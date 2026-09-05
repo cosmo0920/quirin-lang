@@ -2231,6 +2231,15 @@ The following are not yet established for this exact system:
 
 Each stage must have executable tests before the next stage begins.
 
+Lean formal verification is a continuous requirement across the roadmap, not a
+one-time activity deferred to Stage 8. Every development stage MUST extend the
+Lean core with definitions corresponding to the executable semantics introduced
+by that stage and machine-checked lemmas for its safety-critical acceptance
+criteria. Both the implementation test suite and `lake build` MUST pass before
+the next stage begins. `sorry` is not accepted as verification. Stage 8 remains
+the integration milestone for the reduced end-to-end operational semantics and
+its global metatheory.
+
 ### Stage 0: syntax-only core
 
 Implement:
