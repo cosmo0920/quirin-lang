@@ -34,12 +34,16 @@ markers:
 
 | File | Contract checked |
 | --- | --- |
-| `include/event2/event.h` | blocking/nonblocking delete, finalization, and explicit activation public APIs |
+| `include/event2/event.h` | blocking/nonblocking delete, finalization, explicit activation, and Windows IOCP-startup public APIs |
 | `event.c` | one running loop per base, nonblocking-delete distinction, finalizing events ignoring activation, and active-queue processing |
 | `bufferevent.c` | unlocked callbacks require deferral, locked/unlocked deferred dispatch, and thread-safe locking setup |
-| `include/event2/thread.h` | pthread initialization API |
+| `include/event2/thread.h` | pthread and Windows-thread initialization APIs |
 | `epoll.c` | public epoll backend operation table and native wait path |
 | `kqueue.c` | public kqueue backend operation table, native initialization, and native wait path |
+| `win32select.c` | public WIN32 backend operation table and native `select` dispatch path |
+| `event_iocp.c` | completion-port creation, association, completion wait, activation, and shutdown paths |
+| `buffer_iocp.c` | overlapped evbuffer read and write launch paths |
+| `bufferevent_async.c` | IOCP-backed asynchronous bufferevent construction and `ConnectEx` path |
 
 The command and result are:
 
@@ -52,6 +56,10 @@ checked bufferevent.c
 checked include/event2/thread.h
 checked epoll.c
 checked kqueue.c
+checked win32select.c
+checked event_iocp.c
+checked buffer_iocp.c
+checked bufferevent_async.c
 ```
 
 This is a reproducible source-contract audit, not a proof of the upstream C
@@ -165,19 +173,77 @@ omits kqueue from its runtime backend table. The normal native macOS path sets
 the feature explicitly, and the forced-backend CTest matrix above supplies the
 runtime evidence.
 
+## Windows native MSVC and IOCP build manifest
+
+The out-of-tree build directory was `target/cycle18-libevent-msvc`. It was
+configured on Windows 10.0.26200.9168 x64 with CMake 4.3.4, the Visual Studio
+18 2026 generator, Windows SDK 10.0.26100.0, and native MSVC 19.51.36248:
+
+```text
+cmake -S third_party/libevent -B target/cycle18-libevent-msvc \
+  -G "Visual Studio 18 2026" -A x64 \
+  -DEVENT__DISABLE_OPENSSL=ON \
+  -DEVENT__DISABLE_MBEDTLS=ON \
+  -DEVENT__DISABLE_THREAD_SUPPORT=OFF \
+  -DEVENT__DISABLE_TESTS=OFF \
+  -DEVENT__DISABLE_REGRESS=OFF \
+  -DEVENT__DISABLE_BENCHMARK=ON \
+  -DEVENT__DISABLE_SAMPLES=ON \
+  -DEVENT__ENABLE_VERBOSE_DEBUG=ON
+cmake --build target/cycle18-libevent-msvc --config Debug --parallel 4
+```
+
+Configuration selected the `WEPOLL` and `WIN32` event backends and Windows
+thread support. The core static/shared builds compiled `win32select.c`,
+`event_iocp.c`, `buffer_iocp.c`, `bufferevent_async.c`, and
+`evthread_win32.c`. IOCP is a completion dispatcher used by asynchronous
+bufferevents and listeners rather than the name returned by
+`event_base_get_method`; the focused regression group explicitly starts and
+exercises that dispatcher while the event base uses the WIN32 backend.
+
+The focused native IOCP command was:
+
+```text
+target/cycle18-libevent-msvc/bin/Debug/regress.exe \
+  --verbose --timeout 120 iocp/..
+```
+
+All 21 IOCP tests passed. They covered the completion port, overlapped
+evbuffers, asynchronous bufferevents, flush modes, watermarks, filters,
+connection success/failure, nonblocking connection, listeners, and HTTP.
+
+The complete generated Windows backend matrix was then run with:
+
+```text
+ctest --test-dir target/cycle18-libevent-msvc -C Debug \
+  --output-on-failure --parallel 4
+```
+
+The result was:
+
+```text
+100% tests passed, 0 tests failed out of 44
+Total Test time (real) = 326.86 sec
+```
+
+The complete run forced both WEPOLL and WIN32 variants, including verbose
+debug variants, and ran the bufferevent rate-limit cases. The Windows/IOCP
+platform result is recorded independently of the Linux and macOS runs.
+
 ## QCore-C trust and limits
 
 The trusted boundary for these runs consists of the pinned headers and source
 files above, CMake's generated configurations, Linux 7.0.0-30-generic x86-64
-with GCC 15.2.0, macOS 26.6.2 arm64 with Apple Clang 21.0.0, pthreads, the
-selected EPOLL/POLL/SELECT and KQUEUE/POLL/SELECT backends, and application
-callback summaries supplied to the Rust checker. Rust `ObservedEvent` entries
-are the observation-hook interface; the checker rejects reordered, duplicated,
-or invented observable boundaries.
+with GCC 15.2.0, macOS 26.6.2 arm64 with Apple Clang 21.0.0, Windows
+10.0.26200.9168 x64 with MSVC 19.51.36248, pthreads or Windows threads as
+applicable, the selected EPOLL/POLL/SELECT, KQUEUE/POLL/SELECT, and
+WEPOLL/WIN32-plus-IOCP backends, and application callback summaries supplied
+to the Rust checker. Rust `ObservedEvent` entries are the observation-hook
+interface; the checker rejects reordered, duplicated, or invented observable
+boundaries.
 
-No native Windows/IOCP result is available. No ASan, UBSan, or TSan result is
-recorded by these runs. The current repository supplies the
+No ASan, UBSan, or TSan result is recorded for the pinned Libevent builds. The
+current repository supplies the
 checked observation interface and refinement checker, but not a deployed
 zero-global-lock C instrumentation hook for arbitrary Libevent applications.
-Those gaps keep the aggregate Cycle 18 status short of full multi-platform
-acceptance.
+Those gaps keep the aggregate Cycle 18 status short of full acceptance.

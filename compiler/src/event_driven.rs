@@ -1384,6 +1384,7 @@ pub fn verify_pinned_libevent_source(
                 "int event_del_block(struct event *ev);",
                 "int event_finalize(unsigned, struct event *",
                 "void event_active(struct event *ev, int res, short ncalls);",
+                "EVENT_BASE_FLAG_STARTUP_IOCP = 0x04",
             ][..],
         ),
         (
@@ -1405,7 +1406,10 @@ pub fn verify_pinned_libevent_source(
         ),
         (
             "include/event2/thread.h",
-            &["int evthread_use_pthreads(void);"][..],
+            &[
+                "int evthread_use_pthreads(void);",
+                "int evthread_use_windows_threads(void);",
+            ][..],
         ),
         (
             "epoll.c",
@@ -1418,6 +1422,27 @@ pub fn verify_pinned_libevent_source(
                 "if ((kq = kqueue()) == -1)",
                 "res = kevent(kqop->kq",
             ][..],
+        ),
+        (
+            "win32select.c",
+            &["struct eventop win32ops", "res = select(fd_count"][..],
+        ),
+        (
+            "event_iocp.c",
+            &[
+                "GetQueuedCompletionStatus(p, &bytes, &key",
+                "event_iocp_port_launch_(int n_cpus)",
+                "CreateIoCompletionPort(INVALID_HANDLE_VALUE",
+                "PostQueuedCompletionStatus(port->port",
+            ][..],
+        ),
+        (
+            "buffer_iocp.c",
+            &["evbuffer_launch_read_", "evbuffer_launch_write_"][..],
+        ),
+        (
+            "bufferevent_async.c",
+            &["bufferevent_async_new_", "ext->ConnectEx(fd, sa"][..],
         ),
     ];
     let mut checked_files = Vec::new();

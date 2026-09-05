@@ -1,6 +1,6 @@
 # Cycle 18: Libevent Event-Driven Concurrency Verification
 
-**Status: Bounded implementation complete; native multi-platform acceptance pending**
+**Status: Bounded implementation and native platform matrix complete; aggregate acceptance pending**
 
 Cycle 18 defines and verifies an event-driven concurrency profile modeled on
 Libevent. It builds on Cycle 17's native backend and C11 memory relation; it
@@ -246,13 +246,16 @@ The upstream checkout is pinned to commit
 support, debug mode, OpenSSL disabled, MbedTLS disabled, and the detected
 EPOLL, POLL, and SELECT backends. The native macOS build uses Apple Clang
 21.0.0 with the same feature flags and the detected KQUEUE, POLL, and SELECT
-backends. Exact commands, audited source contracts, and native results are
+backends. The native Windows build uses MSVC 19.51.36248, Windows threads,
+the WIN32 event backend, and the IOCP regression profile. Exact commands,
+audited source contracts, and native results are
 recorded in `docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md`.
 
-Native Windows/IOCP results, application-specific foreign callback summaries,
-sanitizer evidence, and a deployed per-dispatcher observation hook must still
-be recorded before the full multi-platform acceptance gate above can be called
-complete. Results are not inferred between the recorded Linux and macOS runs.
+Application-specific foreign callback summaries, Libevent sanitizer evidence,
+and a deployed per-dispatcher observation hook must still be recorded before
+the full aggregate acceptance gate above can be called complete. Results are
+recorded independently for Linux, macOS/kqueue, and Windows/IOCP rather than
+inferred between platforms.
 
 ## Verification commands
 

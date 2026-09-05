@@ -27,4 +27,15 @@ fn libevent_submodule_matches_the_audited_revision() {
         evidence.checked_files.iter().any(|path| path == "kqueue.c"),
         "the pinned source audit must cover the native BSD/macOS backend"
     );
+    for path in [
+        "win32select.c",
+        "event_iocp.c",
+        "buffer_iocp.c",
+        "bufferevent_async.c",
+    ] {
+        assert!(
+            evidence.checked_files.iter().any(|checked| checked == path),
+            "the pinned source audit must cover the native Windows contract in {path}"
+        );
+    }
 }

@@ -211,10 +211,30 @@ mod tests {
     }
 
     #[test]
-    fn exhaustive_emitted_c_corpus_passes_address_and_undefined_sanitizers() {
-        if Command::new("clang").arg("--version").output().is_err() {
-            return;
-        }
+    fn exhaustive_emitted_c_corpus_passes_available_native_sanitizers() {
+        let msvc = cfg!(target_env = "msvc");
+        let msvc_compiler = if msvc {
+            let rust_target = rust_host_target();
+            let mut build = cc::Build::new();
+            build
+                .host(&rust_target)
+                .target(&rust_target)
+                .opt_level(0)
+                .debug(false)
+                .cargo_metadata(false);
+            let compiler = build.get_compiler();
+            assert!(
+                compiler.is_like_msvc() && !compiler.is_like_clang_cl(),
+                "native Windows sanitizer validation requires MSVC, got {}",
+                compiler.path().display()
+            );
+            Some(compiler)
+        } else {
+            if Command::new("clang").arg("--version").output().is_err() {
+                return;
+            }
+            None
+        };
         let sequence = TEMP_SEQUENCE.fetch_add(1, Ordering::Relaxed);
         let directory = std::env::temp_dir().join(format!(
             "qcore-cycle13-sanitizers-{}-{sequence}",
@@ -222,7 +242,7 @@ mod tests {
         ));
         fs::create_dir_all(&directory).unwrap();
         let c_path = directory.join("program.c");
-        let executable = directory.join("program");
+        let executable = directory.join(if msvc { "program.exe" } else { "program" });
 
         for first_succeeds in [false, true] {
             for second_succeeds in [false, true] {
@@ -248,20 +268,39 @@ mod tests {
                     ]);
                     let cfg = lower_cleanup_cfg(&source).unwrap();
                     fs::write(&c_path, emit_c11(&cfg).unwrap()).unwrap();
-                    let compilation = Command::new("clang")
-                        .args([
-                            "-std=c11",
-                            "-Wall",
-                            "-Wextra",
-                            "-Werror",
-                            "-fsanitize=address,undefined",
-                            "-fno-omit-frame-pointer",
-                        ])
-                        .arg(&c_path)
-                        .arg("-o")
-                        .arg(&executable)
-                        .status()
-                        .unwrap();
+                    let compilation = if let Some(compiler) = &msvc_compiler {
+                        let mut command = compiler.to_command();
+                        command
+                            .current_dir(&directory)
+                            .args([
+                                "/nologo",
+                                "/std:c11",
+                                "/TC",
+                                "/W4",
+                                "/WX",
+                                "/Zi",
+                                "/fsanitize=address",
+                            ])
+                            .arg(&c_path)
+                            .arg(format!("/Fe:{}", executable.display()))
+                            .status()
+                            .unwrap()
+                    } else {
+                        Command::new("clang")
+                            .args([
+                                "-std=c11",
+                                "-Wall",
+                                "-Wextra",
+                                "-Werror",
+                                "-fsanitize=address,undefined",
+                                "-fno-omit-frame-pointer",
+                            ])
+                            .arg(&c_path)
+                            .arg("-o")
+                            .arg(&executable)
+                            .status()
+                            .unwrap()
+                    };
                     assert!(compilation.success());
                     let output = Command::new(&executable)
                         // LeakSanitizer cannot run in ptrace-based CI sandboxes;
@@ -285,5 +324,16 @@ mod tests {
             }
         }
         fs::remove_dir_all(directory).unwrap();
+    }
+
+    fn rust_host_target() -> String {
+        let version = Command::new("rustc").arg("-vV").output().unwrap();
+        assert!(version.status.success());
+        std::str::from_utf8(&version.stdout)
+            .unwrap()
+            .lines()
+            .find_map(|line| line.strip_prefix("host: "))
+            .expect("rustc -vV must report its host target")
+            .into()
     }
 }

@@ -1,12 +1,12 @@
 # Cycle 17: Research Extensions and Production Closure
 
-**Status: Implementation complete; native Windows acceptance run pending**
+**Status: Complete**
 
 The executable and proof workstreams described below are implemented. The
 aggregate certificate deliberately still requires separately recorded Linux
-and Windows sanitizer runs. This checkout has produced the Linux Rust/Lean
-results, but no native Windows result was available during this development
-run, so the program-level acceptance gate is not yet recorded as complete.
+and Windows sanitizer runs. The Linux Rust/Lean results and the native Windows
+MSVC/runtime results are now recorded; the Windows record below completes the
+previously outstanding platform gate.
 
 Cycle 17 promotes every item in `QCore.Metatheory.remainingResearch` from an
 explicit post-roadmap boundary into one numbered milestone. It is intentionally
@@ -149,6 +149,34 @@ depends on Cycle 17's native concurrent backend and C11 weak-memory relation.
   evidence, ledger composition, six per-workstream discharge theorems, and the
   combined certificate theorem. `proof/AuditCycle17.lean` audits their
   dependencies.
+
+## Native Windows acceptance record
+
+The native Windows run was executed on 2026-09-05 on Windows
+10.0.26200.9168 x64. Rust 1.97.1 targeted
+`x86_64-pc-windows-msvc`; the C compiler was native MSVC
+19.51.36248 from Visual Studio 18.7.3 with MSVC tools 14.51.36231.
+
+From an x64 Visual Studio developer environment, the complete workspace suite
+passed with 182 tests: 181 library tests and the pinned-Libevent integration
+test. This includes the native threaded custody/observation backend and the
+generated-C differential corpus. The latter selected native `cl.exe`, rejected
+`clang-cl`, compiled four generated programs as C11 with `/W4 /WX /sdl /RTC1`,
+executed them, and matched both Rust interpreters.
+
+The exhaustive eight-program generated-C sanitizer corpus also compiled and
+executed with native MSVC using `/W4 /WX /Zi /fsanitize=address`. All eight
+source/CFG/C observations matched and AddressSanitizer reported no error. MSVC
+does not supply the Clang UndefinedBehaviorSanitizer used by the non-Windows
+branch, so the recorded native Windows sanitizer is AddressSanitizer; `/RTC1`
+and `/sdl` remain enabled in the separate differential corpus.
+
+The focused sanitizer command was:
+
+```text
+cargo test -p qcore-compiler \
+  translation_validation::tests::exhaustive_emitted_c_corpus_passes_available_native_sanitizers
+```
 
 ## Verification commands
 
