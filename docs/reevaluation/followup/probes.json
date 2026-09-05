@@ -1,0 +1,71 @@
+{
+  "failed_expectations": 8,
+  "probes": [
+    {
+      "compilation_succeeded": true,
+      "detail": "Ok(\"main\")",
+      "id": "VP05_scope_never_invokes_provider",
+      "pass": false,
+      "provider_invocations": 0
+    },
+    {
+      "diagnostics": [],
+      "id": "VP06_unsupported_unsafe_proposal",
+      "pass": false,
+      "verdict": "Unsafe"
+    },
+    {
+      "id": "CONTROL_direct_provider_invoked",
+      "pass": true
+    },
+    {
+      "detail": "Ok(Safe(LegacySafetyCertificate { preprocessed_source: \"void *q_alloc(void); void q_free(void *); void *make(void) { void *p = q_alloc(); return p; } int main(void) { void *p = make(); return 0; }\\n\", entry: \"main\", contracts: ResourceContracts({\"q_alloc\": ResourceFunctionContract { parameters: [], result: Owned { nullable: false } }, \"q_free\": ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }}), dialect: C11, function_scope: PreprocessedTranslationUnit, summary: LegacyProgramSummary { entry: \"main\", status: Safe, functions: {\"main\": LegacyFunctionSummary { function: \"main\", status: Safe, diagnostics: [], fixed_point_steps: 2, cfg: LegacyCfg { function: \"main\", entry: 2, nodes: [LegacyCfgNode { instruction: NoOp, successors: [], line: 0, is_exit: true }, LegacyCfgNode { instruction: NoOp, successors: [], line: 1, is_exit: true }, LegacyCfgNode { instruction: ContractCall { function: \"make\", destination: Some(\"p\"), arguments: [], contract: ResourceFunctionContract { parameters: [], result: None }, produced_sites: [] }, successors: [1], line: 1, is_exit: false }] } }, \"make\": LegacyFunctionSummary { function: \"make\", status: Safe, diagnostics: [], fixed_point_steps: 2, cfg: LegacyCfg { function: \"make\", entry: 2, nodes: [LegacyCfgNode { instruction: NoOp, successors: [], line: 0, is_exit: true }, LegacyCfgNode { instruction: EscapeIfOwned { source: \"p\" }, successors: [], line: 1, is_exit: true }, LegacyCfgNode { instruction: ContractCall { function: \"q_alloc\", destination: Some(\"p\"), arguments: [], contract: ResourceFunctionContract { parameters: [], result: Owned { nullable: false } }, produced_sites: [0] }, successors: [1], line: 1, is_exit: false }] } }} }, checked_functions: [\"main\", \"make\"] }))",
+      "id": "LC01_returned_owner_lost_at_internal_call",
+      "pass": false
+    },
+    {
+      "detail": "Ok(Unsafe(LegacyProgramSummary { entry: \"main\", status: Unsafe, functions: {\"main\": LegacyFunctionSummary { function: \"main\", status: Unsafe, diagnostics: [LegacyDiagnostic { function: \"main\", line: 1, kind: Leak { acquisition_line: 1 } }], fixed_point_steps: 2, cfg: LegacyCfg { function: \"main\", entry: 2, nodes: [LegacyCfgNode { instruction: NoOp, successors: [], line: 0, is_exit: true }, LegacyCfgNode { instruction: NoOp, successors: [], line: 1, is_exit: true }, LegacyCfgNode { instruction: ContractCall { function: \"q_alloc\", destination: Some(\"p\"), arguments: [], contract: ResourceFunctionContract { parameters: [], result: Owned { nullable: false } }, produced_sites: [0] }, successors: [1], line: 1, is_exit: false }] } }} }))",
+      "id": "CONTROL_direct_allocation_leak",
+      "pass": true
+    },
+    {
+      "detail": "Ok(C11ExecutionCertificate { event_count: 2, happens_before: [], source_observation: [] })",
+      "id": "WM05_simultaneous_mutex_owners",
+      "pass": false
+    },
+    {
+      "detail": "Ok(C11ExecutionCertificate { event_count: 4, happens_before: [RelationEdge { from: 0, to: 1 }, RelationEdge { from: 0, to: 2 }, RelationEdge { from: 0, to: 3 }, RelationEdge { from: 1, to: 2 }, RelationEdge { from: 1, to: 3 }, RelationEdge { from: 2, to: 3 }], source_observation: [] })",
+      "id": "WM05_unowned_unlock_manufactures_order",
+      "pass": false
+    },
+    {
+      "configured_timeout_ms": 20,
+      "detail": "Err(Timeout)",
+      "elapsed_ms": 403,
+      "id": "VP04_descendant_holds_pipes",
+      "note": "200 ms tolerance; bounded descendant sleeps 400 ms",
+      "pass": false
+    },
+    {
+      "codec_accepts": true,
+      "frame_bytes": 4289,
+      "id": "VP07_frame_limit_disagreement",
+      "pass": false,
+      "payload_bytes": 4285,
+      "process_result": "Err(OutputLimit)"
+    },
+    {
+      "detail": "Ok(Unknown)",
+      "id": "CONTROL_frame_limit_includes_header",
+      "pass": true
+    },
+    {
+      "detail": "Err(OutputLimit)",
+      "id": "VP08_provider_survives_encoding_failure",
+      "marker_after_return": true,
+      "marker_at_return": false,
+      "pass": false
+    }
+  ],
+  "schema_version": 1
+}

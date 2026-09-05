@@ -1,0 +1,22 @@
+{
+  "audit_date": "2026-09-05",
+  "baseline_head": "3827db1c0be3bafdb7d069729c311bfa3632d0d9",
+  "file_sha256": {
+    "compiler/src/legacy_c.rs": "4cc86a8565a657cd5f78e490d654cefea4920013ae09bebde8fd4fc17618922e",
+    "compiler/src/weak_memory.rs": "7d6084905d0319c2cf5212e708d0db117ebcf2afa16d900fc45714f2c145dbab",
+    "compiler/src/verifier_plugin.rs": "134110de3e8f8d502dcb5c2a28255754b04c40a6d8d7702a81cd3fcead09d8d6",
+    "compiler/src/driver.rs": "e164ea2d652d00ee31246f27ef60d0aff5902923abb7c097353ef20f05dbce97",
+    "compiler/examples/reevaluation_followup.rs": "0321750fd2f68d8ff6ef79ee2227e0f2ba39c20f931120d9654184815cc3fbce"
+  },
+  "followup_exit_code": 1,
+  "original_probe_exit_code": 0,
+  "test_exit_code": 0,
+  "clippy_exit_code": 0,
+  "format_exit_code": 0,
+  "finding_count": 7,
+  "failed_probe_expectations": 8,
+  "passing_controls": 3,
+  "platform": "Linux x86_64",
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
