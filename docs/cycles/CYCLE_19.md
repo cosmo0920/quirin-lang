@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — contract and nullable/reallocation foundation implemented**
+**Status: In progress — contract foundation and bounded ChunkIO lifecycle implemented**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -11,6 +11,12 @@ The source and build boundary remains the one recorded in
 `CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md`: pinned CMetrics, CTraces,
 librdkafka, ChunkIO, Fluent Bit's central input-chunk wrapper, and a separate
 Monkey build forced onto its bundled Libevent adapter.
+
+Library-specific mechanisms remain in core modules for this milestone so their
+semantics and evidence can stabilize. Their extraction into separately
+versioned, process-isolated verifier providers is Cycle 20; Cycle 19 APIs should
+therefore expose explicit request, result, profile, and certificate boundaries
+without introducing a native Rust plugin ABI.
 
 ## Ordered workstreams
 
@@ -128,3 +134,26 @@ The Cycle 19 audit manifest now marks known allocation results nullable, marks
 null-tolerant destructors explicitly, and models `rd_realloc` with the new
 replacement contract. Aggregate/container transfer and general control-flow
 work remain pending.
+
+## Implemented 19C bounded lifecycle
+
+`chunk_lifecycle` is an identity-indexed executable checker for the bounded
+ChunkIO/Fluent Bit lifecycle profile. It tracks context, stream, and chunk
+custody; memory/file backend resources; up/down residency; both intrusive-list
+links; the context chunk counter; lock, busy, task, and route obligations; and
+transaction commit or rollback. Context destruction follows the audited
+context → stream → chunk → backend order and rejects teardown while any wrapper
+obligation is outstanding.
+
+Construction failures leave no list or counter residue. File deletion through
+`cio_file_close` is recorded only as requested because its `void` API logs but
+does not return native deletion failure. Stream deletion therefore retains an
+explicit success/failure partial state and is not confused with stream object
+destruction.
+
+The corresponding Lean account checks replacement, aggregate custody, unique
+identities, backend discharge, list/counter balance, failed-open rollback,
+nested teardown order, and delete-only classification. This bounded checker is
+not yet composed with the unrestricted-C importer, so it does not promote any
+raw ChunkIO or Fluent Bit translation unit to `Safe`. Importer composition,
+remaining control flow, and Monkey event composition remain Cycle 19 work.

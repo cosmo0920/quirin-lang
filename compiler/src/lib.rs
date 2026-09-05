@@ -22,6 +22,7 @@ pub mod ast;
 pub mod c_emit;
 pub mod cfg;
 pub mod check;
+pub mod chunk_lifecycle;
 pub mod cleanup_lowering;
 pub mod concurrency;
 pub mod driver;
@@ -57,6 +58,12 @@ pub use cfg::{
     ExecutionObservation, ExecutionOutcome, TraceEvent, TypedCfg, interpret_cfg,
 };
 pub use check::{CheckError, StaticEnvironment};
+pub use chunk_lifecycle::{
+    BackingDeleteOutcome, ChunkBackend, ChunkCertificate, ChunkContextId, ChunkContextRecord,
+    ChunkDiagnostic, ChunkId, ChunkOpenFailure, ChunkOperation, ChunkProgram, ChunkRecord,
+    ChunkResidency, ChunkRouteId, ChunkState, ChunkStreamId, ChunkStreamRecord, ChunkTaskId,
+    ChunkTraceEvent, check_chunk_program,
+};
 pub use cleanup_lowering::{
     LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,
 };

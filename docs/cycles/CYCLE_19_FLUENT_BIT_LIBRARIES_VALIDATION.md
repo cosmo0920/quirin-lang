@@ -250,6 +250,26 @@ aliases, or callback-to-fired-array effects into the event IR. The aggregate
 event verdict remains fail-closed as `Unknown` until those contracts are
 modeled and the selected backend is observed or constrained.
 
+## Bounded ChunkIO lifecycle result
+
+Cycle 19 now includes a separate executable `chunk_lifecycle` checker. Its
+bounded corpus covers memory- and filesystem-backed teardown, up/down
+residency, list unlinking and counter balance, lock/busy/task/route custody,
+transaction rollback, construction failure, and stream-delete partial states.
+The model follows the concrete `cio_destroy` → `cio_stream_destroy` →
+`cio_chunk_close` → backend-close chain.
+
+The checker deliberately records a filesystem close with deletion enabled as
+a delete request, not a confirmed deletion: `cio_file_close` returns `void` and
+only logs native deletion failure. It separately records the observable result
+of recursive stream-directory deletion. Memory-backed close never claims a
+filesystem deletion.
+
+The model and its Lean theorems pass independently, but the unrestricted-C
+importer does not yet derive these lifecycle operations from the pinned source.
+Accordingly, the audit table above is unchanged and no raw ChunkIO or Fluent
+Bit unit is newly marked `Safe`.
+
 ## Next resource-model gates
 
 The remaining stages should be implemented and validated in this order. The
@@ -267,8 +287,8 @@ certification gate.
    the CFG rather than consuming them as unknown blocks;
 5. model thread/callback transfer and atomic publication before evaluating
    librdkafka concurrency;
-6. add a chunk-specific state model for memory/file residency, lock/busy/task
-   custody, route accounting, transactions, and close/delete outcomes;
+6. compose the implemented chunk-specific state model with imported wrapper
+   control flow and audited ChunkIO summaries;
 7. add CFL arena parent/child lifetime discharge; and
 8. rerun the same pinned local audit before expanding beyond the central
    Fluent Bit chunk wrapper.

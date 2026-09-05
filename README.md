@@ -50,9 +50,10 @@ native Windows/IOCP development evidence is recorded; Libevent sanitizer and
 deployed observation-hook evidence remain pending. Cycle 19 applies the
 unrestricted-C gateway to pinned Fluent Bit CMetrics, CTraces, librdkafka,
 ChunkIO, the central input-chunk wrapper, and Monkey builds. It retains partial
-summaries across reduced-parser failures, begins the chunk-lifecycle evaluation
-fail-closed, and links the forced-Libevent Monkey source back to the Cycle 18
-trust boundary. The completed Cycle 16 requirements and verification procedure are in
+summaries across reduced-parser failures, adds a bounded fail-closed ChunkIO
+lifecycle checker without promoting raw units to Safe, and links the
+forced-Libevent Monkey source back to the Cycle 18 trust boundary. The completed
+Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent
 event-driven verification plan is in [`CYCLE_18.md`](docs/cycles/CYCLE_18.md).
@@ -60,6 +61,8 @@ The active Fluent Bit resource/event milestone is in
 [`CYCLE_19.md`](docs/cycles/CYCLE_19.md). All
 cycle records are archived under [`docs/cycles/`](docs/cycles/), including the
 [Cycle 19 Fluent Bit library and chunk audit](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md).
+The subsequent extraction into versioned verifier providers is planned in
+[`CYCLE_20.md`](docs/cycles/CYCLE_20.md).
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the
