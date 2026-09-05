@@ -1,7 +1,8 @@
 //! Executable implementation of the QCore-C static semantics.
 //!
 //! The implemented vertical slices cover lexical/index foundations,
-//! interval-graded usage analysis, ownership, and static resource-flow bounds.
+//! interval-graded usage analysis, ownership, static resource-flow bounds, and
+//! path-sensitive typed recoverable errors.
 
 pub mod ast;
 pub mod check;
@@ -10,6 +11,7 @@ pub mod lexer;
 pub mod ownership;
 pub mod parser;
 pub mod resource_flow;
+pub mod typed_errors;
 pub mod usage;
 
 pub use ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
@@ -23,6 +25,11 @@ pub use ownership::{
 pub use parser::{ParseError, parse_program};
 pub use resource_flow::{
     Flow, FlowError, FunctionSummary, NetChange, Quantity, ResourceBounds, interpret_flow_trace,
+};
+pub use typed_errors::{
+    CallExit, CallSummary, CatchClause, Effect, EffectRow, ErrorDeclarations, ErrorLedger,
+    ErrorName, ErrorOp, ExitMap, ExitState, ExitTag, LedgerTransition, TypedErrorError,
+    analyze_typed_errors, check_no_unhandled_errors,
 };
 pub use usage::{
     DemandContext, DemandError, Usage, UsageArithmeticError, UsageCheckError, UsageExpr,
