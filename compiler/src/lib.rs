@@ -1,11 +1,15 @@
 //! Executable implementation of the QCore-C static semantics.
 //!
 //! The implemented vertical slices cover lexical/index foundations,
-//! interval-graded usage analysis, ownership, static resource-flow bounds, and
-//! path-sensitive typed recoverable errors, and checked error-region cleanup.
+//! interval-graded usage analysis, ownership, static resource-flow bounds,
+//! path-sensitive typed recoverable errors, checked error-region cleanup, and
+//! cleanup-explicit CFG lowering to C11.
 
 pub mod ast;
+pub mod c_emit;
+pub mod cfg;
 pub mod check;
+pub mod cleanup_lowering;
 pub mod error_region;
 pub mod index;
 pub mod lexer;
@@ -16,7 +20,15 @@ pub mod typed_errors;
 pub mod usage;
 
 pub use ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
+pub use c_emit::{CEmitError, emit_c11, parse_c_observation};
+pub use cfg::{
+    BasicBlock, BlockId, CfgError, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ErrorVariant,
+    ExecutionObservation, ExecutionOutcome, TraceEvent, TypedCfg, interpret_cfg,
+};
 pub use check::{CheckError, StaticEnvironment};
+pub use cleanup_lowering::{
+    LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,
+};
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
     RegionCatchClause, RegionExitMap, RegionExitState, RegionExitTag, RegionName, RegionOp,

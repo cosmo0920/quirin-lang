@@ -2376,8 +2376,30 @@ Implement:
 Acceptance:
 
 - reference interpreter and emitted C agree on values, error tags, and resource traces;
-- sanitizers report no generated-code errors on the test corpus;
+- sanitizers report no generated-code errors on the supported non-MSVC test corpus;
 - each runtime resource identity is released at most once.
+
+### Stage 7.5: native Windows/MSVC conformance (postponed)
+
+After the initial C emitter is stable, validate and adapt it for native MSVC:
+
+- select and invoke the MSVC compiler through the Rust `cc` crate;
+- use MSVC-appropriate C language, warning, and runtime-checking options;
+- confirm the tagged error ABI and fixed-width representations on Windows;
+- compile and execute the differential C corpus on native Windows runners;
+- compare values, error tags, ownership transfers, and resource traces with
+  both Rust interpreters;
+- add Windows-specific generated-code regression cases where required.
+
+Acceptance:
+
+- emitted programs compile as C with warnings treated as errors under MSVC;
+- the Windows binaries match both Rust interpreters on the differential corpus;
+- available Windows runtime instrumentation reports no generated-code errors;
+- every returned or locally owned allocation is released exactly once.
+
+Stage 7.5 is a portability-validation cycle, not part of Stage 7 completion.
+It is intentionally postponed until native Windows/MSVC execution is available.
 
 ### Stage 8: executable formal model
 

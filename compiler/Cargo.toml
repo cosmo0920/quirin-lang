@@ -10,3 +10,5 @@ path = "src/lib.rs"
 
 [dependencies]
 
+[dev-dependencies]
+cc = "1.2.50"
