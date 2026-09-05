@@ -3822,7 +3822,7 @@ Later extensions have separate gates for dynamic task collections, condition var
 
 Cycle 18 is a planned verification profile built on the Cycle 17 native
 concurrent backend and C11 weak-memory relation. Its complete implementation
-and proof plan is normative roadmap material in `CYCLE_18.md`.
+and proof plan is normative roadmap material in `cycles/CYCLE_18.md`.
 
 The profile models a Libevent-style reactor rather than equating an event loop
 with sequential execution. An `event_base` has at most one active dispatcher,

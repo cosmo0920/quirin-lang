@@ -28,7 +28,7 @@ pass-interface invariants and acceptance preservation into checked CFG.
 
 ## Cycle 12: End-to-end QCore-C compiler and CLI
 
-**Status: completed.** See [`../CYCLE_12.md`](../CYCLE_12.md).
+**Status: completed.** See [`cycles/CYCLE_12.md`](cycles/CYCLE_12.md).
 
 Lower checked source programs—not only Rust IR fixtures—to cleanup-explicit CFG
 and C11. Add module/file handling, a stable CLI, diagnostics, and emitted-source
@@ -37,7 +37,7 @@ resource traces, ownership transfers, and quantitative bounds.
 
 ## Cycle 13: Translation validation and analysis hardening
 
-**Status: completed.** See [`../CYCLE_13.md`](../CYCLE_13.md).
+**Status: completed.** See [`cycles/CYCLE_13.md`](cycles/CYCLE_13.md).
 
 Add property testing, pass-boundary CFG validation, larger sanitizer corpora,
 and a translation-validation checker. Extend legacy-C analysis with a
@@ -46,7 +46,7 @@ documented widening, preserving `Unknown` for everything unmodeled.
 
 ## Cycle 14: Concurrency and resource-race verification
 
-**Status: completed.** See [`../CYCLE_14.md`](../CYCLE_14.md).
+**Status: completed.** See [`cycles/CYCLE_14.md`](cycles/CYCLE_14.md).
 
 Specify threads, shared ownership, atomics, mutex capabilities,
 happens-before, lock order, and resource access footprints. Implement race and
@@ -57,7 +57,7 @@ multi-threaded resource races absent from Cycles 0–9.
 
 ## Cycle 15: Advanced control and cleanup
 
-**Status: completed.** See [`../CYCLE_15.md`](../CYCLE_15.md).
+**Status: completed.** See [`cycles/CYCLE_15.md`](cycles/CYCLE_15.md).
 
 Define asynchronous cancellation, fallible destructors and double-error
 semantics, higher-order ownership capture, and restrictions for resumable or
@@ -66,7 +66,7 @@ mechanized cleanup/linearity preservation.
 
 ## Cycle 16: Full metatheory and research closure
 
-**Status: completed.** See [`../CYCLE_16.md`](../CYCLE_16.md).
+**Status: completed.** See [`cycles/CYCLE_16.md`](cycles/CYCLE_16.md).
 
 Unify the reduced proofs into preservation and progress for the implemented
 combined language, resource safety across all implemented ledgers, and
@@ -76,7 +76,7 @@ unification that remains open explicitly labeled as research.
 
 ## Cycle 17: Research extensions and production closure
 
-**Status: planned.** See [`../CYCLE_17.md`](../CYCLE_17.md).
+**Status: planned.** See [`cycles/CYCLE_17.md`](cycles/CYCLE_17.md).
 
 Promote the six explicit Cycle 16 research-boundary items into one roadmap
 milestone: principal inference, general nonzero-net loops, unrestricted
@@ -89,7 +89,7 @@ itself close the promoted item.
 
 ## Cycle 18: Libevent event-driven concurrency verification
 
-**Status: planned.** See [`../CYCLE_18.md`](../CYCLE_18.md).
+**Status: planned.** See [`cycles/CYCLE_18.md`](cycles/CYCLE_18.md).
 
 Define and verify a Libevent-style reactor profile on top of the Cycle 17
 native concurrency and C11 memory model. Model event bases, event generations,

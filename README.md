@@ -48,17 +48,17 @@ priority schedule exploration, cross-context conflict checks, source pinning,
 and corresponding Lean theorems. Its Linux development evidence is recorded;
 native kqueue, Windows/IOCP, sanitizer, and deployed observation-hook evidence
 remain pending. The completed Cycle 16 requirements and verification procedure are in
-[`CYCLE_16.md`](CYCLE_16.md). The promoted research milestone and its
-implementation/acceptance record is in [`CYCLE_17.md`](CYCLE_17.md). The subsequent Libevent
-event-driven verification plan is in [`CYCLE_18.md`](CYCLE_18.md). Earlier
-completed cycle records are archived under [`docs/cycles/`](docs/cycles/).
+[`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
+implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent
+event-driven verification plan is in [`CYCLE_18.md`](docs/cycles/CYCLE_18.md). All
+cycle records are archived under [`docs/cycles/`](docs/cycles/).
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the
 file compiler API is `compile_files`. The CLI binary is `qcorec`.
 
 Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
-[Cycle 7.5 validation](docs/CYCLE_7_5.md) now also compiles and executes the
+[Cycle 7.5 validation](docs/cycles/CYCLE_7_5.md) now also compiles and executes the
 same differential C corpus with native MSVC, strict warnings, and Windows
 runtime checks.
 The post-Cycle-9 sequence and promoted research boundary are in the

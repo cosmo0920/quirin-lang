@@ -17,7 +17,7 @@ Before Cycle 8 implementation begins:
 - mark Cycle 7 as done;
 - move the Cycle 7 record to `docs/cycles/`;
 - update repository documentation to point at Cycle 8 as the active cycle;
-- retain `docs/CYCLE_7_5.md` unchanged as a postponed portability plan.
+- retain `docs/cycles/CYCLE_7_5.md` unchanged as a postponed portability plan.
 
 ## Executable Rust semantics
 
@@ -78,7 +78,7 @@ lake env lean AuditCycle8.lean
 
 The Rust suite continues to compile and execute the Cycle 7 emitted-C corpus on
 non-MSVC hosts with the existing strict warnings and sanitizers. Native MSVC is
-still excluded exactly as documented in `docs/CYCLE_7_5.md`.
+still excluded exactly as documented in `docs/cycles/CYCLE_7_5.md`.
 
 ## Verified completion result
 

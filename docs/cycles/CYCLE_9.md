@@ -91,4 +91,4 @@ limited to the standard foundations above.
 
 Stage 9 is complete for its stated subset. The overall language remains
 unfinished; the sequenced remaining milestones are recorded in
-[`docs/ROADMAP_AFTER_CYCLE_9.md`](docs/ROADMAP_AFTER_CYCLE_9.md).
+[`docs/ROADMAP_AFTER_CYCLE_9.md`](../ROADMAP_AFTER_CYCLE_9.md).

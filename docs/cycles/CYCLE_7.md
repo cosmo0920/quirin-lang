@@ -50,7 +50,7 @@ and AddressSanitizer and UndefinedBehaviorSanitizer remain active.
 Native Windows/MSVC compilation is not part of Cycle 7 acceptance. The current
 GNU/Clang-style diagnostic and sanitizer flags are intentionally not passed to
 MSVC. Windows ABI, compiler, runtime, and generated-code conformance are
-recorded as the postponed [Cycle 7.5 plan](docs/CYCLE_7_5.md).
+recorded as the postponed [Cycle 7.5 plan](CYCLE_7_5.md).
 
 ## Surface-language maturity
 
