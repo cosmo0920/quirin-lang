@@ -1,0 +1,9 @@
+import QCore.AdvancedControl
+
+#print axioms QCore.AdvancedControl.double_error_preserves_primary_error
+#print axioms QCore.AdvancedControl.double_error_preserves_cancellation
+#print axioms QCore.AdvancedControl.cleanup_is_lifo
+#print axioms QCore.AdvancedControl.cleanup_preserves_linearity
+#print axioms QCore.AdvancedControl.checked_owned_capture_is_one_shot
+#print axioms QCore.AdvancedControl.checked_owned_capture_is_consumed_once
+#print axioms QCore.AdvancedControl.checked_captures_are_unique

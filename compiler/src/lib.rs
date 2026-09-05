@@ -10,6 +10,7 @@
 //! connects the established passes through whole-program summaries.  Cycle 12
 //! adds the source-file compiler driver and stable `qcorec` CLI.
 
+pub mod advanced_control;
 pub mod ast;
 pub mod c_emit;
 pub mod cfg;
@@ -31,6 +32,11 @@ pub mod typed_errors;
 pub mod usage;
 pub mod whole_program;
 
+pub use advanced_control::{
+    AdvancedControlError, AdvancedExecution, AdvancedOp, AdvancedOutcome, AdvancedProgram,
+    AdvancedResourceId, AdvancedTraceEvent, Capture, CaptureMode, DestructorId, DestructorOutcome,
+    DestructorSpec, HandlerId, HandlerKind, HandlerSpec, PrimaryFailure, run_advanced,
+};
 pub use ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
 pub use c_emit::{CEmitError, emit_c11, parse_c_observation};
 pub use cfg::{

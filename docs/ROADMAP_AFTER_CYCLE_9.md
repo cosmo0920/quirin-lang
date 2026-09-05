@@ -57,6 +57,8 @@ multi-threaded resource races absent from Cycles 0–9.
 
 ## Cycle 15: Advanced control and cleanup
 
+**Status: completed.** See [`../CYCLE_15.md`](../CYCLE_15.md).
+
 Define asynchronous cancellation, fallible destructors and double-error
 semantics, higher-order ownership capture, and restrictions for resumable or
 multi-shot effects. Implement only fragments with executable tests and
