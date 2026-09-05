@@ -118,6 +118,33 @@ pub enum LegacyCError {
     ProductionParserRejected(String),
 }
 
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct C11TranslationUnit<'a> {
+    pub source: &'a str,
+    pub include_paths: Vec<String>,
+    pub definitions: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacySafetyCertificate {
+    pub preprocessed_source: String,
+    pub entry: String,
+    pub contracts: ResourceContracts,
+    pub summary: LegacyProgramSummary,
+    pub checked_functions: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum UnrestrictedLegacyResult {
+    Safe(LegacySafetyCertificate),
+    Unsafe(LegacyProgramSummary),
+    Unknown {
+        preprocessed_source: String,
+        reason: String,
+        partial: Option<LegacyProgramSummary>,
+    },
+}
+
 impl fmt::Display for LegacyCError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -200,6 +227,144 @@ pub fn analyze_legacy_c11(
         ));
     }
     analyze_legacy_c(source, function, contracts)
+}
+
+/// Preprocess a conforming C11 translation unit with Clang, then project it
+/// through the conservative resource analyzer.  Projection gaps are an
+/// `Unknown` verdict, not a parse failure and never a `Safe` certificate.
+pub fn analyze_unrestricted_c11(
+    unit: &C11TranslationUnit<'_>,
+    entry: &str,
+    contracts: &ResourceContracts,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let mut command = Command::new("clang");
+    command.args(["-x", "c", "-std=c11", "-E", "-P"]);
+    for include in &unit.include_paths {
+        command.arg(format!("-I{include}"));
+    }
+    for definition in &unit.definitions {
+        command.arg(format!("-D{definition}"));
+    }
+    command.arg("-");
+    let mut child = command
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    child
+        .stdin
+        .take()
+        .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
+        .write_all(unit.source.as_bytes())
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    let output = child
+        .wait_with_output()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    if !output.status.success() {
+        return Err(LegacyCError::ProductionParserRejected(
+            String::from_utf8_lossy(&output.stderr).trim().to_owned(),
+        ));
+    }
+    let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
+    let mut syntax = Command::new("clang")
+        .args(["-x", "c", "-std=c11", "-fsyntax-only", "-"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    syntax
+        .stdin
+        .take()
+        .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing syntax stdin".into()))?
+        .write_all(preprocessed_source.as_bytes())
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    let syntax_output = syntax
+        .wait_with_output()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    if !syntax_output.status.success() {
+        return Err(LegacyCError::ProductionParserRejected(
+            String::from_utf8_lossy(&syntax_output.stderr)
+                .trim()
+                .to_owned(),
+        ));
+    }
+    let summary = match analyze_legacy_c_translation_unit(&preprocessed_source, entry, contracts) {
+        Ok(summary) => summary,
+        Err(error) => {
+            return Ok(UnrestrictedLegacyResult::Unknown {
+                preprocessed_source,
+                reason: error.to_string(),
+                partial: None,
+            });
+        }
+    };
+    match summary.status {
+        AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
+        AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason: "the conservative C11 projection contains an unsupported operation".into(),
+            partial: Some(summary),
+        }),
+        AnalysisStatus::Safe => {
+            let checked_functions = summary.functions.keys().cloned().collect::<Vec<_>>();
+            let certificate = LegacySafetyCertificate {
+                preprocessed_source,
+                entry: entry.to_owned(),
+                contracts: contracts.clone(),
+                summary,
+                checked_functions,
+            };
+            check_legacy_safety_certificate(&certificate).map_err(|reason| {
+                LegacyCError::ProductionParserRejected(format!(
+                    "internal legacy-C certificate check failed: {reason}"
+                ))
+            })?;
+            Ok(UnrestrictedLegacyResult::Safe(certificate))
+        }
+    }
+}
+
+/// Independent structural check for an unrestricted-C `Safe` result.
+pub fn check_legacy_safety_certificate(
+    certificate: &LegacySafetyCertificate,
+) -> Result<(), String> {
+    let recomputed = analyze_legacy_c_translation_unit(
+        &certificate.preprocessed_source,
+        &certificate.entry,
+        &certificate.contracts,
+    )
+    .map_err(|error| format!("certificate source cannot be reanalyzed: {error}"))?;
+    if recomputed != certificate.summary {
+        return Err("program summary does not match the preprocessed source".into());
+    }
+    if certificate.summary.status != AnalysisStatus::Safe {
+        return Err("program summary is not Safe".into());
+    }
+    let names = certificate
+        .summary
+        .functions
+        .keys()
+        .cloned()
+        .collect::<Vec<_>>();
+    if certificate.checked_functions != names {
+        return Err("checked function index is not canonical".into());
+    }
+    for (name, function) in &certificate.summary.functions {
+        if function.status != AnalysisStatus::Safe || !function.diagnostics.is_empty() {
+            return Err(format!("function `{name}` is not independently Safe"));
+        }
+        if function
+            .cfg
+            .nodes
+            .iter()
+            .any(|node| matches!(node.instruction, LegacyInstruction::Unknown { .. }))
+        {
+            return Err(format!("function `{name}` retains an unknown instruction"));
+        }
+    }
+    Ok(())
 }
 
 /// Analyze every function definition in a translation unit and combine the
@@ -1338,5 +1503,34 @@ mod tests {
             Err(LegacyCError::ProductionParserRejected(_))
                 | Err(LegacyCError::ProductionParserUnavailable(_))
         ));
+    }
+
+    #[test]
+    fn unrestricted_gateway_certifies_only_fully_checked_safe_summaries() {
+        let unit = C11TranslationUnit {
+            source: "#define RELEASE(x) q_free(x)\nvoid *q_alloc(void); void q_free(void *); void subject(void) { void *p = q_alloc(); RELEASE(p); }",
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&unit, "subject", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+                check_legacy_safety_certificate(&certificate).unwrap();
+                assert_eq!(certificate.checked_functions, vec!["subject"]);
+            }
+            Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            other => panic!("unexpected unrestricted-C result: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn unrestricted_projection_gaps_remain_unknown() {
+        let unit = C11TranslationUnit {
+            source: "int mystery(void); int subject(void) { return mystery(); }",
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&unit, "subject", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Unknown { .. })
+            | Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            other => panic!("projection gap must remain Unknown: {other:?}"),
+        }
     }
 }

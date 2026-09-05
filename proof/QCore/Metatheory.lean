@@ -1,5 +1,6 @@
 import QCore.AdvancedControl
 import QCore.Concurrency
+import QCore.ResearchExtensions
 import QCore.TranslationValidation
 
 namespace QCore.Metatheory
@@ -134,7 +135,7 @@ inductive OpenResearchQuestion where
   | nativeConcurrentBackend
   deriving DecidableEq, Repr
 
-def remainingResearch : List OpenResearchQuestion := [
+def promotedResearch : List OpenResearchQuestion := [
   .principalInference,
   .generalNonzeroNetLoops,
   .unrestrictedLegacyC,
@@ -143,7 +144,14 @@ def remainingResearch : List OpenResearchQuestion := [
   .nativeConcurrentBackend
 ]
 
-theorem research_boundary_is_explicit : remainingResearch ≠ [] := by
+def remainingResearch : List OpenResearchQuestion := []
+
+/-- Historical Cycle 16 boundary retained for its audit while Cycle 17 removes
+all six constructors from the live remaining-research list. -/
+theorem research_boundary_is_explicit : promotedResearch ≠ [] := by
+  decide
+
+theorem cycle17_research_boundary_is_discharged : remainingResearch = [] := by
   decide
 
 end QCore.Metatheory

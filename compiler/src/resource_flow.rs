@@ -112,6 +112,10 @@ impl NetChange {
         self.0.is_empty()
     }
 
+    pub fn iter(&self) -> impl Iterator<Item = (&str, i128)> {
+        self.0.iter().map(|(axis, amount)| (axis.as_str(), *amount))
+    }
+
     fn from_quantity(quantity: &Quantity, negative: bool) -> Self {
         Self(
             quantity
@@ -164,12 +168,32 @@ impl NetChange {
         }
         Ok(result)
     }
+
+    /// Entry quantity needed for `required` after applying this signed change:
+    /// `max(0, required - self)` componentwise.
+    fn shift_requirement(&self, required: &Quantity) -> Result<Quantity, FlowError> {
+        let mut result = Quantity::zero();
+        for (axis, amount) in &required.0 {
+            let shifted = i128::from(*amount)
+                .checked_sub(self.get(axis))
+                .ok_or(FlowError::Overflow)?;
+            if shifted > 0 {
+                result.set(
+                    axis.clone(),
+                    u64::try_from(shifted).map_err(|_| FlowError::Overflow)?,
+                );
+            }
+        }
+        Ok(result)
+    }
 }
 
 /// Static resource behavior relative to a path's entry state.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Flow {
     net: NetChange,
+    /// Minimum live quantity required at entry for the flow not to underflow.
+    required: Quantity,
     peak: Quantity,
     total: Quantity,
 }
@@ -182,6 +206,7 @@ impl Flow {
     pub fn acquire(footprint: Quantity, acquisition_cost: Quantity) -> Self {
         Self {
             net: NetChange::from_quantity(&footprint, false),
+            required: Quantity::zero(),
             peak: footprint,
             total: acquisition_cost,
         }
@@ -190,6 +215,7 @@ impl Flow {
     pub fn release(footprint: Quantity, release_cost: Quantity) -> Self {
         Self {
             net: NetChange::from_quantity(&footprint, true),
+            required: footprint,
             peak: Quantity::zero(),
             total: release_cost,
         }
@@ -203,6 +229,10 @@ impl Flow {
         &self.peak
     }
 
+    pub fn required_entry(&self) -> &Quantity {
+        &self.required
+    }
+
     pub fn total(&self) -> &Quantity {
         &self.total
     }
@@ -214,6 +244,7 @@ impl Flow {
     /// post-fixed-point order.
     pub fn is_covered_by(&self, summary: &Self) -> bool {
         self.net == summary.net
+            && self.required.componentwise_le(&summary.required)
             && self.peak.componentwise_le(&summary.peak)
             && self.total.componentwise_le(&summary.total)
     }
@@ -222,6 +253,9 @@ impl Flow {
     pub fn then(&self, next: &Self) -> Result<Self, FlowError> {
         Ok(Self {
             net: self.net.checked_add(&next.net)?,
+            required: self
+                .required
+                .join(&self.net.shift_requirement(&next.required)?),
             peak: self.peak.join(&self.net.shift_peak(&next.peak)?),
             total: self.total.checked_add(&next.total)?,
         })
@@ -235,6 +269,7 @@ impl Flow {
         }
         Ok(Self {
             net: self.net.clone(),
+            required: self.required.join(&other.required),
             peak: self.peak.join(&other.peak),
             total: self.total.join(&other.total),
         })
@@ -247,9 +282,32 @@ impl Flow {
         }
         Ok(Self {
             net: NetChange::zero(),
+            required: self.required.clone(),
             peak: self.peak.clone(),
             total: self.total.checked_scale(bound)?,
         })
+    }
+
+    /// Exact summary for at most `iterations` executions of an arbitrary body.
+    ///
+    /// Unlike `bounded_zero_net_loop`, this accepts positive and negative net
+    /// changes.  `required_entry` records the invariant needed to make every
+    /// release in every iteration defined.  Exponentiation by squaring keeps a
+    /// very large checked bound from making the checker itself linear in it.
+    pub fn bounded_loop(&self, iterations: u64) -> Result<Self, FlowError> {
+        let mut remaining = iterations;
+        let mut result = Self::zero();
+        let mut power = self.clone();
+        while remaining != 0 {
+            if remaining & 1 == 1 {
+                result = result.then(&power)?;
+            }
+            remaining >>= 1;
+            if remaining != 0 {
+                power = power.then(&power)?;
+            }
+        }
+        Ok(result)
     }
 }
 
@@ -335,6 +393,7 @@ pub fn interpret_flow_trace(operations: &[Flow]) -> Result<Flow, FlowError> {
     }
     Ok(Flow {
         net: NetChange::from_quantity(&live, false),
+        required: Quantity::zero(),
         peak,
         total,
     })
@@ -486,6 +545,7 @@ mod tests {
         );
         let body = Flow {
             net: NetChange::zero(),
+            required: Quantity::zero(),
             peak: q(1),
             total: q(u64::MAX),
         };

@@ -2,6 +2,10 @@
 
 **Status: Done**
 
+This is the historical Cycle 16 closure record. Cycle 17 subsequently promoted
+the six boundaries described here; the current open/promoted lists therefore
+differ from the Cycle 16 snapshot.
+
 Cycle 16 closes the numbered prototype roadmap for the language actually
 implemented in this repository. The closure is bounded and compositional: it
 does not relabel unimplemented research extensions as completed language

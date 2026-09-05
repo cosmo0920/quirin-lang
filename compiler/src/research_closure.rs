@@ -61,7 +61,7 @@ pub enum OpenResearchQuestion {
     NativeConcurrentBackend,
 }
 
-pub const OPEN_RESEARCH_QUESTIONS: &[OpenResearchQuestion] = &[
+pub const PROMOTED_RESEARCH_QUESTIONS: &[OpenResearchQuestion] = &[
     OpenResearchQuestion::PrincipalInference,
     OpenResearchQuestion::GeneralNonzeroNetLoops,
     OpenResearchQuestion::UnrestrictedLegacyC,
@@ -69,6 +69,9 @@ pub const OPEN_RESEARCH_QUESTIONS: &[OpenResearchQuestion] = &[
     OpenResearchQuestion::FullC11WeakMemory,
     OpenResearchQuestion::NativeConcurrentBackend,
 ];
+
+/// Cycle 17 discharges the six questions retained by the Cycle 16 product.
+pub const OPEN_RESEARCH_QUESTIONS: &[OpenResearchQuestion] = &[];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ResearchClosureError {
@@ -316,9 +319,10 @@ mod tests {
     }
 
     #[test]
-    fn research_boundaries_remain_explicit() {
-        assert_eq!(OPEN_RESEARCH_QUESTIONS.len(), 6);
-        assert!(OPEN_RESEARCH_QUESTIONS.contains(&OpenResearchQuestion::PrincipalInference));
-        assert!(OPEN_RESEARCH_QUESTIONS.contains(&OpenResearchQuestion::UnrestrictedLegacyC));
+    fn cycle_17_promotes_every_cycle_16_research_boundary() {
+        assert_eq!(PROMOTED_RESEARCH_QUESTIONS.len(), 6);
+        assert!(OPEN_RESEARCH_QUESTIONS.is_empty());
+        assert!(PROMOTED_RESEARCH_QUESTIONS.contains(&OpenResearchQuestion::PrincipalInference));
+        assert!(PROMOTED_RESEARCH_QUESTIONS.contains(&OpenResearchQuestion::UnrestrictedLegacyC));
     }
 }

@@ -1,6 +1,12 @@
 # Cycle 17: Research Extensions and Production Closure
 
-**Status: Planned**
+**Status: Implementation complete; native Windows acceptance run pending**
+
+The executable and proof workstreams described below are implemented. The
+aggregate certificate deliberately still requires separately recorded Linux
+and Windows sanitizer runs. This checkout has produced the Linux Rust/Lean
+results, but no native Windows result was available during this development
+run, so the program-level acceptance gate is not yet recorded as complete.
 
 Cycle 17 promotes every item in `QCore.Metatheory.remainingResearch` from an
 explicit post-roadmap boundary into one numbered milestone. It is intentionally
@@ -107,3 +113,55 @@ and the cycle must remain incomplete until the aggregate gate passes.
 
 Cycle 18 is the next roadmap milestone. Its event-driven verification model
 depends on Cycle 17's native concurrent backend and C11 weak-memory relation.
+
+## Implemented artifacts
+
+- `compiler/src/inference.rs` implements the normalized conjunctive
+  usage/effect/resource/ownership/path fragment. Solver output is accepted only
+  after the separate certificate checker reconstructs its extrema and rejects
+  noncanonical, merely satisfying, ambiguous, or inconsistent output.
+- `Flow` now carries an entry requirement. `bounded_loop` summarizes positive
+  and negative net changes with checked arithmetic; Cycle 17 certificates
+  distinguish termination bounds, widening caps, and unbounded cases for which
+  no finite claim is made.
+- `analyze_unrestricted_c11` invokes the production C11 preprocessor and maps
+  every unsupported projection to `Unknown`. A `Safe` result carries a second
+  certificate that rechecks every function and rejects any retained unknown
+  instruction. `compiler/examples/cycle17_legacy_audit.rs` exposes the gate for
+  external C source trees.
+- `compiler/src/weak_memory.rs` checks explicit reads-from, per-object
+  modification order, synchronizes-with, program-order/happens-before,
+  sequentially-consistent order, coherence, non-atomic races, and source/target
+  observations. Litmus coverage includes permitted relaxed store buffering and
+  release/acquire message passing.
+- `compiler/src/native_concurrency.rs` runs chosen schedules on native worker
+  threads and checks atomic observations, synchronized custody transfer,
+  exactly-once destruction, and joins. Dynamic task collections, condition
+  variables, ownership queues, dynamic mutex invariants, atomic publication,
+  and reclamation have explicit `Accepted`/`Unknown` profile entries.
+- `compiler/src/research_extensions.rs` interprets loop and native cleanup
+  ledgers as endpoint-checked morphisms, keeps effects/path facts/C11 relations
+  deliberately separate, and creates the aggregate Cycle 17 certificate only
+  after all component and platform checks pass.
+- `proof/QCore/ResearchExtensions.lean` proves principality uniqueness,
+  nonzero-loop conservation, conservative legacy-C acceptance, weak-memory
+  race freedom and observation equality, native custody/cleanup and platform
+  evidence, ledger composition, six per-workstream discharge theorems, and the
+  combined certificate theorem. `proof/AuditCycle17.lean` audits their
+  dependencies.
+
+## Verification commands
+
+```sh
+cargo test --workspace
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+if rg -n '\b(sorry|admit)\b|^[[:space:]]*axiom\b' proof --glob '*.lean'; then exit 1; fi
+cd proof
+lake build
+lake env lean AuditCycle17.lean
+```
+
+The adjacent CFL checkout was also passed through the unrestricted importer;
+the exact source revision, command, and conservative result are recorded in
+`docs/cycles/CYCLE_17_CFL_VALIDATION.md`.

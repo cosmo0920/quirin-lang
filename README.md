@@ -12,7 +12,7 @@ The implementation is split into:
 - `compiler/`: the Rust parser, checker, reference interpreter, and C backend;
 - `proof/`: the Lean 4 executable core and safety proofs.
 
-The current implementation includes all sixteen bounded vertical slices: dimension
+The current implementation includes all sixteen completed bounded vertical slices: dimension
 and quantitative-axis declarations, interval-graded usage demand analysis,
 ownership without exceptional exits, and resource-flow summaries with checked
 peak and cumulative bounds, followed by path-sensitive typed errors without
@@ -37,9 +37,14 @@ bounded advanced-control semantics for safe-point cancellation, fallible LIFO
 cleanup, deterministic double errors, and linear higher-order capture; and a
 combined closure certificate with preservation, progress, cross-ledger resource
 safety, concurrent race freedom, and supported-C11 observation agreement.
-The completed Cycle 16 requirements and verification procedure are in
+Cycle 17 adds principal product inference certificates, nonzero-net bounded
+loop invariants, a fail-closed unrestricted-C11 preprocessing gateway, explicit
+weak-memory candidate executions, a native threaded custody backend, and
+mechanically interpreted ledger morphisms. Its implementation is complete;
+program-level acceptance remains pending a recorded native Windows sanitizer
+run. The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](CYCLE_16.md). The promoted research milestone and its
-acceptance gates are in [`CYCLE_17.md`](CYCLE_17.md). The subsequent Libevent
+implementation/acceptance record is in [`CYCLE_17.md`](CYCLE_17.md). The subsequent Libevent
 event-driven verification plan is in [`CYCLE_18.md`](CYCLE_18.md). Earlier
 completed cycle records are archived under [`docs/cycles/`](docs/cycles/).
 

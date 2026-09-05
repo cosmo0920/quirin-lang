@@ -9,6 +9,9 @@
 //! 10–12 add the source front end, whole-program checking, and compiler driver.
 //! Cycles 13–16 add translation validation, restricted concurrency, advanced
 //! control fragments, and a bounded combined research-closure certificate.
+//! Cycle 17 adds independently checked inference and loop certificates, a
+//! conservative unrestricted-C gateway, explicit C11 candidate executions,
+//! native threaded execution, and a mechanically interpreted ledger category.
 
 pub mod advanced_control;
 pub mod ast;
@@ -22,15 +25,19 @@ pub mod error_region;
 pub mod executable_model;
 pub mod frontend;
 pub mod index;
+pub mod inference;
 pub mod legacy_c;
 pub mod lexer;
+pub mod native_concurrency;
 pub mod ownership;
 pub mod parser;
 pub mod research_closure;
+pub mod research_extensions;
 pub mod resource_flow;
 pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
+pub mod weak_memory;
 pub mod whole_program;
 
 pub use advanced_control::{
@@ -77,20 +84,39 @@ pub use frontend::{
     source_diagnostic,
 };
 pub use index::{IndexError, IndexExpression, IndexTerm};
+pub use inference::{
+    InferenceCertificate, InferenceConstraint, InferenceError, PrincipalSolution, UsageInterval,
+    check_inference_certificate, infer_principal,
+};
 pub use legacy_c::{
-    AnalysisStatus, LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind,
-    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, LegacyProgramSummary, ResourceApiKind,
-    ResourceContracts, analyze_legacy_c, analyze_legacy_c_translation_unit, analyze_legacy_c11,
+    AnalysisStatus, C11TranslationUnit, LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic,
+    LegacyDiagnosticKind, LegacyFunctionSummary, LegacyInstruction, LegacyNodeId,
+    LegacyProgramSummary, LegacySafetyCertificate, ResourceApiKind, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_legacy_c, analyze_legacy_c_translation_unit,
+    analyze_legacy_c11, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
+pub use native_concurrency::{
+    FeatureDisposition, NativeBackendError, NativeCellId, NativeExecutionCertificate,
+    NativeOperation, NativeProgram, NativeResourceId, NativeScheduleStep, NativeTaskId,
+    PROMOTED_FEATURE_PROFILE, PlatformMatrixCertificate, PlatformMatrixError, PlatformRun,
+    PromotedConcurrencyFeature, RequiredPlatform, check_platform_matrix, run_native_backend,
+};
 pub use ownership::{
     Footprint, OwnershipArithmeticError, OwnershipError, OwnershipOp, OwnershipState,
     ResourceEntry, ResourceId, check_ownership, execute_ownership,
 };
 pub use parser::{ParseError, parse_program};
 pub use research_closure::{
-    OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, Progress, ResearchClosureCertificate,
-    ResearchClosureError, ResearchProgram, ResourceSafetyCertificate, close_research_program,
+    OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, PROMOTED_RESEARCH_QUESTIONS, Progress,
+    ResearchClosureCertificate, ResearchClosureError, ResearchProgram, ResourceSafetyCertificate,
+    close_research_program,
+};
+pub use research_extensions::{
+    CategoricalCertificate, CategoryError, Cycle17Certificate, Cycle17Error, Cycle17Input, Ledger,
+    LedgerMorphism, LoopBoundEvidence, LoopSummaryCertificate, LoopSummaryError, ResearchExtension,
+    check_categorical_account, check_loop_summary, close_cycle17, loop_ledger_morphism,
+    native_ledger_morphism, summarize_general_loop,
 };
 pub use resource_flow::{
     Flow, FlowError, FunctionSummary, NetChange, Quantity, ResourceBounds, interpret_flow_trace,
@@ -106,6 +132,11 @@ pub use typed_errors::{
 pub use usage::{
     DemandContext, DemandError, Usage, UsageArithmeticError, UsageCheckError, UsageExpr,
     UsageUpper, UsageViolation, check_usage,
+};
+pub use weak_memory::{
+    C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,
+    MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
+    check_c11_execution,
 };
 pub use whole_program::{
     CallSite, CheckedFunction, CheckedProgram, FunctionSemantics,
