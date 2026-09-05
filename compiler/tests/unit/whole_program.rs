@@ -94,6 +94,25 @@ fn checks_an_acyclic_whole_program_and_preserves_cfg_observation() {
 }
 
 #[test]
+fn supplied_usage_contract_cannot_override_the_source_annotation() {
+    let source = typed("fn discard(x: i32 use one) -> i32 { return 0; }");
+    let symbol = source.globals["discard"];
+    for declared in [None, Some(Usage::MANY), Some(Usage::ONE)] {
+        let mut body = semantics(symbol, "discard", Vec::new(), Vec::new());
+        if let Some(grade) = declared {
+            body.usage_declarations.insert("x".into(), grade);
+        }
+        let errors = check_whole_program(
+            &source,
+            &ErrorDeclarations::new(["Failure".into()]),
+            vec![body],
+        )
+        .unwrap_err();
+        assert_eq!(errors[0].pass, SemanticPass::Usage);
+    }
+}
+
+#[test]
 fn recursive_scc_requires_an_explicit_contract() {
     let source = typed("fn looped() -> unit { looped(); return; }");
     let symbol = source.globals["looped"];

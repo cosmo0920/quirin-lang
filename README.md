@@ -86,6 +86,11 @@ The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the
 file compiler API is `compile_files`. The CLI binary is `qcorec`.
 
+The [QTT alignment record](docs/QTT_ALIGNMENT.md) describes enforced source
+parameter usage grades, per-invocation lambda checking in the reduced usage IR,
+and the executable Lean demand checker. General source lambdas and dependent
+function typing remain outside this implementation boundary.
+
 Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
 [Cycle 7.5 validation](docs/cycles/CYCLE_7_5.md) now also compiles and executes the
 same differential C corpus with native MSVC, strict warnings, and Windows

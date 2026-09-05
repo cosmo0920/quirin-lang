@@ -17,7 +17,7 @@ use crate::lexer::{Span, Symbol, Token, TokenKind, lex};
 use crate::ownership::{Footprint, OwnershipOp, ResourceId};
 use crate::resource_flow::{Flow, Quantity, ResourceBounds};
 use crate::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
-use crate::usage::UsageExpr;
+use crate::usage::{Usage, UsageExpr};
 use crate::whole_program::{
     CallSite, CheckedProgram, FunctionSemantics, FunctionSummary, ParameterOwnership,
     check_whole_program,
@@ -296,6 +296,22 @@ fn synthesize_function(
     };
     let mut resources = Vec::new();
     let mut owners = BTreeMap::<String, ResourceId>::new();
+    let mut usage_declarations = typed_declaration
+        .parameters
+        .iter()
+        .map(|parameter| {
+            (
+                parameter.name.clone(),
+                parameter
+                    .usage
+                    .as_ref()
+                    .map_or(Usage::MANY, |grade| grade.value),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let mut local_usage_names = BTreeMap::<String, String>::new();
+    let mut runtime_demands = Vec::new();
+    let mut usage_reachable = true;
     let mut lowering = Vec::new();
     let mut ownership = Vec::new();
     let mut error_operations = Vec::new();
@@ -319,6 +335,19 @@ fn synthesize_function(
             StatementKind::Let {
                 binding: Some(binding),
             } => {
+                // Local usage annotations are not in this executable slice.
+                // Reject them instead of silently ignoring a contract.
+                if tokens
+                    .iter()
+                    .take_while(|token| token.kind != TokenKind::Symbol(Symbol::Equal))
+                    .any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "use"))
+                {
+                    return Err(diagnostic(
+                        SemanticPass::Usage,
+                        statement.span,
+                        "local usage annotations are not supported in the executable subset",
+                    ));
+                }
                 let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
                     diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
                 })?;
@@ -331,6 +360,12 @@ fn synthesize_function(
                 }
                 resources.push(resource);
                 owners.insert(binding.clone(), resource);
+                // Distinguish a local from a shadowed parameter. Ownership and
+                // implicit error cleanup remain the ownership pass's concern.
+                let usage_name = format!("$local:{}:{binding}", statement.span.start);
+                usage_declarations.insert(usage_name.clone(), Usage::MANY);
+                local_usage_names.insert(binding.clone(), usage_name);
+                usage_reachable &= succeeds;
                 lowering.push(SourceOp::Acquire {
                     resource,
                     succeeds,
@@ -369,7 +404,20 @@ fn synthesize_function(
                         ));
                     }
                     lowering.push(SourceOp::Check { passes, error });
+                    usage_reachable &= passes;
                 } else if let Some(callee_name) = parse_zero_argument_call(&tokens) {
+                    if local_usage_names.contains_key(&callee_name)
+                        || typed_declaration
+                            .parameters
+                            .iter()
+                            .any(|parameter| parameter.name == callee_name)
+                    {
+                        return Err(diagnostic(
+                            SemanticPass::OrdinaryTypes,
+                            statement.span,
+                            "indirect calls are not supported in the executable subset",
+                        ));
+                    }
                     let Some(&callee) = typed.globals.get(&callee_name) else {
                         return Err(diagnostic(
                             SemanticPass::NameResolution,
@@ -393,6 +441,18 @@ fn synthesize_function(
                             SemanticPass::OrdinaryTypes,
                             statement.span,
                             "executable source calls must have zero arguments",
+                        ));
+                    }
+                    let usage_name = format!("$function:{}", callee.0);
+                    usage_declarations.insert(usage_name.clone(), Usage::MANY);
+                    if usage_reachable {
+                        runtime_demands.push((
+                            UsageExpr::Apply {
+                                function: Box::new(UsageExpr::Variable(usage_name)),
+                                parameter_usages: Vec::new(),
+                                arguments: Vec::new(),
+                            },
+                            true,
                         ));
                     }
                     resource_segments.push(segment);
@@ -419,6 +479,10 @@ fn synthesize_function(
                     )
                 })?;
                 lowering.push(SourceOp::Drop(resource));
+                if usage_reachable {
+                    runtime_demands
+                        .push((UsageExpr::Variable(local_usage_names[place].clone()), false));
+                }
                 ownership.push(OwnershipOp::Drop(place.clone()));
                 error_operations.push(ErrorOp::Drop(resource));
                 segment = segment
@@ -444,6 +508,10 @@ fn synthesize_function(
                     )
                 })?;
                 lowering.push(SourceOp::TransferToResult(resource));
+                if usage_reachable {
+                    runtime_demands
+                        .push((UsageExpr::Variable(local_usage_names[place].clone()), false));
+                }
                 ownership.push(OwnershipOp::TransferOut(place.clone()));
                 error_operations.push(ErrorOp::Drop(resource));
                 segment = segment
@@ -469,6 +537,7 @@ fn synthesize_function(
                     )
                 })?;
                 lowering.push(SourceOp::Return(value));
+                usage_reachable = false;
             }
             _ => {
                 return Err(diagnostic(
@@ -511,10 +580,27 @@ fn synthesize_function(
             _ => None,
         })
         .collect();
+    // Callees may exit before their continuation. Without a proved normal-exit
+    // summary, zero is a possible demand on every subsequent source use.
+    let mut reversed_tail = Vec::new();
+    for (expression, may_exit) in runtime_demands.into_iter().rev() {
+        if may_exit && !reversed_tail.is_empty() {
+            reversed_tail.reverse();
+            let continuation = UsageExpr::Branch {
+                condition: Box::new(UsageExpr::Unit),
+                then_expression: Box::new(UsageExpr::Sequence(reversed_tail)),
+                else_expression: Box::new(UsageExpr::Unit),
+            };
+            reversed_tail = vec![continuation];
+        }
+        reversed_tail.push(expression);
+    }
+    reversed_tail.reverse();
+    let usage_expression = UsageExpr::Sequence(reversed_tail);
     Ok(FunctionSemantics {
         symbol: typed_declaration.symbol,
-        usage_declarations: BTreeMap::new(),
-        usage_expression: UsageExpr::Unit,
+        usage_declarations,
+        usage_expression,
         ownership_operations: ownership,
         resource_segments,
         resource_bounds: ResourceBounds::new(

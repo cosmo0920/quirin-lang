@@ -17,6 +17,7 @@ import QCore.Resource
 import QCore.ResearchExtensions
 import QCore.TypedErrors
 import QCore.Usage
+import QCore.UsageDemand
 import QCore.WholeProgram
 import QCore.Compiler
 import QCore.Concurrency

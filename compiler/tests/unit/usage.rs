@@ -135,3 +135,99 @@ fn application_checks_arity() {
         })
     );
 }
+
+fn lambda(parameter: &str, grade: Usage, body: UsageExpr) -> UsageExpr {
+    UsageExpr::Lambda {
+        parameter: parameter.into(),
+        parameter_usage: grade,
+        body: Box::new(body),
+    }
+}
+
+#[test]
+fn replicated_affine_function_cannot_duplicate_its_parameter() {
+    // The gist's lambda f. lambda x. f (f x), with unrestricted A -> A.
+    let apply_f = |argument| UsageExpr::Apply {
+        function: Box::new(variable("f")),
+        parameter_usages: vec![Usage::MANY],
+        arguments: vec![argument],
+    };
+    let twice = lambda(
+        "f",
+        Usage::AFFINE,
+        lambda("x", Usage::MANY, apply_f(apply_f(variable("x")))),
+    );
+    for quantity in [Usage::ZERO, Usage::ONE, Usage::MANY] {
+        assert!(matches!(twice.synthesize_demands_at(quantity),
+            Err(DemandError::ParameterUsage { name, actual, .. })
+                if name == "f" && actual == Usage::RELEVANT));
+    }
+    // Passing it to a replicating or erased parameter must still check its body.
+    for grade in [Usage::ZERO, Usage::MANY] {
+        let application = UsageExpr::Apply {
+            function: Box::new(UsageExpr::Unit),
+            parameter_usages: vec![grade],
+            arguments: vec![twice.clone()],
+        };
+        assert!(application.synthesize_demands().is_err());
+    }
+}
+
+#[test]
+fn lambda_replication_scales_captures_after_checking_the_binder() {
+    let closure = lambda(
+        "x",
+        Usage::ONE,
+        UsageExpr::Sequence(vec![variable("x"), variable("captured")]),
+    );
+    let replicated = UsageExpr::Apply {
+        function: Box::new(UsageExpr::Unit),
+        parameter_usages: vec![Usage::MANY],
+        arguments: vec![closure.clone()],
+    };
+    assert_eq!(closure.synthesize_demands().unwrap().get("x"), Usage::ZERO);
+    assert_eq!(
+        replicated.synthesize_demands().unwrap().get("captured"),
+        Usage::MANY
+    );
+    assert!(check_usage(&declarations(&[("captured", Usage::AFFINE)]), &replicated).is_err());
+    assert!(check_usage(&declarations(&[("captured", Usage::MANY)]), &replicated).is_ok());
+    assert!(
+        lambda("x", Usage::ONE, variable("x"))
+            .synthesize_demands_at(Usage::MANY)
+            .is_ok()
+    );
+}
+
+#[test]
+fn lambda_binders_respect_shadowing_erasure_and_branch_obligations() {
+    let shadowed = lambda("x", Usage::ZERO, lambda("x", Usage::ONE, variable("x")));
+    assert!(
+        shadowed
+            .synthesize_demands()
+            .unwrap()
+            .iter()
+            .next()
+            .is_none()
+    );
+    assert!(
+        lambda("x", Usage::ZERO, variable("x"))
+            .synthesize_demands()
+            .is_err()
+    );
+    let branch = UsageExpr::Branch {
+        condition: Box::new(UsageExpr::Unit),
+        then_expression: Box::new(variable("x")),
+        else_expression: Box::new(UsageExpr::Unit),
+    };
+    assert!(
+        lambda("x", Usage::ONE, branch.clone())
+            .synthesize_demands()
+            .is_err()
+    );
+    assert!(
+        lambda("x", Usage::AFFINE, branch)
+            .synthesize_demands()
+            .is_ok()
+    );
+}

@@ -212,7 +212,9 @@ impl DemandContext {
     }
 }
 
-/// Reduced expression core for the cycle-2 usage pass.
+/// Reduced demand-analysis core, including per-invocation lambda checking.
+/// Application grades must come from a separately checked function contract.
+/// This core does not establish ordinary types or operational evaluation order.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum UsageExpr {
     Unit,
@@ -228,12 +230,27 @@ pub enum UsageExpr {
         parameter_usages: Vec<Usage>,
         arguments: Vec<UsageExpr>,
     },
+    /// Check one invocation before any surrounding demand scales the captures.
+    /// This is a demand-analysis node, not an ordinary/dependent type checker.
+    Lambda {
+        parameter: String,
+        parameter_usage: Usage,
+        body: Box<UsageExpr>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DemandError {
     Arithmetic(UsageArithmeticError),
-    ApplicationArity { expected: usize, actual: usize },
+    ApplicationArity {
+        expected: usize,
+        actual: usize,
+    },
+    ParameterUsage {
+        name: String,
+        declared: Usage,
+        actual: Usage,
+    },
 }
 
 impl fmt::Display for DemandError {
@@ -246,6 +263,14 @@ impl fmt::Display for DemandError {
                     "application expects {expected} arguments but received {actual}"
                 )
             }
+            Self::ParameterUsage {
+                name,
+                declared,
+                actual,
+            } => write!(
+                f,
+                "parameter `{name}` declares usage {declared}, but one invocation demands {actual}"
+            ),
         }
     }
 }
@@ -259,10 +284,33 @@ impl From<UsageArithmeticError> for DemandError {
 }
 
 impl UsageExpr {
+    /// Scale free-variable demand only after checking every local binder.
+    /// Even demand zero must not hide an invalid lambda body.
+    pub fn synthesize_demands_at(&self, quantity: Usage) -> Result<DemandContext, DemandError> {
+        Ok(self.synthesize_demands()?.scale(quantity)?)
+    }
+
     pub fn synthesize_demands(&self) -> Result<DemandContext, DemandError> {
         match self {
             Self::Unit => Ok(DemandContext::default()),
             Self::Variable(name) => Ok(DemandContext::singleton(name)),
+            Self::Lambda {
+                parameter,
+                parameter_usage,
+                body,
+            } => {
+                let mut demands = body.synthesize_demands()?;
+                let actual = demands.get(parameter);
+                if !parameter_usage.contains(actual) {
+                    return Err(DemandError::ParameterUsage {
+                        name: parameter.clone(),
+                        declared: *parameter_usage,
+                        actual,
+                    });
+                }
+                demands.0.remove(parameter);
+                Ok(demands)
+            }
             Self::Sequence(expressions) => expressions
                 .iter()
                 .try_fold(DemandContext::default(), |demands, expression| {
@@ -325,6 +373,31 @@ pub enum UsageViolation {
     },
 }
 
+impl fmt::Display for UsageViolation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnknownVariable { name } => write!(f, "unknown usage variable `{name}`"),
+            Self::ErasedVariableAtRuntime { name, actual } => {
+                write!(f, "erased variable `{name}` has runtime demand {actual}")
+            }
+            Self::ExactOneNotConsumed { name, actual }
+            | Self::ExactOneConsumedMoreThanOnce { name, actual } => write!(
+                f,
+                "variable `{name}` requires usage {}, but has demand {actual}",
+                Usage::ONE
+            ),
+            Self::DeclaredUsageExceeded {
+                name,
+                declared,
+                actual,
+            } => write!(
+                f,
+                "variable `{name}` declares usage {declared}, but has demand {actual}"
+            ),
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum UsageCheckError {
     Demand(DemandError),
@@ -336,7 +409,13 @@ impl fmt::Display for UsageCheckError {
         match self {
             Self::Demand(error) => error.fmt(f),
             Self::Violations(violations) => {
-                write!(f, "{} usage violation(s)", violations.len())
+                for (index, violation) in violations.iter().enumerate() {
+                    if index > 0 {
+                        f.write_str("; ")?;
+                    }
+                    violation.fmt(f)?;
+                }
+                Ok(())
             }
         }
     }

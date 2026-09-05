@@ -398,6 +398,20 @@ fn check_local(
         }
     }
 
+    for parameter in &source.parameters {
+        if let Some(annotation) = &parameter.usage
+            && semantics.usage_declarations.get(&parameter.name) != Some(&annotation.value)
+        {
+            return Err(diagnostic(
+                SemanticPass::Usage,
+                annotation.span,
+                format!(
+                    "parameter `{}` usage declaration does not match its source annotation",
+                    parameter.name
+                ),
+            ));
+        }
+    }
     let usage = check_usage(&semantics.usage_declarations, &semantics.usage_expression)
         .map_err(|error| source_diagnostic(SemanticPass::Usage, source.span, &error))?;
     let ownership = check_ownership(&semantics.ownership_operations)

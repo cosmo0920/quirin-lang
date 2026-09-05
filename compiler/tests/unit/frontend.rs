@@ -144,6 +144,50 @@ fn rejects_unbalanced_and_unterminated_syntax() {
 }
 
 #[test]
+fn preserves_concrete_parameter_usage_grades_and_spans() {
+    for (annotation, expected) in [
+        ("zero", Usage::ZERO),
+        ("one", Usage::ONE),
+        ("affine", Usage::AFFINE),
+        ("relevant", Usage::RELEVANT),
+        ("many", Usage::MANY),
+        ("2", Usage::finite(2, 2)),
+        ("[0, 3]", Usage::finite(0, 3)),
+        ("[2, inf]", Usage::unbounded(2)),
+    ] {
+        let source = format!("fn f(x: usize as idx n use {annotation}) -> unit {{ return; }}");
+        let parsed = parse_source_program(&source).unwrap();
+        let typed = elaborate_source(&parsed).unwrap();
+        let grade = typed.declarations[0].parameters[0].usage.as_ref().unwrap();
+        assert_eq!(grade.value, expected);
+        assert_eq!(
+            &source[grade.span.start..grade.span.end],
+            format!("use {annotation}")
+        );
+    }
+}
+
+#[test]
+fn rejects_invalid_and_unsupported_usage_annotations() {
+    for annotation in [
+        "",
+        "mystery",
+        "[2, 1]",
+        "[0, n]",
+        "-1",
+        "one use many",
+        "18446744073709551616",
+        "[0, 18446744073709551616]",
+    ] {
+        let source = format!("fn f(x: i32 use {annotation}) -> unit {{ return; }}");
+        assert!(
+            parse_source_program(&source).is_err(),
+            "accepted {annotation:?}"
+        );
+    }
+}
+
+#[test]
 fn maps_every_existing_semantic_boundary_to_a_source_diagnostic() {
     #[derive(Debug)]
     struct TestError;

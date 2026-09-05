@@ -12,6 +12,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::lexer::{LexError, Span, Symbol, Token, TokenKind, lex};
+use crate::usage::Usage;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Located<T> {
@@ -85,6 +86,7 @@ pub struct SourceParameter {
     pub type_kind: SourceTypeKind,
     pub type_span: Span,
     pub type_source: String,
+    pub usage: Option<Located<Usage>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -596,6 +598,28 @@ impl<'a> SourceParser<'a> {
             return Err(self.error(type_start, "parameter type cannot be empty"));
         }
         let type_span = self.range_span(type_start, type_end);
+        let mut suffix = type_end;
+        if self.word(suffix, "as") {
+            if !self.word(suffix + 1, "idx") || suffix + 2 >= end {
+                return Err(self.error(suffix, "index alias requires `as idx NAME`"));
+            }
+            self.identifier(suffix + 2)?;
+            suffix += 3;
+        }
+        let usage = if suffix < end {
+            if !self.word(suffix, "use") {
+                return Err(self.error(
+                    suffix,
+                    "expected a usage annotation after the parameter type",
+                ));
+            }
+            Some(Located {
+                span: self.range_span(suffix, end),
+                value: self.usage_grade(suffix + 1, end)?,
+            })
+        } else {
+            None
+        };
         Ok(SourceParameter {
             name: Located {
                 span: self.tokens[start].span,
@@ -604,7 +628,49 @@ impl<'a> SourceParser<'a> {
             type_kind: self.type_kind(type_start),
             type_span,
             type_source: self.source[type_span.start..type_span.end].to_owned(),
+            usage,
         })
+    }
+
+    fn usage_grade(&self, start: usize, end: usize) -> Result<Usage, SourceParseError> {
+        let natural = |index: usize| -> Result<u64, SourceParseError> {
+            match self.tokens.get(index).map(|token| &token.kind) {
+                Some(TokenKind::Integer(value)) => value
+                    .parse()
+                    .map_err(|_| self.error(index, "usage bound exceeds the supported u64 range")),
+                _ => Err(self.error(index, "usage bounds must be natural integer literals")),
+            }
+        };
+        if end == start + 1 {
+            return match self.word_value(start) {
+                Some("zero") => Ok(Usage::ZERO),
+                Some("one") => Ok(Usage::ONE),
+                Some("affine") => Ok(Usage::AFFINE),
+                Some("relevant") => Ok(Usage::RELEVANT),
+                Some("many") => Ok(Usage::MANY),
+                Some(_) => Err(self.error(start, "unknown or unsupported symbolic usage grade")),
+                None => natural(start).map(|n| Usage::finite(n, n)),
+            };
+        }
+        if end == start + 5
+            && self.symbol(start, Symbol::LeftBracket)
+            && self.symbol(start + 2, Symbol::Comma)
+            && self.symbol(start + 4, Symbol::RightBracket)
+        {
+            let lower = natural(start + 1)?;
+            if self.word(start + 3, "inf") {
+                return Ok(Usage::unbounded(lower));
+            }
+            let upper = natural(start + 3)?;
+            if lower > upper {
+                return Err(self.error(start, "usage lower bound exceeds its upper bound"));
+            }
+            return Ok(Usage::finite(lower, upper));
+        }
+        Err(self.error(
+            start,
+            "expected a named grade, natural literal, or literal usage interval",
+        ))
     }
 
     fn type_kind(&self, start: usize) -> SourceTypeKind {
@@ -1154,6 +1220,7 @@ pub struct TypedBinding {
     pub name: String,
     pub span: Span,
     pub type_kind: SourceTypeKind,
+    pub usage: Option<Located<Usage>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1236,6 +1303,7 @@ pub fn elaborate_source(
                 name: parameter.name.value.clone(),
                 span: parameter.name.span,
                 type_kind: parameter.type_kind,
+                usage: parameter.usage.clone(),
             });
         }
         let statements = declaration

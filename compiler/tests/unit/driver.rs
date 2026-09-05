@@ -110,6 +110,78 @@ fn reports_unsupported_source_at_the_owning_file() {
 }
 
 #[test]
+fn checks_parameter_usage_even_for_uncalled_functions() {
+    for grade in ["one", "relevant", "2", "[1, inf]"] {
+        let source = format!(
+            "fn discard(x: i32 use {grade}) -> i32 {{ return 0; }}\nfn main() -> i32 {{ return 0; }}"
+        );
+        let errors = compile_files(
+            &[SourceFile::new("usage.qc", source)],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        assert_eq!(errors[0].code, "Q100", "{grade}");
+        assert_eq!(errors[0].location.path, "usage.qc");
+        assert!(errors[0].message.contains("`x`"));
+    }
+    for grade in ["zero", "affine", "many", "[0, 3]"] {
+        let source = format!(
+            "fn discard(x: i32 use {grade}) -> i32 {{ return 0; }}\nfn main() -> i32 {{ return 0; }}"
+        );
+        assert_eq!(compile(&source).checked.functions.len(), 2);
+    }
+}
+
+#[test]
+fn a_shadowing_local_does_not_discharge_a_parameter_usage_obligation() {
+    let source = "error Failure { Failed; } fn discard(x: i32 use one) -> i32 { let x = qcore_acquire(1, true, Failure); drop x; return 0; } fn main() -> i32 { return 0; }";
+    let errors = compile_files(
+        &[SourceFile::new("usage.qc", source)],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert_eq!(errors[0].code, "Q100");
+}
+
+#[test]
+fn records_source_demands_and_rejects_unsupported_local_contracts() {
+    let module = compile(
+        "error Failure { Failed; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); drop x; return 0; }",
+    );
+    let main = &module.checked.functions[&module.checked.source.globals["main"]];
+    assert!(
+        main.usage
+            .iter()
+            .any(|(name, demand)| name.ends_with(":x") && demand == Usage::ONE)
+    );
+    let failed = compile(
+        "error Failure { Failed; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); qcore_check(false, Failure); drop x; return 0; }",
+    );
+    let main = &failed.checked.functions[&failed.checked.source.globals["main"]];
+    assert!(main.usage.iter().next().is_none());
+    let errors = compile_files(&[SourceFile::new("usage.qc", "error Failure { Failed; } fn main() -> i32 { let x: own<File> use zero = qcore_acquire(1, true, Failure); drop x; return 0; }")], &CompileOptions::default()).unwrap_err();
+    assert_eq!(errors[0].code, "Q100");
+}
+
+#[test]
+fn call_continuations_have_conservative_usage_lower_bounds() {
+    let module = compile(
+        "error Failure { Failed; } fn leaf() -> i32 { return 0; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); leaf(); drop x; return 0; }",
+    );
+    let main = &module.checked.functions[&module.checked.source.globals["main"]];
+    assert!(
+        main.usage
+            .iter()
+            .any(|(name, demand)| name.ends_with(":x") && demand == Usage::AFFINE)
+    );
+    assert!(
+        main.usage
+            .iter()
+            .any(|(name, demand)| name.starts_with("$function:") && demand == Usage::ONE)
+    );
+}
+
+#[test]
 fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
     if Command::new("cc").arg("--version").output().is_err() {
         return;
