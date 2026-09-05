@@ -23,6 +23,14 @@ theorem right_le_join (a b : QuantVector) : Le b (join a b) := by
   intro axis
   exact Nat.le_max_right (a axis) (b axis)
 
+theorem le_trans {a b c : QuantVector} (ab : Le a b) (bc : Le b c) : Le a c := by
+  intro axis
+  exact Nat.le_trans (ab axis) (bc axis)
+
+theorem join_least {a b bound : QuantVector} (left : Le a bound)
+    (right : Le b bound) : Le (join a b) bound := by
+  intro axis
+  exact Nat.max_le.mpr ⟨left axis, right axis⟩
+
 end QuantVector
 end QCore
-

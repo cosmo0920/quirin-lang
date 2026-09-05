@@ -1,4 +1,5 @@
 import QCore.Index
+import QCore.Flow
 import QCore.Ownership
 import QCore.Quant
 import QCore.Resource
