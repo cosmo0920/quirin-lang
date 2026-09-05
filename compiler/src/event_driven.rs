@@ -1411,6 +1411,14 @@ pub fn verify_pinned_libevent_source(
             "epoll.c",
             &["const struct eventop epollops", "epoll_wait("][..],
         ),
+        (
+            "kqueue.c",
+            &[
+                "const struct eventop kqops",
+                "if ((kq = kqueue()) == -1)",
+                "res = kevent(kqop->kq",
+            ][..],
+        ),
     ];
     let mut checked_files = Vec::new();
     for (relative, needles) in contracts {

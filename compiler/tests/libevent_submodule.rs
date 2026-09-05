@@ -19,4 +19,12 @@ fn libevent_submodule_matches_the_audited_revision() {
     });
 
     assert_eq!(evidence.commit, PINNED_LIBEVENT_COMMIT);
+    assert!(
+        evidence.checked_files.iter().any(|path| path == "epoll.c"),
+        "the pinned source audit must cover the Linux backend"
+    );
+    assert!(
+        evidence.checked_files.iter().any(|path| path == "kqueue.c"),
+        "the pinned source audit must cover the native BSD/macOS backend"
+    );
 }

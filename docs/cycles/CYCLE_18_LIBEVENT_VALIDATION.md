@@ -39,6 +39,7 @@ markers:
 | `bufferevent.c` | unlocked callbacks require deferral, locked/unlocked deferred dispatch, and thread-safe locking setup |
 | `include/event2/thread.h` | pthread initialization API |
 | `epoll.c` | public epoll backend operation table and native wait path |
+| `kqueue.c` | public kqueue backend operation table, native initialization, and native wait path |
 
 The command and result are:
 
@@ -50,6 +51,7 @@ checked event.c
 checked bufferevent.c
 checked include/event2/thread.h
 checked epoll.c
+checked kqueue.c
 ```
 
 This is a reproducible source-contract audit, not a proof of the upstream C
@@ -102,17 +104,79 @@ select, poll, debug variants, and bufferevent rate-limit tests.  The checkout
 remained clean after generation and execution; generated regression sources
 are upstream-ignored artifacts.
 
+## macOS native kqueue build manifest
+
+The out-of-tree build directory was
+`/tmp/qcore-cycle18-libevent-kqueue-default`. It was configured on macOS
+26.6.2 (Darwin 25.6.0, arm64) with CMake 4.3.2 and Apple Clang 21.0.0:
+
+```sh
+cmake -S third_party/libevent \
+  -B /tmp/qcore-cycle18-libevent-kqueue-default \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DEVENT__DISABLE_OPENSSL=ON \
+  -DEVENT__DISABLE_MBEDTLS=ON \
+  -DEVENT__DISABLE_THREAD_SUPPORT=OFF \
+  -DEVENT__DISABLE_TESTS=OFF \
+  -DEVENT__DISABLE_REGRESS=OFF \
+  -DEVENT__DISABLE_BENCHMARK=ON \
+  -DEVENT__DISABLE_SAMPLES=ON \
+  -DEVENT__ENABLE_VERBOSE_DEBUG=ON
+cmake --build /tmp/qcore-cycle18-libevent-kqueue-default --parallel 2
+ctest --test-dir /tmp/qcore-cycle18-libevent-kqueue-default \
+  --output-on-failure --parallel 2 -R 'KQUEUE|kq-collision'
+ctest --test-dir /tmp/qcore-cycle18-libevent-kqueue-default \
+  --output-on-failure --parallel 2
+```
+
+Configuration selected `KQUEUE`, `POLL`, and `SELECT`, pthreads, and Libevent
+verbose debug mode. `EVENT__HAVE_WORKING_KQUEUE` was defined. Each `__KQUEUE`
+CTest entry set `EVENT_NOSELECT=1` and `EVENT_NOPOLL=1`, preventing fallback to
+another backend. The build compiled `kqueue.c` into the static and shared core
+libraries.
+
+The focused native kqueue matrix passed:
+
+```text
+100% tests passed, 0 tests failed out of 21
+Total Test time (real) = 191.47 sec
+```
+
+This included `test-test-kq-collision`, normal and debug regression runs, and
+the generated signal-mode variants. The regression traces contained native
+`kq_dispatch`/`kevent` activity.
+
+The complete native backend matrix also passed:
+
+```text
+100% tests passed, 0 tests failed out of 65
+Total Test time (real) = 589.48 sec
+```
+
+In addition to the forced-kqueue tests, the complete run exercised select,
+poll, debug and generated signal-mode variants, and bufferevent rate-limit
+tests.
+
+CMake's optional `EVENT__FORCE_KQUEUE_CHECK=ON` probe was also investigated.
+With CMake 4.3.2 its generated executable compiled and returned exit code 0,
+but `check_c_source_runs` nevertheless left `EVENT__HAVE_WORKING_KQUEUE`
+false. That configuration is unsuitable for validation because Libevent then
+omits kqueue from its runtime backend table. The normal native macOS path sets
+the feature explicitly, and the forced-backend CTest matrix above supplies the
+runtime evidence.
+
 ## QCore-C trust and limits
 
-The trusted boundary for this run consists of the pinned headers and source
-files above, CMake's generated configuration, Linux 7.0.0-30-generic x86-64,
-GCC 15.2.0, pthreads, the selected EPOLL/POLL/SELECT backends, and application
-callback summaries supplied to the Rust checker.  Rust `ObservedEvent` entries
+The trusted boundary for these runs consists of the pinned headers and source
+files above, CMake's generated configurations, Linux 7.0.0-30-generic x86-64
+with GCC 15.2.0, macOS 26.6.2 arm64 with Apple Clang 21.0.0, pthreads, the
+selected EPOLL/POLL/SELECT and KQUEUE/POLL/SELECT backends, and application
+callback summaries supplied to the Rust checker. Rust `ObservedEvent` entries
 are the observation-hook interface; the checker rejects reordered, duplicated,
 or invented observable boundaries.
 
-No native kqueue or Windows/IOCP result was available.  No ASan, UBSan, or
-TSan result is recorded by this run.  The current repository supplies the
+No native Windows/IOCP result is available. No ASan, UBSan, or TSan result is
+recorded by these runs. The current repository supplies the
 checked observation interface and refinement checker, but not a deployed
 zero-global-lock C instrumentation hook for arbitrary Libevent applications.
 Those gaps keep the aggregate Cycle 18 status short of full multi-platform

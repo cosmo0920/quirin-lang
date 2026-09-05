@@ -45,11 +45,11 @@ program-level acceptance remains pending a recorded native Windows sanitizer
 run. Cycle 18 adds a bounded, fail-closed Libevent event-reactor checker with
 generation-safe lifecycle/custody tracking, explicit callback authority,
 priority schedule exploration, cross-context conflict checks, source pinning,
-and corresponding Lean theorems. Its Linux development evidence is recorded;
-native kqueue, Windows/IOCP, sanitizer, and deployed observation-hook evidence
-remain pending. Cycle 19 applies the unrestricted-C gateway to pinned Fluent
-Bit CMetrics, CTraces, librdkafka, ChunkIO, the central input-chunk wrapper,
-and Monkey builds. It retains partial summaries across reduced-parser
+and corresponding Lean theorems. Its Linux and native macOS/kqueue development
+evidence is recorded; Windows/IOCP, sanitizer, and deployed observation-hook
+evidence remain pending. Cycle 19 applies the unrestricted-C gateway to pinned
+Fluent Bit CMetrics, CTraces, librdkafka, ChunkIO, the central input-chunk
+wrapper, and Monkey builds. It retains partial summaries across reduced-parser
 failures, begins the chunk-lifecycle evaluation fail-closed, and links the
 forced-Libevent Monkey source back to the Cycle 18 trust boundary. The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its

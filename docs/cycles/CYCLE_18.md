@@ -242,16 +242,17 @@ symbols remain `Unknown`.
 
 The upstream checkout is pinned to commit
 `d82464a277d0f42703702c4dfd9af6af38595a83`
-(`release-2.2.2-alpha-11-gd82464a2`).  The Linux build uses GCC 15.2.0, pthread
+(`release-2.2.2-alpha-11-gd82464a2`). The Linux build uses GCC 15.2.0, pthread
 support, debug mode, OpenSSL disabled, MbedTLS disabled, and the detected
-EPOLL, POLL, and SELECT backends.  Exact commands, audited source contracts,
-and native results are recorded in
-`docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md`.
+EPOLL, POLL, and SELECT backends. The native macOS build uses Apple Clang
+21.0.0 with the same feature flags and the detected KQUEUE, POLL, and SELECT
+backends. Exact commands, audited source contracts, and native results are
+recorded in `docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md`.
 
-Native kqueue and Windows/IOCP results, application-specific foreign callback
-summaries, sanitizer evidence, and a deployed per-dispatcher observation hook
-must still be recorded before the full multi-platform acceptance gate above
-can be called complete.  Results are not inferred from this Linux run.
+Native Windows/IOCP results, application-specific foreign callback summaries,
+sanitizer evidence, and a deployed per-dispatcher observation hook must still
+be recorded before the full multi-platform acceptance gate above can be called
+complete. Results are not inferred between the recorded Linux and macOS runs.
 
 ## Verification commands
 
