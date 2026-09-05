@@ -4,6 +4,7 @@ import QCore.LegacyCAnalyzer
 import QCore.Lowering
 import QCore.Metatheory
 import QCore.ErrorRegion
+import QCore.EventDriven
 import QCore.ExecutableModel
 import QCore.Flow
 import QCore.Frontend

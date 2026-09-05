@@ -1,0 +1,15 @@
+import QCore.EventDriven
+
+#print axioms QCore.EventDriven.accepted_transition_preserves_lifecycle
+#print axioms QCore.EventDriven.accepted_transition_is_generation_safe
+#print axioms QCore.EventDriven.accepted_lifecycles_are_well_formed
+#print axioms QCore.EventDriven.accepted_callback_has_live_declared_authority
+#print axioms QCore.EventDriven.accepted_same_base_callbacks_are_exclusive
+#print axioms QCore.EventDriven.accepted_cross_context_conflicts_are_ordered
+#print axioms QCore.EventDriven.accepted_close_authority_and_generations_are_unique
+#print axioms QCore.EventDriven.accepted_persistent_and_deferred_callbacks_preserve_custody
+#print axioms QCore.EventDriven.accepted_teardown_is_quiescent
+#print axioms QCore.EventDriven.accepted_cleanup_discharges_owned_resources_once
+#print axioms QCore.EventDriven.accepted_progress_claim_is_qualified_by_blocking
+#print axioms QCore.EventDriven.accepted_observation_refines_event_trace
+#print axioms QCore.EventDriven.combined_cycle18_safety

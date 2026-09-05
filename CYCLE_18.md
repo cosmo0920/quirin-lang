@@ -1,6 +1,6 @@
 # Cycle 18: Libevent Event-Driven Concurrency Verification
 
-**Status: Planned**
+**Status: Bounded implementation complete; native multi-platform acceptance pending**
 
 Cycle 18 defines and verifies an event-driven concurrency profile modeled on
 Libevent. It builds on Cycle 17's native backend and C11 memory relation; it
@@ -211,3 +211,57 @@ Cycle 18 is complete only when:
 - [Working with events](https://libevent.org/libevent-book/Ref4_event.html)
 - [Locks and threading](https://libevent.org/libevent-book/Ref1_libsetup.html)
 - [Bufferevents: concepts and basics](https://libevent.org/libevent-book/Ref6_bufferevent.html)
+
+## Implemented bounded slice
+
+- `compiler/src/event_driven.rs` implements generation-indexed event and
+  bufferevent identities, lifecycle transitions, callback summaries, payload
+  authority, descriptor-close custody, watermarks and pending-output cleanup,
+  same-base callback exclusion, explicit cross-context ordering evidence,
+  bounded priority schedule exploration, fail-closed API/profile
+  classification, adapter-observation refinement, and the pinned-source audit.
+- `compiler/examples/cycle18_libevent_audit.rs` verifies the exact upstream
+  commit and source contracts used by the model.  It rejects another revision
+  even if the expected symbol names happen to be present.
+- `proof/QCore/EventDriven.lean` defines the checked lifecycle relation and
+  proves generation safety, callback authorization, same-base exclusion,
+  cross-context ordering, unique descriptor/event identities, custody through
+  persistent/deferred callbacks, quiescent teardown, exactly-once cleanup,
+  qualified progress, and observation refinement.
+- `proof/AuditCycle18.lean` reports the theorem dependencies.  The lifecycle
+  relation lemmas use Lean's standard `propext`; the aggregate safety theorems
+  have no axiom dependencies.
+
+This bounded slice does not turn unsupported Libevent calls into accepted
+ones, infer arbitrary function-pointer targets, or infer ordering from
+priority/readiness/trace order.  DNS, HTTP, RPC, OpenSSL, listeners, custom
+allocator/lock callbacks, fork reinitialization, private APIs, and unknown
+symbols remain `Unknown`.
+
+## Pinned source and validation
+
+The upstream checkout is pinned to commit
+`d82464a277d0f42703702c4dfd9af6af38595a83`
+(`release-2.2.2-alpha-11-gd82464a2`).  The Linux build uses GCC 15.2.0, pthread
+support, debug mode, OpenSSL disabled, MbedTLS disabled, and the detected
+EPOLL, POLL, and SELECT backends.  Exact commands, audited source contracts,
+and native results are recorded in
+`docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md`.
+
+Native kqueue and Windows/IOCP results, application-specific foreign callback
+summaries, sanitizer evidence, and a deployed per-dispatcher observation hook
+must still be recorded before the full multi-platform acceptance gate above
+can be called complete.  Results are not inferred from this Linux run.
+
+## Verification commands
+
+```sh
+cargo run --example cycle18_libevent_audit -- ../libevent
+cargo test --workspace
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+if rg -n '\b(sorry|admit)\b|^[[:space:]]*axiom\b' proof --glob '*.lean'; then exit 1; fi
+cd proof
+lake build
+lake env lean AuditCycle18.lean
+```

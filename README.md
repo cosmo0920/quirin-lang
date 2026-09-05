@@ -42,7 +42,12 @@ loop invariants, a fail-closed unrestricted-C11 preprocessing gateway, explicit
 weak-memory candidate executions, a native threaded custody backend, and
 mechanically interpreted ledger morphisms. Its implementation is complete;
 program-level acceptance remains pending a recorded native Windows sanitizer
-run. The completed Cycle 16 requirements and verification procedure are in
+run. Cycle 18 adds a bounded, fail-closed Libevent event-reactor checker with
+generation-safe lifecycle/custody tracking, explicit callback authority,
+priority schedule exploration, cross-context conflict checks, source pinning,
+and corresponding Lean theorems. Its Linux development evidence is recorded;
+native kqueue, Windows/IOCP, sanitizer, and deployed observation-hook evidence
+remain pending. The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](CYCLE_17.md). The subsequent Libevent
 event-driven verification plan is in [`CYCLE_18.md`](CYCLE_18.md). Earlier

@@ -12,6 +12,8 @@
 //! Cycle 17 adds independently checked inference and loop certificates, a
 //! conservative unrestricted-C gateway, explicit C11 candidate executions,
 //! native threaded execution, and a mechanically interpreted ledger category.
+//! Cycle 18 adds a fail-closed Libevent profile, generation-indexed event and
+//! bufferevent lifecycles, callback authority, and observed-trace refinement.
 
 pub mod advanced_control;
 pub mod ast;
@@ -22,6 +24,7 @@ pub mod cleanup_lowering;
 pub mod concurrency;
 pub mod driver;
 pub mod error_region;
+pub mod event_driven;
 pub mod executable_model;
 pub mod frontend;
 pub mod index;
@@ -68,6 +71,17 @@ pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
     RegionCatchClause, RegionExitMap, RegionExitState, RegionExitTag, RegionName, RegionOp,
     analyze_error_regions,
+};
+pub use event_driven::{
+    ActivationReason, ArgumentMode, BuffereventId, BuffereventKey, CallbackArgumentId,
+    CallbackContext, CallbackSummary, DeleteMode, DescriptorId, EventBackend, EventBaseId,
+    EventCertificate, EventDiagnostic, EventFlags, EventId, EventKey, EventLifecycle,
+    EventOperation, EventProgram, ExecutionContextId, Generation, InvalidOrderingEvidence,
+    LIBEVENT_API_PROFILE, LibeventBuildProfile, LibeventSourceError, LibeventSourceEvidence,
+    LoopControl, ObservedEvent, ObservedKind, PINNED_LIBEVENT_COMMIT, PINNED_LIBEVENT_DESCRIPTION,
+    PayloadAccessKind, PayloadId, ProfileDisposition, ThreadMode, check_event_program,
+    check_observation_refinement, classify_libevent_symbol, explore_activation_orders,
+    verify_pinned_libevent_source,
 };
 pub use executable_model::{
     ErrorIdentity as ModelErrorIdentity, ExecutableModel, ModelBuildError, ModelCleanupPack,
