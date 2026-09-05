@@ -3,7 +3,8 @@
 //! The implemented vertical slices cover lexical/index foundations,
 //! interval-graded usage analysis, ownership, static resource-flow bounds,
 //! path-sensitive typed recoverable errors, checked error-region cleanup, and
-//! cleanup-explicit CFG lowering to C11.
+//! cleanup-explicit CFG lowering to C11, plus a reduced executable model tying
+//! those safety mechanisms together for the Cycle 8 metatheory.
 
 pub mod ast;
 pub mod c_emit;
@@ -11,6 +12,7 @@ pub mod cfg;
 pub mod check;
 pub mod cleanup_lowering;
 pub mod error_region;
+pub mod executable_model;
 pub mod index;
 pub mod lexer;
 pub mod ownership;
@@ -33,6 +35,12 @@ pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
     RegionCatchClause, RegionExitMap, RegionExitState, RegionExitTag, RegionName, RegionOp,
     analyze_error_regions,
+};
+pub use executable_model::{
+    ErrorIdentity as ModelErrorIdentity, ExecutableModel, ModelBuildError, ModelCleanupPack,
+    ModelControl, ModelOutcome, ModelProgram, ModelState, ModelTraceEvent, ModelTypedError,
+    NaturalIndex, Operation as ModelOperation, ResourceIdentity as ModelResourceIdentity,
+    UsageBinding as ModelUsageBinding, UsageGrade as ModelUsageGrade, Variable as ModelVariable,
 };
 pub use index::{IndexError, IndexExpression, IndexTerm};
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
