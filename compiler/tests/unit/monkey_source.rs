@@ -32,6 +32,9 @@ fn calls(path: &MonkeySourcePath) -> Vec<&str> {
 
 #[test]
 fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(FIXTURE);
     let event = summary(&results, 0);
     assert_eq!(event.function(), "cb_event");
@@ -114,6 +117,9 @@ fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
 
 #[test]
 fn aliases_are_bound_to_parameter_and_prior_reads_not_variable_names() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(FIXTURE);
     let original = summary(&results, 0);
     let renamed = import(
@@ -151,6 +157,9 @@ fn aliases_are_bound_to_parameter_and_prior_reads_not_variable_names() {
 
 #[test]
 fn unsupported_even_unreachable_operations_fail_the_whole_callback() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for injected in [
         "while (0) {}",
         "goto done; done: return;",
@@ -173,6 +182,9 @@ fn unsupported_even_unreachable_operations_fail_the_whole_callback() {
 
 #[test]
 fn field_qualifiers_bitfields_and_signature_mismatch_remain_unknown() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for (old, new) in [
         ("int fired_count;", "volatile int fired_count;"),
         ("int fired_count;", "_Atomic int fired_count;"),
@@ -189,6 +201,9 @@ fn field_qualifiers_bitfields_and_signature_mismatch_remain_unknown() {
 
 #[test]
 fn source_changes_are_retained_and_never_claim_successful_release() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(&FIXTURE.replace(
         "evutil_closesocket(ev_map->pipe[1]);",
         "evutil_closesocket(ev_map->pipe[0]);",
@@ -208,6 +223,9 @@ fn with_event_body(body: &str) -> String {
 
 #[test]
 fn opaque_calls_and_indirect_writes_invalidate_escaped_local_values() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for body in [
         "int x = 1; int *p = &x; *p = 2; if (x) return;",
         "int x = 1; send(fd, &x, 4, 0); if (x) return;",
@@ -240,6 +258,9 @@ fn opaque_calls_and_indirect_writes_invalidate_escaped_local_values() {
 
 #[test]
 fn does_not_invent_order_for_multiple_calls_or_call_and_memory_read() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for body in [
         "if (evutil_closesocket(fd) == event_del(data)) return;",
         "struct mk_event *e = data; if (evutil_closesocket(fd) == e->fd) return;",
@@ -257,6 +278,9 @@ fn does_not_invent_order_for_multiple_calls_or_call_and_memory_read() {
 
 #[test]
 fn import_limits_bound_branches_and_symbolic_substitution() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for body in [
         "if (flags) {}".repeat(7),
         format!("int x = 1; {}", "x = x | x;".repeat(13)),
@@ -270,6 +294,9 @@ fn import_limits_bound_branches_and_symbolic_substitution() {
 
 #[test]
 fn absent_callbacks_and_wrong_revision_do_not_create_summaries() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(&with_event_body("return;"));
     assert!(matches!(results[1], MonkeySourceResult::Unknown { .. }));
     assert!(matches!(results[2], MonkeySourceResult::Unknown { .. }));
@@ -319,6 +346,9 @@ fn symbolic_references_require_prior_producers_with_matching_types() {
 
 #[test]
 fn nested_blocks_end_storage_and_early_returns_keep_only_executed_effects() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(&with_event_body(
         "if (flags) { int x = 1; return; } int y = 2; perror(\"later\");",
     ));
@@ -348,6 +378,9 @@ fn nested_blocks_end_storage_and_early_returns_keep_only_executed_effects() {
 
 #[test]
 fn increment_and_compound_assignment_evaluate_nested_lvalue_once() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for statement in ["map->ctx->fired_count++;", "map->ctx->fired_count |= 1;"] {
         let results = import(&with_event_body(&format!(
             "struct ev_map *map = data; {statement}"

@@ -33,6 +33,9 @@ fn busy_summary() -> ChunkSourceSummary {
 
 #[test]
 fn native_contract_files_are_checked_against_source_paths() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let busy = busy_summary();
     let checked = check_chunk_source_contract(&busy, BUSY).unwrap();
     assert_eq!(checked.checked_states(), 4);
@@ -48,6 +51,9 @@ fn native_contract_files_are_checked_against_source_paths() {
 
 #[test]
 fn changing_qcore_postconditions_changes_the_verdict() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let busy = busy_summary();
     for contract in [
         BUSY.replace("old_busy - 1", "old_busy"),
@@ -72,6 +78,9 @@ fn changing_qcore_postconditions_changes_the_verdict() {
 
 #[test]
 fn missing_assumptions_unknown_predicates_and_wrong_types_fail_closed() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let busy = busy_summary();
     for contract in [
         BUSY.replace("requires exclusive_chunk_access;", ""),
@@ -93,12 +102,18 @@ fn missing_assumptions_unknown_predicates_and_wrong_types_fail_closed() {
 
 #[test]
 fn qcore_trivia_does_not_change_predicate_meaning() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let contract = BUSY.replace("old_busy - 1", "(old_busy /* entry value */ - 1)");
     check_chunk_source_contract(&busy_summary(), &contract).unwrap();
 }
 
 #[test]
 fn const_contract_rejects_even_an_idempotent_c_write() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = summary(
         "int cio_chunk_is_locked(struct cio_chunk *ch) { ch->lock = ch->lock; return ch->lock; }",
     );

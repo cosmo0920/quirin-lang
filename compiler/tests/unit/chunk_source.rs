@@ -48,6 +48,9 @@ fn prefix() -> Vec<ChunkOperation> {
 
 #[test]
 fn derives_both_returns_and_instantiates_the_actual_identity() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let summary = release_summary();
     assert_eq!(summary.field(), ChunkSourceField::Busy);
     assert_eq!(summary.paths()[0].return_value, -1);
@@ -84,6 +87,9 @@ fn derives_both_returns_and_instantiates_the_actual_identity() {
 
 #[test]
 fn releasing_wrapper_busy_does_not_discharge_chunkio_lock() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let summary = release_summary();
     let mut operations = prefix();
     operations.push(ChunkOperation::Lock { chunk: 7 });
@@ -102,6 +108,9 @@ fn releasing_wrapper_busy_does_not_discharge_chunkio_lock() {
 
 #[test]
 fn typed_ast_preserves_else_and_ordered_writes() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(
         "int toggle(struct cio_chunk *ch) {\n\
          if (ch->lock != 0) { ch->lock = 0; } else { ch->lock = !0; }\n\
@@ -119,6 +128,9 @@ fn typed_ast_preserves_else_and_ordered_writes() {
 
 #[test]
 fn rejects_unmodeled_effects_even_on_unexecuted_paths() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for body in [
         "extern void opaque(void); int f(struct flb_input_chunk *p) { opaque(); return p->busy; }",
         "extern void opaque(void); int f(struct flb_input_chunk *p) { if (0) opaque(); return p->busy; }",
@@ -139,6 +151,9 @@ fn rejects_unmodeled_effects_even_on_unexecuted_paths() {
 
 #[test]
 fn source_configuration_and_parameter_qualifiers_are_not_erased() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = "struct flb_input_chunk { int busy; };\n\
         #ifdef INCLUDE_F\n\
         int f(struct flb_input_chunk *p) { p->busy = 0; return 0; }\n\
@@ -169,6 +184,9 @@ fn source_configuration_and_parameter_qualifiers_are_not_erased() {
 
 #[test]
 fn exact_ast_definition_selection_does_not_confuse_name_prefixes() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let results = import(
         "int f(struct flb_input_chunk *p) { return p->busy; }\n\
          int f_extra(struct flb_input_chunk *p) { return !p->busy; }",
@@ -188,6 +206,9 @@ fn exact_ast_definition_selection_does_not_confuse_name_prefixes() {
 
 #[test]
 fn bitfields_and_volatile_members_cannot_receive_boolean_field_summaries() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     for declaration in ["int busy : 1", "volatile int busy", "_Atomic int busy"] {
         let source = format!(
             "struct flb_input_chunk {{ {declaration}; }};\n\

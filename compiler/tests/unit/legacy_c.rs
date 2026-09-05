@@ -499,6 +499,9 @@ fn unrestricted_projection_retains_successful_siblings() {
 
 #[test]
 fn source_scope_uses_a_definition_that_survives_preprocessing() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = "#if 0\nvoid hidden(void) {}\n#endif\nvoid subject(void) { return; }";
     let selected = legacy_c_source_functions(source);
     assert_eq!(selected, vec!["hidden", "subject"]);
@@ -525,6 +528,9 @@ fn source_scope_uses_a_definition_that_survives_preprocessing() {
 
 #[test]
 fn unrestricted_gateway_accepts_data_only_translation_units() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let unit = C11TranslationUnit {
         source: "const int generated_table[] = { 1, 2, 3 };",
         ..C11TranslationUnit::default()
@@ -578,6 +584,9 @@ fn documented_alias_widening_can_only_lose_a_safe_result() {
 
 #[test]
 fn clang_gateway_rejects_invalid_c_before_projection() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = "void *q_alloc(void); void q_free(void *); void subject(void) { void *p = q_alloc(); q_free(p); }";
     match analyze_legacy_c11(source, "subject", &contracts()) {
         Ok(summary) => assert_eq!(summary.status, AnalysisStatus::Safe),
@@ -593,6 +602,9 @@ fn clang_gateway_rejects_invalid_c_before_projection() {
 
 #[test]
 fn unrestricted_gateway_certifies_only_fully_checked_safe_summaries() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let unit = C11TranslationUnit {
         source: "#define RELEASE(x) q_free(x)\nvoid *q_alloc(void); void q_free(void *); void subject(void) { void *p = q_alloc(); RELEASE(p); }",
         ..C11TranslationUnit::default()
@@ -609,6 +621,9 @@ fn unrestricted_gateway_certifies_only_fully_checked_safe_summaries() {
 
 #[test]
 fn unrestricted_projection_gaps_remain_unknown() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let unit = C11TranslationUnit {
         source: "int mystery(void); int subject(void) { return mystery(); }",
         ..C11TranslationUnit::default()
@@ -622,6 +637,9 @@ fn unrestricted_projection_gaps_remain_unknown() {
 
 #[test]
 fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = "void subject(void) { typeof(1) value = 1; }";
     let strict = C11TranslationUnit {
         source,
@@ -649,6 +667,9 @@ fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
 
 #[test]
 fn main_source_scope_excludes_macro_expanded_header_bodies() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let source = "\
 #define HEADER_BODY static void header_helper(void) { struct Local { int value; }; }\n\
 HEADER_BODY\n\

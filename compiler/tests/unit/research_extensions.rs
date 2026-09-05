@@ -64,6 +64,9 @@ fn ledger_morphisms_compose_only_at_equal_endpoints() {
 
 #[test]
 fn aggregate_certificate_contains_all_six_discharges() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
     let constraints = vec![InferenceConstraint::Owns { identity: 1 }];
     let inference = infer_principal(&constraints).unwrap();
     let loop_summary = summarize_general_loop(

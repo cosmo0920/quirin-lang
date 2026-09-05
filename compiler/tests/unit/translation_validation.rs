@@ -209,7 +209,14 @@ fn exhaustive_emitted_c_corpus_passes_available_native_sanitizers() {
                         .unwrap()
                 };
                 assert!(compilation.success());
-                let output = Command::new(&executable)
+                let mut run_command = Command::new(&executable);
+                if let Some(compiler) = &msvc_compiler {
+                    // `cc` discovers MSVC through Visual Studio and retains the
+                    // environment that locates its dynamic ASan runtime. The
+                    // generated executable needs the same PATH when launched.
+                    run_command.envs(compiler.env().iter().cloned());
+                }
+                let output = run_command
                     // LeakSanitizer cannot run in ptrace-based CI sandboxes;
                     // address and undefined-behavior checks remain enabled.
                     .env("ASAN_OPTIONS", "detect_leaks=0:halt_on_error=1")
@@ -218,8 +225,9 @@ fn exhaustive_emitted_c_corpus_passes_available_native_sanitizers() {
                     .unwrap();
                 assert!(
                     output.status.success(),
-                    "sanitizer failure: {}",
-                    String::from_utf8_lossy(&output.stderr)
+                    "sanitizer failure ({status}): {stderr}",
+                    status = output.status,
+                    stderr = String::from_utf8_lossy(&output.stderr)
                 );
                 validate_translation(&source, &cfg, std::str::from_utf8(&output.stdout).unwrap())
                     .unwrap();
