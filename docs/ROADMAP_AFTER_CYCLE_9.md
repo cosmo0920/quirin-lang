@@ -66,6 +66,8 @@ mechanized cleanup/linearity preservation.
 
 ## Cycle 16: Full metatheory and research closure
 
+**Status: completed.** See [`../CYCLE_16.md`](../CYCLE_16.md).
+
 Unify the reduced proofs into preservation and progress for the implemented
 combined language, resource safety across all implemented ledgers, and
 end-to-end correctness for the supported C11 target. Keep principal inference,

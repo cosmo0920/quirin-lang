@@ -5,10 +5,10 @@
 //! path-sensitive typed recoverable errors, checked error-region cleanup, and
 //! cleanup-explicit CFG lowering to C11, plus a reduced executable model tying
 //! those safety mechanisms together for the Cycle 8 metatheory, and a
-//! conservative annotated legacy-C resource analyzer for Cycle 9.  Cycle 10
-//! adds the shared, source-located front end and typed source IR.  Cycle 11
-//! connects the established passes through whole-program summaries.  Cycle 12
-//! adds the source-file compiler driver and stable `qcorec` CLI.
+//! conservative annotated legacy-C resource analyzer for Cycle 9. Cycles
+//! 10–12 add the source front end, whole-program checking, and compiler driver.
+//! Cycles 13–16 add translation validation, restricted concurrency, advanced
+//! control fragments, and a bounded combined research-closure certificate.
 
 pub mod advanced_control;
 pub mod ast;
@@ -26,6 +26,7 @@ pub mod legacy_c;
 pub mod lexer;
 pub mod ownership;
 pub mod parser;
+pub mod research_closure;
 pub mod resource_flow;
 pub mod translation_validation;
 pub mod typed_errors;
@@ -87,6 +88,10 @@ pub use ownership::{
     ResourceEntry, ResourceId, check_ownership, execute_ownership,
 };
 pub use parser::{ParseError, parse_program};
+pub use research_closure::{
+    OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, Progress, ResearchClosureCertificate,
+    ResearchClosureError, ResearchProgram, ResourceSafetyCertificate, close_research_program,
+};
 pub use resource_flow::{
     Flow, FlowError, FunctionSummary, NetChange, Quantity, ResourceBounds, interpret_flow_trace,
 };

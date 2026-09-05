@@ -2,6 +2,7 @@ import QCore.Index
 import QCore.AdvancedControl
 import QCore.LegacyCAnalyzer
 import QCore.Lowering
+import QCore.Metatheory
 import QCore.ErrorRegion
 import QCore.ExecutableModel
 import QCore.Flow
