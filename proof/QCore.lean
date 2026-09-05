@@ -12,5 +12,6 @@ import QCore.TypedErrors
 import QCore.Usage
 import QCore.WholeProgram
 import QCore.Compiler
+import QCore.TranslationValidation
 
 /-! The executable formal core of QCore-C revision 0.1. -/

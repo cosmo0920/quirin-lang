@@ -25,6 +25,7 @@ pub mod lexer;
 pub mod ownership;
 pub mod parser;
 pub mod resource_flow;
+pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
 pub mod whole_program;
@@ -65,8 +66,8 @@ pub use frontend::{
 pub use index::{IndexError, IndexExpression, IndexTerm};
 pub use legacy_c::{
     AnalysisStatus, LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind,
-    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, ResourceApiKind, ResourceContracts,
-    analyze_legacy_c,
+    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, LegacyProgramSummary, ResourceApiKind,
+    ResourceContracts, analyze_legacy_c, analyze_legacy_c_translation_unit, analyze_legacy_c11,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use ownership::{
@@ -76,6 +77,9 @@ pub use ownership::{
 pub use parser::{ParseError, parse_program};
 pub use resource_flow::{
     Flow, FlowError, FunctionSummary, NetChange, Quantity, ResourceBounds, interpret_flow_trace,
+};
+pub use translation_validation::{
+    TranslationCertificate, TranslationValidationError, validate_cfg_boundary, validate_translation,
 };
 pub use typed_errors::{
     CallExit, CallSummary, CatchClause, Effect, EffectRow, ErrorDeclarations, ErrorLedger,

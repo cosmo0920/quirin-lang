@@ -37,6 +37,8 @@ resource traces, ownership transfers, and quantitative bounds.
 
 ## Cycle 13: Translation validation and analysis hardening
 
+**Status: completed.** See [`../CYCLE_13.md`](../CYCLE_13.md).
+
 Add property testing, pass-boundary CFG validation, larger sanitizer corpora,
 and a translation-validation checker. Extend legacy-C analysis with a
 production C parser, interprocedural summaries, structs/fields, arrays, and

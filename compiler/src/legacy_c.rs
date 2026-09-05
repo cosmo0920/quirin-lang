@@ -6,6 +6,8 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
+use std::io::Write;
+use std::process::{Command, Stdio};
 
 pub type LegacyNodeId = usize;
 
@@ -14,6 +16,9 @@ pub enum ResourceApiKind {
     Acquire,
     Release,
     Escape,
+    /// A proven resource-neutral call.  Cycle 13 uses this only for an
+    /// internal function whose own summary is retained in the program result.
+    Neutral,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -99,9 +104,18 @@ pub struct LegacyFunctionSummary {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyProgramSummary {
+    pub entry: String,
+    pub status: AnalysisStatus,
+    pub functions: BTreeMap<String, LegacyFunctionSummary>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyCError {
     FunctionNotFound(String),
     MalformedFunction { function: String, line: usize },
+    ProductionParserUnavailable(String),
+    ProductionParserRejected(String),
 }
 
 impl fmt::Display for LegacyCError {
@@ -112,6 +126,15 @@ impl fmt::Display for LegacyCError {
                 write!(
                     f,
                     "malformed body for C function `{function}` at line {line}"
+                )
+            }
+            Self::ProductionParserUnavailable(message) => {
+                write!(f, "production C parser is unavailable: {message}")
+            }
+            Self::ProductionParserRejected(message) => {
+                write!(
+                    f,
+                    "production C parser rejected the translation unit: {message}"
                 )
             }
         }
@@ -145,6 +168,80 @@ pub fn analyze_legacy_c(
             })?;
     let cfg = CfgBuilder::build(function, &statements);
     Ok(analyze_cfg(cfg))
+}
+
+/// Gate the conservative importer with Clang's production C11 parser.  The
+/// typed AST accepted by Clang is still deliberately projected into the small
+/// resource language below; any projection gap remains `Unknown`.
+pub fn analyze_legacy_c11(
+    source: &str,
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyFunctionSummary, LegacyCError> {
+    let mut child = Command::new("clang")
+        .args(["-x", "c", "-std=c11", "-fsyntax-only", "-"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    child
+        .stdin
+        .take()
+        .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
+        .write_all(source.as_bytes())
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    let output = child
+        .wait_with_output()
+        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    if !output.status.success() {
+        return Err(LegacyCError::ProductionParserRejected(
+            String::from_utf8_lossy(&output.stderr).trim().to_owned(),
+        ));
+    }
+    analyze_legacy_c(source, function, contracts)
+}
+
+/// Analyze every function definition in a translation unit and combine the
+/// per-function results into a bounded interprocedural status summary.
+/// Internal calls are resource-neutral at the call site, while the callee's
+/// own resource behavior is checked separately and contributes to the result.
+pub fn analyze_legacy_c_translation_unit(
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyProgramSummary, LegacyCError> {
+    let tokens = tokenize(source);
+    let names = function_names(&tokens);
+    if !names.iter().any(|name| name == entry) {
+        return Err(LegacyCError::FunctionNotFound(entry.to_owned()));
+    }
+    let mut extended = contracts.clone();
+    for name in &names {
+        extended.insert(name, ResourceApiKind::Neutral);
+    }
+    let mut functions = BTreeMap::new();
+    for name in names {
+        functions.insert(name.clone(), analyze_legacy_c(source, &name, &extended)?);
+    }
+    let status = if functions
+        .values()
+        .any(|summary| summary.status == AnalysisStatus::Unsafe)
+    {
+        AnalysisStatus::Unsafe
+    } else if functions
+        .values()
+        .any(|summary| summary.status == AnalysisStatus::Unknown)
+    {
+        AnalysisStatus::Unknown
+    } else {
+        AnalysisStatus::Safe
+    };
+    Ok(LegacyProgramSummary {
+        entry: entry.to_owned(),
+        status,
+        functions,
+    })
 }
 
 #[derive(Clone, Debug)]
@@ -249,6 +346,24 @@ fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)
         }
     }
     None
+}
+
+fn function_names(tokens: &[Token]) -> Vec<String> {
+    let mut names = BTreeSet::new();
+    for (index, token) in tokens.iter().enumerate() {
+        if !is_identifier(&token.text)
+            || matches!(token.text.as_str(), "if" | "while" | "for" | "switch")
+            || tokens.get(index + 1).map(|next| next.text.as_str()) != Some("(")
+        {
+            continue;
+        }
+        if let Some(close) = matching(tokens, index + 1, "(", ")")
+            && tokens.get(close + 1).map(|next| next.text.as_str()) == Some("{")
+        {
+            names.insert(token.text.clone());
+        }
+    }
+    names.into_iter().collect()
 }
 
 fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<usize> {
@@ -474,6 +589,7 @@ impl Parser<'_> {
                             source: source.to_owned(),
                         },
                     ),
+                    ResourceApiKind::Neutral => LegacyInstruction::NoOp,
                 };
             }
             return LegacyInstruction::Unknown {
@@ -488,20 +604,15 @@ impl Parser<'_> {
                 };
             };
             let right = &texts[equal + 1..];
-            if right.len() == 1 && is_identifier(right[0]) {
-                if matches!(right[0], "NULL" | "nullptr") {
-                    return LegacyInstruction::Clear {
-                        destination: destination.to_owned(),
-                    };
-                }
-                return LegacyInstruction::Alias {
-                    destination: destination.to_owned(),
-                    source: right[0].to_owned(),
-                };
-            }
-            if right == ["0"] {
+            if right.len() == 1 && matches!(right[0], "NULL" | "nullptr" | "0") {
                 return LegacyInstruction::Clear {
                     destination: destination.to_owned(),
+                };
+            }
+            if let Some(source) = canonical_place(right) {
+                return LegacyInstruction::Alias {
+                    destination: destination.to_owned(),
+                    source,
                 };
             }
             return LegacyInstruction::Unknown {
@@ -533,28 +644,63 @@ fn contains_call(tokens: &[Token]) -> bool {
     find_call(&texts).is_some()
 }
 
-fn first_call_argument<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<&'a str> {
-    let argument = tokens.get(call_index + 2).copied()?;
-    (is_identifier(argument)
-        && argument != "NULL"
-        && tokens.get(call_index + 3).copied() == Some(")"))
-    .then_some(argument)
+fn first_call_argument(tokens: &[&str], call_index: usize) -> Option<String> {
+    let close = tokens[call_index + 2..]
+        .iter()
+        .position(|token| *token == ")")?
+        + call_index
+        + 2;
+    let argument = &tokens[call_index + 2..close];
+    (!argument.contains(&",")).then(|| canonical_place(argument))?
 }
 
-fn direct_assignment_destination<'a>(tokens: &'a [&'a str]) -> Option<&'a str> {
-    let destination = tokens.last().copied()?;
-    if !is_identifier(destination)
-        || tokens.first() == Some(&"*")
-        || tokens
-            .iter()
-            .any(|text| matches!(*text, "." | "[" | "]" | "-" | ">"))
-        || !tokens
-            .iter()
-            .all(|text| is_identifier(text) || *text == "*")
-    {
+fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
+    if tokens.first() == Some(&"*") {
         return None;
     }
-    Some(destination)
+    (0..tokens.len()).find_map(|start| canonical_place(&tokens[start..]))
+}
+
+fn canonical_place(tokens: &[&str]) -> Option<String> {
+    let first = tokens.first().copied()?;
+    if !is_identifier(first) || matches!(first, "NULL" | "nullptr") {
+        return None;
+    }
+    let mut place = first.to_owned();
+    let mut cursor = 1;
+    while cursor < tokens.len() {
+        match tokens[cursor] {
+            "." if tokens
+                .get(cursor + 1)
+                .is_some_and(|field| is_identifier(field)) =>
+            {
+                place.push('.');
+                place.push_str(tokens[cursor + 1]);
+                cursor += 2;
+            }
+            "-" if tokens.get(cursor + 1) == Some(&">")
+                && tokens
+                    .get(cursor + 2)
+                    .is_some_and(|field| is_identifier(field)) =>
+            {
+                place.push_str("->");
+                place.push_str(tokens[cursor + 2]);
+                cursor += 3;
+            }
+            "[" if tokens
+                .get(cursor + 1)
+                .is_some_and(|index| index.bytes().all(|byte| byte.is_ascii_digit()))
+                && tokens.get(cursor + 2) == Some(&"]") =>
+            {
+                place.push('[');
+                place.push_str(tokens[cursor + 1]);
+                place.push(']');
+                cursor += 3;
+            }
+            _ => return None,
+        }
+    }
+    Some(place)
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -680,7 +826,10 @@ struct AbstractPointer {
 struct AbstractState {
     pointers: BTreeMap<String, AbstractPointer>,
     resources: BTreeMap<usize, u8>,
+    widened: bool,
 }
+
+const MAX_ALIAS_TARGETS: usize = 8;
 
 impl AbstractState {
     fn join(&mut self, incoming: &Self) -> bool {
@@ -699,6 +848,11 @@ impl AbstractState {
                 (Some(mut current), Some(other)) => {
                     current.targets.extend(other.targets.iter().copied());
                     current.unknown |= other.unknown;
+                    if current.targets.len() > MAX_ALIAS_TARGETS {
+                        current.targets.clear();
+                        current.unknown = true;
+                        self.widened = true;
+                    }
                     self.pointers.insert(variable, current);
                 }
                 (Some(mut current), None) => {
@@ -719,6 +873,7 @@ impl AbstractState {
                 .and_modify(|current| *current |= status)
                 .or_insert(status);
         }
+        self.widened |= incoming.widened;
         *self != before
     }
 }
@@ -772,6 +927,18 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
                 work.push_back(successor);
             }
         }
+    }
+
+    if incoming.iter().flatten().any(|state| state.widened) {
+        diagnostics.insert(LegacyDiagnostic {
+            function: cfg.function.clone(),
+            line: 0,
+            kind: LegacyDiagnosticKind::Unsupported {
+                description: format!(
+                    "alias set exceeded {MAX_ALIAS_TARGETS} targets and was widened"
+                ),
+            },
+        });
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
@@ -1096,7 +1263,7 @@ mod tests {
         assert_eq!(field.status, AnalysisStatus::Unsafe);
         assert!(has(&field, |kind| matches!(
             kind,
-            LegacyDiagnosticKind::Unsupported { .. }
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p->field"
         )));
     }
 
@@ -1115,6 +1282,61 @@ mod tests {
         assert!(matches!(
             analyze_legacy_c("void subject(void) { q_free(p);", "subject", &contracts()),
             Err(LegacyCError::MalformedFunction { .. })
+        ));
+    }
+
+    #[test]
+    fn imports_struct_fields_and_constant_array_elements() {
+        let summary = analyze(
+            "struct Pair { void *left; void *right[2]; };\nvoid subject(void) {\n struct Pair p;\n p.left = q_alloc();\n p.right[0] = q_alloc();\n q_free(p.right[0]);\n q_free(p.left);\n}",
+        );
+        assert_eq!(summary.status, AnalysisStatus::Safe);
+    }
+
+    #[test]
+    fn translation_unit_summary_propagates_callee_defects() {
+        let source = "void helper(void) { void *p = q_alloc(); return; }\nvoid subject(void) { helper(); return; }";
+        let summary = analyze_legacy_c_translation_unit(source, "subject", &contracts()).unwrap();
+        assert_eq!(summary.status, AnalysisStatus::Unsafe);
+        assert_eq!(summary.functions["subject"].status, AnalysisStatus::Safe);
+        assert_eq!(summary.functions["helper"].status, AnalysisStatus::Unsafe);
+    }
+
+    #[test]
+    fn documented_alias_widening_can_only_lose_a_safe_result() {
+        let mut source = String::from("void subject(int c) {\n");
+        for index in 0..=8 {
+            source.push_str(&format!(" void *p{index} = q_alloc();\n"));
+        }
+        source.push_str(" void *q = p0;\n");
+        for index in 1..=8 {
+            source.push_str(&format!(" if (c) q = p{index};\n"));
+        }
+        for index in 0..=8 {
+            source.push_str(&format!(" q_free(p{index});\n"));
+        }
+        source.push_str("}\n");
+        let summary = analyze(&source);
+        assert_eq!(summary.status, AnalysisStatus::Unknown);
+        assert!(has(&summary, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Unsupported { description }
+                if description.contains("widened")
+        )));
+    }
+
+    #[test]
+    fn clang_gateway_rejects_invalid_c_before_projection() {
+        let source = "void *q_alloc(void); void q_free(void *); void subject(void) { void *p = q_alloc(); q_free(p); }";
+        match analyze_legacy_c11(source, "subject", &contracts()) {
+            Ok(summary) => assert_eq!(summary.status, AnalysisStatus::Safe),
+            Err(LegacyCError::ProductionParserUnavailable(_)) => return,
+            Err(error) => panic!("unexpected production parser result: {error}"),
+        }
+        assert!(matches!(
+            analyze_legacy_c11("void subject( {", "subject", &contracts()),
+            Err(LegacyCError::ProductionParserRejected(_))
+                | Err(LegacyCError::ProductionParserUnavailable(_))
         ));
     }
 }
