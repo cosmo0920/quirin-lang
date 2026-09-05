@@ -2,10 +2,11 @@
 //!
 //! The implemented vertical slices cover lexical/index foundations,
 //! interval-graded usage analysis, ownership, static resource-flow bounds, and
-//! path-sensitive typed recoverable errors.
+//! path-sensitive typed recoverable errors, and checked error-region cleanup.
 
 pub mod ast;
 pub mod check;
+pub mod error_region;
 pub mod index;
 pub mod lexer;
 pub mod ownership;
@@ -16,6 +17,11 @@ pub mod usage;
 
 pub use ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
 pub use check::{CheckError, StaticEnvironment};
+pub use error_region::{
+    CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
+    RegionCatchClause, RegionExitMap, RegionExitState, RegionExitTag, RegionName, RegionOp,
+    analyze_error_regions,
+};
 pub use index::{IndexError, IndexExpression, IndexTerm};
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use ownership::{

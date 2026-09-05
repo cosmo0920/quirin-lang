@@ -9,13 +9,14 @@ The implementation is split into:
 - `compiler/`: the Rust parser, checker, reference interpreter, and C backend;
 - `proof/`: the Lean 4 executable core and safety proofs.
 
-The current implementation includes the first five vertical slices: dimension
+The current implementation includes the first six vertical slices: dimension
 and quantitative-axis declarations, interval-graded usage demand analysis,
 ownership without exceptional exits, and resource-flow summaries with checked
 peak and cumulative bounds, followed by path-sensitive typed errors without
-cleanup packs. Active cycle requirements, including continuous Lean
-verification, are in [`CYCLE_5.md`](CYCLE_5.md). Completed cycle records are
-archived under [`docs/cycles/`](docs/cycles/).
+cleanup packs, and sealed error-region cleanup with checked `quant open` and
+linear discharge. Active cycle requirements, including the complete Lean
+verification procedure, are in [`CYCLE_6.md`](CYCLE_6.md). Completed cycle
+records are archived under [`docs/cycles/`](docs/cycles/).
 
 ## Build
 

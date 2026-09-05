@@ -1,4 +1,5 @@
 import QCore.Index
+import QCore.ErrorRegion
 import QCore.Flow
 import QCore.Ownership
 import QCore.Quant
