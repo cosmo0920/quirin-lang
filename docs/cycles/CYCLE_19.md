@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — contract/control-flow foundation and bounded ChunkIO lifecycle implemented**
+**Status: In progress — compositional checkers implemented; source-derived summaries and deployed Monkey observation pending**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -140,8 +140,31 @@ present, resolved, and attached to retained CFG nodes.
 
 The Cycle 19 audit manifest now marks known allocation results nullable, marks
 null-tolerant destructors explicitly, and models `rd_realloc` with the new
-replacement contract. Audited library-specific aggregate summaries, refcounts,
-arenas, and concurrent publication remain pending.
+replacement contract. Supplying source-derived library summaries to the pinned
+audit remains pending.
+
+## Implemented 19B custody composition
+
+`external_integration` adds an identity-indexed checker for intrusive-list,
+typed-queue, arena, and reference-count custody. Retains are counted even when
+one execution context owns multiple references. Store and removal transfer one
+reference, arena/container destruction can discharge member references, and
+the checker rejects missing containers, invalid holders, underflow-shaped
+releases, nonempty non-cascading destruction, overflow, and terminal live
+resources or containers.
+
+The imported-library wrapper additionally pins the Fluent Bit revision and
+scopes mechanism summaries per bundled library: librdkafka may use its
+refcount, list, typed-queue, destructor, and evidence-gated concurrency
+summaries; CFL may use list, arena, destructor, publication, and handoff
+summaries; and ChunkIO may use its list and destructor summaries. A missing
+required summary or a summary outside that library's profile is rejected.
+
+Atomic publication, thread handoff, and reclamation are accepted only with a
+matching typed synchronization-evidence identifier. The certificate records
+the exact evidence consumed. This is the fail-closed summary target for the
+library audit; it does not by itself assert that a librdkafka or CFL source
+pattern has been extracted into those operations.
 
 ## Implemented 19C bounded lifecycle
 
@@ -161,12 +184,17 @@ destruction.
 
 The corresponding Lean account checks replacement, aggregate custody, unique
 identities, backend discharge, list/counter balance, failed-open rollback,
-nested teardown order, and delete-only classification. This bounded checker is
-not yet composed with the unrestricted-C importer, so it does not promote any
-raw ChunkIO or Fluent Bit translation unit to `Safe`. Importer/lifecycle
-composition and Monkey event composition remain Cycle 19 work.
+nested teardown order, and delete-only classification. The new import
+composition gate requires the pinned Fluent Bit revision, an explicit claim
+that the imported CFG is complete, and every exact lifecycle summary used by
+the operation trace before invoking `chunk_lifecycle`. Missing source identity,
+control-flow coverage, or a used summary fails closed.
 
-## Implemented 19D descriptor foundation
+The unrestricted-C importer does not yet automatically derive this operation
+trace from every raw ChunkIO and wrapper function, so the gate does not promote
+any translation unit to `Safe` and the recorded audit counts remain unchanged.
+
+## Implemented 19D Monkey composition
 
 The Cycle 18 API profile now includes the three Libevent descriptor utilities
 called by Monkey. `evutil_socketpair` has explicit success/failure out-custody,
@@ -180,6 +208,22 @@ Cycle 18 checkout.
 The Lean account proves successful pair creation is distinct, pair failure
 creates no custody, close failure retains custody, successful close discharges
 it once, error query preserves custody, and accepted teardown has no live
-owned descriptor. Wrapper event/map importing, nullable `event_base_new` and
-`event_new` failure composition, callback summaries, and deployed backend
-observation remain pending; therefore the Monkey aggregate stays `Unknown`.
+owned descriptor.
+
+`check_monkey_composition` now joins the Monkey wrapper obligations to that
+event certificate. It requires exact summaries for all three callbacks:
+`cb_event` borrows its argument and writes the fired-event array; `cb_timeout`
+borrows its argument and may close the descriptor and release the event map;
+and `cb_wait_2_timeout` is a borrowed no-effect callback. The gate also requires
+the pinned Fluent Bit source revision, event-map custody, nullable base/event
+failure paths, failed registration,
+an accepted build profile matching the base created by the event program, one
+matching dispatcher, a matching observed backend, and an observation trace
+refining the checked event trace.
+
+The generic Lean `QCore.ExternalIntegration` account proves the accepted
+custody, chunk-import, callback, backend/dispatcher/trace, and teardown
+conditions without project axioms. Its module and theorem identifiers are
+cycle-neutral. No deployed Monkey observation was produced by this change, so
+the current aggregate remains `Unknown` until real hook evidence and a
+source-derived wrapper trace are supplied.

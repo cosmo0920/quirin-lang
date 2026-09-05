@@ -31,6 +31,7 @@ pub mod driver;
 pub mod error_region;
 pub mod event_driven;
 pub mod executable_model;
+pub mod external_integration;
 pub mod frontend;
 pub mod index;
 pub mod inference;
@@ -100,6 +101,18 @@ pub use executable_model::{
     ModelControl, ModelOutcome, ModelProgram, ModelState, ModelTraceEvent, ModelTypedError,
     NaturalIndex, Operation as ModelOperation, ResourceIdentity as ModelResourceIdentity,
     UsageBinding as ModelUsageBinding, UsageGrade as ModelUsageGrade, Variable as ModelVariable,
+};
+pub use external_integration::{
+    AuditedLibrary, ChunkImportCertificate, ChunkImportDiagnostic, ChunkImportProfile,
+    DispatcherObservation, ExternalContainerId, ExternalContainerKind, ExternalContextId,
+    ExternalEvidenceId, ExternalHolder, ExternalResourceId, ImportedChunkProgram,
+    ImportedLibraryCustodyProgram, LibraryCustodyCertificate, LibraryCustodyDiagnostic,
+    LibraryCustodyOperation, LibraryCustodyProgram, LibraryImportCertificate,
+    LibraryImportDiagnostic, LibraryMechanismSummary, LibrarySummaryProfile, MonkeyCallback,
+    MonkeyCallbackSummary, MonkeyCompositionCertificate, MonkeyCompositionDiagnostic,
+    MonkeyCompositionProfile, MonkeyCompositionProgram, PINNED_FLUENT_BIT_REVISION,
+    SynchronizationEvidenceKind, check_imported_chunk_program, check_imported_library_custody,
+    check_library_custody, check_monkey_composition, required_chunk_summary,
 };
 pub use frontend::{
     DeclarationKind as SourceDeclarationKind, Located, SemanticPass, SourceBlock,

@@ -149,7 +149,7 @@ Fluent Bit.
 | librdkafka 2.15.0 | 94 | 3 | 0 | 3,410 | 3,025 | 88.7% | 0 | 10 | 81 |
 | ChunkIO | 13 | 0 | 0 | 126 | 122 | 96.8% | 0 | 5 | 8 |
 | Fluent Bit input chunk | 1 | 0 | 0 | 66 | 64 | 97.0% | 0 | 1 | 0 |
-| Monkey, forced Libevent | 29 | 0 | 0 | 359 | 346 | 96.4% | 1 | 17 | 11 |
+| Monkey, forced Libevent | 29 | 0 | 0 | 359 | 346 | 96.4% | 1 | 18 | 10 |
 
 All 185 selected translation units pass the production Clang gateway under
 their gated GNU dialect and build definitions. Of 4,775 raw-source functions,
@@ -162,8 +162,8 @@ slices without converting any incomplete unit into a `Safe` result.
 Compared with the initial name-only-contract run, nullable contracts first
 moved 15 resource translation units from provisional `Unsafe` to `Unknown`.
 The explicit control-flow rerun recovers 51 additional function projections
-and reclassifies seven units from `Unknown` to provisional `Unsafe`, for 53
-Unsafe and 126 Unknown units overall; the two fully Safe units are unchanged.
+and reclassifies eight units from `Unknown` to provisional `Unsafe`, for 54
+Unsafe and 125 Unknown units overall; the two fully Safe units are unchanged.
 These classifications remain conservative model results, not defect claims.
 
 These numbers are projection results, not memory-safety coverage. In
@@ -173,6 +173,13 @@ aggregate store/removal, and `realloc`, but the audit does not yet supply the
 library-specific queue, refcount, arena, callback, or concurrency summaries
 needed to interpret those patterns. It can therefore still report a local
 obligation as leaked when ownership moves through an unaudited mechanism.
+An executable composition checker now exists for counted references,
+intrusive-list/typed-queue/arena transfers, and evidence-gated publication,
+handoff, and reclamation. This establishes the fail-closed target shape; it
+pins imported profiles to the audited Fluent Bit revision, and rejects
+mechanisms outside the declared bundled-library profile. It does not change
+these results until the pinned source audit derives and feeds the corresponding
+operations.
 `ctr_version.c`, which is resource-neutral, is the single fully `Safe` CTraces
 unit.
 
@@ -199,8 +206,9 @@ The resource profile recognizes `rd_malloc`, `rd_calloc`, `rd_strdup`, and
 `rd_realloc` now preserves the old identity on a null result and replaces it on
 a non-null result. The 10 `Unsafe` and 81 `Unknown` unit results are still
 projection classifications, not librdkafka defect reports. Librdkafka-specific
-refcounted objects, typed queue macros, aggregate summaries, callbacks, thread
-handoff, and atomics remain outside this stage.
+source-to-summary mappings for refcounted objects, typed queue macros,
+callbacks, thread handoff, and atomics remain outside this audit run even
+though their certificate-side custody operations are now implemented.
 
 `tinycthread.c` contains 30 raw-source function bodies, but this build defines
 `WITH_C11THREADS`, so none survive preprocessing. The unit remains fail-closed
@@ -213,9 +221,8 @@ units and Fluent Bit's `flb_input_chunk.c`. The wrapper uses 14 `cio_chunk_*`
 operations covering open/close, up/down residency, locking, content access,
 writes, size queries, and transaction rollback. Its operational lifecycle is
 roughly create or map, move up/down, append or write, flush and lock, release,
-then destroy and close. The gateway projects 63 of 66 raw wrapper functions;
-`append_to_ring_buffer` is one reduced-parser failure and two conditional
-definitions do not survive this build profile.
+then destroy and close. The gateway projects 64 of 66 raw wrapper functions;
+the other two remain outside the projected summary under this build profile.
 
 This is only the start of chunk evaluation. The generic resource contracts
 recognize `flb_malloc`/`flb_calloc`, `flb_free`, SDS creation/destruction, and
@@ -255,13 +262,16 @@ checks `include/event2/util.h` and `evutil.c`, both byte-identical in Monkey's
 bundled Libevent and the Cycle 18 checkout.
 
 Recognizing all called API names still does not produce a Cycle 18 event-safety
-certificate for Monkey. The adapter uses `event_base_new`, so the runtime
-Libevent backend is not pinned by the call itself, and the current importer
-does not yet carry Monkey's `struct mk_event`/`struct ev_map` custody, nullable
-event acquisition, callback argument aliases, or callback-to-fired-array
-effects into the event IR. The aggregate event verdict remains fail-closed as
-`Unknown` until those contracts are modeled and the selected backend is
-observed or constrained.
+certificate for Monkey. A new composition gate requires exact callback
+summaries for `cb_event`, `cb_timeout`, and `cb_wait_2_timeout`; event-map
+custody; the pinned Fluent Bit source revision; nullable base/event and
+failed-registration paths; an accepted build;
+event-program base creation matching that build; one matching dispatcher; a
+matching observed backend; and an observation trace that refines the checked
+event trace. The adapter uses `event_base_new`, so the
+runtime backend is not pinned by the call itself. The current source audit does
+not yet derive the complete wrapper trace, and no deployed observation was
+captured in this run. The aggregate therefore remains fail-closed as `Unknown`.
 
 ## Bounded ChunkIO lifecycle result
 
@@ -278,38 +288,33 @@ only logs native deletion failure. It separately records the observable result
 of recursive stream-directory deletion. Memory-backed close never claims a
 filesystem deletion.
 
-The model and its Lean theorems pass independently, but the unrestricted-C
-importer does not yet derive these lifecycle operations from the pinned source.
-Accordingly, the audit table above is unchanged and no raw ChunkIO or Fluent
-Bit unit is newly marked `Safe`.
+The lifecycle checker is now behind an importer-composition gate. The gate
+checks the pinned Fluent Bit revision, requires complete imported control flow,
+requires the exact summary for every emitted lifecycle operation, and then
+invokes the lifecycle checker. The unrestricted-C importer does not yet derive
+all of those operations from the pinned source automatically. Accordingly, the
+audit table above is unchanged and no raw ChunkIO or Fluent Bit unit is newly
+marked `Safe`.
 
 ## Next resource-model gates
 
-The remaining stages should be implemented and validated in this order. The
-first two foundation items are implemented for direct recognized calls and
-null-test edges; explicit control-flow import and generic aggregate
-store/removal are also implemented. Audited library summaries remain the next
-certification gate.
+The checker-side custody and composition boundaries are implemented. Remaining
+work is source extraction and real evidence, in this order:
 
 1. extend owned, borrowed, consumed, released, and out-parameter contracts from
-   direct calls to audited library summaries;
-2. extend nullable acquisition and preserve-on-failure `realloc` refinement to
-   the audited wrapper patterns;
-3. extend implemented aggregate store/removal and destructor cascading to
-   audited typed-queue, intrusive-list, refcount, and arena summaries;
-4. model thread/callback transfer and atomic publication before evaluating
-   librdkafka concurrency;
-5. compose the implemented chunk-specific state model with imported wrapper
-   control flow and audited ChunkIO summaries;
-6. add CFL arena parent/child lifetime discharge; and
-7. rerun the same pinned local audit before expanding beyond the central
+   direct calls to source-derived library summary operations;
+2. map audited typed-queue, intrusive-list, refcount, arena, thread handoff,
+   atomic publication, and reclamation patterns into the custody checker;
+3. derive the implemented ChunkIO operation trace from every selected wrapper
+   path and retain `Unknown` for an incomplete path;
+4. add CFL arena parent/child source mappings; and
+5. rerun the same pinned local audit before expanding beyond the central
    Fluent Bit chunk wrapper.
 
-For the Monkey event slice, the remaining gates are to import the wrapper's
-event/map custody into the implemented descriptor operations, refine nullable
-Libevent acquisitions and failed registration paths, summarize `cb_event`,
-`cb_timeout`, and `cb_wait_2_timeout`, and bind runtime backend evidence to the
-Cycle 18 build profile before claiming event-model coverage.
+For the Monkey event slice, the remaining evidence is a source-derived wrapper
+operation trace satisfying the exact callback/failure/custody profile and a
+deployed observation binding its dispatcher and selected backend to the Cycle
+18 profile. The checker rejects either omission.
 
 Only functions whose resource obligations are fully discharged may contribute
 to memory-safety coverage. `Unknown` and provisional `Unsafe` functions remain

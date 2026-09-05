@@ -1,6 +1,7 @@
 import QCore.ChunkLifecycle
 import QCore.MonkeyEvent
 import QCore.ControlFlow
+import QCore.ExternalIntegration
 
 #print axioms QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old
 #print axioms QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old
@@ -23,3 +24,14 @@ import QCore.ControlFlow
 #print axioms QCore.ControlFlow.accepted_import_preserves_declared_control_edges
 #print axioms QCore.ControlFlow.accepted_import_has_no_unresolved_jump
 #print axioms QCore.ControlFlow.accepted_import_edges_reference_known_nodes
+#print axioms QCore.ExternalIntegration.accepted_library_custody_balances_holders_and_containers
+#print axioms QCore.ExternalIntegration.accepted_publication_and_reclamation_have_evidence
+#print axioms QCore.ExternalIntegration.accepted_library_custody_has_no_live_obligation
+#print axioms QCore.ExternalIntegration.accepted_library_summary_profile_is_pinned_and_scoped
+#print axioms QCore.ExternalIntegration.accepted_chunk_import_is_pinned_and_complete
+#print axioms QCore.ExternalIntegration.accepted_chunk_import_composes_lifecycle_safety
+#print axioms QCore.ExternalIntegration.accepted_monkey_callbacks_cover_failure_and_map_paths
+#print axioms QCore.ExternalIntegration.accepted_monkey_observation_binds_backend_dispatcher_and_trace
+#print axioms QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown
+#print axioms QCore.ExternalIntegration.accepted_monkey_event_build_matches_profile
+#print axioms QCore.ExternalIntegration.accepted_monkey_source_is_pinned
