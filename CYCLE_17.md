@@ -104,3 +104,6 @@ direct engineering, but its translation theorem depends on the weak-memory
 model. The single Cycle 17 label is therefore suitable as a program-level
 roadmap task; its workstreams should be delivered and reviewed independently,
 and the cycle must remain incomplete until the aggregate gate passes.
+
+Cycle 18 is the next roadmap milestone. Its event-driven verification model
+depends on Cycle 17's native concurrent backend and C11 weak-memory relation.

@@ -3818,6 +3818,74 @@ Every stage requires implementation tests and a successful `lake build` of its p
 
 Later extensions have separate gates for dynamic task collections, condition variables, ownership-carrying queues, dynamic mutex ownership invariants, atomics/publication, and reclamation. Do not expand the accepted subset merely because a grammar token exists.
 
+### 53.1 Cycle 18: Libevent event-driven verification
+
+Cycle 18 is a planned verification profile built on the Cycle 17 native
+concurrent backend and C11 weak-memory relation. Its complete implementation
+and proof plan is normative roadmap material in `CYCLE_18.md`.
+
+The profile models a Libevent-style reactor rather than equating an event loop
+with sequential execution. An `event_base` has at most one active dispatcher,
+but separate bases, worker threads, immediate callbacks, and cross-thread API
+calls may execute concurrently. Readiness, timeout, signal, and equal-priority
+activation order are nondeterministic. Priority constrains dispatch selection;
+it does not establish happens-before, fairness, or ownership transfer.
+
+The checked event state contains:
+
+```text
+EventBaseState =
+  base identity + dispatcher custody + loop mode + priority queues
+  + registered events + active callbacks + deferred callbacks
+
+EventState =
+  event identity + generation + base identity + trigger set + priority
+  + persistence + lifecycle + callback summary + callback-argument custody
+
+EventLifecycle = initialized | pending | active | running | finalizing | freed
+```
+
+Transitions cover construction/assignment, add/reschedule, readiness or
+timeout activation, explicit activation, callback entry/exit, persistence or
+one-shot removal, blocking deletion, `EV_FINALIZE` nonblocking deletion, loop
+break/exit, explicit finalization, and free. Every transition preserves
+generation validity, base membership, callback-argument lifetime,
+file-descriptor custody, quantitative resource ledgers, and the Cycle 17
+access-permission invariant. Deletion prevents a queued callback from starting;
+only a documented blocking delete result or completed finalizer establishes
+quiescence for a callback already running elsewhere. Freeing an event base must
+account for callback arguments and owned application resources separately from
+Libevent's internal event storage.
+
+Cross-thread operations are accepted only under an initialized and supported
+Libevent threading configuration. Internal base or bufferevent locking
+protects the documented library object state; it does not automatically
+authorize or order arbitrary application payload accesses. Immediate,
+deferred, lock-held, and unlocked bufferevent callbacks have distinct checked
+contracts. Events on multiple bases and callbacks that submit work to a task
+queue use the ordinary Cycle 17 may-happen-in-parallel, mutex, atomic, and
+custody rules.
+
+The acceptance theorem requires lifecycle preservation, callback access
+authorization, same-base dispatch exclusion, conflict ordering across bases
+and workers, cancellation/finalization safety, quiescent teardown, and trace
+refinement between annotated C, the event IR, and a pinned Libevent build.
+Testing must include bounded schedule exploration, priorities, persistent and
+one-shot events, recursive activation, loop break/exit, event deletion and
+free during activation, cross-thread notification, bufferevent callback modes,
+fault injection, sanitizers, and backend-specific differential runs. Unknown
+callbacks, unsupported Libevent APIs or build configurations, and unresolved
+callback-argument aliases must produce `Unknown`, never a safety certificate.
+
+The upstream behavior baseline is the official
+[Libevent API documentation](https://libevent.org/doc/), including the
+[event-loop](https://libevent.org/libevent-book/Ref3_eventloop.html),
+[event lifecycle](https://libevent.org/libevent-book/Ref4_event.html),
+[threading](https://libevent.org/libevent-book/Ref1_libsetup.html), and
+[bufferevent](https://libevent.org/libevent-book/Ref6_bufferevent.html)
+contracts. Cycle 18 must pin an exact upstream release or commit and record the
+enabled backend and thread configuration in every certificate.
+
 ## 54. Stable Diagnostics
 
 Retain base identifiers and add:
@@ -3853,6 +3921,19 @@ Q626  backend/profile/permission-scale incompatibility
 Q627  permission reconstructed from a pointer, literal, or copied view
 Q628  unsupported dynamic protected ownership shape
 Q629  post-start task failure misclassified as creation failure
+Q700  event/base lifecycle transition is invalid or stale
+Q701  event, base, bufferevent, or callback argument used after free
+Q702  callback argument outlives its ownership or borrow contract
+Q703  file-descriptor or close-on-free custody is duplicated
+Q704  cross-thread Libevent operation lacks supported thread initialization
+Q705  callback access conflicts across bases, callers, or worker tasks
+Q706  deletion, finalization, or teardown lacks callback quiescence
+Q707  persistent event or deferred callback leaves an owned obligation
+Q708  priority, readiness, or timing is used as synchronization evidence
+Q709  callback target, Libevent API, backend, or build profile is unknown
+Q710  bufferevent callback mode or lock contract is violated
+Q711  loop exit leaves unaccounted event or callback custody
+Q712  observed Libevent trace does not refine the checked event model
 ```
 
 Diagnostics SHOULD show both relevant threads/sites, the overlapping footprint, permission amounts, current custody, missing synchronization or loan-return edge, and whether the issue is a proved violation, potential violation, or unknown analysis state.

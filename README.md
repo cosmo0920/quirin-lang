@@ -39,8 +39,9 @@ combined closure certificate with preservation, progress, cross-ledger resource
 safety, concurrent race freedom, and supported-C11 observation agreement.
 The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](CYCLE_16.md). The promoted research milestone and its
-acceptance gates are in [`CYCLE_17.md`](CYCLE_17.md). Earlier completed cycle
-records are archived under [`docs/cycles/`](docs/cycles/).
+acceptance gates are in [`CYCLE_17.md`](CYCLE_17.md). The subsequent Libevent
+event-driven verification plan is in [`CYCLE_18.md`](CYCLE_18.md). Earlier
+completed cycle records are archived under [`docs/cycles/`](docs/cycles/).
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the

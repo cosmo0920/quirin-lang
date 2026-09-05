@@ -87,6 +87,21 @@ validation, corresponding Lean definitions and theorems, and an end-to-end
 composition result; a bounded prototype or an `Unknown` fallback does not by
 itself close the promoted item.
 
+## Cycle 18: Libevent event-driven concurrency verification
+
+**Status: planned.** See [`../CYCLE_18.md`](../CYCLE_18.md).
+
+Define and verify a Libevent-style reactor profile on top of the Cycle 17
+native concurrency and C11 memory model. Model event bases, event generations,
+pending and active queues, callback custody, priorities, persistent events,
+cancellation/finalization, cross-thread notification, and the supported
+bufferevent locking modes. Add an annotated legacy-C importer and a pinned
+Libevent adapter, then prove lifecycle safety, callback authorization,
+same-base dispatch exclusion, cross-base race freedom, quiescent teardown, and
+source/model/runtime trace refinement. Backend-specific tests must cover the
+available select, poll, epoll, kqueue, and Windows IOCP profiles without
+treating priority, readiness, or wall-clock timing as synchronization evidence.
+
 Later cycles may be split into consecutive numbers if their executable and
 proof scope is too large, but none may be skipped without updating this
 dependency order and its acceptance criteria.
