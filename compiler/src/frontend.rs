@@ -22,6 +22,7 @@ pub struct Located<T> {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DeclarationKind {
     ConcurrencyProfile,
+    VerifierScope,
     Dimension,
     Axis,
     TypeAlias,
@@ -38,7 +39,25 @@ pub struct SourceDeclaration {
     pub name: String,
     pub parameters: Vec<SourceParameter>,
     pub body: Option<SourceBlock>,
+    pub verifier_scope: Option<VerifierScopeDeclaration>,
     pub tokens: Vec<TokenKind>,
+}
+
+/// A source-level selection of verifier providers. The scope is declarative:
+/// it grants no authority and is resolved against the registry before a
+/// provider is invoked.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VerifierScopeDeclaration {
+    pub providers: Vec<VerifierProviderUse>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VerifierProviderUse {
+    pub span: Span,
+    pub plugin_id: String,
+    pub version: Option<String>,
+    pub profile: String,
+    pub capabilities: BTreeSet<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -163,6 +182,16 @@ impl SourceProgram {
 
     pub fn lexical_tokens(&self) -> &[Token] {
         &self.lexical_tokens
+    }
+
+    pub fn verifier_scopes(&self) -> impl Iterator<Item = (&str, &VerifierScopeDeclaration)> {
+        self.declarations.iter().filter_map(|declaration| {
+            declaration
+                .value
+                .verifier_scope
+                .as_ref()
+                .map(|scope| (declaration.value.name.as_str(), scope))
+        })
     }
 
     /// Round trips compare lexical structure rather than byte offsets.  This
@@ -296,6 +325,8 @@ impl<'a> SourceParser<'a> {
     ) -> Result<(Located<SourceDeclaration>, usize), SourceParseError> {
         let (kind, name_index) = if self.words(start, &["concurrency", "checked"]) {
             (DeclarationKind::ConcurrencyProfile, None)
+        } else if self.words(start, &["verify", "scope"]) {
+            (DeclarationKind::VerifierScope, Some(start + 2))
         } else if self.word(start, "dimension") {
             (DeclarationKind::Dimension, Some(start + 1))
         } else if self.words(start, &["quant", "axis"]) {
@@ -321,7 +352,9 @@ impl<'a> SourceParser<'a> {
             None => "checked-concurrency-0.2".to_owned(),
         };
         let (end, body_open) = match kind {
-            DeclarationKind::ResourceType | DeclarationKind::ErrorType => {
+            DeclarationKind::ResourceType
+            | DeclarationKind::ErrorType
+            | DeclarationKind::VerifierScope => {
                 let open = self.find_symbol(start, Symbol::LeftBrace)?;
                 (self.close(open)? + 1, None)
             }
@@ -332,6 +365,12 @@ impl<'a> SourceParser<'a> {
             _ => (self.semicolon(start)? + 1, None),
         };
         let body = body_open.map(|open| self.block(open)).transpose()?;
+        let verifier_scope = if kind == DeclarationKind::VerifierScope {
+            let open = self.find_symbol(start, Symbol::LeftBrace)?;
+            Some(self.verifier_scope(open)?)
+        } else {
+            None
+        };
         self.validate_declaration(kind, start, end)?;
         let parameters = if matches!(
             kind,
@@ -350,6 +389,7 @@ impl<'a> SourceParser<'a> {
                     name,
                     parameters,
                     body,
+                    verifier_scope,
                     tokens: self.tokens[start..end]
                         .iter()
                         .map(|token| token.kind.clone())
@@ -358,6 +398,116 @@ impl<'a> SourceParser<'a> {
             },
             end,
         ))
+    }
+
+    fn verifier_scope(&self, open: usize) -> Result<VerifierScopeDeclaration, SourceParseError> {
+        let close = self.close(open)?;
+        let mut cursor = open + 1;
+        let mut providers = Vec::new();
+        let mut seen = BTreeSet::new();
+        while cursor < close {
+            let entry_start = cursor;
+            if !self.word(cursor, "plugin") {
+                return Err(self.error(cursor, "verifier scope expects a `plugin` entry"));
+            }
+            cursor += 1;
+            let mut components = Vec::new();
+            components.push(self.identifier(cursor)?.to_owned());
+            cursor += 1;
+            while self.symbol(cursor, Symbol::Dot) {
+                cursor += 1;
+                components.push(self.identifier(cursor)?.to_owned());
+                cursor += 1;
+            }
+            let plugin_id = components.join(".");
+            if components.len() < 2
+                || components.iter().any(|component| {
+                    component.is_empty()
+                        || !component
+                            .chars()
+                            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
+                })
+            {
+                return Err(self.error(entry_start, "plugin ID must be a lowercase dotted name"));
+            }
+            let version = if self.word(cursor, "version") {
+                cursor += 1;
+                let value = match self.tokens.get(cursor).map(|token| &token.kind) {
+                    Some(TokenKind::StringLiteral(value)) | Some(TokenKind::Word(value)) => {
+                        value.clone()
+                    }
+                    _ => {
+                        return Err(self.error(
+                            cursor,
+                            "plugin version must be an identifier or string literal",
+                        ));
+                    }
+                };
+                cursor += 1;
+                Some(value)
+            } else {
+                None
+            };
+            if !self.word(cursor, "profile") {
+                return Err(self.error(cursor, "plugin entry requires `profile`"));
+            }
+            cursor += 1;
+            let profile = match self.tokens.get(cursor).map(|token| &token.kind) {
+                Some(TokenKind::StringLiteral(value)) | Some(TokenKind::Word(value)) => {
+                    value.clone()
+                }
+                _ => return Err(self.error(cursor, "plugin profile must be a name or string")),
+            };
+            cursor += 1;
+            if !self.word(cursor, "capabilities") {
+                return Err(self.error(cursor, "plugin entry requires `capabilities`"));
+            }
+            cursor += 1;
+            if !self.symbol(cursor, Symbol::LeftBrace) {
+                return Err(self.error(cursor, "plugin capabilities require a set"));
+            }
+            let capabilities_close = self.close(cursor)?;
+            let mut capability_cursor = cursor + 1;
+            let mut capabilities = BTreeSet::new();
+            while capability_cursor < capabilities_close {
+                let capability = self.identifier(capability_cursor)?.to_owned();
+                if !capabilities.insert(capability) {
+                    return Err(self.error(capability_cursor, "duplicate plugin capability"));
+                }
+                capability_cursor += 1;
+                if capability_cursor < capabilities_close {
+                    if !self.symbol(capability_cursor, Symbol::Comma) {
+                        return Err(self.error(
+                            capability_cursor,
+                            "plugin capabilities must be comma-separated",
+                        ));
+                    }
+                    capability_cursor += 1;
+                }
+            }
+            if capabilities.is_empty() {
+                return Err(self.error(cursor, "plugin capability set cannot be empty"));
+            }
+            cursor = capabilities_close + 1;
+            if !self.symbol(cursor, Symbol::Semicolon) {
+                return Err(self.error(cursor, "plugin entry requires `;`"));
+            }
+            cursor += 1;
+            if !seen.insert((plugin_id.clone(), profile.clone())) {
+                return Err(self.error(entry_start, "duplicate plugin/profile entry"));
+            }
+            providers.push(VerifierProviderUse {
+                span: self.range_span(entry_start, cursor),
+                plugin_id,
+                version,
+                profile,
+                capabilities,
+            });
+        }
+        if providers.is_empty() {
+            return Err(self.error(open, "verifier scope must contain at least one plugin"));
+        }
+        Ok(VerifierScopeDeclaration { providers })
     }
 
     fn function_body(&self, start: usize) -> Result<usize, SourceParseError> {
@@ -494,6 +644,7 @@ impl<'a> SourceParser<'a> {
                     return Err(self.error(start, "expected `concurrency checked;`"));
                 }
             }
+            DeclarationKind::VerifierScope => {}
             DeclarationKind::Dimension => {
                 if end - start != 7
                     || !self.symbol(start + 2, Symbol::Colon)
@@ -910,6 +1061,7 @@ impl<'a> SourceParser<'a> {
             || self.word(index, "extern")
             || self.word(index, "fn")
             || self.word(index, "concurrency")
+            || self.word(index, "verify")
     }
 
     fn is_statement_start(&self, index: usize) -> bool {
@@ -970,6 +1122,7 @@ pub enum SemanticPass {
     CleanupLowering,
     CEmission,
     Concurrency,
+    PluginVerification,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1035,7 +1188,10 @@ pub fn elaborate_source(
     let mut globals = BTreeMap::new();
     let mut next_symbol = 0_u32;
     for declaration in &program.declarations {
-        if declaration.value.kind == DeclarationKind::ConcurrencyProfile {
+        if matches!(
+            declaration.value.kind,
+            DeclarationKind::ConcurrencyProfile | DeclarationKind::VerifierScope
+        ) {
             continue;
         }
         if globals.contains_key(&declaration.value.name) {
@@ -1053,7 +1209,10 @@ pub fn elaborate_source(
 
     let mut declarations = Vec::new();
     for declaration in &program.declarations {
-        if declaration.value.kind == DeclarationKind::ConcurrencyProfile {
+        if matches!(
+            declaration.value.kind,
+            DeclarationKind::ConcurrencyProfile | DeclarationKind::VerifierScope
+        ) {
             continue;
         }
         let symbol = globals[&declaration.value.name];
@@ -1354,6 +1513,7 @@ pub fn source_diagnostic(
         SemanticPass::CleanupLowering => "Q202",
         SemanticPass::CEmission => "Q500",
         SemanticPass::Concurrency => "Q600",
+        SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {
         code,

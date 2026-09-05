@@ -1,0 +1,8 @@
+import QCore.VerifierPlugin
+
+#print axioms QCore.VerifierPlugin.checked_safe_has_valid_evidence
+#print axioms QCore.VerifierPlugin.safe_without_evidence_is_unknown
+#print axioms QCore.VerifierPlugin.invalid_envelope_is_unknown
+#print axioms QCore.VerifierPlugin.invalid_evidence_is_unknown
+#print axioms QCore.VerifierPlugin.missing_plugin_composition_is_unknown
+#print axioms QCore.VerifierPlugin.unknown_plugin_prevents_safe

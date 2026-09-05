@@ -20,5 +20,6 @@ import QCore.WholeProgram
 import QCore.Compiler
 import QCore.Concurrency
 import QCore.TranslationValidation
+import QCore.VerifierPlugin
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -16,6 +16,8 @@
 //! bufferevent lifecycles, callback authority, and observed-trace refinement.
 //! Cycle 19 begins the pinned Fluent Bit integration with rich external-call
 //! resource contracts and path-sensitive nullable/reallocation custody.
+//! Cycle 20 adds a versioned, fail-closed verifier-provider registry and makes
+//! first-party library verification use the same certificate firewall.
 
 pub mod advanced_control;
 pub mod ast;
@@ -43,6 +45,7 @@ pub mod resource_flow;
 pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
+pub mod verifier_plugin;
 pub mod weak_memory;
 pub mod whole_program;
 
@@ -74,7 +77,7 @@ pub use concurrency::{
 };
 pub use driver::{
     CompileOptions, CompiledModule, EmittedSourceMap, FileDiagnostic, SourceFile, SourceLocation,
-    compile_files, format_diagnostic,
+    compile_files, compile_files_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
@@ -103,8 +106,8 @@ pub use frontend::{
     SourceDeclaration, SourceDiagnostic, SourceParameter, SourceParseError,
     SourceProgram as CompleteSourceProgram, SourceTypeKind, StatementKind as SourceStatementKind,
     SymbolId as SourceSymbolId, TypedBinding, TypedSourceDeclaration, TypedSourceProgram,
-    TypedStatement, covered_semantic_passes, elaborate_source, parse_source_program,
-    source_diagnostic,
+    TypedStatement, VerifierProviderUse, VerifierScopeDeclaration, covered_semantic_passes,
+    elaborate_source, parse_source_program, source_diagnostic,
 };
 pub use index::{IndexError, IndexExpression, IndexTerm};
 pub use inference::{
@@ -157,6 +160,17 @@ pub use typed_errors::{
 pub use usage::{
     DemandContext, DemandError, Usage, UsageArithmeticError, UsageCheckError, UsageExpr,
     UsageUpper, UsageViolation, check_usage,
+};
+pub use verifier_plugin::{
+    BuiltInProvider, CompositeCertificate, CoreCertificate, EvidenceClaim, FactPredicate,
+    ManifestError, NormalizedFact, PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION,
+    PackageLoadError, PluginDiagnostic, PluginEntrypoint, PluginId, PluginLimits, PluginManifest,
+    PluginTrustClass, ProcessProvider, ProposedEvidence, ProposedVerdict, ProviderFailure,
+    RegistryError, Reproducibility, ResolvedVerifierScope, ResolvedVerifierUse,
+    ScopeResolutionError, SupportedTarget, TargetProfile, UnitIdentity, VerificationOutcome,
+    VerificationRequest, VerificationResponse, VerifierCapability, VerifierProvider,
+    VerifierRegistry, compose_certificates, compose_verification, decode_protocol_frame,
+    encode_protocol_frame, first_party_manifests, first_party_registry,
 };
 pub use weak_memory::{
     C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,

@@ -1,6 +1,6 @@
 # Cycle 20: Verifier Plugin Ecosystem
 
-**Status: Planned — begins after Cycle 19 evidence closure**
+**Status: Active — 20A, the generic 20B firewall, and the initial 20E model are implemented**
 
 Cycle 20 extracts library- and framework-specific verification from the core
 compiler into a versioned verifier-plugin ecosystem. The initial providers are
@@ -133,3 +133,51 @@ Cycle 20 is complete only when:
   axioms; and
 - Rust tests, formatting, Clippy, Lean builds, protocol conformance tests, and
   reproducible provider-package audits all pass.
+
+## Implementation record
+
+The first Cycle 20 implementation adds `compiler/src/verifier_plugin.rs` with:
+
+- canonical serde-backed protocol v1 and evidence v1 structures framed as a
+  four-byte big-endian length followed by JSON;
+- strict manifests, target/capability declarations, deterministic registry
+  ordering, deterministic `verifier-plugin.json` package discovery,
+  enable/disable policy, and a bounded process provider with cleared
+  environment, timeout, and output limits;
+- fail-closed handling for absence, disablement, version mismatch, process
+  failure, malformed envelopes, and rejected evidence;
+- a core certificate firewall that independently matches source/build
+  identity, full fact coverage, claims, assumptions, provider version, package
+  digest, and deterministic replay metadata;
+- conflict-aware multi-provider composition; and
+- separate first-party built-in adapters for `qcore.libevent`,
+  `qcore.chunkio`, `qcore.cmetrics`, `qcore.ctraces`, and
+  `qcore.librdkafka`. Built-ins traverse the same request, proposal, and core
+  checking path and are not allowed to construct `CoreCertificate` values.
+
+The revision 0.2 surface now accepts declarations such as:
+
+```qcore
+verify scope fluent_bit {
+  plugin qcore.libevent version "0.1" profile linux_epoll
+    capabilities { event_traces, resource_contracts };
+  plugin qcore.chunkio profile default capabilities { chunk_lifecycle };
+}
+```
+
+`compile_files_with_registry` supplies the embedding boundary for external
+registries; `compile_files` resolves against the first-party registry. The CLI
+adds `qcorec plugins list` and `qcorec plugins inspect ID`. Cycle 20 tests are
+kept outside source modules in `compiler/tests/cycle20_verifier_plugins.rs`.
+
+`proof/QCore/VerifierPlugin.lean` models provider evidence as an untrusted
+proposal and proves that checked safety has valid evidence, missing or invalid
+evidence stays unknown, invalid envelopes stay unknown, and a missing/unknown
+composition member prevents safety. `proof/AuditCycle20.lean` prints the axiom
+surface.
+
+The remaining acceptance work is provider-specific extraction/parity against
+the Cycle 19 audits, reproducible standalone packages and full CLI lifecycle
+tooling, OS-enforced memory/network isolation, and replacement of the old
+monolithic audit routing. Those gates remain open rather than being weakened
+by the generic plugin foundation.

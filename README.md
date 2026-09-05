@@ -62,8 +62,13 @@ The active Fluent Bit resource/event milestone is in
 [`CYCLE_19.md`](docs/cycles/CYCLE_19.md). All
 cycle records are archived under [`docs/cycles/`](docs/cycles/), including the
 [Cycle 19 Fluent Bit library and chunk audit](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md).
-The subsequent extraction into versioned verifier providers is planned in
-[`CYCLE_20.md`](docs/cycles/CYCLE_20.md).
+The subsequent extraction into versioned verifier providers is tracked in
+[`CYCLE_20.md`](docs/cycles/CYCLE_20.md). Cycle 20 is now active; its foundation includes versioned
+length-delimited JSON verifier requests, fail-closed registry dispatch,
+process-provider timeout/output isolation, an independently checked
+certificate firewall, first-party in-process migration adapters, and
+source-level `verify scope` declarations. Provider-specific Cycle 19 parity
+and standalone package hardening remain tracked in the Cycle 20 record.
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the

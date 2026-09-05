@@ -405,6 +405,7 @@ The grammar below is strict BNF. `ε` denotes the empty production. The scanner 
                 | <extern-function-declaration>
                 | <function-declaration>
                 | <concurrency-profile-declaration>
+                | <verifier-scope-declaration>
 
 <dimension-declaration> ::= "dimension" <identifier> ":" "Idx" "+" "Ordered" ";"
 
@@ -421,7 +422,36 @@ The grammar below is strict BNF. `ε` denotes the empty production. The scanner 
 <type-declaration> ::= "type" <identifier> <optional-type-parameters> "=" <type> ";"
 
 <constant-declaration> ::= "const" <identifier> ":" <type> "=" <expression> ";"
+
+<verifier-scope-declaration> ::= "verify" "scope" <identifier> "{"
+                                   <verifier-provider-list> "}"
+
+<verifier-provider-list> ::= <verifier-provider>
+                           | <verifier-provider> <verifier-provider-list>
+
+<verifier-provider> ::= "plugin" <plugin-id> <optional-plugin-version>
+                        "profile" <plugin-value>
+                        "capabilities" "{" <capability-list> "}" ";"
+
+<plugin-id> ::= <identifier> "." <identifier>
+              | <identifier> "." <plugin-id>
+
+<optional-plugin-version> ::= ε
+                            | "version" <plugin-value>
+
+<plugin-value> ::= <identifier>
+                 | <STRING-TOKEN>
+
+<capability-list> ::= <identifier>
+                    | <identifier> "," <capability-list>
 ```
+
+A verifier scope is configuration, not a value-level declaration and not a
+grant of trust. Plugin IDs are lowercase dotted names. The compiler resolves
+every selected version, profile, and capability against its active registry
+before semantic checking; an absent, disabled, incompatible, or undeclared
+selection is diagnostic `Q700`. Providers still cannot produce a language
+safety certificate directly: the core rechecks their normalized evidence.
 
 ### 5.2 Type and index parameters
 

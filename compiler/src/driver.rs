@@ -22,7 +22,7 @@ use crate::whole_program::{
     CallSite, CheckedProgram, FunctionSemantics, FunctionSummary, ParameterOwnership,
     check_whole_program,
 };
-use crate::{ExecutionObservation, emit_c11};
+use crate::{ExecutionObservation, VerifierRegistry, emit_c11, first_party_registry};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceFile {
@@ -101,6 +101,18 @@ pub fn compile_files(
     files: &[SourceFile],
     options: &CompileOptions,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    let registry = first_party_registry();
+    compile_files_with_registry(files, options, &registry)
+}
+
+/// Compiles with an explicit verifier registry. Source-level `verify scope`
+/// declarations are resolved before semantic checking, so callers can add
+/// process-isolated providers without changing the compiler core.
+pub fn compile_files_with_registry(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if files.is_empty() {
         return Err(vec![plain_diagnostic(
             "Q400",
@@ -116,6 +128,25 @@ pub fn compile_files(
             error.message,
             &ranges,
         )]
+    })?;
+    registry.resolve_source_scopes(&parsed).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = parsed
+                    .declarations
+                    .iter()
+                    .find(|declaration| declaration.value.name == error.scope)
+                    .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+                map_raw_diagnostic(
+                    "Q700",
+                    SemanticPass::PluginVerification,
+                    span,
+                    error.to_string(),
+                    &ranges,
+                )
+            })
+            .collect::<Vec<_>>()
     })?;
     let typed = elaborate_source(&parsed).map_err(|diagnostics| {
         diagnostics
