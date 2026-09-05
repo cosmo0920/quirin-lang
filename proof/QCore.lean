@@ -8,6 +8,7 @@ import QCore.EventDriven
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
+import QCore.ChunkSource
 import QCore.ControlFlow
 import QCore.ExecutableModel
 import QCore.Flow

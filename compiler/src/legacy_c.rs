@@ -255,7 +255,7 @@ pub enum CCompilerDialect {
 }
 
 impl CCompilerDialect {
-    fn clang_argument(self) -> &'static str {
+    pub(crate) fn clang_argument(self) -> &'static str {
         match self {
             Self::C11 => "-std=c11",
             Self::Gnu99 => "-std=gnu99",

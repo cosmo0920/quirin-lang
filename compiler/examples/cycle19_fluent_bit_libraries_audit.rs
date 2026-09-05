@@ -3,6 +3,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
+use qcore_compiler::chunk_contract::check_chunk_source_contract;
+use qcore_compiler::chunk_source::{ChunkSourceResult, import_chunk_source};
 use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
     AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
@@ -377,6 +379,9 @@ fn audit_library(
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
+        if library == "fluent-bit-chunk" || (library == "chunkio" && file == "cio_chunk.c") {
+            audit_chunk_source(&unit, library, &file)?;
+        }
         counts.units += 1;
         if source_functions.is_empty() {
             counts.data_only_units += 1;
@@ -429,6 +434,59 @@ fn audit_library(
         }
     }
     Ok(counts)
+}
+
+fn audit_chunk_source(
+    unit: &C11TranslationUnit<'_>,
+    library: &str,
+    file: &str,
+) -> Result<(), String> {
+    let contract_source = match library {
+        "fluent-bit-chunk" => include_str!("../../contract/qcore/fluent_bit/busy_state.qcore"),
+        "chunkio" => include_str!("../../contract/qcore/chunkio/lock_state.qcore"),
+        _ => return Err("missing native QCore chunk contract file".into()),
+    };
+    let results = import_chunk_source(unit, PINNED_FLUENT_BIT_COMMIT)?;
+    let mut summaries = 0;
+    let mut checked_contracts = 0;
+    for result in &results {
+        match result {
+            ChunkSourceResult::Summary(summary) => {
+                summaries += 1;
+                println!(
+                    "  chunk-source {library}/{file}/{}: field-summary {:?}; {:?}",
+                    summary.function(),
+                    summary.field(),
+                    summary.paths()
+                );
+                match check_chunk_source_contract(summary, contract_source) {
+                    Ok(certificate) => {
+                        checked_contracts += 1;
+                        println!(
+                            "  qcore-contract {}: Checked ({} Boolean pre-states; live/exclusive/domain preconditions assumed)",
+                            certificate.function(),
+                            certificate.checked_states()
+                        );
+                    }
+                    Err(reason) => {
+                        return Err(format!(
+                            "native QCore contract check failed for {}: {reason}",
+                            summary.function()
+                        ));
+                    }
+                }
+            }
+            ChunkSourceResult::Unknown { function, reason } => {
+                println!("  chunk-source {library}/{file}/{function}: Unknown: {reason}")
+            }
+        }
+    }
+    println!(
+        "chunk-source {library}/{file}: {} function(s), {summaries} field summary(s), {checked_contracts} QCore contract(s) checked, {} Unknown; no whole-unit lifecycle certificate",
+        results.len(),
+        results.len() - summaries
+    );
+    Ok(())
 }
 
 fn monkey_source_root(entries: &[CompileEntry]) -> Result<PathBuf, String> {

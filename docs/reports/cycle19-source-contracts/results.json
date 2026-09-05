@@ -1,0 +1,34 @@
+{
+  "recorded_at_utc": "2026-09-05T14:57:38.864752+00:00",
+  "qcore_base_revision": "74fa6fd47f2728d7473da9dc9babdc8c0ccd282c",
+  "qcore_changes": "uncommitted implementation in this worktree",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "fluent_bit_status": "",
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+  "inputs_sha256": {
+    "/home/cosmo/Documents/GitHub/fluent-bit/build/compile_commands.json": "686769c1b40a60417bdc25eaeffa41a3d82b275d9e52ab3f337ab103d62a313c",
+    "/tmp/qcore-cycle19-monkey-build-codex-20260905/compile_commands.json": "307362b01b6fa9d279cbec9ba1cf8e9cdb86a4cabcbc7929d250494ce5a8874d",
+    "/home/cosmo/Documents/GitHub/qcore-c/contract/qcore/fluent_bit/busy_state.qcore": "adee02e5f0588f01e037903b8a4bc6d030ec34f0684c9614a28ee269076de511",
+    "/home/cosmo/Documents/GitHub/qcore-c/contract/qcore/chunkio/lock_state.qcore": "f859865bc271f813d875743ce7bf331b2d59d68b555a4625d48595aebcc85d89"
+  },
+  "audit_exit_code": 0,
+  "checked_native_contracts": [
+    "flb_input_chunk_release_lock",
+    "cio_chunk_is_locked"
+  ],
+  "checked_boolean_prestates_per_contract": 4,
+  "chunk_source_functions": 96,
+  "chunk_source_unknown_functions": 94,
+  "generic_projection": {
+    "units": 185,
+    "source_functions": 4775,
+    "projected_functions": 4346,
+    "safe": 2,
+    "unsafe_provisional": 54,
+    "unknown": 125,
+    "data_only": 4,
+    "gateway_failures": 0
+  },
+  "workspace_tests_passed": 266,
+  "full_cycle19_complete": false
+}

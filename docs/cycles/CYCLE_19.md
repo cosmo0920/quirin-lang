@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — source-derived summary profiles implemented; per-path imports and deployed Monkey observation pending**
+**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports and deployed Monkey observation pending**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -252,3 +252,42 @@ silently losing its structural coverage. Arbitrary contract predicates remain
 syntax-preserved rather than certificate-producing until their semantic
 checker is connected; compiling the corpus does not promote an external unit
 to `Safe`.
+
+## First native-contract source binding
+
+`chunk_source` now imports a bounded class of single-chunk field functions from
+Clang's typed AST. It checks the actual parameter and field types, rejects
+bitfields and volatile/atomic fields, retains ordered assignments and branch
+decisions, and evaluates both Boolean entry values. Every statement must be
+modeled, including statements on unexecuted paths. Calls, aliases, loops,
+unsupported expressions, and missing returns remain `Unknown`.
+
+The contract definitions are native QCore files:
+`contract/qcore/fluent_bit/busy_state.qcore` and
+`contract/qcore/chunkio/lock_state.qcore`. `chunk_contract` interprets their
+bounded predicate vocabulary and checks all postconditions against the C-derived
+paths, including the other field's frame condition. Changing a QCore
+postcondition changes the semantic verdict. Rust contains the importer and
+predicate semantics, not duplicate per-function postcondition tables.
+
+The pinned-source run checks `flb_input_chunk_release_lock` and
+`cio_chunk_is_locked` over four Boolean ghost pre-states each. Release-lock's
+error path returns -1 without changing busy; its success path clears busy and
+returns 0. Neither path unlocks the underlying ChunkIO chunk. Querying the
+ChunkIO lock preserves both fields. These claims assume a live borrowed chunk,
+exclusive access, Boolean field values, and correct caller identity binding.
+
+The audit now reports every discovered function in the two selected files:
+the wrapper has 1 checked native contract and 65 `Unknown` functions;
+`cio_chunk.c` has 1 checked native contract and 29 `Unknown` functions. A
+function summary can instantiate operations at a concrete live chunk identity
+and compose with the existing teardown checker. A checked execution prefix is
+kept distinct from a terminal lifecycle certificate. Neither file is promoted
+to a whole-unit `Safe` verdict.
+
+`QCore.ChunkSource` adds executable field semantics and proves that an accepted
+summary covers every Boolean entry state, accepted predicates hold on those
+paths, and busy effects preserve the lock and other identities. Clang and the
+AST-to-IR bridge remain explicit trusted boundaries; this is not a proof of
+arbitrary C or arbitrary QCore predicates. Full results and the remaining gates
+are recorded in `../reports/cycle19-source-contracts/README.md`.

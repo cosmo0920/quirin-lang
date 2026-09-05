@@ -2,6 +2,7 @@ import QCore.ChunkLifecycle
 import QCore.MonkeyEvent
 import QCore.ControlFlow
 import QCore.ExternalIntegration
+import QCore.ChunkSource
 
 #print axioms QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old
 #print axioms QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old
@@ -36,3 +37,9 @@ import QCore.ExternalIntegration
 #print axioms QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown
 #print axioms QCore.ExternalIntegration.accepted_monkey_event_build_matches_profile
 #print axioms QCore.ExternalIntegration.accepted_monkey_source_is_pinned
+#print axioms QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate
+#print axioms QCore.ChunkSource.accepted_contract_holds_on_every_source_path
+#print axioms QCore.ChunkSource.busy_effect_preserves_chunkio_lock
+#print axioms QCore.ChunkSource.bound_effect_preserves_other_identities
+#print axioms QCore.ChunkSource.release_busy_error_path_preserves_state
+#print axioms QCore.ChunkSource.release_busy_success_path_clears_busy

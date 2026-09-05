@@ -278,9 +278,32 @@ pub struct ChunkCertificate {
 pub fn check_chunk_program(
     program: &ChunkProgram,
 ) -> Result<ChunkCertificate, Vec<ChunkDiagnostic>> {
+    let execution = execute_chunk_prefix(&program.operations)?;
+    let diagnostics = terminal_diagnostics(&execution.final_state);
+    if diagnostics.is_empty() {
+        Ok(ChunkCertificate {
+            final_state: execution.final_state,
+            trace: execution.trace,
+        })
+    } else {
+        Err(diagnostics)
+    }
+}
+
+/// A checked execution prefix may still own resources. It is deliberately
+/// distinct from a teardown certificate.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChunkExecution {
+    pub final_state: ChunkState,
+    pub trace: Vec<ChunkTraceEvent>,
+}
+
+pub fn execute_chunk_prefix(
+    operations: &[ChunkOperation],
+) -> Result<ChunkExecution, Vec<ChunkDiagnostic>> {
     let mut state = ChunkState::default();
     let mut trace = Vec::new();
-    for operation in &program.operations {
+    for operation in operations {
         let mut next = state.clone();
         let mut next_trace = trace.clone();
         if let Err(diagnostic) = apply(operation, &mut next, &mut next_trace) {
@@ -289,15 +312,10 @@ pub fn check_chunk_program(
         state = next;
         trace = next_trace;
     }
-    let diagnostics = terminal_diagnostics(&state);
-    if diagnostics.is_empty() {
-        Ok(ChunkCertificate {
-            final_state: state,
-            trace,
-        })
-    } else {
-        Err(diagnostics)
-    }
+    Ok(ChunkExecution {
+        final_state: state,
+        trace,
+    })
 }
 
 fn apply(
