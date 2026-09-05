@@ -9,11 +9,15 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
+#[cfg(unix)]
 use std::io::{Read, Write};
 use std::path::{Component, Path};
+#[cfg(unix)]
 use std::process::{Command, Stdio};
-use std::sync::{Arc, mpsc};
+use std::sync::Arc;
+#[cfg(unix)]
 use std::thread;
+#[cfg(unix)]
 use std::time::{Duration, Instant};
 
 use serde::{Deserialize, Serialize};
@@ -123,6 +127,8 @@ pub enum PluginEntrypoint {
 pub struct PluginLimits {
     pub timeout_ms: u64,
     pub memory_bytes: u64,
+    /// Maximum JSON payload bytes for both requests and responses; the
+    /// four-byte frame header is additional. Stderr has a separate 64 KiB cap.
     pub output_bytes: usize,
 }
 
@@ -655,72 +661,192 @@ impl VerifierProvider for ProcessProvider {
         &self,
         request: &VerificationRequest,
     ) -> Result<VerificationResponse, ProviderFailure> {
+        // Invalid requests must never launch a process.
+        let frame = encode_protocol_frame(request, self.manifest.limits.output_bytes)?;
+        #[cfg(unix)]
+        {
+            self.verify_process(frame)
+        }
+        #[cfg(not(unix))]
+        {
+            let _ = frame;
+            Err(ProviderFailure::Protocol(
+                "bounded process providers require Unix process groups".into(),
+            ))
+        }
+    }
+}
+
+#[cfg(unix)]
+struct ProviderChild(std::process::Child);
+
+#[cfg(unix)]
+impl Drop for ProviderChild {
+    fn drop(&mut self) {
+        // The child starts a fresh process group. Kill descendants on every
+        // exit path, including successful direct-child exits with open pipes.
+        // This contains ordinary inherited descendants, not processes that
+        // deliberately escape the group; providers are not an OS sandbox.
+        unsafe {
+            libc::kill(-(self.0.id() as libc::pid_t), libc::SIGKILL);
+        }
+        let _ = self.0.kill();
+        // Reap without blocking the caller past its deadline. Usually the
+        // killed child is ready immediately; otherwise a reaper owns it.
+        if !matches!(self.0.try_wait(), Ok(Some(_))) {
+            let child = &mut self.0;
+            // waitpid owns no Rust pipe handles and only waits for this PID.
+            let pid = child.id() as libc::pid_t;
+            thread::spawn(move || {
+                loop {
+                    let result = unsafe { libc::waitpid(pid, std::ptr::null_mut(), 0) };
+                    if result >= 0
+                        || std::io::Error::last_os_error().kind() != std::io::ErrorKind::Interrupted
+                    {
+                        break;
+                    }
+                }
+            });
+        }
+    }
+}
+
+#[cfg(unix)]
+fn nonblocking(pipe: &impl std::os::fd::AsRawFd) -> Result<(), ProviderFailure> {
+    let fd = pipe.as_raw_fd();
+    // The descriptor remains owned by the live pipe; only its status flags change.
+    let flags = unsafe { libc::fcntl(fd, libc::F_GETFL) };
+    if flags == -1 || unsafe { libc::fcntl(fd, libc::F_SETFL, flags | libc::O_NONBLOCK) } == -1 {
+        return Err(ProviderFailure::Io(
+            std::io::Error::last_os_error().to_string(),
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn read_available(
+    reader: &mut impl Read,
+    output: &mut Vec<u8>,
+    limit: usize,
+) -> Result<bool, ProviderFailure> {
+    // One bounded chunk per iteration keeps a continuously writing provider
+    // from starving deadline checks or the other pipe.
+    let mut chunk = [0; 8192];
+    match reader.read(&mut chunk) {
+        Ok(0) => Ok(true),
+        Ok(count) => {
+            if count > limit.saturating_sub(output.len()) {
+                return Err(ProviderFailure::OutputLimit);
+            }
+            output.extend_from_slice(&chunk[..count]);
+            Ok(false)
+        }
+        Err(error)
+            if matches!(
+                error.kind(),
+                std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
+            ) =>
+        {
+            Ok(false)
+        }
+        Err(error) => Err(ProviderFailure::Io(error.to_string())),
+    }
+}
+
+#[cfg(unix)]
+impl ProcessProvider {
+    fn verify_process(&self, frame: Vec<u8>) -> Result<VerificationResponse, ProviderFailure> {
+        use std::os::unix::process::CommandExt;
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
         };
+        let deadline = Instant::now()
+            .checked_add(Duration::from_millis(self.manifest.limits.timeout_ms))
+            .ok_or_else(|| {
+                ProviderFailure::Protocol("provider timeout exceeds clock range".into())
+            })?;
+        let limit = self.manifest.limits.output_bytes;
+        let wire_limit = limit.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
         let executable = Path::new(&self.package_root).join(path);
-        let mut child = Command::new(&executable)
-            .current_dir(&self.package_root)
-            .env_clear()
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|error| ProviderFailure::Spawn(error.to_string()))?;
-        let frame = encode_protocol_frame(request, self.manifest.limits.output_bytes)?;
-        let mut stdin = child
-            .stdin
-            .take()
-            .ok_or_else(|| ProviderFailure::Io("missing provider stdin".into()))?;
-
-        let stdout = child
+        let mut child = ProviderChild(
+            Command::new(&executable)
+                .current_dir(&self.package_root)
+                .env_clear()
+                .process_group(0)
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .map_err(|error| ProviderFailure::Spawn(error.to_string()))?,
+        );
+        let mut stdin = child.0.stdin.take();
+        let mut stdout = child
+            .0
             .stdout
             .take()
             .ok_or_else(|| ProviderFailure::Io("missing provider stdout".into()))?;
-        let stderr = child
+        let mut stderr = child
+            .0
             .stderr
             .take()
             .ok_or_else(|| ProviderFailure::Io("missing provider stderr".into()))?;
-        let limit = self.manifest.limits.output_bytes;
-        let input_thread = thread::spawn(move || {
+        nonblocking(
             stdin
-                .write_all(&frame)
-                .map_err(|error| ProviderFailure::Io(error.to_string()))
-        });
-        let (sender, receiver) = mpsc::channel();
-        let output_thread = thread::spawn(move || {
-            let _ = sender.send(read_limited(stdout, limit));
-        });
-        let error_thread = thread::spawn(move || read_limited(stderr, 64 * 1024));
-        let deadline = Instant::now() + Duration::from_millis(self.manifest.limits.timeout_ms);
-        let status = loop {
-            match child.try_wait() {
-                Ok(Some(status)) => break status,
-                Ok(None) if Instant::now() < deadline => thread::sleep(Duration::from_millis(2)),
-                Ok(None) => {
-                    let _ = child.kill();
-                    let _ = child.wait();
-                    let _ = input_thread.join();
-                    let _ = output_thread.join();
-                    let _ = error_thread.join();
-                    return Err(ProviderFailure::Timeout);
-                }
-                Err(error) => return Err(ProviderFailure::Io(error.to_string())),
+                .as_ref()
+                .ok_or_else(|| ProviderFailure::Io("missing provider stdin".into()))?,
+        )?;
+        nonblocking(&stdout)?;
+        nonblocking(&stderr)?;
+        let mut sent = 0;
+        let mut output = Vec::new();
+        let mut error_output = Vec::new();
+        let (mut output_done, mut error_done) = (false, false);
+        let mut status = None;
+        loop {
+            if Instant::now() >= deadline {
+                return Err(ProviderFailure::Timeout);
             }
-        };
-        input_thread
-            .join()
-            .map_err(|_| ProviderFailure::Io("provider input worker panicked".into()))??;
-        let output = receiver
-            .recv()
-            .map_err(|error| ProviderFailure::Io(error.to_string()))??;
-        let _ = output_thread.join();
-        let error = error_thread.join().unwrap_or_else(|_| Ok(Vec::new()))?;
-        if !status.success() {
-            let detail = String::from_utf8_lossy(&error);
-            return Err(ProviderFailure::Crashed(status.code()).with_detail(&detail));
+            if let Some(input) = stdin.as_mut() {
+                match input.write(&frame[sent..]) {
+                    Ok(0) => return Err(ProviderFailure::Io("provider stdin closed".into())),
+                    Ok(count) => sent += count,
+                    Err(error)
+                        if matches!(
+                            error.kind(),
+                            std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
+                        ) => {}
+                    Err(error) => return Err(ProviderFailure::Io(error.to_string())),
+                }
+                if sent == frame.len() {
+                    stdin = None;
+                }
+            }
+            if !output_done {
+                output_done = read_available(&mut stdout, &mut output, wire_limit)?;
+            }
+            if !error_done {
+                error_done = read_available(&mut stderr, &mut error_output, 64 * 1024)?;
+            }
+            if status.is_none() {
+                status = child
+                    .0
+                    .try_wait()
+                    .map_err(|error| ProviderFailure::Io(error.to_string()))?;
+            }
+            if let Some(status) = status
+                && output_done
+                && error_done
+                && stdin.is_none()
+            {
+                if !status.success() {
+                    return Err(ProviderFailure::Crashed(status.code())
+                        .with_detail(&String::from_utf8_lossy(&error_output)));
+                }
+                return decode_protocol_frame(&output, limit);
+            }
+            thread::sleep(Duration::from_millis(1));
         }
-        decode_protocol_frame(&output, limit)
     }
 }
 
@@ -738,20 +864,6 @@ impl FailureDetail for ProviderFailure {
     }
 }
 
-fn read_limited(mut reader: impl Read, limit: usize) -> Result<Vec<u8>, ProviderFailure> {
-    let mut output = Vec::new();
-    reader
-        .by_ref()
-        .take(limit as u64 + 1)
-        .read_to_end(&mut output)
-        .map_err(|error| ProviderFailure::Io(error.to_string()))?;
-    if output.len() > limit {
-        Err(ProviderFailure::OutputLimit)
-    } else {
-        Ok(output)
-    }
-}
-
 pub fn encode_protocol_frame<T: Serialize>(
     value: &T,
     max_bytes: usize,
@@ -761,7 +873,11 @@ pub fn encode_protocol_frame<T: Serialize>(
     if payload.len() > max_bytes || payload.len() > u32::MAX as usize {
         return Err(ProviderFailure::OutputLimit);
     }
-    let mut frame = Vec::with_capacity(payload.len() + 4);
+    let capacity = payload
+        .len()
+        .checked_add(4)
+        .ok_or(ProviderFailure::OutputLimit)?;
+    let mut frame = Vec::with_capacity(capacity);
     frame.extend_from_slice(&(payload.len() as u32).to_be_bytes());
     frame.extend_from_slice(&payload);
     Ok(frame)
@@ -778,7 +894,8 @@ pub fn decode_protocol_frame<T: for<'de> Deserialize<'de>>(
     if length > max_bytes {
         return Err(ProviderFailure::OutputLimit);
     }
-    if frame.len() != length + 4 {
+    let wire_length = length.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
+    if frame.len() != wire_length {
         return Err(ProviderFailure::Protocol("invalid frame length".into()));
     }
     serde_json::from_slice(&frame[4..])
@@ -1084,11 +1201,14 @@ impl VerifierRegistry {
                 diagnostics: response.diagnostics,
                 certificate: None,
             },
-            ProposedVerdict::Unsafe => VerificationOutcome {
-                verdict: ProposedVerdict::Unsafe,
-                diagnostics: response.diagnostics,
-                certificate: None,
-            },
+            ProposedVerdict::Unsafe => {
+                let mut outcome = VerificationOutcome::unknown(
+                    "QP010",
+                    "unverified provider allegation: protocol v1 has no counterexample checker",
+                );
+                outcome.diagnostics.extend(response.diagnostics);
+                outcome
+            }
             ProposedVerdict::Safe => {
                 let Some(evidence) = response.evidence else {
                     return VerificationOutcome::unknown("QP008", "safe result has no evidence");

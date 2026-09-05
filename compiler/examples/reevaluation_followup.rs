@@ -98,7 +98,7 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
         "pass": elapsed_ms < 200, "note": "200 ms tolerance; bounded descendant sleeps 400 ms"}),
     );
 
-    // Same response accepted by the public codec, rejected by the process reader.
+    // Payload budgets must agree between the public codec and process reader.
     let req = request();
     let mut reply = response(&req, ProposedVerdict::Unknown);
     reply.diagnostics.push(PluginDiagnostic {
@@ -173,8 +173,8 @@ fn main() {
     );
     let invocations = calls.load(Ordering::SeqCst);
     results.push(serde_json::json!({"id": "VP05_scope_never_invokes_provider", "compilation_succeeded": compiled.is_ok(),
-        "provider_invocations": invocations, "pass": invocations > 0,
-        "detail": format!("{:?}", compiled.as_ref().map(|m| &m.entry))}));
+        "provider_invocations": invocations, "pass": invocations > 0 || compiled.as_ref().is_err_and(|errors| errors.iter().any(|error| error.code == "Q701")),
+        "detail": format!("{:?}", compiled.as_ref().map(|m| &m.entry)), "accepted_boundary": "dispatch or explicit Q701 unsupported-integration rejection"}));
     let outcome = registry.verify(&request());
     results.push(serde_json::json!({"id": "VP06_unsupported_unsafe_proposal", "verdict": format!("{:?}", outcome.verdict),
         "diagnostics": outcome.diagnostics, "pass": outcome.verdict == ProposedVerdict::Unknown}));
@@ -213,6 +213,7 @@ fn main() {
             event(0, 1, K::MutexLock { mutex: 0 }),
             event(1, 2, K::MutexLock { mutex: 0 }),
         ],
+        mutex_order: BTreeMap::from([(0, vec![0, 1])]),
         ..Default::default()
     });
     results.push(serde_json::json!({"id": "WM05_simultaneous_mutex_owners", "pass": result.is_err(), "detail": format!("{result:?}")}));
@@ -224,6 +225,7 @@ fn main() {
             event(3, 2, K::NonAtomicWrite { location: 0 }),
         ],
         synchronizes_with: vec![E::new(1, 2)],
+        mutex_order: BTreeMap::from([(0, vec![1, 2])]),
         ..Default::default()
     });
     results.push(serde_json::json!({"id": "WM05_unowned_unlock_manufactures_order", "pass": result.is_err(), "detail": format!("{result:?}")}));

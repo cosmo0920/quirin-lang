@@ -73,8 +73,14 @@ source-level `verify scope` declarations. Provider-specific Cycle 19 parity
 and standalone package hardening remain tracked in the Cycle 20 record.
 Protocol v1 carries caller assertions without semantic witnesses: built-ins
 return `Unknown`, and the core refuses all v1 `Safe` proposals, including empty
-evidence. Manifest capabilities describe routing only; source-level scopes
-validate configuration and do not verify application safety.
+evidence. Unchecked `Unsafe` proposals also become `Unknown` (`QP010`).
+Manifest capabilities describe routing only. Use `resolve_source_scopes` for
+configuration validation; compiling a source-level scope fails with `Q701`
+until obligation generation and dispatch are implemented. Unix process providers
+use nonblocking pipes and process-group cleanup; request/response budgets count
+JSON payload bytes, excluding the four-byte header. See the
+[follow-up repair record](docs/REEVALUATION_FOLLOWUP.md#repair-and-containment-on-2026-09-05)
+for the ownership, mutex, and provider boundaries.
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the

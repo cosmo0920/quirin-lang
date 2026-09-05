@@ -106,8 +106,9 @@ pub fn compile_files(
 }
 
 /// Compiles with an explicit verifier registry. Source-level `verify scope`
-/// declarations are resolved before semantic checking, so callers can add
-/// process-isolated providers without changing the compiler core.
+/// declarations are configuration-only in protocol v1 and are rejected with
+/// Q701 until core obligation generation and dispatch are implemented. Use
+/// `VerifierRegistry::resolve_source_scopes` for configuration validation.
 pub fn compile_files_with_registry(
     files: &[SourceFile],
     options: &CompileOptions,
@@ -129,7 +130,7 @@ pub fn compile_files_with_registry(
             &ranges,
         )]
     })?;
-    registry.resolve_source_scopes(&parsed).map_err(|errors| {
+    let scopes = registry.resolve_source_scopes(&parsed).map_err(|errors| {
         errors
             .into_iter()
             .map(|error| {
@@ -148,6 +149,18 @@ pub fn compile_files_with_registry(
             })
             .collect::<Vec<_>>()
     })?;
+    if !scopes.is_empty() {
+        return Err(scopes.iter().map(|scope| {
+            let span = parsed.declarations.iter()
+                .find(|declaration| declaration.value.name == scope.name)
+                .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+            map_raw_diagnostic(
+                "Q701", SemanticPass::PluginVerification, span,
+                "verify scope is configuration-only: source obligation generation and provider dispatch are not implemented".into(),
+                &ranges,
+            )
+        }).collect());
+    }
     let typed = elaborate_source(&parsed).map_err(|diagnostics| {
         diagnostics
             .into_iter()

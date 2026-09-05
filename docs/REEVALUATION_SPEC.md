@@ -2,6 +2,8 @@
 
 Date: 2026-09-05. Status: proposed acceptance specification with an executed diagnostic audit
 and a [six-finding repair record](#six-finding-repair-on-2026-09-05).
+The subsequent [seven-finding follow-up and repair](REEVALUATION_FOLLOWUP.md#repair-and-containment-on-2026-09-05)
+records the current ownership, mutex-history, and provider containment changes.
 
 The initial audit established certificate soundness as the immediate priority.
 Six independent audit probes disagreed with the intended semantics: three invalid weak-memory candidates are

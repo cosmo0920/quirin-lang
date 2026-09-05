@@ -2,7 +2,9 @@ namespace QCore.VerifierPlugin
 
 /-! Cycle 20's trust boundary. Provider output is only a proposal; the trusted
 core checks protocol identity and the complete evidence relation before it can
-produce `safe`. -/
+produce `safe`. This is an abstract evidence interface, not a semantic witness
+checker for Rust protocol v1 (which refuses every Safe proposal). Negative
+proposals also remain unknown until a counterexample checker exists. -/
 
 inductive Verdict where
   | safe
@@ -42,7 +44,7 @@ def check (response : Response) : Verdict :=
       match response.evidence with
       | some evidence => if evidence.Valid then .safe else .unknown
       | none => .unknown
-    | .rejected => .rejected
+    | .rejected => .unknown
     | .unknown => .unknown
   else
     .unknown
@@ -72,6 +74,12 @@ theorem invalid_evidence_is_unknown
     (evidence : Evidence) (invalid : ¬ evidence.Valid) :
     check { proposed := .safe, envelopeValid := true, evidence := some evidence } = .unknown := by
   simp [check, invalid]
+
+/-- A provider allegation is not a checked violation. -/
+theorem rejected_proposal_is_unknown
+    (envelopeValid : Bool) (evidence : Option Evidence) :
+    check { proposed := .rejected, envelopeValid, evidence } = .unknown := by
+  cases envelopeValid <;> rfl
 
 def compose : List Verdict → Verdict
   | [] => .unknown

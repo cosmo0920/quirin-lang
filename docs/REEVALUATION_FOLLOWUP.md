@@ -1,7 +1,7 @@
 # Reevaluation follow-up: remaining verifier boundaries
 
-**Audited:** 2026-09-05, commit `3827db1c0be3bafdb7d069729c311bfa3632d0d9`.
-The original six audit expectations now pass. This follow-up identifies five
+**Historical audit:** 2026-09-05, commit `3827db1c0be3bafdb7d069729c311bfa3632d0d9`.
+The original six audit expectations passed at that baseline. This follow-up identifies five
 new issues and supplies executable reproductions for two previously suspected
 gaps (VP04 and VP05). Seven findings produce eight failed probe expectations;
 three positive controls pass. Two probes exercise the same mutex root cause.
@@ -10,6 +10,10 @@ The [new probe](../compiler/examples/reevaluation_followup.rs) calls public APIs
 and includes the production Clang gateway for the legacy-C example. It does not
 change verifier behavior. [JSON evidence](reevaluation/followup/probes.json)
 and [execution metadata](reevaluation/followup/metadata.json) are archived.
+
+The findings and archived logs below describe the audit baseline. The
+[superseding repair record](#repair-and-containment-on-2026-09-05) documents the
+current implementation and remaining unsupported features.
 
 ## Findings in priority order
 
@@ -171,8 +175,9 @@ interoperability issue, not a false-safe result.
 cargo run -p qcore-compiler --example reevaluation_followup
 ```
 
-The example exits **1** for the eight unresolved expectations, and exits zero
-only when its executed expectations pass. Process probes are Unix-only, use
+At the audit baseline, the example exited **1** for eight unresolved
+expectations. The repaired example exits zero when its executed expectations
+pass, including explicit unsupported-integration rejection for VP05. Process probes are Unix-only, use
 `/bin/sh`, `/bin/cat` and `/bin/sleep`, and complete in under a second on the
 audited machine. The legacy-C probe requires Clang. Consult individual probe
 results, not just the aggregate, when a tool is unavailable or a profile is
@@ -188,3 +193,43 @@ The LC01 and WM05 findings should be addressed before expanding safety claims.
 Process lifecycle fixes should precede running third-party providers as a
 bounded service. Record VP05 as an integration milestone and VP06–VP07 as
 verdict/transport contract decisions with matching tests.
+
+
+## Repair and containment on 2026-09-05
+
+Implemented against `9edc9708cac7ed0692211a35b9f4f17629c93730`. These changes
+close the reproduced acceptance and lifecycle gaps without claiming that the
+missing interprocedural or plugin semantic infrastructure is implemented.
+
+| Finding | Current behavior | Remaining boundary |
+|---|---|---|
+| LC01 | Internal definitions no longer receive automatic neutral contracts. Explicit trusted contracts are preserved; uncontracted calls retain Unknown instructions. | Inferred parameter/return custody, identity, and cost summaries remain unimplemented. A detected independent leak can still make the aggregate Unsafe. |
+| WM05 | `C11Execution::mutex_order` supplies a complete order per mutex. The checker validates exact coverage, successful acquisitions, owning-thread unlocks, and agreement with happens-before before using handoff edges. | The supported profile starts with unlocked non-recursive mutexes; a finite prefix may end with a held lock. Missing orders, recursion, and initial ownership are unsupported. |
+| VP04 | Nonblocking pipe I/O shares one deadline. A Unix process-group guard terminates ordinary descendants on success, timeout, and errors; direct-child reaping does not block the caller. | This is process-group containment, not a sandbox for deliberately detached descendants or OS memory/network enforcement. Non-Unix process execution is rejected. |
+| VP08 | Encoding and request-size validation happen before spawn; the cleanup guard is installed immediately after successful spawn. | Request and response payloads currently share the manifest budget. |
+| VP05 | Configuration validation remains available through `resolve_source_scopes`. Compilation rejects resolved scopes with `Q701`; unavailable or incompatible providers retain `Q700`. | Source obligation generation and dispatch remain unimplemented. No provider runs through a source scope, and no source verification success is implied. |
+| VP06 | Every unchecked Unsafe proposal becomes Unknown with `QP010`; original diagnostics are preserved as allegations. Composition therefore cannot count it as verified Unsafe. | Reachable counterexample witnesses and their core checker remain unimplemented. |
+| VP07 | Codec and transport limits both count JSON payload bytes. The transport allows four additional frame-header bytes using checked arithmetic; stderr has a separate 64 KiB cap. | Separate request/output manifest limits would require a future contract revision. |
+
+The follow-up probe now passes all **11 expectations** (eight regressions and
+three controls). VP05 explicitly accepts `Q701` as the documented containment
+alternative to dispatch; the mutex probes now supply complete candidate orders
+so they exercise invalid transitions rather than merely missing order data.
+The inherited-pipe timeout returned in **20 ms** with a 20 ms deadline in the
+recorded repair run. The original reevaluation probe still passes all eight
+expectations. Baseline evidence is preserved; repair evidence and source hashes
+are under [`reevaluation/followup/repair/`](reevaluation/followup/repair/).
+
+Validation passed **212 library + 20 integration tests**, workspace formatting,
+and Clippy with `--all-targets -- -D warnings`. Added cases cover caller-discard,
+caller-release, nested wrappers, parameter consumption, recursion, preserved
+explicit return contracts, valid mutex handoff, invalid/missing mutex orders,
+unowned unlocks, held-lock prefixes, source-scope rejection, unsupported
+negative verdicts, inherited pipes after timeout and normal child exit,
+pre-spawn rejection, post-spawn I/O failure, successful-exit cleanup, delayed
+valid output, and exact/over-limit response payloads. Process regressions run
+under a two-second outer harness deadline with bounded helpers.
+
+`lake build` and `lake env lean AuditCycle20.lean` pass. The new
+`rejected_proposal_is_unknown` theorem uses no axioms. This audit does not claim
+a Lean refinement proof for the new Rust mutex or operating-system code.

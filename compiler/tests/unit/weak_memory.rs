@@ -515,3 +515,83 @@ fn wm04_overlapping_release_sequences_require_each_head() {
         &WeakMemoryError::MissingSynchronizesWith(RelationEdge::new(1, 4))
     ));
 }
+
+#[test]
+fn wm05_valid_mutex_handoff_checks_ownership_order_and_required_edges() {
+    let valid = C11Execution {
+        events: vec![
+            event(1, 1, MemoryEventKind::MutexLock { mutex: 7 }),
+            event(2, 1, MemoryEventKind::NonAtomicWrite { location: 9 }),
+            event(3, 1, MemoryEventKind::MutexUnlock { mutex: 7 }),
+            event(4, 2, MemoryEventKind::MutexLock { mutex: 7 }),
+            event(5, 2, MemoryEventKind::NonAtomicWrite { location: 9 }),
+            event(6, 2, MemoryEventKind::MutexUnlock { mutex: 7 }),
+        ],
+        mutex_order: BTreeMap::from([(7, vec![1, 3, 4, 6])]),
+        synchronizes_with: vec![RelationEdge::new(3, 4)],
+        ..Default::default()
+    };
+    assert!(
+        check_c11_execution(&valid)
+            .unwrap()
+            .happens_before
+            .contains(&RelationEdge::new(2, 5))
+    );
+    for order in [
+        vec![],
+        vec![1, 3, 4],
+        vec![1, 3, 4, 6, 6],
+        vec![3, 1, 4, 6],
+        vec![1, 4, 3, 6],
+        vec![4, 6, 1, 3],
+        vec![1, 3, 4, 999],
+    ] {
+        let mut execution = valid.clone();
+        execution.mutex_order.insert(7, order);
+        assert!(check_c11_execution(&execution).is_err());
+    }
+    let mut missing = valid.clone();
+    missing.mutex_order.clear();
+    assert!(
+        check_c11_execution(&missing)
+            .unwrap_err()
+            .contains(&WeakMemoryError::InvalidMutexHistory(7))
+    );
+    let mut unowned = valid.clone();
+    unowned.events[2].thread = 3;
+    assert!(
+        check_c11_execution(&unowned)
+            .unwrap_err()
+            .contains(&WeakMemoryError::InvalidMutexHistory(7))
+    );
+    let mut missing_edge = valid.clone();
+    missing_edge.synchronizes_with.clear();
+    assert!(check_c11_execution(&missing_edge).unwrap_err().contains(
+        &WeakMemoryError::MissingSynchronizesWith(RelationEdge::new(3, 4))
+    ));
+    // Inter-thread list order is not an acquisition order.
+    let mut reordered = valid.clone();
+    reordered.events.rotate_left(3);
+    check_c11_execution(&reordered).unwrap();
+}
+
+#[test]
+fn wm05_mutex_prefix_can_remain_held_but_cannot_have_two_owners() {
+    let mut execution = C11Execution {
+        events: vec![event(1, 1, MemoryEventKind::MutexLock { mutex: 0 })],
+        mutex_order: BTreeMap::from([(0, vec![1])]),
+        ..Default::default()
+    };
+    check_c11_execution(&execution).unwrap();
+    for thread in [1, 2] {
+        execution
+            .events
+            .push(event(2, thread, MemoryEventKind::MutexLock { mutex: 0 }));
+        execution.mutex_order.insert(0, vec![1, 2]);
+        assert!(check_c11_execution(&execution).is_err());
+        execution.events.pop();
+    }
+    execution.events = vec![event(1, 1, MemoryEventKind::MutexUnlock { mutex: 0 })];
+    execution.mutex_order.insert(0, vec![1]);
+    assert!(check_c11_execution(&execution).is_err());
+}

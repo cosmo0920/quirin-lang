@@ -155,7 +155,7 @@ The first Cycle 20 implementation adds `compiler/src/verifier_plugin.rs` with:
   `qcore.librdkafka`. Built-ins traverse the same request, proposal, and core
   checking path and are not allowed to construct `CoreCertificate` values.
 
-The revision 0.2 surface now accepts declarations such as:
+The revision 0.2 parser accepts declarations such as (configuration validation only):
 
 ```qcore
 verify scope fluent_bit {
@@ -165,8 +165,10 @@ verify scope fluent_bit {
 }
 ```
 
-`compile_files_with_registry` supplies the embedding boundary for external
-registries; `compile_files` resolves against the first-party registry. The CLI
+`resolve_source_scopes` validates these declarations against a registry.
+`compile_files_with_registry` and `compile_files` reject resolved scopes with
+`Q701` until core obligation generation and dispatch exist; unresolved scopes
+retain their `Q700` diagnostics. The CLI
 adds `qcorec plugins list` and `qcorec plugins inspect ID`. Cycle 20 tests are
 kept outside source modules in `compiler/tests/cycle20_verifier_plugins.rs`.
 
@@ -193,3 +195,22 @@ Manifest capability declarations describe routing only. Semantic witnesses,
 core-derived obligations, source integration, and provider parity remain required
 before independent plugin safety certificates can be issued. The earlier test
 results remain historical observations of the narrower assertion-replay model.
+
+
+### Follow-up containment, 2026-09-05
+
+The [follow-up repair](../REEVALUATION_FOLLOWUP.md#repair-and-containment-on-2026-09-05)
+also downgrades every unchecked provider `Unsafe` proposal to `Unknown` with
+`QP010`. Provider diagnostics remain available as allegations. There is no
+protocol-v1 counterexample checker. The Lean model now proves that rejected
+proposals remain unknown; its abstract positive-evidence interface is not an
+implementation of the missing Rust semantic witness checker.
+
+Process requests are encoded before spawn. On Unix, a cleanup guard owns a new
+process group, kills it on all exits, and reaps the direct child asynchronously
+when necessary. Nonblocking stdin/stdout/stderr share the invocation deadline;
+there are no blocking pipe-worker joins. The manifest's `output_bytes` applies
+to each request and response JSON payload, with four additional header bytes;
+stderr has a separate 64 KiB cap. Unsupported non-Unix process execution returns
+a protocol failure before spawn. This does not add OS memory/network isolation
+or containment for descendants that deliberately leave the process group.

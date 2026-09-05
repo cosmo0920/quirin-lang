@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-09-05T12:19:31.489233+00:00",
+  "baseline_head": "9edc9708cac7ed0692211a35b9f4f17629c93730",
+  "working_tree": true,
+  "file_sha256": {
+    "Cargo.lock": "22491c4dafb5412a90afb589b2e35b0f675f0131afd2711d614b010ce2419516",
+    "README.md": "9a13c4aaf4aca5cd6dada6c6d41fb2273ab20c976f6bc012061ac697ad325733",
+    "compiler/Cargo.toml": "db639b3c37dcd747989ba177ce796be23f6ad7fed9fe0bd575a421a26d0c5438",
+    "compiler/examples/reevaluation_followup.rs": "5ce1e5a7d4edfbb2a172d7cd207f7b8b2e6db9d8e3151a8b641b02e7a8a224e2",
+    "compiler/src/driver.rs": "de9d9cf01db42c6b152c3f040250a83790706d98ac2604ac4c8d8202f347892e",
+    "compiler/src/legacy_c.rs": "9994ea8bf77cfd8507ed93ee6008b14c8bbbdc6de9b2a12387459ce7de4462b4",
+    "compiler/src/verifier_plugin.rs": "4b61954cd5161565ab386c97ab69e2b169dffb5efdf313d715fdc2f34d7c5498",
+    "compiler/src/weak_memory.rs": "4b535cbd1ef3f4cda2760ce1227ab03bf1eb59aff0975646c75205ce4656d61e",
+    "compiler/tests/cycle20_verifier_plugins.rs": "1155f4521d6bb79c40a9919001818be56366950932eb8e9413e80fee7ad85de2",
+    "compiler/tests/unit/legacy_c.rs": "305f057bf15fb465c7ec237fb864cbe407f77f469f8f0e8b32575a5430d66b66",
+    "compiler/tests/unit/weak_memory.rs": "c2d4c25cdfaa55b526d9f1990d3e4774d4920568614a7a77fafaabfe93d52eaf",
+    "docs/REEVALUATION_FOLLOWUP.md": "e667e1e5bec9e95dd20c5546b4188f84accbb47d5e19bbc2860e786d9a8bf2a6",
+    "docs/REEVALUATION_SPEC.md": "dea57ba00df84c13484e76d930357f9135173818c91d1ab731d47c8ba232a78f",
+    "docs/cycles/CYCLE_20.md": "f012cf549e25429a36d6d2da76a753a5b82b6905ab3f0263b27c8b0462c8cae8",
+    "proof/AuditCycle20.lean": "cb9ee7a15554783b6b5fa4268a712a9c5a2a44d358e619156244af28563e29f8",
+    "proof/QCore/VerifierPlugin.lean": "7f3412715c091c1168ea281fec7ad1655f6c7696673c227cf557e2b436a09e9b"
+  },
+  "followup_exit_code": 0,
+  "original_exit_code": 0,
+  "test_exit_code": 0,
+  "clippy_exit_code": 0,
+  "format_exit_code": 0,
+  "lean_build_exit_code": 0,
+  "lean_audit20_exit_code": 0,
+  "library_tests": 212,
+  "integration_tests": 20,
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+  "commands": {
+    "tests": "cargo test --workspace --offline",
+    "clippy": "cargo clippy --workspace --all-targets --offline -- -D warnings",
+    "format": "cargo fmt --all -- --check",
+    "lean": "cd proof && lake build && lake env lean AuditCycle20.lean"
+  }
+}

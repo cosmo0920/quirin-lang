@@ -347,12 +347,12 @@ fn main() -> unit { return; }
     assert_eq!(scopes[0].name, "fluent_bit");
     assert_eq!(scopes[0].providers.len(), 2);
 
-    let module = compile_files(
+    let errors = compile_files(
         &[SourceFile::new("scope.qc", source)],
         &CompileOptions::default(),
     )
-    .unwrap();
-    assert_eq!(module.entry, "main");
+    .unwrap_err();
+    assert_eq!(errors[0].code, "Q701");
 }
 
 #[test]
@@ -522,5 +522,171 @@ fn vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety() {
             assert!(outcome.diagnostics[0].message.contains("no-obligations"));
         }
     }
+    fs::remove_dir_all(package).unwrap();
+}
+
+#[test]
+fn vp06_unverified_unsafe_is_unknown_and_cannot_dominate_composition() {
+    struct Allegation(PluginManifest);
+    use qcore_compiler::PluginManifest;
+    impl VerifierProvider for Allegation {
+        fn manifest(&self) -> &PluginManifest {
+            &self.0
+        }
+        fn verify(
+            &self,
+            req: &VerificationRequest,
+        ) -> Result<VerificationResponse, ProviderFailure> {
+            Ok(VerificationResponse {
+                protocol_version: req.protocol_version,
+                request_id: req.request_id.clone(),
+                plugin_id: req.plugin_id.clone(),
+                verdict: ProposedVerdict::Unsafe,
+                diagnostics: vec![],
+                evidence: None,
+            })
+        }
+    }
+    let mut registry = VerifierRegistry::default();
+    registry
+        .register(Arc::new(Allegation(first_party_manifests().remove(0))))
+        .unwrap();
+    let outcome = registry.verify(&request("qcore.libevent", "libevent"));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+    assert_eq!(outcome.diagnostics[0].code, "QP010");
+    assert_eq!(
+        compose_verification(vec![outcome]).verdict,
+        ProposedVerdict::Unknown
+    );
+}
+
+#[test]
+fn vp05_nonempty_source_obligations_cannot_silently_skip_providers() {
+    for plugin in ["qcore.libevent", "example.unavailable"] {
+        let source = format!(
+            "verify scope check {{ plugin {plugin} profile default capabilities {{ resource_contracts }}; }} fn main() -> i64 {{ return 7; }}"
+        );
+        let errors = compile_files(
+            &[SourceFile::new("scope.qc", source)],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        assert_eq!(
+            errors[0].code,
+            if plugin == "qcore.libevent" {
+                "Q701"
+            } else {
+                "Q700"
+            }
+        );
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
+    use std::{
+        fs,
+        os::unix::fs::PermissionsExt,
+        sync::mpsc,
+        time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    };
+    let unique = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let package = std::env::temp_dir().join(format!(
+        "qcore-process-regression-{}-{unique}",
+        std::process::id()
+    ));
+    fs::create_dir(&package).unwrap();
+    let script = package.join("provider.sh");
+    let mut manifest = first_party_manifests().remove(0);
+    manifest.entrypoint = PluginEntrypoint::Executable {
+        path: "provider.sh".into(),
+    };
+    manifest.limits.timeout_ms = 20;
+    manifest.package_digest = digest('0');
+    let run = |manifest: qcore_compiler::PluginManifest, req: VerificationRequest| {
+        let provider = ProcessProvider::new(manifest, &package).unwrap();
+        let (send, recv) = mpsc::channel();
+        let start = Instant::now();
+        std::thread::spawn(move || {
+            let _ = send.send(provider.verify(&req));
+        });
+        // Outer harness bound catches regressions in transport cleanup.
+        let result = recv
+            .recv_timeout(Duration::from_secs(2))
+            .expect("provider exceeded outer harness deadline");
+        (result, start.elapsed())
+    };
+    let write_script = |body: &str| {
+        fs::write(&script, format!("#!/bin/sh\n{body}\n")).unwrap();
+        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+    };
+    // Both waiting and already-exited direct children can leave inherited pipes.
+    for tail in ["wait", "exit 0"] {
+        write_script(&format!(
+            "(/bin/sleep 0.15; : > descendant.marker) &\n{tail}"
+        ));
+        let (result, elapsed) = run(manifest.clone(), request("qcore.libevent", "libevent"));
+        assert_eq!(result, Err(ProviderFailure::Timeout));
+        assert!(elapsed < Duration::from_millis(200), "{elapsed:?}");
+        std::thread::sleep(Duration::from_millis(200));
+        assert!(!package.join("descendant.marker").exists());
+    }
+    write_script(": > launched.marker");
+    let mut rejected = manifest.clone();
+    rejected.limits.output_bytes = 1;
+    assert_eq!(
+        run(rejected, request("qcore.libevent", "libevent")).0,
+        Err(ProviderFailure::OutputLimit)
+    );
+    std::thread::sleep(Duration::from_millis(30));
+    assert!(!package.join("launched.marker").exists());
+
+    // A closed input pipe must clean up after spawn, even with unread input.
+    write_script("exec 0<&-\n/bin/sleep 0.15\n: > io.marker");
+    let mut large = request("qcore.libevent", "libevent");
+    large.request_id = "x".repeat(1024 * 1024);
+    let (result, elapsed) = run(manifest.clone(), large);
+    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
+    assert!(elapsed < Duration::from_millis(200));
+    std::thread::sleep(Duration::from_millis(200));
+    assert!(!package.join("io.marker").exists());
+
+    let req = request("qcore.libevent", "libevent");
+    let reply = VerificationResponse {
+        protocol_version: req.protocol_version,
+        request_id: req.request_id.clone(),
+        plugin_id: req.plugin_id.clone(),
+        verdict: ProposedVerdict::Unknown,
+        evidence: None,
+        diagnostics: vec![qcore_compiler::PluginDiagnostic {
+            code: "qcore.libevent.pending".into(),
+            message: "x".repeat(4096),
+            fact_id: None,
+        }],
+    };
+    let payload = serde_json::to_vec(&reply).unwrap().len();
+    let frame = encode_protocol_frame(&reply, payload).unwrap();
+    fs::write(package.join("response.bin"), &frame).unwrap();
+    manifest.limits.output_bytes = payload;
+    manifest.limits.timeout_ms = 1000;
+    write_script("/bin/cat > /dev/null\n/bin/sleep 0.03\n/bin/cat response.bin");
+    assert_eq!(run(manifest.clone(), req.clone()).0.unwrap(), reply);
+    manifest.limits.output_bytes = payload - 1;
+    assert_eq!(
+        run(manifest.clone(), req.clone()).0,
+        Err(ProviderFailure::OutputLimit)
+    );
+    manifest.limits.output_bytes = payload;
+    // Successful completion still terminates descendants with closed pipes.
+    write_script(
+        "/bin/cat > /dev/null\n(/bin/sleep 0.15; : > success.marker) </dev/null >/dev/null 2>/dev/null &\n/bin/cat response.bin",
+    );
+    assert!(run(manifest, req).0.is_ok());
+    std::thread::sleep(Duration::from_millis(200));
+    assert!(!package.join("success.marker").exists());
     fs::remove_dir_all(package).unwrap();
 }

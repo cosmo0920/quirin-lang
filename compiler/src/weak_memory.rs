@@ -101,6 +101,9 @@ pub struct C11Execution {
     pub modification_order: Vec<RelationEdge>,
     pub synchronizes_with: Vec<RelationEdge>,
     pub sequentially_consistent: Vec<MemoryEventId>,
+    /// Complete order of successful operations for each initially unlocked,
+    /// non-recursive mutex. Includes each lock/unlock exactly once.
+    pub mutex_order: BTreeMap<u32, Vec<MemoryEventId>>,
     pub source_observation: Vec<i64>,
     pub target_observation: Vec<i64>,
 }
@@ -130,6 +133,7 @@ pub enum WeakMemoryError {
     MissingSynchronizesWith(RelationEdge),
     CyclicRelation(&'static str),
     InvalidSequentiallyConsistentOrder,
+    InvalidMutexHistory(u32),
     CoherenceViolation(MemoryEventId),
     DataRace {
         first: MemoryEventId,
@@ -167,7 +171,9 @@ pub fn check_c11_execution(
     validate_reads_from(execution, &by_id, &mut errors);
     validate_modification_order(execution, &by_id, &mut errors);
 
-    let expected_sw = expected_synchronizes_with(execution, &by_id);
+    let mutex_sw = validate_mutex_histories(execution, &by_id, &mut errors);
+    let mut expected_sw = expected_synchronizes_with(execution, &by_id);
+    expected_sw.extend(mutex_sw);
     let supplied_sw = execution
         .synchronizes_with
         .iter()
@@ -392,16 +398,77 @@ fn expected_synchronizes_with(
             }
         }
     }
-    // A supplied unlock-to-lock edge is valid when it names the same mutex.
-    for edge in &execution.synchronizes_with {
-        if matches!(
-            (by_id.get(&edge.from).map(|event| &event.kind), by_id.get(&edge.to).map(|event| &event.kind)),
-            (
-                Some(MemoryEventKind::MutexUnlock { mutex: left }),
-                Some(MemoryEventKind::MutexLock { mutex: right })
-            ) if left == right
-        ) {
-            result.insert(*edge);
+    result
+}
+
+// Mutex ordering is an explicit candidate premise, never inferred from the
+// inter-thread position of events or accepted solely from supplied SW edges.
+fn validate_mutex_histories(
+    execution: &C11Execution,
+    by_id: &BTreeMap<MemoryEventId, &MemoryEvent>,
+    errors: &mut BTreeSet<WeakMemoryError>,
+) -> BTreeSet<RelationEdge> {
+    let mut inventory = BTreeMap::<u32, BTreeSet<MemoryEventId>>::new();
+    for event in &execution.events {
+        if let MemoryEventKind::MutexLock { mutex } | MemoryEventKind::MutexUnlock { mutex } =
+            event.kind
+        {
+            inventory.entry(mutex).or_default().insert(event.id);
+        }
+    }
+    let mut result = BTreeSet::new();
+    for mutex in inventory
+        .keys()
+        .chain(execution.mutex_order.keys())
+        .copied()
+        .collect::<BTreeSet<_>>()
+    {
+        let Some(order) = execution.mutex_order.get(&mutex) else {
+            errors.insert(WeakMemoryError::InvalidMutexHistory(mutex));
+            continue;
+        };
+        let ids = order.iter().copied().collect::<BTreeSet<_>>();
+        if inventory.get(&mutex) != Some(&ids) || ids.len() != order.len() {
+            errors.insert(WeakMemoryError::InvalidMutexHistory(mutex));
+            continue;
+        }
+        let mut owner = None;
+        let mut last_unlock = None;
+        let mut edges = BTreeSet::new();
+        let mut valid = true;
+        for id in order {
+            let event = by_id[id];
+            match event.kind {
+                MemoryEventKind::MutexLock { .. } if owner.is_none() => {
+                    owner = Some(event.thread);
+                    if let Some(unlock) = last_unlock {
+                        edges.insert(RelationEdge::new(unlock, *id));
+                    }
+                }
+                MemoryEventKind::MutexUnlock { .. } if owner == Some(event.thread) => {
+                    owner = None;
+                    last_unlock = Some(*id);
+                }
+                _ => {
+                    valid = false;
+                }
+            }
+        }
+        // A finite prefix may end with a held lock. Its order must also agree
+        // with sequencing, atomics, and thread lifecycle happens-before.
+        let mut combined = program_order(&execution.events);
+        combined.extend(execution.synchronizes_with.iter().copied());
+        combined.extend(spawn_join_edges(&execution.events));
+        combined.extend(edges.iter().copied());
+        combined.extend(
+            order
+                .windows(2)
+                .map(|pair| RelationEdge::new(pair[0], pair[1])),
+        );
+        if !valid || has_cycle(&combined) {
+            errors.insert(WeakMemoryError::InvalidMutexHistory(mutex));
+        } else {
+            result.extend(edges);
         }
     }
     result

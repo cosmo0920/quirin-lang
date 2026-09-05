@@ -549,7 +549,7 @@ fn translation_unit_summary_propagates_callee_defects() {
     let source = "void helper(void) { void *p = q_alloc(); return; }\nvoid subject(void) { helper(); return; }";
     let summary = analyze_legacy_c_translation_unit(source, "subject", &contracts()).unwrap();
     assert_eq!(summary.status, AnalysisStatus::Unsafe);
-    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Safe);
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unknown);
     assert_eq!(summary.functions["helper"].status, AnalysisStatus::Unsafe);
 }
 
@@ -697,4 +697,45 @@ void subject(void) {\n\
 fn source_function_discovery_enters_cxx_linkage_blocks() {
     let source = "extern \"C\" {\nvoid first(void) {}\nint second(void) { return 0; }\n}";
     assert_eq!(legacy_c_source_functions(source), vec!["first", "second"]);
+}
+
+#[test]
+fn lc01_internal_calls_require_explicit_custody_contracts() {
+    for source in [
+        "void *make(void) { void *p = q_alloc(); return p; } void subject(void) { void *p = make(); return; }",
+        "void *make(void) { void *p = q_alloc(); return p; } void subject(void) { void *p = make(); q_free(p); return; }",
+        "void *make(void) { void *p = q_alloc(); return p; } void *nested(void) { void *p = make(); return p; } void subject(void) { void *p = nested(); return; }",
+        "void consume(void *p) { q_free(p); } void subject(void) { void *p = q_alloc(); consume(p); return; }",
+        "void subject(void) { subject(); return; }",
+    ] {
+        let summary = analyze_legacy_c_translation_unit(source, "subject", &contracts()).unwrap();
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{source}");
+        assert!(
+            summary.functions["subject"]
+                .cfg
+                .nodes
+                .iter()
+                .any(|node| matches!(node.instruction, LegacyInstruction::Unknown { .. }))
+        );
+    }
+}
+
+#[test]
+fn lc01_explicit_internal_return_contract_is_preserved() {
+    let mut contracts = contracts();
+    contracts.insert("make", ResourceApiKind::Acquire);
+    for (cleanup, expected) in [
+        ("", AnalysisStatus::Unsafe),
+        ("q_free(p);", AnalysisStatus::Safe),
+    ] {
+        let source = format!(
+            "void *make(void) {{ void *p = q_alloc(); return p; }} void subject(void) {{ void *p = make(); {cleanup} return; }}"
+        );
+        let summary = analyze_legacy_c_translation_unit(&source, "subject", &contracts).unwrap();
+        assert_eq!(summary.status, expected);
+        assert!(summary.functions["subject"].cfg.nodes.iter().any(|node| matches!(
+            &node.instruction, LegacyInstruction::ContractCall { function, contract, .. }
+            if function == "make" && contract.result == ResourceReturnMode::Owned { nullable: false }
+        )));
+    }
 }

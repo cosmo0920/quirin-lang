@@ -16,8 +16,8 @@ pub enum ResourceApiKind {
     Acquire,
     Release,
     Escape,
-    /// A proven resource-neutral call.  Cycle 13 uses this only for an
-    /// internal function whose own summary is retained in the program result.
+    /// A trusted resource-neutral call. Internal definitions do not establish
+    /// this contract automatically; custody summaries are not yet inferred.
     Neutral,
 }
 
@@ -631,14 +631,12 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     } else {
         return Err(LegacyCError::FunctionNotFound(entry.to_owned()));
     };
-    let mut extended = contracts.clone();
-    for name in &names {
-        extended.insert(name, ResourceApiKind::Neutral);
-    }
+    // A retained callee summary does not prove neutral parameter/return custody.
+    // Preserve explicit trusted contracts; uncontracted calls remain Unknown.
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
     for name in names {
-        match analyze_legacy_c_tokens(&tokens, &name, &extended) {
+        match analyze_legacy_c_tokens(&tokens, &name, contracts) {
             Ok(summary) => {
                 functions.insert(name, summary);
             }
