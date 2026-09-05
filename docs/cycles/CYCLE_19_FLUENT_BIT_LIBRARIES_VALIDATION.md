@@ -168,18 +168,18 @@ These classifications remain conservative model results, not defect claims.
 
 These numbers are projection results, not memory-safety coverage. In
 particular, an `Unsafe` result at this stage is not evidence of an upstream
-defect. The generic resource projection now expresses direct owned parameters,
-aggregate store/removal, and `realloc`, but the audit does not yet supply the
-library-specific queue, refcount, arena, callback, or concurrency summaries
-needed to interpret those patterns. It can therefore still report a local
-obligation as leaked when ownership moves through an unaudited mechanism.
-An executable composition checker now exists for counted references,
+defect. The generic resource projection expresses direct owned parameters,
+aggregate store/removal, and `realloc`. The audit now derives mechanism
+profiles from pinned source contracts for librdkafka refcounts and typed
+queues, CFL lists and arenas, and the nested ChunkIO teardown chain.
+
+The executable composition checker handles counted references,
 intrusive-list/typed-queue/arena transfers, and evidence-gated publication,
-handoff, and reclamation. This establishes the fail-closed target shape; it
-pins imported profiles to the audited Fluent Bit revision, and rejects
-mechanisms outside the declared bundled-library profile. It does not change
-these results until the pinned source audit derives and feeds the corresponding
-operations.
+handoff, and reclamation. It pins imported profiles to the audited Fluent Bit
+revision and rejects mechanisms outside the declared bundled-library profile.
+Per-function source paths are not yet translated into concrete identity-indexed
+operations, so the generic projection can still report a local obligation as
+leaked when custody moves through one of these mechanisms.
 `ctr_version.c`, which is resource-neutral, is the single fully `Safe` CTraces
 unit.
 
@@ -206,9 +206,11 @@ The resource profile recognizes `rd_malloc`, `rd_calloc`, `rd_strdup`, and
 `rd_realloc` now preserves the old identity on a null result and replaces it on
 a non-null result. The 10 `Unsafe` and 81 `Unknown` unit results are still
 projection classifications, not librdkafka defect reports. Librdkafka-specific
-source-to-summary mappings for refcounted objects, typed queue macros,
-callbacks, thread handoff, and atomics remain outside this audit run even
-though their certificate-side custody operations are now implemented.
+source contracts now establish refcount, typed-queue/intrusive-list,
+queue-destructor, and mutex-mediated queue-handoff summary availability.
+Per-call identity mappings, callbacks, atomic ownership publication, and
+reclamation remain outside this audit run. Scalar atomic operations alone are
+not treated as ownership-transfer evidence.
 
 `tinycthread.c` contains 30 raw-source function bodies, but this build defines
 `WITH_C11THREADS`, so none survive preprocessing. The unit remains fail-closed
@@ -298,13 +300,14 @@ marked `Safe`.
 
 ## Next resource-model gates
 
-The checker-side custody and composition boundaries are implemented. Remaining
-work is source extraction and real evidence, in this order:
+The checker-side custody and composition boundaries and the first pinned
+library source profiles are implemented. Remaining work is per-path extraction
+and real evidence, in this order:
 
-1. extend owned, borrowed, consumed, released, and out-parameter contracts from
-   direct calls to source-derived library summary operations;
-2. map audited typed-queue, intrusive-list, refcount, arena, thread handoff,
-   atomic publication, and reclamation patterns into the custody checker;
+1. map each audited typed-queue, intrusive-list, refcount, arena, destructor,
+   and mutex-mediated handoff call to concrete custody identities;
+2. require separate synchronization evidence for atomic publication and
+   reclamation paths rather than deriving it from scalar atomic primitives;
 3. derive the implemented ChunkIO operation trace from every selected wrapper
    path and retain `Unknown` for an incomplete path;
 4. add CFL arena parent/child source mappings; and

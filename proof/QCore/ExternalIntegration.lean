@@ -13,6 +13,7 @@ structure LibraryCustody where
   noLiveObligations : Bool
   sourcePinned : Bool
   summaryProfileAccepted : Bool
+  sourceContractsChecked : Bool
   deriving DecidableEq, Repr
 
 def LibraryCustody.Valid (custody : LibraryCustody) : Prop :=
@@ -24,7 +25,8 @@ def LibraryCustody.Valid (custody : LibraryCustody) : Prop :=
   custody.reclamationEvidenceComplete = true ∧
   custody.noLiveObligations = true ∧
   custody.sourcePinned = true ∧
-  custody.summaryProfileAccepted = true
+  custody.summaryProfileAccepted = true ∧
+  custody.sourceContractsChecked = true
 
 instance (custody : LibraryCustody) : Decidable custody.Valid := by
   unfold LibraryCustody.Valid
@@ -74,7 +76,13 @@ theorem accepted_library_summary_profile_is_pinned_and_scoped
     (result : checkLibraryCustody custody = some certificate) :
     custody.sourcePinned = true ∧ custody.summaryProfileAccepted = true := by
   have valid := checkLibraryCustody_valid result
-  exact ⟨valid.2.2.2.2.2.2.2.1, valid.2.2.2.2.2.2.2.2⟩
+  exact ⟨valid.2.2.2.2.2.2.2.1, valid.2.2.2.2.2.2.2.2.1⟩
+
+theorem accepted_library_source_contracts_are_checked
+    {custody : LibraryCustody} {certificate : LibraryCustodyCertificate}
+    (result : checkLibraryCustody custody = some certificate) :
+    custody.sourceContractsChecked = true :=
+  (checkLibraryCustody_valid result).2.2.2.2.2.2.2.2.2
 
 structure ChunkImport where
   sourcePinned : Bool

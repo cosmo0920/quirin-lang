@@ -5,10 +5,11 @@ use std::process::{Command, ExitCode};
 
 use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
-    C11TranslationUnit, CCompilerDialect, LegacyFunctionScope, ResourceApiKind, ResourceContracts,
-    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult,
-    analyze_unrestricted_c11, classify_libevent_symbol, legacy_c_source_functions,
-    validate_unrestricted_c11, verify_pinned_libevent_source,
+    AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
+    LegacyFunctionScope, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    classify_libevent_symbol, derive_library_summary_profile, legacy_c_source_functions,
+    required_library_source_paths, validate_unrestricted_c11, verify_pinned_libevent_source,
 };
 
 const PINNED_FLUENT_BIT_COMMIT: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
@@ -95,6 +96,8 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
             "lib/librdkafka-2.15.0/src",
             "lib/chunkio/src",
             "lib/chunkio/include",
+            "lib/cfl/src/cfl_arena.c",
+            "lib/cfl/include/cfl/cfl_list.h",
             "lib/monkey",
             "src/flb_input_chunk.c",
             "include/fluent-bit/flb_input_chunk.h",
@@ -105,6 +108,7 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         return Err("audited Fluent Bit library sources contain tracked modifications".into());
     }
     println!("Fluent Bit {revision}");
+    audit_library_summary_profiles(&root, &revision)?;
 
     let mut contracts = ResourceContracts::new([
         ("malloc", ResourceApiKind::Acquire),
@@ -290,6 +294,37 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         );
     }
     Ok(failed)
+}
+
+fn audit_library_summary_profiles(root: &Path, revision: &str) -> Result<(), String> {
+    for (name, library) in [
+        ("librdkafka", AuditedLibrary::Librdkafka2150),
+        ("cfl", AuditedLibrary::Cfl),
+        ("chunkio", AuditedLibrary::ChunkIo),
+    ] {
+        let mut files = std::collections::BTreeMap::new();
+        for relative in required_library_source_paths(library) {
+            let path = root.join(relative);
+            let contents = fs::read_to_string(&path)
+                .map_err(|error| format!("could not read {}: {error}", path.display()))?;
+            files.insert((*relative).to_owned(), contents);
+        }
+        let certificate = derive_library_summary_profile(
+            library,
+            &ExternalSourceBundle {
+                source_revision: revision.to_owned(),
+                files,
+            },
+        )
+        .map_err(|diagnostics| format!("{name} source-summary contract failed: {diagnostics:?}"))?;
+        println!(
+            "{name} source summaries: {} contract(s), {} file(s), {:?}",
+            certificate.checked_contracts.len(),
+            certificate.checked_files.len(),
+            certificate.profile.summaries
+        );
+    }
+    Ok(())
 }
 
 fn select_recursive_units(entries: &[CompileEntry], source_root: &Path) -> Vec<CompileEntry> {

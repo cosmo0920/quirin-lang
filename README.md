@@ -52,11 +52,13 @@ unrestricted-C gateway to pinned Fluent Bit CMetrics, CTraces, librdkafka,
 ChunkIO, the central input-chunk wrapper, and Monkey builds. It retains partial
 summaries across reduced-parser failures, imports structured and named C
 control flow as explicit CFG edges, adds counted ref/list/queue/arena and
-evidence-gated concurrency custody, composes pinned complete ChunkIO imports
-with the bounded lifecycle checker, and joins exact Monkey callback/failure
-contracts plus dispatcher/backend observations to the Cycle 18 event
-certificate. Raw units remain unpromoted until source-derived summaries and
-real observation evidence satisfy those fail-closed gates. The completed
+evidence-gated concurrency custody, derives scoped mechanism profiles from
+pinned librdkafka, CFL, and ChunkIO source contracts, composes complete ChunkIO
+imports with the bounded lifecycle checker, and joins exact Monkey
+callback/failure contracts plus dispatcher/backend observations to the Cycle
+18 event certificate. Raw units remain unpromoted until per-path identity
+imports and real observation evidence satisfy those fail-closed gates. The
+completed
 Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent

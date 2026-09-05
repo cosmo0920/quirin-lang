@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — compositional checkers implemented; source-derived summaries and deployed Monkey observation pending**
+**Status: In progress — source-derived summary profiles implemented; per-path imports and deployed Monkey observation pending**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -140,8 +140,7 @@ present, resolved, and attached to retained CFG nodes.
 
 The Cycle 19 audit manifest now marks known allocation results nullable, marks
 null-tolerant destructors explicitly, and models `rd_realloc` with the new
-replacement contract. Supplying source-derived library summaries to the pinned
-audit remains pending.
+replacement contract.
 
 ## Implemented 19B custody composition
 
@@ -162,9 +161,16 @@ required summary or a summary outside that library's profile is rejected.
 
 Atomic publication, thread handoff, and reclamation are accepted only with a
 matching typed synchronization-evidence identifier. The certificate records
-the exact evidence consumed. This is the fail-closed summary target for the
-library audit; it does not by itself assert that a librdkafka or CFL source
-pattern has been extracted into those operations.
+the exact evidence consumed.
+
+The pinned audit now derives those library profiles from eight source
+contracts: librdkafka refcount, typed-queue/intrusive-list handoff, and queue
+destruction; CFL intrusive-list and arena lifetime; and ChunkIO context,
+stream, and chunk teardown. Revision, required files, and semantic fragments
+are checked before a profile is emitted. The librdkafka profile intentionally
+does not infer ownership publication or reclamation from scalar atomic
+primitives. Mapping each accepted source call/path to concrete identity-indexed
+custody operations remains pending.
 
 ## Implemented 19C bounded lifecycle
 
