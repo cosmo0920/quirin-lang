@@ -108,7 +108,7 @@ pub use legacy_c::{
     LegacyInstruction, LegacyNodeId, LegacyProgramSummary, LegacySafetyCertificate,
     ResourceApiKind, ResourceContracts, UnrestrictedLegacyResult, analyze_legacy_c,
     analyze_legacy_c_translation_unit, analyze_legacy_c11, analyze_unrestricted_c11,
-    check_legacy_safety_certificate, legacy_c_source_functions,
+    check_legacy_safety_certificate, legacy_c_source_functions, validate_unrestricted_c11,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use native_concurrency::{

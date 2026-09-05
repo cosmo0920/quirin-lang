@@ -1,4 +1,4 @@
-# Cycle 19 Fluent Bit core-library validation
+# Cycle 19 Fluent Bit library and chunk validation
 
 ## Scope and source identity
 
@@ -12,15 +12,22 @@ The adjacent Fluent Bit checkout was audited at:
 v5.1.1-127-g66910c10a
 ```
 
-The audit rejects another `HEAD` and tracked changes under the three selected
-library source trees.
+The audit rejects another `HEAD` and tracked changes under the selected
+library and chunk source trees.
 
-The first-stage targets are the top-level C translation units for CMetrics and
-CTraces that are present in Fluent Bit's generated
+The targets are the top-level C translation units for CMetrics and CTraces,
+every built C translation unit under librdkafka 2.15.0 and ChunkIO, and Fluent
+Bit's central `src/flb_input_chunk.c` wrapper that are present in the generated
 `build/compile_commands.json`. Cycle 19 also audits the non-dependency Monkey
 translation units in a separate build with `MK_EVENT_LOOP_LIBEVENT=ON`.
-Generated nested sources and platform sources that are absent from these
-builds are not included in this stage.
+Generated and platform sources absent from these builds are not included. The
+three generated librdkafka OpenTelemetry tables and empty `ctr_utils.c` have no
+discoverable source function body; they still pass the standalone
+preprocessing and syntax gate.
+
+The bundled librdkafka version is identified by `RD_KAFKA_VERSION` as 2.15.0.
+The ChunkIO import is v1.5.5, introduced into this Fluent Bit history by
+`b3a19e516ae6173566e6442d083c4261edbc5bd2`.
 
 The Monkey tree at that Fluent Bit revision is:
 
@@ -62,10 +69,21 @@ definitions.
 Returned local allocations are modeled as ownership transfers. This closes the
 simple factory case while leaving call-in-return expressions fail-closed.
 
+For the larger librdkafka units, the projection now tokenizes a preprocessed
+translation unit once and reuses that token stream for every selected
+function. A malformed reduced-parser body no longer discards successfully
+projected sibling functions: the aggregate verdict remains `Unknown`, with a
+partial summary. When the first raw-source function is compiled out by the
+selected definitions, source-scoped analysis uses the first surviving selected
+definition. Conditional C++ linkage blocks are ignored for raw C function
+discovery. Translation units without a function body have a public syntax-only
+gateway and cannot receive a resource-safety certificate.
+
 ## Reproduction
 
-From the QCore-C root, CMetrics and CTraces plus the Monkey source-contract
-gate can be reproduced with:
+From the QCore-C root, CMetrics, CTraces, librdkafka, ChunkIO, the Fluent Bit
+input-chunk wrapper, and the Monkey source-contract gate can be reproduced
+with:
 
 ```sh
 cargo run --quiet -p qcore-compiler \
@@ -109,17 +127,22 @@ Fluent Bit.
 
 ## Local result
 
-| Library | Built top-level units | Gateway failures | Source functions | Projected functions | Projection coverage | Safe units | Unsafe units | Unknown units |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| CMetrics | 31 | 0 | 540 | 287 | 53.1% | 0 | 16 | 15 |
-| CTraces | 16 | 0 | 274 | 225 | 82.1% | 1 | 9 | 6 |
-| Monkey, forced Libevent | 29 | 0 | 359 | 259 | 72.1% | 1 | 18 | 10 |
+| Slice | Built units | Data-only units | Gateway failures | Source functions | Projected functions | Projection coverage | Safe units | Unsafe units | Unknown units |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| CMetrics | 31 | 0 | 0 | 540 | 521 | 96.5% | 0 | 16 | 15 |
+| CTraces | 17 | 1 | 0 | 274 | 264 | 96.4% | 1 | 9 | 6 |
+| librdkafka 2.15.0 | 94 | 3 | 0 | 3,410 | 2,984 | 87.5% | 0 | 10 | 81 |
+| ChunkIO | 13 | 0 | 0 | 126 | 121 | 96.0% | 0 | 7 | 6 |
+| Fluent Bit input chunk | 1 | 0 | 0 | 66 | 63 | 95.5% | 0 | 0 | 1 |
+| Monkey, forced Libevent | 29 | 0 | 0 | 359 | 342 | 95.3% | 1 | 19 | 9 |
 
-All 76 selected translation units pass the production Clang gateway under
-their gated GNU dialect and build definitions. The original 47 CMetrics and
-CTraces units retain their prior results, and the forced-Libevent Monkey
-profile adds no gateway failure. This resolves the previous strict-C11,
-header-expanded xxHash, and quoted backend-include blockers.
+All 185 selected translation units pass the production Clang gateway under
+their gated GNU dialect and build definitions. Of 4,775 raw-source functions,
+4,295 receive a partial resource summary. The four units without a discoverable
+function body pass the same preprocessing and syntax gate but are kept outside
+the Safe/Unsafe/Unknown resource-unit counts. Partial-result retention raises
+the projected numerator for the already selected CMetrics, CTraces, and Monkey
+slices without converting any incomplete unit into a `Safe` result.
 
 These numbers are projection results, not memory-safety coverage. In
 particular, an `Unsafe` result at this stage is not evidence of an upstream
@@ -137,6 +160,46 @@ source-contract audit or remain future library-audit scope. `mk_event.c`
 passes the gateway with the Libevent implementation expanded and projects all
 14 source functions, provisionally as `Unsafe`; this is an ownership-model
 result, not evidence of an upstream defect.
+
+## librdkafka boundary
+
+This stage follows the exact 94 C commands selected by Fluent Bit's local
+build, including bundled compression, hashing, JSON, nanopb, OpenTelemetry,
+threading, SSL, SASL, and unit-support translation units. It restores the
+source-file quoted include location and forwards only the allowlisted dialect,
+include paths, and resolved definitions. All 94 pass both preprocessing and
+Clang syntax validation.
+
+The resource profile recognizes `rd_malloc`, `rd_calloc`, `rd_strdup`, and
+`rd_strndup` as acquisitions and `rd_free` as release. It deliberately leaves
+`rd_realloc` unmodeled because treating it as a fresh allocation would lose
+the preserve-on-failure obligation. The 10 `Unsafe` and 81 `Unknown` unit
+results are therefore projection classifications, not librdkafka defect
+reports. Refcounted objects, typed queue macros, aggregate custody, callbacks,
+thread handoff, atomics, and realloc semantics remain outside this stage.
+
+`tinycthread.c` contains 30 raw-source function bodies, but this build defines
+`WITH_C11THREADS`, so none survive preprocessing. The unit remains fail-closed
+as `Unknown (0/30)` rather than being called data-only or safe.
+
+## Initial chunk boundary
+
+The chunk evaluation deliberately spans both layers: all 13 built ChunkIO
+units and Fluent Bit's `flb_input_chunk.c`. The wrapper uses 14 `cio_chunk_*`
+operations covering open/close, up/down residency, locking, content access,
+writes, size queries, and transaction rollback. Its operational lifecycle is
+roughly create or map, move up/down, append or write, flush and lock, release,
+then destroy and close. The gateway projects 63 of 66 raw wrapper functions;
+`append_to_ring_buffer` is one reduced-parser failure and two conditional
+definitions do not survive this build profile.
+
+This is only the start of chunk evaluation. The generic resource contracts
+recognize `flb_malloc`/`flb_calloc`, `flb_free`, SDS creation/destruction, and
+ChunkIO open/close. They do not yet connect `struct flb_input_chunk` custody to
+its `struct cio_chunk`, route mask, task, trace, list membership, memory/file
+backend, busy flag, lock state, filesystem accounting, or deletion policy.
+Consequently the wrapper stays `Unknown`, and none of these numbers constitutes
+a chunk lifecycle, crash-consistency, routing, or concurrency certificate.
 
 ## Monkey event-model boundary
 
@@ -163,26 +226,25 @@ aliases, or callback-to-fired-array effects into the event IR. The aggregate
 event verdict remains fail-closed as `Unknown` until those contracts are
 modeled and the selected backend is observed or constrained.
 
-Six CMetrics units and one CTraces unit still stop before a partial resource
-summary because the reduced statement parser cannot form a body for at least
-one selected function. The remaining `Unknown` units reach a partial summary
-and fail closed on unsupported operations.
-
 ## Next resource-model gates
 
 The next stage should be implemented and validated in this order:
 
-1. retain per-function partial results when a sibling function is malformed;
-2. import `for`, `switch`, `goto` cleanup, labels, `break`, and `continue` into
+1. import `for`, `switch`, `goto` cleanup, labels, `break`, and `continue` into
    the CFG rather than consuming them as unknown blocks;
-3. distinguish owned, borrowed, consumed, and out-parameter function
+2. distinguish owned, borrowed, consumed, and out-parameter function
    contracts;
-4. add aggregate fields and intrusive-list custody, including destructor
-   summaries;
-5. add nullable acquisition and path refinement;
-6. model `realloc` as preserve-on-failure and replace-on-success;
-7. add CFL arena parent/child lifetime discharge; and
-8. rerun the same pinned local audit before expanding to Fluent Bit `src`.
+3. add aggregate fields, typed queues, refcounts, and intrusive-list custody,
+   including destructor summaries;
+4. add nullable acquisition and path refinement;
+5. model `realloc` as preserve-on-failure and replace-on-success;
+6. model thread/callback transfer and atomic publication before evaluating
+   librdkafka concurrency;
+7. add a chunk-specific state model for memory/file residency, lock/busy/task
+   custody, route accounting, transactions, and close/delete outcomes;
+8. add CFL arena parent/child lifetime discharge; and
+9. rerun the same pinned local audit before expanding beyond the central
+   Fluent Bit chunk wrapper.
 
 For the Monkey event slice, the corresponding gates are to add explicit
 semantics for the three `evutil_*` calls, import the wrapper's event and

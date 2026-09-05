@@ -7,7 +7,7 @@ use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
     C11TranslationUnit, CCompilerDialect, LegacyFunctionScope, ResourceApiKind, ResourceContracts,
     UnrestrictedLegacyResult, analyze_unrestricted_c11, classify_libevent_symbol,
-    legacy_c_source_functions, verify_pinned_libevent_source,
+    legacy_c_source_functions, validate_unrestricted_c11, verify_pinned_libevent_source,
 };
 
 const PINNED_FLUENT_BIT_COMMIT: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
@@ -22,6 +22,7 @@ struct CompileEntry {
 #[derive(Default)]
 struct AuditCounts {
     units: usize,
+    data_only_units: usize,
     source_functions: usize,
     projected_functions: usize,
     safe_units: usize,
@@ -90,7 +91,12 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
             "--",
             "lib/cmetrics/src",
             "lib/ctraces/src",
+            "lib/librdkafka-2.15.0/src",
+            "lib/chunkio/src",
+            "lib/chunkio/include",
             "lib/monkey",
+            "src/flb_input_chunk.c",
+            "include/fluent-bit/flb_input_chunk.h",
         ])
         .status()
         .map_err(|error| format!("could not inspect Fluent Bit source state: {error}"))?;
@@ -106,6 +112,18 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         ("mk_mem_alloc", ResourceApiKind::Acquire),
         ("mk_mem_alloc_z", ResourceApiKind::Acquire),
         ("mk_mem_free", ResourceApiKind::Release),
+        ("rd_malloc", ResourceApiKind::Acquire),
+        ("rd_calloc", ResourceApiKind::Acquire),
+        ("rd_strdup", ResourceApiKind::Acquire),
+        ("rd_strndup", ResourceApiKind::Acquire),
+        ("rd_free", ResourceApiKind::Release),
+        ("flb_malloc", ResourceApiKind::Acquire),
+        ("flb_calloc", ResourceApiKind::Acquire),
+        ("flb_free", ResourceApiKind::Release),
+        ("flb_sds_create_len", ResourceApiKind::Acquire),
+        ("flb_sds_destroy", ResourceApiKind::Release),
+        ("cio_chunk_open", ResourceApiKind::Acquire),
+        ("cio_chunk_close", ResourceApiKind::Release),
     ]);
     let mut failed = false;
     for library in ["cmetrics", "ctraces"] {
@@ -131,16 +149,62 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
-             {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+             {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
             counts.units,
             counts.source_functions,
             counts.projected_functions,
+            counts.data_only_units,
             counts.safe_units,
             counts.unsafe_units,
             counts.unknown_units,
             counts.gateway_failures
         );
     }
+    for (library, relative_root) in [
+        ("librdkafka", "lib/librdkafka-2.15.0/src"),
+        ("chunkio", "lib/chunkio/src"),
+    ] {
+        let source_root = root.join(relative_root);
+        let selected = select_recursive_units(&entries, &source_root);
+        if selected.is_empty() {
+            return Err(format!(
+                "compile database contains no built {library} sources"
+            ));
+        }
+        let counts = audit_library(library, &source_root, &selected, &contracts)?;
+        failed |= counts.gateway_failures != 0;
+        println!(
+            "{library}: {} unit(s), {} source function(s), {} projected; \
+             {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+            counts.units,
+            counts.source_functions,
+            counts.projected_functions,
+            counts.data_only_units,
+            counts.safe_units,
+            counts.unsafe_units,
+            counts.unknown_units,
+            counts.gateway_failures
+        );
+    }
+    let input_chunk_path = root.join("src/flb_input_chunk.c");
+    let selected = select_exact_unit(&entries, &input_chunk_path);
+    if selected.is_empty() {
+        return Err("compile database contains no src/flb_input_chunk.c command".into());
+    }
+    let counts = audit_library("fluent-bit-chunk", &root.join("src"), &selected, &contracts)?;
+    failed |= counts.gateway_failures != 0;
+    println!(
+        "fluent-bit-chunk: {} unit(s), {} source function(s), {} projected; \
+         {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+        counts.units,
+        counts.source_functions,
+        counts.projected_functions,
+        counts.data_only_units,
+        counts.safe_units,
+        counts.unsafe_units,
+        counts.unknown_units,
+        counts.gateway_failures
+    );
     audit_monkey_libevent_contract(&root)?;
     if let Some(database_path) = monkey_database {
         let database_path = database_path
@@ -161,10 +225,11 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         failed |= counts.gateway_failures != 0;
         println!(
             "monkey-libevent: {} unit(s), {} source function(s), {} projected; \
-             {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+             {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
             counts.units,
             counts.source_functions,
             counts.projected_functions,
+            counts.data_only_units,
             counts.safe_units,
             counts.unsafe_units,
             counts.unknown_units,
@@ -179,6 +244,32 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
     Ok(failed)
 }
 
+fn select_recursive_units(entries: &[CompileEntry], source_root: &Path) -> Vec<CompileEntry> {
+    let mut selected = entries
+        .iter()
+        .filter(|entry| {
+            entry.file.starts_with(source_root)
+                && entry
+                    .file
+                    .extension()
+                    .is_some_and(|extension| extension == "c")
+        })
+        .cloned()
+        .collect::<Vec<_>>();
+    selected.sort_by(|left, right| left.file.cmp(&right.file));
+    selected.dedup_by(|left, right| left.file == right.file);
+    selected
+}
+
+fn select_exact_unit(entries: &[CompileEntry], source: &Path) -> Vec<CompileEntry> {
+    entries
+        .iter()
+        .find(|entry| entry.file == source)
+        .cloned()
+        .into_iter()
+        .collect()
+}
+
 fn audit_library(
     library: &str,
     source_root: &Path,
@@ -190,9 +281,11 @@ fn audit_library(
         let source = fs::read_to_string(&entry.file)
             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
         let source_functions = legacy_c_source_functions(&source);
-        if source_functions.is_empty() {
-            continue;
-        }
+        let file = entry
+            .file
+            .strip_prefix(source_root)
+            .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
+            .to_string_lossy();
         let options = compiler_options(entry)?;
         let unit = C11TranslationUnit {
             source: &source,
@@ -202,12 +295,18 @@ fn audit_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
         counts.units += 1;
+        if source_functions.is_empty() {
+            counts.data_only_units += 1;
+            match validate_unrestricted_c11(&unit) {
+                Ok(_) => println!("  {library}/{file}: data-only gateway pass"),
+                Err(error) => {
+                    counts.gateway_failures += 1;
+                    println!("  {library}/{file}: data-only gateway failure: {error}");
+                }
+            }
+            continue;
+        }
         counts.source_functions += source_functions.len();
-        let file = entry
-            .file
-            .strip_prefix(source_root)
-            .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
-            .to_string_lossy();
         match analyze_unrestricted_c11(&unit, &source_functions[0], contracts) {
             Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
                 counts.safe_units += 1;

@@ -233,10 +233,18 @@ pub fn analyze_legacy_c(
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
     let tokens = tokenize(source);
-    let (body_start, line) = find_function_body(&tokens, function)
+    analyze_legacy_c_tokens(&tokens, function, contracts)
+}
+
+fn analyze_legacy_c_tokens(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyFunctionSummary, LegacyCError> {
+    let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
     let mut parser = Parser {
-        tokens: &tokens,
+        tokens,
         cursor: body_start,
         contracts,
         next_site: 0,
@@ -296,6 +304,67 @@ pub fn analyze_unrestricted_c11(
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => Some(function_names(&tokenize(unit.source))),
     };
+    let preprocessed_source = validate_unrestricted_c11(unit)?;
+    let analysis = match analyze_legacy_c_translation_unit_selected_partial(
+        &preprocessed_source,
+        entry,
+        contracts,
+        source_functions.as_deref(),
+    ) {
+        Ok(summary) => summary,
+        Err(error) => {
+            return Ok(UnrestrictedLegacyResult::Unknown {
+                preprocessed_source,
+                reason: error.to_string(),
+                partial: None,
+            });
+        }
+    };
+    let summary = analysis.summary;
+    if !analysis.projection_failures.is_empty() {
+        let failures = analysis
+            .projection_failures
+            .iter()
+            .map(ToString::to_string)
+            .collect::<Vec<_>>()
+            .join("; ");
+        return Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason: format!("some source functions could not be projected: {failures}"),
+            partial: Some(summary),
+        });
+    }
+    match summary.status {
+        AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
+        AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            reason: "the conservative C11 projection contains an unsupported operation".into(),
+            partial: Some(summary),
+        }),
+        AnalysisStatus::Safe => {
+            let checked_functions = summary.functions.keys().cloned().collect::<Vec<_>>();
+            let certificate = LegacySafetyCertificate {
+                preprocessed_source,
+                entry: summary.entry.clone(),
+                contracts: contracts.clone(),
+                dialect: unit.dialect,
+                function_scope: unit.function_scope,
+                summary,
+                checked_functions,
+            };
+            check_legacy_safety_certificate(&certificate).map_err(|reason| {
+                LegacyCError::ProductionParserRejected(format!(
+                    "internal legacy-C certificate check failed: {reason}"
+                ))
+            })?;
+            Ok(UnrestrictedLegacyResult::Safe(certificate))
+        }
+    }
+}
+
+/// Preprocess and syntax-check an unrestricted C translation unit without
+/// requiring it to contain an executable function body.
+pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
     let mut command = Command::new("clang");
     command.args(["-x", "c", unit.dialect.clang_argument(), "-E", "-P"]);
     for include in &unit.include_paths {
@@ -355,47 +424,7 @@ pub fn analyze_unrestricted_c11(
                 .to_owned(),
         ));
     }
-    let summary = match analyze_legacy_c_translation_unit_selected(
-        &preprocessed_source,
-        entry,
-        contracts,
-        source_functions.as_deref(),
-    ) {
-        Ok(summary) => summary,
-        Err(error) => {
-            return Ok(UnrestrictedLegacyResult::Unknown {
-                preprocessed_source,
-                reason: error.to_string(),
-                partial: None,
-            });
-        }
-    };
-    match summary.status {
-        AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
-        AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
-            preprocessed_source,
-            reason: "the conservative C11 projection contains an unsupported operation".into(),
-            partial: Some(summary),
-        }),
-        AnalysisStatus::Safe => {
-            let checked_functions = summary.functions.keys().cloned().collect::<Vec<_>>();
-            let certificate = LegacySafetyCertificate {
-                preprocessed_source,
-                entry: entry.to_owned(),
-                contracts: contracts.clone(),
-                dialect: unit.dialect,
-                function_scope: unit.function_scope,
-                summary,
-                checked_functions,
-            };
-            check_legacy_safety_certificate(&certificate).map_err(|reason| {
-                LegacyCError::ProductionParserRejected(format!(
-                    "internal legacy-C certificate check failed: {reason}"
-                ))
-            })?;
-            Ok(UnrestrictedLegacyResult::Safe(certificate))
-        }
-    }
+    Ok(preprocessed_source)
 }
 
 /// Independent structural check for an unrestricted-C `Safe` result.
@@ -464,40 +493,85 @@ fn analyze_legacy_c_translation_unit_selected(
     contracts: &ResourceContracts,
     selected_functions: Option<&[String]>,
 ) -> Result<LegacyProgramSummary, LegacyCError> {
+    let analysis = analyze_legacy_c_translation_unit_selected_partial(
+        source,
+        entry,
+        contracts,
+        selected_functions,
+    )?;
+    if let Some(error) = analysis.projection_failures.into_iter().next() {
+        return Err(error);
+    }
+    Ok(analysis.summary)
+}
+
+struct PartialTranslationUnitAnalysis {
+    summary: LegacyProgramSummary,
+    projection_failures: Vec<LegacyCError>,
+}
+
+fn analyze_legacy_c_translation_unit_selected_partial(
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+    selected_functions: Option<&[String]>,
+) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let tokens = tokenize(source);
     let mut names = function_names(&tokens);
+    let requested_was_selected =
+        selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
-    if !names.iter().any(|name| name == entry) {
+    let effective_entry = if names.iter().any(|name| name == entry) {
+        entry.to_owned()
+    } else if requested_was_selected {
+        names
+            .first()
+            .cloned()
+            .ok_or_else(|| LegacyCError::FunctionNotFound(entry.to_owned()))?
+    } else {
         return Err(LegacyCError::FunctionNotFound(entry.to_owned()));
-    }
+    };
     let mut extended = contracts.clone();
     for name in &names {
         extended.insert(name, ResourceApiKind::Neutral);
     }
     let mut functions = BTreeMap::new();
+    let mut projection_failures = Vec::new();
     for name in names {
-        functions.insert(name.clone(), analyze_legacy_c(source, &name, &extended)?);
+        match analyze_legacy_c_tokens(&tokens, &name, &extended) {
+            Ok(summary) => {
+                functions.insert(name, summary);
+            }
+            Err(error @ LegacyCError::MalformedFunction { .. }) => {
+                projection_failures.push(error);
+            }
+            Err(error) => return Err(error),
+        }
     }
     let status = if functions
         .values()
         .any(|summary| summary.status == AnalysisStatus::Unsafe)
     {
         AnalysisStatus::Unsafe
-    } else if functions
-        .values()
-        .any(|summary| summary.status == AnalysisStatus::Unknown)
+    } else if !projection_failures.is_empty()
+        || functions
+            .values()
+            .any(|summary| summary.status == AnalysisStatus::Unknown)
     {
         AnalysisStatus::Unknown
     } else {
         AnalysisStatus::Safe
     };
-    Ok(LegacyProgramSummary {
-        entry: entry.to_owned(),
-        status,
-        functions,
+    Ok(PartialTranslationUnitAnalysis {
+        summary: LegacyProgramSummary {
+            entry: effective_entry,
+            status,
+            functions,
+        },
+        projection_failures,
     })
 }
 
@@ -608,12 +682,26 @@ fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)
 fn function_names(tokens: &[Token]) -> Vec<String> {
     let mut names = BTreeSet::new();
     let mut brace_depth = 0usize;
+    let mut linkage_closes = BTreeSet::new();
     for (index, token) in tokens.iter().enumerate() {
         if token.text == "{" {
+            // Raw C sources commonly retain an `extern "C"` wrapper behind
+            // `#ifdef __cplusplus`; it is a linkage boundary, not a function.
+            if index >= 2
+                && tokens[index - 2].text == "extern"
+                && tokens[index - 1].text == "__qcore_literal__"
+                && let Some(close) = matching(tokens, index, "{", "}")
+            {
+                linkage_closes.insert(close);
+                continue;
+            }
             brace_depth += 1;
             continue;
         }
         if token.text == "}" {
+            if linkage_closes.remove(&index) {
+                continue;
+            }
             brace_depth = brace_depth.saturating_sub(1);
             continue;
         }
@@ -1594,6 +1682,61 @@ mod tests {
     }
 
     #[test]
+    fn unrestricted_projection_retains_successful_siblings() {
+        let source = "void bad(void) { label: { return; } }\nvoid subject(void) { return; }";
+        let analysis = analyze_legacy_c_translation_unit_selected_partial(
+            source,
+            "subject",
+            &contracts(),
+            None,
+        )
+        .unwrap();
+        assert_eq!(analysis.summary.status, AnalysisStatus::Unknown);
+        assert!(analysis.summary.functions.contains_key("subject"));
+        assert!(!analysis.summary.functions.contains_key("bad"));
+        assert_eq!(analysis.projection_failures.len(), 1);
+    }
+
+    #[test]
+    fn source_scope_uses_a_definition_that_survives_preprocessing() {
+        let source = "#if 0\nvoid hidden(void) {}\n#endif\nvoid subject(void) { return; }";
+        let selected = legacy_c_source_functions(source);
+        assert_eq!(selected, vec!["hidden", "subject"]);
+        let unit = C11TranslationUnit {
+            source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&unit, "hidden", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+                assert_eq!(certificate.entry, "subject");
+                assert_eq!(certificate.checked_functions, vec!["subject"]);
+            }
+            Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            other => panic!("compiled-out source entry blocked the unit: {other:?}"),
+        }
+
+        assert!(matches!(
+            analyze_unrestricted_c11(&unit, "typo", &contracts()),
+            Ok(UnrestrictedLegacyResult::Unknown { partial: None, .. })
+                | Err(LegacyCError::ProductionParserUnavailable(_))
+        ));
+    }
+
+    #[test]
+    fn unrestricted_gateway_accepts_data_only_translation_units() {
+        let unit = C11TranslationUnit {
+            source: "const int generated_table[] = { 1, 2, 3 };",
+            ..C11TranslationUnit::default()
+        };
+        match validate_unrestricted_c11(&unit) {
+            Ok(preprocessed) => assert!(preprocessed.contains("generated_table")),
+            Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            Err(error) => panic!("data-only unit failed the C gateway: {error}"),
+        }
+    }
+
+    #[test]
     fn imports_struct_fields_and_constant_array_elements() {
         let summary = analyze(
             "struct Pair { void *left; void *right[2]; };\nvoid subject(void) {\n struct Pair p;\n p.left = q_alloc();\n p.right[0] = q_alloc();\n q_free(p.right[0]);\n q_free(p.left);\n}",
@@ -1747,5 +1890,11 @@ void subject(void) {\n\
     cfl_list_foreach(item, list) { use(item); }\n\
 }\n";
         assert_eq!(legacy_c_source_functions(source), vec!["subject"]);
+    }
+
+    #[test]
+    fn source_function_discovery_enters_cxx_linkage_blocks() {
+        let source = "extern \"C\" {\nvoid first(void) {}\nint second(void) { return 0; }\n}";
+        assert_eq!(legacy_c_source_functions(source), vec!["first", "second"]);
     }
 }
