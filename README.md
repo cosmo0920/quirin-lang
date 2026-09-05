@@ -9,16 +9,18 @@ The implementation is split into:
 - `compiler/`: the Rust parser, checker, reference interpreter, and C backend;
 - `proof/`: the Lean 4 executable core and safety proofs.
 
-The current implementation includes the first eight vertical slices: dimension
+The current implementation includes the first nine vertical slices: dimension
 and quantitative-axis declarations, interval-graded usage demand analysis,
 ownership without exceptional exits, and resource-flow summaries with checked
 peak and cumulative bounds, followed by path-sensitive typed errors without
 cleanup packs, sealed error-region cleanup with checked `quant open` and linear
 discharge, cleanup-explicit CFG lowering to a tagged-error C11 ABI, and a
 reduced executable small-step model integrating natural indices, usage grades,
-owned identities, typed errors, and one error region. Active
+owned identities, typed errors, and one error region, followed by a
+conservative fixed-point resource analyzer for an annotated legacy-C subset.
+Active
 cycle requirements, including the complete Rust/C/Lean verification procedure,
-are in [`CYCLE_8.md`](CYCLE_8.md). Completed cycle records are archived under
+are in [`CYCLE_9.md`](CYCLE_9.md). Completed cycle records are archived under
 [`docs/cycles/`](docs/cycles/).
 
 The source language is not yet end-to-end: the human-facing parser currently
@@ -29,6 +31,8 @@ compiler remain future work.
 Cycle 8 preserves Cycle 7's validation on the current non-MSVC C toolchain.
 Native Windows/MSVC conformance remains explicitly postponed to the
 [Cycle 7.5 plan](docs/CYCLE_7_5.md); no Cycle 7.5 implementation is included.
+The sequenced Cycle 10 and later work is in the
+[post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 
 ## Build
 

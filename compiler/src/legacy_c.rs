@@ -269,16 +269,22 @@ fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<u
 #[derive(Clone, Debug)]
 enum Statement {
     Instruction(LegacyInstruction, usize),
+    Block(Vec<Statement>),
     If {
         line: usize,
+        condition_supported: bool,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
     While {
         line: usize,
+        condition_supported: bool,
         body: Vec<Statement>,
     },
-    Return(usize),
+    Return {
+        line: usize,
+        expression_supported: bool,
+    },
 }
 
 struct Parser<'a> {
@@ -311,7 +317,7 @@ impl Parser<'_> {
         match self.text() {
             Some("if") => {
                 self.cursor += 1;
-                self.skip_parenthesized()?;
+                let condition = self.take_parenthesized()?;
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -321,26 +327,29 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
+                    condition_supported: !contains_call(&condition),
                     then_body,
                     else_body,
                 })
             }
             Some("while") => {
                 self.cursor += 1;
-                self.skip_parenthesized()?;
+                let condition = self.take_parenthesized()?;
                 let body = self.parse_statement_body()?;
-                Ok(Statement::While { line, body })
+                Ok(Statement::While {
+                    line,
+                    condition_supported: !contains_call(&condition),
+                    body,
+                })
             }
             Some("return") => {
-                self.consume_to_semicolon()?;
-                Ok(Statement::Return(line))
+                let expression = self.consume_to_semicolon()?;
+                Ok(Statement::Return {
+                    line,
+                    expression_supported: !contains_call(&expression),
+                })
             }
-            Some("{") => Ok(Statement::Instruction(
-                LegacyInstruction::Unknown {
-                    description: "standalone compound block".to_owned(),
-                },
-                line,
-            )),
+            Some("{") => Ok(Statement::Block(self.parse_block()?)),
             Some("for" | "do" | "switch" | "goto" | "break" | "continue") => {
                 self.consume_unsupported()?;
                 Ok(Statement::Instruction(
@@ -366,15 +375,15 @@ impl Parser<'_> {
         }
     }
 
-    fn skip_parenthesized(&mut self) -> Result<(), usize> {
+    fn take_parenthesized(&mut self) -> Result<Vec<Token>, usize> {
         let line = self.tokens.get(self.cursor).map_or(1, |token| token.line);
         if self.text() != Some("(") {
             return Err(line);
         }
-        self.cursor = matching(self.tokens, self.cursor, "(", ")")
-            .map(|index| index + 1)
-            .ok_or(line)?;
-        Ok(())
+        let close = matching(self.tokens, self.cursor, "(", ")").ok_or(line)?;
+        let result = self.tokens[self.cursor + 1..close].to_vec();
+        self.cursor = close + 1;
+        Ok(result)
     }
 
     fn consume_to_semicolon(&mut self) -> Result<Vec<Token>, usize> {
@@ -401,7 +410,7 @@ impl Parser<'_> {
     fn consume_unsupported(&mut self) -> Result<(), usize> {
         if matches!(self.text(), Some("for" | "switch")) {
             self.cursor += 1;
-            self.skip_parenthesized()?;
+            self.take_parenthesized()?;
         } else {
             self.cursor += 1;
         }
@@ -436,7 +445,8 @@ impl Parser<'_> {
                                 ),
                             };
                         };
-                        let Some(destination) = last_identifier(&texts[..equal]) else {
+                        let Some(destination) = direct_assignment_destination(&texts[..equal])
+                        else {
                             return LegacyInstruction::Unknown {
                                 description: "unrecognized acquisition destination".to_owned(),
                             };
@@ -472,7 +482,7 @@ impl Parser<'_> {
         }
 
         if let Some(equal) = assignment {
-            let Some(destination) = last_identifier(&texts[..equal]) else {
+            let Some(destination) = direct_assignment_destination(&texts[..equal]) else {
                 return LegacyInstruction::Unknown {
                     description: "unrecognized assignment destination".to_owned(),
                 };
@@ -494,12 +504,8 @@ impl Parser<'_> {
                     destination: destination.to_owned(),
                 };
             }
-            // Scalar assignments do not change the resource abstraction.
-            if !texts.contains(&"*") {
-                return LegacyInstruction::NoOp;
-            }
             return LegacyInstruction::Unknown {
-                description: "unsupported pointer assignment".to_owned(),
+                description: "unsupported assignment expression".to_owned(),
             };
         }
 
@@ -519,19 +525,36 @@ fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
     })
 }
 
-fn first_call_argument<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<&'a str> {
-    tokens
-        .get(call_index + 2)
-        .copied()
-        .filter(|text| is_identifier(text) && *text != "NULL")
+fn contains_call(tokens: &[Token]) -> bool {
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    find_call(&texts).is_some()
 }
 
-fn last_identifier<'a>(tokens: &'a [&'a str]) -> Option<&'a str> {
-    tokens
-        .iter()
-        .rev()
-        .copied()
-        .find(|text| is_identifier(text))
+fn first_call_argument<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<&'a str> {
+    let argument = tokens.get(call_index + 2).copied()?;
+    (is_identifier(argument)
+        && argument != "NULL"
+        && tokens.get(call_index + 3).copied() == Some(")"))
+    .then_some(argument)
+}
+
+fn direct_assignment_destination<'a>(tokens: &'a [&'a str]) -> Option<&'a str> {
+    let destination = tokens.last().copied()?;
+    if !is_identifier(destination)
+        || tokens.first() == Some(&"*")
+        || tokens
+            .iter()
+            .any(|text| matches!(*text, "." | "[" | "]" | "-" | ">"))
+        || !tokens
+            .iter()
+            .all(|text| is_identifier(text) || *text == "*")
+    {
+        return None;
+    }
+    Some(destination)
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -574,23 +597,50 @@ impl CfgBuilder {
             Statement::Instruction(instruction, line) => {
                 self.push(instruction.clone(), vec![continuation], *line, false)
             }
-            Statement::Return(line) => self.push(LegacyInstruction::NoOp, Vec::new(), *line, true),
+            Statement::Block(statements) => self.compile_sequence(statements, continuation),
+            Statement::Return {
+                line,
+                expression_supported,
+            } => {
+                let instruction = if *expression_supported {
+                    LegacyInstruction::NoOp
+                } else {
+                    LegacyInstruction::Unknown {
+                        description: "call in return expression".to_owned(),
+                    }
+                };
+                self.push(instruction, Vec::new(), *line, true)
+            }
             Statement::If {
                 line,
+                condition_supported,
                 then_body,
                 else_body,
             } => {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
-                self.push(
-                    LegacyInstruction::NoOp,
-                    vec![then_entry, else_entry],
-                    *line,
-                    false,
-                )
+                let instruction = if *condition_supported {
+                    LegacyInstruction::NoOp
+                } else {
+                    LegacyInstruction::Unknown {
+                        description: "call in branch condition".to_owned(),
+                    }
+                };
+                self.push(instruction, vec![then_entry, else_entry], *line, false)
             }
-            Statement::While { line, body } => {
-                let header = self.push(LegacyInstruction::NoOp, Vec::new(), *line, false);
+            Statement::While {
+                line,
+                condition_supported,
+                body,
+            } => {
+                let instruction = if *condition_supported {
+                    LegacyInstruction::NoOp
+                } else {
+                    LegacyInstruction::Unknown {
+                        description: "call in loop condition".to_owned(),
+                    }
+                };
+                let header = self.push(instruction, Vec::new(), *line, false);
                 let body_entry = self.compile_sequence(body, header);
                 self.nodes[header].successors = vec![body_entry, continuation];
                 header
@@ -679,6 +729,14 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
     let mut work = VecDeque::from([cfg.entry]);
     let mut diagnostics = BTreeSet::new();
     let mut steps = 0usize;
+    let acquisition_lines = cfg
+        .nodes
+        .iter()
+        .filter_map(|node| match node.instruction {
+            LegacyInstruction::Acquire { site, .. } => Some((site, node.line)),
+            _ => None,
+        })
+        .collect::<BTreeMap<_, _>>();
 
     while let Some(node_id) = work.pop_front() {
         steps += 1;
@@ -686,9 +744,21 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
             continue;
         };
         let node = &cfg.nodes[node_id];
-        let output = transfer(&cfg.function, node, state, &mut diagnostics);
+        let output = transfer(
+            &cfg.function,
+            node,
+            state,
+            &acquisition_lines,
+            &mut diagnostics,
+        );
         if node.is_exit {
-            report_leaks(&cfg.function, node.line, &output, &mut diagnostics);
+            report_leaks(
+                &cfg.function,
+                node.line,
+                &output,
+                &acquisition_lines,
+                &mut diagnostics,
+            );
         }
         for &successor in &node.successors {
             let changed = match &mut incoming[successor] {
@@ -739,6 +809,7 @@ fn transfer(
     function: &str,
     node: &LegacyCfgNode,
     mut state: AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
     match &node.instruction {
@@ -777,10 +848,26 @@ fn transfer(
                 .insert(destination.clone(), AbstractPointer::default());
         }
         LegacyInstruction::Release { source } => {
-            apply_resource_action(function, node.line, source, &mut state, diagnostics, false);
+            apply_resource_action(
+                function,
+                node.line,
+                source,
+                &mut state,
+                acquisition_lines,
+                diagnostics,
+                false,
+            );
         }
         LegacyInstruction::Escape { source } => {
-            apply_resource_action(function, node.line, source, &mut state, diagnostics, true);
+            apply_resource_action(
+                function,
+                node.line,
+                source,
+                &mut state,
+                acquisition_lines,
+                diagnostics,
+                true,
+            );
         }
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {
@@ -804,6 +891,7 @@ fn apply_resource_action(
     line: usize,
     source: &str,
     state: &mut AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
     escape: bool,
 ) {
@@ -834,7 +922,7 @@ fn apply_resource_action(
                     function: function.to_owned(),
                     line,
                     kind: LegacyDiagnosticKind::DoubleRelease {
-                        acquisition_line: acquisition_line(state, site),
+                        acquisition_line: acquisition_line(acquisition_lines, site),
                     },
                 });
             }
@@ -843,7 +931,7 @@ fn apply_resource_action(
                     function: function.to_owned(),
                     line,
                     kind: LegacyDiagnosticKind::ReleaseAfterEscape {
-                        acquisition_line: acquisition_line(state, site),
+                        acquisition_line: acquisition_line(acquisition_lines, site),
                     },
                 });
             }
@@ -852,17 +940,15 @@ fn apply_resource_action(
     }
 }
 
-fn acquisition_line(_state: &AbstractState, site: usize) -> usize {
-    // Sites are stable parser-assigned identities. The CFG lookup below turns
-    // these into source locations when reporting exit leaks; for transfer
-    // diagnostics the stable one-based site is retained if no CFG is present.
-    site + 1
+fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site: usize) -> usize {
+    acquisition_lines.get(&site).copied().unwrap_or(0)
 }
 
 fn report_leaks(
     function: &str,
     line: usize,
     state: &AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (&site, &status) in &state.resources {
@@ -871,7 +957,7 @@ fn report_leaks(
                 function: function.to_owned(),
                 line,
                 kind: LegacyDiagnosticKind::Leak {
-                    acquisition_line: site + 1,
+                    acquisition_line: acquisition_line(acquisition_lines, site),
                 },
             });
         }
@@ -988,6 +1074,36 @@ mod tests {
             kind,
             LegacyDiagnosticKind::UnknownAlias { .. }
         )));
+    }
+
+    #[test]
+    fn calls_in_conditions_and_returns_cannot_be_silently_accepted() {
+        let condition = analyze("int subject(void) { if (mystery()) { return 1; } return 0; }");
+        assert_eq!(condition.status, AnalysisStatus::Unknown);
+
+        let returned = analyze("void *subject(void) { return mystery(); }");
+        assert_eq!(returned.status, AnalysisStatus::Unknown);
+    }
+
+    #[test]
+    fn indirect_pointer_expressions_cannot_be_silently_accepted() {
+        let arithmetic =
+            analyze("void subject(void) { void *p = q_alloc(); p = p + 1; q_free(p); return; }");
+        assert_eq!(arithmetic.status, AnalysisStatus::Unknown);
+
+        let field =
+            analyze("void subject(void) { void *p = q_alloc(); q_free(p->field); return; }");
+        assert_eq!(field.status, AnalysisStatus::Unsafe);
+        assert!(has(&field, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Unsupported { .. }
+        )));
+    }
+
+    #[test]
+    fn standalone_compound_blocks_are_imported() {
+        let summary = analyze("void subject(void) { { void *p = q_alloc(); q_free(p); } return; }");
+        assert_eq!(summary.status, AnalysisStatus::Safe);
     }
 
     #[test]

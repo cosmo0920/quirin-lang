@@ -133,6 +133,24 @@ theorem safe_implies_no_safety_diagnostic (state : AbstractState)
   unfold classify at safe
   split at safe <;> simp_all
 
+theorem safe_implies_precise (state : AbstractState)
+    (safe : classify state = .safe) : state.precise = true := by
+  unfold classify at safe
+  split at safe
+  · contradiction
+  · split at safe
+    · cases preciseEq : state.precise <;>
+        cases leakEq : leakFree state <;> simp_all
+    · contradiction
+
+/-- The formal no-false-negative contract for a `safe` report: analysis was
+    precise, no resource may remain live, and no modeled safety defect exists. -/
+theorem safe_report_is_sound (state : AbstractState)
+    (safe : classify state = .safe) :
+    state.precise = true ∧ leakFree state = true ∧ hasSafetyIssue state = false := by
+  exact ⟨safe_implies_precise state safe, safe_implies_no_exit_leak state safe,
+    safe_implies_no_safety_diagnostic state safe⟩
+
 theorem safe_implies_no_double_release_diagnostic (state : AbstractState)
     (safe : classify state = .safe) :
     ¬ ∃ resource, .doubleRelease resource ∈ state.diagnostics := by
@@ -163,6 +181,11 @@ theorem imprecise_is_never_safe (state : AbstractState)
 theorem unsupported_becomes_unknown :
     classify (transfer initial .unsupported) = .indeterminate := by
   decide
+
+theorem unsupported_is_never_safe (state : AbstractState) :
+    classify (transfer state .unsupported) ≠ .safe := by
+  apply imprecise_is_never_safe
+  rfl
 
 theorem seeded_normal_leak_is_unsafe (resource : ResourceId) :
     analyze [.acquire resource] = .defect := by

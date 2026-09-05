@@ -2439,6 +2439,11 @@ Acceptance:
 - produces no false negative on the supported annotated subset;
 - reports unknown rather than assuming safety outside the model.
 
+Cycle 9 completes this original prototype sequence. Remaining front-end,
+whole-program, end-to-end compiler, hardening, concurrency, advanced-control,
+and full-metatheory milestones are assigned to Cycles 10–16 in
+`docs/ROADMAP_AFTER_CYCLE_9.md`. Cycle 7.5 remains separately postponed.
+
 ---
 
 ## 28. Required Unit and UI Tests
