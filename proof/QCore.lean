@@ -1,3 +1,4 @@
+import QCore.CallbackSource
 import QCore.Index
 import QCore.QuantIndexBinding
 import QCore.AdvancedControl

@@ -6,6 +6,9 @@ use std::process::{Command, ExitCode};
 use qcore_compiler::chunk_contract::check_chunk_source_contract;
 use qcore_compiler::verifier_plugins::chunkio::{ChunkSourceResult, import_chunk_source};
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
+use qcore_compiler::verifier_plugins::libevent::monkey_source::{
+    MonkeySourceResult, import_monkey_callbacks,
+};
 use qcore_compiler::{
     AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
     LegacyFunctionScope, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
@@ -42,14 +45,19 @@ fn main() -> ExitCode {
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("../fluent-bit"));
     let monkey_database = arguments.next().map(PathBuf::from);
+    let monkey_source_report = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
             "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
-             [monkey-libevent-compile_commands.json]"
+             [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json]"
         );
         return ExitCode::FAILURE;
     }
-    match run(&root, monkey_database.as_deref()) {
+    match run(
+        &root,
+        monkey_database.as_deref(),
+        monkey_source_report.as_deref(),
+    ) {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
         Err(error) => {
@@ -59,7 +67,11 @@ fn main() -> ExitCode {
     }
 }
 
-fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
+fn run(
+    root: &Path,
+    monkey_database: Option<&Path>,
+    monkey_source_report: Option<&Path>,
+) -> Result<bool, String> {
     let root = root
         .canonicalize()
         .map_err(|error| format!("could not resolve {}: {error}", root.display()))?;
@@ -277,6 +289,7 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         selected.sort_by(|left, right| left.file.cmp(&right.file));
         selected.dedup_by(|left, right| left.file == right.file);
         verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
+        audit_monkey_callback_source(&selected, monkey_source_report)?;
         let counts = audit_library("monkey-libevent", &source_root, &selected, &contracts)?;
         failed |= counts.gateway_failures != 0;
         println!(
@@ -491,6 +504,53 @@ fn audit_chunk_source(
     Ok(())
 }
 
+fn audit_monkey_callback_source(
+    entries: &[CompileEntry],
+    report: Option<&Path>,
+) -> Result<(), String> {
+    let entry = entries
+        .iter()
+        .find(|entry| entry.file.ends_with("mk_core/mk_event.c"))
+        .ok_or("missing Monkey adapter translation unit")?;
+    let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+    let options = compiler_options(entry)?;
+    let unit = C11TranslationUnit {
+        source: &source,
+        include_paths: options.include_paths,
+        definitions: options.definitions,
+        dialect: options.dialect,
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+    };
+    let results = import_monkey_callbacks(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+    for result in &results {
+        match result {
+            MonkeySourceResult::Summary(summary) => println!(
+                "  monkey-libevent/{}: {} source access path(s); custody, failure paths, and runtime access refinement Unknown",
+                summary.function(),
+                summary.paths().len()
+            ),
+            MonkeySourceResult::Unknown { function, reason } => {
+                println!("  monkey-libevent/{function}: callback source Unknown: {reason}")
+            }
+        }
+    }
+    if let Some(report) = report {
+        let output = serde_json::json!({
+            "schema_version": 1,
+            "source_revision": PINNED_FLUENT_BIT_COMMIT,
+            "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
+            "source_projection_only": true,
+            "callbacks": results,
+        });
+        fs::write(
+            report,
+            serde_json::to_string_pretty(&output).map_err(|error| error.to_string())? + "\n",
+        )
+        .map_err(|error| format!("could not write {}: {error}", report.display()))?;
+    }
+    Ok(())
+}
+
 fn monkey_source_root(entries: &[CompileEntry]) -> Result<PathBuf, String> {
     let event_entry = entries
         .iter()
@@ -549,6 +609,26 @@ fn verify_monkey_source_copy(
             return Err(format!(
                 "compiled Monkey source differs from pinned Fluent Bit source: {}",
                 relative.display()
+            ));
+        }
+    }
+    // The adapter is textually included, so it is absent from the standalone
+    // command list. Bind its body, layout and core macro headers explicitly.
+    for relative in [
+        "mk_core/mk_event_libevent.c",
+        "include/monkey/mk_core/mk_event.h",
+        "include/monkey/mk_core/mk_event_libevent.h",
+        "include/monkey/mk_core/mk_macros.h",
+        "include/monkey/mk_core/mk_memory.h",
+        "include/monkey/mk_core/mk_limits.h",
+        "include/monkey/mk_core/mk_list.h",
+    ] {
+        let compiled = fs::read(compiled_root.join(relative)).map_err(|error| error.to_string())?;
+        let expected =
+            fs::read(canonical_root.join(relative)).map_err(|error| error.to_string())?;
+        if compiled != expected {
+            return Err(format!(
+                "compiled Monkey callback source/layout differs from pinned source: {relative}"
             ));
         }
     }

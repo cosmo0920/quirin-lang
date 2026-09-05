@@ -137,7 +137,7 @@ def main():
             raise RuntimeError(f"missing descriptor creation/failure scenarios: {report}")
         metadata["monkey_result"] = {"identity_projection": report,
             "static_certificate": False,
-            "unknown": "source-derived callback/access trace, allocation/registration failure paths"}
+            "unknown": "source/runtime callback access refinement, allocation/registration failure paths"}
         print(json.dumps(metadata["monkey_result"]))
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
 

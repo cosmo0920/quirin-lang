@@ -1,0 +1,46 @@
+{
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "qcore_base_revision": "0a3f7d566fa29145cb8e79eed7b5d5e19cfa3532",
+  "source_projection_only": true,
+  "qcore_sources_sha256": {
+    "compiler/src/typed_c_ast.rs": "72a9cf049c44570bbcd949c9a1f284be6271099d301e2253ce7cba1beb75fac7",
+    "compiler/src/verifier_plugins/libevent/monkey_source.rs": "bc60f4b6bece8d1d08961ef8621af46ecaf4bc5c8a34429a477ecb389d964f73",
+    "compiler/src/verifier_plugins/chunkio/chunk_source.rs": "64264d497b64af714615f9a83679ed0f2611c9407771bc0cb676e3ca4fd6c0f2",
+    "compiler/examples/cycle19_fluent_bit_libraries_audit.rs": "ea8b7ec5016658fc4c12f00b30891b4d26e8f8cb26671f45a616dc4ab5d8b09c",
+    "compiler/tests/unit/monkey_source.rs": "9ba37efeebe6de11c01919593468c4f9c3fcb42afecdc5b32ef8e792cabf2b16",
+    "compiler/tests/fixtures/monkey/callbacks.c": "d8e335f6cb915525e497f078ceb9258bcf0ed9eda87ea0980c4695d3b0aab027",
+    "proof/QCore/CallbackSource.lean": "2293a12a74b7ba47daf303f4357879b50e41aaf216d6096ec464ba2af563285d",
+    "proof/AuditCycle19.lean": "9d4d43c1de5f490725a64b2cbf84afd003cabe91a48f9e1c505b95fe19fa25af",
+    "scripts/cycle19_native_observations.py": "64d9eec010e622cf6f0f0f11a46b4a4e3f45b397d5f30c2f4af0fcb97b60606c"
+  },
+  "pinned_monkey_source_sha256": {
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/mk_core/mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/mk_core/mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_event.h": "6a1123d6e94cd8a5bbc93043ae78a964caacd789bd64674604f2dcae9cba8de7",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_event_libevent.h": "2cef581fd42f28762bd395f2b49ed3062a1ebe935269ae151a9c1f331761a5c3",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_macros.h": "ec875a3474cdd226651e5211e9f864b797dffd0c6570dfdbae083b34860383e7",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_memory.h": "576b95e3baef0f1fe6255e4fe438d5d154e26e7f9634bfb8ac3753e36bc7b3d5",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_limits.h": "478943c1dfc9e014644b255295376e85a4bb94d0f7a1ec1f114022669c487a2b",
+    "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core/mk_list.h": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1"
+  },
+  "compile_databases_sha256": {
+    "/tmp/qcore-cycle19-monkey-build-codex-20260905/compile_commands.json": "307362b01b6fa9d279cbec9ba1cf8e9cdb86a4cabcbc7929d250494ce5a8874d",
+    "/home/cosmo/Documents/GitHub/fluent-bit/build/compile_commands.json": "686769c1b40a60417bdc25eaeffa41a3d82b275d9e52ab3f337ab103d62a313c"
+  },
+  "artifacts_sha256": {
+    "README.md": "50b2e27466a3be73af1528bf79bfe4fbc3cd59eb3d799214cc14d327651214fb",
+    "clippy.log": "47c859be08b528ea6aa6875357324ddb2bab555513feb8bba10b378fd808f079",
+    "flb_mem_contract_result.json": "2796691c805875f58b9788004e5a9505469a4190804cf7ece218eea64343e6df",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lean-audit.log": "0beef094e00c07d22810d3b26a37946e9591c7c5f5cec406004218425bb5a8d3",
+    "lean.log": "3b3e982b47a872a0e9c592ed1205f41dac6508ba898e166861591f11a018b812",
+    "monkey_callback_source.json": "a97025d354ec71809b981511bab90dfd7f4ccf373633ab77432a8ca320e247bd",
+    "monkey_identity_result.json": "56250d192d92f24f3e907c07530376918e371e3921b975fcb54357ec4a2985f8",
+    "monkey_observation.jsonl": "b375a0a5b060c842ef4769d1b51173f279899ce03665934eb7bac5710b5b169a",
+    "monkey_observation.stderr": "345d72794d8a7e6ebe6bcdcd0ddc21343363a25c2bdc815d0529ab44dfe1c806",
+    "native-metadata.json": "e6aed11e4713ccb293adae7a96aed4c47384708af89c93effc133c30b10ca568",
+    "source-audit.log": "3c75085985b865d9d8d64d0404cb9a4e8789c51c71d1aae22c29ffb3e6d1c668",
+    "tests.log": "c24b532ba166753f0a91c1dc1355b2e1b88ba2d95e13abe8d4a113097a2b6827"
+  },
+  "native_dependency_hashes": "native-metadata.json"
+}

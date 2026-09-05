@@ -1,3 +1,4 @@
+import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
 import QCore.ChunkLifecycle
@@ -58,3 +59,11 @@ import QCore.ChunkSource
 #print axioms QCore.DescriptorObservation.failed_native_close_is_unresolved
 #print axioms QCore.DescriptorObservation.accepted_close_prevents_duplicate_close
 #print axioms QCore.DescriptorObservation.reuse_rejects_previous_generation
+
+#print axioms QCore.CallbackSource.accepted_record_has_typed_producers
+#print axioms QCore.CallbackSource.accepted_record_rejects_forward_references
+#print axioms QCore.CallbackSource.accepted_record_appends_exactly_its_producer
+#print axioms QCore.CallbackSource.wrong_type_reference_is_rejected
+#print axioms QCore.CallbackSource.nonproducing_record_cannot_supply_symbol
+#print axioms QCore.CallbackSource.branch_preserves_taken_alternative
+#print axioms QCore.CallbackSource.branch_preserves_not_taken_alternative

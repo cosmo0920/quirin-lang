@@ -322,3 +322,21 @@ deployed observation binding its dispatcher and selected backend to the Cycle
 Only functions whose resource obligations are fully discharged may contribute
 to memory-safety coverage. `Unknown` and provisional `Unsafe` functions remain
 outside the proved numerator.
+
+
+## Callback source-path increment (2026-09-06)
+
+The current audit also imports the three included Monkey callbacks from the
+forced-Libevent `mk_event.c` build. It emits four `cb_event` source paths, three
+`cb_timeout` paths, and one `cb_wait_2_timeout` path. The optional third argument
+to `cycle19_fluent_bit_libraries_audit` saves their typed access/call report.
+The copied adapter and core layout/macro headers are explicitly byte-checked
+in addition to the standalone translation units.
+
+These are source projections, not callback or custody certificates. The audit
+prints the remaining custody, failure-path, and runtime access refinement gates
+for each imported callback. The native observation regression still checks the
+48-record descriptor trace and 145 allocator executions, but it does not yet
+bind the new symbolic payload/map/fired-slot accesses to those observations.
+The table's generic projection and Safe/Unsafe/Unknown counts are unchanged.
+See [the callback source report](../reports/cycle19-callback-source/README.md).

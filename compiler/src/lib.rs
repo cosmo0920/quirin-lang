@@ -47,6 +47,7 @@ pub mod research_closure;
 pub mod research_extensions;
 pub mod resource_flow;
 pub mod translation_validation;
+mod typed_c_ast;
 pub mod typed_errors;
 pub mod usage;
 pub mod verifier_plugin;

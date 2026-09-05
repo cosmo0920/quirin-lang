@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports pending; native allocator and generation-bound Monkey observations checked**
+**Status: In progress — native field contracts and allocator/descriptor observations checked; all three Monkey callback access paths imported; custody/lifecycle and source/runtime composition gates remain**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -347,3 +347,30 @@ open, as do the general 19B and 19C source identity/teardown workstreams. No new
 whole-source or plugin safety certificate is issued. See the [descriptor
 observation report](../reports/cycle19-descriptor-observations/README.md) for
 reproduction, evidence, validation, and the precise boundary.
+
+
+## Source-derived Monkey callback access paths
+
+The next 19D increment imports all three callbacks from the selected, pinned
+Libevent adapter through Clang's typed AST. It retains four flag paths for
+`cb_event`, three send/error paths for `cb_timeout`, and the single return path
+for `cb_wait_2_timeout`. Typed parameter/read/call symbols preserve aliases,
+field and fired-slot accesses, branch guards, casts, call arguments, local
+lifetimes, and cleanup order. The Linux error-query macro is retained as its
+actual errno-location call and read. Calls remain opaque: a close/free call is
+not by itself successful custody discharge.
+
+The importer checks every definition node before expansion and rejects
+unsupported control flow, qualified or bitfield accesses, unresolved locals,
+unsequenced call/read operands, and bounded-profile limit violations. The
+external audit additionally byte-checks the textually included adapter and its
+core layout/macro headers. Seven new Lean theorems audit typed symbol provenance
+and both branch alternatives; Clang/Rust import and full C semantics remain
+outside those proofs.
+
+All 300 workspace tests, formatting, Clippy, Lean build/dependency audit, native
+regression, and pinned source audit pass. Generic projection and safety counts
+are unchanged. Source/runtime payload and map binding, callback-contract
+checking under those bindings, and allocation/registration failure imports
+remain open, alongside 19B and 19C. See the [callback source report](../reports/cycle19-callback-source/README.md)
+for source paths, reproduction, evidence, and the precise remaining gates.

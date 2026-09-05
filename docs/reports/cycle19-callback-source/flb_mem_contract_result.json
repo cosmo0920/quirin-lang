@@ -1,0 +1,1 @@
+{"checked_executions":145,"functions":{"flb_calloc":50,"flb_free":5,"flb_malloc":10,"flb_realloc":40,"flb_realloc_z":40},"kind":"runtime_contract_evaluation","static_certificate":false}

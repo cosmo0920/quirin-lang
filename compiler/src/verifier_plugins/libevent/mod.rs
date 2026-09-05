@@ -2,6 +2,7 @@
 
 pub mod event_driven;
 pub mod monkey_observation;
+pub mod monkey_source;
 pub use event_driven::*;
 
 use crate::verifier_plugin::{
