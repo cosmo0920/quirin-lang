@@ -21,8 +21,63 @@ pub enum ResourceApiKind {
     Neutral,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ResourceParameterMode {
+    /// The call observes the argument without requiring resource custody.
+    Borrowed,
+    /// The caller must retain a known live resource across the call.
+    Owned { nullable: bool },
+    /// Custody moves to the callee, without claiming that the callee destroys it.
+    Consumed { nullable: bool },
+    /// The trusted call destroys the resource.
+    Released { nullable: bool },
+    /// The call initializes the pointed-to destination with fresh custody.
+    Out { nullable: bool },
+    /// The callee stores this resource under the resource passed at
+    /// `owner_parameter`. Destruction or transfer of the owner cascades to it.
+    Stored {
+        owner_parameter: usize,
+        nullable: bool,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum ResourceReturnMode {
+    #[default]
+    None,
+    Owned {
+        nullable: bool,
+    },
+    /// On success the result replaces `parameter`; on failure the old resource
+    /// remains live. A nullable result therefore requires path refinement
+    /// before the replacement can be treated as complete.
+    Reallocated {
+        parameter: usize,
+        nullable: bool,
+    },
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct ResourceContracts(BTreeMap<String, ResourceApiKind>);
+pub struct ResourceFunctionContract {
+    pub parameters: Vec<ResourceParameterMode>,
+    pub result: ResourceReturnMode,
+}
+
+impl ResourceFunctionContract {
+    #[must_use]
+    pub fn new(
+        parameters: impl IntoIterator<Item = ResourceParameterMode>,
+        result: ResourceReturnMode,
+    ) -> Self {
+        Self {
+            parameters: parameters.into_iter().collect(),
+            result,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ResourceContracts(BTreeMap<String, ResourceFunctionContract>);
 
 impl ResourceContracts {
     #[must_use]
@@ -30,17 +85,41 @@ impl ResourceContracts {
         Self(
             contracts
                 .into_iter()
-                .map(|(name, kind)| (name.into(), kind))
+                .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
         )
     }
 
     pub fn insert(&mut self, name: impl Into<String>, kind: ResourceApiKind) {
-        self.0.insert(name.into(), kind);
+        self.0
+            .insert(name.into(), ResourceFunctionContract::from(kind));
     }
 
-    fn kind(&self, name: &str) -> Option<ResourceApiKind> {
-        self.0.get(name).copied()
+    pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
+        self.0.insert(name.into(), contract);
+    }
+
+    fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
+        self.0.get(name)
+    }
+}
+
+impl From<ResourceApiKind> for ResourceFunctionContract {
+    fn from(kind: ResourceApiKind) -> Self {
+        match kind {
+            ResourceApiKind::Acquire => {
+                Self::new([], ResourceReturnMode::Owned { nullable: false })
+            }
+            ResourceApiKind::Release => Self::new(
+                [ResourceParameterMode::Released { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+            ResourceApiKind::Escape => Self::new(
+                [ResourceParameterMode::Consumed { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+            ResourceApiKind::Neutral => Self::default(),
+        }
     }
 }
 
@@ -67,6 +146,17 @@ pub enum LegacyInstruction {
     /// Non-resource scalar returns remain resource-neutral.
     EscapeIfOwned {
         source: String,
+    },
+    ContractCall {
+        function: String,
+        destination: Option<String>,
+        arguments: Vec<Option<String>>,
+        contract: ResourceFunctionContract,
+        produced_sites: Vec<usize>,
+    },
+    BranchOnNull {
+        source: String,
+        true_is_null: bool,
     },
     NoOp,
     Unknown {
@@ -101,6 +191,7 @@ pub enum LegacyDiagnosticKind {
     Leak { acquisition_line: usize },
     DoubleRelease { acquisition_line: usize },
     ReleaseAfterEscape { acquisition_line: usize },
+    CustodyConflict { acquisition_line: usize },
     UnknownAlias { variable: String },
     Unsupported { description: String },
 }
@@ -753,12 +844,14 @@ enum Statement {
     If {
         line: usize,
         condition_supported: bool,
+        null_condition: Option<PointerNullCondition>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
     While {
         line: usize,
         condition_supported: bool,
+        null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
     },
     Return {
@@ -766,6 +859,12 @@ enum Statement {
         expression_supported: bool,
         returned_place: Option<String>,
     },
+}
+
+#[derive(Clone, Debug)]
+struct PointerNullCondition {
+    source: String,
+    true_is_null: bool,
 }
 
 struct Parser<'a> {
@@ -809,6 +908,7 @@ impl Parser<'_> {
                 Ok(Statement::If {
                     line,
                     condition_supported: !contains_call(&condition),
+                    null_condition: pointer_null_condition(&condition),
                     then_body,
                     else_body,
                 })
@@ -820,6 +920,7 @@ impl Parser<'_> {
                 Ok(Statement::While {
                     line,
                     condition_supported: !contains_call(&condition),
+                    null_condition: pointer_null_condition(&condition),
                     body,
                 })
             }
@@ -921,47 +1022,46 @@ impl Parser<'_> {
         let call = find_call(&texts);
 
         if let Some((call_index, function)) = call {
-            if let Some(kind) = self.contracts.kind(function) {
-                let argument = first_call_argument(&texts, call_index);
-                return match kind {
-                    ResourceApiKind::Acquire => {
-                        let Some(equal) = assignment else {
-                            return LegacyInstruction::Unknown {
-                                description: format!(
-                                    "discarded result of resource API `{function}`"
-                                ),
-                            };
-                        };
-                        let Some(destination) = direct_assignment_destination(&texts[..equal])
-                        else {
-                            return LegacyInstruction::Unknown {
-                                description: "unrecognized acquisition destination".to_owned(),
-                            };
-                        };
+            if let Some(contract) = self.contracts.contract(function).cloned() {
+                let destination =
+                    assignment.and_then(|equal| direct_assignment_destination(&texts[..equal]));
+                if !matches!(contract.result, ResourceReturnMode::None) && destination.is_none() {
+                    return LegacyInstruction::Unknown {
+                        description: format!("discarded owned result of resource API `{function}`"),
+                    };
+                }
+                let raw_arguments = call_arguments(&texts, call_index);
+                let arguments = contract
+                    .parameters
+                    .iter()
+                    .enumerate()
+                    .map(|(index, mode)| {
+                        raw_arguments
+                            .as_ref()
+                            .and_then(|arguments| arguments.get(index))
+                            .and_then(|argument| contract_argument_place(argument, *mode))
+                    })
+                    .collect::<Vec<_>>();
+                let produced_count =
+                    usize::from(!matches!(contract.result, ResourceReturnMode::None))
+                        + contract
+                            .parameters
+                            .iter()
+                            .filter(|mode| matches!(mode, ResourceParameterMode::Out { .. }))
+                            .count();
+                let produced_sites = (0..produced_count)
+                    .map(|_| {
                         let site = self.next_site;
                         self.next_site += 1;
-                        LegacyInstruction::Acquire {
-                            destination: destination.to_owned(),
-                            site,
-                        }
-                    }
-                    ResourceApiKind::Release => argument.map_or_else(
-                        || LegacyInstruction::Unknown {
-                            description: format!("unrecognized argument to `{function}`"),
-                        },
-                        |source| LegacyInstruction::Release {
-                            source: source.to_owned(),
-                        },
-                    ),
-                    ResourceApiKind::Escape => argument.map_or_else(
-                        || LegacyInstruction::Unknown {
-                            description: format!("unrecognized argument to `{function}`"),
-                        },
-                        |source| LegacyInstruction::Escape {
-                            source: source.to_owned(),
-                        },
-                    ),
-                    ResourceApiKind::Neutral => LegacyInstruction::NoOp,
+                        site
+                    })
+                    .collect();
+                return LegacyInstruction::ContractCall {
+                    function: function.to_owned(),
+                    destination,
+                    arguments,
+                    contract,
+                    produced_sites,
                 };
             }
             return LegacyInstruction::Unknown {
@@ -1016,14 +1116,89 @@ fn contains_call(tokens: &[Token]) -> bool {
     find_call(&texts).is_some()
 }
 
-fn first_call_argument(tokens: &[&str], call_index: usize) -> Option<String> {
-    let close = tokens[call_index + 2..]
+fn pointer_null_condition(tokens: &[Token]) -> Option<PointerNullCondition> {
+    let texts = tokens
         .iter()
-        .position(|token| *token == ")")?
-        + call_index
-        + 2;
-    let argument = &tokens[call_index + 2..close];
-    (!argument.contains(&",")).then(|| canonical_place(argument))?
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    let is_null = |text: &str| matches!(text, "NULL" | "nullptr" | "0");
+    match texts.as_slice() {
+        [source] if is_identifier(source) => Some(PointerNullCondition {
+            source: (*source).to_owned(),
+            true_is_null: false,
+        }),
+        ["!", source] if is_identifier(source) => Some(PointerNullCondition {
+            source: (*source).to_owned(),
+            true_is_null: true,
+        }),
+        [source, "=", "=", null] if is_identifier(source) && is_null(null) => {
+            Some(PointerNullCondition {
+                source: (*source).to_owned(),
+                true_is_null: true,
+            })
+        }
+        [source, "!", "=", null] if is_identifier(source) && is_null(null) => {
+            Some(PointerNullCondition {
+                source: (*source).to_owned(),
+                true_is_null: false,
+            })
+        }
+        [null, "=", "=", source] if is_null(null) && is_identifier(source) => {
+            Some(PointerNullCondition {
+                source: (*source).to_owned(),
+                true_is_null: true,
+            })
+        }
+        [null, "!", "=", source] if is_null(null) && is_identifier(source) => {
+            Some(PointerNullCondition {
+                source: (*source).to_owned(),
+                true_is_null: false,
+            })
+        }
+        _ => None,
+    }
+}
+
+fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'a [&'a str]>> {
+    let mut arguments = Vec::new();
+    let mut start = call_index + 2;
+    let mut parentheses = 0usize;
+    let mut brackets = 0usize;
+    let mut cursor = start;
+    while cursor < tokens.len() {
+        match tokens[cursor] {
+            "(" => parentheses += 1,
+            ")" if parentheses == 0 && brackets == 0 => {
+                if cursor > start {
+                    arguments.push(&tokens[start..cursor]);
+                }
+                return Some(arguments);
+            }
+            ")" => parentheses = parentheses.checked_sub(1)?,
+            "[" => brackets += 1,
+            "]" => brackets = brackets.checked_sub(1)?,
+            "," if parentheses == 0 && brackets == 0 => {
+                arguments.push(&tokens[start..cursor]);
+                start = cursor + 1;
+            }
+            _ => {}
+        }
+        cursor += 1;
+    }
+    None
+}
+
+fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Option<String> {
+    match mode {
+        ResourceParameterMode::Borrowed => None,
+        ResourceParameterMode::Out { .. } => {
+            (argument.first() == Some(&"&")).then(|| canonical_place(&argument[1..]))?
+        }
+        ResourceParameterMode::Owned { .. }
+        | ResourceParameterMode::Consumed { .. }
+        | ResourceParameterMode::Released { .. }
+        | ResourceParameterMode::Stored { .. } => canonical_place(argument),
+    }
 }
 
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
@@ -1137,12 +1312,18 @@ impl CfgBuilder {
             Statement::If {
                 line,
                 condition_supported,
+                null_condition,
                 then_body,
                 else_body,
             } => {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
-                let instruction = if *condition_supported {
+                let instruction = if let Some(condition) = null_condition {
+                    LegacyInstruction::BranchOnNull {
+                        source: condition.source.clone(),
+                        true_is_null: condition.true_is_null,
+                    }
+                } else if *condition_supported {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
@@ -1154,9 +1335,15 @@ impl CfgBuilder {
             Statement::While {
                 line,
                 condition_supported,
+                null_condition,
                 body,
             } => {
-                let instruction = if *condition_supported {
+                let instruction = if let Some(condition) = null_condition {
+                    LegacyInstruction::BranchOnNull {
+                        source: condition.source.clone(),
+                        true_is_null: condition.true_is_null,
+                    }
+                } else if *condition_supported {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
@@ -1192,17 +1379,22 @@ impl CfgBuilder {
 const LIVE: u8 = 1;
 const RELEASED: u8 = 2;
 const ESCAPED: u8 = 4;
+const CONTAINED: u8 = 8;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 struct AbstractPointer {
     targets: BTreeSet<usize>,
     unknown: bool,
+    may_be_null: bool,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 struct AbstractState {
     pointers: BTreeMap<String, AbstractPointer>,
     resources: BTreeMap<usize, u8>,
+    nullable_sites: BTreeSet<usize>,
+    conditional_replacements: BTreeMap<usize, BTreeSet<usize>>,
+    contained: BTreeMap<usize, BTreeSet<usize>>,
     widened: bool,
 }
 
@@ -1225,6 +1417,7 @@ impl AbstractState {
                 (Some(mut current), Some(other)) => {
                     current.targets.extend(other.targets.iter().copied());
                     current.unknown |= other.unknown;
+                    current.may_be_null |= other.may_be_null;
                     if current.targets.len() > MAX_ALIAS_TARGETS {
                         current.targets.clear();
                         current.unknown = true;
@@ -1234,11 +1427,13 @@ impl AbstractState {
                 }
                 (Some(mut current), None) => {
                     current.unknown = true;
+                    current.may_be_null = true;
                     self.pointers.insert(variable, current);
                 }
                 (None, Some(other)) => {
                     let mut joined = other.clone();
                     joined.unknown = true;
+                    joined.may_be_null = true;
                     self.pointers.insert(variable, joined);
                 }
                 (None, None) => {}
@@ -1249,6 +1444,25 @@ impl AbstractState {
                 .entry(site)
                 .and_modify(|current| *current |= status)
                 .or_insert(status);
+        }
+        self.nullable_sites
+            .extend(incoming.nullable_sites.iter().copied());
+        for pointer in self.pointers.values() {
+            if pointer.may_be_null {
+                self.nullable_sites.extend(pointer.targets.iter().copied());
+            }
+        }
+        for (&site, replaced) in &incoming.conditional_replacements {
+            self.conditional_replacements
+                .entry(site)
+                .or_default()
+                .extend(replaced.iter().copied());
+        }
+        for (&owner, children) in &incoming.contained {
+            self.contained
+                .entry(owner)
+                .or_default()
+                .extend(children.iter().copied());
         }
         self.widened |= incoming.widened;
         *self != before
@@ -1264,9 +1478,13 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
     let acquisition_lines = cfg
         .nodes
         .iter()
-        .filter_map(|node| match node.instruction {
-            LegacyInstruction::Acquire { site, .. } => Some((site, node.line)),
-            _ => None,
+        .flat_map(|node| match &node.instruction {
+            LegacyInstruction::Acquire { site, .. } => vec![(*site, node.line)],
+            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites
+                .iter()
+                .map(|site| (*site, node.line))
+                .collect(),
+            _ => Vec::new(),
         })
         .collect::<BTreeMap<_, _>>();
 
@@ -1292,11 +1510,36 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
                 &mut diagnostics,
             );
         }
-        for &successor in &node.successors {
+        for (edge, &successor) in node.successors.iter().enumerate() {
+            let mut edge_output = output.clone();
+            if let LegacyInstruction::BranchOnNull {
+                source,
+                true_is_null,
+            } = &node.instruction
+            {
+                let assume_null = if edge == 0 {
+                    *true_is_null
+                } else {
+                    !*true_is_null
+                };
+                match refine_pointer_null(&mut edge_output, source, assume_null) {
+                    PointerRefinement::Infeasible => continue,
+                    PointerRefinement::Unknown => {
+                        diagnostics.insert(LegacyDiagnostic {
+                            function: cfg.function.clone(),
+                            line: node.line,
+                            kind: LegacyDiagnosticKind::UnknownAlias {
+                                variable: source.clone(),
+                            },
+                        });
+                    }
+                    PointerRefinement::Refined => {}
+                }
+            }
             let changed = match &mut incoming[successor] {
-                Some(current) => current.join(&output),
+                Some(current) => current.join(&edge_output),
                 slot @ None => {
-                    *slot = Some(output.clone());
+                    *slot = Some(edge_output);
                     true
                 }
             };
@@ -1325,6 +1568,7 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
             LegacyDiagnosticKind::Leak { .. }
                 | LegacyDiagnosticKind::DoubleRelease { .. }
                 | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
+                | LegacyDiagnosticKind::CustodyConflict { .. }
         )
     });
     let unknown_found = diagnostics.iter().any(|diagnostic| {
@@ -1364,6 +1608,7 @@ fn transfer(
                 AbstractPointer {
                     targets: BTreeSet::from([*site]),
                     unknown: false,
+                    may_be_null: false,
                 },
             );
         }
@@ -1382,14 +1627,19 @@ fn transfer(
                 AbstractPointer {
                     targets: BTreeSet::new(),
                     unknown: true,
+                    may_be_null: true,
                 }
             });
             state.pointers.insert(destination.clone(), pointer);
         }
         LegacyInstruction::Clear { destination } => {
-            state
-                .pointers
-                .insert(destination.clone(), AbstractPointer::default());
+            state.pointers.insert(
+                destination.clone(),
+                AbstractPointer {
+                    may_be_null: true,
+                    ..AbstractPointer::default()
+                },
+            );
         }
         LegacyInstruction::Release { source } => {
             apply_resource_action(
@@ -1399,6 +1649,7 @@ fn transfer(
                 &mut state,
                 acquisition_lines,
                 diagnostics,
+                false,
                 false,
             );
         }
@@ -1411,6 +1662,7 @@ fn transfer(
                 acquisition_lines,
                 diagnostics,
                 true,
+                false,
             );
         }
         LegacyInstruction::EscapeIfOwned { source } => {
@@ -1423,9 +1675,29 @@ fn transfer(
                     acquisition_lines,
                     diagnostics,
                     true,
+                    false,
                 );
             }
         }
+        LegacyInstruction::ContractCall {
+            function: called,
+            destination,
+            arguments,
+            contract,
+            produced_sites,
+        } => apply_contract_call(
+            function,
+            node.line,
+            called,
+            destination.as_deref(),
+            arguments,
+            contract,
+            produced_sites,
+            &mut state,
+            acquisition_lines,
+            diagnostics,
+        ),
+        LegacyInstruction::BranchOnNull { .. } => {}
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
@@ -1436,6 +1708,7 @@ fn transfer(
             });
             for pointer in state.pointers.values_mut() {
                 pointer.unknown = true;
+                pointer.may_be_null = true;
             }
         }
         LegacyInstruction::NoOp => {}
@@ -1443,6 +1716,7 @@ fn transfer(
     state
 }
 
+#[allow(clippy::too_many_arguments)]
 fn apply_resource_action(
     function: &str,
     line: usize,
@@ -1451,6 +1725,7 @@ fn apply_resource_action(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
     escape: bool,
+    nullable: bool,
 ) {
     let pointer = state
         .pointers
@@ -1459,8 +1734,9 @@ fn apply_resource_action(
         .unwrap_or(AbstractPointer {
             targets: BTreeSet::new(),
             unknown: true,
+            may_be_null: true,
         });
-    if pointer.unknown || pointer.targets.is_empty() {
+    if pointer.unknown || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null)) {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -1469,10 +1745,35 @@ fn apply_resource_action(
             },
         });
     }
+    if !nullable
+        && pointer
+            .targets
+            .iter()
+            .any(|site| state.nullable_sites.contains(site))
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::Unsupported {
+                description: format!("nullable resource `{source}` used by a non-null contract"),
+            },
+        });
+    }
     for site in pointer.targets {
         let status = state.resources.get(&site).copied().unwrap_or(0);
+        if status & CONTAINED != 0 {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::CustodyConflict {
+                    acquisition_line: acquisition_line(acquisition_lines, site),
+                },
+            });
+        }
         if escape {
-            state.resources.insert(site, (status & !LIVE) | ESCAPED);
+            state
+                .resources
+                .insert(site, (status & !(LIVE | CONTAINED)) | ESCAPED);
         } else {
             if status & RELEASED != 0 {
                 diagnostics.insert(LegacyDiagnostic {
@@ -1492,9 +1793,352 @@ fn apply_resource_action(
                     },
                 });
             }
-            state.resources.insert(site, (status & !LIVE) | RELEASED);
+            state
+                .resources
+                .insert(site, (status & !(LIVE | CONTAINED)) | RELEASED);
+        }
+        cascade_resource_action(state, site, escape);
+    }
+}
+
+fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool) {
+    let mut pending = state.contained.remove(&owner).unwrap_or_default();
+    let mut visited = BTreeSet::new();
+    while let Some(site) = pending.pop_first() {
+        if !visited.insert(site) {
+            continue;
+        }
+        if let Some(children) = state.contained.remove(&site) {
+            pending.extend(children);
+        }
+        let status = state.resources.get(&site).copied().unwrap_or(0);
+        let terminal = if escape { ESCAPED } else { RELEASED };
+        state
+            .resources
+            .insert(site, (status & !(LIVE | CONTAINED)) | terminal);
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn apply_contract_call(
+    function: &str,
+    line: usize,
+    called: &str,
+    destination: Option<&str>,
+    arguments: &[Option<String>],
+    contract: &ResourceFunctionContract,
+    produced_sites: &[usize],
+    state: &mut AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let mut sites = produced_sites.iter().copied();
+    // Apply input custody effects before assigning a return value. This is
+    // essential when the destination aliases a consumed/reallocated argument.
+    for (index, mode) in contract.parameters.iter().copied().enumerate() {
+        let source = arguments.get(index).and_then(Option::as_deref);
+        match mode {
+            ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. } => {}
+            ResourceParameterMode::Owned { nullable } => {
+                let Some(source) = source else {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    continue;
+                };
+                require_live_resource(function, line, source, nullable, state, diagnostics);
+            }
+            ResourceParameterMode::Consumed { nullable } => {
+                let Some(source) = source else {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    continue;
+                };
+                apply_resource_action(
+                    function,
+                    line,
+                    source,
+                    state,
+                    acquisition_lines,
+                    diagnostics,
+                    true,
+                    nullable,
+                );
+            }
+            ResourceParameterMode::Released { nullable } => {
+                let Some(source) = source else {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    continue;
+                };
+                apply_resource_action(
+                    function,
+                    line,
+                    source,
+                    state,
+                    acquisition_lines,
+                    diagnostics,
+                    false,
+                    nullable,
+                );
+            }
+            ResourceParameterMode::Stored {
+                owner_parameter,
+                nullable,
+            } => {
+                let owner = arguments.get(owner_parameter).and_then(Option::as_deref);
+                let (Some(source), Some(owner)) = (source, owner) else {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    continue;
+                };
+                attach_contained_resource(
+                    function,
+                    line,
+                    owner,
+                    source,
+                    nullable,
+                    state,
+                    acquisition_lines,
+                    diagnostics,
+                );
+            }
         }
     }
+
+    match contract.result {
+        ResourceReturnMode::None => {}
+        ResourceReturnMode::Owned { nullable } => {
+            let (Some(destination), Some(site)) = (destination, sites.next()) else {
+                report_unsupported_contract(function, line, called, diagnostics);
+                return;
+            };
+            create_resource(state, destination, site, nullable);
+        }
+        ResourceReturnMode::Reallocated {
+            parameter,
+            nullable,
+        } => {
+            let source = arguments.get(parameter).and_then(Option::as_deref);
+            let (Some(destination), Some(source), Some(site)) = (destination, source, sites.next())
+            else {
+                report_unsupported_contract(function, line, called, diagnostics);
+                return;
+            };
+            let Some(old) = state.pointers.get(source).cloned() else {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: source.to_owned(),
+                    },
+                });
+                return;
+            };
+            if old.unknown || old.targets.is_empty() {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: source.to_owned(),
+                    },
+                });
+            }
+            create_resource(state, destination, site, nullable);
+            state
+                .conditional_replacements
+                .insert(site, old.targets.clone());
+            if !nullable {
+                finalize_replacement_success(state, site);
+            }
+        }
+    }
+
+    for (index, mode) in contract.parameters.iter().copied().enumerate() {
+        if let ResourceParameterMode::Out { nullable } = mode {
+            let source = arguments.get(index).and_then(Option::as_deref);
+            let (Some(destination), Some(site)) = (source, sites.next()) else {
+                report_unsupported_contract(function, line, called, diagnostics);
+                continue;
+            };
+            create_resource(state, destination, site, nullable);
+        }
+    }
+}
+
+fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nullable: bool) {
+    state.resources.insert(site, LIVE);
+    if nullable {
+        state.nullable_sites.insert(site);
+    }
+    state.pointers.insert(
+        destination.to_owned(),
+        AbstractPointer {
+            targets: BTreeSet::from([site]),
+            unknown: false,
+            may_be_null: nullable,
+        },
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+fn attach_contained_resource(
+    function: &str,
+    line: usize,
+    owner: &str,
+    source: &str,
+    nullable: bool,
+    state: &mut AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    require_live_resource(function, line, owner, false, state, diagnostics);
+    require_live_resource(function, line, source, nullable, state, diagnostics);
+    let Some(owners) = state.pointers.get(owner).cloned() else {
+        return;
+    };
+    let Some(children) = state.pointers.get(source).cloned() else {
+        return;
+    };
+    if owners.unknown || children.unknown || owners.targets.len() != 1 {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: format!("{owner}/{source}"),
+            },
+        });
+        return;
+    }
+    let owner_site = *owners.targets.first().expect("one owner target");
+    for child in children.targets {
+        let status = state.resources.get(&child).copied().unwrap_or(0);
+        if status & LIVE == 0 || status & CONTAINED != 0 || child == owner_site {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::CustodyConflict {
+                    acquisition_line: acquisition_line(acquisition_lines, child),
+                },
+            });
+            continue;
+        }
+        state.resources.insert(child, (status & !LIVE) | CONTAINED);
+        state.contained.entry(owner_site).or_default().insert(child);
+    }
+}
+
+fn require_live_resource(
+    function: &str,
+    line: usize,
+    source: &str,
+    nullable: bool,
+    state: &AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let Some(pointer) = state.pointers.get(source) else {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: source.to_owned(),
+            },
+        });
+        return;
+    };
+    if pointer.unknown
+        || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null))
+        || (!nullable
+            && pointer
+                .targets
+                .iter()
+                .any(|site| state.nullable_sites.contains(site)))
+        || pointer
+            .targets
+            .iter()
+            .any(|site| state.resources.get(site).copied().unwrap_or(0) & LIVE == 0)
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: source.to_owned(),
+            },
+        });
+    }
+}
+
+fn report_unsupported_contract(
+    function: &str,
+    line: usize,
+    called: &str,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!("arguments do not match resource contract for `{called}`"),
+        },
+    });
+}
+
+fn finalize_replacement_success(state: &mut AbstractState, site: usize) {
+    state.nullable_sites.remove(&site);
+    if let Some(replaced) = state.conditional_replacements.remove(&site) {
+        for old in replaced {
+            let status = state.resources.get(&old).copied().unwrap_or(0);
+            state.resources.insert(old, (status & !LIVE) | RELEASED);
+        }
+    }
+}
+
+enum PointerRefinement {
+    Refined,
+    Infeasible,
+    Unknown,
+}
+
+fn refine_pointer_null(
+    state: &mut AbstractState,
+    source: &str,
+    assume_null: bool,
+) -> PointerRefinement {
+    let Some(pointer) = state.pointers.get(source).cloned() else {
+        // The reduced importer has no scalar type environment. An untracked
+        // identifier may be an ordinary integer condition, so leave it alone.
+        return PointerRefinement::Refined;
+    };
+    if pointer.unknown || pointer.targets.len() > 1 {
+        return PointerRefinement::Unknown;
+    }
+    let Some(site) = pointer.targets.iter().next().copied() else {
+        return if assume_null {
+            PointerRefinement::Refined
+        } else {
+            PointerRefinement::Infeasible
+        };
+    };
+    if !pointer.may_be_null && !state.nullable_sites.contains(&site) {
+        return if assume_null {
+            PointerRefinement::Infeasible
+        } else {
+            PointerRefinement::Refined
+        };
+    }
+    if assume_null {
+        state.resources.remove(&site);
+        state.nullable_sites.remove(&site);
+        state.conditional_replacements.remove(&site);
+        for alias in state.pointers.values_mut() {
+            if alias.targets.remove(&site) {
+                alias.may_be_null = true;
+            }
+        }
+    } else {
+        finalize_replacement_success(state, site);
+        for alias in state.pointers.values_mut() {
+            if alias.targets.contains(&site) {
+                alias.may_be_null = false;
+            }
+        }
+    }
+    PointerRefinement::Refined
 }
 
 fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site: usize) -> usize {
@@ -1611,6 +2255,223 @@ mod tests {
         let summary =
             analyze("void subject(void) {\n void *p = q_alloc();\n q_transfer(p);\n return;\n}");
         assert_eq!(summary.status, AnalysisStatus::Safe);
+    }
+
+    #[test]
+    fn rich_contracts_distinguish_borrowed_owned_consumed_and_out_parameters() {
+        let mut contracts = contracts();
+        contracts.insert_contract(
+            "q_observe",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Borrowed],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "q_mutate",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Owned { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "q_consume",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Consumed { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "q_make",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Out { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+        );
+
+        let observed = analyze_legacy_c(
+            "void subject(void) { void *p = q_alloc(); q_observe(p); q_mutate(p); q_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(observed.status, AnalysisStatus::Safe);
+
+        let consumed = analyze_legacy_c(
+            "void subject(void) { void *p = q_alloc(); q_consume(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(consumed.status, AnalysisStatus::Safe);
+
+        let out = analyze_legacy_c(
+            "void subject(void) { void *p; q_make(&p); q_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(out.status, AnalysisStatus::Safe);
+
+        let missing_owned =
+            analyze_legacy_c("void subject(void) { q_mutate(p); }", "subject", &contracts).unwrap();
+        assert_eq!(missing_owned.status, AnalysisStatus::Unknown);
+    }
+
+    #[test]
+    fn nullable_owned_results_require_nonnull_path_refinement() {
+        let mut contracts = contracts();
+        contracts.insert_contract(
+            "q_maybe_alloc",
+            ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
+        );
+        contracts.insert_contract(
+            "q_nullable_free",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Released { nullable: true }],
+                ResourceReturnMode::None,
+            ),
+        );
+
+        let checked = analyze_legacy_c(
+            "void subject(void) { void *p = q_maybe_alloc(); if (!p) return; q_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(checked.status, AnalysisStatus::Safe);
+
+        let nullable_release = analyze_legacy_c(
+            "void subject(void) { void *p = q_maybe_alloc(); q_nullable_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(nullable_release.status, AnalysisStatus::Safe);
+
+        let unchecked = analyze_legacy_c(
+            "void subject(void) { void *p = q_maybe_alloc(); q_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(unchecked.status, AnalysisStatus::Unknown);
+        assert!(has(&unchecked, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Unsupported { description }
+                if description.contains("nullable resource")
+        )));
+
+        let reconverged = analyze_legacy_c(
+            "void subject(void) { void *p = q_maybe_alloc(); if (!p) { } q_free(p); }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(reconverged.status, AnalysisStatus::Unknown);
+    }
+
+    #[test]
+    fn realloc_preserves_old_custody_on_failure_and_replaces_it_on_success() {
+        let mut contracts = contracts();
+        contracts.insert_contract(
+            "q_realloc",
+            ResourceFunctionContract::new(
+                [
+                    ResourceParameterMode::Owned { nullable: false },
+                    ResourceParameterMode::Borrowed,
+                ],
+                ResourceReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true,
+                },
+            ),
+        );
+
+        let checked = analyze_legacy_c(
+            "void subject(void) {\n\
+             void *p = q_alloc();\n\
+             void *next = q_realloc(p, 8);\n\
+             if (!next) { q_free(p); return; }\n\
+             p = next; q_free(p);\n\
+             }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(checked.status, AnalysisStatus::Safe);
+
+        let loses_old = analyze_legacy_c(
+            "void subject(void) {\n\
+             void *p = q_alloc();\n\
+             p = q_realloc(p, 8);\n\
+             if (!p) return;\n\
+             q_free(p);\n\
+             }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(loses_old.status, AnalysisStatus::Unsafe);
+        assert!(has(&loses_old, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Leak { .. }
+        )));
+    }
+
+    #[test]
+    fn container_contract_cascades_child_custody_on_release_or_transfer() {
+        let mut contracts = contracts();
+        contracts.insert_contract(
+            "q_store",
+            ResourceFunctionContract::new(
+                [
+                    ResourceParameterMode::Owned { nullable: false },
+                    ResourceParameterMode::Stored {
+                        owner_parameter: 0,
+                        nullable: false,
+                    },
+                ],
+                ResourceReturnMode::None,
+            ),
+        );
+
+        let released = analyze_legacy_c(
+            "void subject(void) {\n\
+             void *container = q_alloc(); void *item = q_alloc();\n\
+             q_store(container, item); q_free(container);\n\
+             }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(released.status, AnalysisStatus::Safe);
+
+        let transferred = analyze_legacy_c(
+            "void *subject(void) {\n\
+             void *container = q_alloc(); void *item = q_alloc();\n\
+             q_store(container, item); return container;\n\
+             }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(transferred.status, AnalysisStatus::Safe);
+
+        let conflicting = analyze_legacy_c(
+            "void subject(void) {\n\
+             void *container = q_alloc(); void *item = q_alloc();\n\
+             q_store(container, item); q_free(item); q_free(container);\n\
+             }",
+            "subject",
+            &contracts,
+        )
+        .unwrap();
+        assert_eq!(conflicting.status, AnalysisStatus::Unsafe);
+        assert!(has(&conflicting, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::CustodyConflict { .. }
+        )));
     }
 
     #[test]

@@ -6,8 +6,9 @@ use std::process::{Command, ExitCode};
 use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
     C11TranslationUnit, CCompilerDialect, LegacyFunctionScope, ResourceApiKind, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11, classify_libevent_symbol,
-    legacy_c_source_functions, validate_unrestricted_c11, verify_pinned_libevent_source,
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult,
+    analyze_unrestricted_c11, classify_libevent_symbol, legacy_c_source_functions,
+    validate_unrestricted_c11, verify_pinned_libevent_source,
 };
 
 const PINNED_FLUENT_BIT_COMMIT: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
@@ -105,7 +106,7 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
     }
     println!("Fluent Bit {revision}");
 
-    let contracts = ResourceContracts::new([
+    let mut contracts = ResourceContracts::new([
         ("malloc", ResourceApiKind::Acquire),
         ("calloc", ResourceApiKind::Acquire),
         ("free", ResourceApiKind::Release),
@@ -125,6 +126,53 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
         ("cio_chunk_open", ResourceApiKind::Acquire),
         ("cio_chunk_close", ResourceApiKind::Release),
     ]);
+    for name in [
+        "malloc",
+        "calloc",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "rd_malloc",
+        "rd_calloc",
+        "rd_strdup",
+        "rd_strndup",
+        "flb_malloc",
+        "flb_calloc",
+        "flb_sds_create_len",
+        "cio_chunk_open",
+    ] {
+        contracts.insert_contract(
+            name,
+            ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
+        );
+    }
+    for name in [
+        "free",
+        "mk_mem_free",
+        "rd_free",
+        "flb_free",
+        "flb_sds_destroy",
+    ] {
+        contracts.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Released { nullable: true }],
+                ResourceReturnMode::None,
+            ),
+        );
+    }
+    contracts.insert_contract(
+        "rd_realloc",
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: true },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::Reallocated {
+                parameter: 0,
+                nullable: true,
+            },
+        ),
+    );
     let mut failed = false;
     for library in ["cmetrics", "ctraces"] {
         let source_root = root.join("lib").join(library).join("src");

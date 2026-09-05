@@ -50,6 +50,14 @@ The unrestricted-C gateway now has an explicit dialect gate for `c11`,
 `gnu99`, `gnu11`, and `gnu17`. C11 remains the default. Arbitrary compiler
 arguments are not accepted by the verifier.
 
+The Cycle 19 19A rerun replaces the audit's name-only allocation annotations
+with explicit parameter/result contracts. Known allocators return nullable
+owned custody, null-tolerant destructors say so explicitly, and `rd_realloc`
+has preserve-on-failure/replace-on-success semantics. Recognized null tests
+refine those alternatives on separate CFG edges. A contract mismatch remains
+`Unknown`; the checker does not assume that an allocation succeeded merely
+because a later call consumes its result.
+
 The library audit extracts only include paths, preprocessor definitions, and
 the allowlisted language dialect from each compilation-database entry. When a
 command has no explicit `-std`, the audit records GNU17, matching the GNU C
@@ -129,12 +137,12 @@ Fluent Bit.
 
 | Slice | Built units | Data-only units | Gateway failures | Source functions | Projected functions | Projection coverage | Safe units | Unsafe units | Unknown units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| CMetrics | 31 | 0 | 0 | 540 | 521 | 96.5% | 0 | 16 | 15 |
-| CTraces | 17 | 1 | 0 | 274 | 264 | 96.4% | 1 | 9 | 6 |
+| CMetrics | 31 | 0 | 0 | 540 | 521 | 96.5% | 0 | 14 | 17 |
+| CTraces | 17 | 1 | 0 | 274 | 264 | 96.4% | 1 | 3 | 12 |
 | librdkafka 2.15.0 | 94 | 3 | 0 | 3,410 | 2,984 | 87.5% | 0 | 10 | 81 |
-| ChunkIO | 13 | 0 | 0 | 126 | 121 | 96.0% | 0 | 7 | 6 |
+| ChunkIO | 13 | 0 | 0 | 126 | 121 | 96.0% | 0 | 4 | 9 |
 | Fluent Bit input chunk | 1 | 0 | 0 | 66 | 63 | 95.5% | 0 | 0 | 1 |
-| Monkey, forced Libevent | 29 | 0 | 0 | 359 | 342 | 95.3% | 1 | 19 | 9 |
+| Monkey, forced Libevent | 29 | 0 | 0 | 359 | 342 | 95.3% | 1 | 15 | 13 |
 
 All 185 selected translation units pass the production Clang gateway under
 their gated GNU dialect and build definitions. Of 4,775 raw-source functions,
@@ -143,6 +151,13 @@ function body pass the same preprocessing and syntax gate but are kept outside
 the Safe/Unsafe/Unknown resource-unit counts. Partial-result retention raises
 the projected numerator for the already selected CMetrics, CTraces, and Monkey
 slices without converting any incomplete unit into a `Safe` result.
+
+Compared with the initial name-only-contract run, the 19A rerun moves 15
+resource translation units from provisional `Unsafe` to `Unknown`: the totals
+change from 61 Unsafe and 118 Unknown to 46 Unsafe and 133 Unknown. Projection
+and the two fully Safe units are unchanged. This is an intentional correction,
+not a coverage increase: paths that may receive a null allocation result are no
+longer analyzed as though acquisition were unconditional.
 
 These numbers are projection results, not memory-safety coverage. In
 particular, an `Unsafe` result at this stage is not evidence of an upstream
@@ -171,12 +186,12 @@ include paths, and resolved definitions. All 94 pass both preprocessing and
 Clang syntax validation.
 
 The resource profile recognizes `rd_malloc`, `rd_calloc`, `rd_strdup`, and
-`rd_strndup` as acquisitions and `rd_free` as release. It deliberately leaves
-`rd_realloc` unmodeled because treating it as a fresh allocation would lose
-the preserve-on-failure obligation. The 10 `Unsafe` and 81 `Unknown` unit
-results are therefore projection classifications, not librdkafka defect
-reports. Refcounted objects, typed queue macros, aggregate custody, callbacks,
-thread handoff, atomics, and realloc semantics remain outside this stage.
+`rd_strndup` as nullable acquisitions and `rd_free` as a null-tolerant release.
+`rd_realloc` now preserves the old identity on a null result and replaces it on
+a non-null result. The 10 `Unsafe` and 81 `Unknown` unit results are still
+projection classifications, not librdkafka defect reports. Refcounted objects,
+typed queue macros, aggregate custody, callbacks, thread handoff, and atomics
+remain outside this stage.
 
 `tinycthread.c` contains 30 raw-source function bodies, but this build defines
 `WITH_C11THREADS`, so none survive preprocessing. The unit remains fail-closed
@@ -200,6 +215,15 @@ its `struct cio_chunk`, route mask, task, trace, list membership, memory/file
 backend, busy flag, lock state, filesystem accounting, or deletion policy.
 Consequently the wrapper stays `Unknown`, and none of these numbers constitutes
 a chunk lifecycle, crash-consistency, routing, or concurrency certificate.
+
+In particular, a future ChunkIO `Safe` mark must check the nested teardown
+chain rather than attach a release annotation only to `cio_chunk_close`.
+`cio_destroy` traverses and destroys streams, `cio_stream_destroy` closes all
+linked chunks, and `cio_chunk_close` dispatches to the memory or file backend
+before unlinking and releasing the chunk. `cio_memfs_close` and
+`cio_file_close` discharge different nested resources. Conversely,
+`cio_stream_delete` and `cio_chunk_delete` have delete-specific partial
+post-states and are not interchangeable with complete object teardown.
 
 ## Monkey event-model boundary
 
@@ -228,22 +252,25 @@ modeled and the selected backend is observed or constrained.
 
 ## Next resource-model gates
 
-The next stage should be implemented and validated in this order:
+The remaining stages should be implemented and validated in this order. The
+first two foundation items are now implemented for direct recognized calls and
+null-test edges; aggregate/container propagation remains the next
+certification gate.
 
-1. import `for`, `switch`, `goto` cleanup, labels, `break`, and `continue` into
-   the CFG rather than consuming them as unknown blocks;
-2. distinguish owned, borrowed, consumed, and out-parameter function
-   contracts;
+1. extend owned, borrowed, consumed, released, and out-parameter contracts from
+   direct calls to audited library summaries;
+2. extend nullable acquisition and preserve-on-failure `realloc` refinement to
+   the audited wrapper patterns;
 3. add aggregate fields, typed queues, refcounts, and intrusive-list custody,
    including destructor summaries;
-4. add nullable acquisition and path refinement;
-5. model `realloc` as preserve-on-failure and replace-on-success;
-6. model thread/callback transfer and atomic publication before evaluating
+4. import `for`, `switch`, `goto` cleanup, labels, `break`, and `continue` into
+   the CFG rather than consuming them as unknown blocks;
+5. model thread/callback transfer and atomic publication before evaluating
    librdkafka concurrency;
-7. add a chunk-specific state model for memory/file residency, lock/busy/task
+6. add a chunk-specific state model for memory/file residency, lock/busy/task
    custody, route accounting, transactions, and close/delete outcomes;
-8. add CFL arena parent/child lifetime discharge; and
-9. rerun the same pinned local audit before expanding beyond the central
+7. add CFL arena parent/child lifetime discharge; and
+8. rerun the same pinned local audit before expanding beyond the central
    Fluent Bit chunk wrapper.
 
 For the Monkey event slice, the corresponding gates are to add explicit

@@ -14,6 +14,8 @@
 //! native threaded execution, and a mechanically interpreted ledger category.
 //! Cycle 18 adds a fail-closed Libevent profile, generation-indexed event and
 //! bufferevent lifecycles, callback authority, and observed-trace refinement.
+//! Cycle 19 begins the pinned Fluent Bit integration with rich external-call
+//! resource contracts and path-sensitive nullable/reallocation custody.
 
 pub mod advanced_control;
 pub mod ast;
@@ -106,7 +108,8 @@ pub use legacy_c::{
     AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyCError, LegacyCfg, LegacyCfgNode,
     LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope, LegacyFunctionSummary,
     LegacyInstruction, LegacyNodeId, LegacyProgramSummary, LegacySafetyCertificate,
-    ResourceApiKind, ResourceContracts, UnrestrictedLegacyResult, analyze_legacy_c,
+    ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
+    ResourceReturnMode, UnrestrictedLegacyResult, analyze_legacy_c,
     analyze_legacy_c_translation_unit, analyze_legacy_c11, analyze_unrestricted_c11,
     check_legacy_safety_certificate, legacy_c_source_functions, validate_unrestricted_c11,
 };
