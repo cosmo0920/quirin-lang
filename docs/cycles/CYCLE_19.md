@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports pending; native allocator and Monkey observations recorded**
+**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports pending; native allocator and generation-bound Monkey observations checked**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -12,9 +12,9 @@ The source and build boundary remains the one recorded in
 librdkafka, ChunkIO, Fluent Bit's central input-chunk wrapper, and a separate
 Monkey build forced onto its bundled Libevent adapter.
 
-Library-specific mechanisms remain in core modules for this milestone so their
-semantics and evidence can stabilize. Their extraction into separately
-versioned, process-isolated verifier providers is Cycle 20; Cycle 19 APIs should
+Library-specific semantics continue to stabilize in this milestone. Libevent
+and ChunkIO source modules now have in-process plugin boundaries; separately
+versioned, process-isolated verifier providers remain Cycle 20 work; Cycle 19 APIs should
 therefore expose explicit request, result, profile, and certificate boundaries
 without introducing a native Rust plugin ABI.
 
@@ -323,3 +323,27 @@ See [the native evaluation and remaining gates](../reports/cycle19-native-contra
 and [the module/type syntax](../QCORE_MODULE_MODES.md). General 19B per-call
 identity mapping, 19C nested source teardown/failure imports, and the remaining
 19D source/observation refinement gates keep Cycle 19 in progress.
+
+
+## Generation-bound Monkey runtime identities
+
+The next 19D increment records descriptor generations across socketpair
+creation, send/receive, event registration and callback entry, successful close,
+and descriptor-number reuse. A schema-versioned Rust observation checker in the
+Libevent plugin rejects stale identities, mismatched base/dispatcher/thread
+bindings, malformed or incomplete traces, and outstanding teardown obligations.
+The native runner now invokes this checker instead of relying only on callback
+names and sequence continuity.
+
+The actual pinned run contains 48 records, four acquired and closed descriptor
+identities, two reused descriptor numbers, all three callbacks, and one injected
+socketpair failure through the actual Monkey channel wrapper. The generation
+slot model has six new Lean theorems in the Cycle 19 dependency audit. All 145
+allocator executions still check; generic source audit verdicts are unchanged.
+
+This closes descriptor binding for the recorded runtime projection only. Source
+callback/access refinement and allocation/registration failure imports remain
+open, as do the general 19B and 19C source identity/teardown workstreams. No new
+whole-source or plugin safety certificate is issued. See the [descriptor
+observation report](../reports/cycle19-descriptor-observations/README.md) for
+reproduction, evidence, validation, and the precise boundary.

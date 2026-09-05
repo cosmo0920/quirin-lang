@@ -1,3 +1,4 @@
+import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
 import QCore.ChunkLifecycle
 import QCore.MonkeyEvent
@@ -50,3 +51,10 @@ import QCore.ChunkSource
 #print axioms QCore.QuantIndexBinding.binding_preserves_other_dimensions
 #print axioms QCore.QuantIndexBinding.accepted_value_fits_u128
 #print axioms QCore.QuantIndexBinding.five_binding
+
+#print axioms QCore.DescriptorObservation.accepted_acquisition_advances_generation
+#print axioms QCore.DescriptorObservation.stale_generation_cannot_be_used
+#print axioms QCore.DescriptorObservation.accepted_close_discharges_slot
+#print axioms QCore.DescriptorObservation.failed_native_close_is_unresolved
+#print axioms QCore.DescriptorObservation.accepted_close_prevents_duplicate_close
+#print axioms QCore.DescriptorObservation.reuse_rejects_previous_generation

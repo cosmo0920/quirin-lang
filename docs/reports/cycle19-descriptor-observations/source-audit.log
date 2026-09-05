@@ -1,0 +1,298 @@
+Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+librdkafka source summaries: 3 contract(s), 3 file(s), {ReferenceCount, IntrusiveList, TypedQueue, CascadingDestructor, ThreadHandoff}
+cfl source summaries: 2 contract(s), 2 file(s), {IntrusiveList, Arena, CascadingDestructor}
+chunkio source summaries: 3 contract(s), 3 file(s), {IntrusiveList, CascadingDestructor}
+  cmetrics/cmetrics.c: Unknown (6/6): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_atomic_gcc.c: Unknown (4/4): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_cat.c: Unsafe (23/23)
+  cmetrics/cmt_counter.c: Unsafe (7/7)
+  cmetrics/cmt_decode_msgpack.c: Unknown (70/80): some source functions could not be projected: malformed body for C function `unpack_basic_type` at line 8360; malformed body for C function `unpack_basic_type_meta` at line 8286; malformed body for C function `unpack_context` at line 8654; malformed body for C function `unpack_context_header` at line 8630; malformed body for C function `unpack_context_processing_section` at line 8618; malformed body for C function `unpack_metric` at line 7945; malformed body for C function `unpack_metric_exp_histogram` at line 7908; malformed body for C function `unpack_metric_histogram` at line 7688; malformed body for C function `unpack_metric_summary` at line 7584; malformed body for C function `unpack_opts` at line 7216
+  cmetrics/cmt_decode_opentelemetry.c: Unsafe (40/40)
+  cmetrics/cmt_decode_prometheus_remote_write.c: Unsafe (18/18)
+  cmetrics/cmt_decode_statsd.c: Unknown (14/15): some source functions could not be projected: malformed body for C function `statsd_process_line` at line 5929
+  cmetrics/cmt_encode_cloudwatch_emf.c: Unsafe (12/12)
+  cmetrics/cmt_encode_influx.c: Unknown (9/9): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_encode_msgpack.c: Unknown (11/11): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_encode_opentelemetry.c: Unsafe (100/100)
+  cmetrics/cmt_encode_opentelemetry_batch.c: Unsafe (19/19)
+  cmetrics/cmt_encode_prometheus.c: Unknown (12/15): some source functions could not be projected: malformed body for C function `format_histogram_bucket` at line 6175; malformed body for C function `format_metrics` at line 6260; malformed body for C function `format_summary_quantiles` at line 6223
+  cmetrics/cmt_encode_prometheus_remote_write.c: Unsafe (19/19)
+  cmetrics/cmt_encode_splunk_hec.c: Unsafe (19/19)
+  cmetrics/cmt_encode_text.c: Unknown (16/16): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_exp_histogram.c: Unsafe (5/5)
+  cmetrics/cmt_filter.c: Unknown (10/10): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_gauge.c: Unsafe (8/8)
+  cmetrics/cmt_histogram.c: Unsafe (12/12)
+  cmetrics/cmt_label.c: Unsafe (4/4)
+  cmetrics/cmt_log.c: Unknown (2/3): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_map.c: Unsafe (18/18)
+  cmetrics/cmt_metric.c: Unsafe (29/29)
+  cmetrics/cmt_metric_histogram.c: Unknown (12/12): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_mpack_utils.c: Unknown (7/7): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_opts.c: Unknown (2/2): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_summary.c: Unsafe (12/12)
+  cmetrics/cmt_time.c: Unknown (1/1): the conservative C11 projection contains an unsupported operation
+  cmetrics/cmt_untyped.c: Unsafe (4/4)
+cmetrics: 31 unit(s), 540 source function(s), 525 projected; 0 data-only, 0 Safe, 17 Unsafe, 14 Unknown, 0 gateway failure(s)
+  ctraces/ctr_attributes.c: Unknown (9/9): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_decode_msgpack.c: Unknown (39/48): some source functions could not be projected: malformed body for C function `unpack_context` at line 7741; malformed body for C function `unpack_event` at line 7385; malformed body for C function `unpack_link` at line 7467; malformed body for C function `unpack_resource` at line 7261; malformed body for C function `unpack_resource_span` at line 7722; malformed body for C function `unpack_scope_span` at line 7689; malformed body for C function `unpack_scope_span_instrumentation_scope` at line 7323; malformed body for C function `unpack_span` at line 7642; malformed body for C function `unpack_span_status` at line 7626
+  ctraces/ctr_decode_opentelemetry.c: Unknown (16/16): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_encode_msgpack.c: Unknown (18/18): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_encode_opentelemetry.c: Unsafe (70/70)
+  ctraces/ctr_encode_text.c: Unknown (15/15): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_id.c: Unknown (10/10): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_link.c: Unknown (7/7): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_log.c: Unknown (2/3): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_mpack_utils.c: Unknown (16/16): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_random.c: Unknown (1/1): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_resource.c: Unsafe (9/9)
+  ctraces/ctr_scope.c: Unknown (6/6): the conservative C11 projection contains an unsupported operation
+  ctraces/ctr_span.c: Unsafe (40/40)
+  ctraces/ctr_utils.c: data-only gateway pass
+  ctraces/ctr_version.c: Safe (1/1)
+  ctraces/ctraces.c: Unknown (5/5): the conservative C11 projection contains an unsupported operation
+ctraces: 17 unit(s), 274 source function(s), 264 projected; 1 data-only, 1 Safe, 3 Unsafe, 12 Unknown, 0 gateway failure(s)
+  librdkafka/cJSON.c: Unknown (109/116): some source functions could not be projected: malformed body for C function `cJSON_ParseWithLengthOpts` at line 2163; malformed body for C function `cJSON_PrintBuffered` at line 2294; malformed body for C function `cJSON_PrintPreallocated` at line 2319; malformed body for C function `print_number` at line 1746
+  librdkafka/crc32c.c: Unknown (12/12): the conservative C11 projection contains an unsupported operation
+  librdkafka/lz4.c: Unknown (81/87): some source functions could not be projected: malformed body for C function `LZ4_createStream` at line 1056; malformed body for C function `LZ4_createStreamDecode` at line 1710; malformed body for C function `LZ4_decompress_generic` at line 1389; malformed body for C function `LZ4_getIndexOnHash` at line 565; malformed body for C function `LZ4_isLittleEndian` at line 350; malformed body for C function `LZ4_stream_t_alignment` at line 1064
+  librdkafka/lz4frame.c: Unknown (48/54): some source functions could not be projected: malformed body for C function `LZ4F_compressBegin_usingCDict` at line 1402; malformed body for C function `LZ4F_compressBound_internal` at line 1201; malformed body for C function `LZ4F_decompress` at line 2357; malformed body for C function `LZ4F_getBlockSize` at line 1172; malformed body for C function `LZ4F_getFrameInfo` at line 1897; malformed body for C function `LZ4F_returnErrorCode` at line 1165
+  librdkafka/lz4hc.c: Unknown (54/58): some source functions could not be projected: malformed body for C function `LZ4HC_FindLongerMatch` at line 1510; malformed body for C function `LZ4HC_compress_generic_internal` at line 1128; malformed body for C function `LZ4HC_encodeSequence` at line 887; malformed body for C function `LZ4_streamHC_t_alignment` at line 1234
+  librdkafka/nanopb/pb_common.c: Unknown (10/12): some source functions could not be projected: malformed body for C function `pb_const_cast` at line 525
+  librdkafka/nanopb/pb_decode.c: Unknown (32/42): some source functions could not be projected: malformed body for C function `pb_decode_fixed32` at line 1051; malformed body for C function `pb_decode_fixed64` at line 1062; malformed body for C function `pb_decode_inner` at line 887; malformed body for C function `pb_istream_from_buffer` at line 413; malformed body for C function `pb_message_set_to_defaults` at line 854
+  librdkafka/nanopb/pb_encode.c: Unknown (27/31): some source functions could not be projected: malformed body for C function `encode_array` at line 425; malformed body for C function `pb_encode_submessage` at line 831; malformed body for C function `pb_get_encoded_size` at line 725
+  librdkafka/opentelemetry/common.pb.c: data-only gateway pass
+  librdkafka/opentelemetry/metrics.pb.c: data-only gateway pass
+  librdkafka/opentelemetry/resource.pb.c: data-only gateway pass
+  librdkafka/rdaddr.c: Unknown (4/4): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdavl.c: Unknown (8/9): some source functions could not be projected: malformed body for C function `rd_avl_rotate` at line 19567
+  librdkafka/rdbase64.c: Unsafe (4/5)
+  librdkafka/rdbuf.c: Unknown (54/55): some source functions could not be projected: malformed body for C function `do_unittest_erase` at line 4201
+  librdkafka/rdcrc32.c: Unknown (1/1): the conservative C11 projection contains an unsupported operation
+  librdkafka/rddl.c: Unknown (5/5): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdfnv1a.c: Unknown (1/2): some source functions could not be projected: malformed body for C function `unittest_fnv1a` at line 2894
+  librdkafka/rdgz.c: Unknown (0/1): some source functions could not be projected: malformed body for C function `rd_gz_decompress` at line 3083
+  librdkafka/rdhdrhistogram.c: Unknown (28/36): some source functions could not be projected: malformed body for C function `rd_hdr_histogram_max` at line 4214; malformed body for C function `rd_hdr_histogram_mean` at line 4234; malformed body for C function `rd_hdr_histogram_min` at line 4223; malformed body for C function `rd_hdr_histogram_quantile` at line 4261; malformed body for C function `rd_hdr_histogram_stddev` at line 4197; malformed body for C function `ut_high_sigfig` at line 4276; malformed body for C function `ut_quantile` at line 4295; malformed body for C function `ut_subbucketmask_overflow` at line 4432
+  librdkafka/rdhttp.c: Unknown (19/21): some source functions could not be projected: malformed body for C function `rd_http_ssl_configure` at line 21369; malformed body for C function `unittest_http_get_params_append` at line 21787
+  librdkafka/rdkafka.c: Unknown (18/19): some source functions could not be projected: malformed body for C function `rd_kafka_global_init0` at line 21148
+  librdkafka/rdkafka_admin.c: Unknown (312/354): some source functions could not be projected: malformed body for C function `rd_kafka_AclOperation_name` at line 23251; malformed body for C function `rd_kafka_AclPermissionType_name` at line 23271; malformed body for C function `rd_kafka_AlterConfigs` at line 22050; malformed body for C function `rd_kafka_AlterConsumerGroupOffsets` at line 24541; malformed body for C function `rd_kafka_AlterUserScramCredentials` at line 24178; malformed body for C function `rd_kafka_AlterUserScramCredentialsRequest_salted_password` at line 24040; malformed body for C function `rd_kafka_AlterUserScramCredentialsResponse_parse` at line 24150; malformed body for C function `rd_kafka_ConfigSource_name` at line 21763; malformed body for C function `rd_kafka_ConsumerGroupDescribeResponse_parse` at line 25717; malformed body for C function `rd_kafka_CreateAcls` at line 23506; malformed body for C function `rd_kafka_CreateAclsResponse_parse` at line 23473; malformed body for C function `rd_kafka_CreatePartitions` at line 21671; malformed body for C function `rd_kafka_CreateTopics` at line 21381; malformed body for C function `rd_kafka_CreateTopicsResponse_parse` at line 21324; malformed body for C function `rd_kafka_DeleteAcls` at line 24432; malformed body for C function `rd_kafka_DeleteAclsResponse_parse` at line 24322; malformed body for C function `rd_kafka_DeleteConsumerGroupOffsets` at line 23208; malformed body for C function `rd_kafka_DeleteGroups` at line 23057; malformed body for C function `rd_kafka_DeleteRecords` at line 22805; malformed body for C function `rd_kafka_DeleteRecordsResponse_parse` at line 22501; malformed body for C function `rd_kafka_DeleteRecords_leaders_queried_cb` at line 22747; malformed body for C function `rd_kafka_DeleteTopics` at line 21501; malformed body for C function `rd_kafka_DescribeAcls` at line 23630; malformed body for C function `rd_kafka_DescribeCluster` at line 26416; malformed body for C function `rd_kafka_DescribeConfigs` at line 22403; malformed body for C function `rd_kafka_DescribeConsumerGroups` at line 25880; malformed body for C function `rd_kafka_DescribeConsumerGroupsResponse_parse` at line 25519; malformed body for C function `rd_kafka_DescribeConsumerGroups_response_merge` at line 25853; malformed body for C function `rd_kafka_DescribeTopics` at line 26229; malformed body for C function `rd_kafka_DescribeUserScramCredentials` at line 23830; malformed body for C function `rd_kafka_DescribeUserScramCredentialsResponse_parse` at line 23765; malformed body for C function `rd_kafka_ElectLeaders` at line 26591; malformed body for C function `rd_kafka_IncrementalAlterConfigs` at line 22173; malformed body for C function `rd_kafka_ListConsumerGroupOffsets` at line 24710; malformed body for C function `rd_kafka_ListConsumerGroups` at line 25089; malformed body for C function `rd_kafka_ListConsumerGroupsResponse_parse` at line 24937; malformed body for C function `rd_kafka_ListOffsets` at line 22862; malformed body for C function `rd_kafka_ListOffsets_leaders_queried_cb` at line 22668; malformed body for C function `rd_kafka_OffsetDeleteResponse_parse` at line 23178; malformed body for C function `rd_kafka_ResourcePatternType_name` at line 21781; malformed body for C function `rd_kafka_ResourceType_name` at line 21789; malformed body for C function `ut_ListConsumerGroups_response_merge` at line 26694
+  librdkafka/rdkafka_assignment.c: Unsafe (21/21)
+  librdkafka/rdkafka_assignor.c: Unknown (34/38): some source functions could not be projected: malformed body for C function `rd_kafka_consumer_protocol_member_metadata_new` at line 20269; malformed body for C function `ut_assignors` at line 20964; malformed body for C function `ut_populate_internal_topic_metadata` at line 20696; malformed body for C function `verifyNumPartitionsWithRackMismatch0` at line 20879
+  librdkafka/rdkafka_aux.c: Unknown (34/35): some source functions could not be projected: malformed body for C function `rd_kafka_Node_new_from_brokers` at line 19758
+  librdkafka/rdkafka_background.c: Unknown (3/4): some source functions could not be projected: malformed body for C function `rd_kafka_background_thread_create` at line 20193
+  librdkafka/rdkafka_broker.c: Unknown (114/122): some source functions could not be projected: malformed body for C function `rd_kafka_broker_ApiVersion_supported0` at line 21024; malformed body for C function `rd_kafka_broker_find_by_nodeid0_fl` at line 23750; malformed body for C function `rd_kafka_broker_produce_toppars` at line 23111; malformed body for C function `rd_kafka_broker_request_supported` at line 22314; malformed body for C function `rd_kafka_broker_toppar_msgq_scan` at line 22892; malformed body for C function `rd_kafka_dr_implicit_ack` at line 22499; malformed body for C function `rd_ut_ApiVersion_at_least` at line 24274; malformed body for C function `rd_ut_reconnect_backoff` at line 24247
+  librdkafka/rdkafka_buf.c: Unknown (19/19): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_cert.c: Unknown (5/8): some source functions could not be projected: malformed body for C function `rd_kafka_cert_new` at line 20202; malformed body for C function `rd_kafka_conf_set_ssl_cert` at line 20446
+  librdkafka/rdkafka_cgrp.c: Unknown (135/146): some source functions could not be projected: malformed body for C function `rd_kafka_cgrp_handle_ConsumerGroupHeartbeat` at line 22033; malformed body for C function `rd_kafka_cgrp_handle_FindCoordinator` at line 20656; malformed body for C function `rd_kafka_cgrp_handle_JoinGroup` at line 21514; malformed body for C function `rd_kafka_cgrp_handle_ShareGroupHeartbeat` at line 22254; malformed body for C function `rd_kafka_cgrp_handle_SyncGroup` at line 21350; malformed body for C function `rd_kafka_cgrp_handle_SyncGroup_memberstate` at line 21286; malformed body for C function `rd_kafka_group_MemberMetadata_consumer_read` at line 21474; malformed body for C function `unittest_consumer_group_metadata` at line 24752; malformed body for C function `unittest_map_to_list` at line 24856; malformed body for C function `unittest_set_intersect` at line 24793; malformed body for C function `unittest_set_subtract` at line 24834
+  librdkafka/rdkafka_conf.c: Unsafe (91/91)
+  librdkafka/rdkafka_coord.c: Unknown (17/18): some source functions could not be projected: malformed body for C function `rd_kafka_coord_req_handle_FindCoordinator` at line 20322
+  librdkafka/rdkafka_error.c: Unknown (18/18): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_event.c: Unknown (37/38): some source functions could not be projected: malformed body for C function `rd_kafka_event_debug_contexts` at line 19819
+  librdkafka/rdkafka_feature.c: Unknown (7/9): some source functions could not be projected: malformed body for C function `rd_kafka_get_legacy_ApiVersions` at line 19751; malformed body for C function `rd_ut_features_check` at line 19867
+  librdkafka/rdkafka_fetcher.c: Unknown (42/47): some source functions could not be projected: malformed body for C function `rd_kafka_fetch_reply_handle` at line 20708; malformed body for C function `rd_kafka_fetch_reply_handle_partition` at line 20552; malformed body for C function `rd_kafka_share_acknowledge_reply_handle` at line 21431; malformed body for C function `rd_kafka_share_fetch_reply_handle` at line 21165; malformed body for C function `rd_kafka_share_fetch_reply_handle_partition` at line 21004
+  librdkafka/rdkafka_header.c: Unsafe (11/11)
+  librdkafka/rdkafka_idempotence.c: Unknown (18/18): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_interceptor.c: Unknown (38/39): some source functions could not be projected: malformed body for C function `rd_kafka_interceptor_method_add` at line 19690
+  librdkafka/rdkafka_lz4.c: Unknown (1/4): some source functions could not be projected: malformed body for C function `rd_kafka_lz4_compress` at line 19856; malformed body for C function `rd_kafka_lz4_compress_break_framing` at line 19725; malformed body for C function `rd_kafka_lz4_decompress_fixup_bad_framing` at line 19699
+  librdkafka/rdkafka_metadata.c: Unknown (29/34): some source functions could not be projected: malformed body for C function `rd_kafka_metadata_copy_internal` at line 20321; malformed body for C function `rd_kafka_metadata_topic_match` at line 20863; malformed body for C function `rd_kafka_metadata_update_op` at line 21372; malformed body for C function `rd_kafka_parse_Metadata0` at line 20491; malformed body for C function `rd_kafka_populate_metadata_topic_racks` at line 20401
+  librdkafka/rdkafka_metadata_cache.c: Unknown (31/33): some source functions could not be projected: malformed body for C function `rd_kafka_metadata_cache_hint` at line 20530; malformed body for C function `rd_kafka_metadata_cache_topic_partition_get` at line 20659
+  librdkafka/rdkafka_mock.c: Unknown (125/138): some source functions could not be projected: malformed body for C function `rd_kafka_mock_broker_new` at line 22546; malformed body for C function `rd_kafka_mock_error_stack_next` at line 22655; malformed body for C function `ut_cgrp_consumer_member_next_assignment0` at line 23618; malformed body for C function `ut_cgrp_consumer_member_next_assignment1` at line 23693; malformed body for C function `ut_cgrp_consumer_member_next_assignment2` at line 23810; malformed body for C function `ut_cgrp_consumer_member_next_assignment3` at line 23891; malformed body for C function `ut_cgrp_consumer_member_next_assignment4` at line 23958; malformed body for C function `ut_cgrp_consumer_member_next_assignment5` at line 24003; malformed body for C function `ut_mock_txn_aborted_range_recorded` at line 24179; malformed body for C function `ut_mock_txn_control_batch_written` at line 24107; malformed body for C function `ut_mock_txn_get_creates_and_reuses` at line 24056; malformed body for C function `ut_mock_txn_lso_calculation` at line 24141; malformed body for C function `ut_mock_txn_partition_add_and_clear` at line 24081
+  librdkafka/rdkafka_mock_cgrp.c: Unknown (56/57): some source functions could not be projected: malformed body for C function `rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range` at line 21263
+  librdkafka/rdkafka_mock_handlers.c: Unknown (38/54): some source functions could not be projected: malformed body for C function `rd_kafka_mock_handle_ConsumerGroupHeartbeat` at line 23957; malformed body for C function `rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions` at line 23907; malformed body for C function `rd_kafka_mock_handle_Fetch` at line 22303; malformed body for C function `rd_kafka_mock_handle_GetTelemetrySubscriptions` at line 23767; malformed body for C function `rd_kafka_mock_handle_Heartbeat` at line 23157; malformed body for C function `rd_kafka_mock_handle_InitProducerId` at line 23417; malformed body for C function `rd_kafka_mock_handle_JoinGroup` at line 23079; malformed body for C function `rd_kafka_mock_handle_Metadata` at line 22923; malformed body for C function `rd_kafka_mock_handle_Produce` at line 22124; malformed body for C function `rd_kafka_mock_handle_PushTelemetry_payload` at line 23842; malformed body for C function `rd_kafka_mock_handle_ShareAcknowledge` at line 25223; malformed body for C function `rd_kafka_mock_handle_ShareFetch` at line 24706; malformed body for C function `rd_kafka_mock_handle_ShareGroupHeartbeat_write_TopicPartitions` at line 24092; malformed body for C function `rd_kafka_mock_handle_SyncGroup` at line 23256; malformed body for C function `rd_kafka_mock_pid_find` at line 23357; malformed body for C function `rd_kafka_mock_sgrp_write_acquired_records_meta` at line 24629
+  librdkafka/rdkafka_mock_sharegrp.c: Unknown (36/37): some source functions could not be projected: malformed body for C function `rd_kafka_mock_sharegroup_target_assignment_set` at line 22235
+  librdkafka/rdkafka_msg.c: Unknown (58/63): some source functions could not be projected: malformed body for C function `rd_kafka_produce_batch` at line 20197; malformed body for C function `rd_kafka_producev` at line 20078; malformed body for C function `rd_kafka_produceva` at line 19953; malformed body for C function `unittest_msg_seq_wrap` at line 21119; malformed body for C function `unittest_msgq_order` at line 21010
+  librdkafka/rdkafka_msgset_reader.c: Unknown (20/24): some source functions could not be projected: malformed body for C function `rd_kafka_msgset_reader` at line 20350; malformed body for C function `rd_kafka_msgset_reader_decompress` at line 19746; malformed body for C function `rd_kafka_msgset_reader_msg_v0_1` at line 19897; malformed body for C function `rd_kafka_msgset_reader_msg_v2` at line 20004
+  librdkafka/rdkafka_msgset_writer.c: Unknown (20/23): some source functions could not be projected: malformed body for C function `rd_kafka_msgset_writer_compress` at line 20211; malformed body for C function `rd_kafka_msgset_writer_select_MsgVersion` at line 19687; malformed body for C function `rd_kafka_msgset_writer_write_msg` at line 20024
+  librdkafka/rdkafka_offset.c: Unknown (34/37): some source functions could not be projected: malformed body for C function `rd_kafka_commit` at line 20350; malformed body for C function `rd_kafka_offset_reset` at line 20599; malformed body for C function `rd_kafka_offset_store_init` at line 20986
+  librdkafka/rdkafka_op.c: Unknown (23/25): some source functions could not be projected: malformed body for C function `rd_kafka_op2str` at line 19618; malformed body for C function `rd_kafka_op_new0` at line 19782
+  librdkafka/rdkafka_partition.c: Unknown (154/161): some source functions could not be projected: malformed body for C function `rd_kafka_retry_msgq` at line 20704; malformed body for C function `rd_kafka_topic_partition_get_topic_id` at line 21742; malformed body for C function `rd_kafka_topic_partition_list_difference0` at line 22889; malformed body for C function `rd_kafka_topic_partition_list_intersection0` at line 22867; malformed body for C function `rd_kafka_topic_partition_update` at line 21670; malformed body for C function `rd_kafka_toppar_op_serve` at line 21298; malformed body for C function `rd_kafka_toppar_purge_queues` at line 22796
+  librdkafka/rdkafka_pattern.c: Unsafe (12/12)
+  librdkafka/rdkafka_plugin.c: Unknown (4/5): some source functions could not be projected: malformed body for C function `rd_kafka_plugin_new` at line 19594
+  librdkafka/rdkafka_queue.c: Unknown (39/42): some source functions could not be projected: malformed body for C function `rd_kafka_q_purge0` at line 19780; malformed body for C function `rd_kafka_q_purge_toppar_version` at line 19809; malformed body for C function `rd_kafka_q_serve_rkmessages` at line 20113
+  librdkafka/rdkafka_range_assignor.c: Unknown (25/34): some source functions could not be projected: malformed body for C function `rd_kafka_find_member_assigned_partitions_pair_by_member_id` at line 19600; malformed body for C function `rd_kafka_range_assignor_unittest` at line 20496; malformed body for C function `ut_testCoPartitionedAssignmentWithSameSubscription` at line 20444; malformed body for C function `ut_testRackAwareAssignmentWithCoPartitioning0` at line 20348; malformed body for C function `ut_testRackAwareAssignmentWithCoPartitioning1` at line 20393; malformed body for C function `ut_testRackAwareAssignmentWithNonEqualSubscription` at line 20222; malformed body for C function `ut_testRackAwareAssignmentWithUniformPartitions` at line 20267; malformed body for C function `ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription` at line 20302; malformed body for C function `ut_testRackAwareAssignmentWithUniformSubscription` at line 20176
+  librdkafka/rdkafka_request.c: Unknown (78/94): some source functions could not be projected: malformed body for C function `rd_kafka_ConsumerGroupHeartbeatRequest` at line 21839; malformed body for C function `rd_kafka_DeleteRecordsRequest` at line 23376; malformed body for C function `rd_kafka_ElectLeadersRequest` at line 23901; malformed body for C function `rd_kafka_ListOffsetRequest_parameters_make` at line 20755; malformed body for C function `rd_kafka_MetadataRequest0` at line 22156; malformed body for C function `rd_kafka_OffsetCommitRequest` at line 21491; malformed body for C function `rd_kafka_OffsetDeleteRequest` at line 21539; malformed body for C function `rd_kafka_OffsetFetchRequest` at line 21315; malformed body for C function `rd_kafka_OffsetForLeaderEpochRequest` at line 21074; malformed body for C function `rd_kafka_group_MemberState_consumer_write` at line 21559; malformed body for C function `rd_kafka_handle_OffsetCommit` at line 21402; malformed body for C function `rd_kafka_handle_OffsetForLeaderEpoch` at line 21042; malformed body for C function `rd_kafka_handle_Produce_parse` at line 22712; malformed body for C function `rd_kafka_msgbatch_handle_Produce_result` at line 23130; malformed body for C function `rd_kafkap_share_leader_changes_apply` at line 22570; malformed body for C function `unittest_idempotent_producer` at line 24316
+  librdkafka/rdkafka_roundrobin_assignor.c: Unknown (2/2): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_sasl.c: Unsafe (23/23)
+  librdkafka/rdkafka_sasl_cyrus.c: Unknown (18/19): some source functions could not be projected: malformed body for C function `rd_kafka_sasl_cyrus_client_new` at line 20661
+  librdkafka/rdkafka_sasl_oauthbearer.c: Unknown (26/36): some source functions could not be projected: malformed body for C function `do_unittest_config_empty_should_fail` at line 21012; malformed body for C function `do_unittest_config_empty_value_should_fail` at line 21043; malformed body for C function `do_unittest_config_no_principal_should_fail` at line 20994; malformed body for C function `do_unittest_config_value_with_quote_should_fail` at line 21067; malformed body for C function `do_unittest_illegal_extension_keys_should_fail` at line 21110; malformed body for C function `do_unittest_odd_extension_size_should_fail` at line 21127; malformed body for C function `rd_kafka_oauthbearer_unsecured_token` at line 20687; malformed body for C function `rd_kafka_oauthbearer_unsecured_token0` at line 20617; malformed body for C function `rd_kafka_sasl_oauthbearer_fsm` at line 20755; malformed body for C function `rd_kafka_sasl_oauthbearer_recv` at line 20805
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c: Unknown (25/28): some source functions could not be projected: malformed body for C function `rd_kafka_oidc_token_metadata_azure_imds_refresh_cb` at line 21898; malformed body for C function `ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode` at line 22127; malformed body for C function `ut_sasl_oauthbearer_oidc_sub_claim_name` at line 22068
+  librdkafka/rdkafka_sasl_plain.c: Unknown (3/3): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_sasl_scram.c: Unknown (14/19): some source functions could not be projected: malformed body for C function `rd_kafka_sasl_scram_build_client_final_message` at line 20305; malformed body for C function `rd_kafka_sasl_scram_fsm` at line 20506; malformed body for C function `rd_kafka_sasl_scram_recv` at line 20551; malformed body for C function `unittest_scram_nonce` at line 20602; malformed body for C function `unittest_scram_safe` at line 20614
+  librdkafka/rdkafka_share_acknowledgement.c: Unsafe (52/52)
+  librdkafka/rdkafka_ssl.c: Unknown (31/38): some source functions could not be projected: malformed body for C function `rd_kafka_ssl_ctx_load_providers` at line 21105; malformed body for C function `rd_kafka_ssl_probe_and_set_default_ca_location` at line 20677; malformed body for C function `unittest_ssl` at line 21239
+  librdkafka/rdkafka_sticky_assignor.c: Unknown (69/85): some source functions could not be projected: malformed body for C function `PartitionMovements_getTheActualPartitionToBeMoved` at line 21469; malformed body for C function `balance` at line 21876; malformed body for C function `isBalanced` at line 21647; malformed body for C function `prepopulateCurrentAssignments` at line 21982; malformed body for C function `rd_kafka_rack_info_new` at line 21347; malformed body for C function `rd_kafka_sticky_assignor_assign_cb` at line 22238; malformed body for C function `rd_kafka_sticky_assignor_get_metadata` at line 22375; malformed body for C function `rd_kafka_sticky_assignor_unittest` at line 23861; malformed body for C function `sortPartitions` at line 22103; malformed body for C function `ut_testMoveExistingAssignments` at line 23028; malformed body for C function `ut_testMoveExistingAssignments_j` at line 23086; malformed body for C function `ut_testRackAwareAssignmentWithNonEqualSubscription` at line 23784; malformed body for C function `ut_testRackAwareAssignmentWithUniformSubscription` at line 23690; malformed body for C function `ut_testStickiness_j` at line 23162
+  librdkafka/rdkafka_subscription.c: Unknown (17/17): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_telemetry.c: Unknown (17/18): some source functions could not be projected: malformed body for C function `rd_kafka_match_requested_metrics` at line 20775
+  librdkafka/rdkafka_telemetry_decode.c: Unknown (29/38): some source functions could not be projected: malformed body for C function `decode_key_value` at line 21495; malformed body for C function `decode_metric` at line 21553; malformed body for C function `decode_number_data_point` at line 21516; malformed body for C function `decode_resource_metrics` at line 21592; malformed body for C function `decode_scope_metrics` at line 21572; malformed body for C function `decode_string` at line 21480; malformed body for C function `rd_kafka_snappy_decompress` at line 21611; malformed body for C function `rd_kafka_telemetry_decode_metrics` at line 21691; malformed body for C function `unit_test_telemetry` at line 21839
+  librdkafka/rdkafka_telemetry_encode.c: Unknown (49/54): some source functions could not be projected: malformed body for C function `calculate_broker_avg_rtt` at line 20288; malformed body for C function `calculate_broker_max_rtt` at line 20296; malformed body for C function `calculate_produce_latency_avg` at line 20304; malformed body for C function `calculate_produce_latency_max` at line 20312; malformed body for C function `rd_kafka_telemetry_encode_metrics` at line 21010
+  librdkafka/rdkafka_timer.c: Unknown (19/19): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdkafka_topic.c: Unknown (43/47): some source functions could not be projected: malformed body for C function `rd_kafka_topic_assign_uas` at line 20487; malformed body for C function `rd_kafka_topic_new0` at line 20044; malformed body for C function `rd_kafka_topic_scan_all` at line 20788; malformed body for C function `rd_ut_kafka_topic_set_topic_exists` at line 21028
+  librdkafka/rdkafka_transport.c: Unknown (23/32): some source functions could not be projected: malformed body for C function `rd_kafka_transport_socket_recvmsg` at line 20323; malformed body for C function `rd_kafka_transport_socket_sendmsg` at line 20260
+  librdkafka/rdkafka_txnmgr.c: Unknown (48/50): some source functions could not be projected: malformed body for C function `rd_kafka_txn_handle_TxnOffsetCommit` at line 20981; malformed body for C function `rd_kafka_txn_send_TxnOffsetCommitRequest` at line 21117
+  librdkafka/rdkafka_zstd.c: Unsafe (2/2)
+  librdkafka/rdlist.c: Unsafe (43/43)
+  librdkafka/rdlog.c: Unknown (3/3): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdmap.c: Unknown (20/26): some source functions could not be projected: malformed body for C function `rd_map_alloc_buckets` at line 3055; malformed body for C function `rd_map_delete` at line 3025; malformed body for C function `rd_map_get` at line 3017; malformed body for C function `rd_map_set` at line 3002; malformed body for C function `unittest_typed_map` at line 3460; malformed body for C function `unittest_typed_map2` at line 3501
+  librdkafka/rdmurmur2.c: Unknown (1/2): some source functions could not be projected: malformed body for C function `unittest_murmur2` at line 2922
+  librdkafka/rdports.c: Unknown (2/2): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdrand.c: Unknown (6/7): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdregex.c: Unknown (4/4): the conservative C11 projection contains an unsupported operation
+  librdkafka/rdstring.c: Unknown (15/17): some source functions could not be projected: malformed body for C function `ut_strcasestr` at line 3139; malformed body for C function `ut_string_split` at line 3251
+  librdkafka/rdunittest.c: Unknown (1/9): some source functions could not be projected: malformed body for C function `rd_unittest` at line 20489; malformed body for C function `unittest_sysqueue` at line 20404; malformed body for C function `ut_tq_test` at line 20334
+  librdkafka/rdunittest_acknowledge.c: Unsafe (27/27)
+  librdkafka/rdunittest_fetcher.c: Unknown (22/35): some source functions could not be projected: malformed body for C function `unittest_ack_details_alternating` at line 19928; malformed body for C function `unittest_ack_details_gap_acquired` at line 20030; malformed body for C function `unittest_ack_details_interleaved` at line 20099; malformed body for C function `unittest_ack_details_mixed_collation` at line 19880; malformed body for C function `unittest_ack_details_multi_partition` at line 19958; malformed body for C function `unittest_ack_mapping_gaps` at line 20198; malformed body for C function `unittest_fetcher_share_filter_forward` at line 20295; malformed body for C function `unittest_filter_all_acquired` at line 19670; malformed body for C function `unittest_filter_disjoint_ranges` at line 19721; malformed body for C function `unittest_filter_empty_queue` at line 19747; malformed body for C function `unittest_filter_partial_range` at line 19696; malformed body for C function `unittest_filter_range_beyond_messages` at line 19806; malformed body for C function `unittest_filter_sparse_offsets` at line 19778
+  librdkafka/rdunittest_msgset_errors.c: Unknown (12/21): some source functions could not be projected: malformed body for C function `unittest_msgset_all_error_types_with_valid` at line 20341; malformed body for C function `unittest_msgset_all_errors` at line 20277; malformed body for C function `unittest_msgset_all_success` at line 20223; malformed body for C function `unittest_msgset_crc_error_share_consumer` at line 19826; malformed body for C function `unittest_msgset_decompression_error_share_consumer` at line 19890; malformed body for C function `unittest_msgset_mixed_crc_success_decomp` at line 20074; malformed body for C function `unittest_msgset_mixed_magic_success_crc_success` at line 20147; malformed body for C function `unittest_msgset_mixed_success_crc_success` at line 20005; malformed body for C function `unittest_msgset_unsupported_magic_share_consumer` at line 19951
+  librdkafka/rdvarint.c: Unknown (1/2): some source functions could not be projected: malformed body for C function `do_test_rd_uvarint_enc_i64` at line 3219
+  librdkafka/rdxxhash.c: Unknown (43/46): some source functions could not be projected: malformed body for C function `XXH32_canonicalFromHash` at line 1005; malformed body for C function `XXH64_canonicalFromHash` at line 1284; malformed body for C function `XXH_isLittleEndian` at line 783
+  librdkafka/snappy.c: Unknown (49/57): some source functions could not be projected: malformed body for C function `rd_kafka_snappy_compress` at line 20422; malformed body for C function `rd_kafka_snappy_compress_iov` at line 20403; malformed body for C function `rd_kafka_snappy_uncompress` at line 20452; malformed body for C function `rd_kafka_snappy_uncompress_iov` at line 20438
+  librdkafka/tinycthread.c: Unknown (0/30): C function `_cnd_timedwait_win32` was not found
+  librdkafka/tinycthread_extra.c: Unknown (12/14): the conservative C11 projection contains an unsupported operation
+librdkafka: 94 unit(s), 3410 source function(s), 3025 projected; 3 data-only, 0 Safe, 10 Unsafe, 81 Unknown, 0 gateway failure(s)
+  chunkio/chunkio.c: Unsafe (13/13)
+  chunk-source chunkio/cio_chunk.c/chunk_state_sync: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_close: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_close_stream: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_sub: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_up_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_up_sub: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_down: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_copy: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_end_pos: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_real_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_hash: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_file: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_locked: field-summary Locked; [ChunkSourcePath { initial_value: false, final_value: false, return_value: 0, branches: [], writes: [] }, ChunkSourcePath { initial_value: true, final_value: true, return_value: 1, branches: [], writes: [] }]
+  qcore-contract cio_chunk_is_locked: Checked (4 Boolean pre-states; live/exclusive/domain preconditions assumed)
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_up: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_lock: Unknown: unmodeled statement CallExpr
+  chunk-source chunkio/cio_chunk.c/cio_chunk_open: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_sync: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_begin: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_commit: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_rollback: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_unlock: Unknown: unmodeled statement CallExpr
+  chunk-source chunkio/cio_chunk.c/cio_chunk_up: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_up_force: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_write: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_write_at: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_version: Unknown: outside single borrowed chunk / int-result source profile
+chunk-source chunkio/cio_chunk.c: 30 function(s), 1 field summary(s), 1 QCore contract(s) checked, 29 Unknown; no whole-unit lifecycle certificate
+  chunkio/cio_chunk.c: Unknown (30/30): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_error.c: Unknown (4/4): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_file.c: Unsafe (32/32)
+  chunkio/cio_file_unix.c: Unsafe (15/15)
+  chunkio/cio_log.c: Unknown (2/3): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_memfs.c: Unsafe (5/5)
+  chunkio/cio_meta.c: Unsafe (4/4)
+  chunkio/cio_os.c: Unknown (2/3): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_scan.c: Unknown (3/3): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_stats.c: Unknown (2/2): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_stream.c: Unknown (8/8): the conservative C11 projection contains an unsupported operation
+  chunkio/cio_utils.c: Unknown (2/4): some source functions could not be projected: malformed body for C function `cio_utils_recursive_delete` at line 2213
+chunkio: 13 unit(s), 126 source function(s), 122 projected; 0 data-only, 0 Safe, 5 Unsafe, 8 Unknown, 0 gateway failure(s)
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/append_to_ring_buffer: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/destroy_chunk_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_chunk_route_plugin_matches: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_append_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_append_raw_local: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_create: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy_corrupted: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy_direct_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_down: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_drop_task_route: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_find_space_new_data: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_flush: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_direct_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_event_type: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_projected_write_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_real_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_tag: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_direct_routes: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_other_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_overlimit_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_mem_overlimit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_storage_overlimit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_task_safe_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_up: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_map: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_size_subtract: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_would_exceed_limit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_place_new_chunk: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_prefers_physical_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_protect: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_lock: field-summary Busy; [ChunkSourcePath { initial_value: false, final_value: false, return_value: -1, branches: [true], writes: [] }, ChunkSourcePath { initial_value: true, final_value: false, return_value: 0, branches: [false], writes: [false] }]
+  qcore-contract flb_input_chunk_release_lock: Checked (4 Boolean pre-states; live/exclusive/domain preconditions assumed)
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_route: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_space: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_space_compound: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_cleanup: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_collector: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_enqueue: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_enqueue_log_routing: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_safe_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_limits: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_up: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_up_down: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_total_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_update_output_instances: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write_at: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write_header_v2: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/generate_chunk_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/get_input_chunk_record_count: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/get_input_chunk_source_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_append_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_collect_output_references: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_get: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_has_magic_bytes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_metadata_view: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_output_size_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_write_header: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/logs_tag_records_metrics_enabled: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/memrb_input_chunk_release_space: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/sb_get_releasable_output_queue_space: Unknown: expected one selected definition after preprocessing, found 0
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/sb_release_output_queue_space: Unknown: expected one selected definition after preprocessing, found 0
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_metrics: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_untracked: Unknown: outside single borrowed chunk / int-result source profile
+chunk-source fluent-bit-chunk/flb_input_chunk.c: 66 function(s), 1 field summary(s), 1 QCore contract(s) checked, 65 Unknown; no whole-unit lifecycle certificate
+  fluent-bit-chunk/flb_input_chunk.c: Unsafe (64/66)
+fluent-bit-chunk: 1 unit(s), 66 source function(s), 64 projected; 0 data-only, 0 Safe, 1 Unsafe, 0 Unknown, 0 gateway failure(s)
+monkey-libevent adapter: 10 accepted Cycle 18 API symbol(s): event_add, event_base_free, event_base_loop, event_base_new, event_del, event_free, event_new, evutil_closesocket, evutil_socket_geterror, evutil_socketpair
+monkey-libevent adapter: 0 symbol(s) remain Unknown:
+monkey bundled Libevent: 7 Cycle 18 contract file(s) byte-identical
+  monkey-libevent/mk_core/mk_event.c: Unsafe (14/14)
+  monkey-libevent/mk_core/mk_file.c: Unsafe (2/2)
+  monkey-libevent/mk_core/mk_iov.c: Unknown (8/8): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_core/mk_memory.c: Unsafe (5/5)
+  monkey-libevent/mk_core/mk_rconf.c: Unsafe (17/17)
+  monkey-libevent/mk_core/mk_string.c: Unsafe (16/20)
+  monkey-libevent/mk_core/mk_utils.c: Unknown (7/11): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_cache.c: Unsafe (2/2)
+  monkey-libevent/mk_server/mk_clock.c: Unsafe (6/8)
+  monkey-libevent/mk_server/mk_config.c: Unknown (13/13): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_fifo.c: Unsafe (16/16)
+  monkey-libevent/mk_server/mk_header.c: Unknown (5/5): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_http.c: Unsafe (26/26)
+  monkey-libevent/mk_server/mk_http_parser.c: Unsafe (18/18)
+  monkey-libevent/mk_server/mk_http_thread.c: Unknown (10/10): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_kernel.c: Unknown (3/3): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_lib.c: Unsafe (26/26)
+  monkey-libevent/mk_server/mk_mimetype.c: Unsafe (7/7)
+  monkey-libevent/mk_server/mk_net.c: Unsafe (11/11)
+  monkey-libevent/mk_server/mk_plugin.c: Unsafe (26/26)
+  monkey-libevent/mk_server/mk_scheduler.c: Unsafe (31/31)
+  monkey-libevent/mk_server/mk_server.c: Unsafe (12/12)
+  monkey-libevent/mk_server/mk_socket.c: Unknown (14/14): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_stream.c: Unknown (9/9): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_user.c: Unknown (3/3): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/mk_server/mk_utils.c: Unsafe (11/14)
+  monkey-libevent/mk_server/mk_vhost.c: Unsafe (18/18)
+  monkey-libevent/mk_server/monkey.c: Unknown (5/5): the conservative C11 projection contains an unsupported operation
+  monkey-libevent/tls/tls_stub.c: Safe (5/5)
+monkey-libevent: 29 unit(s), 359 source function(s), 346 projected; 0 data-only, 1 Safe, 18 Unsafe, 10 Unknown, 0 gateway failure(s)

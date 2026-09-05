@@ -1,6 +1,7 @@
 //! `qcore.libevent`: bounded event semantics, profiles, and observation refinement.
 
 pub mod event_driven;
+pub mod monkey_observation;
 pub use event_driven::*;
 
 use crate::verifier_plugin::{

@@ -125,18 +125,19 @@ def main():
                 upstream = root / "lib/monkey" / path.relative_to(source)
                 if not upstream.is_file() or sha(path) != sha(upstream):
                     raise RuntimeError(f"Monkey dependency source mismatch: {path}")
-        events = [json.loads(line) for line in (output / "monkey_observation.jsonl").read_text().splitlines()]
-        if not events or events[-1]["kind"] != "completed":
-            raise RuntimeError("incomplete Monkey observation")
-        if [e["sequence"] for e in events] != list(range(1, len(events) + 1)):
-            raise RuntimeError("noncontiguous Monkey observation")
-        callbacks = sorted({e["callback"] for e in events if e["kind"] == "callback_enter"})
-        if callbacks != ["cb_event", "cb_timeout", "cb_wait_2_timeout"]:
-            raise RuntimeError(f"unobserved callbacks: {callbacks}")
-        metadata["monkey_result"] = {"events": len(events), "callbacks": callbacks,
-            "backend": [e["backend"] for e in events if e["kind"] == "backend"],
+        observation_path = output / "monkey_observation.jsonl"
+        checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
+                       "check_monkey_observations", "--", str(observation_path)],
+                      cwd=REPO, capture_output=True)
+        (output / "monkey_identity_result.json").write_text(checked.stdout)
+        report = json.loads(checked.stdout)["checked"]
+        if report["callbacks"] != ["cb_event", "cb_timeout", "cb_wait_2_timeout"]:
+            raise RuntimeError(f"unobserved callbacks: {report['callbacks']}")
+        if report["socketpair_failures"] != 1 or report["descriptor_acquisitions"] != 4:
+            raise RuntimeError(f"missing descriptor creation/failure scenarios: {report}")
+        metadata["monkey_result"] = {"identity_projection": report,
             "static_certificate": False,
-            "unknown": "source-derived identity trace, allocation/registration failure paths, callback access refinement"}
+            "unknown": "source-derived callback/access trace, allocation/registration failure paths"}
         print(json.dumps(metadata["monkey_result"]))
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
 
