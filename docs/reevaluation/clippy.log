@@ -1,0 +1,33 @@
+    Checking qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+error: large size difference between variants
+   --> compiler/src/legacy_c.rs:841:1
+    |
+841 | /  enum Statement {
+842 | |      Instruction(LegacyInstruction, usize),
+    | |      ------------------------------------- the second-largest variant contains at least 144 bytes
+843 | |      Block(Vec<Statement>),
+844 | |      If {
+...   |
+857 | |/     For {
+858 | ||         line: usize,
+859 | ||         init: Option<(LegacyInstruction, usize)>,
+860 | ||         condition_always_true: bool,
+...   ||
+864 | ||         body: Vec<Statement>,
+865 | ||     },
+    | ||_____- the largest variant contains at least 354 bytes
+...   |
+900 | |      },
+901 | |  }
+    | |__^ the entire enum is at least 360 bytes
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#large_enum_variant
+    = note: `-D clippy::large-enum-variant` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::large_enum_variant)]`
+help: consider boxing the large fields or introducing indirection in some other way to reduce the total size of the enum
+    |
+863 -         increment: Option<(LegacyInstruction, usize)>,
+863 +         increment: Box<Option<(LegacyInstruction, usize)>>,
+    |
+
+error: could not compile `qcore-compiler` (lib) due to 1 previous error

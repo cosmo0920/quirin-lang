@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-05",
+  "head": "e4ed3df5b92176435159d6833c56cfe1d44d7a4f",
+  "scope": "Mutable worktree; hashes captured after probes, not a clean historical checkout. Other worktree edits were observed during the audit.",
+  "audited_file_sha256": {
+    "compiler/src/weak_memory.rs": "26293b7c29d98e62ca81af8051399460d7b64fa498ad756619a065190e9fe713",
+    "compiler/src/verifier_plugin.rs": "cca05f64cd06628c5d1475511841defda6a4ae05d260bb7702d6bd4d6de00274",
+    "compiler/src/driver.rs": "e164ea2d652d00ee31246f27ef60d0aff5902923abb7c097353ef20f05dbce97",
+    "compiler/src/translation_validation.rs": "1f9eb9e13ef78db9e241c029b1915cfb87b5987db63edec918a727dbbbec84d0",
+    "compiler/examples/reevaluation_probe.rs": "2eb18191f12f38d5ef54ad85d3f5b23f53fde664e1fe1f8d679e75d1ce7224c2",
+    "proof/QCore/ResearchExtensions.lean": "4960be0ac2ae124d84738ee46a62e6a1663f72554b2a583ffcc22f45bc3f7a0c",
+    "proof/QCore/VerifierPlugin.lean": "cc911a43b3bd91ff04d7968cbae9ebad3992d6d4b538486ca35f1088bb3d40b2",
+    "proof/QCore/Metatheory.lean": "81c8ea5fe96778590ba84a7f7d84515c4961f6d8be6c58803c9e87a7f0de09bc",
+    "proof/lean-toolchain": "3aac669c7a910ec2389f4e4f921b605adf6ebf2d1e0c9b9cd0be4d33f3f5db71",
+    "docs/QCORE_SPEC_r0_2.md": "58b15b1943c3cc26492ce6696b15a206cc876f780a0d75a9ce3c4683ae77c9f3",
+    ".github/workflows/ci.yml": "d26b075335c62f12eb01c5e271d118499f21bbeb80c7449d2d0c5d9ad9f50233"
+  },
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+  "cargo": "cargo 1.98.0 (797e8a9bc 2026-08-05)",
+  "lean_toolchain": "leanprover/lean4:v4.33.1",
+  "probe_exit_code": 1,
+  "format_exit_code": 0
+}

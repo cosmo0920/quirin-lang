@@ -1,0 +1,20 @@
+'QCore.ResearchExtensions.checked_inference_is_principal' does not depend on any axioms
+'QCore.ResearchExtensions.principal_result_unique' does not depend on any axioms
+'QCore.ResearchExtensions.checked_loop_conserves_net' does not depend on any axioms
+'QCore.ResearchExtensions.checked_loop_scales_total' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_legacy_safe_has_checked_summary' depends on axioms: [propext]
+'QCore.ResearchExtensions.accepted_c11_is_race_free' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_c11_refines_source_observation' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_native_preserves_custody_and_cleanup' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_native_has_native_platform_evidence' does not depend on any axioms
+'QCore.ResearchExtensions.composition_requires_matching_endpoint' does not depend on any axioms
+'QCore.ResearchExtensions.valid_morphisms_compose' depends on axioms: [propext]
+'QCore.ResearchExtensions.principalInference_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.generalNonzeroNetLoops_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.unrestrictedLegacyC_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.categoricalUnification_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.fullC11WeakMemory_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.nativeConcurrentBackend_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.combined_cycle17_certificate' does not depend on any axioms
+'QCore.ResearchExtensions.all_promoted_research_is_discharged' does not depend on any axioms
+'QCore.Metatheory.cycle17_research_boundary_is_discharged' does not depend on any axioms

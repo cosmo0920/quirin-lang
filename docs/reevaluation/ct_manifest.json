@@ -1,0 +1,856 @@
+{
+  "schema_version": 1,
+  "note": "Inherited requirements, not a claim that related existing tests are absent or that these cases pass.",
+  "cases": [
+    {
+      "id": "CT01",
+      "scenario": "Move an owned buffer to child; child returns it; parent joins and drops",
+      "expected": "Accept",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT02",
+      "scenario": "Parent uses buffer after successful move capture",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT03",
+      "scenario": "Parent and child share reads with complementary positive shares",
+      "expected": "Accept",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT04",
+      "scenario": "Parent writes while child retains a read share",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT05",
+      "scenario": "Two children each request FULL for the same memory",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT06",
+      "scenario": "Same pointer copied into differently named variables",
+      "expected": "Still same permission identity",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT07",
+      "scenario": "Two disjoint array halves mutated independently",
+      "expected": "Accept with bounds/disjointness proof",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT08",
+      "scenario": "Overlapping array ranges",
+      "expected": "Reject or analyzer potential/unknown",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT09",
+      "scenario": "Distinct ordinary struct fields",
+      "expected": "Accept only after layout/access proof",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT10",
+      "scenario": "Adjacent bit-fields in one memory location",
+      "expected": "Reject independent concurrent writes",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT11",
+      "scenario": "Full permission reconstructed while local shared aliases survive",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT12",
+      "scenario": "Create fails before any child starts",
+      "expected": "Capture state restored; no task obligation",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT13",
+      "scenario": "Second create fails after first succeeds",
+      "expected": "First task must still be joined",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT14",
+      "scenario": "Child finishes but parent has not joined",
+      "expected": "No restored parent authority",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT15",
+      "scenario": "Backend join failure",
+      "expected": "No quiescence, no environment reclamation",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT16",
+      "scenario": "Worker typed error after partial local acquisition",
+      "expected": "Clean locals, return loans, carry declared payload",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT17",
+      "scenario": "Worker error payload contains owned result",
+      "expected": "Join transfers it exactly once",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT18",
+      "scenario": "Worker error payload contains scoped capture borrow",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT19",
+      "scenario": "Parent `?` bypasses a live sibling task",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT20",
+      "scenario": "In-scope handler joins siblings before rethrow",
+      "expected": "Accept with all result obligations accounted",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT21",
+      "scenario": "Quant opening discards positive access permission",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT22",
+      "scenario": "Quant opening discards parent-local unused credit after joins",
+      "expected": "Accept",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT23",
+      "scenario": "Parent abandons child-owned credit during its own error",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT24",
+      "scenario": "Cleanup destroys an owner before child join",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT25",
+      "scenario": "Cleanup destroys owner after joins and loan expiry",
+      "expected": "Accept",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT26",
+      "scenario": "Two critical sections use the same mutex for the same payload",
+      "expected": "Accept",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT27",
+      "scenario": "Two different mutex identities allegedly guard the same payload",
+      "expected": "Reject without a valid composite protocol",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT28",
+      "scenario": "Guard is moved to a child or unlocked by another thread",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT29",
+      "scenario": "Typed error leaves a temporarily broken mutex invariant",
+      "expected": "Reject unless restored before unlock",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT30",
+      "scenario": "Guard-derived borrow escapes critical section",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT31",
+      "scenario": "Mutex destroyed with outstanding handle borrower/waiter",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT32",
+      "scenario": "Join while a guard is held",
+      "expected": "Reject in initial profile",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT33",
+      "scenario": "Lock order cycle in optional rank mode",
+      "expected": "Reject rank proof",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT34",
+      "scenario": "Protected owned graph grows/replaces identities",
+      "expected": "Unsupported in fixed-shape profile",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT35",
+      "scenario": "One shared 4096-byte allocation read by two tasks",
+      "expected": "Count 4096 once",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT36",
+      "scenario": "Concurrent incremental peaks 3072 and 5120 bytes",
+      "expected": "Bound at least 8192 plus modeled overhead",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT37",
+      "scenario": "Child returns allocation and finishes early",
+      "expected": "Allocation remains live in completion capsule",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT38",
+      "scenario": "Child credit splits total more than original credit",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT39",
+      "scenario": "Concurrent work bound used as wall-clock bound",
+      "expected": "Reject unsupported claim",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT40",
+      "scenario": "Atomic pointer points to prematurely freed memory",
+      "expected": "Not certified; unsupported lifetime/publication protocol",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT41",
+      "scenario": "`volatile` used as a completion flag",
+      "expected": "No synchronization proof",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT42",
+      "scenario": "Two descriptors share an underlying logical state",
+      "expected": "Preserve shared protocol-cell identity",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT43",
+      "scenario": "Unresolved callback may run after API return",
+      "expected": "Unknown; no whole-program proof",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT44",
+      "scenario": "Stack capture expires or environment moves before join",
+      "expected": "Reject",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT45",
+      "scenario": "Unknown destructor accesses shared global state",
+      "expected": "Require access contract or report unknown",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT46",
+      "scenario": "Known shared wrapper with non-Sync but Send payload",
+      "expected": "Accept only through verified mutex protocol",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT47",
+      "scenario": "Raw pointer is Copy but no transfer/share contract exists",
+      "expected": "Reject automatic cross-thread acceptance",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT48",
+      "scenario": "Stale heap refinement reused after mutex release/reacquire",
+      "expected": "Invalidate/re-establish, never assume",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT49",
+      "scenario": "Independent event order differs between C and interpreter",
+      "expected": "Validate partial order, not exact total trace",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    },
+    {
+      "id": "CT50",
+      "scenario": "New lifetime reuses old numeric address/descriptor",
+      "expected": "Old capability cannot authorize new identity",
+      "spec_section": "55",
+      "mapping_status": "unmapped",
+      "source_fixture": null,
+      "semantic_profile": null,
+      "stages": {
+        "parser": "unassessed",
+        "type_checker": "unassessed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      }
+    }
+  ]
+}

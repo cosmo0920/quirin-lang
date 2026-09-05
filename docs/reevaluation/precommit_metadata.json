@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-05",
+  "baseline_head": "490f51517ff3dae4534b8c8b0a181d6265a3d66e",
+  "selected_changes": "README link, reevaluation specification, example probes, and evidence files",
+  "cargo_test_workspace": {
+    "exit_code": 0,
+    "library_passed": 201,
+    "integration_passed": 14
+  },
+  "cargo_fmt_check": {
+    "exit_code": 0
+  },
+  "cargo_clippy_workspace_all_targets_deny_warnings": {
+    "exit_code": 0
+  },
+  "reevaluation_probe": {
+    "exit_code": 1,
+    "failed_expectations": 6,
+    "passing_controls": 2
+  },
+  "logs": {
+    "tests": "precommit-tests.log",
+    "clippy": "precommit-clippy.log",
+    "probes": "precommit-probes.json",
+    "probe_build": "precommit-probe-build.log"
+  }
+}

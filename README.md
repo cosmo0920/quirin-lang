@@ -83,6 +83,10 @@ runtime checks.
 The post-Cycle-9 sequence and promoted research boundary are in the
 [post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 
+The [reevaluation specification](docs/REEVALUATION_SPEC.md) records a recent
+research review, six reproduced certificate/weak-memory discrepancies, and
+the proposed acceptance gates across the language, backends, and providers.
+
 ## Build
 
 ```sh

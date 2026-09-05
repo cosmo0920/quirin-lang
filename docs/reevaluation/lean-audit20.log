@@ -1,0 +1,6 @@
+'QCore.VerifierPlugin.checked_safe_has_valid_evidence' depends on axioms: [propext, Quot.sound]
+'QCore.VerifierPlugin.safe_without_evidence_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.invalid_envelope_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.invalid_evidence_is_unknown' depends on axioms: [propext]
+'QCore.VerifierPlugin.missing_plugin_composition_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.unknown_plugin_prevents_safe' depends on axioms: [propext]

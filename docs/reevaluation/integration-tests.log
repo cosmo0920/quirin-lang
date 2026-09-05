@@ -1,0 +1,26 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-4a157c6dcffda9a8)
+
+running 13 tests
+test composition_cannot_promote_an_uncertified_safe_label ... ok
+test builtin_safe_proposal_only_becomes_safe_after_core_checking ... ok
+test forged_safe_evidence_is_downgraded_to_unknown ... ok
+test missing_disabled_incompatible_and_negative_results_fail_closed ... ok
+test first_party_builtins_are_registered_as_separate_providers ... ok
+test conflicting_assumptions_make_composition_unknown ... ok
+test reproducibility_fields_are_bound_into_safe_evidence ... ok
+test protocol_frames_are_length_delimited_json_and_reject_trailing_data ... ok
+test protocol_rejects_unknown_fields_instead_of_guessing_a_schema ... ok
+test verifier_scope_rejects_unknown_capabilities_and_plugins ... ok
+test package_discovery_loads_a_versioned_manifest ... ok
+test verifier_scope_syntax_resolves_against_the_same_builtin_registry ... ok
+test process_provider_timeout_is_unknown_and_cannot_issue_a_certificate ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/libevent_submodule.rs (target/debug/deps/libevent_submodule-a564a5f92658e5ce)
+
+running 1 test
+test libevent_submodule_matches_the_audited_revision ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
