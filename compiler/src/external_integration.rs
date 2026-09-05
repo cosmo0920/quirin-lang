@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::chunk_lifecycle::{
     ChunkCertificate, ChunkDiagnostic, ChunkOperation, ChunkProgram, check_chunk_program,
 };
-use crate::event_driven::{
+use crate::verifier_plugins::libevent::{
     EventBackend, EventCertificate, EventDiagnostic, EventOperation, EventProgram,
     LibeventBuildProfile, ObservedKind, check_event_program, check_observation_refinement,
 };
@@ -455,7 +455,7 @@ fn require_evidence(
     }
 }
 
-pub const PINNED_FLUENT_BIT_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+pub use crate::verifier_plugins::chunkio::PINNED_FLUENT_BIT_REVISION;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum AuditedLibrary {

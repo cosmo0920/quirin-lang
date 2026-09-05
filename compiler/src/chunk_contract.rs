@@ -4,11 +4,11 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::chunk_source::{ChunkSourceField, ChunkSourceSummary};
 use crate::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
 };
 use crate::lexer::{Symbol, TokenKind, lex};
+use crate::verifier_plugins::chunkio::{ChunkSourceField, ChunkSourceSummary};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ChunkContractCertificate {

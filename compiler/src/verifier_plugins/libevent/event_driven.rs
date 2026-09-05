@@ -1612,5 +1612,5 @@ pub fn verify_pinned_libevent_source(
 }
 
 #[cfg(test)]
-#[path = "../tests/unit/event_driven.rs"]
+#[path = "../../../tests/unit/event_driven.rs"]
 mod tests;

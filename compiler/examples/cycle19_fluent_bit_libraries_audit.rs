@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
 use qcore_compiler::chunk_contract::check_chunk_source_contract;
-use qcore_compiler::chunk_source::{ChunkSourceResult, import_chunk_source};
-use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
+use qcore_compiler::verifier_plugins::chunkio::{ChunkSourceResult, import_chunk_source};
+use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
     AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
     LegacyFunctionScope, ResourceApiKind, ResourceContracts, ResourceFunctionContract,

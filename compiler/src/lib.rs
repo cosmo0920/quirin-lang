@@ -26,13 +26,11 @@ pub mod cfg;
 pub mod check;
 pub mod chunk_contract;
 pub mod chunk_lifecycle;
-pub mod chunk_source;
 pub mod cleanup_lowering;
 pub mod concurrency;
 pub mod contract_observation;
 pub mod driver;
 pub mod error_region;
-pub mod event_driven;
 pub mod executable_model;
 pub mod external_integration;
 pub mod external_source;
@@ -52,8 +50,13 @@ pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
 pub mod verifier_plugin;
+pub mod verifier_plugins;
 pub mod weak_memory;
 pub mod whole_program;
+
+// Compatibility paths for callers predating the in-process plugin extraction.
+pub use verifier_plugins::chunkio::chunk_source;
+pub use verifier_plugins::libevent::event_driven;
 
 pub use advanced_control::{
     AdvancedControlError, AdvancedExecution, AdvancedOp, AdvancedOutcome, AdvancedProgram,

@@ -184,6 +184,31 @@ tooling, OS-enforced memory/network isolation, and replacement of the old
 monolithic audit routing. Those gates remain open rather than being weakened
 by the generic plugin foundation.
 
+### Initial in-process extraction
+
+`event_driven.rs` and `chunk_source.rs` now live under
+`compiler/src/verifier_plugins/libevent/` and
+`compiler/src/verifier_plugins/chunkio/`, respectively. Each plugin module owns
+its manifest and exposes a `provider()` adapter for explicit registry
+registration. `first_party_registry()` registers those adapters. The Libevent
+profile, state machine, source audit, and observation refinement, and the
+ChunkIO source importer and revision pin, live behind these module boundaries.
+
+Typed consumers should use `qcore_compiler::verifier_plugins::libevent` and
+`qcore_compiler::verifier_plugins::chunkio`. The old `event_driven` and
+`chunk_source` paths remain aliases to the same implementations and types.
+External composition, contract checking, and audit examples use the plugin
+paths. The existing semantic tests exercise the relocated implementations;
+registry regression coverage checks both adapters for every declared capability.
+
+This is an in-process extraction within the compiler crate. Core C11
+preprocessing, chunk lifecycle checking, and contract certificate checking remain
+in place. The typed APIs preserve their existing bounded results and private
+summary construction; they do not create plugin `CoreCertificate` values or
+route semantic inputs through protocol v1. The registry adapters still return
+`Unknown` for Boolean-only requests. Standalone executable packaging, semantic
+protocol integration, and pinned provider parity audits remain open gates.
+
 
 ### Superseding certificate containment, 2026-09-05
 

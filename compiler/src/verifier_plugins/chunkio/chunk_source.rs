@@ -12,8 +12,8 @@ use std::process::{Command, Stdio};
 
 use serde_json::Value;
 
+use super::PINNED_FLUENT_BIT_REVISION;
 use crate::chunk_lifecycle::{ChunkId, ChunkOperation, ChunkState};
-use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -477,5 +477,5 @@ fn derive_summary(
 }
 
 #[cfg(test)]
-#[path = "../tests/unit/chunk_source.rs"]
+#[path = "../../../tests/unit/chunk_source.rs"]
 mod tests;

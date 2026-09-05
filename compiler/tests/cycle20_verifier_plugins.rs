@@ -77,6 +77,32 @@ fn builtin_assertions_cannot_establish_safety() {
     );
 }
 
+#[test]
+fn extracted_plugins_preserve_manifests_and_fail_closed_for_every_capability() {
+    use qcore_compiler::verifier_plugins::{chunkio, libevent};
+
+    let mut registry = VerifierRegistry::default();
+    registry.register(Arc::new(libevent::provider())).unwrap();
+    registry.register(Arc::new(chunkio::provider())).unwrap();
+    let first_party = first_party_registry();
+    for manifest in [libevent::manifest(), chunkio::manifest()] {
+        assert!(registry.manifests().contains(&&manifest));
+        assert!(first_party.manifests().contains(&&manifest));
+        for capability in &manifest.capabilities {
+            let mut request = request(manifest.plugin_id.as_str(), &manifest.targets[0].library);
+            request.capability = *capability;
+            let outcome = registry.verify(&request);
+            assert_eq!(outcome, first_party.verify(&request));
+            assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+            assert!(outcome.certificate.is_none());
+            assert_eq!(
+                outcome.diagnostics[0].code,
+                format!("{}.semantic_evidence_unavailable", manifest.plugin_id)
+            );
+        }
+    }
+}
+
 // Deliberately untrusted provider: echo all caller assertions as a Safe proof,
 // including the empty case. This must be rejected by the core, not the provider.
 fn echo_response(

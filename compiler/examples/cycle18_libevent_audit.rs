@@ -2,7 +2,7 @@ use std::env;
 use std::path::Path;
 use std::process::ExitCode;
 
-use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
+use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{PINNED_LIBEVENT_DESCRIPTION, verify_pinned_libevent_source};
 
 fn main() -> ExitCode {

@@ -1434,28 +1434,16 @@ pub fn compose_certificates(
 }
 
 pub fn first_party_manifests() -> Vec<PluginManifest> {
+    let mut manifests = vec![
+        crate::verifier_plugins::libevent::manifest(),
+        crate::verifier_plugins::chunkio::manifest(),
+    ];
+    manifests.extend(unextracted_first_party_manifests());
+    manifests
+}
+
+fn unextracted_first_party_manifests() -> Vec<PluginManifest> {
     vec![
-        first_party_manifest(
-            "qcore.libevent",
-            "libevent",
-            &[
-                VerifierCapability::ResourceContracts,
-                VerifierCapability::EventTraces,
-                VerifierCapability::Concurrency,
-                VerifierCapability::ObservationHooks,
-            ],
-            "QCore.EventDriven",
-        ),
-        first_party_manifest(
-            "qcore.chunkio",
-            "chunkio",
-            &[
-                VerifierCapability::ResourceContracts,
-                VerifierCapability::ChunkLifecycle,
-                VerifierCapability::TranslationUnitProjection,
-            ],
-            "QCore.ChunkLifecycle",
-        ),
         first_party_manifest(
             "qcore.cmetrics",
             "cmetrics",
@@ -1480,7 +1468,7 @@ pub fn first_party_manifests() -> Vec<PluginManifest> {
     ]
 }
 
-fn first_party_manifest(
+pub(crate) fn first_party_manifest(
     id: &str,
     library: &str,
     capabilities: &[VerifierCapability],
@@ -1516,7 +1504,13 @@ fn first_party_manifest(
 
 pub fn first_party_registry() -> VerifierRegistry {
     let mut registry = VerifierRegistry::default();
-    for manifest in first_party_manifests() {
+    registry
+        .register(Arc::new(crate::verifier_plugins::libevent::provider()))
+        .expect("Libevent plugin ID is unique");
+    registry
+        .register(Arc::new(crate::verifier_plugins::chunkio::provider()))
+        .expect("ChunkIO plugin ID is unique");
+    for manifest in unextracted_first_party_manifests() {
         registry
             .register(Arc::new(
                 BuiltInProvider::new(manifest).expect("first-party manifest is valid"),
