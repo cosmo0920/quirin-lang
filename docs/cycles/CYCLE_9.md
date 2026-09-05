@@ -1,6 +1,6 @@
 # Cycle 9: Conservative Legacy-C Resource Analyzer
 
-**Status: Done**
+**Status: Done (archived)**
 
 Cycle 9 implements Stage 9 of the prototype roadmap. It adds a conservative,
 path-sensitive resource analyzer for an explicitly supported annotated C

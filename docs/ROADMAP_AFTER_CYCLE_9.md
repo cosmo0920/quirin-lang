@@ -10,6 +10,8 @@ validation effort. It is not folded into the milestones below.
 
 ## Cycle 10: Complete source front end
 
+**Status: completed.** See [`../CYCLE_10.md`](../CYCLE_10.md).
+
 Implement the remaining function, statement, ownership, borrow, effect,
 resource-flow, error-region, and cleanup syntax; name resolution; source spans;
 and elaboration into one typed source IR. Require grammar golden/round-trip

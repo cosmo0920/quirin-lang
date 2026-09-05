@@ -5,7 +5,8 @@
 //! path-sensitive typed recoverable errors, checked error-region cleanup, and
 //! cleanup-explicit CFG lowering to C11, plus a reduced executable model tying
 //! those safety mechanisms together for the Cycle 8 metatheory, and a
-//! conservative annotated legacy-C resource analyzer for Cycle 9.
+//! conservative annotated legacy-C resource analyzer for Cycle 9.  Cycle 10
+//! adds the shared, source-located front end and typed source IR.
 
 pub mod ast;
 pub mod c_emit;
@@ -14,6 +15,7 @@ pub mod check;
 pub mod cleanup_lowering;
 pub mod error_region;
 pub mod executable_model;
+pub mod frontend;
 pub mod index;
 pub mod legacy_c;
 pub mod lexer;
@@ -43,6 +45,14 @@ pub use executable_model::{
     ModelControl, ModelOutcome, ModelProgram, ModelState, ModelTraceEvent, ModelTypedError,
     NaturalIndex, Operation as ModelOperation, ResourceIdentity as ModelResourceIdentity,
     UsageBinding as ModelUsageBinding, UsageGrade as ModelUsageGrade, Variable as ModelVariable,
+};
+pub use frontend::{
+    DeclarationKind as SourceDeclarationKind, Located, SemanticPass, SourceBlock,
+    SourceDeclaration, SourceDiagnostic, SourceParameter, SourceParseError,
+    SourceProgram as CompleteSourceProgram, SourceTypeKind, StatementKind as SourceStatementKind,
+    SymbolId as SourceSymbolId, TypedBinding, TypedSourceDeclaration, TypedSourceProgram,
+    TypedStatement, covered_semantic_passes, elaborate_source, parse_source_program,
+    source_diagnostic,
 };
 pub use index::{IndexError, IndexExpression, IndexTerm};
 pub use legacy_c::{

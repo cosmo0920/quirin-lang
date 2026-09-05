@@ -4,6 +4,7 @@ import QCore.Lowering
 import QCore.ErrorRegion
 import QCore.ExecutableModel
 import QCore.Flow
+import QCore.Frontend
 import QCore.Ownership
 import QCore.Quant
 import QCore.Resource
