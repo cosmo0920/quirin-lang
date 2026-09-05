@@ -67,10 +67,15 @@ The post-Cycle-9 sequence and promoted research boundary are in the
 ## Build
 
 ```sh
+git submodule update --init --recursive
 cargo test --workspace
 cd proof
 lake build
 ```
+
+The Rust test suite verifies that `third_party/libevent` is checked out at the
+audited revision and still contains the source contracts used by the Cycle 18
+model. The CI workflow initializes the submodule before running this gate.
 
 The Lean toolchain is selected through `proof/lean-toolchain`. Elan must have a
 Lean 4 stable toolchain installed before `lake build` can run.

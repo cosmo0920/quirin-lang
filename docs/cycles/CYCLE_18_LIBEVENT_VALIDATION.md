@@ -2,24 +2,30 @@
 
 ## Source identity
 
-The requested sibling checkout was created with:
+Libevent is recorded as a Git submodule at `third_party/libevent`. A fresh
+checkout can reproduce the audited source with:
 
 ```sh
-git clone git@github.com:libevent/libevent.git ../libevent
+git clone --recurse-submodules https://github.com/cosmo0920/qcore-c.git
+# Or, in an existing checkout:
+git submodule update --init --recursive
 ```
 
 The Cycle 18 model pins the resulting source exactly:
 
 | Item | Evidence |
 | --- | --- |
-| Upstream | `git@github.com:libevent/libevent.git` |
+| Upstream | `https://github.com/libevent/libevent.git` |
+| Repository path | `third_party/libevent` |
 | Commit | `d82464a277d0f42703702c4dfd9af6af38595a83` |
 | Description | `release-2.2.2-alpha-11-gd82464a2` |
 | Commit date | 2026-08-29 |
 | Branch at clone | `master`, tracking `origin/master` |
 
 `cycle18_libevent_audit` requires that exact `HEAD`; a later upstream commit
-is rejected until the pin and source contract are reviewed together.
+is rejected until the pin and source contract are reviewed together. It also
+rejects tracked modifications in the submodule, so the files being audited are
+the files represented by the gitlink rather than a locally altered checkout.
 
 ## Audited upstream contracts
 
@@ -37,7 +43,7 @@ markers:
 The command and result are:
 
 ```text
-$ cargo run --quiet --example cycle18_libevent_audit -- ../libevent
+$ cargo run --quiet --example cycle18_libevent_audit
 verified Libevent release-2.2.2-alpha-11-gd82464a2 at d82464a277d0f42703702c4dfd9af6af38595a83
 checked include/event2/event.h
 checked event.c
@@ -49,13 +55,23 @@ checked epoll.c
 This is a reproducible source-contract audit, not a proof of the upstream C
 implementation.
 
+The same audit is an integration test, so CI can use the normal workspace test
+command after initializing submodules:
+
+```sh
+cargo test --workspace
+```
+
+For a focused failure signal, run
+`cargo test -p qcore-compiler --test libevent_submodule`.
+
 ## Linux native build manifest
 
 The out-of-tree build directory was `/tmp/qcore-cycle18-libevent`.  It was
 configured with:
 
 ```sh
-cmake -S ../libevent -B /tmp/qcore-cycle18-libevent \
+cmake -S third_party/libevent -B /tmp/qcore-cycle18-libevent \
   -DCMAKE_BUILD_TYPE=Debug \
   -DEVENT__DISABLE_OPENSSL=ON \
   -DEVENT__DISABLE_MBEDTLS=ON \

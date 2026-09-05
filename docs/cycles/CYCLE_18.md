@@ -256,7 +256,8 @@ can be called complete.  Results are not inferred from this Linux run.
 ## Verification commands
 
 ```sh
-cargo run --example cycle18_libevent_audit -- ../libevent
+git submodule update --init --recursive
+cargo run --example cycle18_libevent_audit
 cargo test --workspace
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings

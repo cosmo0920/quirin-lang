@@ -13,6 +13,7 @@ use std::process::Command;
 
 pub const PINNED_LIBEVENT_COMMIT: &str = "d82464a277d0f42703702c4dfd9af6af38595a83";
 pub const PINNED_LIBEVENT_DESCRIPTION: &str = "release-2.2.2-alpha-11-gd82464a2";
+pub const LIBEVENT_SUBMODULE_PATH: &str = "third_party/libevent";
 
 pub type EventBaseId = u32;
 pub type EventId = u32;
@@ -1325,6 +1326,7 @@ pub struct LibeventSourceEvidence {
 pub enum LibeventSourceError {
     GitUnavailable,
     WrongCommit { actual: String },
+    DirtyCheckout,
     MissingContract { file: PathBuf, needle: &'static str },
     Io(std::io::Error),
 }
@@ -1361,6 +1363,18 @@ pub fn verify_pinned_libevent_source(
     let actual = String::from_utf8_lossy(&output.stdout).trim().to_owned();
     if actual != PINNED_LIBEVENT_COMMIT {
         return Err(LibeventSourceError::WrongCommit { actual });
+    }
+    let status = Command::new("git")
+        .args(["-C"])
+        .arg(root)
+        .args(["status", "--porcelain", "--untracked-files=no"])
+        .output()
+        .map_err(|_| LibeventSourceError::GitUnavailable)?;
+    if !status.status.success() {
+        return Err(LibeventSourceError::GitUnavailable);
+    }
+    if !status.stdout.is_empty() {
+        return Err(LibeventSourceError::DirtyCheckout);
     }
     let contracts = [
         (
