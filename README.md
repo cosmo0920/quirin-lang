@@ -28,9 +28,10 @@ accepts dimension and quantitative-axis declarations, while the later semantic
 passes and C backend are checked Rust IR APIs. A full function grammar and CLI
 compiler remain future work.
 
-Cycle 8 preserves Cycle 7's validation on the current non-MSVC C toolchain.
-Native Windows/MSVC conformance remains explicitly postponed to the
-[Cycle 7.5 plan](docs/CYCLE_7_5.md); no Cycle 7.5 implementation is included.
+Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
+[Cycle 7.5 validation](docs/CYCLE_7_5.md) now also compiles and executes the
+same differential C corpus with native MSVC, strict warnings, and Windows
+runtime checks.
 The sequenced Cycle 10 and later work is in the
 [post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 

@@ -475,22 +475,13 @@ mod tests {
     }
 
     #[test]
-    fn compiled_sanitized_c_matches_source_and_cfg_on_cycle_7_hosts() {
-        #[cfg(target_env = "msvc")]
-        {
-            // Native MSVC compilation and runtime conformance are deliberately
-            // scoped to the postponed Cycle 7.5 validation matrix.
-            eprintln!("MSVC conformance is postponed to Cycle 7.5");
-        }
-        #[cfg(not(target_env = "msvc"))]
-        {
-            for source in corpus() {
-                let cfg = lower_cleanup_cfg(&source).unwrap();
-                let reference = interpret_source(&source).unwrap();
-                assert_eq!(interpret_cfg(&cfg).unwrap(), reference);
-                let c_observation = compile_and_run(&cfg);
-                assert_eq!(c_observation, reference);
-            }
+    fn compiled_instrumented_c_matches_source_and_cfg() {
+        for source in corpus() {
+            let cfg = lower_cleanup_cfg(&source).unwrap();
+            let reference = interpret_source(&source).unwrap();
+            assert_eq!(interpret_cfg(&cfg).unwrap(), reference);
+            let c_observation = compile_and_run(&cfg);
+            assert_eq!(c_observation, reference);
         }
     }
 
@@ -506,19 +497,32 @@ mod tests {
         ));
         fs::create_dir(&directory).unwrap();
         let source_path = directory.join("generated.c");
-        let binary_path = directory.join("generated");
+        let binary_path = directory.join(if cfg!(target_env = "msvc") {
+            "generated.exe"
+        } else {
+            "generated"
+        });
         fs::write(&source_path, emit_c11(cfg).unwrap()).unwrap();
-        let flags = [
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ];
+        let flags: &[&str] = if cfg!(target_env = "msvc") {
+            // /RTC1 enables the native debug runtime's stack-frame and
+            // uninitialized-use checks. /sdl adds Microsoft's stricter
+            // security diagnostics and runtime checks. The cc configuration
+            // below adds /W4 and /WX without first injecting /W0.
+            &["/std:c11", "/TC", "/sdl", "/RTC1"]
+        } else {
+            &[
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ]
+        };
         let rust_target = rust_host_target();
-        cc::Build::new()
+        let mut build = cc::Build::new();
+        build
             .host(&rust_target)
             .target(&rust_target)
             .file(&source_path)
@@ -526,41 +530,48 @@ mod tests {
             .opt_level(0)
             .debug(false)
             .cargo_metadata(false)
-            .warnings(false)
-            .flags(flags)
-            .try_compile("qcore_generated")
-            .unwrap();
+            .flags(flags);
+        if cfg!(target_env = "msvc") {
+            build.warnings(true).warnings_into_errors(true);
+        } else {
+            build.warnings(false);
+        }
+        let compiler = build.get_compiler();
+        if cfg!(target_env = "msvc") {
+            assert!(
+                compiler.is_like_msvc() && !compiler.is_like_clang_cl(),
+                "Cycle 7.5 requires the native MSVC compiler selected by cc, got {}",
+                compiler.path().display()
+            );
+        }
+        build.try_compile("qcore_generated").unwrap();
 
-        let compiler = cc::Build::new()
-            .host(&rust_target)
-            .target(&rust_target)
-            .opt_level(0)
-            .debug(false)
-            .cargo_metadata(false)
-            .get_compiler();
-        let compile = compiler
-            .to_command()
-            .args(flags)
-            .arg(&source_path)
-            .arg("-o")
-            .arg(&binary_path)
-            .output()
-            .unwrap();
+        let mut compile_command = compiler.to_command();
+        compile_command.current_dir(&directory).arg(&source_path);
+        if compiler.is_like_msvc() {
+            compile_command.arg(format!("/Fe:{}", binary_path.display()));
+        } else {
+            compile_command.arg("-o").arg(&binary_path);
+        }
+        let compile = compile_command.output().unwrap();
         assert!(
             compile.status.success(),
-            "C compiler rejected generated code:\n{}",
+            "C compiler rejected generated code:\nstdout:\n{}\nstderr:\n{}",
+            String::from_utf8_lossy(&compile.stdout),
             String::from_utf8_lossy(&compile.stderr)
         );
-        let run = Command::new(&binary_path)
+        let mut run_command = Command::new(&binary_path);
+        if !cfg!(target_env = "msvc") {
             // LeakSanitizer cannot run under the process supervisor used by
             // some CI sandboxes; AddressSanitizer and UBSan remain enabled.
-            .env("ASAN_OPTIONS", "detect_leaks=0:halt_on_error=1")
-            .env("UBSAN_OPTIONS", "halt_on_error=1")
-            .output()
-            .unwrap();
+            run_command
+                .env("ASAN_OPTIONS", "detect_leaks=0:halt_on_error=1")
+                .env("UBSAN_OPTIONS", "halt_on_error=1");
+        }
+        let run = run_command.output().unwrap();
         assert!(
             run.status.success(),
-            "generated code failed under sanitizers:\n{}",
+            "generated code failed under runtime instrumentation:\n{}",
             String::from_utf8_lossy(&run.stderr)
         );
         let observation =

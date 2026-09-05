@@ -7,8 +7,9 @@ path-sensitive resource analyzer for an explicitly supported annotated C
 subset. The analyzer reports `Unknown` whenever parsing or alias semantics
 leave that subset, rather than treating unmodeled C behavior as safe.
 
-Cycle 7.5 remains postponed. No native Windows/MSVC work is required by or
-included in Cycle 9, and `docs/CYCLE_7_5.md` remains unchanged.
+Cycle 7.5 was still postponed during Cycle 9, so no native Windows/MSVC work is
+included in this cycle. It was completed later as a separate portability
+validation cycle.
 
 ## Rust implementation
 

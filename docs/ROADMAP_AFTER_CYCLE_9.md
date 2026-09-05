@@ -5,7 +5,7 @@ language described by the normative specification. Each future cycle requires
 executable Rust tests, matching Lean definitions and safety theorems, strict
 Clippy, a placeholder-free Lean build, and a theorem-dependency audit.
 
-Cycle 7.5 remains a separately postponed native Windows/MSVC portability
+Cycle 7.5 was completed separately as a native Windows/MSVC portability
 validation effort. It is not folded into the milestones below.
 
 ## Cycle 10: Complete source front end

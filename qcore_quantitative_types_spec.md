@@ -2379,7 +2379,7 @@ Acceptance:
 - sanitizers report no generated-code errors on the supported non-MSVC test corpus;
 - each runtime resource identity is released at most once.
 
-### Stage 7.5: native Windows/MSVC conformance (postponed)
+### Stage 7.5: native Windows/MSVC conformance
 
 After the initial C emitter is stable, validate and adapt it for native MSVC:
 
@@ -2399,7 +2399,7 @@ Acceptance:
 - every returned or locally owned allocation is released exactly once.
 
 Stage 7.5 is a portability-validation cycle, not part of Stage 7 completion.
-It is intentionally postponed until native Windows/MSVC execution is available.
+It was completed separately on a native Windows/MSVC environment after Stage 9.
 
 ### Stage 8: executable formal model
 
@@ -2442,7 +2442,8 @@ Acceptance:
 Cycle 9 completes this original prototype sequence. Remaining front-end,
 whole-program, end-to-end compiler, hardening, concurrency, advanced-control,
 and full-metatheory milestones are assigned to Cycles 10–16 in
-`docs/ROADMAP_AFTER_CYCLE_9.md`. Cycle 7.5 remains separately postponed.
+`docs/ROADMAP_AFTER_CYCLE_9.md`. Cycle 7.5 was completed separately as a
+portability-validation cycle.
 
 ---
 
