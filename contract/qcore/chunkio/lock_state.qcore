@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream: lib/chunkio/src/cio_chunk.c, cio_chunk_is_locked.
 // Bounded chunk-source profile: old_* names are entry ghost values and the
 // unprefixed fields are exit ghost values. Reading lock preserves both fields.
@@ -14,7 +16,3 @@ contract {
     ensures normal lock == old_lock;
     ensures normal busy == old_busy;
 };
-
-fn main() -> i32 {
-    return 0;
-}

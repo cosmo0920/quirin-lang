@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports and deployed Monkey observation pending**
+**Status: In progress — first typed-source field contracts checked from native QCore; general custody/lifecycle imports pending; native allocator and Monkey observations recorded**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -291,3 +291,35 @@ paths, and busy effects preserve the lock and other identities. Clang and the
 AST-to-IR bridge remain explicit trusted boundaries; this is not a proof of
 arbitrary C or arbitrary QCore predicates. Full results and the remaining gates
 are recorded in `../reports/cycle19-source-contracts/README.md`.
+
+
+## Native execution evidence and entry-free contract modules
+
+The actual pinned `flb_mem.h` is compiled with its selected Fluent Bit build
+profile and instrumented allocator calls. Its five wrappers are evaluated
+against `contract/qcore/fluent_bit/memory.qcore` on 145 executions. The
+postconditions are defined in QCore; Rust provides a general bounded predicate
+interpreter, not a duplicate per-function behavior table. Nonzero-size realloc
+failure preservation is explicitly conditional. Zero-size realloc, alternate
+allocator profiles, arbitrary caller provenance, and exhaustive C verification
+are not claimed by these runtime checks.
+
+The Monkey harness now records all three actual Libevent callbacks on the
+observed `epoll` backend, with per-base event identities, a dispatcher/thread
+binding, callback entry/exit, registration, frees, descriptor closes, and
+teardown. The native run passes address, undefined-behavior, and leak checks
+for the instrumented harness. Static dependencies retain their build's
+instrumentation level. This supplies real execution evidence for 19D, but does
+not yet satisfy the source-derived access/identity trace or failure-path
+requirements of `check_monkey_composition`.
+
+The compiler supports `module contract;` and `module library;`, so contract
+files no longer need dummy `main` functions. Closed `quant<n where n := 5>`
+definitions now elaborate to dimensioned indices, with cycle, freshness,
+constraint, and overflow checks. The Lean binding account proves substitution
+and scope preservation; it does not prove the Rust graph resolver.
+
+See [the native evaluation and remaining gates](../reports/cycle19-native-contracts/README.md)
+and [the module/type syntax](../QCORE_MODULE_MODES.md). General 19B per-call
+identity mapping, 19C nested source teardown/failure imports, and the remaining
+19D source/observation refinement gates keep Cycle 19 in progress.

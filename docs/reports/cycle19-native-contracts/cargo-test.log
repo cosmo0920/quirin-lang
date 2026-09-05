@@ -1,0 +1,329 @@
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/debug/deps/qcore_compiler-cb674beb6e2ac3af)
+
+running 246 tests
+test advanced_control::tests::double_error_preserves_the_primary_error ... ok
+test advanced_control::tests::multi_shot_shared_capture_can_be_invoked_repeatedly ... ok
+test advanced_control::tests::multi_shot_and_resumable_handlers_reject_owned_capture ... ok
+test advanced_control::tests::fallible_cleanup_on_normal_return_has_a_distinct_outcome ... ok
+test advanced_control::tests::owned_capture_is_linear_and_one_shot ... ok
+test advanced_control::tests::cancellation_is_deferred_to_a_safe_point_and_cleans_lifo ... ok
+test check::tests::rejects_unknown_named_dimension ... ok
+test check::tests::validates_named_and_count_dimensions ... ok
+test advanced_control::tests::normal_cleanup_destroys_each_resource_exactly_once ... ok
+test check::tests::allows_forward_dimension_references ... ok
+test chunk_lifecycle::tests::context_destroy_runs_the_nested_stream_chunk_backend_chain ... ok
+test chunk_lifecycle::tests::delete_failure_has_an_explicit_partial_state_that_can_still_be_destroyed ... ok
+test chunk_lifecycle::tests::delete_stream_content_is_not_a_stream_destructor ... ok
+test chunk_lifecycle::tests::close_records_only_an_auditable_file_delete_request ... ok
+test c_emit::tests::emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels ... ok
+test chunk_lifecycle::tests::settled_wrapper_obligations_allow_teardown ... ok
+test chunk_lifecycle::tests::failed_open_does_not_create_list_or_counter_obligations ... ok
+test chunk_lifecycle::tests::teardown_rejects_lock_busy_task_route_and_transaction_obligations ... ok
+test cleanup_lowering::tests::invalid_normal_leak_is_rejected ... ok
+test cleanup_lowering::tests::cleanup_is_lifo_and_releases_each_identity_once ... ok
+test cleanup_lowering::tests::partial_initialization_uses_edge_specific_cleanup ... ok
+test cleanup_lowering::tests::resource_identity_cannot_be_reacquired_after_release ... ok
+test cleanup_lowering::tests::normal_transfer_is_explicit_and_not_cleaned_locally ... ok
+test concurrency::tests::conflicting_unordered_accesses_report_a_race ... ok
+test concurrency::tests::atomic_to_atomic_access_is_not_a_data_race ... ok
+test concurrency::tests::different_mutexes_do_not_hide_a_race ... ok
+test concurrency::tests::join_requires_quiescence_and_all_handles_are_linear ... ok
+test concurrency::tests::lock_capabilities_and_rank_order_are_linear ... ok
+test concurrency::tests::same_mutex_establishes_happens_before ... ok
+test concurrency::tests::shared_reads_with_conserved_permissions_are_accepted ... ok
+test contract_observation::tests::unsupported_and_overflowing_predicates_fail_closed ... ok
+test contract_observation::tests::native_predicates_control_the_verdict ... ok
+test concurrency::tests::synchronized_transfer_moves_unique_destruction_custody ... ok
+test driver::tests::a_shadowing_local_does_not_discharge_a_parameter_usage_obligation ... ok
+test driver::tests::call_continuations_have_conservative_usage_lower_bounds ... ok
+test driver::tests::checks_parameter_usage_even_for_uncalled_functions ... ok
+test driver::tests::combines_module_files_and_checks_calls ... ok
+test driver::tests::compiles_values_and_maps_emitted_source ... ok
+test driver::tests::preserves_error_cleanup_and_ownership_transfer_observations ... ok
+test driver::tests::records_source_demands_and_rejects_unsupported_local_contracts ... ok
+test driver::tests::rejects_observable_calls_that_the_reduced_c_cfg_cannot_encode ... ok
+test driver::tests::reports_unsupported_source_at_the_owning_file ... ok
+test driver::tests::synthesized_quantitative_bound_covers_the_resource_trace ... ok
+test error_region::tests::cleanup_capability_must_be_consumed_exactly_once ... ok
+test error_region::tests::discharge_restores_baseline_in_lifo_order ... ok
+test error_region::tests::explicit_drop_removes_the_cleanup_action ... ok
+test error_region::tests::fallible_cleanup_is_rejected ... ok
+test error_region::tests::live_obligations_require_quant_open_and_discharge ... ok
+test error_region::tests::error_only_credit_abandonment_is_explicit ... ok
+test error_region::tests::nested_cleanup_order_is_inner_then_outer_and_lifo_within_each ... ok
+test error_region::tests::partial_initialization_builds_path_specific_packs ... ok
+test error_region::tests::payload_transfer_is_excluded_from_cleanup ... ok
+test error_region::tests::rethrow_requires_prior_discharge ... ok
+test event_driven::tests::active_event_borrow_prevents_socket_close ... ok
+test error_region::tests::wrong_and_outside_quant_open_are_rejected ... ok
+test event_driven::tests::adapter_observation_must_refine_the_checked_trace ... ok
+test event_driven::tests::bufferevent_modes_watermarks_and_close_custody_are_checked ... ok
+test event_driven::tests::cross_base_conflict_needs_explicit_synchronization ... ok
+test event_driven::tests::cross_thread_activation_requires_supported_thread_setup ... ok
+test event_driven::tests::evutil_socket_contracts_are_profiled_and_conserve_custody ... ok
+test event_driven::tests::failed_or_duplicate_socket_close_is_fail_closed ... ok
+test event_driven::tests::failed_socketpair_creates_no_descriptor_obligation ... ok
+test event_driven::tests::nonblocking_delete_requires_callback_exit_and_finalization ... ok
+test event_driven::tests::one_shot_callback_has_live_authority_and_quiescent_teardown ... ok
+test event_driven::tests::persistent_recursive_activation_repends_without_fairness_claim ... ok
+test event_driven::tests::priority_exploration_is_nondeterministic_only_within_a_priority ... ok
+test event_driven::tests::priority_readiness_timing_and_trace_order_are_not_synchronization ... ok
+test event_driven::tests::same_base_cannot_enter_two_callbacks_concurrently ... ok
+test event_driven::tests::stale_generation_and_argument_use_after_free_are_rejected ... ok
+test event_driven::tests::socket_error_query_cannot_use_a_closed_descriptor ... ok
+test event_driven::tests::unlock_callbacks_without_deferral_and_pending_output_fail ... ok
+test event_driven::tests::unsupported_symbols_and_profiles_fail_closed ... ok
+test executable_model::tests::a_typed_error_cleans_partial_initialization_in_lifo_order ... ok
+test executable_model::tests::all_usage_grades_apply_their_interval_bounds ... ok
+test executable_model::tests::construction_rejects_duplicate_static_bindings ... ok
+test executable_model::tests::duplicate_acquire_is_typed_and_original_resource_is_cleaned_once ... ok
+test executable_model::tests::every_small_step_preserves_the_identity_partition ... ok
+test executable_model::tests::exact_usage_obligation_fails_as_a_typed_error ... ok
+test executable_model::tests::invalid_drop_enters_cleanup_without_double_release ... ok
+test executable_model::tests::returns_a_natural_index_after_satisfying_usage_and_ownership ... ok
+test external_integration::tests::arena_destructor_cascades_but_queue_and_publication_fail_closed ... ok
+test external_integration::tests::chunk_import_requires_pinned_source_complete_cfg_and_every_summary ... ok
+test external_integration::tests::monkey_composition_requires_callbacks_failure_paths_backend_and_observation ... ok
+test external_integration::tests::queue_refcounts_and_synchronized_publication_discharge ... ok
+test external_integration::tests::repeated_retains_by_one_holder_are_counted ... ok
+test external_source::tests::derives_only_the_audited_librdkafka_mechanisms ... ok
+test external_source::tests::source_profiles_fail_closed_on_revision_file_or_contract_drift ... ok
+test frontend::tests::classifies_all_sequential_statement_families ... ok
+test frontend::tests::classifies_parameter_types_for_typed_source_ir ... ok
+test frontend::tests::elaborates_names_and_attributes_statements_to_passes ... ok
+test frontend::tests::maps_every_existing_semantic_boundary_to_a_source_diagnostic ... ok
+test external_source::tests::derives_cfl_arena_and_chunkio_nested_teardown_profiles ... ok
+test frontend::tests::preserves_concrete_parameter_usage_grades_and_spans ... ok
+test frontend::tests::parses_complete_golden_surface_and_preserves_exact_text ... ok
+test frontend::tests::rejects_malformed_function_contract_clauses ... ok
+test frontend::tests::rejects_invalid_and_unsupported_usage_annotations ... ok
+test frontend::tests::rejects_unbalanced_and_unterminated_syntax ... ok
+test frontend::tests::reports_duplicate_and_unknown_names_at_source_spans ... ok
+test frontend::tests::retains_function_contracts_as_structured_source ... ok
+test index::tests::cross_dimension_addition_is_rejected ... ok
+test index::tests::same_dimension_addition_is_constructible ... ok
+test index::tests::scaling_is_constant_by_construction ... ok
+test inference::tests::infers_and_independently_checks_the_principal_product ... ok
+test inference::tests::normalization_makes_principal_results_permutation_unique ... ok
+test inference::tests::rejects_unsatisfiable_and_ambiguous_inputs ... ok
+test inference::tests::rejects_a_satisfying_but_nonprincipal_certificate ... ok
+test legacy_c::tests::calls_in_conditions_and_returns_cannot_be_silently_accepted ... ok
+test legacy_c::tests::branch_cleanup_on_both_paths_is_safe ... ok
+test legacy_c::tests::cleanup_goto_and_labels_preserve_resource_paths ... ok
+test legacy_c::tests::container_contract_cascades_child_custody_on_release_or_transfer ... ok
+test legacy_c::tests::container_removal_restores_direct_child_custody ... ok
+test legacy_c::tests::documented_alias_widening_can_only_lose_a_safe_result ... ok
+test legacy_c::tests::finds_a_seeded_double_free_through_an_alias ... ok
+test legacy_c::tests::finds_a_seeded_error_path_leak ... ok
+test legacy_c::tests::finds_a_seeded_normal_exit_leak ... ok
+test legacy_c::tests::for_do_while_break_and_continue_are_imported_as_cfg_edges ... ok
+test legacy_c::tests::imports_struct_fields_and_constant_array_elements ... ok
+test legacy_c::tests::indirect_pointer_expressions_cannot_be_silently_accepted ... ok
+test legacy_c::tests::lc01_explicit_internal_return_contract_is_preserved ... ok
+test legacy_c::tests::lc01_internal_calls_require_explicit_custody_contracts ... ok
+test legacy_c::tests::loop_analysis_terminates_at_a_conservative_fixed_point ... ok
+test legacy_c::tests::clang_gateway_rejects_invalid_c_before_projection ... ok
+test legacy_c::tests::malformed_and_missing_functions_are_parse_errors ... ok
+test legacy_c::tests::nullable_owned_results_require_nonnull_path_refinement ... ok
+test legacy_c::tests::ownership_transfer_discharges_the_local_obligation ... ok
+test legacy_c::tests::realloc_preserves_old_custody_on_failure_and_replaces_it_on_success ... ok
+test legacy_c::tests::returned_ownership_discharges_the_local_obligation ... ok
+test legacy_c::tests::rich_contracts_distinguish_borrowed_owned_consumed_and_out_parameters ... ok
+test legacy_c::tests::safe_annotated_program_reaches_a_safe_fixed_point ... ok
+test legacy_c::tests::source_function_discovery_enters_cxx_linkage_blocks ... ok
+test legacy_c::tests::source_function_discovery_ignores_block_macros ... ok
+test chunk_source::tests::typed_ast_preserves_else_and_ordered_writes ... ok
+test legacy_c::tests::standalone_compound_blocks_are_imported ... ok
+test legacy_c::tests::switch_cases_fallthrough_and_break_are_explicit ... ok
+test legacy_c::tests::translation_unit_summary_propagates_callee_defects ... ok
+test legacy_c::tests::uncontracted_calls_report_unknown_instead_of_safe ... ok
+test legacy_c::tests::unresolved_release_alias_reports_unknown ... ok
+test chunk_source::tests::releasing_wrapper_busy_does_not_discharge_chunkio_lock ... ok
+test chunk_contract::tests::missing_assumptions_unknown_predicates_and_wrong_types_fail_closed ... ok
+test legacy_c::tests::main_source_scope_excludes_macro_expanded_header_bodies ... ok
+test chunk_contract::tests::qcore_trivia_does_not_change_predicate_meaning ... ok
+test legacy_c::tests::unrestricted_projection_retains_successful_siblings ... ok
+test lexer::tests::distinguishes_lifetimes_from_character_literals ... ok
+test lexer::tests::rejects_unterminated_comment ... ok
+test lexer::tests::tokenizes_literals_comments_and_compound_symbols ... ok
+test native_concurrency::tests::every_deferred_concurrency_feature_is_classified ... ok
+test native_concurrency::tests::native_workers_preserve_transfer_cleanup_and_observation ... ok
+test native_concurrency::tests::platform_gaps_are_failures_not_inferences ... ok
+test native_concurrency::tests::wrong_custody_and_incomplete_cleanup_fail ... ok
+test ownership::tests::allocate_use_and_drop_reaches_empty_normal_exit ... ok
+test ownership::tests::branch_states_must_agree ... ok
+test ownership::tests::live_vector_is_componentwise_ledger_sum ... ok
+test ownership::tests::move_preserves_identity_and_footprint ... ok
+test ownership::tests::multiple_shared_borrows_may_overlap ... ok
+test ownership::tests::mutable_borrow_is_exclusive_and_permits_write ... ok
+test ownership::tests::rejects_double_drop ... ok
+test ownership::tests::rejects_move_during_shared_borrow ... ok
+test ownership::tests::rejects_normal_path_leak ... ok
+test ownership::tests::rejects_owned_copy ... ok
+test ownership::tests::rejects_use_after_move ... ok
+test ownership::tests::shared_borrow_ends_before_drop ... ok
+test ownership::tests::transfer_out_is_not_a_normal_path_leak ... ok
+test parser::tests::parses_and_pretty_prints_initial_declarations ... ok
+test parser::tests::rejects_variable_multiplication_as_a_declaration_start ... ok
+test research_closure::tests::a_concurrent_race_prevents_a_closure_certificate ... ok
+test research_closure::tests::closes_the_combined_language_with_all_ledgers_discharged ... ok
+test research_closure::tests::cycle_17_promotes_every_cycle_16_research_boundary ... ok
+test research_closure::tests::target_mismatch_prevents_a_closure_certificate ... ok
+test research_closure::tests::undestroyed_concurrent_custody_is_not_closed ... ok
+test chunk_contract::tests::const_contract_rejects_even_an_idempotent_c_write ... ok
+test research_extensions::tests::ledger_morphisms_compose_only_at_equal_endpoints ... ok
+test research_extensions::tests::positive_and_negative_net_loops_have_checked_invariants ... ok
+test research_extensions::tests::unbounded_loop_refuses_a_finite_resource_claim ... ok
+test resource_flow::tests::arithmetic_overflow_is_explicit ... ok
+test resource_flow::tests::bounded_zero_net_loop_scales_only_total ... ok
+test resource_flow::tests::bounds_are_checked_on_every_axis ... ok
+test resource_flow::tests::branch_join_rejects_different_post_live_states ... ok
+test resource_flow::tests::function_summary_composes_at_call_site ... ok
+test chunk_source::tests::derives_both_returns_and_instantiates_the_actual_identity ... ok
+test resource_flow::tests::mutually_exclusive_branches_join_componentwise ... ok
+test resource_flow::tests::release_then_reacquire_uses_maximum_peak_not_sum ... ok
+test resource_flow::tests::sequential_acquisitions_add_live_and_total ... ok
+test translation_validation::tests::certificate_retains_error_trace ... ok
+test chunk_source::tests::exact_ast_definition_selection_does_not_confuse_name_prefixes ... ok
+test translation_validation::tests::exhaustive_small_corpus_preserves_source_cfg_semantics ... ok
+test translation_validation::tests::rejects_a_target_observation_that_drops_cleanup ... ok
+test translation_validation::tests::validates_all_three_observations ... ok
+test typed_errors::tests::branch_and_catch_normal_joins_are_checked ... ok
+test typed_errors::tests::catch_without_cleanup_accepts_only_the_entry_ledger ... ok
+test typed_errors::tests::error_free_boundary_rejects_a_remaining_error_exit ... ok
+test typed_errors::tests::error_post_ledgers_remain_path_sensitive ... ok
+test typed_errors::tests::propagated_error_must_be_in_the_callers_effect_row ... ok
+test typed_errors::tests::qualitative_effects_are_checked_separately_from_resource_bounds ... ok
+test typed_errors::tests::question_mark_preserves_each_declared_post_ledger ... ok
+test typed_errors::tests::raise_has_no_normal_exit_and_preserves_the_ledger ... ok
+test typed_errors::tests::raise_must_be_declared_and_present_in_the_effect_row ... ok
+test usage::tests::affine_allows_loss_but_rejects_duplication ... ok
+test usage::tests::application_checks_arity ... ok
+test usage::tests::application_substitutes_parameter_usage_pointwise ... ok
+test usage::tests::branch_join_is_the_least_enclosing_interval ... ok
+test usage::tests::erased_variable_cannot_occur_at_runtime ... ok
+test usage::tests::exact_one_rejects_loss_and_duplication ... ok
+test usage::tests::interval_operations_follow_the_usage_semiring ... ok
+test usage::tests::lambda_binders_respect_shadowing_erasure_and_branch_obligations ... ok
+test usage::tests::lambda_replication_scales_captures_after_checking_the_binder ... ok
+test usage::tests::many_allows_weakening_and_contraction ... ok
+test usage::tests::relevant_forbids_weakening_but_allows_contraction ... ok
+test usage::tests::replicated_affine_function_cannot_duplicate_its_parameter ... ok
+test verifier_plugin::tests::conflicting_assumptions_make_composition_unknown ... ok
+test weak_memory::tests::modification_order_must_be_total_per_atomic_object ... ok
+test weak_memory::tests::relaxed_store_buffering_weak_outcome_is_permitted ... ok
+test weak_memory::tests::release_acquire_execution_establishes_happens_before ... ok
+test weak_memory::tests::unordered_non_atomic_conflict_is_rejected ... ok
+test weak_memory::tests::wm01_plain_load_and_store_order_legality_table ... ok
+test weak_memory::tests::wm02_each_coherence_direction_rejects_reversal_and_accepts_forward_order ... ok
+test legacy_c::tests::source_scope_uses_a_definition_that_survives_preprocessing ... ok
+test weak_memory::tests::wm03_sc_modification_order_and_mixed_load_sources ... ok
+test legacy_c::tests::unrestricted_gateway_certifies_only_fully_checked_safe_summaries ... ok
+test weak_memory::tests::wm04_overlapping_release_sequences_require_each_head ... ok
+test weak_memory::tests::wm04_release_sequence_continues_and_foreign_store_terminates_it ... ok
+test weak_memory::tests::wm05_mutex_prefix_can_remain_held_but_cannot_have_two_owners ... ok
+test weak_memory::tests::wm05_valid_mutex_handoff_checks_ownership_order_and_required_edges ... ok
+test whole_program::tests::callee_effects_must_fit_the_callers_declared_row ... ok
+test whole_program::tests::checks_an_acyclic_whole_program_and_preserves_cfg_observation ... ok
+test whole_program::tests::consumed_parameter_transfers_the_same_identity_across_a_call ... ok
+test whole_program::tests::local_ownership_failure_is_reported_at_the_function_span ... ok
+test whole_program::tests::owned_call_parameters_cannot_alias_one_identity ... ok
+test whole_program::tests::recursive_post_fixed_summary_is_accepted ... ok
+test whole_program::tests::recursive_scc_requires_an_explicit_contract ... ok
+test whole_program::tests::recursive_summary_must_cover_one_unfolding ... ok
+test whole_program::tests::returned_parameter_preserves_identity_for_the_caller ... ok
+test whole_program::tests::supplied_usage_contract_cannot_override_the_source_annotation ... ok
+test weak_memory::tests::wm03_all_sc_store_buffering_orders_and_outcomes_match_serial_execution ... ok
+test resource_flow::tests::generated_valid_traces_match_composed_summaries ... ok
+test legacy_c::tests::unrestricted_projection_gaps_remain_unknown ... ok
+test chunk_contract::tests::changing_qcore_postconditions_changes_the_verdict ... ok
+test legacy_c::tests::unrestricted_gateway_accepts_data_only_translation_units ... ok
+test driver::tests::emitted_c_matches_reference_for_value_error_trace_and_transfer ... ok
+test research_extensions::tests::aggregate_certificate_contains_all_six_discharges ... ok
+test legacy_c::tests::unrestricted_gateway_requires_an_explicit_gnu_dialect ... ok
+test chunk_contract::tests::native_contract_files_are_checked_against_source_paths ... ok
+test chunk_source::tests::bitfields_and_volatile_members_cannot_receive_boolean_field_summaries ... ok
+test chunk_source::tests::source_configuration_and_parameter_qualifiers_are_not_erased ... ok
+test c_emit::tests::compiled_instrumented_c_matches_source_and_cfg ... ok
+test chunk_source::tests::rejects_unmodeled_effects_even_on_unexecuted_paths ... ok
+test translation_validation::tests::exhaustive_emitted_c_corpus_passes_available_native_sanitizers ... ok
+
+test result: ok. 246 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
+
+     Running unittests src/main.rs (target/debug/deps/qcorec-55c80663a37f2c9c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-9423f79292664fed)
+
+running 19 tests
+test composition_cannot_promote_an_uncertified_safe_label ... ok
+test first_party_builtins_are_registered_as_separate_providers ... ok
+test missing_disabled_incompatible_and_negative_results_fail_closed ... ok
+test protocol_frames_are_length_delimited_json_and_reject_trailing_data ... ok
+test composition_of_unsupported_assertions_stays_unknown ... ok
+test forged_safe_evidence_is_downgraded_to_unknown ... ok
+test protocol_rejects_unknown_fields_instead_of_guessing_a_schema ... ok
+test vp02_empty_in_process_evidence_is_rejected_by_the_core ... ok
+test package_discovery_loads_a_versioned_manifest ... ok
+test builtin_assertions_cannot_establish_safety ... ok
+test verifier_scope_rejects_unknown_capabilities_and_plugins ... ok
+test verifier_scope_syntax_resolves_against_the_same_builtin_registry ... ok
+test vp06_unverified_unsafe_is_unknown_and_cannot_dominate_composition ... ok
+test reproducibility_metadata_does_not_establish_semantic_evidence ... ok
+test vp05_nonempty_source_obligations_cannot_silently_skip_providers ... ok
+test vp01_predicate_source_profile_and_capability_mutations_cannot_mint_safety ... ok
+test vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety ... ok
+test process_provider_timeout_is_unknown_and_cannot_issue_a_certificate ... ok
+test vp04_vp07_vp08_process_lifecycle_and_payload_budgets ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+
+     Running tests/libevent_submodule.rs (target/debug/deps/libevent_submodule-5872b7ce3ba69b74)
+
+running 1 test
+test libevent_submodule_matches_the_audited_revision ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/module_modes.rs (target/debug/deps/module_modes-1c5caaddf373907d)
+
+running 5 tests
+test declaration_only_modules_have_no_synthetic_entry_or_execution ... ok
+test non_executable_mode_still_checks_bodies_and_preserves_diagnostic_locations ... ok
+test contract_files_compose_with_libraries_and_explicit_executables ... ok
+test mode_is_explicit_and_entry_cannot_silently_override_it ... ok
+test cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-c55dbc7f65336f3e)
+
+running 2 tests
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/quant_index_contracts.rs (target/debug/deps/quant_index_contracts-b2b0885bfedfb092)
+
+running 7 tests
+test where_binders_cannot_shadow_visible_runtime_locals ... ok
+test shorthand_is_ambiguous_with_two_axes_and_binders_cannot_cross_dimensions ... ok
+test bindings_are_type_local_and_natural_operators_are_checked ... ok
+test rejects_effectful_and_nonlinear_where_syntax ... ok
+test shorthand_and_vector_where_bindings_elaborate_to_dimensioned_values ... ok
+test shared_definition_dependencies_are_evaluated_without_exponential_expansion ... ok
+test rejects_false_cyclic_runtime_and_overflowing_index_bindings ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_compiler
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

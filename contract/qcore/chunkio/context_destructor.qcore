@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/cio.c (ChunkIO 1.5.5)
 // Audited mechanism: context-to-stream cascading teardown.
 
@@ -21,7 +23,3 @@ contract {
     ensures normal context_is_discharged;
     quant normal live_contexts == old(live_contexts) - 1;
 };
-
-fn main() -> i32 {
-    return 0;
-}

@@ -1,0 +1,44 @@
+'QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_owner_teardown_discharges_stored_child' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_rejects_independent_child_destruction' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_removal_restores_child_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_discharges_nested_backend' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_unlinks_and_balances_counter' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_wrapper_teardown_has_no_outstanding_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_identities_are_unique' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_failed_open_has_no_residual_obligation' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_teardown_records_nested_order_and_partial_delete' does not depend on any axioms
+'QCore.ChunkLifecycle.combined_chunk_safety' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_successful_socketpair_creates_two_distinct_owned_descriptors' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_failed_socketpair_creates_no_custody' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_successful_close_discharges_once' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_failed_close_retains_custody' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_error_query_is_borrowed' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_monkey_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_preserves_declared_control_edges' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_has_no_unresolved_jump' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_edges_reference_known_nodes' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_balances_holders_and_containers' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_publication_and_reclamation_have_evidence' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_has_no_live_obligation' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_summary_profile_is_pinned_and_scoped' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_source_contracts_are_checked' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_is_pinned_and_complete' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_composes_lifecycle_safety' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_callbacks_cover_failure_and_map_paths' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_observation_binds_backend_dispatcher_and_trace' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_event_build_matches_profile' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_source_is_pinned' does not depend on any axioms
+'QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate' depends on axioms: [propext, Quot.sound]
+'QCore.ChunkSource.accepted_contract_holds_on_every_source_path' depends on axioms: [propext, Quot.sound]
+'QCore.ChunkSource.busy_effect_preserves_chunkio_lock' depends on axioms: [propext]
+'QCore.ChunkSource.bound_effect_preserves_other_identities' depends on axioms: [propext]
+'QCore.ChunkSource.release_busy_error_path_preserves_state' does not depend on any axioms
+'QCore.ChunkSource.release_busy_success_path_clears_busy' does not depend on any axioms
+'QCore.QuantIndexBinding.substitution_preserves_evaluation' depends on axioms: [propext]
+'QCore.QuantIndexBinding.binding_preserves_other_names' depends on axioms: [propext]
+'QCore.QuantIndexBinding.binding_preserves_other_dimensions' depends on axioms: [propext]
+'QCore.QuantIndexBinding.accepted_value_fits_u128' does not depend on any axioms
+'QCore.QuantIndexBinding.five_binding' depends on axioms: [propext]

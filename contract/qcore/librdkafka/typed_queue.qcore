@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/rdkafka_queue.h (librdkafka 2.15.0)
 // Audited mechanisms: intrusive list, typed queue, and locked thread handoff.
 
@@ -44,8 +46,4 @@ contract {
 
 error QueueEmpty {
     Empty;
-}
-
-fn main() -> i32 {
-    return 0;
 }

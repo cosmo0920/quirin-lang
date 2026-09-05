@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/cio_stream.c (ChunkIO 1.5.5)
 // Audited mechanism: stream-to-chunk cascading teardown.
 
@@ -32,7 +34,3 @@ contract {
     ensures any delete_only_is_not_object_destruction;
     quant any live_streams == old(live_streams);
 };
-
-fn main() -> i32 {
-    return 0;
-}

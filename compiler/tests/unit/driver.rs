@@ -18,13 +18,19 @@ fn compile(source: &str) -> CompiledModule {
 fn compiles_values_and_maps_emitted_source() {
     let module = compile("fn main() -> i32 { return 42; }");
     assert_eq!(
-        module.reference_observation.outcome,
+        module.reference_observation.as_ref().unwrap().outcome,
         ExecutionOutcome::Ok {
             value: 42,
             payload: Vec::new()
         }
     );
-    assert!(module.c_source.contains("#line 1 \"main.qc\""));
+    assert!(
+        module
+            .c_source
+            .as_ref()
+            .unwrap()
+            .contains("#line 1 \"main.qc\"")
+    );
     assert_eq!(module.source_map[0].source.path, "main.qc");
 }
 
@@ -36,7 +42,7 @@ fn combines_module_files_and_checks_calls() {
     ];
     let module = compile_files(&files, &CompileOptions::default()).unwrap();
     assert_eq!(module.checked.functions.len(), 2);
-    assert_eq!(module.entry, "main");
+    assert_eq!(module.entry.as_deref(), Some("main"));
 }
 
 #[test]
@@ -58,7 +64,9 @@ fn synthesized_quantitative_bound_covers_the_resource_trace() {
     let module = compile(
         "error Failure { Failed; } fn main() -> i32 { let a = qcore_acquire(3, true, Failure); let b = qcore_acquire(4, true, Failure); drop b; drop a; return 0; }",
     );
-    let summary = &module.checked.functions[&module.checked.source.globals[&module.entry]].summary;
+    let summary = &module.checked.functions
+        [&module.checked.source.globals[module.entry.as_ref().unwrap()]]
+        .summary;
     assert_eq!(summary.flow.peak().get("resources"), 2);
     assert_eq!(summary.flow.total().get("allocations"), 2);
 }
@@ -69,28 +77,28 @@ fn preserves_error_cleanup_and_ownership_transfer_observations() {
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(7, true, Failure); qcore_check(false, Failure); drop r; return 1; }",
     );
     assert_eq!(
-        failed.reference_observation.outcome,
+        failed.reference_observation.as_ref().unwrap().outcome,
         ExecutionOutcome::Error {
             name: "Failure".into(),
             tag: 1
         }
     );
     assert_eq!(
-        failed.reference_observation.trace,
+        failed.reference_observation.as_ref().unwrap().trace,
         vec![TraceEvent::Acquire(7), TraceEvent::Release(7)]
     );
     let moved = compile(
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(9, true, Failure); move r; return -3; }",
     );
     assert_eq!(
-        moved.reference_observation.outcome,
+        moved.reference_observation.as_ref().unwrap().outcome,
         ExecutionOutcome::Ok {
             value: -3,
             payload: vec![9]
         }
     );
     assert_eq!(
-        moved.reference_observation.trace,
+        moved.reference_observation.as_ref().unwrap().trace,
         vec![TraceEvent::Acquire(9), TraceEvent::Transfer(9)]
     );
 }
@@ -198,7 +206,7 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
         fs::create_dir_all(&directory).unwrap();
         let c_path = directory.join("program.c");
         let exe_path = directory.join("program");
-        fs::write(&c_path, &module.c_source).unwrap();
+        fs::write(&c_path, module.c_source.as_ref().unwrap()).unwrap();
         let status = Command::new("cc")
             .args(["-std=c11", "-Wall", "-Wextra", "-Werror"])
             .arg(&c_path)
@@ -212,12 +220,13 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
         assert_eq!(
             parse_c_observation(
                 std::str::from_utf8(&output.stdout).unwrap(),
-                module.checked.functions[&module.checked.source.globals[&module.entry]]
+                module.checked.functions
+                    [&module.checked.source.globals[module.entry.as_ref().unwrap()]]
                     .cfg
                     .error_abi()
             )
             .unwrap(),
-            module.reference_observation
+            module.reference_observation.as_ref().unwrap().clone()
         );
         fs::remove_dir_all(directory).unwrap();
     }

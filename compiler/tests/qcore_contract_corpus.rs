@@ -31,6 +31,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_release_lock",
         7,
     ),
+    ("fluent_bit/memory.qcore", "flb_malloc", 6),
+    ("fluent_bit/memory.qcore", "flb_calloc", 7),
+    ("fluent_bit/memory.qcore", "flb_realloc", 9),
+    ("fluent_bit/memory.qcore", "flb_realloc_z", 12),
+    ("fluent_bit/memory.qcore", "flb_free", 5),
+    (
+        "language/quantified_indices.qcore",
+        "preserve_five_chunk_credits",
+        2,
+    ),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -107,7 +117,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 13, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 15, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");
@@ -132,7 +142,12 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
                     .join("\n")
             )
         });
-        assert_eq!(module.entry, "main", "{}", path.display());
+        assert_eq!(
+            module.mode,
+            qcore_compiler::frontend::SourceModuleMode::Contract
+        );
+        assert!(module.entry.is_none(), "{}", path.display());
+        assert!(module.c_source.is_none(), "{}", path.display());
     }
 }
 

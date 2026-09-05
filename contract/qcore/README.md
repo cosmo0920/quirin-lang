@@ -56,3 +56,16 @@ prints an explicit `Unknown` for every unmodeled function in `cio_chunk.c` and
 These two contract checks do not promote either translation unit to `Safe`.
 The ordinary `qcorec check FILE.qcore` command continues to perform the compiler
 and contract-syntax checks; use the audit above to bind these contracts to C.
+
+Every contract source now begins with `module contract;` and compiles without
+an artificial `main`. `module library;` similarly checks helper definitions
+without a process entry. See [module modes and closed `where` bindings](../../docs/QCORE_MODULE_MODES.md)
+for syntax, multi-file behavior, compiler API changes, and current boundaries.
+
+`fluent_bit/memory.qcore` is also evaluated on executions of the actual
+`include/fluent-bit/flb_mem.h`, compiled with Fluent Bit's include/define
+profile and allocator observation hooks. Its five functions passed 145
+recorded executions, including deterministic allocator failures. This is
+runtime contract evaluation, separate from the two static Boolean-field
+source checks above. See the [native evaluation report](../../docs/reports/cycle19-native-contracts/README.md)
+for reproducible commands, assumptions, and exclusions.

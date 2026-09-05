@@ -103,6 +103,8 @@ fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
             "lib/monkey",
             "src/flb_input_chunk.c",
             "include/fluent-bit/flb_input_chunk.h",
+            "include/fluent-bit/flb_mem.h",
+            "include/fluent-bit/flb_macros.h",
         ])
         .status()
         .map_err(|error| format!("could not inspect Fluent Bit source state: {error}"))?;

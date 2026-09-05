@@ -7,7 +7,7 @@ use qcore_compiler::{
     CompileOptions, PluginId, SourceFile, compile_files, first_party_registry, format_diagnostic,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] FILE...\n  qcorec emit [--entry NAME] [-o FILE] FILE...\n  qcorec plugins list\n  qcorec plugins inspect PLUGIN_ID\n";
+const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] FILE...\n  qcorec emit [--entry NAME] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list\n  qcorec plugins inspect PLUGIN_ID\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -86,16 +86,28 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
             .join("\n")
     })?;
     if command == "check" {
-        println!(
-            "checked {} function(s); entry `{}`",
-            module.checked.functions.len(),
-            module.entry
-        );
-    } else if let Some(path) = output {
-        fs::write(&path, module.c_source)
-            .map_err(|error| format!("{}: {error}", path.display()))?;
+        if let Some(entry) = &module.entry {
+            println!(
+                "checked {} function(s); entry `{entry}`",
+                module.checked.functions.len()
+            );
+        } else {
+            println!(
+                "checked {:?} module: {} declaration(s), {} function body/bodies; no entry point",
+                module.mode,
+                module.checked.source.declarations.len(),
+                module.checked.functions.len()
+            );
+        }
     } else {
-        print!("{}", module.c_source);
+        let source = module.c_source.as_ref().ok_or(
+            "library/contract mode supports checking declarations and bodies; standalone C emission requires an executable module"
+        )?;
+        if let Some(path) = output {
+            fs::write(&path, source).map_err(|error| format!("{}: {error}", path.display()))?;
+        } else {
+            print!("{source}");
+        }
     }
     Ok(())
 }

@@ -1,3 +1,4 @@
+import QCore.QuantIndexBinding
 import QCore.ChunkLifecycle
 import QCore.MonkeyEvent
 import QCore.ControlFlow
@@ -43,3 +44,9 @@ import QCore.ChunkSource
 #print axioms QCore.ChunkSource.bound_effect_preserves_other_identities
 #print axioms QCore.ChunkSource.release_busy_error_path_preserves_state
 #print axioms QCore.ChunkSource.release_busy_success_path_clears_busy
+
+#print axioms QCore.QuantIndexBinding.substitution_preserves_evaluation
+#print axioms QCore.QuantIndexBinding.binding_preserves_other_names
+#print axioms QCore.QuantIndexBinding.binding_preserves_other_dimensions
+#print axioms QCore.QuantIndexBinding.accepted_value_fits_u128
+#print axioms QCore.QuantIndexBinding.five_binding

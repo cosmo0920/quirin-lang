@@ -9,8 +9,8 @@ use std::fmt;
 
 use crate::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram, interpret_source};
 use crate::frontend::{
-    DeclarationKind, Located, SemanticPass, SourceDeclaration, SourceDiagnostic, SourceProgram,
-    StatementKind, TypedSourceDeclaration, TypedSourceProgram, elaborate_source,
+    DeclarationKind, Located, SemanticPass, SourceDeclaration, SourceDiagnostic, SourceModuleMode,
+    SourceProgram, StatementKind, TypedSourceDeclaration, TypedSourceProgram, elaborate_source,
     parse_source_program,
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind, lex};
@@ -70,10 +70,11 @@ pub struct EmittedSourceMap {
 #[derive(Clone, Debug)]
 pub struct CompiledModule {
     pub checked: CheckedProgram,
-    pub entry: String,
-    pub c_source: String,
+    pub mode: SourceModuleMode,
+    pub entry: Option<String>,
+    pub c_source: Option<String>,
     pub source_map: Vec<EmittedSourceMap>,
-    pub reference_observation: ExecutionObservation,
+    pub reference_observation: Option<ExecutionObservation>,
 }
 
 #[derive(Debug)]
@@ -96,7 +97,9 @@ struct FileRange {
 }
 
 /// Parses one or more source files as a module, checks the whole program, and
-/// emits a standalone C11 translation unit for the selected entry function.
+/// emits a standalone C11 translation unit for an executable module. Explicit
+/// library/contract modules return checked declarations without an entry or C
+/// artifact. Their contracts are not automatically discharged by compilation.
 pub fn compile_files(
     files: &[SourceFile],
     options: &CompileOptions,
@@ -120,8 +123,50 @@ pub fn compile_files_with_registry(
             "no input files were provided",
         )]);
     }
-    let (combined, ranges) = combine_files(files);
-    let parsed = parse_source_program(&combined).map_err(|error| {
+    let (_, ranges) = combine_files(files);
+    let mut stripped = Vec::new();
+    let mut modes = Vec::new();
+    for (file, range) in files.iter().zip(&ranges) {
+        let parsed = parse_source_program(&file.source).map_err(|error| {
+            vec![map_raw_diagnostic(
+                "Q000",
+                SemanticPass::NameResolution,
+                Span {
+                    start: error.span.start + range.start,
+                    end: error.span.end + range.start,
+                },
+                error.message,
+                &ranges,
+            )]
+        })?;
+        modes.push(parsed.mode);
+        let mut source = file.source.clone();
+        if let Some(span) = parsed.mode_span {
+            let blank: String = source.as_bytes()[span.start..span.end]
+                .iter()
+                .map(|byte| if *byte == b'\n' { '\n' } else { ' ' })
+                .collect();
+            source.replace_range(span.start..span.end, &blank);
+        }
+        stripped.push(SourceFile::new(&file.path, source));
+    }
+    // Contract declarations can accompany either a library or an executable.
+    // An unmarked file keeps the existing executable compilation behavior.
+    let mode = if modes.contains(&SourceModuleMode::Executable) {
+        SourceModuleMode::Executable
+    } else if modes.contains(&SourceModuleMode::Library) {
+        SourceModuleMode::Library
+    } else {
+        SourceModuleMode::Contract
+    };
+    if mode != SourceModuleMode::Executable && options.entry.is_some() {
+        return Err(vec![plain_diagnostic(
+            "Q403",
+            "--entry is incompatible with library/contract mode; include an executable module to link an entry point",
+        )]);
+    }
+    let (combined, _) = combine_files(&stripped);
+    let mut parsed = parse_source_program(&combined).map_err(|error| {
         vec![map_raw_diagnostic(
             "Q000",
             SemanticPass::NameResolution,
@@ -130,6 +175,7 @@ pub fn compile_files_with_registry(
             &ranges,
         )]
     })?;
+    parsed.mode = mode;
     let scopes = registry.resolve_source_scopes(&parsed).map_err(|errors| {
         errors
             .into_iter()
@@ -197,6 +243,16 @@ pub fn compile_files_with_registry(
             .collect::<Vec<_>>()
     })?;
 
+    if mode != SourceModuleMode::Executable {
+        return Ok(CompiledModule {
+            checked,
+            mode,
+            entry: None,
+            c_source: None,
+            source_map: Vec::new(),
+            reference_observation: None,
+        });
+    }
     let entry = select_entry(&typed, options).map_err(|diagnostic| vec![diagnostic])?;
     let symbol = typed.globals[&entry];
     let function = &checked.functions[&symbol];
@@ -233,10 +289,11 @@ pub fn compile_files_with_registry(
     let (c_source, source_map) = add_source_mapping(raw_c, &entry, source_location);
     Ok(CompiledModule {
         checked,
-        entry,
-        c_source,
+        mode,
+        entry: Some(entry),
+        c_source: Some(c_source),
         source_map,
-        reference_observation,
+        reference_observation: Some(reference_observation),
     })
 }
 

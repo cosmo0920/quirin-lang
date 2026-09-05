@@ -29,6 +29,7 @@ pub mod chunk_lifecycle;
 pub mod chunk_source;
 pub mod cleanup_lowering;
 pub mod concurrency;
+pub mod contract_observation;
 pub mod driver;
 pub mod error_region;
 pub mod event_driven;
@@ -43,6 +44,7 @@ pub mod lexer;
 pub mod native_concurrency;
 pub mod ownership;
 pub mod parser;
+pub mod quant_index;
 pub mod research_closure;
 pub mod research_extensions;
 pub mod resource_flow;
@@ -124,7 +126,7 @@ pub use external_source::{
 pub use frontend::{
     DeclarationKind as SourceDeclarationKind, Located, SemanticPass, SourceBlock,
     SourceContractClause, SourceContractClauseKind, SourceContractExitSelector, SourceDeclaration,
-    SourceDiagnostic, SourceFunctionContract, SourceParameter, SourceParseError,
+    SourceDiagnostic, SourceFunctionContract, SourceModuleMode, SourceParameter, SourceParseError,
     SourceProgram as CompleteSourceProgram, SourceTypeKind, StatementKind as SourceStatementKind,
     SymbolId as SourceSymbolId, TypedBinding, TypedSourceDeclaration, TypedSourceProgram,
     TypedStatement, VerifierProviderUse, VerifierScopeDeclaration, covered_semantic_passes,

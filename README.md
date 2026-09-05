@@ -68,6 +68,12 @@ source. Its predicate definitions live in `contract/qcore`; the source audit
 reports every other function in those two files as `Unknown` for lifecycle
 purposes. These conditional field contracts do not promote whole C units to
 `Safe`. See the [source-contract run](docs/reports/cycle19-source-contracts/README.md).
+Contract sources now declare `module contract;` and compile without `main`;
+`module library;` also enables entry-free checking. Closed quantitative types
+such as `quant<n where n := 5>` resolve to dimensioned values. See
+[module and index syntax](docs/QCORE_MODULE_MODES.md). The actual Fluent Bit
+memory header and Monkey callbacks also have recorded
+[native contract/observation results](docs/reports/cycle19-native-contracts/README.md).
 The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent

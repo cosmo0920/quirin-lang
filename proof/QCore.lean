@@ -1,4 +1,5 @@
 import QCore.Index
+import QCore.QuantIndexBinding
 import QCore.AdvancedControl
 import QCore.LegacyCAnalyzer
 import QCore.Lowering

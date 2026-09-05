@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/rdkafka_queue.c (librdkafka 2.15.0)
 // Audited mechanism: cascading queue destruction.
 
@@ -20,7 +22,3 @@ contract {
     ensures normal queue_is_discharged;
     quant normal live_queues == old(live_queues) - 1;
 };
-
-fn main() -> i32 {
-    return 0;
-}

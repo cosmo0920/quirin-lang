@@ -1,3 +1,5 @@
+module contract;
+
 // Composition boundary for Monkey's bundled Libevent adapter.
 // The certificate joins callback summaries, descriptor custody, build identity,
 // backend selection, dispatcher identity, and one observed execution trace.
@@ -103,8 +105,4 @@ error SocketPairError {
 
 error SocketCloseError {
     CloseFailed;
-}
-
-fn main() -> i32 {
-    return 0;
 }

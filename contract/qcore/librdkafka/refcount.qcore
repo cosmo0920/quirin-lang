@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/rd.h (librdkafka 2.15.0)
 // Audited mechanism: reference-count custody and final destruction.
 
@@ -39,7 +41,3 @@ contract {
     ensures normal reference_is_discharged;
     quant normal live_resources == old(live_resources) - 1;
 };
-
-fn main() -> i32 {
-    return 0;
-}

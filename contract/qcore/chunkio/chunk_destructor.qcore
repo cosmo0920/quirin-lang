@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: src/cio_chunk.c (ChunkIO 1.5.5)
 // Audited mechanism: backend close, dual unlink, and counter discharge.
 
@@ -38,7 +40,3 @@ contract {
     ensures any delete_only_is_not_object_destruction;
     quant any live_chunks == old(live_chunks);
 };
-
-fn main() -> i32 {
-    return 0;
-}

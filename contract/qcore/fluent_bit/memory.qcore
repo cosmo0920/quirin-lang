@@ -1,0 +1,66 @@
+module contract;
+
+// Actual source: include/fluent-bit/flb_mem.h. Observation profile: ordinary
+// libc build, without FLB_HAVE_JEMALLOC or FLB_HAVE_TESTS_OSSFUZZ.
+// Ghost observations and trust boundary are documented in the Cycle 19 report.
+// These are C ABI wrapper contracts; nullptr is represented by result_null.
+// Runtime checks cover recorded executions, not all inputs or caller safety.
+
+extern fn flb_malloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires ordinary_allocator_profile == 1;
+    ensures normal size != 0 or result_null == 1;
+    ensures normal backend_calls == (size != 0);
+    ensures normal size == 0 or forwarded_size == size;
+    ensures normal size == 0 or result_is_backend == 1;
+    ensures normal live_after == (result_null == 0);
+};
+
+extern fn flb_calloc(n: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires ordinary_allocator_profile == 1;
+    ensures normal size != 0 or result_null == 1;
+    ensures normal backend_calls == (size != 0);
+    ensures normal size == 0 or (forwarded_size == size and forwarded_n == n);
+    ensures normal size == 0 or result_is_backend == 1;
+    ensures normal result_null == 1 or zeroed == 1;
+    ensures normal live_after == (result_null == 0);
+};
+
+extern fn flb_realloc(ptr: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires ordinary_allocator_profile == 1;
+    requires size > 0;
+    requires valid_input_extent == 1;
+    ensures normal backend_calls == 1;
+    ensures normal forwarded_size == size and forwarded_input == 1;
+    ensures normal result_is_backend == 1;
+    ensures normal result_null == 0 or live_after == input_live;
+    ensures normal result_null == 1 or live_after == 1;
+    ensures normal prefix_preserved == 1;
+};
+
+extern fn flb_realloc_z(ptr: ptr<mut, u8>, old_size: usize, new_size: usize) -> ptr<mut, u8>
+contract {
+    requires ordinary_allocator_profile == 1;
+    requires new_size > 0;
+    requires valid_input_extent == 1;
+    ensures normal backend_calls == 1;
+    ensures normal forwarded_size == new_size and forwarded_input == 1;
+    ensures normal result_is_backend == 1;
+    ensures normal result_null == 0 or live_after == input_live;
+    ensures normal result_null == 1 or live_after == 1;
+    ensures normal prefix_preserved == 1;
+    ensures normal memset_calls == (result_null == 0 and new_size > old_size);
+    ensures normal memset_calls == 0 or (zero_offset == old_size and zero_length == new_size - old_size and zero_value == 0);
+    ensures normal result_null == 1 or new_size <= old_size or growth_zeroed == 1;
+};
+
+extern fn flb_free(ptr: ptr<mut, u8>) -> unit
+contract {
+    requires ordinary_allocator_profile == 1;
+    requires valid_input_extent == 1;
+    ensures normal backend_calls == 1;
+    ensures normal forwarded_input == 1;
+    ensures normal live_after == 0;
+};

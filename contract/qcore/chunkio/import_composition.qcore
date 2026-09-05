@@ -1,3 +1,5 @@
+module contract;
+
 // Composition boundary for an imported ChunkIO/Fluent Bit lifecycle trace.
 // A checker may use the lifecycle postconditions only after all import claims hold.
 
@@ -19,7 +21,3 @@ contract {
     ensures normal no_live_owned_chunk_obligation;
     ensures error(ChunkImportError) no_safe_verdict_is_issued;
 };
-
-fn main() -> i32 {
-    return 0;
-}

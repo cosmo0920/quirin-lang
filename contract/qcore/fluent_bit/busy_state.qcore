@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream: src/flb_input_chunk.c, flb_input_chunk_release_lock.
 // Bounded chunk-source profile: busy/lock and old_busy/old_lock are Boolean
 // ghost values (0 or 1); result is the ordinary C integer return value.
@@ -16,7 +18,3 @@ contract {
     ensures normal result == old_busy - 1;
     ensures normal lock == old_lock;
 };
-
-fn main() -> i32 {
-    return 0;
-}

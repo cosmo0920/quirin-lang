@@ -39,6 +39,7 @@ pub struct SourceDeclaration {
     pub kind: DeclarationKind,
     pub name: String,
     pub parameters: Vec<SourceParameter>,
+    pub quant_index_types: Vec<crate::quant_index::SourceQuantIndexType>,
     pub body: Option<SourceBlock>,
     pub function_contract: Option<SourceFunctionContract>,
     pub verifier_scope: Option<VerifierScopeDeclaration>,
@@ -197,8 +198,20 @@ impl StatementKind {
     }
 }
 
+/// File/module compilation intent. Non-executable modes check declarations and
+/// supported bodies without selecting or synthesizing a process entry point.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum SourceModuleMode {
+    #[default]
+    Executable,
+    Library,
+    Contract,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceProgram {
+    pub mode: SourceModuleMode,
+    pub mode_span: Option<Span>,
     source: String,
     lexical_tokens: Vec<Token>,
     tokens: Vec<TokenKind>,
@@ -232,7 +245,8 @@ impl SourceProgram {
     /// permits callers to format or indent a program without invalidating the
     /// source locations from the original parse.
     pub fn syntax_equivalent(&self, other: &Self) -> bool {
-        self.tokens == other.tokens
+        self.mode == other.mode
+            && self.tokens == other.tokens
             && self
                 .declarations
                 .iter()
@@ -340,12 +354,34 @@ impl<'a> SourceParser<'a> {
     fn parse(self) -> Result<SourceProgram, SourceParseError> {
         let mut declarations = Vec::new();
         let mut cursor = 0;
+        let mut mode = SourceModuleMode::Executable;
+        let mut mode_span = None;
+        if self.word(0, "module") {
+            mode = if self.word(1, "contract") {
+                SourceModuleMode::Contract
+            } else if self.word(1, "library") {
+                SourceModuleMode::Library
+            } else if self.word(1, "executable") {
+                SourceModuleMode::Executable
+            } else {
+                return Err(self.error(1, "expected module contract, library, or executable"));
+            };
+            if self.tokens.get(2).map(|token| &token.kind)
+                != Some(&TokenKind::Symbol(Symbol::Semicolon))
+            {
+                return Err(self.error(2, "expected semicolon after module mode"));
+            }
+            mode_span = Some(self.range_span(0, 3));
+            cursor = 3;
+        }
         while cursor < self.tokens.len() {
             let (declaration, next) = self.declaration(cursor)?;
             declarations.push(declaration);
             cursor = next;
         }
         Ok(SourceProgram {
+            mode,
+            mode_span,
             source: self.source.to_owned(),
             lexical_tokens: self.tokens.clone(),
             tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
@@ -423,6 +459,8 @@ impl<'a> SourceParser<'a> {
             Vec::new()
         };
         let span = self.range_span(start, end);
+        let quant_index_types =
+            crate::quant_index::parse_quant_index_types(&self.tokens[start..end])?;
         Ok((
             Located {
                 span,
@@ -430,6 +468,7 @@ impl<'a> SourceParser<'a> {
                     kind,
                     name,
                     parameters,
+                    quant_index_types,
                     body,
                     function_contract,
                     verifier_scope,
@@ -703,6 +742,10 @@ impl<'a> SourceParser<'a> {
         let mut cursor = segment;
         let mut angle_depth = 0_u32;
         while cursor <= close {
+            if let Some(next) = crate::quant_index::quant_type_end(&self.tokens, cursor)? {
+                cursor = next;
+                continue;
+            }
             let separator =
                 cursor == close || (angle_depth == 0 && self.symbol(cursor, Symbol::Comma));
             if separator {
@@ -740,6 +783,10 @@ impl<'a> SourceParser<'a> {
         let mut cursor = type_start;
         let mut angle_depth = 0_u32;
         while cursor < end {
+            if let Some(next) = crate::quant_index::quant_type_end(&self.tokens, cursor)? {
+                cursor = next;
+                continue;
+            }
             if self.symbol(cursor, Symbol::Less) {
                 angle_depth += 1;
             } else if self.symbol(cursor, Symbol::Greater) && angle_depth > 0 {
@@ -1394,15 +1441,48 @@ pub struct TypedSourceDeclaration {
     pub name: String,
     pub span: Span,
     pub parameters: Vec<TypedBinding>,
+    pub quant_index_types: Vec<crate::quant_index::ResolvedQuantIndexType>,
     pub function_contract: Option<SourceFunctionContract>,
     pub statements: Vec<TypedStatement>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TypedSourceProgram {
+    pub mode: SourceModuleMode,
     pub declarations: Vec<TypedSourceDeclaration>,
     pub globals: BTreeMap<String, SymbolId>,
     pub origin: String,
+}
+
+fn visible_local_names(block: &SourceBlock, position: usize, names: &mut BTreeSet<String>) {
+    if position < block.span.start || position >= block.span.end {
+        return;
+    }
+    for statement in &block.statements {
+        if statement.span.start > position {
+            break;
+        }
+        match &statement.value {
+            StatementKind::Let {
+                binding: Some(name),
+            }
+            | StatementKind::LetIndex { binding: name }
+            | StatementKind::Discharge {
+                binding: Some(name),
+            } => {
+                names.insert(name.clone());
+            }
+            StatementKind::WithLock { guard, body }
+                if position >= body.span.start && position < body.span.end =>
+            {
+                names.insert(guard.clone());
+            }
+            _ => {}
+        }
+        for child in statement.value.nested_blocks() {
+            visible_local_names(child, position, names);
+        }
+    }
 }
 
 pub fn elaborate_source(
@@ -1432,6 +1512,38 @@ pub fn elaborate_source(
     }
 
     let mut declarations = Vec::new();
+    let mut index_environment = crate::check::StaticEnvironment::default();
+    if program
+        .declarations
+        .iter()
+        .any(|declaration| !declaration.value.quant_index_types.is_empty())
+    {
+        let axis_source = program
+            .declarations
+            .iter()
+            .filter(|declaration| {
+                matches!(
+                    declaration.value.kind,
+                    DeclarationKind::Dimension | DeclarationKind::Axis
+                )
+            })
+            .map(|declaration| &program.source[declaration.span.start..declaration.span.end])
+            .collect::<Vec<_>>()
+            .join("\n");
+        match crate::parser::parse_program(&axis_source)
+            .map_err(|error| error.to_string())
+            .and_then(|parsed| {
+                crate::check::StaticEnvironment::check(&parsed).map_err(|error| error.to_string())
+            }) {
+            Ok(environment) => index_environment = environment,
+            Err(message) => diagnostics.push(SourceDiagnostic {
+                code: "Q016",
+                pass: SemanticPass::Index,
+                span: Span { start: 0, end: 0 },
+                message,
+            }),
+        }
+    }
     for declaration in &program.declarations {
         if matches!(
             declaration.value.kind,
@@ -1463,6 +1575,37 @@ pub fn elaborate_source(
                 usage: parameter.usage.clone(),
             });
         }
+        let forbidden_names: BTreeSet<String> = globals
+            .keys()
+            .cloned()
+            .chain(
+                declaration
+                    .value
+                    .parameters
+                    .iter()
+                    .map(|parameter| parameter.name.value.clone()),
+            )
+            .collect();
+        let mut quant_index_types = Vec::new();
+        for source_type in &declaration.value.quant_index_types {
+            let mut forbidden_names = forbidden_names.clone();
+            if let Some(body) = &declaration.value.body {
+                visible_local_names(body, source_type.span.start, &mut forbidden_names);
+            }
+            match crate::quant_index::resolve_quant_index_type(
+                source_type,
+                &index_environment,
+                &forbidden_names,
+            ) {
+                Ok(resolved) => quant_index_types.push(resolved),
+                Err(message) => diagnostics.push(SourceDiagnostic {
+                    code: "Q016",
+                    pass: SemanticPass::Index,
+                    span: source_type.span,
+                    message,
+                }),
+            }
+        }
         let statements = declaration
             .value
             .body
@@ -1483,12 +1626,14 @@ pub fn elaborate_source(
             name: declaration.value.name.clone(),
             span: declaration.span,
             parameters,
+            quant_index_types,
             function_contract: declaration.value.function_contract.clone(),
             statements,
         });
     }
     if diagnostics.is_empty() {
         Ok(TypedSourceProgram {
+            mode: program.mode,
             declarations,
             globals,
             origin: program.source.clone(),

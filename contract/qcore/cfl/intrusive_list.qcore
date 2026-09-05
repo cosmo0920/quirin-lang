@@ -1,3 +1,5 @@
+module contract;
+
 // Upstream source: include/cfl/cfl_list.h
 // Audited mechanism: intrusive-list insertion and removal.
 
@@ -30,7 +32,3 @@ contract {
     ensures normal entry_next_is_null;
     quant any live_resources == old(live_resources);
 };
-
-fn main() -> i32 {
-    return 0;
-}
