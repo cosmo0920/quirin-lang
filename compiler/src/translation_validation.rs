@@ -92,7 +92,12 @@ pub fn validate_translation(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{ExecutionOutcome, SourceOp, TraceEvent};
+    use crate::{ExecutionOutcome, SourceOp, TraceEvent, emit_c11};
+    use std::fs;
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+
+    static TEMP_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
     fn source(operations: Vec<SourceOp>) -> SourceProgram {
         SourceProgram::new("subject", vec![1, 2], ["Failure".to_owned()], operations).unwrap()
@@ -203,5 +208,82 @@ mod tests {
             certificate.source.trace,
             vec![TraceEvent::Acquire(1), TraceEvent::Release(1)]
         );
+    }
+
+    #[test]
+    fn exhaustive_emitted_c_corpus_passes_address_and_undefined_sanitizers() {
+        if Command::new("clang").arg("--version").output().is_err() {
+            return;
+        }
+        let sequence = TEMP_SEQUENCE.fetch_add(1, Ordering::Relaxed);
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-cycle13-sanitizers-{}-{sequence}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&directory).unwrap();
+        let c_path = directory.join("program.c");
+        let executable = directory.join("program");
+
+        for first_succeeds in [false, true] {
+            for second_succeeds in [false, true] {
+                for check_passes in [false, true] {
+                    let source = source(vec![
+                        SourceOp::Acquire {
+                            resource: 1,
+                            succeeds: first_succeeds,
+                            error: "Failure".into(),
+                        },
+                        SourceOp::Acquire {
+                            resource: 2,
+                            succeeds: second_succeeds,
+                            error: "Failure".into(),
+                        },
+                        SourceOp::Check {
+                            passes: check_passes,
+                            error: "Failure".into(),
+                        },
+                        SourceOp::Drop(2),
+                        SourceOp::Drop(1),
+                        SourceOp::Return(11),
+                    ]);
+                    let cfg = lower_cleanup_cfg(&source).unwrap();
+                    fs::write(&c_path, emit_c11(&cfg).unwrap()).unwrap();
+                    let compilation = Command::new("clang")
+                        .args([
+                            "-std=c11",
+                            "-Wall",
+                            "-Wextra",
+                            "-Werror",
+                            "-fsanitize=address,undefined",
+                            "-fno-omit-frame-pointer",
+                        ])
+                        .arg(&c_path)
+                        .arg("-o")
+                        .arg(&executable)
+                        .status()
+                        .unwrap();
+                    assert!(compilation.success());
+                    let output = Command::new(&executable)
+                        // LeakSanitizer cannot run in ptrace-based CI sandboxes;
+                        // address and undefined-behavior checks remain enabled.
+                        .env("ASAN_OPTIONS", "detect_leaks=0:halt_on_error=1")
+                        .env("UBSAN_OPTIONS", "halt_on_error=1")
+                        .output()
+                        .unwrap();
+                    assert!(
+                        output.status.success(),
+                        "sanitizer failure: {}",
+                        String::from_utf8_lossy(&output.stderr)
+                    );
+                    validate_translation(
+                        &source,
+                        &cfg,
+                        std::str::from_utf8(&output.stdout).unwrap(),
+                    )
+                    .unwrap();
+                }
+            }
+        }
+        fs::remove_dir_all(directory).unwrap();
     }
 }

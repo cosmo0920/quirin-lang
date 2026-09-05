@@ -23,8 +23,10 @@ The legacy-C importer now:
 
 The interprocedural slice does not infer resource transfer through arbitrary C
 parameters, function pointers, dynamic array indices, unions, or casts. Those
-remain `Unknown`. Sanitizer execution continues to use the compiler-generated
-native-C corpus; platform-specific sanitizer availability is not a proof gate.
+remain `Unknown`. When Clang is available, the exhaustive acquisition/check
+corpus is compiled with AddressSanitizer and UndefinedBehaviorSanitizer, run,
+and fed back through the independent translation validator. Platform-specific
+sanitizer availability is not a proof gate.
 
 ## Lean verification
 

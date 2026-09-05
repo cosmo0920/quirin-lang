@@ -25,6 +25,10 @@ The certificate retains all three component results, aggregate ledger counts,
 and a terminal progress witness. Negative tests show that a target mismatch, a
 concurrency defect, or undestroyed custody prevents closure.
 
+The final acceptance run also compiles and executes the exhaustive Cycle 13
+Boolean outcome corpus under Clang AddressSanitizer and
+UndefinedBehaviorSanitizer when that toolchain is available.
+
 ## Lean verification
 
 `proof/QCore/Metatheory.lean` defines the combined checked state and proves:
