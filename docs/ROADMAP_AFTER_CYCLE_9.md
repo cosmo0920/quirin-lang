@@ -46,6 +46,8 @@ documented widening, preserving `Unknown` for everything unmodeled.
 
 ## Cycle 14: Concurrency and resource-race verification
 
+**Status: completed.** See [`../CYCLE_14.md`](../CYCLE_14.md).
+
 Specify threads, shared ownership, atomics, mutex capabilities,
 happens-before, lock order, and resource access footprints. Implement race and
 deadlock diagnostics for a restricted concurrent core. Prove that accepted

@@ -15,6 +15,7 @@ pub mod c_emit;
 pub mod cfg;
 pub mod check;
 pub mod cleanup_lowering;
+pub mod concurrency;
 pub mod driver;
 pub mod error_region;
 pub mod executable_model;
@@ -39,6 +40,11 @@ pub use cfg::{
 pub use check::{CheckError, StaticEnvironment};
 pub use cleanup_lowering::{
     LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,
+};
+pub use concurrency::{
+    AccessFootprint, AccessKind, AccessPermission, ConcurrencyCertificate, ConcurrencyDiagnostic,
+    ConcurrentEvent, ConcurrentProgram, FULL_ACCESS, LockRank, MutexId, SharedResourceId, TaskId,
+    check_concurrent,
 };
 pub use driver::{
     CompileOptions, CompiledModule, EmittedSourceMap, FileDiagnostic, SourceFile, SourceLocation,

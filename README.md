@@ -12,7 +12,7 @@ The implementation is split into:
 - `compiler/`: the Rust parser, checker, reference interpreter, and C backend;
 - `proof/`: the Lean 4 executable core and safety proofs.
 
-The current implementation includes the first thirteen vertical slices: dimension
+The current implementation includes the first fourteen vertical slices: dimension
 and quantitative-axis declarations, interval-graded usage demand analysis,
 ownership without exceptional exits, and resource-flow summaries with checked
 peak and cumulative bounds, followed by path-sensitive typed errors without
@@ -30,9 +30,11 @@ end-to-end multi-file compiler driver with a stable CLI, source-located
 diagnostics, emitted-source mapping, and native-C differential validation for
 the conservative executable source subset; and independent source/CFG/C11
 translation certificates plus a Clang-gated, interprocedural, field/array-aware
-conservative legacy-C analysis slice with documented widening.
+conservative legacy-C analysis slice with documented widening; and a restricted
+concurrent event checker for access authority, vector-clock happens-before,
+scoped tasks, mutex capabilities, lock order, and destruction custody.
 Active cycle requirements, including the complete Rust/C/Lean verification procedure,
-are in [`CYCLE_13.md`](CYCLE_13.md). Completed cycle records are archived under
+are in [`CYCLE_14.md`](CYCLE_14.md). Completed cycle records are archived under
 [`docs/cycles/`](docs/cycles/).
 
 The source front end is available through `parse_source_program` and
@@ -43,7 +45,7 @@ Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
 [Cycle 7.5 validation](docs/CYCLE_7_5.md) now also compiles and executes the
 same differential C corpus with native MSVC, strict warnings, and Windows
 runtime checks.
-The sequenced Cycle 13 and later work is in the
+The sequenced Cycle 14 and later work is in the
 [post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 
 ## Build

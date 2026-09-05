@@ -1,0 +1,7 @@
+import QCore.Concurrency
+
+#print axioms QCore.Concurrency.accepted_accesses_are_authorized
+#print axioms QCore.Concurrency.accepted_program_is_race_free
+#print axioms QCore.Concurrency.accepted_lock_capabilities_are_linear
+#print axioms QCore.Concurrency.accepted_destruction_custody_is_unique
+#print axioms QCore.Concurrency.accepted_scope_is_quiescent
