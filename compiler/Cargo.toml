@@ -8,6 +8,10 @@ license = "MIT OR Apache-2.0"
 name = "qcore_compiler"
 path = "src/lib.rs"
 
+[[bin]]
+name = "qcorec"
+path = "src/main.rs"
+
 [dependencies]
 
 [dev-dependencies]

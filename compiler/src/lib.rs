@@ -7,13 +7,15 @@
 //! those safety mechanisms together for the Cycle 8 metatheory, and a
 //! conservative annotated legacy-C resource analyzer for Cycle 9.  Cycle 10
 //! adds the shared, source-located front end and typed source IR.  Cycle 11
-//! connects the established passes through whole-program summaries.
+//! connects the established passes through whole-program summaries.  Cycle 12
+//! adds the source-file compiler driver and stable `qcorec` CLI.
 
 pub mod ast;
 pub mod c_emit;
 pub mod cfg;
 pub mod check;
 pub mod cleanup_lowering;
+pub mod driver;
 pub mod error_region;
 pub mod executable_model;
 pub mod frontend;
@@ -36,6 +38,10 @@ pub use cfg::{
 pub use check::{CheckError, StaticEnvironment};
 pub use cleanup_lowering::{
     LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,
+};
+pub use driver::{
+    CompileOptions, CompiledModule, EmittedSourceMap, FileDiagnostic, SourceFile, SourceLocation,
+    compile_files, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,

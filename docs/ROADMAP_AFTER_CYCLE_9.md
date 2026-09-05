@@ -19,7 +19,7 @@ tests and source diagnostics for every existing semantic pass.
 
 ## Cycle 11: Whole-program checking and summaries
 
-**Status: completed.** See [`../CYCLE_11.md`](../CYCLE_11.md).
+**Status: completed.** See [`cycles/CYCLE_11.md`](cycles/CYCLE_11.md).
 
 Connect usage, ownership, borrows, resource vectors, typed errors, regions, and
 function summaries in one pipeline. Add call-graph fixed points,
@@ -27,6 +27,8 @@ recursive-summary rules, and cross-function identity transfer. Prove
 pass-interface invariants and acceptance preservation into checked CFG.
 
 ## Cycle 12: End-to-end QCore-C compiler and CLI
+
+**Status: completed.** See [`../CYCLE_12.md`](../CYCLE_12.md).
 
 Lower checked source programs—not only Rust IR fixtures—to cleanup-explicit CFG
 and C11. Add module/file handling, a stable CLI, diagnostics, and emitted-source

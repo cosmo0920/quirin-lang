@@ -1302,6 +1302,8 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "many"
             | "inf"
             | "FULL"
+            | "qcore_acquire"
+            | "qcore_check"
     )
 }
 
