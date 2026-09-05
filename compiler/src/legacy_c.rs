@@ -46,13 +46,32 @@ impl ResourceContracts {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
-    Acquire { destination: String, site: usize },
-    Alias { destination: String, source: String },
-    Clear { destination: String },
-    Release { source: String },
-    Escape { source: String },
+    Acquire {
+        destination: String,
+        site: usize,
+    },
+    Alias {
+        destination: String,
+        source: String,
+    },
+    Clear {
+        destination: String,
+    },
+    Release {
+        source: String,
+    },
+    Escape {
+        source: String,
+    },
+    /// Transfer a returned local resource when the expression names one.
+    /// Non-resource scalar returns remain resource-neutral.
+    EscapeIfOwned {
+        source: String,
+    },
     NoOp,
-    Unknown { description: String },
+    Unknown {
+        description: String,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -123,6 +142,40 @@ pub struct C11TranslationUnit<'a> {
     pub source: &'a str,
     pub include_paths: Vec<String>,
     pub definitions: Vec<String>,
+    pub dialect: CCompilerDialect,
+    pub function_scope: LegacyFunctionScope,
+}
+
+/// Explicitly gated C dialects accepted by the production-parser gateway.
+/// Arbitrary compiler arguments are intentionally not accepted here.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum CCompilerDialect {
+    #[default]
+    C11,
+    Gnu99,
+    Gnu11,
+    Gnu17,
+}
+
+impl CCompilerDialect {
+    fn clang_argument(self) -> &'static str {
+        match self {
+            Self::C11 => "-std=c11",
+            Self::Gnu99 => "-std=gnu99",
+            Self::Gnu11 => "-std=gnu11",
+            Self::Gnu17 => "-std=gnu17",
+        }
+    }
+}
+
+/// Selects whether header-expanded definitions participate in the proof.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum LegacyFunctionScope {
+    /// Preserve the Cycle 17 behavior and analyze every preprocessed body.
+    #[default]
+    PreprocessedTranslationUnit,
+    /// Analyze only functions whose definitions occur in the input source.
+    MainSourceDefinitions,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -130,6 +183,8 @@ pub struct LegacySafetyCertificate {
     pub preprocessed_source: String,
     pub entry: String,
     pub contracts: ResourceContracts,
+    pub dialect: CCompilerDialect,
+    pub function_scope: LegacyFunctionScope,
     pub summary: LegacyProgramSummary,
     pub checked_functions: Vec<String>,
 }
@@ -237,8 +292,12 @@ pub fn analyze_unrestricted_c11(
     entry: &str,
     contracts: &ResourceContracts,
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let source_functions = match unit.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => Some(function_names(&tokenize(unit.source))),
+    };
     let mut command = Command::new("clang");
-    command.args(["-x", "c", "-std=c11", "-E", "-P"]);
+    command.args(["-x", "c", unit.dialect.clang_argument(), "-E", "-P"]);
     for include in &unit.include_paths {
         command.arg(format!("-I{include}"));
     }
@@ -268,7 +327,13 @@ pub fn analyze_unrestricted_c11(
     }
     let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
     let mut syntax = Command::new("clang")
-        .args(["-x", "c", "-std=c11", "-fsyntax-only", "-"])
+        .args([
+            "-x",
+            "c",
+            unit.dialect.clang_argument(),
+            "-fsyntax-only",
+            "-",
+        ])
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
@@ -290,7 +355,12 @@ pub fn analyze_unrestricted_c11(
                 .to_owned(),
         ));
     }
-    let summary = match analyze_legacy_c_translation_unit(&preprocessed_source, entry, contracts) {
+    let summary = match analyze_legacy_c_translation_unit_selected(
+        &preprocessed_source,
+        entry,
+        contracts,
+        source_functions.as_deref(),
+    ) {
         Ok(summary) => summary,
         Err(error) => {
             return Ok(UnrestrictedLegacyResult::Unknown {
@@ -313,6 +383,8 @@ pub fn analyze_unrestricted_c11(
                 preprocessed_source,
                 entry: entry.to_owned(),
                 contracts: contracts.clone(),
+                dialect: unit.dialect,
+                function_scope: unit.function_scope,
                 summary,
                 checked_functions,
             };
@@ -330,10 +402,17 @@ pub fn analyze_unrestricted_c11(
 pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,
 ) -> Result<(), String> {
-    let recomputed = analyze_legacy_c_translation_unit(
+    let selected = match certificate.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => {
+            Some(certificate.checked_functions.as_slice())
+        }
+    };
+    let recomputed = analyze_legacy_c_translation_unit_selected(
         &certificate.preprocessed_source,
         &certificate.entry,
         &certificate.contracts,
+        selected,
     )
     .map_err(|error| format!("certificate source cannot be reanalyzed: {error}"))?;
     if recomputed != certificate.summary {
@@ -376,8 +455,21 @@ pub fn analyze_legacy_c_translation_unit(
     entry: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyProgramSummary, LegacyCError> {
+    analyze_legacy_c_translation_unit_selected(source, entry, contracts, None)
+}
+
+fn analyze_legacy_c_translation_unit_selected(
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+    selected_functions: Option<&[String]>,
+) -> Result<LegacyProgramSummary, LegacyCError> {
     let tokens = tokenize(source);
-    let names = function_names(&tokens);
+    let mut names = function_names(&tokens);
+    if let Some(selected) = selected_functions {
+        let selected = selected.iter().collect::<BTreeSet<_>>();
+        names.retain(|name| selected.contains(name));
+    }
     if !names.iter().any(|name| name == entry) {
         return Err(LegacyCError::FunctionNotFound(entry.to_owned()));
     }
@@ -515,7 +607,19 @@ fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)
 
 fn function_names(tokens: &[Token]) -> Vec<String> {
     let mut names = BTreeSet::new();
+    let mut brace_depth = 0usize;
     for (index, token) in tokens.iter().enumerate() {
+        if token.text == "{" {
+            brace_depth += 1;
+            continue;
+        }
+        if token.text == "}" {
+            brace_depth = brace_depth.saturating_sub(1);
+            continue;
+        }
+        if brace_depth != 0 {
+            continue;
+        }
         if !is_identifier(&token.text)
             || matches!(token.text.as_str(), "if" | "while" | "for" | "switch")
             || tokens.get(index + 1).map(|next| next.text.as_str()) != Some("(")
@@ -529,6 +633,14 @@ fn function_names(tokens: &[Token]) -> Vec<String> {
         }
     }
     names.into_iter().collect()
+}
+
+/// Return the function definitions written in a source file before headers
+/// and macros are expanded. This is the auditable scope used by
+/// [`LegacyFunctionScope::MainSourceDefinitions`].
+#[must_use]
+pub fn legacy_c_source_functions(source: &str) -> Vec<String> {
+    function_names(&tokenize(source))
 }
 
 fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<usize> {
@@ -564,6 +676,7 @@ enum Statement {
     Return {
         line: usize,
         expression_supported: bool,
+        returned_place: Option<String>,
     },
 }
 
@@ -623,10 +736,16 @@ impl Parser<'_> {
                 })
             }
             Some("return") => {
+                self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
+                let texts = expression
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
                     expression_supported: !contains_call(&expression),
+                    returned_place: canonical_place(&texts),
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -912,13 +1031,18 @@ impl CfgBuilder {
             Statement::Return {
                 line,
                 expression_supported,
+                returned_place,
             } => {
-                let instruction = if *expression_supported {
-                    LegacyInstruction::NoOp
-                } else {
+                let instruction = if !*expression_supported {
                     LegacyInstruction::Unknown {
                         description: "call in return expression".to_owned(),
                     }
+                } else if let Some(source) = returned_place {
+                    LegacyInstruction::EscapeIfOwned {
+                        source: source.clone(),
+                    }
+                } else {
+                    LegacyInstruction::NoOp
                 };
                 self.push(instruction, Vec::new(), *line, true)
             }
@@ -1201,6 +1325,19 @@ fn transfer(
                 true,
             );
         }
+        LegacyInstruction::EscapeIfOwned { source } => {
+            if state.pointers.contains_key(source) {
+                apply_resource_action(
+                    function,
+                    node.line,
+                    source,
+                    &mut state,
+                    acquisition_lines,
+                    diagnostics,
+                    true,
+                );
+            }
+        }
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
@@ -1389,6 +1526,12 @@ mod tests {
     }
 
     #[test]
+    fn returned_ownership_discharges_the_local_obligation() {
+        let summary = analyze("void *subject(void) {\n void *p = q_alloc();\n return p;\n}");
+        assert_eq!(summary.status, AnalysisStatus::Safe);
+    }
+
+    #[test]
     fn uncontracted_calls_report_unknown_instead_of_safe() {
         let summary = analyze("void subject(void) {\n void *p = mystery();\n return;\n}");
         assert_eq!(summary.status, AnalysisStatus::Unknown);
@@ -1532,5 +1675,77 @@ mod tests {
             | Err(LegacyCError::ProductionParserUnavailable(_)) => {}
             other => panic!("projection gap must remain Unknown: {other:?}"),
         }
+    }
+
+    #[test]
+    fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
+        let source = "void subject(void) { typeof(1) value = 1; }";
+        let strict = C11TranslationUnit {
+            source,
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&strict, "subject", &contracts()) {
+            Err(LegacyCError::ProductionParserRejected(_)) => {}
+            Err(LegacyCError::ProductionParserUnavailable(_)) => return,
+            other => panic!("strict C11 unexpectedly admitted `typeof`: {other:?}"),
+        }
+
+        let gnu = C11TranslationUnit {
+            source,
+            dialect: CCompilerDialect::Gnu17,
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&gnu, "subject", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => {
+                assert!(partial.is_some());
+            }
+            Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            other => panic!("GNU17 gateway did not reach conservative projection: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn main_source_scope_excludes_macro_expanded_header_bodies() {
+        let source = "\
+#define HEADER_BODY static void header_helper(void) { for (;;) {} }\n\
+HEADER_BODY\n\
+void *q_alloc(void);\n\
+void q_free(void *);\n\
+void subject(void) { void *p = q_alloc(); q_free(p); }\n";
+        let whole_unit = C11TranslationUnit {
+            source,
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&whole_unit, "subject", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => {
+                let partial = partial.expect("whole-unit projection should be available");
+                assert!(partial.functions.contains_key("header_helper"));
+            }
+            Err(LegacyCError::ProductionParserUnavailable(_)) => return,
+            other => panic!("expanded helper must prevent a whole-unit proof: {other:?}"),
+        }
+
+        let source_only = C11TranslationUnit {
+            source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..C11TranslationUnit::default()
+        };
+        match analyze_unrestricted_c11(&source_only, "subject", &contracts()) {
+            Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+                assert_eq!(certificate.checked_functions, vec!["subject"]);
+                check_legacy_safety_certificate(&certificate).unwrap();
+            }
+            Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+            other => panic!("source-only proof was blocked by expanded helper: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn source_function_discovery_ignores_block_macros() {
+        let source = "\
+void subject(void) {\n\
+    cfl_list_foreach(item, list) { use(item); }\n\
+}\n";
+        assert_eq!(legacy_c_source_functions(source), vec!["subject"]);
     }
 }

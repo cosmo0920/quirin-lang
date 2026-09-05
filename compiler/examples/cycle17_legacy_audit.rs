@@ -25,6 +25,7 @@ fn main() -> ExitCode {
         source: &source,
         include_paths: arguments[2..].to_vec(),
         definitions: Vec::new(),
+        ..C11TranslationUnit::default()
     };
     match analyze_unrestricted_c11(&unit, &arguments[1], &ResourceContracts::default()) {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {

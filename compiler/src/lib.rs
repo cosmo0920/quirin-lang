@@ -103,11 +103,12 @@ pub use inference::{
     check_inference_certificate, infer_principal,
 };
 pub use legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic,
-    LegacyDiagnosticKind, LegacyFunctionSummary, LegacyInstruction, LegacyNodeId,
-    LegacyProgramSummary, LegacySafetyCertificate, ResourceApiKind, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_legacy_c, analyze_legacy_c_translation_unit,
-    analyze_legacy_c11, analyze_unrestricted_c11, check_legacy_safety_certificate,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyCError, LegacyCfg, LegacyCfgNode,
+    LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope, LegacyFunctionSummary,
+    LegacyInstruction, LegacyNodeId, LegacyProgramSummary, LegacySafetyCertificate,
+    ResourceApiKind, ResourceContracts, UnrestrictedLegacyResult, analyze_legacy_c,
+    analyze_legacy_c_translation_unit, analyze_legacy_c11, analyze_unrestricted_c11,
+    check_legacy_safety_certificate, legacy_c_source_functions,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use native_concurrency::{
