@@ -37,6 +37,11 @@ impl EffectRow {
         self.0.iter()
     }
 
+    /// True when every effect in this row is admitted by `other`.
+    pub fn is_subset_of(&self, other: &Self) -> bool {
+        self.0.is_subset(&other.0)
+    }
+
     fn insert(&mut self, effect: Effect) {
         self.0.insert(effect);
     }

@@ -1,0 +1,16 @@
+import QCore.WholeProgram
+
+-- Print the foundational dependencies of every Cycle 11 integration theorem.
+#print axioms QCore.WholeProgram.checkPasses_implies_interfaces
+#print axioms QCore.WholeProgram.checkPasses_preserves_input
+#print axioms QCore.WholeProgram.accepted_passes_have_checked_cfg
+#print axioms QCore.WholeProgram.accepted_passes_preserve_cfg_identities
+#print axioms QCore.WholeProgram.checkProgram_implies_accepts
+#print axioms QCore.WholeProgram.checkProgram_preserves_source
+#print axioms QCore.WholeProgram.accepted_function_interfaces
+#print axioms QCore.WholeProgram.recursive_function_has_declared_summary
+#print axioms QCore.WholeProgram.accepted_program_function_has_checked_cfg
+#print axioms QCore.WholeProgram.accepted_program_preserves_function_cfg_identities
+#print axioms QCore.WholeProgram.consume_does_not_mint
+#print axioms QCore.WholeProgram.consume_preserves_unique_identities
+#print axioms QCore.WholeProgram.recursive_summary_round_uses_contract

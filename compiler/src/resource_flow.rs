@@ -207,6 +207,17 @@ impl Flow {
         &self.total
     }
 
+    /// Whether this flow is safely over-approximated by `summary`.
+    ///
+    /// Net ownership change is exact, while peak and cumulative quantities
+    /// may be widened.  Cycle 11 uses this as the recursive-summary
+    /// post-fixed-point order.
+    pub fn is_covered_by(&self, summary: &Self) -> bool {
+        self.net == summary.net
+            && self.peak.componentwise_le(&summary.peak)
+            && self.total.componentwise_le(&summary.total)
+    }
+
     /// Sequential composition: `(d1+d2, max(p1, d1+p2), t1+t2)`.
     pub fn then(&self, next: &Self) -> Result<Self, FlowError> {
         Ok(Self {

@@ -6,7 +6,7 @@ Cycle 10 implements the source-front-end prerequisite in the post-Cycle-9
 roadmap. It preserves the checked IR APIs from Cycles 1–9 while adding one
 canonical, source-located boundary for later whole-program integration.
 
-The consolidated revision 0.2 specification in `docs/QCORE_SPEC_r0_2.md`
+The consolidated revision 0.2 specification in `../QCORE_SPEC_r0_2.md`
 already incorporates the checked-concurrency amendment. Cycle 10 recognizes
 its new surface forms for forward compatibility, but it does not claim the
 concurrency safety results assigned to the later C0–C7 concurrency roadmap.
@@ -86,9 +86,5 @@ archive is neither required nor used.
 
 ## Verified completion result
 
-Completion is verified by 97 passing Rust tests (the existing 90 plus seven Cycle 10
-front-end tests), formatting and strict Clippy without warnings, a successful
-Lean build, no `sorry`, `admit`, or project-defined axioms, and a Cycle 10
-theorem-dependency audit limited to Lean's standard foundations.
-
-Cycle 11 is the next implementation milestone.
+Cycle 10 completed with 97 passing Rust tests, strict formatting and Clippy,
+a placeholder-free Lean build, and a standard-foundations theorem audit.

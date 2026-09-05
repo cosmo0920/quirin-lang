@@ -10,7 +10,7 @@ validation effort. It is not folded into the milestones below.
 
 ## Cycle 10: Complete source front end
 
-**Status: completed.** See [`../CYCLE_10.md`](../CYCLE_10.md).
+**Status: completed.** See [`cycles/CYCLE_10.md`](cycles/CYCLE_10.md).
 
 Implement the remaining function, statement, ownership, borrow, effect,
 resource-flow, error-region, and cleanup syntax; name resolution; source spans;
@@ -18,6 +18,8 @@ and elaboration into one typed source IR. Require grammar golden/round-trip
 tests and source diagnostics for every existing semantic pass.
 
 ## Cycle 11: Whole-program checking and summaries
+
+**Status: completed.** See [`../CYCLE_11.md`](../CYCLE_11.md).
 
 Connect usage, ownership, borrows, resource vectors, typed errors, regions, and
 function summaries in one pipeline. Add call-graph fixed points,

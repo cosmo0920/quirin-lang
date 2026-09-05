@@ -10,5 +10,6 @@ import QCore.Quant
 import QCore.Resource
 import QCore.TypedErrors
 import QCore.Usage
+import QCore.WholeProgram
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -6,7 +6,8 @@
 //! cleanup-explicit CFG lowering to C11, plus a reduced executable model tying
 //! those safety mechanisms together for the Cycle 8 metatheory, and a
 //! conservative annotated legacy-C resource analyzer for Cycle 9.  Cycle 10
-//! adds the shared, source-located front end and typed source IR.
+//! adds the shared, source-located front end and typed source IR.  Cycle 11
+//! connects the established passes through whole-program summaries.
 
 pub mod ast;
 pub mod c_emit;
@@ -24,6 +25,7 @@ pub mod parser;
 pub mod resource_flow;
 pub mod typed_errors;
 pub mod usage;
+pub mod whole_program;
 
 pub use ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
 pub use c_emit::{CEmitError, emit_c11, parse_c_observation};
@@ -77,4 +79,8 @@ pub use typed_errors::{
 pub use usage::{
     DemandContext, DemandError, Usage, UsageArithmeticError, UsageCheckError, UsageExpr,
     UsageUpper, UsageViolation, check_usage,
+};
+pub use whole_program::{
+    CallSite, CheckedFunction, CheckedProgram, FunctionSemantics,
+    FunctionSummary as WholeFunctionSummary, ParameterOwnership, check_whole_program,
 };
