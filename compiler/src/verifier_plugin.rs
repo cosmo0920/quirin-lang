@@ -2,9 +2,10 @@
 //!
 //! Providers are deliberately outside the trusted computing base. They may
 //! propose a verdict and evidence, but [`VerifierRegistry`] only returns a
-//! [`CoreCertificate`] after replaying the evidence against normalized facts.
+//! [`CoreCertificate`] after capability-specific semantic checking. Protocol v1
+//! carries only caller assertions, so it cannot currently issue certificates.
 //! Built-in providers use exactly the same request/response path as process
-//! providers, which keeps the migration boundary honest.
+//! providers. Manifest capabilities describe routing, not verified support.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -574,67 +575,20 @@ impl VerifierProvider for BuiltInProvider {
         &self,
         request: &VerificationRequest,
     ) -> Result<VerificationResponse, ProviderFailure> {
-        let prefix = self.manifest.plugin_id.as_str();
-        if request.facts.is_empty() {
-            return Ok(VerificationResponse {
-                protocol_version: request.protocol_version,
-                request_id: request.request_id.clone(),
-                plugin_id: request.plugin_id.clone(),
-                verdict: ProposedVerdict::Unknown,
-                diagnostics: vec![PluginDiagnostic {
-                    code: format!("{prefix}.no_evidence"),
-                    message: "the normalized unit contains no evidence facts".into(),
-                    fact_id: None,
-                }],
-                evidence: None,
-            });
-        }
-        if let Some(fact) = request.facts.iter().find(|fact| !fact.holds) {
-            return Ok(VerificationResponse {
-                protocol_version: request.protocol_version,
-                request_id: request.request_id.clone(),
-                plugin_id: request.plugin_id.clone(),
-                verdict: ProposedVerdict::Unsafe,
-                diagnostics: vec![PluginDiagnostic {
-                    code: format!("{prefix}.rejected_fact"),
-                    message: format!("fact `{}` does not hold", fact.fact_id),
-                    fact_id: Some(fact.fact_id.clone()),
-                }],
-                evidence: None,
-            });
-        }
+        // Boolean assertions cannot establish either safety or a reachable
+        // violation. Keep legacy analysis routes until semantic adapters exist.
         Ok(VerificationResponse {
             protocol_version: request.protocol_version,
             request_id: request.request_id.clone(),
             plugin_id: request.plugin_id.clone(),
-            verdict: ProposedVerdict::Safe,
-            diagnostics: Vec::new(),
-            evidence: Some(ProposedEvidence {
-                evidence_version: request.evidence_version,
-                unit: request.unit.clone(),
-                capability: request.capability,
-                claims: request
-                    .facts
-                    .iter()
-                    .map(|fact| EvidenceClaim {
-                        fact_id: fact.fact_id.clone(),
-                        subject: fact.subject.clone(),
-                        predicate: fact.predicate,
-                        holds: fact.holds,
-                    })
-                    .collect(),
-                coverage: request
-                    .facts
-                    .iter()
-                    .map(|fact| fact.fact_id.clone())
-                    .collect(),
-                assumptions_used: request.assumptions.clone(),
-                reproducibility: Reproducibility {
-                    provider_version: self.manifest.package_version.clone(),
-                    package_digest: self.manifest.package_digest.clone(),
-                    deterministic: true,
-                },
-            }),
+            verdict: ProposedVerdict::Unknown,
+            diagnostics: vec![PluginDiagnostic {
+                code: format!("{}.semantic_evidence_unavailable", self.manifest.plugin_id),
+                message: "protocol v1 facts lack core-derived obligations and semantic witnesses"
+                    .into(),
+                fact_id: None,
+            }],
+            evidence: None,
         })
     }
 }
@@ -1139,11 +1093,8 @@ impl VerifierRegistry {
                 let Some(evidence) = response.evidence else {
                     return VerificationOutcome::unknown("QP008", "safe result has no evidence");
                 };
-                if !self.check_evidence(manifest, request, &evidence) {
-                    return VerificationOutcome::unknown(
-                        "QP009",
-                        "the core certificate checker rejected plugin evidence",
-                    );
+                if let Err(reason) = self.check_evidence(manifest, request, &evidence) {
+                    return VerificationOutcome::unknown("QP009", reason);
                 }
                 VerificationOutcome {
                     verdict: ProposedVerdict::Safe,
@@ -1164,7 +1115,12 @@ impl VerifierRegistry {
         manifest: &PluginManifest,
         request: &VerificationRequest,
         evidence: &ProposedEvidence,
-    ) -> bool {
+    ) -> Result<(), &'static str> {
+        // Enforced in the core for every provider, including process providers.
+        // No independently checked no-obligations argument exists in v1.
+        if request.facts.is_empty() || evidence.claims.is_empty() || evidence.coverage.is_empty() {
+            return Err("empty evidence has no core-established no-obligations proof");
+        }
         let requested = request
             .facts
             .iter()
@@ -1181,10 +1137,10 @@ impl VerifierRegistry {
             || !evidence.reproducibility.deterministic
             || evidence.claims.len() != request.facts.len()
         {
-            return false;
+            return Err("the core certificate checker rejected the evidence envelope");
         }
         let mut seen = BTreeSet::new();
-        evidence.claims.iter().all(|claim| {
+        let claims_match = evidence.claims.iter().all(|claim| {
             let Some(fact) = requested.get(claim.fact_id.as_str()) else {
                 return false;
             };
@@ -1193,7 +1149,16 @@ impl VerifierRegistry {
                 && claim.predicate == fact.predicate
                 && claim.holds
                 && claim.holds == fact.holds
-        })
+        });
+        if !claims_match {
+            return Err("the core certificate checker rejected evidence claims");
+        }
+        // Matching untrusted assertions is necessary for envelope replay but
+        // never sufficient for any capability. Fail closed even for predicates
+        // named ResourceBalanced/ConcurrencySafe and plausible source digests.
+        // Re-enable only with a core-derived inventory, bound semantic inputs,
+        // and a versioned capability-specific witness checker (reevaluation G2).
+        Err("protocol v1 lacks core-derived obligations and capability-specific semantic witnesses")
     }
 }
 
@@ -1423,7 +1388,7 @@ fn first_party_manifest(
         network_access: false,
         limits: PluginLimits::default(),
         trust_class: PluginTrustClass::FirstParty,
-        certificate_checker: format!("{id}.core.v1"),
+        certificate_checker: "qcore.unsupported_assertions.v1".into(),
         lean_theorem_family: theorem_family.into(),
         plugin_id,
     }
@@ -1439,4 +1404,50 @@ pub fn first_party_registry() -> VerifierRegistry {
             .expect("first-party plugin IDs are unique");
     }
     registry
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn conflicting_assumptions_make_composition_unknown() {
+        // Test composition with internal fixtures. These are not certificates
+        // issuable through the v1 firewall, which rejects Boolean-only evidence.
+        let outcome = |assumption| {
+            let unit = UnitIdentity {
+                source_digest: "a".repeat(64),
+                build_digest: "b".repeat(64),
+                translation_unit: "fixture.c".into(),
+            };
+            VerificationOutcome {
+                verdict: ProposedVerdict::Safe,
+                diagnostics: vec![],
+                certificate: Some(CoreCertificate {
+                    plugin_id: PluginId::new("example.fixture").unwrap(),
+                    capability: VerifierCapability::ResourceContracts,
+                    unit: unit.clone(),
+                    evidence: ProposedEvidence {
+                        evidence_version: PLUGIN_EVIDENCE_VERSION,
+                        unit,
+                        capability: VerifierCapability::ResourceContracts,
+                        claims: vec![],
+                        coverage: BTreeSet::new(),
+                        assumptions_used: BTreeMap::from([(
+                            "callbacks_bounded".into(),
+                            assumption,
+                        )]),
+                        reproducibility: Reproducibility {
+                            provider_version: "0.1.0".into(),
+                            package_digest: "test-fixture".into(),
+                            deterministic: true,
+                        },
+                    },
+                }),
+            }
+        };
+        let composed = compose_verification(vec![outcome(true), outcome(false)]);
+        assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+        assert_eq!(composed.diagnostics[0].code, "QP012");
+    }
 }

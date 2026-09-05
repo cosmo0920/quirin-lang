@@ -3,6 +3,9 @@
 //! Candidate executions explicitly supply reads-from, modification order,
 //! synchronizes-with, and the sequentially-consistent order.  Program order is
 //! derived per thread and is never inferred from inter-thread list position.
+//! The atomic subset follows C11 N1570 (not C++20/RC11): plain loads/stores
+//! and same-thread store release sequences. RMWs, fences, and consume are not
+//! represented. Acceptance checks one supplied graph, not program exploration.
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
@@ -210,8 +213,14 @@ pub fn check_c11_execution(
 
 fn invalid_order(kind: &MemoryEventKind) -> bool {
     match kind {
-        MemoryEventKind::AtomicStore { order, .. } => order.has_acquire() && !order.has_release(),
-        MemoryEventKind::AtomicLoad { order, .. } => order.has_release() && !order.has_acquire(),
+        MemoryEventKind::AtomicStore { order, .. } => !matches!(
+            order,
+            MemoryOrder::Relaxed | MemoryOrder::Release | MemoryOrder::SequentiallyConsistent
+        ),
+        MemoryEventKind::AtomicLoad { order, .. } => !matches!(
+            order,
+            MemoryOrder::Relaxed | MemoryOrder::Acquire | MemoryOrder::SequentiallyConsistent
+        ),
         _ => false,
     }
 }
@@ -351,20 +360,36 @@ fn expected_synchronizes_with(
     by_id: &BTreeMap<MemoryEventId, &MemoryEvent>,
 ) -> BTreeSet<RelationEdge> {
     let mut result = BTreeSet::new();
+    let mo = transitive_closure(&execution.modification_order);
     for edge in &execution.reads_from {
-        let release_acquire = by_id
-            .get(&edge.from)
-            .and_then(|event| atomic_write(&event.kind))
-            .and_then(|(_, _, order)| order)
-            .zip(
-                by_id
-                    .get(&edge.to)
-                    .and_then(|event| atomic_load(&event.kind))
-                    .map(|(_, _, order)| order),
-            )
-            .is_some_and(|(store, load)| store.has_release() && load.has_acquire());
-        if release_acquire {
-            result.insert(*edge);
+        let Some((location, _, order)) = by_id
+            .get(&edge.to)
+            .and_then(|event| atomic_load(&event.kind))
+        else {
+            continue;
+        };
+        if !order.has_acquire() {
+            continue;
+        }
+        // N1570 5.1.2.4p10-11: every intervening modification must
+        // continue the sequence. A foreign plain store terminates it;
+        // a later store by the head's thread cannot restart that sequence.
+        for head in &execution.events {
+            if !atomic_write(&head.kind).is_some_and(|(loc, _, order)| {
+                loc == location && order.is_some_and(MemoryOrder::has_release)
+            }) {
+                continue;
+            }
+            if edge.from == head.id || (mo.contains(&RelationEdge::new(head.id, edge.from))
+                && execution.events.iter().filter(|candidate| {
+                    candidate.id == edge.from || (mo.contains(&RelationEdge::new(head.id, candidate.id))
+                        && mo.contains(&RelationEdge::new(candidate.id, edge.from)))
+                }).all(|candidate| {
+                    candidate.thread == head.thread
+                        && matches!(candidate.kind, MemoryEventKind::AtomicStore { location: loc, .. } if loc == location)
+                })) {
+                result.insert(RelationEdge::new(head.id, edge.to));
+            }
         }
     }
     // A supplied unlock-to-lock edge is valid when it names the same mutex.
@@ -417,6 +442,22 @@ fn validate_coherence(
     errors: &mut BTreeSet<WeakMemoryError>,
 ) {
     let modification_order = transitive_closure(&execution.modification_order);
+    // Write/write coherence (N1570 5.1.2.4p7).
+    for edge in happens_before {
+        if by_id
+            .get(&edge.from)
+            .and_then(|event| atomic_write(&event.kind))
+            .zip(
+                by_id
+                    .get(&edge.to)
+                    .and_then(|event| atomic_write(&event.kind)),
+            )
+            .is_some_and(|(left, right)| left.0 == right.0)
+            && !modification_order.contains(edge)
+        {
+            errors.insert(WeakMemoryError::CoherenceViolation(edge.to));
+        }
+    }
     for read in &execution.reads_from {
         if happens_before.contains(&RelationEdge::new(read.to, read.from)) {
             errors.insert(WeakMemoryError::CoherenceViolation(read.to));
@@ -431,6 +472,26 @@ fn validate_coherence(
                 && happens_before.contains(&RelationEdge::new(event.id, read.to))
             {
                 errors.insert(WeakMemoryError::CoherenceViolation(read.to));
+            }
+            // Read/write coherence: a later write must follow the read's
+            // source in modification order, including when it is that source.
+            if by_id
+                .get(&read.from)
+                .and_then(|source| atomic_write(&source.kind))
+                .zip(atomic_write(&event.kind))
+                .is_some_and(|(source, candidate)| source.0 == candidate.0)
+                && happens_before.contains(&RelationEdge::new(read.to, event.id))
+                && !modification_order.contains(&RelationEdge::new(read.from, event.id))
+            {
+                errors.insert(WeakMemoryError::CoherenceViolation(read.to));
+            }
+        }
+        // Read/read coherence (N1570 5.1.2.4p22).
+        for later in &execution.reads_from {
+            if happens_before.contains(&RelationEdge::new(read.to, later.to))
+                && modification_order.contains(&RelationEdge::new(later.from, read.from))
+            {
+                errors.insert(WeakMemoryError::CoherenceViolation(later.to));
             }
         }
     }
@@ -474,15 +535,50 @@ fn validate_sc(
         .enumerate()
         .map(|(position, id)| (*id, position))
         .collect::<BTreeMap<_, _>>();
-    if happens_before.iter().any(|edge| {
-        position
-            .get(&edge.from)
-            .zip(position.get(&edge.to))
-            .is_some_and(|(left, right)| left >= right)
-    }) {
+    let modification_order = transitive_closure(&execution.modification_order);
+    if happens_before
+        .iter()
+        .chain(modification_order.iter())
+        .any(|edge| {
+            position
+                .get(&edge.from)
+                .zip(position.get(&edge.to))
+                .is_some_and(|(left, right)| left >= right)
+        })
+    {
         errors.insert(WeakMemoryError::InvalidSequentiallyConsistentOrder);
     }
-    let _ = by_id;
+    // N1570 7.17.3p6: an SC load observes the last preceding SC
+    // modification, or a non-SC modification that does not happen before it.
+    // Coherence separately constrains visibility of the non-SC source.
+    for read in &execution.reads_from {
+        let Some(&load_position) = position.get(&read.to) else {
+            continue;
+        };
+        let Some((location, _, _)) = by_id
+            .get(&read.to)
+            .and_then(|event| atomic_load(&event.kind))
+        else {
+            continue;
+        };
+        let last = execution.sequentially_consistent[..load_position]
+            .iter()
+            .rev()
+            .find(|id| {
+                by_id
+                    .get(id)
+                    .and_then(|event| atomic_write(&event.kind))
+                    .is_some_and(|(loc, _, _)| loc == location)
+            });
+        let valid = if position.contains_key(&read.from) {
+            last == Some(&read.from)
+        } else {
+            last.is_none_or(|last| !happens_before.contains(&RelationEdge::new(read.from, *last)))
+        };
+        if !valid {
+            errors.insert(WeakMemoryError::InvalidSequentiallyConsistentOrder);
+        }
+    }
 }
 
 fn validate_non_atomic_races(

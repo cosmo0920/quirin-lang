@@ -181,3 +181,15 @@ the Cycle 19 audits, reproducible standalone packages and full CLI lifecycle
 tooling, OS-enforced memory/network isolation, and replacement of the old
 monolithic audit routing. Those gates remain open rather than being weakened
 by the generic plugin foundation.
+
+
+### Superseding certificate containment, 2026-09-05
+
+The [reevaluation repair](../REEVALUATION_SPEC.md#six-finding-repair-on-2026-09-05)
+supersedes the assertion-based certificate results above. Protocol v1's Boolean
+facts do not prove capability-specific properties: built-ins now return
+`Unknown`, and the core refuses all v1 `Safe` proposals, including empty scopes.
+Manifest capability declarations describe routing only. Semantic witnesses,
+core-derived obligations, source integration, and provider parity remain required
+before independent plugin safety certificates can be issued. The earlier test
+results remain historical observations of the narrower assertion-replay model.

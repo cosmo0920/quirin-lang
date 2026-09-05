@@ -1,0 +1,63 @@
+{
+  "recorded_at": "2026-09-05T11:25:18.624429+00:00",
+  "baseline_head": "8591eb806e520823b3e657667ff5516bf60de6ff",
+  "working_tree": "uncommitted six-finding repair; audited code hashes below",
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+  "cargo": "cargo 1.98.0 (797e8a9bc 2026-08-05)",
+  "sha256": {
+    "compiler/src/weak_memory.rs": "7d6084905d0319c2cf5212e708d0db117ebcf2afa16d900fc45714f2c145dbab",
+    "compiler/src/verifier_plugin.rs": "134110de3e8f8d502dcb5c2a28255754b04c40a6d8d7702a81cd3fcead09d8d6",
+    "compiler/tests/unit/weak_memory.rs": "659a1ab1246fb0ba17d5c2aaf63b66ca3b94422e7d5bfb27c2b2ec0407f26b19",
+    "compiler/tests/cycle20_verifier_plugins.rs": "19adb139163e6f703170cd0b911a21496ae7130306f22896c8581ae8b641cd4f",
+    "compiler/examples/reevaluation_probe.rs": "2eb18191f12f38d5ef54ad85d3f5b23f53fde664e1fe1f8d679e75d1ce7224c2",
+    ".github/workflows/ci.yml": "c466fff46682a1cea24bc9cb599d590a33ed9ab3cab81358703d9e822c9997bf",
+    "Cargo.lock": "ef60aa51fa489fee945447c15de42eb137e83509a9b6a040034f376e61999ee0"
+  },
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "output": "repair_workspace_tests.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "output": "repair_clippy.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": "repair_fmt.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit_code": 0,
+      "output": "repair_probes.json"
+    }
+  ]
+}

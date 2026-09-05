@@ -29,3 +29,6 @@ jobs:
 
       - name: Test, including the pinned Libevent audit
         run: cargo test --workspace
+
+      - name: Check the six reevaluation regressions and controls
+        run: cargo run -p qcore-compiler --example reevaluation_probe

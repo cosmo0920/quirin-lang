@@ -1,9 +1,10 @@
 # QCore-C reevaluation specification
 
-Date: 2026-09-05. Status: proposed acceptance specification with an executed diagnostic audit.
+Date: 2026-09-05. Status: proposed acceptance specification with an executed diagnostic audit
+and a [six-finding repair record](#six-finding-repair-on-2026-09-05).
 
-The immediate priority is certificate soundness. Six independent audit probes
-disagree with the intended semantics: three invalid weak-memory candidates are
+The initial audit established certificate soundness as the immediate priority.
+Six independent audit probes disagreed with the intended semantics: three invalid weak-memory candidates are
 accepted, one valid C11 candidate is rejected, and two insufficient plugin
 requests receive core `Safe` certificates. This is evidence against the checked
 boundaries, not a claim that an emitted application has exhibited a runtime bug.
@@ -400,3 +401,64 @@ reported the same six failed expectations and two passing controls, exiting 1
 as designed. The earlier failures above remain historical observations, not
 current baseline failures. The new logs and baseline identity are recorded in
 [`precommit_metadata.json`](reevaluation/precommit_metadata.json).
+
+
+### Six-finding repair on 2026-09-05
+
+The original probe source is unchanged. All six findings and both controls now
+meet their expected verdicts (zero failed expectations, exit 0). The original
+logs above remain historical evidence. Current results are in
+[`repair_probes.json`](reevaluation/repair_probes.json); code hashes, baseline
+commit, tool versions, and commands are in
+[`repair_metadata.json`](reevaluation/repair_metadata.json).
+
+| Finding | Repair and regression coverage | Status |
+|---|---|---|
+| WM01 | Explicit load/store legality tables; test each operation separately with every exposed order, including valid SC operations. | Fixed in the represented atomic subset |
+| WM02 | Enforce write/write, write/read, read/write, and read/read coherence against happens-before and modification order; reverse each relation with matching positive cases, including equal-valued distinct writes. | Fixed for these coherence checks |
+| WM03 | Constrain SC order by modification order and constrain each SC load's reads-from source by the last preceding SC write. Check all 24 SC store-buffering orders against all four outcomes using a serial-schedule oracle, plus mixed SC/non-SC source cases. The relaxed store-buffering control remains accepted. | Fixed for represented loads/stores |
+| WM04 | Derive synchronization from contiguous C11 release sequences of same-thread stores. Test continuation, foreign-store termination, absence/presence of required edges, and overlapping release heads. | Fixed for represented stores |
+| VP01 | Built-ins return `Unknown`; the core rejects assertion-only evidence even when every claim exactly matches the request. Mutate predicates, source path, revision, profile, and capability across first-party providers; exercise an executable provider too. First-party checker metadata now identifies the unsupported assertion schema. | Certificate issuance contained; semantic verification remains unsupported |
+| VP02 | The core explicitly rejects empty facts, claims, or coverage without an independently established no-obligations proof. Test matching empty proposals through both in-process and actual executable providers, checking that rejection occurs at the evidence firewall. | Empty-scope certificate issuance contained |
+
+The memory rules use [N1570](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
+§5.1.2.4 and §7.17.3, §7.17.7.1–2. The API checks one supplied candidate;
+these changes do not establish complete execution exploration or an
+implementation soundness theorem. RMWs, compare-exchange, fences, consume, and
+mixed-size accesses are not represented by this event API. Mutex and thread
+lifecycle adequacy remain in the broader coverage matrix.
+
+Protocol v1 has no core-derived obligation inventory, semantic witnesses, or
+independently bound source identity. Consequently **no v1 plugin `Safe` proposal
+can obtain a core certificate**, including proposals containing predicates
+named `ResourceBalanced` or `ConcurrencySafe`. Checking those names or requiring
+more caller-supplied Boolean facts would not repair the trust boundary.
+Built-ins also return `Unknown` for false assertions, since these do not supply
+reachable counterexamples. Third-party `Unsafe` witness validation remains a
+separate open obligation. Manifest capabilities and wildcard targets describe
+configuration routing only; they do not establish verified capability/profile
+support. Source scopes still validate configuration only.
+
+Previous tests that obtained certificates from Boolean facts now assert
+`Unknown`; those old results were not legitimate semantic positive controls.
+The original composition assumption-conflict test is retained with internal
+certificate fixtures, separately from the public firewall. Existing Cycle 19
+analysis routes and their tests remain in place. Capability-specific witnesses,
+core-derived inventories (including legitimate empty scopes), source integration,
+package identity, process-tree isolation, and Lean implementation bridges remain
+open. This is containment of the two reported false-safe cases, not completion
+of G2–G6 or all Cycle 20 capabilities.
+
+Validation of the repaired working tree:
+
+- `cargo test --workspace`: 208 library tests and 17 integration tests passed,
+  including the pinned Libevent audit. [Log](reevaluation/repair_workspace_tests.log).
+- `cargo clippy --workspace --all-targets -- -D warnings`: passed.
+  [Log](reevaluation/repair_clippy.log).
+- `cargo fmt --all -- --check`: passed. [Log](reevaluation/repair_fmt.log).
+- `cargo run -p qcore-compiler --example reevaluation_probe`: all eight
+  expectations passed. This command is now also a CI gate.
+
+No Lean files changed and no new Lean build or external weak-memory model
+checker run is claimed for this repair. The bounded SC schedule oracle and
+hand-constructed graph regressions are the executed memory evidence.

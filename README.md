@@ -67,10 +67,14 @@ cycle records are archived under [`docs/cycles/`](docs/cycles/), including the
 The subsequent extraction into versioned verifier providers is tracked in
 [`CYCLE_20.md`](docs/cycles/CYCLE_20.md). Cycle 20 is now active; its foundation includes versioned
 length-delimited JSON verifier requests, fail-closed registry dispatch,
-process-provider timeout/output isolation, an independently checked
-certificate firewall, first-party in-process migration adapters, and
+process-provider timeout/output limits, a certificate firewall,
+first-party in-process migration scaffolding, and
 source-level `verify scope` declarations. Provider-specific Cycle 19 parity
 and standalone package hardening remain tracked in the Cycle 20 record.
+Protocol v1 carries caller assertions without semantic witnesses: built-ins
+return `Unknown`, and the core refuses all v1 `Safe` proposals, including empty
+evidence. Manifest capabilities describe routing only; source-level scopes
+validate configuration and do not verify application safety.
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the
@@ -86,6 +90,8 @@ The post-Cycle-9 sequence and promoted research boundary are in the
 The [reevaluation specification](docs/REEVALUATION_SPEC.md) records a recent
 research review, six reproduced certificate/weak-memory discrepancies, and
 the proposed acceptance gates across the language, backends, and providers.
+The [six-finding repair record](docs/REEVALUATION_SPEC.md#six-finding-repair-on-2026-09-05)
+documents the memory fixes, plugin certificate containment, and regression results.
 
 ## Build
 

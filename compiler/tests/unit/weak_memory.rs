@@ -170,3 +170,348 @@ fn modification_order_must_be_total_per_atomic_object() {
             .any(|error| { matches!(error, WeakMemoryError::IncompleteModificationOrder { .. }) })
     );
 }
+
+fn store(location: u32, value: i64, order: MemoryOrder) -> MemoryEventKind {
+    MemoryEventKind::AtomicStore {
+        location,
+        value,
+        order,
+    }
+}
+
+fn load(location: u32, value: i64, order: MemoryOrder) -> MemoryEventKind {
+    MemoryEventKind::AtomicLoad {
+        location,
+        value,
+        order,
+    }
+}
+
+#[test]
+fn wm01_plain_load_and_store_order_legality_table() {
+    use MemoryOrder::*;
+    for order in [
+        Relaxed,
+        Acquire,
+        Release,
+        AcquireRelease,
+        SequentiallyConsistent,
+    ] {
+        for is_store in [true, false] {
+            let mut execution = C11Execution {
+                events: vec![
+                    event(
+                        0,
+                        0,
+                        MemoryEventKind::AtomicInit {
+                            location: 0,
+                            value: 0,
+                        },
+                    ),
+                    event(1, 1, store(0, 1, if is_store { order } else { Relaxed })),
+                    event(2, 2, load(0, 1, if is_store { Relaxed } else { order })),
+                ],
+                reads_from: vec![RelationEdge::new(1, 2)],
+                modification_order: vec![RelationEdge::new(0, 1)],
+                ..Default::default()
+            };
+            if order == SequentiallyConsistent {
+                execution
+                    .sequentially_consistent
+                    .push(if is_store { 1 } else { 2 });
+            }
+            let expected = if is_store {
+                matches!(order, Relaxed | Release | SequentiallyConsistent)
+            } else {
+                matches!(order, Relaxed | Acquire | SequentiallyConsistent)
+            };
+            let result = check_c11_execution(&execution);
+            assert_eq!(
+                result.is_ok(),
+                expected,
+                "store={is_store}, order={order:?}: {result:?}"
+            );
+            if !expected {
+                assert!(
+                    result
+                        .unwrap_err()
+                        .contains(&WeakMemoryError::InvalidMemoryOrder(if is_store {
+                            1
+                        } else {
+                            2
+                        }))
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn wm02_each_coherence_direction_rejects_reversal_and_accepts_forward_order() {
+    use MemoryOrder::Relaxed;
+    // Two same-valued writes ensure reads-from identity, not value equality,
+    // determines coherence. Each pair in thread 1 induces the tested HB edge.
+    for (name, thread_events, reads) in [
+        (
+            "write/write",
+            vec![
+                event(1, 1, store(0, 1, Relaxed)),
+                event(2, 1, store(0, 1, Relaxed)),
+            ],
+            vec![],
+        ),
+        (
+            "write/read",
+            vec![
+                event(2, 2, store(0, 1, Relaxed)),
+                event(1, 1, store(0, 1, Relaxed)),
+                event(3, 1, load(0, 1, Relaxed)),
+            ],
+            vec![RelationEdge::new(2, 3)],
+        ),
+        (
+            "read/write",
+            vec![
+                event(1, 2, store(0, 1, Relaxed)),
+                event(3, 1, load(0, 1, Relaxed)),
+                event(2, 1, store(0, 1, Relaxed)),
+            ],
+            vec![RelationEdge::new(1, 3)],
+        ),
+        (
+            "read/read",
+            vec![
+                event(1, 2, store(0, 1, Relaxed)),
+                event(2, 3, store(0, 1, Relaxed)),
+                event(3, 1, load(0, 1, Relaxed)),
+                event(4, 1, load(0, 1, Relaxed)),
+            ],
+            vec![RelationEdge::new(1, 3), RelationEdge::new(2, 4)],
+        ),
+    ] {
+        for reversed in [false, true] {
+            let mut events = vec![event(
+                0,
+                0,
+                MemoryEventKind::AtomicInit {
+                    location: 0,
+                    value: 0,
+                },
+            )];
+            events.extend(thread_events.clone());
+            let (first, second) = if reversed { (2, 1) } else { (1, 2) };
+            let execution = C11Execution {
+                events,
+                reads_from: reads.clone(),
+                modification_order: vec![
+                    RelationEdge::new(0, first),
+                    RelationEdge::new(first, second),
+                ],
+                ..Default::default()
+            };
+            let result = check_c11_execution(&execution);
+            assert_eq!(
+                result.is_ok(),
+                !reversed,
+                "{name}, reversed={reversed}: {result:?}"
+            );
+            if reversed {
+                assert!(
+                    result
+                        .unwrap_err()
+                        .iter()
+                        .any(|e| matches!(e, WeakMemoryError::CoherenceViolation(_)))
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn wm03_all_sc_store_buffering_orders_and_outcomes_match_serial_execution() {
+    use MemoryOrder::SequentiallyConsistent as Sc;
+    // Enumerate all 24 supplied SC orders, including those violating program
+    // order, and all four outcomes. Oracle executes each legal serial schedule.
+    for a in 4..8 {
+        for b in 4..8 {
+            for c in 4..8 {
+                for d in 4..8 {
+                    let order = vec![a, b, c, d];
+                    if order.iter().collect::<BTreeSet<_>>().len() != 4 {
+                        continue;
+                    }
+                    for x in 0..=1 {
+                        for y in 0..=1 {
+                            let pos = |id| order.iter().position(|event| *event == id).unwrap();
+                            let expected = pos(4) < pos(5)
+                                && pos(6) < pos(7)
+                                && y == i64::from(pos(6) < pos(5))
+                                && x == i64::from(pos(4) < pos(7));
+                            let mut sw = vec![];
+                            if y == 1 {
+                                sw.push(RelationEdge::new(6, 5));
+                            }
+                            if x == 1 {
+                                sw.push(RelationEdge::new(4, 7));
+                            }
+                            let execution = C11Execution {
+                                events: vec![
+                                    event(
+                                        0,
+                                        0,
+                                        MemoryEventKind::AtomicInit {
+                                            location: 0,
+                                            value: 0,
+                                        },
+                                    ),
+                                    event(
+                                        1,
+                                        0,
+                                        MemoryEventKind::AtomicInit {
+                                            location: 1,
+                                            value: 0,
+                                        },
+                                    ),
+                                    event(2, 0, MemoryEventKind::Spawn { child: 1 }),
+                                    event(3, 0, MemoryEventKind::Spawn { child: 2 }),
+                                    event(4, 1, store(0, 1, Sc)),
+                                    event(5, 1, load(1, y, Sc)),
+                                    event(6, 2, store(1, 1, Sc)),
+                                    event(7, 2, load(0, x, Sc)),
+                                ],
+                                modification_order: vec![
+                                    RelationEdge::new(0, 4),
+                                    RelationEdge::new(1, 6),
+                                ],
+                                reads_from: vec![
+                                    RelationEdge::new(if y == 0 { 1 } else { 6 }, 5),
+                                    RelationEdge::new(if x == 0 { 0 } else { 4 }, 7),
+                                ],
+                                synchronizes_with: sw,
+                                sequentially_consistent: order.clone(),
+                                ..Default::default()
+                            };
+                            let result = check_c11_execution(&execution);
+                            assert_eq!(
+                                result.is_ok(),
+                                expected,
+                                "{order:?}, ({x},{y}): {result:?}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn wm03_sc_modification_order_and_mixed_load_sources() {
+    use MemoryOrder::{Relaxed, SequentiallyConsistent as Sc};
+    let execution = C11Execution {
+        events: vec![event(1, 1, store(0, 1, Sc)), event(2, 2, store(0, 2, Sc))],
+        modification_order: vec![RelationEdge::new(1, 2)],
+        sequentially_consistent: vec![2, 1],
+        ..Default::default()
+    };
+    assert!(
+        check_c11_execution(&execution)
+            .unwrap_err()
+            .contains(&WeakMemoryError::InvalidSequentiallyConsistentOrder)
+    );
+    // An unordered non-SC source remains permitted; one HB-before the last
+    // SC write is forbidden. With no preceding SC write, non-SC is permitted.
+    for before in [false, true] {
+        for include_sc_write in [false, true] {
+            let mut events = vec![event(1, 1, store(0, 1, Relaxed))];
+            if include_sc_write {
+                events.push(event(2, if before { 1 } else { 2 }, store(0, 2, Sc)));
+            }
+            events.push(event(3, 3, load(0, 1, Sc)));
+            let execution = C11Execution {
+                events,
+                reads_from: vec![RelationEdge::new(1, 3)],
+                modification_order: if include_sc_write {
+                    vec![RelationEdge::new(1, 2)]
+                } else {
+                    vec![]
+                },
+                sequentially_consistent: if include_sc_write {
+                    vec![2, 3]
+                } else {
+                    vec![3]
+                },
+                ..Default::default()
+            };
+            assert_eq!(
+                check_c11_execution(&execution).is_ok(),
+                !(before && include_sc_write)
+            );
+        }
+    }
+}
+
+#[test]
+fn wm04_release_sequence_continues_and_foreign_store_terminates_it() {
+    use MemoryOrder::{Acquire, Relaxed, Release};
+    for foreign in [false, true] {
+        for supply_sw in [false, true] {
+            let execution = C11Execution {
+                events: vec![
+                    event(
+                        0,
+                        0,
+                        MemoryEventKind::AtomicInit {
+                            location: 0,
+                            value: 0,
+                        },
+                    ),
+                    event(1, 1, store(0, 1, Release)),
+                    event(2, if foreign { 2 } else { 1 }, store(0, 2, Relaxed)),
+                    event(3, 1, store(0, 3, Relaxed)),
+                    event(4, 3, load(0, 3, Acquire)),
+                ],
+                modification_order: vec![
+                    RelationEdge::new(0, 1),
+                    RelationEdge::new(1, 2),
+                    RelationEdge::new(2, 3),
+                ],
+                reads_from: vec![RelationEdge::new(3, 4)],
+                synchronizes_with: if supply_sw {
+                    vec![RelationEdge::new(1, 4)]
+                } else {
+                    vec![]
+                },
+                ..Default::default()
+            };
+            let result = check_c11_execution(&execution);
+            assert_eq!(
+                result.is_ok(),
+                supply_sw != foreign,
+                "foreign={foreign}, sw={supply_sw}: {result:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn wm04_overlapping_release_sequences_require_each_head() {
+    use MemoryOrder::{Acquire, Relaxed, Release};
+    let mut execution = C11Execution {
+        events: vec![
+            event(1, 1, store(0, 1, Release)),
+            event(2, 1, store(0, 2, Release)),
+            event(3, 1, store(0, 3, Relaxed)),
+            event(4, 2, load(0, 3, Acquire)),
+        ],
+        modification_order: vec![RelationEdge::new(1, 2), RelationEdge::new(2, 3)],
+        reads_from: vec![RelationEdge::new(3, 4)],
+        synchronizes_with: vec![RelationEdge::new(1, 4), RelationEdge::new(2, 4)],
+        ..Default::default()
+    };
+    check_c11_execution(&execution).unwrap();
+    execution.synchronizes_with.remove(0);
+    assert!(check_c11_execution(&execution).unwrap_err().contains(
+        &WeakMemoryError::MissingSynchronizesWith(RelationEdge::new(1, 4))
+    ));
+}
