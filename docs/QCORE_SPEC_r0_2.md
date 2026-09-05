@@ -2273,6 +2273,12 @@ The following are not yet established for this exact system:
 14. A useful derived- or triangulated-category semantics.
 15. Whether a single abstract algebra can express all live, peak, cumulative, credit, and identity behavior without harming implementation clarity.
 
+The six questions still explicit in the Cycle 16 formal research boundary are
+promoted into the planned Cycle 17 milestone in
+`docs/ROADMAP_AFTER_CYCLE_9.md`. The broader list above remains the historical
+research inventory; bounded results from Cycles 13–16 are not restated as
+unresolved implementation work.
+
 ---
 
 ## 27. Prototype and Proof Roadmap

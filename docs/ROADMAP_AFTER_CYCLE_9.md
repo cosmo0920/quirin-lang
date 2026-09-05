@@ -74,6 +74,19 @@ end-to-end correctness for the supported C11 target. Keep principal inference,
 general nonzero-net loops, unrestricted legacy C, and any categorical
 unification that remains open explicitly labeled as research.
 
+## Cycle 17: Research extensions and production closure
+
+**Status: planned.** See [`../CYCLE_17.md`](../CYCLE_17.md).
+
+Promote the six explicit Cycle 16 research-boundary items into one roadmap
+milestone: principal inference, general nonzero-net loops, unrestricted
+legacy-C analysis, categorical unification, full C11 weak-memory semantics,
+and a native concurrent backend. Execute them as ordered workstreams under one
+completion gate. Cycle 17 is complete only when each workstream has executable
+validation, corresponding Lean definitions and theorems, and an end-to-end
+composition result; a bounded prototype or an `Unknown` fallback does not by
+itself close the promoted item.
+
 Later cycles may be split into consecutive numbers if their executable and
 proof scope is too large, but none may be skipped without updating this
 dependency order and its acceptance criteria.

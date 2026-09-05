@@ -37,9 +37,10 @@ bounded advanced-control semantics for safe-point cancellation, fallible LIFO
 cleanup, deterministic double errors, and linear higher-order capture; and a
 combined closure certificate with preservation, progress, cross-ledger resource
 safety, concurrent race freedom, and supported-C11 observation agreement.
-Active cycle requirements, including the complete Rust/C/Lean verification procedure,
-are in [`CYCLE_16.md`](CYCLE_16.md). Completed cycle records are archived under
-[`docs/cycles/`](docs/cycles/).
+The completed Cycle 16 requirements and verification procedure are in
+[`CYCLE_16.md`](CYCLE_16.md). The promoted research milestone and its
+acceptance gates are in [`CYCLE_17.md`](CYCLE_17.md). Earlier completed cycle
+records are archived under [`docs/cycles/`](docs/cycles/).
 
 The source front end is available through `parse_source_program` and
 `elaborate_source`; the integrated checker is `check_whole_program`; and the
@@ -49,7 +50,7 @@ Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
 [Cycle 7.5 validation](docs/CYCLE_7_5.md) now also compiles and executes the
 same differential C corpus with native MSVC, strict warnings, and Windows
 runtime checks.
-The completed post-Cycle-9 sequence and explicit research boundary are in the
+The post-Cycle-9 sequence and promoted research boundary are in the
 [post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 
 ## Build

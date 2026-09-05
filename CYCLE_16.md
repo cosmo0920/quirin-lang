@@ -65,5 +65,6 @@ lake build
 lake env lean AuditCycle16.lean
 ```
 
-Cycle 16 completes the numbered development sequence. Further work must begin
-as an explicitly scoped post-roadmap extension.
+Cycle 16 completes the original numbered development sequence. The six
+explicitly scoped research extensions are promoted together into the planned
+Cycle 17 roadmap milestone.
