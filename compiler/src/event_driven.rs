@@ -101,8 +101,9 @@ pub enum ProfileDisposition {
     Unknown,
 }
 
-/// The complete set of symbols recognized by the initial Cycle 18 importer.
-/// Anything absent from this table is `Unknown`, including DNS, HTTP, RPC,
+/// The complete set of symbols recognized by the bounded event importer.
+/// Cycle 19 adds the three descriptor utilities used by Monkey to the initial
+/// Cycle 18 surface. Anything absent is `Unknown`, including DNS, HTTP, RPC,
 /// OpenSSL, listeners, custom allocators/locks, fork repair, and private APIs.
 pub const LIBEVENT_API_PROFILE: &[(&str, ProfileDisposition)] = &[
     ("event_base_new", ProfileDisposition::Accepted),
@@ -139,6 +140,9 @@ pub const LIBEVENT_API_PROFILE: &[(&str, ProfileDisposition)] = &[
     ("evbuffer_add", ProfileDisposition::Accepted),
     ("evbuffer_remove", ProfileDisposition::Accepted),
     ("evbuffer_free", ProfileDisposition::Accepted),
+    ("evutil_closesocket", ProfileDisposition::Accepted),
+    ("evutil_socket_geterror", ProfileDisposition::Accepted),
+    ("evutil_socketpair", ProfileDisposition::Accepted),
     ("evdns_base_new", ProfileDisposition::Unknown),
     ("evhttp_new", ProfileDisposition::Unknown),
     ("evrpc_init", ProfileDisposition::Unknown),
@@ -330,6 +334,21 @@ pub enum EventOperation {
     FreeEvent {
         event: EventKey,
     },
+    /// A successful `evutil_socketpair` creates two distinct owned
+    /// descriptors. `None` is its failure branch and creates no custody.
+    CreateSocketPair {
+        descriptors: Option<(DescriptorId, DescriptorId)>,
+    },
+    /// `evutil_socket_geterror` borrows a descriptor (and on Unix expands to
+    /// `errno`). It must not revive a descriptor already closed in this trace.
+    GetSocketError {
+        descriptor: DescriptorId,
+    },
+    /// `evutil_closesocket` consumes close custody only on its success branch.
+    CloseSocket {
+        descriptor: DescriptorId,
+        succeeds: bool,
+    },
     CreateBufferevent {
         bev: BuffereventKey,
         base: EventBaseId,
@@ -485,6 +504,7 @@ struct BaseState {
 #[derive(Clone, Debug)]
 struct EventState {
     base: EventBaseId,
+    descriptor: Option<DescriptorId>,
     flags: EventFlags,
     priority: u8,
     summary: CallbackSummary,
@@ -508,6 +528,12 @@ struct BuffereventState {
     read_watermark: (usize, usize),
     write_watermark: (usize, usize),
     freed: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum DescriptorCustody {
+    SocketPair,
+    Bufferevent(BuffereventKey),
 }
 
 #[derive(Clone, Debug)]
@@ -547,7 +573,7 @@ pub fn check_event_program(
     let mut latest_bev_generation = BTreeMap::<BuffereventId, Generation>::new();
     let mut live_arguments = program.live_arguments.clone();
     let mut dropped_arguments = BTreeSet::new();
-    let mut descriptor_custody = BTreeMap::<DescriptorId, BuffereventKey>::new();
+    let mut descriptor_custody = BTreeMap::<DescriptorId, DescriptorCustody>::new();
     let mut closed_descriptors = BTreeSet::new();
     let mut freed_events = BTreeSet::new();
     let mut freed_bufferevents = BTreeSet::new();
@@ -608,7 +634,7 @@ pub fn check_event_program(
             EventOperation::Assign {
                 event,
                 base,
-                descriptor: _,
+                descriptor,
                 flags,
                 priority,
                 summary,
@@ -616,7 +642,12 @@ pub fn check_event_program(
                 let stale = latest_event_generation
                     .get(&event.id)
                     .is_some_and(|generation| *generation >= event.generation);
-                if stale || events.contains_key(event) {
+                if descriptor.is_some_and(|descriptor| closed_descriptors.contains(&descriptor)) {
+                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        operation: operation_index,
+                        descriptor: descriptor.expect("checked descriptor"),
+                    });
+                } else if stale || events.contains_key(event) {
                     diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
                         operation: operation_index,
                     });
@@ -645,6 +676,7 @@ pub fn check_event_program(
                         *event,
                         EventState {
                             base: *base,
+                            descriptor: *descriptor,
                             flags: *flags,
                             priority: *priority,
                             summary: summary.clone(),
@@ -657,6 +689,16 @@ pub fn check_event_program(
             }
             EventOperation::Add { event } | EventOperation::Reschedule { event } => {
                 match events.get_mut(event) {
+                    Some(state)
+                        if state
+                            .descriptor
+                            .is_some_and(|descriptor| closed_descriptors.contains(&descriptor)) =>
+                    {
+                        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                            operation: operation_index,
+                            descriptor: state.descriptor.expect("checked descriptor"),
+                        });
+                    }
                     Some(state)
                         if matches!(
                             state.lifecycle,
@@ -868,6 +910,70 @@ pub fn check_event_program(
                     });
                 }
             },
+            EventOperation::CreateSocketPair { descriptors } => {
+                if let Some((first, second)) = descriptors {
+                    if *first < 0
+                        || *second < 0
+                        || first == second
+                        || descriptor_custody.contains_key(first)
+                        || descriptor_custody.contains_key(second)
+                        || closed_descriptors.contains(first)
+                        || closed_descriptors.contains(second)
+                    {
+                        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                            operation: operation_index,
+                            descriptor: *first,
+                        });
+                    } else {
+                        descriptor_custody.insert(*first, DescriptorCustody::SocketPair);
+                        descriptor_custody.insert(*second, DescriptorCustody::SocketPair);
+                    }
+                }
+            }
+            EventOperation::GetSocketError { descriptor } => {
+                if closed_descriptors.contains(descriptor) {
+                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        operation: operation_index,
+                        descriptor: *descriptor,
+                    });
+                }
+            }
+            EventOperation::CloseSocket {
+                descriptor,
+                succeeds,
+            } => {
+                let active_borrow = events.values().any(|event| {
+                    event.descriptor == Some(*descriptor)
+                        && matches!(
+                            event.lifecycle,
+                            EventLifecycle::Active | EventLifecycle::Running
+                        )
+                });
+                if active_borrow {
+                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        operation: operation_index,
+                        descriptor: *descriptor,
+                    });
+                } else {
+                    match descriptor_custody.get(descriptor) {
+                        Some(DescriptorCustody::SocketPair) if *succeeds => {
+                            descriptor_custody.remove(descriptor);
+                            closed_descriptors.insert(*descriptor);
+                            observed = ObservedKind::DescriptorClose;
+                        }
+                        Some(DescriptorCustody::SocketPair) => {
+                            // A failed close retains the obligation. The
+                            // terminal custody check rejects an absent retry.
+                        }
+                        _ => {
+                            diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                                operation: operation_index,
+                                descriptor: *descriptor,
+                            });
+                        }
+                    }
+                }
+            }
             EventOperation::CreateBufferevent {
                 bev,
                 base,
@@ -886,6 +992,11 @@ pub fn check_event_program(
                     diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
                         operation: operation_index,
                     });
+                } else if closed_descriptors.contains(descriptor) {
+                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        operation: operation_index,
+                        descriptor: *descriptor,
+                    });
                 } else if !live_arguments.contains(argument) {
                     diagnostics.insert(EventDiagnostic::Q702ArgumentLifetime {
                         operation: operation_index,
@@ -900,14 +1011,20 @@ pub fn check_event_program(
                         operation: operation_index,
                         base: *base,
                     });
-                } else if *close_on_free && descriptor_custody.contains_key(descriptor) {
+                } else if *close_on_free
+                    && matches!(
+                        descriptor_custody.get(descriptor),
+                        Some(DescriptorCustody::Bufferevent(_))
+                    )
+                {
                     diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
                     });
                 } else {
                     if *close_on_free {
-                        descriptor_custody.insert(*descriptor, *bev);
+                        descriptor_custody
+                            .insert(*descriptor, DescriptorCustody::Bufferevent(*bev));
                     }
                     latest_bev_generation.insert(bev.id, bev.generation);
                     bevs.insert(
@@ -1037,9 +1154,18 @@ pub fn check_event_program(
                     live_arguments.remove(&state.argument);
                     dropped_arguments.insert(state.argument);
                     if state.close_on_free {
-                        descriptor_custody.remove(&state.descriptor);
-                        closed_descriptors.insert(state.descriptor);
-                        observed = ObservedKind::DescriptorClose;
+                        if descriptor_custody.get(&state.descriptor)
+                            == Some(&DescriptorCustody::Bufferevent(*bev))
+                        {
+                            descriptor_custody.remove(&state.descriptor);
+                            closed_descriptors.insert(state.descriptor);
+                            observed = ObservedKind::DescriptorClose;
+                        } else {
+                            diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                                operation: operation_index,
+                                descriptor: state.descriptor,
+                            });
+                        }
                     } else {
                         observed = ObservedKind::Teardown;
                     }
@@ -1192,6 +1318,12 @@ pub fn check_event_program(
                 operation: program.operations.len(),
             });
         }
+    }
+    for descriptor in descriptor_custody.keys() {
+        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+            operation: program.operations.len(),
+            descriptor: *descriptor,
+        });
     }
 
     if diagnostics.is_empty() {
@@ -1409,6 +1541,22 @@ pub fn verify_pinned_libevent_source(
             &[
                 "int evthread_use_pthreads(void);",
                 "int evthread_use_windows_threads(void);",
+            ][..],
+        ),
+        (
+            "include/event2/util.h",
+            &[
+                "int evutil_socketpair(int domain, int type, int protocol, evutil_socket_t sv[2]);",
+                "int evutil_closesocket(evutil_socket_t sock);",
+                "int evutil_socket_geterror(evutil_socket_t sock);",
+            ][..],
+        ),
+        (
+            "evutil.c",
+            &[
+                "evutil_closesocket(evutil_socket_t sock)",
+                "evutil_socket_geterror(evutil_socket_t sock)",
+                "evutil_socketpair(int family, int type, int protocol, evutil_socket_t fd[2])",
             ][..],
         ),
         (
@@ -1863,6 +2011,179 @@ mod tests {
         assert!(has(
             &check_event_program(&program).unwrap_err(),
             |error| matches!(error, EventDiagnostic::Q709UnknownProfile { .. })
+        ));
+    }
+
+    #[test]
+    fn evutil_socket_contracts_are_profiled_and_conserve_custody() {
+        for symbol in [
+            "evutil_closesocket",
+            "evutil_socket_geterror",
+            "evutil_socketpair",
+        ] {
+            assert_eq!(
+                classify_libevent_symbol(symbol),
+                ProfileDisposition::Accepted
+            );
+        }
+        let program = EventProgram {
+            live_arguments: BTreeSet::new(),
+            operations: vec![
+                EventOperation::CreateSocketPair {
+                    descriptors: Some((3, 4)),
+                },
+                EventOperation::GetSocketError { descriptor: 3 },
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: true,
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 4,
+                    succeeds: true,
+                },
+            ],
+        };
+        let certificate = check_event_program(&program).unwrap();
+        assert_eq!(certificate.closed_descriptors, BTreeSet::from([3, 4]));
+    }
+
+    #[test]
+    fn failed_socketpair_creates_no_descriptor_obligation() {
+        let program = EventProgram {
+            live_arguments: BTreeSet::new(),
+            operations: vec![EventOperation::CreateSocketPair { descriptors: None }],
+        };
+        assert!(check_event_program(&program).is_ok());
+    }
+
+    #[test]
+    fn failed_or_duplicate_socket_close_is_fail_closed() {
+        let failed_close = EventProgram {
+            live_arguments: BTreeSet::new(),
+            operations: vec![
+                EventOperation::CreateSocketPair {
+                    descriptors: Some((3, 4)),
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: false,
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 4,
+                    succeeds: true,
+                },
+            ],
+        };
+        let diagnostics = check_event_program(&failed_close).unwrap_err();
+        assert!(
+            diagnostics.contains(&EventDiagnostic::Q703DescriptorCustody {
+                operation: failed_close.operations.len(),
+                descriptor: 3,
+            })
+        );
+
+        let duplicate_close = EventProgram {
+            live_arguments: BTreeSet::new(),
+            operations: vec![
+                EventOperation::CreateSocketPair {
+                    descriptors: Some((3, 4)),
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: true,
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: true,
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 4,
+                    succeeds: true,
+                },
+            ],
+        };
+        assert!(has(
+            &check_event_program(&duplicate_close).unwrap_err(),
+            |error| matches!(
+                error,
+                EventDiagnostic::Q703DescriptorCustody {
+                    operation: 2,
+                    descriptor: 3
+                }
+            )
+        ));
+    }
+
+    #[test]
+    fn socket_error_query_cannot_use_a_closed_descriptor() {
+        let program = EventProgram {
+            live_arguments: BTreeSet::new(),
+            operations: vec![
+                EventOperation::CreateSocketPair {
+                    descriptors: Some((3, 4)),
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: true,
+                },
+                EventOperation::GetSocketError { descriptor: 3 },
+                EventOperation::CloseSocket {
+                    descriptor: 4,
+                    succeeds: true,
+                },
+            ],
+        };
+        assert!(has(
+            &check_event_program(&program).unwrap_err(),
+            |error| matches!(
+                error,
+                EventDiagnostic::Q703DescriptorCustody {
+                    operation: 2,
+                    descriptor: 3
+                }
+            )
+        ));
+    }
+
+    #[test]
+    fn active_event_borrow_prevents_socket_close() {
+        let mut program = one_shot(1, key(1), 9);
+        program.operations.insert(
+            0,
+            EventOperation::CreateSocketPair {
+                descriptors: Some((3, 4)),
+            },
+        );
+        program.operations.insert(
+            6,
+            EventOperation::CloseSocket {
+                descriptor: 3,
+                succeeds: true,
+            },
+        );
+        let free_base = program.operations.len() - 1;
+        program.operations.splice(
+            free_base..free_base,
+            [
+                EventOperation::CloseSocket {
+                    descriptor: 3,
+                    succeeds: true,
+                },
+                EventOperation::CloseSocket {
+                    descriptor: 4,
+                    succeeds: true,
+                },
+            ],
+        );
+        assert!(has(
+            &check_event_program(&program).unwrap_err(),
+            |error| matches!(
+                error,
+                EventDiagnostic::Q703DescriptorCustody {
+                    operation: 6,
+                    descriptor: 3
+                }
+            )
         ));
     }
 

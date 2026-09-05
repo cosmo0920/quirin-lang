@@ -38,6 +38,8 @@ markers:
 | `event.c` | one running loop per base, nonblocking-delete distinction, finalizing events ignoring activation, and active-queue processing |
 | `bufferevent.c` | unlocked callbacks require deferral, locked/unlocked deferred dispatch, and thread-safe locking setup |
 | `include/event2/thread.h` | pthread and Windows-thread initialization APIs |
+| `include/event2/util.h` | socket-pair creation, portable socket close, and socket-error query APIs added by the Cycle 19 Monkey composition |
+| `evutil.c` | socket-pair rollback and platform-specific close/error implementations used by those contracts |
 | `epoll.c` | public epoll backend operation table and native wait path |
 | `kqueue.c` | public kqueue backend operation table, native initialization, and native wait path |
 | `win32select.c` | public WIN32 backend operation table and native `select` dispatch path |
@@ -54,6 +56,8 @@ checked include/event2/event.h
 checked event.c
 checked bufferevent.c
 checked include/event2/thread.h
+checked include/event2/util.h
+checked evutil.c
 checked epoll.c
 checked kqueue.c
 checked win32select.c

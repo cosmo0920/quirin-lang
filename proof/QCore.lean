@@ -5,6 +5,7 @@ import QCore.Lowering
 import QCore.Metatheory
 import QCore.ErrorRegion
 import QCore.EventDriven
+import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
 import QCore.ExecutableModel
 import QCore.Flow

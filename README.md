@@ -52,7 +52,8 @@ unrestricted-C gateway to pinned Fluent Bit CMetrics, CTraces, librdkafka,
 ChunkIO, the central input-chunk wrapper, and Monkey builds. It retains partial
 summaries across reduced-parser failures, adds a bounded fail-closed ChunkIO
 lifecycle checker without promoting raw units to Safe, and links the
-forced-Libevent Monkey source back to the Cycle 18 trust boundary. The completed
+forced-Libevent Monkey source back to the Cycle 18 trust boundary with checked
+socket-pair, close, and error-query custody. The completed
 Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent

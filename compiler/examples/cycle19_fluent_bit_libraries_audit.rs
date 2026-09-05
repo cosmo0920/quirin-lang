@@ -474,6 +474,8 @@ fn audit_monkey_libevent_contract(fluent_root: &Path) -> Result<(), String> {
         "event.c",
         "bufferevent.c",
         "include/event2/thread.h",
+        "include/event2/util.h",
+        "evutil.c",
         "epoll.c",
     ];
     for relative in trusted_files {

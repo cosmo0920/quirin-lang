@@ -1,4 +1,5 @@
 import QCore.ChunkLifecycle
+import QCore.MonkeyEvent
 
 #print axioms QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old
 #print axioms QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old
@@ -11,3 +12,9 @@ import QCore.ChunkLifecycle
 #print axioms QCore.ChunkLifecycle.accepted_failed_open_has_no_residual_obligation
 #print axioms QCore.ChunkLifecycle.accepted_teardown_records_nested_order_and_partial_delete
 #print axioms QCore.ChunkLifecycle.combined_cycle19_chunk_safety
+#print axioms QCore.MonkeyEvent.accepted_successful_socketpair_creates_two_distinct_owned_descriptors
+#print axioms QCore.MonkeyEvent.accepted_failed_socketpair_creates_no_custody
+#print axioms QCore.MonkeyEvent.accepted_successful_close_discharges_once
+#print axioms QCore.MonkeyEvent.accepted_failed_close_retains_custody
+#print axioms QCore.MonkeyEvent.accepted_error_query_is_borrowed
+#print axioms QCore.MonkeyEvent.accepted_monkey_descriptor_teardown_is_complete_and_unique

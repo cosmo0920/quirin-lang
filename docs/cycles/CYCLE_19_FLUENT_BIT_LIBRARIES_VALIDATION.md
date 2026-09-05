@@ -37,7 +37,7 @@ Monkey v1.8.9 import (Fluent Bit commit 1f10023cfbb25115eadb6c16498c2003c7a9c2bb
 ```
 
 Monkey bundles a Libevent source snapshot under
-`lib/monkey/mk_core/deps/libevent`. The five source-contract files trusted by
+`lib/monkey/mk_core/deps/libevent`. The seven source-contract files trusted by
 the Cycle 18 model are byte-identical to the separately pinned
 `third_party/libevent` checkout at
 `d82464a277d0f42703702c4dfd9af6af38595a83`. This equality is checked by the
@@ -227,28 +227,32 @@ post-states and are not interchangeable with complete object teardown.
 
 ## Monkey event-model boundary
 
-The adapter calls seven Libevent APIs already accepted by Cycle 18:
+The adapter's ten Libevent calls are now in the bounded event profile:
 
 ```text
 event_add, event_base_free, event_base_loop, event_base_new,
-event_del, event_free, event_new
+event_del, event_free, event_new, evutil_closesocket,
+evutil_socket_geterror, evutil_socketpair
 ```
 
-Three public descriptor utilities are not in the current Cycle 18 importer and
-therefore remain `Unknown`:
+The Cycle 19 extension gives the three descriptor utilities explicit branch
+and custody semantics. A successful `evutil_socketpair` creates two distinct
+owned descriptors; failure creates none. `evutil_socket_geterror` is borrowed
+and cannot revive a descriptor already closed in the trace.
+`evutil_closesocket` discharges close custody only on success, so Monkey paths
+that ignore a failed close retain an obligation. Duplicate closes and closing
+an active callback descriptor are rejected. The pinned contract audit now also
+checks `include/event2/util.h` and `evutil.c`, both byte-identical in Monkey's
+bundled Libevent and the Cycle 18 checkout.
 
-```text
-evutil_closesocket, evutil_socket_geterror, evutil_socketpair
-```
-
-Consequently, passing the C gateway does not produce a Cycle 18 event-safety
+Recognizing all called API names still does not produce a Cycle 18 event-safety
 certificate for Monkey. The adapter uses `event_base_new`, so the runtime
 Libevent backend is not pinned by the call itself, and the current importer
-does not yet carry Monkey's `struct mk_event`/`struct ev_map` custody,
-socket-pair close authority, nullable event acquisition, callback argument
-aliases, or callback-to-fired-array effects into the event IR. The aggregate
-event verdict remains fail-closed as `Unknown` until those contracts are
-modeled and the selected backend is observed or constrained.
+does not yet carry Monkey's `struct mk_event`/`struct ev_map` custody, nullable
+event acquisition, callback argument aliases, or callback-to-fired-array
+effects into the event IR. The aggregate event verdict remains fail-closed as
+`Unknown` until those contracts are modeled and the selected backend is
+observed or constrained.
 
 ## Bounded ChunkIO lifecycle result
 
@@ -293,12 +297,11 @@ certification gate.
 8. rerun the same pinned local audit before expanding beyond the central
    Fluent Bit chunk wrapper.
 
-For the Monkey event slice, the corresponding gates are to add explicit
-semantics for the three `evutil_*` calls, import the wrapper's event and
-descriptor custody, refine nullable Libevent acquisitions and failed
-registration paths, summarize `cb_event`, `cb_timeout`, and
-`cb_wait_2_timeout`, and bind runtime backend evidence to the Cycle 18 build
-profile before claiming event-model coverage.
+For the Monkey event slice, the remaining gates are to import the wrapper's
+event/map custody into the implemented descriptor operations, refine nullable
+Libevent acquisitions and failed registration paths, summarize `cb_event`,
+`cb_timeout`, and `cb_wait_2_timeout`, and bind runtime backend evidence to the
+Cycle 18 build profile before claiming event-model coverage.
 
 Only functions whose resource obligations are fully discharged may contribute
 to memory-safety coverage. `Unknown` and provisional `Unsafe` functions remain

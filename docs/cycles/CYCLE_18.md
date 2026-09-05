@@ -108,7 +108,8 @@ locking disabled.
 ## 18D: Libevent importer and runtime adapter
 
 Extend the legacy-C importer with summaries for the accepted `event2/event.h`,
-`event2/thread.h`, `event2/buffer.h`, and `event2/bufferevent.h` surface. Resolve
+`event2/thread.h`, `event2/buffer.h`, `event2/bufferevent.h`, and bounded
+`event2/util.h` surface. Resolve
 callback targets and callback-argument aliases interprocedurally. Preserve
 `Unknown` for function pointers or wrappers whose lifecycle and effects cannot
 be proved.

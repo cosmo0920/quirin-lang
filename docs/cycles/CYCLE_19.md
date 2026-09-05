@@ -157,3 +157,21 @@ nested teardown order, and delete-only classification. This bounded checker is
 not yet composed with the unrestricted-C importer, so it does not promote any
 raw ChunkIO or Fluent Bit translation unit to `Safe`. Importer composition,
 remaining control flow, and Monkey event composition remain Cycle 19 work.
+
+## Implemented 19D descriptor foundation
+
+The Cycle 18 API profile now includes the three Libevent descriptor utilities
+called by Monkey. `evutil_socketpair` has explicit success/failure out-custody,
+`evutil_socket_geterror` is a borrowed query, and `evutil_closesocket` consumes
+close custody only when the close succeeds. The event checker rejects duplicate
+close, use after close, active-callback close, and terminal live descriptor
+obligations. Its pinned source contract includes `event2/util.h` and
+`evutil.c`, and the Monkey audit verifies those files are byte-identical to the
+Cycle 18 checkout.
+
+The Lean account proves successful pair creation is distinct, pair failure
+creates no custody, close failure retains custody, successful close discharges
+it once, error query preserves custody, and accepted teardown has no live
+owned descriptor. Wrapper event/map importing, nullable `event_base_new` and
+`event_new` failure composition, callback summaries, and deployed backend
+observation remain pending; therefore the Monkey aggregate stays `Unknown`.
