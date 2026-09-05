@@ -1,0 +1,16 @@
+import QCore.LegacyCAnalyzer
+
+-- Print the foundational dependencies of every Cycle 9 safety theorem.
+#print axioms QCore.LegacyCAnalyzer.safe_implies_no_exit_leak
+#print axioms QCore.LegacyCAnalyzer.safe_implies_no_safety_diagnostic
+#print axioms QCore.LegacyCAnalyzer.safe_implies_no_double_release_diagnostic
+#print axioms QCore.LegacyCAnalyzer.safe_implies_no_release_after_escape
+#print axioms QCore.LegacyCAnalyzer.imprecise_is_never_safe
+#print axioms QCore.LegacyCAnalyzer.unsupported_becomes_unknown
+#print axioms QCore.LegacyCAnalyzer.seeded_normal_leak_is_unsafe
+#print axioms QCore.LegacyCAnalyzer.seeded_double_release_is_unsafe
+#print axioms QCore.LegacyCAnalyzer.acquired_then_released_is_safe
+#print axioms QCore.LegacyCAnalyzer.join_preserves_left_live
+#print axioms QCore.LegacyCAnalyzer.join_preserves_right_live
+#print axioms QCore.LegacyCAnalyzer.alias_join_preserves_unknown_left
+#print axioms QCore.LegacyCAnalyzer.alias_join_preserves_unknown_right

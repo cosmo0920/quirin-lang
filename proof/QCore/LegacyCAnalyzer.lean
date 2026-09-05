@@ -1,0 +1,220 @@
+namespace QCore.LegacyCAnalyzer
+
+abbrev ResourceId := Nat
+
+inductive ResourceStatus where
+  | live
+  | released
+  | escaped
+  deriving DecidableEq
+
+inductive Instruction where
+  | acquire (resource : ResourceId)
+  | release (resource : ResourceId)
+  | escape (resource : ResourceId)
+  | unsupported
+  deriving DecidableEq
+
+inductive Diagnostic where
+  | leak (resource : ResourceId)
+  | doubleRelease (resource : ResourceId)
+  | releaseAfterEscape (resource : ResourceId)
+  | unknown
+  deriving DecidableEq
+
+structure AbstractState where
+  ledger : List (ResourceId × ResourceStatus)
+  diagnostics : List Diagnostic
+  precise : Bool
+  deriving DecidableEq
+
+def initial : AbstractState := {
+  ledger := []
+  diagnostics := []
+  precise := true }
+
+def lookup (resource : ResourceId) :
+    List (ResourceId × ResourceStatus) → Option ResourceStatus
+  | [] => none
+  | (candidate, status) :: rest =>
+      if candidate = resource then some status else lookup resource rest
+
+def update (resource : ResourceId) (status : ResourceStatus) :
+    List (ResourceId × ResourceStatus) → List (ResourceId × ResourceStatus)
+  | [] => [(resource, status)]
+  | (candidate, oldStatus) :: rest =>
+      if candidate = resource then
+        (candidate, status) :: rest
+      else
+        (candidate, oldStatus) :: update resource status rest
+
+def transfer (state : AbstractState) : Instruction → AbstractState
+  | .acquire resource =>
+      match lookup resource state.ledger with
+      | none => { state with ledger := update resource .live state.ledger }
+      | some _ => {
+          state with
+          diagnostics := .unknown :: state.diagnostics
+          precise := false }
+  | .release resource =>
+      match lookup resource state.ledger with
+      | some .live => { state with ledger := update resource .released state.ledger }
+      | some .released => {
+          state with diagnostics := .doubleRelease resource :: state.diagnostics }
+      | some .escaped => {
+          state with diagnostics := .releaseAfterEscape resource :: state.diagnostics }
+      | none => {
+          state with
+          diagnostics := .unknown :: state.diagnostics
+          precise := false }
+  | .escape resource =>
+      match lookup resource state.ledger with
+      | some .live => { state with ledger := update resource .escaped state.ledger }
+      | some _ => {
+          state with
+          diagnostics := .unknown :: state.diagnostics
+          precise := false }
+      | none => {
+          state with
+          diagnostics := .unknown :: state.diagnostics
+          precise := false }
+  | .unsupported => {
+      state with
+      diagnostics := .unknown :: state.diagnostics
+      precise := false }
+
+def run (program : List Instruction) : AbstractState :=
+  program.foldl transfer initial
+
+def close (state : AbstractState) : AbstractState :=
+  state.ledger.foldl (fun current entry =>
+    if entry.2 = .live then
+      { current with diagnostics := .leak entry.1 :: current.diagnostics }
+    else current) state
+
+def isSafetyIssue : Diagnostic → Bool
+  | .leak _ | .doubleRelease _ | .releaseAfterEscape _ => true
+  | .unknown => false
+
+def leakFree (state : AbstractState) : Bool :=
+  state.ledger.all fun entry => entry.2 != .live
+
+def hasSafetyIssue (state : AbstractState) : Bool :=
+  state.diagnostics.any isSafetyIssue
+
+inductive Verdict where
+  | safe
+  | defect
+  | indeterminate
+  deriving DecidableEq
+
+/-- Safety is reported only for a precise abstract state with no live resource.
+    A safety diagnostic takes priority over an accompanying unknown. -/
+def classify (state : AbstractState) : Verdict :=
+  if hasSafetyIssue state then .defect
+  else if state.precise && leakFree state then .safe
+  else .indeterminate
+
+def analyze (program : List Instruction) : Verdict :=
+  classify (close (run program))
+
+theorem safe_implies_no_exit_leak (state : AbstractState)
+    (safe : classify state = .safe) : leakFree state = true := by
+  unfold classify at safe
+  split at safe
+  · contradiction
+  · split at safe
+    · cases preciseEq : state.precise <;>
+        cases leakEq : leakFree state <;> simp_all
+    · contradiction
+
+theorem safe_implies_no_safety_diagnostic (state : AbstractState)
+    (safe : classify state = .safe) : hasSafetyIssue state = false := by
+  unfold classify at safe
+  split at safe <;> simp_all
+
+theorem safe_implies_no_double_release_diagnostic (state : AbstractState)
+    (safe : classify state = .safe) :
+    ¬ ∃ resource, .doubleRelease resource ∈ state.diagnostics := by
+  intro doubleRelease
+  have clear := safe_implies_no_safety_diagnostic state safe
+  rcases doubleRelease with ⟨resource, member⟩
+  have present : state.diagnostics.any isSafetyIssue = true :=
+    List.any_eq_true.mpr ⟨.doubleRelease resource, member, by simp [isSafetyIssue]⟩
+  simp [hasSafetyIssue, present] at clear
+
+theorem safe_implies_no_release_after_escape (state : AbstractState)
+    (safe : classify state = .safe) :
+    ¬ ∃ resource, .releaseAfterEscape resource ∈ state.diagnostics := by
+  intro releaseAfterEscape
+  have clear := safe_implies_no_safety_diagnostic state safe
+  rcases releaseAfterEscape with ⟨resource, member⟩
+  have present : state.diagnostics.any isSafetyIssue = true :=
+    List.any_eq_true.mpr ⟨.releaseAfterEscape resource, member, by simp [isSafetyIssue]⟩
+  simp [hasSafetyIssue, present] at clear
+
+theorem imprecise_is_never_safe (state : AbstractState)
+    (imprecise : state.precise = false) : classify state ≠ .safe := by
+  unfold classify
+  split
+  · simp
+  · simp [imprecise]
+
+theorem unsupported_becomes_unknown :
+    classify (transfer initial .unsupported) = .indeterminate := by
+  decide
+
+theorem seeded_normal_leak_is_unsafe (resource : ResourceId) :
+    analyze [.acquire resource] = .defect := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+theorem seeded_double_release_is_unsafe (resource : ResourceId) :
+    analyze [.acquire resource, .release resource, .release resource] = .defect := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+theorem acquired_then_released_is_safe (resource : ResourceId) :
+    analyze [.acquire resource, .release resource] = .safe := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, leakFree]
+
+/-- The may-state used at CFG joins.  Each bit records a possible concrete
+    state; join preserves every possibility from either predecessor. -/
+structure MayStatus where
+  live : Bool
+  released : Bool
+  escaped : Bool
+  deriving DecidableEq
+
+def MayStatus.join (left right : MayStatus) : MayStatus := {
+  live := left.live || right.live
+  released := left.released || right.released
+  escaped := left.escaped || right.escaped }
+
+theorem join_preserves_left_live (left right : MayStatus)
+    (live : left.live = true) : (left.join right).live = true := by
+  simp [MayStatus.join, live]
+
+theorem join_preserves_right_live (left right : MayStatus)
+    (live : right.live = true) : (left.join right).live = true := by
+  simp [MayStatus.join, live]
+
+structure AliasValue where
+  targets : List ResourceId
+  unknown : Bool
+  deriving DecidableEq
+
+def AliasValue.join (left right : AliasValue) : AliasValue := {
+  targets := left.targets ++ right.targets
+  unknown := left.unknown || right.unknown }
+
+theorem alias_join_preserves_unknown_left (left right : AliasValue)
+    (unknown : left.unknown = true) : (left.join right).unknown = true := by
+  simp [AliasValue.join, unknown]
+
+theorem alias_join_preserves_unknown_right (left right : AliasValue)
+    (unknown : right.unknown = true) : (left.join right).unknown = true := by
+  simp [AliasValue.join, unknown]
+
+end QCore.LegacyCAnalyzer

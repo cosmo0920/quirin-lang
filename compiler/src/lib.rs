@@ -4,7 +4,8 @@
 //! interval-graded usage analysis, ownership, static resource-flow bounds,
 //! path-sensitive typed recoverable errors, checked error-region cleanup, and
 //! cleanup-explicit CFG lowering to C11, plus a reduced executable model tying
-//! those safety mechanisms together for the Cycle 8 metatheory.
+//! those safety mechanisms together for the Cycle 8 metatheory, and a
+//! conservative annotated legacy-C resource analyzer for Cycle 9.
 
 pub mod ast;
 pub mod c_emit;
@@ -14,6 +15,7 @@ pub mod cleanup_lowering;
 pub mod error_region;
 pub mod executable_model;
 pub mod index;
+pub mod legacy_c;
 pub mod lexer;
 pub mod ownership;
 pub mod parser;
@@ -43,6 +45,11 @@ pub use executable_model::{
     UsageBinding as ModelUsageBinding, UsageGrade as ModelUsageGrade, Variable as ModelVariable,
 };
 pub use index::{IndexError, IndexExpression, IndexTerm};
+pub use legacy_c::{
+    AnalysisStatus, LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind,
+    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, ResourceApiKind, ResourceContracts,
+    analyze_legacy_c,
+};
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use ownership::{
     Footprint, OwnershipArithmeticError, OwnershipError, OwnershipOp, OwnershipState,
