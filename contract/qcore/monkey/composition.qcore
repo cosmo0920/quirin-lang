@@ -1,0 +1,110 @@
+// Composition boundary for Monkey's bundled Libevent adapter.
+// The certificate joins callback summaries, descriptor custody, build identity,
+// backend selection, dispatcher identity, and one observed execution trace.
+
+error MonkeyCompositionError {
+    SourceRevisionMismatch;
+    MissingCallbackSummary;
+    DescriptorCustodyMismatch;
+    BuildProfileMismatch;
+    BackendMismatch;
+    DispatcherMismatch;
+    ObservationMismatch;
+}
+
+resource type EventMap {
+    repr: ptr<mut, u8>;
+    footprint: { event_maps = 1 };
+    destructor: monkey_event_map_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn evutil_socketpair(
+    descriptors: borrow<'out, mut, DescriptorPairOut> use one
+) -> result<DescriptorPair, SocketPairError>
+effects { io, throws<SocketPairError> }
+contract {
+    ensures normal descriptor_pair_is_distinct;
+    ensures normal both_descriptors_have_local_close_custody;
+    ensures error(SocketPairError) no_descriptor_custody_created;
+};
+
+extern fn evutil_socket_geterror(
+    descriptor: borrow<'call, const, Descriptor> use one
+) -> i32
+contract {
+    requires descriptor_is_live;
+    ensures any descriptor_custody_is_preserved;
+};
+
+extern fn evutil_closesocket(
+    descriptor: own<Descriptor> use one
+) -> result<unit, SocketCloseError>
+effects { io, throws<SocketCloseError> }
+contract {
+    requires descriptor_has_close_custody;
+    requires descriptor_has_no_active_callback;
+    ensures normal descriptor_custody_is_discharged_once;
+    ensures error(SocketCloseError) descriptor_custody_is_preserved;
+};
+
+extern fn cb_event(
+    callback_argument: borrow<'callback, mut, MonkeyCallbackArgument> use one
+) -> unit
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal fired_event_array_is_written;
+    ensures normal callback_argument_custody_is_preserved;
+};
+
+extern fn cb_timeout(
+    callback_argument: borrow<'callback, mut, MonkeyCallbackArgument> use one
+) -> unit
+effects { io }
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal descriptor_may_be_closed;
+    ensures normal event_map_may_be_released;
+    ensures normal every_release_is_reflected_in_custody;
+};
+
+extern fn cb_wait_2_timeout(
+    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one
+) -> unit
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal callback_has_no_resource_effect;
+};
+
+extern fn check_monkey_composition(
+    event_map: own<EventMap> use one,
+    observation: borrow<'observation, const, DispatcherObservation> use one
+) -> result<MonkeyCompositionCertificate, MonkeyCompositionError>
+contract {
+    requires source_revision_matches_pinned_revision;
+    requires nullable_base_failure_is_discharged;
+    requires nullable_event_failure_is_discharged;
+    requires failed_registration_is_discharged;
+    requires callback_summaries_are_exact;
+    requires build_profile_matches_created_base;
+    requires dispatcher_matches_observation;
+    requires backend_matches_observation;
+    requires observed_trace_refines_checked_trace;
+    ensures normal all_callback_obligations_are_composed;
+    ensures normal all_descriptor_obligations_are_discharged;
+    ensures normal event_map_is_discharged;
+    ensures error(MonkeyCompositionError) no_event_certificate_is_issued;
+};
+
+error SocketPairError {
+    CreationFailed;
+}
+
+error SocketCloseError {
+    CloseFailed;
+}
+
+fn main() -> i32 {
+    return 0;
+}

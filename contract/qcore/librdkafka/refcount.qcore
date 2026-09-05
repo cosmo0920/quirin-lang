@@ -1,0 +1,45 @@
+// Upstream source: src/rd.h (librdkafka 2.15.0)
+// Audited mechanism: reference-count custody and final destruction.
+
+resource type KafkaReference {
+    repr: ptr<mut, u8>;
+    footprint: { references = 1 };
+    destructor: rd_refcnt_destroy_final noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn rd_refcnt_add0(
+    reference: borrow<'call, mut, KafkaReference> use one
+) -> i32
+effects { atomic }
+contract {
+    requires reference_is_live;
+    ensures normal reference_count == old(reference_count) + 1;
+    ensures normal custody_is_preserved;
+    quant any live_resources == old(live_resources);
+};
+
+extern fn rd_refcnt_sub0(
+    reference: borrow<'call, mut, KafkaReference> use one
+) -> i32
+effects { atomic }
+contract {
+    requires reference_is_live;
+    requires reference_count > 0;
+    ensures normal reference_count == old(reference_count) - 1;
+    ensures normal final_release_iff_reference_count_zero;
+};
+
+extern fn rd_refcnt_destroy_final(
+    reference: own<KafkaReference> use one
+) -> unit
+contract {
+    requires reference_count == 1;
+    ensures normal reference_is_discharged;
+    quant normal live_resources == old(live_resources) - 1;
+};
+
+fn main() -> i32 {
+    return 0;
+}

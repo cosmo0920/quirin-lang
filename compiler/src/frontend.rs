@@ -40,8 +40,40 @@ pub struct SourceDeclaration {
     pub name: String,
     pub parameters: Vec<SourceParameter>,
     pub body: Option<SourceBlock>,
+    pub function_contract: Option<SourceFunctionContract>,
     pub verifier_scope: Option<VerifierScopeDeclaration>,
     pub tokens: Vec<TokenKind>,
+}
+
+/// A source-level function contract retained as structured syntax.  Semantic
+/// passes can consume these clauses incrementally without reparsing declaration
+/// text, while corpus tests can pin the contract surface independently of the
+/// executable subset.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceFunctionContract {
+    pub span: Span,
+    pub clauses: Vec<Located<SourceContractClause>>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceContractClause {
+    pub kind: SourceContractClauseKind,
+    pub expression_span: Span,
+    pub expression_source: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SourceContractClauseKind {
+    Requires,
+    Ensures(SourceContractExitSelector),
+    Quant(SourceContractExitSelector),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SourceContractExitSelector {
+    Normal,
+    Error(String),
+    Any,
 }
 
 /// A source-level selection of verifier providers. The scope is declarative:
@@ -367,6 +399,14 @@ impl<'a> SourceParser<'a> {
             _ => (self.semicolon(start)? + 1, None),
         };
         let body = body_open.map(|open| self.block(open)).transpose()?;
+        let function_contract = if matches!(
+            kind,
+            DeclarationKind::Function | DeclarationKind::ExternFunction
+        ) {
+            self.function_contract(start, body_open.unwrap_or(end))?
+        } else {
+            None
+        };
         let verifier_scope = if kind == DeclarationKind::VerifierScope {
             let open = self.find_symbol(start, Symbol::LeftBrace)?;
             Some(self.verifier_scope(open)?)
@@ -391,6 +431,7 @@ impl<'a> SourceParser<'a> {
                     name,
                     parameters,
                     body,
+                    function_contract,
                     verifier_scope,
                     tokens: self.tokens[start..end]
                         .iter()
@@ -399,6 +440,121 @@ impl<'a> SourceParser<'a> {
                 },
             },
             end,
+        ))
+    }
+
+    fn function_contract(
+        &self,
+        start: usize,
+        limit: usize,
+    ) -> Result<Option<SourceFunctionContract>, SourceParseError> {
+        let params = self.find_symbol(start, Symbol::LeftParen)?;
+        let mut cursor = self.close(params)? + 1;
+        let mut contract = None;
+        while cursor < limit {
+            if self.word(cursor, "contract") {
+                if contract.is_some() {
+                    return Err(self.error(cursor, "function has more than one contract block"));
+                }
+                if !self.symbol(cursor + 1, Symbol::LeftBrace) {
+                    return Err(self.error(cursor + 1, "function contract requires a block"));
+                }
+                let open = cursor + 1;
+                let close = self.close(open)?;
+                if close >= limit {
+                    return Err(self.error(open, "function contract lies outside its signature"));
+                }
+                contract = Some(self.contract_block(cursor, open, close)?);
+                cursor = close + 1;
+            } else {
+                cursor = self.skip_group(cursor);
+            }
+        }
+        Ok(contract)
+    }
+
+    fn contract_block(
+        &self,
+        contract_start: usize,
+        open: usize,
+        close: usize,
+    ) -> Result<SourceFunctionContract, SourceParseError> {
+        let mut clauses = Vec::new();
+        let mut cursor = open + 1;
+        while cursor < close {
+            let clause_start = cursor;
+            let (kind, expression_start) = if self.word(cursor, "requires") {
+                (SourceContractClauseKind::Requires, cursor + 1)
+            } else if self.word(cursor, "ensures") || self.word(cursor, "quant") {
+                let is_quant = self.word(cursor, "quant");
+                let (selector, next) = self.contract_exit_selector(cursor + 1, close)?;
+                let kind = if is_quant {
+                    SourceContractClauseKind::Quant(selector)
+                } else {
+                    SourceContractClauseKind::Ensures(selector)
+                };
+                (kind, next)
+            } else {
+                return Err(self.error(
+                    cursor,
+                    "contract clause must begin with `requires`, `ensures`, or `quant`",
+                ));
+            };
+            let semicolon = self.semicolon_before(expression_start, close)?;
+            if expression_start == semicolon {
+                return Err(self.error(expression_start, "contract clause expression is empty"));
+            }
+            let expression_span = self.range_span(expression_start, semicolon);
+            clauses.push(Located {
+                span: self.range_span(clause_start, semicolon + 1),
+                value: SourceContractClause {
+                    kind,
+                    expression_span,
+                    expression_source: self.source[expression_span.start..expression_span.end]
+                        .trim()
+                        .to_owned(),
+                },
+            });
+            cursor = semicolon + 1;
+        }
+        Ok(SourceFunctionContract {
+            span: self.range_span(contract_start, close + 1),
+            clauses,
+        })
+    }
+
+    fn contract_exit_selector(
+        &self,
+        start: usize,
+        limit: usize,
+    ) -> Result<(SourceContractExitSelector, usize), SourceParseError> {
+        if self.word(start, "normal") {
+            return Ok((SourceContractExitSelector::Normal, start + 1));
+        }
+        if self.word(start, "any") {
+            return Ok((SourceContractExitSelector::Any, start + 1));
+        }
+        if self.word(start, "error") {
+            if !self.symbol(start + 1, Symbol::LeftParen) {
+                return Err(self.error(start + 1, "error exit selector requires an error type"));
+            }
+            let close = self.close(start + 1)?;
+            if close >= limit || close == start + 2 {
+                return Err(self.error(start + 1, "error exit selector requires an error type"));
+            }
+            let error_span = self.range_span(start + 2, close);
+            return Ok((
+                SourceContractExitSelector::Error(
+                    self.source[error_span.start..error_span.end]
+                        .trim()
+                        .to_owned(),
+                ),
+                close + 1,
+            ));
+        }
+        Err(self.error(
+            start,
+            "contract clause requires `normal`, `error(Type)`, or `any` exit selector",
         ))
     }
 
@@ -1238,6 +1394,7 @@ pub struct TypedSourceDeclaration {
     pub name: String,
     pub span: Span,
     pub parameters: Vec<TypedBinding>,
+    pub function_contract: Option<SourceFunctionContract>,
     pub statements: Vec<TypedStatement>,
 }
 
@@ -1326,6 +1483,7 @@ pub fn elaborate_source(
             name: declaration.value.name.clone(),
             span: declaration.span,
             parameters,
+            function_contract: declaration.value.function_contract.clone(),
             statements,
         });
     }

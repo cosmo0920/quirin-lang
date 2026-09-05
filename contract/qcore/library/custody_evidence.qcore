@@ -1,0 +1,82 @@
+// Shared composition boundary for library custody that crosses threads or
+// publication slots. Scalar atomic operations do not establish these claims;
+// every transition consumes evidence of the exact synchronization kind.
+
+error CustodyEvidenceError {
+    MissingSynchronization;
+    InvalidHolder;
+    LiveResource;
+}
+
+resource type LibraryResource {
+    repr: ptr<mut, u8>;
+    footprint: { library_resources = 1 };
+    destructor: release_library_resource noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn publish_library_resource(
+    resource: own<LibraryResource> use one,
+    evidence: borrow<'evidence, const, AtomicPublicationEvidence> use one
+) -> PublishedLibraryResource
+contract {
+    requires resource_has_local_custody;
+    requires evidence_kind_is_atomic_publication;
+    ensures normal resource_has_publication_custody;
+    ensures normal evidence_is_recorded;
+    ensures normal local_custody_is_transferred_once;
+    quant any live_resources == old(live_resources);
+};
+
+extern fn handoff_library_resource(
+    resource: own<LibraryResource> use one,
+    evidence: borrow<'evidence, const, ThreadHandoffEvidence> use one
+) -> own<LibraryResource>
+contract {
+    requires resource_has_source_thread_custody;
+    requires evidence_kind_is_thread_handoff;
+    ensures normal resource_has_destination_thread_custody;
+    ensures normal evidence_is_recorded;
+    ensures normal source_thread_custody_is_transferred_once;
+    quant any live_resources == old(live_resources);
+};
+
+extern fn reclaim_library_resource(
+    published: own<PublishedLibraryResource> use one,
+    evidence: borrow<'evidence, const, ReclamationEvidence> use one
+) -> own<LibraryResource>
+contract {
+    requires resource_has_publication_custody;
+    requires evidence_kind_is_reclamation;
+    ensures normal resource_has_local_custody;
+    ensures normal evidence_is_recorded;
+    ensures normal publication_custody_is_transferred_once;
+    quant any live_resources == old(live_resources);
+};
+
+extern fn check_imported_library_custody(
+    imported_trace: borrow<'trace, const, ImportedLibraryCustodyTrace> use one
+) -> result<LibraryCustodyCertificate, CustodyEvidenceError>
+contract {
+    requires source_revision_matches_pinned_revision;
+    requires summaries_are_derived_from_audited_source;
+    requires every_summary_is_permitted_for_selected_library;
+    requires every_cross_context_transition_has_typed_evidence;
+    ensures normal certificate_records_every_consumed_evidence;
+    ensures normal no_live_resource_or_container_obligation;
+    ensures error(CustodyEvidenceError) no_safe_verdict_is_issued;
+};
+
+extern fn release_library_resource(
+    resource: own<LibraryResource> use one
+) -> unit
+contract {
+    requires resource_has_local_custody;
+    ensures normal resource_is_discharged;
+    quant normal live_resources == old(live_resources) - 1;
+};
+
+fn main() -> i32 {
+    return 0;
+}

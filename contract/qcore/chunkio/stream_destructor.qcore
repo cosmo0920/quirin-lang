@@ -1,0 +1,38 @@
+// Upstream source: src/cio_stream.c (ChunkIO 1.5.5)
+// Audited mechanism: stream-to-chunk cascading teardown.
+
+resource type ChunkStream {
+    repr: ptr<mut, u8>;
+    footprint: { chunk_streams = 1 };
+    destructor: cio_stream_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cio_stream_destroy(
+    stream: own<ChunkStream> use one
+) -> unit
+contract {
+    requires stream_is_live;
+    ensures normal every_linked_chunk_is_closed;
+    ensures normal stream_is_unlinked;
+    ensures normal stream_name_is_released;
+    ensures normal stream_is_discharged;
+    quant normal live_streams == old(live_streams) - 1;
+};
+
+extern fn cio_stream_delete(
+    stream: borrow<'call, mut, ChunkStream> use one
+) -> i32
+effects { io }
+contract {
+    requires stream_is_live;
+    ensures normal backing_content_is_deleted;
+    ensures normal stream_object_remains_live;
+    ensures any delete_only_is_not_object_destruction;
+    quant any live_streams == old(live_streams);
+};
+
+fn main() -> i32 {
+    return 0;
+}

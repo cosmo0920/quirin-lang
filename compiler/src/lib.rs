@@ -121,7 +121,8 @@ pub use external_source::{
 };
 pub use frontend::{
     DeclarationKind as SourceDeclarationKind, Located, SemanticPass, SourceBlock,
-    SourceDeclaration, SourceDiagnostic, SourceParameter, SourceParseError,
+    SourceContractClause, SourceContractClauseKind, SourceContractExitSelector, SourceDeclaration,
+    SourceDiagnostic, SourceFunctionContract, SourceParameter, SourceParseError,
     SourceProgram as CompleteSourceProgram, SourceTypeKind, StatementKind as SourceStatementKind,
     SymbolId as SourceSymbolId, TypedBinding, TypedSourceDeclaration, TypedSourceProgram,
     TypedStatement, VerifierProviderUse, VerifierScopeDeclaration, covered_semantic_passes,

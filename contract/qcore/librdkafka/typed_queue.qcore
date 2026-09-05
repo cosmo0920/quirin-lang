@@ -1,0 +1,51 @@
+// Upstream source: src/rdkafka_queue.h (librdkafka 2.15.0)
+// Audited mechanisms: intrusive list, typed queue, and locked thread handoff.
+
+resource type KafkaQueue {
+    repr: ptr<mut, u8>;
+    footprint: { queues = 1 };
+    destructor: rd_kafka_q_destroy_final noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+resource type KafkaQueueEntry {
+    repr: ptr<mut, u8>;
+    footprint: { queue_entries = 1 };
+    destructor: rd_kafka_op_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn rd_kafka_q_enq0(
+    queue: borrow<'queue, mut, KafkaQueue> use one,
+    entry: own<KafkaQueueEntry> use one
+) -> unit
+effects { atomic }
+contract {
+    requires queue_lock_is_held;
+    requires entry_is_unlinked;
+    ensures normal entry_custody_is_queue;
+    ensures normal entry_is_linked_once;
+    ensures normal handoff_has_synchronization_evidence;
+};
+
+extern fn rd_kafka_q_deq0(
+    queue: borrow<'queue, mut, KafkaQueue> use one
+) -> result<own<KafkaQueueEntry>, QueueEmpty>
+effects { atomic, throws<QueueEmpty> }
+contract {
+    requires queue_lock_is_held;
+    ensures normal returned_entry_is_unlinked;
+    ensures normal returned_entry_has_local_custody;
+    ensures error(QueueEmpty) queue_custody_is_preserved;
+    ensures any handoff_has_synchronization_evidence;
+};
+
+error QueueEmpty {
+    Empty;
+}
+
+fn main() -> i32 {
+    return 0;
+}

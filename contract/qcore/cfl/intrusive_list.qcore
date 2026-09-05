@@ -1,0 +1,36 @@
+// Upstream source: include/cfl/cfl_list.h
+// Audited mechanism: intrusive-list insertion and removal.
+
+resource type CflListEntry {
+    repr: ptr<mut, u8>;
+    footprint: { list_entries = 1 };
+    destructor: cfl_list_entry_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cfl_list_add(
+    entry: own<CflListEntry> use one,
+    list: borrow<'list, mut, CflListEntry> use one
+) -> unit
+contract {
+    requires entry_is_unlinked;
+    ensures normal entry_has_list_custody;
+    ensures normal previous_and_next_links_are_consistent;
+    quant any live_resources == old(live_resources);
+};
+
+extern fn cfl_list_del(
+    entry: own<CflListEntry> use one
+) -> own<CflListEntry>
+contract {
+    requires entry_has_list_custody;
+    ensures normal entry_has_local_custody;
+    ensures normal entry_previous_is_null;
+    ensures normal entry_next_is_null;
+    quant any live_resources == old(live_resources);
+};
+
+fn main() -> i32 {
+    return 0;
+}

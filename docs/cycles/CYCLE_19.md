@@ -233,3 +233,22 @@ conditions without project axioms. Its module and theorem identifiers are
 cycle-neutral. No deployed Monkey observation was produced by this change, so
 the current aggregate remains `Unknown` until real hook evidence and a
 source-derived wrapper trace are supplied.
+
+## Native QCore contract corpus
+
+The implemented library and composition boundaries are retained as native
+QCore sources under `contract/qcore`, grouped by librdkafka, CFL, ChunkIO, and
+Monkey. They record resource types, owned and borrowed interfaces, normal and
+error postconditions, quantitative custody relations, delete-only partial
+states, import completeness, callback summaries, and observation refinement.
+
+The source front end now exposes function contracts as structured clauses with
+source spans and preserved predicate text. The regression corpus recursively
+parses, round-trips, and compiles every `.qcore` file, pins every
+contract-bearing declaration and clause count, and checks the critical
+handoff, teardown, import, callback, and observation predicates. This keeps the
+contracts directly inspectable and prevents a fixture from disappearing or
+silently losing its structural coverage. Arbitrary contract predicates remain
+syntax-preserved rather than certificate-producing until their semantic
+checker is connected; compiling the corpus does not promote an external unit
+to `Safe`.

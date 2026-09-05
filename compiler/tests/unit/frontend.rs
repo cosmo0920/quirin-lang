@@ -37,6 +37,61 @@ fn parses_complete_golden_surface_and_preserves_exact_text() {
 }
 
 #[test]
+fn retains_function_contracts_as_structured_source() {
+    let source = "extern fn transfer(value: own<Item> use one) -> result<own<Item>, TransferError> contract { requires caller_owns_value; ensures normal custody_transferred; ensures error(TransferError) caller_owns_value; quant any live_resources == one; };";
+    let program = parse_source_program(source).unwrap();
+    let contract = program.declarations[0]
+        .value
+        .function_contract
+        .as_ref()
+        .unwrap();
+    assert_eq!(contract.clauses.len(), 4);
+    assert_eq!(
+        contract.clauses[0].value.kind,
+        SourceContractClauseKind::Requires
+    );
+    assert_eq!(
+        contract.clauses[1].value.kind,
+        SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal)
+    );
+    assert_eq!(
+        contract.clauses[2].value.kind,
+        SourceContractClauseKind::Ensures(SourceContractExitSelector::Error(
+            "TransferError".into()
+        ))
+    );
+    assert_eq!(
+        contract.clauses[3].value.kind,
+        SourceContractClauseKind::Quant(SourceContractExitSelector::Any)
+    );
+    assert_eq!(
+        contract.clauses[2].value.expression_source,
+        "caller_owns_value"
+    );
+    let typed = elaborate_source(&program).unwrap();
+    assert_eq!(
+        typed.declarations[0]
+            .function_contract
+            .as_ref()
+            .unwrap()
+            .clauses,
+        contract.clauses
+    );
+}
+
+#[test]
+fn rejects_malformed_function_contract_clauses() {
+    for source in [
+        "extern fn bad() -> unit contract { unknown true; };",
+        "extern fn bad() -> unit contract { ensures normal; };",
+        "extern fn bad() -> unit contract { ensures error() failed; };",
+        "extern fn bad() -> unit contract { quant mystery zero == zero; };",
+    ] {
+        assert!(parse_source_program(source).is_err(), "accepted {source}");
+    }
+}
+
+#[test]
 fn classifies_all_sequential_statement_families() {
     let program = parse_source_program(GOLDEN).unwrap();
     let kinds = program

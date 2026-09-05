@@ -58,8 +58,11 @@ imports with the bounded lifecycle checker, and joins exact Monkey
 callback/failure contracts plus dispatcher/backend observations to the Cycle
 18 event certificate. Raw units remain unpromoted until per-path identity
 imports and real observation evidence satisfy those fail-closed gates. The
-completed
-Cycle 16 requirements and verification procedure are in
+library, ChunkIO-import, and Monkey-composition contracts also have native,
+compiler-checked QCore regression sources under
+[`contract/qcore`](contract/qcore/README.md); the front end retains each
+contract clause as structured source syntax for future semantic passes.
+The completed Cycle 16 requirements and verification procedure are in
 [`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
 implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent
 event-driven verification plan is in [`CYCLE_18.md`](docs/cycles/CYCLE_18.md).

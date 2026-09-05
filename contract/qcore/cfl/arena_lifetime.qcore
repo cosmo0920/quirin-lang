@@ -1,0 +1,39 @@
+// Upstream source: src/cfl_arena.c
+// Audited mechanisms: arena custody and cascading destruction.
+
+error ArenaCreateError {
+    AllocationFailed;
+}
+
+resource type CflArena {
+    repr: ptr<mut, u8>;
+    footprint: { arenas = 1 };
+    destructor: cfl_arena_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cfl_arena_create_with_options() -> result<own<CflArena>, ArenaCreateError>
+effects { alloc, throws<ArenaCreateError> }
+contract {
+    ensures normal arena_has_local_custody;
+    ensures normal allocator_callbacks_are_recorded;
+    ensures error(ArenaCreateError) no_arena_custody_created;
+    quant normal live_arenas == old(live_arenas) + 1;
+    quant error(ArenaCreateError) live_arenas == old(live_arenas);
+};
+
+extern fn cfl_arena_destroy(
+    arena: own<CflArena> use one
+) -> unit
+contract {
+    requires arena_is_live;
+    ensures normal external_storage_is_released;
+    ensures normal every_arena_chunk_is_released;
+    ensures normal arena_is_discharged;
+    quant normal live_arenas == old(live_arenas) - 1;
+};
+
+fn main() -> i32 {
+    return 0;
+}

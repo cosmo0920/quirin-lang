@@ -1,0 +1,27 @@
+// Upstream source: src/cio.c (ChunkIO 1.5.5)
+// Audited mechanism: context-to-stream cascading teardown.
+
+resource type ChunkContext {
+    repr: ptr<mut, u8>;
+    footprint: { chunk_contexts = 1 };
+    destructor: cio_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cio_destroy(
+    context: own<ChunkContext> use one
+) -> unit
+contract {
+    requires context_is_live;
+    requires wrapper_obligations_are_discharged;
+    ensures normal every_stream_is_destroyed;
+    ensures normal every_chunk_backend_is_closed;
+    ensures normal chunk_counter_is_zero;
+    ensures normal context_is_discharged;
+    quant normal live_contexts == old(live_contexts) - 1;
+};
+
+fn main() -> i32 {
+    return 0;
+}
