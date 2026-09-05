@@ -7,6 +7,7 @@ import QCore.ErrorRegion
 import QCore.EventDriven
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
+import QCore.ControlFlow
 import QCore.ExecutableModel
 import QCore.Flow
 import QCore.Frontend

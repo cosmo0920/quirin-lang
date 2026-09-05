@@ -39,6 +39,12 @@ pub enum ResourceParameterMode {
         owner_parameter: usize,
         nullable: bool,
     },
+    /// The callee removes this resource from the aggregate passed at
+    /// `owner_parameter`, restoring direct custody to the caller.
+    Removed {
+        owner_parameter: usize,
+        nullable: bool,
+    },
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -854,6 +860,45 @@ enum Statement {
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
     },
+    For {
+        line: usize,
+        init: Option<Box<(LegacyInstruction, usize)>>,
+        condition_always_true: bool,
+        condition_supported: bool,
+        null_condition: Option<PointerNullCondition>,
+        increment: Option<Box<(LegacyInstruction, usize)>>,
+        body: Vec<Statement>,
+    },
+    DoWhile {
+        line: usize,
+        condition_supported: bool,
+        null_condition: Option<PointerNullCondition>,
+        body: Vec<Statement>,
+    },
+    Switch {
+        line: usize,
+        expression_supported: bool,
+        body: Vec<Statement>,
+    },
+    Case {
+        line: usize,
+        expression_supported: bool,
+        is_default: bool,
+    },
+    Label {
+        line: usize,
+        name: String,
+    },
+    Goto {
+        line: usize,
+        label: String,
+    },
+    Break {
+        line: usize,
+    },
+    Continue {
+        line: usize,
+    },
     Return {
         line: usize,
         expression_supported: bool,
@@ -924,6 +969,111 @@ impl Parser<'_> {
                     body,
                 })
             }
+            Some("for") => {
+                self.cursor += 1;
+                let clauses = self.take_parenthesized()?;
+                let Some([init, condition, increment]) = split_for_clauses(&clauses) else {
+                    return Ok(Statement::Instruction(
+                        LegacyInstruction::Unknown {
+                            description: "malformed for-loop clauses".to_owned(),
+                        },
+                        line,
+                    ));
+                };
+                let body = self.parse_statement_body()?;
+                let init =
+                    (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
+                let increment = (!increment.is_empty())
+                    .then(|| Box::new((self.classify_simple(&increment), line)));
+                Ok(Statement::For {
+                    line,
+                    init,
+                    condition_always_true: condition.is_empty(),
+                    condition_supported: !contains_call(&condition),
+                    null_condition: pointer_null_condition(&condition),
+                    increment,
+                    body,
+                })
+            }
+            Some("do") => {
+                self.cursor += 1;
+                let body = self.parse_statement_body()?;
+                if self.text() != Some("while") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                let condition = self.take_parenthesized()?;
+                if self.text() != Some(";") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                Ok(Statement::DoWhile {
+                    line,
+                    condition_supported: !contains_call(&condition),
+                    null_condition: pointer_null_condition(&condition),
+                    body,
+                })
+            }
+            Some("switch") => {
+                self.cursor += 1;
+                let expression = self.take_parenthesized()?;
+                let body = self.parse_statement_body()?;
+                Ok(Statement::Switch {
+                    line,
+                    expression_supported: !contains_call(&expression),
+                    body,
+                })
+            }
+            Some("case") => {
+                self.cursor += 1;
+                let expression = self.consume_to_colon()?;
+                Ok(Statement::Case {
+                    line,
+                    expression_supported: !contains_call(&expression),
+                    is_default: false,
+                })
+            }
+            Some("default") => {
+                self.cursor += 1;
+                if self.text() != Some(":") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                Ok(Statement::Case {
+                    line,
+                    expression_supported: true,
+                    is_default: true,
+                })
+            }
+            Some("goto") => {
+                self.cursor += 1;
+                let Some(label) = self.text().filter(|text| is_identifier(text)) else {
+                    return Err(line);
+                };
+                let label = label.to_owned();
+                self.cursor += 1;
+                if self.text() != Some(";") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                Ok(Statement::Goto { line, label })
+            }
+            Some("break") => {
+                self.cursor += 1;
+                if self.text() != Some(";") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                Ok(Statement::Break { line })
+            }
+            Some("continue") => {
+                self.cursor += 1;
+                if self.text() != Some(";") {
+                    return Err(line);
+                }
+                self.cursor += 1;
+                Ok(Statement::Continue { line })
+            }
             Some("return") => {
                 self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
@@ -938,14 +1088,17 @@ impl Parser<'_> {
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
-            Some("for" | "do" | "switch" | "goto" | "break" | "continue") => {
-                self.consume_unsupported()?;
-                Ok(Statement::Instruction(
-                    LegacyInstruction::Unknown {
-                        description: "unsupported control flow".to_owned(),
-                    },
-                    line,
-                ))
+            Some(name)
+                if is_identifier(name)
+                    && self
+                        .tokens
+                        .get(self.cursor + 1)
+                        .map(|token| token.text.as_str())
+                        == Some(":") =>
+            {
+                let name = name.to_owned();
+                self.cursor += 2;
+                Ok(Statement::Label { line, name })
             }
             Some(_) => {
                 let tokens = self.consume_to_semicolon()?;
@@ -995,22 +1148,25 @@ impl Parser<'_> {
         Err(line)
     }
 
-    fn consume_unsupported(&mut self) -> Result<(), usize> {
-        if matches!(self.text(), Some("for" | "switch")) {
-            self.cursor += 1;
-            self.take_parenthesized()?;
-        } else {
+    fn consume_to_colon(&mut self) -> Result<Vec<Token>, usize> {
+        let start = self.cursor;
+        let line = self.tokens.get(start).map_or(1, |token| token.line);
+        let mut parentheses = 0usize;
+        while self.cursor < self.tokens.len() {
+            match self.text() {
+                Some("(") => parentheses += 1,
+                Some(")") => parentheses = parentheses.saturating_sub(1),
+                Some(":") if parentheses == 0 => {
+                    let result = self.tokens[start..self.cursor].to_vec();
+                    self.cursor += 1;
+                    return Ok(result);
+                }
+                Some("{") | Some("}") | Some(";") if parentheses == 0 => return Err(line),
+                _ => {}
+            }
             self.cursor += 1;
         }
-        if self.text() == Some("{") {
-            let line = self.tokens[self.cursor].line;
-            self.cursor = matching(self.tokens, self.cursor, "{", "}")
-                .map(|index| index + 1)
-                .ok_or(line)?;
-            Ok(())
-        } else {
-            self.consume_to_semicolon().map(|_| ())
-        }
+        Err(line)
     }
 
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
@@ -1116,6 +1272,23 @@ fn contains_call(tokens: &[Token]) -> bool {
     find_call(&texts).is_some()
 }
 
+fn split_for_clauses(tokens: &[Token]) -> Option<[Vec<Token>; 3]> {
+    let mut clauses = vec![Vec::new()];
+    let mut parentheses = 0usize;
+    let mut brackets = 0usize;
+    for token in tokens {
+        match token.text.as_str() {
+            "(" => parentheses += 1,
+            ")" => parentheses = parentheses.checked_sub(1)?,
+            "[" => brackets += 1,
+            "]" => brackets = brackets.checked_sub(1)?,
+            ";" if parentheses == 0 && brackets == 0 => clauses.push(Vec::new()),
+            _ => clauses.last_mut()?.push(token.clone()),
+        }
+    }
+    clauses.try_into().ok()
+}
+
 fn pointer_null_condition(tokens: &[Token]) -> Option<PointerNullCondition> {
     let texts = tokens
         .iter()
@@ -1197,7 +1370,8 @@ fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Op
         ResourceParameterMode::Owned { .. }
         | ResourceParameterMode::Consumed { .. }
         | ResourceParameterMode::Released { .. }
-        | ResourceParameterMode::Stored { .. } => canonical_place(argument),
+        | ResourceParameterMode::Stored { .. }
+        | ResourceParameterMode::Removed { .. } => canonical_place(argument),
     }
 }
 
@@ -1258,13 +1432,41 @@ fn is_identifier(text: &str) -> bool {
 
 struct CfgBuilder {
     nodes: Vec<LegacyCfgNode>,
+    labels: BTreeMap<String, LegacyNodeId>,
+    pending_gotos: Vec<(LegacyNodeId, String, LegacyNodeId)>,
+    break_targets: Vec<LegacyNodeId>,
+    continue_targets: Vec<LegacyNodeId>,
+    switch_cases: Vec<SwitchTargets>,
+}
+
+#[derive(Default)]
+struct SwitchTargets {
+    entries: Vec<LegacyNodeId>,
+    has_default: bool,
 }
 
 impl CfgBuilder {
     fn build(function: &str, statements: &[Statement]) -> LegacyCfg {
-        let mut builder = Self { nodes: Vec::new() };
+        let mut builder = Self {
+            nodes: Vec::new(),
+            labels: BTreeMap::new(),
+            pending_gotos: Vec::new(),
+            break_targets: Vec::new(),
+            continue_targets: Vec::new(),
+            switch_cases: Vec::new(),
+        };
         let exit = builder.push(LegacyInstruction::NoOp, Vec::new(), 0, true);
         let entry = builder.compile_sequence(statements, exit);
+        for (node, label, fallback) in std::mem::take(&mut builder.pending_gotos) {
+            if let Some(target) = builder.labels.get(&label).copied() {
+                builder.nodes[node].successors = vec![target];
+            } else {
+                builder.nodes[node].instruction = LegacyInstruction::Unknown {
+                    description: format!("goto to unresolved label `{label}`"),
+                };
+                builder.nodes[node].successors = vec![fallback];
+            }
+        }
         LegacyCfg {
             function: function.to_owned(),
             entry,
@@ -1351,9 +1553,161 @@ impl CfgBuilder {
                     }
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
+                self.break_targets.push(continuation);
+                self.continue_targets.push(header);
                 let body_entry = self.compile_sequence(body, header);
+                self.continue_targets.pop();
+                self.break_targets.pop();
                 self.nodes[header].successors = vec![body_entry, continuation];
                 header
+            }
+            Statement::For {
+                line,
+                init,
+                condition_always_true,
+                condition_supported,
+                null_condition,
+                increment,
+                body,
+            } => {
+                let instruction = branch_instruction(
+                    *condition_supported,
+                    null_condition,
+                    "call in for-loop condition",
+                );
+                let header = self.push(instruction, Vec::new(), *line, false);
+                let increment_entry = increment.as_ref().map_or(header, |clause| {
+                    let (instruction, line) = clause.as_ref();
+                    self.push(instruction.clone(), vec![header], *line, false)
+                });
+                self.break_targets.push(continuation);
+                self.continue_targets.push(increment_entry);
+                let body_entry = self.compile_sequence(body, increment_entry);
+                self.continue_targets.pop();
+                self.break_targets.pop();
+                self.nodes[header].successors = if *condition_always_true {
+                    vec![body_entry]
+                } else {
+                    vec![body_entry, continuation]
+                };
+                init.as_ref().map_or(header, |clause| {
+                    let (instruction, line) = clause.as_ref();
+                    self.push(instruction.clone(), vec![header], *line, false)
+                })
+            }
+            Statement::DoWhile {
+                line,
+                condition_supported,
+                null_condition,
+                body,
+            } => {
+                let instruction = branch_instruction(
+                    *condition_supported,
+                    null_condition,
+                    "call in do-while condition",
+                );
+                let header = self.push(instruction, Vec::new(), *line, false);
+                self.break_targets.push(continuation);
+                self.continue_targets.push(header);
+                let body_entry = self.compile_sequence(body, header);
+                self.continue_targets.pop();
+                self.break_targets.pop();
+                self.nodes[header].successors = vec![body_entry, continuation];
+                body_entry
+            }
+            Statement::Switch {
+                line,
+                expression_supported,
+                body,
+            } => {
+                self.break_targets.push(continuation);
+                self.switch_cases.push(SwitchTargets::default());
+                let _body_entry = self.compile_sequence(body, continuation);
+                let targets = self.switch_cases.pop().expect("switch target scope");
+                self.break_targets.pop();
+                let mut successors = targets.entries;
+                if !targets.has_default || successors.is_empty() {
+                    successors.push(continuation);
+                }
+                successors.sort_unstable();
+                successors.dedup();
+                let instruction = if *expression_supported {
+                    LegacyInstruction::NoOp
+                } else {
+                    LegacyInstruction::Unknown {
+                        description: "call in switch expression".to_owned(),
+                    }
+                };
+                self.push(instruction, successors, *line, false)
+            }
+            Statement::Case {
+                line,
+                expression_supported,
+                is_default,
+            } => {
+                let instruction = if *expression_supported {
+                    LegacyInstruction::NoOp
+                } else {
+                    LegacyInstruction::Unknown {
+                        description: "call in case expression".to_owned(),
+                    }
+                };
+                let entry = self.push(instruction, vec![continuation], *line, false);
+                if let Some(targets) = self.switch_cases.last_mut() {
+                    targets.entries.push(entry);
+                    targets.has_default |= *is_default;
+                } else {
+                    self.nodes[entry].instruction = LegacyInstruction::Unknown {
+                        description: "case label outside switch".to_owned(),
+                    };
+                }
+                entry
+            }
+            Statement::Label { line, name } => {
+                let entry = self.push(LegacyInstruction::NoOp, vec![continuation], *line, false);
+                if self.labels.insert(name.clone(), entry).is_some() {
+                    self.nodes[entry].instruction = LegacyInstruction::Unknown {
+                        description: format!("duplicate label `{name}`"),
+                    };
+                }
+                entry
+            }
+            Statement::Goto { line, label } => {
+                let node = self.push(LegacyInstruction::NoOp, Vec::new(), *line, false);
+                if let Some(target) = self.labels.get(label).copied() {
+                    self.nodes[node].successors = vec![target];
+                } else {
+                    self.pending_gotos.push((node, label.clone(), continuation));
+                }
+                node
+            }
+            Statement::Break { line } => {
+                if let Some(target) = self.break_targets.last().copied() {
+                    self.push(LegacyInstruction::NoOp, vec![target], *line, false)
+                } else {
+                    self.push(
+                        LegacyInstruction::Unknown {
+                            description: "break outside loop or switch".to_owned(),
+                        },
+                        vec![continuation],
+                        *line,
+                        false,
+                    )
+                }
+            }
+            Statement::Continue { line } => {
+                if let Some(target) = self.continue_targets.last().copied() {
+                    self.push(LegacyInstruction::NoOp, vec![target], *line, false)
+                } else {
+                    self.push(
+                        LegacyInstruction::Unknown {
+                            description: "continue outside loop".to_owned(),
+                        },
+                        vec![continuation],
+                        *line,
+                        false,
+                    )
+                }
             }
         }
     }
@@ -1373,6 +1727,25 @@ impl CfgBuilder {
             is_exit,
         });
         id
+    }
+}
+
+fn branch_instruction(
+    condition_supported: bool,
+    null_condition: &Option<PointerNullCondition>,
+    unsupported_description: &str,
+) -> LegacyInstruction {
+    if let Some(condition) = null_condition {
+        LegacyInstruction::BranchOnNull {
+            source: condition.source.clone(),
+            true_is_null: condition.true_is_null,
+        }
+    } else if condition_supported {
+        LegacyInstruction::NoOp
+    } else {
+        LegacyInstruction::Unknown {
+            description: unsupported_description.to_owned(),
+        }
     }
 }
 
@@ -1898,6 +2271,26 @@ fn apply_contract_call(
                     diagnostics,
                 );
             }
+            ResourceParameterMode::Removed {
+                owner_parameter,
+                nullable,
+            } => {
+                let owner = arguments.get(owner_parameter).and_then(Option::as_deref);
+                let (Some(source), Some(owner)) = (source, owner) else {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    continue;
+                };
+                detach_contained_resource(
+                    function,
+                    line,
+                    owner,
+                    source,
+                    nullable,
+                    state,
+                    acquisition_lines,
+                    diagnostics,
+                );
+            }
         }
     }
 
@@ -1965,6 +2358,11 @@ fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nu
     state.resources.insert(site, LIVE);
     if nullable {
         state.nullable_sites.insert(site);
+    } else {
+        // Re-executing a non-null acquisition site in a loop is a strong
+        // update. A predecessor on which the destination did not yet exist
+        // must not permanently poison the fresh result as nullable.
+        state.nullable_sites.remove(&site);
     }
     state.pointers.insert(
         destination.to_owned(),
@@ -2020,6 +2418,72 @@ fn attach_contained_resource(
         }
         state.resources.insert(child, (status & !LIVE) | CONTAINED);
         state.contained.entry(owner_site).or_default().insert(child);
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn detach_contained_resource(
+    function: &str,
+    line: usize,
+    owner: &str,
+    source: &str,
+    nullable: bool,
+    state: &mut AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    require_live_resource(function, line, owner, false, state, diagnostics);
+    let Some(owners) = state.pointers.get(owner).cloned() else {
+        return;
+    };
+    let Some(children) = state.pointers.get(source).cloned() else {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: source.to_owned(),
+            },
+        });
+        return;
+    };
+    if owners.unknown
+        || children.unknown
+        || owners.targets.len() != 1
+        || (!nullable && (children.targets.is_empty() || children.may_be_null))
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: format!("{owner}/{source}"),
+            },
+        });
+        return;
+    }
+    let owner_site = *owners.targets.first().expect("one owner target");
+    for child in children.targets {
+        let attached = state
+            .contained
+            .get(&owner_site)
+            .is_some_and(|contained| contained.contains(&child));
+        let status = state.resources.get(&child).copied().unwrap_or(0);
+        if !attached || status & CONTAINED == 0 {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::CustodyConflict {
+                    acquisition_line: acquisition_line(acquisition_lines, child),
+                },
+            });
+            continue;
+        }
+        if let Some(contained) = state.contained.get_mut(&owner_site) {
+            contained.remove(&child);
+            if contained.is_empty() {
+                state.contained.remove(&owner_site);
+            }
+        }
+        state.resources.insert(child, (status & !CONTAINED) | LIVE);
     }
 }
 

@@ -50,8 +50,10 @@ native Windows/IOCP development evidence is recorded; Libevent sanitizer and
 deployed observation-hook evidence remain pending. Cycle 19 applies the
 unrestricted-C gateway to pinned Fluent Bit CMetrics, CTraces, librdkafka,
 ChunkIO, the central input-chunk wrapper, and Monkey builds. It retains partial
-summaries across reduced-parser failures, adds a bounded fail-closed ChunkIO
-lifecycle checker without promoting raw units to Safe, and links the
+summaries across reduced-parser failures, imports structured and named C
+control flow as explicit CFG edges, checks aggregate store/removal custody,
+adds a bounded fail-closed ChunkIO lifecycle checker without promoting raw
+units to Safe, and links the
 forced-Libevent Monkey source back to the Cycle 18 trust boundary with checked
 socket-pair, close, and error-query custody. The completed
 Cycle 16 requirements and verification procedure are in

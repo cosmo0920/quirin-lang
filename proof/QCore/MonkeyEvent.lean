@@ -1,7 +1,7 @@
 namespace QCore.MonkeyEvent
 
-/-! Cycle 19's formal boundary for the three Libevent descriptor utilities
-used by Monkey. The executable checker supplies these branch and custody facts;
+/-! Formal boundary for the three Libevent descriptor utilities used by
+Monkey. The executable checker supplies these branch and custody facts;
 accepted evidence cannot turn a failed pair/close into a discharged resource. -/
 
 abbrev DescriptorId := Nat

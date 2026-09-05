@@ -1,7 +1,7 @@
 namespace QCore.ChunkLifecycle
 
-/-! Cycle 19's formal boundary for checked replacement, aggregate custody, and
-the bounded ChunkIO teardown profile. The Rust checker supplies these Boolean
+/-! Formal boundary for checked replacement, aggregate custody, and the bounded
+ChunkIO teardown profile. The Rust checker supplies these Boolean
 facts from its identity-indexed transition system; this module establishes the
 properties exposed by an accepted certificate. -/
 
@@ -107,6 +107,51 @@ theorem accepted_aggregate_rejects_independent_child_destruction
     (result : checkAggregate custody = some certificate) :
     custody.childDestroyedIndependently = false :=
   (checkAggregate_valid result).2
+
+structure AggregateRemoval where
+  ownerLive : Bool
+  childContainedBefore : Bool
+  childLiveAfter : Bool
+  relationPresentAfter : Bool
+  deriving DecidableEq, Repr
+
+def AggregateRemoval.Valid (removal : AggregateRemoval) : Prop :=
+  removal.ownerLive = true ∧
+  removal.childContainedBefore = true ∧
+  removal.childLiveAfter = true ∧
+  removal.relationPresentAfter = false
+
+instance (removal : AggregateRemoval) : Decidable removal.Valid := by
+  unfold AggregateRemoval.Valid
+  infer_instance
+
+structure AggregateRemovalCertificate where
+  checked : AggregateRemoval
+  deriving DecidableEq, Repr
+
+def checkAggregateRemoval
+    (removal : AggregateRemoval) : Option AggregateRemovalCertificate :=
+  if removal.Valid then some { checked := removal } else none
+
+private theorem checkAggregateRemoval_valid
+    {removal : AggregateRemoval}
+    {certificate : AggregateRemovalCertificate}
+    (result : checkAggregateRemoval removal = some certificate) : removal.Valid := by
+  unfold checkAggregateRemoval at result
+  split at result
+  · assumption
+  · contradiction
+
+/-- Removing a child from an audited aggregate restores direct live custody
+and removes exactly the parent/child containment relation. -/
+theorem accepted_aggregate_removal_restores_child_custody
+    {removal : AggregateRemoval}
+    {certificate : AggregateRemovalCertificate}
+    (result : checkAggregateRemoval removal = some certificate) :
+    removal.childLiveAfter = true ∧
+      removal.relationPresentAfter = false := by
+  have valid := checkAggregateRemoval_valid result
+  exact ⟨valid.2.2.1, valid.2.2.2⟩
 
 abbrev ContextId := Nat
 abbrev StreamId := Nat
@@ -243,7 +288,7 @@ theorem accepted_teardown_records_nested_order_and_partial_delete
   exact ⟨valid.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1,
     valid.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2⟩
 
-theorem combined_cycle19_chunk_safety
+theorem combined_chunk_safety
     {teardown : Teardown} {certificate : TeardownCertificate}
     (result : checkTeardown teardown = some certificate) : teardown.Valid :=
   checkTeardown_valid result

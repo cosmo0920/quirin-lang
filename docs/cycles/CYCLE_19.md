@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — contract foundation and bounded ChunkIO lifecycle implemented**
+**Status: In progress — contract/control-flow foundation and bounded ChunkIO lifecycle implemented**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -123,17 +123,25 @@ null edge deletes only the failed new allocation, while the non-null edge
 releases the replaced identity. Direct assignment that loses the old pointer
 therefore remains an `Unsafe` leak on the failure path.
 
-The abstract state also has the first aggregate-custody primitive: a stored
-child is discharged or transferred when its owner is discharged or
-transferred, while independent child destruction is a definite custody
-conflict. Applying this primitive to ChunkIO still requires audited constructor,
-list-removal, and nested teardown summaries; the current ChunkIO units are not
-marked Safe by the primitive alone.
+The abstract state also has aggregate-custody primitives: a stored child is
+discharged or transferred when its owner is discharged or transferred,
+audited removal restores direct child custody, and independent or wrong-owner
+child removal/destruction is a definite custody conflict. Applying these
+primitives to ChunkIO still requires audited constructor and nested teardown
+summaries; the current ChunkIO units are not marked Safe by the primitives
+alone.
+
+The resource CFG now imports `for`, `do`/`while`, `switch`/`case` fallthrough,
+labels, cleanup `goto`, `break`, and `continue` as explicit edges. Empty
+`for (;;)` conditions retain only the loop edge, `switch` without `default`
+retains an unmatched exit, and unresolved jump targets remain `Unknown`. The
+Lean `QCore.ControlFlow` certificate checks that declared control edges are
+present, resolved, and attached to retained CFG nodes.
 
 The Cycle 19 audit manifest now marks known allocation results nullable, marks
 null-tolerant destructors explicitly, and models `rd_realloc` with the new
-replacement contract. Aggregate/container transfer and general control-flow
-work remain pending.
+replacement contract. Audited library-specific aggregate summaries, refcounts,
+arenas, and concurrent publication remain pending.
 
 ## Implemented 19C bounded lifecycle
 
@@ -155,8 +163,8 @@ The corresponding Lean account checks replacement, aggregate custody, unique
 identities, backend discharge, list/counter balance, failed-open rollback,
 nested teardown order, and delete-only classification. This bounded checker is
 not yet composed with the unrestricted-C importer, so it does not promote any
-raw ChunkIO or Fluent Bit translation unit to `Safe`. Importer composition,
-remaining control flow, and Monkey event composition remain Cycle 19 work.
+raw ChunkIO or Fluent Bit translation unit to `Safe`. Importer/lifecycle
+composition and Monkey event composition remain Cycle 19 work.
 
 ## Implemented 19D descriptor foundation
 

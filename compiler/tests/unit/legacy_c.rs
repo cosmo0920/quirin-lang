@@ -302,6 +302,63 @@ fn container_contract_cascades_child_custody_on_release_or_transfer() {
 }
 
 #[test]
+fn container_removal_restores_direct_child_custody() {
+    let mut contracts = contracts();
+    contracts.insert_contract(
+        "q_store",
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Stored {
+                    owner_parameter: 0,
+                    nullable: false,
+                },
+            ],
+            ResourceReturnMode::None,
+        ),
+    );
+    contracts.insert_contract(
+        "q_remove",
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Removed {
+                    owner_parameter: 0,
+                    nullable: false,
+                },
+            ],
+            ResourceReturnMode::None,
+        ),
+    );
+
+    let removed = analyze_legacy_c(
+        "void subject(void) {\n\
+         void *container = q_alloc(); void *item = q_alloc();\n\
+         q_store(container, item); q_remove(container, item);\n\
+         q_free(container); q_free(item);\n}",
+        "subject",
+        &contracts,
+    )
+    .unwrap();
+    assert_eq!(removed.status, AnalysisStatus::Safe);
+
+    let wrong_owner = analyze_legacy_c(
+        "void subject(void) {\n\
+         void *left = q_alloc(); void *right = q_alloc(); void *item = q_alloc();\n\
+         q_store(left, item); q_remove(right, item);\n\
+         q_free(left); q_free(right);\n}",
+        "subject",
+        &contracts,
+    )
+    .unwrap();
+    assert_eq!(wrong_owner.status, AnalysisStatus::Unsafe);
+    assert!(has(&wrong_owner, |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::CustodyConflict { .. }
+    )));
+}
+
+#[test]
 fn returned_ownership_discharges_the_local_obligation() {
     let summary = analyze("void *subject(void) {\n void *p = q_alloc();\n return p;\n}");
     assert_eq!(summary.status, AnalysisStatus::Safe);
@@ -357,6 +414,66 @@ fn standalone_compound_blocks_are_imported() {
 }
 
 #[test]
+fn for_do_while_break_and_continue_are_imported_as_cfg_edges() {
+    let for_loop = analyze(
+        "void subject(int again) {\n\
+         for (; again; ) { void *p = q_alloc(); q_free(p); continue; }\n\
+         return;\n}",
+    );
+    assert_eq!(for_loop.status, AnalysisStatus::Safe, "{for_loop:#?}");
+
+    let do_while = analyze(
+        "void subject(int again) {\n\
+         do { void *p = q_alloc(); q_free(p); if (!again) break; } while (again);\n\
+         return;\n}",
+    );
+    assert_eq!(do_while.status, AnalysisStatus::Safe, "{do_while:#?}");
+}
+
+#[test]
+fn cleanup_goto_and_labels_preserve_resource_paths() {
+    let cleaned = analyze(
+        "void subject(int fail) {\n\
+         void *p = q_alloc(); if (fail) goto cleanup;\n\
+         cleanup: q_free(p); return;\n}",
+    );
+    assert_eq!(cleaned.status, AnalysisStatus::Safe);
+
+    let skipped = analyze(
+        "void subject(void) {\n\
+         void *p = q_alloc(); goto done; q_free(p); done: return;\n}",
+    );
+    assert_eq!(skipped.status, AnalysisStatus::Unsafe);
+    assert!(has(&skipped, |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+}
+
+#[test]
+fn switch_cases_fallthrough_and_break_are_explicit() {
+    let complete = analyze(
+        "void subject(int choice) {\n\
+         void *p = q_alloc();\n\
+         switch (choice) {\n\
+           case 0: q_free(p); break;\n\
+           case 1: q_free(p); break;\n\
+           default: q_free(p); break;\n\
+         }\n\
+         return;\n}",
+    );
+    assert_eq!(complete.status, AnalysisStatus::Safe);
+
+    let unmatched = analyze(
+        "void subject(int choice) {\n\
+         void *p = q_alloc();\n\
+         switch (choice) { case 0: q_free(p); break; }\n\
+         return;\n}",
+    );
+    assert_eq!(unmatched.status, AnalysisStatus::Unsafe);
+}
+
+#[test]
 fn malformed_and_missing_functions_are_parse_errors() {
     assert!(matches!(
         analyze_legacy_c("void other(void) {}", "subject", &contracts()),
@@ -370,7 +487,7 @@ fn malformed_and_missing_functions_are_parse_errors() {
 
 #[test]
 fn unrestricted_projection_retains_successful_siblings() {
-    let source = "void bad(void) { label: { return; } }\nvoid subject(void) { return; }";
+    let source = "void bad(void) { struct Local { int value; }; }\nvoid subject(void) { return; }";
     let analysis =
         analyze_legacy_c_translation_unit_selected_partial(source, "subject", &contracts(), None)
             .unwrap();
@@ -533,7 +650,7 @@ fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
 #[test]
 fn main_source_scope_excludes_macro_expanded_header_bodies() {
     let source = "\
-#define HEADER_BODY static void header_helper(void) { for (;;) {} }\n\
+#define HEADER_BODY static void header_helper(void) { struct Local { int value; }; }\n\
 HEADER_BODY\n\
 void *q_alloc(void);\n\
 void q_free(void *);\n\
@@ -545,7 +662,8 @@ void subject(void) { void *p = q_alloc(); q_free(p); }\n";
     match analyze_unrestricted_c11(&whole_unit, "subject", &contracts()) {
         Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => {
             let partial = partial.expect("whole-unit projection should be available");
-            assert!(partial.functions.contains_key("header_helper"));
+            assert!(!partial.functions.contains_key("header_helper"));
+            assert!(partial.functions.contains_key("subject"));
         }
         Err(LegacyCError::ProductionParserUnavailable(_)) => return,
         other => panic!("expanded helper must prevent a whole-unit proof: {other:?}"),
