@@ -1,5 +1,7 @@
 # Cycle 2: Usage Grades
 
+**Status: Done**
+
 Cycle 2 implements Stage 2 of the prototype roadmap. A cycle is complete only
 when its executable Rust behavior and corresponding Lean model both pass their
 builds.
