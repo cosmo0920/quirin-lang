@@ -191,9 +191,22 @@ fn call_continuations_have_conservative_usage_lower_bounds() {
 
 #[test]
 fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
-    if Command::new("cc").arg("--version").output().is_err() {
-        return;
-    }
+    let version = Command::new("rustc").arg("-vV").output().unwrap();
+    assert!(version.status.success());
+    let version = String::from_utf8(version.stdout).unwrap();
+    let host = version
+        .lines()
+        .find_map(|line| line.strip_prefix("host: "))
+        .unwrap();
+    let compiler = cc::Build::new()
+        .host(host)
+        .target(host)
+        .opt_level(0)
+        .debug(false)
+        .cargo_metadata(false)
+        .warnings(true)
+        .warnings_into_errors(true)
+        .get_compiler();
     for source in [
         "fn main() -> i32 { return 17; }",
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(1, true, Failure); qcore_check(false, Failure); drop r; return 0; }",
@@ -205,15 +218,22 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
             std::env::temp_dir().join(format!("qcore-cycle12-{}-{sequence}", std::process::id()));
         fs::create_dir_all(&directory).unwrap();
         let c_path = directory.join("program.c");
-        let exe_path = directory.join("program");
+        let exe_path = directory.join(if cfg!(windows) {
+            "program.exe"
+        } else {
+            "program"
+        });
         fs::write(&c_path, module.c_source.as_ref().unwrap()).unwrap();
-        let status = Command::new("cc")
-            .args(["-std=c11", "-Wall", "-Wextra", "-Werror"])
-            .arg(&c_path)
-            .arg("-o")
-            .arg(&exe_path)
-            .status()
-            .unwrap();
+        let mut command = compiler.to_command();
+        command.current_dir(&directory).arg(&c_path);
+        if compiler.is_like_msvc() {
+            command
+                .args(["/std:c11", "/TC"])
+                .arg(format!("/Fe:{}", exe_path.display()));
+        } else {
+            command.arg("-std=c11").arg("-o").arg(&exe_path);
+        }
+        let status = command.status().unwrap();
         assert!(status.success());
         let output = Command::new(&exe_path).output().unwrap();
         assert!(output.status.success());

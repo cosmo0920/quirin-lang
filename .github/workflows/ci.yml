@@ -32,3 +32,78 @@ jobs:
 
       - name: Check the six reevaluation regressions and controls
         run: cargo run -p qcore-compiler --example reevaluation_probe
+
+  windows:
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [msvc-core, msvc-clang-analysis]
+    env:
+      CC: cl
+    steps:
+      - name: Preserve pinned source line endings
+        run: git config --global core.autocrlf false
+
+      - name: Check out pinned sources
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Configure MSVC and Windows SDK environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Lint Windows targets
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Check core functionality using MSVC with Clang unavailable
+        if: matrix.toolchain == 'msvc-core'
+        shell: pwsh
+        run: |
+          # An authoritative missing override prevents discovery of runner LLVM.
+          $env:QCORE_CLANG = Join-Path $env:RUNNER_TEMP 'missing-qcore-clang.exe'
+          cargo test --test toolchain_compatibility --test module_modes --test quant_index_contracts --test qcore_contract_corpus
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($filter in @('clang::tests::', 'frontend::tests::', 'driver::tests::', 'c_emit::tests::', 'native_concurrency::tests::')) {
+            cargo test --lib $filter
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Test full suite with MSVC and explicit Clang installation
+        if: matrix.toolchain == 'msvc-clang-analysis'
+        shell: pwsh
+        run: |
+          # windows-2022 includes LLVM; use its full path, including spaces.
+          $env:QCORE_CLANG = (Get-Item 'C:\Program Files\LLVM\bin\clang.exe' -ErrorAction Stop).FullName
+          & $env:QCORE_CLANG --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test --workspace
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo run -p qcore-compiler --example reevaluation_probe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify Visual Studio discovery without Clang on PATH
+        if: matrix.toolchain == 'msvc-clang-analysis'
+        shell: pwsh
+        run: |
+          Remove-Item Env:QCORE_CLANG -ErrorAction SilentlyContinue
+          Remove-Item Env:VSINSTALLDIR -ErrorAction SilentlyContinue
+          $env:PATH = (($env:PATH -split ';') | Where-Object {
+            $_ -and -not (Test-Path (Join-Path $_ 'clang.exe'))
+          }) -join ';'
+          if (Get-Command clang -ErrorAction SilentlyContinue) {
+            throw 'Clang must be absent from PATH for this discovery test'
+          }
+          # The runner has Visual Studio's optional Clang component. These
+          # exercise preprocessing and JSON AST extraction through vswhere.
+          foreach ($filter in @('legacy_c::tests::', 'chunk_source::tests::')) {
+            cargo test --lib $filter
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }

@@ -7,7 +7,7 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 pub type LegacyNodeId = usize;
 
@@ -365,7 +365,8 @@ pub fn analyze_legacy_c11(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
-    let mut child = Command::new("clang")
+    let mut child = crate::clang::command()
+        .map_err(LegacyCError::ProductionParserUnavailable)?
         .args(["-x", "c", "-std=c11", "-fsyntax-only", "-"])
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
@@ -462,7 +463,7 @@ pub fn analyze_unrestricted_c11(
 /// Preprocess and syntax-check an unrestricted C translation unit without
 /// requiring it to contain an executable function body.
 pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
-    let mut command = Command::new("clang");
+    let mut command = crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
     command.args(["-x", "c", unit.dialect.clang_argument(), "-E", "-P"]);
     for include in &unit.include_paths {
         command.arg(format!("-I{include}"));
@@ -492,7 +493,8 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
         ));
     }
     let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
-    let mut syntax = Command::new("clang")
+    let mut syntax = crate::clang::command()
+        .map_err(LegacyCError::ProductionParserUnavailable)?
         .args([
             "-x",
             "c",

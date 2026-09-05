@@ -124,6 +124,13 @@ documents the memory fixes, plugin certificate containment, and regression resul
 
 ## Build
 
+The Rust compiler and `qcorec check` / `qcorec emit` do not require Clang.
+Compiling emitted C requires a C11 compiler. Tests that compile generated C use
+MSVC on Windows with the Rust MSVC toolchain, and a native C compiler elsewhere.
+The full test suite also exercises existing-C analysis, which requires Clang
+for preprocessing, syntax validation, and its JSON AST; `cl.exe` cannot replace
+that analysis dependency.
+
 ```sh
 git submodule update --init --recursive
 cargo test --workspace
@@ -137,3 +144,49 @@ model. The CI workflow initializes the submodule before running this gate.
 
 The Lean toolchain is selected through `proof/lean-toolchain`. Elan must have a
 Lean 4 stable toolchain installed before `lake build` can run.
+
+### Windows
+
+Install Rust's MSVC toolchain and Visual Studio or Build Tools with **Desktop
+development with C++**, including MSVC and the Windows SDK. Use an **x64 Native
+Tools Command Prompt** or **Developer PowerShell** when compiling native C so
+the SDK, linker, and runtime DLLs are available. The generated-C tests discover
+MSVC through the `cc` crate; they do not require a `cc` or `clang` command on PATH.
+
+For existing-C analysis and the full test suite, also install Visual Studio's
+optional **C++ Clang tools for Windows**, or a standalone LLVM installation.
+See [Microsoft's Clang setup instructions](https://learn.microsoft.com/en-us/cpp/build/clang-support-msbuild).
+QCore locates the analysis compiler in this order:
+
+1. `QCORE_CLANG`, when set, names a single executable (no extra arguments).
+2. `clang` on PATH.
+3. On Windows, LLVM under `VSINSTALLDIR` and Visual Studio installations found
+   using Microsoft's `vswhere`, including Build Tools installations. Both
+   `clang.exe` and `clang-cl.exe` are supported, using Clang's GCC driver mode
+   for the analysis arguments.
+
+An explicit path works without changing PATH, including paths containing spaces:
+
+```powershell
+$env:QCORE_CLANG = 'C:\Program Files\LLVM\bin\clang.exe'
+cargo test --workspace
+```
+
+An invalid or empty `QCORE_CLANG` is an error; it never silently selects another
+compiler. If no Clang can be found, existing-C analysis reports an unavailable
+parser with installation guidance and does not issue a safety certificate.
+Ordinary QCore checking and C emission remain available:
+
+```powershell
+cargo build --bin qcorec
+.\target\debug\qcorec.exe check examples\cycle12.qc
+.\target\debug\qcorec.exe emit -o generated.c examples\cycle12.qc
+```
+
+Windows CI has separate MSVC core and MSVC-plus-Clang analysis jobs. The core
+job deliberately disables Clang discovery and exercises checking, emission,
+and native generated-C execution. The analysis job runs the full suite,
+including MSVC AddressSanitizer tests (which require the corresponding Visual
+Studio component). Linux CI continues to run the full suite as well.
+The analysis job also removes Clang from PATH and clears `VSINSTALLDIR` to
+exercise automatic Visual Studio discovery through `vswhere`.

@@ -3,14 +3,14 @@
 use crate::legacy_c::C11TranslationUnit;
 use serde_json::Value;
 use std::io::Write;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 pub(crate) fn ast_declarations(
     source: &str,
     unit: &C11TranslationUnit<'_>,
     function: &str,
 ) -> Result<Vec<Value>, String> {
-    let mut child = Command::new("clang")
+    let mut child = crate::clang::command()?
         .args([
             "-x",
             "c",
