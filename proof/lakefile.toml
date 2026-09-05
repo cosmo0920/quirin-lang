@@ -1,0 +1,7 @@
+name = "qcore"
+version = "0.1.0"
+defaultTargets = ["QCore"]
+
+[[lean_lib]]
+name = "QCore"
+
