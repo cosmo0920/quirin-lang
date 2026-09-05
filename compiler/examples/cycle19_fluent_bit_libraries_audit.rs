@@ -3,10 +3,14 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
+use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::{
     C11TranslationUnit, CCompilerDialect, LegacyFunctionScope, ResourceApiKind, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11, legacy_c_source_functions,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, classify_libevent_symbol,
+    legacy_c_source_functions, verify_pinned_libevent_source,
 };
+
+const PINNED_FLUENT_BIT_COMMIT: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
 
 #[derive(Clone, Debug)]
 struct CompileEntry {
@@ -27,11 +31,20 @@ struct AuditCounts {
 }
 
 fn main() -> ExitCode {
-    let root = env::args_os()
-        .nth(1)
+    let mut arguments = env::args_os().skip(1);
+    let root = arguments
+        .next()
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("../fluent-bit"));
-    match run(&root) {
+    let monkey_database = arguments.next().map(PathBuf::from);
+    if arguments.next().is_some() {
+        eprintln!(
+            "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
+             [monkey-libevent-compile_commands.json]"
+        );
+        return ExitCode::FAILURE;
+    }
+    match run(&root, monkey_database.as_deref()) {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
         Err(error) => {
@@ -41,7 +54,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn run(root: &Path) -> Result<bool, String> {
+fn run(root: &Path, monkey_database: Option<&Path>) -> Result<bool, String> {
     let root = root
         .canonicalize()
         .map_err(|error| format!("could not resolve {}: {error}", root.display()))?;
@@ -61,15 +74,38 @@ fn run(root: &Path) -> Result<bool, String> {
     if !revision.status.success() {
         return Err("could not identify the Fluent Bit revision".into());
     }
-    println!(
-        "Fluent Bit {}",
-        String::from_utf8_lossy(&revision.stdout).trim()
-    );
+    let revision = String::from_utf8_lossy(&revision.stdout).trim().to_owned();
+    if revision != PINNED_FLUENT_BIT_COMMIT {
+        return Err(format!(
+            "expected Fluent Bit {PINNED_FLUENT_BIT_COMMIT}, found {revision}"
+        ));
+    }
+    let source_status = Command::new("git")
+        .args(["-C"])
+        .arg(&root)
+        .args([
+            "diff",
+            "--quiet",
+            "HEAD",
+            "--",
+            "lib/cmetrics/src",
+            "lib/ctraces/src",
+            "lib/monkey",
+        ])
+        .status()
+        .map_err(|error| format!("could not inspect Fluent Bit source state: {error}"))?;
+    if !source_status.success() {
+        return Err("audited Fluent Bit library sources contain tracked modifications".into());
+    }
+    println!("Fluent Bit {revision}");
 
     let contracts = ResourceContracts::new([
         ("malloc", ResourceApiKind::Acquire),
         ("calloc", ResourceApiKind::Acquire),
         ("free", ResourceApiKind::Release),
+        ("mk_mem_alloc", ResourceApiKind::Acquire),
+        ("mk_mem_alloc_z", ResourceApiKind::Acquire),
+        ("mk_mem_free", ResourceApiKind::Release),
     ]);
     let mut failed = false;
     for library in ["cmetrics", "ctraces"] {
@@ -91,7 +127,7 @@ fn run(root: &Path) -> Result<bool, String> {
                 "compile database contains no top-level {library} sources"
             ));
         }
-        let counts = audit_library(library, &selected, &contracts)?;
+        let counts = audit_library(library, &source_root, &selected, &contracts)?;
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
@@ -105,11 +141,47 @@ fn run(root: &Path) -> Result<bool, String> {
             counts.gateway_failures
         );
     }
+    audit_monkey_libevent_contract(&root)?;
+    if let Some(database_path) = monkey_database {
+        let database_path = database_path
+            .canonicalize()
+            .map_err(|error| format!("could not resolve {}: {error}", database_path.display()))?;
+        let database = fs::read_to_string(&database_path)
+            .map_err(|error| format!("could not read {}: {error}", database_path.display()))?;
+        let monkey_entries = compile_entries(&database)?;
+        let source_root = monkey_source_root(&monkey_entries)?;
+        let mut selected = monkey_entries
+            .into_iter()
+            .filter(|entry| is_monkey_unit(&source_root, &entry.file))
+            .collect::<Vec<_>>();
+        selected.sort_by(|left, right| left.file.cmp(&right.file));
+        selected.dedup_by(|left, right| left.file == right.file);
+        verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
+        let counts = audit_library("monkey-libevent", &source_root, &selected, &contracts)?;
+        failed |= counts.gateway_failures != 0;
+        println!(
+            "monkey-libevent: {} unit(s), {} source function(s), {} projected; \
+             {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+            counts.units,
+            counts.source_functions,
+            counts.projected_functions,
+            counts.safe_units,
+            counts.unsafe_units,
+            counts.unknown_units,
+            counts.gateway_failures
+        );
+    } else {
+        println!(
+            "monkey-libevent: source contract checked; pass its forced-libevent \
+             compile_commands.json to run the C gateway projection"
+        );
+    }
     Ok(failed)
 }
 
 fn audit_library(
     library: &str,
+    source_root: &Path,
     entries: &[CompileEntry],
     contracts: &ResourceContracts,
 ) -> Result<AuditCounts, String> {
@@ -133,9 +205,9 @@ fn audit_library(
         counts.source_functions += source_functions.len();
         let file = entry
             .file
-            .file_name()
-            .and_then(|name| name.to_str())
-            .ok_or_else(|| format!("non-UTF-8 source path: {}", entry.file.display()))?;
+            .strip_prefix(source_root)
+            .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
+            .to_string_lossy();
         match analyze_unrestricted_c11(&unit, &source_functions[0], contracts) {
             Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
                 counts.safe_units += 1;
@@ -177,6 +249,159 @@ fn audit_library(
     Ok(counts)
 }
 
+fn monkey_source_root(entries: &[CompileEntry]) -> Result<PathBuf, String> {
+    let event_entry = entries
+        .iter()
+        .find(|entry| entry.file.ends_with("mk_core/mk_event.c"))
+        .ok_or("Monkey compile database has no mk_core/mk_event.c entry")?;
+    let options = compiler_options(event_entry)?;
+    if !options
+        .definitions
+        .iter()
+        .any(|definition| definition == "MK_EVENT_LOOP_LIBEVENT")
+    {
+        return Err("Monkey mk_event.c was not compiled with -DMK_EVENT_LOOP_LIBEVENT".into());
+    }
+    event_entry
+        .file
+        .parent()
+        .and_then(Path::parent)
+        .map(Path::to_path_buf)
+        .ok_or_else(|| {
+            format!(
+                "could not derive Monkey source root from {}",
+                event_entry.file.display()
+            )
+        })
+}
+
+fn is_monkey_unit(source_root: &Path, file: &Path) -> bool {
+    let Ok(relative) = file.strip_prefix(source_root) else {
+        return false;
+    };
+    if file.extension().is_none_or(|extension| extension != "c") {
+        return false;
+    }
+    let relative = relative.to_string_lossy();
+    (relative.starts_with("mk_core/") && !relative.starts_with("mk_core/deps/"))
+        || relative.starts_with("mk_server/")
+        || relative.starts_with("tls/")
+}
+
+fn verify_monkey_source_copy(
+    canonical_root: &Path,
+    compiled_root: &Path,
+    entries: &[CompileEntry],
+) -> Result<(), String> {
+    for entry in entries {
+        let relative = entry
+            .file
+            .strip_prefix(compiled_root)
+            .map_err(|_| format!("source is outside Monkey root: {}", entry.file.display()))?;
+        let canonical = canonical_root.join(relative);
+        let compiled = fs::read(&entry.file)
+            .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
+        let expected = fs::read(&canonical)
+            .map_err(|error| format!("could not read {}: {error}", canonical.display()))?;
+        if compiled != expected {
+            return Err(format!(
+                "compiled Monkey source differs from pinned Fluent Bit source: {}",
+                relative.display()
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn audit_monkey_libevent_contract(fluent_root: &Path) -> Result<(), String> {
+    let repository_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .ok_or("compiler crate must be inside the QCore-C repository")?;
+    let reference_root = repository_root.join(LIBEVENT_SUBMODULE_PATH);
+    verify_pinned_libevent_source(&reference_root)
+        .map_err(|error| format!("could not verify Cycle 18 Libevent source: {error}"))?;
+
+    let bundled_root = fluent_root.join("lib/monkey/mk_core/deps/libevent");
+    let trusted_files = [
+        "include/event2/event.h",
+        "event.c",
+        "bufferevent.c",
+        "include/event2/thread.h",
+        "epoll.c",
+    ];
+    for relative in trusted_files {
+        let reference = fs::read(reference_root.join(relative))
+            .map_err(|error| format!("could not read reference {relative}: {error}"))?;
+        let bundled = fs::read(bundled_root.join(relative))
+            .map_err(|error| format!("could not read bundled {relative}: {error}"))?;
+        if bundled != reference {
+            return Err(format!(
+                "Monkey's bundled Libevent differs in Cycle 18 contract file {relative}"
+            ));
+        }
+    }
+
+    let adapter_path = fluent_root.join("lib/monkey/mk_core/mk_event_libevent.c");
+    let adapter = fs::read_to_string(&adapter_path)
+        .map_err(|error| format!("could not read {}: {error}", adapter_path.display()))?;
+    let symbols = prefixed_call_symbols(&adapter);
+    let mut accepted = Vec::new();
+    let mut unknown = Vec::new();
+    for symbol in symbols {
+        match classify_libevent_symbol(&symbol) {
+            qcore_compiler::ProfileDisposition::Accepted => accepted.push(symbol),
+            qcore_compiler::ProfileDisposition::Unknown => unknown.push(symbol),
+        }
+    }
+    println!(
+        "monkey-libevent adapter: {} accepted Cycle 18 API symbol(s): {}",
+        accepted.len(),
+        accepted.join(", ")
+    );
+    println!(
+        "monkey-libevent adapter: {} symbol(s) remain Unknown: {}",
+        unknown.len(),
+        unknown.join(", ")
+    );
+    println!(
+        "monkey bundled Libevent: {} Cycle 18 contract file(s) byte-identical",
+        trusted_files.len()
+    );
+    Ok(())
+}
+
+fn prefixed_call_symbols(source: &str) -> Vec<String> {
+    let bytes = source.as_bytes();
+    let mut symbols = Vec::new();
+    let mut cursor = 0;
+    while cursor < bytes.len() {
+        let start = cursor;
+        if bytes[cursor].is_ascii_alphabetic() || bytes[cursor] == b'_' {
+            cursor += 1;
+            while cursor < bytes.len()
+                && (bytes[cursor].is_ascii_alphanumeric() || bytes[cursor] == b'_')
+            {
+                cursor += 1;
+            }
+            let symbol = &source[start..cursor];
+            let mut following = cursor;
+            while bytes.get(following).is_some_and(u8::is_ascii_whitespace) {
+                following += 1;
+            }
+            if (symbol.starts_with("event_") || symbol.starts_with("evutil_"))
+                && bytes.get(following) == Some(&b'(')
+            {
+                symbols.push(symbol.to_owned());
+            }
+        } else {
+            cursor += 1;
+        }
+    }
+    symbols.sort();
+    symbols.dedup();
+    symbols
+}
+
 struct CompilerOptions {
     include_paths: Vec<String>,
     definitions: Vec<String>,
@@ -185,7 +410,14 @@ struct CompilerOptions {
 
 fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String> {
     let words = shell_words(&entry.command)?;
-    let mut include_paths = Vec::new();
+    // The gateway preprocesses through stdin, so Clang cannot infer the normal
+    // quoted-include search directory from the source filename.  Preserve that
+    // part of the compilation-database contract explicitly.
+    let mut include_paths = entry
+        .file
+        .parent()
+        .map(|path| vec![path.to_string_lossy().into_owned()])
+        .unwrap_or_default();
     let mut definitions = Vec::new();
     let mut dialect = CCompilerDialect::Gnu17;
     let mut cursor = 1;
