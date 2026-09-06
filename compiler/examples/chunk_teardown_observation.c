@@ -21,6 +21,9 @@ static struct allocation allocations[2048];
 static unsigned used, sequence, case_id;
 static int tracking, destroying;
 static int (*allocation_failure_hook)(const char *, size_t);
+static void (*backend_snapshot_hook)(struct cio_chunk *);
+static void (*before_free_hook)(void *);
+static const char *(*extra_function_name)(void *);
 static struct cio_ctx *context;
 static struct cio_stream *streams[16];
 static struct cio_chunk *chunks[64];
@@ -63,6 +66,7 @@ static int empty(struct mk_list *head) { return head->next==head && head->prev==
 void __wrap_free(void *p) {
     if (tracking && p) {
         unsigned id=identity(p);
+        if (before_free_hook) before_free_hook(p);
         if (destroying) {
             for (unsigned i=0;i<chunk_count;i++) if (chunks[i]==p) {
                 struct cio_chunk *ch=p;
@@ -88,7 +92,7 @@ static const char *function_name(void *fn) {
     NAME(cio_chunk_close_stream);NAME(cio_chunk_close);NAME(cio_memfs_close);
     NAME(cio_chunk_counter_total_sub);
 #undef NAME
-    return NULL;
+    return extra_function_name ? extra_function_name(fn) : NULL;
 }
 void __cyg_profile_func_enter(void *fn,void *caller) {
     (void)caller;
@@ -125,6 +129,7 @@ static void snapshot(void) {
         for(struct mk_list *h=st->chunks.next;h!=&st->chunks;h=h->next) {
             struct cio_chunk *ch=mk_list_entry(h,struct cio_chunk,_head);struct cio_memfs *mf=ch->backend;
             if(ci++)printf(",");
+            if (backend_snapshot_hook) { backend_snapshot_hook(ch); continue; }
             printf("{\"id\":%u,\"name\":%u,\"context\":%u,\"stream\":%u,\"locked\":%d,\"transaction\":%d,\"backend\":%u,\"fields\":[%u,%u,%u]}",identity(ch),identity(ch->name),identity(ch->ctx),identity(ch->st),ch->lock,ch->tx_active,identity(mf),identity(mf->name),identity(mf->buf_data),identity(mf->meta_data));
         }
         printf("]}");

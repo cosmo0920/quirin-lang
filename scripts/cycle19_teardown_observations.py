@@ -17,7 +17,7 @@ from cycle19_native_observations import PIN, REPO, profile, run, sha
 from check_teardown_trace import check_trace, load_trace
 
 
-def build(root, output, observer="chunk_teardown_observation"):
+def build(root, output, observer="chunk_teardown_observation", syscall_wrappers=()):
     revision = run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True).stdout.strip()
     if revision != PIN or run(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"], capture_output=True).stdout:
         raise RuntimeError("native teardown requires the clean pinned Fluent Bit checkout")
@@ -44,6 +44,7 @@ def build(root, output, observer="chunk_teardown_observation"):
     source = REPO / "compiler/examples" / (observer + ".c")
     binary = output / observer
     command = ["clang", *profile(entries[0]), *sanitizer, str(source), *map(str, objects), "-Wl,--wrap=malloc,--wrap=calloc,--wrap=strdup,--wrap=realloc,--wrap=free", "-lpthread", "-o", str(binary)]
+    command[1:1] = ["-Wl,--wrap=" + name for name in syscall_wrappers]
     dep = output / "observer.d"
     command[1:1] = ["-MMD", "-MF", str(dep)]
     run(command, capture_output=True); commands.append(command)

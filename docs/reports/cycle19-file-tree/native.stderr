@@ -1,0 +1,3 @@
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_file_unix.c:62 errno=5] Input/output error
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_file_unix.c:431 errno=5] Input/output error
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_file_unix.c:491 errno=5] Input/output error

@@ -108,8 +108,12 @@ and surviving-stream teardown. General caller reachability remains open.
 [Twelve real Linux cleanup observations](docs/reports/cycle19-file-os/README.md)
 now bind close, unmap and deletion to OS endpoint probes and inode witnesses in
 exclusive temporary fixtures. A failed zero-length unmap retains its mapping.
-These helper executions do not establish enclosing filesystem teardown or
-durability; no raw unit is promoted.
+These helper executions do not establish arbitrary filesystem teardown or
+durability. [Six enclosing native filesystem runs](docs/reports/cycle19-file-tree/README.md)
+add constructor, ring, release-order and OS endpoint evidence for one-file trees.
+All 66 allocation generations are released. Injected unmap/close failures retain
+live OS resources after parent release, and sync failure still allows cleanup.
+General caller/failure guarantees remain open; no raw unit is promoted.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

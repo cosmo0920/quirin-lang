@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (48 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (49 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -72,9 +72,13 @@ It also ships a conservative checker for *existing* C source (the
   sanitized real Linux cleanup calls now bind close/unmap/delete endpoints to
   exclusive temporary fixtures, including inode witnesses and retained mapping
   after invalid-length unmap failure. They do not establish enclosing filesystem
-  teardown, arbitrary OS failure behavior or durability. Latest evidence:
-  `docs/reports/cycle19-file-os/README.md` (407 workspace tests,
-  48 contract modules; prior source/verdict parity preserved).
+  teardown, arbitrary OS failure behavior or durability. Six further native
+  one-file constructor/teardown cases account for 66 allocation generations.
+  Suppressed unmap/close calls returning EIO leave observed mapping/descriptor
+  residuals after parent free; failed sync still allows cleanup. These fixtures
+  do not prove general filesystem callers, failures or durability. Latest evidence:
+  `docs/reports/cycle19-file-tree/README.md` (407 workspace tests,
+  49 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

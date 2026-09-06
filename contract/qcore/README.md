@@ -334,3 +334,10 @@ independent adapter checks raw arguments, errno, record frames, endpoint probes
 and inode hardlink witnesses. The 13 clauses preserve the separation between
 observed cleanup, static safety and durability. See the
 [OS observation report](../../docs/reports/cycle19-file-os/README.md).
+
+`chunkio/filesystem_teardown_observation.qcore` checks six native one-file tree
+executions, including three suppressed-syscall EIO cases. Its 16 clauses require
+complete allocation release while retaining mapping, descriptor and up-counter
+residuals separately. Neither successful `msync` nor released parent allocations
+prove durability. See the
+[filesystem tree report](../../docs/reports/cycle19-file-tree/README.md).

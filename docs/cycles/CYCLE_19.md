@@ -866,3 +866,19 @@ bounded evidence. All standing checks and pinned source/verdict parity pass.
 Arbitrary OS failures, full sync/durability, enclosing native filesystem teardown,
 general caller provenance, aggregate custody, wrapper lifecycle and full event
 composition remain open. No raw unit is promoted.
+
+## Native filesystem constructors and residual teardown (2026-09-06)
+
+The [filesystem tree report](../reports/cycle19-file-tree/README.md) binds six
+native one-file executions to constructor generations, reciprocal rings, exact
+nested release order and original OS identities. All 66 allocation generations
+are released. Suppressed unmap and close calls returning EIO retain respectively
+a mapping/up-counter and a descriptor after all enclosing allocations are freed.
+Suppressed sync still allows cleanup, while the backend's synced field stays
+false. The harness records residuals before separately reclaiming its fixtures.
+A 16-clause policy, 40 trace mutations and four additional Lean observation-gate
+theorems check this boundary. All standing checks, 19 existing sanitized native
+regressions and pinned source/verdict parity pass. These fixed one-file Linux
+cases do not prove general constructor/caller/failure paths, full sync/durability,
+aggregate source custody, remaining wrapper lifecycle or full event composition.
+Cycle 19 remains in progress and no raw unit is promoted.

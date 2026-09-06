@@ -1,3 +1,5 @@
+import QCore.NativeTeardownObservation
+
 namespace QCore.NativeOsObservation
 
 -- Abstract final observation gate. The C observer, Python structural adapter,
@@ -36,5 +38,40 @@ theorem missing_endpoint_rejects_success {o : Observation}
   intro h
   have absent := accepted_success_has_absent_endpoint h success
   simp [present] at absent
+
+end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Independent resource ledgers: accepted allocation release never consumes
+-- descriptor/mapping residuals recorded after the parent object is freed.
+def acceptedTeardown (plan released : List Nat)
+    (expectedResidual observedResidual : List (Resource × Nat))
+    (durability : Bool) : Prop :=
+  QCore.NativeTeardownObservation.accepted plan released ∧
+  observedResidual = expectedResidual ∧ durability = false
+
+theorem accepted_teardown_releases_exact_generations {plan released : List Nat}
+    {expectedResidual observedResidual : List (Resource × Nat)} {durability : Bool}
+    (h : acceptedTeardown plan released expectedResidual observedResidual durability) :
+    released = plan ∧ released.Nodup :=
+  ⟨h.1.2, QCore.NativeTeardownObservation.accepted_has_no_duplicate_release h.1⟩
+
+theorem accepted_teardown_preserves_residual_identity {plan released : List Nat}
+    {expectedResidual observedResidual : List (Resource × Nat)} {durability : Bool}
+    (h : acceptedTeardown plan released expectedResidual observedResidual durability) :
+    observedResidual = expectedResidual := h.2.1
+
+theorem live_residual_prevents_empty_terminal {plan released : List Nat}
+    {expectedResidual observedResidual : List (Resource × Nat)} {durability : Bool}
+    (h : acceptedTeardown plan released expectedResidual observedResidual durability)
+    (live : expectedResidual ≠ []) : observedResidual ≠ [] := by
+  rw [h.2.1]
+  exact live
+
+theorem released_allocations_can_coexist_with_mapping_residual :
+    acceptedTeardown [1] [1] [(.mapping, 7)] [(.mapping, 7)] false := by
+  unfold acceptedTeardown QCore.NativeTeardownObservation.accepted
+  decide
 
 end QCore.NativeOsObservation

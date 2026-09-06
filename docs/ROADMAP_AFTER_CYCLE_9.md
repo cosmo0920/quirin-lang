@@ -143,6 +143,11 @@ conditional unsupported-close path a reachable violation.
 helper calls to descriptor/mapping probes and pathname inode witnesses. This
 adds actual OS outcomes to the controlled observations; enclosing filesystem
 teardown, full sync/durability and general caller guarantees remain open.
+[Six native filesystem tree observations](reports/cycle19-file-tree/README.md)
+now bind one-stream/one-file constructors and parent teardown, including exact
+OS residual identities after injected unmap/close failures and cleanup after
+sync failure. These bounded cases account for 66 allocation generations without
+closing general filesystem or static custody gates.
 
 ## Cycle 20: Verifier plugin ecosystem
 

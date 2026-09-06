@@ -1,0 +1,22 @@
+{
+  "workspace-tests": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean-build": 0,
+  "lean-audit": 0,
+  "report-tests": 0,
+  "python-tests": 0,
+  "audit": 0,
+  "workspace_tests": 407,
+  "contract_modules": 49,
+  "python_tests": 15,
+  "new_trace_mutations": 40,
+  "native_executions": 6,
+  "native_positive_regressions": 5,
+  "native_failure_regressions": 10,
+  "native_unsupported_regressions": 4,
+  "native_asan_ubsan_lsan": true,
+  "raw_units_promoted": 0
+}

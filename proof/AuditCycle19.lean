@@ -306,3 +306,7 @@ import QCore.ChunkSource
 #print axioms QCore.NativeOsObservation.accepted_success_has_absent_endpoint
 #print axioms QCore.NativeOsObservation.observation_does_not_promote_static_or_durability
 #print axioms QCore.NativeOsObservation.missing_endpoint_rejects_success
+#print axioms QCore.NativeOsObservation.accepted_teardown_releases_exact_generations
+#print axioms QCore.NativeOsObservation.accepted_teardown_preserves_residual_identity
+#print axioms QCore.NativeOsObservation.live_residual_prevents_empty_terminal
+#print axioms QCore.NativeOsObservation.released_allocations_can_coexist_with_mapping_residual
