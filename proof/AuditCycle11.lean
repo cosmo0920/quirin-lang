@@ -14,3 +14,9 @@ import QCore.WholeProgram
 #print axioms QCore.WholeProgram.consume_does_not_mint
 #print axioms QCore.WholeProgram.consume_preserves_unique_identities
 #print axioms QCore.WholeProgram.recursive_summary_round_uses_contract
+
+#print axioms QCore.WholeProgram.accepted_function_has_no_unchecked_source_contract
+#print axioms QCore.WholeProgram.unchecked_source_contract_rejects
+#print axioms QCore.Frontend.BodyScope.binder_resolves_in_body
+#print axioms QCore.Frontend.BodyScope.leaving_body_restores_outer
+#print axioms QCore.Frontend.BodyScope.binder_cannot_escape

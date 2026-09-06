@@ -1473,6 +1473,7 @@ fn visible_local_names(block: &SourceBlock, position: usize, names: &mut BTreeSe
                 names.insert(name.clone());
             }
             StatementKind::WithLock { guard, body }
+            | StatementKind::ThreadScope { name: guard, body }
                 if position >= body.span.start && position < body.span.end =>
             {
                 names.insert(guard.clone());
@@ -1618,6 +1619,7 @@ pub fn elaborate_source(
                     &program.lexical_tokens,
                     &mut next_symbol,
                     &mut diagnostics,
+                    None,
                 )
             });
         declarations.push(TypedSourceDeclaration {
@@ -1650,8 +1652,14 @@ fn elaborate_block(
     lexical_tokens: &[Token],
     next_symbol: &mut u32,
     diagnostics: &mut Vec<SourceDiagnostic>,
+    body_binding: Option<&str>,
 ) -> Vec<TypedStatement> {
-    scopes.push(BTreeMap::new());
+    let mut scope = BTreeMap::new();
+    if let Some(name) = body_binding {
+        scope.insert(name.to_owned(), SymbolId(*next_symbol));
+        *next_symbol += 1;
+    }
+    scopes.push(scope);
     let mut typed = Vec::new();
     for statement in &block.statements {
         let (binding, reference, pass) = statement_metadata(&statement.value);
@@ -1701,6 +1709,11 @@ fn elaborate_block(
                 lexical_tokens,
                 next_symbol,
                 diagnostics,
+                match &statement.value {
+                    StatementKind::WithLock { guard, .. } => Some(guard),
+                    StatementKind::ThreadScope { name, .. } => Some(name),
+                    _ => None,
+                },
             ));
         }
         typed.push(TypedStatement {
@@ -1763,7 +1776,19 @@ fn lexical_references(
         };
         let previous = index.checked_sub(1).and_then(|index| tokens.get(index));
         let next = tokens.get(index + 1);
-        if is_reserved_source_word(word)
+        // Header binders are definitions in the body scope, not references.
+        // Skip the binder token only: `with lock m as m` still resolves the
+        // mutex expression against the enclosing scope.
+        let body_binder = match &statement.value {
+            StatementKind::ThreadScope { .. } => index == 2,
+            StatementKind::WithLock { .. } => matches!(
+                previous.map(|token| &token.kind),
+                Some(TokenKind::Word(keyword)) if keyword == "as"
+            ),
+            _ => false,
+        };
+        if body_binder
+            || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),
                 Some(TokenKind::Symbol(

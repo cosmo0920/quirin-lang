@@ -85,3 +85,10 @@ stores MAP_FAILED, reports up-ring membership without incrementing the counter,
 and retains the new descriptor. Fixed retries and already-synced behavior remain
 observations, not general OS failure or durability guarantees. Evidence:
 `docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.

@@ -333,3 +333,45 @@ fn callee_effects_must_fit_the_callers_declared_row() {
                 && error.message.contains("callee effects"))
     );
 }
+
+#[test]
+fn source_contract_clauses_cannot_be_bypassed_by_supplied_semantics() {
+    for clause in [
+        "requires true;",
+        "ensures normal true;",
+        "quant normal wall_clock <= 5;",
+    ] {
+        let text = format!("fn main() -> i32 contract {{ {clause} }} {{ return 0; }}");
+        let source = typed(&text);
+        let errors = check_whole_program(
+            &source,
+            &ErrorDeclarations::new(["Failure".into()]),
+            vec![semantics(
+                source.globals["main"],
+                "main",
+                Vec::new(),
+                Vec::new(),
+            )],
+        )
+        .unwrap_err();
+        assert!(errors.iter().any(|error| error.code == "Q021"
+            && error.message.contains("refusing unchecked contract")
+            && text[error.span.start..error.span.end].contains(clause.trim_end_matches(';'))));
+    }
+    for contract in ["", "contract {}"] {
+        let source = typed(&format!("fn main() -> i32 {contract} {{ return 0; }}"));
+        assert!(
+            check_whole_program(
+                &source,
+                &ErrorDeclarations::new(["Failure".into()]),
+                vec![semantics(
+                    source.globals["main"],
+                    "main",
+                    Vec::new(),
+                    Vec::new()
+                )],
+            )
+            .is_ok()
+        );
+    }
+}

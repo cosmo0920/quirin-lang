@@ -273,3 +273,60 @@ fn maps_every_existing_semantic_boundary_to_a_source_diagnostic() {
         assert!(!diagnostic.code.is_empty());
     }
 }
+
+#[test]
+fn concurrency_header_binders_have_body_local_symbol_identity() {
+    let source = "fn main(m: i32) -> unit { with lock m as g { g; } thread scope s { s; } }";
+    let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
+    let function = &typed.declarations[0];
+    let lock = &function.statements[0];
+    let scope = &function.statements[1];
+    assert_eq!(lock.referenced_symbols, vec![function.parameters[0].symbol]);
+    assert!(scope.referenced_symbols.is_empty());
+    assert_eq!(lock.nested[0].referenced_symbols.len(), 1);
+    assert_eq!(scope.nested[0].referenced_symbols.len(), 1);
+    assert_ne!(lock.nested[0].referenced_symbols, lock.referenced_symbols);
+    assert_ne!(
+        lock.nested[0].referenced_symbols,
+        scope.nested[0].referenced_symbols
+    );
+
+    let source = "fn main(m: i32) -> unit { with lock m as m { m; } m; }";
+    let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
+    let function = &typed.declarations[0];
+    assert_ne!(
+        function.statements[0].referenced_symbols,
+        function.statements[0].nested[0].referenced_symbols
+    );
+    assert_eq!(
+        function.statements[0].referenced_symbols,
+        function.statements[1].referenced_symbols
+    );
+}
+
+#[test]
+fn concurrency_binders_do_not_hide_unresolved_inputs_or_escape_their_body() {
+    for source in [
+        "fn main() -> unit { with lock missing as g { g; } }",
+        "fn main() -> unit { with lock m as m { m; } }",
+        "fn main(m: i32) -> unit { with lock m as g { } g; }",
+        "fn main() -> unit { thread scope s { } s; }",
+        "fn main() -> unit { thread scope s { } thread scope t { s; } }",
+    ] {
+        let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
+        assert!(
+            errors.iter().any(|error| error.code == "Q013"),
+            "{source}: {errors:?}"
+        );
+    }
+    for source in [
+        "fn main(m: i32) -> unit { with lock m as g { let g = 0; } }",
+        "fn main() -> unit { thread scope s { let s = 0; } }",
+    ] {
+        let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
+        assert!(
+            errors.iter().any(|error| error.code == "Q012"),
+            "{source}: {errors:?}"
+        );
+    }
+}
