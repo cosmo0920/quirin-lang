@@ -109,9 +109,13 @@ pub fn compile_files(
 }
 
 /// Compiles with an explicit verifier registry. Source-level `verify scope`
-/// declarations are configuration-only in protocol v1 and are rejected with
-/// Q701 until core obligation generation and dispatch are implemented. Use
-/// `VerifierRegistry::resolve_source_scopes` for configuration validation.
+/// declarations are resolved (`Q700` on failure) and then dispatched: the core
+/// derives an obligation inventory, requests witnesses, and rechecks them
+/// behind the firewall. A scope whose obligations are not all discharged by
+/// core-checked evidence is `Q701`; conflicting provider evidence is `Q702`
+/// and an unvalidated provider allegation is `Q703`. Use
+/// `VerifierRegistry::resolve_source_scopes` for configuration validation
+/// alone.
 pub fn compile_files_with_registry(
     files: &[SourceFile],
     options: &CompileOptions,
@@ -196,16 +200,35 @@ pub fn compile_files_with_registry(
             .collect::<Vec<_>>()
     })?;
     if !scopes.is_empty() {
-        return Err(scopes.iter().map(|scope| {
-            let span = parsed.declarations.iter()
-                .find(|declaration| declaration.value.name == scope.name)
-                .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
-            map_raw_diagnostic(
-                "Q701", SemanticPass::PluginVerification, span,
-                "verify scope is configuration-only: source obligation generation and provider dispatch are not implemented".into(),
-                &ranges,
-            )
-        }).collect());
+        // W3: resolved scopes drive real verification. The core derives the
+        // obligation inventory, dispatches requests, and fails closed; a scope
+        // is verified only when every core-derived obligation is discharged by
+        // core-checked evidence.
+        let unit = stripped
+            .first()
+            .map_or("<unit>", |file| file.path.as_str())
+            .to_owned();
+        let report = crate::verify_dispatch::dispatch_scopes(&parsed, &unit, &scopes, registry);
+        let diagnostics = report.diagnostics();
+        if !diagnostics.is_empty() {
+            return Err(diagnostics
+                .into_iter()
+                .map(|diagnostic| {
+                    let span = parsed
+                        .declarations
+                        .iter()
+                        .find(|declaration| declaration.value.name == diagnostic.scope)
+                        .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+                    map_raw_diagnostic(
+                        diagnostic.code,
+                        SemanticPass::PluginVerification,
+                        span,
+                        diagnostic.message,
+                        &ranges,
+                    )
+                })
+                .collect());
+        }
     }
     let typed = elaborate_source(&parsed).map_err(|diagnostics| {
         diagnostics

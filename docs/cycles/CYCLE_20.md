@@ -256,3 +256,16 @@ It does not implement plugin evidence v2, close VP05, establish provider parity
 or authorize removal of the existing source/profile routes. Review the W2
 manifest schema and W3 witness schema before their broad implementation, and
 archive each W5 provider comparison before deleting its predecessor.
+
+## W3 bounded execution note (2026-09-07)
+
+The earlier configuration-only description is superseded by
+[`w3-evidence-v2`](../reports/w3-evidence-v2/README.md). Source scopes derive
+capability obligations and dispatch through the registry. The checked positive
+source path is observation agreement under an explicit trust assumption and
+recorded-run bounds. A standalone provider links only the published schemas
+and JSON. Lifecycle model replay is exercised, but source lifecycle effects
+are deliberately incomplete pending a trusted importer. Empty inventories,
+unsupported capabilities, mismatches, malicious witnesses and unchecked
+violation allegations stay Unknown. Host relocation, W2 production-profile
+composition and first-party semantic acceptance remain open.

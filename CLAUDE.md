@@ -74,3 +74,9 @@ Claude-specific additions:
 - Run the full standing per-change gate from AGENTS.md before reporting a
   task complete; report probe/example exit codes honestly (a nonzero probe
   exit is a finding, not a build failure).
+
+- W3 bounded evidence-v2 replay/dispatch is recorded in
+  `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
+  describe recorded runs under `observations_trusted`; lifecycle source
+  derivation stays incomplete until real effect/ABI import exists. The host
+  relocation is a separate remaining step, and v1 Safe refusal is unchanged.

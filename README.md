@@ -166,14 +166,19 @@ length-delimited JSON protocol, manifests, a fail-closed registry, bounded
 process providers, and a certificate firewall. Protocol v1 carries only
 Boolean assertions, so the core currently refuses all v1 `Safe` proposals
 and treats unchecked `Unsafe` proposals as `Unknown`; source-level
-`verify scope` declarations are configuration-validated but not yet
-dispatched.
+`verify scope` declarations now derive obligations and dispatch providers.
+The [bounded evidence-v2 increment](docs/reports/w3-evidence-v2/README.md)
+replays observation predicates against pinned contracts and records agreement
+for supplied runs under an explicit observation-trust assumption. A standalone
+provider builds against `qcore-schemas` alone. Source lifecycle effects remain
+unimported, empty inventories remain unverified, and first-party providers
+remain unpromoted; host relocation and production profile import are still open.
 
 **Trust and audits.** An independent
 [reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six
 certificate/weak-memory discrepancies, followed by a
 [seven-finding follow-up](docs/REEVALUATION_FOLLOWUP.md); all thirteen are
-repaired, with the remaining boundaries (semantic plugin witnesses, OS-level
+repaired, with the remaining boundaries (production semantic-witness imports, OS-level
 provider sandboxing, and the custody modes W4 still does not infer) documented
 rather than papered over.
 

@@ -1,3 +1,4 @@
+import QCore.VerifierEvidenceV2
 import QCore.GuardedDelete
 import QCore.UnsupportedClose
 import QCore.ShortCircuit

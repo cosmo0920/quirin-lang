@@ -412,49 +412,58 @@ pub struct EventProgram {
     pub operations: Vec<EventOperation>,
 }
 
+/// Libevent-specific event/callback diagnostics.
+///
+/// These were spec §54's `Q700`–`Q712`. W3/W7 reassigned them to the provider
+/// namespace as `qcore.libevent.L00`–`L12`, because the core allocates no
+/// numbers for library-specific conditions and `Q700`–`Q719` are now reserved
+/// for core `verify scope` resolution and dispatch. Order and one-line
+/// meanings are preserved exactly; the mapping is recorded in this module's
+/// parent (`verifier_plugins::libevent`) and in `docs/CHANGELOG_r0_2.md`.
+/// Archived Cycle 18 reports keep the old identifiers and their dates.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EventDiagnostic {
-    Q700InvalidLifecycle {
+    L00InvalidLifecycle {
         operation: usize,
     },
-    Q701UseAfterFree {
+    L01UseAfterFree {
         operation: usize,
     },
-    Q702ArgumentLifetime {
+    L02ArgumentLifetime {
         operation: usize,
         argument: CallbackArgumentId,
     },
-    Q703DescriptorCustody {
+    L03DescriptorCustody {
         operation: usize,
         descriptor: DescriptorId,
     },
-    Q704ThreadInitialization {
+    L04ThreadInitialization {
         operation: usize,
         base: EventBaseId,
     },
-    Q705ConflictingAccess {
+    L05ConflictingAccess {
         first: usize,
         second: usize,
     },
-    Q706NotQuiescent {
+    L06NotQuiescent {
         operation: usize,
     },
-    Q707OwnedObligation {
+    L07OwnedObligation {
         operation: usize,
     },
-    Q708OrderingAssumption {
+    L08OrderingAssumption {
         operation: usize,
     },
-    Q709UnknownProfile {
+    L09UnknownProfile {
         operation: usize,
     },
-    Q710BuffereventContract {
+    L10BuffereventContract {
         operation: usize,
     },
-    Q711LoopExitCustody {
+    L11LoopExitCustody {
         operation: usize,
     },
-    Q712TraceRefinement {
+    L12TraceRefinement {
         observation: usize,
     },
 }
@@ -585,11 +594,11 @@ pub fn check_event_program(
         match operation {
             EventOperation::CreateBase { base, profile } => {
                 if bases.contains_key(base) {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 } else if !profile.accepted() {
-                    diagnostics.insert(EventDiagnostic::Q709UnknownProfile {
+                    diagnostics.insert(EventDiagnostic::L09UnknownProfile {
                         operation: operation_index,
                     });
                 } else {
@@ -610,12 +619,12 @@ pub fn check_event_program(
                     state.dispatcher = Some(*dispatcher);
                 }
                 Some(state) if state.freed => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -626,7 +635,7 @@ pub fn check_event_program(
                     state.loop_request = None;
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 }
@@ -643,16 +652,16 @@ pub fn check_event_program(
                     .get(&event.id)
                     .is_some_and(|generation| *generation >= event.generation);
                 if descriptor.is_some_and(|descriptor| closed_descriptors.contains(&descriptor)) {
-                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                    diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: descriptor.expect("checked descriptor"),
                     });
                 } else if stale || events.contains_key(event) {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 } else if !bases.get(base).is_some_and(|state| !state.freed) {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 } else if !flags.valid()
@@ -662,11 +671,11 @@ pub fn check_event_program(
                         .iter()
                         .any(|reason| !reason_allowed(*flags, *reason))
                 {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 } else if !live_arguments.contains(&summary.argument) {
-                    diagnostics.insert(EventDiagnostic::Q702ArgumentLifetime {
+                    diagnostics.insert(EventDiagnostic::L02ArgumentLifetime {
                         operation: operation_index,
                         argument: summary.argument,
                     });
@@ -694,7 +703,7 @@ pub fn check_event_program(
                             .descriptor
                             .is_some_and(|descriptor| closed_descriptors.contains(&descriptor)) =>
                     {
-                        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                             operation: operation_index,
                             descriptor: state.descriptor.expect("checked descriptor"),
                         });
@@ -708,12 +717,12 @@ pub fn check_event_program(
                         state.lifecycle = EventLifecycle::Pending;
                     }
                     Some(state) if state.lifecycle == EventLifecycle::Freed => {
-                        diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                        diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                             operation: operation_index,
                         });
                     }
                     _ => {
-                        diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                        diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                             operation: operation_index,
                         });
                     }
@@ -733,7 +742,7 @@ pub fn check_event_program(
                     ) && state.summary.trigger_reasons.contains(reason) =>
                 {
                     if *cross_thread && bases[&state.base].profile.threads == ThreadMode::Disabled {
-                        diagnostics.insert(EventDiagnostic::Q704ThreadInitialization {
+                        diagnostics.insert(EventDiagnostic::L04ThreadInitialization {
                             operation: operation_index,
                             base: state.base,
                         });
@@ -748,12 +757,12 @@ pub fn check_event_program(
                     }
                 }
                 Some(state) if state.lifecycle == EventLifecycle::Freed => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -771,11 +780,11 @@ pub fn check_event_program(
                 });
                 let Some(state) = events.get_mut(event) else {
                     diagnostics.insert(if latest_event_generation.contains_key(&event.id) {
-                        EventDiagnostic::Q701UseAfterFree {
+                        EventDiagnostic::L01UseAfterFree {
                             operation: operation_index,
                         }
                     } else {
-                        EventDiagnostic::Q700InvalidLifecycle {
+                        EventDiagnostic::L00InvalidLifecycle {
                             operation: operation_index,
                         }
                     });
@@ -786,7 +795,7 @@ pub fn check_event_program(
                     continue;
                 };
                 let Some(base) = bases.get_mut(&state.base) else {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                     trace.push(ObservedEvent {
@@ -802,7 +811,7 @@ pub fn check_event_program(
                     || !live_arguments.contains(&state.summary.argument)
                     || selected_priority != Some(Some(state.priority))
                 {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 } else {
@@ -815,7 +824,7 @@ pub fn check_event_program(
                 Some(state) if state.lifecycle == EventLifecycle::Running => {
                     let base = &mut bases.get_mut(&state.base).expect("checked base");
                     if base.running_callback != Some(CallbackContext::Event(*event)) {
-                        diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                        diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                             operation: operation_index,
                         });
                     } else {
@@ -833,7 +842,7 @@ pub fn check_event_program(
                     }
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -844,7 +853,7 @@ pub fn check_event_program(
                         state.nonblocking_delete = true;
                         state.active_reasons.clear();
                     } else {
-                        diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                        diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                             operation: operation_index,
                         });
                     }
@@ -859,12 +868,12 @@ pub fn check_event_program(
                     state.lifecycle = EventLifecycle::Idle;
                 }
                 Some(_) => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
                 None => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -879,7 +888,7 @@ pub fn check_event_program(
                     state.lifecycle = EventLifecycle::Finalized;
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 }
@@ -900,12 +909,12 @@ pub fn check_event_program(
                     observed = ObservedKind::Teardown;
                 }
                 Some(_) => {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 }
                 None => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -920,7 +929,7 @@ pub fn check_event_program(
                         || closed_descriptors.contains(first)
                         || closed_descriptors.contains(second)
                     {
-                        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                        diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                             operation: operation_index,
                             descriptor: *first,
                         });
@@ -932,7 +941,7 @@ pub fn check_event_program(
             }
             EventOperation::GetSocketError { descriptor } => {
                 if closed_descriptors.contains(descriptor) {
-                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                    diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
                     });
@@ -950,7 +959,7 @@ pub fn check_event_program(
                         )
                 });
                 if active_borrow {
-                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                    diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
                     });
@@ -966,7 +975,7 @@ pub fn check_event_program(
                             // terminal custody check rejects an absent retry.
                         }
                         _ => {
-                            diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                            diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                                 operation: operation_index,
                                 descriptor: *descriptor,
                             });
@@ -989,25 +998,25 @@ pub fn check_event_program(
                     .get(&bev.id)
                     .is_some_and(|generation| *generation >= bev.generation);
                 if stale || bevs.contains_key(bev) || !bases.get(base).is_some_and(|b| !b.freed) {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 } else if closed_descriptors.contains(descriptor) {
-                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                    diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
                     });
                 } else if !live_arguments.contains(argument) {
-                    diagnostics.insert(EventDiagnostic::Q702ArgumentLifetime {
+                    diagnostics.insert(EventDiagnostic::L02ArgumentLifetime {
                         operation: operation_index,
                         argument: *argument,
                     });
                 } else if *unlock_callbacks && !*deferred {
-                    diagnostics.insert(EventDiagnostic::Q710BuffereventContract {
+                    diagnostics.insert(EventDiagnostic::L10BuffereventContract {
                         operation: operation_index,
                     });
                 } else if *thread_safe && bases[base].profile.threads == ThreadMode::Disabled {
-                    diagnostics.insert(EventDiagnostic::Q704ThreadInitialization {
+                    diagnostics.insert(EventDiagnostic::L04ThreadInitialization {
                         operation: operation_index,
                         base: *base,
                     });
@@ -1017,7 +1026,7 @@ pub fn check_event_program(
                         Some(DescriptorCustody::Bufferevent(_))
                     )
                 {
-                    diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                    diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
                     });
@@ -1061,12 +1070,12 @@ pub fn check_event_program(
                     }
                 }
                 Some(state) if state.freed => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q710BuffereventContract {
+                    diagnostics.insert(EventDiagnostic::L10BuffereventContract {
                         operation: operation_index,
                     });
                 }
@@ -1076,7 +1085,7 @@ pub fn check_event_program(
                     state.output_bytes = state.output_bytes.saturating_add(*bytes);
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
@@ -1086,14 +1095,14 @@ pub fn check_event_program(
                     state.output_bytes -= *bytes;
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q710BuffereventContract {
+                    diagnostics.insert(EventDiagnostic::L10BuffereventContract {
                         operation: operation_index,
                     });
                 }
             },
             EventOperation::BuffereventCallbackEnter { bev, caller } => {
                 let Some(state) = bevs.get_mut(bev) else {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                     trace.push(ObservedEvent {
@@ -1106,13 +1115,13 @@ pub fn check_event_program(
                     || state.callback_running
                     || !live_arguments.contains(&state.argument)
                 {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 } else if state.deferred {
                     let base = &mut bases.get_mut(&state.base).expect("checked base");
                     if base.dispatcher.is_none() || base.running_callback.is_some() {
-                        diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                        diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                             operation: operation_index,
                         });
                     } else {
@@ -1140,7 +1149,7 @@ pub fn check_event_program(
                     observed = ObservedKind::CallbackExit;
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
+                    diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
                 }
@@ -1161,7 +1170,7 @@ pub fn check_event_program(
                             closed_descriptors.insert(state.descriptor);
                             observed = ObservedKind::DescriptorClose;
                         } else {
-                            diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+                            diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                                 operation: operation_index,
                                 descriptor: state.descriptor,
                             });
@@ -1171,12 +1180,12 @@ pub fn check_event_program(
                     }
                 }
                 Some(state) if state.output_bytes != 0 => {
-                    diagnostics.insert(EventDiagnostic::Q707OwnedObligation {
+                    diagnostics.insert(EventDiagnostic::L07OwnedObligation {
                         operation: operation_index,
                     });
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q706NotQuiescent {
+                    diagnostics.insert(EventDiagnostic::L06NotQuiescent {
                         operation: operation_index,
                     });
                 }
@@ -1190,7 +1199,7 @@ pub fn check_event_program(
                 let (authorized, base) =
                     context_authority(*context, *payload, *kind, &events, &bevs, &bases);
                 if !authorized {
-                    diagnostics.insert(EventDiagnostic::Q702ArgumentLifetime {
+                    diagnostics.insert(EventDiagnostic::L02ArgumentLifetime {
                         operation: operation_index,
                         argument: 0,
                     });
@@ -1203,7 +1212,7 @@ pub fn check_event_program(
                         && access_conflicts(prior.kind, *kind)
                         && !(*synchronized || prior.synchronized)
                     {
-                        diagnostics.insert(EventDiagnostic::Q705ConflictingAccess {
+                        diagnostics.insert(EventDiagnostic::L05ConflictingAccess {
                             first: prior.operation,
                             second: operation_index,
                         });
@@ -1224,7 +1233,7 @@ pub fn check_event_program(
                 };
             }
             EventOperation::AssumeOrdering { evidence: _ } => {
-                diagnostics.insert(EventDiagnostic::Q708OrderingAssumption {
+                diagnostics.insert(EventDiagnostic::L08OrderingAssumption {
                     operation: operation_index,
                 });
             }
@@ -1235,7 +1244,7 @@ pub fn check_event_program(
             } => match bases.get_mut(base) {
                 Some(state) if !state.freed => {
                     if *cross_thread && state.profile.threads == ThreadMode::Disabled {
-                        diagnostics.insert(EventDiagnostic::Q704ThreadInitialization {
+                        diagnostics.insert(EventDiagnostic::L04ThreadInitialization {
                             operation: operation_index,
                             base: *base,
                         });
@@ -1245,7 +1254,7 @@ pub fn check_event_program(
                     }
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
@@ -1257,7 +1266,7 @@ pub fn check_event_program(
                     .values()
                     .any(|bev| !bev.freed && bev.argument == *argument);
                 if referenced || !live_arguments.remove(argument) {
-                    diagnostics.insert(EventDiagnostic::Q702ArgumentLifetime {
+                    diagnostics.insert(EventDiagnostic::L02ArgumentLifetime {
                         operation: operation_index,
                         argument: *argument,
                     });
@@ -1277,7 +1286,7 @@ pub fn check_event_program(
                         || live_event
                         || live_bev
                     {
-                        diagnostics.insert(EventDiagnostic::Q711LoopExitCustody {
+                        diagnostics.insert(EventDiagnostic::L11LoopExitCustody {
                             operation: operation_index,
                         });
                     } else {
@@ -1286,7 +1295,7 @@ pub fn check_event_program(
                     }
                 }
                 _ => {
-                    diagnostics.insert(EventDiagnostic::Q701UseAfterFree {
+                    diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
                 }
@@ -1300,27 +1309,27 @@ pub fn check_event_program(
 
     for event in events.values() {
         if event.lifecycle != EventLifecycle::Freed {
-            diagnostics.insert(EventDiagnostic::Q707OwnedObligation {
+            diagnostics.insert(EventDiagnostic::L07OwnedObligation {
                 operation: program.operations.len(),
             });
         }
     }
     for bev in bevs.values() {
         if !bev.freed {
-            diagnostics.insert(EventDiagnostic::Q707OwnedObligation {
+            diagnostics.insert(EventDiagnostic::L07OwnedObligation {
                 operation: program.operations.len(),
             });
         }
     }
     for base in bases.values() {
         if !base.freed {
-            diagnostics.insert(EventDiagnostic::Q711LoopExitCustody {
+            diagnostics.insert(EventDiagnostic::L11LoopExitCustody {
                 operation: program.operations.len(),
             });
         }
     }
     for descriptor in descriptor_custody.keys() {
-        diagnostics.insert(EventDiagnostic::Q703DescriptorCustody {
+        diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
             operation: program.operations.len(),
             descriptor: *descriptor,
         });
@@ -1441,7 +1450,7 @@ pub fn check_observation_refinement(
             .zip(observation)
             .position(|(left, right)| left != right)
             .unwrap_or(expected.len().min(observation.len()));
-        Err(EventDiagnostic::Q712TraceRefinement {
+        Err(EventDiagnostic::L12TraceRefinement {
             observation: first_difference,
         })
     }
