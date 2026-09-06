@@ -1120,3 +1120,235 @@ fn removal_preserves_other_children_and_rejects_aliased_removal_arguments() {
         AnalysisStatus::Safe
     );
 }
+
+#[test]
+fn direct_out_forwarding_initializes_the_callers_original_slot() {
+    let source = "void fill(void **out) { q_make(out); } void subject(void) { void *p; fill(&p); q_free(p); }";
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "fill"),
+        ResourceFunctionContract::new(
+            [ResourceParameterMode::Out { nullable: false }],
+            ResourceReturnMode::None
+        )
+    );
+}
+
+#[test]
+fn forwarded_out_slots_compose_through_acyclic_wrappers_and_parentheses() {
+    let source = "void fill(void **out) { q_make((out)); } void relay(void **out) { fill(out); } void subject(void) { void *p; relay(&p); q_free(p); }";
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "relay"),
+        ResourceFunctionContract::new(
+            [ResourceParameterMode::Out { nullable: false }],
+            ResourceReturnMode::None
+        )
+    );
+}
+
+#[test]
+fn forwarding_does_not_accept_reassigned_aliased_or_unwritten_slots() {
+    for body in [
+        "{ void **out; q_make(out); }",
+        "{ void *local, **out; q_make(out); }",
+        "{ void **out = other; q_make(out); }",
+        "{ void *local = q_alloc(), **out; q_free(local); q_make(out); }",
+        "out = other; q_make(out);",
+        "out++; q_make(out);",
+        "--out; q_make(out);",
+        "q_observe(out = other); q_make(out);",
+        "q_observe(&out); q_make(out);",
+        "q_make(out); q_observe(out);",
+        "q_make(out); q_observe((void *)out);",
+        "q_make(out); q_observe(out + 0);",
+        "q_make(out), q_observe(out);",
+        "flag && (q_make(out), 1);",
+        "out = 0; q_make(out);",
+        "q_make(&out); q_make(out);",
+        "q_make(out); out = other;",
+        "void **alias = out; q_make(alias);",
+        "void **alias = out; q_make(out); q_observe(alias);",
+        "if (flag) { q_make(out); }",
+        "q_make(out); q_make(out);",
+        "q_make(out); *out = 0;",
+        "q_make(out + 1);",
+        "q_make(0);",
+        "q_make(out); opaque(out);",
+    ] {
+        let source = format!("void fill(void **out, void **other, int flag) {{ {body} }}");
+        assert!(
+            no_summary(&source, &[Q_BASE, Q_RICH_MODES], "fill"),
+            "accepted {body}"
+        );
+    }
+    // A bare local pointer never receives an inferred caller-slot authority.
+    let source = "void subject(void) { void *p; q_make(p); q_free(p); }";
+    let result = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_ne!(result.status, AnalysisStatus::Safe);
+    assert!(has(
+        &result,
+        "subject",
+        |kind| matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains("without an out-parameter contract"))
+    ));
+}
+
+#[test]
+fn forwarded_outputs_keep_nullability_and_dont_invent_unresolved_handback() {
+    let source = "void fill(void **out, int flag) { if (flag) { q_make(out); return; } *out = 0; } void subject(void) { void *p; fill(&p, 1); if (p) { q_free(p); } }";
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "fill").parameters[0],
+        ResourceParameterMode::Out { nullable: true }
+    );
+    assert_ne!(
+        analyze(
+            &source.replace("if (p) { q_free(p); }", "q_free(p);"),
+            modules
+        )
+        .status,
+        AnalysisStatus::Safe
+    );
+    let nullable = Q_RICH_MODES.1.replace(
+        "resource_out(destination, nonnull)",
+        "resource_out(destination, nullable)",
+    );
+    assert!(no_summary(
+        "void fill(void **out) { q_make(out); }",
+        &[Q_BASE, ("nullable-out.qcore", &nullable)],
+        "fill"
+    ));
+}
+
+#[test]
+fn forwarded_output_callers_keep_leak_and_slot_alias_obligations() {
+    let prefix = "void fill(void **a, void **b) { q_make(a); q_make(b); }";
+    let source = format!(
+        "{prefix} void subject(void) {{ void *p; void *q; fill(&p, &q); q_free(p); q_free(q); }}"
+    );
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    assert_eq!(analyze(&source, modules).status, AnalysisStatus::Safe);
+    for body in [
+        "void *p; void *q; fill(&p, &q); q_free(p);",
+        "void *p; fill(&p, &p); q_free(p);",
+        "void *p = q_alloc(); void *q; fill(&p, &q); q_free(p); q_free(q);",
+    ] {
+        let result = analyze(
+            &format!("{prefix} void subject(void) {{ {body} }}"),
+            modules,
+        );
+        assert!(
+            has(&result, "subject", |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
+            "{body}"
+        );
+    }
+}
+
+#[test]
+fn out_forwarding_respects_declared_contracts_and_certificate_rederivation() {
+    use crate::legacy_c::{
+        C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+        check_legacy_safety_certificate,
+    };
+    let source = "void q_make(void **); void q_free(void *); void fill(void **out) { q_make(out); } void subject(void) { void *p; fill(&p); q_free(p); }";
+    let declaration = "module contract; extern fn fill(out: ptr<mut, ptr<mut, u8>>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(out); ensures normal resource_return_none(); };";
+    let result = analyze(source, &[Q_BASE, Q_RICH_MODES, ("fill.qcore", declaration)]);
+    assert!(has(&result, "fill", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::SummaryConflict { .. }
+    )));
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &fixture_contracts(&[Q_BASE, Q_RICH_MODES]),
+    )
+    .unwrap();
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("{result:?}")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let shadowed = source.replace("q_make(out);", "{ void **out; q_make(out); }");
+    let shadowed_result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &shadowed,
+            ..Default::default()
+        },
+        "subject",
+        &fixture_contracts(&[Q_BASE, Q_RICH_MODES]),
+    )
+    .unwrap();
+    assert!(!matches!(
+        shadowed_result,
+        UnrestrictedLegacyResult::Safe(_)
+    ));
+    for mode in [
+        ResourceParameterMode::Borrowed,
+        ResourceParameterMode::Out { nullable: true },
+    ] {
+        let mut changed = certificate.clone();
+        changed
+            .summaries
+            .iter_mut()
+            .find(|record| record.function == "fill")
+            .unwrap()
+            .contract
+            .parameters[0] = mode;
+        assert!(check_legacy_safety_certificate(&changed).is_err());
+    }
+    let mut changed = certificate.clone();
+    changed.preprocessed_source = changed
+        .preprocessed_source
+        .replace("q_make(out)", "q_make(&out)");
+    assert_ne!(changed.preprocessed_source, certificate.preprocessed_source);
+    assert!(check_legacy_safety_certificate(&changed).is_err());
+}
+
+#[test]
+fn formal_identity_guards_keep_scalar_updates_but_reject_resource_mutation() {
+    let source = "void fill(void **out, int count) { count++; q_make(out); } void subject(void) { void *p; fill(&p, 0); q_free(p); }";
+    assert_eq!(
+        analyze(source, &[Q_BASE, Q_RICH_MODES]).status,
+        AnalysisStatus::Safe
+    );
+    for body in ["p++; q_free(p);", "{ void *p; q_free(p); }"] {
+        assert!(no_summary(
+            &format!("void drop(void *p) {{ {body} }}"),
+            &[Q_BASE],
+            "drop"
+        ));
+    }
+}
+
+#[test]
+fn resource_aliases_do_not_hide_formal_pointer_mutation() {
+    let local =
+        "void subject(void) { void *p = q_alloc(); void *alias = p; alias++; q_free(alias); }";
+    assert_ne!(base(local).status, AnalysisStatus::Safe);
+    for body in [
+        "p++; void *alias = p; q_free(alias);",
+        "p++; void *a = p; void *b = a; q_free(b);",
+        "void *alias = p; p++; q_free(p);",
+        "void *alias = p; alias++; q_free(alias);",
+    ] {
+        assert!(
+            no_summary(
+                &format!("void drop(void *p) {{ {body} }}"),
+                &[Q_BASE],
+                "drop"
+            ),
+            "accepted {body}"
+        );
+    }
+}

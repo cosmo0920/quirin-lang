@@ -682,11 +682,17 @@ pub(crate) fn build_function_cfg(
 ) -> Result<LegacyCfg, LegacyCError> {
     let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
+    let parameters = function_parameters(tokens, function).unwrap_or_default();
+    let formal_parameters = parameters.iter().flatten().cloned().collect();
+    let protected_formals =
+        protected_resource_formals(tokens, body_start, function, &parameters, contracts);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
         contracts,
         next_site: 0,
+        formal_parameters,
+        protected_formals,
     };
     let statements =
         parser
@@ -696,6 +702,120 @@ pub(crate) fn build_function_cfg(
                 line: failure_line.max(line),
             })?;
     Ok(CfgBuilder::build(function, &statements))
+}
+
+// Discover identities requiring stable bindings before parsing expressions.
+// This is only a conservative candidate inventory, never an inferred effect:
+// direct *formal writes, forwarded Out calls, and non-borrowed resource calls
+// are still checked by CFG re-analysis. Declared modes also protect formals.
+fn protected_resource_formals(
+    tokens: &[Token],
+    body_start: usize,
+    function: &str,
+    parameters: &[Option<String>],
+    contracts: &ResourceContracts,
+) -> BTreeSet<String> {
+    let formals = parameters
+        .iter()
+        .flatten()
+        .map(String::as_str)
+        .collect::<BTreeSet<_>>();
+    let mut protected = BTreeSet::new();
+    if let Some(contract) = contracts.contract(function) {
+        for (parameter, mode) in parameters.iter().zip(&contract.parameters) {
+            if !matches!(mode, ResourceParameterMode::Borrowed)
+                && let Some(name) = parameter
+            {
+                protected.insert(name.clone());
+            }
+        }
+    }
+    let mut depth = 0usize;
+    let body_end = tokens
+        .iter()
+        .enumerate()
+        .skip(body_start)
+        .find_map(|(index, token)| {
+            match token.text.as_str() {
+                "{" => depth += 1,
+                "}" => {
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        return Some(index);
+                    }
+                }
+                _ => {}
+            }
+            None
+        })
+        .unwrap_or(tokens.len());
+    let body = tokens[body_start..body_end]
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    for (index, pair) in body.windows(2).enumerate() {
+        if pair[0] == "*" && formals.contains(pair[1]) {
+            protected.insert(pair[1].to_owned());
+        }
+        if pair[1] != "(" {
+            continue;
+        }
+        let Some(contract) = contracts.contract(pair[0]) else {
+            continue;
+        };
+        let Some(arguments) = call_arguments(&body, index) else {
+            continue;
+        };
+        for (mode, argument) in contract.parameters.iter().zip(arguments) {
+            if matches!(mode, ResourceParameterMode::Borrowed) {
+                continue;
+            }
+            let Some(place) = contract_argument_place(argument, *mode) else {
+                continue;
+            };
+            let name = place.strip_prefix('*').unwrap_or(&place);
+            if is_identifier(name) {
+                protected.insert(name.to_owned());
+            }
+        }
+    }
+    // Propagate protection, never custody, across direct lexical aliases.
+    // The closure is deliberately flow-insensitive: mutation before an alias
+    // declaration must not be hidden by the later resource call on that alias.
+    let mut aliases = Vec::new();
+    let mut start = 0usize;
+    for (end, token) in body.iter().enumerate() {
+        if !matches!(*token, ";" | "{" | "}") {
+            continue;
+        }
+        let statement = &body[start..end];
+        start = end + 1;
+        let Some(equal) = statement.iter().position(|token| *token == "=") else {
+            continue;
+        };
+        let Some(destination) = direct_assignment_destination(&statement[..equal]) else {
+            continue;
+        };
+        let Some(source) = canonical_place(&statement[equal + 1..]) else {
+            continue;
+        };
+        if is_identifier(&destination) && is_identifier(&source) {
+            aliases.push((destination, source));
+        }
+    }
+    loop {
+        let before = protected.len();
+        for (destination, source) in &aliases {
+            if protected.contains(destination) || protected.contains(source) {
+                protected.insert(destination.clone());
+                protected.insert(source.clone());
+            }
+        }
+        if before == protected.len() {
+            break;
+        }
+    }
+    protected
 }
 
 #[derive(Clone, Debug)]
@@ -1080,6 +1200,8 @@ struct Parser<'a> {
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,
+    formal_parameters: BTreeSet<String>,
+    protected_formals: BTreeSet<String>,
 }
 
 impl Parser<'_> {
@@ -1354,6 +1476,66 @@ impl Parser<'_> {
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
         let assignment = texts.iter().position(|text| *text == "=");
+        let mentions_formal = texts
+            .iter()
+            .any(|name| self.protected_formals.contains(*name));
+        let has_increment = texts
+            .windows(2)
+            .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]));
+        let mut expression_depth = 0usize;
+        let nested_assignment = texts.iter().any(|text| match *text {
+            "(" | "[" => {
+                expression_depth += 1;
+                false
+            }
+            ")" | "]" => {
+                expression_depth = expression_depth.saturating_sub(1);
+                false
+            }
+            "=" => expression_depth > 0,
+            _ => false,
+        });
+        if mentions_formal && (has_increment || nested_assignment) {
+            return LegacyInstruction::Unknown {
+                description: "unmodeled expression may mutate a formal resource identity".into(),
+            };
+        }
+        // Resource places currently use names, without lexical binding IDs.
+        // A local declaration must not reuse a formal's entry custody or Out
+        // slot. Conservatively reject ambiguous declaration prefixes too;
+        // initializer references to a formal remain outside this prefix.
+        let declaration = &texts[..assignment.unwrap_or(texts.len())];
+        let declaration_like = declaration.first().is_some_and(|first| {
+            DECLARATION_SPECIFIERS.contains(first)
+                || (is_identifier(first)
+                    && declaration.get(1).is_some_and(|second| {
+                        is_identifier(second)
+                            || *second == "*"
+                            || (*second == "(" && declaration.get(2) == Some(&"*"))
+                    }))
+        });
+        let mut nesting = 0usize;
+        let mut initializer = false;
+        let mut may_shadow_formal = false;
+        if declaration_like {
+            for text in &texts {
+                match *text {
+                    "(" | "[" => nesting += 1,
+                    ")" | "]" => nesting = nesting.saturating_sub(1),
+                    "=" if nesting == 0 => initializer = true,
+                    "," if nesting == 0 => initializer = false,
+                    name if !initializer && self.formal_parameters.contains(name) => {
+                        may_shadow_formal = true;
+                    }
+                    _ => {}
+                }
+            }
+        }
+        if may_shadow_formal {
+            return LegacyInstruction::Unknown {
+                description: "local declaration may shadow a formal resource identity".into(),
+            };
+        }
         let call = find_call(&texts);
 
         if let Some((call_index, function)) = call {
@@ -1366,6 +1548,36 @@ impl Parser<'_> {
                 };
             }
             if let Some(contract) = self.contracts.contract(function).cloned() {
+                let mut call_depth = 0usize;
+                let call_end =
+                    texts
+                        .iter()
+                        .enumerate()
+                        .skip(call_index + 1)
+                        .find_map(|(index, text)| {
+                            match *text {
+                                "(" => call_depth += 1,
+                                ")" => {
+                                    call_depth = call_depth.saturating_sub(1);
+                                    if call_depth == 0 {
+                                        return Some(index);
+                                    }
+                                }
+                                _ => {}
+                            }
+                            None
+                        });
+                let direct_call = call_index == 0
+                    || assignment.is_some_and(|equal| {
+                        call_index == equal + 1
+                            && direct_assignment_destination(&texts[..equal]).is_some()
+                    });
+                if mentions_formal && (!direct_call || call_end != Some(texts.len() - 1)) {
+                    return LegacyInstruction::Unknown {
+                        description:
+                            "resource call with a formal embedded in an unmodeled expression".into(),
+                    };
+                }
                 let destination =
                     assignment.and_then(|equal| direct_assignment_destination(&texts[..equal]));
                 if !matches!(contract.result, ResourceReturnMode::None) && destination.is_none() {
@@ -1374,6 +1586,26 @@ impl Parser<'_> {
                     };
                 }
                 let raw_arguments = call_arguments(&texts, call_index);
+                if raw_arguments.as_ref().is_some_and(|arguments| {
+                    contract
+                        .parameters
+                        .iter()
+                        .zip(arguments)
+                        .any(|(mode, argument)| {
+                            ((!matches!(mode, ResourceParameterMode::Out { .. })
+                                && argument.contains(&"&"))
+                                || (matches!(mode, ResourceParameterMode::Borrowed)
+                                    && canonical_place(argument).is_none()))
+                                && argument
+                                    .iter()
+                                    .any(|name| self.protected_formals.contains(*name))
+                        })
+                }) {
+                    return LegacyInstruction::Unknown {
+                        description: "call has an unmodeled formal address or borrowed expression"
+                            .into(),
+                    };
+                }
                 let arguments = contract
                     .parameters
                     .iter()
@@ -1598,9 +1830,24 @@ fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'
 
 fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Option<String> {
     match mode {
-        ResourceParameterMode::Borrowed => None,
+        // Retain direct borrowed names for the enclosing Out-slot identity
+        // guard; the callee's borrowed resource effect still consumes nothing.
+        ResourceParameterMode::Borrowed => canonical_place(argument),
         ResourceParameterMode::Out { .. } => {
-            (argument.first() == Some(&"&")).then(|| canonical_place(&argument[1..]))?
+            let argument = strip_parentheses(argument);
+            if argument.first() == Some(&"&") {
+                canonical_place(&argument[1..])
+            } else {
+                // A bare pointer may forward the current function's out slot.
+                // Naming *formal is not permission to write it: transfer must
+                // find that exact slot sanctioned and its pointer unchanged.
+                match argument {
+                    [name] if is_identifier(name) && !matches!(*name, "NULL" | "nullptr") => {
+                        Some(format!("*{name}"))
+                    }
+                    _ => None,
+                }
+            }
         }
         ResourceParameterMode::Owned { .. }
         | ResourceParameterMode::Consumed { .. }
@@ -2667,6 +2914,41 @@ fn transfer(
     {
         reject_unsanctioned_store(function, node.line, destination, &mut state, diagnostics);
         return state;
+    }
+    // Forwarded Out arguments denote indirect writes just like *out = value.
+    // A local alias or an unbound pointer must never gain a fabricated slot.
+    if let LegacyInstruction::ContractCall {
+        arguments,
+        contract,
+        ..
+    } = &node.instruction
+    {
+        for (mode, argument) in contract.parameters.iter().zip(arguments) {
+            if !matches!(mode, ResourceParameterMode::Out { .. })
+                && argument.as_deref().is_some_and(changes_slot_identity)
+            {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::Unsupported {
+                        description: "out-slot pointer passed without a modeled Out effect".into(),
+                    },
+                });
+                for pointer in state.pointers.values_mut() {
+                    pointer.unknown = true;
+                    pointer.may_be_null = true;
+                }
+                return state;
+            }
+            if matches!(mode, ResourceParameterMode::Out { .. })
+                && let Some(place) = argument
+                && is_indirect_place(place)
+                && !context.sanctioned.contains(place.as_str())
+            {
+                reject_unsanctioned_store(function, node.line, place, &mut state, diagnostics);
+                return state;
+            }
+        }
     }
     match &node.instruction {
         LegacyInstruction::Acquire { destination, site } => {

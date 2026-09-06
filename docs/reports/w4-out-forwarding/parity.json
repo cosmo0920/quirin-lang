@@ -1,0 +1,4413 @@
+{
+  "after_verdicts": {
+    "Safe": 3,
+    "Unknown": 84,
+    "Unsafe": 94,
+    "data_only": 4
+  },
+  "base_commit": "ef28d4d3598c5f7df0c987713078405894a9482e",
+  "baseline_reused_from_commit": "6ffcf6e",
+  "before_verdicts": {
+    "Safe": 3,
+    "Unknown": 80,
+    "Unsafe": 98,
+    "data_only": 4
+  },
+  "contract_normalization": {
+    "after": "/tmp/qcore-out-forwarding/",
+    "before": "/tmp/qcore-removed-custody/",
+    "replacement": "/WORKTREE/"
+  },
+  "contracts_byte_identical": false,
+  "contracts_equal_after_worktree_prefix_normalization": true,
+  "coverage_changes": [],
+  "diagnostic_changes": [
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 5588
+        }
+      ],
+      "file": "cmetrics.c",
+      "function": "cmt_create",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `cmt`",
+          "line": 5619
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 8377
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 8409
+        }
+      ],
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_basic_type",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_map_destroy`",
+          "line": 8377
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_map_destroy`",
+          "line": 8409
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 6768
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 6793
+        }
+      ],
+      "file": "cmt_decode_prometheus_remote_write.c",
+      "function": "decode_histogram_points",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 6768
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 6793
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 8362
+        }
+      ],
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "destroy_summary_data_point_list",
+      "library": "cmetrics",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 9494
+        }
+      ],
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "pack_basic_type",
+      "library": "cmetrics",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 6674
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 6691
+        }
+      ],
+      "file": "cmt_encode_prometheus_remote_write.c",
+      "function": "append_entry_to_prometheus_label_list",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `calloc`",
+          "line": 6674
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 5558
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `upper_bounds`",
+          "line": 5570
+        }
+      ],
+      "file": "cmt_histogram.c",
+      "function": "cmt_histogram_buckets_exponential_create",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 5558",
+          "line": 5575
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 5523
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `upper_bounds`",
+          "line": 5535
+        }
+      ],
+      "file": "cmt_histogram.c",
+      "function": "cmt_histogram_buckets_linear_create",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 5523",
+          "line": 5540
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 6334
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 6336
+        }
+      ],
+      "file": "cmt_mpack_utils.c",
+      "function": "cmt_mpack_consume_string_tag",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `memcpy`",
+          "line": 6334
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_set_len`",
+          "line": 6336
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 5504
+        }
+      ],
+      "file": "cmt_summary.c",
+      "function": "cmt_summary_create",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 5504",
+          "line": 5514
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 5656
+        }
+      ],
+      "file": "cmt_summary.c",
+      "function": "cmt_summary_set_default",
+      "library": "cmetrics",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 5656",
+          "line": 5671
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 9309
+        }
+      ],
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "set_resource_spans",
+      "library": "ctraces",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 9309
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2171
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2174
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2180
+        }
+      ],
+      "file": "ctr_mpack_utils.c",
+      "function": "ctr_mpack_consume_binary_tag",
+      "library": "ctraces",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_set_len`",
+          "line": 2171
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_destroy`",
+          "line": 2174
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_destroy`",
+          "line": 2180
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2134
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2137
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 2143
+        }
+      ],
+      "file": "ctr_mpack_utils.c",
+      "function": "ctr_mpack_consume_string_tag",
+      "library": "ctraces",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_set_len`",
+          "line": 2134
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_destroy`",
+          "line": 2137
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_sds_destroy`",
+          "line": 2143
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1410
+        }
+      ],
+      "file": "cJSON.c",
+      "function": "case_insensitive_strcmp",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 3556
+        }
+      ],
+      "file": "cJSON.c",
+      "function": "minify_string",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 3543
+        }
+      ],
+      "file": "cJSON.c",
+      "function": "skip_multiline_comment",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 3532
+        }
+      ],
+      "file": "cJSON.c",
+      "function": "skip_oneline_comment",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 2941
+        }
+      ],
+      "file": "crc32c.c",
+      "function": "gf2_matrix_times",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 468
+        },
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 475
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 482
+        }
+      ],
+      "file": "lz4.c",
+      "function": "LZ4_count",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1237
+        }
+      ],
+      "file": "lz4.c",
+      "function": "read_long_length_no_check",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1328
+        }
+      ],
+      "file": "lz4.c",
+      "function": "read_variable_length",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1437
+        }
+      ],
+      "file": "lz4frame.c",
+      "function": "LZ4F_compressBegin_usingCDict",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 1437
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1164
+        }
+      ],
+      "file": "lz4hc.c",
+      "function": "LZ4HC_compress_generic_internal",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `LZ4HC_compress_optimal`",
+          "line": 1164
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 641
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 648
+        }
+      ],
+      "file": "lz4hc.c",
+      "function": "LZ4HC_countPattern",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 885
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 895
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 896
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 913
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 914
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 915
+        }
+      ],
+      "file": "lz4hc.c",
+      "function": "LZ4HC_encodeSequence",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 885
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 896
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 915
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 555
+        }
+      ],
+      "file": "nanopb/pb_decode.c",
+      "function": "read_raw_value",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 4007
+        }
+      ],
+      "file": "rdaddr.c",
+      "function": "rd_addrinfo_prepare",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 19672
+        }
+      ],
+      "file": "rdavl.c",
+      "function": "rd_avl_init",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ravl`",
+          "line": 19681
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `ravl` used by a non-null contract",
+          "line": 19681
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21715
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21721
+        }
+      ],
+      "file": "rdhttp.c",
+      "function": "rd_http_get_json",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21721
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21757
+        }
+      ],
+      "file": "rdhttp.c",
+      "function": "unittest_http_get",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21757",
+          "line": 21763
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21757",
+          "line": 21769
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21757",
+          "line": 21774
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21757",
+          "line": 21775
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21817
+        }
+      ],
+      "file": "rdhttp.c",
+      "function": "unittest_http_get_params_append",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21817",
+          "line": 21820
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25686
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25687
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25688
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25729
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25731
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25733
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25734
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25729",
+          "line": 25741
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25731",
+          "line": 25742
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25733",
+          "line": 25743
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25734",
+          "line": 25744
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25729",
+          "line": 25781
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25731",
+          "line": 25781
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25733",
+          "line": 25781
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25734",
+          "line": 25781
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25686",
+          "line": 25783
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25687",
+          "line": 25784
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25688",
+          "line": 25785
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25686",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25687",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25688",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25729",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25731",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25733",
+          "line": 25794
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25734",
+          "line": 25794
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 23475
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreateAclsResponse_parse",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 24323
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteAclsResponse_parse",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25498
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25499
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25500
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25501
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25557
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25559
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25562
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25563
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25559",
+          "line": 25573
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25498",
+          "line": 25619
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25499",
+          "line": 25621
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25500",
+          "line": 25623
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 25501",
+          "line": 25625
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25498",
+          "line": 25636
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25499",
+          "line": 25636
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25500",
+          "line": 25636
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 25501",
+          "line": 25636
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24954
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24955
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24957
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24961
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 24957",
+          "line": 24974
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 24961",
+          "line": 24976
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 26035
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_TopicDescription_new",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 26035",
+          "line": 26043
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 23961
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_UserScramCredentialAlteration_copy",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `copied_alteration`",
+          "line": 23984
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `copied_alteration` used by a non-null contract",
+          "line": 23984
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 25407
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24868
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24876
+        }
+      ],
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24868",
+          "line": 24895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24876",
+          "line": 24895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24868",
+          "line": 24897
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24876",
+          "line": 24897
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20361
+        }
+      ],
+      "file": "rdkafka_assignor.c",
+      "function": "rd_kafka_member_subscriptions_map",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20361",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 23530
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rkb`",
+          "line": 23677
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_add",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rkb`",
+          "line": 23694
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `rkb` used by a non-null contract",
+          "line": 23694
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21363
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_bufq_timeout_scan",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 22542
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 22549
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_share_session_add_remove_toppar",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_list_add`",
+          "line": 22542
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_list_destroy`",
+          "line": 22549
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 23877
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_brokers_add0",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24210
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_brokers_learned_ids",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 23854
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 23857
+        }
+      ],
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_find_or_add_broker",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19641
+        }
+      ],
+      "file": "rdkafka_buf.c",
+      "function": "rd_kafka_buf_destroy_final",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 21946
+        }
+      ],
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_list_add`",
+          "line": 21946
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24620
+        }
+      ],
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_consumer_group_metadata_dup",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ret`",
+          "line": 24627
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `ret` used by a non-null contract",
+          "line": 24627
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21173
+        }
+      ],
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_member_partitions_intersect",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_copy`",
+          "line": 21173
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24899
+        }
+      ],
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_member_metadata_serdes",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24910
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24911
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24912
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24914
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24916
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24899",
+          "line": 24918
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24803
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 24806
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24809
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24810
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24811
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24812
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24813
+        }
+      ],
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_set_intersect",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_new`",
+          "line": 24809
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_new`",
+          "line": 24810
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_new`",
+          "line": 24811
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_new`",
+          "line": 24812
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_topic_partition_new`",
+          "line": 24813
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24803",
+          "line": 24815
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24806",
+          "line": 24815
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24803",
+          "line": 24816
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24806",
+          "line": 24816
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24803",
+          "line": 24817
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24806",
+          "line": 24817
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24803",
+          "line": 24819
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24806",
+          "line": 24819
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24803",
+          "line": 24820
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 24806",
+          "line": 24820
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24456
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24573
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24579
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24582
+        }
+      ],
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_anyconf_set_prop",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 25655
+        }
+      ],
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_conf_kv_get",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "nullable resource `ret` used by a non-null contract",
+          "line": 25661
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 25621
+        }
+      ],
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_conf_kv_split",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `out`",
+          "line": 25637
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `out` used by a non-null contract",
+          "line": 25637
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22780
+        }
+      ],
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_conf_validate_str",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 25583
+        }
+      ],
+      "file": "rdkafka_conf.c",
+      "function": "rd_kafka_sw_str_is_safe",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 19833
+        }
+      ],
+      "file": "rdkafka_feature.c",
+      "function": "rd_kafka_ApiVersions_copy",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `qsort`",
+          "line": 19833
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21092
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21105
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21107
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21109
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21117
+        }
+      ],
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_share_fetch_reply_handle_partition",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_log0`",
+          "line": 21117
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 21105",
+          "line": 21147
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 21107",
+          "line": 21148
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 21109",
+          "line": 21149
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21105",
+          "line": 21153
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21107",
+          "line": 21153
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21109",
+          "line": 21153
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20417
+        }
+      ],
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafkap_Fetch_reply_tags_set_topic",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20417",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20407
+        }
+      ],
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafkap_Fetch_reply_tags_set_topic_cnt",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20407",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20375
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20399
+        }
+      ],
+      "file": "rdkafka_metadata_cache.c",
+      "function": "rd_kafka_metadata_cache_topic_update_merge_partitions",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 20375
+        },
+        {
+          "category": "unsupported",
+          "description": "unsupported assignment expression",
+          "line": 20399
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22464
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_broker_destroy",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22050
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22052
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22063
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_cluster_io_add",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `mcluster->fds`",
+          "line": 22050
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `mcluster->handlers`",
+          "line": 22052
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22037
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_cluster_io_del",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22659
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_error_stack_next",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 23530
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_get_requests",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "nullable resource `ret` used by a non-null contract",
+          "line": 23538
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21389
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_msgset_destroy",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21389
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 21738
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21756
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21763
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_partition_assign_replicas",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21738",
+          "line": 0
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21738",
+          "line": 21744
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21756
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21763
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21883
+        }
+      ],
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_topic_destroy",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 23952
+        }
+      ],
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22306
+        }
+      ],
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Fetch",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22131
+        }
+      ],
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Produce",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24140
+        }
+      ],
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24443
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24444
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 24447
+        }
+      ],
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_sgrp_acquire_available_offsets",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21924
+        }
+      ],
+      "file": "rdkafka_mock_sharegrp.c",
+      "function": "rd_kafka_mock_sharegroup_destroy",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20947
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20953
+        }
+      ],
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_Produce_result_copy",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20947",
+          "line": 20957
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20953",
+          "line": 20957
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20577
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `cnt`",
+          "line": 20579
+        }
+      ],
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_messages_new",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20112
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 20121
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 20130
+        }
+      ],
+      "file": "rdkafka_msgset_writer.c",
+      "function": "rd_kafka_gzip_compress",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_malloc`",
+          "line": 20112
+        },
+        {
+          "category": "unsupported",
+          "description": "arguments do not match resource contract for `rd_free`",
+          "line": 20121
+        },
+        {
+          "category": "unsupported",
+          "description": "arguments do not match resource contract for `rd_free`",
+          "line": 20130
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19775
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19814
+        }
+      ],
+      "file": "rdkafka_msgset_writer.c",
+      "function": "rd_kafka_msgset_writer_alloc_buf",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19775
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_buf_new_request0`",
+          "line": 19814
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22751
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22752
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22753
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22756
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22762
+        }
+      ],
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_list_combine_regexes",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 22751
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 22752
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 22753
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 22756
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 22762
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21599
+        }
+      ],
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_list_grow",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rktparlist->elems`",
+          "line": 21599
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22134
+        }
+      ],
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_match",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_log0`",
+          "line": 22134
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 19677
+        }
+      ],
+      "file": "rdkafka_pattern.c",
+      "function": "rd_kafka_pattern_list_new",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `plist`",
+          "line": 19683
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `plist` used by a non-null contract",
+          "line": 19683
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 19578
+        }
+      ],
+      "file": "rdkafka_pattern.c",
+      "function": "rd_kafka_pattern_new",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rkpat`",
+          "line": 19584
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `rkpat` used by a non-null contract",
+          "line": 19584
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20403
+        }
+      ],
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_cb_event_enable",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20403",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20370
+        }
+      ],
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_io_event_enable",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20370",
+          "line": 0
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21988
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_DescribeGroupsRequest",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_buf_new_request0`",
+          "line": 21988
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21948
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_ListGroupsRequest",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_kafka_buf_new_request0`",
+          "line": 21948
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20708
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20713
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20715
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_buf_read_NodeEndpoints",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20708",
+          "line": 20718
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20708",
+          "line": 20720
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22281
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 22294
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 22301
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_handle_ApiVersion",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_malloc`",
+          "line": 22281
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `qsort`",
+          "line": 22294
+        },
+        {
+          "category": "unsupported",
+          "description": "arguments do not match resource contract for `rd_free`",
+          "line": 22301
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22746
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22757
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22764
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_handle_Produce_parse",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22746",
+          "line": 22785
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22757",
+          "line": 22785
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22764",
+          "line": 22785
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22746",
+          "line": 22788
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22757",
+          "line": 22788
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22764",
+          "line": 22788
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 22578
+        }
+      ],
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_share_leader_changes_apply",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20591
+        }
+      ],
+      "file": "rdkafka_sasl_cyrus.c",
+      "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_realloc`",
+          "line": 20591
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20282
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "check_oauthbearer_extension_key",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20416
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "parse_ujws_config",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20392
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20395
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20397
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "parse_ujws_config_value_for_prefix",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_strdup`",
+          "line": 20397
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21330
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "rd_kafka_jwt_b64_decode_payload",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21330
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 21410
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "rd_kafka_oidc_assertion_parse_template_file",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cJSON_Delete`",
+          "line": 21410
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21356
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 21357
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "rd_kafka_oidc_client_credentials_build_post_fields",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_malloc`",
+          "line": 21356
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `snprintf`",
+          "line": 21357
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21697
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "rd_kafka_oidc_token_try_validate",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "discarded owned result of resource API `rd_strdup`",
+          "line": 21697
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22264
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22303
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22298
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22300
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22302
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22306
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22306
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22307
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22307
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22308
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22308
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22309
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22309
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22310
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22310
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22311
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22311
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22312
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22312
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22313
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22313
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22314
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22314
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22315
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22315
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22316
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22316
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22264",
+          "line": 22317
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22303",
+          "line": 22317
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22219
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22221
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22224
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22225
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22226
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22228
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22229
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22230
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22232
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22233
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22234
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22236
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22237
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22238
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22245
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22246
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22219",
+          "line": 22247
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21990
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21990",
+          "line": 21993
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21990",
+          "line": 21999
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21990",
+          "line": 22000
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21990",
+          "line": 22002
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21990",
+          "line": 22004
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 22019
+        }
+      ],
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22019",
+          "line": 22022
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22019",
+          "line": 22026
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22019",
+          "line": 22027
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 22019",
+          "line": 22029
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21819
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21821
+        }
+      ],
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "getBalanceScore",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 21821
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21351
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 21357
+        }
+      ],
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "rd_kafka_rack_info_new",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_map_set`",
+          "line": 21351
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `rd_map_set`",
+          "line": 21357
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20766
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20767
+        }
+      ],
+      "file": "rdkafka_telemetry.c",
+      "function": "update_matched_metrics",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rk->rk_telemetry.matched_metrics`",
+          "line": 20767
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21781
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21799
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21802
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21849
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rkb`",
+          "line": 21884
+        }
+      ],
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21889
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21889
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21889
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21889
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21892
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21892
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21892
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21892
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21893
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21893
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21893
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21893
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21894
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21894
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21894
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21894
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21895
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21897
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21897
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21897
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21897
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21899
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21899
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21899
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21899
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21901
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21901
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21901
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21901
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21902
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21902
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21902
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21902
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21904
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21904
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21904
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21904
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21905
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21905
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21905
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21905
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21906
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21906
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21906
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21906
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21907
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21907
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21907
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21907
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21908
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21908
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21908
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21908
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21910
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21910
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21910
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21910
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21911
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21911
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21911
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21911
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21912
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21912
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21912
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21912
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21913
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21913
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21913
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21913
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21914
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21914
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21914
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21914
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21915
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21915
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21915
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21915
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21781",
+          "line": 21916
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21799",
+          "line": 21916
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21802",
+          "line": 21916
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 21849",
+          "line": 21916
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 20989
+        }
+      ],
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "serialize_Metric",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `snprintf`",
+          "line": 20989
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 19747
+        }
+      ],
+      "file": "rdkafka_timer.c",
+      "function": "rd_kafka_timers_run",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `void`",
+          "line": 19747
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19888
+        }
+      ],
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_destroy_final",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20608
+        }
+      ],
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_metadata_update",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20406
+        }
+      ],
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_partition_cnt_update",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20406",
+          "line": 20471
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 21026
+        }
+      ],
+      "file": "rdkafka_topic.c",
+      "function": "rd_ut_kafka_topic_set_topic_exists",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 2959
+        }
+      ],
+      "file": "rdlist.c",
+      "function": "rd_list_grow",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `rl->rl_elems`",
+          "line": 2959
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 3047
+        }
+      ],
+      "file": "rdlist.c",
+      "function": "rd_list_remove_elem",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 3038
+        }
+      ],
+      "file": "rdmap.c",
+      "function": "rd_map_copy",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 3025
+        }
+      ],
+      "file": "rdregex.c",
+      "function": "rd_regex_comp",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `re`",
+          "line": 3034
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `re` used by a non-null contract",
+          "line": 3034
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 3067
+        }
+      ],
+      "file": "rdstring.c",
+      "function": "rd_flags2str",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20342
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20361
+        }
+      ],
+      "file": "rdunittest.c",
+      "function": "ut_tq_test",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20342",
+          "line": 20355
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20342",
+          "line": 20356
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20342",
+          "line": 20360
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20342",
+          "line": 20395
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20361",
+          "line": 20395
+        },
+        {
+          "category": "double_release",
+          "description": "repeated release of acquisition at preprocessed line 20361",
+          "line": 20398
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20342",
+          "line": 20401
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 20361",
+          "line": 20401
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 20328
+        }
+      ],
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_fetcher_share_filter_forward",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 818
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 820
+        }
+      ],
+      "file": "rdxxhash.c",
+      "function": "XXH32_avalanche",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 818
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 820
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 812
+        }
+      ],
+      "file": "rdxxhash.c",
+      "function": "XXH32_round",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 812
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 1068
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 1070
+        }
+      ],
+      "file": "rdxxhash.c",
+      "function": "XXH64_avalanche",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 1068
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 1070
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 1055
+        }
+      ],
+      "file": "rdxxhash.c",
+      "function": "XXH64_round",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 1055
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19964
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19967
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19969
+        }
+      ],
+      "file": "snappy.c",
+      "function": "emit_copy_less_than64",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19964
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19967
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19969
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19934
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19943
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19945
+        }
+      ],
+      "file": "snappy.c",
+      "function": "emit_literal",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19934
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19945
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 20034
+        }
+      ],
+      "file": "snappy.c",
+      "function": "find_match_length",
+      "library": "librdkafka",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 19842
+        }
+      ],
+      "file": "snappy.c",
+      "function": "incremental_copy",
+      "library": "librdkafka",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 19842
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 2388
+        }
+      ],
+      "file": "chunkio.c",
+      "function": "qsort_stream",
+      "library": "chunkio",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 2388
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 3095
+        },
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 3097
+        }
+      ],
+      "file": "cio_file_unix.c",
+      "function": "cio_file_native_lookup_group",
+      "library": "chunkio",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 19621
+        }
+      ],
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_create",
+      "library": "fluent-bit-chunk",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19621",
+          "line": 19653
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 19461
+        },
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 19525
+        }
+      ],
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_direct_routes",
+      "library": "fluent-bit-chunk",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19459
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19467
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19495
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19501
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19511
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19523
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19525",
+          "line": 19523
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19530
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19525",
+          "line": 19530
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19461",
+          "line": 19550
+        },
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 19525",
+          "line": 19550
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "resource call with a formal embedded in an unmodeled expression",
+          "line": 18769
+        }
+      ],
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_map",
+      "library": "fluent-bit-chunk",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 18769",
+          "line": 18960
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "call has an unmodeled formal address or borrowed expression",
+          "line": 3590
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `loop`",
+          "line": 3598
+        }
+      ],
+      "file": "mk_core/mk_event.c",
+      "function": "mk_event_loop_create",
+      "library": "monkey-libevent",
+      "removed": [
+        {
+          "category": "leak",
+          "description": "live obligation acquired at preprocessed line 3590",
+          "line": 3598
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1883
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1884
+        }
+      ],
+      "file": "mk_core/mk_rconf.c",
+      "function": "check_indent",
+      "library": "monkey-libevent",
+      "removed": []
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1951
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled expression may mutate a formal resource identity",
+          "line": 1953
+        }
+      ],
+      "file": "mk_core/mk_rconf.c",
+      "function": "mk_rconf_read",
+      "library": "monkey-libevent",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 1951
+        },
+        {
+          "category": "unsupported",
+          "description": "unrecognized assignment destination",
+          "line": 1953
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 5892
+        }
+      ],
+      "file": "mk_server/mk_utils.c",
+      "function": "mk_utils_gmt_cache_get",
+      "library": "monkey-libevent",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `memcpy`",
+          "line": 5892
+        }
+      ]
+    },
+    {
+      "added": [
+        {
+          "category": "unsupported",
+          "description": "local declaration may shadow a formal resource identity",
+          "line": 5960
+        }
+      ],
+      "file": "mk_server/mk_utils.c",
+      "function": "mk_utils_utime2gmt",
+      "library": "monkey-libevent",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_utils_gmt_cache_add`",
+          "line": 5960
+        }
+      ]
+    }
+  ],
+  "diagnostic_count_delta": {
+    "double_release": -18,
+    "leak": -223,
+    "unknown_alias": -8,
+    "unsupported": 142
+  },
+  "function_changes": [
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "cmt_histogram.c",
+      "function": "cmt_histogram_buckets_exponential_create",
+      "library": "cmetrics"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "cmt_histogram.c",
+      "function": "cmt_histogram_buckets_linear_create",
+      "library": "cmetrics"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "cmt_summary.c",
+      "function": "cmt_summary_set_default",
+      "library": "cmetrics"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdhttp.c",
+      "function": "unittest_http_get",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdhttp.c",
+      "function": "unittest_http_get_params_append",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_assignor.c",
+      "function": "rd_kafka_member_subscriptions_map",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_member_metadata_serdes",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_set_intersect",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_share_fetch_reply_handle_partition",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafkap_Fetch_reply_tags_set_topic",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafkap_Fetch_reply_tags_set_topic_cnt",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_partition_assign_replicas",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Safe",
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_messages_new",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_cb_event_enable",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_io_event_enable",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_buf_read_NodeEndpoints",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_partition_cnt_update",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdunittest.c",
+      "function": "ut_tq_test",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_map",
+      "library": "fluent-bit-chunk"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "mk_core/mk_event.c",
+      "function": "mk_event_loop_create",
+      "library": "monkey-libevent"
+    }
+  ],
+  "hashes": {
+    "after-audit.log": "1fbbbd5c321414266aea754579c2e50f096ac02dc594c6c9427f008f8b8de6eb",
+    "after-contracts.json": "335136c8149906f631063faabe3821570fd400509174e288ada190a973c1b295",
+    "after-diagnostics.json": "b0a82ea20e0904251b916c1755d71e0c5e62554ae4669a5b2d0ba753957597df",
+    "after-source.json": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "alias-after.log": "2ff3ab6b243c29db43538f07d10863a7c1a805b672383ea298e67d808e326914",
+    "alias-regression.log": "1691a77b5f1f4fc18fe7f05321b9db45de399e3e439574c413a12522612f4210",
+    "baseline-audit.log": "d2e85f239c0badbb1dc1a85a342dfdf36b254edb963ccb38c41123d6ba1433ce",
+    "baseline-contracts.json": "8fa36e5d306741b54729636b8ad2759be3bf724f4b85c5ab7e88a222680ba53d",
+    "baseline-diagnostics.json": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+    "baseline-regression.log": "d100ea783a685026f4288b905c7463eed0935c264b04cda8753c069c6b74564f",
+    "baseline-source.json": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "clippy.log": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "followup.log": "a3962e65a950eaa8cd476e76640e1553e04bd391dd2767feb5c71e6d7c40b291",
+    "lean-audits.log": "6ace57474d31c3a04eb8ce3610ccdf713c4e65844533f915f3fc96a59724abfd",
+    "lean.log": "fa7359e56a62b59e95852b8cdc5581e8c24f7e8460850d5b663fbb2eeae96c94",
+    "probe.log": "c16e3c98ebd9b8a477e119806fab5f66f314fbdf92dd192a3a2c23255be367c9",
+    "shadow-regression.log": "266e87d8ef06be629b676c3edf74dab0c1b49a09e0bc0b4c210eb8f635dd5c7d",
+    "workspace.log": "3039651d49c1659671ab1265942eb187dd23feb2f1446eb7a5f1680d0603a9d4"
+  },
+  "source_byte_identical": true,
+  "unit_changes": [
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdhttp.c",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdkafka_queue.c",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "rdunittest.c",
+      "library": "librdkafka"
+    },
+    {
+      "after": "Unknown",
+      "before": "Unsafe",
+      "file": "mk_core/mk_event.c",
+      "library": "monkey-libevent"
+    }
+  ],
+  "units": 185
+}

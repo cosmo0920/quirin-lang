@@ -682,4 +682,45 @@ theorem removal_left_contained_at_an_exit_rejects :
     validate removalSummary true
       [removalExit, { removalExit with parameters := [some .live, some .contained], containedIn := [none, some 0] }] = false := by decide
 
+/-- Reduced direct Out forwarding. Formal positions represent symbolic slots;
+    sanctioned lists come from the enclosing candidate, and written pointers
+    from the modeled instruction. The importer separately rejects shadowing,
+    unmodeled mutation and slot exposure; this relation assumes those guards
+    succeeded. An ordinary local alias is not sanctioned.
+    The produced value is preserved exactly rather than replaced by a new claim. -/
+def forwardOutSlot (original current : Nat) (sanctioned written : List Nat)
+    (produced : OutSlot) : Option OutSlot :=
+  if original = current ∧ original ∈ sanctioned ∧ original ∉ written then
+    some produced
+  else none
+
+theorem forwarded_out_keeps_original_slot (original current : Nat)
+    (sanctioned written : List Nat) (produced delivered : OutSlot)
+    (forwarded : forwardOutSlot original current sanctioned written produced = some delivered) :
+    original = current ∧ original ∈ sanctioned ∧ original ∉ written ∧ delivered = produced := by
+  unfold forwardOutSlot at forwarded
+  split at forwarded
+  next identity =>
+    simp only [Option.some.injEq] at forwarded
+    exact ⟨identity.1, identity.2.1, identity.2.2, forwarded.symm⟩
+  next => contradiction
+
+theorem reassigned_out_pointer_cannot_forward (original current : Nat)
+    (sanctioned written : List Nat) (produced : OutSlot) (changed : original ∈ written) :
+    forwardOutSlot original current sanctioned written produced = none := by
+  simp [forwardOutSlot, changed]
+
+theorem unsanctioned_out_pointer_cannot_forward (original current : Nat)
+    (sanctioned written : List Nat) (produced : OutSlot) (absent : original ∉ sanctioned) :
+    forwardOutSlot original current sanctioned written produced = none := by
+  simp [forwardOutSlot, absent]
+
+theorem forwarded_nullable_site_does_not_discharge_nonnull_out :
+    outSlotMatches (.out false)
+      (forwardOutSlot 0 0 [0] [] (.site false .live true)) = false := by decide
+
+theorem direct_fresh_forwarding_discharges_out :
+    outSlotMatches (.out false)
+      (forwardOutSlot 0 0 [0] [] (.site false .live false)) = true := by decide
+
 end QCore.CustodySummary
