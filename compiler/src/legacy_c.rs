@@ -1612,9 +1612,27 @@ fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Op
 
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
     if tokens.first() == Some(&"*") {
-        return None;
+        // A single dereference of a plain identifier is the only indirect
+        // destination this importer names: `*out = …` becomes the place
+        // `*out`. It is *not* modeled here — [`transfer`] rejects it unless the
+        // analysis in force sanctions `*out` as an out-parameter slot — but
+        // naming it is what lets an out-parameter contract describe the store.
+        // Anything deeper (`*p->field`, `**p`, `*(p + 1)`) stays unnamed.
+        return match tokens {
+            ["*", name] if is_identifier(name) && !matches!(*name, "NULL" | "nullptr") => {
+                Some(format!("*{name}"))
+            }
+            _ => None,
+        };
     }
     (0..tokens.len()).find_map(|start| canonical_place(&tokens[start..]))
+}
+
+/// Whether `place` denotes a store through a pointer rather than a variable.
+/// Such a place is modeled only when the contract in force declares it an
+/// out-parameter slot; see [`EntryCustody::out_slots`].
+fn is_indirect_place(place: &str) -> bool {
+    place.starts_with('*')
 }
 
 fn canonical_place(tokens: &[&str]) -> Option<String> {
@@ -2091,6 +2109,14 @@ pub(crate) struct EntryCustody {
     /// Abstract site bound to each formal parameter, when the contract gives
     /// that parameter observable custody. `None` for `Borrowed`/`Out` modes.
     pub(crate) parameter_sites: Vec<Option<usize>>,
+    /// Place a formal declared `Out` writes through, as `*name`. Nothing is
+    /// bound at entry — the callee *initializes* the slot — but naming it is
+    /// what makes `*name = …` a modeled store instead of an unmodeled one.
+    pub(crate) out_slots: Vec<Option<String>>,
+    /// Whether the contract's result may be null. A body may return a
+    /// possibly-null place only when its own contract says the caller has to
+    /// null-check the result; otherwise the escape reports an unresolved alias.
+    pub(crate) result_nullable: bool,
 }
 
 impl EntryCustody {
@@ -2108,13 +2134,26 @@ impl EntryCustody {
         let mut custody = Self {
             state: AbstractState::default(),
             parameter_sites: vec![None; parameters.len()],
+            out_slots: vec![None; parameters.len()],
+            result_nullable: match contract.result {
+                ResourceReturnMode::None => false,
+                ResourceReturnMode::Owned { nullable }
+                | ResourceReturnMode::Reallocated { nullable, .. } => nullable,
+            },
         };
         for (index, mode) in contract.parameters.iter().copied().enumerate() {
             let nullable = match mode {
                 // Nothing is bound: the body may not treat the formal as a
-                // resource it already owns. An `Out` formal is written by the
-                // callee, which the reduced importer does not model.
-                ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. } => continue,
+                // resource it already owns.
+                ResourceParameterMode::Borrowed => continue,
+                // An `Out` formal is *written* by the callee. Nothing is bound
+                // at entry either, but the slot it writes through is named so
+                // the store can be modeled and observed at every exit.
+                ResourceParameterMode::Out { .. } => {
+                    let name = parameters[index].as_ref()?;
+                    custody.out_slots[index] = Some(format!("*{name}"));
+                    continue;
+                }
                 ResourceParameterMode::Owned { nullable }
                 | ResourceParameterMode::Consumed { nullable }
                 | ResourceParameterMode::Released { nullable }
@@ -2140,8 +2179,35 @@ impl EntryCustody {
         Some(custody)
     }
 
-    fn exempt_sites(&self) -> BTreeSet<usize> {
-        self.parameter_sites.iter().flatten().copied().collect()
+    /// Sites the caller — not this body — is responsible for discharging at a
+    /// given exit: every formal the contract bound, plus whatever each out
+    /// slot holds there, because an `Out` contract hands that resource back.
+    ///
+    /// The out part is read from the exit state rather than fixed up front, so
+    /// a resource overwritten in the slot (`*out = p; *out = q;`) loses its
+    /// exemption and is reported as the leak it is.
+    fn exempt_sites(&self, state: &AbstractState) -> BTreeSet<usize> {
+        let mut sites = self
+            .parameter_sites
+            .iter()
+            .flatten()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for place in self.out_slots.iter().flatten() {
+            if let Some(pointer) = state.pointers.get(place) {
+                sites.extend(pointer.targets.iter().copied());
+            }
+        }
+        sites
+    }
+
+    /// Places a store may legitimately target in this analysis.
+    fn sanctioned_places(&self) -> BTreeSet<&str> {
+        self.out_slots
+            .iter()
+            .flatten()
+            .map(String::as_str)
+            .collect()
     }
 }
 
@@ -2164,9 +2230,13 @@ pub(crate) struct ExitObservation {
     /// Disposition of each bound formal parameter site at this exit.
     pub(crate) parameters: Vec<Option<SiteDisposition>>,
     pub(crate) returned: ReturnedValue,
-    /// A fresh resource ended up attached to a caller-owned parameter. Such a
-    /// transfer is invisible to the caller, so no summary may claim it.
-    pub(crate) attached_to_parameter: bool,
+    /// What each declared out slot holds at this exit.
+    pub(crate) out_slots: Vec<Option<OutSlotValue>>,
+    /// Containment whose *owner* is a site the caller holds — a formal, or a
+    /// resource handed back through an out slot. A summary may only claim such
+    /// an attachment through an explicit `Stored` mode; anything else here is
+    /// a transfer invisible at the call site, and refutes the summary.
+    pub(crate) caller_containment: BTreeMap<usize, BTreeSet<usize>>,
     /// Reallocation replacements that this exit left unresolved.
     pub(crate) pending_replacements: BTreeMap<usize, BTreeSet<usize>>,
 }
@@ -2194,6 +2264,39 @@ pub(crate) enum ReturnedValue {
     },
     /// The returned place denotes more than one site, or an unknown one.
     Ambiguous,
+}
+
+/// What an out slot holds at one exit. `Unwritten` is deliberately distinct
+/// from `Null`: a slot the callee never stored to leaves the caller's variable
+/// as it was, which no `Out` mode describes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OutSlotValue {
+    /// The slot was never stored to on this path.
+    Unwritten,
+    /// The slot definitely holds a null pointer.
+    Null,
+    Site {
+        site: usize,
+        nullable: bool,
+        disposition: SiteDisposition,
+    },
+    /// The slot denotes more than one site, or an unknown one.
+    Ambiguous,
+}
+
+fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
+    match state.pointers.get(place) {
+        None => OutSlotValue::Unwritten,
+        Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => OutSlotValue::Ambiguous,
+        Some(pointer) => match pointer.targets.first().copied() {
+            None => OutSlotValue::Null,
+            Some(site) => OutSlotValue::Site {
+                site,
+                nullable: pointer.may_be_null || state.nullable_sites.contains(&site),
+                disposition: site_disposition(state, site),
+            },
+        },
+    }
 }
 
 fn site_disposition(state: &AbstractState, site: usize) -> SiteDisposition {
@@ -2232,7 +2335,7 @@ fn observe_exit(
         }
         _ => ReturnedValue::None,
     };
-    let exempt = entry.exempt_sites();
+    let exempt = entry.exempt_sites(state);
     ExitObservation {
         parameters: entry
             .parameter_sites
@@ -2240,10 +2343,17 @@ fn observe_exit(
             .map(|site| site.map(|site| site_disposition(state, site)))
             .collect(),
         returned,
-        attached_to_parameter: state
+        out_slots: entry
+            .out_slots
+            .iter()
+            .map(|place| place.as_deref().map(|place| observe_out_slot(state, place)))
+            .collect(),
+        caller_containment: state
             .contained
             .iter()
-            .any(|(owner, children)| exempt.contains(owner) && !children.is_empty()),
+            .filter(|(owner, children)| exempt.contains(owner) && !children.is_empty())
+            .map(|(owner, children)| (*owner, children.clone()))
+            .collect(),
         pending_replacements: state.conditional_replacements.clone(),
     }
 }
@@ -2275,6 +2385,21 @@ fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
     }
 }
 
+/// The parts of the contract in force that the transfer function consults.
+///
+/// Both fields default to the most conservative setting, which is what the
+/// contract-free analysis uses: no store through a pointer is modeled, and a
+/// returned place may not be null. A contract only ever *adds* permissions
+/// here, and every permission it adds is re-checked at the exits.
+#[derive(Default)]
+struct TransferContext<'a> {
+    /// Out-parameter slots the contract in force declares. A store to any
+    /// other indirect place stays unmodeled.
+    sanctioned: BTreeSet<&'a str>,
+    /// Whether the contract's result mode obliges callers to null-check.
+    result_nullable: bool,
+}
+
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
     analyze_cfg_with_entry(cfg, &EntryCustody::default()).0
 }
@@ -2283,7 +2408,10 @@ pub(crate) fn analyze_cfg_with_entry(
     cfg: LegacyCfg,
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
-    let exempt = entry_custody.exempt_sites();
+    let context = TransferContext {
+        sanctioned: entry_custody.sanctioned_places(),
+        result_nullable: entry_custody.result_nullable,
+    };
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
@@ -2313,9 +2441,11 @@ pub(crate) fn analyze_cfg_with_entry(
             node,
             state,
             &acquisition_lines,
+            &context,
             &mut diagnostics,
         );
         if node.is_exit {
+            let exempt = entry_custody.exempt_sites(&output);
             report_leaks(
                 &cfg.function,
                 node.line,
@@ -2389,7 +2519,14 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
-        let output = transfer(&cfg.function, node, state, &acquisition_lines, &mut ignored);
+        let output = transfer(
+            &cfg.function,
+            node,
+            state,
+            &acquisition_lines,
+            &context,
+            &mut ignored,
+        );
         observations.push(observe_exit(node, &output, entry_custody));
     }
 
@@ -2407,13 +2544,99 @@ pub(crate) fn analyze_cfg_with_entry(
     )
 }
 
+/// Report an indirect store the contract in force does not sanction, and
+/// poison the state exactly as an unmodeled construct would. The importer
+/// *names* `*out` so an out-parameter contract can describe it; without such a
+/// contract the store is as opaque as it was before out slots existed.
+fn reject_unsanctioned_store(
+    function: &str,
+    line: usize,
+    place: &str,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!("store through `{place}` without an out-parameter contract"),
+        },
+    });
+    for pointer in state.pointers.values_mut() {
+        pointer.unknown = true;
+        pointer.may_be_null = true;
+    }
+}
+
 fn transfer(
     function: &str,
     node: &LegacyCfgNode,
     mut state: AbstractState,
     acquisition_lines: &BTreeMap<usize, usize>,
+    context: &TransferContext<'_>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
+    // A slot name denotes the caller's original pointer only while that
+    // formal is unchanged. Tracking its reassignment would need pointer-to-
+    // pointer alias analysis; reject it rather than writing a fictitious slot.
+    let destination = match &node.instruction {
+        LegacyInstruction::Acquire { destination, .. }
+        | LegacyInstruction::Alias { destination, .. }
+        | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
+        LegacyInstruction::ContractCall { destination, .. } => destination.as_deref(),
+        _ => None,
+    };
+    let changes_slot_identity = |place: &str| {
+        context
+            .sanctioned
+            .iter()
+            .any(|slot| slot.strip_prefix('*') == Some(place))
+    };
+    let overwritten = destination.is_some_and(changes_slot_identity)
+        || match &node.instruction {
+            LegacyInstruction::ContractCall {
+                arguments,
+                contract,
+                ..
+            } => contract
+                .parameters
+                .iter()
+                .zip(arguments)
+                .any(|(mode, argument)| {
+                    matches!(mode, ResourceParameterMode::Out { .. })
+                        && argument.as_deref().is_some_and(changes_slot_identity)
+                }),
+            _ => false,
+        };
+    if overwritten {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line: node.line,
+            kind: LegacyDiagnosticKind::Unsupported {
+                description: "reassignment of an out-parameter pointer".to_owned(),
+            },
+        });
+        for pointer in state.pointers.values_mut() {
+            pointer.unknown = true;
+            pointer.may_be_null = true;
+        }
+        return state;
+    }
+    // A store through a pointer is modeled only where the contract in force
+    // declares that slot an out parameter. `ContractCall` handles its own
+    // destination below, because a call whose result carries no custody never
+    // touched the slot in the first place.
+    if let LegacyInstruction::Alias {
+        destination,
+        source: _,
+    }
+    | LegacyInstruction::Clear { destination } = &node.instruction
+        && is_indirect_place(destination)
+        && !context.sanctioned.contains(destination.as_str())
+    {
+        reject_unsanctioned_store(function, node.line, destination, &mut state, diagnostics);
+        return state;
+    }
     match &node.instruction {
         LegacyInstruction::Acquire { destination, site } => {
             state.resources.insert(*site, LIVE);
@@ -2489,7 +2712,10 @@ fn transfer(
                     acquisition_lines,
                     diagnostics,
                     true,
-                    false,
+                    // Returning a possibly-null place is an unresolved alias
+                    // unless this function's own result mode already obliges
+                    // its callers to null-check what they get back.
+                    context.result_nullable,
                 );
             }
         }
@@ -2499,18 +2725,59 @@ fn transfer(
             arguments,
             contract,
             produced_sites,
-        } => apply_contract_call(
-            function,
-            node.line,
-            called,
-            destination.as_deref(),
-            arguments,
-            contract,
-            produced_sites,
-            &mut state,
-            acquisition_lines,
-            diagnostics,
-        ),
+        } => {
+            let unsanctioned = destination
+                .as_deref()
+                .filter(|place| is_indirect_place(place) && !context.sanctioned.contains(place));
+            match unsanctioned {
+                // A result that carries no custody never wrote the slot, so
+                // the call's parameter effects still apply and the unmodeled
+                // destination is simply ignored — the pre-out-slot behavior.
+                Some(_) if matches!(contract.result, ResourceReturnMode::None) => {
+                    apply_contract_call(
+                        function,
+                        node.line,
+                        called,
+                        None,
+                        arguments,
+                        contract,
+                        produced_sites,
+                        &mut state,
+                        acquisition_lines,
+                        diagnostics,
+                    );
+                }
+                // Custody would be created in a place this analysis cannot
+                // account for: refuse the whole call.
+                Some(_) => {
+                    diagnostics.insert(LegacyDiagnostic {
+                        function: function.to_owned(),
+                        line: node.line,
+                        kind: LegacyDiagnosticKind::Unsupported {
+                            description: format!(
+                                "discarded owned result of resource API `{called}`"
+                            ),
+                        },
+                    });
+                    for pointer in state.pointers.values_mut() {
+                        pointer.unknown = true;
+                        pointer.may_be_null = true;
+                    }
+                }
+                None => apply_contract_call(
+                    function,
+                    node.line,
+                    called,
+                    destination.as_deref(),
+                    arguments,
+                    contract,
+                    produced_sites,
+                    &mut state,
+                    acquisition_lines,
+                    diagnostics,
+                ),
+            }
+        }
         LegacyInstruction::BranchOnNull { .. } => {}
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {

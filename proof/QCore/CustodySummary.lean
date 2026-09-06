@@ -2,16 +2,22 @@
 Summary validation for the unrestricted-C gateway's interprocedural custody
 inference (W4 of `docs/GENERALIZATION_PLAN.md`).
 
-`compiler/src/legacy_summary.rs` derives a candidate parameter/return custody
-summary for an internal C function and then *validates* it by re-running the
-intraprocedural analyzer under the entry state the candidate prescribes. Only a
-validated summary is trusted at call sites; anything else leaves the call
-uncontracted and the unit `Unknown`.
+`compiler/src/legacy_summary.rs` derives a candidate custody summary for an
+internal C function and then *validates* it by re-running the intraprocedural
+analyzer under the entry state the candidate prescribes. Only a validated
+summary is trusted at call sites; anything else leaves the call uncontracted
+and the unit `Unknown`.
 
 This module models that validation relation and proves the properties the Rust
 implementation relies on. The claims are all about the *checked* relation, not
 about a flag: each theorem states what a validated summary necessarily implies
 about every reachable exit of the body it summarizes.
+
+The vocabulary covers the modes the pass infers: `borrowed`/`owned`/
+`consumed`/`released`/`out`/`stored` formals and neutral/owned/reallocated
+results. `removed` is absent here for the same reason it is not inferred — the
+entry state seeds such a formal as an ordinary live resource rather than a
+contained one, so no body that detaches it validates.
 -/
 
 namespace QCore.CustodySummary
@@ -41,6 +47,12 @@ inductive ParameterMode where
   | consumed
   /-- The callee destroys the resource. -/
   | released
+  /-- The callee initializes the slot this formal points at, and the caller
+      receives whatever it finds there. -/
+  | out (nullable : Bool)
+  /-- The callee attaches this formal to the aggregate passed at `owner`;
+      destroying the owner cascades to it. -/
+  | stored (owner : Nat)
   deriving DecidableEq, Repr
 
 inductive ResultMode where
@@ -48,6 +60,10 @@ inductive ResultMode where
   | neutral
   /-- The result is a fresh resource the caller must discharge. -/
   | owned (nullable : Bool)
+  /-- On success the result replaces the formal at `parameter`; on failure the
+      caller still holds the old one. Which of the two happened is decided by
+      the caller's null test, so such a result is always nullable. -/
+  | reallocated (parameter : Nat) (nullable : Bool)
   deriving DecidableEq, Repr
 
 /-- The value one exit returns, as the exit state describes it. -/
@@ -60,12 +76,34 @@ inductive Returned where
   | ambiguous
   deriving DecidableEq, Repr
 
+/-- What an out slot holds at one exit. `unwritten` is deliberately distinct
+    from `null`: a slot the callee never stored to leaves the caller's variable
+    as it was, which no `out` mode describes. -/
+inductive OutSlot where
+  | unwritten
+  | null
+  | site (fromParameter : Bool) (disposition : Disposition) (nullable : Bool)
+  | ambiguous
+  deriving DecidableEq, Repr
+
 structure ExitObservation where
   /-- Disposition of each formal; `none` where the contract bound nothing. -/
   parameters : List (Option Disposition)
+  /-- What each formal's out slot holds; `none` where the contract declared
+      no slot for that formal. -/
+  outSlots : List (Option OutSlot)
+  /-- For each formal, the formal whose aggregate holds it at this exit. -/
+  containedIn : List (Option Nat)
+  /-- For each formal, whether this exit left a replacement of it by the
+      returned resource unresolved. -/
+  pendingReplacement : List Bool
   returned : Returned
-  /-- A fresh resource ended up owned by a caller-supplied aggregate. -/
-  attachedToParameter : Bool
+  /-- A resource that is none of the formals ended up inside an aggregate the
+      caller holds. Such a transfer is invisible at the call site. -/
+  foreignAttachment : Bool
+  /-- The resources this exit hands back — through the result and through the
+      out slots — are pairwise distinct sites. -/
+  distinctHandback : Bool
   deriving DecidableEq, Repr
 
 structure Summary where
@@ -75,36 +113,120 @@ structure Summary where
 
 /-- One formal's declared mode against its observed exit disposition.
 
-    `borrowed` binds nothing, so the observation carries no disposition for it;
-    the accompanying requirement that the whole analysis be defect-free is what
-    rules out a body that used an unbound formal as a resource. A nullable mode
-    is not modeled here: the Rust check additionally accepts `absent` for it,
-    which only ever *rejects* fewer bodies than the relation below. -/
+    `borrowed` and `out` bind nothing, so the observation carries no
+    disposition for them; the accompanying requirement that the whole analysis
+    be defect-free is what rules out a body that used an unbound formal as a
+    resource. A nullable mode is not modeled here: the Rust check additionally
+    accepts `absent` for it, which only ever *rejects* fewer bodies than the
+    relation below. -/
 def parameterMatches : ParameterMode → Option Disposition → Bool
   | .borrowed, Option.none => true
+  | .out _, Option.none => true
   | .owned, Option.some .live => true
   | .consumed, Option.some .escaped => true
   | .released, Option.some .released => true
+  | .stored _, Option.some .contained => true
   | _, _ => false
 
-/-- The declared result mode against what one exit returns. -/
-def resultMatches : ResultMode → Returned → Bool
-  | .neutral, .nothing => true
-  | .neutral, _ => false
-  | .owned _, .ambiguous => false
-  -- Returning nothing is consistent only with a result the caller must
-  -- null-check before treating as a resource.
-  | .owned nullable, .nothing => nullable
-  | .owned nullable, .site fromParameter disposition siteNullable =>
-      !fromParameter && disposition == Disposition.escaped && (nullable || !siteNullable)
+/-- `none` marks a formal no per-formal mode governs: the one a `reallocated`
+    result names, whose disposition depends on which outcome the exit took.
+    The result rule checks that formal instead. -/
+def governedMatches : Option ParameterMode → Option Disposition → Bool
+  | Option.none, _ => true
+  | Option.some mode, disposition => parameterMatches mode disposition
+
+def governedModes (summary : Summary) : List (Option ParameterMode) :=
+  match summary.result with
+  | .reallocated parameter _ =>
+      summary.parameters.mapIdx fun index mode =>
+        if index == parameter then Option.none else Option.some mode
+  | _ => summary.parameters.map Option.some
+
+/-- One formal's out slot against its declared mode.
+
+    An `out` formal promises a fresh resource in the slot on return, so a slot
+    left unwritten, holding an ambiguous value, holding a formal the caller
+    already owns, or holding a value the callee never resolved to non-null all
+    refute the summary. A null store is consistent only with a nullable mode.
+    A formal the summary does not declare `out` has no slot at all. -/
+def outSlotMatches : ParameterMode → Option OutSlot → Bool
+  | .out _, Option.some (.site fromParameter disposition nullable) =>
+      !fromParameter && disposition == Disposition.live && !nullable
+  | .out nullable, Option.some OutSlot.null => nullable
+  | .out _, _ => false
+  | _, Option.none => true
+  | _, Option.some _ => false
+
+/-- One formal's containment against its declared mode. A `stored` formal has
+    to sit in the aggregate the summary names, and every other formal has to
+    sit in no caller-held aggregate at all. -/
+def containmentMatches : ParameterMode → Option Nat → Bool
+  | .stored owner, Option.some actual => owner == actual
+  | .stored _, Option.none => false
+  | _, Option.none => true
+  | _, Option.some _ => false
+
+/-- The shapes a reallocation's conditional custody can take at one exit. -/
+inductive Reallocation where
+  /-- Unresolved: the result may be null and the old resource is still live,
+      pending the caller's null test. -/
+  | pending
+  /-- The callee resolved the success case: the old resource is gone and a
+      definitely non-null fresh one is handed back. -/
+  | replaced
+  /-- The failure case: nothing is handed back and the caller keeps the old
+      resource. -/
+  | kept
+  /-- No reallocation shape describes this exit. -/
+  | none
+  deriving DecidableEq, Repr
+
+/-- Which shape one exit exhibits for the formal a `reallocated` result names,
+    read off the same data the Rust classifier reads. -/
+def reallocationExit (disposition : Option Disposition) (returned : Returned)
+    (pending : Bool) : Reallocation :=
+  match returned, pending with
+  | .site false Disposition.escaped true, true =>
+      if disposition == Option.some Disposition.live then .pending else .none
+  | .site false Disposition.escaped false, false =>
+      if disposition == Option.some Disposition.released then .replaced else .none
+  | .nothing, false =>
+      if disposition == Option.some Disposition.live then .kept else .none
+  | _, _ => .none
+
+def reallocationAt (observation : ExitObservation) (parameter : Nat) : Reallocation :=
+  reallocationExit (observation.parameters[parameter]?).join observation.returned
+    ((observation.pendingReplacement[parameter]?).getD false)
+
+/-- The declared result mode against what one exit hands back. -/
+def resultMatches (summary : Summary) (observation : ExitObservation) : Bool :=
+  match summary.result with
+  | .neutral => observation.returned == Returned.nothing
+  | .owned nullable =>
+      match observation.returned with
+      -- Returning nothing is consistent only with a result the caller must
+      -- null-check before treating as a resource.
+      | .nothing => nullable
+      | .ambiguous => false
+      | .site fromParameter disposition siteNullable =>
+          !fromParameter && disposition == Disposition.escaped && (nullable || !siteNullable)
+  | .reallocated parameter nullable =>
+      nullable && reallocationAt observation parameter != Reallocation.none
 
 /-- Every condition one reachable exit has to satisfy. -/
 def exitMatches (summary : Summary) (observation : ExitObservation) : Bool :=
-  !observation.attachedToParameter
+  !observation.foreignAttachment
+    && observation.distinctHandback
     && observation.parameters.length == summary.parameters.length
-    && (summary.parameters.zip observation.parameters).all
-        (fun pair => parameterMatches pair.1 pair.2)
-    && resultMatches summary.result observation.returned
+    && observation.outSlots.length == summary.parameters.length
+    && observation.containedIn.length == summary.parameters.length
+    && ((governedModes summary).zip observation.parameters).all
+        (fun pair => governedMatches pair.1 pair.2)
+    && (summary.parameters.zip observation.outSlots).all
+        (fun pair => outSlotMatches pair.1 pair.2)
+    && (summary.parameters.zip observation.containedIn).all
+        (fun pair => containmentMatches pair.1 pair.2)
+    && resultMatches summary observation
 
 /-- The validation relation itself: a defect-free analysis, at least one
     reachable exit, and every exit agreeing with the summary. -/
@@ -122,7 +244,6 @@ theorem unvalidated_analysis_never_validates (summary : Summary)
 theorem no_reachable_exit_never_validates (summary : Summary) :
     validate summary true [] = false := by
   simp [validate]
-
 
 /-- Extraction lemma: a validated summary agrees with *every* reachable exit,
     not with some representative one. -/
@@ -149,25 +270,34 @@ theorem validated_summary_has_a_reachable_exit (summary : Summary) (safe : Bool)
   have := valid.1.2
   cases isEmpty : exits.isEmpty <;> simp_all
 
-/-- No validated summary hides a resource handed to a caller-owned aggregate.
-    Such a transfer is invisible at the call site, so it may never be summarized
-    away. -/
-theorem validated_summary_attaches_nothing_to_a_formal (summary : Summary) (safe : Bool)
+/-- No validated summary hides a resource handed to a caller-owned aggregate
+    that is none of the formals. Such a transfer is invisible at the call site,
+    so it may never be summarized away. -/
+theorem validated_summary_attaches_nothing_foreign (summary : Summary) (safe : Bool)
     (exits : List ExitObservation) (valid : validate summary safe exits = true)
     (observation : ExitObservation) (member : observation ∈ exits) :
-    observation.attachedToParameter = false := by
+    observation.foreignAttachment = false := by
   have matched := validated_summary_matches_every_exit summary safe exits valid observation member
   unfold exitMatches at matched
-  simp only [Bool.and_eq_true] at matched
-  have attached := matched.1.1.1
-  cases flag : observation.attachedToParameter <;> simp_all
+  cases flag : observation.foreignAttachment <;> simp_all
+
+/-- Every resource a validated exit hands back is a distinct one: the same
+    site returned twice, or returned and also stored through a slot, would
+    mint a second custody for one resource. -/
+theorem validated_summary_hands_back_distinct_resources (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits) :
+    observation.distinctHandback = true := by
+  have matched := validated_summary_matches_every_exit summary safe exits valid observation member
+  unfold exitMatches at matched
+  cases flag : observation.distinctHandback <;> simp_all
 
 /-- Every reachable exit of a validated summary returns what the result mode
     claims. -/
 theorem validated_summary_result_matches (summary : Summary) (safe : Bool)
     (exits : List ExitObservation) (valid : validate summary safe exits = true)
     (observation : ExitObservation) (member : observation ∈ exits) :
-    resultMatches summary.result observation.returned = true := by
+    resultMatches summary observation = true := by
   have matched := validated_summary_matches_every_exit summary safe exits valid observation member
   unfold exitMatches at matched
   simp only [Bool.and_eq_true] at matched
@@ -177,13 +307,37 @@ theorem validated_summary_result_matches (summary : Summary) (safe : Bool)
 theorem validated_summary_parameters_match (summary : Summary) (safe : Bool)
     (exits : List ExitObservation) (valid : validate summary safe exits = true)
     (observation : ExitObservation) (member : observation ∈ exits)
-    (mode : ParameterMode) (disposition : Option Disposition)
-    (paired : (mode, disposition) ∈ summary.parameters.zip observation.parameters) :
-    parameterMatches mode disposition = true := by
+    (mode : Option ParameterMode) (disposition : Option Disposition)
+    (paired : (mode, disposition) ∈ (governedModes summary).zip observation.parameters) :
+    governedMatches mode disposition = true := by
   have matched := validated_summary_matches_every_exit summary safe exits valid observation member
   unfold exitMatches at matched
   simp only [Bool.and_eq_true] at matched
-  exact List.all_eq_true.mp matched.1.2 (mode, disposition) paired
+  exact List.all_eq_true.mp matched.1.1.1.2 (mode, disposition) paired
+
+/-- Every formal's out slot agrees with its declared mode at every exit. -/
+theorem validated_summary_out_slots_match (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (mode : ParameterMode) (slot : Option OutSlot)
+    (paired : (mode, slot) ∈ summary.parameters.zip observation.outSlots) :
+    outSlotMatches mode slot = true := by
+  have matched := validated_summary_matches_every_exit summary safe exits valid observation member
+  unfold exitMatches at matched
+  simp only [Bool.and_eq_true] at matched
+  exact List.all_eq_true.mp matched.1.1.2 (mode, slot) paired
+
+/-- Every formal's containment agrees with its declared mode at every exit. -/
+theorem validated_summary_containment_matches (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (mode : ParameterMode) (owner : Option Nat)
+    (paired : (mode, owner) ∈ summary.parameters.zip observation.containedIn) :
+    containmentMatches mode owner = true := by
+  have matched := validated_summary_matches_every_exit summary safe exits valid observation member
+  unfold exitMatches at matched
+  simp only [Bool.and_eq_true] at matched
+  exact List.all_eq_true.mp matched.1.2 (mode, owner) paired
 
 /-- A neutral result claim forces every exit to return no resource. This is the
     exact hole LC01 reproduced: a wrapper that returns a fresh owned resource
@@ -195,12 +349,12 @@ theorem neutral_result_returns_nothing (summary : Summary) (safe : Bool)
     observation.returned = Returned.nothing := by
   have result :=
     validated_summary_result_matches summary safe exits valid observation member
+  unfold resultMatches at result
   rw [neutral] at result
   cases returned : observation.returned with
   | nothing => rfl
-  | site fromParameter disposition nullable =>
-      rw [returned] at result; simp [resultMatches] at result
-  | ambiguous => rw [returned] at result; simp [resultMatches] at result
+  | site fromParameter disposition nullable => rw [returned] at result; simp at result
+  | ambiguous => rw [returned] at result; simp at result
 
 /-- An owned result is never a formal handed straight back: that would mint a
     second custody for one resource. -/
@@ -214,8 +368,9 @@ theorem owned_result_never_returns_a_formal (summary : Summary) (safe : Bool)
     False := by
   have result :=
     validated_summary_result_matches summary safe exits valid observation member
+  unfold resultMatches at result
   rw [owned, returned] at result
-  simp [resultMatches] at result
+  simp at result
 
 /-- A non-null owned result forbids an exit that returns nothing, so a caller is
     never handed a resource that may not exist without being told. -/
@@ -227,8 +382,9 @@ theorem nonnull_owned_result_returns_a_resource (summary : Summary) (safe : Bool
     (returned : observation.returned = Returned.nothing) : False := by
   have result :=
     validated_summary_result_matches summary safe exits valid observation member
+  unfold resultMatches at result
   rw [owned, returned] at result
-  simp [resultMatches] at result
+  simp at result
 
 /-- Declaring a formal released commits the callee to releasing it on *every*
     reachable exit; a path that leaves it live refutes the summary. -/
@@ -237,14 +393,15 @@ theorem released_formal_is_released_at_every_exit (summary : Summary) (safe : Bo
     (observation : ExitObservation) (member : observation ∈ exits)
     (disposition : Option Disposition)
     (paired :
-      (ParameterMode.released, disposition) ∈ summary.parameters.zip observation.parameters) :
+      (Option.some ParameterMode.released, disposition)
+        ∈ (governedModes summary).zip observation.parameters) :
     disposition = Option.some Disposition.released := by
   have matched :=
     validated_summary_parameters_match summary safe exits valid observation member
-      ParameterMode.released disposition paired
+      (Option.some ParameterMode.released) disposition paired
   cases disposition with
-  | none => simp [parameterMatches] at matched
-  | some observed => cases observed <;> simp [parameterMatches] at matched ⊢
+  | none => simp [governedMatches, parameterMatches] at matched
+  | some observed => cases observed <;> simp [governedMatches, parameterMatches] at matched ⊢
 
 /-- A borrowed formal binds nothing: the summary makes no custody claim about
     it, and the exit state carries no disposition for it. -/
@@ -253,23 +410,141 @@ theorem borrowed_formal_binds_nothing (summary : Summary) (safe : Bool)
     (observation : ExitObservation) (member : observation ∈ exits)
     (disposition : Option Disposition)
     (paired :
-      (ParameterMode.borrowed, disposition) ∈ summary.parameters.zip observation.parameters) :
+      (Option.some ParameterMode.borrowed, disposition)
+        ∈ (governedModes summary).zip observation.parameters) :
     disposition = Option.none := by
   have matched :=
     validated_summary_parameters_match summary safe exits valid observation member
-      ParameterMode.borrowed disposition paired
+      (Option.some ParameterMode.borrowed) disposition paired
   cases disposition with
   | none => rfl
-  | some observed => cases observed <;> simp [parameterMatches] at matched
+  | some observed => cases observed <;> simp [governedMatches, parameterMatches] at matched
+
+/-- A stored formal ends up inside the aggregate the summary names, at every
+    exit. Nothing else about it is claimed, and nothing else is permitted. -/
+theorem stored_formal_sits_in_its_declared_owner (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (owner : Nat) (actual : Option Nat)
+    (paired :
+      (ParameterMode.stored owner, actual) ∈ summary.parameters.zip observation.containedIn) :
+    actual = Option.some owner := by
+  have matched :=
+    validated_summary_containment_matches summary safe exits valid observation member
+      (ParameterMode.stored owner) actual paired
+  cases actual with
+  | none => simp [containmentMatches] at matched
+  | some observed =>
+      unfold containmentMatches at matched
+      simp at matched
+      simp [matched]
+
+/-- A formal the summary does not declare `stored` is in no caller-held
+    aggregate at any exit. A body that quietly attaches one yields no summary. -/
+theorem unstored_formal_is_never_contained (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (mode : ParameterMode) (owner : Nat)
+    (unstored : ∀ declared, mode ≠ ParameterMode.stored declared)
+    (paired : (mode, Option.some owner) ∈ summary.parameters.zip observation.containedIn) :
+    False := by
+  have matched :=
+    validated_summary_containment_matches summary safe exits valid observation member
+      mode (Option.some owner) paired
+  cases mode with
+  | stored declared => exact unstored declared rfl
+  | _ => simp [containmentMatches] at matched
+
+/-- A non-null `out` formal never has a null slot: the caller is told it
+    receives a resource, so every exit has to have produced one. -/
+theorem nonnull_out_slot_is_never_null (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (paired :
+      (ParameterMode.out false, Option.some OutSlot.null)
+        ∈ summary.parameters.zip observation.outSlots) :
+    False := by
+  have matched :=
+    validated_summary_out_slots_match summary safe exits valid observation member
+      (ParameterMode.out false) (Option.some OutSlot.null) paired
+  simp [outSlotMatches] at matched
+
+/-- A slot the callee never stored to validates under no mode at all, nullable
+    or not: the caller's variable keeps whatever it held, which no `out` mode
+    describes. -/
+theorem an_unwritten_slot_matches_no_mode (mode : ParameterMode) :
+    outSlotMatches mode (Option.some OutSlot.unwritten) = false := by
+  cases mode <;> simp [outSlotMatches]
+
+/-- An out slot never holds a formal the caller already owns. -/
+theorem out_slot_never_holds_a_formal (nullable : Bool) (disposition : Disposition)
+    (siteNullable : Bool) :
+    outSlotMatches (ParameterMode.out nullable)
+      (Option.some (OutSlot.site true disposition siteNullable)) = false := by
+  simp [outSlotMatches]
+
+/-- A `reallocated` result is never claimed as non-null. Which of the two
+    custody outcomes happened is decided by the caller's null test, so a
+    summary that removed the test would remove the decision. -/
+theorem nonnullable_reallocated_result_matches_no_exit (summary : Summary)
+    (parameter : Nat) (observation : ExitObservation)
+    (reallocated : summary.result = ResultMode.reallocated parameter false) :
+    resultMatches summary observation = false := by
+  unfold resultMatches
+  rw [reallocated]
+  simp
+
+theorem nonnullable_reallocated_never_validates (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (parameter : Nat)
+    (reallocated : summary.result = ResultMode.reallocated parameter false)
+    (valid : validate summary safe exits = true) : False := by
+  have nonempty := validated_summary_has_a_reachable_exit summary safe exits valid
+  cases exits with
+  | nil => simp at nonempty
+  | cons observation rest =>
+      have result :=
+        validated_summary_result_matches summary safe (observation :: rest) valid observation
+          (by simp)
+      rw [nonnullable_reallocated_result_matches_no_exit summary parameter observation
+        reallocated] at result
+      simp at result
+
+/-- The classic double-custody trap. A realloc wrapper that frees the old
+    resource on its failure path leaves that formal *released* while returning
+    nothing, and no reallocation shape describes such an exit. Claiming
+    `reallocated` there would tell the caller it still owns a pointer the
+    callee already freed. -/
+theorem a_discarded_argument_is_no_reallocation :
+    reallocationExit (Option.some Disposition.released) Returned.nothing false
+      = Reallocation.none := by
+  decide
+
+/-- Nor is a formal handed straight back a reallocation. -/
+theorem a_returned_formal_is_no_reallocation (disposition : Option Disposition)
+    (returnedDisposition : Disposition) (nullable pending : Bool) :
+    reallocationExit disposition (Returned.site true returnedDisposition nullable) pending
+      = Reallocation.none := by
+  cases pending <;> cases returnedDisposition <;> cases nullable <;>
+    simp [reallocationExit]
+
+/-- An exit with no formals and no aggregates: the shape LC01's wrapper has. -/
+def plainExit (returned : Returned) : ExitObservation :=
+  { parameters := [], outSlots := [], containedIn := [], pendingReplacement := [],
+    returned, foreignAttachment := false, distinctHandback := true }
+
+/-- An exit of a one-formal wrapper that declares no slot and no aggregate. -/
+def oneFormalExit (disposition : Option Disposition) (returned : Returned)
+    (pending : Bool) : ExitObservation :=
+  { parameters := [disposition], outSlots := [Option.none], containedIn := [Option.none],
+    pendingReplacement := [pending], returned, foreignAttachment := false,
+    distinctHandback := true }
 
 /-- LC01's counterexample, as observations: a body that returns a fresh owned
     resource cannot validate as a resource-neutral call. -/
 theorem lc01_allocation_wrapper_is_not_neutral :
     validate { parameters := [], result := ResultMode.neutral }
       true
-      [{ parameters := [],
-         returned := Returned.site false Disposition.escaped false,
-         attachedToParameter := false }] = false := by
+      [plainExit (Returned.site false Disposition.escaped false)] = false := by
   decide
 
 /-- The same body does validate as an owned-return summary, which is what makes
@@ -277,30 +552,46 @@ theorem lc01_allocation_wrapper_is_not_neutral :
 theorem lc01_allocation_wrapper_is_an_owned_return :
     validate { parameters := [], result := ResultMode.owned false }
       true
-      [{ parameters := [],
-         returned := Returned.site false Disposition.escaped false,
-         attachedToParameter := false }] = true := by
+      [plainExit (Returned.site false Disposition.escaped false)] = true := by
   decide
 
 /-- A formal released on one path and left live on another matches no single
-    parameter mode, so the wrapper yields no summary. -/
+    parameter mode, so under a neutral result the wrapper yields no summary. -/
 theorem conditionally_released_formal_validates_under_no_mode (mode : ParameterMode) :
     validate { parameters := [mode], result := ResultMode.neutral }
       true
-      [{ parameters := [Option.some Disposition.released],
-         returned := Returned.nothing,
-         attachedToParameter := false },
-       { parameters := [Option.some Disposition.live],
-         returned := Returned.nothing,
-         attachedToParameter := false }] = false := by
-  cases mode <;> decide
+      [oneFormalExit (Option.some Disposition.released) Returned.nothing false,
+       oneFormalExit (Option.some Disposition.live) Returned.nothing false] = false := by
+  cases mode <;> simp [validate, exitMatches, governedModes, governedMatches,
+    parameterMatches, outSlotMatches, containmentMatches, resultMatches,
+    oneFormalExit]
 
-/-- A resource left attached to a caller-supplied aggregate refutes every
-    summary, whatever the summary claims about the formals. -/
-theorem attachment_to_a_formal_validates_under_no_summary (summary : Summary) :
+/-- A resource attached to a caller-supplied aggregate that is none of the
+    formals refutes every summary, whatever the summary claims. -/
+theorem foreign_attachment_validates_under_no_summary (summary : Summary) :
     validate summary true
-      [{ parameters := [], returned := Returned.nothing, attachedToParameter := true }]
-      = false := by
-  simp [validate, exitMatches]
+      [{ plainExit Returned.nothing with foreignAttachment := true }] = false := by
+  simp [validate, exitMatches, plainExit]
+
+/-- The reallocation pass-through: one exit, the result may be null, the old
+    resource is still live, and the replacement is unresolved. That is exactly
+    what a `reallocated` result describes, and it validates. -/
+theorem realloc_passthrough_validates_as_reallocated :
+    validate { parameters := [ParameterMode.owned], result := ResultMode.reallocated 0 true }
+      true
+      [oneFormalExit (Option.some Disposition.live)
+        (Returned.site false Disposition.escaped true) true] = true := by
+  decide
+
+/-- The trap, end to end: the wrapper that discards its argument on failure
+    validates as no reallocation, nullable or not. Its caller is therefore
+    never told it still owns the old pointer. -/
+theorem discarding_realloc_wrapper_is_no_reallocation (nullable : Bool) :
+    validate { parameters := [ParameterMode.owned], result := ResultMode.reallocated 0 nullable }
+      true
+      [oneFormalExit (Option.some Disposition.released)
+        (Returned.site false Disposition.escaped false) false,
+       oneFormalExit (Option.some Disposition.released) Returned.nothing false] = false := by
+  cases nullable <;> decide
 
 end QCore.CustodySummary

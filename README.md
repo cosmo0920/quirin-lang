@@ -213,9 +213,10 @@ over the call graph and publishes it only after re-running the intraprocedural
 analyzer against it, so a wrapper around a contracted API is analyzed instead
 of being `Unknown`. Declared contracts always take precedence, a disagreement
 is reported rather than resolved silently, and the safety certificate's recheck
-re-derives every summary independently. Recursive functions, out-parameters,
-aggregate stores and reallocation wrappers are still not summarized and keep
-their callers `Unknown`.
+re-derives every summary independently. The [bounded W4 extension](docs/reports/w4-custody-extensions/README.md)
+adds direct out-parameters, stores of formal resources into formal owners,
+reallocation wrappers and possibly-null owned returns. Recursive functions,
+aggregate removal and unsupported out-slot aliases keep their callers `Unknown`.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

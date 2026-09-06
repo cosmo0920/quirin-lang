@@ -1,0 +1,11 @@
+{
+  "workspace_tests": 451,
+  "summary_tests": 41,
+  "submodule_init": "passed",
+  "format": "passed",
+  "clippy_all_targets_deny_warnings": "passed",
+  "reevaluation_probe": "exit 0",
+  "reevaluation_followup": "exit 0",
+  "lean_build": "passed, 52 jobs",
+  "lean_audit": "passed, no project axioms"
+}

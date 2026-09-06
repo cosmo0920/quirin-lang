@@ -5,7 +5,7 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.validated_summary_matches_every_exit
 #print axioms QCore.CustodySummary.validated_summary_is_analyzed_safely
 #print axioms QCore.CustodySummary.validated_summary_has_a_reachable_exit
-#print axioms QCore.CustodySummary.validated_summary_attaches_nothing_to_a_formal
+#print axioms QCore.CustodySummary.validated_summary_attaches_nothing_foreign
 #print axioms QCore.CustodySummary.validated_summary_result_matches
 #print axioms QCore.CustodySummary.validated_summary_parameters_match
 #print axioms QCore.CustodySummary.neutral_result_returns_nothing
@@ -16,4 +16,18 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.lc01_allocation_wrapper_is_not_neutral
 #print axioms QCore.CustodySummary.lc01_allocation_wrapper_is_an_owned_return
 #print axioms QCore.CustodySummary.conditionally_released_formal_validates_under_no_mode
-#print axioms QCore.CustodySummary.attachment_to_a_formal_validates_under_no_summary
+#print axioms QCore.CustodySummary.foreign_attachment_validates_under_no_summary
+
+#print axioms QCore.CustodySummary.validated_summary_hands_back_distinct_resources
+#print axioms QCore.CustodySummary.validated_summary_out_slots_match
+#print axioms QCore.CustodySummary.validated_summary_containment_matches
+#print axioms QCore.CustodySummary.stored_formal_sits_in_its_declared_owner
+#print axioms QCore.CustodySummary.unstored_formal_is_never_contained
+#print axioms QCore.CustodySummary.nonnull_out_slot_is_never_null
+#print axioms QCore.CustodySummary.an_unwritten_slot_matches_no_mode
+#print axioms QCore.CustodySummary.out_slot_never_holds_a_formal
+#print axioms QCore.CustodySummary.nonnullable_reallocated_never_validates
+#print axioms QCore.CustodySummary.a_discarded_argument_is_no_reallocation
+#print axioms QCore.CustodySummary.a_returned_formal_is_no_reallocation
+#print axioms QCore.CustodySummary.realloc_passthrough_validates_as_reallocated
+#print axioms QCore.CustodySummary.discarding_realloc_wrapper_is_no_reallocation

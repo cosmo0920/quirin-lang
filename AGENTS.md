@@ -131,9 +131,9 @@ It also ships a conservative checker for *existing* C source (the
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
   boundaries that remain true statements: interprocedural parameter/return
   custody inference is **implemented for parameter/return custody with
-  validation** (LC01, W4 — but `Out`/`Stored`/`Removed`/`Reallocated` modes,
-  possibly-null returns without a callee-side null test, recursive call-graph
-  components, and cost summaries are still not inferred, and every such body
+  validation** (LC01, W4, extended 2026-09-07 with validated `Out`,
+  `Stored`, `Reallocated` and possibly-null returns; `Removed`, recursive
+  call-graph components, and cost summaries are still not inferred, and every such body
   keeps its callers `Unknown`); semantic witness schema v2
   is unimplemented; process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
@@ -186,7 +186,8 @@ It also ships a conservative checker for *existing* C source (the
   always win; a disagreement is a `SummaryConflict` diagnostic, never a silent
   override. On the 156 pinned Fluent Bit units measurable in that run, one unit
   moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
-  class; the 29-unit Monkey/forced-Libevent leg was not re-measured. Execution
+  class; the 29-unit Monkey/forced-Libevent leg was not re-measured. The bounded extension and remaining restrictions are recorded in
+  `docs/reports/w4-custody-extensions/README.md`. Execution
   is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)
