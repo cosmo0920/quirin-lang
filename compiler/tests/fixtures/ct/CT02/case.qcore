@@ -1,0 +1,12 @@
+// CT02 (spec §55): parent uses buffer after successful move capture.
+// Sequential ownership core: the move permanently transfers the parent's
+// authority over `buffer`; the later `drop buffer` is a parent use after the
+// successful move and must be rejected.
+module library;
+error Failure { Failed; }
+fn parent() -> i32 {
+    let buffer = qcore_acquire(1, true, Failure);
+    move buffer;
+    drop buffer;
+    return 0;
+}

@@ -189,7 +189,12 @@ dependency rule; providers stay compile-time crates for now (decision
 recorded in the W0 report). The W1 relocation is executed
 ([record](docs/reports/w1-contract-crate/README.md)): the contract loader
 and observation interpreter live in `crates/qcore-contract`, above the new
-`qcore-core` kernel seed and `qcore-frontend` front-end crates.
+`qcore-core` kernel seed and `qcore-frontend` front-end crates. The W6 CT
+conformance harness is stood up
+([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
+executes the manifest-mapped spec §55 cases through the real source pipeline;
+CT02/CT12/CT16 are mapped as sequential-core fixtures and 47 of 50 cases
+remain unmapped, counted by a pinned test.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

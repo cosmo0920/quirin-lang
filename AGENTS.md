@@ -132,7 +132,8 @@ It also ships a conservative checker for *existing* C source (the
   custody inference is **unimplemented** (LC01); semantic witness schema v2
   is unimplemented; process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **100% unmapped**.
+  only; CT01–CT50 conformance corpus is **47/50 unmapped** (CT02/CT12/CT16
+  are mapped as sequential-core source fixtures; see the W6 note below).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -146,7 +147,15 @@ It also ships a conservative checker for *existing* C source (the
   `docs/reports/w1-contract-crate/README.md`): `qcore-core`,
   `qcore-frontend`, and `qcore-contract` are extracted with a
   dependency-matrix guard test; W1's remaining items are literal-site
-  migration and the richer clause vocabulary. Execution is tracked in
+  migration and the richer clause vocabulary. W6's CT harness is stood up
+  (2026-09-06, `docs/reports/w6-ct-harness/README.md`):
+  `compiler/tests/ct_corpus.rs` executes every case
+  `docs/reevaluation/ct_manifest.json` marks mapped through the real source
+  pipeline and fails closed on manifest/fixture disagreement; CT02, CT12 and
+  CT16 are mapped as Cycle 12 executable-subset fixtures exercising the
+  sequential ownership/typed-error/cleanup core only (spawn/capture syntax,
+  shares, mutexes and the concurrency backend remain unexercised; 47 cases
+  remain unmapped, counted by a pinned test). Execution is tracked in
   `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)
