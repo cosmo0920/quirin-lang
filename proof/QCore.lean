@@ -43,6 +43,7 @@ import QCore.Compiler
 import QCore.Concurrency
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
+import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.DescriptorObservation
 

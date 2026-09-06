@@ -139,6 +139,10 @@ alongside typed filesystem and up-counter residuals.
 record null chunk returns, unchanged errors and complete rollback before empty
 stream teardown. They narrow the observed caller boundary without making the
 conditional unsupported-close path a reachable violation.
+[Real Linux cleanup observations](reports/cycle19-file-os/README.md) bind twelve
+helper calls to descriptor/mapping probes and pathname inode witnesses. This
+adds actual OS outcomes to the controlled observations; enclosing filesystem
+teardown, full sync/durability and general caller guarantees remain open.
 
 ## Cycle 20: Verifier plugin ecosystem
 

@@ -1,3 +1,4 @@
+import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.UnsupportedClose
 import QCore.GuardedDelete
@@ -301,3 +302,7 @@ import QCore.ChunkSource
 #print axioms QCore.NativeTeardownObservation.rejected_constructor_returns_no_chunk
 #print axioms QCore.NativeTeardownObservation.rejected_constructor_preserves_native_outputs
 #print axioms QCore.NativeTeardownObservation.rejected_constructor_rollback_does_not_escape
+#print axioms QCore.NativeOsObservation.accepted_preserves_witness_identity
+#print axioms QCore.NativeOsObservation.accepted_success_has_absent_endpoint
+#print axioms QCore.NativeOsObservation.observation_does_not_promote_static_or_durability
+#print axioms QCore.NativeOsObservation.missing_endpoint_rejects_success

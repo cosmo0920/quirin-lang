@@ -105,6 +105,11 @@ retains those exact opaque identities through stream and context release.
 [Four native unsupported-type constructor cases](docs/reports/cycle19-unsupported-constructors/README.md)
 return null chunks and release all 24 allocation generations through rollback
 and surviving-stream teardown. General caller reachability remains open.
+[Twelve real Linux cleanup observations](docs/reports/cycle19-file-os/README.md)
+now bind close, unmap and deletion to OS endpoint probes and inode witnesses in
+exclusive temporary fixtures. A failed zero-length unmap retains its mapping.
+These helper executions do not establish enclosing filesystem teardown or
+durability; no raw unit is promoted.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

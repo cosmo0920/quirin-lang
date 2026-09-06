@@ -852,3 +852,17 @@ These four observations do not establish arbitrary constructor reachability,
 general caller/failure provenance, full filesystem guarantees, aggregate source
 custody, wrapper lifecycle or full event composition. Cycle 19 remains open and
 no raw unit is promoted.
+
+## Real Linux cleanup endpoint observations (2026-09-06)
+
+The [OS cleanup report](../reports/cycle19-file-os/README.md) records twelve
+sanitized close/unmap/delete helper executions with forwarding syscall wrappers.
+Fresh temporary fixtures bind descriptor and mapping endpoints and an inode
+hardlink witness; a zero-length unmap failure leaves its real mapping live.
+Missing-path deletion and stale-descriptor failure are distinct from successful
+cleanup and blocked deletion. A 13-clause runtime policy, independent trace
+adapter, 31 trace mutations and four Lean observation-gate theorems check the
+bounded evidence. All standing checks and pinned source/verdict parity pass.
+Arbitrary OS failures, full sync/durability, enclosing native filesystem teardown,
+general caller provenance, aggregate custody, wrapper lifecycle and full event
+composition remain open. No raw unit is promoted.

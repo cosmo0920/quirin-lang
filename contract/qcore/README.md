@@ -327,3 +327,10 @@ allocations. The surviving empty stream/context is fully released. The
 11-clause runtime policy and exact trace adapter establish only these executions,
 not all caller inputs or universal reachability of the conditional close arm.
 See the [constructor report](../../docs/reports/cycle19-unsupported-constructors/README.md).
+
+`chunkio/filesystem_os_observation.qcore` checks twelve real Linux cleanup
+executions against exclusive temporary files, descriptors and mappings. An
+independent adapter checks raw arguments, errno, record frames, endpoint probes
+and inode hardlink witnesses. The 13 clauses preserve the separation between
+observed cleanup, static safety and durability. See the
+[OS observation report](../../docs/reports/cycle19-file-os/README.md).
