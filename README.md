@@ -1,135 +1,125 @@
 # QCore-C
 
-QCore-C is a research language for quantitative types, owned resources, typed
-recoverable errors, checked cleanup, and checked concurrency before lowering
-to C11. The consolidated proposed revision 0.2 design is in
-[`docs/QCORE_SPEC_r0_2.md`](docs/QCORE_SPEC_r0_2.md); its inherited sequential
-baseline remains in
-[`docs/qcore_quantitative_types_spec.md`](docs/qcore_quantitative_types_spec.md).
+QCore-C is a research language for **quantitative types**, **owned
+resources**, **typed recoverable errors**, **checked cleanup**, and **checked
+concurrency**, lowering to portable C11. Alongside the language, the project
+builds a conservative, fail-closed checker for *existing* C source — the
+"unrestricted-C gateway" — currently exercised against a pinned Fluent Bit
+corpus.
 
-The implementation is split into:
+- Language design: [`docs/QCORE_SPEC_r0_2.md`](docs/QCORE_SPEC_r0_2.md)
+  (proposed revision 0.2). Its inherited sequential baseline is
+  [`docs/qcore_quantitative_types_spec.md`](docs/qcore_quantitative_types_spec.md).
+- Working with the repo as an AI agent? Start at [`AGENTS.md`](AGENTS.md) —
+  the compressed status ledger, invariants, and per-change gate live there.
 
-- `compiler/`: the Rust parser, checker, reference interpreter, and C backend;
-- `proof/`: the Lean 4 executable core and safety proofs.
+## What the type system tracks
 
-The current implementation includes all sixteen completed bounded vertical slices: dimension
-and quantitative-axis declarations, interval-graded usage demand analysis,
-ownership without exceptional exits, and resource-flow summaries with checked
-peak and cumulative bounds, followed by path-sensitive typed errors without
-cleanup packs, sealed error-region cleanup with checked `quant open` and linear
-discharge, cleanup-explicit CFG lowering to a tagged-error C11 ABI, and a
-reduced executable small-step model integrating natural indices, usage grades,
-owned identities, typed errors, and one error region, followed by a
-conservative fixed-point resource analyzer for an annotated legacy-C subset;
-a complete structural source front end with byte spans, name resolution, type
-classification, one typed source IR, and pass-attributed diagnostics; and a
-whole-program checker that connects the sequential semantic passes, computes
-call summaries, checks recursive contracts, transfers resource identities
-across calls, and validates accepted source paths against checked CFGs; and an
-end-to-end multi-file compiler driver with a stable CLI, source-located
-diagnostics, emitted-source mapping, and native-C differential validation for
-the conservative executable source subset; and independent source/CFG/C11
-translation certificates plus a Clang-gated, interprocedural, field/array-aware
-conservative legacy-C analysis slice with documented widening; and a restricted
-concurrent event checker for access authority, vector-clock happens-before,
-scoped tasks, mutex capabilities, lock order, and destruction custody; and
-bounded advanced-control semantics for safe-point cancellation, fallible LIFO
-cleanup, deterministic double errors, and linear higher-order capture; and a
-combined closure certificate with preservation, progress, cross-ledger resource
-safety, concurrent race freedom, and supported-C11 observation agreement.
-Cycle 17 adds principal product inference certificates, nonzero-net bounded
-loop invariants, a fail-closed unrestricted-C11 preprocessing gateway, explicit
-weak-memory candidate executions, a native threaded custody backend, and
-mechanically interpreted ledger morphisms. Its implementation is complete;
-its native Linux/Windows platform gate now includes a recorded MSVC and
-AddressSanitizer run. Cycle 18 adds a bounded, fail-closed Libevent event-reactor
-checker with generation-safe lifecycle/custody tracking, explicit callback
-authority, priority schedule exploration, cross-context conflict checks, source
-pinning, and corresponding Lean theorems. Its Linux, native macOS/kqueue, and
-native Windows/IOCP development evidence is recorded; Libevent sanitizer and
-deployed observation-hook evidence remain pending. Cycle 19 applies the
-unrestricted-C gateway to pinned Fluent Bit CMetrics, CTraces, librdkafka,
-ChunkIO, the central input-chunk wrapper, and Monkey builds. It retains partial
-summaries across reduced-parser failures, imports structured and named C
-control flow as explicit CFG edges, adds counted ref/list/queue/arena and
-evidence-gated concurrency custody, derives scoped mechanism profiles from
-pinned librdkafka, CFL, and ChunkIO source contracts, composes complete ChunkIO
-imports with the bounded lifecycle checker, and joins exact Monkey
-callback/failure contracts plus dispatcher/backend observations to the Cycle
-18 event certificate. Raw units remain unpromoted until per-path identity
-imports and real observation evidence satisfy those fail-closed gates. The
-library, ChunkIO-import, and Monkey-composition contracts also have native,
-compiler-checked QCore regression sources under
-[`contract/qcore`](contract/qcore/README.md); the front end retains each
-contract clause as structured source syntax for future semantic passes.
-The bounded chunk-source importer now checks the native busy-state and
-lock-query contracts against Clang-derived paths from the actual Fluent Bit
-source. Its predicate definitions live in `contract/qcore`; the source audit
-reports every other function in those two files as `Unknown` for lifecycle
-purposes. These conditional field contracts do not promote whole C units to
-`Safe`. See the [source-contract run](docs/reports/cycle19-source-contracts/README.md).
-Contract sources now declare `module contract;` and compile without `main`;
-`module library;` also enables entry-free checking. Closed quantitative types
-such as `quant<n where n := 5>` resolve to dimensioned values. See
-[module and index syntax](docs/QCORE_MODULE_MODES.md). The actual Fluent Bit
-memory header and Monkey callbacks also have recorded
-[native contract/observation results](docs/reports/cycle19-native-contracts/README.md).
-The completed Cycle 16 requirements and verification procedure are in
-[`CYCLE_16.md`](docs/cycles/CYCLE_16.md). The promoted research milestone and its
-implementation/acceptance record is in [`CYCLE_17.md`](docs/cycles/CYCLE_17.md). The subsequent Libevent
-event-driven verification plan is in [`CYCLE_18.md`](docs/cycles/CYCLE_18.md).
-The active Fluent Bit resource/event milestone is in
-[`CYCLE_19.md`](docs/cycles/CYCLE_19.md). All
-cycle records are archived under [`docs/cycles/`](docs/cycles/), including the
-[Cycle 19 Fluent Bit library and chunk audit](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md).
-The subsequent extraction into versioned verifier providers is tracked in
-[`CYCLE_20.md`](docs/cycles/CYCLE_20.md). Cycle 20 is now active; its foundation includes versioned
-length-delimited JSON verifier requests, fail-closed registry dispatch,
-process-provider timeout/output limits, a certificate firewall,
-first-party in-process migration scaffolding, and
-source-level `verify scope` declarations. Provider-specific Cycle 19 parity
-and standalone package hardening remain tracked in the Cycle 20 record.
-Protocol v1 carries caller assertions without semantic witnesses: built-ins
-return `Unknown`, and the core refuses all v1 `Safe` proposals, including empty
-evidence. Unchecked `Unsafe` proposals also become `Unknown` (`QP010`).
-Manifest capabilities describe routing only. Use `resolve_source_scopes` for
-configuration validation; compiling a source-level scope fails with `Q701`
-until obligation generation and dispatch are implemented. Unix process providers
-use nonblocking pipes and process-group cleanup; request/response budgets count
-JSON payload bytes, excluding the four-byte header. See the
-[follow-up repair record](docs/REEVALUATION_FOLLOWUP.md#repair-and-containment-on-2026-09-05)
-for the ownership, mutex, and provider boundaries.
+QCore-C deliberately keeps separate quantitative domains separate instead of
+overloading one number:
 
-The source front end is available through `parse_source_program` and
-`elaborate_source`; the integrated checker is `check_whole_program`; and the
-file compiler API is `compile_files`. The CLI binary is `qcorec`.
+- **Usage grades** — how many times a value is demanded, as intervals.
+- **Static indices and dimensions** — numeric type parameters with nominal
+  units (`Bytes`, `Count<Fd>`, `Steps`, …); cross-unit arithmetic is rejected.
+- **Quantitative credit** — linear, spendable capacity.
+- **Live resource obligations** — what must be released, rolled back, or
+  transferred; never weakened.
+- **Cost summaries** — upper bounds, not tokens.
+- **Effect rows and per-exit post-states** — what a function may do and what
+  remains at each exit, including typed error exits.
 
-The [QTT alignment record](docs/QTT_ALIGNMENT.md) describes enforced source
-parameter usage grades, per-invocation lambda checking in the reduced usage IR,
-and the executable Lean demand checker. General source lambdas and dependent
-function typing remain outside this implementation boundary.
+Checked programs lower to C11 with a tagged-error ABI and cleanup-explicit
+control flow, validated by translation certificates and native differential
+execution.
 
-Cycle 8 preserves Cycle 7's validation on the non-MSVC C toolchain. The
-[Cycle 7.5 validation](docs/cycles/CYCLE_7_5.md) now also compiles and executes the
-same differential C corpus with native MSVC, strict warnings, and Windows
-runtime checks.
-The post-Cycle-9 sequence and promoted research boundary are in the
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| [`compiler/`](compiler/) | Rust implementation: parser, checker, reference semantics, C backend, existing-C analyzer, verifier-plugin host, CLI (`qcorec`) |
+| [`proof/`](proof/) | Lean 4 executable core and safety proofs; per-cycle axiom audits |
+| [`contract/qcore/`](contract/qcore/README.md) | Declarative `.qcore` contract corpus for audited C APIs |
+| [`docs/`](docs/) | Specifications, cycle records, validation and audit reports |
+| `third_party/libevent` | Submodule pinned to the audited Libevent revision |
+
+Useful entry points: the source front end (`parse_source_program`,
+`elaborate_source`), the integrated checker (`check_whole_program`), the file
+compiler (`compile_files`), and the CLI binary `qcorec`
+(`check`, `emit`, `plugins list|inspect`).
+
+## Project status
+
+Development proceeds in bounded, individually accepted **cycles**; every
+record is archived under [`docs/cycles/`](docs/cycles/).
+
+**Complete (Cycles 1–17).** The sequential language end to end — dimension
+and quantitative-axis declarations, interval-graded usage demand, ownership,
+resource-flow bounds, path-sensitive typed errors, sealed error-region
+cleanup, CFG lowering to the tagged-error C11 ABI, an executable small-step
+model — plus the structural front end, the whole-program checker, the
+multi-file driver, translation certificates, a restricted concurrency
+checker (access authority, happens-before, mutex capabilities, lock order,
+destruction custody), advanced control (cancellation, fallible LIFO cleanup,
+double errors, linear capture), and a combined closure certificate.
+[Cycle 17](docs/cycles/CYCLE_17.md) added principal product inference, the
+fail-closed unrestricted-C11 gateway, explicit weak-memory candidate
+executions, and a native threaded custody backend, with recorded MSVC and
+AddressSanitizer runs.
+
+**Bounded and recorded (Cycle 18).** A fail-closed
+[Libevent event-reactor checker](docs/cycles/CYCLE_18.md): generation-safe
+lifecycle and custody tracking, explicit callback authority, priority
+schedule exploration, cross-context conflict checks, and source pinning,
+with Lean theorems and
+[multi-platform build evidence](docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md).
+Sanitizer and deployed observation-hook evidence remain pending.
+
+**In progress (Cycle 19).** The gateway applied to a
+[pinned Fluent Bit corpus](docs/cycles/CYCLE_19.md) (CMetrics, CTraces,
+librdkafka, ChunkIO, the input-chunk wrapper, Monkey): resource-function
+contracts, library custody mechanisms (refcount/list/queue/arena),
+a bounded chunk-lifecycle model, and Monkey/Libevent callback composition
+with recorded native observations. **Verdicts stay honest**: raw translation
+units are not promoted to `Safe` until per-path identity imports and real
+observation evidence satisfy the cycle's fail-closed gates — see the
+[library audit record](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md)
+and the archived [evidence reports](docs/reports/).
+
+**Active (Cycle 20).** Extraction of library-specific verification into a
+[versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a
+length-delimited JSON protocol, manifests, a fail-closed registry, bounded
+process providers, and a certificate firewall. Protocol v1 carries only
+Boolean assertions, so the core currently refuses all v1 `Safe` proposals
+and treats unchecked `Unsafe` proposals as `Unknown`; source-level
+`verify scope` declarations are configuration-validated but not yet
+dispatched.
+
+**Trust and audits.** An independent
+[reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six
+certificate/weak-memory discrepancies, followed by a
+[seven-finding follow-up](docs/REEVALUATION_FOLLOWUP.md); all thirteen are
+repaired, with the remaining boundaries (interprocedural custody inference,
+semantic plugin witnesses, OS-level provider sandboxing) documented rather
+than papered over.
+
+**Direction.** The [generalization plan](docs/GENERALIZATION_PLAN.md)
+reviews the architecture and orders the work to (a) make the checker generic
+over source sets — contracts and profiles as data, core-derived obligations,
+interprocedural summary inference — and (b) decompose the monolithic crate
+into a pluggable contract/verification system with a versioned schema
+surface and out-of-process providers.
+
+Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
+[QTT alignment](docs/QTT_ALIGNMENT.md),
 [post-Cycle-9 roadmap](docs/ROADMAP_AFTER_CYCLE_9.md).
 
-The [reevaluation specification](docs/REEVALUATION_SPEC.md) records a recent
-research review, six reproduced certificate/weak-memory discrepancies, and
-the proposed acceptance gates across the language, backends, and providers.
-The [six-finding repair record](docs/REEVALUATION_SPEC.md#six-finding-repair-on-2026-09-05)
-documents the memory fixes, plugin certificate containment, and regression results.
-
-## Build
+## Build and test
 
 The Rust compiler and `qcorec check` / `qcorec emit` do not require Clang.
-Compiling emitted C requires a C11 compiler. Tests that compile generated C use
-MSVC on Windows with the Rust MSVC toolchain, and a native C compiler elsewhere.
-The full test suite also exercises existing-C analysis, which requires Clang
-for preprocessing, syntax validation, and its JSON AST; `cl.exe` cannot replace
-that analysis dependency.
+Compiling emitted C requires a C11 compiler (MSVC on Windows via the Rust
+MSVC toolchain, a native compiler elsewhere). The full test suite also
+exercises existing-C analysis, which needs Clang for preprocessing, syntax
+validation, and its JSON AST; `cl.exe` cannot replace that dependency.
 
 ```sh
 git submodule update --init --recursive
@@ -138,44 +128,44 @@ cd proof
 lake build
 ```
 
-The Rust test suite verifies that `third_party/libevent` is checked out at the
-audited revision and still contains the source contracts used by the Cycle 18
-model. The CI workflow initializes the submodule before running this gate.
-
-The Lean toolchain is selected through `proof/lean-toolchain`. Elan must have a
-Lean 4 stable toolchain installed before `lake build` can run.
+The Rust suite verifies that `third_party/libevent` is at the audited
+revision and still contains the source constructs the Cycle 18 model relies
+on; CI initializes the submodule before this gate. The Lean toolchain is
+selected through `proof/lean-toolchain` (install a Lean 4 stable toolchain
+via elan first).
 
 ### Windows
 
-Install Rust's MSVC toolchain and Visual Studio or Build Tools with **Desktop
-development with C++**, including MSVC and the Windows SDK. Use an **x64 Native
-Tools Command Prompt** or **Developer PowerShell** when compiling native C so
-the SDK, linker, and runtime DLLs are available. The generated-C tests discover
-MSVC through the `cc` crate; they do not require a `cc` or `clang` command on PATH.
+Install Rust's MSVC toolchain and Visual Studio or Build Tools with
+**Desktop development with C++** (MSVC and the Windows SDK). Use an **x64
+Native Tools Command Prompt** or **Developer PowerShell** when compiling
+native C so the SDK, linker, and runtime DLLs are available. Generated-C
+tests discover MSVC through the `cc` crate; no `cc` or `clang` command on
+PATH is required.
 
-For existing-C analysis and the full test suite, also install Visual Studio's
-optional **C++ Clang tools for Windows**, or a standalone LLVM installation.
-See [Microsoft's Clang setup instructions](https://learn.microsoft.com/en-us/cpp/build/clang-support-msbuild).
+For existing-C analysis and the full test suite, also install Visual
+Studio's optional **C++ Clang tools for Windows** or a standalone LLVM
+installation (see
+[Microsoft's Clang setup instructions](https://learn.microsoft.com/en-us/cpp/build/clang-support-msbuild)).
 QCore locates the analysis compiler in this order:
 
 1. `QCORE_CLANG`, when set, names a single executable (no extra arguments).
 2. `clang` on PATH.
-3. On Windows, LLVM under `VSINSTALLDIR` and Visual Studio installations found
-   using Microsoft's `vswhere`, including Build Tools installations. Both
-   `clang.exe` and `clang-cl.exe` are supported, using Clang's GCC driver mode
-   for the analysis arguments.
+3. On Windows, LLVM under `VSINSTALLDIR` and Visual Studio installations
+   found via `vswhere` (including Build Tools). Both `clang.exe` and
+   `clang-cl.exe` work, using Clang's GCC driver mode for analysis.
 
-An explicit path works without changing PATH, including paths containing spaces:
+An explicit path works without changing PATH, including paths with spaces:
 
 ```powershell
 $env:QCORE_CLANG = 'C:\Program Files\LLVM\bin\clang.exe'
 cargo test --workspace
 ```
 
-An invalid or empty `QCORE_CLANG` is an error; it never silently selects another
-compiler. If no Clang can be found, existing-C analysis reports an unavailable
-parser with installation guidance and does not issue a safety certificate.
-Ordinary QCore checking and C emission remain available:
+An invalid or empty `QCORE_CLANG` is an error; it never silently selects
+another compiler. If no Clang is found, existing-C analysis reports an
+unavailable parser with installation guidance and does not issue a safety
+certificate; ordinary QCore checking and C emission remain available:
 
 ```powershell
 cargo build --bin qcorec
@@ -183,10 +173,8 @@ cargo build --bin qcorec
 .\target\debug\qcorec.exe emit -o generated.c examples\cycle12.qc
 ```
 
-Windows CI has separate MSVC core and MSVC-plus-Clang analysis jobs. The core
-job deliberately disables Clang discovery and exercises checking, emission,
-and native generated-C execution. The analysis job runs the full suite,
-including MSVC AddressSanitizer tests (which require the corresponding Visual
-Studio component). Linux CI continues to run the full suite as well.
-The analysis job also removes Clang from PATH and clears `VSINSTALLDIR` to
-exercise automatic Visual Studio discovery through `vswhere`.
+Windows CI runs a core MSVC job (Clang discovery disabled; checking,
+emission, native generated-C execution) and an MSVC-plus-Clang analysis job
+(full suite including MSVC AddressSanitizer; Clang removed from PATH and
+`VSINSTALLDIR` cleared to exercise `vswhere` discovery). Linux CI runs the
+full suite.
