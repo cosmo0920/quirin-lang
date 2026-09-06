@@ -1,3 +1,4 @@
+import QCore.FileClose
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
@@ -201,3 +202,15 @@ import QCore.ChunkSource
 #print axioms QCore.UnmapWrapper.accepted_success_has_positive_counter
 
 #print axioms QCore.UnmapWrapper.accepted_success_balances_and_clears
+
+#print axioms QCore.FileClose.backend_release_preserves_mapping
+
+#print axioms QCore.FileClose.backend_release_preserves_descriptor
+
+#print axioms QCore.FileClose.unresolved_mapping_survives_backend_release
+
+#print axioms QCore.FileClose.unknown_custody_rejects_discharge
+
+#print axioms QCore.FileClose.accepted_nested_discharge_has_no_unresolved_resource
+
+#print axioms QCore.FileClose.duplicate_backend_release_rejected

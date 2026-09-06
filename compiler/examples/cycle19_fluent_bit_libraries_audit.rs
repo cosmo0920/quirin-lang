@@ -471,6 +471,14 @@ fn audit_library(
             .into_iter()
             .find(|c| c.source().function() == "cio_file_native_unmap")
             .ok_or("missing native unmap certificate")?;
+        let close =
+            qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(
+                &native_unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?
+            .into_iter()
+            .find(|c| c.source().function() == "cio_file_native_close")
+            .ok_or("missing native close certificate")?;
         let (counter_source, counter_options) = load("cio_chunk.c")?;
         let counter_unit = C11TranslationUnit {
             source: &counter_source,
@@ -487,7 +495,7 @@ fn audit_library(
             .into_iter()
             .find(|c| c.field() == "total_chunks_up" && c.delta() == -1)
             .ok_or("missing up counter certificate")?;
-        filesystem_deps = Some((native, counter));
+        filesystem_deps = Some((native, counter, close));
     }
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
@@ -518,13 +526,33 @@ fn audit_library(
             teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
         }
         if library == "chunkio" && file == "cio_file.c" {
-            let (native, counter) = filesystem_deps
+            let (native, counter, close) = filesystem_deps
                 .as_ref()
                 .ok_or("missing filesystem dependencies")?;
             let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
             println!(
                 "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
                 certificate.cases().len()
+            );
+            let close_evidence =
+                qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_source(
+                    &unit,
+                    PINNED_FLUENT_BIT_COMMIT,
+                    &certificate,
+                    close,
+                )?;
+            println!(
+                "qcore-custody cio_file_close: {} conditional no-delete cases, {} unresolved nested cleanup cases; deletion paths uncovered",
+                close_evidence.cases().len(),
+                close_evidence
+                    .cases()
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| close_evidence.require_nested_discharge(*i).is_err())
+                    .count()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"filesystem_close_no_delete", "evidence":close_evidence}),
             );
             teardown_results.push(
                 serde_json::json!({"kind":"filesystem_unmap_wrapper", "certificate":certificate}),

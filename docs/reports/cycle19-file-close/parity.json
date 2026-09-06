@@ -1,0 +1,11 @@
+{
+  "baseline": "cycle19-unmap-wrapper",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "new_file_close_conditional_cases": 43,
+  "unresolved_nested_custody_cases": 26,
+  "uncovered_deletion_paths": 2,
+  "workspace_tests": 371
+}

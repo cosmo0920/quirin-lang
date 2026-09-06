@@ -42,6 +42,9 @@ impl UnmapCertificate {
     pub fn source(&self) -> &SourceSummary {
         &self.source
     }
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        check(&self.source, &self.native, &self.counter, CONTRACT)
+    }
     /// Conditional counter projection, not a C pointer/provenance binding.
     pub fn counter_after(&self, case: usize, before: u128, maximum: u128) -> Result<u128, String> {
         let case = self

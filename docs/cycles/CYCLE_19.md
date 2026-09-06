@@ -637,3 +637,15 @@ Sync/log framing, mappedness, identity and lifetime assumptions remain explicit.
 Five Lean theorems, 368 workspace tests and required checks pass with unchanged
 prior audit evidence. Full sync framing and outer close failure custody remain
 open alongside the wider lifecycle, provenance and event gates.
+
+## Non-deleting backend close and unresolved custody (2026-09-06)
+
+The [file close report](../reports/cycle19-file-close/README.md) binds the actual
+backend/path identities and no-delete cleanup/free sequence to rechecked unmap
+and native close dependencies. It retains 43 conditional cases: 17 have no
+nested obligation under the premises, while 26 fail the nested-discharge gate
+because OS custody remains unresolved despite backend allocation release.
+Deletion paths remain uncovered. Six Lean theorems, 371 workspace tests and
+required checks pass with unchanged prior verdicts/certificates. Actual outcome
+and caller/provenance binding, full sync/deletion handling, enclosing filesystem
+chunk close and the remaining lifecycle/event gates stay open.

@@ -1,0 +1,204 @@
+use super::*;
+use crate::counter_contract::check_counter_contract;
+use crate::typed_source::{SourceImportProfile, SourceResult, import_source_functions};
+use crate::verifier_plugins::chunkio::{
+    teardown_source::COUNTER_CONTRACT, unmap_wrapper::check_unmap_wrapper_source,
+};
+fn fixture() -> String {
+    let source = include_str!("../fixtures/chunkio/unmap_source.c")
+        .replace("struct cio_file {", "struct cio_file {int fd;");
+    let start = source.find("void cio_file_close(").unwrap();
+    format!(
+        "{}{}",
+        &source[..start],
+        r#"
+int close(int);int cio_file_native_delete(struct cio_file *);
+int cio_file_native_close(struct cio_file *cf){if(!cf)return -1;if(cf->fd!=-1){int r=close(cf->fd);if(r==-1){cio_errno_print(*__errno_location(),"test.c",1);return -1;}cf->fd=-1;}return 0;}
+void cio_file_close(struct cio_chunk *ch,int delete){struct cio_file *cf=ch->backend;if(!cf)return;
+munmap_file(ch->ctx,ch);cio_file_native_close(cf);
+if(delete==1){int r=cio_file_native_delete(cf);if(r!=0)cio_log_print(ch->ctx,1,"test.c",1,"delete failed %s:%s",ch->st->name,ch->name);}
+free(cf->path);free(cf);
+}
+"#
+    )
+}
+fn import(c: &str, f: &str) -> SourceSummary {
+    let summaries = import_source_functions(
+        &C11TranslationUnit {
+            source: c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &[f],
+        &SourceImportProfile {
+            records: &["cio_ctx", "cio_chunk", "cio_file", "cio_stream"],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )
+    .unwrap();
+    let SourceResult::Summary(s) = &summaries[0] else {
+        panic!("{summaries:?}")
+    };
+    s.clone()
+}
+fn dependencies(c: &str) -> (UnmapCertificate, CleanupCertificate) {
+    let native = |function: &str| {
+        check_cleanup_outcomes(
+            &import(c, function),
+            &file_outcomes::profile(function).unwrap(),
+            file_outcomes::CONTRACT,
+        )
+        .unwrap()
+    };
+    let counter = check_counter_contract(
+        &import(c, "cio_chunk_counter_total_up_sub"),
+        COUNTER_CONTRACT,
+        "struct cio_ctx *",
+        "ChunkContext",
+    )
+    .unwrap();
+    let unmap = check_unmap_wrapper_source(
+        &C11TranslationUnit {
+            source: c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &native("cio_file_native_unmap"),
+        &counter,
+    )
+    .unwrap();
+    (unmap, native("cio_file_native_close"))
+}
+#[test]
+fn backend_release_does_not_discharge_unknown_os_custody() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = fixture();
+    let (unmap, close) = dependencies(&c);
+    let evidence = check_file_close_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &unmap,
+        &close,
+    )
+    .unwrap();
+    assert_eq!(evidence.cases().len(), 43);
+    assert_eq!(evidence.uncovered_paths(), [1, 2]);
+    assert_eq!(
+        evidence
+            .cases()
+            .iter()
+            .filter(|c| c.backend_released)
+            .count(),
+        42
+    );
+    assert_eq!(
+        evidence.cases().iter().filter(|c| c.path_released).count(),
+        21
+    );
+    let mut accepted = 0;
+    for (i, case) in evidence.cases().iter().enumerate() {
+        let discharged =
+            case.mapping == ResidualCustody::Absent && case.descriptor == ResidualCustody::Absent;
+        assert_eq!(evidence.require_nested_discharge(i).is_ok(), discharged);
+        accepted += usize::from(discharged);
+        if !discharged {
+            assert!(case.backend_released);
+        }
+    }
+    assert_eq!(accepted, 17);
+    assert!(evidence.require_nested_discharge(43).is_err());
+    assert!(
+        evidence
+            .cases()
+            .iter()
+            .any(|c| c.mapping == ResidualCustody::Unresolved
+                && c.descriptor == ResidualCustody::Unresolved
+                && c.backend_released)
+    );
+}
+#[test]
+fn file_close_rejects_wrong_resource_identity_order_and_result_handling() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = fixture();
+    let (unmap, close) = dependencies(&c);
+    for (old, new) in [
+        (
+            "munmap_file(ch->ctx,ch);cio_file_native_close(cf);",
+            "cio_file_native_close(cf);munmap_file(ch->ctx,ch);",
+        ),
+        (
+            "munmap_file(ch->ctx,ch);cio_file_native_close(cf);",
+            "munmap_file((void*)0,ch);cio_file_native_close(cf);",
+        ),
+        (
+            "munmap_file(ch->ctx,ch);cio_file_native_close(cf);",
+            "munmap_file(ch->ctx,ch);cio_file_native_close((void*)0);",
+        ),
+        (
+            "munmap_file(ch->ctx,ch);cio_file_native_close(cf);",
+            "if(munmap_file(ch->ctx,ch))return;cio_file_native_close(cf);",
+        ),
+        ("free(cf->path);free(cf);", "free(cf);free(cf->path);"),
+        ("free(cf->path);free(cf);", "free(ch->name);free(cf);"),
+        ("free(cf->path);free(cf);", "free((void*)0);free(cf);"),
+        ("free(cf->path);free(cf);", "free(cf->path);"),
+        ("free(cf->path);free(cf);", "free(cf->path);free(ch);"),
+        (
+            "free(cf->path);free(cf);",
+            "free(cf->path);free(cf);ch->backend=(void*)0;",
+        ),
+        (
+            "free(cf->path);free(cf);",
+            "if(!cf->path)return;free(cf->path);free(cf);",
+        ),
+    ] {
+        assert!(
+            check(
+                &import(&c.replace(old, new), "cio_file_close"),
+                &unmap,
+                &close,
+                CONTRACT
+            )
+            .is_err(),
+            "accepted {old} -> {new}"
+        );
+    }
+    let changed = c.replace("if(!cf->map)return -1;", "if(!cf->map)return 0;");
+    assert!(
+        check_file_close_source(
+            &C11TranslationUnit {
+                source: &changed,
+                ..Default::default()
+            },
+            PINNED_FLUENT_BIT_REVISION,
+            &unmap,
+            &close
+        )
+        .is_err()
+    );
+}
+#[test]
+fn file_close_native_policy_cannot_hide_failure_custody() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = fixture();
+    let (unmap, close) = dependencies(&c);
+    let source = import(&c, "cio_file_close");
+    for (i, _) in CONTRACT.match_indices("ensures normal ") {
+        let j = i + CONTRACT[i..].find(';').unwrap();
+        for pred in ["false", "unbound_file_custody"] {
+            let mutated = format!("{}ensures normal {pred}{}", &CONTRACT[..i], &CONTRACT[j..]);
+            assert!(check(&source, &unmap, &close, &mutated).is_err());
+        }
+    }
+}

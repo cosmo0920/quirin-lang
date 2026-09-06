@@ -236,3 +236,9 @@ up-counter helpers across all eight `munmap_file` paths. Only successful native
 unmap clears wrapper sizes and decrements the saved parameter context. Sync/log
 frames and provenance remain explicit premises. See the
 [unmap wrapper report](../../docs/reports/cycle19-unmap-wrapper/README.md).
+
+`chunkio/file_close.qcore` binds the non-deleting backend close chain to its
+checked unmap/counter and descriptor helpers. It retains unresolved OS custody
+through the subsequent backend allocation release: 26 of 43 conditional cases
+fail the nested-discharge gate. Deletion paths remain uncovered. See the
+[file close report](../../docs/reports/cycle19-file-close/README.md).
