@@ -348,3 +348,10 @@ clauses conserve acquired generations across temporary, rollback and teardown
 releases plus outstanding prefix generations. Sanitizer-interrupted processes
 cannot claim completed teardown or leak checking; fixture cleanup is separate.
 See the [filesystem failure report](../../docs/reports/cycle19-file-constructor-failures/README.md).
+
+`chunkio/filesystem_os_constructor_observation.qcore` checks eight native
+constructor OS-failure/control processes. Its 17 clauses separate allocation
+release from descriptor custody after null returns and parent teardown. POSIX
+allocation return/errno, file-size fallback and failed-mapping sentinels remain
+distinct; harness reclamation cannot be mistaken for constructor rollback.
+See the [OS constructor report](../../docs/reports/cycle19-file-os-constructors/README.md).

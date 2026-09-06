@@ -119,6 +119,11 @@ and chunk-name copies trigger two observed UBSan null-argument terminations;
 eight generations remain outstanding in those interrupted prefixes. Ten returning
 cases complete leak checking. These observations do not establish general caller
 or failure guarantees, and no raw unit is promoted.
+[Eight constructor OS-failure cases](docs/reports/cycle19-file-os-constructors/README.md)
+add 88 fully released allocation generations. A suppressed rollback close retains
+the original descriptor/inode after null chunk return and parent release; harness
+reclamation is recorded separately. File-size fallback and POSIX allocation
+return/errno conventions remain distinct, with general OS guarantees still open.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

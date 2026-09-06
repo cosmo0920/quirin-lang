@@ -897,3 +897,19 @@ A 16-clause policy, 55 trace/process mutations and four Lean prefix-accounting
 theorems preserve these boundaries. General callers/options, multiple failures,
 OS failure combinations, full sync/durability, aggregate source custody, remaining
 wrapper lifecycle and full event composition remain open. No raw unit is promoted.
+
+## Native constructor OS-failure rollback (2026-09-06)
+
+The [constructor OS-failure report](../reports/cycle19-file-os-constructors/README.md)
+records eight fresh native processes with ten selected suppressed OS calls.
+All 88 allocation generations are released: 16 temporary, 24 rollback and 48
+teardown releases. First/second fstat failures, stat fallback, POSIX resize
+return/errno and MAP_FAILED outcomes remain distinct. A suppressed close after
+map failure retains the original descriptor/inode after null chunk return and
+parent allocation release; harness reclamation is recorded separately. All eight
+runs complete ASan/UBSan/leak checking. A 17-clause policy, 60 trace/process
+mutations and four Lean rollback-ledger theorems check the bounded observations.
+Arbitrary callers/options, ACL failures, existing-file and residency/transaction
+paths, other combined OS failures, full sync/durability, aggregate source custody,
+remaining wrapper lifecycle and full event composition remain open. No raw unit
+is promoted.

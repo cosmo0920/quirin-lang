@@ -1,0 +1,2 @@
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_file_unix.c:103 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_file_unix.c:431 errno=5] Input/output error
