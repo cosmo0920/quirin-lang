@@ -475,12 +475,14 @@ impl VerificationRequestV2 {
             .count();
         match &self.source_effect {
             Some(input)
-                if self.capability == VerifierCapability::ResourceContracts
+                if input.schema_version
+                    == crate::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_VERSION
+                    && self.capability == VerifierCapability::ResourceContracts
                     && field_obligations == 1
                     && self.obligations.len() == 1
                     && matches!(&self.obligations[0].subject,
                     crate::obligation::ObligationSubject::Function { symbol, translation_unit }
-                    if symbol == &input.summary.function && translation_unit == &self.unit.translation_unit) =>
+                    if symbol == &input.function && translation_unit == &self.unit.translation_unit) =>
                 {}
             None if field_obligations == 0 => {}
             _ => return Err(RequestError::InvalidObligations),

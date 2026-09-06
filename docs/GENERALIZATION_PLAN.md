@@ -481,7 +481,7 @@ inferred" discipline the follow-up demands.
 now derives bounded tasks from opaque Clang imports and dispatches the real
 ChunkIO package for three production function contracts. This closes that
 source-effect exchange slice; general lifecycle effect import and provider-owned
-source analysis remain open. The selected audit mode has no provider fallback,
+full source analysis remain open. The [statement execution increment](reports/w5-provider-statement-execution/README.md) moves finite-state path computation into the actual process, without sending expected paths. The selected audit mode has no provider fallback,
 and retains direct evaluation until broader composition parity is established.
 
 **Status (2026-09-07).** Configured audit orchestration is extracted with a
@@ -490,8 +490,9 @@ chunk lifecycle and generic loop/ledger checks reside in core; whole-program
 checking resides in frontend. Declared chunk-path evaluation is in contract,
 with portable schema0.2.0 records and an opaque source-import boundary.
 Five standalone schema-only executables now reproduce the built-in v1 Unknown
-responses and reject malformed requests; v2 capabilities explicitly return
-Unknown without witnesses. Two clean builds reproduce executable/manifest/
+responses and reject malformed requests. ChunkIO 0.3.0 now computes bounded
+Boolean-field witnesses from typed statement inputs through v2; other v2
+capabilities remain Unknown without witnesses. Two clean builds reproduce executable/manifest/
 archive hashes. [Provider packaging evidence](reports/w5-provider-packages/README.md)
 and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
 

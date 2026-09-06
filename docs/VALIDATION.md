@@ -80,3 +80,10 @@ audits, plus four excluded provider conformance tests. The real ChunkIO process
 provides replayed evidence for three bounded function contracts; 93 selected
 functions remain Unknown. Full 185-unit source/diagnostic output and the prior
 contract sidecar remain byte-identical. General lifecycle import remains open.
+
+[Provider statement execution](reports/w5-provider-statement-execution/README.md)
+passes the same 611 workspace tests and standing gate, plus nine excluded
+provider workspace tests (four conformance and five executor tests). The process
+computes source paths from typed statements; source import and contract replay
+remain trusted. The program-input schema/profile are version 2 and ChunkIO is
+package 0.3.0; this is not full source-language or lifecycle conformance.

@@ -7,15 +7,14 @@ This separate Cargo workspace builds five executable packages:
 source introduces no Rust crate dependency. The conformance harness depends
 on the real verifier host and is never linked into an artifact.
 
-All protocol-v1 responses remain Unknown. ChunkIO 0.2.0 additionally proposes
+All protocol-v1 responses remain Unknown. ChunkIO 0.3.0 additionally computes and proposes
 source-derived Boolean-field contract witnesses for the explicit
-`qcore.c_boolean_field_contract.v1` profile. The trusted receiver binds the typed
-source/build snapshot and independently evaluates the contract. Other v2
+`qcore.c_boolean_field_contract.v2` profile. The trusted receiver binds the typed
+source/build snapshot, checks the computed paths and independently evaluates the contract. Requests contain a version-2 typed statement program and no expected paths. Other v2
 requests remain Unknown. This bounded function property does not establish
 whole-unit custody, caller provenance, general lifecycle or synchronization.
-The other four packages remain Unknown-only. Specialized provider source
-analysis and aggregate Cycle20 acceptance are still open. See the
-[source-field integration](../docs/reports/w3-source-field-provider/README.md).
+The other four packages remain Unknown-only. Clang import and helper validation stay in the trusted gateway; broader provider source analysis and aggregate Cycle20 acceptance are still open. See the
+[statement execution integration](../docs/reports/w5-provider-statement-execution/README.md).
 
 ## Build, verify and reproduce
 

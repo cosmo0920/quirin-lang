@@ -1,19 +1,18 @@
 #[path = "fixtures/boolean_source.rs"]
 mod fixture;
 use fixture::*;
+use qcore_schemas::SemanticWitness;
 use qcore_schemas::chunk_summary::BooleanFieldContractWitness;
-use qcore_schemas::{PluginId, SemanticWitness};
 use qcore_verification::source_effect::BooleanFieldSourceTask;
 use qcore_verifier_host::WitnessChecker;
 
-fn witness(task: &BooleanFieldSourceTask) -> SemanticWitness {
+fn witness(
+    task: &BooleanFieldSourceTask,
+    summary: &qcore_c_gateway::boolean_source::ChunkSourceSummary,
+) -> SemanticWitness {
     SemanticWitness::BooleanFieldContract(Box::new(BooleanFieldContractWitness {
         task_digest: task.task().task_digest(),
-        summary: task
-            .request(PluginId::new("qcore.chunkio").unwrap())
-            .source_effect
-            .unwrap()
-            .summary,
+        summary: (**summary).clone(),
     }))
 }
 
@@ -23,14 +22,16 @@ fn real_c_prestates_and_contract_are_recomputed() {
     let replay = task(&summary, CONTRACT);
     assert_eq!(replay.evaluate().unwrap().checked_states(), 4);
     assert_eq!(
-        replay.check(replay.task(), &witness(&replay)).unwrap(),
+        replay
+            .check(replay.task(), &witness(&replay, &summary))
+            .unwrap(),
         replay.task().coverage_for(replay.capability())
     );
     let false_contract = CONTRACT.replace("result == old_lock", "result == 7");
     let rejected = task(&summary, &false_contract);
     assert!(
         rejected
-            .check(rejected.task(), &witness(&rejected))
+            .check(rejected.task(), &witness(&rejected, &summary))
             .is_err(),
         "exact paths alone cannot discharge an invalid postcondition"
     );
@@ -41,7 +42,7 @@ fn forged_paths_frames_and_source_assumptions_are_rejected() {
     let summary = checked(SOURCE, vec![]);
     let replay = task(&summary, CONTRACT);
     for mutation in 0..11 {
-        let mut proposal = witness(&replay);
+        let mut proposal = witness(&replay, &summary);
         let SemanticWitness::BooleanFieldContract(value) = &mut proposal else {
             unreachable!()
         };
@@ -84,7 +85,11 @@ fn actual_source_build_and_contract_snapshots_separate_tasks() {
     for changed in [source_changed, build_changed] {
         let other = task(&changed, CONTRACT);
         assert_ne!(replay.task().task_digest(), other.task().task_digest());
-        assert!(replay.check(other.task(), &witness(&other)).is_err());
+        assert!(
+            replay
+                .check(other.task(), &witness(&other, &changed))
+                .is_err()
+        );
     }
     let other = task(
         &original,
@@ -95,7 +100,11 @@ fn actual_source_build_and_contract_snapshots_separate_tasks() {
     changed
         .assumptions
         .insert("exclusive_chunk_access".into(), false);
-    assert!(replay.check(&changed, &witness(&replay)).is_err());
+    assert!(
+        replay
+            .check(&changed, &witness(&replay, &original))
+            .is_err()
+    );
 }
 
 #[test]

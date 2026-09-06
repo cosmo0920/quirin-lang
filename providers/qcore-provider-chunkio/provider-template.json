@@ -1,6 +1,6 @@
 {
   "plugin_id": "qcore.chunkio",
-  "package_version": "0.2.0",
+  "package_version": "0.3.0",
   "protocol_versions": [
     1
   ],
@@ -42,7 +42,7 @@
         "*"
       ],
       "profiles": [
-        "qcore.c_boolean_field_contract.v1"
+        "qcore.c_boolean_field_contract.v2"
       ],
       "dialects": [
         "c11",

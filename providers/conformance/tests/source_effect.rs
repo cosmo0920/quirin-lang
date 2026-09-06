@@ -53,6 +53,75 @@ fn real_package_proposes_source_effects_without_admitting_false_contracts() {
         "boolean_field_contract"
     );
 
+    // The process receives the typed statement program, never expected paths.
+    let input_json = serde_json::to_value(request.source_effect.as_ref().unwrap()).unwrap();
+    assert!(input_json.get("summary").is_none());
+    assert!(input_json.get("paths").is_none());
+    assert!(input_json.get("program").is_some());
+    let mut old_shape = input_json.clone();
+    old_shape["summary"] = serde_json::to_value(&*summary).unwrap();
+    assert!(
+        serde_json::from_value::<qcore_schemas::chunk_summary::BooleanFieldSourceInput>(old_shape)
+            .is_err()
+    );
+    let mut wrong_version = request.clone();
+    wrong_version.source_effect.as_mut().unwrap().schema_version = 1;
+    assert!(wrong_version.validate().is_err());
+
+    // Independent process execution agrees with the retained trusted evaluator
+    // for each supported expression and ordered branch/write behavior.
+    for body in [
+        "return !!ch->lock;",
+        "return -(-ch->lock);",
+        "return ch->lock != 0;",
+        "return !(ch->lock == 0);",
+        "if (ch->lock == 0) { return 0; } return 1;",
+        "if (ch->lock) { ch->lock = 1; } else { ch->lock = 0; } return ch->lock;",
+        "ch->lock = !ch->lock; ch->lock = !ch->lock; return ch->lock;",
+        "return ch->lock; ch->lock = 0;",
+    ] {
+        let source = format!(
+            "struct cio_chunk {{ int lock; }}; int cio_chunk_is_locked(struct cio_chunk *ch) {{ {body} }}"
+        );
+        let imported = checked(&source, vec![]);
+        let mutable_contract =
+            CONTRACT.replace("borrow<'call, const, Chunk>", "borrow<'call, mut, Chunk>");
+        let context = task(&imported, &mutable_contract);
+        if imported.paths.iter().any(|path| !path.writes.is_empty()) {
+            let readonly = task(&imported, CONTRACT);
+            let rejected = registry.verify_v2(
+                &readonly.request(PluginId::new("qcore.chunkio").unwrap()),
+                readonly.task(),
+                Some(&readonly),
+            );
+            assert_eq!(rejected.verdict, ProposedVerdict::Unknown);
+            assert!(
+                rejected
+                    .diagnostics
+                    .iter()
+                    .any(|diagnostic| diagnostic.code == "QP009"
+                        && diagnostic.message.contains("const QCore borrow"))
+            );
+        }
+        let response = registry.verify_v2(
+            &context.request(PluginId::new("qcore.chunkio").unwrap()),
+            context.task(),
+            Some(&context),
+        );
+        assert_eq!(
+            response.verdict,
+            ProposedVerdict::Safe,
+            "{body}: {:?}",
+            response.diagnostics
+        );
+        let qcore_schemas::SemanticWitness::BooleanFieldContract(witness) =
+            response.certificate.unwrap().witness().unwrap().clone()
+        else {
+            panic!("wrong witness");
+        };
+        assert_eq!(witness.summary, *imported, "{body}");
+    }
+
     let no_checker = registry.verify_v2(&request, replay.task(), None);
     assert_eq!(no_checker.verdict, ProposedVerdict::Unknown);
     assert!(no_checker.diagnostics.iter().any(|d| d.code == "QP016"));
@@ -64,7 +133,10 @@ fn real_package_proposes_source_effects_without_admitting_false_contracts() {
     );
 
     let mut forged = request.clone();
-    forged.source_effect.as_mut().unwrap().summary.paths[0].return_value = 7;
+    forged.source_effect.as_mut().unwrap().program =
+        qcore_schemas::chunk_summary::BooleanFieldStatement::Return(
+            qcore_schemas::chunk_summary::BooleanFieldExpression::Integer(7),
+        );
     let rejection = registry.verify_v2(&forged, replay.task(), Some(&replay));
     assert_eq!(rejection.verdict, ProposedVerdict::Unknown);
     assert!(rejection.diagnostics.iter().any(|d| d.code == "QP001"));

@@ -50,16 +50,44 @@ pub struct ChunkFrameSummaryRecord {
     pub writes: Vec<(String, i32)>,
 }
 
-/// Restricted source projection supplied by the trusted importer to a provider.
-/// This raw record conveys no import authority by itself. Its digest is pinned
-/// in the core task and its paths are independently checked during replay.
+/// Typed, bounded source expression vocabulary. These records are data only;
+/// producer evaluation and trusted source import remain separate implementations.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BooleanFieldExpression {
+    Integer(i32),
+    Field,
+    Not(Box<Self>),
+    Negate(Box<Self>),
+    Equal(Box<Self>, Box<Self>),
+    NotEqual(Box<Self>, Box<Self>),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BooleanFieldStatement {
+    Block(Vec<Self>),
+    If(BooleanFieldExpression, Box<Self>, Option<Box<Self>>),
+    Assign(BooleanFieldExpression),
+    Return(BooleanFieldExpression),
+    FrameWrites(Vec<(String, i32)>),
+}
+
+/// Source program supplied by the trusted importer, without expected results.
+/// A raw record conveys no import authority. Its complete digest is pinned in
+/// the task; the receiver checks proposed paths against its original import.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BooleanFieldSourceInput {
-    pub summary: ChunkSourceSummaryRecord,
+    pub schema_version: u16,
+    pub function: String,
+    pub source_revision: String,
+    pub field: ChunkSourceField,
+    pub program: BooleanFieldStatement,
+    pub dependencies: BTreeMap<String, String>,
+    pub profile_assumptions: BTreeMap<String, String>,
 }
 
-pub const BOOLEAN_FIELD_SOURCE_INPUT_KEY: &str = "qcore:boolean-field-source-input:v1";
+pub const BOOLEAN_FIELD_SOURCE_INPUT_VERSION: u16 = 2;
+pub const BOOLEAN_FIELD_SOURCE_INPUT_KEY: &str = "qcore:boolean-field-source-input:v2";
 
 impl BooleanFieldSourceInput {
     pub fn digest(&self) -> String {

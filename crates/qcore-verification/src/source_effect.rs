@@ -7,14 +7,14 @@
 
 use qcore_c_gateway::boolean_source::ChunkSourceSummary;
 use qcore_contract::chunk_contract::{ChunkContractEvaluation, evaluate_chunk_source_contract};
-use qcore_schemas::chunk_summary::{BOOLEAN_FIELD_SOURCE_INPUT_KEY, BooleanFieldSourceInput};
+use qcore_schemas::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_KEY;
 use qcore_schemas::obligation::*;
 use qcore_schemas::plugin::*;
 use qcore_schemas::{SemanticWitness, sha256_hex};
 use qcore_verifier_host::WitnessChecker;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub const BOOLEAN_FIELD_SEMANTIC_PROFILE: &str = "qcore.c_boolean_field_contract.v1";
+pub const BOOLEAN_FIELD_SEMANTIC_PROFILE: &str = "qcore.c_boolean_field_contract.v2";
 
 /// Sealed replay context. A raw wire summary cannot construct one.
 pub struct BooleanFieldSourceTask {
@@ -70,9 +70,7 @@ impl BooleanFieldSourceTask {
                 "source-effect helper compiler target differs from the importing unit".into(),
             );
         }
-        let input = BooleanFieldSourceInput {
-            summary: (**summary).clone(),
-        };
+        let input = summary.source_input();
         let identity = summary.input_identity();
         let serialized_identity = serde_json::to_vec(identity).map_err(|e| e.to_string())?;
         let contract_sources = BTreeMap::from([
@@ -164,9 +162,7 @@ impl BooleanFieldSourceTask {
             assumptions: self.task.assumptions.clone(),
             task_digest: self.task.task_digest(),
             obligations: self.task.obligations.clone(),
-            source_effect: Some(BooleanFieldSourceInput {
-                summary: (*self.summary).clone(),
-            }),
+            source_effect: Some(self.summary.source_input()),
         }
     }
 

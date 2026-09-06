@@ -448,3 +448,11 @@ byte parity. Raw unit totals remain 2 Safe / 47 provisional Unsafe / 132 Unknown
 4 data-only. Evidence: `docs/reports/w3-source-field-provider/README.md`.
 Full lifecycle source inference, provider-owned source analysis and aggregate
 registry composition remain open; this bounded property does not discharge them.
+
+ChunkIO statement execution (2026-09-07): package 0.3.0 independently computes
+Boolean-field paths from a version-2 typed statement program. Requests no longer
+carry expected paths. The receiver retains opaque source identity, compares
+complete proposed paths and evaluates the pinned contract. Parser/evaluator
+semantics retain parity; source import and helper ABI checks stay trusted.
+Evidence: `docs/reports/w5-provider-statement-execution/README.md`. Full lifecycle
+import, other specialized provider analysis and registry composition remain open.

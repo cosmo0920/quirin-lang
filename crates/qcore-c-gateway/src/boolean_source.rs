@@ -16,7 +16,10 @@ use std::collections::BTreeMap;
 
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
-use qcore_schemas::chunk_summary::{ChunkFrameSummaryRecord, ChunkSourceSummaryRecord};
+use qcore_schemas::chunk_summary::{
+    BOOLEAN_FIELD_SOURCE_INPUT_VERSION, BooleanFieldExpression, BooleanFieldSourceInput,
+    BooleanFieldStatement, ChunkFrameSummaryRecord, ChunkSourceSummaryRecord,
+};
 pub use qcore_schemas::chunk_summary::{ChunkSourceField, ChunkSourcePath};
 
 /// Importer-captured provenance for one validated preprocessing snapshot.
@@ -194,6 +197,7 @@ fn input_identity(
 pub struct ChunkSourceSummary(
     ChunkSourceSummaryRecord,
     #[serde(skip)] BooleanSourceIdentity,
+    #[serde(skip)] BooleanFieldStatement,
 );
 
 impl std::ops::Deref for ChunkSourceSummary {
@@ -204,6 +208,19 @@ impl std::ops::Deref for ChunkSourceSummary {
 }
 
 impl ChunkSourceSummary {
+    /// Captured typed statement program; no expected execution paths are sent.
+    pub fn source_input(&self) -> BooleanFieldSourceInput {
+        BooleanFieldSourceInput {
+            schema_version: BOOLEAN_FIELD_SOURCE_INPUT_VERSION,
+            function: self.function.clone(),
+            source_revision: self.source_revision.clone(),
+            field: self.field,
+            program: self.2.clone(),
+            dependencies: self.dependencies.clone(),
+            profile_assumptions: self.profile_assumptions.clone(),
+        }
+    }
+
     /// Identity captured by the importer, never supplied by a schema record.
     pub fn input_identity(&self) -> &BooleanSourceIdentity {
         &self.1
@@ -619,6 +636,20 @@ enum Expression {
 }
 
 impl Expression {
+    fn record(&self) -> BooleanFieldExpression {
+        use BooleanFieldExpression as R;
+        match self {
+            Self::Integer(value) => R::Integer(*value),
+            Self::Field => R::Field,
+            Self::Not(value) => R::Not(Box::new(value.record())),
+            Self::Negate(value) => R::Negate(Box::new(value.record())),
+            Self::Equal(left, right) => R::Equal(Box::new(left.record()), Box::new(right.record())),
+            Self::NotEqual(left, right) => {
+                R::NotEqual(Box::new(left.record()), Box::new(right.record()))
+            }
+        }
+    }
+
     fn evaluate(&self, field: bool) -> Result<i32, String> {
         Ok(match self {
             Self::Integer(value) => *value,
@@ -646,6 +677,21 @@ enum Statement {
 }
 
 impl Statement {
+    fn record(&self) -> BooleanFieldStatement {
+        use BooleanFieldStatement as R;
+        match self {
+            Self::Block(statements) => R::Block(statements.iter().map(Self::record).collect()),
+            Self::If(condition, yes, no) => R::If(
+                condition.record(),
+                Box::new(yes.record()),
+                no.as_ref().map(|value| Box::new(value.record())),
+            ),
+            Self::Assign(value) => R::Assign(value.record()),
+            Self::Return(value) => R::Return(value.record()),
+            Self::FrameWrites(writes) => R::FrameWrites(writes.clone()),
+        }
+    }
+
     fn execute(&self, path: &mut ChunkSourcePath) -> Result<Option<i32>, String> {
         match self {
             Self::Block(statements) => {
@@ -879,5 +925,6 @@ fn derive_summary(
             profile_assumptions: BTreeMap::new(),
         },
         identity.clone(),
+        statement.record(),
     ))
 }
