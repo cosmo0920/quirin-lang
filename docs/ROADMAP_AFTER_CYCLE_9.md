@@ -189,6 +189,7 @@ binding: G1 containment precedes provider expansion; G4 parity precedes deletion
 
 | Workstream | Dependency and acceptance | Current execution record |
 | --- | --- | --- |
+| W0: workspace layering | Schema surface + CLI extracted with unchanged behavior; downward-only dependency guard | [W0 schema-crate record](reports/w0-schema-crate/README.md): `qcore-schemas` and `qcorec` extracted 2026-09-06; providers stay compile-time crates by recorded decision |
 | W1: contracts as data | Total-or-reject native contract loader, explicit trusted inputs, pinned verdict/diagnostic parity | [Cycle 19 resource loader](reports/cycle19-contract-loader/README.md): audit table migrated; richer observation/lifecycle predicates remain separate interpreters |
 | W2: profiles as data | Versioned source/build/profile manifests; schema review before mass migration; parity before removing tables | Planned; library enums and source/profile tables remain |
 | W3: obligations and dispatch | Core-derived inventories, v2 semantic witness design/review and replay, fail-closed source dispatch | Planned; VP05 and semantic-provider acceptance remain open |

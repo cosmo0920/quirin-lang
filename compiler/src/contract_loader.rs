@@ -111,6 +111,20 @@ pub fn load_resource_contract_sources(
     Ok(contracts)
 }
 
+/// Recheck a declarative environment against its declared trusted sources
+/// without consulting mutable files. Lives here rather than on
+/// `ResourceContracts` because the recheck needs the front-end parser, which
+/// the schema crate must not depend on.
+pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
+    if !contracts.source_assumptions().is_empty() {
+        let loaded = load_resource_contract_sources(contracts.source_assumptions())?;
+        if loaded.functions() != contracts.functions() {
+            return Err("resource contracts differ from their declared source assumptions".into());
+        }
+    }
+    Ok(())
+}
+
 fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {
     Ok(lex(source)
         .map_err(|e| e.to_string())?

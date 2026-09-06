@@ -164,6 +164,10 @@ Rules:
   first-party providers may run in-process behind the same request/response
   types, but they must lose access to core internals at the crate split — the
   compiler enforces what code review currently has to.
+  *Decision (2026-09-06): providers remain compile-time crates speaking the
+  same schema types in-process; the out-of-process step is deferred, not
+  abandoned. Schema types stay process-portable so the deferral costs no
+  schema rework.*
 - **The core must build and test with zero providers present**, and the full
   first-party set must be reproducible as separate artifacts (Cycle 20D's
   packaging gate).
@@ -197,6 +201,10 @@ then independent of each other and can proceed in parallel; W4 depends on W1;
 W5 depends on W1–W3; W6/W7 are continuous.
 
 ### W0 — Workspace layering: extract the schema surface and the CLI
+
+**Status.** Executed (2026-09-06): see the
+[W0 schema-crate record](reports/w0-schema-crate/README.md). All four tasks
+landed; the standing gate passed unchanged.
 
 **Goal.** Make the plugin boundary compiler-enforced from the start: a
 standalone `qcore-schemas` crate holding every type that crosses the

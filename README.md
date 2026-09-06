@@ -36,7 +36,9 @@ execution.
 
 | Path | Contents |
 |---|---|
-| [`compiler/`](compiler/) | Rust implementation: parser, checker, reference semantics, C backend, existing-C analyzer, verifier-plugin host, CLI (`qcorec`) |
+| [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C analyzer, verifier-plugin host |
+| [`crates/qcore-schemas/`](crates/qcore-schemas/) | Published, versioned schema surface (serde types crossing the core/provider boundary; no analysis logic) |
+| [`crates/qcorec/`](crates/qcorec/) | CLI binary `qcorec` over the compiler library |
 | [`proof/`](proof/) | Lean 4 executable core and safety proofs; per-cycle axiom audits |
 | [`contract/qcore/`](contract/qcore/README.md) | Declarative `.qcore` contract corpus for audited C APIs |
 | [`docs/`](docs/) | Specifications, cycle records, validation and audit reports |
@@ -177,7 +179,11 @@ reviews the architecture and orders the work to (a) make the checker generic
 over source sets — contracts and profiles as data, core-derived obligations,
 interprocedural summary inference — and (b) decompose the monolithic crate
 into a pluggable contract/verification system with a versioned schema
-surface and out-of-process providers.
+surface and out-of-process providers. W0 is executed
+([record](docs/reports/w0-schema-crate/README.md)): the schema surface and
+the CLI are standalone crates, with a test guarding the downward-only
+dependency rule; providers stay compile-time crates for now (decision
+recorded in the W0 report).
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

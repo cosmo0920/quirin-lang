@@ -2,7 +2,8 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use qcore_compiler::contract_loader::{
-    load_resource_contract_files, load_resource_contract_manifest, load_resource_contract_sources,
+    check_source_assumptions, load_resource_contract_files, load_resource_contract_manifest,
+    load_resource_contract_sources,
 };
 use qcore_compiler::{
     AnalysisStatus, CCompilerDialect, LegacyFunctionScope, LegacySafetyCertificate,
@@ -28,7 +29,7 @@ extern fn alloc() -> ptr<mut, u8> contract {
 fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
     assert_eq!(contracts.source_assumptions().len(), 5);
-    contracts.check_source_assumptions().unwrap();
+    check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
         "malloc",
@@ -361,5 +362,5 @@ fn manifest_selection_rejects_unknown_schema_missing_inputs_and_traversal() {
     assert_eq!(loaded.source_assumptions().values().next().unwrap(), ALLOC);
     // Immutable evidence survives deletion of the original selected file.
     std::fs::remove_dir_all(&directory).unwrap();
-    loaded.check_source_assumptions().unwrap();
+    check_source_assumptions(&loaded).unwrap();
 }

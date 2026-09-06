@@ -18,7 +18,9 @@ It also ships a conservative checker for *existing* C source (the
 
 | Path | Contents |
 |---|---|
-| `compiler/` | Single Rust crate `qcore-compiler` (lib `qcore_compiler`, bin `qcorec`): parser, checker, reference semantics, C backend, legacy-C analyzer, verifier-plugin host, first-party providers. Monolithic today; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, legacy-C analyzer, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
+| `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `compiler/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `compiler/src/verifier_plugin.rs` | Cycle 20 plugin protocol v1, manifests, registry, process providers, certificate firewall |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
@@ -130,7 +132,12 @@ It also ships a conservative checker for *existing* C source (the
   only; CT01–CT50 conformance corpus is **100% unmapped**.
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
-  into a pluggable contract/verification system (workstreams W0–W7). W1 is
+  into a pluggable contract/verification system (workstreams W0–W7). W0 is
+  executed (2026-09-06, `docs/reports/w0-schema-crate/README.md`): the
+  workspace has three members (`qcore-schemas` L0 surface, `qcore-compiler`
+  grab-bag, `qcorec` CLI) with a layering-guard test; providers remain
+  compile-time crates for now (decision recorded there — the plan's
+  out-of-process step is deferred, not abandoned). W1 is
   partially executed: `compiler/src/contract_loader.rs` (total-or-reject v1)
   feeds the Cycle 19 audit from a contract manifest. Execution is tracked in
   `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.

@@ -1,6 +1,6 @@
 //! Source-derived profiles for pinned external-library custody summaries.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use crate::external_integration::{
     AuditedLibrary, LibraryMechanismSummary, LibrarySummaryProfile, PINNED_FLUENT_BIT_REVISION,
@@ -18,11 +18,7 @@ const CHUNK_IO_FILES: &[&str] = &[
     "lib/chunkio/src/cio_chunk.c",
 ];
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct ExternalSourceBundle {
-    pub source_revision: String,
-    pub files: BTreeMap<String, String>,
-}
+pub use qcore_schemas::identity::ExternalSourceBundle;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LibrarySourceCertificate {

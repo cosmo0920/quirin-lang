@@ -134,37 +134,3 @@ fn contract_files_compose_with_libraries_and_explicit_executables() {
     assert_eq!(app.source_map[0].source.path, "app.qcore");
     assert_eq!(app.source_map[0].source.line, 1);
 }
-
-#[test]
-fn cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output() {
-    let directory = std::env::temp_dir().join(format!("qcore-module-mode-{}", std::process::id()));
-    std::fs::create_dir_all(&directory).unwrap();
-    let source = directory.join("api.qcore");
-    let output = directory.join("output.c");
-    std::fs::write(&source, "module contract; extern fn f() -> unit;").unwrap();
-    std::fs::write(&output, "keep existing output").unwrap();
-    let checked = std::process::Command::new(env!("CARGO_BIN_EXE_qcorec"))
-        .arg("check")
-        .arg(&source)
-        .output()
-        .unwrap();
-    assert!(
-        checked.status.success(),
-        "{}",
-        String::from_utf8_lossy(&checked.stderr)
-    );
-    assert!(String::from_utf8_lossy(&checked.stdout).contains("no entry point"));
-    let emitted = std::process::Command::new(env!("CARGO_BIN_EXE_qcorec"))
-        .arg("emit")
-        .arg(&source)
-        .arg("-o")
-        .arg(&output)
-        .output()
-        .unwrap();
-    assert!(!emitted.status.success());
-    assert_eq!(
-        std::fs::read_to_string(&output).unwrap(),
-        "keep existing output"
-    );
-    std::fs::remove_dir_all(&directory).unwrap();
-}

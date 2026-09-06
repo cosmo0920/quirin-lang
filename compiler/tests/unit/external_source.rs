@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::*;
 
 fn bundle(contracts: impl IntoIterator<Item = SourceContract>) -> ExternalSourceBundle {

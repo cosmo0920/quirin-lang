@@ -464,17 +464,7 @@ pub enum AuditedLibrary {
     ChunkIo,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum LibraryMechanismSummary {
-    ReferenceCount,
-    IntrusiveList,
-    TypedQueue,
-    Arena,
-    CascadingDestructor,
-    AtomicPublication,
-    ThreadHandoff,
-    Reclamation,
-}
+pub use qcore_schemas::mechanism::LibraryMechanismSummary;
 
 impl AuditedLibrary {
     pub fn permits(self, summary: LibraryMechanismSummary) -> bool {

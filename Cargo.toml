@@ -1,4 +1,4 @@
 [workspace]
-members = ["compiler"]
+members = ["compiler", "crates/qcore-schemas", "crates/qcorec"]
 resolver = "2"
 
