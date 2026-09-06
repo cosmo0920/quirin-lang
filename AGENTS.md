@@ -21,8 +21,8 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | Path | Contents |
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
-| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle and generic reactor/descriptor custody. No runtime or workspace dependencies; W5 consolidation remains bounded |
-| `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
+| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
+| `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped-copy source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
@@ -154,9 +154,9 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **45/50 unmapped**
-  (CT02/CT12/CT16/CT19/CT37 are mapped as sequential-core source fixtures;
-  see the W6 note below).
+  only; CT01–CT50 conformance corpus is **44/50 unmapped**
+  (CT02/CT12/CT16/CT37 retain sequential-core fixtures; CT19 checks real
+  sibling failure source and CT15 has Linux native join-failure evidence).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -185,13 +185,13 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   `compiler/tests/ct_corpus.rs` executes every case
   `docs/reevaluation/ct_manifest.json` marks mapped through the real source
   pipeline and fails closed on manifest/fixture disagreement; CT02, CT12,
-  CT16, CT19 and CT37 are mapped as Cycle 12 executable-subset fixtures
-  exercising the sequential ownership/typed-error/cleanup/completion-record
-  core only (spawn/capture syntax, shares, mutexes and the concurrency
-  backend remain unexercised). Batch 2 (2026-09-06,
+  CT16 and CT37 retain Cycle 12 sequential ownership/typed-error/cleanup
+  fixtures. CT19 now checks actual sibling-failure source; CT15 executes
+  Linux native join-failure and successful reclamation controls. Shares and
+  mutex source paths remain unexercised. Batch 2 (2026-09-06,
   `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
-  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); 45 cases remain
+  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); the later native task increment leaves 44 cases
   unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
@@ -315,9 +315,10 @@ work. This does not complete W2.
 Frontend gates repaired (2026-09-07,
 `docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
 reject centrally with Q021 until enforced. Guard/thread-scope header names bind
-only inside their bodies; nested concurrency lowering still rejects with Q500.
+only inside their bodies; at that checkpoint nested concurrency lowering rejected with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
-concurrency semantics are implemented. CT mapping remains 5/50.
+concurrency semantics were implemented by that increment. CT mapping was then 5/50;
+the native source-task increment below advances it.
 
 W2 H6 provider metadata discovery is implemented (2026-09-07;
 `docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
@@ -472,8 +473,8 @@ ordered captures, resolved scope/worker/place symbols and initializer-before-bin
 identity. The core scoped-task ledger checks reservation rollback, completion
 capsules, creator-only join and scope exits; matching Lean transfer theorems and
 adversarial scenarios pass. These components are not yet composed into source
-execution: the driver still rejects task scopes with Q500, and CT coverage stays
-5/50. Typed task/result IR and native C lowering are next. Evidence:
+execution at that checkpoint: task scopes still rejected and CT coverage was
+5/50. The native source-task increment below now composes the copy-only path. Evidence:
 `docs/reports/w6-source-task-foundations/README.md`.
 
 Schema compatibility (2026-09-07): `qcore-schemas` is now 1.0.0 and all Rust
@@ -482,3 +483,15 @@ a public summary field, requiring the documented breaking-change policy.
 Protocol v1, evidence v2, program schema/profile v2 and ChunkIO package 0.3.0
 retain their separate versions. Evidence:
 `docs/reports/schema-1-compatibility/README.md`.
+
+Native source tasks (2026-09-07): `compile_files` and normal `qcorec check`/`emit`
+now execute the scoped-copy profile on Linux C11 threads. A typed finite task
+IR checks all definitions, creation outcomes, declared worker outcomes, exact
+scalar/handle/result identities and permitted effects. Native start records
+survive until creator join; unexpected join failure aborts before reclamation.
+`CompiledModule.checked` explicitly separates sequential and task evidence.
+CT15 now maps actual native join failure with a successful join/free control;
+CT19 uses a real second-spawn failure rejection and joined-sibling control.
+Coverage is 6/50 mapped, 44 unmapped. Moves/loans, owned results, shared memory,
+mutexes, nested workers, sibling recovery and other platforms remain open.
+Evidence: `docs/reports/w6-native-source-tasks/README.md`.

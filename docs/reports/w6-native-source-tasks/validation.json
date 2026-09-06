@@ -1,0 +1,32 @@
+{
+  "baseline": "9262b29",
+  "workspace_tests": 663,
+  "provider_tests": 9,
+  "python_tests": 43,
+  "lean_audits": 20,
+  "standing_gate": "passed",
+  "ct_mapped": 6,
+  "ct_unmapped": 44,
+  "new_ct_mapping": "CT15 Linux native join-failure control",
+  "upgraded_ct_mapping": "CT19 actual sibling-failure source",
+  "native_target": "linux C11 threads",
+  "source_execution_profile": "source.tasks.copy.v1 / ScopedCopyTasksV1",
+  "native_tests": "real create/join; copied i32 extrema; typed worker errors; allocation/create failure; second-create failure; join abort before free; CLI artifact preservation",
+  "sanitizers": {
+    "asan": "passed",
+    "ubsan": "passed",
+    "lsan": "passed outside tracing sandbox; initial ptrace failure archived",
+    "fixture": "native-copy.qcore"
+  },
+  "full_language_conformance": false,
+  "full_185_audit": "all four outputs byte-identical; no promotions",
+  "remaining": [
+    "owned and loan captures",
+    "typed owned/error payloads",
+    "shared memory and mutexes",
+    "nested workers",
+    "general source control flow and sibling recovery",
+    "other native platforms",
+    "source/Rust/Lean/C refinement"
+  ]
+}

@@ -77,3 +77,81 @@ fn plugin_discovery_errors_are_reported_without_builtin_fallback() {
         assert!(String::from_utf8_lossy(&output.stderr).contains("provider discovery failed"));
     }
 }
+
+#[test]
+#[cfg(target_os = "linux")]
+fn cli_checks_emits_and_executes_native_source_tasks() {
+    let directory =
+        std::env::temp_dir().join(format!("qcore-cli-source-tasks-{}", std::process::id()));
+    std::fs::create_dir_all(&directory).unwrap();
+    let input = directory.join("tasks.qcore");
+    let c = directory.join("tasks.c");
+    let exe = directory.join("tasks");
+    std::fs::write(
+        &input,
+        r#"
+concurrency checked;
+fn worker(x: i32) -> i32 { return x; }
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let x = 42;
+    thread scope s {
+        let h = spawn s worker(copy x)?;
+        let y = join move h?;
+        return y;
+    }
+}
+"#,
+    )
+    .unwrap();
+    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg(&input)
+        .output()
+        .unwrap();
+    assert!(
+        checked.status.success(),
+        "{}",
+        String::from_utf8_lossy(&checked.stderr)
+    );
+    assert!(String::from_utf8_lossy(&checked.stdout).contains("scoped copy tasks (Linux C11)"));
+    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("emit")
+        .arg(&input)
+        .arg("-o")
+        .arg(&c)
+        .output()
+        .unwrap();
+    assert!(
+        emitted.status.success(),
+        "{}",
+        String::from_utf8_lossy(&emitted.stderr)
+    );
+    let compiled = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()))
+        .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
+        .arg(&c)
+        .arg("-o")
+        .arg(&exe)
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    let executed = Command::new(exe).output().unwrap();
+    assert!(executed.status.success());
+    assert!(String::from_utf8_lossy(&executed.stdout).contains("QCORE_TASK_RESULT 0 I32 42"));
+    // A source failure must not replace an existing emitted artifact.
+    let original = std::fs::read(&c).unwrap();
+    std::fs::write(&input, "concurrency checked; fn main() -> unit { thread scope s { let h = spawn s main()?; } return; }").unwrap();
+    let rejected = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("emit")
+        .arg(&input)
+        .arg("-o")
+        .arg(&c)
+        .output()
+        .unwrap();
+    assert!(!rejected.status.success());
+    assert_eq!(std::fs::read(&c).unwrap(), original);
+    std::fs::remove_dir_all(directory).unwrap();
+}

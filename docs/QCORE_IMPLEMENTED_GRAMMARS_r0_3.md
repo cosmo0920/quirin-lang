@@ -35,8 +35,9 @@ retains ordered `copy`, `move`, `read ... share ...` and `write` place captures;
 Name resolution identifies a live scope, a source worker with matching arity,
 capture roots and the handle binder. Typed statements preserve new binder IDs
 after resolving their initializers. Place/share syntax is not proof of capture
-types, permissions or live handles. These records do not extend G02's executable
-profile; see the [task foundations record](reports/w6-source-task-foundations/README.md).
+types, permissions or live handles. These records do not extend G02's sequential executable profile. The separate
+G02a path now checks and executes its supported task subset; the earlier
+[task foundations record](reports/w6-source-task-foundations/README.md) remains historical.
 
 ## G02. Source execution profile
 
@@ -74,6 +75,47 @@ fn main() -> i32 {
 ```
 
 This example does not demonstrate arbitrary allocation ABI support. Source references: `compiler/src/driver.rs:390–610, 724–767, 775–932`.
+
+## G02a. Scoped-copy task execution
+
+`source.tasks.copy.v1` uses the ordinary compiler commands and requires exactly
+one `concurrency checked;` marker. All definitions are checked. The entry has no
+parameters; leaf workers accept named i32 parameters and return i32/unit.
+Local scalar bindings are immutable. A return may use an i32 literal or live
+scalar slot; unit uses bare return or a live unit result slot. Explicit supported effect rows permit
+`spawn`, `join`, `may_block` and `throws<E>`; every actual effect/error must be
+permitted. Payload-free error variants preserve their exact `E::Variant` tags.
+
+```qcore
+concurrency checked;
+fn worker(x: i32) -> i32 { return x; }
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let x = 42;
+    thread scope s {
+        let h = spawn s worker(copy x)?;
+        let collected = join move h;
+        let y = collected?;
+        return y;
+    }
+}
+```
+
+Creation succeeds or raises the distinguished SpawnError dynamically. `join`
+collects the worker's typed Result; `?` is a separate propagation operation.
+`let y = join move h?;` combines those operations. A bare join may discard only
+an infallible unit result. Scope exits, returns and propagation reject live
+handles or unconsumed Results, including the failure edge of a later spawn.
+There is no automatic join. Sequential spawn/join pairs are supported.
+
+Captures must be `copy` of direct immutable i32 local/parameter names. General
+expressions, assignments, loops, branches, resources, loans, move/read/write
+captures, mutexes, externs, globals, user contracts and task-bearing workers
+reject in every definition. Entry-free task modules are not admitted yet.
+The native driver currently supports Linux C11 threads and explicitly rejects
+other targets. Its start record survives until successful native join; failed
+join aborts without reclaiming possibly accessed storage. These rules do not
+establish general C11/shared-memory or cross-platform refinement. See the
+[execution record](reports/w6-native-source-tasks/README.md).
 
 ## G03. Source parameter usage grades
 

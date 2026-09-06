@@ -1,0 +1,12 @@
+{
+  "compiler/src/driver.rs": "0693ddf9bbc66987a73a87b6d47bee4480c95aa1cfa40adef71b2f51cc34e270",
+  "compiler/tests/source_tasks.rs": "9b44d39c171c18f9e7d876f1bb3f09c4f0cf50849c5e3f9b2cde399671713bfd",
+  "compiler/tests/ct_corpus.rs": "8d3db2f83192e20935c9f80a16282943a2f3553a79433c3109049c397651522b",
+  "crates/qcore-core/src/task_execution.rs": "318c638323d607e672e1f8c21d60eb6ba3d3b0e8585c19241e9190695b7de70f",
+  "crates/qcore-core/src/task_execution/reference.rs": "333c237f40e3387138d3163fa19d48e8b0e18db055be4ba1a78b56f68e9042e7",
+  "crates/qcore-core/src/task_c_emit.rs": "6096a94917edf3f76d32c7b1086d949b63ddc7003b9d582c1e0846855669b33e",
+  "crates/qcore-frontend/src/source_tasks.rs": "8077b133246bde6a8cd74213db9c1b62c8b73154b02bab66b193430a1e00728d",
+  "proof/QCore/TaskExecution.lean": "1c704f0c4282fb140640221b04f65bc39a3e8a5712f52b3bf83efe1afad156f4",
+  "proof/AuditTaskExecution.lean": "bfa6652a75b523c826e613bbf1133b34b259daa703a752967e020e9123a6a478",
+  "docs/reevaluation/ct_manifest.json": "b2d2ec165a0a16470ba307d9d641cd39f364b5b4f69b5d771b4176fd9d4a385e"
+}

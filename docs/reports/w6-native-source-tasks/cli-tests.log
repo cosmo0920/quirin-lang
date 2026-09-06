@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on build directory
+   Compiling qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcorec)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.73s
+     Running tests/cli.rs (target/debug/deps/cli-7538997695a7b215)
+
+running 4 tests
+test plugin_discovery_errors_are_reported_without_builtin_fallback ... ok
+test cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output ... ok
+test core_cli_works_without_clang ... ok
+test cli_checks_emits_and_executes_native_source_tasks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

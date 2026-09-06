@@ -1,0 +1,16 @@
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.58s
+     Running unittests src/lib.rs (target/debug/deps/qcore_core-827ee9186b99e1af)
+
+running 8 tests
+test task_execution::tests::second_creation_failure_cannot_strand_a_sibling ... ok
+test task_execution::tests::checked_creation_outcomes_and_copied_scalar_reference_are_distinct ... ok
+test task_execution::tests::collecting_worker_error_is_distinct_from_propagation ... ok
+test task_execution::tests::joined_worker_error_keeps_its_exact_tag ... ok
+test task_execution::tests::declared_rows_permit_unused_operations_and_multiple_error_variants ... ok
+test task_execution::tests::absence_and_consumption_of_handle_are_checked_on_every_path ... ok
+test task_execution::tests::all_definitions_types_rows_and_source_spans_are_required ... ok
+test task_execution::tests::finite_outcome_exploration_exhaustion_rejects_instead_of_sampling_success ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 150 filtered out; finished in 0.26s
+

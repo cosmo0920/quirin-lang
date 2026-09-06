@@ -1,0 +1,10 @@
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running tests/ct_corpus.rs (target/debug/deps/ct_corpus-9612230a2da6affa)
+
+running 2 tests
+test ct_mapping_progress_is_pinned_and_counted ... ok
+test ct_manifest_and_fixture_set_agree_and_mapped_cases_execute ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+

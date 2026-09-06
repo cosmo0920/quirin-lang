@@ -30,7 +30,7 @@ use serde::Deserialize;
 
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
-const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT16", "CT19", "CT37"];
+const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT15", "CT16", "CT19", "CT37"];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parser",
@@ -63,6 +63,8 @@ struct ManifestCase {
     source_fixture: Option<String>,
     semantic_profile: Option<String>,
     stages: BTreeMap<String, String>,
+    #[serde(default)]
+    evidence_target: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -77,6 +79,29 @@ struct ExpectedCase {
     stages_executed: Vec<String>,
     #[allow(dead_code)]
     notes: String,
+    #[serde(default)]
+    evidence_target: Option<String>,
+    #[serde(default)]
+    native_join_failure: Option<NativeJoinFailure>,
+    #[serde(default)]
+    positive_control: Option<PositiveControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeJoinFailure {
+    header: String,
+    control_i32: i32,
+    abort_exit_code: i32,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PositiveControl {
+    source: String,
+    evidence_target: String,
+    expected_i32: i32,
+    joined_children: usize,
 }
 
 #[derive(Deserialize)]
@@ -143,6 +168,57 @@ fn run_mapped_case(case: &ManifestCase) {
     )
     .unwrap_or_else(|error| panic!("cannot parse {}: {error}", expected_path.display()));
     assert_eq!(expected.id, case.id, "expected.json id mismatch");
+    assert_eq!(
+        expected.evidence_target, case.evidence_target,
+        "{}: target metadata mismatch",
+        case.id
+    );
+    assert_eq!(
+        expected.native_join_failure.is_some(),
+        expected.verdict == "native_join_failure",
+        "{}: native fault mode and fixture metadata must agree",
+        case.id
+    );
+    assert_eq!(
+        expected.evidence_target.as_deref(),
+        expected.native_join_failure.as_ref().map(|_| "linux"),
+        "{}: only the native fault mode carries target-scoped evidence",
+        case.id
+    );
+    assert_eq!(
+        expected.positive_control.is_some(),
+        case.id == "CT19",
+        "CT19 must retain its explicitly named joined-sibling positive control"
+    );
+    let mut required_files = BTreeSet::from(["case.qcore".to_owned(), "expected.json".to_owned()]);
+    if let Some(native) = &expected.native_join_failure {
+        assert_eq!(case.id, "CT15");
+        assert_eq!(native.header, "join_failure.h");
+        assert_eq!(native.abort_exit_code, 77);
+        required_files.insert(native.header.clone());
+    }
+    if let Some(control) = &expected.positive_control {
+        assert_eq!(control.source, "joined_sibling.qcore");
+        assert_eq!(control.evidence_target, "linux");
+        assert_eq!(control.joined_children, 2);
+        required_files.insert(control.source.clone());
+    }
+    let actual_files = fs::read_dir(&directory)
+        .unwrap()
+        .map(|entry| {
+            let entry = entry.unwrap();
+            assert!(
+                entry.file_type().unwrap().is_file(),
+                "CT fixtures cannot hide nested artifacts"
+            );
+            entry.file_name().into_string().unwrap()
+        })
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        actual_files, required_files,
+        "{}: fixture inventory differs from executed inputs",
+        case.id
+    );
 
     let source_path = directory.join("case.qcore");
     assert!(
@@ -186,6 +262,29 @@ fn run_mapped_case(case: &ManifestCase) {
         "{}: a mapped case must at least execute the parser and type checker",
         case.id
     );
+    let allowed_stages: BTreeSet<&str> = match expected.verdict.as_str() {
+        "native_join_failure" => [
+            "parser",
+            "type_checker",
+            "reference_execution",
+            "cfg",
+            "native_backend",
+        ]
+        .into_iter()
+        .collect(),
+        "accept" if expected.outcome.is_some() => {
+            ["parser", "type_checker", "reference_execution", "cfg"]
+                .into_iter()
+                .collect()
+        }
+        "accept" | "reject" => ["parser", "type_checker"].into_iter().collect(),
+        other => panic!("{}: unknown verdict vocabulary `{other}`", case.id),
+    };
+    assert_eq!(
+        executed, allowed_stages,
+        "{}: claimed stages must match this mode's actual runner",
+        case.id
+    );
     for stage in &executed {
         assert!(
             STAGE_NAMES.contains(stage),
@@ -216,7 +315,19 @@ fn run_mapped_case(case: &ManifestCase) {
         },
     );
 
+    if let Some(control) = &expected.positive_control {
+        run_positive_control(&directory, control);
+    }
     match expected.verdict.as_str() {
+        "native_join_failure" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none(),
+                "native fault mode has its own explicit outcome expectations"
+            );
+            run_native_join_failure(&directory, &expected, result);
+        }
         "accept" => {
             assert!(
                 expected.diagnostics.is_empty(),
@@ -378,7 +489,9 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
                     case.id
                 );
                 assert!(
-                    case.source_fixture.is_none() && case.semantic_profile.is_none(),
+                    case.source_fixture.is_none()
+                        && case.semantic_profile.is_none()
+                        && case.evidence_target.is_none(),
                     "{}: an unmapped case must not carry fixture metadata",
                     case.id
                 );
@@ -413,8 +526,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 5 of 50 CT cases are mapped
-/// as executed source-level tests; 45 remain unmapped. This test exists so the
+/// The moving count is the W6 genericity metric: 6 of 50 CT cases are mapped
+/// as executed source-level tests; 44 remain unmapped. CT15 native evidence is Linux-scoped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
@@ -436,4 +549,175 @@ fn ct_mapping_progress_is_pinned_and_counted() {
         "unmapped CT case count"
     );
     assert_eq!(mapped + unmapped, TOTAL_CASES, "every case is counted");
+}
+
+fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
+    assert_eq!(
+        diagnostics.len(),
+        1,
+        "unsupported target must follow successful source/core checks"
+    );
+    assert_eq!(diagnostics[0].code, "Q500");
+    assert!(
+        diagnostics[0]
+            .message
+            .contains("requires a Linux C11 threads target"),
+        "{diagnostics:?}"
+    );
+}
+
+fn run_positive_control(directory: &Path, expected: &PositiveControl) {
+    let path = directory.join(&expected.source);
+    let source = fs::read_to_string(&path).unwrap();
+    let result = compile_files(
+        &[SourceFile::new(path.to_string_lossy(), source)],
+        &CompileOptions::default(),
+    );
+    if !cfg!(target_os = "linux") {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "CT19 joined-sibling control: source/core checked; Linux reference/native evidence unexecuted on this host"
+        );
+        return;
+    }
+    let module =
+        result.expect("joined siblings must be accepted, so rejection is not a syntax gate");
+    let reference = qcore_core::task_execution::execute_task_module(
+        module
+            .checked
+            .as_scoped_tasks()
+            .expect("control must use actual tasks"),
+        &qcore_core::task_execution::TaskExecutionScript::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        reference.root_outcome,
+        qcore_core::scoped_tasks::TaskOutcome::I32(expected.expected_i32)
+    );
+    let children = reference
+        .tasks
+        .iter()
+        .filter(|task| task.parent.is_some())
+        .collect::<Vec<_>>();
+    assert_eq!(children.len(), expected.joined_children);
+    assert!(
+        children.iter().all(|task| task.joined),
+        "positive control must explicitly collect both siblings"
+    );
+}
+
+fn run_native_join_failure(
+    directory: &Path,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    let native = expected.native_join_failure.as_ref().unwrap();
+    assert!(directory.join(&native.header).is_file());
+    if !cfg!(target_os = "linux") {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "CT15: source/core checked; Linux native/reference execution unexecuted on this host (manifest evidence_target=linux)"
+        );
+        return;
+    }
+    let module = result.expect("CT15 source must check before native fault injection");
+    let checked = module
+        .checked
+        .as_scoped_tasks()
+        .expect("CT15 must use the task execution artifact");
+    assert!(
+        module.reference_observation.is_none(),
+        "do not substitute the sequential execution profile"
+    );
+    let reference = qcore_core::task_execution::execute_task_module(
+        checked,
+        &qcore_core::task_execution::TaskExecutionScript::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        reference.root_outcome,
+        qcore_core::scoped_tasks::TaskOutcome::I32(native.control_i32)
+    );
+    let children = reference
+        .tasks
+        .iter()
+        .filter(|task| task.parent.is_some())
+        .collect::<Vec<_>>();
+    assert_eq!(children.len(), 1);
+    assert!(children[0].joined);
+    let transcript = qcore_core::task_execution::render_task_observation(&reference);
+    let normal = native_join_run(
+        module.c_source.as_deref().unwrap(),
+        &directory.join(&native.header),
+        false,
+    );
+    assert!(normal.status.success(), "CT15 control failed: {normal:?}");
+    assert_eq!(normal.stdout, transcript.as_bytes());
+    assert_eq!(
+        normal.stderr, b"JOIN_OK\nFREE\n",
+        "control must really join and reclaim its environment"
+    );
+    let failed = native_join_run(
+        module.c_source.as_deref().unwrap(),
+        &directory.join(&native.header),
+        true,
+    );
+    assert_eq!(
+        failed.status.code(),
+        Some(native.abort_exit_code),
+        "CT15 must take process abort policy: {failed:?}"
+    );
+    assert_eq!(
+        failed.stderr, b"JOIN_FAILED\n",
+        "failed join must not reclaim its environment"
+    );
+    let spawn = transcript
+        .lines()
+        .next()
+        .expect("control must publish spawn");
+    assert!(spawn.starts_with("QCORE_TASK_SPAWN "));
+    assert_eq!(
+        failed.stdout,
+        format!("{spawn}\n").as_bytes(),
+        "failed join must not publish initialized completion, quiescence or a parent outcome"
+    );
+}
+
+fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process::Output {
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-ct15-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&directory).unwrap();
+    let c_path = directory.join("module.c");
+    let exe_path = directory.join("module");
+    fs::write(&c_path, source).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
+    let compiled = Command::new(compiler)
+        .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
+        .arg(if fail_join {
+            "-DQCORE_CT_FAIL_JOIN=1"
+        } else {
+            "-DQCORE_CT_FAIL_JOIN=0"
+        })
+        .arg("-include")
+        .arg(header)
+        .arg(&c_path)
+        .arg("-o")
+        .arg(&exe_path)
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "CT15 emitted C failed: {} (artifact {})",
+        String::from_utf8_lossy(&compiled.stderr),
+        c_path.display()
+    );
+    let output = Command::new(&exe_path).output().unwrap();
+    fs::remove_dir_all(directory).unwrap();
+    output
 }

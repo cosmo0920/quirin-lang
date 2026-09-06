@@ -109,16 +109,21 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     })?;
     if command == "check" {
         if let Some(entry) = &module.entry {
+            let profile = if module.checked.as_scoped_tasks().is_some() {
+                "; scoped copy tasks (Linux C11)"
+            } else {
+                ""
+            };
             println!(
-                "checked {} function(s); entry `{entry}`",
-                module.checked.functions.len()
+                "checked {} function(s); entry `{entry}`{profile}",
+                module.checked.function_count()
             );
         } else {
             println!(
                 "checked {:?} module: {} declaration(s), {} function body/bodies; no entry point",
                 module.mode,
-                module.checked.source.declarations.len(),
-                module.checked.functions.len()
+                module.declaration_count,
+                module.checked.function_count()
             );
         }
     } else {

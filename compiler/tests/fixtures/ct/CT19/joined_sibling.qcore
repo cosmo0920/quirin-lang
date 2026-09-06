@@ -1,0 +1,12 @@
+concurrency checked;
+fn worker(x: i32) -> i32 { return x; }
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let value = 42;
+    thread scope tasks {
+        let first = spawn tasks worker(copy value)?;
+        let first_result = join move first?;
+        let second = spawn tasks worker(copy first_result)?;
+        let second_result = join move second?;
+        return second_result;
+    }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Inherited requirements, not a claim that related existing tests are absent or that these cases pass.",
+  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Mapping is not full language conformance.",
   "cases": [
     {
       "id": "CT01",
@@ -245,17 +245,18 @@
       "scenario": "Backend join failure",
       "expected": "No quiescence, no environment reclamation",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "semantic_profile": "Linux ScopedCopyTasksV1 native fault evidence: a real i32-copy worker is created; successful control joins then frees the environment and returns 42. An injected native join failure establishes no quiescence and aborts before result publication or environment reclamation. The fault is supplied only by a test runtime adapter. Reference execution covers the successful control; native join failure has no returning reference transition. No source-owned payload/loan restoration, full runtime refinement or other-platform native conformance is claimed.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT16",
@@ -315,7 +316,7 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "source_fixture": "compiler/tests/fixtures/ct/CT19/case.qcore",
-      "semantic_profile": "Cycle 12 executable subset, sequential obligation core: the live sibling obligation is modeled as an ownership transfer out of the parent frame, which places it outside the frame's cleanup pack while still undischarged, and the parent's error exit is modeled as a failing checked operation. The source pipeline statically refuses that error edge (Q202 FallibleOperationAfterTransfer), matching the §43.7 rule that the exit is rejected even though the sequential cleanup pack would itself be valid. Task handles, `spawn`/`join` syntax, `?` propagation and the concurrency backend are not exercised.",
+      "semantic_profile": "Actual scoped-copy task source checking: a second spawn with immediate ? has a dynamic failure edge leaving the first live handle, and rejects with Q600 ScopeBusy. The separate joined_sibling.qcore control joins the first task before creating the second; Linux checking/reference execution accepts it with both children joined. The rejected case executes parser/type checker only. No resource capture, sibling recovery handler or native execution of the rejected program is claimed.",
       "stages": {
         "parser": "executed",
         "type_checker": "executed",
@@ -621,7 +622,7 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "source_fixture": "compiler/tests/fixtures/ct/CT37/case.qcore",
-      "semantic_profile": "Cycle 12 executable subset, sequential completion-record core: the returning frame holds one local scratch identity and one allocation handed to its result, then exits early. The CFG reference execution shows the allocation leaving as a transfer rather than a release and still carried by the completion record at exit, while the scratch identity is reclaimed by ordinary frame cleanup — the §43.5 rule that capsule identities remain globally live. `spawn`/`join`, the parent's consumption of the capsule, loan-return evidence and the concurrency backend are not exercised.",
+      "semantic_profile": "Cycle 12 executable subset, sequential completion-record core: the returning frame holds one local scratch identity and one allocation handed to its result, then exits early. The CFG reference execution shows the allocation leaving as a transfer rather than a release and still carried by the completion record at exit, while the scratch identity is reclaimed by ordinary frame cleanup \u2014 the \u00a743.5 rule that capsule identities remain globally live. `spawn`/`join`, the parent's consumption of the capsule, loan-return evidence and the concurrency backend are not exercised.",
       "stages": {
         "parser": "executed",
         "type_checker": "executed",

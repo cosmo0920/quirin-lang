@@ -44,6 +44,7 @@ For documentation, this revision names the current boundaries as follows. These 
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `qcorec check`, `qcorec emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
+| `source.tasks.copy.v1` | `compile_files`, `qcorec check`, `qcorec emit` | Linux C11 threads; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
 | `index.closed` | `quant_index` | Closed, dimensioned natural expressions in credit/live types. |
 | `model.sequential` | Ownership, usage, flow, typed-error, error-region and CFG APIs | Supplied semantic IR; not a general source elaborator. |
@@ -283,9 +284,19 @@ fn main() -> i32 {
 
 Emission additionally requires reachable callees to be observationally pure under the reduced model: no resource trace and a normal outcome with empty payload. Recursive calls and effectful callees are rejected for C emission. This check makes omission of a pure discarded-result call observationally acceptable only for this reduced observation model; it is not a general interprocedural backend.
 
-Source `if`, `match`, loops, arbitrary assignment, general arithmetic evaluation, nonliteral returns, error-region bodies, source borrowing, source concurrency, and arbitrary extern calls are not executable through this driver. Structural recognition of those forms MUST NOT be reported as implemented lowering.
+Source `if`, `match`, loops, arbitrary assignment, general arithmetic evaluation, nonliteral returns, error-region bodies, source borrowing, source concurrency, and arbitrary extern calls are not executable through the `source.exec12` path. Structural recognition of those forms MUST NOT be reported as implemented lowering.
 
 The result-literal parser now accepts the full signed i32 range, including `-2147483648`, by checking the signed result using a wider representation. Out-of-range literals reject. This R07 repair does not implement general result expressions or full owned-result typing.
+
+The separate `source.tasks.copy.v1` path now lowers marked scoped-task source
+through an opaque checked task IR and emits real Linux C11 threads. It supports
+immutable i32 copies, leaf workers with i32/unit results, dynamic creation
+failure, explicit creator join, collected Results and separate `?` propagation.
+The source execution profile and checked-artifact variant are explicit. Native
+join failure aborts before environment reclamation. General capture authority,
+shared memory, mutexes, owned payloads and sibling recovery handlers remain
+open. See [implemented grammar G02a](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02a-scoped-copy-task-execution)
+and the [execution evidence](reports/w6-native-source-tasks/README.md).
 
 ## L15. Lowering, observations, and translation certificates
 
@@ -313,7 +324,7 @@ The current `model.concurrent14` checker uses interval footprints, fixed initial
 
 The certificate declares `TrustedExplicitTrace` and the initial-authority/unique-lifetime-ID premise, plus guard-footprint and synchronized-handoff premises when used. A held guard still relies on its supplied footprint binding, and a true synchronization flag still relies on declared real synchronization. R03's stronger checked-invariant/source-witness profile remains open. These certificates do not prove faithful extraction from arbitrary source or all lifetime protocols. The source driver does not lower general concurrency syntax.
 
-The `concurrency checked;` marker is not evidence of race verification. The reviewed driver does not invoke the concurrent checker merely because the marker was parsed. A future supported source-concurrency profile MUST derive and validate its events, task transitions, access permissions, and synchronization witnesses rather than accepting producer-supplied truth flags.
+The `concurrency checked;` marker is not evidence of race verification. The marker alone does not select evidence. The scoped-copy path independently checks its typed task IR; the supplied-event concurrency checker remains a separate API. A future supported source-concurrency profile MUST derive and validate its events, task transitions, access permissions, and synchronization witnesses rather than accepting producer-supplied truth flags.
 
 ## L17. Explicit C11 execution candidates
 
@@ -379,7 +390,7 @@ This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUG
 
 The implementation matrix MUST track stages separately: parsing, semantic checking, reference execution, CFG/lowering, native execution, and proof. One checked IR test does not complete a source-language CT case. One passed platform run does not cover another target or backend.
 
-The supplied CT manifest has five mapped cases—CT02, CT12, CT16, CT19, and CT37—and 45 unmapped cases. Their individual stage statuses remain authoritative; five mappings do not imply five fully completed end-to-end proofs. The current corpus contains 57 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
+The current CT manifest has six mapped cases—CT02, CT12, CT15, CT16, CT19, and CT37—and 44 unmapped cases. CT15 has Linux native join-failure evidence; CT19 now checks actual sibling-failure source. The other four retain their stated sequential profiles. Individual stage/target statuses remain authoritative; mappings do not imply fully completed end-to-end proofs. The current corpus contains 57 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
 
 The supplied archive review reported 39 Python evidence-validator tests and no Rust/Lean/native execution; its Libevent directory was empty. This repository integration has complete pinned inputs and separately executes Rust, Lean, Python and the configured audit. Current results are recorded in [VALIDATION.md](VALIDATION.md) and the acceptance ledger. Historical runs are never substituted for fresh checks.
 

@@ -15,12 +15,12 @@ reconstruct them. This ledger and source inventory are new local records.
 repaired until implementation, relevant Rust regressions, Lean parity where
 semantic rules change, and the standing gates have passed. Profile-qualified
 results do not imply complete language conformance. The CT manifest remains
-five mapped and 45 unmapped, with separate stages.
+six mapped and 44 unmapped, with separate stages and Linux-only native evidence for CT15.
 
 | Finding | Current acceptance | Evidence / remaining boundary |
 |---|---|---|
 | R01 | repaired model | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Live IDs are unique lifetimes in TrustedExplicitTrace. No arbitrary-source extraction or general callback lifetime proof. |
-| R02 | repaired model | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Active task state is separate from retained clock history; source concurrency lowering remains unsupported. |
+| R02 | repaired model | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Active task state is separate from retained clock history. The [scoped-copy source path](../../reports/w6-native-source-tasks/README.md) now checks explicit task results and joins; general authority/loan lowering remains open. |
 | R03 | explicit trust boundary | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Checked mutex-footprint invariants and reconstructed synchronization witnesses remain open; the model names the assumptions it consumes. |
 | R04 | partially repaired | [Report](../../../docs/reports/r0-3-source-validation/README.md); Explicit i32/unit scalar compatibility is checked. Separate custody payload metadata preserves the reduced model; full owned-result/per-exit typing remains open. |
 | R05 | repaired source | [Report](../../../docs/reports/r0-3-source-validation/README.md); Axis environment validation is unconditional; closed index/profile limits remain. |
@@ -44,10 +44,11 @@ five mapped and 45 unmapped, with separate stages.
 - W5 has a configured provider-free audit runner and a second-codebase example;
   specialized production adapters and provider/kernel consolidation remain.
 - W6 rejects ignored source function contracts with Q021 and resolves body-local
-  guard/scope binders; this does not implement source concurrency lowering.
+  guard/scope binders. The later scoped-copy source path now executes Linux C11
+  leaf workers; CT15 is newly mapped and CT19 uses real sibling-failure source.
 - W7 has local Libevent diagnostic codes, generic Lean names and Lean/axiom CI.
 - The native reopen-failure evidence package is now present and separately
   validated. Fixed observations do not promote raw Cycle19 source units.
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
-Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 549 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 19 axiom audits passed. The full pinned audit preserves 185 unit results. These counts are different suites, not interchangeable conformance cases.
+Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 663 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nine separate provider tests also pass. The full pinned audit preserves all four reports for 185 units. These counts are different suites, not interchangeable conformance cases.

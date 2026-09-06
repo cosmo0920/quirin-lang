@@ -3,10 +3,22 @@
   "verdict": "reject",
   "entry": null,
   "diagnostics": [
-    { "code": "Q202", "message_contains": "FallibleOperationAfterTransfer" }
+    {
+      "code": "Q600",
+      "message_contains": "ScopeBusy"
+    }
   ],
   "outcome": null,
   "trace": null,
-  "stages_executed": ["parser", "type_checker"],
-  "notes": "The outstanding sibling obligation is modeled as an ownership transfer out of the parent frame (Cycle 12 executable subset), which is exactly the position of a task handle: outside the frame's cleanup pack and still undischarged. The static refusal of the later fallible operation is the source pipeline's decision that an error edge may not leave that obligation unaccounted for. Task handles, `spawn`/`join` syntax, `?` propagation and the concurrency backend are not exercised, so reference execution, CFG, native backend and proof stages stay unassessed."
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "positive_control": {
+    "source": "joined_sibling.qcore",
+    "evidence_target": "linux",
+    "expected_i32": 42,
+    "joined_children": 2
+  },
+  "notes": "Actual source spawn/join/? syntax replaces the sequential ownership analogy. The second dynamic create failure edge would propagate SpawnError while the first handle is outstanding; source task checking rejects its attempted scope exit as ScopeBusy. The separately named control joins the first task before the second spawn and is accepted, with two explicitly joined reference children and result 42 on Linux. Other hosts check that this valid control reaches only the explicit Linux target gate. The rejected case has no emitted/native execution and claims no resource capture, handler recovery or automatic join behavior."
 }

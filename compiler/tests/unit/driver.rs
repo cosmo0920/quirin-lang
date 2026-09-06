@@ -41,7 +41,7 @@ fn combines_module_files_and_checks_calls() {
         SourceFile::new("main.qc", "fn main() -> i32 { leaf(); return 2; }"),
     ];
     let module = compile_files(&files, &CompileOptions::default()).unwrap();
-    assert_eq!(module.checked.functions.len(), 2);
+    assert_eq!(module.checked.function_count(), 2);
     assert_eq!(module.entry.as_deref(), Some("main"));
 }
 
@@ -64,8 +64,8 @@ fn synthesized_quantitative_bound_covers_the_resource_trace() {
     let module = compile(
         "error Failure { Failed; } fn main() -> i32 { let a = qcore_acquire(3, true, Failure); let b = qcore_acquire(4, true, Failure); drop b; drop a; return 0; }",
     );
-    let summary = &module.checked.functions
-        [&module.checked.source.globals[module.entry.as_ref().unwrap()]]
+    let summary = &module.checked.as_sequential().unwrap().functions
+        [&module.checked.as_sequential().unwrap().source.globals[module.entry.as_ref().unwrap()]]
         .summary;
     assert_eq!(summary.flow.peak().get("resources"), 2);
     assert_eq!(summary.flow.total().get("allocations"), 2);
@@ -144,7 +144,7 @@ fn checks_parameter_usage_even_for_uncalled_functions() {
         let source = format!(
             "fn discard(x: i32 use {grade}) -> i32 {{ return 0; }}\nfn main() -> i32 {{ return 0; }}"
         );
-        assert_eq!(compile(&source).checked.functions.len(), 2);
+        assert_eq!(compile(&source).checked.function_count(), 2);
     }
 }
 
@@ -164,7 +164,8 @@ fn records_source_demands_and_rejects_unsupported_local_contracts() {
     let module = compile(
         "error Failure { Failed; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); drop x; return 0; }",
     );
-    let main = &module.checked.functions[&module.checked.source.globals["main"]];
+    let main = &module.checked.as_sequential().unwrap().functions
+        [&module.checked.as_sequential().unwrap().source.globals["main"]];
     assert!(
         main.usage
             .iter()
@@ -173,7 +174,8 @@ fn records_source_demands_and_rejects_unsupported_local_contracts() {
     let failed = compile(
         "error Failure { Failed; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); qcore_check(false, Failure); drop x; return 0; }",
     );
-    let main = &failed.checked.functions[&failed.checked.source.globals["main"]];
+    let main = &failed.checked.as_sequential().unwrap().functions
+        [&failed.checked.as_sequential().unwrap().source.globals["main"]];
     assert!(main.usage.iter().next().is_none());
     let errors = compile_files(&[SourceFile::new("usage.qc", "error Failure { Failed; } fn main() -> i32 { let x: own<File> use zero = qcore_acquire(1, true, Failure); drop x; return 0; }")], &CompileOptions::default()).unwrap_err();
     assert_eq!(errors[0].code, "Q100");
@@ -184,7 +186,8 @@ fn call_continuations_have_conservative_usage_lower_bounds() {
     let module = compile(
         "error Failure { Failed; } fn leaf() -> i32 { return 0; } fn main() -> i32 { let x = qcore_acquire(1, true, Failure); leaf(); drop x; return 0; }",
     );
-    let main = &module.checked.functions[&module.checked.source.globals["main"]];
+    let main = &module.checked.as_sequential().unwrap().functions
+        [&module.checked.as_sequential().unwrap().source.globals["main"]];
     assert!(
         main.usage
             .iter()
@@ -251,8 +254,12 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
         assert_eq!(
             parse_c_observation(
                 std::str::from_utf8(&output.stdout).unwrap(),
-                module.checked.functions
-                    [&module.checked.source.globals[module.entry.as_ref().unwrap()]]
+                module.checked.as_sequential().unwrap().functions[&module
+                    .checked
+                    .as_sequential()
+                    .unwrap()
+                    .source
+                    .globals[module.entry.as_ref().unwrap()]]
                     .cfg
                     .error_abi()
             )
@@ -283,8 +290,11 @@ fn refuses_unchecked_source_contracts_in_every_input_file() {
 }
 
 #[test]
-fn resolved_scope_and_guard_still_require_concurrency_lowering() {
-    for body in ["thread scope s { }", "let m = 0; with lock m as g { }"] {
+fn resolved_scope_requires_checked_profile_and_guard_still_requires_lowering() {
+    for (body, expected_code) in [
+        ("thread scope s { }", "Q600"),
+        ("let m = 0; with lock m as g { }", "Q500"),
+    ] {
         let source = format!("fn main() -> i32 {{ {body} return 0; }}");
         let errors = compile_files(
             &[SourceFile::new("main.qcore", source)],
@@ -292,7 +302,7 @@ fn resolved_scope_and_guard_still_require_concurrency_lowering() {
         )
         .unwrap_err();
         assert!(
-            errors.iter().any(|error| error.code == "Q500"),
+            errors.iter().any(|error| error.code == expected_code),
             "{errors:?}"
         );
         assert!(

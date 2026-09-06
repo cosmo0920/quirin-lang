@@ -1,0 +1,1173 @@
+//! Exact source lowering for the bounded copy-scalar scoped-task profile.
+//!
+//! Structural task records are not admitted on their own: this pass consumes
+//! complete statements, checks every declaration and resolves immutable slots.
+//! The returned core IR still requires independent `check_task_module` validation.
+use std::collections::{BTreeMap, BTreeSet};
+
+use crate::frontend::*;
+use crate::lexer::{Span, Symbol, Token, TokenKind};
+
+/// Detect source task forms in every definition, including empty/nested scopes
+/// and uncalled bodies. This selects a checker, never grants execution support.
+pub fn has_source_tasks(source: &SourceProgram) -> bool {
+    fn has_scope(block: &SourceBlock) -> bool {
+        block.statements.iter().any(|s| {
+            matches!(s.value, StatementKind::ThreadScope { .. })
+                || s.value.nested_blocks().iter().any(|b| has_scope(b))
+        })
+    }
+    !source.task_expressions().is_empty()
+        || source
+            .declarations
+            .iter()
+            .filter_map(|d| d.value.body.as_ref())
+            .any(has_scope)
+}
+
+fn failure(span: Span, pass: SemanticPass, message: impl Into<String>) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: match pass {
+            SemanticPass::NameResolution => "Q013",
+            SemanticPass::OrdinaryTypes => "Q020",
+            SemanticPass::TypedErrors => "Q300",
+            SemanticPass::Concurrency => "Q600",
+            _ => "Q500",
+        },
+        pass,
+        span,
+        message: message.into(),
+    }
+}
+
+fn tokens_for(source: &SourceProgram, span: Span) -> Vec<Token> {
+    source
+        .lexical_tokens()
+        .iter()
+        .filter(|token| token.span.start >= span.start && token.span.end <= span.end)
+        .cloned()
+        .collect()
+}
+
+fn word(token: Option<&Token>, expected: &str) -> bool {
+    matches!(token.map(|t| &t.kind), Some(TokenKind::Word(w)) if w == expected)
+}
+
+fn symbol(token: Option<&Token>, expected: Symbol) -> bool {
+    matches!(token.map(|t| &t.kind), Some(TokenKind::Symbol(s)) if *s == expected)
+}
+
+fn name(token: Option<&Token>) -> Option<&str> {
+    match &token?.kind {
+        TokenKind::Word(w) => Some(w),
+        _ => None,
+    }
+}
+
+fn matching(tokens: &[Token], start: usize, open: Symbol, close: Symbol) -> Option<usize> {
+    if !symbol(tokens.get(start), open) {
+        return None;
+    }
+    let mut depth = 0usize;
+    for (index, token) in tokens.iter().enumerate().skip(start) {
+        if symbol(Some(token), open) {
+            depth += 1;
+        }
+        if symbol(Some(token), close) {
+            depth = depth.checked_sub(1)?;
+            if depth == 0 {
+                return Some(index);
+            }
+        }
+    }
+    None
+}
+
+#[derive(Clone, Debug, Default)]
+struct ParsedEffects {
+    spawn: bool,
+    join: bool,
+    may_block: bool,
+    errors: BTreeSet<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Scalar {
+    I32,
+    Unit,
+}
+
+fn scalar(tokens: &[Token]) -> Option<Scalar> {
+    match tokens {
+        [t] if word(Some(t), "i32") => Some(Scalar::I32),
+        [t] if word(Some(t), "unit") => Some(Scalar::Unit),
+        _ => None,
+    }
+}
+
+#[derive(Clone, Debug)]
+struct Signature {
+    id: SymbolId,
+    name: String,
+    parameters: Vec<(SymbolId, String)>,
+    result: Scalar,
+    effects: ParsedEffects,
+}
+
+fn error_declarations(
+    source: &SourceProgram,
+) -> Result<BTreeMap<String, BTreeSet<String>>, SourceDiagnostic> {
+    let mut errors = BTreeMap::from([(
+        "SpawnError".to_owned(),
+        BTreeSet::from(["SpawnError".to_owned()]),
+    )]);
+    for declaration in &source.declarations {
+        if declaration.value.kind != DeclarationKind::ErrorType {
+            continue;
+        }
+        let tokens = tokens_for(source, declaration.span);
+        let bad = || {
+            failure(
+                declaration.span,
+                SemanticPass::TypedErrors,
+                "task execution supports only payload-free nominal error variants",
+            )
+        };
+        if tokens.len() < 6
+            || !word(tokens.first(), "error")
+            || !symbol(tokens.get(2), Symbol::LeftBrace)
+            || !symbol(tokens.last(), Symbol::RightBrace)
+            || declaration.value.name == "SpawnError"
+        {
+            return Err(bad());
+        }
+        let mut variants = BTreeSet::new();
+        let inner = &tokens[3..tokens.len() - 1];
+        let (pairs, remainder) = inner.as_chunks::<2>();
+        if !remainder.is_empty() {
+            return Err(bad());
+        }
+        for pair in pairs {
+            let Some(variant) = name(pair.first()) else {
+                return Err(bad());
+            };
+            if !symbol(pair.get(1), Symbol::Semicolon)
+                || !variants.insert(format!("{}::{variant}", declaration.value.name))
+            {
+                return Err(bad());
+            }
+        }
+        if variants.is_empty()
+            || errors
+                .insert(declaration.value.name.clone(), variants)
+                .is_some()
+        {
+            return Err(bad());
+        }
+    }
+    Ok(errors)
+}
+
+fn signature(
+    source: &SourceProgram,
+    declaration: &Located<SourceDeclaration>,
+    typed: &TypedSourceDeclaration,
+    errors: &BTreeMap<String, BTreeSet<String>>,
+) -> Result<Signature, SourceDiagnostic> {
+    let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
+    let body = declaration
+        .value
+        .body
+        .as_ref()
+        .ok_or_else(|| bad("task functions require source bodies"))?;
+    if declaration.value.function_contract.is_some() {
+        return Err(bad(
+            "source contracts require an implemented consumer for task execution",
+        ));
+    }
+    let header_span = Span {
+        start: declaration.span.start,
+        end: body.span.start,
+    };
+    let tokens = tokens_for(source, header_span);
+    if !word(tokens.first(), "fn")
+        || name(tokens.get(1)) != Some(declaration.value.name.as_str())
+        || !symbol(tokens.get(2), Symbol::LeftParen)
+    {
+        return Err(bad(
+            "generic/unsupported function headers are outside task execution",
+        ));
+    }
+    let close = matching(&tokens, 2, Symbol::LeftParen, Symbol::RightParen)
+        .ok_or_else(|| bad("invalid task parameter list"))?;
+    let groups = if close == 3 {
+        Vec::new()
+    } else {
+        tokens[3..close]
+            .split(|token| symbol(Some(token), Symbol::Comma))
+            .collect::<Vec<_>>()
+    };
+    if groups.len() != typed.parameters.len() {
+        return Err(bad("task parameter metadata disagrees with the source"));
+    }
+    let mut parameters = Vec::new();
+    for (group, parameter) in groups.iter().zip(&typed.parameters) {
+        if group.len() != 3
+            || name(group.first()) != Some(parameter.name.as_str())
+            || !symbol(group.get(1), Symbol::Colon)
+            || !word(group.get(2), "i32")
+            || parameter.usage.is_some()
+        {
+            return Err(bad(
+                "task parameters require explicit i32 without unsupported usage/type annotations",
+            ));
+        }
+        parameters.push((parameter.symbol, parameter.name.clone()));
+    }
+    if !symbol(tokens.get(close + 1), Symbol::Arrow) {
+        return Err(bad("task functions require an explicit i32 or unit result"));
+    }
+    let result = scalar(tokens.get(close + 2..close + 3).unwrap_or_default())
+        .ok_or_else(|| bad("task functions support only i32 and unit results"))?;
+    let mut cursor = close + 3;
+    let mut effects = ParsedEffects::default();
+    if cursor < tokens.len() {
+        if !word(tokens.get(cursor), "effects")
+            || !symbol(tokens.get(cursor + 1), Symbol::LeftBrace)
+        {
+            return Err(bad("unsupported function annotation in task execution"));
+        }
+        let last = matching(&tokens, cursor + 1, Symbol::LeftBrace, Symbol::RightBrace)
+            .ok_or_else(|| bad("invalid task effect row"))?;
+        if last + 1 != tokens.len() {
+            return Err(bad(
+                "trailing function annotations are not supported by task execution",
+            ));
+        }
+        cursor += 2;
+        let mut seen = BTreeSet::new();
+        while cursor < last {
+            let effect = name(tokens.get(cursor)).ok_or_else(|| bad("invalid task effect"))?;
+            let key;
+            match effect {
+                "spawn" => {
+                    effects.spawn = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                "join" => {
+                    effects.join = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                "may_block" => {
+                    effects.may_block = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                "throws" => {
+                    if !symbol(tokens.get(cursor + 1), Symbol::Less)
+                        || !symbol(tokens.get(cursor + 3), Symbol::Greater)
+                    {
+                        return Err(bad("throws requires one declared nominal error type"));
+                    }
+                    let error = name(tokens.get(cursor + 2))
+                        .ok_or_else(|| bad("throws requires a nominal error type"))?;
+                    let variants = errors
+                        .get(error)
+                        .ok_or_else(|| bad("throws references an unknown error type"))?;
+                    effects.errors.extend(variants.iter().cloned());
+                    key = format!("throws<{error}>");
+                    cursor += 4;
+                }
+                _ => return Err(bad("unsupported effect in task execution")),
+            }
+            if !seen.insert(key) {
+                return Err(bad("duplicate task effect"));
+            }
+            if cursor == last {
+                break;
+            }
+            if !symbol(tokens.get(cursor), Symbol::Comma) {
+                return Err(bad("task effects must be separated by commas"));
+            }
+            cursor += 1;
+            if cursor == last {
+                return Err(bad("missing effect after comma"));
+            }
+        }
+    }
+    Ok(Signature {
+        id: typed.symbol,
+        name: typed.name.clone(),
+        parameters,
+        result,
+        effects,
+    })
+}
+
+use qcore_core::task_execution::{
+    ErrorOperand, ScalarOperand, ScalarType, TaskBlock, TaskEffects, TaskFunction, TaskInstruction,
+    TaskInstructionKind, TaskModule, TaskSpan, TaskTerminator, TaskTerminatorKind,
+};
+
+impl Scalar {
+    fn core(self) -> ScalarType {
+        match self {
+            Self::I32 => ScalarType::I32,
+            Self::Unit => ScalarType::Unit,
+        }
+    }
+}
+
+fn core_span(span: Span) -> TaskSpan {
+    TaskSpan {
+        start: span.start,
+        end: span.end,
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum ValueType {
+    Scalar(Scalar),
+    Handle(SymbolId),
+    Result {
+        value: Scalar,
+        errors: BTreeSet<String>,
+    },
+    Scope,
+}
+
+/// Lower complete source syntax into task execution IR. This checks the source
+/// import/type boundary; the resulting IR requires `check_task_module` before
+/// emission or a source-execution claim.
+pub fn lower_source_tasks(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<TaskModule, Vec<SourceDiagnostic>> {
+    lower(source, typed, entry).map_err(|error| vec![error])
+}
+
+fn lower(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<TaskModule, SourceDiagnostic> {
+    let span = Span {
+        start: 0,
+        end: source.source().len(),
+    };
+    if source.mode != SourceModuleMode::Executable {
+        return Err(failure(
+            span,
+            SemanticPass::CEmission,
+            "entry-free task execution checking is not implemented",
+        ));
+    }
+    let reparsed = parse_source_program(source.source())
+        .map_err(|error| failure(error.span, SemanticPass::NameResolution, error.message))?;
+    if reparsed != *source {
+        return Err(failure(
+            span,
+            SemanticPass::NameResolution,
+            "task source metadata differs from independent parsing",
+        ));
+    }
+    let retyped = elaborate_source(source).map_err(|errors| {
+        errors
+            .into_iter()
+            .next()
+            .expect("elaboration rejection has diagnostics")
+    })?;
+    if retyped != *typed {
+        return Err(failure(
+            span,
+            SemanticPass::NameResolution,
+            "task symbol metadata differs from independent elaboration",
+        ));
+    }
+    if source
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind == DeclarationKind::ConcurrencyProfile)
+        .count()
+        != 1
+    {
+        return Err(failure(
+            span,
+            SemanticPass::Concurrency,
+            "task execution requires exactly one `concurrency checked;` marker",
+        ));
+    }
+    for declaration in &source.declarations {
+        if !matches!(
+            declaration.value.kind,
+            DeclarationKind::ConcurrencyProfile
+                | DeclarationKind::Function
+                | DeclarationKind::ErrorType
+        ) {
+            return Err(failure(
+                declaration.span,
+                SemanticPass::CEmission,
+                "declaration is outside the copy-scalar task execution profile",
+            ));
+        }
+    }
+    let errors = error_declarations(source)?;
+    let mut signatures = BTreeMap::new();
+    for declaration in source
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind == DeclarationKind::Function)
+    {
+        let resolved = typed
+            .declarations
+            .iter()
+            .find(|d| d.name == declaration.value.name)
+            .expect("independent elaboration preserved functions");
+        let signature = signature(source, declaration, resolved, &errors)?;
+        signatures.insert(signature.id, signature);
+    }
+    let entry = typed
+        .globals
+        .get(entry)
+        .copied()
+        .filter(|symbol| signatures.contains_key(symbol))
+        .ok_or_else(|| {
+            failure(
+                span,
+                SemanticPass::NameResolution,
+                "task entry must name a source function",
+            )
+        })?;
+    if !signatures[&entry].parameters.is_empty() {
+        return Err(failure(
+            span,
+            SemanticPass::OrdinaryTypes,
+            "task execution entry must have no parameters",
+        ));
+    }
+    let mut functions = BTreeMap::new();
+    for declaration in source
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind == DeclarationKind::Function)
+    {
+        let resolved = typed
+            .declarations
+            .iter()
+            .find(|d| d.name == declaration.value.name)
+            .unwrap();
+        let signature = &signatures[&resolved.symbol];
+        let body = declaration.value.body.as_ref().unwrap();
+        let mut builder = Builder::new(
+            source,
+            &signatures,
+            signature,
+            &errors,
+            next_temporary(resolved)?,
+        );
+        if !builder.block(body, &resolved.statements)? {
+            return Err(failure(
+                body.span,
+                SemanticPass::OrdinaryTypes,
+                "task functions require an explicit return or raise on every path",
+            ));
+        }
+        functions.insert(
+            resolved.symbol.0 as usize,
+            TaskFunction {
+                name: signature.name.clone(),
+                parameters: signature
+                    .parameters
+                    .iter()
+                    .map(|(symbol, _)| (symbol.0 as usize, ScalarType::I32))
+                    .collect(),
+                result: signature.result.core(),
+                errors: signature.effects.errors.clone(),
+                declared_effects: TaskEffects {
+                    spawn: signature.effects.spawn,
+                    join: signature.effects.join,
+                    may_block: signature.effects.may_block,
+                },
+                entry: 0,
+                blocks: builder.blocks,
+                span: core_span(declaration.span),
+            },
+        );
+    }
+    // A worker cannot recursively or transitively create tasks in this first
+    // executable profile. All source functions were still lowered above.
+    let workers = functions
+        .values()
+        .flat_map(|function| {
+            function
+                .blocks
+                .values()
+                .filter_map(|block| match block.terminator.kind {
+                    TaskTerminatorKind::TrySpawn { worker, .. } => Some(worker),
+                    _ => None,
+                })
+        })
+        .collect::<BTreeSet<_>>();
+    for worker in workers {
+        if functions[&worker]
+            .blocks
+            .values()
+            .any(|block| matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }))
+        {
+            let span = functions[&worker].span;
+            return Err(failure(
+                Span {
+                    start: span.start,
+                    end: span.end,
+                },
+                SemanticPass::Concurrency,
+                "spawned workers must be first-order leaf functions in this task profile",
+            ));
+        }
+    }
+    Ok(TaskModule {
+        entry: entry.0 as usize,
+        functions,
+        source_len: source.source().len(),
+    })
+}
+
+fn next_temporary(function: &TypedSourceDeclaration) -> Result<usize, SourceDiagnostic> {
+    fn statement_max(statements: &[TypedStatement]) -> usize {
+        statements
+            .iter()
+            .map(|s| {
+                s.binding
+                    .into_iter()
+                    .chain(s.body_binding)
+                    .map(|id| id.0 as usize)
+                    .chain(std::iter::once(statement_max(&s.nested)))
+                    .max()
+                    .unwrap_or(0)
+            })
+            .max()
+            .unwrap_or(0)
+    }
+    function
+        .parameters
+        .iter()
+        .map(|p| p.symbol.0 as usize)
+        .chain(std::iter::once(statement_max(&function.statements)))
+        .max()
+        .unwrap_or(0)
+        .checked_add(1)
+        .ok_or_else(|| {
+            failure(
+                function.span,
+                SemanticPass::CEmission,
+                "task slot identity space exhausted",
+            )
+        })
+}
+
+struct Builder<'a> {
+    source: &'a SourceProgram,
+    signatures: &'a BTreeMap<SymbolId, Signature>,
+    signature: &'a Signature,
+    errors: &'a BTreeMap<String, BTreeSet<String>>,
+    environment: Vec<BTreeMap<String, (SymbolId, ValueType)>>,
+    scopes: Vec<u64>,
+    blocks: BTreeMap<usize, TaskBlock>,
+    current: usize,
+    next_block: usize,
+    next_temporary: usize,
+    instructions: Vec<TaskInstruction>,
+}
+
+impl<'a> Builder<'a> {
+    fn new(
+        source: &'a SourceProgram,
+        signatures: &'a BTreeMap<SymbolId, Signature>,
+        signature: &'a Signature,
+        errors: &'a BTreeMap<String, BTreeSet<String>>,
+        next_temporary: usize,
+    ) -> Self {
+        Self {
+            source,
+            signatures,
+            signature,
+            errors,
+            environment: vec![
+                signature
+                    .parameters
+                    .iter()
+                    .map(|(symbol, name)| (name.clone(), (*symbol, ValueType::Scalar(Scalar::I32))))
+                    .collect(),
+            ],
+            scopes: Vec::new(),
+            blocks: BTreeMap::new(),
+            current: 0,
+            next_block: 1,
+            next_temporary,
+            instructions: Vec::new(),
+        }
+    }
+
+    fn bad(&self, span: Span, message: impl Into<String>) -> SourceDiagnostic {
+        failure(span, SemanticPass::CEmission, message)
+    }
+    fn temporary(&mut self, span: Span) -> Result<usize, SourceDiagnostic> {
+        let slot = self.next_temporary;
+        self.next_temporary = slot
+            .checked_add(1)
+            .ok_or_else(|| self.bad(span, "task slot identity space exhausted"))?;
+        Ok(slot)
+    }
+    fn block_id(&mut self, span: Span) -> Result<usize, SourceDiagnostic> {
+        let block = self.next_block;
+        self.next_block = block
+            .checked_add(1)
+            .ok_or_else(|| self.bad(span, "task block identity space exhausted"))?;
+        Ok(block)
+    }
+    fn instruction(&mut self, span: Span, kind: TaskInstructionKind) {
+        self.instructions.push(TaskInstruction {
+            span: core_span(span),
+            kind,
+        });
+    }
+    fn finish(&mut self, span: Span, kind: TaskTerminatorKind) {
+        self.blocks.insert(
+            self.current,
+            TaskBlock {
+                instructions: std::mem::take(&mut self.instructions),
+                terminator: TaskTerminator {
+                    span: core_span(span),
+                    kind,
+                },
+            },
+        );
+    }
+    fn exit_instructions(&self, span: Span) -> Vec<TaskInstruction> {
+        self.scopes
+            .iter()
+            .rev()
+            .map(|scope| TaskInstruction {
+                span: core_span(span),
+                kind: TaskInstructionKind::ExitScope { scope: *scope },
+            })
+            .collect()
+    }
+    fn error_block(&mut self, span: Span, error: ErrorOperand) -> Result<usize, SourceDiagnostic> {
+        let block = self.block_id(span)?;
+        self.blocks.insert(
+            block,
+            TaskBlock {
+                instructions: self.exit_instructions(span),
+                terminator: TaskTerminator {
+                    span: core_span(span),
+                    kind: TaskTerminatorKind::Raise { error },
+                },
+            },
+        );
+        Ok(block)
+    }
+    fn lookup(&self, name: &str, span: Span) -> Result<(SymbolId, ValueType), SourceDiagnostic> {
+        self.environment
+            .iter()
+            .rev()
+            .find_map(|scope| scope.get(name))
+            .cloned()
+            .ok_or_else(|| {
+                failure(
+                    span,
+                    SemanticPass::NameResolution,
+                    "value is not a live local or parameter in this task function",
+                )
+            })
+    }
+    fn lookup_place(
+        &self,
+        place: &ResolvedTaskPlace,
+    ) -> Result<(SymbolId, ValueType), SourceDiagnostic> {
+        let SourcePlace::Name(name) = &place.syntax.value else {
+            return Err(self.bad(
+                place.syntax.span,
+                "task execution supports direct local/parameter places only",
+            ));
+        };
+        let found = self.lookup(&name.value, name.span)?;
+        if found.0 != place.root_symbol {
+            return Err(self.bad(
+                name.span,
+                "task place identity disagrees with the lexical value binding",
+            ));
+        }
+        Ok(found)
+    }
+
+    fn scalar_operand(
+        &self,
+        tokens: &[Token],
+        span: Span,
+    ) -> Result<(ScalarOperand, Scalar), SourceDiagnostic> {
+        match tokens {
+            [
+                Token {
+                    kind: TokenKind::Integer(value),
+                    ..
+                },
+            ] => value
+                .parse::<i32>()
+                .map(|value| (ScalarOperand::I32(value), Scalar::I32))
+                .map_err(|_| self.bad(span, "integer literal is outside i32")),
+            [
+                Token {
+                    kind: TokenKind::Symbol(Symbol::Minus),
+                    ..
+                },
+                Token {
+                    kind: TokenKind::Integer(value),
+                    ..
+                },
+            ] => {
+                let magnitude = value
+                    .parse::<u64>()
+                    .ok()
+                    .filter(|n| *n <= 2147483648)
+                    .ok_or_else(|| self.bad(span, "negative integer literal is outside i32"))?;
+                Ok((
+                    ScalarOperand::I32((-(magnitude as i64)) as i32),
+                    Scalar::I32,
+                ))
+            }
+            [
+                Token {
+                    kind: TokenKind::Word(name),
+                    ..
+                },
+            ] => {
+                let (symbol, kind) = self.lookup(name, span)?;
+                let ValueType::Scalar(scalar) = kind else {
+                    return Err(self.bad(
+                        span,
+                        "a scalar expression cannot copy a handle, result, or scope",
+                    ));
+                };
+                Ok((ScalarOperand::Slot(symbol.0 as usize), scalar))
+            }
+            _ => Err(self.bad(
+                span,
+                "task scalar expressions require an i32 literal or immutable scalar binding",
+            )),
+        }
+    }
+
+    fn propagate(
+        &mut self,
+        span: Span,
+        result_slot: usize,
+        value_slot: usize,
+        value: Scalar,
+        errors: &BTreeSet<String>,
+    ) -> Result<ValueType, SourceDiagnostic> {
+        if !errors.is_subset(&self.signature.effects.errors) {
+            return Err(failure(
+                span,
+                SemanticPass::TypedErrors,
+                "propagated task errors are absent from the function's throws effects",
+            ));
+        }
+        let success = self.block_id(span)?;
+        let error_slot = self.temporary(span)?;
+        let error = self.error_block(span, ErrorOperand::Slot(error_slot))?;
+        self.finish(
+            span,
+            TaskTerminatorKind::TryOutcome {
+                result_slot,
+                value_slot,
+                error_slot,
+                success,
+                error,
+            },
+        );
+        self.current = success;
+        Ok(ValueType::Scalar(value))
+    }
+
+    fn task_expression(
+        &mut self,
+        statement: &TypedStatement,
+        rhs: &[Token],
+        slot: Option<usize>,
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        let span = statement.span;
+        if statement.task_expressions.len() != 1 {
+            return Err(self.bad(
+                span,
+                "task execution requires exactly one complete task expression",
+            ));
+        }
+        let task = &statement.task_expressions[0];
+        if rhs.first().map(|t| t.span.start) != Some(task.syntax.span.start)
+            || rhs.last().map(|t| t.span.end) != Some(task.syntax.span.end)
+        {
+            return Err(self.bad(span, "task expression must consume its complete statement or initializer; suffixes and surrounding operations are unsupported"));
+        }
+        match &task.kind {
+            ResolvedTaskExpressionKind::Spawn {
+                scope,
+                worker,
+                captures,
+            } => {
+                let Some(slot) = slot else {
+                    return Err(self.bad(span, "spawn requires a fresh handle binding"));
+                };
+                if !task.syntax.propagates_error {
+                    return Err(self.bad(
+                        span,
+                        "spawn requires immediate error discrimination with `?` in this profile",
+                    ));
+                }
+                if !self.signature.effects.spawn
+                    || !self.signature.effects.errors.contains("SpawnError")
+                {
+                    return Err(failure(
+                        span,
+                        SemanticPass::TypedErrors,
+                        "spawn requires spawn and throws<SpawnError> effects",
+                    ));
+                }
+                let scope_id = u64::from(scope.0);
+                if self.scopes.last() != Some(&scope_id) {
+                    return Err(self.bad(
+                        span,
+                        "this task profile requires spawning in the innermost active thread scope",
+                    ));
+                }
+                let signature = self
+                    .signatures
+                    .get(worker)
+                    .ok_or_else(|| self.bad(span, "unknown source worker"))?;
+                if captures.len() != signature.parameters.len() {
+                    return Err(self.bad(span, "worker capture arity mismatch"));
+                }
+                let mut arguments = Vec::new();
+                for capture in captures {
+                    if capture.mode != SourceCaptureMode::Copy {
+                        return Err(self.bad(capture.span, "move/read/write capture execution is not implemented in the copy-scalar profile"));
+                    }
+                    let (symbol, kind) = self.lookup_place(&capture.place)?;
+                    if kind != ValueType::Scalar(Scalar::I32) {
+                        return Err(failure(
+                            capture.span,
+                            SemanticPass::OrdinaryTypes,
+                            "copy captures require i32 values matching i32 worker parameters",
+                        ));
+                    }
+                    arguments.push(ScalarOperand::Slot(symbol.0 as usize));
+                }
+                let success = self.block_id(span)?;
+                let spawn_error = self.error_block(span, ErrorOperand::Tag("SpawnError".into()))?;
+                self.finish(
+                    span,
+                    TaskTerminatorKind::TrySpawn {
+                        scope: scope_id,
+                        worker: worker.0 as usize,
+                        arguments,
+                        handle_slot: slot,
+                        success,
+                        spawn_error,
+                    },
+                );
+                self.current = success;
+                Ok(Some(ValueType::Handle(*worker)))
+            }
+            ResolvedTaskExpressionKind::Join { handle } => {
+                if !self.signature.effects.join || !self.signature.effects.may_block {
+                    return Err(failure(
+                        span,
+                        SemanticPass::TypedErrors,
+                        "join requires join and may_block effects",
+                    ));
+                }
+                let (handle, kind) = self.lookup_place(handle)?;
+                let ValueType::Handle(worker) = kind else {
+                    return Err(failure(
+                        span,
+                        SemanticPass::OrdinaryTypes,
+                        "join requires a task handle, not a scalar or undiscriminated result",
+                    ));
+                };
+                let worker = &self.signatures[&worker];
+                let value = worker.result;
+                let errors = worker.effects.errors.clone();
+                if task.syntax.propagates_error {
+                    let result_slot = self.temporary(span)?;
+                    let value_slot = match slot {
+                        Some(slot) => slot,
+                        None => self.temporary(span)?,
+                    };
+                    self.instruction(
+                        span,
+                        TaskInstructionKind::Join {
+                            handle: handle.0 as usize,
+                            outcome_slot: Some(result_slot),
+                        },
+                    );
+                    let kind = self.propagate(span, result_slot, value_slot, value, &errors)?;
+                    if slot.is_none() && value != Scalar::Unit {
+                        return Err(self.bad(span, "discarded join result must be unit"));
+                    }
+                    Ok(slot.map(|_| kind))
+                } else {
+                    if slot.is_none() && (value != Scalar::Unit || !errors.is_empty()) {
+                        return Err(self.bad(span, "discarded join result must be infallible unit"));
+                    }
+                    self.instruction(
+                        span,
+                        TaskInstructionKind::Join {
+                            handle: handle.0 as usize,
+                            outcome_slot: slot,
+                        },
+                    );
+                    Ok(slot.map(|_| ValueType::Result { value, errors }))
+                }
+            }
+        }
+    }
+
+    fn block(
+        &mut self,
+        block: &SourceBlock,
+        typed: &[TypedStatement],
+    ) -> Result<bool, SourceDiagnostic> {
+        if block.statements.len() != typed.len() {
+            return Err(self.bad(block.span, "task block metadata mismatch"));
+        }
+        let mut terminated = false;
+        for (statement, typed) in block.statements.iter().zip(typed) {
+            if terminated {
+                return Err(self.bad(
+                    statement.span,
+                    "unreachable statements after return/raise are not admitted by task execution",
+                ));
+            }
+            if statement.span != typed.span {
+                return Err(self.bad(statement.span, "task statement metadata mismatch"));
+            }
+            let tokens = tokens_for(self.source, statement.span);
+            match &statement.value {
+                StatementKind::ThreadScope { name, body } => {
+                    if tokens.len() < 5
+                        || !word(tokens.first(), "thread")
+                        || !word(tokens.get(1), "scope")
+                        || name != super_name(tokens.get(2)).unwrap_or("")
+                        || !symbol(tokens.get(3), Symbol::LeftBrace)
+                        || tokens[3].span.start != body.span.start
+                        || matching(&tokens, 3, Symbol::LeftBrace, Symbol::RightBrace)
+                            != Some(tokens.len() - 1)
+                        || tokens.last().map(|token| token.span.end) != Some(body.span.end)
+                        || !typed.task_expressions.is_empty()
+                    {
+                        return Err(self.bad(
+                            statement.span,
+                            "thread scope header must be consumed exactly",
+                        ));
+                    }
+                    let scope = typed.body_binding.ok_or_else(|| {
+                        self.bad(statement.span, "missing typed thread-scope binder")
+                    })?;
+                    self.instruction(
+                        statement.span,
+                        TaskInstructionKind::EnterScope {
+                            scope: u64::from(scope.0),
+                        },
+                    );
+                    self.scopes.push(u64::from(scope.0));
+                    self.environment
+                        .push(BTreeMap::from([(name.clone(), (scope, ValueType::Scope))]));
+                    terminated = self.block(body, &typed.nested)?;
+                    self.environment.pop();
+                    self.scopes.pop();
+                    if !terminated {
+                        self.instruction(
+                            statement.span,
+                            TaskInstructionKind::ExitScope {
+                                scope: u64::from(scope.0),
+                            },
+                        );
+                    }
+                }
+                StatementKind::Let {
+                    binding: Some(binding),
+                } => {
+                    if !word(tokens.first(), "let")
+                        || name(tokens.get(1)) != Some(binding.as_str())
+                        || !symbol(tokens.last(), Symbol::Semicolon)
+                    {
+                        return Err(self.bad(
+                            statement.span,
+                            "only a single immutable name binding is supported",
+                        ));
+                    }
+                    let equal = tokens
+                        .iter()
+                        .position(|token| symbol(Some(token), Symbol::Equal))
+                        .ok_or_else(|| {
+                            self.bad(statement.span, "task locals require initialized values")
+                        })?;
+                    let annotation = match equal {
+                        2 => None,
+                        4 if symbol(tokens.get(2), Symbol::Colon) => {
+                            Some(scalar(&tokens[3..4]).ok_or_else(|| {
+                                self.bad(
+                                    statement.span,
+                                    "only i32/unit local annotations are supported",
+                                )
+                            })?)
+                        }
+                        _ => {
+                            return Err(self.bad(
+                                statement.span,
+                                "unsupported binding pattern/type/usage annotation",
+                            ));
+                        }
+                    };
+                    let rhs = &tokens[equal + 1..tokens.len() - 1];
+                    let id = typed
+                        .binding
+                        .ok_or_else(|| self.bad(statement.span, "missing typed local binder"))?;
+                    let kind = if !typed.task_expressions.is_empty() {
+                        self.task_expression(typed, rhs, Some(id.0 as usize))?
+                            .unwrap()
+                    } else if rhs.len() == 2 && symbol(rhs.get(1), Symbol::Question) {
+                        let source_name = name(rhs.first()).ok_or_else(|| {
+                            self.bad(
+                                statement.span,
+                                "result propagation requires an immutable result binding",
+                            )
+                        })?;
+                        let (result, kind) = self.lookup(source_name, statement.span)?;
+                        let ValueType::Result { value, errors } = kind else {
+                            return Err(
+                                self.bad(statement.span, "`?` requires a collected task result")
+                            );
+                        };
+                        self.propagate(
+                            statement.span,
+                            result.0 as usize,
+                            id.0 as usize,
+                            value,
+                            &errors,
+                        )?
+                    } else {
+                        let (value, scalar) = self.scalar_operand(rhs, statement.span)?;
+                        self.instruction(
+                            statement.span,
+                            TaskInstructionKind::BindScalar {
+                                slot: id.0 as usize,
+                                value,
+                            },
+                        );
+                        ValueType::Scalar(scalar)
+                    };
+                    if annotation.is_some_and(|annotation| kind != ValueType::Scalar(annotation)) {
+                        return Err(failure(
+                            statement.span,
+                            SemanticPass::OrdinaryTypes,
+                            "local result does not match its declared scalar type",
+                        ));
+                    }
+                    self.environment
+                        .last_mut()
+                        .unwrap()
+                        .insert(binding.clone(), (id, kind));
+                }
+                StatementKind::Expression => {
+                    if !symbol(tokens.last(), Symbol::Semicolon)
+                        || typed.task_expressions.is_empty()
+                    {
+                        return Err(self.bad(
+                            statement.span,
+                            "unsupported expression statement in task execution",
+                        ));
+                    }
+                    self.task_expression(typed, &tokens[..tokens.len() - 1], None)?;
+                }
+                StatementKind::Return => {
+                    if !symbol(tokens.last(), Symbol::Semicolon)
+                        || !word(tokens.first(), "return")
+                        || !typed.task_expressions.is_empty()
+                    {
+                        return Err(self.bad(statement.span, "unsupported task return expression"));
+                    }
+                    let (value, kind) = if tokens.len() == 2 {
+                        (ScalarOperand::Unit, Scalar::Unit)
+                    } else {
+                        self.scalar_operand(&tokens[1..tokens.len() - 1], statement.span)?
+                    };
+                    if kind != self.signature.result {
+                        return Err(failure(
+                            statement.span,
+                            SemanticPass::OrdinaryTypes,
+                            "return value does not match the declared task function result",
+                        ));
+                    }
+                    self.instructions
+                        .extend(self.exit_instructions(statement.span));
+                    self.finish(statement.span, TaskTerminatorKind::Return { value });
+                    terminated = true;
+                }
+                StatementKind::Raise => {
+                    if tokens.len() != 5
+                        || !word(tokens.first(), "raise")
+                        || !symbol(tokens.get(2), Symbol::ColonColon)
+                        || !symbol(tokens.get(4), Symbol::Semicolon)
+                    {
+                        return Err(self.bad(
+                            statement.span,
+                            "task raise requires one payload-free Error::Variant",
+                        ));
+                    }
+                    let error_type = name(tokens.get(1))
+                        .ok_or_else(|| self.bad(statement.span, "invalid error type"))?;
+                    let variant = name(tokens.get(3))
+                        .ok_or_else(|| self.bad(statement.span, "invalid error variant"))?;
+                    let tag = format!("{error_type}::{variant}");
+                    if !self
+                        .errors
+                        .get(error_type)
+                        .is_some_and(|errors| errors.contains(&tag))
+                        || !self.signature.effects.errors.contains(&tag)
+                    {
+                        return Err(failure(
+                            statement.span,
+                            SemanticPass::TypedErrors,
+                            "raised variant must be declared and covered by throws effects",
+                        ));
+                    }
+                    self.instructions
+                        .extend(self.exit_instructions(statement.span));
+                    self.finish(
+                        statement.span,
+                        TaskTerminatorKind::Raise {
+                            error: ErrorOperand::Tag(tag),
+                        },
+                    );
+                    terminated = true;
+                }
+                _ => {
+                    return Err(self.bad(
+                        statement.span,
+                        "statement is outside the copy-scalar task execution profile",
+                    ));
+                }
+            }
+        }
+        Ok(terminated)
+    }
+}
+
+// Avoid a pattern binding named `name` obscuring the token helper in scope arms.
+fn super_name(token: Option<&Token>) -> Option<&str> {
+    name(token)
+}

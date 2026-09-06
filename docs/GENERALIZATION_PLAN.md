@@ -562,10 +562,11 @@ at every schema-surface addition requested by a provider.
 [Source task foundations](reports/w6-source-task-foundations/README.md) now
 retain structured spawn/join syntax and exact binder identities, and add a
 checked owned-resource reservation/completion/join ledger with Lean transfer
-proofs. Source lowering remains rejected. The next dependencies are typed
-entry/worker task-result IR and dynamic native create/join C emission; loans,
-usage/SSA rollback and typed returned ownership need further composition.
-No CT mapping is added by these model and frontend changes.
+proofs. [Native source tasks](reports/w6-native-source-tasks/README.md) now
+compose typed task/result IR and real Linux C11 create/join for scalar copies,
+with explicit checked failure paths. CT15 is newly mapped and CT19 upgraded
+to actual source; 6/50 mapped, 44 unmapped. Loans, move captures, usage/SSA
+rollback, typed owned results, sibling recovery and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to
 the spec's own generic conformance corpus, so "generic" is measured, not

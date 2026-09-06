@@ -218,8 +218,9 @@ W6 CT conformance harness is stood up
 executes the manifest-mapped spec §55 cases through the real source pipeline;
 CT02/CT12/CT16 are mapped as sequential-core fixtures. Batch 2
 ([record](docs/reports/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
-records the full triage of all 47 then-unmapped cases, so 45 of 50 cases
-remain unmapped, counted by a pinned test. W4 is
+records the full triage of all 47 then-unmapped cases. The later
+[native task increment](docs/reports/w6-native-source-tasks/README.md) maps CT15
+and upgrades CT19 to actual task source; 44 of 50 remain unmapped. W4 is
 executed for parameter/return custody with validation
 ([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
 infers each internal function's parameter and return custody summary bottom-up
@@ -330,9 +331,10 @@ work. This does not complete W2.
 Frontend gates repaired (2026-09-07,
 `docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
 reject centrally with Q021 until enforced. Guard/thread-scope header names bind
-only inside their bodies; nested concurrency lowering still rejects with Q500.
+only inside their bodies; at that checkpoint nested concurrency lowering rejected with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
-concurrency semantics are implemented. CT mapping remains 5/50.
+concurrency semantics were implemented by that increment. CT mapping was then 5/50;
+the native source-task increment below advances it.
 
 W2 H6 provider metadata discovery is implemented (2026-09-07;
 `docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
@@ -496,8 +498,8 @@ ordered captures, resolved scope/worker/place symbols and initializer-before-bin
 identity. The core scoped-task ledger checks reservation rollback, completion
 capsules, creator-only join and scope exits; matching Lean transfer theorems and
 adversarial scenarios pass. These components are not yet composed into source
-execution: the driver still rejects task scopes with Q500, and CT coverage stays
-5/50. Typed task/result IR and native C lowering are next. Evidence:
+execution at that checkpoint: task scopes still rejected and CT coverage was
+5/50. The native source-task increment below now composes the copy-only path. Evidence:
 `docs/reports/w6-source-task-foundations/README.md`.
 
 Schema compatibility (2026-09-07): `qcore-schemas` is now 1.0.0 and all Rust
@@ -506,3 +508,15 @@ a public summary field, requiring the documented breaking-change policy.
 Protocol v1, evidence v2, program schema/profile v2 and ChunkIO package 0.3.0
 retain their separate versions. Evidence:
 `docs/reports/schema-1-compatibility/README.md`.
+
+Native source tasks (2026-09-07): `compile_files` and normal `qcorec check`/`emit`
+now execute the scoped-copy profile on Linux C11 threads. A typed finite task
+IR checks all definitions, creation outcomes, declared worker outcomes, exact
+scalar/handle/result identities and permitted effects. Native start records
+survive until creator join; unexpected join failure aborts before reclamation.
+`CompiledModule.checked` explicitly separates sequential and task evidence.
+CT15 now maps actual native join failure with a successful join/free control;
+CT19 uses a real second-spawn failure rejection and joined-sibling control.
+Coverage is 6/50 mapped, 44 unmapped. Moves/loans, owned results, shared memory,
+mutexes, nested workers, sibling recovery and other platforms remain open.
+Evidence: `docs/reports/w6-native-source-tasks/README.md`.

@@ -1,0 +1,22 @@
+{
+  "id": "CT15",
+  "verdict": "native_join_failure",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "native_join_failure": {
+    "header": "join_failure.h",
+    "control_i32": 42,
+    "abort_exit_code": 77
+  },
+  "notes": "Linux C11-threads evidence only. Real source checks and emits a copied-i32 worker. Successful reference/native control returns 42 and records successful native join followed by environment free. Injected native join failure leaves its result output uninitialized, never establishes native quiescence, and must abort before completion publication or environment reclamation. The observed abort exits 77; an attempted free exits 91. Native failure is intentionally outside returning reference semantics. No source resources, loans, permission restoration, general runtime refinement or non-Linux native conformance are claimed. Other hosts explicitly verify the unsupported-target diagnostic and report native/reference execution unexecuted there."
+}

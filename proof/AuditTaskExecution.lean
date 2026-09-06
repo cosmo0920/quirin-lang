@@ -1,0 +1,29 @@
+import QCore.TaskExecution
+
+#print axioms QCore.TaskExecution.checked_copy_preserves_ordered_values
+#print axioms QCore.TaskExecution.checked_copy_has_exact_parameter_types
+#print axioms QCore.TaskExecution.checked_copy_preserves_arity
+#print axioms QCore.TaskExecution.i32_representation_is_bounded
+#print axioms QCore.TaskExecution.failed_create_changes_no_handles
+#print axioms QCore.TaskExecution.failed_create_produces_no_handle
+#print axioms QCore.TaskExecution.successful_create_commits_fresh_handle
+#print axioms QCore.TaskExecution.completion_retains_exact_outcome
+#print axioms QCore.TaskExecution.completed_result_cannot_be_overwritten
+#print axioms QCore.TaskExecution.unrelated_handle_write_preserves_completion
+#print axioms QCore.TaskExecution.explicit_creator_join_collects_exact_outcome
+#print axioms QCore.TaskExecution.noncreator_cannot_collect_completion
+#print axioms QCore.TaskExecution.checked_join_consumes_handle_once
+#print axioms QCore.TaskExecution.checked_join_preserves_result_type
+#print axioms QCore.TaskExecution.checked_propagation_cannot_strand_outstanding_handles
+#print axioms QCore.TaskExecution.completed_unjoined_child_prevents_propagation
+#print axioms QCore.TaskExecution.normal_and_error_outcomes_are_distinct
+#print axioms QCore.TaskExecution.worker_error_tag_is_preserved
+#print axioms QCore.TaskExecution.outcome_discrimination_preserves_normal_value
+#print axioms QCore.TaskExecution.outcome_discrimination_preserves_exact_error
+#print axioms QCore.TaskExecution.consumed_result_cannot_be_discriminated_again
+#print axioms QCore.TaskExecution.create_preserves_other_handle
+#print axioms QCore.TaskExecution.complete_preserves_other_handle
+#print axioms QCore.TaskExecution.join_preserves_other_handle
+#print axioms QCore.TaskExecution.uncollected_step_retains_handle
+#print axioms QCore.TaskExecution.completion_survives_until_explicit_collection
+#print axioms QCore.TaskExecution.completed_handle_cannot_be_recreated

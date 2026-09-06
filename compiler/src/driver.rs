@@ -1,8 +1,7 @@
-//! Cycle 12 source-file compiler orchestration.
-//!
-//! This is intentionally a conservative vertical slice.  It accepts the flat,
-//! executable source forms for which the existing cleanup CFG has exact
-//! semantics and rejects every other body form before C emission.
+//! Source-file orchestration for the sequential cleanup and scoped-copy task
+//! profiles. Each path produces its own checked evidence and rejects unsupported
+//! forms before C emission. Task source is never represented by an erased
+//! sequential CFG.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -83,11 +82,52 @@ pub enum CustodyPayloadProfile {
     /// The ownership/cleanup model checks that ledger, but the scalar result
     /// annotation does not type its identities as `own<T>` payloads.
     SeparateIdentityLedger,
+    /// The scoped copy profile rejects every resource-bearing source form.
+    NoResourcePayloads,
+}
+
+/// Checked evidence is explicit about the executed semantic profile. Task
+/// modules never carry a sequential CFG with their task operations erased.
+#[derive(Clone, Debug)]
+pub enum CheckedSourceModule {
+    Sequential(Box<CheckedProgram>),
+    ScopedTasks(Box<qcore_core::task_execution::CheckedTaskModule>),
+}
+
+impl CheckedSourceModule {
+    pub fn as_sequential(&self) -> Option<&CheckedProgram> {
+        match self {
+            Self::Sequential(program) => Some(program),
+            Self::ScopedTasks(_) => None,
+        }
+    }
+
+    pub fn as_scoped_tasks(&self) -> Option<&qcore_core::task_execution::CheckedTaskModule> {
+        match self {
+            Self::Sequential(_) => None,
+            Self::ScopedTasks(program) => Some(program),
+        }
+    }
+
+    pub fn function_count(&self) -> usize {
+        match self {
+            Self::Sequential(program) => program.functions.len(),
+            Self::ScopedTasks(program) => program.module().functions.len(),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SourceExecutionProfile {
+    SequentialCleanupV1,
+    ScopedCopyTasksV1,
 }
 
 #[derive(Clone, Debug)]
 pub struct CompiledModule {
-    pub checked: CheckedProgram,
+    pub checked: CheckedSourceModule,
+    pub execution_profile: SourceExecutionProfile,
+    pub declaration_count: usize,
     pub mode: SourceModuleMode,
     pub result_profile: SourceResultProfile,
     pub entry: Option<String>,
@@ -258,6 +298,9 @@ pub fn compile_files_with_registry(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
+        return compile_task_source(&parsed, &typed, mode, options, &ranges);
+    }
     let error_names = parsed
         .declarations
         .iter()
@@ -308,7 +351,9 @@ pub fn compile_files_with_registry(
     };
     if mode != SourceModuleMode::Executable {
         return Ok(CompiledModule {
-            checked,
+            checked: CheckedSourceModule::Sequential(Box::new(checked)),
+            execution_profile: SourceExecutionProfile::SequentialCleanupV1,
+            declaration_count: typed.declarations.len(),
             mode,
             result_profile,
             entry: None,
@@ -352,7 +397,9 @@ pub fn compile_files_with_registry(
     let source_location = locate(function.source.span.start, &ranges);
     let (c_source, source_map) = add_source_mapping(raw_c, &entry, source_location);
     Ok(CompiledModule {
-        checked,
+        checked: CheckedSourceModule::Sequential(Box::new(checked)),
+        execution_profile: SourceExecutionProfile::SequentialCleanupV1,
+        declaration_count: typed.declarations.len(),
         mode,
         result_profile,
         entry: Some(entry),
@@ -1056,6 +1103,94 @@ fn select_entry(
                 },
             )
         })
+}
+
+fn compile_task_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free scoped task modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let task_module = qcore_frontend::source_tasks::lower_source_tasks(parsed, typed, &entry)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let checked =
+        qcore_core::task_execution::check_task_module(&task_module).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    map_raw_diagnostic(
+                        "Q600",
+                        SemanticPass::Concurrency,
+                        Span {
+                            start: error.span.start,
+                            end: error.span.end,
+                        },
+                        error.message,
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    if !cfg!(target_os = "linux") {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "native scoped-copy task emission currently requires a Linux C11 threads target",
+        )]);
+    }
+    let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
+    let result_profile = SourceResultProfile {
+        scalar_results: typed
+            .declarations
+            .iter()
+            .filter(|declaration| declaration.kind == DeclarationKind::Function)
+            .map(|declaration| {
+                (
+                    declaration.name.clone(),
+                    declaration
+                        .result_type
+                        .as_ref()
+                        .and_then(|annotation| annotation.executable_type())
+                        .expect("task lowerer validated scalar result"),
+                )
+            })
+            .collect(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    let source_map = emission
+        .source_map
+        .into_iter()
+        .map(|mapping| EmittedSourceMap {
+            generated_start_line: mapping.generated_start_line,
+            generated_end_line: mapping.generated_end_line,
+            source: locate(mapping.span.start, ranges),
+        })
+        .collect();
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
+        execution_profile: SourceExecutionProfile::ScopedCopyTasksV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map,
+        // Creation is dynamic. A single chosen reference execution is not the
+        // evidence that all creation and completion alternatives are checked.
+        reference_observation: None,
+    })
 }
 
 fn add_source_mapping(

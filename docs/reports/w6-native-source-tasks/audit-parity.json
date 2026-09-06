@@ -1,0 +1,44 @@
+{
+  "baseline_report": "docs/reports/schema-1-compatibility",
+  "audited_base_head": "9262b295e6d183c36e2e4c9749d59c1f437a082e",
+  "audited_source_state": "working tree including uncommitted source-task changes",
+  "audit_exit_code": 0,
+  "command": "QCORE_CHUNKIO_PACKAGE=build/cycle19/provider-packages/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-source-tasks-source.json /tmp/qcore-source-tasks-diagnostics.json",
+  "unit_count": 185,
+  "safe": 2,
+  "provisional_unsafe": 47,
+  "unknown": 132,
+  "data_only": 4,
+  "raw_units_promoted": 0,
+  "source_effect_status_counts": {
+    "checked_function_contract": 3,
+    "unknown": 93
+  },
+  "package_rebuilt_for_this_audit": false,
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "new_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "uncompressed_bytes": 1663331
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "baseline_sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac",
+      "new_sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac",
+      "uncompressed_bytes": 11019532
+    },
+    "chunk-contracts": {
+      "byte_identical": true,
+      "baseline_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "new_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "uncompressed_bytes": 4139889
+    },
+    "source-effects": {
+      "byte_identical": true,
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "new_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "uncompressed_bytes": 113871
+    }
+  }
+}

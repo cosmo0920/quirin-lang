@@ -100,3 +100,12 @@ Structured task resolution and the owned-resource ledger are checked separately;
 the source driver still rejects task execution and CT coverage remains 5/50.
 The companion [schema 1.0 migration](reports/schema-1-compatibility/README.md)
 records standalone consumer compatibility and rebuilt provider identity parity.
+
+[Native scoped-copy source tasks](reports/w6-native-source-tasks/README.md) pass
+663 workspace tests, nine provider tests, 43 Python tests, formatting, Clippy,
+both reevaluation probes, Lean build and 20 axiom audits. Real source/CLI C11
+worker execution, creation failures and join-failure abort are covered on Linux.
+One native copy fixture passes ASan/UBSan/LSan outside the tracing sandbox.
+CT15 is newly mapped with target-specific stages; CT19 now uses actual sibling
+failure source. Coverage is 6/50 mapped, 44 unmapped. All four full 185-unit
+audit outputs are byte-identical; raw verdicts remain unchanged.

@@ -1536,6 +1536,8 @@ pub struct TypedStatement {
     /// Identity introduced by this statement, after its initializer resolves.
     /// Assignments retain the existing identity and introduce no new binding.
     pub binding: Option<SymbolId>,
+    /// Body-local scope/guard identity, including an empty body.
+    pub body_binding: Option<SymbolId>,
     /// Role-specific name resolution; no task lifetime or capture authority claim.
     pub task_expressions: Vec<ResolvedTaskExpression>,
     pub span: Span,
@@ -1764,18 +1766,16 @@ fn elaborate_block(
     context: &mut tasks::ResolutionContext<'_>,
     next_symbol: &mut u32,
     diagnostics: &mut Vec<SourceDiagnostic>,
-    body_binding: Option<(&str, bool)>,
+    body_binding: Option<(&str, bool, SymbolId)>,
 ) -> Vec<TypedStatement> {
     let mut scope = BTreeMap::new();
     let mut introduced_scope = None;
-    if let Some((name, thread_scope)) = body_binding {
-        let symbol = SymbolId(*next_symbol);
+    if let Some((name, thread_scope, symbol)) = body_binding {
         if thread_scope {
             context.live_scopes.insert(symbol);
             introduced_scope = Some(symbol);
         }
         scope.insert(name.to_owned(), symbol);
-        *next_symbol += 1;
     }
     scopes.push(scope);
     let mut typed = Vec::new();
@@ -1823,6 +1823,16 @@ fn elaborate_block(
                 *next_symbol += 1;
             }
         }
+        let body_binding = match &statement.value {
+            StatementKind::WithLock { guard, .. } => Some((guard.as_str(), false)),
+            StatementKind::ThreadScope { name, .. } => Some((name.as_str(), true)),
+            _ => None,
+        }
+        .map(|(name, thread_scope)| {
+            let symbol = SymbolId(*next_symbol);
+            *next_symbol += 1;
+            (name, thread_scope, symbol)
+        });
         let mut nested = Vec::new();
         for child in statement.value.nested_blocks() {
             nested.extend(elaborate_block(
@@ -1832,15 +1842,12 @@ fn elaborate_block(
                 context,
                 next_symbol,
                 diagnostics,
-                match &statement.value {
-                    StatementKind::WithLock { guard, .. } => Some((guard, false)),
-                    StatementKind::ThreadScope { name, .. } => Some((name, true)),
-                    _ => None,
-                },
+                body_binding,
             ));
         }
         typed.push(TypedStatement {
             binding: binding_symbol,
+            body_binding: body_binding.map(|(_, _, symbol)| symbol),
             task_expressions,
             span: statement.span,
             pass,

@@ -1,0 +1,22 @@
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-frontend)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running tests/source_tasks.rs (target/debug/deps/source_tasks-99c293f81211f6a8)
+
+running 1 test
+test thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block ... FAILED
+
+failures:
+
+---- thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block stdout ----
+
+thread 'thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block' (117) panicked at crates/qcore-frontend/tests/source_tasks.rs:209:5:
+an earlier scope body was erased
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-frontend --test source_tasks`

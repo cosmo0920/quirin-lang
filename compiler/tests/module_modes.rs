@@ -25,9 +25,18 @@ fn declaration_only_modules_have_no_synthetic_entry_or_execution() {
         assert!(module.entry.is_none());
         assert!(module.c_source.is_none());
         assert!(module.reference_observation.is_none());
-        assert_eq!(module.checked.source.declarations.len(), 1);
         assert_eq!(
-            module.checked.source.declarations[0]
+            module
+                .checked
+                .as_sequential()
+                .unwrap()
+                .source
+                .declarations
+                .len(),
+            1
+        );
+        assert_eq!(
+            module.checked.as_sequential().unwrap().source.declarations[0]
                 .function_contract
                 .as_ref()
                 .unwrap()
@@ -53,7 +62,7 @@ fn mode_is_explicit_and_entry_cannot_silently_override_it() {
         let file = SourceFile::new("lib.qcore", source);
         let module =
             compile_files(std::slice::from_ref(&file), &CompileOptions::default()).unwrap();
-        assert_eq!(module.checked.functions.len(), 1);
+        assert_eq!(module.checked.function_count(), 1);
         assert!(module.entry.is_none());
         let errors = compile_files(
             &[file],

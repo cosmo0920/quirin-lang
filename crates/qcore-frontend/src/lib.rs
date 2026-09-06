@@ -10,6 +10,7 @@ pub mod frontend;
 pub mod lexer;
 pub mod parser;
 pub mod quant_index;
+pub mod source_tasks;
 
 pub use parser::parse_program;
 

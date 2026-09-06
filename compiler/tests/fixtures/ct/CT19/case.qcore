@@ -1,17 +1,12 @@
-// CT19 (spec §55; rule in §43.7): a parent error exit that would bypass a live
-// sibling obligation must be rejected "even if the usual sequential cleanup
-// pack would otherwise be valid".
-// Sequential obligation core: the sibling's obligation is modeled as an
-// ownership transfer out of the parent frame, so it is no longer a member of
-// the frame's cleanup pack while still being outstanding. The subsequent
-// failing checked operation is the parent's error exit. The pack itself is
-// empty and would be valid; the exit is refused because the outstanding
-// transferred obligation cannot be accounted for on the error edge.
-module executable;
-error ScopeError { Failed; }
-fn parent() -> i32 {
-    let sibling = qcore_acquire(4, true, ScopeError);
-    move sibling;
-    qcore_check(false, ScopeError);
-    return 0;
+concurrency checked;
+fn worker(x: i32) -> i32 { return x; }
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let value = 42;
+    thread scope tasks {
+        let first = spawn tasks worker(copy value)?;
+        let second = spawn tasks worker(copy value)?;
+        let second_result = join move second?;
+        let first_result = join move first?;
+        return first_result;
+    }
 }

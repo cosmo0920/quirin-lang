@@ -1,0 +1,21 @@
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-audit)
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.28s
+     Running tests/source_tasks.rs (target/debug/deps/source_tasks-7e0dcaa15b22b30e)
+
+running 7 tests
+test resolved_spawn_and_join_require_the_checked_source_profile ... ok
+test dynamic_creation_failure_cannot_strand_a_previous_sibling ... ok
+test unexpected_native_join_failure_aborts_before_environment_reclamation ... ok
+test empty_scopes_and_uncalled_workers_emit_complete_warning_clean_c ... ok
+test allocation_and_native_creation_failure_follow_the_checked_error_edge ... ok
+test worker_errors_and_sequential_copy_results_preserve_exact_outcomes ... ok
+test actual_native_copy_worker_matches_reference_and_retains_scalar_extrema ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
