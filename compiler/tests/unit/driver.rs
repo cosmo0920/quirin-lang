@@ -251,3 +251,42 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
         fs::remove_dir_all(directory).unwrap();
     }
 }
+
+#[test]
+fn refuses_unchecked_source_contracts_in_every_input_file() {
+    let errors = compile_files(
+        &[
+            SourceFile::new(
+                "bound.qcore",
+                "fn leaf() -> i32 contract { quant normal wall_clock <= 5; } { return 0; }",
+            ),
+            SourceFile::new("main.qcore", "fn main() -> i32 { return 0; }"),
+        ],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert!(errors.iter().any(|error| error.code == "Q021"
+        && error.location.path == "bound.qcore"
+        && error.message.contains("refusing unchecked contract")));
+    compile("fn main() -> i32 contract {} { return 0; }");
+}
+
+#[test]
+fn resolved_scope_and_guard_still_require_concurrency_lowering() {
+    for body in ["thread scope s { }", "let m = 0; with lock m as g { }"] {
+        let source = format!("fn main() -> i32 {{ {body} return 0; }}");
+        let errors = compile_files(
+            &[SourceFile::new("main.qcore", source)],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        assert!(
+            errors.iter().any(|error| error.code == "Q500"),
+            "{errors:?}"
+        );
+        assert!(
+            !errors.iter().any(|error| error.code == "Q013"),
+            "{errors:?}"
+        );
+    }
+}

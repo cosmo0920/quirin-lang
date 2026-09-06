@@ -166,14 +166,19 @@ length-delimited JSON protocol, manifests, a fail-closed registry, bounded
 process providers, and a certificate firewall. Protocol v1 carries only
 Boolean assertions, so the core currently refuses all v1 `Safe` proposals
 and treats unchecked `Unsafe` proposals as `Unknown`; source-level
-`verify scope` declarations are configuration-validated but not yet
-dispatched.
+`verify scope` declarations now derive obligations and dispatch providers.
+The [bounded evidence-v2 increment](docs/reports/w3-evidence-v2/README.md)
+replays observation predicates against pinned contracts and records agreement
+for supplied runs under an explicit observation-trust assumption. A standalone
+provider builds against `qcore-schemas` alone. Source lifecycle effects remain
+unimported, empty inventories remain unverified, and first-party providers
+remain unpromoted; host relocation and production profile import are still open.
 
 **Trust and audits.** An independent
 [reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six
 certificate/weak-memory discrepancies, followed by a
 [seven-finding follow-up](docs/REEVALUATION_FOLLOWUP.md); all thirteen are
-repaired, with the remaining boundaries (semantic plugin witnesses, OS-level
+repaired, with the remaining boundaries (production semantic-witness imports, OS-level
 provider sandboxing, and the custody modes W4 still does not infer) documented
 rather than papered over.
 
@@ -217,6 +222,9 @@ re-derives every summary independently. The [bounded W4 extension](docs/reports/
 adds direct out-parameters, stores of formal resources into formal owners,
 reallocation wrappers and possibly-null owned returns. Recursive functions,
 aggregate removal and unsupported out-slot aliases keep their callers `Unknown`.
+The [gateway relocation](docs/reports/w4-gateway-crate/README.md) extracts this
+analysis, Clang discovery and typed-AST transport into `qcore-c-gateway`, retaining
+the compiler API and exact 185-unit diagnostic/verdict/projection parity.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),
@@ -317,3 +325,10 @@ are removed after field-for-field parity; registry metadata is loaded atomically
 from profile packages with stable plugin-id ordering and no compiled fallback.
 All shipped providers remain v1 built-ins returning Unknown; process extraction
 is still W5 work. Full 185-TU diagnostic/source parity is unchanged.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.

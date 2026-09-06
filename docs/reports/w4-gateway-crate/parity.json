@@ -1,0 +1,24 @@
+{
+  "baseline": "W4 extension 5450fe5",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "baseline_sha256": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+  "relocated_sha256": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+  "complete_resource_reports_byte_identical": true,
+  "unit_count": 185,
+  "statuses": {
+    "Unknown": 80,
+    "Unsafe": 98,
+    "data_only": 4,
+    "Safe": 3
+  },
+  "diagnostic_counts": {
+    "double_release": 35,
+    "leak": 1001,
+    "unknown_alias": 8679,
+    "unsupported": 42188
+  },
+  "changed_units": [],
+  "changed_functions": [],
+  "changed_diagnostics": [],
+  "changed_projections": []
+}

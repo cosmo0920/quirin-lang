@@ -1,11 +1,17 @@
 //! Shared Clang typed-AST transport after the unrestricted-C gateway.
+//!
+//! Input is expected to have passed [`crate::legacy_c::validate_unrestricted_c11`].
+//! These helpers expose raw JSON for source-profile interpreters, not trusted
+//! semantic evidence. Exact shape matching and fail-closed handling of absent
+//! fields remain the caller's obligation.
 
 use crate::legacy_c::C11TranslationUnit;
 use serde_json::Value;
 use std::io::Write;
 use std::process::Stdio;
 
-pub(crate) fn ast_declarations(
+/// Parse Clang declarations selected by its substring name filter.
+pub fn ast_declarations(
     source: &str,
     unit: &C11TranslationUnit<'_>,
     function: &str,
@@ -53,7 +59,8 @@ pub(crate) fn ast_declarations(
         .collect()
 }
 
-pub(crate) fn function_ast(
+/// Require exactly one body-bearing definition with the exact requested name.
+pub fn function_ast(
     source: &str,
     unit: &C11TranslationUnit<'_>,
     function: &str,
@@ -78,10 +85,12 @@ pub(crate) fn function_ast(
     Ok(definitions.remove(0))
 }
 
-pub(crate) fn kind(node: &Value) -> &str {
+/// Read a raw node kind; absent or malformed kinds yield the empty string.
+pub fn kind(node: &Value) -> &str {
     node["kind"].as_str().unwrap_or("")
 }
 
-pub(crate) fn children(node: &Value) -> &[Value] {
+/// Read raw child nodes; absent or malformed arrays yield an empty slice.
+pub fn children(node: &Value) -> &[Value] {
     node["inner"].as_array().map_or(&[], Vec::as_slice)
 }

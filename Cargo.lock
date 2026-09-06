@@ -46,11 +46,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "qcore-c-gateway"
+version = "0.1.0"
+dependencies = [
+ "qcore-contract",
+ "qcore-schemas",
+ "serde_json",
+]
+
+[[package]]
 name = "qcore-compiler"
 version = "0.1.0"
 dependencies = [
  "cc",
  "libc",
+ "qcore-c-gateway",
  "qcore-contract",
  "qcore-core",
  "qcore-frontend",
@@ -86,6 +96,7 @@ name = "qcore-schemas"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
 ]
 
 [[package]]

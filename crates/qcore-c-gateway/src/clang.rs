@@ -6,7 +6,7 @@ use std::process::Command;
 
 const INSTALL_HELP: &str = "Existing-C analysis requires Clang (MSVC cl.exe cannot provide the required AST). Install LLVM or Visual Studio's optional 'C++ Clang tools for Windows', then set QCORE_CLANG to the full compiler executable path if discovery fails. QCORE_CLANG is a path, not a command with arguments. QCore check/emit do not require Clang.";
 
-pub(crate) fn command() -> Result<Command, String> {
+pub fn command() -> Result<Command, String> {
     let path = resolve(std::env::var_os("QCORE_CLANG"), discovery_candidates, probe)?;
     let mut command = Command::new(path);
     // Visual Studio may supply clang-cl.exe. Use the GNU-style driver arguments

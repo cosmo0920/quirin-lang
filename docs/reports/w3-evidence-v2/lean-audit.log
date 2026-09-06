@@ -1,0 +1,12 @@
+'QCore.VerifierPlugin.checked_safe_has_valid_evidence' depends on axioms: [propext, Quot.sound]
+'QCore.VerifierPlugin.safe_without_evidence_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.invalid_envelope_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.invalid_evidence_is_unknown' depends on axioms: [propext]
+'QCore.VerifierPlugin.missing_plugin_composition_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.unknown_plugin_prevents_safe' depends on axioms: [propext]
+'QCore.VerifierPlugin.rejected_proposal_is_unknown' does not depend on any axioms
+'QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory' does not depend on any axioms
+'QCore.VerifierEvidenceV2.accepted_hook_has_recomputed_observation' depends on axioms: [propext, Quot.sound]
+'QCore.VerifierEvidenceV2.incomplete_inventory_rejects' depends on axioms: [propext, Quot.sound]
+'QCore.VerifierEvidenceV2.empty_inventory_rejects' depends on axioms: [propext, Quot.sound]
+'QCore.VerifierEvidenceV2.false_precondition_never_counts' depends on axioms: [propext]

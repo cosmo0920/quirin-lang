@@ -1,0 +1,42 @@
+[
+  {
+    "command": "git -c protocol.file.allow=always submodule update --init --recursive",
+    "exit_code": 0,
+    "note": "Existing pinned submodule; metadata refresh required sandbox escalation."
+  },
+  {
+    "command": "cargo test --workspace",
+    "exit_code": 0,
+    "log": "workspace-tests.log"
+  },
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0,
+    "log": "format.log"
+  },
+  {
+    "command": "cargo clippy --all-targets -- -D warnings",
+    "exit_code": 0,
+    "log": "clippy.log"
+  },
+  {
+    "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+    "exit_code": 0,
+    "log": "reevaluation-probe.log"
+  },
+  {
+    "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+    "exit_code": 0,
+    "log": "reevaluation-followup.log"
+  },
+  {
+    "command": "cd proof && lake build",
+    "exit_code": 0,
+    "log": "lean-build.log"
+  },
+  {
+    "command": "cd proof && lake env lean AuditCycle20.lean",
+    "exit_code": 0,
+    "log": "lean-audit.log"
+  }
+]

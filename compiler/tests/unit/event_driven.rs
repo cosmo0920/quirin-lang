@@ -146,7 +146,7 @@ fn nonblocking_delete_requires_callback_exit_and_finalization() {
     bad.operations.remove(8); // remove callback exit; subsequent teardown must fail
     assert!(has(
         &check_event_program(&bad, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q706NotQuiescent { .. })
+        |error| matches!(error, EventDiagnostic::L06NotQuiescent { .. })
     ));
 
     let mut good = one_shot(1, event, 9);
@@ -178,7 +178,7 @@ fn stale_generation_and_argument_use_after_free_are_rejected() {
         &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
-            EventDiagnostic::Q700InvalidLifecycle { .. } | EventDiagnostic::Q701UseAfterFree { .. }
+            EventDiagnostic::L00InvalidLifecycle { .. } | EventDiagnostic::L01UseAfterFree { .. }
         )
     ));
 }
@@ -223,7 +223,7 @@ fn same_base_cannot_enter_two_callbacks_concurrently() {
         .insert(12, EventOperation::FreeEvent { event: second });
     assert!(has(
         &check_event_program(&program, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q706NotQuiescent { .. })
+        |error| matches!(error, EventDiagnostic::L06NotQuiescent { .. })
     ));
 }
 
@@ -277,7 +277,7 @@ fn cross_base_conflict_needs_explicit_synchronization() {
     }
     assert!(has(
         &check_event_program(&program, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q705ConflictingAccess { .. })
+        |error| matches!(error, EventDiagnostic::L05ConflictingAccess { .. })
     ));
     if let EventOperation::Access { synchronized, .. } = &mut program.operations[17] {
         *synchronized = true;
@@ -298,8 +298,8 @@ fn cross_thread_activation_requires_supported_thread_setup() {
         &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
-            EventDiagnostic::Q709UnknownProfile { .. }
-                | EventDiagnostic::Q704ThreadInitialization { .. }
+            EventDiagnostic::L09UnknownProfile { .. }
+                | EventDiagnostic::L04ThreadInitialization { .. }
         )
     ));
 }
@@ -381,7 +381,7 @@ fn unlock_callbacks_without_deferral_and_pending_output_fail() {
     };
     assert!(has(
         &check_event_program(&program, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q710BuffereventContract { .. })
+        |error| matches!(error, EventDiagnostic::L10BuffereventContract { .. })
     ));
     if let EventOperation::CreateBufferevent { deferred, .. } = &mut program.operations[1] {
         *deferred = true;
@@ -391,7 +391,7 @@ fn unlock_callbacks_without_deferral_and_pending_output_fail() {
         .insert(2, EventOperation::BufferOutput { bev, bytes: 1 });
     assert!(has(
         &check_event_program(&program, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q707OwnedObligation { .. })
+        |error| matches!(error, EventDiagnostic::L07OwnedObligation { .. })
     ));
 }
 
@@ -420,7 +420,7 @@ fn unsupported_symbols_and_profiles_fail_closed() {
     }
     assert!(has(
         &check_event_program(&program, builds()).unwrap_err(),
-        |error| matches!(error, EventDiagnostic::Q709UnknownProfile { .. })
+        |error| matches!(error, EventDiagnostic::L09UnknownProfile { .. })
     ));
 }
 
@@ -486,7 +486,7 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
     };
     let diagnostics = check_event_program(&failed_close, builds()).unwrap_err();
     assert!(
-        diagnostics.contains(&EventDiagnostic::Q703DescriptorCustody {
+        diagnostics.contains(&EventDiagnostic::L03DescriptorCustody {
             operation: failed_close.operations.len(),
             descriptor: 3,
         })
@@ -516,7 +516,7 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
         &check_event_program(&duplicate_close, builds()).unwrap_err(),
         |error| matches!(
             error,
-            EventDiagnostic::Q703DescriptorCustody {
+            EventDiagnostic::L03DescriptorCustody {
                 operation: 2,
                 descriptor: 3
             }
@@ -547,7 +547,7 @@ fn socket_error_query_cannot_use_a_closed_descriptor() {
         &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
-            EventDiagnostic::Q703DescriptorCustody {
+            EventDiagnostic::L03DescriptorCustody {
                 operation: 2,
                 descriptor: 3
             }
@@ -589,7 +589,7 @@ fn active_event_borrow_prevents_socket_close() {
         &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
-            EventDiagnostic::Q703DescriptorCustody {
+            EventDiagnostic::L03DescriptorCustody {
                 operation: 6,
                 descriptor: 3
             }
@@ -611,7 +611,7 @@ fn priority_readiness_timing_and_trace_order_are_not_synchronization() {
             .insert(7, EventOperation::AssumeOrdering { evidence });
         assert!(has(
             &check_event_program(&program, builds()).unwrap_err(),
-            |error| matches!(error, EventDiagnostic::Q708OrderingAssumption { .. })
+            |error| matches!(error, EventDiagnostic::L08OrderingAssumption { .. })
         ));
     }
 }
@@ -629,6 +629,6 @@ fn adapter_observation_must_refine_the_checked_trace() {
     wrong.push(ObservedKind::CallbackEnter);
     assert!(matches!(
         check_observation_refinement(&certificate, &wrong),
-        Err(EventDiagnostic::Q712TraceRefinement { .. })
+        Err(EventDiagnostic::L12TraceRefinement { .. })
     ));
 }

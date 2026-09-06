@@ -54,7 +54,7 @@ Claude-specific additions:
   (§2); do not add new code to the monolithic grab-bag once a target crate
   exists.
 - W4 is executed for parameter/return custody with validation
-  (`compiler/src/legacy_summary.rs`,
+  (`crates/qcore-c-gateway/src/legacy_summary.rs`,
   `docs/reports/w4-custody-inference/README.md`). A call into an internal C
   function is modeled only through a declared `.qcore` contract or a summary
   that `observations_match_contract` validated against a fresh analyzer run;
@@ -66,7 +66,8 @@ Claude-specific additions:
   `Stored` formals, `Reallocated` results and possibly-null owned returns
   (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
   `Removed` inference and recursive components remain unsupported; the
-  `qcore-c-gateway` relocation is still open.
+  `qcore-c-gateway` relocation is executed with compiler compatibility reexports
+  (`docs/reports/w4-gateway-crate/README.md`).
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass. If a pinned table (contract corpus counts,
   submodule revision, archived report) conflicts with your change, the change
@@ -96,3 +97,16 @@ observations, not general OS failure or durability guarantees. Evidence:
 - W2 H6 provider metadata now loads from profile packages; see
   `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
   into processes or change the v1 Safe refusal.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.
+
+- W3 bounded evidence-v2 replay/dispatch is recorded in
+  `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
+  describe recorded runs under `observations_trusted`; lifecycle source
+  derivation stays incomplete until real effect/ABI import exists. The host
+  relocation is a separate remaining step, and v1 Safe refusal is unchanged.

@@ -1,0 +1,12 @@
+[package]
+name = "qcore-v2-conformance"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# Standalone plugin ABI fixture: intentionally outside the compiler workspace.
+[workspace]
+
+[dependencies]
+qcore-schemas = { path = "../../../../../crates/qcore-schemas" }
+serde_json = "1.0.151"

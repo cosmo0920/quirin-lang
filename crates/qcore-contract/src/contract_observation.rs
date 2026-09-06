@@ -94,6 +94,86 @@ pub fn check_contract_observation(
     })
 }
 
+/// What a replayed observation witness established, as recomputed by the core.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ObservationReplay {
+    /// Hooks with at least one observation that met its preconditions and
+    /// satisfied every `ensures normal` clause.
+    pub checked_hooks: std::collections::BTreeSet<String>,
+    /// Run identities that contributed at least one counted observation.
+    pub run_ids: std::collections::BTreeSet<String>,
+    /// Observations excluded from coverage because a `requires` clause was
+    /// false. Counted separately: preconditions-dodging never earns coverage.
+    pub outside_preconditions: usize,
+}
+
+/// Replays an evidence-v2 `ContractObservationWitness` against trusted
+/// contract text (`docs/design/W3_OBLIGATIONS_EVIDENCE_V2.md` §2.4).
+///
+/// The predicates come from `contract_sources`, which the caller pinned by
+/// digest on the verification task — never from the witness. The provider
+/// supplies only recorded `values` and run identities, and a fabricated
+/// value cannot weaken a predicate, skip a required hook, or make evaluation
+/// trivially succeed: a missing observation variable is an error, not a skip.
+/// What remains trust rather than proof — that the recorded values are the
+/// ones the run produced — is named as an assumption on the task, not
+/// laundered into `Safe`.
+pub fn replay_observation_witness(
+    contract_sources: &BTreeMap<String, String>,
+    required_hooks: &BTreeMap<String, String>,
+    witness: &qcore_schemas::witness::ContractObservationWitness,
+) -> Result<ObservationReplay, String> {
+    let mut replay = ObservationReplay::default();
+    let mut seen_runs = std::collections::BTreeSet::new();
+    for run in &witness.runs {
+        if run.run_id.is_empty() || !seen_runs.insert(&run.run_id) {
+            return Err("an observed run has no run identity".into());
+        }
+        let sha256 =
+            |value: &str| value.len() == 64 && value.bytes().all(|byte| byte.is_ascii_hexdigit());
+        if !sha256(&run.binding.emitted_source_digest)
+            || !sha256(&run.binding.executable_digest)
+            || run.binding.compiler_invocation.is_empty()
+            || run.binding.profile.is_empty()
+            || run.binding.instrumentation_version.is_empty()
+        {
+            return Err(format!(
+                "observed run `{}` has an incomplete native run binding",
+                run.run_id
+            ));
+        }
+        for observation in &run.observations {
+            let Some(module) = required_hooks.get(&observation.hook) else {
+                return Err(format!(
+                    "observation names hook `{}`, which the core did not require",
+                    observation.hook
+                ));
+            };
+            // The hook's identity is the contract function the core pinned; a
+            // provider cannot point a required hook at a weaker contract.
+            if observation.function != observation.hook {
+                return Err(format!(
+                    "observation for hook `{}` reports function `{}`",
+                    observation.hook, observation.function
+                ));
+            }
+            let source = contract_sources.get(module).ok_or_else(|| {
+                format!("contract module `{module}` is not among the trusted sources")
+            })?;
+            match check_contract_observation(source, &observation.function, &observation.values)? {
+                ObservationVerdict::Checked { .. } => {
+                    replay.checked_hooks.insert(observation.hook.clone());
+                    replay.run_ids.insert(run.run_id.clone());
+                }
+                ObservationVerdict::OutsidePreconditions { .. } => {
+                    replay.outside_preconditions += 1;
+                }
+            }
+        }
+    }
+    Ok(replay)
+}
+
 fn evaluate(source: &str, values: &BTreeMap<String, i128>) -> Result<i128, String> {
     let tokens: Vec<_> = lex(source)
         .map_err(|e| e.to_string())?

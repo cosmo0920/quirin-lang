@@ -18,14 +18,15 @@ It also ships a conservative checker for *existing* C source (the
 
 | Path | Contents |
 |---|---|
-| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, legacy-C analyzer, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway compatibility API, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
 | `crates/qcore-core/` | L1 semantic-kernel seed (W1 relocation): `usage`, `ast`, `index`. No workspace dependencies; the rest of the kernel arrives at W5 consolidation |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery (W1 relocation): total-or-reject `contract_loader`, `contract_observation`. Depends on core/frontend/schemas; `chunk_contract` joins after the W5 chunk-summary schema split |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery and typed-AST transport; depends only on contract/schemas plus JSON transport |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
-| `compiler/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
-| `compiler/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocation into `qcore-c-gateway` is still open |
+| `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
+| `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
 | `compiler/src/verifier_plugin.rs` | Cycle 20 plugin protocol v1, manifests, registry, process providers, certificate firewall |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
@@ -124,9 +125,15 @@ It also ships a conservative checker for *existing* C source (the
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`
-  proposals downgrade to `Unknown` (`QP010`). `verify scope` in source is
-  configuration validation only — compiling a resolved scope fails with
-  `Q701`; obligation generation and dispatch are unimplemented (finding VP05).
+  proposals downgrade to `Unknown` (`QP010`). W3's bounded evidence-v2
+  increment derives source obligations and dispatches resolved scopes; trusted
+  observation replay can certify recorded agreement only, under the explicit
+  `observations_trusted` assumption and observed-run bounds. A standalone
+  schemas-only process fixture exercises positive and forged evidence.
+  Lifecycle source effect/ABI import stays incomplete, all unsupported and
+  empty inventories stay `Unknown`, and first-party v1 providers remain
+  unpromoted. Host relocation and production profile/source import remain open.
+  See `docs/reports/w3-evidence-v2/README.md`.
 - **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
   boundaries that remain true statements: interprocedural parameter/return
@@ -134,8 +141,8 @@ It also ships a conservative checker for *existing* C source (the
   validation** (LC01, W4, extended 2026-09-07 with validated `Out`,
   `Stored`, `Reallocated` and possibly-null returns; `Removed`, recursive
   call-graph components, and cost summaries are still not inferred, and every such body
-  keeps its callers `Unknown`); semantic witness schema v2
-  is unimplemented; process providers have process-group containment, not an
+  keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
+  replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
   only; CT01–CT50 conformance corpus is **45/50 unmapped**
   (CT02/CT12/CT16/CT19/CT37 are mapped as sequential-core source fixtures;
@@ -178,7 +185,7 @@ It also ships a conservative checker for *existing* C source (the
   unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
-  `compiler/src/legacy_summary.rs` derives SCC-ordered custody summaries for
+  `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
   internal C functions, publishes only summaries that a re-run of the
   intraprocedural analyzer validates, expresses them as `qcore-schemas`
   `ResourceSummaryRecord`s under `ContractTrust::InferredValidated`, and has
@@ -187,7 +194,9 @@ It also ships a conservative checker for *existing* C source (the
   override. On the 156 pinned Fluent Bit units measurable in that run, one unit
   moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
   class; the 29-unit Monkey/forced-Libevent leg was not re-measured. The bounded extension and remaining restrictions are recorded in
-  `docs/reports/w4-custody-extensions/README.md`. Execution
+  `docs/reports/w4-custody-extensions/README.md`. Gateway relocation is executed
+  (2026-09-07, `docs/reports/w4-gateway-crate/README.md`), with exact
+  185-unit verdict/projection/diagnostic parity. Execution
   is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)
@@ -243,8 +252,8 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 - CLI: `qcorec check <file>`, `qcorec emit -o out.c <file>`,
   `qcorec plugins list|inspect <id>`.
 - Diagnostics namespaces: `Q1xx–Q4xx` core, `Q6xx` concurrency, `Q7xx`
-  event/scope (note: `Q700/Q701` currently collide between spec §54 and
-  Cycle 20 scope resolution — see plan W7), `QP***` plugin protocol.
+  event/scope (`Q700`–`Q703` are core scope diagnostics; Libevent uses
+  `qcore.libevent.L00`–`L12`, see `docs/CHANGELOG_r0_2.md`), `QP***` plugin protocol.
 
 ## Where to read more
 
@@ -284,3 +293,10 @@ are removed after field-for-field parity; registry metadata is loaded atomically
 from profile packages with stable plugin-id ordering and no compiled fallback.
 All shipped providers remain v1 built-ins returning Unknown; process extraction
 is still W5 work. Full 185-TU diagnostic/source parity is unchanged.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.
