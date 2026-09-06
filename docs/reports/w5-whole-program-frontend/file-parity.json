@@ -1,0 +1,22 @@
+{
+  "baseline": "1ea51e3",
+  "normalization": "none: exact byte parity",
+  "files": [
+    {
+      "kind": "module",
+      "from": "compiler/src/whole_program.rs",
+      "to": "crates/qcore-frontend/src/whole_program.rs",
+      "before_sha256": "a63d958e062d12dc0206ee4364215bc640c717da60142e71cf4823aedb47c646",
+      "after_sha256": "a63d958e062d12dc0206ee4364215bc640c717da60142e71cf4823aedb47c646",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/whole_program.rs",
+      "to": "crates/qcore-frontend/tests/unit/whole_program.rs",
+      "before_sha256": "d8f4d14358a3cb3df7062cccb7e000ccb5bef605276fe9d072a53b6ab1bee4be",
+      "after_sha256": "d8f4d14358a3cb3df7062cccb7e000ccb5bef605276fe9d072a53b6ab1bee4be",
+      "byte_identical": true
+    }
+  ]
+}

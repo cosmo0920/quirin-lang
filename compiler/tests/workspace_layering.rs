@@ -139,3 +139,28 @@ fn concurrent_kernel_compatibility_paths_are_core_types() {
     same_type!(translation_validation, TranslationCertificate);
     same_type!(research_closure, ResearchClosureCertificate);
 }
+
+#[test]
+fn whole_program_qualified_apis_are_frontend_owned() {
+    use std::any::TypeId;
+    assert_eq!(
+        TypeId::of::<qcore_compiler::whole_program::CheckedProgram>(),
+        TypeId::of::<qcore_frontend::whole_program::CheckedProgram>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::WholeFunctionSummary>(),
+        TypeId::of::<qcore_frontend::whole_program::FunctionSummary>()
+    );
+    type Checker = fn(
+        &qcore_frontend::frontend::TypedSourceProgram,
+        &qcore_core::typed_errors::ErrorDeclarations,
+        Vec<qcore_frontend::whole_program::FunctionSemantics>,
+    ) -> Result<
+        qcore_frontend::whole_program::CheckedProgram,
+        Vec<qcore_frontend::frontend::SourceDiagnostic>,
+    >;
+    let _: Checker = qcore_compiler::whole_program::check_whole_program;
+    let _: Checker = qcore_compiler::check_whole_program;
+    let _: Checker = qcore_frontend::whole_program::check_whole_program;
+    let _: Checker = qcore_frontend::check_whole_program;
+}
