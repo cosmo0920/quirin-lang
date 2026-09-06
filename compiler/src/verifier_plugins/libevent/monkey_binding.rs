@@ -16,7 +16,9 @@ use super::monkey_observation::{
 use super::monkey_source::{
     MonkeySourcePath, MonkeySourceResult, SourceExpression as E, SourceOperation as O, SourceValue,
 };
-use crate::contract_observation::{ObservationVerdict, check_contract_observation};
+use crate::contract_observation::{
+    ObservationVerdict, check_contract_facts as rule, check_contract_observation,
+};
 use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 
 #[derive(Clone, Debug, Deserialize)]
@@ -70,9 +72,19 @@ struct Buffer {
     value: u64,
     size: u64,
 }
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum CallOrigin {
+    #[default]
+    Native,
+    InjectedFailure,
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Call {
+    #[serde(default)]
+    origin: CallOrigin,
     function: String,
     arguments: Vec<Argument>,
     result: i64,
@@ -85,6 +97,9 @@ pub struct CallbackBindingReport {
     pub function: String,
     pub checked_executions: usize,
     pub checked_paths: BTreeSet<usize>,
+    pub native_paths: BTreeSet<usize>,
+    pub injected_paths: BTreeSet<usize>,
+    pub injected_executions: usize,
     pub unknown_paths: Vec<usize>,
     pub unknown_reasons: Vec<String>,
     pub checked_postconditions: usize,
@@ -95,6 +110,10 @@ pub struct MonkeyBindingReport {
     pub unknown: Vec<String>,
     pub static_certificate: bool,
 }
+
+/// Native QCore policy for the replay boundary, separate from callback postconditions.
+pub const CALLBACK_BINDING_CONTRACTS: &str =
+    include_str!("../../../../contract/qcore/monkey/callback_binding.qcore");
 
 type Memory = BTreeMap<(u64, String), (String, i64)>;
 
@@ -156,6 +175,7 @@ impl Value {
 }
 
 struct Replay<'a> {
+    rules: &'a str,
     binding: &'a Callback,
     memory: Memory,
     symbols: BTreeMap<usize, (String, Value)>,
@@ -168,6 +188,9 @@ struct Replay<'a> {
 impl Replay<'_> {
     fn eval(&self, value: &SourceValue) -> Result<Value, String> {
         let result = match &value.expression {
+            E::Function { .. } => {
+                return Err("function pointer outside callback replay profile".into());
+            }
             E::Parameter { index } => Value::Scalar(match index {
                 0 => self.binding.fd.into(),
                 1 => self.binding.flags.into(),
@@ -193,10 +216,19 @@ impl Replay<'_> {
                 _ => return Err("sizeof outside LP64 scalar profile".into()),
             }),
             E::Symbol { operation } => {
-                let (ty, result) = self.symbols.get(operation).ok_or("absent prior symbol")?;
-                if ty != &value.c_type {
-                    return Err("symbol type mismatch".into());
-                }
+                let producer = self.symbols.get(operation);
+                rule(
+                    self.rules,
+                    "binding_symbol",
+                    &[
+                        ("producer_present", i128::from(producer.is_some())),
+                        (
+                            "producer_type_matches",
+                            i128::from(producer.is_some_and(|(ty, _)| ty == &value.c_type)),
+                        ),
+                    ],
+                )?;
+                let (_, result) = producer.ok_or("absent prior symbol")?;
                 result.clone()
             }
             E::Cast { cast, value: inner } => {
@@ -290,15 +322,23 @@ impl Replay<'_> {
         let Value::Place(object, field) = self.eval(value)? else {
             return Err("unmodeled memory place".into());
         };
-        if object == 0 {
-            return Err("null memory access".into());
-        }
-        let (ty, _) = self
-            .memory
-            .get(&(object, field.clone()))
-            .ok_or("absent, out-of-bounds, or released memory cell")?;
-        if ty != &value.c_type {
-            return Err("memory access type mismatch".into());
+        let cell = self.memory.get(&(object, field.clone()));
+        rule(
+            self.rules,
+            "binding_memory",
+            &[
+                ("object", object.into()),
+                ("cell_present", i128::from(cell.is_some())),
+                (
+                    "cell_type_matches",
+                    i128::from(cell.is_some_and(|(ty, _)| ty == &value.c_type)),
+                ),
+            ],
+        )?;
+        // The interpreter still requires concrete typed storage even if a
+        // caller supplies a weaker policy. Contracts cannot create cells.
+        if cell.is_none_or(|(ty, _)| ty != &value.c_type) {
+            return Err("absent or differently typed memory cell".into());
         }
         Ok((object, field))
     }
@@ -368,18 +408,33 @@ impl Replay<'_> {
                         .iter()
                         .map(|v| self.argument(v))
                         .collect::<Result<Vec<_>, _>>()?;
-                    if function != &call.function || arguments != call.arguments {
-                        return Err("source call arguments/order differ from observation".into());
-                    }
+                    rule(
+                        self.rules,
+                        "binding_call_arguments",
+                        &[
+                            ("function_matches", i128::from(function == &call.function)),
+                            ("arguments_match", i128::from(arguments == call.arguments)),
+                        ],
+                    )?;
                     match function.as_str() {
                         "__errno_location" => {
                             let address =
                                 u64::try_from(call.result).map_err(|_| "invalid errno pointer")?;
-                            if address == 0
-                                || self.memory.keys().any(|(object, _)| *object == address)
-                            {
-                                return Err("errno pointer aliases observed object".into());
-                            }
+                            rule(
+                                self.rules,
+                                "binding_errno_location",
+                                &[
+                                    ("result", call.result.into()),
+                                    (
+                                        "aliases_observed_object",
+                                        i128::from(
+                                            self.memory
+                                                .keys()
+                                                .any(|(object, _)| *object == address),
+                                        ),
+                                    ),
+                                ],
+                            )?;
                             scalar(call.memory_value, "int")?;
                             self.memory.insert(
                                 (address, String::new()),
@@ -387,45 +442,55 @@ impl Replay<'_> {
                             );
                         }
                         "send" => {
-                            if !matches!(
-                                call.arguments.as_slice(),
-                                [
-                                    Argument::Integer(_),
-                                    Argument::Buffer(Buffer { size: 8, .. }),
-                                    Argument::Integer(8),
-                                    Argument::Integer(0)
-                                ]
-                            ) || !(-1..=8).contains(&call.result)
-                            {
-                                return Err("send outside bounded call profile".into());
-                            }
+                            let [
+                                Argument::Integer(_),
+                                Argument::Buffer(buffer),
+                                Argument::Integer(length),
+                                Argument::Integer(flags),
+                            ] = call.arguments.as_slice()
+                            else {
+                                return Err(
+                                    "send requires a descriptor, typed buffer, length and flags"
+                                        .into(),
+                                );
+                            };
+                            rule(
+                                self.rules,
+                                "binding_send",
+                                &[
+                                    ("buffer_size", buffer.size.into()),
+                                    ("length", (*length).into()),
+                                    ("flags", (*flags).into()),
+                                    ("result", call.result.into()),
+                                ],
+                            )?;
                         }
-                        "perror" => {
-                            if call.result != 0 {
-                                return Err("nonvoid result on perror".into());
-                            }
-                        }
-                        "evutil_closesocket" => {
-                            if call.result != 0 {
-                                return Err("unresolved native close failure".into());
-                            }
-                            self.closed += 1;
-                        }
-                        "event_del" | "event_free" => {
-                            if call.result != 0 {
-                                return Err("unresolved event cleanup failure".into());
-                            }
+                        "perror" | "evutil_closesocket" | "event_del" | "event_free" => {
+                            rule(
+                                self.rules,
+                                &format!("binding_{function}"),
+                                &[("result", call.result.into())],
+                            )?;
+                            self.closed += usize::from(function == "evutil_closesocket");
                         }
                         "mk_mem_free" => {
-                            if arguments != [Argument::Integer(self.binding.argument as i64)]
-                                || call.result != 0
-                                || !self.releases.is_empty()
-                            {
-                                return Err("wrong or duplicate map release".into());
-                            }
-                            self.memory
-                                .retain(|(object, _), _| *object != self.binding.argument);
-                            self.releases.push(self.binding.argument);
+                            let [Argument::Integer(pointer)] = arguments.as_slice() else {
+                                return Err("map release requires one pointer".into());
+                            };
+                            rule(
+                                self.rules,
+                                "binding_mk_mem_free",
+                                &[
+                                    ("pointer", (*pointer).into()),
+                                    ("registered_argument", self.binding.argument.into()),
+                                    ("result", call.result.into()),
+                                    ("prior_releases", self.releases.len() as i128),
+                                ],
+                            )?;
+                            let pointer =
+                                u64::try_from(*pointer).map_err(|_| "invalid released pointer")?;
+                            self.memory.retain(|(object, _), _| *object != pointer);
+                            self.releases.push(pointer);
                         }
                         _ => return Err("unmodeled call effects".into()),
                     }
@@ -438,17 +503,26 @@ impl Replay<'_> {
                     self.call_index += 1;
                 }
                 O::Return => returned = true,
+                O::ReturnValue { .. } => {
+                    return Err("value return outside void callback profile".into());
+                }
             }
         }
         // errno belongs to the thread, outside the callback snapshot footprint.
         self.memory.retain(|(_, field), _| !field.is_empty());
-        if !returned
-            || self.call_index != self.binding.calls.len()
-            || self.memory != memory(&self.binding.after)?
-        {
-            return Err("incomplete source execution or post-state mismatch".into());
-        }
-        Ok(())
+        rule(
+            self.rules,
+            "binding_execution",
+            &[
+                ("returned", i128::from(returned)),
+                ("consumed_calls", self.call_index as i128),
+                ("observed_calls", self.binding.calls.len() as i128),
+                (
+                    "post_state_matches",
+                    i128::from(self.memory == memory(&self.binding.after)?),
+                ),
+            ],
+        )
     }
 }
 
@@ -464,13 +538,26 @@ fn effects(
     binding: &Callback,
     rows: &[MonkeyObservation],
     event_pointer: u64,
+    rules: &str,
 ) -> Result<(), String> {
     let mut consumed = BTreeSet::new();
     let mut prior = binding.enter;
     for call in &binding.calls {
-        if call.sequence < prior || call.sequence >= binding.exit {
-            return Err("call outside callback or reordered".into());
-        }
+        rule(
+            rules,
+            "binding_call_interval",
+            &[
+                ("sequence", call.sequence.into()),
+                ("prior_sequence", prior.into()),
+                ("callback_exit", binding.exit.into()),
+                (
+                    "injected",
+                    i128::from(call.origin == CallOrigin::InjectedFailure),
+                ),
+                ("is_send", i128::from(call.function == "send")),
+                ("result", call.result.into()),
+            ],
+        )?;
         prior = call.sequence;
         let observed = row(rows, call.sequence)?;
         let arg = |n| match call.arguments.get(n) {
@@ -498,9 +585,18 @@ fn effects(
             "__errno_location" | "perror" | "mk_mem_free" => continue,
             _ => return Err("unknown effect call".into()),
         };
-        if !runtime || !consumed.insert(call.sequence) {
-            return Err("call has no unique matching runtime effect".into());
-        }
+        rule(
+            rules,
+            "binding_runtime_effect",
+            &[
+                ("effect_matches", i128::from(runtime)),
+                (
+                    "previously_consumed",
+                    i128::from(consumed.contains(&call.sequence)),
+                ),
+            ],
+        )?;
+        consumed.insert(call.sequence);
     }
     for sequence in binding.enter + 1..binding.exit {
         if !consumed.contains(&sequence) {
@@ -517,6 +613,24 @@ pub fn check_monkey_bindings(
     observations: &str,
     bindings: &str,
     contracts: &str,
+) -> Result<MonkeyBindingReport, String> {
+    check_monkey_bindings_with_rules(
+        summaries,
+        observations,
+        bindings,
+        contracts,
+        CALLBACK_BINDING_CONTRACTS,
+    )
+}
+
+/// Evaluate a supplied native rule source. This is an execution report, never
+/// a static certificate; altered policy must be recorded by the evidence producer.
+pub fn check_monkey_bindings_with_rules(
+    summaries: &[MonkeySourceResult],
+    observations: &str,
+    bindings: &str,
+    contracts: &str,
+    rules: &str,
 ) -> Result<MonkeyBindingReport, String> {
     check_monkey_observations(observations)?;
     let rows = observations
@@ -587,17 +701,33 @@ pub fn check_monkey_bindings(
             .get(event)
             .ok_or("absent callback registration")?;
         let exit = row(&rows, binding.exit)?;
-        if *created >= binding.enter
-            || binding.event != *event
-            || binding.argument != *argument
-            || binding.fd != descriptor.map_or(-1, |key| key.fd)
-            || (exit.base, exit.dispatcher, exit.thread)
-                != (observed.base, observed.dispatcher, observed.thread)
-            || !matches!(&exit.action, ObservationAction::Event { operation: EventAction::CallbackExit, event: id, .. } if id == event)
-        {
-            return Err("callback payload/descriptor/dispatcher differs from registration".into());
-        }
-        effects(binding, &rows, *event_pointer)?;
+        rule(
+            rules,
+            "binding_scope",
+            &[
+                ("created", (*created).into()),
+                ("enter", binding.enter.into()),
+                ("event", binding.event.into()),
+                ("registered_event", (*event).into()),
+                ("argument", binding.argument.into()),
+                ("registered_argument", (*argument).into()),
+                ("fd", binding.fd.into()),
+                ("registered_fd", descriptor.map_or(-1, |key| key.fd).into()),
+                ("exit_base", exit.base.into()),
+                ("base", observed.base.into()),
+                ("exit_dispatcher", exit.dispatcher.into()),
+                ("dispatcher", observed.dispatcher.into()),
+                ("exit_thread", exit.thread.into()),
+                ("thread", observed.thread.into()),
+                (
+                    "exit_matches_event",
+                    i128::from(
+                        matches!(&exit.action, ObservationAction::Event { operation: EventAction::CallbackExit, event: id, .. } if id == event),
+                    ),
+                ),
+            ],
+        )?;
+        effects(binding, &rows, *event_pointer, rules)?;
         by_function
             .entry(callback.clone())
             .or_default()
@@ -630,6 +760,9 @@ pub fn check_monkey_bindings(
             function: name.into(),
             checked_executions: 0,
             checked_paths: BTreeSet::new(),
+            native_paths: BTreeSet::new(),
+            injected_paths: BTreeSet::new(),
+            injected_executions: 0,
             unknown_paths: Vec::new(),
             unknown_reasons: reason.into_iter().collect(),
             checked_postconditions: 0,
@@ -643,6 +776,7 @@ pub fn check_monkey_bindings(
                 let mut failures = BTreeSet::new();
                 for (index, path) in summary.paths().iter().enumerate() {
                     let mut replay = Replay {
+                        rules,
                         binding,
                         memory: memory(&binding.before)?,
                         symbols: BTreeMap::new(),
@@ -659,13 +793,22 @@ pub fn check_monkey_bindings(
                         }
                     }
                 }
-                let [(index, replay)] = matches.as_slice() else {
+                if let Err(reason) = rule(
+                    rules,
+                    "binding_select_path",
+                    &[("refining_paths", matches.len() as i128)],
+                ) {
                     result.unknown_reasons.push(format!(
-                        "execution {}: expected one refining source path, found {}; {}",
+                        "execution {}: {reason}; {}",
                         binding.enter,
-                        matches.len(),
                         failures.into_iter().collect::<Vec<_>>().join("; ")
                     ));
+                    continue;
+                }
+                let [(index, replay)] = matches.as_slice() else {
+                    result
+                        .unknown_reasons
+                        .push("ambiguous or absent replay cannot be interpreted".into());
                     continue;
                 };
                 let values = BTreeMap::from([
@@ -708,6 +851,16 @@ pub fn check_monkey_bindings(
                     Ok(ObservationVerdict::Checked { postconditions }) => {
                         result.checked_executions += 1;
                         result.checked_paths.insert(*index);
+                        if binding
+                            .calls
+                            .iter()
+                            .any(|call| call.origin == CallOrigin::InjectedFailure)
+                        {
+                            result.injected_executions += 1;
+                            result.injected_paths.insert(*index);
+                        } else {
+                            result.native_paths.insert(*index);
+                        }
                         result.checked_postconditions += postconditions;
                     }
                     other => result.unknown_reasons.push(format!(

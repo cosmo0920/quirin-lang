@@ -37,6 +37,7 @@ static unsigned int sequence;
 static FILE *bindings;
 static int binding_active;
 static unsigned int binding_calls;
+static int binding_injected;
 static void *released_map;
 static void binding_begin(struct observed_callback *, evutil_socket_t, short);
 static void binding_end(struct observed_callback *);
@@ -45,11 +46,12 @@ static void binding_call(const char *name, const char *arguments, long result,
 {
     if (!binding_active) { return; }
     fprintf(bindings, "%s{\"function\":\"%s\",\"arguments\":%s,\"result\":%ld,"
-            "\"sequence\":%u,\"memory_value\":%ld}",
-            binding_calls++ ? "," : "", name, arguments, result, sequence, memory_value);
+            "\"sequence\":%u,\"memory_value\":%ld,\"origin\":\"%s\"}",
+            binding_calls++ ? "," : "", name, arguments, result, sequence, memory_value,
+            binding_injected ? "injected_failure" : "native");
 }
 
-static struct observed_callback callbacks[16];
+static struct observed_callback callbacks[32];
 static unsigned int callback_count;
 static unsigned int base_id;
 static struct event_base *dispatch_base;
@@ -68,6 +70,7 @@ struct observed_descriptor {
 static struct observed_descriptor descriptors[32];
 static unsigned int descriptor_count;
 static int fail_socketpair;
+static int fail_send_errno;
 
 static struct observed_descriptor *find_descriptor(evutil_socket_t fd)
 {
@@ -131,8 +134,18 @@ static int observed_socketpair(int domain, int type, int protocol, evutil_socket
 static ssize_t observed_send(int fd, const void *buffer, size_t length, int flags)
 {
     unsigned int generation = live_generation(fd);
-    ssize_t result = send(fd, buffer, length, flags);
-    int saved_errno = errno;
+    ssize_t result;
+    int saved_errno;
+    assert(!binding_injected);
+    if (fail_send_errno) {
+        assert(binding_active);
+        errno = fail_send_errno;
+        fail_send_errno = 0;
+        binding_injected = 1;
+        result = -1;
+    }
+    else { result = send(fd, buffer, length, flags); }
+    saved_errno = errno;
     record_descriptor("descriptor_use", fd, generation, result);
     if (binding_active) {
         char args[256];
@@ -143,6 +156,7 @@ static ssize_t observed_send(int fd, const void *buffer, size_t length, int flag
                  fd, (unsigned long) value, (unsigned long) length, (unsigned long) length, flags);
         binding_call("send", args, result, 0);
     }
+    binding_injected = 0;
     errno = saved_errno;
     return result;
 }
@@ -455,6 +469,18 @@ int main(void)
     assert(mk_event_wait_2(loop, 100) == 1);
     assert(((struct mk_event_ctx *) loop->data)->fired[0].data == &channel);
     assert(observed_recv(reader, &value, 1, 0) == 1);
+    /* Drive all remaining mask branches through Libevent's actual dispatcher.
+     * event_active supplies controlled flags; these are not readiness claims. */
+    {
+        struct ev_map *map = channel.data;
+        const short flags[] = {EV_WRITE, EV_READ | EV_WRITE, EV_TIMEOUT};
+        const unsigned int masks[] = {MK_EVENT_WRITE, MK_EVENT_READ | MK_EVENT_WRITE, 0};
+        for (index = 0; index < sizeof(flags) / sizeof(flags[0]); index++) {
+            event_active(map->event, flags[index], 1);
+            assert(mk_event_wait_2(loop, 0) == 1);
+            assert(((struct mk_event_ctx *) loop->data)->fired[0].mask == masks[index]);
+        }
+    }
     assert(mk_event_wait_2(loop, 2) == 0);
     assert(mk_event_channel_destroy(loop, reader, writer, &channel) == 0);
     mk_event_loop_destroy(loop);
@@ -467,7 +493,36 @@ int main(void)
     assert(mk_event_wait_2(loop, 100) == 0);
     mk_event_loop_destroy(loop);
 
-    assert(seen_event > 0 && seen_timeout > 0 && seen_wait_timeout > 0);
+    /* Successful timer write, then a labeled injected ECONNABORTED send.
+     * The second run executes native cleanup but is not an OS failure sample. */
+    loop = mk_event_loop_create(8);
+    assert(loop != NULL);
+    MK_EVENT_ZERO(&timer);
+    assert(mk_event_timeout_create(loop, 60, 0, &timer) >= 0);
+    {
+        struct observed_callback *timeout = NULL;
+        uint64_t tick = 0;
+        for (index = 0; index < callback_count; index++) {
+            if (!callbacks[index].freed && callbacks[index].callback == cb_timeout) {
+                assert(timeout == NULL);
+                timeout = &callbacks[index];
+            }
+        }
+        assert(timeout != NULL);
+        event_active(timeout->event, EV_TIMEOUT, 1);
+        mk_event_wait_2(loop, 0);
+        assert(!timeout->freed);
+        assert(observed_recv(timer.fd, &tick, sizeof(tick), 0) == sizeof(tick));
+        assert(tick == 1);
+        fail_send_errno = ECONNABORTED;
+        event_active(timeout->event, EV_TIMEOUT, 1);
+        mk_event_wait_2(loop, 0);
+        assert(timeout->freed && fail_send_errno == 0);
+    }
+    assert(mk_event_timeout_destroy(loop, &timer) == 0);
+    mk_event_loop_destroy(loop);
+
+    assert(seen_event >= 4 && seen_timeout == 3 && seen_wait_timeout > 0);
     for (index = 0; index < callback_count; index++) { assert(callbacks[index].freed); }
     for (index = 0; index < descriptor_count; index++) { assert(!descriptors[index].live); }
     record("completed", 0, "", 0);

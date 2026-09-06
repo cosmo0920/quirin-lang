@@ -16,6 +16,25 @@ pub enum ObservationVerdict {
     OutsidePreconditions { predicate: String },
 }
 
+/// Require acceptance under a native QCore rule using facts derived by an
+/// interpreter. A false precondition also rejects the attempted transition.
+pub fn check_contract_facts(
+    source: &str,
+    function: &str,
+    facts: &[(&str, i128)],
+) -> Result<(), String> {
+    let values = facts
+        .iter()
+        .map(|(name, value)| ((*name).into(), *value))
+        .collect();
+    match check_contract_observation(source, function, &values)? {
+        ObservationVerdict::Checked { .. } => Ok(()),
+        ObservationVerdict::OutsidePreconditions { predicate } => {
+            Err(format!("{function}: outside precondition: {predicate}"))
+        }
+    }
+}
+
 pub fn check_contract_observation(
     source: &str,
     function: &str,

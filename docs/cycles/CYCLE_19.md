@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — all three recorded Monkey callbacks bound to source and QCore contracts; Lean binding models verified; custody/lifecycle, unobserved failures, and full event composition remain**
+**Status: In progress — native QCore replay/identity rules, eight exercised Monkey callback paths, and bounded wrapper failure imports verified; source custody/lifecycle and full event composition remain**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -426,3 +426,34 @@ complete wrapper/map custody, and the full Cycle 18 event-program composition
 remain `Unknown`; no static event or plugin certificate is issued. 19B and 19C
 source custody/lifecycle work also remains open. See the [binding report](../reports/cycle19-callback-binding/README.md)
 for evidence, reproduction, assumptions, and the exact remaining gates.
+
+## Native replay rules and expanded callback/failure paths
+
+The recent Rust callback-binding and descriptor-observation policies now live
+in `monkey/callback_binding.qcore` and `monkey/descriptor_observation.qcore`:
+20 executable contracts with 56 postconditions. The checkers supply typed facts
+to the native predicate interpreter. Mutation regressions exercise every
+extracted contract; false or unsupported predicates fail closed. Existing
+callback postconditions remain in `monkey/composition.qcore`.
+
+The expanded native harness exercises all eight callback source paths and
+checks 18 callback postconditions on one shared 84-record observation. Seven
+executions use native call results; one timer execution uses an explicitly
+labeled injected `ECONNABORTED` send failure. Three event-mask cases use
+controlled Libevent activation. Reports distinguish native and injected paths;
+exercised paths are not universal proofs. Three new Lean theorems retain that
+evidence distinction.
+
+The source importer now reports every one of 15 selected Monkey wrappers:
+eight produce 37 symbolic paths, and seven remain Unknown with specific
+unsupported-source reasons. Loop creation and event update retain allocation
+and registration failure exits, opaque calls and exact returns without
+inventing cleanup. These source projections are not yet bound to complete
+wrapper/map custody or a Cycle 18 event program.
+
+All 323 Rust tests, formatting, Clippy, Lean build/audit, sanitized native run
+and pinned external audit pass. Generic projection and Safe/Unsafe/Unknown
+counts are unchanged. 19B identity mapping, 19C lifecycle/teardown imports,
+unsupported Monkey wrappers, failure-path custody and full event composition
+remain open. See [the native-rule report](../reports/cycle19-native-rules/README.md)
+for extraction scope, evidence, reproduction and remaining gates.

@@ -196,3 +196,112 @@ fn source_unknown_is_reported_per_callback_without_promotion() {
     assert!(!report.callbacks[0].unknown_reasons.is_empty());
     assert!(!report.static_certificate);
 }
+
+#[test]
+fn native_binding_rules_are_executed_and_mutations_fail_closed() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = import(SOURCE);
+    for name in [
+        "binding_symbol",
+        "binding_call_arguments",
+        "binding_call_interval",
+        "binding_runtime_effect",
+        "binding_scope",
+        "binding_memory",
+        "binding_execution",
+        "binding_select_path",
+        "binding_send",
+        "binding_errno_location",
+        "binding_perror",
+        "binding_evutil_closesocket",
+        "binding_event_del",
+        "binding_event_free",
+        "binding_mk_mem_free",
+    ] {
+        let marker = format!("extern fn {name}() -> unit\ncontract {{");
+        for predicate in ["false", "unknown_native_predicate"] {
+            let rules = CALLBACK_BINDING_CONTRACTS.replace(
+                &marker,
+                &format!("{marker}\n    ensures normal {predicate};"),
+            );
+            assert_ne!(rules, CALLBACK_BINDING_CONTRACTS);
+            match check_monkey_bindings_with_rules(
+                &source,
+                OBSERVATIONS,
+                BINDINGS,
+                CONTRACT,
+                &rules,
+            ) {
+                Err(error) => assert!(error.contains(predicate), "{name}: {error}"),
+                Ok(report) => {
+                    assert!(checked(&report) < 3, "{name}: {report:?}");
+                    assert!(!report.static_certificate);
+                    assert!(
+                        report
+                            .callbacks
+                            .iter()
+                            .flat_map(|row| &row.unknown_reasons)
+                            .any(|reason| reason.contains(predicate)),
+                        "{name}: {report:?}"
+                    );
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn expanded_native_run_covers_all_paths_and_labels_injected_failure() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let observations = include_str!("../fixtures/monkey/binding/all_paths/observations.jsonl");
+    let bindings = include_str!("../fixtures/monkey/binding/all_paths/bindings.jsonl");
+    let source = import(SOURCE);
+    let report = check_monkey_bindings(&source, observations, bindings, CONTRACT).unwrap();
+    assert_eq!(checked(&report), 8, "{report:?}");
+    assert!(
+        report
+            .callbacks
+            .iter()
+            .all(|row| row.unknown_paths.is_empty() && row.unknown_reasons.is_empty())
+    );
+    assert_eq!(
+        report
+            .callbacks
+            .iter()
+            .map(|row| row.checked_postconditions)
+            .sum::<usize>(),
+        18
+    );
+    let timeout = &report.callbacks[1];
+    assert_eq!(timeout.native_paths, BTreeSet::from([0, 2]));
+    assert_eq!(timeout.injected_paths, BTreeSet::from([1]));
+    assert_eq!(timeout.injected_executions, 1);
+    assert!(!report.static_certificate);
+    assert!(!report.unknown.is_empty());
+
+    let mut rows: Vec<Json> = bindings
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let cleanup = rows
+        .iter_mut()
+        .filter_map(|row| row["calls"].as_array_mut())
+        .flatten()
+        .find(|call| call["function"] == "event_free")
+        .unwrap();
+    cleanup["origin"] = json!("injected_failure");
+    assert!(check_monkey_bindings(&source, observations, &encode(&rows), CONTRACT).is_err());
+    assert!(
+        check_monkey_bindings(
+            &source,
+            observations,
+            &bindings.replace("injected_failure", "unknown_provenance"),
+            CONTRACT
+        )
+        .is_err()
+    );
+}

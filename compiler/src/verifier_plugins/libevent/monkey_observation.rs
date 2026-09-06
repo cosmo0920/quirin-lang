@@ -5,7 +5,11 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::contract_observation::check_contract_facts as rule;
 use serde::{Deserialize, Serialize};
+
+pub const DESCRIPTOR_OBSERVATION_CONTRACTS: &str =
+    include_str!("../../../../contract/qcore/monkey/descriptor_observation.qcore");
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -97,7 +101,8 @@ struct EventState {
 }
 
 #[derive(Default)]
-struct Checker {
+struct Checker<'a> {
+    rules: &'a str,
     bases: BTreeMap<u64, (u64, u64)>,
     seen_bases: BTreeMap<u64, (u64, u64)>,
     generations: BTreeMap<i32, u32>,
@@ -108,12 +113,16 @@ struct Checker {
     completed: bool,
 }
 
-impl Checker {
+impl Checker<'_> {
     fn live(&self, key: DescriptorKey, base: u64) -> Result<(), String> {
-        if self.live.get(&key.fd) != Some(&(key, base)) {
-            return Err("descriptor identity is absent, stale, or bound to another base".into());
-        }
-        Ok(())
+        rule(
+            self.rules,
+            "observation_use",
+            &[(
+                "live_identity_matches",
+                i128::from(self.live.get(&key.fd) == Some(&(key, base))),
+            )],
+        )
     }
 
     fn step(
@@ -147,20 +156,28 @@ impl Checker {
             return Ok(());
         }
         if let ObservationAction::Completed { result } = row.action {
-            if result != 0
-                || self.seen_bases.is_empty()
-                || self.seen_bases.get(&row.base) != Some(&(row.dispatcher, row.thread))
-                || !self.bases.is_empty()
-                || !self.live.is_empty()
-                || self.dispatch.is_some()
-                || self.callback.is_some()
-                || self.events.values().any(|event| !event.freed)
-            {
-                return Err(
-                    "completion retains live base, event, descriptor, or dispatch obligations"
-                        .into(),
-                );
-            }
+            rule(
+                self.rules,
+                "observation_complete",
+                &[
+                    ("result", result.into()),
+                    ("seen_bases", self.seen_bases.len() as i128),
+                    (
+                        "final_scope_matches",
+                        i128::from(
+                            self.seen_bases.get(&row.base) == Some(&(row.dispatcher, row.thread)),
+                        ),
+                    ),
+                    ("live_bases", self.bases.len() as i128),
+                    ("live_descriptors", self.live.len() as i128),
+                    (
+                        "live_events",
+                        self.events.values().filter(|event| !event.freed).count() as i128,
+                    ),
+                    ("dispatch_active", i128::from(self.dispatch.is_some())),
+                    ("callback_active", i128::from(self.callback.is_some())),
+                ],
+            )?;
             self.completed = true;
             return Ok(());
         }
@@ -175,26 +192,36 @@ impl Checker {
                 result,
                 descriptors,
             } => {
+                rule(
+                    self.rules,
+                    "observation_socketpair",
+                    &[
+                        ("result", (*result).into()),
+                        ("descriptor_count", descriptors.len() as i128),
+                        (
+                            "endpoints_distinct",
+                            i128::from(matches!(descriptors.as_slice(), [a, b] if a.fd != b.fd)),
+                        ),
+                    ],
+                )?;
                 if *result == -1 {
-                    if !descriptors.is_empty() {
-                        return Err("failed socketpair creates custody".into());
-                    }
                     report.socketpair_failures += 1;
                 } else if *result == 0 {
-                    let [first, second] = descriptors.as_slice() else {
+                    let [_, _] = descriptors.as_slice() else {
                         return Err("successful socketpair requires two descriptors".into());
                     };
-                    if first.fd == second.fd {
-                        return Err("socketpair aliases its endpoints".into());
-                    }
                     for key in descriptors {
                         let previous = self.generations.get(&key.fd).copied().unwrap_or(0);
-                        if key.fd < 0
-                            || self.live.contains_key(&key.fd)
-                            || previous.checked_add(1) != Some(key.generation)
-                        {
-                            return Err("descriptor acquisition duplicates a live identity or skips its next generation".into());
-                        }
+                        rule(
+                            self.rules,
+                            "observation_acquire",
+                            &[
+                                ("fd", key.fd.into()),
+                                ("already_live", i128::from(self.live.contains_key(&key.fd))),
+                                ("previous_generation", previous.into()),
+                                ("generation", key.generation.into()),
+                            ],
+                        )?;
                         self.generations.insert(key.fd, key.generation);
                         self.live.insert(key.fd, (*key, row.base));
                         report.descriptor_acquisitions += 1;
@@ -210,25 +237,23 @@ impl Checker {
             }
             ObservationAction::DescriptorClose { descriptor, result } => {
                 self.live(*descriptor, row.base)?;
-                if self
-                    .callback
-                    .and_then(|event| self.events.get(&event))
-                    .is_some_and(|event| event.descriptor == Some(*descriptor))
-                {
-                    return Err("descriptor close conflicts with its active I/O callback".into());
-                }
-                match result {
-                    0 => {
-                        self.live.remove(&descriptor.fd);
-                        report.descriptor_closes += 1;
-                    }
-                    -1 => {
-                        return Err(
-                            "failed native close has unresolved platform-specific custody".into(),
-                        );
-                    }
-                    _ => return Err("invalid descriptor close result".into()),
-                }
+                rule(
+                    self.rules,
+                    "observation_close",
+                    &[
+                        (
+                            "active_io_callback",
+                            i128::from(
+                                self.callback
+                                    .and_then(|event| self.events.get(&event))
+                                    .is_some_and(|event| event.descriptor == Some(*descriptor)),
+                            ),
+                        ),
+                        ("result", (*result).into()),
+                    ],
+                )?;
+                self.live.remove(&descriptor.fd);
+                report.descriptor_closes += 1;
             }
             ObservationAction::Event {
                 operation,
@@ -375,7 +400,19 @@ impl Checker {
 }
 
 pub fn check_monkey_observations(source: &str) -> Result<MonkeyObservationReport, String> {
-    let mut checker = Checker::default();
+    check_monkey_observations_with_contracts(source, DESCRIPTOR_OBSERVATION_CONTRACTS)
+}
+
+/// Evaluate recorded identities under the supplied native policy. This cannot
+/// issue a static certificate; callers must retain the policy with the evidence.
+pub fn check_monkey_observations_with_contracts(
+    source: &str,
+    contracts: &str,
+) -> Result<MonkeyObservationReport, String> {
+    let mut checker = Checker {
+        rules: contracts,
+        ..Checker::default()
+    };
     let mut report = MonkeyObservationReport {
         observations: 0,
         descriptor_acquisitions: 0,

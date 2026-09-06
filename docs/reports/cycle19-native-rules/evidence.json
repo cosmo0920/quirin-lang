@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-06",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "scope": "Native QCore execution policy, supplied callback paths (including labeled injected failure), symbolic wrapper projection, and abstract Lean origin models. No static event or plugin certificate.",
+  "sha256": {
+    "docs/reports/cycle19-native-rules/README.md": "fea56e0f427aa40ece126291fb214bd97a1574f720d0941d523d306ab64c91f6",
+    "docs/reports/cycle19-native-rules/clippy.log": "117d3e53adf7606e4769d3292ba0229c946a2124ba1ed2395e20f074db6c4d2b",
+    "docs/reports/cycle19-native-rules/flb_mem_contract_result.json": "2796691c805875f58b9788004e5a9505469a4190804cf7ece218eea64343e6df",
+    "docs/reports/cycle19-native-rules/fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/cycle19-native-rules/lean-audit.log": "a70e5003622ff5156fa0bff1fe409c4e92da1b7dc95e54995f54e7679c96a5b7",
+    "docs/reports/cycle19-native-rules/lean.log": "0ab83e2da736f04319017a0f15eee9614a60df547dec80aa32cfb7fea08b627e",
+    "docs/reports/cycle19-native-rules/metadata.json": "68e13d73f91b3ea15f2f11446f803f00e520a0dad76087ac7ac8c998d340a6d3",
+    "docs/reports/cycle19-native-rules/monkey_binding_result.json": "251dc0c7458606d9394c9e3a0c32ceeadb1967c98bc6a44950cc6adc264da200",
+    "docs/reports/cycle19-native-rules/monkey_bindings.jsonl": "ded9acc418b3df758f997395d5d910a32926a96f17c8871cd7c81eec9c08d5c9",
+    "docs/reports/cycle19-native-rules/monkey_callback_source.json": "1f8a2c5b9412bbec2c275b467fa1ffeffb0142ffb03fb9bc9f7f96a3ea5a3ab3",
+    "docs/reports/cycle19-native-rules/monkey_identity_result.json": "f176ae57f9a295b892a991fcbd50211e7a60cc368de499f79c5facb06417fee3",
+    "docs/reports/cycle19-native-rules/monkey_observation.jsonl": "8ac10621f0c01ca94acefa51693ae7c530a3e5d98d4f42f1f55d9d212518a323",
+    "docs/reports/cycle19-native-rules/monkey_observation.stderr": "345d72794d8a7e6ebe6bcdcd0ddc21343363a25c2bdc815d0529ab44dfe1c806",
+    "docs/reports/cycle19-native-rules/source-audit.log": "42a5e9b7fb557fa399bebb74b0f780a0438b898056ee2013e9c234f8ea72d190",
+    "docs/reports/cycle19-native-rules/tests.log": "552f24894ef3840c5532e2ba43cdb777819338f802b1dfb1ccbcbee1cfc02a58"
+  },
+  "implementation_sha256": {
+    "compiler/src/contract_observation.rs": "7fe85ae1d858fe744f14be33fa51762f8c21774a260de02de32aa7042cf31bd2",
+    "compiler/src/verifier_plugins/libevent/monkey_binding.rs": "31b5db4bef3b3a7397c07b6fd6d0a9b9a5211455a5a024bdd3a77aa0108d5de2",
+    "compiler/src/verifier_plugins/libevent/monkey_observation.rs": "42fa7787384bd586fd168f0627f7491f79fd7ed233e47d651d5378acea857935",
+    "compiler/src/verifier_plugins/libevent/monkey_source.rs": "32c1bce30afc19f974dd4ab10ed838d704fca98e6ebe9987c4bc838336066d64",
+    "compiler/examples/monkey_observation.c": "36607ef98ee450141cf1d01632248f7cc29d9734c4722b0483bd9eb3172b9f8d",
+    "compiler/examples/cycle19_fluent_bit_libraries_audit.rs": "71dc3b95e1b76689ac58da9bb0c54d70adfd585f948fcf8171cd2ad0852666d6",
+    "scripts/cycle19_native_observations.py": "2ef5f9039ba3b29f7cec85145c47d36090924867e33f584e4f18245c5f5ce8f1",
+    "proof/QCore/CallbackBinding.lean": "4238c73617dc06e07e2dcb18670bd60f093ee26a554838e4843640d29510187d",
+    "proof/AuditCycle19.lean": "634dbaf509ea5bb2485e5266d162d4a59c7ff7eb2dcc778de39e7b5f1aaac900",
+    "contract/qcore/monkey/callback_binding.qcore": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6",
+    "contract/qcore/monkey/descriptor_observation.qcore": "22fc5aceb37c04a5c403d890a3bcefca11f5c86f93dc1d3a0a3d52bcb7d22d63",
+    "contract/qcore/monkey/composition.qcore": "98bdd22b59994d3c35a5ecb5d3fee3dfb438ccc096269e23ef5f9b657a0425b5",
+    "compiler/tests/qcore_contract_corpus.rs": "ffe3cf0cb7afa10f21f4cff591476c647ca6897fab6102474422097e60688517",
+    "compiler/tests/unit/monkey_binding.rs": "70af999b6e3a5cff5e252402ec8116efface8a707fd43cfd223a01e8d241c3d5",
+    "compiler/tests/unit/monkey_source.rs": "45120c4741f26674f3a8b7153996828a08fc4fd62c6d40bb52a5069fe3e1532f",
+    "compiler/tests/unit/monkey_observation.rs": "c1e335d279eb651cc31fa876cf77c2678495f2e204313fbf624fdbdc2e8f8acb",
+    "compiler/tests/fixtures/monkey/wrappers.c": "2f47bc771897f9b7e063e920a1b06c072b37ec5ad1e4faf2c7a27b4ce715fb14",
+    "compiler/tests/fixtures/monkey/binding/all_paths/observations.jsonl": "6c8168179a6fd4d5095ae512ad76f3a030ed6456c7bfdd6d2c8c591098130ed8",
+    "compiler/tests/fixtures/monkey/binding/all_paths/bindings.jsonl": "23740db4e3ca896be33c9e804ba095b5b67c0295b5253136e0184ce6e4d59695"
+  }
+}

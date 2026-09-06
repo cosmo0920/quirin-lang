@@ -91,3 +91,7 @@ import QCore.ChunkSource
 
 #print axioms QCore.CallbackBinding.accepted_write_preserves_binding
 #print axioms QCore.CallbackBinding.accepted_release_requires_live_object
+
+#print axioms QCore.CallbackBinding.native_path_has_native_execution
+#print axioms QCore.CallbackBinding.injected_path_is_observed_but_not_native
+#print axioms QCore.CallbackBinding.native_path_is_observed

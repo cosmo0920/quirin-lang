@@ -1,0 +1,1 @@
+{"checked":{"backends":{"1":"epoll","2":"epoll","3":"epoll"},"callbacks":["cb_event","cb_timeout","cb_wait_2_timeout"],"descriptor_acquisitions":6,"descriptor_closes":6,"descriptor_reuses":4,"descriptor_uses":6,"observations":84,"socketpair_failures":1},"kind":"runtime_identity_projection","static_certificate":false}

@@ -76,6 +76,25 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/refcount.qcore", "rd_refcnt_destroy_final", 3),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_enq0", 5),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_deq0", 5),
+    ("monkey/callback_binding.qcore", "binding_scope", 8),
+    ("monkey/callback_binding.qcore", "binding_memory", 3),
+    ("monkey/callback_binding.qcore", "binding_execution", 3),
+    ("monkey/callback_binding.qcore", "binding_select_path", 1),
+    ("monkey/callback_binding.qcore", "binding_send", 4),
+    ("monkey/callback_binding.qcore", "binding_errno_location", 2),
+    ("monkey/callback_binding.qcore", "binding_perror", 1),
+    (
+        "monkey/callback_binding.qcore",
+        "binding_evutil_closesocket",
+        1,
+    ),
+    ("monkey/callback_binding.qcore", "binding_event_del", 1),
+    ("monkey/callback_binding.qcore", "binding_event_free", 1),
+    ("monkey/callback_binding.qcore", "binding_mk_mem_free", 3),
+    ("monkey/callback_binding.qcore", "binding_symbol", 2),
+    ("monkey/callback_binding.qcore", "binding_call_arguments", 2),
+    ("monkey/callback_binding.qcore", "binding_call_interval", 3),
+    ("monkey/callback_binding.qcore", "binding_runtime_effect", 2),
     ("monkey/composition.qcore", "evutil_socketpair", 3),
     ("monkey/composition.qcore", "evutil_socket_geterror", 2),
     ("monkey/composition.qcore", "evutil_closesocket", 4),
@@ -83,6 +102,27 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/composition.qcore", "cb_timeout", 4),
     ("monkey/composition.qcore", "cb_wait_2_timeout", 2),
     ("monkey/composition.qcore", "check_monkey_composition", 13),
+    (
+        "monkey/descriptor_observation.qcore",
+        "observation_socketpair",
+        4,
+    ),
+    (
+        "monkey/descriptor_observation.qcore",
+        "observation_acquire",
+        4,
+    ),
+    ("monkey/descriptor_observation.qcore", "observation_use", 1),
+    (
+        "monkey/descriptor_observation.qcore",
+        "observation_close",
+        2,
+    ),
+    (
+        "monkey/descriptor_observation.qcore",
+        "observation_complete",
+        8,
+    ),
 ];
 
 fn corpus_root() -> PathBuf {
@@ -117,7 +157,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 15, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 17, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

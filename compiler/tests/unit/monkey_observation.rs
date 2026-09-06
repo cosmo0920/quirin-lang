@@ -132,7 +132,7 @@ fn rejects_ambiguous_native_close_and_changed_thread_or_base() {
     assert!(
         check_monkey_observations(&jsonl(rows))
             .unwrap_err()
-            .contains("platform-specific")
+            .contains("observation_close: observed contract violation: result == 0")
     );
 }
 
@@ -181,9 +181,33 @@ fn rejects_close_during_io_callback_and_unknown_record_fields() {
     assert!(
         check_monkey_observations(&jsonl(rows))
             .unwrap_err()
-            .contains("active I/O callback")
+            .contains("not active_io_callback")
     );
     let mut rows = fixture();
     rows[15]["action"]["unmodeled_effect"] = json!(true);
     assert!(check_monkey_observations(&jsonl(rows)).is_err());
+}
+
+#[test]
+fn native_descriptor_contracts_control_every_extracted_transition() {
+    let observations = jsonl(fixture());
+    for name in [
+        "observation_socketpair",
+        "observation_acquire",
+        "observation_use",
+        "observation_close",
+        "observation_complete",
+    ] {
+        let marker = format!("extern fn {name}() -> unit\ncontract {{");
+        for predicate in ["false", "unknown_native_predicate"] {
+            let contracts = DESCRIPTOR_OBSERVATION_CONTRACTS.replace(
+                &marker,
+                &format!("{marker}\n    ensures normal {predicate};"),
+            );
+            assert_ne!(contracts, DESCRIPTOR_OBSERVATION_CONTRACTS);
+            let error =
+                check_monkey_observations_with_contracts(&observations, &contracts).unwrap_err();
+            assert!(error.contains(predicate), "{name}: {error}");
+        }
+    }
 }

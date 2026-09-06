@@ -571,6 +571,23 @@ fn audit_monkey_callback_source(
             }
         }
     }
+    let wrappers =
+        qcore_compiler::verifier_plugins::libevent::monkey_source::import_monkey_wrappers(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+        )?;
+    for result in &wrappers {
+        match result {
+            MonkeySourceResult::Summary(summary) => println!(
+                "  monkey-wrapper/{}: {} complete symbolic source path(s); opaque calls and custody Unknown",
+                summary.function(),
+                summary.paths().len()
+            ),
+            MonkeySourceResult::Unknown { function, reason } => {
+                println!("  monkey-wrapper/{function}: source Unknown: {reason}")
+            }
+        }
+    }
     if let Some(directory) = binding_directory {
         let read =
             |name| fs::read_to_string(directory.join(name)).map_err(|error| error.to_string());
@@ -604,6 +621,7 @@ fn audit_monkey_callback_source(
             "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
             "source_projection_only": true,
             "callbacks": results,
+            "wrappers": wrappers,
         });
         fs::write(
             report,

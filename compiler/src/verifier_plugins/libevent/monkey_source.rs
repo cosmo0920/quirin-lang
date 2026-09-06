@@ -17,6 +17,23 @@ use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
 use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
 
 const CALLBACKS: [&str; 3] = ["cb_event", "cb_timeout", "cb_wait_2_timeout"];
+const WRAPPERS: [&str; 15] = [
+    "mk_event_libevent_socketpair",
+    "_mk_event_init",
+    "_mk_event_loop_create",
+    "_mk_event_loop_destroy",
+    "_mk_event_update",
+    "_mk_event_add",
+    "_mk_event_del",
+    "_mk_event_timeout_create",
+    "_mk_event_timeout_destroy",
+    "_mk_event_channel_create",
+    "_mk_event_channel_destroy",
+    "_mk_event_inject",
+    "_mk_event_wait_with_flags",
+    "_mk_event_wait_2",
+    "_mk_event_backend",
+];
 const MAX_PATHS: usize = 64;
 const MAX_OPERATIONS: usize = 512;
 
@@ -31,6 +48,10 @@ pub struct SourceValue {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum SourceExpression {
+    Function {
+        name: String,
+        signature: String,
+    },
     Parameter {
         index: usize,
     },
@@ -102,6 +123,9 @@ pub enum SourceOperation {
     LocalEnd {
         local: usize,
     },
+    ReturnValue {
+        value: SourceValue,
+    },
     Return,
 }
 
@@ -115,6 +139,7 @@ pub struct MonkeySourcePath {
 pub struct MonkeySourceSummary {
     function: String,
     source_revision: String,
+    signature: String,
     paths: Vec<MonkeySourcePath>,
 }
 
@@ -144,6 +169,24 @@ pub fn import_monkey_callbacks(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
 ) -> Result<Vec<MonkeySourceResult>, String> {
+    import_functions(unit, source_revision, &CALLBACKS)
+}
+
+/// Import every selected adapter wrapper with an explicit Unknown for bodies
+/// outside the bounded grammar. Calls remain opaque; returned values and every
+/// imported failure guard are retained, without assuming cleanup or success.
+pub fn import_monkey_wrappers(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+) -> Result<Vec<MonkeySourceResult>, String> {
+    import_functions(unit, source_revision, &WRAPPERS)
+}
+
+fn import_functions(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    functions: &[&str],
+) -> Result<Vec<MonkeySourceResult>, String> {
     if source_revision != PINNED_FLUENT_BIT_REVISION {
         return Err("Monkey source revision does not match the pinned revision".into());
     }
@@ -152,7 +195,7 @@ pub fn import_monkey_callbacks(
     // selected complete records by name/type, then bind each MemberExpr to its
     // typed base and direct field (anonymous/union/bitfield access is rejected).
     let mut fields = BTreeMap::new();
-    for record in ["mk_event", "mk_event_ctx", "ev_map"] {
+    for record in ["mk_event", "mk_event_ctx", "ev_map", "mk_event_loop"] {
         let declarations = ast_declarations(&source, unit, record)?;
         let definitions: Vec<_> = declarations
             .iter()
@@ -177,7 +220,7 @@ pub fn import_monkey_callbacks(
             }
         }
     }
-    Ok(CALLBACKS
+    Ok(functions
         .iter()
         .map(|function| {
             let result = function_ast(&source, unit, function)
@@ -233,7 +276,7 @@ enum Stmt {
     Increment(Expr),
     Call(Expr),
     If(Expr, Box<Self>, Option<Box<Self>>),
-    Return,
+    Return(Option<Expr>),
 }
 
 struct Importer<'a> {
@@ -270,6 +313,18 @@ impl Importer<'_> {
                 }
                 Ok(Expr::Local(id.into(), ty))
             }
+            ("DeclRefExpr", []) if node["referencedDecl"]["kind"] == "FunctionDecl" => {
+                Ok(Expr::Literal(value(
+                    ty.clone(),
+                    SourceExpression::Function {
+                        name: node["referencedDecl"]["name"]
+                            .as_str()
+                            .ok_or("missing function identity")?
+                            .into(),
+                        signature: ty,
+                    },
+                )))
+            }
             ("IntegerLiteral", []) | ("StringLiteral", []) => {
                 let literal = node["value"].as_str().ok_or("missing literal")?.to_owned();
                 Ok(Expr::Literal(value(
@@ -289,7 +344,13 @@ impl Importer<'_> {
                 // Reject variably modified sizeof, whose operand can execute.
                 if !matches!(
                     argument_type,
-                    "unsigned long" | "unsigned long long" | "int" | "short"
+                    "unsigned long"
+                        | "unsigned long long"
+                        | "int"
+                        | "short"
+                        | "struct mk_event_ctx"
+                        | "struct mk_event"
+                        | "struct ev_map"
                 ) {
                     return Err("sizeof outside fixed scalar type profile".into());
                 }
@@ -307,7 +368,14 @@ impl Importer<'_> {
             ("ImplicitCastExpr" | "CStyleCastExpr", [child])
                 if matches!(
                     node["castKind"].as_str(),
-                    Some("BitCast" | "IntegralCast" | "NoOp" | "ArrayToPointerDecay")
+                    Some(
+                        "BitCast"
+                            | "IntegralCast"
+                            | "NoOp"
+                            | "ArrayToPointerDecay"
+                            | "NullToPointer"
+                            | "FunctionToPointerDecay"
+                    )
                 ) =>
             {
                 Ok(Expr::Cast(
@@ -342,7 +410,10 @@ impl Importer<'_> {
                 ))
             }
             ("BinaryOperator", [left, right])
-                if matches!(node["opcode"].as_str(), Some("&" | "|" | "==" | "!=")) =>
+                if matches!(
+                    node["opcode"].as_str(),
+                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/")
+                ) =>
             {
                 Ok(Expr::Binary(
                     ty,
@@ -377,6 +448,19 @@ impl Importer<'_> {
                         | "event_del"
                         | "event_free"
                         | "mk_mem_free"
+                        | "mk_mem_alloc_z"
+                        | "event_base_new"
+                        | "event_base_free"
+                        | "event_new"
+                        | "event_add"
+                        | "event_base_loop"
+                        | "evutil_socketpair"
+                        | "_mk_event_init"
+                        | "_mk_event_update"
+                        | "_mk_event_add"
+                        | "_mk_event_del"
+                        | "mk_event_libevent_socketpair"
+                        | "_mk_event_wait_with_flags"
                 ) {
                     return Err(format!(
                         "call {name} is outside the callback source profile"
@@ -457,7 +541,8 @@ impl Importer<'_> {
                 Some(Box::new(self.statement(no, depth + 1)?)),
             )),
             ("CallExpr", _) => Ok(Stmt::Call(self.expression(node, depth + 1)?)),
-            ("ReturnStmt", []) => Ok(Stmt::Return),
+            ("ReturnStmt", []) => Ok(Stmt::Return(None)),
+            ("ReturnStmt", [result]) => Ok(Stmt::Return(Some(self.expression(result, depth + 1)?))),
             _ => Err(format!("unmodeled callback statement {}", kind(node))),
         }
     }
@@ -469,6 +554,7 @@ struct Path {
     addressed: BTreeSet<String>,
     operations: Vec<SourceOperation>,
     returned: bool,
+    return_value: Option<SourceValue>,
     next_local: usize,
 }
 
@@ -693,7 +779,9 @@ fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
         let (values, produced): (Vec<&SourceValue>, Option<&str>) = match operation {
             SourceOperation::Read { place } => (vec![place], Some(&place.c_type)),
             SourceOperation::Write { place, value } => (vec![place, value], None),
-            SourceOperation::LocalWrite { value, .. } => (vec![value], None),
+            SourceOperation::LocalWrite { value, .. } | SourceOperation::ReturnValue { value } => {
+                (vec![value], None)
+            }
             SourceOperation::Call {
                 arguments,
                 result_type,
@@ -796,7 +884,13 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                 }
             }
             Stmt::Assign(place, expr) => {
-                reject_unsequenced(&[place, expr])?;
+                // A direct field base read from an unescaped pointer local
+                // cannot be changed by the RHS call. Other addresses retain
+                // the conservative call/read ordering gate.
+                let stable_base = matches!(place, Expr::Field(_, base, _) if matches!(base.as_ref(), Expr::Read(_, local) if matches!(local.as_ref(), Expr::Local(id, _) if !path.addressed.contains(id))));
+                if !stable_base {
+                    reject_unsequenced(&[place, expr])?;
+                }
                 let result = path.evaluate(expr)?;
                 path.write(place, result)?;
             }
@@ -848,7 +942,11 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                 }
                 continue;
             }
-            Stmt::Return => {
+            Stmt::Return(result) => {
+                path.return_value = result
+                    .as_ref()
+                    .map(|value| path.evaluate(value))
+                    .transpose()?;
                 path.returned = true;
             }
             Stmt::Block(_) => unreachable!(),
@@ -867,26 +965,35 @@ fn derive(
     revision: &str,
     fields: &BTreeMap<(String, String), String>,
 ) -> Result<MonkeySourceSummary, String> {
-    if !ast["type"]["qualType"]
-        .as_str()
-        .is_some_and(|ty| ty.starts_with("void ("))
-        || ast["variadic"] == true
-    {
-        return Err("callback signature is outside the selected Unix profile".into());
+    let callback = CALLBACKS.contains(&function);
+    let signature = c_type(ast)?;
+    let return_type = signature
+        .split('(')
+        .next()
+        .ok_or("missing return type")?
+        .trim();
+    if ast["variadic"] == true || (callback && return_type != "void") {
+        return Err("function signature is outside the selected Unix profile".into());
     }
-    let [fd, flags, data, body] = children(ast) else {
-        return Err("unmodeled callback parameters/attributes".into());
+    if !matches!(return_type, "void" | "void *" | "int" | "char *") {
+        return Err("wrapper return type outside bounded profile".into());
+    }
+    let Some((body, parameters)) = children(ast).split_last() else {
+        return Err("missing function body".into());
     };
+    if kind(body) != "CompoundStmt" || (callback && parameters.len() != 3) {
+        return Err("unmodeled function parameters/attributes".into());
+    }
     let mut importer = Importer {
         fields,
         locals: BTreeSet::new(),
         nodes: 0,
     };
     let mut path = Path {
-        next_local: 3,
+        next_local: parameters.len(),
         ..Path::default()
     };
-    for (index, parameter) in [fd, flags, data].into_iter().enumerate() {
+    for (index, parameter) in parameters.iter().enumerate() {
         if kind(parameter) != "ParmVarDecl" || !children(parameter).is_empty() {
             return Err("unmodeled callback parameter".into());
         }
@@ -895,7 +1002,10 @@ fn derive(
             .ok_or("missing parameter ID")?
             .to_owned();
         let ty = c_type(parameter)?;
-        if ty != ["int", "short", "void *"][index] {
+        if (callback && ty != ["int", "short", "void *"][index])
+            || (!callback
+                && !(ty.ends_with('*') || matches!(ty.as_str(), "int" | "unsigned int" | "long")))
+        {
             return Err("callback parameter type outside selected Unix profile".into());
         }
         importer.locals.insert(id.clone());
@@ -914,7 +1024,21 @@ fn derive(
     let paths = execute(&statement, vec![path])?
         .into_iter()
         .map(|mut path| {
-            path.push(SourceOperation::Return)?;
+            if return_type == "void" {
+                if path.return_value.is_some() {
+                    return Err("value returned from void function".into());
+                }
+                path.push(SourceOperation::Return)?;
+            } else {
+                let value = path
+                    .return_value
+                    .take()
+                    .ok_or("missing nonvoid return on a source path")?;
+                if value.c_type != return_type {
+                    return Err("returned value type differs from signature".into());
+                }
+                path.push(SourceOperation::ReturnValue { value })?;
+            }
             let path = MonkeySourcePath {
                 operations: path.operations,
             };
@@ -925,6 +1049,7 @@ fn derive(
     Ok(MonkeySourceSummary {
         function: function.into(),
         source_revision: revision.into(),
+        signature,
         paths,
     })
 }

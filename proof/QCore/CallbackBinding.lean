@@ -241,4 +241,42 @@ theorem accepted_release_requires_live_object
     exact ⟨live, rfl⟩
   · contradiction
 
+/-! Evidence origin is retained independently of path refinement. Exercising a
+path with a controlled failure cannot count as an unmodified native call result.
+Origins are supplied by the observer; these facts do not authenticate it. -/
+inductive EvidenceOrigin where
+  | native
+  | injectedFailure
+  deriving DecidableEq, Repr
+
+structure CheckedExecution where
+  path : Nat
+  origin : EvidenceOrigin
+  deriving DecidableEq, Repr
+
+def nativePaths (executions : List CheckedExecution) : List Nat :=
+  (executions.filter (fun execution => decide (execution.origin = .native))).map CheckedExecution.path
+
+def observedPaths (executions : List CheckedExecution) : List Nat :=
+  executions.map CheckedExecution.path
+
+theorem native_path_has_native_execution
+    {executions : List CheckedExecution} {path : Nat}
+    (member : path ∈ nativePaths executions) :
+    ∃ execution ∈ executions, execution.path = path ∧ execution.origin = .native := by
+  obtain ⟨execution, present, same⟩ := List.mem_map.mp member
+  have facts := List.mem_filter.mp present
+  exact ⟨execution, facts.1, same, by simpa using facts.2⟩
+
+theorem injected_path_is_observed_but_not_native (path : Nat) :
+    path ∈ observedPaths [{ path, origin := .injectedFailure }] ∧
+    path ∉ nativePaths [{ path, origin := .injectedFailure }] := by
+  simp [observedPaths, nativePaths]
+
+theorem native_path_is_observed
+    {executions : List CheckedExecution} {path : Nat}
+    (member : path ∈ nativePaths executions) : path ∈ observedPaths executions := by
+  obtain ⟨execution, present, same, _⟩ := native_path_has_native_execution member
+  exact List.mem_map.mpr ⟨execution, present, same⟩
+
 end QCore.CallbackBinding

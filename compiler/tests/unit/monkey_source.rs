@@ -415,3 +415,98 @@ fn increment_and_compound_assignment_evaluate_nested_lvalue_once() {
         assert_eq!(reads[1], write);
     }
 }
+
+fn wrappers(source: &str) -> Vec<MonkeySourceResult> {
+    import_monkey_wrappers(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+    )
+    .unwrap()
+}
+
+#[test]
+fn wrapper_import_retains_nullable_and_registration_failure_exits() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let results = wrappers(include_str!("../fixtures/monkey/wrappers.c"));
+    assert_eq!(results.len(), 15);
+    let create = summary(&results, 2);
+    assert_eq!(create.paths().len(), 4, "{create:?}");
+    assert_eq!(calls(&create.paths()[0]), ["_mk_event_init"]);
+    assert_eq!(
+        calls(&create.paths()[1]),
+        ["_mk_event_init", "mk_mem_alloc_z"]
+    );
+    assert_eq!(
+        calls(&create.paths()[2]),
+        [
+            "_mk_event_init",
+            "mk_mem_alloc_z",
+            "event_base_new",
+            "mk_mem_alloc_z",
+            "mk_mem_free"
+        ]
+    );
+    assert_eq!(
+        calls(&create.paths()[3]),
+        [
+            "_mk_event_init",
+            "mk_mem_alloc_z",
+            "event_base_new",
+            "mk_mem_alloc_z"
+        ]
+    );
+    for path in create.paths() {
+        assert!(matches!(
+            path.operations.last(),
+            Some(SourceOperation::ReturnValue { .. })
+        ));
+    }
+    let update = summary(&results, 4);
+    assert_eq!(update.paths().len(), 24);
+    let mut endings = BTreeSet::new();
+    for path in update.paths() {
+        let functions = calls(path);
+        assert_eq!(&functions[..3], ["event_del", "event_free", "event_new"]);
+        // Registration failure does not invent a second event_free cleanup.
+        assert_eq!(
+            functions
+                .iter()
+                .filter(|name| **name == "event_free")
+                .count(),
+            1
+        );
+        endings.insert(functions.last().copied().unwrap());
+        check_path_symbols(path).unwrap();
+    }
+    assert_eq!(endings, BTreeSet::from(["event_new", "event_add"]));
+    assert_eq!(
+        calls(&summary(&results, 3).paths()[0]),
+        ["event_base_free", "mk_mem_free", "mk_mem_free"]
+    );
+    assert!(matches!(&results[5], MonkeySourceResult::Unknown { .. }));
+}
+
+#[test]
+fn wrapper_mutations_cannot_erase_unsupported_paths_or_invent_return_values() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let original = include_str!("../fixtures/monkey/wrappers.c");
+    for source in [
+        original.replace("return ctx;", "if (size) return ctx;"),
+        original.replace("return ctx;", "return ctx; while (0) {}"),
+        original.replace("ctx->base = event_base_new();", "struct mk_event_ctx **escaped = &ctx; mk_mem_free(escaped); ctx->base = event_base_new();"),
+    ] {
+        assert!(matches!(&wrappers(&source)[2], MonkeySourceResult::Unknown { .. }));
+    }
+    let source = original.replace("if (ret < 0)", "if (ret > 0)");
+    assert_ne!(
+        summary(&wrappers(original), 4),
+        summary(&wrappers(&source), 4)
+    );
+}

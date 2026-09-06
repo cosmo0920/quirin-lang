@@ -359,3 +359,19 @@ snapshots, calls, and the same 48-record descriptor/event observation. Five
 unobserved callback paths and unimported allocation/registration failures remain
 explicitly `Unknown`; complete wrapper custody and static event-program
 composition are not claimed. The generic audit counts above are unchanged.
+
+## Native policy and wrapper failure-path follow-up (2026-09-06)
+
+The [native-rule report](../reports/cycle19-native-rules/README.md) supersedes
+the earlier callback execution counts. The replay/descriptor checkers now
+interpret 20 native QCore contracts with 56 postconditions. The expanded
+sanitized run checks eight callback executions covering every imported callback
+path, including one explicitly labeled injected send failure. Native and
+injected evidence remain separate from universal safety claims.
+
+The same pinned audit imports 37 symbolic paths across eight Monkey wrappers,
+retaining nullable creation and registration failure exits. All 15 selected
+wrappers have a result; seven remain Unknown for unsupported source constructs.
+Wrapper failure custody, complete map provenance and the Cycle 18 event-program
+join remain unproved. The generic 4,688/4,775 projection count and unit verdicts
+are unchanged; Cycle 19 remains in progress.

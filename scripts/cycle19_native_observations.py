@@ -134,7 +134,7 @@ def main():
         report = json.loads(checked.stdout)["checked"]
         if report["callbacks"] != ["cb_event", "cb_timeout", "cb_wait_2_timeout"]:
             raise RuntimeError(f"unobserved callbacks: {report['callbacks']}")
-        if report["socketpair_failures"] != 1 or report["descriptor_acquisitions"] != 4:
+        if report["socketpair_failures"] != 1 or report["descriptor_acquisitions"] != 6:
             raise RuntimeError(f"missing descriptor creation/failure scenarios: {report}")
         # Import fresh private source summaries under the same checked build;
         # serialized symbolic reports are never accepted as trusted summaries.
@@ -146,10 +146,15 @@ def main():
                  str(source_report), str(diagnostics), str(output)],
                 cwd=REPO, stdout=audit, stderr=subprocess.STDOUT)
         binding_result = json.loads((output / "monkey_binding_result.json").read_text())
-        if any(row["checked_executions"] < 1 for row in binding_result["callbacks"]):
+        if (any(row["checked_executions"] < 1 or row["unknown_paths"] or row["unknown_reasons"]
+                for row in binding_result["callbacks"])
+                or sum(row["injected_executions"] for row in binding_result["callbacks"]) != 1):
             raise RuntimeError(f"callback binding regression: {binding_result}")
         metadata["monkey_binding"] = {
             "schema_version": 1,
+            "replay_contract_sha256": sha(REPO / "contract/qcore/monkey/callback_binding.qcore"),
+            "identity_contract_sha256": sha(REPO / "contract/qcore/monkey/descriptor_observation.qcore"),
+            "controlled_scenarios": ["event_active flags: write, read|write, timeout", "one injected send failure with ECONNABORTED"],
             "database_sha256": sha(db),
             "contract_sha256": sha(REPO / "contract/qcore/monkey/composition.qcore"),
             "bindings_sha256": sha(output / "monkey_bindings.jsonl"),
