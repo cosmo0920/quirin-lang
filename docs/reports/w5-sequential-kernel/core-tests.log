@@ -1,0 +1,100 @@
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.5
+   Compiling qcore-core v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-core)
+   Compiling cc v1.2.50
+    Finished `test` profile [unoptimized] target(s) in 1.40s
+     Running unittests src/lib.rs (target/debug/deps/qcore_core-ea2ea75c2feaed6c)
+
+running 83 tests
+test advanced_control::tests::multi_shot_and_resumable_handlers_reject_owned_capture ... ok
+test advanced_control::tests::cancellation_is_deferred_to_a_safe_point_and_cleans_lifo ... ok
+test advanced_control::tests::multi_shot_shared_capture_can_be_invoked_repeatedly ... ok
+test advanced_control::tests::double_error_preserves_the_primary_error ... ok
+test advanced_control::tests::fallible_cleanup_on_normal_return_has_a_distinct_outcome ... ok
+test advanced_control::tests::normal_cleanup_destroys_each_resource_exactly_once ... ok
+test advanced_control::tests::owned_capture_is_linear_and_one_shot ... ok
+test cleanup_lowering::tests::invalid_normal_leak_is_rejected ... ok
+test cleanup_lowering::tests::normal_transfer_is_explicit_and_not_cleaned_locally ... ok
+test cleanup_lowering::tests::cleanup_is_lifo_and_releases_each_identity_once ... ok
+test cleanup_lowering::tests::resource_identity_cannot_be_reacquired_after_release ... ok
+test cleanup_lowering::tests::partial_initialization_uses_edge_specific_cleanup ... ok
+test c_emit::tests::emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels ... ok
+test error_region::tests::cleanup_capability_must_be_consumed_exactly_once ... ok
+test error_region::tests::discharge_restores_baseline_in_lifo_order ... ok
+test error_region::tests::fallible_cleanup_is_rejected ... ok
+test error_region::tests::live_obligations_require_quant_open_and_discharge ... ok
+test error_region::tests::error_only_credit_abandonment_is_explicit ... ok
+test error_region::tests::explicit_drop_removes_the_cleanup_action ... ok
+test error_region::tests::nested_cleanup_order_is_inner_then_outer_and_lifo_within_each ... ok
+test error_region::tests::rethrow_requires_prior_discharge ... ok
+test error_region::tests::partial_initialization_builds_path_specific_packs ... ok
+test error_region::tests::wrong_and_outside_quant_open_are_rejected ... ok
+test executable_model::tests::all_usage_grades_apply_their_interval_bounds ... ok
+test error_region::tests::payload_transfer_is_excluded_from_cleanup ... ok
+test executable_model::tests::a_typed_error_cleans_partial_initialization_in_lifo_order ... ok
+test executable_model::tests::construction_rejects_duplicate_static_bindings ... ok
+test executable_model::tests::duplicate_acquire_is_typed_and_original_resource_is_cleaned_once ... ok
+test executable_model::tests::every_small_step_preserves_the_identity_partition ... ok
+test executable_model::tests::exact_usage_obligation_fails_as_a_typed_error ... ok
+test executable_model::tests::invalid_drop_enters_cleanup_without_double_release ... ok
+test executable_model::tests::returns_a_natural_index_after_satisfying_usage_and_ownership ... ok
+test index::tests::cross_dimension_addition_is_rejected ... ok
+test index::tests::same_dimension_addition_is_constructible ... ok
+test index::tests::scaling_is_constant_by_construction ... ok
+test inference::tests::infers_and_independently_checks_the_principal_product ... ok
+test inference::tests::rejects_a_satisfying_but_nonprincipal_certificate ... ok
+test inference::tests::normalization_makes_principal_results_permutation_unique ... ok
+test inference::tests::rejects_unsatisfiable_and_ambiguous_inputs ... ok
+test ownership::tests::allocate_use_and_drop_reaches_empty_normal_exit ... ok
+test ownership::tests::branch_states_must_agree ... ok
+test ownership::tests::live_vector_is_componentwise_ledger_sum ... ok
+test ownership::tests::move_preserves_identity_and_footprint ... ok
+test ownership::tests::mutable_borrow_is_exclusive_and_permits_write ... ok
+test ownership::tests::rejects_double_drop ... ok
+test ownership::tests::multiple_shared_borrows_may_overlap ... ok
+test ownership::tests::rejects_move_during_shared_borrow ... ok
+test ownership::tests::rejects_normal_path_leak ... ok
+test ownership::tests::rejects_owned_copy ... ok
+test ownership::tests::rejects_use_after_move ... ok
+test ownership::tests::shared_borrow_ends_before_drop ... ok
+test ownership::tests::transfer_out_is_not_a_normal_path_leak ... ok
+test resource_flow::tests::arithmetic_overflow_is_explicit ... ok
+test resource_flow::tests::bounds_are_checked_on_every_axis ... ok
+test resource_flow::tests::branch_join_rejects_different_post_live_states ... ok
+test resource_flow::tests::function_summary_composes_at_call_site ... ok
+test resource_flow::tests::mutually_exclusive_branches_join_componentwise ... ok
+test resource_flow::tests::release_then_reacquire_uses_maximum_peak_not_sum ... ok
+test resource_flow::tests::sequential_acquisitions_add_live_and_total ... ok
+test typed_errors::tests::branch_and_catch_normal_joins_are_checked ... ok
+test typed_errors::tests::catch_without_cleanup_accepts_only_the_entry_ledger ... ok
+test typed_errors::tests::error_post_ledgers_remain_path_sensitive ... ok
+test typed_errors::tests::error_free_boundary_rejects_a_remaining_error_exit ... ok
+test typed_errors::tests::qualitative_effects_are_checked_separately_from_resource_bounds ... ok
+test typed_errors::tests::propagated_error_must_be_in_the_callers_effect_row ... ok
+test typed_errors::tests::question_mark_preserves_each_declared_post_ledger ... ok
+test typed_errors::tests::raise_has_no_normal_exit_and_preserves_the_ledger ... ok
+test typed_errors::tests::raise_must_be_declared_and_present_in_the_effect_row ... ok
+test resource_flow::tests::bounded_zero_net_loop_scales_only_total ... ok
+test usage::tests::application_checks_arity ... ok
+test usage::tests::affine_allows_loss_but_rejects_duplication ... ok
+test usage::tests::erased_variable_cannot_occur_at_runtime ... ok
+test usage::tests::application_substitutes_parameter_usage_pointwise ... ok
+test usage::tests::branch_join_is_the_least_enclosing_interval ... ok
+test usage::tests::exact_one_rejects_loss_and_duplication ... ok
+test usage::tests::interval_operations_follow_the_usage_semiring ... ok
+test usage::tests::lambda_binders_respect_shadowing_erasure_and_branch_obligations ... ok
+test usage::tests::lambda_replication_scales_captures_after_checking_the_binder ... ok
+test usage::tests::many_allows_weakening_and_contraction ... ok
+test usage::tests::relevant_forbids_weakening_but_allows_contraction ... ok
+test usage::tests::replicated_affine_function_cannot_duplicate_its_parameter ... ok
+test resource_flow::tests::generated_valid_traces_match_composed_summaries ... ok
+test c_emit::tests::compiled_instrumented_c_matches_source_and_cfg ... ok
+
+test result: ok. 83 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+   Doc-tests qcore_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

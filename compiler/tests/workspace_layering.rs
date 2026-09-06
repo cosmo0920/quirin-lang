@@ -96,3 +96,28 @@ fn compiler_uses_audit_only_for_examples() {
         }
     }
 }
+
+#[test]
+fn sequential_kernel_compatibility_paths_are_core_types() {
+    // Compiler APIs must remain the same types as their provider-free owners,
+    // rather than a duplicate implementation drifting behind a facade.
+    use std::any::TypeId;
+    macro_rules! same_type {
+        ($module:ident, $name:ident) => {
+            assert_eq!(
+                TypeId::of::<qcore_compiler::$module::$name>(),
+                TypeId::of::<qcore_core::$module::$name>()
+            );
+        };
+    }
+    same_type!(ownership, OwnershipState);
+    same_type!(resource_flow, Flow);
+    same_type!(typed_errors, ErrorLedger);
+    same_type!(error_region, CleanupPack);
+    same_type!(cleanup_lowering, SourceProgram);
+    same_type!(cfg, TypedCfg);
+    same_type!(c_emit, CEmitError);
+    same_type!(executable_model, ModelProgram);
+    same_type!(advanced_control, AdvancedProgram);
+    same_type!(inference, InferenceCertificate);
+}

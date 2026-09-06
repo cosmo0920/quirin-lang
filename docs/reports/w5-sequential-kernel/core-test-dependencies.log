@@ -1,0 +1,5 @@
+qcore-core v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-core)
+[dev-dependencies]
+└── cc v1.2.50
+    ├── find-msvc-tools v0.1.5
+    └── shlex v1.3.0

@@ -1,0 +1,158 @@
+{
+  "baseline": "6a66f99",
+  "normalization": "none: exact byte parity before and after physical relocation",
+  "files": [
+    {
+      "kind": "module",
+      "from": "compiler/src/ownership.rs",
+      "to": "crates/qcore-core/src/ownership.rs",
+      "sha256": "779573eabcb3b67f5e22ac9120bcfa0acb97f3d01d99ccce089399dbe305feee",
+      "byte_identical": true,
+      "after_sha256": "779573eabcb3b67f5e22ac9120bcfa0acb97f3d01d99ccce089399dbe305feee"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/ownership.rs",
+      "to": "crates/qcore-core/tests/unit/ownership.rs",
+      "sha256": "bdd7369121132a88c53cebff32051ec976925cfbfac461e26f48f82edeaac63f",
+      "byte_identical": true,
+      "after_sha256": "bdd7369121132a88c53cebff32051ec976925cfbfac461e26f48f82edeaac63f"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/resource_flow.rs",
+      "to": "crates/qcore-core/src/resource_flow.rs",
+      "sha256": "689f991d244d008048d4105c09eb0256efb5558f98f48d3a904765465cee3668",
+      "byte_identical": true,
+      "after_sha256": "689f991d244d008048d4105c09eb0256efb5558f98f48d3a904765465cee3668"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/resource_flow.rs",
+      "to": "crates/qcore-core/tests/unit/resource_flow.rs",
+      "sha256": "d6efca3edfb1eee5a2208d47a00ed4fb23a6d2628da089bb81f637de9b2d0f30",
+      "byte_identical": true,
+      "after_sha256": "d6efca3edfb1eee5a2208d47a00ed4fb23a6d2628da089bb81f637de9b2d0f30"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/typed_errors.rs",
+      "to": "crates/qcore-core/src/typed_errors.rs",
+      "sha256": "bbb71006bbc461e5c81e68ef07ddcf08a15ae0bc5c5e5675301dcd984849a3c5",
+      "byte_identical": true,
+      "after_sha256": "bbb71006bbc461e5c81e68ef07ddcf08a15ae0bc5c5e5675301dcd984849a3c5"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/typed_errors.rs",
+      "to": "crates/qcore-core/tests/unit/typed_errors.rs",
+      "sha256": "8d7fdd86a3a9a6abaec05a407d9516dd9c94575e2d3af0056d1e9e733d746d03",
+      "byte_identical": true,
+      "after_sha256": "8d7fdd86a3a9a6abaec05a407d9516dd9c94575e2d3af0056d1e9e733d746d03"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/error_region.rs",
+      "to": "crates/qcore-core/src/error_region.rs",
+      "sha256": "ef95d408b067ff43296bdbe835912e624e6e115f40e317bf1620906b837f7abf",
+      "byte_identical": true,
+      "after_sha256": "ef95d408b067ff43296bdbe835912e624e6e115f40e317bf1620906b837f7abf"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/error_region.rs",
+      "to": "crates/qcore-core/tests/unit/error_region.rs",
+      "sha256": "3e43bc6374df81baf4e9821efd2294d0c6ec893976fde36a3524715c3fbdd897",
+      "byte_identical": true,
+      "after_sha256": "3e43bc6374df81baf4e9821efd2294d0c6ec893976fde36a3524715c3fbdd897"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/cleanup_lowering.rs",
+      "to": "crates/qcore-core/src/cleanup_lowering.rs",
+      "sha256": "8d59f6f25acda9377522e5e05ce9d284b3ee34e8e54d48daacc2e0cad0471a11",
+      "byte_identical": true,
+      "after_sha256": "8d59f6f25acda9377522e5e05ce9d284b3ee34e8e54d48daacc2e0cad0471a11"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/cleanup_lowering.rs",
+      "to": "crates/qcore-core/tests/unit/cleanup_lowering.rs",
+      "sha256": "a4df009b51f001d2426ecbcb8288df37f74907391f7061cf993d7a8ec5b8289f",
+      "byte_identical": true,
+      "after_sha256": "a4df009b51f001d2426ecbcb8288df37f74907391f7061cf993d7a8ec5b8289f"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/cfg.rs",
+      "to": "crates/qcore-core/src/cfg.rs",
+      "sha256": "894a46c1c077d27035572dbe7c04a603d67babb8b3917797d8f4e8957ffeacb4",
+      "byte_identical": true,
+      "after_sha256": "894a46c1c077d27035572dbe7c04a603d67babb8b3917797d8f4e8957ffeacb4"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/c_emit.rs",
+      "to": "crates/qcore-core/src/c_emit.rs",
+      "sha256": "9208e8346087c158239be21298fb8ece7498bb7e056b820bd3539ff5ba6f2c46",
+      "byte_identical": true,
+      "after_sha256": "9208e8346087c158239be21298fb8ece7498bb7e056b820bd3539ff5ba6f2c46"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/c_emit.rs",
+      "to": "crates/qcore-core/tests/unit/c_emit.rs",
+      "sha256": "7504b37adbee970566f2f8b1441f6bc8fb1374d7709aca48ef1616206f1c1d2e",
+      "byte_identical": true,
+      "after_sha256": "7504b37adbee970566f2f8b1441f6bc8fb1374d7709aca48ef1616206f1c1d2e"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/executable_model.rs",
+      "to": "crates/qcore-core/src/executable_model.rs",
+      "sha256": "681bd3420b931f669f121c3793d8802a98dd901dc04c5b408c1f3d30a36209e3",
+      "byte_identical": true,
+      "after_sha256": "681bd3420b931f669f121c3793d8802a98dd901dc04c5b408c1f3d30a36209e3"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/executable_model.rs",
+      "to": "crates/qcore-core/tests/unit/executable_model.rs",
+      "sha256": "8661b2678b7d01e001faffca5e24358cd7c40af5eeb66a69f43a2dbbb0624a0a",
+      "byte_identical": true,
+      "after_sha256": "8661b2678b7d01e001faffca5e24358cd7c40af5eeb66a69f43a2dbbb0624a0a"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/advanced_control.rs",
+      "to": "crates/qcore-core/src/advanced_control.rs",
+      "sha256": "ced37f3537f312e409652efa38e053d7cdabb1ee291f0c3a7813d3489ed3a5b1",
+      "byte_identical": true,
+      "after_sha256": "ced37f3537f312e409652efa38e053d7cdabb1ee291f0c3a7813d3489ed3a5b1"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/advanced_control.rs",
+      "to": "crates/qcore-core/tests/unit/advanced_control.rs",
+      "sha256": "6879a87bcd98817d200c0d165751099a72ddf8bbc9d7a9d60a74ce606d435e65",
+      "byte_identical": true,
+      "after_sha256": "6879a87bcd98817d200c0d165751099a72ddf8bbc9d7a9d60a74ce606d435e65"
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/inference.rs",
+      "to": "crates/qcore-core/src/inference.rs",
+      "sha256": "a2a4d1558eddb63cbbebc2dfff31be61f83c404846bdc332175a88cbdc9170cf",
+      "byte_identical": true,
+      "after_sha256": "a2a4d1558eddb63cbbebc2dfff31be61f83c404846bdc332175a88cbdc9170cf"
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/inference.rs",
+      "to": "crates/qcore-core/tests/unit/inference.rs",
+      "sha256": "aa4fe42e81050e18c03d847d1bcca6b9960005392e29caff9c2cd65946d9c8e8",
+      "byte_identical": true,
+      "after_sha256": "aa4fe42e81050e18c03d847d1bcca6b9960005392e29caff9c2cd65946d9c8e8"
+    }
+  ]
+}
