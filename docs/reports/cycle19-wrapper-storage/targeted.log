@@ -1,0 +1,72 @@
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.35s
+     Running unittests src/lib.rs (target/debug/deps/qcore_compiler-cb674beb6e2ac3af)
+
+running 17 tests
+test verifier_plugins::libevent::monkey_source::tests::aggregate_symbol_validation_rejects_nested_forward_reference ... ok
+test verifier_plugins::libevent::monkey_source::tests::symbolic_references_require_prior_producers_with_matching_types ... ok
+test verifier_plugins::libevent::monkey_source::tests::nested_blocks_end_storage_and_early_returns_keep_only_executed_effects ... ok
+test verifier_plugins::libevent::monkey_source::tests::absent_callbacks_and_wrong_revision_do_not_create_summaries ... ok
+test verifier_plugins::libevent::monkey_source::tests::imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order ... ok
+test verifier_plugins::libevent::monkey_source::tests::increment_and_compound_assignment_evaluate_nested_lvalue_once ... ok
+test verifier_plugins::libevent::monkey_source::tests::import_limits_bound_branches_and_symbolic_substitution ... ok
+test verifier_plugins::libevent::monkey_source::tests::wrapper_import_retains_nullable_and_registration_failure_exits ... ok
+test verifier_plugins::libevent::monkey_source::tests::aliases_are_bound_to_parameter_and_prior_reads_not_variable_names ... ok
+test verifier_plugins::libevent::monkey_source::tests::opaque_calls_and_indirect_writes_invalidate_escaped_local_values ... ok
+test verifier_plugins::libevent::monkey_source::tests::does_not_invent_order_for_multiple_calls_or_call_and_memory_read ... ok
+test verifier_plugins::libevent::monkey_source::tests::source_changes_are_retained_and_never_claim_successful_release ... ok
+test verifier_plugins::libevent::monkey_source::tests::field_qualifiers_bitfields_and_signature_mismatch_remain_unknown ... ok
+test verifier_plugins::libevent::monkey_source::tests::stack_socketpair_cells_remain_memory_reads_after_opaque_calls ... ok
+test verifier_plugins::libevent::monkey_source::tests::unsupported_even_unreachable_operations_fail_the_whole_callback ... ok
+test verifier_plugins::libevent::monkey_source::tests::wrapper_constants_and_stack_initializers_retain_source_values ... ok
+test verifier_plugins::libevent::monkey_source::tests::wrapper_mutations_cannot_erase_unsupported_paths_or_invent_return_values ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 271 filtered out; finished in 3.60s
+
+     Running unittests src/main.rs (target/debug/deps/qcorec-55c80663a37f2c9c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contract_loader.rs (target/debug/deps/contract_loader-47230a52bbe0ea9d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-9423f79292664fed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.00s
+
+     Running tests/libevent_submodule.rs (target/debug/deps/libevent_submodule-5872b7ce3ba69b74)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/module_modes.rs (target/debug/deps/module_modes-1c5caaddf373907d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-c55dbc7f65336f3e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quant_index_contracts.rs (target/debug/deps/quant_index_contracts-b2b0885bfedfb092)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/toolchain_compatibility.rs (target/debug/deps/toolchain_compatibility-0fa9939fdf3d859d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s

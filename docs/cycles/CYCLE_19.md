@@ -488,3 +488,13 @@ The remaining 19B source identity mapping, 19C lifecycle/teardown imports, 19D
 unsupported wrappers/failure custody/full event composition, and 19E complete
 formal composition stay open. W1 supplies their contract input boundary; it does
 not close them or bypass Cycle 20's semantic-witness firewall.
+
+## Wrapper enum and stack-storage imports (2026-09-06)
+
+The [wrapper storage report](../reports/cycle19-wrapper-storage/README.md)
+records 41 symbolic paths from 10/15 wrappers, recovering socketpair forwarding
+and timed wait. Explicit Clang enum values and bounded stack arrays/records are
+retained with lexical identities; unsupported initialization and aggregate
+callback replay remain Unknown. Four Lean storage-identity theorems are audited.
+All checks pass and the pinned generic inventory and callback summaries remain
+identical. The other five wrappers and full 19B–19E composition remain open.

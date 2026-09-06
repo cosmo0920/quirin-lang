@@ -1,0 +1,13 @@
+{
+  "README.md": "e72a95f5491a55bee397526927a4d23e04df22372efecd489a0db7be0cbc180b",
+  "audit.log": "39b608e6c224f40b4a99c1b689cd9880dda966ad47999199a7a87f5bbcd76731",
+  "clippy.log": "69fa937c65bc88e10252eed74a6dbef10d52871a714d5fedd2bfe2b1c4c602b4",
+  "fmt.log": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+  "lean-audit.log": "3cee4df81dea90617f91c4d031be3757be40affec618fed57287399ee61da579",
+  "lean-build.log": "9974e7d5184e5b94629762ccdbda5754cbc09a2551c3ffcfdc97ae740f253b92",
+  "parity.json": "af5ac987a752d9ed4f052ebc54aaa2998e0b5fed06d078b8704958c9dad20262",
+  "report-tests.log": "ed2a20f6cedb1096daa163d320cb278871dde1946cb6ee0190c183085e08fe0b",
+  "source.json.gz": "f1f4f5b03d2b4eede3648253e7c47a8c3a367f437bfbdc761c932cdab6b4f218",
+  "targeted.log": "e364e074e9255501018d43c0d648be16814e267d930e462df48dba7d03882110",
+  "tests.log": "e6a4f3b37289013a07d4d0c46d3924ac44d9b2e58af989893df0e81884d8b1d7"
+}

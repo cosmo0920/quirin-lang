@@ -95,3 +95,8 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackBinding.native_path_has_native_execution
 #print axioms QCore.CallbackBinding.injected_path_is_observed_but_not_native
 #print axioms QCore.CallbackBinding.native_path_is_observed
+
+#print axioms QCore.CallbackSource.accepted_storage_start_is_fresh
+#print axioms QCore.CallbackSource.accepted_storage_start_retains_existing
+#print axioms QCore.CallbackSource.storage_end_removes_identity
+#print axioms QCore.CallbackSource.storage_end_preserves_other_identity

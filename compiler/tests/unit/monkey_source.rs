@@ -510,3 +510,99 @@ fn wrapper_mutations_cannot_erase_unsupported_paths_or_invent_return_values() {
         summary(&wrappers(&source), 4)
     );
 }
+
+#[test]
+fn wrapper_constants_and_stack_initializers_retain_source_values() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let original = include_str!("../fixtures/monkey/wrappers.c");
+    let results = wrappers(original);
+    assert_eq!(
+        calls(&summary(&results, 0).paths()[0]),
+        ["evutil_socketpair"]
+    );
+    let changed = wrappers(&original.replace("SOCK_STREAM = 1", "SOCK_STREAM = 7"));
+    assert_ne!(summary(&results, 0), summary(&changed, 0));
+    let wait = summary(&results, 13);
+    assert_eq!(wait.paths().len(), 3);
+    assert_eq!(
+        calls(&wait.paths()[2]),
+        [
+            "event_new",
+            "event_add",
+            "_mk_event_wait_with_flags",
+            "event_free"
+        ]
+    );
+    for path in wait.paths() {
+        assert!(path.operations.iter().any(|op| matches!(op, SourceOperation::LocalStart { c_type, .. } if c_type == "struct timeval")));
+        assert!(path.operations.iter().any(|op| matches!(op, SourceOperation::LocalWrite { value: SourceValue { expression: SourceExpression::Aggregate { elements }, .. }, .. } if elements.len() == 2)));
+        check_path_symbols(path).unwrap();
+    }
+    for replacement in [
+        "struct timeval timev = {timeout / 1000};",
+        "int timev[timeout];",
+    ] {
+        let changed = original.replace(
+            "struct timeval timev = {timeout / 1000, (timeout % 1000) * 1000};",
+            replacement,
+        );
+        assert!(matches!(
+            &wrappers(&changed)[13],
+            MonkeySourceResult::Unknown { .. }
+        ));
+    }
+}
+
+#[test]
+fn stack_socketpair_cells_remain_memory_reads_after_opaque_calls() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let original = include_str!("../fixtures/monkey/wrappers.c");
+    let source = format!(
+        "{original}\nint _mk_event_channel_create(int *out) {{ int fd[2]; int ret = mk_event_libevent_socketpair(fd); if (ret == -1) return -1; *out = fd[1]; return fd[0]; }}"
+    );
+    let results = wrappers(&source);
+    let channel = summary(&results, 9);
+    assert_eq!(channel.paths().len(), 2);
+    assert_eq!(
+        channel.paths()[1]
+            .operations
+            .iter()
+            .filter(|op| matches!(op, SourceOperation::Read { .. }))
+            .count(),
+        2
+    );
+    assert!(
+        channel.paths()[0]
+            .operations
+            .iter()
+            .any(|op| matches!(op, SourceOperation::LocalEnd { local: 1 }))
+    );
+    let source = source.replace("int fd[2];", "int fd[2] = {1, 2};");
+    assert!(matches!(
+        &wrappers(&source)[9],
+        MonkeySourceResult::Unknown { .. }
+    ));
+}
+
+#[test]
+fn aggregate_symbol_validation_rejects_nested_forward_reference() {
+    let path = MonkeySourcePath {
+        operations: vec![SourceOperation::LocalWrite {
+            local: 0,
+            value: value(
+                "struct timeval".into(),
+                SourceExpression::Aggregate {
+                    elements: vec![value(
+                        "long".into(),
+                        SourceExpression::Symbol { operation: 0 },
+                    )],
+                },
+            ),
+        }],
+    };
+    assert!(check_path_symbols(&path).is_err());
+}

@@ -81,4 +81,40 @@ theorem branch_preserves_not_taken_alternative (prior : List Bool) :
     prior ++ [false] ∈ branchPaths prior := by
   simp [branchPaths]
 
+/-! Abstract lexical storage boundary for array/record path projections.
+The C layout and initialization semantics remain obligations of consumers. -/
+def startStorage (live : List Nat) (slot : Nat) : Option (List Nat) :=
+  if slot ∈ live then none else some (slot :: live)
+
+def endStorage (live : List Nat) (slot : Nat) : List Nat :=
+  live.filter (fun candidate => candidate != slot)
+
+theorem accepted_storage_start_is_fresh
+    {live next : List Nat} {slot : Nat}
+    (accepted : startStorage live slot = some next) : slot ∉ live := by
+  unfold startStorage at accepted
+  split at accepted
+  · contradiction
+  · assumption
+
+theorem accepted_storage_start_retains_existing
+    {live next : List Nat} {slot : Nat}
+    (accepted : startStorage live slot = some next) :
+    ∀ prior ∈ live, prior ∈ next := by
+  unfold startStorage at accepted
+  split at accepted
+  · contradiction
+  · cases accepted
+    intro prior member
+    exact List.mem_cons_of_mem slot member
+
+theorem storage_end_removes_identity (live : List Nat) (slot : Nat) :
+    slot ∉ endStorage live slot := by
+  simp [endStorage]
+
+theorem storage_end_preserves_other_identity
+    (live : List Nat) (slot other : Nat) (different : other ≠ slot)
+    (present : other ∈ live) : other ∈ endStorage live slot := by
+  simp [endStorage, different, present]
+
 end QCore.CallbackSource

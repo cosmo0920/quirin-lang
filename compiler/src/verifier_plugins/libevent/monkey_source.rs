@@ -67,6 +67,10 @@ pub enum SourceExpression {
     SizeOf {
         argument_type: String,
     },
+    /// Ordered initializer elements; layouts and bounds remain consumer obligations.
+    Aggregate {
+        elements: Vec<SourceValue>,
+    },
     Symbol {
         operation: usize,
     },
@@ -108,6 +112,10 @@ pub enum SourceOperation {
     LocalWrite {
         local: usize,
         value: SourceValue,
+    },
+    LocalStart {
+        local: usize,
+        c_type: String,
     },
     /// Signature is the source declaration's type, not an assumed API contract.
     Call {
@@ -195,7 +203,13 @@ fn import_functions(
     // selected complete records by name/type, then bind each MemberExpr to its
     // typed base and direct field (anonymous/union/bitfield access is rejected).
     let mut fields = BTreeMap::new();
-    for record in ["mk_event", "mk_event_ctx", "ev_map", "mk_event_loop"] {
+    for record in [
+        "mk_event",
+        "mk_event_ctx",
+        "ev_map",
+        "mk_event_loop",
+        "timeval",
+    ] {
         let declarations = ast_declarations(&source, unit, record)?;
         let definitions: Vec<_> = declarations
             .iter()
@@ -223,8 +237,10 @@ fn import_functions(
     Ok(functions
         .iter()
         .map(|function| {
-            let result = function_ast(&source, unit, function)
-                .and_then(|ast| derive(&ast, function, source_revision, &fields));
+            let result = function_ast(&source, unit, function).and_then(|ast| {
+                let constants = enum_constants(&ast, &source, unit)?;
+                derive(&ast, function, source_revision, &fields, &constants)
+            });
             match result {
                 Ok(summary) => MonkeySourceResult::Summary(summary),
                 Err(reason) => MonkeySourceResult::Unknown {
@@ -234,6 +250,62 @@ fn import_functions(
             }
         })
         .collect())
+}
+
+// Resolve explicit enum values from this same preprocessed input, never from
+// host constants. Ambiguous names (including shadowing) and implicit enum values
+// remain outside this profile. Clang's constant evaluator is a trusted boundary.
+fn enum_constants(
+    ast: &Value,
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<BTreeMap<String, SourceValue>, String> {
+    fn references(node: &Value, names: &mut BTreeSet<String>) {
+        if kind(node) == "DeclRefExpr"
+            && node["referencedDecl"]["kind"] == "EnumConstantDecl"
+            && let Some(name) = node["referencedDecl"]["name"].as_str()
+        {
+            names.insert(name.into());
+        }
+        for child in children(node) {
+            references(child, names);
+        }
+    }
+    let mut names = BTreeSet::new();
+    references(ast, &mut names);
+    let mut constants = BTreeMap::new();
+    for name in names {
+        let declarations = ast_declarations(source, unit, &name)?;
+        let exact: Vec<_> = declarations
+            .iter()
+            .filter(|node| kind(node) == "EnumConstantDecl" && node["name"] == name)
+            .collect();
+        let [decl] = exact.as_slice() else {
+            return Err("enum constant requires one unambiguous declaration".into());
+        };
+        let [initial] = children(decl) else {
+            return Err("enum constant requires an explicit evaluated initializer".into());
+        };
+        if kind(initial) != "ConstantExpr" || c_type(initial)? != c_type(decl)? {
+            return Err("enum initializer outside evaluated scalar profile".into());
+        }
+        let integer = initial["value"]
+            .as_str()
+            .ok_or("missing evaluated enum value")?;
+        integer
+            .parse::<i128>()
+            .map_err(|_| "enum value outside integer profile")?;
+        constants.insert(
+            name,
+            value(
+                c_type(decl)?,
+                SourceExpression::Integer {
+                    value: integer.into(),
+                },
+            ),
+        );
+    }
+    Ok(constants)
 }
 
 fn c_type(node: &Value) -> Result<String, String> {
@@ -265,6 +337,7 @@ enum Expr {
     Index(String, Box<Self>, Box<Self>),
     Read(String, Box<Self>),
     Call(String, String, String, Vec<Self>),
+    Aggregate(String, Vec<Self>),
 }
 
 #[derive(Clone)]
@@ -281,6 +354,7 @@ enum Stmt {
 
 struct Importer<'a> {
     fields: &'a BTreeMap<(String, String), String>,
+    constants: &'a BTreeMap<String, SourceValue>,
     locals: BTreeSet<String>,
     nodes: usize,
 }
@@ -299,6 +373,33 @@ impl Importer<'_> {
         let ty = c_type(node)?;
         let inner = children(node);
         match (kind(node), inner) {
+            ("DeclRefExpr", []) if node["referencedDecl"]["kind"] == "EnumConstantDecl" => {
+                let constant = node["referencedDecl"]["name"]
+                    .as_str()
+                    .and_then(|name| self.constants.get(name))
+                    .filter(|constant| constant.c_type == ty)
+                    .ok_or("unresolved or mismatched enum constant")?;
+                Ok(Expr::Literal(constant.clone()))
+            }
+            ("InitListExpr", elements) if ty == "struct timeval" => {
+                if elements.len() != 2
+                    || !self
+                        .fields
+                        .contains_key(&("struct timeval *".into(), "tv_sec".into()))
+                    || !self
+                        .fields
+                        .contains_key(&("struct timeval *".into(), "tv_usec".into()))
+                {
+                    return Err("record initializer outside fixed timeval profile".into());
+                }
+                Ok(Expr::Aggregate(
+                    ty,
+                    elements
+                        .iter()
+                        .map(|element| self.expression(element, depth + 1))
+                        .collect::<Result<_, _>>()?,
+                ))
+            }
             ("DeclRefExpr", [])
                 if matches!(
                     node["referencedDecl"]["kind"].as_str(),
@@ -412,7 +513,7 @@ impl Importer<'_> {
             ("BinaryOperator", [left, right])
                 if matches!(
                     node["opcode"].as_str(),
-                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/")
+                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/" | "%")
                 ) =>
             {
                 Ok(Expr::Binary(
@@ -497,11 +598,19 @@ impl Importer<'_> {
                     .ok_or("missing declaration ID")?
                     .to_owned();
                 let ty = c_type(decl)?;
-                // Fixed scalar and pointer locals only: no VLA or destructor attrs.
+                // Fixed storage only: no VLA, implicit aggregate initialization,
+                // or destructor attributes. Array cells are explicit memory reads.
                 if !(ty.ends_with('*')
                     || matches!(
                         ty.as_str(),
-                        "int" | "short" | "unsigned int" | "unsigned long" | "unsigned long long"
+                        "int"
+                            | "short"
+                            | "unsigned int"
+                            | "unsigned long"
+                            | "unsigned long long"
+                            | "long"
+                            | "int[2]"
+                            | "struct timeval"
                     ))
                 {
                     return Err("local outside scalar/pointer callback profile".into());
@@ -591,6 +700,18 @@ impl Path {
                 )
             }
             Expr::Literal(value) => value.clone(),
+            Expr::Aggregate(ty, elements) => {
+                reject_unsequenced(&elements.iter().collect::<Vec<_>>())?;
+                value(
+                    ty.clone(),
+                    SourceExpression::Aggregate {
+                        elements: elements
+                            .iter()
+                            .map(|element| self.evaluate(element))
+                            .collect::<Result<_, _>>()?,
+                    },
+                )
+            }
             Expr::Read(ty, place) => self.read(place, ty)?,
             Expr::Cast(ty, cast, child) => value(
                 ty.clone(),
@@ -761,6 +882,9 @@ fn visit_value(
                 pending.push((base, depth + 1));
                 pending.push((index, depth + 1));
             }
+            SourceExpression::Aggregate { elements } => {
+                pending.extend(elements.iter().map(|element| (element, depth + 1)));
+            }
             _ => {}
         }
     }
@@ -788,7 +912,9 @@ fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
                 ..
             } => (arguments.iter().collect(), Some(result_type)),
             SourceOperation::Guard { condition, .. } => (vec![condition], None),
-            SourceOperation::LocalEnd { .. } | SourceOperation::Return => (vec![], None),
+            SourceOperation::LocalStart { .. }
+            | SourceOperation::LocalEnd { .. }
+            | SourceOperation::Return => (vec![], None),
         };
         for value in values {
             visit_value(value, |value| {
@@ -820,6 +946,9 @@ fn effects(expr: &Expr) -> (bool, bool) {
             combine(effects(left), effects(right))
         }
         Expr::Call(..) => (true, true),
+        Expr::Aggregate(_, elements) => elements.iter().fold((false, false), |prior, element| {
+            combine(prior, effects(element))
+        }),
     }
 }
 
@@ -876,6 +1005,12 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                     .transpose()?;
                 path.locals
                     .insert(id.clone(), (index, ty.clone(), result.clone()));
+                if ty == "int[2]" || ty == "struct timeval" {
+                    path.push(SourceOperation::LocalStart {
+                        local: index,
+                        c_type: ty.clone(),
+                    })?;
+                }
                 if let Some(value) = result {
                     path.push(SourceOperation::LocalWrite {
                         local: index,
@@ -964,6 +1099,7 @@ fn derive(
     function: &str,
     revision: &str,
     fields: &BTreeMap<(String, String), String>,
+    constants: &BTreeMap<String, SourceValue>,
 ) -> Result<MonkeySourceSummary, String> {
     let callback = CALLBACKS.contains(&function);
     let signature = c_type(ast)?;
@@ -986,6 +1122,7 @@ fn derive(
     }
     let mut importer = Importer {
         fields,
+        constants,
         locals: BTreeSet::new(),
         nodes: 0,
     };

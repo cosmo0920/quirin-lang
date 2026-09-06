@@ -152,3 +152,75 @@ static inline int _mk_event_update(struct mk_event_ctx *ctx, evutil_socket_t fd,
     ev_map->ctx   = ctx;
     return 0;
 }
+
+/* Portable test declarations; production constants/layouts come from Clang. */
+#define AF_UNIX 1
+enum { SOCK_STREAM = 1 };
+#define EV_TIMEOUT 1
+#define EVLOOP_ONCE 1
+#define EVLOOP_NONBLOCK 2
+struct timeval { long tv_sec; long tv_usec; };
+struct mk_event_loop { void *data; int n_events; };
+int evutil_socketpair(int, int, int, int *);
+int _mk_event_wait_with_flags(struct mk_event_loop *, int);
+static void cb_wait_2_timeout(evutil_socket_t, short, void *);
+
+static int mk_event_libevent_socketpair(evutil_socket_t fd[2])
+{
+#ifdef _WIN32
+    int ret;
+    SOCKET pair[2];
+
+    ret = mk_win32_socketpair(pair);
+    if (ret != 0) {
+        return ret;
+    }
+
+    fd[0] = (evutil_socket_t) pair[0];
+    fd[1] = (evutil_socket_t) pair[1];
+    return 0;
+#else
+    return evutil_socketpair(AF_UNIX, SOCK_STREAM, 0, fd);
+#endif
+}
+
+static inline int _mk_event_wait_2(struct mk_event_loop *loop, int timeout)
+{
+    struct mk_event_ctx *ctx = loop->data;
+    struct timeval timev = {timeout / 1000, (timeout % 1000) * 1000}; /* (tv_sec, tv_usec} */
+    int timedout_flag = 0;
+    struct event *timeout_event;
+    int ret;
+
+    /* Infinite wait */
+    if (timeout == -1) {
+        return _mk_event_wait_with_flags(loop, EVLOOP_ONCE);
+    }
+
+    /* No wait: fast path, zero second timeout is nonblocking wait */
+    if (timeout == 0) {
+        return _mk_event_wait_with_flags(loop, EVLOOP_ONCE | EVLOOP_NONBLOCK);
+    }
+
+    /* Timed wait: slow path, blocking wait with timeout via timeout event */
+    /* Add timeout */
+    timeout_event = event_new(ctx->base, -1,
+                      EV_TIMEOUT,
+                      cb_wait_2_timeout, &timedout_flag);
+
+    event_add(timeout_event, &timev);
+
+    /* Blocking wait */
+    ret = _mk_event_wait_with_flags(loop, EVLOOP_ONCE);
+
+    /*
+     * Remove timeout
+     * "To deallocate an event, call event_free(). It is safe to call event_free()
+     * on an event that is pending or active: doing so makes the event non-pending
+     * and inactive before deallocating it."
+     * ref: http://www.wangafu.net/~nickm/libevent-book/Ref4_event.html
+     */
+    event_free(timeout_event);
+
+    return ret;
+}

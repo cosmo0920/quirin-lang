@@ -188,6 +188,9 @@ struct Replay<'a> {
 impl Replay<'_> {
     fn eval(&self, value: &SourceValue) -> Result<Value, String> {
         let result = match &value.expression {
+            E::Aggregate { .. } => {
+                return Err("aggregate initializer outside callback replay profile".into());
+            }
             E::Function { .. } => {
                 return Err("function pointer outside callback replay profile".into());
             }
@@ -368,6 +371,9 @@ impl Replay<'_> {
                 return Err("operation after return".into());
             }
             match operation {
+                O::LocalStart { .. } => {
+                    return Err("aggregate storage outside callback replay profile".into());
+                }
                 O::Read { place } => {
                     let key = self.place(place)?;
                     self.symbols.insert(

@@ -1,0 +1,86 @@
+'QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_owner_teardown_discharges_stored_child' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_rejects_independent_child_destruction' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_removal_restores_child_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_discharges_nested_backend' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_unlinks_and_balances_counter' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_wrapper_teardown_has_no_outstanding_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_identities_are_unique' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_failed_open_has_no_residual_obligation' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_teardown_records_nested_order_and_partial_delete' does not depend on any axioms
+'QCore.ChunkLifecycle.combined_chunk_safety' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_successful_socketpair_creates_two_distinct_owned_descriptors' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_failed_socketpair_creates_no_custody' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_successful_close_discharges_once' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_failed_close_retains_custody' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_error_query_is_borrowed' does not depend on any axioms
+'QCore.MonkeyEvent.accepted_monkey_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_preserves_declared_control_edges' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_has_no_unresolved_jump' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_edges_reference_known_nodes' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_balances_holders_and_containers' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_publication_and_reclamation_have_evidence' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_has_no_live_obligation' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_summary_profile_is_pinned_and_scoped' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_source_contracts_are_checked' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_is_pinned_and_complete' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_composes_lifecycle_safety' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_callbacks_cover_failure_and_map_paths' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_observation_binds_backend_dispatcher_and_trace' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_event_build_matches_profile' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_source_is_pinned' does not depend on any axioms
+'QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate' depends on axioms: [propext, Quot.sound]
+'QCore.ChunkSource.accepted_contract_holds_on_every_source_path' depends on axioms: [propext, Quot.sound]
+'QCore.ChunkSource.busy_effect_preserves_chunkio_lock' depends on axioms: [propext]
+'QCore.ChunkSource.bound_effect_preserves_other_identities' depends on axioms: [propext]
+'QCore.ChunkSource.release_busy_error_path_preserves_state' does not depend on any axioms
+'QCore.ChunkSource.release_busy_success_path_clears_busy' does not depend on any axioms
+'QCore.QuantIndexBinding.substitution_preserves_evaluation' depends on axioms: [propext]
+'QCore.QuantIndexBinding.binding_preserves_other_names' depends on axioms: [propext]
+'QCore.QuantIndexBinding.binding_preserves_other_dimensions' depends on axioms: [propext]
+'QCore.QuantIndexBinding.accepted_value_fits_u128' does not depend on any axioms
+'QCore.QuantIndexBinding.five_binding' depends on axioms: [propext]
+'QCore.DescriptorObservation.accepted_acquisition_advances_generation' does not depend on any axioms
+'QCore.DescriptorObservation.stale_generation_cannot_be_used' depends on axioms: [propext]
+'QCore.DescriptorObservation.accepted_close_discharges_slot' does not depend on any axioms
+'QCore.DescriptorObservation.failed_native_close_is_unresolved' depends on axioms: [propext]
+'QCore.DescriptorObservation.accepted_close_prevents_duplicate_close' depends on axioms: [propext]
+'QCore.DescriptorObservation.reuse_rejects_previous_generation' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.CallbackSource.accepted_record_has_typed_producers' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.accepted_record_rejects_forward_references' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.accepted_record_appends_exactly_its_producer' depends on axioms: [propext]
+'QCore.CallbackSource.wrong_type_reference_is_rejected' depends on axioms: [propext]
+'QCore.CallbackSource.nonproducing_record_cannot_supply_symbol' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.branch_preserves_taken_alternative' depends on axioms: [propext]
+'QCore.CallbackSource.branch_preserves_not_taken_alternative' depends on axioms: [propext]
+'QCore.CallbackBinding.accepted_scope_is_registered' depends on axioms: [propext]
+'QCore.CallbackBinding.accepted_has_exactly_one_refining_path' depends on axioms: [propext]
+'QCore.CallbackBinding.selected_path_retains_all_obligations' depends on axioms: [propext]
+'QCore.CallbackBinding.changed_scope_is_rejected' depends on axioms: [propext]
+'QCore.CallbackBinding.uncovered_path_remains_unknown' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.checked_path_is_not_unknown' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.accepted_read_binds_live_typed_cell' depends on axioms: [propext]
+'QCore.CallbackBinding.accepted_read_appends_exact_symbol' does not depend on any axioms
+'QCore.CallbackBinding.absent_symbol_is_rejected' depends on axioms: [propext]
+'QCore.CallbackBinding.store_changes_exact_cell' depends on axioms: [propext]
+'QCore.CallbackBinding.store_preserves_other_cells' depends on axioms: [propext]
+'QCore.CallbackBinding.write_rejects_absent_cell' depends on axioms: [propext]
+'QCore.CallbackBinding.release_clears_all_object_cells' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.release_preserves_other_objects' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.release_prevents_subsequent_read' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.release_prevents_subsequent_write' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.release_prevents_duplicate_release' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.accepted_call_consumes_exact_next_record' depends on axioms: [propext]
+'QCore.CallbackBinding.accepted_write_preserves_binding' depends on axioms: [propext]
+'QCore.CallbackBinding.accepted_release_requires_live_object' does not depend on any axioms
+'QCore.CallbackBinding.native_path_has_native_execution' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackBinding.injected_path_is_observed_but_not_native' depends on axioms: [propext]
+'QCore.CallbackBinding.native_path_is_observed' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.accepted_storage_start_is_fresh' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.accepted_storage_start_retains_existing' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.storage_end_removes_identity' depends on axioms: [propext, Quot.sound]
+'QCore.CallbackSource.storage_end_preserves_other_identity' depends on axioms: [propext, Quot.sound]
