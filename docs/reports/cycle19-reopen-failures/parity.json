@@ -1,0 +1,42 @@
+{
+  "source.json": {
+    "historical_exact_equal": true
+  },
+  "diagnostics.json": {
+    "historical_exact_equal": false,
+    "status_changes": [
+      {
+        "library": "chunkio",
+        "file": "cio_error.c",
+        "before": "Unknown",
+        "after": "Safe"
+      }
+    ],
+    "before_diagnostic_counts": {
+      "double_release": 35,
+      "leak": 944,
+      "unknown_alias": 8718,
+      "unsupported": 42254
+    },
+    "after_diagnostic_counts": {
+      "double_release": 35,
+      "leak": 947,
+      "unknown_alias": 8700,
+      "unsupported": 42123
+    },
+    "current_counts": {
+      "Unknown": 80,
+      "Unsafe": 98,
+      "data_only": 4,
+      "Safe": 3
+    },
+    "note": "The historical report predates W4 parameter/return inference. This worktree adds no analyzer changes relative to 43040e7; the single Unknown to Safe movement in cio_error.c is the previously archived W4 result. Raw units remain unpromoted."
+  },
+  "diagnostics.chunk-contracts.json": {
+    "historical_exact_equal": true
+  },
+  "diagnostics.contracts.json": {
+    "historical_exact_equal": false,
+    "equal_after_checkout_path_normalization": true
+  }
+}

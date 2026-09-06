@@ -438,3 +438,164 @@ theorem successful_parent_close_discharges_descriptor (s : NativeDescriptorState
     nativeDescriptorParentResidual s false = [] := by simp [nativeDescriptorParentResidual]
 
 end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Bounded reopen-failure projection. The input is a chunk already taken down,
+-- with its mapping and descriptor released. Every arm assumes the observed
+-- reopen `open` call succeeds; the failure arms are explicitly supplied
+-- suppressed results for the size lookup and for the mapping call. Arbitrary
+-- kernel errors, other flags and production callers stay outside the model.
+
+-- The backend mapping field, which the library tests only for non-nullness.
+-- `failed` is the MAP_FAILED value a failed mmap leaves in that field.
+inductive ReopenMapField where
+  | absent | failed | live
+  deriving DecidableEq, Repr
+
+def ReopenMapField.isMapped : ReopenMapField → Bool
+  | .absent => false
+  | .failed => true
+  | .live => true
+
+inductive ReopenOutcome where
+  | sizeLookupFailed | mappingFailed | mapped
+  deriving DecidableEq, Repr
+
+structure NativeReopenState where
+  mapping : ReopenMapField
+  descriptorHeld : Bool
+  epoch : Nat
+  mappingEpoch : Nat
+  -- Observed state-ring membership, recorded separately from the counter.
+  upMember : Bool
+  upCounter : Nat
+  recordedSize : Nat
+  deriving DecidableEq, Repr
+
+-- `cio_file_is_up` is descriptor presence conjoined with a non-null mapping
+-- field, so a stored MAP_FAILED still classifies the chunk as up.
+def NativeReopenState.isUp (s : NativeReopenState) : Bool :=
+  s.descriptorHeld && s.mapping.isMapped
+
+def nativeReopen (s : NativeReopenState) (outcome : ReopenOutcome) :
+    Int × NativeReopenState :=
+  if s.mapping.isMapped || s.descriptorHeld then (-1, s)
+  else match outcome with
+    | .sizeLookupFailed =>
+        (-1, { s with descriptorHeld := true, epoch := s.epoch + 1,
+                      recordedSize := 0, upMember := false })
+    | .mappingFailed =>
+        (-1, { s with descriptorHeld := true, epoch := s.epoch + 1,
+                      mapping := .failed, upMember := true })
+    | .mapped =>
+        (0, { s with descriptorHeld := true, epoch := s.epoch + 1,
+                     mapping := .live, mappingEpoch := s.mappingEpoch + 1,
+                     upMember := true, upCounter := s.upCounter + 1 })
+
+-- Down rejects an absent mapping outright, and an unmap of the stored
+-- MAP_FAILED value is refused by the kernel, so neither retry changes state.
+def nativeReopenDown (s : NativeReopenState) : Int × NativeReopenState :=
+  match s.mapping with
+  | .absent => (-1, s)
+  | .failed => (-1, s)
+  | .live => (0, { s with mapping := .absent, descriptorHeld := false,
+                          upMember := false, upCounter := s.upCounter - 1 })
+
+-- Sync reports success whenever the mapping field is non-null and the chunk is
+-- already flagged synced; it issues no syscall, so it witnesses no durability.
+def nativeReopenSync (s : NativeReopenState) : Int × Bool :=
+  (0, s.mapping == ReopenMapField.live)
+
+def nativeReopenParentResidual (s : NativeReopenState) (closeSuppressed : Bool) :
+    List Nat :=
+  if s.descriptorHeld && closeSuppressed then [s.epoch] else []
+
+-- The recorded post-down input: one released descriptor epoch, one released
+-- mapping epoch, no membership and a size carried over from the down update.
+def reopenDown : NativeReopenState :=
+  { mapping := .absent, descriptorHeld := false, epoch := 1, mappingEpoch := 1,
+    upMember := false, upCounter := 0, recordedSize := 4096 }
+
+theorem reopen_membership_matches_library_predicate {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false)
+    (outcome : ReopenOutcome) :
+    (nativeReopen s outcome).2.upMember = (nativeReopen s outcome).2.isUp := by
+  cases outcome <;>
+    simp [nativeReopen, NativeReopenState.isUp, ReopenMapField.isMapped, unmapped, closed]
+
+theorem failed_size_lookup_retains_new_descriptor_without_mapping
+    {s : NativeReopenState} (unmapped : s.mapping = .absent)
+    (closed : s.descriptorHeld = false) :
+    nativeReopen s .sizeLookupFailed =
+      (-1, { s with descriptorHeld := true, epoch := s.epoch + 1,
+                    recordedSize := 0, upMember := false }) := by
+  simp [nativeReopen, ReopenMapField.isMapped, unmapped, closed]
+
+theorem failed_size_lookup_keeps_chunk_down {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false) :
+    (nativeReopen s .sizeLookupFailed).2.upMember = false ∧
+    (nativeReopen s .sizeLookupFailed).2.upCounter = s.upCounter ∧
+    (nativeReopen s .sizeLookupFailed).2.mappingEpoch = s.mappingEpoch := by
+  simp [nativeReopen, ReopenMapField.isMapped, unmapped, closed]
+
+theorem retries_after_failed_size_lookup_reject {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false)
+    (outcome : ReopenOutcome) :
+    let stuck := (nativeReopen s .sizeLookupFailed).2
+    nativeReopenDown stuck = (-1, stuck) ∧ nativeReopen stuck outcome = (-1, stuck) := by
+  simp [nativeReopen, nativeReopenDown, ReopenMapField.isMapped, unmapped, closed]
+
+theorem failed_mapping_retains_descriptor_and_failed_field {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false) :
+    nativeReopen s .mappingFailed =
+      (-1, { s with descriptorHeld := true, epoch := s.epoch + 1,
+                    mapping := .failed, upMember := true }) := by
+  simp [nativeReopen, ReopenMapField.isMapped, unmapped, closed]
+
+-- The recorded divergence: the stream reports the chunk up while the context
+-- counter was never incremented, so ring membership discharges nothing.
+theorem failed_mapping_reports_up_without_counter {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false) :
+    (nativeReopen s .mappingFailed).2.upMember = true ∧
+    (nativeReopen s .mappingFailed).2.upCounter = s.upCounter ∧
+    (nativeReopen s .mappingFailed).2.mappingEpoch = s.mappingEpoch := by
+  simp [nativeReopen, ReopenMapField.isMapped, unmapped, closed]
+
+theorem retries_after_failed_mapping_reject {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false)
+    (outcome : ReopenOutcome) :
+    let stuck := (nativeReopen s .mappingFailed).2
+    nativeReopenDown stuck = (-1, stuck) ∧ nativeReopen stuck outcome = (-1, stuck) := by
+  simp [nativeReopen, nativeReopenDown, ReopenMapField.isMapped, unmapped, closed]
+
+theorem sync_after_failed_mapping_succeeds_without_live_mapping
+    {s : NativeReopenState} (unmapped : s.mapping = .absent)
+    (closed : s.descriptorHeld = false) :
+    nativeReopenSync (nativeReopen s .mappingFailed).2 = (0, false) := by
+  simp [nativeReopen, nativeReopenSync, ReopenMapField.isMapped, unmapped, closed]
+
+theorem stat_fallback_reopen_acquires_both_epochs {s : NativeReopenState}
+    (unmapped : s.mapping = .absent) (closed : s.descriptorHeld = false) :
+    (nativeReopen s .mapped).1 = 0 ∧
+    (nativeReopen s .mapped).2.epoch = s.epoch + 1 ∧
+    (nativeReopen s .mapped).2.mappingEpoch = s.mappingEpoch + 1 ∧
+    (nativeReopen s .mapped).2.upMember = true ∧
+    (nativeReopen s .mapped).2.upCounter = s.upCounter + 1 := by
+  simp [nativeReopen, ReopenMapField.isMapped, unmapped, closed]
+
+-- Neither failed reopen releases the descriptor it acquired; only the parent
+-- close does, and a suppressed parent close leaves that exact epoch behind.
+theorem reopen_failures_leave_descriptor_for_parent (outcome : ReopenOutcome) :
+    nativeReopenParentResidual (nativeReopen reopenDown outcome).2 true = [2] ∧
+    nativeReopenParentResidual (nativeReopen reopenDown outcome).2 false = [] := by
+  cases outcome <;>
+    simp [nativeReopen, nativeReopenParentResidual, ReopenMapField.isMapped, reopenDown]
+
+theorem reopen_observation_does_not_prove_durability :
+    let stuck := (nativeReopen reopenDown .mappingFailed).2
+    (nativeReopenSync stuck).1 = 0 ∧ stuck.mapping ≠ ReopenMapField.live ∧
+    stuck.mappingEpoch = reopenDown.mappingEpoch := by
+  simp [nativeReopen, nativeReopenSync, ReopenMapField.isMapped, reopenDown]
+
+end QCore.NativeOsObservation

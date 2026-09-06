@@ -55,27 +55,31 @@ class Replay:
         return dict(sentinel=sentinel,next=address,prev=address,
                     nodes=[dict(owner=owner,address=address,next=sentinel,prev=sentinel)] if owner else [])
 
-    def snapshot(self, chunk=None, up=True):
+    def snapshot(self, chunk=None, up=True, counter=None):
+        # `up` is observed state-ring membership; `counter` is the independent
+        # context total. They coincide unless an observation says otherwise.
         owner = 7 if chunk else 0
         stream = dict(id=5,name=6,context=1,memory=0,
             ring=self.ring(5,'stream_ring',owner,'chunk_node'),
             up_ring=self.ring(5,'up_ring',owner if up else 0,'state_node'),
             down_ring=self.ring(5,'down_ring',owner if not up else 0,'state_node'),
             chunks=[chunk] if chunk else [])
-        self.consume('snapshot',context=dict(id=1,total=int(bool(chunk)),up=int(bool(chunk) and up),
+        if counter is None: counter = int(bool(chunk) and up)
+        self.consume('snapshot',context=dict(id=1,total=int(bool(chunk)),up=counter,
             fields=[0,0,2,0,0,3],ring=self.ring(1,'context_ring',5,'stream_node'),streams=[stream]))
 
-    def backend_release(self, fd, fs_size):
+    def backend_release(self, fd, fs_size, mapping=0, size=0, data_size=0, up=0):
         self.release(9)
-        self.consume('backend_release',id=10,fd=fd,map=0,size=0,fs_size=fs_size,data_size=0,up=0)
+        self.consume('backend_release',id=10,fd=fd,map=mapping,size=size,fs_size=fs_size,
+                     data_size=data_size,up=up)
         self.release(10)
 
     def close(self, fd, phase, injected=False, epoch=1):
         self.consume('close',phase=phase,fd=fd,epoch=epoch,result=-1 if injected else 0,
                      errno=errno.EIO if injected else 0,injected=int(injected))
 
-    def unmap(self, mapping, size, phase, epoch=1):
-        self.consume('unmap',phase=phase,map=mapping,size=size,epoch=epoch,result=0,errno=0)
+    def unmap(self, mapping, size, phase, epoch=1, result=0, error=0):
+        self.consume('unmap',phase=phase,map=mapping,size=size,epoch=epoch,result=result,errno=error)
 
     def parents(self, chunk_cleanup=None):
         for name in ('cio_destroy','cio_stream_destroy_all','cio_stream_destroy','cio_chunk_close_stream'):

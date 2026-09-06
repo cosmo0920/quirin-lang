@@ -74,3 +74,14 @@ Claude-specific additions:
 - Run the full standing per-change gate from AGENTS.md before reporting a
   task complete; report probe/example exit codes honestly (a nonzero probe
   exit is a finding, not a build failure).
+
+## Reopen failure evidence (2026-09-07)
+
+Five native reopen size-lookup/mapping failure sequences release all 50
+allocation generations and six mapping epochs. Ten descriptor epochs yield eight
+library closes and two residuals after parent release, reclaimed separately by
+the harness. Failed size lookup retains an unmapped descriptor; failed mapping
+stores MAP_FAILED, reports up-ring membership without incrementing the counter,
+and retains the new descriptor. Fixed retries and already-synced behavior remain
+observations, not general OS failure or durability guarantees. Evidence:
+`docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.

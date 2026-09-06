@@ -69,7 +69,9 @@ void *__wrap_mmap(void *address,size_t size,int prot,int flags,int fd,off_t offs
     errno=error;return result;
 }
 int __wrap_munmap(void *map,size_t size) {
-    if(tracking) assert(map_live && map==last_map && size==last_map_size);
+    /* A library that stored a failed mmap result may hand back MAP_FAILED; that
+     * argument is recorded and forwarded, never treated as a tracked mapping. */
+    if(tracking && map!=MAP_FAILED) assert(map_live && map==last_map && size==last_map_size);
     errno=0;int result=__real_munmap(map,size);int error=errno;
     if(tracking) {
         if(result==0)map_live=0;
