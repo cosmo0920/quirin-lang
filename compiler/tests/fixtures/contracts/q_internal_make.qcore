@@ -1,0 +1,9 @@
+module contract;
+
+// Explicit return-custody contract for an internally defined function (LC01).
+
+extern fn make() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};

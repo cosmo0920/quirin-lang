@@ -1,11 +1,48 @@
 use super::*;
 
+// Contract environments are loaded from `.qcore` fixtures through the
+// total-or-reject v1 loader (W1 literal-site migration) rather than being
+// constructed as Rust literals; the loader's own mapping tests stay in
+// `compiler/tests/contract_loader.rs`.
+const Q_BASE: (&str, &str) = (
+    "q_base.qcore",
+    include_str!("../fixtures/contracts/q_base.qcore"),
+);
+const Q_RICH_MODES: (&str, &str) = (
+    "q_rich_modes.qcore",
+    include_str!("../fixtures/contracts/q_rich_modes.qcore"),
+);
+const Q_NULLABLE: (&str, &str) = (
+    "q_nullable.qcore",
+    include_str!("../fixtures/contracts/q_nullable.qcore"),
+);
+const Q_REALLOC: (&str, &str) = (
+    "q_realloc.qcore",
+    include_str!("../fixtures/contracts/q_realloc.qcore"),
+);
+const Q_CONTAINER_STORE: (&str, &str) = (
+    "q_container_store.qcore",
+    include_str!("../fixtures/contracts/q_container_store.qcore"),
+);
+const Q_CONTAINER_REMOVE: (&str, &str) = (
+    "q_container_remove.qcore",
+    include_str!("../fixtures/contracts/q_container_remove.qcore"),
+);
+const Q_INTERNAL_MAKE: (&str, &str) = (
+    "q_internal_make.qcore",
+    include_str!("../fixtures/contracts/q_internal_make.qcore"),
+);
+
+fn fixture_contracts(modules: &[(&str, &str)]) -> ResourceContracts {
+    let sources = modules
+        .iter()
+        .map(|(name, text)| ((*name).to_owned(), (*text).to_owned()))
+        .collect();
+    crate::contract_loader::load_resource_contract_sources(&sources).unwrap()
+}
+
 fn contracts() -> ResourceContracts {
-    ResourceContracts::new([
-        ("q_alloc", ResourceApiKind::Acquire),
-        ("q_free", ResourceApiKind::Release),
-        ("q_transfer", ResourceApiKind::Escape),
-    ])
+    fixture_contracts(&[Q_BASE])
 }
 
 fn analyze(body: &str) -> LegacyFunctionSummary {
@@ -89,32 +126,7 @@ fn ownership_transfer_discharges_the_local_obligation() {
 
 #[test]
 fn rich_contracts_distinguish_borrowed_owned_consumed_and_out_parameters() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_observe",
-        ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
-    );
-    contracts.insert_contract(
-        "q_mutate",
-        ResourceFunctionContract::new(
-            [ResourceParameterMode::Owned { nullable: false }],
-            ResourceReturnMode::None,
-        ),
-    );
-    contracts.insert_contract(
-        "q_consume",
-        ResourceFunctionContract::new(
-            [ResourceParameterMode::Consumed { nullable: false }],
-            ResourceReturnMode::None,
-        ),
-    );
-    contracts.insert_contract(
-        "q_make",
-        ResourceFunctionContract::new(
-            [ResourceParameterMode::Out { nullable: false }],
-            ResourceReturnMode::None,
-        ),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_RICH_MODES]);
 
     let observed = analyze_legacy_c(
         "void subject(void) { void *p = q_alloc(); q_observe(p); q_mutate(p); q_free(p); }",
@@ -147,18 +159,7 @@ fn rich_contracts_distinguish_borrowed_owned_consumed_and_out_parameters() {
 
 #[test]
 fn nullable_owned_results_require_nonnull_path_refinement() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_maybe_alloc",
-        ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
-    );
-    contracts.insert_contract(
-        "q_nullable_free",
-        ResourceFunctionContract::new(
-            [ResourceParameterMode::Released { nullable: true }],
-            ResourceReturnMode::None,
-        ),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_NULLABLE]);
 
     let checked = analyze_legacy_c(
         "void subject(void) { void *p = q_maybe_alloc(); if (!p) return; q_free(p); }",
@@ -200,11 +201,7 @@ fn nullable_owned_results_require_nonnull_path_refinement() {
 
 #[test]
 fn null_checks_accept_parentheses_and_preprocessed_void_pointer_zero() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_maybe_alloc",
-        ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_NULLABLE]);
     for condition in [
         "((p)) == ((void *)0)",
         "((void *) (0)) == (p)",
@@ -326,20 +323,7 @@ fn braced_control_expressions_do_not_erase_nested_control_flow() {
 
 #[test]
 fn realloc_preserves_old_custody_on_failure_and_replaces_it_on_success() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_realloc",
-        ResourceFunctionContract::new(
-            [
-                ResourceParameterMode::Owned { nullable: false },
-                ResourceParameterMode::Borrowed,
-            ],
-            ResourceReturnMode::Reallocated {
-                parameter: 0,
-                nullable: true,
-            },
-        ),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_REALLOC]);
 
     let checked = analyze_legacy_c(
         "void subject(void) {\n\
@@ -374,20 +358,7 @@ fn realloc_preserves_old_custody_on_failure_and_replaces_it_on_success() {
 
 #[test]
 fn container_contract_cascades_child_custody_on_release_or_transfer() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_store",
-        ResourceFunctionContract::new(
-            [
-                ResourceParameterMode::Owned { nullable: false },
-                ResourceParameterMode::Stored {
-                    owner_parameter: 0,
-                    nullable: false,
-                },
-            ],
-            ResourceReturnMode::None,
-        ),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_CONTAINER_STORE]);
 
     let released = analyze_legacy_c(
         "void subject(void) {\n\
@@ -429,33 +400,7 @@ fn container_contract_cascades_child_custody_on_release_or_transfer() {
 
 #[test]
 fn container_removal_restores_direct_child_custody() {
-    let mut contracts = contracts();
-    contracts.insert_contract(
-        "q_store",
-        ResourceFunctionContract::new(
-            [
-                ResourceParameterMode::Owned { nullable: false },
-                ResourceParameterMode::Stored {
-                    owner_parameter: 0,
-                    nullable: false,
-                },
-            ],
-            ResourceReturnMode::None,
-        ),
-    );
-    contracts.insert_contract(
-        "q_remove",
-        ResourceFunctionContract::new(
-            [
-                ResourceParameterMode::Owned { nullable: false },
-                ResourceParameterMode::Removed {
-                    owner_parameter: 0,
-                    nullable: false,
-                },
-            ],
-            ResourceReturnMode::None,
-        ),
-    );
+    let contracts = fixture_contracts(&[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]);
 
     let removed = analyze_legacy_c(
         "void subject(void) {\n\
@@ -872,8 +817,7 @@ fn lc01_internal_calls_require_explicit_custody_contracts() {
 
 #[test]
 fn lc01_explicit_internal_return_contract_is_preserved() {
-    let mut contracts = contracts();
-    contracts.insert("make", ResourceApiKind::Acquire);
+    let contracts = fixture_contracts(&[Q_BASE, Q_INTERNAL_MAKE]);
     for (cleanup, expected) in [
         ("", AnalysisStatus::Unsafe),
         ("q_free(p);", AnalysisStatus::Safe),

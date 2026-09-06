@@ -1,0 +1,11 @@
+module contract;
+
+// Aggregate custody: the callee stores the item under the owner.
+
+extern fn q_store(owner: ptr<mut, u8>, item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(owner, nonnull);
+    ensures normal resource_stored(item, owner, nonnull);
+    ensures normal resource_return_none();
+};

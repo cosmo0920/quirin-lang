@@ -189,7 +189,11 @@ dependency rule; providers stay compile-time crates for now (decision
 recorded in the W0 report). The W1 relocation is executed
 ([record](docs/reports/w1-contract-crate/README.md)): the contract loader
 and observation interpreter live in `crates/qcore-contract`, above the new
-`qcore-core` kernel seed and `qcore-frontend` front-end crates.
+`qcore-core` kernel seed and `qcore-frontend` front-end crates. The W1
+literal-site migration is executed
+([record](docs/reports/w1-literal-sites/README.md)): the remaining Rust
+contract-table literals in tests and examples now load `.qcore` fixture
+modules through the loader; the richer clause vocabulary remains open.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

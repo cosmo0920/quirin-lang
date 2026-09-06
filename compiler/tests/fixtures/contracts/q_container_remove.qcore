@@ -1,0 +1,11 @@
+module contract;
+
+// Aggregate custody: removal restores direct caller custody of the item.
+
+extern fn q_remove(owner: ptr<mut, u8>, item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(owner, nonnull);
+    ensures normal resource_removed(item, owner, nonnull);
+    ensures normal resource_return_none();
+};

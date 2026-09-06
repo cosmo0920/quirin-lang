@@ -29,10 +29,11 @@ certificate recheck, taking contracts through one clean interface,
   W1's first execution (2026-09-06) added a total-or-reject v1 loader,
   `compiler/src/contract_loader.rs`, and the audit example now loads its
   resource contracts through a manifest
-  ([parity record](reports/cycle19-contract-loader/README.md)). Richer
-  observation/lifecycle predicates still use separate interpreters, no loader
-  feeds `LibrarySummaryProfile`, and remaining literal contract sites in
-  tests/examples are unmigrated.
+  ([parity record](reports/cycle19-contract-loader/README.md)), and the
+  leftover test/example literal sites now load `.qcore` fixtures through the
+  loader ([literal-site record](reports/w1-literal-sites/README.md)). Richer
+  observation/lifecycle predicates still use separate interpreters and no
+  loader feeds `LibrarySummaryProfile`.
 - A full Cycle 20 plugin protocol (`compiler/src/verifier_plugin.rs`, 1,567
   lines): versioned manifests, capability matching, process isolation,
   certificate firewall, composition. But `driver.rs:199-211` rejects every
@@ -248,9 +249,12 @@ The relocation into `crates/qcore-contract` is executed (2026-09-06, with
 `crates/qcore-core` and `crates/qcore-frontend` extracted beneath it so the
 loader sits below the certificate recheck — see the
 [W1 relocation record](reports/w1-contract-crate/README.md); `chunk_contract`
-follows once the W5 task 3 chunk-summary schema split lands). Remaining:
-migration of the leftover literal sites and the richer clause vocabulary
-noted below.
+follows once the W5 task 3 chunk-summary schema split lands). The leftover
+literal sites are migrated (2026-09-06): tests and examples load `.qcore`
+fixture modules through the loader, and only the loader's own mapping tests
+still construct literals — see the
+[literal-site record](reports/w1-literal-sites/README.md). Remaining: the
+richer clause vocabulary noted below.
 
 **Goal.** One loader from `contract/qcore` contract modules to the analyzer's
 `ResourceContracts`, eliminating every Rust-literal production contract table.

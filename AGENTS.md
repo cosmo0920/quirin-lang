@@ -145,8 +145,10 @@ It also ships a conservative checker for *existing* C source (the
   and its relocation is executed (2026-09-06,
   `docs/reports/w1-contract-crate/README.md`): `qcore-core`,
   `qcore-frontend`, and `qcore-contract` are extracted with a
-  dependency-matrix guard test; W1's remaining items are literal-site
-  migration and the richer clause vocabulary. Execution is tracked in
+  dependency-matrix guard test. The leftover literal contract sites are
+  migrated to loader-fed `.qcore` fixtures (2026-09-06,
+  `docs/reports/w1-literal-sites/README.md`); W1's remaining item is the
+  richer clause vocabulary. Execution is tracked in
   `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)

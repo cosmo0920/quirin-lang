@@ -1,0 +1,27 @@
+module contract;
+
+// Synthetic q_* custody API shared by the legacy-C analyzer unit tests,
+// the research-extensions aggregate certificate test, and the reevaluation
+// follow-up probes. Loaded through the total-or-reject v1 contract loader so
+// the fixtures exercise the same representation as production contracts.
+// These are trusted test assumptions, not verified facts.
+
+extern fn q_alloc() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn q_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn q_transfer(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};

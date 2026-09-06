@@ -180,10 +180,13 @@ fn main() {
         "diagnostics": outcome.diagnostics, "pass": outcome.verdict == ProposedVerdict::Unknown}));
     results.push(serde_json::json!({"id": "CONTROL_direct_provider_invoked", "pass": calls.load(Ordering::SeqCst) == invocations + 1}));
 
-    let contracts = ResourceContracts::new([
-        ("q_alloc", ResourceApiKind::Acquire),
-        ("q_free", ResourceApiKind::Release),
-    ]);
+    // W1 literal-site migration: the probe environment is loaded from a
+    // `.qcore` module through the total-or-reject v1 loader.
+    let contracts = contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+        "q_base.qcore".to_owned(),
+        include_str!("../tests/fixtures/contracts/q_base.qcore").to_owned(),
+    )]))
+    .unwrap();
     let source = "void *q_alloc(void); void q_free(void *); void *make(void) { void *p = q_alloc(); return p; } int main(void) { void *p = make(); return 0; }";
     let result = analyze_unrestricted_c11(
         &C11TranslationUnit {

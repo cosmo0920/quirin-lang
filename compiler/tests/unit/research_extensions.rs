@@ -1,8 +1,7 @@
 use super::*;
 use crate::inference::{InferenceConstraint, infer_principal};
 use crate::legacy_c::{
-    C11TranslationUnit, LegacyCError, ResourceApiKind, ResourceContracts, UnrestrictedLegacyResult,
-    analyze_unrestricted_c11,
+    C11TranslationUnit, LegacyCError, UnrestrictedLegacyResult, analyze_unrestricted_c11,
 };
 use crate::native_concurrency::{NativeOperation, NativeScheduleStep, RequiredPlatform};
 use crate::resource_flow::Quantity;
@@ -74,10 +73,13 @@ fn aggregate_certificate_contains_all_six_discharges() {
         LoopBoundEvidence::Terminating(2),
     )
     .unwrap();
-    let contracts = ResourceContracts::new([
-        ("q_alloc", ResourceApiKind::Acquire),
-        ("q_free", ResourceApiKind::Release),
-    ]);
+    // W1 literal-site migration: the fixture environment is loaded from a
+    // `.qcore` module through the total-or-reject v1 loader.
+    let contracts = crate::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+        "q_base.qcore".to_owned(),
+        include_str!("../fixtures/contracts/q_base.qcore").to_owned(),
+    )]))
+    .unwrap();
     let unit = C11TranslationUnit {
         source: "void *q_alloc(void); void q_free(void *); void subject(void) { void *p = q_alloc(); q_free(p); }",
         ..C11TranslationUnit::default()

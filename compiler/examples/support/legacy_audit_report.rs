@@ -155,11 +155,18 @@ fn diagnostic_description(diagnostic: &LegacyDiagnostic) -> (&'static str, Strin
 #[cfg(test)]
 mod tests {
     use super::*;
-    use qcore_compiler::{ResourceApiKind, ResourceContracts, analyze_legacy_c_translation_unit};
+    use qcore_compiler::analyze_legacy_c_translation_unit;
+    use qcore_compiler::contract_loader::load_resource_contract_sources;
+    use std::collections::BTreeMap;
 
     #[test]
     fn inventory_keeps_unknown_diagnostics_inside_unsafe_units_and_unprojected_names() {
-        let contracts = ResourceContracts::new([("alloc", ResourceApiKind::Acquire)]);
+        // W1 literal-site migration: loaded from a `.qcore` fixture module.
+        let contracts = load_resource_contract_sources(&BTreeMap::from([(
+            "alloc_acquire.qcore".to_owned(),
+            include_str!("../../tests/fixtures/contracts/alloc_acquire.qcore").to_owned(),
+        )]))
+        .unwrap();
         let summary = analyze_legacy_c_translation_unit(
             "void a(void) { void *p = alloc(); } void b(void) { opaque(); }",
             "a",
