@@ -43,6 +43,7 @@ pub use qcore_core::index;
 pub use qcore_frontend::frontend;
 pub mod inference;
 pub mod legacy_c;
+mod legacy_summary;
 pub use qcore_frontend::lexer;
 pub mod list_unlink_contract;
 pub mod native_concurrency;
@@ -152,13 +153,14 @@ pub use inference::{
     check_inference_certificate, infer_principal,
 };
 pub use legacy_c::{
-    AnalysisStatus, C11TranslationUnit, CCompilerDialect, LegacyCError, LegacyCfg, LegacyCfgNode,
-    LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope, LegacyFunctionSummary,
-    LegacyInstruction, LegacyNodeId, LegacyProgramSummary, LegacySafetyCertificate,
-    ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode, UnrestrictedLegacyResult, analyze_legacy_c,
-    analyze_legacy_c_translation_unit, analyze_legacy_c11, analyze_unrestricted_c11,
-    check_legacy_safety_certificate, legacy_c_source_functions, validate_unrestricted_c11,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, ContractTrust, LegacyCError, LegacyCfg,
+    LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope,
+    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, LegacyProgramSummary,
+    LegacySafetyCertificate, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord, UnrestrictedLegacyResult,
+    analyze_legacy_c, analyze_legacy_c_translation_unit, analyze_legacy_c11,
+    analyze_unrestricted_c11, check_legacy_safety_certificate, legacy_c_source_functions,
+    validate_unrestricted_c11,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use native_concurrency::{

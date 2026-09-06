@@ -1,0 +1,19 @@
+import QCore.CustodySummary
+
+#print axioms QCore.CustodySummary.unvalidated_analysis_never_validates
+#print axioms QCore.CustodySummary.no_reachable_exit_never_validates
+#print axioms QCore.CustodySummary.validated_summary_matches_every_exit
+#print axioms QCore.CustodySummary.validated_summary_is_analyzed_safely
+#print axioms QCore.CustodySummary.validated_summary_has_a_reachable_exit
+#print axioms QCore.CustodySummary.validated_summary_attaches_nothing_to_a_formal
+#print axioms QCore.CustodySummary.validated_summary_result_matches
+#print axioms QCore.CustodySummary.validated_summary_parameters_match
+#print axioms QCore.CustodySummary.neutral_result_returns_nothing
+#print axioms QCore.CustodySummary.owned_result_never_returns_a_formal
+#print axioms QCore.CustodySummary.nonnull_owned_result_returns_a_resource
+#print axioms QCore.CustodySummary.released_formal_is_released_at_every_exit
+#print axioms QCore.CustodySummary.borrowed_formal_binds_nothing
+#print axioms QCore.CustodySummary.lc01_allocation_wrapper_is_not_neutral
+#print axioms QCore.CustodySummary.lc01_allocation_wrapper_is_an_owned_return
+#print axioms QCore.CustodySummary.conditionally_released_formal_validates_under_no_mode
+#print axioms QCore.CustodySummary.attachment_to_a_formal_validates_under_no_summary

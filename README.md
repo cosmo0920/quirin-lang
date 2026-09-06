@@ -173,9 +173,9 @@ dispatched.
 [reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six
 certificate/weak-memory discrepancies, followed by a
 [seven-finding follow-up](docs/REEVALUATION_FOLLOWUP.md); all thirteen are
-repaired, with the remaining boundaries (interprocedural custody inference,
-semantic plugin witnesses, OS-level provider sandboxing) documented rather
-than papered over.
+repaired, with the remaining boundaries (semantic plugin witnesses, OS-level
+provider sandboxing, and the custody modes W4 still does not infer) documented
+rather than papered over.
 
 **Direction.** The [generalization plan](docs/GENERALIZATION_PLAN.md)
 reviews the architecture and orders the work to (a) make the checker generic
@@ -193,7 +193,17 @@ and observation interpreter live in `crates/qcore-contract`, above the new
 literal-site migration is executed
 ([record](docs/reports/w1-literal-sites/README.md)): the remaining Rust
 contract-table literals in tests and examples now load `.qcore` fixture
-modules through the loader; the richer clause vocabulary remains open.
+modules through the loader; the richer clause vocabulary remains open. W4 is
+executed for parameter/return custody with validation
+([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
+infers each internal function's parameter and return custody summary bottom-up
+over the call graph and publishes it only after re-running the intraprocedural
+analyzer against it, so a wrapper around a contracted API is analyzed instead
+of being `Unknown`. Declared contracts always take precedence, a disagreement
+is reported rather than resolved silently, and the safety certificate's recheck
+re-derives every summary independently. Recursive functions, out-parameters,
+aggregate stores and reallocation wrappers are still not summarized and keep
+their callers `Unknown`.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

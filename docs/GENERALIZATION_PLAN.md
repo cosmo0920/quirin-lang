@@ -398,6 +398,18 @@ malicious provider make the core's check vacuous?"
 
 ### W4 — Interprocedural custody summary inference (LC01's open boundary)
 
+**Status.** Executed for parameter/return custody with validation (2026-09-06):
+see the [W4 custody-inference record](reports/w4-custody-inference/README.md).
+`compiler/src/legacy_summary.rs` derives SCC-ordered summaries, validates each
+by re-running the intraprocedural analyzer against it, publishes them as
+`qcore-schemas` `ResourceSummaryRecord`s, and has the certificate recheck
+re-derive them independently. Declared contracts always win; a disagreement is
+a `SummaryConflict` diagnostic. Remaining: `Out`/`Stored`/`Removed`/
+`Reallocated` inference, recursive components (least fixed point is empty by
+construction), the Juliet stretch corpus, and the relocation into
+`qcore-c-gateway` — the pass landed beside the analyzer in `qcore-compiler`,
+following W1's loader-then-relocation precedent.
+
 **Goal.** The generic capability whose absence forces per-library hand
 contracts: infer and validate parameter/return custody summaries for internal
 functions of a translation unit, so wrappers around contracted APIs are

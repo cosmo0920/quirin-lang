@@ -25,6 +25,7 @@ It also ships a conservative checker for *existing* C source (the
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `compiler/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
+| `compiler/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocation into `qcore-c-gateway` is still open |
 | `compiler/src/verifier_plugin.rs` | Cycle 20 plugin protocol v1, manifests, registry, process providers, certificate firewall |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
@@ -129,7 +130,11 @@ It also ships a conservative checker for *existing* C source (the
 - **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
   boundaries that remain true statements: interprocedural parameter/return
-  custody inference is **unimplemented** (LC01); semantic witness schema v2
+  custody inference is **implemented for parameter/return custody with
+  validation** (LC01, W4 — but `Out`/`Stored`/`Removed`/`Reallocated` modes,
+  possibly-null returns without a callee-side null test, recursive call-graph
+  components, and cost summaries are still not inferred, and every such body
+  keeps its callers `Unknown`); semantic witness schema v2
   is unimplemented; process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
   only; CT01–CT50 conformance corpus is **100% unmapped**.
@@ -148,8 +153,18 @@ It also ships a conservative checker for *existing* C source (the
   dependency-matrix guard test. The leftover literal contract sites are
   migrated to loader-fed `.qcore` fixtures (2026-09-06,
   `docs/reports/w1-literal-sites/README.md`); W1's remaining item is the
-  richer clause vocabulary. Execution is tracked in
-  `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
+  richer clause vocabulary. W4 is executed for parameter/return custody with
+  validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
+  `compiler/src/legacy_summary.rs` derives SCC-ordered custody summaries for
+  internal C functions, publishes only summaries that a re-run of the
+  intraprocedural analyzer validates, expresses them as `qcore-schemas`
+  `ResourceSummaryRecord`s under `ContractTrust::InferredValidated`, and has
+  the certificate recheck re-derive them independently. Declared contracts
+  always win; a disagreement is a `SummaryConflict` diagnostic, never a silent
+  override. On the 156 pinned Fluent Bit units measurable in that run, one unit
+  moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
+  class; the 29-unit Monkey/forced-Libevent leg was not re-measured. Execution
+  is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)
 

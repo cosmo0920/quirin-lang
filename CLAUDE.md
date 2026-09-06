@@ -53,6 +53,17 @@ Claude-specific additions:
   and land code according to its target crate layering (§3) and invariants
   (§2); do not add new code to the monolithic grab-bag once a target crate
   exists.
+- W4 is executed for parameter/return custody with validation
+  (`compiler/src/legacy_summary.rs`,
+  `docs/reports/w4-custody-inference/README.md`). A call into an internal C
+  function is modeled only through a declared `.qcore` contract or a summary
+  that `observations_match_contract` validated against a fresh analyzer run;
+  everything else stays `Unknown`. When touching that pass, do not let a
+  summary be published without validation, do not seed a formal parameter with
+  entry custody the body did not demand (that asserts non-nullness and deletes
+  failure paths), and do not accept an assume-guarantee fixed point for a
+  recursive component. `Out`, `Stored`, `Removed` and `Reallocated` modes are
+  deliberately not inferred; the `qcore-c-gateway` relocation is still open.
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass. If a pinned table (contract corpus counts,
   submodule revision, archived report) conflicts with your change, the change

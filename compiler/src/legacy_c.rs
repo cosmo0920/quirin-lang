@@ -12,9 +12,11 @@ use std::process::Stdio;
 pub type LegacyNodeId = usize;
 
 pub use qcore_schemas::contract::{
-    ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode,
+    ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
+
+use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
@@ -81,12 +83,32 @@ pub enum AnalysisStatus {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LegacyDiagnosticKind {
-    Leak { acquisition_line: usize },
-    DoubleRelease { acquisition_line: usize },
-    ReleaseAfterEscape { acquisition_line: usize },
-    CustodyConflict { acquisition_line: usize },
-    UnknownAlias { variable: String },
-    Unsupported { description: String },
+    Leak {
+        acquisition_line: usize,
+    },
+    DoubleRelease {
+        acquisition_line: usize,
+    },
+    ReleaseAfterEscape {
+        acquisition_line: usize,
+    },
+    CustodyConflict {
+        acquisition_line: usize,
+    },
+    UnknownAlias {
+        variable: String,
+    },
+    Unsupported {
+        description: String,
+    },
+    /// A validated inferred custody summary contradicts the explicit contract
+    /// in force for the same function (W4). The explicit contract still wins at
+    /// every call site; the disagreement is reported instead of being silently
+    /// overridden, and it keeps the defining function `Unknown`.
+    SummaryConflict {
+        inferred: Box<ResourceFunctionContract>,
+        declared: Box<ResourceFunctionContract>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -171,6 +193,11 @@ pub struct LegacySafetyCertificate {
     pub function_scope: LegacyFunctionScope,
     pub summary: LegacyProgramSummary,
     pub checked_functions: Vec<String>,
+    /// Interprocedural custody summaries the analysis relied on (W4). Only
+    /// [`ContractTrust::InferredValidated`] records appear here; declared
+    /// contracts already travel in `contracts`. The recheck re-derives this
+    /// list independently and refuses a certificate that does not reproduce it.
+    pub summaries: Vec<ResourceSummaryRecord>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -225,23 +252,9 @@ fn analyze_legacy_c_tokens(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
-    let (body_start, line) = find_function_body(tokens, function)
-        .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
-    let mut parser = Parser {
-        tokens,
-        cursor: body_start,
-        contracts,
-        next_site: 0,
-    };
-    let statements =
-        parser
-            .parse_block()
-            .map_err(|failure_line| LegacyCError::MalformedFunction {
-                function: function.to_owned(),
-                line: failure_line.max(line),
-            })?;
-    let cfg = CfgBuilder::build(function, &statements);
-    Ok(analyze_cfg(cfg))
+    Ok(analyze_cfg(build_function_cfg(
+        tokens, function, contracts,
+    )?))
 }
 
 /// Gate the conservative importer with Clang's production C11 parser.  The
@@ -306,6 +319,7 @@ pub fn analyze_unrestricted_c11(
         }
     };
     let summary = analysis.summary;
+    let summaries = analysis.summaries;
     if !analysis.projection_failures.is_empty() {
         let failures = analysis
             .projection_failures
@@ -336,6 +350,7 @@ pub fn analyze_unrestricted_c11(
                 function_scope: unit.function_scope,
                 summary,
                 checked_functions,
+                summaries,
             };
             check_legacy_safety_certificate(&certificate).map_err(|reason| {
                 LegacyCError::ProductionParserRejected(format!(
@@ -350,6 +365,7 @@ pub fn analyze_unrestricted_c11(
 fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
     let mut unsupported = 0;
     let mut aliases = 0;
+    let mut conflicts = 0;
     for diagnostic in summary
         .functions
         .values()
@@ -358,11 +374,13 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
         match diagnostic.kind {
             LegacyDiagnosticKind::Unsupported { .. } => unsupported += 1,
             LegacyDiagnosticKind::UnknownAlias { .. } => aliases += 1,
+            LegacyDiagnosticKind::SummaryConflict { .. } => conflicts += 1,
             _ => {}
         }
     }
     format!(
-        "resource projection unresolved: {unsupported} unsupported operation(s), {aliases} unresolved alias(es)"
+        "resource projection unresolved: {unsupported} unsupported operation(s), \
+         {aliases} unresolved alias(es), {conflicts} custody summary conflict(s)"
     )
 }
 
@@ -443,14 +461,31 @@ pub fn check_legacy_safety_certificate(
             Some(certificate.checked_functions.as_slice())
         }
     };
-    let recomputed = analyze_legacy_c_translation_unit_selected(
+    let recomputed = analyze_legacy_c_translation_unit_selected_partial(
         &certificate.preprocessed_source,
         &certificate.entry,
         &certificate.contracts,
         selected,
     )
     .map_err(|error| format!("certificate source cannot be reanalyzed: {error}"))?;
-    if recomputed != certificate.summary {
+    if let Some(error) = recomputed.projection_failures.first() {
+        return Err(format!("certificate source cannot be reanalyzed: {error}"));
+    }
+    // The recheck re-derives the interprocedural custody summaries from the
+    // preprocessed source and the declared contracts alone. A certificate that
+    // leans on a summary this pass cannot reproduce fails containment; a
+    // summary is never taken on the certificate's word.
+    if recomputed.summaries != certificate.summaries {
+        return Err("inferred custody summaries do not match the preprocessed source".into());
+    }
+    if certificate
+        .summaries
+        .iter()
+        .any(|record| record.trust != ContractTrust::InferredValidated)
+    {
+        return Err("certificate carries a custody summary that was not validated".into());
+    }
+    if recomputed.summary != certificate.summary {
         return Err("program summary does not match the preprocessed source".into());
     }
     if certificate.summary.status != AnalysisStatus::Safe {
@@ -511,9 +546,11 @@ fn analyze_legacy_c_translation_unit_selected(
     Ok(analysis.summary)
 }
 
-struct PartialTranslationUnitAnalysis {
-    summary: LegacyProgramSummary,
-    projection_failures: Vec<LegacyCError>,
+pub(crate) struct PartialTranslationUnitAnalysis {
+    pub(crate) summary: LegacyProgramSummary,
+    pub(crate) projection_failures: Vec<LegacyCError>,
+    /// Validated interprocedural custody summaries used at call sites.
+    pub(crate) summaries: Vec<ResourceSummaryRecord>,
 }
 
 fn analyze_legacy_c_translation_unit_selected_partial(
@@ -540,12 +577,16 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     } else {
         return Err(LegacyCError::FunctionNotFound(entry.to_owned()));
     };
-    // A retained callee summary does not prove neutral parameter/return custody.
-    // Preserve explicit trusted contracts; uncontracted calls remain Unknown.
+    // A retained callee summary does not prove neutral parameter/return
+    // custody. Explicit trusted contracts are preserved; a call is modeled only
+    // through such a contract or through an inferred summary that this pass
+    // validated by re-running the intraprocedural analyzer against it (W4).
+    // Everything else stays an uncontracted call and therefore `Unknown`.
+    let derivation = derive_custody_summaries(&tokens, &names, contracts);
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
     for name in names {
-        match analyze_legacy_c_tokens(&tokens, &name, contracts) {
+        match analyze_defined_function(&tokens, &name, &derivation) {
             Ok(summary) => {
                 functions.insert(name, summary);
             }
@@ -576,16 +617,94 @@ fn analyze_legacy_c_translation_unit_selected_partial(
             functions,
         },
         projection_failures,
+        summaries: derivation.records(),
     })
 }
 
+/// Analyze one defined function under the derived environment.
+///
+/// The entry state comes from the contract in force for the function itself —
+/// explicit if one was declared, otherwise the validated inferred summary — so
+/// that a callee's own body is checked against the same custody interface its
+/// callers use. If the body does not validate against that interface the
+/// function falls back to the contract-free analysis, which makes no custody
+/// assumption about the formals at all.
+fn analyze_defined_function(
+    tokens: &[Token],
+    function: &str,
+    derivation: &CustodyDerivation,
+) -> Result<LegacyFunctionSummary, LegacyCError> {
+    let cfg = build_function_cfg(tokens, function, derivation.environment())?;
+    let mut summary = match derivation.entry_contract(function) {
+        Some(contract) => match function_parameters(tokens, function) {
+            Some(parameters) => match EntryCustody::build(&cfg, &parameters, contract) {
+                Some(entry) => {
+                    let (candidate, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
+                    if crate::legacy_summary::observations_match_contract(
+                        contract,
+                        &entry,
+                        &candidate,
+                        &observations,
+                    ) {
+                        candidate
+                    } else {
+                        analyze_cfg(cfg)
+                    }
+                }
+                None => analyze_cfg(cfg),
+            },
+            None => analyze_cfg(cfg),
+        },
+        None => analyze_cfg(cfg),
+    };
+    if let Some((inferred, declared)) = derivation.conflict(function) {
+        let line = find_function_body(tokens, function).map_or(0, |(_, line)| line);
+        summary.diagnostics.push(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::SummaryConflict {
+                inferred: Box::new(inferred.clone()),
+                declared: Box::new(declared.clone()),
+            },
+        });
+        summary.diagnostics.sort();
+        summary.diagnostics.dedup();
+        summary.status = classify_diagnostics(&summary.diagnostics);
+    }
+    Ok(summary)
+}
+
+/// Parse one function body into its resource CFG under `contracts`.
+pub(crate) fn build_function_cfg(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyCfg, LegacyCError> {
+    let (body_start, line) = find_function_body(tokens, function)
+        .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
+    let mut parser = Parser {
+        tokens,
+        cursor: body_start,
+        contracts,
+        next_site: 0,
+    };
+    let statements =
+        parser
+            .parse_block()
+            .map_err(|failure_line| LegacyCError::MalformedFunction {
+                function: function.to_owned(),
+                line: failure_line.max(line),
+            })?;
+    Ok(CfgBuilder::build(function, &statements))
+}
+
 #[derive(Clone, Debug)]
-struct Token {
+pub(crate) struct Token {
     text: String,
     line: usize,
 }
 
-fn tokenize(source: &str) -> Vec<Token> {
+pub(crate) fn tokenize(source: &str) -> Vec<Token> {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
     let mut cursor = 0;
@@ -733,6 +852,143 @@ fn function_names(tokens: &[Token]) -> Vec<String> {
 #[must_use]
 pub fn legacy_c_source_functions(source: &str) -> Vec<String> {
     function_names(&tokenize(source))
+}
+
+/// Declaration specifiers that can end a parameter declarator without naming
+/// it. If one of these is the last token, the parameter is unnamed and the body
+/// cannot refer to it.
+const DECLARATION_SPECIFIERS: &[&str] = &[
+    "void",
+    "char",
+    "short",
+    "int",
+    "long",
+    "float",
+    "double",
+    "signed",
+    "unsigned",
+    "_Bool",
+    "_Complex",
+    "_Imaginary",
+    "const",
+    "volatile",
+    "restrict",
+    "__restrict",
+    "__restrict__",
+    "struct",
+    "union",
+    "enum",
+    "static",
+    "register",
+    "inline",
+    "_Atomic",
+];
+
+/// Formal parameter names of a defined function, in declaration order.
+///
+/// `Some(vec![Some(name), None, ..])` names each formal the body can refer to;
+/// an inner `None` is an unnamed formal. The whole result is `None` whenever
+/// the declarator list cannot be read *unambiguously* — variadic lists,
+/// function-pointer parameters, K&R-style single-identifier declarators,
+/// unnamed tagged types, and duplicate names all reject the function outright.
+/// Misreading which declarator carries a name would attach custody to the wrong
+/// argument, so this parser refuses everything it cannot pin down.
+pub(crate) fn function_parameters(tokens: &[Token], function: &str) -> Option<Vec<Option<String>>> {
+    for (index, token) in tokens.iter().enumerate() {
+        if token.text != function || tokens.get(index + 1).map(|t| t.text.as_str()) != Some("(") {
+            continue;
+        }
+        let close = matching(tokens, index + 1, "(", ")")?;
+        if tokens.get(close + 1).map(|t| t.text.as_str()) != Some("{") {
+            continue;
+        }
+        return parse_parameter_declarators(&tokens[index + 2..close]);
+    }
+    None
+}
+
+fn parse_parameter_declarators(tokens: &[Token]) -> Option<Vec<Option<String>>> {
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    // `(`/`)` mark a function-pointer or nested declarator; `.` is the first
+    // token of a variadic `...`. Neither is read here.
+    if texts
+        .iter()
+        .any(|text| matches!(*text, "(" | ")" | "{" | "}" | "."))
+    {
+        return None;
+    }
+    if texts.is_empty() {
+        return Some(Vec::new());
+    }
+    let groups = texts.split(|text| *text == ",").collect::<Vec<_>>();
+    if groups.len() == 1 && groups[0] == ["void"] {
+        return Some(Vec::new());
+    }
+    let mut names = Vec::new();
+    let mut seen = BTreeSet::new();
+    for group in groups {
+        let mut group = group;
+        // Drop array declarator suffixes: `char buf[16]` names `buf`.
+        while group.last() == Some(&"]") {
+            let open = group.iter().rposition(|text| *text == "[")?;
+            group = &group[..open];
+        }
+        if group.is_empty() {
+            return None;
+        }
+        let last = *group.last()?;
+        if !is_identifier(last) {
+            // An abstract declarator such as `const char *`: unnamed.
+            names.push(None);
+            continue;
+        }
+        if DECLARATION_SPECIFIERS.contains(&last) {
+            names.push(None);
+            continue;
+        }
+        if group.len() < 2 {
+            // `f(n)` (K&R) and `f(size_t)` are indistinguishable here.
+            return None;
+        }
+        if matches!(group[group.len() - 2], "struct" | "union" | "enum") {
+            // `struct foo` without a declarator: the identifier is the tag.
+            names.push(None);
+            continue;
+        }
+        if !seen.insert(last.to_owned()) {
+            return None;
+        }
+        names.push(Some(last.to_owned()));
+    }
+    Some(names)
+}
+
+/// Names in `candidates` that the body of `function` calls directly.
+pub(crate) fn direct_calls(
+    tokens: &[Token],
+    function: &str,
+    candidates: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let mut called = BTreeSet::new();
+    let Some((body_start, _)) = find_function_body(tokens, function) else {
+        return called;
+    };
+    let Some(body_end) = matching(tokens, body_start, "{", "}") else {
+        return called;
+    };
+    for index in body_start..body_end {
+        if tokens.get(index + 1).map(|token| token.text.as_str()) != Some("(") {
+            continue;
+        }
+        let name = &tokens[index].text;
+        if candidates.contains(name) {
+            called.insert(name.clone());
+        }
+    }
+    called
 }
 
 fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<usize> {
@@ -1822,9 +2078,214 @@ impl AbstractState {
     }
 }
 
+/// Custody the caller hands to a function's formal parameters, derived from the
+/// contract in force for that function.
+///
+/// Parameter resources are *caller-owned*: they are seeded live at entry and
+/// exempt from exit-leak reporting, because discharging them is the caller's
+/// obligation, not the callee's. Their exit disposition is what the summary
+/// claims about the call, and [`crate::legacy_summary`] checks that claim.
+#[derive(Clone, Debug, Default)]
+pub(crate) struct EntryCustody {
+    state: AbstractState,
+    /// Abstract site bound to each formal parameter, when the contract gives
+    /// that parameter observable custody. `None` for `Borrowed`/`Out` modes.
+    pub(crate) parameter_sites: Vec<Option<usize>>,
+}
+
+impl EntryCustody {
+    /// Build the entry state a contract prescribes, or `None` when the
+    /// parameter list and the contract cannot be lined up exactly.
+    pub(crate) fn build(
+        cfg: &LegacyCfg,
+        parameters: &[Option<String>],
+        contract: &ResourceFunctionContract,
+    ) -> Option<Self> {
+        if contract.parameters.len() != parameters.len() {
+            return None;
+        }
+        let base = first_free_site(cfg);
+        let mut custody = Self {
+            state: AbstractState::default(),
+            parameter_sites: vec![None; parameters.len()],
+        };
+        for (index, mode) in contract.parameters.iter().copied().enumerate() {
+            let nullable = match mode {
+                // Nothing is bound: the body may not treat the formal as a
+                // resource it already owns. An `Out` formal is written by the
+                // callee, which the reduced importer does not model.
+                ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. } => continue,
+                ResourceParameterMode::Owned { nullable }
+                | ResourceParameterMode::Consumed { nullable }
+                | ResourceParameterMode::Released { nullable }
+                | ResourceParameterMode::Stored { nullable, .. }
+                | ResourceParameterMode::Removed { nullable, .. } => nullable,
+            };
+            let name = parameters[index].as_ref()?;
+            let site = base.checked_add(index)?;
+            custody.state.resources.insert(site, LIVE);
+            custody.state.pointers.insert(
+                name.clone(),
+                AbstractPointer {
+                    targets: BTreeSet::from([site]),
+                    unknown: false,
+                    may_be_null: nullable,
+                },
+            );
+            if nullable {
+                custody.state.nullable_sites.insert(site);
+            }
+            custody.parameter_sites[index] = Some(site);
+        }
+        Some(custody)
+    }
+
+    fn exempt_sites(&self) -> BTreeSet<usize> {
+        self.parameter_sites.iter().flatten().copied().collect()
+    }
+}
+
+/// The first abstract site that no acquisition in `cfg` already uses.
+fn first_free_site(cfg: &LegacyCfg) -> usize {
+    cfg.nodes
+        .iter()
+        .flat_map(|node| match &node.instruction {
+            LegacyInstruction::Acquire { site, .. } => vec![*site],
+            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
+            _ => Vec::new(),
+        })
+        .max()
+        .map_or(0, |site| site.saturating_add(1))
+}
+
+/// What one reachable exit of a function does to the custody it was given.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ExitObservation {
+    /// Disposition of each bound formal parameter site at this exit.
+    pub(crate) parameters: Vec<Option<SiteDisposition>>,
+    pub(crate) returned: ReturnedValue,
+    /// A fresh resource ended up attached to a caller-owned parameter. Such a
+    /// transfer is invisible to the caller, so no summary may claim it.
+    pub(crate) attached_to_parameter: bool,
+    /// Reallocation replacements that this exit left unresolved.
+    pub(crate) pending_replacements: BTreeMap<usize, BTreeSet<usize>>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SiteDisposition {
+    Live,
+    Released,
+    Escaped,
+    Contained,
+    /// The site left the state on this path (a refuted nullable acquisition).
+    Absent,
+    /// Several dispositions joined; no single custody claim describes it.
+    Mixed,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ReturnedValue {
+    /// The exit returns no modeled resource place (including a null constant).
+    None,
+    Site {
+        site: usize,
+        nullable: bool,
+        disposition: SiteDisposition,
+    },
+    /// The returned place denotes more than one site, or an unknown one.
+    Ambiguous,
+}
+
+fn site_disposition(state: &AbstractState, site: usize) -> SiteDisposition {
+    match state.resources.get(&site).copied() {
+        None => SiteDisposition::Absent,
+        Some(LIVE) => SiteDisposition::Live,
+        Some(RELEASED) => SiteDisposition::Released,
+        Some(ESCAPED) => SiteDisposition::Escaped,
+        Some(CONTAINED) => SiteDisposition::Contained,
+        Some(_) => SiteDisposition::Mixed,
+    }
+}
+
+fn observe_exit(
+    node: &LegacyCfgNode,
+    state: &AbstractState,
+    entry: &EntryCustody,
+) -> ExitObservation {
+    let returned = match &node.instruction {
+        LegacyInstruction::EscapeIfOwned { source } | LegacyInstruction::Escape { source } => {
+            match state.pointers.get(source) {
+                None => ReturnedValue::None,
+                Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => {
+                    ReturnedValue::Ambiguous
+                }
+                Some(pointer) => match pointer.targets.first().copied() {
+                    // A definitely-null place returns no resource.
+                    None => ReturnedValue::None,
+                    Some(site) => ReturnedValue::Site {
+                        site,
+                        nullable: pointer.may_be_null || state.nullable_sites.contains(&site),
+                        disposition: site_disposition(state, site),
+                    },
+                },
+            }
+        }
+        _ => ReturnedValue::None,
+    };
+    let exempt = entry.exempt_sites();
+    ExitObservation {
+        parameters: entry
+            .parameter_sites
+            .iter()
+            .map(|site| site.map(|site| site_disposition(state, site)))
+            .collect(),
+        returned,
+        attached_to_parameter: state
+            .contained
+            .iter()
+            .any(|(owner, children)| exempt.contains(owner) && !children.is_empty()),
+        pending_replacements: state.conditional_replacements.clone(),
+    }
+}
+
+fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
+    let unsafe_found = diagnostics.iter().any(|diagnostic| {
+        matches!(
+            diagnostic.kind,
+            LegacyDiagnosticKind::Leak { .. }
+                | LegacyDiagnosticKind::DoubleRelease { .. }
+                | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
+                | LegacyDiagnosticKind::CustodyConflict { .. }
+        )
+    });
+    let unknown_found = diagnostics.iter().any(|diagnostic| {
+        matches!(
+            diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { .. }
+                | LegacyDiagnosticKind::Unsupported { .. }
+                | LegacyDiagnosticKind::SummaryConflict { .. }
+        )
+    });
+    if unsafe_found {
+        AnalysisStatus::Unsafe
+    } else if unknown_found {
+        AnalysisStatus::Unknown
+    } else {
+        AnalysisStatus::Safe
+    }
+}
+
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
+    analyze_cfg_with_entry(cfg, &EntryCustody::default()).0
+}
+
+pub(crate) fn analyze_cfg_with_entry(
+    cfg: LegacyCfg,
+    entry_custody: &EntryCustody,
+) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
+    let exempt = entry_custody.exempt_sites();
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
-    incoming[cfg.entry] = Some(AbstractState::default());
+    incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
     let mut diagnostics = BTreeSet::new();
     let mut steps = 0usize;
@@ -1860,6 +2321,7 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
                 node.line,
                 &output,
                 &acquisition_lines,
+                &exempt,
                 &mut diagnostics,
             );
         }
@@ -1914,36 +2376,35 @@ fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
         });
     }
 
-    let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
-    let unsafe_found = diagnostics.iter().any(|diagnostic| {
-        matches!(
-            diagnostic.kind,
-            LegacyDiagnosticKind::Leak { .. }
-                | LegacyDiagnosticKind::DoubleRelease { .. }
-                | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
-                | LegacyDiagnosticKind::CustodyConflict { .. }
-        )
-    });
-    let unknown_found = diagnostics.iter().any(|diagnostic| {
-        matches!(
-            diagnostic.kind,
-            LegacyDiagnosticKind::UnknownAlias { .. } | LegacyDiagnosticKind::Unsupported { .. }
-        )
-    });
-    let status = if unsafe_found {
-        AnalysisStatus::Unsafe
-    } else if unknown_found {
-        AnalysisStatus::Unknown
-    } else {
-        AnalysisStatus::Safe
-    };
-    LegacyFunctionSummary {
-        function: cfg.function.clone(),
-        status,
-        diagnostics,
-        fixed_point_steps: steps,
-        cfg,
+    // Read the settled exit states once the work list is stable, so that a
+    // summary describes the joined behavior of every reachable return rather
+    // than an intermediate iterate. Diagnostics are already recorded above;
+    // this pass only observes.
+    let mut observations = Vec::new();
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        if !node.is_exit {
+            continue;
+        }
+        let Some(state) = incoming[node_id].clone() else {
+            continue;
+        };
+        let mut ignored = BTreeSet::new();
+        let output = transfer(&cfg.function, node, state, &acquisition_lines, &mut ignored);
+        observations.push(observe_exit(node, &output, entry_custody));
     }
+
+    let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
+    let status = classify_diagnostics(&diagnostics);
+    (
+        LegacyFunctionSummary {
+            function: cfg.function.clone(),
+            status,
+            diagnostics,
+            fixed_point_steps: steps,
+            cfg,
+        },
+        observations,
+    )
 }
 
 fn transfer(
@@ -2275,7 +2736,15 @@ fn apply_contract_call(
     }
 
     match contract.result {
-        ResourceReturnMode::None => {}
+        ResourceReturnMode::None => {
+            // The result carries no custody, so the destination holds no
+            // resource afterwards. Dropping the binding — rather than leaving
+            // the previous one in place — keeps a stale alias from covering for
+            // a resource the assignment actually dropped.
+            if let Some(destination) = destination {
+                state.pointers.remove(destination);
+            }
+        }
         ResourceReturnMode::Owned { nullable } => {
             let (Some(destination), Some(site)) = (destination, sites.next()) else {
                 report_unsupported_contract(function, line, called, diagnostics);
@@ -2594,10 +3063,13 @@ fn report_leaks(
     line: usize,
     state: &AbstractState,
     acquisition_lines: &BTreeMap<usize, usize>,
+    // Caller-owned parameter resources are discharged by the caller; a live
+    // formal at exit is the interface, not a leak.
+    exempt: &BTreeSet<usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (&site, &status) in &state.resources {
-        if status & LIVE != 0 {
+        if status & LIVE != 0 && !exempt.contains(&site) {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,

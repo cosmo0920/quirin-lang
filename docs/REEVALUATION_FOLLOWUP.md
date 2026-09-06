@@ -57,6 +57,12 @@ whose effects are not independently proven neutral must keep the unit Unknown.
 Do not overwrite explicit contracts optimistically. Add caller-discard,
 caller-release, nested-wrapper, parameter-consumption and recursion cases.
 
+**Repaired (2026-09-06, W4):** the counterexample above is now `Unsafe` with a
+leak diagnostic in `main`, and the wrapper `make` carries a validated
+`() -> Owned{nonnull}` summary rather than no contract at all. The repair list's
+cases are pinned in `compiler/tests/unit/legacy_summary.rs`; the remaining
+boundary is recorded in the table below.
+
 ### WM05 — P1: mutex histories are not validated before certifying ordering
 
 [`weak_memory.rs`](../compiler/src/weak_memory.rs),
@@ -203,7 +209,7 @@ missing interprocedural or plugin semantic infrastructure is implemented.
 
 | Finding | Current behavior | Remaining boundary |
 |---|---|---|
-| LC01 | Internal definitions no longer receive automatic neutral contracts. Explicit trusted contracts are preserved; uncontracted calls retain Unknown instructions. | Inferred parameter/return custody, identity, and cost summaries remain unimplemented. A detected independent leak can still make the aggregate Unsafe. |
+| LC01 | Internal definitions still receive no automatic neutral contract. Interprocedural parameter/return custody summaries are **implemented for parameter/return custody with validation** (W4, 2026-09-06): `compiler/src/legacy_summary.rs` infers each internal function's summary bottom-up over call-graph SCCs and publishes it only after re-running the intraprocedural analyzer against it. Explicit trusted contracts still govern every call site; a validated inference that disagrees raises `SummaryConflict` and keeps the function Unknown. `check_legacy_safety_certificate` re-derives the summary set independently and refuses a certificate it cannot reproduce. The finding's own counterexample is now Unsafe with a leak. | `Out`, `Stored`, `Removed`, and `Reallocated` modes are not inferred, and neither is a possibly-null result returned without a callee-side null test; each such body yields no summary and its callers stay Unknown. Recursive components stay Unknown by construction: the least fixed point is empty, and an assume-guarantee summary is not accepted because it is sound only for terminating executions. Cost summaries remain unimplemented. A detected independent leak can still make the aggregate Unsafe. See [`reports/w4-custody-inference`](reports/w4-custody-inference/README.md). |
 | WM05 | `C11Execution::mutex_order` supplies a complete order per mutex. The checker validates exact coverage, successful acquisitions, owning-thread unlocks, and agreement with happens-before before using handoff edges. | The supported profile starts with unlocked non-recursive mutexes; a finite prefix may end with a held lock. Missing orders, recursion, and initial ownership are unsupported. |
 | VP04 | Nonblocking pipe I/O shares one deadline. A Unix process-group guard terminates ordinary descendants on success, timeout, and errors; direct-child reaping does not block the caller. | This is process-group containment, not a sandbox for deliberately detached descendants or OS memory/network enforcement. Non-Unix process execution is rejected. |
 | VP08 | Encoding and request-size validation happen before spawn; the cleanup guard is installed immediately after successful spawn. | Request and response payloads currently share the manifest budget. |
