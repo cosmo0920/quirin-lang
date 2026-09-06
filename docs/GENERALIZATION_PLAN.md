@@ -132,15 +132,14 @@ crates/qcore-schemas          # L0: the published, versioned surface
   source/build identity records.  serde types only, no analysis logic.
 crates/qcore-core             # L1: trusted semantic kernel
   usage, ownership, quant indices, typed errors, error regions, CFG,
-  whole-program, weak memory, concurrency, custody algebra,
-  certificate firewall checkers (per capability).
-crates/qcore-frontend         # L1: QCore language front end + elaboration
+  weak memory, concurrency, custody algebra and pure model checkers.
+crates/qcore-frontend         # L1: front end, elaboration + whole-program checking
 crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
 crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
   interprocedural summary inference (W4).
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
-  composition, obligation generation + dispatch (W3).
+  composition and certificate admission orchestration (W3).
 crates/qcore-verification     # Trusted adapter above L1 + verifier host:
   obligation derivation, witness replay, scope dispatch. No provider dependency.
   Keeps host/frontend/contract/schema integration out of the dependency-free kernel.
