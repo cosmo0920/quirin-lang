@@ -77,8 +77,33 @@ registry.register(std::sync::Arc::new(provider))?;
 Explicit registration avoids silently replacing the default in-process
 first-party registry. For upgrade, verify a newly built version in a separate
 directory, then select it in a fresh registry. For rollback, select the
-previous directory and its retained build record. `qcorec` default provider
-selection is unchanged. The standalone `package.py verify` command and the
+previous directory and its retained build record. CLI configuration is explicit and separate from the default registry:
+
+```sh
+qcorec plugins verify /absolute/path/qcore.libevent
+qcorec plugins enable /absolute/path/qcore.libevent --config ./plugins.json
+qcorec plugins list --config ./plugins.json
+qcorec plugins inspect qcore.libevent --config ./plugins.json
+qcorec check --plugins ./plugins.json main.qcore
+qcorec plugins disable qcore.libevent --config ./plugins.json
+```
+
+Enable pins the complete manifest, including the executable digest, under its
+plugin ID. Re-enable a reviewed new package path to upgrade or roll back.
+Disabled entries do not enter the registry and can remain configured after
+removing the package directory. An explicit config supplies the entire process
+provider registry; an empty selection supplies no providers. Missing, malformed
+or changed enabled packages fail before compilation, without default fallback.
+Config updates use a sibling temporary file and rename. They are local edits,
+not a distributed or concurrent-writer transaction protocol.
+
+The CLI verifier is read-only and does not execute the package: it validates
+manifest syntax, resolved path containment and the declared executable hash.
+It establishes a snapshot identity, not a signature, runtime compatibility,
+embedded-template binding or source authenticity. `package.py verify` additionally
+executes the first-party `--verify-package` self-check. Keep packages protected
+from mutation between verification and dispatch; no immutable-file or OS sandbox
+guarantee is added. `qcorec` default provider selection is unchanged. The standalone `package.py verify` command and the
 binary's `--verify-package` mode check an installed package; no new protocol
 message or implicit network lookup is involved.
 

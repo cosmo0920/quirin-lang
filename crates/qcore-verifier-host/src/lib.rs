@@ -1474,3 +1474,6 @@ mod tests {
         assert_eq!(composed.diagnostics[0].code, "QP012");
     }
 }
+
+pub mod package;
+pub use package::verify_executable_package;

@@ -1,0 +1,9 @@
+{
+  "workspace_tests": 569,
+  "cli_process_tests": 7,
+  "lean_audits": 19,
+  "standing_gate": "passed",
+  "real_package_verify_enable_list_disable": "passed",
+  "new_semantic_admission": false,
+  "config_format_version": 1
+}

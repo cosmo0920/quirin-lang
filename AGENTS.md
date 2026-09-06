@@ -389,3 +389,11 @@ lives in core, with preserved compiler APIs and exact implementation/test body
 parity. Evidence: `docs/reports/w5-provider-packages/README.md`,
 `docs/reports/w5-whole-program-frontend/README.md`, and
 `docs/reports/w5-resource-accounting/README.md`.
+
+CLI package lifecycle (2026-09-07, `docs/reports/w5-cli-packages/README.md`):
+`qcorec plugins verify PACKAGE`, `enable PACKAGE --config FILE`, and
+`disable ID --config FILE` support explicit pinned process selections.
+`check`/`emit --plugins FILE` and list/inspect with `--config FILE` consume
+that selection without default fallback. Verification reads manifest and
+executable identity without executing it; this is a snapshot check, not
+signature, runtime compatibility or immutable-execution proof.

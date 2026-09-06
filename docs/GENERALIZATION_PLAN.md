@@ -486,7 +486,8 @@ and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
 
 Task2's specialized semantic extraction, task3's reactor/descriptor model
 split, registry-based Fluent Bit composition, task4 route deletion, remaining
-compiler consolidation and CLI package enable/disable remain open. Existing
+compiler consolidation remain open. [CLI package lifecycle](reports/w5-cli-packages/README.md)
+now supports explicit verification and pinned enable/disable selection. Existing
 in-process/source routes are retained until semantic parity meets these gates.
 
 **Goal.** Finish moving library semantics behind the plugin boundary — as

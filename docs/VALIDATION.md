@@ -47,3 +47,8 @@ passes 565 Rust tests, 43 Python tests, the standing gate and 19 Lean audits.
 Separate provider-package tests and two reproducible builds against schemas
 0.2.0 are archived in [the package report](reports/w5-provider-packages/README.md).
 This adds architectural/transport evidence, not new language conformance.
+
+[CLI package integration](reports/w5-cli-packages/README.md) subsequently
+passes 569 workspace tests, the standing gate and 19 Lean audits, including
+seven CLI process tests. Package snapshot verification does not establish
+source correctness or immunity to later package-file mutation.

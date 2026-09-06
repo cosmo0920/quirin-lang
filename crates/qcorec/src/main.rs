@@ -1,14 +1,16 @@
+mod plugin_config;
+
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
 use qcore_compiler::{
-    CompileOptions, PluginId, SourceFile, compile_files, format_diagnostic,
-    load_first_party_registry,
+    CompileOptions, PluginId, SourceFile, compile_files, compile_files_with_registry,
+    format_diagnostic, load_first_party_registry,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] FILE...\n  qcorec emit [--entry NAME] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list\n  qcorec plugins inspect PLUGIN_ID\n";
+const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -41,11 +43,23 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         return Err(format!("unknown command `{command}`\n\n{USAGE}"));
     }
     let mut entry = None;
+    let mut plugins = None::<PathBuf>;
     let mut output = None::<PathBuf>;
     let mut inputs = Vec::new();
     let mut index = 1;
     while index < arguments.len() {
         match arguments[index].as_str() {
+            "--plugins" => {
+                index += 1;
+                if plugins.is_some() {
+                    return Err("--plugins specified more than once".into());
+                }
+                plugins = Some(PathBuf::from(
+                    arguments
+                        .get(index)
+                        .ok_or("--plugins requires a config path")?,
+                ));
+            }
             "--entry" => {
                 index += 1;
                 entry = Some(
@@ -79,7 +93,14 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 .map_err(|error| format!("{}: {error}", path.display()))
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let module = compile_files(&files, &CompileOptions { entry }).map_err(|diagnostics| {
+    let options = CompileOptions { entry };
+    let compiled = if let Some(path) = plugins {
+        let registry = plugin_config::registry(&path)?;
+        compile_files_with_registry(&files, &options, &registry)
+    } else {
+        compile_files(&files, &options)
+    };
+    let module = compiled.map_err(|diagnostics| {
         diagnostics
             .iter()
             .map(format_diagnostic)
@@ -114,8 +135,43 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
 }
 
 fn plugins_command(arguments: &[String]) -> Result<(), String> {
-    let registry = load_first_party_registry(&qcore_compiler::source_profiles::profiles_root())
-        .map_err(|error| format!("provider discovery failed: {error}"))?;
+    use qcore_compiler::verifier_plugin::{VerifierProvider, verify_executable_package};
+    match arguments {
+        [command, package] if command == "verify" => {
+            let provider = verify_executable_package(package).map_err(|e| e.to_string())?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(provider.manifest()).map_err(|e| e.to_string())?
+            );
+            return Ok(());
+        }
+        [command, value, flag, config] if flag == "--config" && command == "enable" => {
+            plugin_config::enable(std::path::Path::new(config), std::path::Path::new(value))?;
+            println!("enabled package in {config}");
+            return Ok(());
+        }
+        [command, value, flag, config] if flag == "--config" && command == "disable" => {
+            plugin_config::disable(std::path::Path::new(config), value)?;
+            println!("disabled {value} in {config}");
+            return Ok(());
+        }
+        _ => {}
+    }
+    let (arguments, config) =
+        if arguments.len() >= 2 && arguments[arguments.len() - 2] == "--config" {
+            (
+                &arguments[..arguments.len() - 2],
+                Some(&arguments[arguments.len() - 1]),
+            )
+        } else {
+            (arguments, None)
+        };
+    let registry = if let Some(path) = config {
+        plugin_config::registry(std::path::Path::new(path))?
+    } else {
+        load_first_party_registry(&qcore_compiler::source_profiles::profiles_root())
+            .map_err(|error| format!("provider discovery failed: {error}"))?
+    };
     match arguments {
         [command] if command == "list" => {
             for manifest in registry.manifests() {
