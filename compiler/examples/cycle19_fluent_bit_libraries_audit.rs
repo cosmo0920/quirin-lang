@@ -402,6 +402,11 @@ fn audit_library(
     let mut memory_backend = None;
     let mut filesystem_deps = None;
     let mut filesystem_close = None;
+    let mut nested_memory = None;
+    let mut chunk_traversal = None;
+    let mut stream_traversal = None;
+    let mut stream_parent = None;
+    let mut context_parent = None;
     if library == "chunkio" {
         let entry = entries
             .iter()
@@ -668,6 +673,7 @@ fn audit_library(
                 close.checked_paths().len(),
                 close.uncovered_paths().len()
             );
+            nested_memory = Some(close.clone());
             teardown_results.push(serde_json::json!({"kind":"memory_chunk_close", "status":"checked_null_and_memory_paths", "certificate":close}));
             let file = qcore_compiler::verifier_plugins::chunkio::filesystem_chunk_close::check_filesystem_chunk_close_source(
                 &unit, PINNED_FLUENT_BIT_COMMIT, &dependencies,
@@ -693,6 +699,10 @@ fn audit_library(
                 TraversalKind::Streams
             };
             let evidence = check_traversal_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+            match kind {
+                TraversalKind::Chunks => chunk_traversal = Some(evidence.clone()),
+                TraversalKind::Streams => stream_traversal = Some(evidence.clone()),
+            }
             println!(
                 "qcore-traversal {}: complete typed reference body checked; ring provenance and child custody remain premises",
                 evidence.source().function()
@@ -711,6 +721,10 @@ fn audit_library(
                 ParentKind::Context
             };
             let evidence = check_parent_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+            match kind {
+                ParentKind::Stream => stream_parent = Some(evidence.clone()),
+                ParentKind::Context => context_parent = Some(evidence.clone()),
+            }
             println!(
                 "qcore-parent {}: complete allocation-release body checked; child effects and allocation provenance remain premises",
                 evidence.source().function()
@@ -789,6 +803,23 @@ fn audit_library(
         for line in detail {
             println!("    {line}");
         }
+    }
+    if library == "chunkio" {
+        let certificate =
+            qcore_compiler::verifier_plugins::chunkio::nested_memory::check_nested_memory_source(
+                chunk_traversal.as_ref().ok_or("missing chunk traversal")?,
+                stream_traversal
+                    .as_ref()
+                    .ok_or("missing stream traversal")?,
+                stream_parent.as_ref().ok_or("missing stream parent")?,
+                context_parent.as_ref().ok_or("missing context parent")?,
+                nested_memory.as_ref().ok_or("missing memory close")?,
+            )?;
+        println!(
+            "qcore-nested-memory: complete source dependency chain checked; native caller/ring provenance remains Unknown; filesystem children rejected"
+        );
+        teardown_results
+            .push(serde_json::json!({"kind":"nested_memory_source", "certificate":certificate}));
     }
     Ok(counts)
 }

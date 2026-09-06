@@ -742,3 +742,16 @@ rejects colliding struct/typedef spellings. All 392 workspace tests, 41 modules
 and required checks pass. Prior evidence is unchanged apart from the two
 traversal witnesses' explicit offsetof token representation. Concrete nested
 identity/dependency composition and the broader custody/event work remain open.
+
+## Source-bound nested memory teardown (2026-09-06)
+
+The [nested memory report](../reports/cycle19-nested-memory/README.md) composes
+all six context/stream/chunk/backend stages with reset, unlink and counter
+dependencies. An ordered, complete ring binding instantiates concrete model
+identities and checks the resulting lifecycle prefix. Missing/duplicate/foreign
+or filesystem children and outstanding wrapper obligations reject; unrelated
+contexts remain live. Native allocation/ring provenance, component preconditions
+and cross-unit ABI/call bindings remain explicit premises in a 10-clause policy.
+All 396 workspace tests, 42 modules and required checks pass with identical prior
+audit evidence. Filesystem residual composition and the broader native custody,
+sync/OS, constructor and event-composition gates remain open.

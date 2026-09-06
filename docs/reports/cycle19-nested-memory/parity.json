@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-parent-teardown",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_results_identical": true,
+  "prior_teardown_evidence_identical": true,
+  "nested_memory_source_certificates": 1,
+  "workspace_tests": 396,
+  "contract_modules": 42
+}
