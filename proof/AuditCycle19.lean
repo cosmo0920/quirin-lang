@@ -1,3 +1,4 @@
+import QCore.CounterSource
 import QCore.FieldDestructor
 import QCore.CallbackBinding
 import QCore.CallbackSource
@@ -131,3 +132,15 @@ import QCore.ChunkSource
 #print axioms QCore.FieldDestructor.parent_release_requires_discharged_children
 
 #print axioms QCore.FieldDestructor.accepted_teardown_has_no_owned_field
+
+#print axioms QCore.CounterSource.increment_at_maximum_rejected
+
+#print axioms QCore.CounterSource.decrement_at_zero_rejected
+
+#print axioms QCore.CounterSource.accepted_increment_exact
+
+#print axioms QCore.CounterSource.accepted_decrement_exact
+
+#print axioms QCore.CounterSource.increment_then_decrement_conserves_counter
+
+#print axioms QCore.CounterSource.decrement_then_increment_conserves_counter

@@ -1,0 +1,9 @@
+{
+  "baseline": "cycle19-memory-backend",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_identical": true,
+  "scalar_function_results_identical": true,
+  "memory_backend_certificate_identical": true,
+  "new_counter_certificates": 4,
+  "workspace_tests": 351
+}

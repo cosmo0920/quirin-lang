@@ -443,6 +443,18 @@ fn audit_library(
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
+        if library == "chunkio" && file == "cio_chunk.c" {
+            let certificates =
+                qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
+                    &unit,
+                    PINNED_FLUENT_BIT_COMMIT,
+                )?;
+            println!(
+                "qcore-contract ChunkIO counters: Checked ({} complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)",
+                certificates.len()
+            );
+            teardown_results.push(serde_json::json!({"kind": "unsigned_counters", "status": "checked_source_updates", "certificates": certificates}));
+        }
         if library == "chunkio" && file == "cio_memfs.c" {
             let certificate = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
             println!(

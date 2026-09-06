@@ -558,3 +558,14 @@ ChunkIO destructor checker with exact pinned projection parity. Seven new Lean
 theorems and 348 workspace tests pass with all required checks. Complete chunk
 close, list/counter discharge, filesystem backend and higher-level composition
 remain open; generic resource verdicts and the 96 scalar results are unchanged.
+
+## Source-derived counter conservation (2026-09-06)
+
+The [counter report](../reports/cycle19-counters/README.md) records four checked
+unsigned counter helpers, with native contracts for field selection, update
+direction, return identity and nonwrapping entry bounds. Their instantiation
+rejects zero decrement and maximum increment. Six new Lean arithmetic and
+conservation theorems and 351 workspace tests pass with the required checks.
+All prior pinned verdicts, Monkey/scalar results and memory-backend evidence
+are identical. The actual close call's context identity and list/teardown
+composition still need binding; these helper results do not close Cycle 19.

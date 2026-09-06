@@ -189,3 +189,10 @@ The borrowed chunk and its pointer fields remain unchanged; source-derived
 release does not make a dangling backend pointer reusable. The
 [memory backend report](../../docs/reports/cycle19-memory-backend/README.md)
 records the provenance/libc assumptions and remaining enclosing teardown gates.
+
+`chunkio/counters.qcore` binds four unsigned counter helpers to their selected
+field, source-derived unit `delta`, updated return and write footprint.
+`counter_positive`/`counter_below_maximum` and range/ABI clauses are caller
+premises; the C source does not guard against wraparound. The certificate checks
+concrete values against a supplied target maximum when instantiated. See the
+[counter report](../../docs/reports/cycle19-counters/README.md).

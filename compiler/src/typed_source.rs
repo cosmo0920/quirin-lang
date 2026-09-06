@@ -235,7 +235,8 @@ pub fn import_source_functions(
     Ok(functions
         .iter()
         .map(|function| {
-            let result = function_ast(&source, unit, function).and_then(|ast| {
+            let result = function_ast(&source, unit, function).and_then(|mut ast| {
+                normalize_result_type(&mut ast, &source, unit)?;
                 let constants = enum_constants(&ast, &source, unit)?;
                 let arrays = array_types(&ast, &source, unit)?;
                 derive(
@@ -257,6 +258,49 @@ pub fn import_source_functions(
             }
         })
         .collect())
+}
+
+// Resolve a scalar return typedef through this same Clang input. The ABI
+// width is not inferred here; it remains an explicit consumer obligation.
+fn normalize_result_type(
+    ast: &mut Value,
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<(), String> {
+    let signature = c_type(ast)?;
+    let (result, rest) = signature
+        .split_once('(')
+        .ok_or("missing function signature")?;
+    let result = result.trim();
+    if matches!(
+        result,
+        "void"
+            | "void *"
+            | "int"
+            | "char *"
+            | "unsigned int"
+            | "unsigned long"
+            | "unsigned long long"
+    ) {
+        return Ok(());
+    }
+    let declarations = ast_declarations(source, unit, result)?;
+    let exact: Vec<_> = declarations
+        .iter()
+        .filter(|node| kind(node) == "TypedefDecl" && node["name"] == result)
+        .collect();
+    let [decl] = exact.as_slice() else {
+        return Err("unresolved scalar result typedef".into());
+    };
+    let resolved = c_type(decl)?;
+    if !matches!(
+        resolved.as_str(),
+        "unsigned int" | "unsigned long" | "unsigned long long"
+    ) {
+        return Err("result typedef outside unsigned scalar profile".into());
+    }
+    ast["type"]["desugaredQualType"] = Value::String(format!("{resolved} ({rest}"));
+    Ok(())
 }
 
 // Clang preserves typedef spelling inside arrays. Resolve their element type
@@ -400,7 +444,7 @@ enum Stmt {
     Declare(String, String, Option<Expr>),
     Assign(Expr, Expr),
     OrAssign(Expr, Expr),
-    Increment(Expr),
+    Increment(Expr, String, String),
     Call(Expr),
     NoReturnCall(Expr),
     DoOnce(Box<Self>, Expr),
@@ -763,8 +807,19 @@ impl Importer<'_> {
                     self.expression(right, depth + 1)?,
                 ))
             }
-            ("UnaryOperator", [place]) if node["opcode"] == "++" && c_type(node)? == "int" => {
-                Ok(Stmt::Increment(self.expression(place, depth + 1)?))
+            ("UnaryOperator", [place])
+                if matches!(node["opcode"].as_str(), Some("++" | "--"))
+                    && matches!(
+                        c_type(node)?.as_str(),
+                        "int" | "unsigned int" | "unsigned long" | "unsigned long long"
+                    ) =>
+            {
+                let operator = if node["opcode"] == "++" { "+" } else { "-" };
+                Ok(Stmt::Increment(
+                    self.expression(place, depth + 1)?,
+                    operator.into(),
+                    c_type(node)?,
+                ))
             }
             ("IfStmt", [condition, yes]) if node["hasElse"] != true => Ok(Stmt::If(
                 self.expression(condition, depth + 1)?,
@@ -933,6 +988,7 @@ impl Path {
     }
 
     fn update(&mut self, place: &Expr, operator: &str, right: SourceValue) -> Result<(), String> {
+        let ty = right.c_type.clone();
         // C evaluates a compound-assignment lvalue only once. Preserve the
         // resolved address rather than introducing a second nested field read.
         let resolved = if matches!(place, Expr::Local(..)) {
@@ -944,12 +1000,12 @@ impl Path {
             let operation = self.push(SourceOperation::Read {
                 place: place.clone(),
             })?;
-            value("int".into(), SourceExpression::Symbol { operation })
+            value(ty.clone(), SourceExpression::Symbol { operation })
         } else {
-            self.read(place, "int")?
+            self.read(place, &ty)?
         };
         let result = value(
-            "int".into(),
+            ty,
             SourceExpression::Binary {
                 operator: operator.into(),
                 left: Box::new(left),
@@ -1311,17 +1367,14 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                 let right = path.evaluate(expr)?;
                 path.update(place, "|", right)?;
             }
-            Stmt::Increment(place) => {
+            Stmt::Increment(place, operator, ty) => {
                 if effects(place).1 {
                     return Err("increment with an effectful address".into());
                 }
                 path.update(
                     place,
-                    "+",
-                    value(
-                        "int".into(),
-                        SourceExpression::Integer { value: "1".into() },
-                    ),
+                    operator,
+                    value(ty.clone(), SourceExpression::Integer { value: "1".into() }),
                 )?;
             }
             Stmt::Call(expr) => {
@@ -1412,7 +1465,16 @@ fn derive(
     {
         return Err("function signature is outside the selected Unix profile".into());
     }
-    if !matches!(return_type, "void" | "void *" | "int" | "char *") {
+    if !matches!(
+        return_type,
+        "void"
+            | "void *"
+            | "int"
+            | "char *"
+            | "unsigned int"
+            | "unsigned long"
+            | "unsigned long long"
+    ) {
         return Err("wrapper return type outside bounded profile".into());
     }
     let Some((body, parameters)) = children(ast).split_last() else {

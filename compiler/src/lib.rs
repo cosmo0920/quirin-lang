@@ -31,6 +31,7 @@ pub mod cleanup_lowering;
 pub mod concurrency;
 pub mod contract_loader;
 pub mod contract_observation;
+pub mod counter_contract;
 pub mod driver;
 pub mod error_region;
 pub mod executable_model;
