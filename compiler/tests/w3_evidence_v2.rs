@@ -457,3 +457,64 @@ fn replay_requires_declared_trust_and_observed_run_bounds() {
         assert!(outcome.certificate.is_none());
     }
 }
+
+#[test]
+fn observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds() {
+    use qcore_schemas::obligation::{ObligationScope, ObligationSubject, PathBounds};
+    let mut accepted = Vec::new();
+    for mutation in 0..7 {
+        let mut derived = task();
+        match mutation {
+            0 => {
+                derived.task.obligations[0].scope = ObligationScope::Functions {
+                    symbols: BTreeSet::from(["unobserved_function".into()]),
+                }
+            }
+            1 => {
+                derived.task.obligations[0].scope = ObligationScope::ObservedRuns {
+                    run_ids: BTreeSet::from(["unobserved_run".into()]),
+                }
+            }
+            2 => {
+                let ObligationSubject::ObservedContract {
+                    contract_module, ..
+                } = &mut derived
+                    .task
+                    .obligations
+                    .iter_mut()
+                    .find(|o| matches!(o.subject, ObligationSubject::ObservedContract { .. }))
+                    .unwrap()
+                    .subject
+                else {
+                    panic!("fixture subject")
+                };
+                *contract_module = "unobserved_contract.qc".into();
+            }
+            3 => derived.task.bounds.schedules_explored = Some(100),
+            4 => {
+                derived.task.obligations[0].bounds.path_exploration =
+                    PathBounds::BoundedPaths { paths: 100 }
+            }
+            5 => derived.task.obligations[0].bounds.max_operations = Some(0),
+            _ => {
+                derived.task.obligations[1].scope = ObligationScope::Functions {
+                    symbols: BTreeSet::from(["unobserved_function".into()]),
+                }
+            }
+        }
+        let request = request(&derived.task);
+        let checker = ContractObservationReplay::new(derived.replay.observation.as_ref().unwrap());
+        let witness = response(&request).evidence.unwrap().witness;
+        if checker.check(&derived.task, &witness).is_ok() {
+            accepted.push((mutation, "direct"));
+        }
+        let outcome = registry(|_| {}).verify_v2(&request, &derived.task, Some(&checker));
+        if outcome.verdict != ProposedVerdict::Unknown || outcome.certificate.is_some() {
+            accepted.push((mutation, "firewall"));
+        }
+    }
+    assert!(
+        accepted.is_empty(),
+        "scope/module/bounds substitutions accepted: {accepted:?}"
+    );
+}

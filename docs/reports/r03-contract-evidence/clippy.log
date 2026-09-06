@@ -1,0 +1,10 @@
+    Checking qcore-core v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-core)
+    Checking qcore-schemas v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-schemas)
+    Checking qcore-frontend v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-contract)
+    Checking qcore-verifier-host v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-c-gateway)
+    Checking qcore-audit v0.1.0 (/tmp/qcore-monkey-profile/crates/qcore-audit)
+    Checking qcore-compiler v0.1.0 (/tmp/qcore-monkey-profile/compiler)
+    Checking qcorec v0.1.0 (/tmp/qcore-monkey-profile/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.74s

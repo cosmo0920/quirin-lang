@@ -20,3 +20,6 @@ import QCore.VerifierPlugin
 #print axioms QCore.VerifierEvidenceV2.explicit_refusal_is_preserved
 #print axioms QCore.VerifierEvidenceV2.explicit_refusal_derivation_rejects
 #print axioms QCore.VerifierEvidenceV2.absent_flag_names_conditional_trust
+
+#print axioms QCore.VerifierEvidenceV2.accepted_claim_preserves_scope_bounds_and_module
+#print axioms QCore.VerifierEvidenceV2.substituted_claim_rejects

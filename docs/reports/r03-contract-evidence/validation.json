@@ -1,0 +1,14 @@
+{
+  "workspace": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "baseline_regression": 101,
+  "fixed_regression": 0,
+  "consumer_regression": 0,
+  "lean_build": 0,
+  "lean_audits": 0,
+  "lean_audit_files": 18,
+  "workspace_tests_passed": 529
+}
