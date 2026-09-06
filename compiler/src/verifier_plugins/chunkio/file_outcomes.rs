@@ -24,7 +24,7 @@ pub fn check_file_outcome_sources(
         })
         .collect()
 }
-fn profile(function: &str) -> Result<CleanupProfile, String> {
+pub(super) fn profile(function: &str) -> Result<CleanupProfile, String> {
     let field = |name: &str, c_type: &str, reset| CleanupField {
         name: name.into(),
         c_type: c_type.into(),

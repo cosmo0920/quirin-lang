@@ -1,3 +1,4 @@
+import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
 import QCore.MemoryClose
@@ -190,3 +191,13 @@ import QCore.ChunkSource
 #print axioms QCore.CleanupOutcome.failure_does_not_establish_discharge
 
 #print axioms QCore.CleanupOutcome.discharge_requires_success
+
+#print axioms QCore.UnmapWrapper.failed_native_preserves_post_sync_state
+
+#print axioms QCore.UnmapWrapper.success_at_zero_rejected
+
+#print axioms QCore.UnmapWrapper.success_decrements_once
+
+#print axioms QCore.UnmapWrapper.accepted_success_has_positive_counter
+
+#print axioms QCore.UnmapWrapper.accepted_success_balances_and_clears

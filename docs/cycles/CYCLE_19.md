@@ -626,3 +626,14 @@ reset against native QCore. All 365 workspace tests and required checks pass;
 prior audit sidecars are byte-identical. These are injected outcomes, not actual
 OS resource discharge or a full filesystem custody certificate. Wrapper failure
 composition and the remaining lifecycle/event gates are still open.
+
+## Conditional unmap/counter composition (2026-09-06)
+
+The [unmap wrapper report](../reports/cycle19-unmap-wrapper/README.md) composes
+all eight `munmap_file` source paths with rechecked native unmap and up-counter
+dependencies. Native errors cause no wrapper write/decrement; native success
+clears both sizes then decrements exactly once, with counter underflow rejected.
+Sync/log framing, mappedness, identity and lifetime assumptions remain explicit.
+Five Lean theorems, 368 workspace tests and required checks pass with unchanged
+prior audit evidence. Full sync framing and outer close failure custody remain
+open alongside the wider lifecycle, provenance and event gates.

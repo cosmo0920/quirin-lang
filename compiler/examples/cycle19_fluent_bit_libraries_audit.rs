@@ -400,6 +400,7 @@ fn audit_library(
     let mut counts = AuditCounts::default();
     let mut chunk_helpers = Vec::new();
     let mut memory_backend = None;
+    let mut filesystem_deps = None;
     if library == "chunkio" {
         let entry = entries
             .iter()
@@ -443,6 +444,51 @@ fn audit_library(
         };
         memory_backend = Some(qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?);
     }
+    if library == "chunkio" {
+        let load = |file: &str| -> Result<(String, CompilerOptions), String> {
+            let entry = entries
+                .iter()
+                .find(|entry| entry.file.ends_with(file))
+                .ok_or_else(|| format!("missing compiled dependency {file}"))?;
+            Ok((
+                fs::read_to_string(&entry.file).map_err(|error| error.to_string())?,
+                compiler_options(entry)?,
+            ))
+        };
+        let (native_source, native_options) = load("cio_file_unix.c")?;
+        let native_unit = C11TranslationUnit {
+            source: &native_source,
+            include_paths: native_options.include_paths,
+            definitions: native_options.definitions,
+            dialect: native_options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        let native =
+            qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(
+                &native_unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?
+            .into_iter()
+            .find(|c| c.source().function() == "cio_file_native_unmap")
+            .ok_or("missing native unmap certificate")?;
+        let (counter_source, counter_options) = load("cio_chunk.c")?;
+        let counter_unit = C11TranslationUnit {
+            source: &counter_source,
+            include_paths: counter_options.include_paths,
+            definitions: counter_options.definitions,
+            dialect: counter_options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        let counter =
+            qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
+                &counter_unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?
+            .into_iter()
+            .find(|c| c.field() == "total_chunks_up" && c.delta() == -1)
+            .ok_or("missing up counter certificate")?;
+        filesystem_deps = Some((native, counter));
+    }
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
@@ -470,6 +516,19 @@ fn audit_library(
                 );
             }
             teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
+        }
+        if library == "chunkio" && file == "cio_file.c" {
+            let (native, counter) = filesystem_deps
+                .as_ref()
+                .ok_or("missing filesystem dependencies")?;
+            let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
+            println!(
+                "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
+                certificate.cases().len()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"filesystem_unmap_wrapper", "certificate":certificate}),
+            );
         }
         if library == "chunkio" && file == "cio_file_unix.c" {
             let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;

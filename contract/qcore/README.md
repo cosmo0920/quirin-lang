@@ -230,3 +230,9 @@ executions cover both helpers' null/absent/error/success behavior and record
 call identity, diagnostics and field frames. These hooks do not release OS
 resources. See the
 [cleanup observation report](../../docs/reports/cycle19-cleanup-observations/README.md).
+
+`chunkio/unmap_wrapper.qcore` composes the source-derived native unmap and
+up-counter helpers across all eight `munmap_file` paths. Only successful native
+unmap clears wrapper sizes and decrements the saved parameter context. Sync/log
+frames and provenance remain explicit premises. See the
+[unmap wrapper report](../../docs/reports/cycle19-unmap-wrapper/README.md).

@@ -1,0 +1,9 @@
+{
+  "baseline": "cycle19-cleanup-observations",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "new_unmap_wrapper_source_paths": 8,
+  "workspace_tests": 368
+}
