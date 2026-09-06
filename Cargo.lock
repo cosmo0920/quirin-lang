@@ -52,6 +52,8 @@ dependencies = [
  "qcore-c-gateway",
  "qcore-contract",
  "qcore-schemas",
+ "qcore-verification",
+ "qcore-verifier-host",
  "serde",
  "serde_json",
 ]

@@ -1,0 +1,39 @@
+[
+  {
+    "case": "missing_config",
+    "environment": {
+      "QCORE_SOURCE_CONTRACTS": "/qcore-missing-source-contract-config.json"
+    },
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Fluent Bit library audit failed: source-contract configuration: No such file or directory (os error 2)\n"
+  },
+  {
+    "case": "empty_legacy",
+    "environment": {
+      "QCORE_CHUNKIO_PACKAGE": ""
+    },
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Fluent Bit library audit failed: QCORE_CHUNKIO_PACKAGE cannot be empty\n"
+  },
+  {
+    "case": "missing_legacy_package",
+    "environment": {
+      "QCORE_CHUNKIO_PACKAGE": "/qcore-missing-source-provider"
+    },
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Fluent Bit library audit failed: source-contract package: No such file or directory (os error 2)\n"
+  },
+  {
+    "case": "conflicting_selectors",
+    "environment": {
+      "QCORE_CHUNKIO_PACKAGE": "unused",
+      "QCORE_SOURCE_CONTRACTS": "unused"
+    },
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Fluent Bit library audit failed: QCORE_SOURCE_CONTRACTS and QCORE_CHUNKIO_PACKAGE cannot both select source-contract packages\n"
+  }
+]

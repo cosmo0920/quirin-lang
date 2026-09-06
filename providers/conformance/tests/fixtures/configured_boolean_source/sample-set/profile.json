@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "source_set": "sample-set",
+  "pins": {
+    "sample": {
+      "git_commit": "1234567890abcdef1234567890abcdef12345678",
+      "clean_paths": [],
+      "description": "Declared synthetic conformance fixture revision; not an observed upstream checkout"
+    }
+  },
+  "libraries": {
+    "sample_widgets": {
+      "pin": "sample",
+      "source_roots": [],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [
+        {
+          "record": "sample_record",
+          "field": "ready",
+          "set_operation": "lock",
+          "clear_operation": "unlock"
+        }
+      ],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": null,
+  "provider_manifests": []
+}

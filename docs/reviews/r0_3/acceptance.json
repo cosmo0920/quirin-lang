@@ -111,12 +111,13 @@
     }
   ],
   "validation": {
-    "workspace_tests": 716,
+    "workspace_tests": 722,
     "python_evidence_validator_tests": 43,
     "lean_audits": 20,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w4-nullable-removal/README.md"
+    "latest_integration_evidence": "docs/reports/w5-configured-source-contracts/README.md",
+    "provider_tests": 17
   },
   "documentation_revision": "0.3",
   "open_followups": [

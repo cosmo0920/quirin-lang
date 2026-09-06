@@ -22,6 +22,12 @@ This document and the companion contract specification take precedence over conf
 
 Original line-number references identify the reviewed archive and may have shifted. `reviews/r0_3/source_inventory.json` binds the supplied review files and the integration source anchors; the acceptance ledger links current tests and evidence. The archive itself and its advertised probe package were not supplied in this checkout.
 
+The configured source-contract audit service now selects explicit packages and
+snapshotted policies using sealed import identities ([configuration grammar](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g08-source-contract-service-configuration-v1)).
+Selection supplies no evidence authority: the existing bounded Boolean-field
+task and trusted witness replay remain mandatory. This orchestration increment
+adds no language syntax, semantic profile or general lifecycle coverage.
+
 ## L02. Evidence vocabulary and profile selection
 
 Every published capability claim MUST identify both a semantic profile and an evidence level.

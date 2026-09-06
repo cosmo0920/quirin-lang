@@ -1,0 +1,25 @@
+module contract;
+
+// The declared profile maps sample_record.ready onto the existing Locked
+// Boolean axis. These logical Chunk names do not assert general record safety.
+extern fn sample_ready(record: borrow<'call, const, Chunk> use one) -> i32
+contract {
+    requires chunk_is_live;
+    requires exclusive_chunk_access;
+    requires busy_is_boolean;
+    requires lock_is_boolean;
+    ensures normal result == old_lock;
+    ensures normal lock == old_lock;
+    ensures normal busy == old_busy;
+};
+
+extern fn sample_toggle(record: borrow<'call, mut, Chunk> use one) -> i32
+contract {
+    requires chunk_is_live;
+    requires exclusive_chunk_access;
+    requires busy_is_boolean;
+    requires lock_is_boolean;
+    ensures normal result == 1 - old_lock;
+    ensures normal lock == 1 - old_lock;
+    ensures normal busy == old_busy;
+};

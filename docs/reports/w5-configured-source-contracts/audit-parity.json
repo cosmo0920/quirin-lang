@@ -1,0 +1,186 @@
+{
+  "baseline_report": "docs/reports/w4-nullable-removal",
+  "baseline_commit": "242bc98a259fbe704de00abfedd07f669c4f298d",
+  "audited_base_head": "242bc98a259fbe704de00abfedd07f669c4f298d",
+  "audited_source_state": "frozen working tree including configured source-contract dispatch; existing process package reused",
+  "audit_exit_code": 0,
+  "alias_audit_exit_code": 0,
+  "configured_command": "env -u QCORE_CHUNKIO_PACKAGE QCORE_SOURCE_CONTRACTS=/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/source-contracts.json cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-configured-source-source.json /tmp/qcore-configured-source-diagnostics.json",
+  "alias_command": "env -u QCORE_SOURCE_CONTRACTS QCORE_CHUNKIO_PACKAGE=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-configured-source-alias-source.json /tmp/qcore-configured-source-alias-diagnostics.json",
+  "unit_count": 185,
+  "status_counts": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+  },
+  "source_effect_status_counts": {
+    "checked_function_contract": 3,
+    "unknown": 93
+  },
+  "package_rebuilt_for_this_audit": false,
+  "raw_units_promoted": 0,
+  "package_manifest": {
+    "plugin_id": "qcore.chunkio",
+    "package_version": "0.3.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "44eebd1d2add60a98cc6d1508f2be8304ec873c751c7dd098dd0e1c5345d227e",
+    "targets": [
+      {
+        "library": "chunkio",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "gnu11",
+          "gnu17",
+          "gnu99",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      },
+      {
+        "library": "fluent_bit",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "qcore.c_boolean_field_contract.v2"
+        ],
+        "dialects": [
+          "c11",
+          "gnu11",
+          "gnu17",
+          "gnu99"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts",
+      "chunk_lifecycle",
+      "translation_unit_projection"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.boolean_field_contract.v1",
+    "lean_theorem_family": "QCore.ChunkSource"
+  },
+  "audited_files_sha256": {
+    "contract/profiles/fluent-bit/source-contracts.json": "e24c3698fa81ee37acd88d3b496b71fb6606ec9a2dcfb351a7e1f494fd2e9fa2",
+    "crates/qcore-audit/src/source_contract.rs": "3587e736dc4d12e1b8944d55c6bb71ac81fe0be5a32eaaa29d48b93e71c3647e",
+    "compiler/examples/support/cycle19_compatibility.rs": "c9abd74e85e3934922986b513cff7b6632a5dfe4cb37e8dd3c3af7a55c4ee844",
+    "crates/qcore-verification/src/source_effect.rs": "e5c8367235b785a3bd9d45a455e2d6e82378e352dd93a133e164c72cc05b6e25",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "9d175ed5005122980395dbe9261a638b2ab8b4be7e706d2b6123594b1b26c870",
+    "crates/qcore-verifier-host/src/lib.rs": "656b6564170c375eadcde0131704678a3a94a2bbbda8303f57a53210bdaf5628",
+    "crates/qcore-verifier-host/src/package.rs": "6d2848c3f4b0aa18921735f594e1a27104e404dc7600cdf717e889e83cb7bfc7",
+    "build/cycle19/monkey-build/compile_commands.json": "2dae742d2f0c2d713d58cec01b31e79c73ea79e5a04ed75280af51a120ba5c25",
+    "build/cycle19/provider-packages/qcore.chunkio/verifier-plugin.json": "6d22139c8e69a9cbafa3f0b245a81d17c0f452e95f58d067f30ab751278eebd4",
+    "build/cycle19/provider-packages/qcore.chunkio/provider": "44eebd1d2add60a98cc6d1508f2be8304ec873c751c7dd098dd0e1c5345d227e"
+  },
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "new_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "uncompressed_bytes": 1663331,
+      "diff_uncompressed_bytes": 0,
+      "diff": "source.diff.txt.gz"
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "baseline_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "new_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "uncompressed_bytes": 11006128,
+      "diff_uncompressed_bytes": 0,
+      "diff": "diagnostics.diff.txt.gz"
+    },
+    "chunk-contracts": {
+      "byte_identical": true,
+      "baseline_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "new_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "uncompressed_bytes": 4139889,
+      "diff_uncompressed_bytes": 0,
+      "diff": "chunk-contracts.diff.txt.gz"
+    },
+    "source-effects": {
+      "byte_identical": true,
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "new_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "uncompressed_bytes": 113871,
+      "diff_uncompressed_bytes": 0,
+      "diff": "source-effects.diff.txt.gz"
+    }
+  },
+  "alias_checks": {
+    "source": {
+      "byte_identical": true,
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "new_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "uncompressed_bytes": 1663331,
+      "diff_uncompressed_bytes": 0,
+      "diff": "alias-source.diff.txt.gz"
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "baseline_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "new_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "uncompressed_bytes": 11006128,
+      "diff_uncompressed_bytes": 0,
+      "diff": "alias-diagnostics.diff.txt.gz"
+    },
+    "chunk-contracts": {
+      "byte_identical": true,
+      "baseline_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "new_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "uncompressed_bytes": 4139889,
+      "diff_uncompressed_bytes": 0,
+      "diff": "alias-chunk-contracts.diff.txt.gz"
+    },
+    "source-effects": {
+      "byte_identical": true,
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "new_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "uncompressed_bytes": 113871,
+      "diff_uncompressed_bytes": 0,
+      "diff": "alias-source-effects.diff.txt.gz"
+    }
+  },
+  "limits": [
+    "Function-contract evidence does not promote raw translation units.",
+    "Package verification records a filesystem snapshot, not immutable executable attestation.",
+    "These comparisons cover the pinned corpus and selected package, not arbitrary profiles or production lifecycle semantics."
+  ]
+}

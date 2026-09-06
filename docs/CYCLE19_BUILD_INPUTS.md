@@ -37,3 +37,25 @@ This configures the build but does not claim native binaries or sanitizer runs.
 If a native observation harness needs built libraries, build the configured tree
 with `cmake --build build/cycle19/monkey-build --parallel 2` first and retain its
 separate build/observation evidence.
+
+For process-backed Boolean-field contracts, retain the provider package alongside
+the build inputs. On first setup, build it with
+`python3 -B providers/package.py build --output build/cycle19/provider-packages`.
+An existing package directory is reused after verification; the builder refuses
+to overwrite it. The checked-in configuration resolves relative paths from its
+own directory:
+
+```sh
+mkdir -p build/cycle19/reports
+python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
+QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
+  cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
+  ../fluent-bit build/cycle19/monkey-build/compile_commands.json \
+  build/cycle19/reports/source-effect-source.json \
+  build/cycle19/reports/source-effect-diagnostics.json
+```
+
+`QCORE_CHUNKIO_PACKAGE` still selects a package path using the default bindings.
+Do not set both selectors: ambiguous selection rejects before source auditing.
+Missing or incompatible explicit packages never fall back to direct evaluation.
+The default audit without either selector remains the direct comparison route.

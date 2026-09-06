@@ -129,3 +129,15 @@ five prior provisional Unsafe units become Unknown and 22 units change diagnosti
 Three other reports remain byte-identical and no raw unit is promoted. CT
 coverage remains 7 mapped/43 unmapped; broader source and model correspondence
 remain open.
+
+[Configured source-contract dispatch](reports/w5-configured-source-contracts/README.md)
+passes 722 workspace tests, 17 separate provider tests, 43 Python tests, workspace
+and provider format/Clippy, both reevaluation probes, Lean build and 20 axiom
+audits. The second-codebase process tests exercise actual Clang imports and
+reject false postconditions, missing packages and identity/scope substitutions.
+Process execution coverage is Unix-bound. No kernel or Lean semantics changed.
+Both full 185-unit audits are byte-identical across all four artifacts to the
+preceding baseline and to each other. Counts remain 2 Safe / 42 provisional
+Unsafe / 137 Unknown, plus four data-only units; source evidence remains three
+checked function contracts and 93 Unknown. CT mapping remains 7/50, with 43
+unmapped; these test totals do not change that conformance boundary.

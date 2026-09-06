@@ -44,8 +44,9 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
   and cost inference remain open. The [custody transfer repairs](../../reports/w4-nullable-removal/README.md)
   reject ten reproduced false-Safe patterns while retaining unresolved effects;
   gateway code is in its own crate.
-- W5 has a configured provider-free audit runner and a second-codebase example;
-  specialized production adapters and provider/kernel consolidation remain.
+- W5 has a configured provider-free audit runner and sealed-import process
+  dispatch with a second-codebase demonstration and exact four-artifact parity;
+  general lifecycle import, specialized adapters and consolidation remain.
 - W6 rejects ignored source function contracts with Q021 and resolves body-local
   guard/scope binders. The later scoped-copy source path now executes Linux C11
   leaf workers. CT15 maps join failure and CT19 uses real sibling-failure source;
@@ -55,4 +56,4 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
   validated. Fixed observations do not promote raw Cycle19 source units.
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
-Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 716 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nine separate provider tests also pass. The latest full pinned audit comparison is archived in the [custody transfer report](../../reports/w4-nullable-removal/README.md). These counts are different suites, not interchangeable conformance cases.
+Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 722 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Seventeen separate provider tests also pass. The latest full pinned audit comparison is archived in the [configured source-contract report](../../reports/w5-configured-source-contracts/README.md). These counts are different suites, not interchangeable conformance cases.

@@ -7,8 +7,10 @@ publish = false
 [dependencies]
 qcore-schemas.workspace = true
 serde_json.workspace = true
+serde.workspace = true
 
 [dev-dependencies]
+qcore-audit = { path = "../../crates/qcore-audit" }
 qcore-verifier-host = { path = "../../crates/qcore-verifier-host" }
 qcore-verification = { path = "../../crates/qcore-verification" }
 qcore-core = { path = "../../crates/qcore-core" }

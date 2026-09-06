@@ -242,3 +242,36 @@ Only `requires` and `ensures normal` envelopes are admitted by this consumer, wi
 `QCORE_DESIGN_GRAMMAR_r0_3.bnf` collects the nineteen BNF blocks from revision 0.2, adding the current optional module header. It preserves the intended full language vocabulary, including source constructs without driver lowering. Its lexical terminal placeholders are `IDENTIFIER-TOKEN`, `INTEGER-TOKEN`, `FLOAT-TOKEN`, `STRING-TOKEN` and `CHAR-TOKEN`.
 
 That target grammar is neither a parser generator input already used by the compiler nor the grammar of every policy consumer. In particular, retained policy token expressions and resource predicate calls are defined at their consumer boundary above; their structural acceptance is not a new general-purpose contract proof rule. Future implementation work MUST keep the profile grammars, type rules, lowering coverage and negative tests synchronized instead of conflating the target with today's supported syntax.
+
+## G08. Source-contract service configuration v1
+
+This JSON format configures the audit service; it adds no QCore source syntax.
+All displayed fields are required, and unknown fields reject:
+
+```json
+{
+  "schema_version": 1,
+  "packages": ["packages/example"],
+  "bindings": [
+    {"library": "example", "provider": "example.boolean", "contract": "policy.qcore"}
+  ]
+}
+```
+
+Relative package and policy paths resolve against the configuration directory.
+There must be 1–256 distinct nonempty package paths and 1–4096 bindings with
+unique nonempty library names and valid provider IDs. Configuration is bounded
+at 1 MiB, each UTF-8 policy at 8 MiB, and retained policy bytes together at
+32 MiB. Policy bytes are snapshotted once. Package identities, manifest target
+support and the existing Boolean-field checker capability must validate before
+dispatch. The sealed import supplies the model-library identity; configuration
+cannot manufacture it or expand import coverage. Missing bindings/packages,
+incompatible targets and rejected witnesses fail without provider fallback.
+
+`SourceContractPolicies::load` loads policies for direct comparison without
+requiring installed packages. `SourceContractRegistry::load` additionally verifies
+and registers explicit process packages. Its `verify` method accepts an opaque
+Clang-imported summary and returns a checked certificate plus contract evaluation
+only after existing trusted replay succeeds. Source: `crates/qcore-audit/src/source_contract.rs`.
+This implementation supports the existing bounded Boolean-field semantic profile;
+it is not a general contract solver. See the [execution record](reports/w5-configured-source-contracts/README.md).

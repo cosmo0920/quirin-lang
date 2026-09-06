@@ -2,12 +2,14 @@
 //!
 //! Pins, selected paths and contracts are declared inputs; no provider module
 //! is linked. Safe/Unsafe/Unknown remain the gateway's bounded projection
-//! verdicts. Specialized observation and source-composition stages stay with
-//! the existing compatibility adapter until their own provider extraction.
+//! verdicts. Configured process source-contract checks accept only sealed
+//! gateway imports and trusted witness replay. Specialized native observation
+//! composition remains with the existing compatibility adapter.
 
 pub mod compile_db;
 pub mod projection;
 pub mod report;
+pub mod source_contract;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;

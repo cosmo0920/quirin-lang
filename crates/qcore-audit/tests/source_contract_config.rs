@@ -1,0 +1,209 @@
+use qcore_audit::source_contract::{SourceContractPolicies, SourceContractRegistry};
+use serde_json::{Value, json};
+use std::fs;
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+static NEXT: AtomicUsize = AtomicUsize::new(0);
+
+struct Fixture(PathBuf);
+
+impl Fixture {
+    fn new() -> Self {
+        let path = std::env::temp_dir().join(format!(
+            "qcore-source-contract-config-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&path).unwrap();
+        fs::write(path.join("policy.qcore"), "module contract;\n").unwrap();
+        Self(path)
+    }
+
+    fn config(&self, value: &Value) -> PathBuf {
+        let path = self.0.join("config.json");
+        fs::write(&path, value.to_string()).unwrap();
+        path
+    }
+
+    fn good(&self) -> Value {
+        json!({"schema_version":1,"packages":["package"],"bindings":[{"library":"widgets","provider":"test.widgets","contract":"policy.qcore"}]})
+    }
+
+    fn package(&self, directory: &str, change: impl FnOnce(&mut Value)) {
+        let path = self.0.join(directory);
+        fs::create_dir_all(&path).unwrap();
+        // Load validates package identity without executing the bytes.
+        let executable = b"configuration test: never execute";
+        fs::write(path.join("provider"), executable).unwrap();
+        let mut manifest = json!({
+            "plugin_id":"test.widgets", "package_version":"1.0.0",
+            "protocol_versions":[1], "evidence_versions":[2],
+            "entrypoint":{"kind":"executable","path":"provider"},
+            "package_digest":qcore_schemas::sha256_hex(executable),
+            "targets":[{"library":"widgets","revisions":["*"],"profiles":["*"],"dialects":["c11"],"platforms":["*"],"backends":["native"]}],
+            "capabilities":["resource_contracts"],
+            "required_foreign_summaries":[],"required_observation_hooks":[],"filesystem_inputs":[],
+            "network_access":false,
+            "limits":{"timeout_ms":1000,"memory_bytes":268435456,"output_bytes":4194304},
+            "trust_class":"first_party", "certificate_checker":"qcore.boolean_field_contract.v1",
+            "lean_theorem_family":"QCore.ChunkSource"
+        });
+        change(&mut manifest);
+        fs::write(path.join("verifier-plugin.json"), manifest.to_string()).unwrap();
+    }
+}
+
+impl Drop for Fixture {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
+}
+
+#[test]
+fn policy_only_loading_snapshots_relative_contracts_without_installed_packages() {
+    let fixture = Fixture::new();
+    let path = fixture.config(&fixture.good());
+    let policy = SourceContractPolicies::load(&path).unwrap();
+    fs::write(fixture.0.join("policy.qcore"), "changed after load").unwrap();
+    assert_eq!(
+        policy.contract_for_library("widgets").unwrap(),
+        "module contract;\n"
+    );
+    assert!(policy.contract_for_library("other").is_err());
+    assert!(SourceContractRegistry::load(&path).is_err());
+}
+
+#[test]
+fn malformed_and_empty_configuration_rejects_instead_of_falling_back() {
+    let fixture = Fixture::new();
+    for change in [
+        json!({"schema_version":2}),
+        json!({"packages":[]}),
+        json!({"packages":[""]}),
+        json!({"packages":["x","x"]}),
+        json!({"bindings":[]}),
+        json!({"unexpected":true}),
+    ] {
+        let mut config = fixture.good();
+        for (key, value) in change.as_object().unwrap() {
+            config[key] = value.clone();
+        }
+        assert!(
+            SourceContractPolicies::load(fixture.config(&config)).is_err(),
+            "{config}"
+        );
+    }
+    for (key, value) in [
+        ("library", json!("")),
+        ("library", json!(" widgets")),
+        ("provider", json!("bad provider")),
+        ("contract", json!("")),
+        ("contract", json!("absent.qcore")),
+        ("extra", json!(true)),
+    ] {
+        let mut config = fixture.good();
+        config["bindings"][0][key] = value;
+        assert!(
+            SourceContractPolicies::load(fixture.config(&config)).is_err(),
+            "{config}"
+        );
+    }
+    let mut duplicate = fixture.good();
+    duplicate["bindings"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate_binding());
+    assert!(SourceContractPolicies::load(fixture.config(&duplicate)).is_err());
+    fs::write(fixture.0.join("policy.qcore"), " \n").unwrap();
+    assert!(SourceContractPolicies::load(fixture.config(&fixture.good())).is_err());
+}
+
+fn duplicate_binding() -> Value {
+    json!({"library":"widgets","provider":"test.widgets","contract":"policy.qcore"})
+}
+
+#[test]
+fn verified_registry_snapshots_policy_and_only_explicit_package_overrides_apply() {
+    let fixture = Fixture::new();
+    fixture.package("package", |_| {});
+    let path = fixture.config(&fixture.good());
+    let registry = SourceContractRegistry::load(&path).unwrap();
+    fs::remove_file(fixture.0.join("policy.qcore")).unwrap();
+    assert_eq!(
+        registry.contract_for_library("widgets").unwrap(),
+        "module contract;\n"
+    );
+    fs::write(fixture.0.join("policy.qcore"), "module contract;").unwrap();
+    fixture.package("replacement", |_| {});
+    fs::remove_dir_all(fixture.0.join("package")).unwrap();
+    assert!(SourceContractRegistry::load(&path).is_err());
+    assert!(
+        SourceContractRegistry::load_with_packages(&path, &[PathBuf::from("replacement")]).is_ok()
+    );
+    assert!(SourceContractRegistry::load_with_packages(&path, &[]).is_err());
+}
+
+#[test]
+fn incompatible_checker_identity_digest_and_targets_fail_at_load() {
+    let fixture = Fixture::new();
+    let path = fixture.config(&fixture.good());
+    for (key, value) in [
+        ("certificate_checker", json!("other.checker")),
+        ("evidence_versions", json!([1])),
+        ("protocol_versions", json!([2])),
+        ("capabilities", json!(["chunk_lifecycle"])),
+        ("plugin_id", json!("test.other")),
+        ("package_digest", json!("0".repeat(64))),
+    ] {
+        fixture.package("package", |manifest| manifest[key] = value);
+        assert!(
+            SourceContractRegistry::load(&path).is_err(),
+            "accepted {key}"
+        );
+    }
+    fixture.package("package", |manifest| {
+        manifest["targets"][0]["library"] = json!("other")
+    });
+    assert!(SourceContractRegistry::load(&path).is_err());
+}
+
+#[test]
+fn duplicate_provider_id_and_canonical_package_path_reject_atomically() {
+    let fixture = Fixture::new();
+    fixture.package("package", |_| {});
+    fixture.package("second", |_| {});
+    let mut config = fixture.good();
+    config["packages"] = json!(["package", "second"]);
+    assert!(SourceContractRegistry::load(fixture.config(&config)).is_err());
+    config["packages"] = json!(["package", "./package"]);
+    assert!(SourceContractRegistry::load(fixture.config(&config)).is_err());
+}
+
+#[test]
+fn repeated_policy_references_share_a_bounded_total_snapshot_budget() {
+    let fixture = Fixture::new();
+    let mut policy = "module contract;\n//".to_owned();
+    policy.extend(std::iter::repeat_n('x', 1024 * 1024 - policy.len()));
+    fs::write(fixture.0.join("policy.qcore"), policy).unwrap();
+    let mut config = fixture.good();
+    config["bindings"] = Value::Array((0..32).map(|index| {
+        json!({"library":format!("library_{index}"),"provider":"test.widgets","contract":"policy.qcore"})
+    }).collect());
+    let path = fixture.config(&config);
+    let snapshot = SourceContractPolicies::load(&path).unwrap();
+    assert_eq!(
+        snapshot.contract_for_library("library_31").unwrap().len(),
+        1024 * 1024
+    );
+    drop(snapshot);
+    config["bindings"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"library":"library_32","provider":"test.widgets","contract":"policy.qcore"}));
+    let error = SourceContractPolicies::load(fixture.config(&config)).unwrap_err();
+    assert!(
+        error.to_string().contains("32 MiB aggregate byte budget"),
+        "{error}"
+    );
+}

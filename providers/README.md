@@ -118,19 +118,34 @@ consumer and rejects authority/identity/coverage mutations. It is not one of the
 five packaged providers and speaks no plugin protocol. See
 [callback record evidence](../docs/reports/w5-reactor-callback-records/README.md).
 
-For the real field-contract audit, select the durable verified package:
+For the real field-contract audit, select the checked-in configuration and durable
+verified package. On first setup, build that package set with
+`python3 -B providers/package.py build --output build/cycle19/provider-packages`:
 
 ```sh
+mkdir -p build/cycle19/reports
 python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
-QCORE_CHUNKIO_PACKAGE="$PWD/build/cycle19/provider-packages/qcore.chunkio" \
+QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
   cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
-  /home/cosmo/Documents/GitHub/fluent-bit \
-  build/cycle19/monkey-build/compile_commands.json \
+  ../fluent-bit build/cycle19/monkey-build/compile_commands.json \
   build/cycle19/reports/source-effect-source.json \
   build/cycle19/reports/source-effect-diagnostics.json
 ```
 
-On a fresh checkout, first build that package set with `python3 -B providers/package.py build --output build/cycle19/provider-packages`. The explicit process mode
-retains unsupported functions in the `.source-effects.json` sidecar and fails
-on missing/incompatible/rejected providers. Direct evaluation remains a parity
-comparison; source-scope lifecycle inference remains incomplete.
+The configuration maps sealed model-library identities to provider IDs and policy
+paths. Relative paths resolve from its directory. `QCORE_CHUNKIO_PACKAGE` remains
+a compatible package-path alias using the default bindings; setting both selectors
+rejects. Neither selector changes `qcorec` plugin configuration. The audit loads
+one policy snapshot and verified registry before processing units. Unsupported
+functions remain in the `.source-effects.json` sidecar; explicit missing,
+incompatible or rejected providers fail without fallback. Direct evaluation
+remains available when neither selector is set.
+
+`qcore_audit::source_contract::SourceContractRegistry` exposes the same service to
+other audit drivers. The `sample_boolean_provider` conformance fixture exercises
+a different C codebase through Clang import, explicit package binding, a real
+schemas-only process and trusted replay. Its declared profile maps one Boolean
+field onto an existing logical axis; it does not establish arbitrary record or
+lifecycle semantics. Process tests are Unix-bound. See the
+[configuration format](../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g08-source-contract-service-configuration-v1)
+and [parity evidence](../docs/reports/w5-configured-source-contracts/README.md).

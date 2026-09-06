@@ -539,3 +539,19 @@ plus four data-only units. Five previous provisional Unsafe units now remain
 Unknown because their residual leaks depended on unresolved effects. Source,
 chunk-contract and source-effect reports are byte-identical; 22 units have
 diagnostic changes. No raw unit is promoted.
+
+Configured source-contract dispatch is implemented (2026-09-07;
+`docs/reports/w5-configured-source-contracts/README.md`). The L3 audit service
+loads explicit package/library/policy bindings, snapshots policy bytes and
+selects providers from sealed Clang import identities. `QCORE_SOURCE_CONTRACTS`
+selects the configuration; `QCORE_CHUNKIO_PACKAGE` remains a compatible package
+path alias, and selecting both rejects. The selected process supplies typed
+Boolean-field witnesses for independent trusted replay. A second C codebase
+passes through the same service and a schemas-only process fixture under its
+declared existing Boolean-axis profile. All four full 185-unit audit artifacts
+are byte-identical to the preceding baseline and between both selectors:
+2 Safe / 42 provisional Unsafe / 137 Unknown, plus four data-only units;
+three checked function contracts and 93 Unknown entries remain unpromoted.
+Hardcoded provider/policy selection and the duplicate pre-dispatch evaluation
+are removed from this bounded process route. General lifecycle source import,
+other specialized adapters and full W5 consolidation remain open.

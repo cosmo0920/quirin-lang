@@ -49,7 +49,13 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ),
     (
         "crates/qcore-audit",
-        &["qcore-c-gateway", "qcore-contract", "qcore-schemas"],
+        &[
+            "qcore-c-gateway",
+            "qcore-contract",
+            "qcore-schemas",
+            "qcore-verification",
+            "qcore-verifier-host",
+        ],
     ),
     ("crates/qcorec", &["qcore-compiler"]),
 ];

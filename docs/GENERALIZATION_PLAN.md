@@ -144,7 +144,8 @@ crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier 
   obligation derivation, witness replay, scope dispatch. No provider dependency.
   Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
 crates/qcore-audit            # L3: orchestration-as-configuration (W5):
-  compile-db ingest, pin verification, per-unit iteration, report emission.
+  compile-db ingest, pin verification, per-unit iteration, report emission,
+  sealed-import source-contract selection through explicit verified registries.
 crates/qcorec                 # L3: CLI binary.
 providers/qcore-provider-*    # out-of-tree layer: one crate per provider
   (libevent+monkey, chunkio, cmetrics, ctraces, librdkafka), each buildable
@@ -483,6 +484,16 @@ interaction with `MAX_ALIAS_TARGETS`). Insist on the "validated, not just
 inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
+
+[Configured source-contract dispatch](reports/w5-configured-source-contracts/README.md)
+now moves the bounded Boolean-field package/library/policy selection into L3
+`qcore-audit`, using verified registries and immutable policy snapshots. A second
+C codebase exercises the same service and schemas-only process. Full 185-unit
+source, diagnostic, contract and process-evidence artifacts reproduce the previous
+baseline byte-for-byte. This permits removal of the hardcoded selection and
+redundant pre-dispatch evaluation in this process route; trusted replay and the
+legacy direct comparison remain. It does not complete broader lifecycle import
+or specialized provider extraction.
 
 [Source-field provider integration](reports/w3-source-field-provider/README.md)
 now derives bounded tasks from opaque Clang imports and dispatches the real
