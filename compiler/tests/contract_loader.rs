@@ -422,7 +422,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     let mut modules = Vec::new();
     collect_qcore_sources(&root, &mut modules);
     modules.sort();
-    assert_eq!(modules.len(), 56, "corpus module count");
+    // Includes the runtime-only reopen-failure observation module.
+    assert_eq!(modules.len(), 57, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -477,7 +478,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // every other declaration belongs to another interpreter and is rejected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (5, 19, 141)
+        (5, 19, 142)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
