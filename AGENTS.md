@@ -279,3 +279,10 @@ Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
 already W4's measured change). Raw production units stay unpromoted. Monkey
 typed imports, Boolean field routing, first-party registration literals and
 configured orchestration remain W2/W5 work; this does not complete W2.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.

@@ -93,3 +93,10 @@ observations, not general OS failure or durability guarantees. Evidence:
 - W2's bounded profile migration and full 185-TU parity are recorded in
   `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
   orchestration work is explicit there. Profile data remains declared trust.
+
+Frontend gates repaired (2026-09-07,
+`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+reject centrally with Q021 until enforced. Guard/thread-scope header names bind
+only inside their bodies; nested concurrency lowering still rejects with Q500.
+This closes the two W6 batch-2 frontend defects without claiming contract or
+concurrency semantics are implemented. CT mapping remains 5/50.

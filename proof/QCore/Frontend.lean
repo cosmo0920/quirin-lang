@@ -146,3 +146,33 @@ theorem invalid_program_is_rejected (program : Program)
   simp [elaborate, invalid]
 
 end QCore.Frontend
+
+namespace QCore.Frontend.BodyScope
+
+/-- Reduced lexical scope stack for guard/thread header binding. The body scope
+is pushed once, used while elaborating that body, and popped on return. -/
+abbrev Scope := List (String × Nat)
+abbrev Scopes := List Scope
+
+def enter (name : String) (symbol : Nat) (outer : Scopes) : Scopes :=
+  [(name, symbol)] :: outer
+
+def leave (scopes : Scopes) : Scopes := scopes.tail
+
+def lookup (name : String) : Scopes → Option Nat
+  | [] => none
+  | scope :: outer =>
+      match scope.find? (fun binding => binding.1 == name) with
+      | some binding => some binding.2
+      | none => lookup name outer
+
+theorem binder_resolves_in_body (name : String) (symbol : Nat) (outer : Scopes) :
+    lookup name (enter name symbol outer) = some symbol := by simp [lookup, enter]
+
+theorem leaving_body_restores_outer (name : String) (symbol : Nat) (outer : Scopes) :
+    leave (enter name symbol outer) = outer := rfl
+
+theorem binder_cannot_escape (name queried : String) (symbol : Nat) (outer : Scopes) :
+    lookup queried (leave (enter name symbol outer)) = lookup queried outer := rfl
+
+end QCore.Frontend.BodyScope

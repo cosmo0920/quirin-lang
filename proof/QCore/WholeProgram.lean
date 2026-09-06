@@ -97,12 +97,14 @@ structure FunctionSpec where
   recursive : Bool
   declaredSummary : Option Summary
   passes : PassInterfaces
+  sourceContractClauses : Nat := 0
   deriving DecidableEq, Repr
 
 def FunctionSpec.ValidIn (function : FunctionSpec) (names : List FunctionId) : Prop :=
   function.passes.Accepts ∧
   (function.recursive = true → function.declaredSummary.isSome = true) ∧
-  function.calls.all (fun call => decide (call.callee ∈ names)) = true
+  function.calls.all (fun call => decide (call.callee ∈ names)) = true ∧
+  function.sourceContractClauses = 0
 
 instance (function : FunctionSpec) (names : List FunctionId) :
     Decidable (function.ValidIn names) := by
@@ -183,6 +185,25 @@ theorem accepted_function_interfaces {program : Program} {checked : CheckedProgr
   have decisions := List.all_eq_true.mp (checkProgram_implies_accepts result).2
   exact (of_decide_eq_true (decisions function member) :
     function.ValidIn program.names).1
+
+/-- Until source clauses have an enforcing interpreter, no accepted function
+may carry one. Supplied semantic bundles cannot override this source gate. -/
+theorem accepted_function_has_no_unchecked_source_contract
+    {program : Program} {checked : CheckedProgram}
+    (result : checkProgram program = some checked)
+    {function : FunctionSpec} (member : function ∈ program.functions) :
+    function.sourceContractClauses = 0 := by
+  have decisions := List.all_eq_true.mp (checkProgram_implies_accepts result).2
+  exact (of_decide_eq_true (decisions function member) :
+    function.ValidIn program.names).2.2.2
+
+theorem unchecked_source_contract_rejects {program : Program}
+    {function : FunctionSpec} (member : function ∈ program.functions)
+    (unchecked : function.sourceContractClauses ≠ 0) : checkProgram program = none := by
+  cases result : checkProgram program with
+  | none => rfl
+  | some checked =>
+      exact False.elim (unchecked (accepted_function_has_no_unchecked_source_contract result member))
 
 theorem recursive_function_has_declared_summary
     {program : Program} {checked : CheckedProgram}

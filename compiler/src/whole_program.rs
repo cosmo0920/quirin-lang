@@ -146,6 +146,16 @@ pub fn check_whole_program(
         }
     }
     for (symbol, declaration) in &source_functions {
+        if let Some(contract) = &declaration.function_contract {
+            for clause in &contract.clauses {
+                diagnostics.push(SourceDiagnostic {
+                    code: "Q021",
+                    pass: SemanticPass::OrdinaryTypes,
+                    span: clause.span,
+                    message: "source function contract clauses are not yet enforced; refusing unchecked contract".into(),
+                });
+            }
+        }
         if !supplied.contains_key(symbol) {
             diagnostics.push(diagnostic(
                 SemanticPass::NameResolution,

@@ -2200,6 +2200,8 @@ Q003  unsupported nonlinear index expression
 Q004  unproved checked monus
 Q005  unsatisfied where constraint
 
+Q021  source function contract has no enforcing interpreter
+
 Q100  non-Copy value copied
 Q101  exact-one value not consumed
 Q102  exact-one value consumed more than once
