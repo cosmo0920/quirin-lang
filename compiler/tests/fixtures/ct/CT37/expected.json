@@ -1,0 +1,10 @@
+{
+  "id": "CT37",
+  "verdict": "accept",
+  "entry": "worker",
+  "diagnostics": [],
+  "outcome": { "ok_value": 5, "payload": [6] },
+  "trace": ["acquire:5", "acquire:6", "transfer:6", "release:5"],
+  "stages_executed": ["parser", "type_checker", "reference_execution", "cfg"],
+  "notes": "The CFG reference execution witnesses the case's property directly: identity 6 leaves the frame as a transfer (not a release) and is still carried by the completion record at exit, while the frame's own scratch identity 5 is reclaimed by ordinary cleanup. `spawn`/`join`, the parent's later consumption of the capsule, loan-return evidence and the concurrency backend are not exercised; the early finish is modeled as an early normal return of the returning frame."
+}

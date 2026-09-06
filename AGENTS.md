@@ -137,8 +137,9 @@ It also ships a conservative checker for *existing* C source (the
   keeps its callers `Unknown`); semantic witness schema v2
   is unimplemented; process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **47/50 unmapped** (CT02/CT12/CT16
-  are mapped as sequential-core source fixtures; see the W6 note below).
+  only; CT01–CT50 conformance corpus is **45/50 unmapped**
+  (CT02/CT12/CT16/CT19/CT37 are mapped as sequential-core source fixtures;
+  see the W6 note below).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -158,11 +159,15 @@ It also ships a conservative checker for *existing* C source (the
   (2026-09-06, `docs/reports/w6-ct-harness/README.md`):
   `compiler/tests/ct_corpus.rs` executes every case
   `docs/reevaluation/ct_manifest.json` marks mapped through the real source
-  pipeline and fails closed on manifest/fixture disagreement; CT02, CT12 and
-  CT16 are mapped as Cycle 12 executable-subset fixtures exercising the
-  sequential ownership/typed-error/cleanup core only (spawn/capture syntax,
-  shares, mutexes and the concurrency backend remain unexercised; 47 cases
-  remain unmapped, counted by a pinned test). W4 is executed for
+  pipeline and fails closed on manifest/fixture disagreement; CT02, CT12,
+  CT16, CT19 and CT37 are mapped as Cycle 12 executable-subset fixtures
+  exercising the sequential ownership/typed-error/cleanup/completion-record
+  core only (spawn/capture syntax, shares, mutexes and the concurrency
+  backend remain unexercised). Batch 2 (2026-09-06,
+  `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
+  full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
+  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); 45 cases remain
+  unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
   `compiler/src/legacy_summary.rs` derives SCC-ordered custody summaries for

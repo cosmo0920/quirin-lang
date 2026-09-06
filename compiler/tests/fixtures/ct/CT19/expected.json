@@ -1,0 +1,12 @@
+{
+  "id": "CT19",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    { "code": "Q202", "message_contains": "FallibleOperationAfterTransfer" }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parser", "type_checker"],
+  "notes": "The outstanding sibling obligation is modeled as an ownership transfer out of the parent frame (Cycle 12 executable subset), which is exactly the position of a task handle: outside the frame's cleanup pack and still undischarged. The static refusal of the later fallible operation is the source pipeline's decision that an error edge may not leave that obligation unaccounted for. Task handles, `spawn`/`join` syntax, `?` propagation and the concurrency backend are not exercised, so reference execution, CFG, native backend and proof stages stay unassessed."
+}

@@ -197,7 +197,9 @@ modules through the loader; the richer clause vocabulary remains open. The
 W6 CT conformance harness is stood up
 ([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
 executes the manifest-mapped spec §55 cases through the real source pipeline;
-CT02/CT12/CT16 are mapped as sequential-core fixtures and 47 of 50 cases
+CT02/CT12/CT16 are mapped as sequential-core fixtures. Batch 2
+([record](docs/reports/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
+records the full triage of all 47 then-unmapped cases, so 45 of 50 cases
 remain unmapped, counted by a pinned test. W4 is
 executed for parameter/return custody with validation
 ([record](docs/reports/w4-custody-inference/README.md)): the C gateway now

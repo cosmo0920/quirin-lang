@@ -30,7 +30,7 @@ use serde::Deserialize;
 
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
-const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT16"];
+const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT16", "CT19", "CT37"];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parser",
@@ -93,6 +93,12 @@ struct ExpectedOutcome {
     error: Option<String>,
     #[serde(default)]
     ok_value: Option<i32>,
+    /// Completion-record identities still live at a normal exit (spec §43.5,
+    /// §50.3). Mandatory for an `ok_value` outcome so that a case cannot claim
+    /// a normal exit without stating what the capsule still carries; an error
+    /// exit carries no completion payload in this model.
+    #[serde(default)]
+    payload: Option<Vec<u64>>,
 }
 
 fn repo_root() -> PathBuf {
@@ -243,7 +249,7 @@ fn run_mapped_case(case: &ManifestCase) {
                     )
                 });
                 match &observation.outcome {
-                    ExecutionOutcome::Ok { value, .. } => {
+                    ExecutionOutcome::Ok { value, payload } => {
                         assert_eq!(outcome.error, None, "{}: expected error outcome", case.id);
                         assert_eq!(
                             outcome.ok_value,
@@ -251,11 +257,28 @@ fn run_mapped_case(case: &ManifestCase) {
                             "{}: reference execution returned {value}",
                             case.id
                         );
+                        let expected_payload = outcome.payload.as_deref().unwrap_or_else(|| {
+                            panic!(
+                                "{}: a normal-exit case must pin the completion-record payload",
+                                case.id
+                            )
+                        });
+                        assert_eq!(
+                            expected_payload,
+                            payload.as_slice(),
+                            "{}: completion-record payload mismatch",
+                            case.id
+                        );
                     }
                     ExecutionOutcome::Error { name, .. } => {
                         assert_eq!(
                             outcome.ok_value, None,
                             "{}: expected ok outcome, got error `{name}`",
+                            case.id
+                        );
+                        assert!(
+                            outcome.payload.is_none(),
+                            "{}: an error exit carries no completion-record payload",
                             case.id
                         );
                         assert_eq!(
@@ -390,8 +413,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 3 of 50 CT cases are mapped
-/// as executed source-level tests; 47 remain unmapped. This test exists so the
+/// The moving count is the W6 genericity metric: 5 of 50 CT cases are mapped
+/// as executed source-level tests; 45 remain unmapped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {

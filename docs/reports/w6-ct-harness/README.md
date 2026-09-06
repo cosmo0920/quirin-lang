@@ -1,5 +1,13 @@
 # W6 CT conformance harness stand-up (2026-09-06)
 
+> **Superseded counts.** Batch 2
+> ([`docs/reports/w6-ct-batch-2/README.md`](../w6-ct-batch-2/README.md), also
+> 2026-09-06) maps CT19 and CT37 and records the full triage of all 47 cases
+> this record left unmapped. The current metric is **5 mapped / 45 unmapped**;
+> the "3 mapped / 47 unmapped" figures below are this record's state, not the
+> live one. The harness design described here is unchanged, except that a
+> normal-exit case must now also pin its completion-record payload.
+
 Executes `docs/GENERALIZATION_PLAN.md` §W6 task 1 and maps an initial batch of
 three CT cases. The CT01–CT50 language corpus (spec §55) is tracked by
 [`docs/reevaluation/ct_manifest.json`](../../reevaluation/ct_manifest.json);
