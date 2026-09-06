@@ -193,7 +193,12 @@ and observation interpreter live in `crates/qcore-contract`, above the new
 literal-site migration is executed
 ([record](docs/reports/w1-literal-sites/README.md)): the remaining Rust
 contract-table literals in tests and examples now load `.qcore` fixture
-modules through the loader; the richer clause vocabulary remains open. The
+modules through the loader. W1 is executed
+([record](docs/reports/w1-clause-vocabulary/README.md)): the clause-family
+boundary between the loader and the observation/lifecycle interpreters is
+documented and pinned corpus-wide, and the C ABI scalar table is complete;
+unifying the interpreters is a W5-adjacent item and error sentinels need
+target-interface work. The
 W6 CT conformance harness is stood up
 ([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
 executes the manifest-mapped spec §55 cases through the real source pipeline;
