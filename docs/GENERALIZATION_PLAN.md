@@ -141,6 +141,9 @@ crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
   interprocedural summary inference (W4).
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
   composition, obligation generation + dispatch (W3).
+crates/qcore-verification     # Trusted adapter above L1 + verifier host:
+  obligation derivation, witness replay, scope dispatch. No provider dependency.
+  Keeps host/frontend/contract/schema integration out of the dependency-free kernel.
 crates/qcore-audit            # L3: orchestration-as-configuration (W5):
   compile-db ingest, pin verification, per-unit iteration, report emission.
 crates/qcorec                 # L3: CLI binary.

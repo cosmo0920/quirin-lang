@@ -1,0 +1,13 @@
+[package]
+name = "qcore-verification"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Trusted obligation derivation, witness replay and scope dispatch over the QCore kernel and verifier host."
+
+[dependencies]
+qcore-core = { path = "../qcore-core", version = "0.1.0" }
+qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
+qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "0.2.0" }
+qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.1.0" }

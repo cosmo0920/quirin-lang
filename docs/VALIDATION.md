@@ -52,3 +52,7 @@ This adds architectural/transport evidence, not new language conformance.
 passes 569 workspace tests, the standing gate and 19 Lean audits, including
 seven CLI process tests. Package snapshot verification does not establish
 source correctness or immunity to later package-file mutation.
+
+The [trusted verification adapter integration](reports/w5-verification-adapter/README.md)
+passes 571 workspace tests and the standing/Lean gates. All relocated
+derivation/replay/dispatch implementations retain byte parity.

@@ -41,7 +41,8 @@ models do not imply complete source-language support.
 
 | Path | Contents |
 |---|---|
-| [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C compatibility API, source driver and trusted witness replay |
+| [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C compatibility API, source driver and compatibility APIs |
+| [`crates/qcore-verification/`](crates/qcore-verification/) | Trusted obligation derivation, witness replay and scope dispatch over core/frontend/contract/schemas/host |
 | [`crates/qcore-core/`](crates/qcore-core/) | Semantic kernel: quantitative types, ownership, errors, cleanup, CFG, concurrency, translation and chunk lifecycle models |
 | [`crates/qcore-frontend/`](crates/qcore-frontend/) | QCore language front end: lexer, parsers, quant-index resolution, elaboration |
 | [`crates/qcore-contract/`](crates/qcore-contract/) | Declarative `.qcore` contract loader and observation interpreter |
@@ -422,3 +423,10 @@ CLI package lifecycle (2026-09-07, `docs/reports/w5-cli-packages/README.md`):
 that selection without default fallback. Verification reads manifest and
 executable identity without executing it; this is a snapshot check, not
 signature, runtime compatibility or immutable-execution proof.
+
+Trusted verification adapter (2026-09-07): obligation derivation, witness replay
+and scope dispatch now live in `crates/qcore-verification`, with byte-identical
+implementations/tests and compiler reexports. It depends on core, frontend,
+contract, schemas and host; providers cannot link it. Lifecycle source effects
+remain incomplete and cannot promote a result. Evidence:
+`docs/reports/w5-verification-adapter/README.md`.

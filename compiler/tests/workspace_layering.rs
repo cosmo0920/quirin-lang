@@ -24,6 +24,16 @@ const ALLOWED: &[(&str, &[&str])] = &[
         &["qcore-frontend", "qcore-schemas"],
     ),
     (
+        "crates/qcore-verification",
+        &[
+            "qcore-core",
+            "qcore-frontend",
+            "qcore-contract",
+            "qcore-schemas",
+            "qcore-verifier-host",
+        ],
+    ),
+    (
         "compiler",
         &[
             "qcore-audit", // examples-only dev dependency, not the compiler library
@@ -33,6 +43,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-frontend",
             "qcore-schemas",
             "qcore-verifier-host",
+            "qcore-verification",
         ],
     ),
     (
@@ -180,4 +191,21 @@ fn loop_and_ledger_certificates_are_core_owned() {
         &qcore_core::resource_accounting::LoopSummaryCertificate,
     ) -> Result<(), qcore_core::resource_accounting::LoopSummaryError> =
         qcore_compiler::research_extensions::check_loop_summary;
+}
+
+#[test]
+fn trusted_replay_and_derivation_are_verification_owned() {
+    use std::any::TypeId;
+    assert_eq!(
+        TypeId::of::<qcore_compiler::obligation_derivation::DerivedTask>(),
+        TypeId::of::<qcore_verification::obligation_derivation::DerivedTask>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::verify_dispatch::ScopeDispatch>(),
+        TypeId::of::<qcore_verification::verify_dispatch::ScopeDispatch>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::witness_replay::ChunkLifecycleReplay<'static>>(),
+        TypeId::of::<qcore_verification::witness_replay::ChunkLifecycleReplay<'static>>()
+    );
 }

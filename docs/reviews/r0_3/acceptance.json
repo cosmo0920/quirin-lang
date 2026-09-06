@@ -108,11 +108,12 @@
     }
   ],
   "validation": {
-    "workspace_tests": 549,
+    "workspace_tests": 571,
     "python_evidence_validator_tests": 43,
     "lean_audits": 19,
     "standing_gate": "passed",
-    "full_language_conformance": false
+    "full_language_conformance": false,
+    "latest_integration_evidence": "docs/reports/w5-verification-adapter/README.md"
   },
   "documentation_revision": "0.3"
 }

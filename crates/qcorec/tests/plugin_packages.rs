@@ -185,3 +185,72 @@ fn package_symlinks_cannot_escape_the_package_root() {
     );
     assert!(!Path::new(&f.config).exists());
 }
+
+#[cfg(unix)]
+#[test]
+fn configured_source_scope_dispatches_only_the_enabled_process() {
+    use qcore_compiler::{PluginManifest, SupportedTarget, VerifierCapability};
+    use std::collections::BTreeSet;
+    use std::os::unix::fs::PermissionsExt;
+    let f = Fixture::new("dispatch");
+    let executable = f.package.join("provider");
+    std::fs::write(
+        &executable,
+        "#!/bin/sh\nprintf invoked > invoked\nexit 23\n",
+    )
+    .unwrap();
+    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let manifest_path = f.package.join("verifier-plugin.json");
+    let mut manifest: PluginManifest =
+        serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+    manifest.package_digest =
+        "b825beca93d78556d05b77634bcc85da3c2ea8217cea3f80c38f8f6ef1edf6a1".into();
+    manifest.capabilities = BTreeSet::from([VerifierCapability::ObservationHooks]);
+    manifest.evidence_versions = BTreeSet::from([1, 2]);
+    manifest.required_observation_hooks = BTreeSet::from(["resize".into()]);
+    manifest.certificate_checker = "qcore.contract_observation.v2".into();
+    manifest.targets = vec![SupportedTarget {
+        library: "example".into(),
+        revisions: BTreeSet::from(["source".into()]),
+        profiles: BTreeSet::from(["default".into()]),
+        dialects: BTreeSet::from(["qcore".into()]),
+        platforms: BTreeSet::from([std::env::consts::OS.into()]),
+        backends: BTreeSet::from(["native".into()]),
+    }];
+    std::fs::write(&manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+    succeeds(f.enable());
+    let input = f.root.join("source.qcore");
+    std::fs::write(&input, "extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };\nverify scope s { plugin example.cli profile default capabilities { observation_hooks }; }\nfn main() -> i32 { return 7; }").unwrap();
+    let output = f.cli(&[
+        "check",
+        "--plugins",
+        f.config.to_str().unwrap(),
+        input.to_str().unwrap(),
+    ]);
+    assert!(
+        !output.status.success(),
+        "provider failure cannot certify the source"
+    );
+    assert_eq!(
+        std::fs::read_to_string(f.package.join("invoked")).unwrap(),
+        "invoked"
+    );
+    std::fs::remove_file(f.package.join("invoked")).unwrap();
+    succeeds(f.cli(&[
+        "plugins",
+        "disable",
+        "example.cli",
+        "--config",
+        f.config.to_str().unwrap(),
+    ]));
+    fails(
+        f.cli(&[
+            "check",
+            "--plugins",
+            f.config.to_str().unwrap(),
+            input.to_str().unwrap(),
+        ]),
+        "plugin is not installed",
+    );
+    assert!(!f.package.join("invoked").exists());
+}

@@ -76,6 +76,7 @@ dependencies = [
  "qcore-core",
  "qcore-frontend",
  "qcore-schemas",
+ "qcore-verification",
  "qcore-verifier-host",
  "serde",
  "serde_json",
@@ -112,6 +113,17 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "qcore-verification"
+version = "0.1.0"
+dependencies = [
+ "qcore-contract",
+ "qcore-core",
+ "qcore-frontend",
+ "qcore-schemas",
+ "qcore-verifier-host",
 ]
 
 [[package]]

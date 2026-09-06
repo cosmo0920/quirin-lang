@@ -30,7 +30,8 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
 | `crates/qcore-verifier-host/` | L2 generic registry, source-scope resolution, bounded process transport, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
-| `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation remain in compiler pending kernel consolidation |
+| `crates/qcore-verification/` | Trusted adapter: core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/host, never providers |
+| `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation/dispatch live in `qcore-verification` |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
@@ -397,3 +398,10 @@ CLI package lifecycle (2026-09-07, `docs/reports/w5-cli-packages/README.md`):
 that selection without default fallback. Verification reads manifest and
 executable identity without executing it; this is a snapshot check, not
 signature, runtime compatibility or immutable-execution proof.
+
+Trusted verification adapter (2026-09-07): obligation derivation, witness replay
+and scope dispatch now live in `crates/qcore-verification`, with byte-identical
+implementations/tests and compiler reexports. It depends on core, frontend,
+contract, schemas and host; providers cannot link it. Lifecycle source effects
+remain incomplete and cannot promote a result. Evidence:
+`docs/reports/w5-verification-adapter/README.md`.

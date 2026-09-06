@@ -1,0 +1,32 @@
+[
+  {
+    "old": "compiler/src/obligation_derivation.rs",
+    "new": "crates/qcore-verification/src/obligation_derivation.rs",
+    "sha256": "d2620b82d00a4ed02b608e864e4751eba9adf86ccc1d66626ef7167146938210",
+    "byte_identical": true
+  },
+  {
+    "old": "compiler/src/witness_replay.rs",
+    "new": "crates/qcore-verification/src/witness_replay.rs",
+    "sha256": "d7adcb1f0a39ce06b2ffe9d36b3ec82ebaf69caf1d79aa4a70002b665059d725",
+    "byte_identical": true
+  },
+  {
+    "old": "compiler/src/verify_dispatch.rs",
+    "new": "crates/qcore-verification/src/verify_dispatch.rs",
+    "sha256": "646f155900114cb58afe98abd529af93539c97a35e5209321820724fba6e81f6",
+    "byte_identical": true
+  },
+  {
+    "old": "compiler/tests/unit/obligation_derivation.rs",
+    "new": "crates/qcore-verification/tests/unit/obligation_derivation.rs",
+    "sha256": "ef560e86303d0e5a8196d1075186235eed0e16837128896baeda40ad9291e2d9",
+    "byte_identical": true
+  },
+  {
+    "old": "compiler/tests/unit/witness_replay.rs",
+    "new": "crates/qcore-verification/tests/unit/witness_replay.rs",
+    "sha256": "44dba3cf12002374c6663754308d3b001628abcfaa7492a03b9afbc7fa87503a",
+    "byte_identical": true
+  }
+]

@@ -46,10 +46,10 @@ pub use qcore_frontend::frontend;
 pub use qcore_frontend::lexer;
 pub mod list_unlink_contract;
 pub use qcore_core::native_concurrency;
-pub mod obligation_derivation;
 pub use qcore_core::ownership;
 pub use qcore_frontend::parser;
 pub use qcore_frontend::quant_index;
+pub use qcore_verification::obligation_derivation;
 pub mod first_party;
 pub use qcore_core::research_closure;
 pub mod research_extensions;
@@ -65,10 +65,10 @@ pub mod typed_source_match;
 pub use qcore_core::usage;
 pub mod verifier_plugin;
 pub mod verifier_plugins;
-pub mod verify_dispatch;
 pub use qcore_core::weak_memory;
 pub use qcore_frontend::whole_program;
-pub mod witness_replay;
+pub use qcore_verification::verify_dispatch;
+pub use qcore_verification::witness_replay;
 
 // Compatibility paths for callers predating the in-process plugin extraction.
 pub use verifier_plugins::chunkio::chunk_source;

@@ -111,8 +111,8 @@ concurrency semantics are implemented. CT mapping remains 5/50.
   describe recorded runs under `observations_trusted`; lifecycle source
   derivation stays incomplete until real effect/ABI import exists. The generic
   host is extracted in `crates/qcore-verifier-host` (record:
-  `docs/reports/w3-verifier-host/README.md`); trusted derivation/replay remain
-  in the compiler adapter pending kernel consolidation. V1 Safe refusal is unchanged.
+  `docs/reports/w3-verifier-host/README.md`); trusted derivation/replay/dispatch now reside
+  in `qcore-verification` above the dependency-free kernel. V1 Safe refusal is unchanged.
 
 - W2 H6 provider metadata now loads from profile packages; see
   `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
@@ -194,3 +194,10 @@ CLI package lifecycle (2026-09-07, `docs/reports/w5-cli-packages/README.md`):
 that selection without default fallback. Verification reads manifest and
 executable identity without executing it; this is a snapshot check, not
 signature, runtime compatibility or immutable-execution proof.
+
+Trusted verification adapter (2026-09-07): obligation derivation, witness replay
+and scope dispatch now live in `crates/qcore-verification`, with byte-identical
+implementations/tests and compiler reexports. It depends on core, frontend,
+contract, schemas and host; providers cannot link it. Lifecycle source effects
+remain incomplete and cannot promote a result. Evidence:
+`docs/reports/w5-verification-adapter/README.md`.

@@ -1,0 +1,9 @@
+{
+  "workspace_tests": 571,
+  "standalone_verification_tests": 13,
+  "cli_package_tests": 5,
+  "lean_audits": 19,
+  "standing_gate": "passed",
+  "byte_identical_files": 5,
+  "new_semantic_admission": false
+}
