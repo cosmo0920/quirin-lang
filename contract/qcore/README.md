@@ -216,3 +216,10 @@ policies. They record ignored cleanup results in `cio_file_close` and guarded
 results in the unmap/Unix close helpers. These are producer-use facts, not OS
 success or custody certificates. The [filesystem attempts report](../../docs/reports/cycle19-filesystem-attempts/README.md)
 retains all 20 source paths and the unresolved failure obligations.
+
+`chunkio/filesystem_outcomes.qcore` checks the null, absent, syscall-error and
+syscall-success bookkeeping transitions of the Unix close and unmap helpers.
+The typed symbolic interpreter binds actual syscall arguments and every field
+write. External outcome/framing premises remain explicit; an error preserves C
+fields but leaves OS custody unresolved. See the
+[filesystem outcomes report](../../docs/reports/cycle19-filesystem-outcomes/README.md).

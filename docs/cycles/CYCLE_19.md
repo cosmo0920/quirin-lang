@@ -604,3 +604,14 @@ Three new Lean producer-use theorems and 361 workspace tests pass with every
 required check. Prior verdicts and certificates are identical. This exposes the
 filesystem composition gap explicitly and does not promote it to Safe; broader
 source custody, stream/context and Monkey event work remain open.
+
+## Native filesystem outcome branches (2026-09-06)
+
+The [filesystem outcomes report](../reports/cycle19-filesystem-outcomes/README.md)
+checks all eight null/absent/failure/success cases across Unix close and unmap.
+Typed symbolic replay binds syscall argument identities, error returns, success
+resets and failure field preservation under explicit external-call frames. A
+failed close leaves OS custody unresolved even though its C fd field remains.
+Two native policies, six Lean theorems, 364 workspace tests and required checks
+pass with unchanged prior verdicts and certificates. Actual outcome observation,
+wrapper failure composition and the wider Cycle 19 lifecycle gates remain open.

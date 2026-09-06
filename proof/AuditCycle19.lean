@@ -1,3 +1,4 @@
+import QCore.CleanupOutcome
 import QCore.CallResultUse
 import QCore.MemoryClose
 import QCore.ListUnlink
@@ -177,3 +178,15 @@ import QCore.ChunkSource
 #print axioms QCore.CallResultUse.guarded_result_is_used
 
 #print axioms QCore.CallResultUse.ignored_outcomes_are_indistinguishable
+
+#print axioms QCore.CleanupOutcome.null_has_no_access
+
+#print axioms QCore.CleanupOutcome.absent_is_success_without_cleanup
+
+#print axioms QCore.CleanupOutcome.failure_preserves_bookkeeping
+
+#print axioms QCore.CleanupOutcome.success_clears_bookkeeping
+
+#print axioms QCore.CleanupOutcome.failure_does_not_establish_discharge
+
+#print axioms QCore.CleanupOutcome.discharge_requires_success

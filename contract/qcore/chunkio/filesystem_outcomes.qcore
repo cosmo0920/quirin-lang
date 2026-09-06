@@ -1,0 +1,46 @@
+module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, exact compiled bindings and returning external-call frames.
+// A syscall result is an input, never an assumed success. These policies do not
+// assert OS resource discharge: descriptor custody after an error is unresolved.
+
+extern fn native_close_outcomes() -> unit
+contract {
+    requires nullable_live_exclusive_record;
+    requires present_field_has_valid_syscall_argument_identity;
+    requires syscall_returns_zero_or_minus_one_and_frames_record;
+    requires diagnostics_return_and_frame_record;
+    requires source_and_abi_bindings;
+    ensures normal not was_null or returned == -1;
+    ensures normal was_null or was_present or returned == 0;
+    ensures normal not syscall_failed or returned == -1;
+    ensures normal not syscall_succeeded or returned == 0;
+    ensures normal cleanup_calls == was_present;
+    ensures normal syscall_succeeded or field_writes == 0;
+    ensures normal not syscall_succeeded or field_writes == reset_field_count;
+    ensures normal syscall_succeeded or fields_preserved;
+    ensures normal not syscall_succeeded or fields_reset;
+    ensures normal root_preserved;
+    ensures normal other_fields_preserved;
+};
+
+extern fn native_unmap_outcomes() -> unit
+contract {
+    requires nullable_live_exclusive_record;
+    requires present_field_has_valid_syscall_argument_identity;
+    requires syscall_returns_zero_or_minus_one_and_frames_record;
+    requires diagnostics_return_and_frame_record;
+    requires source_and_abi_bindings;
+    ensures normal not was_null or returned == -1;
+    ensures normal was_null or was_present or returned == 0;
+    ensures normal not syscall_failed or returned == -1;
+    ensures normal not syscall_succeeded or returned == 0;
+    ensures normal cleanup_calls == was_present;
+    ensures normal syscall_succeeded or field_writes == 0;
+    ensures normal not syscall_succeeded or field_writes == reset_field_count;
+    ensures normal syscall_succeeded or fields_preserved;
+    ensures normal not syscall_succeeded or fields_reset;
+    ensures normal root_preserved;
+    ensures normal other_fields_preserved;
+};

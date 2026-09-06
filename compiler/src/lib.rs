@@ -28,6 +28,7 @@ pub mod chunk_contract;
 pub mod chunk_lifecycle;
 mod clang;
 pub mod cleanup_lowering;
+pub mod cleanup_outcome;
 pub mod concurrency;
 pub mod contract_loader;
 pub mod contract_observation;

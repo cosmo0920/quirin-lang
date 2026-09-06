@@ -471,6 +471,17 @@ fn audit_library(
             }
             teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
         }
+        if library == "chunkio" && file == "cio_file_unix.c" {
+            let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+            for certificate in &certificates {
+                println!(
+                    "qcore-outcomes {}: Checked ({} null/absent/failure/success cases; OS custody conditional)",
+                    certificate.source().function(),
+                    certificate.cases().len()
+                );
+            }
+            teardown_results.push(serde_json::json!({"kind":"filesystem_native_outcomes", "certificates":certificates}));
+        }
         if library == "chunkio" && file == "cio_chunk.c" {
             let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
             println!(
