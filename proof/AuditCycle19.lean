@@ -363,3 +363,23 @@ import QCore.ChunkSource
 #print axioms QCore.NativeOsObservation.stat_fallback_reopen_acquires_both_epochs
 #print axioms QCore.NativeOsObservation.reopen_failures_leave_descriptor_for_parent
 #print axioms QCore.NativeOsObservation.reopen_observation_does_not_prove_durability
+
+#print axioms QCore.ChunkSource.frame_writes_preserve_unwritten_field
+
+#print axioms QCore.ChunkSource.frame_writes_preserve_other_object
+
+#print axioms QCore.ChunkSource.checked_frame_writes_preserve_every_modeled_field
+
+#print axioms QCore.ChunkSource.checked_frame_writes_preserve_every_other_object
+
+#print axioms QCore.ChunkSource.modeled_field_write_rejects
+
+#print axioms QCore.ChunkSource.empty_frame_helper_rejects
+
+#print axioms QCore.ChunkSource.admitted_frame_constant_is_prestate_independent
+
+#print axioms QCore.ChunkSource.frame_program_retains_exact_ordered_writes
+
+#print axioms QCore.ChunkSource.frame_program_preserves_boolean_and_control_state
+
+#print axioms QCore.ChunkSource.another_modeled_field_cannot_be_hidden_as_metadata

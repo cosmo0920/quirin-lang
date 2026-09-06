@@ -89,12 +89,47 @@ struct BindingConfiguration {
     library: String,
     provider: String,
     contract: PathBuf,
+    #[serde(default)]
+    frame_helpers: Vec<FrameHelperConfiguration>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FrameHelperConfiguration {
+    source: PathBuf,
+    function: String,
+    record: String,
+    contract: PathBuf,
+}
+
+/// Declared helper selection and immutable policy bytes; not source evidence.
+#[derive(Debug, serde::Serialize)]
+pub struct FrameHelperPolicy {
+    source: PathBuf,
+    function: String,
+    record: String,
+    contract: String,
+}
+impl FrameHelperPolicy {
+    pub fn source(&self) -> &Path {
+        &self.source
+    }
+    pub fn function(&self) -> &str {
+        &self.function
+    }
+    pub fn record(&self) -> &str {
+        &self.record
+    }
+    pub fn contract(&self) -> &str {
+        &self.contract
+    }
 }
 
 #[derive(Debug)]
 struct Binding {
     provider: PluginId,
     contract: String,
+    frame_helpers: Vec<FrameHelperPolicy>,
 }
 
 pub struct SourceContractRegistry {
@@ -156,7 +191,64 @@ fn validate_package_paths(packages: &[PathBuf]) -> Result<(), SourceContractErro
     Ok(())
 }
 
+fn c_identifier(value: &str) -> bool {
+    let mut chars = value.bytes();
+    value.len() <= 128
+        && chars
+            .next()
+            .is_some_and(|c| c.is_ascii_alphabetic() || c == b'_')
+        && chars.all(|c| c.is_ascii_alphanumeric() || c == b'_')
+}
+
+fn snapshot_policy(
+    base: &Path,
+    path: &Path,
+    retained: &mut u64,
+) -> Result<String, SourceContractError> {
+    const MAX_POLICY_BYTES: u64 = 32 * 1024 * 1024;
+    if path.as_os_str().is_empty() {
+        return Err(SourceContractError::Configuration(
+            "empty policy path".into(),
+        ));
+    }
+    let remaining = MAX_POLICY_BYTES.checked_sub(*retained).ok_or_else(|| {
+        SourceContractError::Configuration("policy snapshot byte budget exhausted".into())
+    })?;
+    if remaining == 0 {
+        return Err(SourceContractError::Configuration(
+            "policy snapshots exceed the 32 MiB aggregate byte budget".into(),
+        ));
+    }
+    let bytes = read_bounded(&crate::resolve(base, path), 8_388_608.min(remaining))?;
+    *retained += bytes.len() as u64;
+    let policy = String::from_utf8(bytes)
+        .map_err(|error| SourceContractError::Configuration(error.to_string()))?;
+    if policy.trim().is_empty() {
+        return Err(SourceContractError::Configuration(
+            "empty contract source".into(),
+        ));
+    }
+    Ok(policy)
+}
+
 impl SourceContractPolicies {
+    /// Selection metadata from the immutable configuration, not execution evidence.
+    pub fn frame_helper_policy_inventory(&self) -> BTreeMap<&str, &[FrameHelperPolicy]> {
+        self.bindings
+            .iter()
+            .filter(|(_, binding)| !binding.frame_helpers.is_empty())
+            .map(|(library, binding)| (library.as_str(), binding.frame_helpers.as_slice()))
+            .collect()
+    }
+
+    /// Helpers explicitly selected for this library; no declaration means none.
+    pub fn frame_helpers_for_library(&self, library: &str) -> &[FrameHelperPolicy] {
+        self.bindings
+            .get(library)
+            .map(|binding| binding.frame_helpers.as_slice())
+            .unwrap_or(&[])
+    }
+
     pub fn load(path: impl AsRef<Path>) -> Result<Self, SourceContractError> {
         let path = path
             .as_ref()
@@ -180,7 +272,6 @@ impl SourceContractPolicies {
         let mut bindings = BTreeMap::new();
         // Bound total retained snapshots as well as each individual file.
         // Repeated references still retain distinct bytes and consume budget.
-        const MAX_POLICY_BYTES: u64 = 32 * 1024 * 1024;
         let mut retained_bytes = 0u64;
         for binding in config.bindings {
             if binding.library.trim().is_empty()
@@ -193,38 +284,43 @@ impl SourceContractPolicies {
             }
             let provider = PluginId::new(binding.provider)
                 .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
-            let remaining = MAX_POLICY_BYTES
-                .checked_sub(retained_bytes)
-                .ok_or_else(|| {
-                    SourceContractError::Configuration(
-                        "policy snapshot byte budget exhausted".into(),
-                    )
-                })?;
-            if remaining == 0 {
+            let contract = snapshot_policy(&base, &binding.contract, &mut retained_bytes)?;
+            if binding.frame_helpers.len() > 256 {
                 return Err(SourceContractError::Configuration(
-                    "policy snapshots exceed the 32 MiB aggregate byte budget".into(),
+                    "more than 256 frame helpers in one binding".into(),
                 ));
             }
-            let bytes = read_bounded(
-                &crate::resolve(&base, &binding.contract),
-                8_388_608.min(remaining),
-            )?;
-            retained_bytes = retained_bytes
-                .checked_add(bytes.len() as u64)
-                .ok_or_else(|| {
-                    SourceContractError::Configuration(
-                        "policy snapshot byte budget overflow".into(),
-                    )
-                })?;
-            let contract = String::from_utf8(bytes)
-                .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
-            if contract.trim().is_empty() {
-                return Err(SourceContractError::Configuration(
-                    "empty contract source".into(),
-                ));
+            let mut helper_names = BTreeSet::new();
+            let mut frame_helpers = Vec::new();
+            for helper in binding.frame_helpers {
+                if helper.source.as_os_str().is_empty()
+                    || !helper
+                        .source
+                        .components()
+                        .all(|part| matches!(part, std::path::Component::Normal(_)))
+                    || !c_identifier(&helper.function)
+                    || !c_identifier(&helper.record)
+                    || !helper_names.insert(helper.function.clone())
+                {
+                    return Err(SourceContractError::Configuration("frame helper requires a unique C function, C record, and contained relative source path".into()));
+                }
+                let contract = snapshot_policy(&base, &helper.contract, &mut retained_bytes)?;
+                frame_helpers.push(FrameHelperPolicy {
+                    source: helper.source,
+                    function: helper.function,
+                    record: helper.record,
+                    contract,
+                });
             }
             if bindings
-                .insert(binding.library, Binding { provider, contract })
+                .insert(
+                    binding.library,
+                    Binding {
+                        provider,
+                        contract,
+                        frame_helpers,
+                    },
+                )
                 .is_some()
             {
                 return Err(SourceContractError::Configuration(
@@ -250,6 +346,23 @@ impl SourceContractPolicies {
 }
 
 impl SourceContractRegistry {
+    /// Selection metadata from the immutable configuration, not execution evidence.
+    pub fn frame_helper_policy_inventory(&self) -> BTreeMap<&str, &[FrameHelperPolicy]> {
+        self.bindings
+            .iter()
+            .filter(|(_, binding)| !binding.frame_helpers.is_empty())
+            .map(|(library, binding)| (library.as_str(), binding.frame_helpers.as_slice()))
+            .collect()
+    }
+
+    /// Helpers explicitly selected for this library; no declaration means none.
+    pub fn frame_helpers_for_library(&self, library: &str) -> &[FrameHelperPolicy] {
+        self.bindings
+            .get(library)
+            .map(|binding| binding.frame_helpers.as_slice())
+            .unwrap_or(&[])
+    }
+
     /// The same immutable policy bytes used by process replay, for adapters
     /// retaining a direct compatibility check or policy report.
     pub fn contract_for_library(&self, library: &str) -> Result<&str, SourceContractError> {
@@ -390,4 +503,158 @@ impl SourceContractRegistry {
             evaluation,
         })
     }
+}
+
+/// One selected helper with sealed source evidence and checked policy predicates.
+/// Concrete live/exclusive access and cross-unit C ABI equality remain premises.
+#[derive(Debug)]
+pub struct CheckedFrameHelper {
+    pub summary: qcore_c_gateway::boolean_source::ChunkFrameSummary,
+    pub checked_postconditions: usize,
+}
+
+/// Import only explicitly selected helper TUs through their actual compile entries.
+/// Neither matching a filename nor parsing a policy creates source authority.
+pub fn import_configured_frame_helpers(
+    helpers: &[FrameHelperPolicy],
+    source_root: &Path,
+    entries: &[crate::compile_db::CompileEntry],
+    revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    source_rules: &str,
+) -> Result<Vec<CheckedFrameHelper>, SourceContractError> {
+    import_frame_helpers(
+        helpers,
+        source_root,
+        entries,
+        revision,
+        profile,
+        library,
+        source_rules,
+        crate::compile_db::compiler_options,
+    )
+}
+
+/// Explicit historical option projection for pinned compatibility adapters.
+/// Unrepresented compiler flags remain an outer-audit assumption. General
+/// callers should use `import_configured_frame_helpers`, which rejects them.
+pub fn import_configured_frame_helpers_compatibility(
+    helpers: &[FrameHelperPolicy],
+    source_root: &Path,
+    entries: &[crate::compile_db::CompileEntry],
+    revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    source_rules: &str,
+) -> Result<Vec<CheckedFrameHelper>, SourceContractError> {
+    import_frame_helpers(
+        helpers,
+        source_root,
+        entries,
+        revision,
+        profile,
+        library,
+        source_rules,
+        crate::compile_db::compiler_options_compatibility,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn import_frame_helpers(
+    helpers: &[FrameHelperPolicy],
+    source_root: &Path,
+    entries: &[crate::compile_db::CompileEntry],
+    revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    source_rules: &str,
+    options_for: fn(
+        &crate::compile_db::CompileEntry,
+    ) -> Result<crate::compile_db::CompilerOptions, String>,
+) -> Result<Vec<CheckedFrameHelper>, SourceContractError> {
+    use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
+    if helpers.is_empty() {
+        return Ok(Vec::new());
+    }
+    let root = source_root
+        .canonicalize()
+        .map_err(|error| SourceContractError::Derivation(error.to_string()))?;
+    let mut result = Vec::new();
+    let mut retained_source_bytes = 0usize;
+    for selected in helpers {
+        let path = root
+            .join(selected.source())
+            .canonicalize()
+            .map_err(|error| SourceContractError::Derivation(error.to_string()))?;
+        if !path.starts_with(&root) {
+            return Err(SourceContractError::Derivation(
+                "helper source escapes its selected library root".into(),
+            ));
+        }
+        let matches = entries
+            .iter()
+            .filter(|entry| {
+                crate::resolve(&entry.directory, &entry.file)
+                    .canonicalize()
+                    .is_ok_and(|candidate| candidate == path)
+            })
+            .collect::<Vec<_>>();
+        let [entry] = matches.as_slice() else {
+            return Err(SourceContractError::Derivation(format!(
+                "helper {} requires exactly one selected compile entry",
+                selected.function()
+            )));
+        };
+        let source = String::from_utf8(read_bounded(&path, 8_388_608)?)
+            .map_err(|error| SourceContractError::Derivation(error.to_string()))?;
+        if !entry.directory.is_absolute() {
+            return Err(SourceContractError::Derivation(
+                "helper compile directory must be absolute".into(),
+            ));
+        }
+        let mut entry = (*entry).clone();
+        entry.file = path.clone();
+        let options = options_for(&entry).map_err(SourceContractError::Derivation)?;
+        let unit = C11TranslationUnit {
+            source: &source,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        let summary = qcore_c_gateway::boolean_source::import_chunk_frame_helper_with_profile(
+            &unit,
+            revision,
+            selected.function(),
+            profile,
+            library,
+            selected.record(),
+            source_rules,
+        )
+        .map_err(SourceContractError::Derivation)?;
+        retained_source_bytes = retained_source_bytes
+            .checked_add(summary.source.len())
+            .ok_or_else(|| {
+                SourceContractError::Derivation("helper source byte budget overflow".into())
+            })?;
+        if retained_source_bytes > 32 * 1024 * 1024 {
+            return Err(SourceContractError::Derivation(
+                "retained helper source exceeds 32 MiB".into(),
+            ));
+        }
+        let checked_postconditions =
+            qcore_contract::chunk_contract::evaluate_boolean_frame_contract(
+                &summary,
+                selected.contract(),
+                summary.record(),
+                summary.protected_fields(),
+            )
+            .map_err(SourceContractError::Evaluation)?;
+        result.push(CheckedFrameHelper {
+            summary,
+            checked_postconditions,
+        });
+    }
+    Ok(result)
 }

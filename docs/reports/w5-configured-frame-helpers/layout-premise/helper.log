@@ -1,0 +1,31 @@
+
+*** Dumping AST Record Layout
+         0 | struct __va_list_tag
+         0 |   unsigned int gp_offset
+         4 |   unsigned int fp_offset
+         8 |   void * overflow_arg_area
+        16 |   void * reg_save_area
+           | [sizeof=24, align=8]
+
+*** Dumping AST Record Layout
+         0 | struct __NSConstantString_tag
+         0 |   const int * isa
+         8 |   int flags
+        16 |   const char * str
+        24 |   long length
+           | [sizeof=32, align=8]
+
+*** Dumping AST Record Layout
+         0 | struct nested
+         0 |   int first
+         4 |   int second
+           | [sizeof=8, align=4]
+
+*** Dumping AST Record Layout
+         0 | struct sample
+         0 |   struct nested prefix
+         0 |     int first
+         4 |     int second
+         8 |   int active
+        12 |   int metadata
+           | [sizeof=16, align=4]

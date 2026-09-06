@@ -410,3 +410,10 @@ cannot count as library cleanup. Suppressed close retains a descriptor even when
 down; suppressed reopen creates no new epoch. These runtime-only facts do not
 establish arbitrary kernel failures, production reachability or durability. See
 the [descriptor failure report](../../docs/reports/cycle19-file-descriptor-failures/README.md).
+
+The corpus now contains 58 modules. Five resource-loader modules supply 19
+resource declarations; the other 143 declarations reject through that consumer
+and belong to their explicit interpreters. `chunkio/error_frame.qcore` is the
+configured generic helper policy over `cio_chunk`; `chunkio/error_state.qcore`
+remains the policy of retained specialized lifecycle adapters. Their records
+must not be conflated. See the [helper report](../../docs/reports/w5-configured-frame-helpers/README.md).

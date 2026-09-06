@@ -207,3 +207,49 @@ fn repeated_policy_references_share_a_bounded_total_snapshot_budget() {
         "{error}"
     );
 }
+
+#[test]
+fn frame_helper_selection_snapshots_policies_and_rejects_ambiguous_sources() {
+    let fixture = Fixture::new();
+    fs::write(fixture.0.join("helper.qcore"), "helper policy snapshot").unwrap();
+    let mut config = fixture.good();
+    config["bindings"][0]["frame_helpers"] = json!([{"source":"nested/reset.c","function":"reset_metadata","record":"widget","contract":"helper.qcore"}]);
+    let policies = SourceContractPolicies::load(fixture.config(&config)).unwrap();
+    fs::write(fixture.0.join("helper.qcore"), "modified policy").unwrap();
+    let helper = &policies.frame_helpers_for_library("widgets")[0];
+    assert_eq!(helper.source(), std::path::Path::new("nested/reset.c"));
+    assert_eq!(helper.function(), "reset_metadata");
+    assert_eq!(helper.record(), "widget");
+    assert_eq!(helper.contract(), "helper policy snapshot");
+    assert!(policies.frame_helpers_for_library("absent").is_empty());
+    for path in ["", "../reset.c", "/reset.c", "nested/../reset.c"] {
+        let mut invalid = config.clone();
+        invalid["bindings"][0]["frame_helpers"][0]["source"] = json!(path);
+        assert!(
+            SourceContractPolicies::load(fixture.config(&invalid)).is_err(),
+            "{path}"
+        );
+    }
+    for field in ["function", "record"] {
+        for invalid_name in ["", "a b", "foo()", "1record"] {
+            let mut invalid = config.clone();
+            invalid["bindings"][0]["frame_helpers"][0][field] = json!(invalid_name);
+            assert!(SourceContractPolicies::load(fixture.config(&invalid)).is_err());
+        }
+    }
+    let first = config["bindings"][0]["frame_helpers"][0].clone();
+    config["bindings"][0]["frame_helpers"] = json!([first, first]);
+    assert!(SourceContractPolicies::load(fixture.config(&config)).is_err());
+}
+
+#[test]
+fn helper_policies_share_the_primary_policy_snapshot_budget() {
+    let fixture = Fixture::new();
+    fs::write(fixture.0.join("policy.qcore"), "x".repeat(1024 * 1024)).unwrap();
+    let mut config = fixture.good();
+    let helpers = (0..31).map(|index| json!({"source":"reset.c","function":format!("reset_{index}"),"record":"widget","contract":"policy.qcore"})).collect::<Vec<_>>();
+    config["bindings"][0]["frame_helpers"] = json!(helpers);
+    assert!(SourceContractPolicies::load(fixture.config(&config)).is_ok());
+    config["bindings"][0]["frame_helpers"].as_array_mut().unwrap().push(json!({"source":"reset.c","function":"too_many_bytes","record":"widget","contract":"policy.qcore"}));
+    assert!(SourceContractPolicies::load(fixture.config(&config)).is_err());
+}

@@ -485,6 +485,15 @@ inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
 
+[Configured frame helpers](reports/w5-configured-frame-helpers/README.md) remove
+the remaining helper-source/function/record/policy selection from the bounded
+Boolean process route. Generic imports protect the full declared modeled-field
+inventory and bind helpers to source/build/profile identities; a separate-TU
+second-codebase process test passes. Strict option preservation is the reusable
+default; the pinned adapter keeps its explicitly named historical projection.
+Actual recursive C layout equality remains an external premise. General
+lifecycle extraction and complete provider-owned source analysis remain open.
+
 [Configured source-contract dispatch](reports/w5-configured-source-contracts/README.md)
 now moves the bounded Boolean-field package/library/policy selection into L3
 `qcore-audit`, using verified registries and immutable policy snapshots. A second
@@ -618,8 +627,10 @@ fans out well across parallel agents).
 The [Lean CI gate](reports/w7-lean-ci/README.md) and
 [bounded generic model names](reports/w7-generic-lean-names/README.md) are
 implemented and locally validated (2026-09-07); hosted CI awaits a push.
-Historical model names remain compatibility aliases. Diagnostic renumbering
-is a separate work item.
+Historical model names remain compatibility aliases. Libevent diagnostic
+renumbering is already executed by W3. The [attribution repair](reports/w7-diagnostic-attribution/README.md)
+now enforces one local ASCII component after the exact selected plugin ID in
+both protocol response paths; it changes no manifest or wire shape.
 
 Small, continuous, do-with-adjacent-work:
 

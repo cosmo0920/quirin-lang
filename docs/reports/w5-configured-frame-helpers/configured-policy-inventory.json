@@ -1,0 +1,10 @@
+{
+  "chunkio": [
+    {
+      "contract": "module contract;\n\n// Generic source-frame policy for the declared cio_chunk model record.\n// The importer protects every Boolean field modeled for this record. Live,\n// exclusive access and actual cross-unit ABI equality remain caller premises.\nextern fn cio_error_reset(\n    chunk: borrow<'call, mut, cio_chunk> use one\n) -> unit\ncontract {\n    requires object_is_live;\n    requires exclusive_object_access;\n    ensures normal field_error_n == 0;\n    ensures normal writes_only_declared_fields;\n    ensures normal modeled_fields_are_preserved;\n};\n",
+      "function": "cio_error_reset",
+      "record": "cio_chunk",
+      "source": "cio_error.c"
+    }
+  ]
+}

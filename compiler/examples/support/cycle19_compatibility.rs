@@ -7,15 +7,17 @@ use qcore_audit::compile_db::{
 };
 use qcore_audit::projection::{AuditCounts, project_unit};
 use qcore_audit::report::AuditReport;
-use qcore_audit::source_contract::{SourceContractPolicies, SourceContractRegistry};
+use qcore_audit::source_contract::{
+    FrameHelperPolicy, SourceContractPolicies, SourceContractRegistry,
+    import_configured_frame_helpers_compatibility,
+};
 
-use qcore_compiler::chunk_contract::{check_chunk_frame_contract, check_chunk_source_contract};
+use qcore_compiler::chunk_contract::check_chunk_source_contract;
 use qcore_compiler::contract_loader::load_resource_contract_manifest;
 use qcore_compiler::profile_loader::{LoadedProfile, load_audited_bundle, verify_pin};
 use qcore_compiler::source_profiles::{FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile};
 use qcore_compiler::verifier_plugins::chunkio::{
-    ChunkFrameSummary, ChunkSourceResult, import_chunk_frame_helper,
-    import_chunk_source_with_helpers,
+    ChunkFrameSummary, ChunkSourceResult, import_chunk_source_with_helpers,
 };
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::verifier_plugins::libevent::monkey_source::{
@@ -231,6 +233,7 @@ pub fn run(
             "results": native_results,
             "backend_teardown": teardown_results,
             "source_policy_contract": include_str!("../../../contract/qcore/library/source_projection.qcore"),
+            "configured_frame_helper_policies": source_contracts.frame_helper_policy_inventory(),
             "frame_helper_contract": include_str!("../../../contract/qcore/chunkio/error_state.qcore"),
         });
         fs::write(
@@ -321,32 +324,30 @@ fn audit_library(
     let mut stream_parent = None;
     let mut context_parent = None;
     let mut filesystem_chunk = None;
-    if library == "chunkio" {
-        let entry = entries
-            .iter()
-            .find(|entry| entry.file.ends_with("cio_error.c"))
-            .ok_or("missing compiled ChunkIO error helper")?;
-        let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
-        let options = compiler_options(entry)?;
-        let unit = C11TranslationUnit {
-            source: &source,
-            include_paths: options.include_paths,
-            definitions: options.definitions,
-            dialect: options.dialect,
-            function_scope: LegacyFunctionScope::MainSourceDefinitions,
-        };
-        let helper = import_chunk_frame_helper(&unit, PINNED_FLUENT_BIT_COMMIT, "cio_error_reset")?;
-        let postconditions = check_chunk_frame_contract(
-            &helper,
-            include_str!("../../../contract/qcore/chunkio/error_state.qcore"),
-        )?;
-        println!(
-            "qcore-contract cio_error_reset: Checked ({postconditions} postconditions; complete constant-field helper body, live/exclusive premises assumed)"
-        );
-        chunk_helpers.push(helper);
-        println!(
-            "chunk-source dependency cio_error_reset: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
-        );
+    let helper_policies = source_contracts.frame_helpers_for_library(library);
+    if !helper_policies.is_empty() {
+        let profile = load_profile(FLUENT_BIT_SOURCE_SET).map_err(|error| error.to_string())?;
+        for checked in import_configured_frame_helpers_compatibility(
+            helper_policies,
+            source_root,
+            entries,
+            PINNED_FLUENT_BIT_COMMIT,
+            &profile,
+            library,
+            include_str!("../../../contract/qcore/library/source_projection.qcore"),
+        )
+        .map_err(|error| error.to_string())?
+        {
+            let function = checked.summary.function();
+            let postconditions = checked.checked_postconditions;
+            println!(
+                "qcore-contract {function}: Checked ({postconditions} postconditions; complete constant-field helper body, live/exclusive premises assumed)"
+            );
+            println!(
+                "chunk-source dependency {function}: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
+            );
+            chunk_helpers.push(checked.summary);
+        }
     }
     if library == "chunkio" {
         let entry = entries
@@ -781,6 +782,24 @@ fn audit_library(
 enum SourceContractConfiguration {
     Direct(SourceContractPolicies),
     Process(SourceContractRegistry),
+}
+
+impl SourceContractConfiguration {
+    fn frame_helper_policy_inventory(
+        &self,
+    ) -> std::collections::BTreeMap<&str, &[FrameHelperPolicy]> {
+        match self {
+            Self::Direct(policies) => policies.frame_helper_policy_inventory(),
+            Self::Process(registry) => registry.frame_helper_policy_inventory(),
+        }
+    }
+
+    fn frame_helpers_for_library(&self, library: &str) -> &[FrameHelperPolicy] {
+        match self {
+            Self::Direct(policies) => policies.frame_helpers_for_library(library),
+            Self::Process(registry) => registry.frame_helpers_for_library(library),
+        }
+    }
 }
 
 fn source_contract_configuration() -> Result<SourceContractConfiguration, String> {

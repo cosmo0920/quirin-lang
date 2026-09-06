@@ -1,0 +1,14 @@
+module contract;
+
+// The profile's explicit mapping uses the existing Locked Boolean axis.
+extern fn sample_prepare(record: borrow<'call, mut, Chunk> use one) -> i32
+contract {
+    requires chunk_is_live;
+    requires exclusive_chunk_access;
+    requires busy_is_boolean;
+    requires lock_is_boolean;
+    ensures normal result == old_lock;
+    ensures normal lock == old_lock;
+    ensures normal busy == old_busy;
+    ensures normal field_metadata == 0;
+};

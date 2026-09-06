@@ -246,7 +246,8 @@ That target grammar is neither a parser generator input already used by the comp
 ## G08. Source-contract service configuration v1
 
 This JSON format configures the audit service; it adds no QCore source syntax.
-All displayed fields are required, and unknown fields reject:
+The base fields below are required; `frame_helpers` is optional on each binding.
+Unknown fields reject:
 
 ```json
 {
@@ -275,3 +276,21 @@ Clang-imported summary and returns a checked certificate plus contract evaluatio
 only after existing trusted replay succeeds. Source: `crates/qcore-audit/src/source_contract.rs`.
 This implementation supports the existing bounded Boolean-field semantic profile;
 it is not a general contract solver. See the [execution record](reports/w5-configured-source-contracts/README.md).
+
+A binding may additionally declare `"frame_helpers": [{"source": "reset.c",
+"function": "reset_metadata", "record": "widget", "contract": "reset.qcore"}]`.
+Omission means no helper selection. At most 256 helpers are allowed per binding,
+with unique C function names; function/record identifiers are at most 128 ASCII
+bytes. Source paths must be contained relative paths within the selected library
+root. Policy paths resolve from the configuration directory and their snapshots
+share the existing 32 MiB aggregate policy budget.
+
+`import_configured_frame_helpers` requires exactly one selected compilation entry
+per source, canonical source containment, an absolute compilation directory, and
+strict preservation of supported preprocessing options. Unrepresented options
+reject. Source reads are bounded at 8 MiB each and retained imported helper source
+at 32 MiB per call; this is not a new bound on transient Clang preprocessing.
+`import_configured_frame_helpers_compatibility` explicitly preserves the existing
+pinned audit's historical option projection; there is no automatic fallback.
+`configured_frame_helper_policies` in the audit sidecar records snapshotted
+selection metadata, not proof that every configured helper was executed.

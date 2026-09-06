@@ -147,6 +147,24 @@ impl VerificationOutcome {
     }
 }
 
+/// Provider diagnostics use the selected manifest's complete plugin ID plus
+/// exactly one local component. Like plugin IDs, that component is bounded to
+/// 128 ASCII bytes, so a complete diagnostic code has at most 257 bytes.
+/// A dotted suffix could impersonate a separately registered nested provider;
+/// control characters could obscure attribution in rendered diagnostics.
+fn valid_provider_diagnostic_code(plugin_id: &PluginId, code: &str) -> bool {
+    let Some(local) = code
+        .strip_prefix(plugin_id.as_str())
+        .and_then(|suffix| suffix.strip_prefix('.'))
+    else {
+        return false;
+    };
+    (1..=128).contains(&local.len())
+        && local
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-'))
+}
+
 /// A firewall rejection with the reason code it is reported under. Distinct
 /// codes keep "invalid evidence" separable from "no core checker"
 /// (`docs/REEVALUATION_SPEC.md` §1's reason-code rule).
@@ -976,9 +994,7 @@ impl VerifierRegistry {
             || response.request_id != request.request_id
             || response.plugin_id != request.plugin_id
             || response.diagnostics.iter().any(|diagnostic| {
-                !diagnostic
-                    .code
-                    .starts_with(&format!("{}.", manifest.plugin_id))
+                !valid_provider_diagnostic_code(&manifest.plugin_id, &diagnostic.code)
             })
         {
             return VerificationOutcome::unknown("QP007", "invalid plugin response envelope");
@@ -1130,9 +1146,7 @@ impl VerifierRegistry {
             || response.request_id != request.request_id
             || response.plugin_id != request.plugin_id
             || response.diagnostics.iter().any(|diagnostic| {
-                !diagnostic
-                    .code
-                    .starts_with(&format!("{}.", manifest.plugin_id))
+                !valid_provider_diagnostic_code(&manifest.plugin_id, &diagnostic.code)
             })
         {
             return VerificationOutcome::unknown("QP007", "invalid plugin response envelope");

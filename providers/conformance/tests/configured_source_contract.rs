@@ -4,11 +4,15 @@
 //! The process host currently requires Unix process groups for bounded child
 //! execution; non-Unix hosts explicitly reject this provider transport.
 #![cfg(unix)]
-use qcore_audit::source_contract::{SourceContractError, SourceContractRegistry};
+use qcore_audit::compile_db::{CompileEntry, compiler_options};
+use qcore_audit::source_contract::{
+    CheckedFrameHelper, SourceContractError, SourceContractRegistry,
+    import_configured_frame_helpers,
+};
 use qcore_c_gateway::boolean_source::{
     ChunkSourceResult, ChunkSourceSummary, import_chunk_source_with_profile,
 };
-use qcore_c_gateway::legacy_c::C11TranslationUnit;
+use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
 use qcore_contract::profile_loader::{LoadedProfile, load_profile_directory};
 use qcore_schemas::{PluginManifest, SemanticWitness, sha256_hex};
 use serde_json::{Value, json};
@@ -23,6 +27,11 @@ const PROFILE: &str = include_str!("fixtures/configured_boolean_source/sample-se
 const MANIFEST: &str = include_str!("fixtures/configured_boolean_source/provider-template.json");
 const LIBRARY: &str = "sample_widgets";
 const PROVIDER: &str = "qcore.sample_boolean";
+const HELPER_SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample_reset.c");
+const HELPER_POLICY: &str = include_str!("fixtures/configured_boolean_source/sample_reset.qcore");
+const HELPER_MAIN: &str = include_str!("fixtures/configured_boolean_source/sample_with_helper.c");
+const HELPER_MAIN_POLICY: &str =
+    include_str!("fixtures/configured_boolean_source/sample_with_helper.qcore");
 static NEXT_FIXTURE: AtomicU64 = AtomicU64::new(0);
 
 struct Fixture(PathBuf);
@@ -37,6 +46,14 @@ impl Fixture {
         std::fs::create_dir(path.join("sample-set")).unwrap();
         std::fs::write(path.join("sample-set/profile.json"), PROFILE).unwrap();
         std::fs::write(path.join("sample.qcore"), POLICY).unwrap();
+        for (file, contents) in [
+            ("sample_reset.c", HELPER_SOURCE),
+            ("sample_reset.qcore", HELPER_POLICY),
+            ("sample_with_helper.c", HELPER_MAIN),
+            ("sample_with_helper.qcore", HELPER_MAIN_POLICY),
+        ] {
+            std::fs::write(path.join(file), contents).unwrap();
+        }
         let package = path.join("sample-provider");
         std::fs::create_dir(&package).unwrap();
         std::fs::copy(
@@ -73,6 +90,37 @@ impl Fixture {
     }
     fn config(&self) -> Value {
         json!({"schema_version":1,"packages":["sample-provider"],"bindings":[{"library":LIBRARY,"provider":PROVIDER,"contract":"sample.qcore"}]})
+    }
+    fn helper_config(&self) -> Value {
+        let mut config = self.config();
+        config["bindings"][0]["contract"] = json!("sample_with_helper.qcore");
+        config["bindings"][0]["frame_helpers"] = json!([{
+            "source": "sample_reset.c", "function": "sample_reset", "record": "sample_record", "contract": "sample_reset.qcore"
+        }]);
+        config
+    }
+    fn compile_entry(&self, file: &str) -> CompileEntry {
+        CompileEntry {
+            directory: self.0.clone(),
+            command: format!("clang -std=c11 -DSAMPLE_BUILD=1 -c {file}"),
+            file: self.0.join(file),
+        }
+    }
+    fn helpers(
+        &self,
+        registry: &SourceContractRegistry,
+        entries: &[CompileEntry],
+    ) -> Result<Vec<CheckedFrameHelper>, SourceContractError> {
+        let profile = self.profile();
+        import_configured_frame_helpers(
+            registry.frame_helpers_for_library(LIBRARY),
+            &self.0,
+            entries,
+            &profile.pin_for(LIBRARY).unwrap().git_commit,
+            &profile,
+            LIBRARY,
+            RULES,
+        )
     }
     fn registry(&self, config: &Value) -> Result<SourceContractRegistry, String> {
         let path = self.0.join("source-contracts.json");
@@ -263,4 +311,185 @@ fn process_package_rejects_an_installed_scope_wider_than_its_compiled_manifest()
     if let Ok(registry) = fixture.registry(&fixture.config()) {
         assert!(registry.verify(&source, "sample.c").is_err());
     }
+}
+
+fn helper_main_imports(
+    fixture: &Fixture,
+    helpers: &[CheckedFrameHelper],
+) -> Result<Vec<ChunkSourceResult>, String> {
+    let profile = fixture.profile();
+    let source = std::fs::read_to_string(fixture.0.join("sample_with_helper.c")).unwrap();
+    let entry = fixture.compile_entry("sample_with_helper.c");
+    let options = compiler_options(&entry).unwrap();
+    let summaries = helpers
+        .iter()
+        .map(|helper| helper.summary.clone())
+        .collect::<Vec<_>>();
+    import_chunk_source_with_profile(
+        &C11TranslationUnit {
+            source: &source,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        },
+        &profile.pin_for(LIBRARY).unwrap().git_commit,
+        &profile,
+        &[LIBRARY],
+        &summaries,
+        RULES,
+    )
+}
+
+#[test]
+fn configured_separate_helper_reaches_real_process_frame_execution() {
+    let fixture = Fixture::new();
+    let registry = fixture.registry(&fixture.helper_config()).unwrap();
+    assert_eq!(registry.frame_helpers_for_library(LIBRARY).len(), 1);
+    let helpers = fixture
+        .helpers(&registry, &[fixture.compile_entry("sample_reset.c")])
+        .unwrap();
+    assert_eq!(helpers.len(), 1);
+    assert_eq!(helpers[0].summary.record(), "sample_record");
+    assert_eq!(helpers[0].checked_postconditions, 3);
+    assert!(helpers[0].summary.protected_fields().contains("ready"));
+    let imported = helper_main_imports(&fixture, &helpers).unwrap();
+    let [ChunkSourceResult::Summary(summary)] = imported.as_slice() else {
+        panic!("helper composition did not import sample_prepare: {imported:?}")
+    };
+    assert!(
+        summary
+            .input_identity()
+            .helpers()
+            .contains_key("sample_reset")
+    );
+    assert!(summary.dependencies.contains_key("sample_reset"));
+    let verified = registry.verify(summary, "sample_with_helper.c").unwrap();
+    assert_eq!(verified.certificate.plugin_id().as_str(), PROVIDER);
+    assert_eq!(verified.evaluation.checked_states(), 4);
+    let Some(SemanticWitness::BooleanFieldContract(witness)) = verified.certificate.witness()
+    else {
+        panic!("missing checked source witness")
+    };
+    assert_eq!(&witness.summary, &***summary);
+    let input = serde_json::to_value(summary.source_input()).unwrap();
+    assert!(input.get("program").is_some());
+    assert!(input["program"].to_string().contains("FrameWrites"));
+    assert!(input.get("paths").is_none());
+    assert!(input.get("summary").is_none());
+    assert!(
+        summary
+            .paths
+            .iter()
+            .all(|path| !path.frame_writes.is_empty())
+    );
+
+    // A declaration alone does not discharge the helper call. The selected
+    // actual helper import is required to construct a checked main summary.
+    let missing = helper_main_imports(&fixture, &[]).unwrap();
+    assert_eq!(missing.len(), 1);
+    assert!(
+        matches!(&missing[0], ChunkSourceResult::Unknown { function, .. } if function == "sample_prepare")
+    );
+
+    // Helper and main layouts must agree, even when the selected Boolean
+    // field itself still has the expected ordinary int type.
+    std::fs::write(
+        fixture.0.join("sample_with_helper.c"),
+        HELPER_MAIN.replace("int metadata", "long metadata"),
+    )
+    .unwrap();
+    assert!(helper_main_imports(&fixture, &helpers).is_err());
+}
+
+#[test]
+fn configured_helper_policy_source_and_compile_inventory_fail_closed() {
+    let fixture = Fixture::new();
+    let config = fixture.helper_config();
+    let registry = fixture.registry(&config).unwrap();
+    let entry = fixture.compile_entry("sample_reset.c");
+    assert!(fixture.helpers(&registry, &[]).is_err());
+    assert!(
+        fixture
+            .helpers(&registry, &[entry.clone(), entry.clone()])
+            .is_err()
+    );
+
+    for option in ["-include injected.h", "-USAMPLE_BUILD", "@compiler.rsp"] {
+        let mut unsupported = entry.clone();
+        unsupported.command.push(' ');
+        unsupported.command.push_str(option);
+        assert!(
+            fixture.helpers(&registry, &[unsupported]).is_err(),
+            "unsupported preprocessing option was ignored: {option}"
+        );
+    }
+
+    // A relative compile entry still resolves quoted headers beside the
+    // selected source, rather than beside the process working directory.
+    std::fs::write(
+        fixture.0.join("sample_record.h"),
+        "struct sample_record { int ready; int metadata; };\n",
+    )
+    .unwrap();
+    std::fs::write(
+        fixture.0.join("sample_reset.c"),
+        HELPER_SOURCE.replace(
+            "struct sample_record { int ready; int metadata; };",
+            "#include \"sample_record.h\"",
+        ),
+    )
+    .unwrap();
+    let mut relative = entry.clone();
+    relative.file = PathBuf::from("sample_reset.c");
+    assert!(fixture.helpers(&registry, &[relative]).is_ok());
+    std::fs::write(fixture.0.join("sample_reset.c"), HELPER_SOURCE).unwrap();
+
+    // Changing a helper postcondition cannot bless its actual source writes.
+    std::fs::write(
+        fixture.0.join("sample_reset.qcore"),
+        HELPER_POLICY.replace("field_metadata == 0", "field_metadata == 1"),
+    )
+    .unwrap();
+    let false_policy = fixture.registry(&config).unwrap();
+    assert!(matches!(
+        fixture.helpers(&false_policy, std::slice::from_ref(&entry)),
+        Err(SourceContractError::Evaluation(_))
+    ));
+    // The original registry keeps the policy bytes it loaded.
+    assert!(
+        fixture
+            .helpers(&registry, std::slice::from_ref(&entry))
+            .is_ok()
+    );
+
+    // A changed helper body violates the original snapshotted policy.
+    std::fs::write(
+        fixture.0.join("sample_reset.c"),
+        HELPER_SOURCE.replace("metadata = 0", "metadata = 1"),
+    )
+    .unwrap();
+    assert!(matches!(
+        fixture.helpers(&registry, std::slice::from_ref(&entry)),
+        Err(SourceContractError::Evaluation(_))
+    ));
+
+    // A metadata policy cannot authorize writes to a profile-protected field.
+    std::fs::write(
+        fixture.0.join("sample_reset.c"),
+        HELPER_SOURCE.replace(
+            "record->metadata = 0;",
+            "record->metadata = 0; record->ready = 0;",
+        ),
+    )
+    .unwrap();
+    assert!(matches!(
+        fixture.helpers(&registry, std::slice::from_ref(&entry)),
+        Err(SourceContractError::Derivation(_))
+    ));
+    std::fs::remove_file(fixture.0.join("sample_reset.c")).unwrap();
+    assert!(matches!(
+        fixture.helpers(&registry, &[entry]),
+        Err(SourceContractError::Derivation(_))
+    ));
 }

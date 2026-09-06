@@ -1,0 +1,110 @@
+{
+  "base_commit": "edba69e2a05da88b34e75a98b4d118504057a49f",
+  "status": "passed",
+  "workspace_tests": 737,
+  "provider_tests": 19,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 10,
+  "contract_modules": 58,
+  "ct_mapped": 7,
+  "ct_unmapped": 43,
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "uncompressed_sha256": "05297235aaee0bb07cc494d84b7eb70d6124a93129cbbf37eda1b107d4c655dd"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "log": "checks.log.gz",
+      "uncompressed_sha256": "8706e23ec17cbd5aa76d6dce445d33066f92acff0211e2855cd7c39dc0cb4b73"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "log": "lean-build.log.gz",
+      "uncompressed_sha256": "a76d3b5a8295b95ecaf65c98ff0fad03eceafe368bebbe23fe441ba88d5c4d62"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "log": "lean-audits.log.gz",
+      "uncompressed_sha256": "2189d8aa9aeeff22362d8188d5ed08953bd606ee1a2592ce65633ea98443ea62"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "log": "providers.log.gz",
+      "uncompressed_sha256": "a1959b094de8b01c68a698b192e38f1cb4012445eeb4b67ef498a136f7045d05"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "log": "python.log.gz",
+      "uncompressed_sha256": "b99b8ed9d8b037c11dcf14b7ecfdf5222a1919bf9a51ba801cde2c0cc891d8d5"
+    },
+    "gateway-focused": {
+      "command": "cargo test -p qcore-c-gateway",
+      "exit_code": 0,
+      "log": "gateway-focused.log.gz",
+      "uncompressed_sha256": "7ac671c0ddcff36555f4d98fcd7b40e7fd8b18d9f353c31c45fa5133331d49de"
+    },
+    "compatibility-focused": {
+      "command": "cargo test -p qcore-compiler chunk_source",
+      "exit_code": 0,
+      "log": "compatibility-focused.log.gz",
+      "uncompressed_sha256": "36e46a935e55a5a69f768f776a052879ed56d464ed91098314eb0b724d4112e4"
+    },
+    "process-focused": {
+      "command": "cargo test --manifest-path providers/Cargo.toml -p qcore-provider-conformance --test configured_source_contract",
+      "exit_code": 0,
+      "log": "process-focused.log.gz",
+      "uncompressed_sha256": "d59ed79bb9fc129e6e359696b303d6ff1769a44d6ff2f6be15e76a2c6fe26b75"
+    },
+    "frame-policy-focused": {
+      "command": "cargo test -p qcore-contract --test boolean_frame_policy",
+      "exit_code": 0,
+      "log": "frame-policy-focused.log.gz",
+      "uncompressed_sha256": "d2884d50875d56d8ccfcb8a3ea8650d4e4864c4b2c97807555e94ece8f9afb9e"
+    }
+  },
+  "source_sha256": {
+    "AGENTS.md": "796329c954407b03b669febf7f6992403246375c7fc81e2c78d876e72a04723a",
+    "CLAUDE.md": "d09b17257dce924f92cab08f36ee35a7e9c809dff66580469320536f78b6f4f5",
+    "README.md": "22708258c7c6cdc2fe58bf9431b5c2352957fc5f36521a13d1cbb392a5c13a42",
+    "compiler/examples/support/cycle19_compatibility.rs": "243fbe346262e874bf8edb8edf029f4924b9d8c732d092e3af79a60bca53323b",
+    "compiler/tests/contract_loader.rs": "97f388eee85982aaad4c1f31dbf38e3eec79712260a9910827bd0b784882be12",
+    "compiler/tests/qcore_contract_corpus.rs": "3f918668d2b722a1824a43ef1305bb572c6ee8104427ca6d587697166ec82270",
+    "contract/profiles/fluent-bit/source-contracts.json": "a0f0154696e71633c9f7b3ec36636be619478348606ba6ad5b608a4127d933cf",
+    "contract/qcore/README.md": "b143234c570f4af5eb48d6d76ebe0b75ee6eb69454fad545e4a8b947887fa72b",
+    "contract/qcore/chunkio/error_frame.qcore": "546c0b886b3e835045388266043202c6cbbeff7a5daa043feea91c47cd16a7ce",
+    "crates/qcore-audit/src/source_contract.rs": "c9c451263d9a9bf214c222e45c82eef6588afb1f2ea5a734e6c20c2905b1f92a",
+    "crates/qcore-audit/tests/source_contract_config.rs": "a9ceefe884c7907a7293e6bb6b1473aa2bbfc5896dfce1db4cb25ad9b962a639",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "f9c957367d3211b50262395310041f1ff5085d9e4b947802bebb30aaa2bf5ef9",
+    "crates/qcore-c-gateway/tests/boolean_frame_helpers.rs": "e93290fa744e3caa8af548e3e8c0e6faa51aed1c142861f830cc1d3ff5a12fb0",
+    "crates/qcore-contract/src/chunk_contract.rs": "1d49d2369af9da0505595321b3b8e66b8675b7f31ff52f7cbd185e45a5826332",
+    "crates/qcore-contract/tests/boolean_frame_policy.rs": "94d4c66e2a2aa814be7a1801a9370cf1e7fec994231a4d351bbd7259ef438dbb",
+    "crates/qcore-verifier-host/src/lib.rs": "f6ff70f7e4026a4d601b3502761de949fc7693c50b8e5fedde4f4960f26f7694",
+    "crates/qcore-verifier-host/tests/diagnostic_attribution.rs": "650bf1b16c9b6370512353d52d89a8e549406bbb35bf13ec5ccfa5b54c429d0f",
+    "docs/GENERALIZATION_PLAN.md": "d073942bf020e41f699f93f12c312ece115266e09df5213411f87f687a576d4b",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md": "ae6ec49f4e7dc050cf75a72750f05b3526dee85f9e622f2042e11df671b2e2ec",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": "752c3d3ca492e97fca64a941fa4f2628e6ea0fea8971dd2cb6236207c9a8e294",
+    "docs/QCORE_SPEC_r0_3.md": "75f278e230d4ea357aefd3213aac1d44863653978064f02b7d882ced135b1851",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "936c7208f1e8a8806bbd8168afe0f44d197338f3ca231eaae2776415887b281f",
+    "docs/VALIDATION.md": "1358320e487106bf1755726dfe250d61e8e2b96ec1bf53d37674aa5a0459724b",
+    "docs/reviews/r0_3/REVIEW.md": "676fac46367ffd1a5e6efe3fd1ca2171ad7aa84cd1459e577903508904e408ae",
+    "docs/reviews/r0_3/acceptance.json": "be9fe3f6072cef78946602e676a2bc78288c06e86aafe4a4b98542402f28724b",
+    "proof/AuditCycle19.lean": "8c56a50ec30185ff5767ce418782b0c8971c56a83993c113d48861fa26a8a747",
+    "proof/QCore/ChunkSource.lean": "39df3a83049590895f3d736f9df1d9010f6a75a5a896f2f12e320b9cfb732998",
+    "providers/README.md": "81e28ea6f6b6fa9444a40fbaf2d5a49b04b8e568357baba22f9f526b34a6ef1d",
+    "providers/conformance/tests/configured_source_contract.rs": "c33b95cd02217c720fa835b283165f4b80eba9f501dd54302a3ded3600e8b7e2",
+    "providers/conformance/tests/fixtures/configured_boolean_source/sample.c": "97f4da5ad025f0d2541501036eccac3761776974348123eb661ccf36b3c240ab",
+    "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.c": "a5804b25e921c80868ef493c4ae8589a0bd77811e3dc47e7ad2ddc9d568a6c3b",
+    "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qcore": "a9b481958ce71daaf9874147f1259ba1476437451a39617d3089ee3b36752081",
+    "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.c": "cc411085edc7dcc0b085c61d03ec6769e8cd47975a52c5afdf8a03d8883733c6",
+    "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.qcore": "4422b7be92ac5fa1611fe93c30b16f20e9230c91112c86d6916c550049392aca"
+  }
+}

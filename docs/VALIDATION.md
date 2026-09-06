@@ -141,3 +141,12 @@ preceding baseline and to each other. Counts remain 2 Safe / 42 provisional
 Unsafe / 137 Unknown, plus four data-only units; source evidence remains three
 checked function contracts and 93 Unknown. CT mapping remains 7/50, with 43
 unmapped; these test totals do not change that conformance boundary.
+
+[Configured frame helpers and diagnostic attribution](reports/w5-configured-frame-helpers/README.md)
+pass 737 workspace tests, 19 separate provider tests, 43 Python tests, both
+format/Clippy gates, both probes, Lean build and 20 axiom audits. Ten new generic
+frame theorems and separate-TU process tests cover protected-field preservation
+under explicit source/build/ABI premises. Corpus pins are updated for 58 modules.
+The full production comparison preserves all verdicts and source evidence;
+the final report adds the selected helper-policy inventory. No raw promotion;
+CT mappings remain 7/50, with 43 unmapped.

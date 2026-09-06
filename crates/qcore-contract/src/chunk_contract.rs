@@ -24,6 +24,63 @@ pub fn evaluate_chunk_frame_contract(
     summary: &ChunkFrameSummaryRecord,
     source: &str,
 ) -> Result<usize, String> {
+    evaluate_frame_contract(
+        summary,
+        source,
+        "Chunk",
+        "chunk_is_live",
+        "exclusive_chunk_access",
+        "lock_is_preserved",
+        &BTreeSet::from(["lock".into()]),
+    )
+}
+
+/// Evaluate a declared frame policy over a selected nominal record and protected
+/// field set. These arguments are premises; this does not establish source origin.
+/// Source-bound consumers must derive them from an opaque checked import.
+pub fn evaluate_boolean_frame_contract(
+    summary: &ChunkFrameSummaryRecord,
+    source: &str,
+    record: &str,
+    protected_fields: &BTreeSet<String>,
+) -> Result<usize, String> {
+    if !matches!(tokens(record)?.as_slice(), [TokenKind::Word(_)]) {
+        return Err("Boolean frame record must be one nominal identifier".into());
+    }
+    if protected_fields.is_empty() {
+        return Err("Boolean frame contract requires a nonempty modeled-field inventory".into());
+    }
+    if summary.writes.is_empty()
+        || summary
+            .writes
+            .iter()
+            .any(|(field, _)| protected_fields.contains(field))
+    {
+        return Err(
+            "Boolean frame helper must write nonempty metadata disjoint from modeled fields".into(),
+        );
+    }
+    evaluate_frame_contract(
+        summary,
+        source,
+        record,
+        "object_is_live",
+        "exclusive_object_access",
+        "modeled_fields_are_preserved",
+        protected_fields,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn evaluate_frame_contract(
+    summary: &ChunkFrameSummaryRecord,
+    source: &str,
+    record: &str,
+    live: &str,
+    exclusive: &str,
+    preserved: &str,
+    protected_fields: &BTreeSet<String>,
+) -> Result<usize, String> {
     let parsed = parse_source_program(source).map_err(|error| error.to_string())?;
     let declarations: Vec<_> = parsed
         .declarations
@@ -43,7 +100,7 @@ pub fn evaluate_chunk_frame_contract(
         return Err("frame helper requires explicit use one".into());
     }
     let parameter = tokens(&decl.parameters[0].type_source)?;
-    let expected = tokens("borrow<'call, mut, Chunk>")?;
+    let expected = tokens(&format!("borrow<'call, mut, {record}>"))?;
     // Lifetimes are binders; their spelling does not change the borrow mode.
     if parameter.len() != expected.len()
         || parameter
@@ -100,17 +157,22 @@ pub fn evaluate_chunk_frame_contract(
             }
         }
     }
-    if requirements != BTreeSet::from(["chunk_is_live".into(), "exclusive_chunk_access".into()]) {
+    if requirements != BTreeSet::from([live.into(), exclusive.into()]) {
         return Err("frame contract must require live storage and exclusive access".into());
     }
-    if !ghost_names.contains("writes_only_declared_fields")
-        || !ghost_names.contains("lock_is_preserved")
-    {
+    if !ghost_names.contains("writes_only_declared_fields") || !ghost_names.contains(preserved) {
         return Err("frame contract must constrain the write footprint and lock frame".into());
     }
+    if summary
+        .writes
+        .iter()
+        .any(|(field, _)| !fields.contains(field))
+    {
+        return Err("frame contract leaves a written field unconstrained".into());
+    }
     let mut facts = BTreeMap::from([
-        ("chunk_is_live".into(), 1),
-        ("exclusive_chunk_access".into(), 1),
+        (live.into(), 1),
+        (exclusive.into(), 1),
         (
             "writes_only_declared_fields".into(),
             i128::from(
@@ -122,13 +184,13 @@ pub fn evaluate_chunk_frame_contract(
             ),
         ),
         (
-            "lock_is_preserved".into(),
+            preserved.into(),
             i128::from(
                 summary
                     .writes
                     .as_slice()
                     .iter()
-                    .all(|(field, _)| field != "lock"),
+                    .all(|(field, _)| !protected_fields.contains(field)),
             ),
         ),
     ]);

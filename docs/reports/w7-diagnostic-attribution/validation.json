@@ -1,0 +1,23 @@
+{
+  "report_base_head": "edba69e2a05da88b34e75a98b4d118504057a49f",
+  "source_state": "working tree including diagnostic attribution repair; parent also implementing independent generic helper import",
+  "local_code_grammar": "[A-Za-z0-9_-]{1,128}",
+  "maximum_full_code_bytes": 257,
+  "wire_or_manifest_shape_changed": false,
+  "before_regressions": {
+    "passed": 3,
+    "failed": 2
+  },
+  "host_tests_passed": 9,
+  "real_process_source_tests_passed": 3,
+  "clippy_exit_code": 0,
+  "format_exit_code": 0,
+  "source_sha256": {
+    "crates/qcore-verifier-host/src/lib.rs": "f6ff70f7e4026a4d601b3502761de949fc7693c50b8e5fedde4f4960f26f7694",
+    "crates/qcore-verifier-host/tests/diagnostic_attribution.rs": "650bf1b16c9b6370512353d52d89a8e549406bbb35bf13ec5ccfa5b54c429d0f"
+  },
+  "limitations": [
+    "This validates diagnostic code attribution, not provider message truth or terminal-text escaping.",
+    "Full standing gate and any combined corpus audit belong to the parent integration run."
+  ]
+}

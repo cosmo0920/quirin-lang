@@ -1,0 +1,10 @@
+module contract;
+
+extern fn sample_reset(record: borrow<'call, mut, sample_record> use one) -> unit
+contract {
+    requires object_is_live;
+    requires exclusive_object_access;
+    ensures normal field_metadata == 0;
+    ensures normal writes_only_declared_fields;
+    ensures normal modeled_fields_are_preserved;
+};

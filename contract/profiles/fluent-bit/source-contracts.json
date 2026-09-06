@@ -1,11 +1,21 @@
 {
   "schema_version": 1,
-  "packages": ["../../../build/cycle19/provider-packages/qcore.chunkio"],
+  "packages": [
+    "../../../build/cycle19/provider-packages/qcore.chunkio"
+  ],
   "bindings": [
     {
       "library": "chunkio",
       "provider": "qcore.chunkio",
-      "contract": "../../qcore/chunkio/lock_state.qcore"
+      "contract": "../../qcore/chunkio/lock_state.qcore",
+      "frame_helpers": [
+        {
+          "source": "cio_error.c",
+          "function": "cio_error_reset",
+          "record": "cio_chunk",
+          "contract": "../../qcore/chunkio/error_frame.qcore"
+        }
+      ]
     },
     {
       "library": "fluent_bit",

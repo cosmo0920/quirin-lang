@@ -555,3 +555,26 @@ three checked function contracts and 93 Unknown entries remain unpromoted.
 Hardcoded provider/policy selection and the duplicate pre-dispatch evaluation
 are removed from this bounded process route. General lifecycle source import,
 other specialized adapters and full W5 consolidation remain open.
+
+Configured Boolean frame helpers are implemented (2026-09-07;
+`docs/reports/w5-configured-frame-helpers/README.md`). Helper source/function/
+record/policy selection now comes from configuration. The gateway validates
+exact declared record/prototype/field vectors, source/build/profile identity
+and constant-only metadata writes disjoint from every modeled field on the
+record. A second codebase executes a separately imported helper through the
+same schemas-only process and trusted replay. The reusable service rejects
+unrepresented compiler options; the pinned adapter explicitly retains its
+historical option projection. Actual nested C layout/linker equality remains
+an outer-audit premise. Ten generic Lean frame-preservation theorems pass.
+No raw Cycle19 unit is promoted: 2 Safe /42 provisional Unsafe /137 Unknown
+plus four data-only units; three checked function contracts and 93 Unknown.
+The helper policy inventory is explicit report metadata; general lifecycle
+import, owned task execution and broader W5 consolidation remain open.
+
+W7 diagnostic attribution now requires the exact selected plugin ID plus one
+1–128-byte ASCII local code (letters, digits, underscore or hyphen), in both
+protocol response checks. Nested-provider spoofing, empty suffixes and control
+characters reject with QP007 before verdict admission. Valid provider codes and
+all existing evidence gates remain unchanged. This repairs attribution, not a
+previously demonstrated Safe-admission bypass. Evidence:
+`docs/reports/w7-diagnostic-attribution/README.md`.

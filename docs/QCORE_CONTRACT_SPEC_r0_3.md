@@ -264,6 +264,24 @@ correlations retain unresolved effects and cannot produce Safe. Retained state
 following an unresolved operation is not itself proof of a leak; independently
 established leaks remain evidence. See the [transfer validation report](reports/w4-nullable-removal/README.md).
 
+Generic Boolean frame helpers now use an explicit nominal C record and the
+complete modeled-field inventory from a loaded profile. `evaluate_boolean_frame_contract`
+checks a mutable `borrow<'life, mut, Record> use one` parameter, unit result,
+`object_is_live` and `exclusive_object_access` premises, constant `field_NAME`
+post-state facts, `writes_only_declared_fields` and `modeled_fields_are_preserved`.
+The evaluator intrinsically rejects empty or modeled-field writes. Both frame
+evaluators reject written fields omitted from the policy, even when a policy
+negates the footprint predicate. Schema-only evaluation remains declared-model
+evidence; the configured service additionally requires an opaque Clang import.
+
+The source importer checks exact record/type spelling, direct parameter identity,
+external helper prototypes, ordered field/type vectors and constant-only writes.
+Every field modeled for that record is protected, including fields declared by
+other libraries in the same profile. Caller composition rechecks the protected
+inventory even for legacy helpers. These declared layout vectors do not prove
+recursive nested C offsets or linker identity; actual cross-unit ABI equality
+remains an outer-audit premise. See [frame helper evidence](reports/w5-configured-frame-helpers/README.md).
+
 ## C09. Custody, access, lifetime and quantitative clauses
 
 Custody contracts state who remains responsible for a resource. Access contracts state who may read or write an identified footprint. Lifetime conditions state when identities remain valid. Quantitative clauses state credit, live-count or cost relations. These domains are related but not interchangeable.

@@ -51,9 +51,10 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
   guard/scope binders. The later scoped-copy source path now executes Linux C11
   leaf workers. CT15 maps join failure and CT19 uses real sibling-failure source;
   explicit Result recovery now maps CT13 with native storage checks.
-- W7 has local Libevent diagnostic codes, generic Lean names and Lean/axiom CI.
+- W7 has local Libevent diagnostic codes, exact provider diagnostic attribution,
+  generic Lean names and Lean/axiom CI.
 - The native reopen-failure evidence package is now present and separately
   validated. Fixed observations do not promote raw Cycle19 source units.
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
-Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 722 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Seventeen separate provider tests also pass. The latest full pinned audit comparison is archived in the [configured source-contract report](../../reports/w5-configured-source-contracts/README.md). These counts are different suites, not interchangeable conformance cases.
+Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 737 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nineteen separate provider tests also pass. The latest full pinned audit comparison is archived in the [configured frame-helper report](../../reports/w5-configured-frame-helpers/README.md). These counts are different suites, not interchangeable conformance cases.

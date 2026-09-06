@@ -12,7 +12,7 @@ use qcore_contract::profile_loader::LoadedProfile;
 use qcore_schemas::profile::{BooleanFieldModel, OperationKind};
 use serde::Serialize;
 use serde_json::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
@@ -251,9 +251,10 @@ impl ChunkSourceSummary {
     }
 }
 
-/// A checked, nonrecursive helper with one borrowed ChunkIO pointer and only
-/// constant writes to ordinary int fields outside lock/busy. Source text is
-/// retained; the audit must establish revision, build and cross-unit ABI identity.
+/// A checked, nonrecursive helper with one borrowed record pointer and only
+/// constant writes to ordinary int fields outside its protected model fields.
+/// Source text is retained; the audit must establish cross-unit ABI identity.
+/// Ordered field/type vectors do not establish recursive offsets or alignment.
 ///
 /// ```compile_fail
 /// use qcore_c_gateway::boolean_source::ChunkFrameSummary;
@@ -270,7 +271,15 @@ impl ChunkSourceSummary {
 pub struct ChunkFrameSummary(
     ChunkFrameSummaryRecord,
     #[serde(skip)] BooleanSourceIdentity,
+    #[serde(skip)] FrameBinding,
 );
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct FrameBinding {
+    record: String,
+    protected_fields: BTreeSet<String>,
+    profile: Option<(String, String)>,
+}
 
 impl std::ops::Deref for ChunkFrameSummary {
     type Target = ChunkFrameSummaryRecord;
@@ -280,6 +289,16 @@ impl std::ops::Deref for ChunkFrameSummary {
 }
 
 impl ChunkFrameSummary {
+    /// Exact C record name checked against the helper's pointer parameter.
+    pub fn record(&self) -> &str {
+        &self.2.record
+    }
+
+    /// Fields the imported helper is intrinsically forbidden to write.
+    pub fn protected_fields(&self) -> &BTreeSet<String> {
+        &self.2.protected_fields
+    }
+
     /// Identity captured by the importer, never supplied by a schema record.
     pub fn input_identity(&self) -> &BooleanSourceIdentity {
         &self.1
@@ -296,19 +315,20 @@ impl ChunkFrameSummary {
 fn record_layout(
     source: &str,
     unit: &C11TranslationUnit<'_>,
+    record_name: &str,
 ) -> Result<Vec<(String, String)>, String> {
-    let declarations = ast_declarations(source, unit, "cio_chunk")?;
+    let declarations = ast_declarations(source, unit, record_name)?;
     let exact: Vec<_> = declarations
         .iter()
         .filter(|node| {
             kind(node) == "RecordDecl"
-                && node["name"] == "cio_chunk"
+                && node["name"].as_str() == Some(record_name)
                 && node["completeDefinition"] == true
                 && node["tagUsed"] == "struct"
         })
         .collect();
     let [record] = exact.as_slice() else {
-        return Err("expected one ordinary ChunkIO record".into());
+        return Err("expected one ordinary declared record".into());
     };
     children(record)
         .iter()
@@ -340,14 +360,95 @@ pub fn import_chunk_frame_helper(
     function: &str,
     source_contract_rules: &str,
 ) -> Result<ChunkFrameSummary, String> {
+    import_frame_helper(
+        unit,
+        revision,
+        expected_revision,
+        function,
+        "cio_chunk",
+        &BTreeSet::from(["busy".into(), "lock".into()]),
+        None,
+        source_contract_rules,
+    )
+}
+
+/// Import a helper against an explicit declared record model. Every Boolean
+/// field modeled for this record in the full profile is protected, including
+/// fields belonging to libraries not selected for the eventual caller import.
+/// Profile selection is retained inside the opaque helper; the parent import
+/// rechecks it and serializes its existing complete profile identity.
+pub fn import_chunk_frame_helper_with_profile(
+    unit: &C11TranslationUnit<'_>,
+    revision: &str,
+    function: &str,
+    profile: &LoadedProfile,
+    model_library: &str,
+    record: &str,
+    source_contract_rules: &str,
+) -> Result<ChunkFrameSummary, String> {
+    let library = profile
+        .library(model_library)
+        .ok_or("unknown helper model library")?;
+    let models = library
+        .boolean_field_models
+        .iter()
+        .filter(|model| model.record == record)
+        .collect::<Vec<_>>();
+    if models.is_empty() {
+        return Err("helper record has no selected declared Boolean model".into());
+    }
+    for model in models {
+        field_kind(model)?;
+    }
+    let pin = profile
+        .pin_for(model_library)
+        .ok_or("missing helper source pin")?;
+    let protected = protected_fields(profile, record);
+    let digest = qcore_schemas::sha256_hex(
+        &serde_json::to_vec(profile.manifest()).map_err(|e| e.to_string())?,
+    );
+    import_frame_helper(
+        unit,
+        revision,
+        &pin.git_commit,
+        function,
+        record,
+        &protected,
+        Some((model_library.into(), digest)),
+        source_contract_rules,
+    )
+}
+
+fn protected_fields(profile: &LoadedProfile, record: &str) -> BTreeSet<String> {
+    profile
+        .manifest()
+        .libraries
+        .values()
+        .flat_map(|library| &library.boolean_field_models)
+        .filter(|model| model.record == record)
+        .map(|model| model.field.clone())
+        .collect()
+}
+
+#[allow(clippy::too_many_arguments)]
+fn import_frame_helper(
+    unit: &C11TranslationUnit<'_>,
+    revision: &str,
+    expected_revision: &str,
+    function: &str,
+    record: &str,
+    protected: &BTreeSet<String>,
+    profile_binding: Option<(String, String)>,
+    source_contract_rules: &str,
+) -> Result<ChunkFrameSummary, String> {
     if revision != expected_revision {
         return Err("chunk helper source revision mismatch".into());
     }
     let compiler = CompilerIdentity::capture()?;
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     let ast = function_ast(&source, unit, function)?;
-    if ast["type"]["qualType"] != "void (struct cio_chunk *)" {
-        return Err("helper requires one ChunkIO pointer and void result".into());
+    if ast["type"]["qualType"] != format!("void (struct {record} *)") {
+        return Err("helper requires one declared record pointer and void result".into());
     }
     let [parameter, body] = children(&ast) else {
         return Err("unmodeled helper parameters or attributes".into());
@@ -358,7 +459,7 @@ pub fn import_chunk_frame_helper(
     {
         return Err("unmodeled helper definition".into());
     }
-    let layout = record_layout(&source, unit)?;
+    let layout = record_layout(&source, unit, record)?;
     let id = parameter["id"]
         .as_str()
         .ok_or("missing helper parameter identity")?;
@@ -373,14 +474,17 @@ pub fn import_chunk_frame_helper(
         if kind(statement) != "BinaryOperator" || statement["opcode"] != "=" {
             return Err("helper requires a direct assignment".into());
         }
+        if protected.contains(field) || !layout.contains(&(field.into(), "int".into())) {
+            return Err(
+                "helper must write only ordinary int fields outside the declared Boolean models"
+                    .into(),
+            );
+        }
         qcore_contract::contract_observation::check_contract_facts(
             source_contract_rules,
             "frame_write",
             &[
-                (
-                    "lifecycle_field",
-                    i128::from(matches!(field, "busy" | "lock")),
-                ),
+                ("lifecycle_field", i128::from(protected.contains(field))),
                 (
                     "ordinary_int_field",
                     i128::from(layout.contains(&(field.into(), "int".into()))),
@@ -389,6 +493,7 @@ pub fn import_chunk_frame_helper(
         )?;
         let mut importer = Importer {
             parameter_id: id,
+            record_name: record,
             field_name: field,
             used_field: false,
             helpers: &BTreeMap::new(),
@@ -435,6 +540,11 @@ pub fn import_chunk_frame_helper(
             writes,
         },
         identity,
+        FrameBinding {
+            record: record.into(),
+            protected_fields: protected.clone(),
+            profile: profile_binding,
+        },
     ))
 }
 
@@ -494,28 +604,61 @@ pub fn import_chunk_source_with_profile(
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     let mut checked_helpers = BTreeMap::new();
     if !helpers.is_empty() {
-        let layout = record_layout(&source, unit)?;
+        let profile_digest = qcore_schemas::sha256_hex(
+            &serde_json::to_vec(profile.manifest()).map_err(|e| e.to_string())?,
+        );
         for helper in helpers {
+            let record = &helper.2.record;
+            let abi = format!("int (struct {record} *)");
+            if !models.contains_key(&abi) {
+                return Err("helper record is not a selected Boolean model".into());
+            }
+            if let Some((library, digest)) = &helper.2.profile
+                && (model_libraries.get(&abi) != Some(library)
+                    || digest != &profile_digest
+                    || helper.input_identity().source_revision() != source_revision
+                    || helper.input_identity().dialect()
+                        != unit.dialect.clang_argument().trim_start_matches("-std=")
+                    || helper.1.compiler != compiler
+                    || helper.input_identity().source_contract_digest()
+                        != qcore_schemas::sha256_hex(source_contract_rules.as_bytes()))
+            {
+                return Err("helper source/build/profile selection mismatch".into());
+            }
+            let protected = protected_fields(profile, record);
+            if helper
+                .writes
+                .iter()
+                .any(|(field, _)| protected.contains(field))
+            {
+                return Err("helper writes a declared Boolean model field".into());
+            }
+            let layout = record_layout(&source, unit, record)?;
             let declarations = ast_declarations(&source, unit, &helper.function)?;
             let exact: Vec<_> = declarations
                 .iter()
                 .filter(|node| kind(node) == "FunctionDecl" && node["name"] == helper.function)
                 .collect();
+            let external_prototypes = exact.iter().all(|decl| {
+                decl["storageClass"] != "static"
+                    && decl["type"]["qualType"] == format!("void (struct {record} *)")
+                    && children(decl)
+                        .iter()
+                        .all(|child| kind(child) == "ParmVarDecl")
+            });
+            if exact.is_empty()
+                || !external_prototypes
+                || helper.layout != layout
+                || checked_helpers.contains_key(&helper.function)
+            {
+                return Err("helper declaration, structural layout, or uniqueness mismatch".into());
+            }
             qcore_contract::contract_observation::check_contract_facts(
                 source_contract_rules,
                 "frame_declaration",
                 &[
                     ("declaration_count", exact.len() as i128),
-                    (
-                        "all_external_prototypes",
-                        i128::from(exact.iter().all(|decl| {
-                            decl["storageClass"] != "static"
-                                && decl["type"]["qualType"] == "void (struct cio_chunk *)"
-                                && children(decl)
-                                    .iter()
-                                    .all(|child| kind(child) == "ParmVarDecl")
-                        })),
-                    ),
+                    ("all_external_prototypes", i128::from(external_prototypes)),
                 ],
             )?;
             qcore_contract::contract_observation::check_contract_facts(
@@ -734,6 +877,7 @@ impl Statement {
 
 struct Importer<'a> {
     parameter_id: &'a str,
+    record_name: &'a str,
     field_name: &'a str,
     used_field: bool,
     helpers: &'a BTreeMap<String, &'a ChunkFrameSummary>,
@@ -821,13 +965,13 @@ impl Importer<'_> {
                     || callee["castKind"] != "FunctionToPointerDecay"
                     || kind(reference) != "DeclRefExpr"
                     || reference["referencedDecl"]["kind"] != "FunctionDecl"
-                    || reference["type"]["qualType"] != "void (struct cio_chunk *)"
+                    || reference["type"]["qualType"]
+                        != format!("void (struct {} *)", self.record_name)
                     || kind(argument) != "ImplicitCastExpr"
                     || argument["castKind"] != "LValueToRValue"
                     || kind(parameter) != "DeclRefExpr"
                     || parameter["referencedDecl"]["kind"] != "ParmVarDecl"
                     || parameter["referencedDecl"]["id"].as_str() != Some(self.parameter_id)
-                    || self.field_name != "lock"
                 {
                     return Err("helper signature or parameter binding mismatch".into());
                 }
@@ -835,6 +979,9 @@ impl Importer<'_> {
                     .helpers
                     .get(name)
                     .ok_or("call lacks source-validated frame helper")?;
+                if helper.2.record != self.record_name {
+                    return Err("helper record differs from caller model record".into());
+                }
                 self.dependencies.insert(name.into(), helper.source.clone());
                 Ok(Statement::FrameWrites(helper.writes.clone()))
             }
@@ -892,6 +1039,7 @@ fn derive_summary(
         parameter_id: parameter["id"]
             .as_str()
             .ok_or("missing parameter identity")?,
+        record_name: &model.record,
         field_name,
         used_field: false,
         helpers,

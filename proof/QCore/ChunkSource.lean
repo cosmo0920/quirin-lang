@@ -255,4 +255,145 @@ theorem lock_effect_preserves_other_identities
     bindLock state identity after other = state other := by
   simp [bindLock, different]
 
+/-! Generic frame-helper admission. `modeledFields` is the complete inventory of
+modeled fields for the selected record. Rust obtains it from the loaded profile
+and separately checks record/prototype/ordered field metadata, borrowed parameter
+identity, source/build snapshots and bounded i32 constants. Cross-unit concrete
+ABI equality remains an external premise; field type names alone do not prove
+recursive record layout equality. These definitions do not infer those C facts. They make the disjoint-field premise of `frameAssign` explicit. -/
+abbrev FieldStore := Nat → String → Int
+
+def writeFrame (before : FieldStore) (identity : Nat) (field : String)
+    (value : Int) : FieldStore :=
+  fun object key => if object = identity ∧ key = field then value else before object key
+
+def applyFrameWrites (before : FieldStore) (identity : Nat) : List (String × Int) → FieldStore
+  | [] => before
+  | (field, value) :: rest => applyFrameWrites (writeFrame before identity field value) identity rest
+
+def frameWritesAllowed (modeledFields : List String) (writes : List (String × Int)) : Prop :=
+  writes ≠ [] ∧ ∀ write ∈ writes, write.1 ∉ modeledFields
+
+instance (modeledFields : List String) (writes : List (String × Int)) :
+    Decidable (frameWritesAllowed modeledFields writes) := inferInstanceAs
+      (Decidable (writes ≠ [] ∧ ∀ write ∈ writes, write.1 ∉ modeledFields))
+
+def checkedFrameWrites (before : FieldStore) (identity : Nat)
+    (modeledFields : List String) (writes : List (String × Int)) : Option FieldStore :=
+  if frameWritesAllowed modeledFields writes then some (applyFrameWrites before identity writes) else none
+
+theorem frame_writes_preserve_unwritten_field
+    (before : FieldStore) (identity object : Nat) (field : String)
+    (writes : List (String × Int)) (unwritten : ∀ write ∈ writes, write.1 ≠ field) :
+    applyFrameWrites before identity writes object field = before object field := by
+  induction writes generalizing before with
+  | nil => rfl
+  | cons write rest ih =>
+    rcases write with ⟨key, value⟩
+    have different := unwritten (key, value) (by simp)
+    have tail : ∀ write ∈ rest, write.1 ≠ field := by
+      intro write member
+      exact unwritten write (by simp [member])
+    simp only [applyFrameWrites, ih _ tail]
+    simp [writeFrame, Ne.symm different]
+
+theorem frame_writes_preserve_other_object
+    (before : FieldStore) (identity object : Nat) (field : String)
+    (writes : List (String × Int)) (different : object ≠ identity) :
+    applyFrameWrites before identity writes object field = before object field := by
+  induction writes generalizing before with
+  | nil => rfl
+  | cons write rest ih =>
+    rcases write with ⟨key, value⟩
+    simp [applyFrameWrites, ih, writeFrame, different]
+
+theorem checked_frame_writes_preserve_every_modeled_field
+    {before after : FieldStore} {identity : Nat} {modeledFields : List String}
+    {writes : List (String × Int)}
+    (checked : checkedFrameWrites before identity modeledFields writes = some after)
+    (field : String) (modeled : field ∈ modeledFields) (object : Nat) :
+    after object field = before object field := by
+  unfold checkedFrameWrites at checked
+  split at checked
+  next allowed =>
+    cases checked
+    apply frame_writes_preserve_unwritten_field
+    intro write member equal
+    exact (allowed.2 write member) (equal ▸ modeled)
+  next => contradiction
+
+theorem checked_frame_writes_preserve_every_other_object
+    {before after : FieldStore} {identity : Nat} {modeledFields : List String}
+    {writes : List (String × Int)}
+    (checked : checkedFrameWrites before identity modeledFields writes = some after)
+    (object : Nat) (different : object ≠ identity) (field : String) :
+    after object field = before object field := by
+  unfold checkedFrameWrites at checked
+  split at checked
+  · cases checked
+    exact frame_writes_preserve_other_object before identity object field writes different
+  · contradiction
+
+theorem modeled_field_write_rejects
+    (before : FieldStore) (identity : Nat) (modeledFields : List String)
+    (writes : List (String × Int)) (write : String × Int)
+    (member : write ∈ writes) (modeled : write.1 ∈ modeledFields) :
+    checkedFrameWrites before identity modeledFields writes = none := by
+  have denied : ¬ frameWritesAllowed modeledFields writes := by
+    intro allowed
+    exact allowed.2 write member modeled
+  simp [checkedFrameWrites, denied]
+
+theorem empty_frame_helper_rejects
+    (before : FieldStore) (identity : Nat) (modeledFields : List String) :
+    checkedFrameWrites before identity modeledFields [] = none := by
+  simp [checkedFrameWrites, frameWritesAllowed]
+
+def frameConstant : Expr → Bool
+  | .literal _ => true
+  | .negate value => frameConstant value
+  | _ => false
+
+theorem admitted_frame_constant_is_prestate_independent
+    (expression : Expr) (admitted : frameConstant expression = true)
+    (first second : Bool) : expression.eval first = expression.eval second := by
+  induction expression with
+  | literal value => rfl
+  | field => simp [frameConstant] at admitted
+  | not value ih => simp [frameConstant] at admitted
+  | negate value ih =>
+    exact congrArg Neg.neg (ih admitted)
+  | equal left right il ir => simp [frameConstant] at admitted
+  | notEqual left right il ir => simp [frameConstant] at admitted
+
+def frameProgram : List (String × Int) → Stmt
+  | [] => .empty
+  | (field, value) :: rest => .sequence (.frameAssign field value) (frameProgram rest)
+
+theorem frame_program_retains_exact_ordered_writes
+    (writes : List (String × Int)) (state : State) :
+    (frameProgram writes).eval state =
+      some ({ state with frameWrites := state.frameWrites ++ writes }, none) := by
+  induction writes generalizing state with
+  | nil => simp [frameProgram, Stmt.eval]
+  | cons write rest ih =>
+    rcases write with ⟨field, value⟩
+    simp [frameProgram, Stmt.eval, ih, List.append_assoc]
+
+theorem frame_program_preserves_boolean_and_control_state
+    (writes : List (String × Int)) (state next : State) (result : Option Int)
+    (evaluated : (frameProgram writes).eval state = some (next, result)) :
+    next.value = state.value ∧ next.writes = state.writes ∧
+      next.branches = state.branches ∧ result = none := by
+  rw [frame_program_retains_exact_ordered_writes] at evaluated
+  cases evaluated
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+theorem another_modeled_field_cannot_be_hidden_as_metadata
+    (before : FieldStore) (identity : Nat) :
+    checkedFrameWrites before identity ["active", "locked"] [("locked", 0)] = none := by
+  apply modeled_field_write_rejects before identity ["active", "locked"] [("locked", 0)] ("locked", 0)
+  · simp
+  · simp
+
 end QCore.ChunkSource

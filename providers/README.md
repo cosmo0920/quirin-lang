@@ -149,3 +149,13 @@ field onto an existing logical axis; it does not establish arbitrary record or
 lifecycle semantics. Process tests are Unix-bound. See the
 [configuration format](../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g08-source-contract-service-configuration-v1)
 and [parity evidence](../docs/reports/w5-configured-source-contracts/README.md).
+
+Bindings may now select separate-TU constant metadata helpers with `frame_helpers`.
+The generic loader checks exact compile-entry selection, supported options,
+record/model identity and disjoint writes before the existing process executes
+`FrameWrites`. The sample fixture exercises this complete path. No provider binary,
+manifest, wire shape or schema version changes for helper selection.
+Provider diagnostic codes now require the complete selected plugin ID plus one
+1–128-byte ASCII local component; dotted/control/empty suffixes reject at the host.
+See [helper evidence](../docs/reports/w5-configured-frame-helpers/README.md) and
+[diagnostic attribution](../docs/reports/w7-diagnostic-attribution/README.md).

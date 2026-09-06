@@ -396,9 +396,9 @@ The diagnostic ownership below reflects the merged W3/W7 migration. The prose re
 | Existing `Q0xx`–`Q6xx` source diagnostics | Core source and semantic passes, according to their existing allocations. |
 | `Q7xx` | Core verifier-scope/configuration/dispatch diagnostics; existing `Q700` and `Q701` retain their meanings. |
 | `QP***` | Core provider-host, protocol, and evidence-firewall diagnostics. |
-| `<plugin-id>.<local-code>` | Provider-owned diagnostics, consistent with the host's prefix validation. |
+| `<plugin-id>.<local-code>` | Provider-owned diagnostics; exact selected plugin ID and one 1–128-byte ASCII local component (letters, digits, `_`, `-`). |
 
-The Libevent-specific `Q700`–`Q712` table in revision 0.2 is a superseded design allocation, not a second active use of the same numbers. Libevent enum variants now use local L00–L12 codes, emitted under qcore.libevent; the mapping and regression tests are recorded with W3. Other diagnostic cleanup remains incremental.
+The Libevent-specific `Q700`–`Q712` table in revision 0.2 is a superseded design allocation, not a second active use of the same numbers. Libevent enum variants now use local L00–L12 codes, emitted under qcore.libevent; the mapping and regression tests are recorded with W3. Both response versions reject nested, empty or malformed local components with QP007 before verdict handling; see the [attribution report](reports/w7-diagnostic-attribution/README.md). Provider messages remain untrusted text. Other diagnostic cleanup remains incremental.
 
 This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUGIN_EVIDENCE_VERSION = 1`, the resource manifest's `schema_version = 1`, the CLI's package version, or any stored observation schema. Future semantic changes require explicit versioning; changing the prose revision number is not wire compatibility work.
 
