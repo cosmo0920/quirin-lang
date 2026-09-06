@@ -304,7 +304,7 @@ impl fmt::Display for LegacyCError {
             Self::MalformedFunction { function, line } => {
                 write!(
                     f,
-                    "malformed body for C function `{function}` at line {line}"
+                    "could not project body for C function `{function}` at input line {line}"
                 )
             }
             Self::ProductionParserUnavailable(message) => {
@@ -436,7 +436,7 @@ pub fn analyze_unrestricted_c11(
         AnalysisStatus::Unsafe => Ok(UnrestrictedLegacyResult::Unsafe(summary)),
         AnalysisStatus::Unknown => Ok(UnrestrictedLegacyResult::Unknown {
             preprocessed_source,
-            reason: "the conservative C11 projection contains an unsupported operation".into(),
+            reason: unresolved_projection_reason(&summary),
             partial: Some(summary),
         }),
         AnalysisStatus::Safe => {
@@ -458,6 +458,25 @@ pub fn analyze_unrestricted_c11(
             Ok(UnrestrictedLegacyResult::Safe(certificate))
         }
     }
+}
+
+fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
+    let mut unsupported = 0;
+    let mut aliases = 0;
+    for diagnostic in summary
+        .functions
+        .values()
+        .flat_map(|function| &function.diagnostics)
+    {
+        match diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { .. } => unsupported += 1,
+            LegacyDiagnosticKind::UnknownAlias { .. } => aliases += 1,
+            _ => {}
+        }
+    }
+    format!(
+        "resource projection unresolved: {unsupported} unsupported operation(s), {aliases} unresolved alias(es)"
+    )
 }
 
 /// Preprocess and syntax-check an unrestricted C translation unit without
@@ -952,7 +971,7 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
-                    condition_supported: !contains_call(&condition),
+                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
                     null_condition: pointer_null_condition(&condition),
                     then_body,
                     else_body,
@@ -964,7 +983,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
-                    condition_supported: !contains_call(&condition),
+                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
                     null_condition: pointer_null_condition(&condition),
                     body,
                 })
@@ -989,7 +1008,7 @@ impl Parser<'_> {
                     line,
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: !contains_call(&condition),
+                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
                     null_condition: pointer_null_condition(&condition),
                     increment,
                     body,
@@ -1009,7 +1028,7 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::DoWhile {
                     line,
-                    condition_supported: !contains_call(&condition),
+                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
                     null_condition: pointer_null_condition(&condition),
                     body,
                 })
@@ -1020,7 +1039,8 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
-                    expression_supported: !contains_call(&expression),
+                    expression_supported: !contains_call(&expression)
+                        && !contains_braces(&expression),
                     body,
                 })
             }
@@ -1029,7 +1049,8 @@ impl Parser<'_> {
                 let expression = self.consume_to_colon()?;
                 Ok(Statement::Case {
                     line,
-                    expression_supported: !contains_call(&expression),
+                    expression_supported: !contains_call(&expression)
+                        && !contains_braces(&expression),
                     is_default: false,
                 })
             }
@@ -1083,7 +1104,8 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
-                    expression_supported: !contains_call(&expression),
+                    expression_supported: !contains_call(&expression)
+                        && !contains_braces(&expression),
                     returned_place: canonical_place(&texts),
                 })
             }
@@ -1130,17 +1152,22 @@ impl Parser<'_> {
     fn consume_to_semicolon(&mut self) -> Result<Vec<Token>, usize> {
         let start = self.cursor;
         let line = self.tokens.get(start).map_or(1, |token| token.line);
-        let mut parentheses = 0usize;
+        let mut delimiters = Vec::new();
         while self.cursor < self.tokens.len() {
             match self.text() {
-                Some("(") => parentheses += 1,
-                Some(")") => parentheses = parentheses.saturating_sub(1),
-                Some(";") if parentheses == 0 => {
+                Some("(") => delimiters.push(")"),
+                Some("[") => delimiters.push("]"),
+                Some("{") => delimiters.push("}"),
+                Some(close @ (")" | "]" | "}")) => {
+                    if delimiters.pop() != Some(close) {
+                        return Err(line);
+                    }
+                }
+                Some(";") if delimiters.is_empty() => {
                     let result = self.tokens[start..self.cursor].to_vec();
                     self.cursor += 1;
                     return Ok(result);
                 }
-                Some("{") | Some("}") if parentheses == 0 => return Err(line),
                 _ => {}
             }
             self.cursor += 1;
@@ -1170,6 +1197,14 @@ impl Parser<'_> {
     }
 
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        // Retain the enclosing function and subsequent cleanup, but never
+        // mistake nested initializers or GNU statement expressions for a
+        // single modeled call/assignment. Their custody effects are unknown.
+        if contains_braces(tokens) {
+            return LegacyInstruction::Unknown {
+                description: "braced initializer, expression, or declaration is not modeled".into(),
+            };
+        }
         let texts = tokens
             .iter()
             .map(|token| token.text.as_str())
@@ -1178,6 +1213,14 @@ impl Parser<'_> {
         let call = find_call(&texts);
 
         if let Some((call_index, function)) = call {
+            if matches!(
+                function,
+                "sizeof" | "_Alignof" | "alignof" | "typeof" | "__typeof" | "__typeof__"
+            ) {
+                return LegacyInstruction::Unknown {
+                    description: format!("C operator `{function}` requires type/operand analysis"),
+                };
+            }
             if let Some(contract) = self.contracts.contract(function).cloned() {
                 let destination =
                     assignment.and_then(|equal| direct_assignment_destination(&texts[..equal]));
@@ -1232,7 +1275,7 @@ impl Parser<'_> {
                 };
             };
             let right = &texts[equal + 1..];
-            if right.len() == 1 && matches!(right[0], "NULL" | "nullptr" | "0") {
+            if is_null_constant(right) {
                 return LegacyInstruction::Clear {
                     destination: destination.to_owned(),
                 };
@@ -1272,6 +1315,12 @@ fn contains_call(tokens: &[Token]) -> bool {
     find_call(&texts).is_some()
 }
 
+fn contains_braces(tokens: &[Token]) -> bool {
+    tokens
+        .iter()
+        .any(|token| matches!(token.text.as_str(), "{" | "}"))
+}
+
 fn split_for_clauses(tokens: &[Token]) -> Option<[Vec<Token>; 3]> {
     let mut clauses = vec![Vec::new()];
     let mut parentheses = 0usize;
@@ -1294,42 +1343,84 @@ fn pointer_null_condition(tokens: &[Token]) -> Option<PointerNullCondition> {
         .iter()
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
-    let is_null = |text: &str| matches!(text, "NULL" | "nullptr" | "0");
-    match texts.as_slice() {
-        [source] if is_identifier(source) => Some(PointerNullCondition {
-            source: (*source).to_owned(),
-            true_is_null: false,
-        }),
-        ["!", source] if is_identifier(source) => Some(PointerNullCondition {
-            source: (*source).to_owned(),
-            true_is_null: true,
-        }),
-        [source, "=", "=", null] if is_identifier(source) && is_null(null) => {
-            Some(PointerNullCondition {
-                source: (*source).to_owned(),
-                true_is_null: true,
-            })
-        }
-        [source, "!", "=", null] if is_identifier(source) && is_null(null) => {
-            Some(PointerNullCondition {
-                source: (*source).to_owned(),
-                true_is_null: false,
-            })
-        }
-        [null, "=", "=", source] if is_null(null) && is_identifier(source) => {
-            Some(PointerNullCondition {
-                source: (*source).to_owned(),
-                true_is_null: true,
-            })
-        }
-        [null, "!", "=", source] if is_null(null) && is_identifier(source) => {
-            Some(PointerNullCondition {
-                source: (*source).to_owned(),
-                true_is_null: false,
-            })
-        }
-        _ => None,
+    null_condition_text(&texts)
+}
+
+fn null_condition_text(texts: &[&str]) -> Option<PointerNullCondition> {
+    let texts = strip_parentheses(texts);
+    if let Some(rest) = texts.strip_prefix(&["!"]) {
+        let mut condition = null_condition_text(rest)?;
+        condition.true_is_null = !condition.true_is_null;
+        return Some(condition);
     }
+    if let Some(source) = canonical_place(texts) {
+        return Some(PointerNullCondition {
+            source,
+            true_is_null: false,
+        });
+    }
+    let mut depth = 0usize;
+    for index in 0..texts.len().saturating_sub(1) {
+        match texts[index] {
+            "(" | "[" => depth += 1,
+            ")" | "]" => depth = depth.checked_sub(1)?,
+            "=" | "!" if depth == 0 && texts[index + 1] == "=" => {
+                let left = &texts[..index];
+                let right = &texts[index + 2..];
+                let source = if is_null_constant(left) {
+                    canonical_place(right)?
+                } else if is_null_constant(right) {
+                    canonical_place(left)?
+                } else {
+                    return None;
+                };
+                return Some(PointerNullCondition {
+                    source,
+                    true_is_null: texts[index] == "=",
+                });
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+// Only erase parentheses that enclose the complete expression. In particular,
+// `(p) + offset` must not become the resource place `p`.
+fn strip_parentheses<'a>(mut tokens: &'a [&'a str]) -> &'a [&'a str] {
+    while tokens.first() == Some(&"(") && tokens.last() == Some(&")") {
+        let mut depth = 0usize;
+        let mut closes_at_end = false;
+        for (index, token) in tokens.iter().enumerate() {
+            match *token {
+                "(" => depth += 1,
+                ")" => {
+                    let Some(next) = depth.checked_sub(1) else {
+                        return tokens;
+                    };
+                    depth = next;
+                    if depth == 0 {
+                        closes_at_end = index == tokens.len() - 1;
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+        if !closes_at_end {
+            break;
+        }
+        tokens = &tokens[1..tokens.len() - 1];
+    }
+    tokens
+}
+
+fn is_null_constant(tokens: &[&str]) -> bool {
+    let tokens = strip_parentheses(tokens);
+    matches!(tokens, ["NULL" | "nullptr" | "0"])
+        || tokens
+            .strip_prefix(&["(", "void", "*", ")"])
+            .is_some_and(|rest| strip_parentheses(rest) == ["0"])
 }
 
 fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'a [&'a str]>> {
@@ -1383,6 +1474,7 @@ fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
 }
 
 fn canonical_place(tokens: &[&str]) -> Option<String> {
+    let tokens = strip_parentheses(tokens);
     let first = tokens.first().copied()?;
     if !is_identifier(first) || matches!(first, "NULL" | "nullptr") {
         return None;
@@ -1500,7 +1592,7 @@ impl CfgBuilder {
             } => {
                 let instruction = if !*expression_supported {
                     LegacyInstruction::Unknown {
-                        description: "call in return expression".to_owned(),
+                        description: "call or braced expression in return expression".to_owned(),
                     }
                 } else if let Some(source) = returned_place {
                     LegacyInstruction::EscapeIfOwned {
@@ -1529,7 +1621,7 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call in branch condition".to_owned(),
+                        description: "call or braced expression in branch condition".to_owned(),
                     }
                 };
                 self.push(instruction, vec![then_entry, else_entry], *line, false)
@@ -1549,7 +1641,7 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call in loop condition".to_owned(),
+                        description: "call or braced expression in loop condition".to_owned(),
                     }
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -1573,7 +1665,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
-                    "call in for-loop condition",
+                    "call or braced expression in for-loop condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 let increment_entry = increment.as_ref().map_or(header, |clause| {
@@ -1604,7 +1696,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
-                    "call in do-while condition",
+                    "call or braced expression in do-while condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 self.break_targets.push(continuation);
@@ -1635,7 +1727,7 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call in switch expression".to_owned(),
+                        description: "call or braced expression in switch expression".to_owned(),
                     }
                 };
                 self.push(instruction, successors, *line, false)
@@ -1649,7 +1741,7 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call in case expression".to_owned(),
+                        description: "call or braced expression in case expression".to_owned(),
                     }
                 };
                 let entry = self.push(instruction, vec![continuation], *line, false);

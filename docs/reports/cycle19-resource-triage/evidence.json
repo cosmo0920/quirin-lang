@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-06",
+  "qcore_base_revision": "bbdbac0e6be179096cbd036a99d0ba571ad91487",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "baseline_importer_sha256": "3cf357702500713771c1e8e5c7c61fd07ad9b395619be2e1cbad6646fa399f34",
+  "source_build_sha256": {
+    "compiler/src/legacy_c.rs": "41e1cd07d727291bfdc839dd22cfbe0d7addc83dbf7dc978ef3bab189a33dd76",
+    "compiler/tests/unit/legacy_c.rs": "1703b05c04a0f19d5761460ec13d085c1d0b92e79f10cdbd73f2f742ad96a2d9",
+    "compiler/examples/cycle19_fluent_bit_libraries_audit.rs": "3433d0aa3183bbdbf8b0769414801646328822845ffd0c727e04b266aa0011c7",
+    "compiler/examples/support/legacy_audit_report.rs": "bb7fec1d9a1c36b3aa708b120b0b6dd72a06827111a24bd01bf48d9d084e944e",
+    "/home/cosmo/Documents/GitHub/fluent-bit/build/compile_commands.json": "686769c1b40a60417bdc25eaeffa41a3d82b275d9e52ab3f337ab103d62a313c",
+    "/tmp/qcore-cycle19-monkey-build-codex-20260905/compile_commands.json": "307362b01b6fa9d279cbec9ba1cf8e9cdb86a4cabcbc7929d250494ce5a8874d"
+  },
+  "artifact_sha256": {
+    "README.md": "b302e50b5fc25c6f9758422df05d5256391c14761e235ac67e9642ea78ec1103",
+    "clippy.log": "8ee4c1bcfc9823c74c03896dc3b4d54e300578355456b5cfb2f50436cb2dc421",
+    "diagnostics-after.json.gz": "e2578636f5f810e697435701ce5389436a75eda6a803394b9e6ce8aef31a8d1e",
+    "diagnostics-before.json.gz": "f3e26f690d4b2467a9eef519468f14c3d23ab0a3f5cdd13575d0f2d5dde6b424",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lean-audit.log": "0beef094e00c07d22810d3b26a37946e9591c7c5f5cec406004218425bb5a8d3",
+    "lean-build.log": "777fd4cd9ab01f11556ff66e4d90fee9bf017ec66b2207321e5524b9ee59074e",
+    "reevaluation.json": "12229cb904bde8c318d0f11809fd5e8df548bd49ed6158951303741c435b09de",
+    "report-tests.log": "f6bcb6288dd84b6ce2c322f54af9627511b38973e562f0faba1dfb2b4f212109",
+    "source-audit.log": "a0d748913b4544bb68a28e0912b88f873e8dfabedc8d79946cfd050105063bd6",
+    "summary.json": "cb792c73e18f91dd6cfef4f638bd46db6dd369c6689680ed296629c321263398",
+    "tests.log": "a8a99b59c12e08f6bab1592ff34743ceb205edd2afb1682fc2800367ed044335"
+  },
+  "tools": {
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+    "lean": "Lean (version 4.33.1, x86_64-unknown-linux-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)"
+  }
+}

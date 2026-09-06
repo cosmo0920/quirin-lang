@@ -374,3 +374,29 @@ are unchanged. Source/runtime payload and map binding, callback-contract
 checking under those bindings, and allocation/registration failure imports
 remain open, alongside 19B and 19C. See the [callback source report](../reports/cycle19-callback-source/README.md)
 for source paths, reproduction, evidence, and the precise remaining gates.
+
+## Resource diagnostic inventory and importer recovery
+
+The next increment inventories per-function diagnostics across all six audited
+slices, including unresolved operations inside provisional Unsafe units. The
+audit accepts an optional fourth positional argument for the complete JSON
+inventory and prints categorized counts with representative preprocessed
+locations. Generic Unknown messages distinguish unsupported operations from
+unresolved aliases; type operators are no longer called uncontracted functions.
+
+Balanced braced statements now retain the enclosing function and later cleanup,
+while aggregate/statement-expression effects remain explicitly Unknown. Null
+refinement additionally recognizes parenthesized resource places, negation,
+equality/inequality, and preprocessed void-pointer zero. Pointer arithmetic and
+nonzero casts are not accepted as null checks, and clearing a pointer does not
+discharge its allocation.
+
+The same pinned audit retains 4,688/4,775 functions, up from 4,346. Unit totals
+are two Safe, 98 provisional Unsafe, 81 Unknown, four data-only, and zero gateway
+failures. This is increased projection visibility, not 342 additional safety
+proofs: most newly retained functions remain Unknown, and aggregate Unsafe
+verdicts still contain unresolved diagnostics. Monkey and the selected native
+chunk/callback contract coverage are unchanged. General 19B identity mapping,
+19C lifecycle/teardown imports, and 19D source/runtime/failure composition remain
+open. See [the triage report](../reports/cycle19-resource-triage/README.md) for
+the full before/after inventory, validation, and next implementation targets.

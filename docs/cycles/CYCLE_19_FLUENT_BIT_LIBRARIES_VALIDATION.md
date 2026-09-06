@@ -140,7 +140,14 @@ The audit requires the `mk_event.c` command to contain
 the adjacent Fluent Bit checkout before analysis. The process does not modify
 Fluent Bit.
 
-## Local result
+## Local result before resource-importer triage
+
+This table is the baseline retained through the callback-source increment.
+The [resource-importer triage rerun](../reports/cycle19-resource-triage/README.md)
+now projects 4,688/4,775 functions, with two Safe, 98 provisional Unsafe,
+81 Unknown, four data-only units, and zero gateway failures. The same source
+and build boundary applies; the increased projection count is not proved
+memory-safety coverage.
 
 | Slice | Built units | Data-only units | Gateway failures | Source functions | Projected functions | Projection coverage | Safe units | Unsafe units | Unknown units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

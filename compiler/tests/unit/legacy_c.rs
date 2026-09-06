@@ -199,6 +199,132 @@ fn nullable_owned_results_require_nonnull_path_refinement() {
 }
 
 #[test]
+fn null_checks_accept_parentheses_and_preprocessed_void_pointer_zero() {
+    let mut contracts = contracts();
+    contracts.insert_contract(
+        "q_maybe_alloc",
+        ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
+    );
+    for condition in [
+        "((p)) == ((void *)0)",
+        "((void *) (0)) == (p)",
+        "!((p) != ((void *)0))",
+        "!((p))",
+        "((p) == (0))",
+    ] {
+        let source = format!(
+            "void subject(void) {{ void *p = q_maybe_alloc(); if ({condition}) return; q_free((p)); }}"
+        );
+        let summary = analyze_legacy_c(&source, "subject", &contracts).unwrap();
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Safe,
+            "{condition}: {:?}",
+            summary.diagnostics
+        );
+    }
+    // The same predicate must refine the other edge, not discharge both.
+    let summary = analyze_legacy_c(
+        "void subject(void) { void *p = q_maybe_alloc(); if ((p) != ((void *)0)) q_free(p); }",
+        "subject",
+        &contracts,
+    )
+    .unwrap();
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    for condition in [
+        "(p) == (void *)1",
+        "(p) + 1 == 0",
+        "p == 0 || other()",
+        "p == 0 && other()",
+    ] {
+        let source = format!(
+            "void subject(void) {{ void *p = q_maybe_alloc(); if ({condition}) return; q_free(p); }}"
+        );
+        let summary = analyze_legacy_c(&source, "subject", &contracts).unwrap();
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{condition}");
+    }
+}
+
+#[test]
+fn braced_declarations_retain_following_cleanup_without_certifying_their_effects() {
+    for declaration in [
+        "int values[2][2] = {{1, 2}, {3, 4}};",
+        "struct local { int value; } item = {.value = 1};",
+        "struct pair pair = (struct pair){.value = opaque()};",
+        "void *other = ({ void *nested = q_alloc(); nested; });",
+    ] {
+        let source = format!(
+            "void subject(void) {{ void *p = q_alloc(); {declaration} q_free(p); q_free(p); }}"
+        );
+        let summary = analyze(&source);
+        assert!(has(
+            &summary,
+            |kind| matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains("braced"))
+        ));
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::DoubleRelease { .. }
+            )),
+            "{declaration}"
+        );
+    }
+    let returned = analyze("struct pair subject(void) { return (struct pair){.value = 0}; }");
+    assert_eq!(returned.status, AnalysisStatus::Unknown);
+    for source in [
+        "void subject(void) { int x[] = {1, 2; }",
+        "void subject(void) { int x[2) = {1, 2}; }",
+        "void subject(void) { int x = 1 } void next(void) { ; }",
+    ] {
+        assert!(
+            analyze_legacy_c(source, "subject", &contracts()).is_err(),
+            "{source}"
+        );
+    }
+}
+
+#[test]
+fn c_type_operators_remain_unknown_without_being_reported_as_missing_contracts() {
+    for operator in ["sizeof", "_Alignof", "typeof", "__typeof__"] {
+        let source = format!("void subject(void) {{ int x = {operator}(int); }}");
+        let summary = analyze(&source);
+        assert_eq!(summary.status, AnalysisStatus::Unknown);
+        assert!(has(
+            &summary,
+            |kind| matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains("requires type/operand analysis"))
+        ));
+    }
+    // sizeof may evaluate a VLA bound; treating every sizeof as neutral is unsound.
+    let summary = analyze("void subject(void) { int x = sizeof(int[opaque()]); }");
+    assert_eq!(summary.status, AnalysisStatus::Unknown);
+}
+
+#[test]
+fn parenthesized_null_assignment_does_not_erase_an_owned_obligation() {
+    let null_only = analyze("void subject(void) { void *p = ((void *)0); if ((p)) q_free(p); }");
+    assert_eq!(null_only.status, AnalysisStatus::Safe);
+    let lost = analyze("void subject(void) { void *p = q_alloc(); p = ((void *)0); }");
+    assert_eq!(lost.status, AnalysisStatus::Unsafe);
+    assert!(has(&lost, |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+    let invalid = analyze("void subject(void) { void *p = ((void *)1); q_free(p); }");
+    assert_ne!(invalid.status, AnalysisStatus::Safe);
+}
+
+#[test]
+fn braced_control_expressions_do_not_erase_nested_control_flow() {
+    for source in [
+        "void subject(void) { if (({ goto done; 1; })) {} done: return; }",
+        "void subject(void) { while (({ goto done; 1; })) {} done: return; }",
+        "void subject(void) { switch (({ goto done; 1; })) { default: break; } done: return; }",
+    ] {
+        assert_eq!(analyze(source).status, AnalysisStatus::Unknown, "{source}");
+    }
+}
+
+#[test]
 fn realloc_preserves_old_custody_on_failure_and_replaces_it_on_success() {
     let mut contracts = contracts();
     contracts.insert_contract(
@@ -487,7 +613,7 @@ fn malformed_and_missing_functions_are_parse_errors() {
 
 #[test]
 fn unrestricted_projection_retains_successful_siblings() {
-    let source = "void bad(void) { struct Local { int value; }; }\nvoid subject(void) { return; }";
+    let source = "void bad(void *target) { goto *target; }\nvoid subject(void) { return; }";
     let analysis =
         analyze_legacy_c_translation_unit_selected_partial(source, "subject", &contracts(), None)
             .unwrap();
@@ -683,7 +809,10 @@ void subject(void) { void *p = q_alloc(); q_free(p); }\n";
     match analyze_unrestricted_c11(&whole_unit, "subject", &contracts()) {
         Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => {
             let partial = partial.expect("whole-unit projection should be available");
-            assert!(!partial.functions.contains_key("header_helper"));
+            assert_eq!(
+                partial.functions["header_helper"].status,
+                AnalysisStatus::Unknown
+            );
             assert!(partial.functions.contains_key("subject"));
         }
         Err(LegacyCError::ProductionParserUnavailable(_)) => return,

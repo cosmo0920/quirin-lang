@@ -1,0 +1,3840 @@
+{
+  "schema_version": 1,
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "before": {
+    "units": 185,
+    "source_functions": 4775,
+    "projected_functions": 4346,
+    "not_projected": 429,
+    "unit_statuses": {
+      "Unknown": 125,
+      "Unsafe": 54,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "local_function_statuses": {
+      "Unknown": 3797,
+      "Safe": 256,
+      "Unsafe": 293
+    },
+    "diagnostic_counts": {
+      "double_release": 13,
+      "leak": 742,
+      "unknown_alias": 6407,
+      "unsupported": 32187
+    }
+  },
+  "after": {
+    "units": 185,
+    "source_functions": 4775,
+    "projected_functions": 4688,
+    "not_projected": 87,
+    "unit_statuses": {
+      "Unknown": 81,
+      "Unsafe": 98,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "local_function_statuses": {
+      "Unknown": 4103,
+      "Safe": 260,
+      "Unsafe": 325
+    },
+    "diagnostic_counts": {
+      "double_release": 35,
+      "leak": 944,
+      "unknown_alias": 8718,
+      "unsupported": 42254
+    }
+  },
+  "slices": {
+    "chunkio": {
+      "before": {
+        "units": 13,
+        "source_functions": 126,
+        "projected_functions": 122,
+        "not_projected": 4,
+        "unit_statuses": {
+          "Unsafe": 5,
+          "Unknown": 8
+        },
+        "local_function_statuses": {
+          "Unknown": 102,
+          "Unsafe": 9,
+          "Safe": 11
+        },
+        "diagnostic_counts": {
+          "leak": 13,
+          "unknown_alias": 197,
+          "unsupported": 608
+        }
+      },
+      "after": {
+        "units": 13,
+        "source_functions": 126,
+        "projected_functions": 123,
+        "not_projected": 3,
+        "unit_statuses": {
+          "Unsafe": 5,
+          "Unknown": 8
+        },
+        "local_function_statuses": {
+          "Unknown": 106,
+          "Unsafe": 6,
+          "Safe": 11
+        },
+        "diagnostic_counts": {
+          "leak": 8,
+          "unknown_alias": 203,
+          "unsupported": 602
+        }
+      }
+    },
+    "cmetrics": {
+      "before": {
+        "units": 31,
+        "source_functions": 540,
+        "projected_functions": 525,
+        "not_projected": 15,
+        "unit_statuses": {
+          "Unknown": 14,
+          "Unsafe": 17
+        },
+        "local_function_statuses": {
+          "Unknown": 437,
+          "Safe": 12,
+          "Unsafe": 76
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 1030,
+          "unsupported": 3672,
+          "leak": 242,
+          "double_release": 2
+        }
+      },
+      "after": {
+        "units": 31,
+        "source_functions": 540,
+        "projected_functions": 539,
+        "not_projected": 1,
+        "unit_statuses": {
+          "Unknown": 12,
+          "Unsafe": 19
+        },
+        "local_function_statuses": {
+          "Unknown": 461,
+          "Safe": 15,
+          "Unsafe": 63
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 1138,
+          "unsupported": 3692,
+          "leak": 159
+        }
+      }
+    },
+    "ctraces": {
+      "before": {
+        "units": 17,
+        "source_functions": 274,
+        "projected_functions": 264,
+        "not_projected": 10,
+        "unit_statuses": {
+          "Unknown": 12,
+          "Unsafe": 3,
+          "data_only": 1,
+          "Safe": 1
+        },
+        "local_function_statuses": {
+          "Unknown": 248,
+          "Unsafe": 10,
+          "Safe": 6
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 257,
+          "unsupported": 1068,
+          "leak": 11
+        }
+      },
+      "after": {
+        "units": 17,
+        "source_functions": 274,
+        "projected_functions": 273,
+        "not_projected": 1,
+        "unit_statuses": {
+          "Unknown": 13,
+          "Unsafe": 2,
+          "data_only": 1,
+          "Safe": 1
+        },
+        "local_function_statuses": {
+          "Unknown": 260,
+          "Unsafe": 6,
+          "Safe": 7
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 271,
+          "unsupported": 1049,
+          "leak": 7
+        }
+      }
+    },
+    "fluent-bit-chunk": {
+      "before": {
+        "units": 1,
+        "source_functions": 66,
+        "projected_functions": 64,
+        "not_projected": 2,
+        "unit_statuses": {
+          "Unsafe": 1
+        },
+        "local_function_statuses": {
+          "Unsafe": 6,
+          "Unknown": 54,
+          "Safe": 4
+        },
+        "diagnostic_counts": {
+          "leak": 44,
+          "unknown_alias": 165,
+          "unsupported": 759
+        }
+      },
+      "after": {
+        "units": 1,
+        "source_functions": 66,
+        "projected_functions": 64,
+        "not_projected": 2,
+        "unit_statuses": {
+          "Unsafe": 1
+        },
+        "local_function_statuses": {
+          "Unsafe": 6,
+          "Unknown": 54,
+          "Safe": 4
+        },
+        "diagnostic_counts": {
+          "leak": 40,
+          "unknown_alias": 179,
+          "unsupported": 725
+        }
+      }
+    },
+    "librdkafka": {
+      "before": {
+        "units": 94,
+        "source_functions": 3410,
+        "projected_functions": 3025,
+        "not_projected": 385,
+        "unit_statuses": {
+          "Unknown": 81,
+          "data_only": 3,
+          "Unsafe": 10
+        },
+        "local_function_statuses": {
+          "Unknown": 2663,
+          "Safe": 206,
+          "Unsafe": 156
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 4023,
+          "unsupported": 23736,
+          "leak": 338,
+          "double_release": 11
+        }
+      },
+      "after": {
+        "units": 94,
+        "source_functions": 3410,
+        "projected_functions": 3343,
+        "not_projected": 67,
+        "unit_statuses": {
+          "Unknown": 38,
+          "data_only": 3,
+          "Unsafe": 53
+        },
+        "local_function_statuses": {
+          "Unknown": 2929,
+          "Safe": 206,
+          "Unsafe": 208
+        },
+        "diagnostic_counts": {
+          "unknown_alias": 6167,
+          "unsupported": 33922,
+          "leak": 643,
+          "double_release": 35
+        }
+      }
+    },
+    "monkey-libevent": {
+      "before": {
+        "units": 29,
+        "source_functions": 359,
+        "projected_functions": 346,
+        "not_projected": 13,
+        "unit_statuses": {
+          "Unsafe": 18,
+          "Unknown": 10,
+          "Safe": 1
+        },
+        "local_function_statuses": {
+          "Unknown": 293,
+          "Unsafe": 36,
+          "Safe": 17
+        },
+        "diagnostic_counts": {
+          "leak": 94,
+          "unknown_alias": 735,
+          "unsupported": 2344
+        }
+      },
+      "after": {
+        "units": 29,
+        "source_functions": 359,
+        "projected_functions": 346,
+        "not_projected": 13,
+        "unit_statuses": {
+          "Unsafe": 18,
+          "Unknown": 10,
+          "Safe": 1
+        },
+        "local_function_statuses": {
+          "Unknown": 293,
+          "Unsafe": 36,
+          "Safe": 17
+        },
+        "diagnostic_counts": {
+          "leak": 87,
+          "unknown_alias": 760,
+          "unsupported": 2264
+        }
+      }
+    }
+  },
+  "unit_transitions": [
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_cloudwatch_emf.c",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_span.c",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhttp.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_aux.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cert.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_coord.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_interceptor.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_cgrp.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_sharegrp.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_writer.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_offset.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_op.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_plugin.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_cyrus.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_txnmgr.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_file_unix.c",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_utils.c",
+      "before": "Unknown",
+      "after": "Unsafe"
+    }
+  ],
+  "function_transition_counts": {
+    "Unsafe -> Unknown": 19,
+    "not_projected -> Unsafe": 54,
+    "not_projected -> Unknown": 288,
+    "Unsafe -> Safe": 3,
+    "Unknown -> Safe": 1
+  },
+  "function_transitions": [
+    {
+      "library": "cmetrics",
+      "file": "cmt_cat.c",
+      "function": "cmt_cat_summary",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_basic_type",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_basic_type_meta",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_context",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_context_header",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_context_processing_section",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_metric",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_metric_exp_histogram",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_metric_histogram",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_metric_summary",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "function": "unpack_opts",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_opentelemetry.c",
+      "function": "decode_data_point_labels",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_prometheus_remote_write.c",
+      "function": "decode_labels",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "function": "decode_labels",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "function": "statsd_process_line",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_cloudwatch_emf.c",
+      "function": "pack_histogram_metric",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_exponential_histogram_data_point_list",
+      "before": "Unsafe",
+      "after": "Safe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_histogram_data_point_list",
+      "before": "Unsafe",
+      "after": "Safe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_instrumentation_scope",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_metric_list",
+      "before": "Unsafe",
+      "after": "Safe"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_resource",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "initialize_scope_metrics",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "function": "otlp_any_value_initialize",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry_batch.c",
+      "function": "empty_batches_create",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus.c",
+      "function": "format_histogram_bucket",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus.c",
+      "function": "format_metrics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus.c",
+      "function": "format_summary_quantiles",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus_remote_write.c",
+      "function": "render_remote_write_context_to_sds",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_splunk_hec.c",
+      "function": "format_context_common",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_context",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_event",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_link",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_resource",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_resource_span",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_scope_span",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_scope_span_instrumentation_scope",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_span",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "function": "unpack_span_status",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "destroy_id",
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "otlp_any_value_initialize",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "function": "otlp_kvpair_list_initialize",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_span.c",
+      "function": "ctr_span_create",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_span.c",
+      "function": "ctr_span_event_add_ts",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "function": "cJSON_ParseWithLengthOpts",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "function": "cJSON_PrintBuffered",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "function": "cJSON_PrintPreallocated",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "function": "print_number",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_createStream",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_createStreamDecode",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_decompress_generic",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_getIndexOnHash",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_isLittleEndian",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_stream_t_alignment",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_compressBegin_usingCDict",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_compressBound_internal",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_decompress",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_getBlockSize",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_getFrameInfo",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "function": "LZ4F_returnErrorCode",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4hc.c",
+      "function": "LZ4HC_FindLongerMatch",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4hc.c",
+      "function": "LZ4HC_compress_generic_internal",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4hc.c",
+      "function": "LZ4HC_encodeSequence",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4hc.c",
+      "function": "LZ4_streamHC_t_alignment",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_common.c",
+      "function": "pb_const_cast",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_decode_fixed32",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_decode_fixed64",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_decode_inner",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_istream_from_buffer",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_message_set_to_defaults",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "encode_array",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_encode_submessage",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_get_encoded_size",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdavl.c",
+      "function": "rd_avl_rotate",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "function": "do_unittest_erase",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdfnv1a.c",
+      "function": "unittest_fnv1a",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdgz.c",
+      "function": "rd_gz_decompress",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_histogram_max",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_histogram_mean",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_histogram_min",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_histogram_quantile",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "rd_hdr_histogram_stddev",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "ut_high_sigfig",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "ut_quantile",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "function": "ut_subbucketmask_overflow",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhttp.c",
+      "function": "rd_http_ssl_configure",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdhttp.c",
+      "function": "unittest_http_get_params_append",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "function": "rd_kafka_global_init0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AclOperation_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AclPermissionType_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AlterConfigs",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AlterConsumerGroupOffsets",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AlterUserScramCredentials",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConfigSource_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreateAcls",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreateAclsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreatePartitions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreateTopics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_CreateTopicsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteAcls",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteAclsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteConsumerGroupOffsets",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteGroups",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteRecords",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteRecordsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DeleteTopics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeAcls",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeCluster",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeConfigs",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeConsumerGroups",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeConsumerGroups_response_merge",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeTopics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeUserScramCredentials",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ElectLeaders",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_IncrementalAlterConfigs",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListConsumerGroupOffsets",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListConsumerGroups",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListOffsets",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_OffsetDeleteResponse_parse",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ResourcePatternType_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "rd_kafka_ResourceType_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "function": "ut_ListConsumerGroups_response_merge",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "function": "rd_kafka_consumer_protocol_member_metadata_new",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "function": "ut_assignors",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "function": "ut_populate_internal_topic_metadata",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "function": "verifyNumPartitionsWithRackMismatch0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_aux.c",
+      "function": "rd_kafka_Node_new_from_brokers",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_background.c",
+      "function": "rd_kafka_background_thread_create",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_ApiVersion_supported0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_find_by_nodeid0_fl",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_produce_toppars",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_request_supported",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_broker_toppar_msgq_scan",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_kafka_dr_implicit_ack",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_ut_ApiVersion_at_least",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "function": "rd_ut_reconnect_backoff",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cert.c",
+      "function": "rd_kafka_cert_new",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cert.c",
+      "function": "rd_kafka_conf_set_ssl_cert",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_FindCoordinator",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_JoinGroup",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_SyncGroup",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_group_MemberMetadata_consumer_read",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_consumer_group_metadata",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_map_to_list",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_set_intersect",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "unittest_set_subtract",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_coord.c",
+      "function": "rd_kafka_coord_req_handle_FindCoordinator",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_event.c",
+      "function": "rd_kafka_event_debug_contexts",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_feature.c",
+      "function": "rd_kafka_get_legacy_ApiVersions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_feature.c",
+      "function": "rd_ut_features_check",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_fetch_reply_handle",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_fetch_reply_handle_partition",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_share_acknowledge_reply_handle",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_share_fetch_reply_handle",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "function": "rd_kafka_share_fetch_reply_handle_partition",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_interceptor.c",
+      "function": "rd_kafka_interceptor_method_add",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "function": "rd_kafka_lz4_compress",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "function": "rd_kafka_lz4_compress_break_framing",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "function": "rd_kafka_lz4_decompress_fixup_bad_framing",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "function": "rd_kafka_metadata_copy_internal",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "function": "rd_kafka_metadata_topic_match",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "function": "rd_kafka_metadata_update_op",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "function": "rd_kafka_parse_Metadata0",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "function": "rd_kafka_populate_metadata_topic_racks",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "function": "rd_kafka_metadata_cache_hint",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "function": "rd_kafka_metadata_cache_topic_partition_get",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_broker_new",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "rd_kafka_mock_error_stack_next",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment1",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment2",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment3",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment4",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_cgrp_consumer_member_next_assignment5",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_mock_txn_aborted_range_recorded",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_mock_txn_control_batch_written",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_mock_txn_get_creates_and_reuses",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_mock_txn_lso_calculation",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "function": "ut_mock_txn_partition_add_and_clear",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_cgrp.c",
+      "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Fetch",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_GetTelemetrySubscriptions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Heartbeat",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_InitProducerId",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_JoinGroup",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Metadata",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_Produce",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_PushTelemetry_payload",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ShareAcknowledge",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ShareFetch",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_ShareGroupHeartbeat_write_TopicPartitions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_handle_SyncGroup",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_pid_find",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "function": "rd_kafka_mock_sgrp_write_acquired_records_meta",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_sharegrp.c",
+      "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_produce_batch",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_producev",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "function": "rd_kafka_produceva",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "function": "unittest_msg_seq_wrap",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "function": "unittest_msgq_order",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_msgset_reader",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_msgset_reader_decompress",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_msgset_reader_msg_v0_1",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "function": "rd_kafka_msgset_reader_msg_v2",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_writer.c",
+      "function": "rd_kafka_msgset_writer_compress",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_writer.c",
+      "function": "rd_kafka_msgset_writer_select_MsgVersion",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_writer.c",
+      "function": "rd_kafka_msgset_writer_write_msg",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_offset.c",
+      "function": "rd_kafka_commit",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_offset.c",
+      "function": "rd_kafka_offset_reset",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_offset.c",
+      "function": "rd_kafka_offset_store_init",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_op.c",
+      "function": "rd_kafka_op2str",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_op.c",
+      "function": "rd_kafka_op_new0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_retry_msgq",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_get_topic_id",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_list_difference0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_list_intersection0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_topic_partition_update",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_toppar_op_serve",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "function": "rd_kafka_toppar_purge_queues",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_plugin.c",
+      "function": "rd_kafka_plugin_new",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_purge0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_purge_toppar_version",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "function": "rd_kafka_q_serve_rkmessages",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "rd_kafka_find_member_assigned_partitions_pair_by_member_id",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "rd_kafka_range_assignor_unittest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testCoPartitionedAssignmentWithSameSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithCoPartitioning0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithCoPartitioning1",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithNonEqualSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithUniformPartitions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithUniformSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_DeleteRecordsRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_ElectLeadersRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_ListOffsetRequest_parameters_make",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_MetadataRequest0",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_OffsetCommitRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_OffsetDeleteRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_OffsetFetchRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_OffsetForLeaderEpochRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_group_MemberState_consumer_write",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_handle_OffsetCommit",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_handle_OffsetForLeaderEpoch",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_handle_Produce_parse",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafka_msgbatch_handle_Produce_result",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "rd_kafkap_share_leader_changes_apply",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "function": "unittest_idempotent_producer",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_cyrus.c",
+      "function": "rd_kafka_sasl_cyrus_client_new",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_config_empty_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_config_empty_value_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_config_no_principal_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_config_value_with_quote_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_illegal_extension_keys_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "do_unittest_odd_extension_size_should_fail",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "rd_kafka_oauthbearer_unsecured_token",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "rd_kafka_oauthbearer_unsecured_token0",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "rd_kafka_sasl_oauthbearer_fsm",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "function": "rd_kafka_sasl_oauthbearer_recv",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "function": "ut_sasl_oauthbearer_oidc_sub_claim_name",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "function": "rd_kafka_sasl_scram_build_client_final_message",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "function": "rd_kafka_sasl_scram_fsm",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "function": "rd_kafka_sasl_scram_recv",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "function": "unittest_scram_nonce",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "function": "unittest_scram_safe",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_ssl_ctx_load_providers",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_ssl_probe_and_set_default_ca_location",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "function": "unittest_ssl",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "PartitionMovements_getTheActualPartitionToBeMoved",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "balance",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "isBalanced",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "prepopulateCurrentAssignments",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "rd_kafka_rack_info_new",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "rd_kafka_sticky_assignor_assign_cb",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "rd_kafka_sticky_assignor_get_metadata",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "rd_kafka_sticky_assignor_unittest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "sortPartitions",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testMoveExistingAssignments",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testMoveExistingAssignments_j",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithNonEqualSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testRackAwareAssignmentWithUniformSubscription",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "ut_testStickiness_j",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry.c",
+      "function": "rd_kafka_match_requested_metrics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_key_value",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_metric",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_number_data_point",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_resource_metrics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_scope_metrics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "decode_string",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "rd_kafka_snappy_decompress",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "rd_kafka_telemetry_decode_metrics",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "function": "unit_test_telemetry",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "calculate_broker_avg_rtt",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "calculate_broker_max_rtt",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "calculate_produce_latency_avg",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "calculate_produce_latency_max",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "function": "rd_kafka_telemetry_encode_metrics",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_assign_uas",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_new0",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "function": "rd_kafka_topic_scan_all",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "function": "rd_ut_kafka_topic_set_topic_exists",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_socket_recvmsg",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_socket_sendmsg",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_txnmgr.c",
+      "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_txnmgr.c",
+      "function": "rd_kafka_txn_send_TxnOffsetCommitRequest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "rd_map_alloc_buckets",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "rd_map_delete",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "rd_map_get",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "rd_map_set",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "unittest_typed_map",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "function": "unittest_typed_map2",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdmurmur2.c",
+      "function": "unittest_murmur2",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdstring.c",
+      "function": "ut_strcasestr",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdstring.c",
+      "function": "ut_string_split",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "function": "rd_unittest",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "function": "unittest_sysqueue",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "function": "ut_tq_test",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_details_alternating",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_details_gap_acquired",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_details_interleaved",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_details_mixed_collation",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_details_multi_partition",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_ack_mapping_gaps",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_fetcher_share_filter_forward",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_all_acquired",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_disjoint_ranges",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_empty_queue",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_partial_range",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_range_beyond_messages",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "function": "unittest_filter_sparse_offsets",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_all_error_types_with_valid",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_all_errors",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_all_success",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_crc_error_share_consumer",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_decompression_error_share_consumer",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_mixed_crc_success_decomp",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_mixed_magic_success_crc_success",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_mixed_success_crc_success",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "function": "unittest_msgset_unsupported_magic_share_consumer",
+      "before": "not_projected",
+      "after": "Unsafe"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdvarint.c",
+      "function": "do_test_rd_uvarint_enc_i64",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "function": "XXH32_canonicalFromHash",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "function": "XXH64_canonicalFromHash",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "function": "XXH_isLittleEndian",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "function": "rd_kafka_snappy_compress",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "function": "rd_kafka_snappy_compress_iov",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "function": "rd_kafka_snappy_uncompress",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "function": "rd_kafka_snappy_uncompress_iov",
+      "before": "not_projected",
+      "after": "Unknown"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_file_unix.c",
+      "function": "cio_file_native_compose_path",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_file_unix.c",
+      "function": "cio_file_native_lookup_group",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_file_unix.c",
+      "function": "cio_file_native_lookup_user",
+      "before": "Unsafe",
+      "after": "Unknown"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_utils.c",
+      "function": "cio_utils_recursive_delete",
+      "before": "not_projected",
+      "after": "Unknown"
+    }
+  ],
+  "ranked_unsupported_before": [
+    {
+      "description": "unsupported assignment expression",
+      "count": 4902
+    },
+    {
+      "description": "call in branch condition",
+      "count": 3282
+    },
+    {
+      "description": "unrecognized assignment destination",
+      "count": 1909
+    },
+    {
+      "description": "call to uncontracted function `sizeof`",
+      "count": 1161
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_log0`",
+      "count": 1142
+    },
+    {
+      "description": "call in return expression",
+      "count": 983
+    },
+    {
+      "description": "call to uncontracted function `mtx_unlock`",
+      "count": 862
+    },
+    {
+      "description": "call to uncontracted function `mtx_lock`",
+      "count": 817
+    },
+    {
+      "description": "call to uncontracted function `snprintf`",
+      "count": 783
+    },
+    {
+      "description": "call to uncontracted function `fprintf`",
+      "count": 667
+    },
+    {
+      "description": "call to uncontracted function `rd_strlcpy`",
+      "count": 617
+    },
+    {
+      "description": "call to uncontracted function `typeof`",
+      "count": 339
+    },
+    {
+      "description": "call to uncontracted function `memcpy`",
+      "count": 199
+    },
+    {
+      "description": "call to uncontracted function `cfl_sds_cat_safe`",
+      "count": 179
+    },
+    {
+      "description": "call to uncontracted function `strlen`",
+      "count": 165
+    },
+    {
+      "description": "call to uncontracted function `rd_list_destroy`",
+      "count": 161
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_i32`",
+      "count": 145
+    },
+    {
+      "description": "call to uncontracted function `mpack_write_cstr`",
+      "count": 143
+    },
+    {
+      "description": "call to uncontracted function `__bswap_32`",
+      "count": 126
+    },
+    {
+      "description": "call to uncontracted function `rd_slice_read_uvarint`",
+      "count": 122
+    },
+    {
+      "description": "call to uncontracted function `rd_list_add`",
+      "count": 119
+    },
+    {
+      "description": "call to uncontracted function `cfl_sds_destroy`",
+      "count": 117
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+      "count": 117
+    },
+    {
+      "description": "call to uncontracted function `__bswap_16`",
+      "count": 109
+    },
+    {
+      "description": "call to uncontracted function `mk_print`",
+      "count": 109
+    },
+    {
+      "description": "call to uncontracted function `memset`",
+      "count": 97
+    },
+    {
+      "description": "call to uncontracted function `rwlock_wrunlock`",
+      "count": 95
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_i8`",
+      "count": 94
+    },
+    {
+      "description": "call to uncontracted function `rd_list_init`",
+      "count": 93
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_op_new0`",
+      "count": 80
+    },
+    {
+      "description": "call in loop condition",
+      "count": 78
+    },
+    {
+      "description": "call to uncontracted function `rd_clock`",
+      "count": 78
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_crash`",
+      "count": 74
+    },
+    {
+      "description": "call to uncontracted function `cmt_atomic_store`",
+      "count": 73
+    },
+    {
+      "description": "call to uncontracted function `ut_init_member_with_rackv`",
+      "count": 71
+    },
+    {
+      "description": "call to uncontracted function `ut_init_member`",
+      "count": 71
+    },
+    {
+      "description": "call to uncontracted function `rwlock_wrlock`",
+      "count": 67
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_str`",
+      "count": 66
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_broker_destroy_final`",
+      "count": 65
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_op_destroy`",
+      "count": 62
+    },
+    {
+      "description": "call to uncontracted function `cmt_log_print`",
+      "count": 61
+    },
+    {
+      "description": "call to uncontracted function `flb_log_print`",
+      "count": 59
+    },
+    {
+      "description": "call to uncontracted function `rd_list_cnt`",
+      "count": 58
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_group_member_clear`",
+      "count": 58
+    },
+    {
+      "description": "call to uncontracted function `cio_log_print`",
+      "count": 56
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_topic_partition_list_new`",
+      "count": 55
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_assignor_run`",
+      "count": 55
+    },
+    {
+      "description": "call to uncontracted function `rwlock_rdunlock`",
+      "count": 53
+    },
+    {
+      "description": "call to uncontracted function `__builtin_va_end`",
+      "count": 52
+    },
+    {
+      "description": "call to uncontracted function `mk_list_add`",
+      "count": 52
+    }
+  ],
+  "ranked_unsupported_after": [
+    {
+      "description": "unsupported assignment expression",
+      "count": 5201
+    },
+    {
+      "description": "call or braced expression in branch condition",
+      "count": 4420
+    },
+    {
+      "description": "unrecognized assignment destination",
+      "count": 2430
+    },
+    {
+      "description": "braced initializer, expression, or declaration is not modeled",
+      "count": 2256
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_log0`",
+      "count": 1760
+    },
+    {
+      "description": "call to uncontracted function `mtx_unlock`",
+      "count": 1429
+    },
+    {
+      "description": "call to uncontracted function `mtx_lock`",
+      "count": 1373
+    },
+    {
+      "description": "call to uncontracted function `snprintf`",
+      "count": 1251
+    },
+    {
+      "description": "call to uncontracted function `fprintf`",
+      "count": 1170
+    },
+    {
+      "description": "call to uncontracted function `rd_strlcpy`",
+      "count": 1143
+    },
+    {
+      "description": "call or braced expression in return expression",
+      "count": 1038
+    },
+    {
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 549
+    },
+    {
+      "description": "call to uncontracted function `rd_slice_read_uvarint`",
+      "count": 331
+    },
+    {
+      "description": "call to uncontracted function `__bswap_32`",
+      "count": 282
+    },
+    {
+      "description": "call to uncontracted function `__bswap_16`",
+      "count": 242
+    },
+    {
+      "description": "call to uncontracted function `memcpy`",
+      "count": 219
+    },
+    {
+      "description": "call to uncontracted function `rd_list_destroy`",
+      "count": 215
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_i32`",
+      "count": 208
+    },
+    {
+      "description": "call to uncontracted function `cfl_sds_cat_safe`",
+      "count": 202
+    },
+    {
+      "description": "call to uncontracted function `rd_list_add`",
+      "count": 192
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+      "count": 183
+    },
+    {
+      "description": "call to uncontracted function `strlen`",
+      "count": 172
+    },
+    {
+      "description": "call to uncontracted function `rd_list_init`",
+      "count": 155
+    },
+    {
+      "description": "call to uncontracted function `mpack_write_cstr`",
+      "count": 143
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_i8`",
+      "count": 123
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_op_destroy`",
+      "count": 120
+    },
+    {
+      "description": "call to uncontracted function `cfl_sds_destroy`",
+      "count": 119
+    },
+    {
+      "description": "call to uncontracted function `memset`",
+      "count": 115
+    },
+    {
+      "description": "call to uncontracted function `mk_print`",
+      "count": 109
+    },
+    {
+      "description": "call to uncontracted function `rwlock_wrunlock`",
+      "count": 108
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_str`",
+      "count": 105
+    },
+    {
+      "description": "call or braced expression in loop condition",
+      "count": 96
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_group_member_clear`",
+      "count": 96
+    },
+    {
+      "description": "call to uncontracted function `rd_clock`",
+      "count": 92
+    },
+    {
+      "description": "call to uncontracted function `rd_list_elem`",
+      "count": 87
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_crash`",
+      "count": 84
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_op_new0`",
+      "count": 82
+    },
+    {
+      "description": "call to uncontracted function `ut_init_member_with_rackv`",
+      "count": 82
+    },
+    {
+      "description": "call to uncontracted function `ut_init_member`",
+      "count": 82
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_destroy_final`",
+      "count": 81
+    },
+    {
+      "description": "call to uncontracted function `rwlock_wrlock`",
+      "count": 78
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_q_enq`",
+      "count": 77
+    },
+    {
+      "description": "call to uncontracted function `ut_destroy_metadata`",
+      "count": 77
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_buf_write_arraycnt`",
+      "count": 76
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_topic_partition_list_new`",
+      "count": 74
+    },
+    {
+      "description": "call to uncontracted function `cmt_atomic_store`",
+      "count": 73
+    },
+    {
+      "description": "call to uncontracted function `rd_kafka_broker_destroy_final`",
+      "count": 69
+    },
+    {
+      "description": "call to uncontracted function `rd_list_cnt`",
+      "count": 68
+    },
+    {
+      "description": "call to uncontracted function `rwlock_rdunlock`",
+      "count": 64
+    },
+    {
+      "description": "call to uncontracted function `__bswap_64`",
+      "count": 62
+    }
+  ],
+  "remaining_unprojected": [
+    {
+      "library": "cmetrics",
+      "file": "cmt_log.c",
+      "functions": [
+        "cmt_winapi_error_print"
+      ],
+      "reason": "resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)"
+    },
+    {
+      "library": "ctraces",
+      "file": "ctr_log.c",
+      "functions": [
+        "ctr_winapi_error_print"
+      ],
+      "reason": "resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "functions": [
+        "internal_free",
+        "internal_malloc",
+        "internal_realloc"
+      ],
+      "reason": "resource projection unresolved: 413 unsupported operation(s), 149 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_common.c",
+      "functions": [
+        "pb_validate_utf8"
+      ],
+      "reason": "resource projection unresolved: 62 unsupported operation(s), 10 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "functions": [
+        "allocate_field",
+        "initialize_pointer_field",
+        "pb_decode_double_as_float",
+        "pb_release_single_field",
+        "pb_release_union_field"
+      ],
+      "reason": "resource projection unresolved: 191 unsupported operation(s), 22 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "functions": [
+        "pb_encode_float_as_double"
+      ],
+      "reason": "resource projection unresolved: 134 unsupported operation(s), 19 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdbase64.c",
+      "functions": [
+        "base64_encoding_conversion"
+      ],
+      "reason": null
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cert.c",
+      "functions": [
+        "rd_kafka_print_ssl_errors"
+      ],
+      "reason": null
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "functions": [
+        "rd_kafka_ssl_win_load_cert_store",
+        "rd_kafka_ssl_win_load_cert_stores",
+        "rd_kafka_transport_libcrypto_THREADID_callback",
+        "rd_kafka_transport_ssl_lock_cb"
+      ],
+      "reason": "resource projection unresolved: 407 unsupported operation(s), 36 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "functions": [
+        "PartitionMovements_isSticky",
+        "hasCycles"
+      ],
+      "reason": null
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_transport.c",
+      "functions": [
+        "rd_kafka_transport_events2wsa",
+        "rd_kafka_transport_get_wsa_events",
+        "rd_kafka_transport_io_serve_win32",
+        "rd_kafka_transport_poll_set_wsa",
+        "rd_kafka_transport_set_blocked",
+        "rd_kafka_transport_term",
+        "rd_kafka_transport_wsa2events"
+      ],
+      "reason": "resource projection unresolved: 187 unsupported operation(s), 28 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdrand.c",
+      "functions": [
+        "rd_rand_bytes_by_rand_s"
+      ],
+      "reason": "resource projection unresolved: 22 unsupported operation(s), 0 unresolved alias(es)"
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "functions": [
+        "rd_ut_QueryPerformanceCounter",
+        "rd_ut_QueryPerformanceFrequency",
+        "rd_ut_coverage",
+        "rd_ut_coverage_check",
+        "unittest_rdclock"
+      ],
+      "reason": null
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "functions": [
+        "rd_clz",
+        "rd_ctz",
+        "rd_ctz64",
+        "sink_peek_no_sg"
+      ],
+      "reason": null
+    },
+    {
+      "library": "librdkafka",
+      "file": "tinycthread.c",
+      "functions": [
+        "_cnd_timedwait_win32",
+        "_thrd_wrapper_function",
+        "_tinycthread_tss_callback",
+        "_tinycthread_tss_cleanup",
+        "_tthread_timespec_get",
+        "call_once",
+        "cnd_broadcast",
+        "cnd_destroy",
+        "cnd_init",
+        "cnd_signal",
+        "cnd_timedwait",
+        "cnd_wait",
+        "mtx_destroy",
+        "mtx_init",
+        "mtx_lock",
+        "mtx_timedlock",
+        "mtx_trylock",
+        "mtx_unlock",
+        "thrd_create",
+        "thrd_current",
+        "thrd_detach",
+        "thrd_equal",
+        "thrd_exit",
+        "thrd_join",
+        "thrd_sleep",
+        "thrd_yield",
+        "tss_create",
+        "tss_delete",
+        "tss_get",
+        "tss_set"
+      ],
+      "reason": "C function `_cnd_timedwait_win32` was not found"
+    },
+    {
+      "library": "librdkafka",
+      "file": "tinycthread_extra.c",
+      "functions": [
+        "cnd_wait_enter",
+        "cnd_wait_exit"
+      ],
+      "reason": "resource projection unresolved: 33 unsupported operation(s), 5 unresolved alias(es)"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_log.c",
+      "functions": [
+        "cio_winapi_error_print"
+      ],
+      "reason": "resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_os.c",
+      "functions": [
+        "cio_os_win32_make_recursive_path"
+      ],
+      "reason": "resource projection unresolved: 8 unsupported operation(s), 1 unresolved alias(es)"
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_utils.c",
+      "functions": [
+        "cio_utils_recursive_delete_handler"
+      ],
+      "reason": null
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "functions": [
+        "sb_get_releasable_output_queue_space",
+        "sb_release_output_queue_space"
+      ],
+      "reason": null
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_string.c",
+      "functions": [
+        "memmem",
+        "memrchr",
+        "strcasestr",
+        "strndup"
+      ],
+      "reason": null
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_utils.c",
+      "functions": [
+        "gettimeofday",
+        "localtime_r",
+        "mk_utils_print_errno",
+        "mk_utils_trace"
+      ],
+      "reason": "resource projection unresolved: 45 unsupported operation(s), 14 unresolved alias(es)"
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_clock.c",
+      "functions": [
+        "gmtime_r",
+        "localtime_r"
+      ],
+      "reason": null
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_utils.c",
+      "functions": [
+        "gmtime_r",
+        "localtime_r",
+        "timegm"
+      ],
+      "reason": null
+    }
+  ]
+}

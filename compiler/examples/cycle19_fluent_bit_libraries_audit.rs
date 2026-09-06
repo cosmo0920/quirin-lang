@@ -3,6 +3,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
+#[path = "support/legacy_audit_report.rs"]
+mod legacy_audit_report;
+use legacy_audit_report::AuditReport;
+
 use qcore_compiler::chunk_contract::check_chunk_source_contract;
 use qcore_compiler::verifier_plugins::chunkio::{ChunkSourceResult, import_chunk_source};
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
@@ -46,10 +50,12 @@ fn main() -> ExitCode {
         .unwrap_or_else(|| PathBuf::from("../fluent-bit"));
     let monkey_database = arguments.next().map(PathBuf::from);
     let monkey_source_report = arguments.next().map(PathBuf::from);
+    let diagnostic_report = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
             "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
-             [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json]"
+             [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
+             [resource-diagnostics.json]"
         );
         return ExitCode::FAILURE;
     }
@@ -57,6 +63,7 @@ fn main() -> ExitCode {
         &root,
         monkey_database.as_deref(),
         monkey_source_report.as_deref(),
+        diagnostic_report.as_deref(),
     ) {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
@@ -71,6 +78,7 @@ fn run(
     root: &Path,
     monkey_database: Option<&Path>,
     monkey_source_report: Option<&Path>,
+    diagnostic_report: Option<&Path>,
 ) -> Result<bool, String> {
     let root = root
         .canonicalize()
@@ -124,6 +132,7 @@ fn run(
         return Err("audited Fluent Bit library sources contain tracked modifications".into());
     }
     println!("Fluent Bit {revision}");
+    let mut report = AuditReport::new(&revision);
     audit_library_summary_profiles(&root, &revision)?;
 
     let mut contracts = ResourceContracts::new([
@@ -213,7 +222,7 @@ fn run(
                 "compile database contains no top-level {library} sources"
             ));
         }
-        let counts = audit_library(library, &source_root, &selected, &contracts)?;
+        let counts = audit_library(library, &source_root, &selected, &contracts, &mut report)?;
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
@@ -239,7 +248,7 @@ fn run(
                 "compile database contains no built {library} sources"
             ));
         }
-        let counts = audit_library(library, &source_root, &selected, &contracts)?;
+        let counts = audit_library(library, &source_root, &selected, &contracts, &mut report)?;
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
@@ -259,7 +268,13 @@ fn run(
     if selected.is_empty() {
         return Err("compile database contains no src/flb_input_chunk.c command".into());
     }
-    let counts = audit_library("fluent-bit-chunk", &root.join("src"), &selected, &contracts)?;
+    let counts = audit_library(
+        "fluent-bit-chunk",
+        &root.join("src"),
+        &selected,
+        &contracts,
+        &mut report,
+    )?;
     failed |= counts.gateway_failures != 0;
     println!(
         "fluent-bit-chunk: {} unit(s), {} source function(s), {} projected; \
@@ -290,7 +305,13 @@ fn run(
         selected.dedup_by(|left, right| left.file == right.file);
         verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
         audit_monkey_callback_source(&selected, monkey_source_report)?;
-        let counts = audit_library("monkey-libevent", &source_root, &selected, &contracts)?;
+        let counts = audit_library(
+            "monkey-libevent",
+            &source_root,
+            &selected,
+            &contracts,
+            &mut report,
+        )?;
         failed |= counts.gateway_failures != 0;
         println!(
             "monkey-libevent: {} unit(s), {} source function(s), {} projected; \
@@ -309,6 +330,10 @@ fn run(
             "monkey-libevent: source contract checked; pass its forced-libevent \
              compile_commands.json to run the C gateway projection"
         );
+    }
+    if let Some(path) = diagnostic_report {
+        report.write(path)?;
+        println!("Resource diagnostics: {}", path.display());
     }
     Ok(failed)
 }
@@ -375,6 +400,7 @@ fn audit_library(
     source_root: &Path,
     entries: &[CompileEntry],
     contracts: &ResourceContracts,
+    report: &mut AuditReport,
 ) -> Result<AuditCounts, String> {
     let mut counts = AuditCounts::default();
     for entry in entries {
@@ -400,7 +426,9 @@ fn audit_library(
         counts.units += 1;
         if source_functions.is_empty() {
             counts.data_only_units += 1;
-            match validate_unrestricted_c11(&unit) {
+            let result = validate_unrestricted_c11(&unit);
+            report.record_data_only(library, &file, result.as_ref().err());
+            match result {
                 Ok(_) => println!("  {library}/{file}: data-only gateway pass"),
                 Err(error) => {
                     counts.gateway_failures += 1;
@@ -410,7 +438,9 @@ fn audit_library(
             continue;
         }
         counts.source_functions += source_functions.len();
-        match analyze_unrestricted_c11(&unit, &source_functions[0], contracts) {
+        let result = analyze_unrestricted_c11(&unit, &source_functions[0], contracts);
+        let detail = report.record(library, &file, &source_functions, &result);
+        match result {
             Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
                 counts.safe_units += 1;
                 counts.projected_functions += certificate.checked_functions.len();
@@ -446,6 +476,9 @@ fn audit_library(
                 counts.gateway_failures += 1;
                 println!("  {library}/{file}: gateway failure: {error}");
             }
+        }
+        for line in detail {
+            println!("    {line}");
         }
     }
     Ok(counts)
