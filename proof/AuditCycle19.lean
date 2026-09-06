@@ -298,3 +298,6 @@ import QCore.ChunkSource
 #print axioms QCore.NestedCleanup.opaque_finish_preserves_exact_inventory
 #print axioms QCore.NestedCleanup.opaque_residual_blocks_parent_discharge
 #print axioms QCore.NestedCleanup.opaque_discharge_requires_both_inventories_empty
+#print axioms QCore.NativeTeardownObservation.rejected_constructor_returns_no_chunk
+#print axioms QCore.NativeTeardownObservation.rejected_constructor_preserves_native_outputs
+#print axioms QCore.NativeTeardownObservation.rejected_constructor_rollback_does_not_escape

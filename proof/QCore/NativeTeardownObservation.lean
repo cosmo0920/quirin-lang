@@ -40,3 +40,28 @@ theorem rollback_and_teardown_are_disjoint {plan rollback teardown : List Nat}
   exact (List.nodup_append.mp distinct).2.2 id inRollback id inTeardown rfl
 
 end QCore.NativeTeardownObservation
+
+namespace QCore.NativeTeardownObservation
+
+-- This is a gate on a recorded result, not a theorem about arbitrary C calls.
+def acceptedRejectedConstructor (requested observed : Int) (chunk : Option Nat)
+    (errorBefore errorAfter : Int) (plan rollback teardown : List Nat) : Prop :=
+  requested = observed ∧ chunk = none ∧ errorAfter = errorBefore ∧
+    acceptedPartition plan rollback teardown
+
+theorem rejected_constructor_returns_no_chunk {requested observed : Int}
+    {chunk : Option Nat} {errorBefore errorAfter : Int} {plan rollback teardown : List Nat}
+    (h : acceptedRejectedConstructor requested observed chunk errorBefore errorAfter plan rollback teardown) :
+    chunk = none := h.2.1
+
+theorem rejected_constructor_preserves_native_outputs {requested observed : Int}
+    {chunk : Option Nat} {errorBefore errorAfter : Int} {plan rollback teardown : List Nat}
+    (h : acceptedRejectedConstructor requested observed chunk errorBefore errorAfter plan rollback teardown) :
+    observed = requested ∧ errorAfter = errorBefore := ⟨h.1.symm, h.2.2.1⟩
+
+theorem rejected_constructor_rollback_does_not_escape {requested observed : Int}
+    {chunk : Option Nat} {errorBefore errorAfter : Int} {plan rollback teardown : List Nat}
+    (h : acceptedRejectedConstructor requested observed chunk errorBefore errorAfter plan rollback teardown) :
+    ∀ id ∈ rollback, id ∉ teardown := rollback_and_teardown_are_disjoint h.2.2.2
+
+end QCore.NativeTeardownObservation

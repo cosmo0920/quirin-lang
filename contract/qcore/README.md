@@ -319,3 +319,11 @@ Opaque stream/chunk/backend-kind identities survive parent teardown separately
 from typed OS residuals; either inventory blocks discharge. The original
 memory/filesystem cases retain their exact results. See the
 [opaque parent report](../../docs/reports/cycle19-nested-unsupported/README.md).
+
+`chunkio/unsupported_constructor_observation.qcore` evaluates four recorded
+unsupported integer stream types. Native stream creation preserves each value;
+chunk open returns null with unchanged error output and rolls back both local
+allocations. The surviving empty stream/context is fully released. The
+11-clause runtime policy and exact trace adapter establish only these executions,
+not all caller inputs or universal reachability of the conditional close arm.
+See the [constructor report](../../docs/reports/cycle19-unsupported-constructors/README.md).

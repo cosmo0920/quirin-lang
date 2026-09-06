@@ -835,3 +835,20 @@ unchanged. These conditional live-child premises do not establish a native
 constructor result. General caller/failure provenance, full filesystem
 guarantees, aggregate custody, wrapper lifecycle and event composition remain
 open. No raw unit is promoted.
+
+## Native unsupported-type constructor observations (2026-09-06)
+
+The [unsupported constructor report](../reports/cycle19-unsupported-constructors/README.md)
+executes four pinned native stream/chunk constructor inputs: `INT_MIN`, `-1`,
+`2` and `INT_MAX`. Streams preserve the requested types; chunk open returns
+null, leaves the error sentinel unchanged and rolls back its name and object.
+All 24 acquired generations are released: eight during constructor rollback and
+sixteen during surviving empty-stream/context teardown. The shared tree checker
+accepts non-memory streams only when no chunk/backend is interpreted. Ten Python
+tests, an 11-clause QCore runtime policy and three Lean recorded-result theorems
+cover the observation boundary. All four new native runs and the five positive
+plus ten allocation-failure/control regressions pass ASan/UBSan/leak checking.
+These four observations do not establish arbitrary constructor reachability,
+general caller/failure provenance, full filesystem guarantees, aggregate source
+custody, wrapper lifecycle or full event composition. Cycle 19 remains open and
+no raw unit is promoted.

@@ -1,0 +1,7 @@
+calloc: Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:159 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:165 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_chunk.c:63 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_memfs.c:43 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_memfs.c:50 errno=12] Cannot allocate memory
+[/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_meta.c:62 errno=12] Cannot allocate memory

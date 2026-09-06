@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (46 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (47 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -66,9 +66,11 @@ It also ships a conservative checker for *existing* C source (the
   composition remain open. The unsupported backend close arm is now classified
   symbolically: outer releases retain unresolved backend custody and an explicit
   `Unknown`; constructor reachability is not inferred. Conditional parent teardown
-  now preserves exact opaque stream/chunk/backend-kind identities. Latest evidence:
-  `docs/reports/cycle19-nested-unsupported/README.md` (407 workspace tests,
-  46 contract modules; prior source/verdict parity preserved).
+  now preserves exact opaque stream/chunk/backend-kind identities. Four sanitized
+  unsupported-type constructor cases return null chunks with unchanged errors;
+  all 24 generations are released (eight rollback, sixteen teardown). Latest evidence:
+  `docs/reports/cycle19-unsupported-constructors/README.md` (407 workspace tests,
+  47 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

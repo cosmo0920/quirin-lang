@@ -52,8 +52,10 @@ def check_case(records, case, scenario):
 
 
 def check_tree_and_teardown(records, cursor, allocations, case, scenario, layout,
-                            nullable_chmod=False, nullable_chunk_name=False):
+                            nullable_chmod=False, nullable_chunk_name=False, stream_memory=1):
     ns, nc, metadata = scenario
+    require(type(stream_memory) is int and stream_memory in (0, 1), "invalid stream memory flag")
+    require(stream_memory == 1 or nc == 0, "non-memory stream must have no chunk/backend interpretation")
     context = records[cursor]["context"]
     owned = set()
 
@@ -86,7 +88,7 @@ def check_tree_and_teardown(records, cursor, allocations, case, scenario, layout
     for stream in streams:
         claim(stream["id"], "stream")
         claim(stream["name"], "name")
-        require(stream["context"] == context["id"] and stream["memory"] == 1, "wrong stream parent/backend")
+        require(stream["context"] == context["id"] and stream["memory"] == stream_memory, "wrong stream parent/backend")
         require(len(stream["chunks"]) == nc, "wrong chunk count")
         for chunk in stream["chunks"]:
             claim(chunk["id"], "chunk")
@@ -156,7 +158,7 @@ def check_tree_and_teardown(records, cursor, allocations, case, scenario, layout
     freed = [record["id"] for record in expected if record["kind"] == "free"]
     require(len(freed) == len(set(freed)) and set(freed) == owned, "release ledger mismatch")
     return {"function": "native_teardown_observation", "case": case, "values": {
-        "observed_memory_profile": 1, "constructor_graph_bound": 1,
+        "observed_memory_profile": stream_memory, "constructor_graph_bound": 1,
         "reciprocal_rings_bound": 1, "exact_nested_release_sequence": 1,
         "allocations": len(allocations), "releases": len(freed),
         "chunks": ns * nc, "counter_steps": sum(r["kind"] == "counter" for r in expected),

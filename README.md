@@ -102,6 +102,9 @@ checks all other integer backend kinds symbolically: outer chunk release
 preserves unresolved backend custody, so the result remains `Unknown`.
 [Conditional parent teardown](docs/reports/cycle19-nested-unsupported/README.md)
 retains those exact opaque identities through stream and context release.
+[Four native unsupported-type constructor cases](docs/reports/cycle19-unsupported-constructors/README.md)
+return null chunks and release all 24 allocation generations through rollback
+and surviving-stream teardown. General caller reachability remains open.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

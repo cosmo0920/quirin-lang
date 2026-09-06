@@ -135,6 +135,10 @@ constructor reachability are unresolved.
 The [parent composition](reports/cycle19-nested-unsupported/README.md) now
 preserves exact opaque stream/chunk/backend-kind identities through parent free,
 alongside typed filesystem and up-counter residuals.
+[Four native unsupported-type constructor observations](reports/cycle19-unsupported-constructors/README.md)
+record null chunk returns, unchanged errors and complete rollback before empty
+stream teardown. They narrow the observed caller boundary without making the
+conditional unsupported-close path a reachable violation.
 
 ## Cycle 20: Verifier plugin ecosystem
 
