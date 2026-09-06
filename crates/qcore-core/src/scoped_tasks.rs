@@ -52,6 +52,7 @@ pub enum ResourceState {
 pub enum TaskOutcome {
     Unit,
     I32(i32),
+    OwnedBuffer(ResourceId),
     Error(String),
 }
 
@@ -421,6 +422,11 @@ impl ScopedTaskLedger {
             {
                 return Err(TaskLedgerError::TaskBusy(child));
             }
+            if let TaskOutcome::OwnedBuffer(resource) = &outcome
+                && resources != [*resource]
+            {
+                return Err(TaskLedgerError::CompletionResourceMismatch);
+            }
             let returned = unique(resources)?;
             let owned = ledger
                 .resources
@@ -636,6 +642,28 @@ mod tests {
         ledger.complete(1, TaskOutcome::Unit, &[]).unwrap();
         assert!(ledger.join(0, 30).unwrap().resources.is_empty());
         assert_eq!(ledger.resource_state(7), Some(ResourceState::Dropped));
+    }
+
+    #[test]
+    fn typed_owned_completion_cannot_substitute_or_omit_its_payload() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        spawn(&mut ledger, 20, 1, 30, &[7]);
+        for (identity, resources) in [(7, vec![]), (8, vec![7]), (7, vec![7, 8])] {
+            unchanged(&mut ledger, |l| {
+                l.complete(1, TaskOutcome::OwnedBuffer(identity), &resources)
+            });
+        }
+        ledger
+            .complete(1, TaskOutcome::OwnedBuffer(7), &[7])
+            .unwrap();
+        assert!(ledger.use_resource(0, 7).is_err());
+        assert!(ledger.use_resource(1, 7).is_err());
+        let result = ledger.join(0, 30).unwrap();
+        assert_eq!(result.outcome, TaskOutcome::OwnedBuffer(7));
+        assert_eq!(result.resources, [7]);
+        ledger.drop_resource(0, 7).unwrap();
+        ledger.exit_scope(0, 10).unwrap();
     }
 
     #[test]

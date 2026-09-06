@@ -140,6 +140,81 @@ join aborts without reclaiming possibly accessed storage. These rules do not
 establish general C11/shared-memory or cross-platform refinement. See the
 [recovery execution record](reports/w6-task-recovery/README.md).
 
+## G02b. Owned-buffer task execution
+
+`ScopedOwnedTasksV1` extends G02a with one concrete builtin type:
+`own<Buffer>`. Each Buffer is a malloc-backed allocation with a fresh generation
+and one immutable i32 payload. Its resource identity is separate from source
+slot and scalar identities. This is not arbitrary `own<T>` elaboration.
+
+```qcore
+concurrency checked;
+fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
+    return move buffer;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s worker(move buffer) {
+            Result::Ok { value: handle } => {
+                let returned = join move handle?;
+                let value = qcore_buffer_read(returned);
+                drop returned;
+                return value;
+            }
+            Result::Err { error: failure } => {
+                let value = qcore_buffer_read(buffer);
+                drop buffer;
+                return value;
+            }
+        }
+    }
+}
+```
+
+Owned parameters require exactly `use one`. Captures must use `move` for owned
+Buffer parameters and `copy` for i32 parameters, with exact arity and no duplicate
+owned capture. Successful creation consumes the original parent bindings;
+failed creation restores them, without altering prior siblings. A later join
+returns custody through a fresh Result/value binding; it never revives the
+original moved binding. Reading does not consume ownership; `drop name;` and
+`return move name;` consume it. Repeated reads require the same live owner.
+
+`qcore_buffer_new(I32_OPERAND)` requires `alloc` and is root-only. It must either
+be propagated with `?` under `throws<AllocError>`, or directly matched using the
+same canonical Result arms as G02a. A failed allocation produces no Buffer or
+new generation. Earlier owners must be released on that failure path. Local
+annotations may be i32, unit or `own<Buffer>` and must match the initializer;
+local quantitative annotations remain unsupported. `qcore_buffer_read(NAME)`
+requires one live owned binding and returns i32. The builtin function names and
+AllocError cannot be shadowed by source declarations.
+
+Workers may read/drop owned inputs, return exactly one remaining original input,
+or drop all inputs before returning scalar/unit or raising a payload-free error.
+The core derives this relation from checked exits and applies exact caller
+capture identities; return annotations alone cannot create custody. Multiple
+owned inputs are supported. Allocation in workers and owned root-entry results
+reject, including in uncalled definitions. Every scope/return/error exit must
+account for owned bindings, Results and handles; there is no implicit cleanup
+or join in this profile. Local move aliases and general assignment are not
+part of the current source grammar.
+
+The finite task checker rejects unreachable blocks. Owned Result analysis uses
+actual checked worker exits rather than inventing resource-bearing alternatives:
+explicit matches with an impossible owned-result arm, and propagation from an
+owned-return worker with an unused nonempty error row, may therefore reject.
+Use infallible `?` for the empty-error owned-return case. General branch reasoning
+and dead-code validation remain open.
+
+Native worker buffer observations are retained privately and printed by the
+parent after successful join. The transcript is a normalized collection order,
+not a wall-clock schedule. C11 publication/join, allocator correctness and
+source/core/native correspondence remain explicit refinement boundaries.
+Lean model lemmas and fixed native pointer/sanitizer observations are separate
+evidence. Loans, owned graphs/error payloads, shared memory, mutexes, nested
+workers, general control flow and non-Linux native targets remain unsupported.
+See [the owned task report](reports/w6-owned-source-tasks/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf

@@ -1,0 +1,7 @@
+BUFFER_ALLOC
+CREATE_FAILED
+ENV_FREE
+BUFFER_FREE
+==36==LeakSanitizer has encountered a fatal error.
+==36==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==36==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)

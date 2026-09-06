@@ -1,0 +1,22 @@
+{
+  "id": "CT01",
+  "verdict": "native_owned_transfer",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "notes": "Actual Linux C11 source tasks move a malloc-backed immutable i32 Buffer. Exact pointer allocation/free and join-before-environment-free are checked. Failure restores the original parent binding and creates no child. Lean transfer lemmas are separate model evidence, not native refinement.",
+  "evidence_target": "linux",
+  "native_owned_transfer": {
+    "header": "owned_transfer.h",
+    "fail_create": false,
+    "expected_i32": 42
+  }
+}

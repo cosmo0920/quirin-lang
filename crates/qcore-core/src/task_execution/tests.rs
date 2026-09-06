@@ -24,6 +24,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
         result: ScalarType::I32,
         errors,
         declared_effects: TaskEffects {
+            alloc: false,
             spawn: true,
             join: true,
             may_block: true,
@@ -144,6 +145,7 @@ fn checked_creation_outcomes_and_copied_scalar_reference_are_distinct() {
     let failed = execute_task_module(
         &checked,
         &TaskExecutionScript {
+            allocation_outcomes: vec![],
             spawn_outcomes: vec![false],
         },
     )
@@ -158,6 +160,7 @@ fn checked_creation_outcomes_and_copied_scalar_reference_are_distinct() {
         execute_task_module(
             &checked,
             &TaskExecutionScript {
+                allocation_outcomes: vec![],
                 spawn_outcomes: vec![false, true]
             }
         )
@@ -347,6 +350,7 @@ fn declared_rows_permit_unused_operations_and_multiple_error_variants() {
         .errors
         .insert("Worker::Second".into());
     input.functions.get_mut(&1).unwrap().declared_effects = TaskEffects {
+        alloc: false,
         spawn: true,
         join: true,
         may_block: true,
@@ -542,6 +546,7 @@ fn infallible_result_extraction_keeps_an_existing_sibling_live_until_explicit_jo
     let failure = execute_task_module(
         &checked,
         &TaskExecutionScript {
+            allocation_outcomes: vec![],
             spawn_outcomes: vec![true, false],
         },
     )

@@ -1,4 +1,4 @@
-//! Source-file orchestration for the sequential cleanup and scoped-copy task
+//! Source-file orchestration for the sequential cleanup and scoped task
 //! profiles. Each path produces its own checked evidence and rejects unsupported
 //! forms before C emission. Task source is never represented by an erased
 //! sequential CFG.
@@ -66,13 +66,15 @@ pub struct EmittedSourceMap {
     pub source: SourceLocation,
 }
 
-/// The executable profile checks the declared scalar slot separately from
-/// Cycle 12's resource-identity payload. It does not elaborate owned-result
-/// types, result/error type constructors, or general per-exit payload types.
+/// Result typing records the sequential scalar/identity split separately from
+/// checked task-owned Buffer results. General owned/error payload types remain
+/// outside these bounded profiles.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceResultProfile {
     /// Body definitions only; external contracts retain structural annotations.
     pub scalar_results: BTreeMap<String, ExecutableResultType>,
+    /// Functions whose checked task result carries one owned Buffer identity.
+    pub owned_buffer_results: std::collections::BTreeSet<String>,
     pub custody_payloads: CustodyPayloadProfile,
 }
 
@@ -84,6 +86,8 @@ pub enum CustodyPayloadProfile {
     SeparateIdentityLedger,
     /// The scoped copy profile rejects every resource-bearing source form.
     NoResourcePayloads,
+    /// Typed owned Buffer capture/result custody, checked against task slots.
+    TypedTaskBuffers,
 }
 
 /// Checked evidence is explicit about the executed semantic profile. Task
@@ -121,6 +125,7 @@ impl CheckedSourceModule {
 pub enum SourceExecutionProfile {
     SequentialCleanupV1,
     ScopedCopyTasksV1,
+    ScopedOwnedTasksV1,
 }
 
 #[derive(Clone, Debug)]
@@ -332,6 +337,7 @@ pub fn compile_files_with_registry(
     })?;
 
     let result_profile = SourceResultProfile {
+        owned_buffer_results: std::collections::BTreeSet::new(),
         scalar_results: typed
             .declarations
             .iter()
@@ -1147,27 +1153,50 @@ fn compile_task_source(
     if !cfg!(target_os = "linux") {
         return Err(vec![plain_diagnostic(
             "Q500",
-            "native scoped-copy task emission currently requires a Linux C11 threads target",
+            "native scoped task emission currently requires a Linux C11 threads target",
         )]);
     }
     let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
-    let result_profile = SourceResultProfile {
-        scalar_results: typed
-            .declarations
-            .iter()
-            .filter(|declaration| declaration.kind == DeclarationKind::Function)
-            .map(|declaration| {
-                (
-                    declaration.name.clone(),
-                    declaration
-                        .result_type
-                        .as_ref()
-                        .and_then(|annotation| annotation.executable_type())
-                        .expect("task lowerer validated scalar result"),
+    use qcore_core::task_execution::{ScalarType, TaskTerminatorKind};
+    let owned_profile = checked.module().functions.values().any(|function| {
+        function.result == ScalarType::OwnedBuffer
+            || function
+                .parameters
+                .iter()
+                .any(|(_, kind)| *kind == ScalarType::OwnedBuffer)
+            || function.blocks.values().any(|block| {
+                matches!(
+                    block.terminator.kind,
+                    TaskTerminatorKind::TryAllocateBuffer { .. }
                 )
             })
+    });
+    let result_profile = SourceResultProfile {
+        scalar_results: checked
+            .module()
+            .functions
+            .values()
+            .filter_map(|function| {
+                let scalar = match function.result {
+                    ScalarType::I32 => ExecutableResultType::I32,
+                    ScalarType::Unit => ExecutableResultType::Unit,
+                    ScalarType::OwnedBuffer => return None,
+                };
+                Some((function.name.clone(), scalar))
+            })
             .collect(),
-        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+        owned_buffer_results: checked
+            .module()
+            .functions
+            .values()
+            .filter(|function| function.result == ScalarType::OwnedBuffer)
+            .map(|function| function.name.clone())
+            .collect(),
+        custody_payloads: if owned_profile {
+            CustodyPayloadProfile::TypedTaskBuffers
+        } else {
+            CustodyPayloadProfile::NoResourcePayloads
+        },
     };
     let source_map = emission
         .source_map
@@ -1180,7 +1209,11 @@ fn compile_task_source(
         .collect();
     Ok(CompiledModule {
         checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
-        execution_profile: SourceExecutionProfile::ScopedCopyTasksV1,
+        execution_profile: if owned_profile {
+            SourceExecutionProfile::ScopedOwnedTasksV1
+        } else {
+            SourceExecutionProfile::ScopedCopyTasksV1
+        },
         declaration_count: typed.declarations.len(),
         mode,
         result_profile,

@@ -112,7 +112,7 @@ The historical `cargo run -p qcore-compiler --bin qcorec` spelling is obsolete a
 
 The structural AST recognizes dimensions, quantitative axes, type aliases, resource types, errors, constants, extern functions, functions, the concurrency marker, and verifier scopes. It retains function parameters, source spans, token sequences, selected type categories, quantitative-index types, and structured contract-clause envelopes.
 
-Recognizing a type category such as `Owned`, `Borrow`, `Result`, `Task`, or `Mutex` is not complete type elaboration. Current typed declarations preserve the exact result annotation and span. The executable driver admits explicit i32/unit scalar results, checks return shape, and rejects unsupported result forms. Its public result profile distinguishes that scalar slot from a separate custody identity ledger; full owned-result and per-exit type elaboration remain open (R04). Axis declarations are now validated unconditionally, including unused declarations (R05).
+Recognizing a type category such as `Owned`, `Borrow`, `Result`, `Task`, or `Mutex` is not complete type elaboration. Current typed declarations preserve the exact result annotation and span. The sequential executable driver admits explicit i32/unit scalar results, checks return shape, and rejects unsupported result forms. The separate ScopedOwnedTasksV1 profile also checks original Buffer identities in owned task results. Its public result profile distinguishes that scalar slot from a separate custody identity ledger; full owned-result and per-exit type elaboration remain open (R04). Axis declarations are now validated unconditionally, including unused declarations (R05).
 
 A conforming source checker MUST validate every declared type and every axis declaration even if no function uses it. It MUST preserve and check parameter and result types, effect annotations, and every contract obligation that it claims to discharge. Unknown type names, invalid dimension references, unsupported semantic annotations, and ignored result-type mismatches MUST NOT receive a claim of complete type correctness.
 
@@ -307,6 +307,17 @@ Infallible `?` consumes a checked empty-error Result without adding an
 impossible error exit; a nonempty error row retains both alternatives. See [implemented grammar G02a](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02a-scoped-copy-task-execution)
 and the [recovery evidence](reports/w6-task-recovery/README.md).
 
+The additional `ScopedOwnedTasksV1` profile accepts affine `own<Buffer>` worker
+parameters/results. A Buffer is an actual heap allocation containing one immutable
+i32. Root allocation may fail with AllocError. Successful move consumes its old
+binding; failed creation restores the original bindings and prior sibling state.
+A checked worker exit returns one original input or drops every input before a
+scalar/unit/payload-free error exit. The parent must join and consume the Result
+before using returned custody. An owned entry result has no external custodian
+and rejects. These rules do not admit arbitrary resource types or owned errors.
+See [G02b](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02b-owned-buffer-task-execution)
+and [the bounded evidence](reports/w6-owned-source-tasks/README.md).
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -406,7 +417,7 @@ This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUG
 
 The implementation matrix MUST track stages separately: parsing, semantic checking, reference execution, CFG/lowering, native execution, and proof. One checked IR test does not complete a source-language CT case. One passed platform run does not cover another target or backend.
 
-The current CT manifest has seven mapped cases—CT02, CT12, CT13, CT15, CT16, CT19, and CT37—and 43 unmapped cases. CT13 has Linux native creation-recovery and retained-sibling evidence; CT15 has Linux native join-failure evidence; CT19 checks actual sibling-failure source. The other four retain their stated sequential profiles. Individual stage/target statuses remain authoritative; mappings do not imply fully completed end-to-end proofs. The current corpus contains 57 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
+The current CT manifest has eight mapped cases—CT01, CT02, CT12, CT13, CT15, CT16, CT19, and CT37—and 42 unmapped cases. CT01 executes owned Buffer transfer/return/join/drop; CT02 rejects actual parent post-move access; CT12 executes creation failure with original Buffer restoration. CT13 has Linux native creation-recovery and retained-sibling evidence; CT15 has Linux native join-failure evidence; CT19 checks actual sibling-failure source. CT16 and CT37 retain their stated sequential profiles. Individual stage/target statuses remain authoritative; mappings do not imply fully completed end-to-end proofs. The current corpus contains 58 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
 
 The supplied archive review reported 39 Python evidence-validator tests and no Rust/Lean/native execution; its Libevent directory was empty. This repository integration has complete pinned inputs and separately executes Rust, Lean, Python and the configured audit. Current results are recorded in [VALIDATION.md](VALIDATION.md) and the acceptance ledger. Historical runs are never substituted for fresh checks.
 

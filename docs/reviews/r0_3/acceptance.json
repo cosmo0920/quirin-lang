@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 7,
-  "ct_unmapped": 43,
+  "ct_mapped": 8,
+  "ct_unmapped": 42,
   "findings": [
     {
       "id": "R01",
@@ -25,9 +25,10 @@
         "docs/reports/r0-3-concurrency-lifetimes/README.md",
         "docs/reports/w6-source-task-foundations/README.md",
         "docs/reports/w6-native-source-tasks/README.md",
-        "docs/reports/w6-task-recovery/README.md"
+        "docs/reports/w6-task-recovery/README.md",
+        "docs/reports/w6-owned-source-tasks/README.md"
       ],
-      "remaining_boundary": "Active task state is separate from clock history. The scoped-copy source profile checks task/result identities, explicit creation/worker-error recovery and real Linux native joins. Move/loan authority, owned results and general concurrency lowering remain open."
+      "remaining_boundary": "ScopedOwnedTasksV1 checks original Buffer capture/result identities, creation rollback and complete worker input custody at exits, with Linux native pointer/free controls. Sequential scalar/identity payloads remain separate. Loans, general owned graphs/error payloads, worker allocation, shared memory, mutexes and native refinement remain open."
     },
     {
       "id": "R03",
@@ -45,9 +46,10 @@
       "area": "frontend",
       "status": "partially_repaired",
       "evidence": [
-        "docs/reports/r0-3-source-validation/README.md"
+        "docs/reports/r0-3-source-validation/README.md",
+        "docs/reports/w6-owned-source-tasks/README.md"
       ],
-      "remaining_boundary": "Explicit i32/unit scalar compatibility is checked. Separate custody payload metadata preserves the reduced model; full owned-result/per-exit typing remains open."
+      "remaining_boundary": "ScopedOwnedTasksV1 checks original Buffer capture/result identities, creation rollback and complete worker input custody at exits, with Linux native pointer/free controls. Sequential scalar/identity payloads remain separate. Loans, general owned graphs/error payloads, worker allocation, shared memory, mutexes and native refinement remain open."
     },
     {
       "id": "R05",

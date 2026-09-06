@@ -1,15 +1,18 @@
-//! Finite source-task execution profile: immutable i32/unit copies and leaf workers.
-//! Model checking covers every creation and declared worker outcome. A separate
-//! reference run chooses creation outcomes; it is not the all-path certificate.
-//! Source parsing, native runtime refinement, resources, loans and synchronization
-//! are separate boundaries. This IR has no operation that erases those effects.
+//! Finite source-task execution: immutable i32/unit copies, affine owned buffers
+//! and leaf workers. Model checking covers allocation/creation branches and
+//! checked worker custody effects. A reference run chooses concrete outcomes;
+//! it is not the all-path certificate. Source/native refinement, arbitrary owned
+//! graphs, loans and synchronization remain separate boundaries.
 pub use crate::scoped_tasks::ScopeId;
-use crate::scoped_tasks::{ScopedTaskLedger, TaskOutcome};
+use crate::scoped_tasks::{ResourceId, ResourceState, ScopedTaskLedger, TaskOutcome};
 use std::collections::{BTreeMap, BTreeSet};
 pub type FunctionId = usize;
 pub type SlotId = usize;
 pub type BlockId = usize;
 pub const SPAWN_ERROR: &str = "SpawnError";
+pub const ALLOC_ERROR: &str = "AllocError";
+pub type TaskValueType = ScalarType;
+pub type TaskOperand = ScalarOperand;
 const MAX_CHECK_STATES: usize = 16_384;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -21,12 +24,14 @@ pub struct TaskSpan {
 pub enum ScalarType {
     Unit,
     I32,
+    OwnedBuffer,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ScalarOperand {
     Unit,
     I32(i32),
     Slot(SlotId),
+    Move(SlotId),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ErrorOperand {
@@ -35,6 +40,7 @@ pub enum ErrorOperand {
 }
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct TaskEffects {
+    pub alloc: bool,
     pub spawn: bool,
     pub join: bool,
     pub may_block: bool,
@@ -68,6 +74,13 @@ pub struct TaskInstruction {
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TaskInstructionKind {
+    ReadBuffer {
+        buffer: SlotId,
+        value_slot: SlotId,
+    },
+    DropBuffer {
+        buffer: SlotId,
+    },
     BindScalar {
         slot: SlotId,
         value: ScalarOperand,
@@ -96,6 +109,12 @@ pub struct TaskTerminator {
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TaskTerminatorKind {
+    TryAllocateBuffer {
+        initial: ScalarOperand,
+        value_slot: SlotId,
+        success: BlockId,
+        allocation_error: BlockId,
+    },
     Goto {
         target: BlockId,
     },
@@ -179,24 +198,60 @@ fn targets(term: &TaskTerminatorKind) -> Vec<BlockId> {
             ..
         } => vec![*success, *spawn_error],
         TaskTerminatorKind::TryOutcome { success, error, .. } => vec![*success, *error],
+        TaskTerminatorKind::TryAllocateBuffer {
+            success,
+            allocation_error,
+            ..
+        } => vec![*success, *allocation_error],
         _ => vec![],
     }
 }
 
+#[derive(Clone, Debug)]
+enum AbstractValue {
+    Scalar(ScalarType),
+    Owned(ResourceId),
+}
+impl AbstractValue {
+    fn ty(&self) -> ScalarType {
+        match self {
+            Self::Scalar(ty) => *ty,
+            Self::Owned(_) => ScalarType::OwnedBuffer,
+        }
+    }
+    fn resource(&self) -> Option<ResourceId> {
+        match self {
+            Self::Owned(id) => Some(*id),
+            _ => None,
+        }
+    }
+}
 #[derive(Clone)]
 enum AbstractSlot {
-    Scalar(ScalarType),
+    Value(AbstractValue),
     Result {
-        scalar: ScalarType,
+        value: Option<AbstractValue>,
         errors: BTreeSet<String>,
+        declared_errors: BTreeSet<String>,
     },
     Error(BTreeSet<String>),
     Handle {
         worker: FunctionId,
         child: u64,
         handle: u64,
+        returned: Option<ResourceId>,
+        errors: BTreeSet<String>,
+        normal: bool,
     },
     Consumed,
+}
+/// Each alternative is derived from a checked worker exit, using original
+/// parameter positions rather than fresh or caller-provided identities.
+#[derive(Clone, Debug)]
+struct WorkerExit {
+    returned: Option<usize>,
+    dropped: Vec<usize>,
+    error: Option<String>,
 }
 #[derive(Clone)]
 struct State {
@@ -204,16 +259,39 @@ struct State {
     ledger: ScopedTaskLedger,
     scopes: Vec<ScopeId>,
     next_id: u64,
+    resources: BTreeSet<ResourceId>,
 }
 impl State {
-    fn scalar(&self, operand: &ScalarOperand) -> Result<ScalarType, String> {
+    fn value(&self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
         match operand {
-            ScalarOperand::Unit => Ok(ScalarType::Unit),
-            ScalarOperand::I32(_) => Ok(ScalarType::I32),
+            ScalarOperand::Unit => Ok(AbstractValue::Scalar(ScalarType::Unit)),
+            ScalarOperand::I32(_) => Ok(AbstractValue::Scalar(ScalarType::I32)),
             ScalarOperand::Slot(id) => match self.slots.get(id) {
-                Some(AbstractSlot::Scalar(ty)) => Ok(*ty),
-                _ => Err(format!("slot {id} is not an initialized scalar")),
+                Some(AbstractSlot::Value(value @ AbstractValue::Scalar(_))) => Ok(value.clone()),
+                _ => Err(format!("slot {id} is not an initialized copy scalar")),
             },
+            ScalarOperand::Move(id) => match self.slots.get(id) {
+                Some(AbstractSlot::Value(value @ AbstractValue::Owned(resource))) => {
+                    self.ledger
+                        .use_resource(0, *resource)
+                        .map_err(|e| format!("{e:?}"))?;
+                    Ok(value.clone())
+                }
+                _ => Err(format!("slot {id} is not an initialized owned buffer")),
+            },
+        }
+    }
+    fn take(&mut self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
+        let value = self.value(operand)?;
+        if let ScalarOperand::Move(slot) = operand {
+            self.slots.insert(*slot, AbstractSlot::Consumed);
+        }
+        Ok(value)
+    }
+    fn buffer(&self, slot: SlotId) -> Result<ResourceId, String> {
+        match self.value(&ScalarOperand::Move(slot))? {
+            AbstractValue::Owned(id) => Ok(id),
+            _ => unreachable!(),
         }
     }
     fn bind(&mut self, id: SlotId, value: AbstractSlot) -> Result<(), String> {
@@ -223,22 +301,36 @@ impl State {
         self.slots.insert(id, value);
         Ok(())
     }
-    fn exit(&self) -> Result<(), String> {
+    fn exit(&self, returned: Option<ResourceId>) -> Result<(), String> {
         if !self.scopes.is_empty() {
             return Err("return/error leaves an open thread scope".into());
         }
-        if self
-            .slots
-            .values()
-            .any(|s| matches!(s, AbstractSlot::Handle { .. } | AbstractSlot::Result { .. }))
-        {
-            return Err("return/error discards a handle or unconsumed Result".into());
+        if self.slots.values().any(|s| {
+            matches!(
+                s,
+                AbstractSlot::Handle { .. }
+                    | AbstractSlot::Result { .. }
+                    | AbstractSlot::Value(AbstractValue::Owned(_))
+            )
+        }) {
+            return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
+        }
+        for &resource in &self.resources {
+            if Some(resource) != returned
+                && self.ledger.resource_state(resource) != Some(ResourceState::Dropped)
+            {
+                return Err("return/error leaves unaccounted resource custody".into());
+            }
         }
         Ok(())
     }
 }
 
-fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnostic> {
+fn check_function(
+    module: &TaskModule,
+    id: FunctionId,
+    summaries: &BTreeMap<FunctionId, Vec<WorkerExit>>,
+) -> Result<Vec<WorkerExit>, TaskDiagnostic> {
     let function = &module.functions[&id];
     let fail = |span, message| problem(id, span, message);
     let span_valid = |span: TaskSpan| {
@@ -262,10 +354,12 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             "task entry must have no parameters".into(),
         ));
     }
-    if id != module.entry && function.errors.contains(SPAWN_ERROR) {
+    if id != module.entry
+        && (function.errors.contains(SPAWN_ERROR) || function.errors.contains(ALLOC_ERROR))
+    {
         return Err(fail(
             function.span,
-            "SpawnError is reserved for creation, not worker errors".into(),
+            "SpawnError/AllocError are reserved for creation/allocation, not worker errors".into(),
         ));
     }
     // Iterative DAG validation covers even blocks not reached by a particular
@@ -307,6 +401,7 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             }
             let defined = match &instruction.kind {
                 TaskInstructionKind::BindScalar { slot, .. } => Some(*slot),
+                TaskInstructionKind::ReadBuffer { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::UnwrapInfallible { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::Join { outcome_slot, .. } => {
                     effects.join = true;
@@ -323,6 +418,10 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             }
         }
         let defined = match &block.terminator.kind {
+            TaskTerminatorKind::TryAllocateBuffer { value_slot, .. } => {
+                effects.alloc = true;
+                vec![*value_slot]
+            }
             TaskTerminatorKind::TrySpawn { handle_slot, .. } => {
                 effects.spawn = true;
                 vec![*handle_slot]
@@ -343,7 +442,8 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             }
         }
     }
-    if (effects.spawn && !function.declared_effects.spawn)
+    if (effects.alloc && !function.declared_effects.alloc)
+        || (effects.spawn && !function.declared_effects.spawn)
         || (effects.join && !function.declared_effects.join)
         || (effects.may_block && !function.declared_effects.may_block)
     {
@@ -352,10 +452,10 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             "declared task effects do not permit body effects".into(),
         ));
     }
-    if id != module.entry && (effects.spawn || effects.join) {
+    if id != module.entry && (effects.spawn || effects.join || effects.alloc) {
         return Err(fail(
             function.span,
-            "workers must be nonrecursive task-free leaves".into(),
+            "workers must be nonrecursive task-free leaves without allocation".into(),
         ));
     }
     let mut ready = incoming
@@ -376,16 +476,37 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
     if visited != function.blocks.len() {
         return Err(fail(function.span, "task CFG contains a cycle".into()));
     }
-    let state = State {
-        slots: function
-            .parameters
-            .iter()
-            .map(|&(id, ty)| (id, AbstractSlot::Scalar(ty)))
-            .collect(),
+    if id == module.entry && function.result == ScalarType::OwnedBuffer {
+        return Err(fail(
+            function.span,
+            "owned task entry results have no external custodian in this profile".into(),
+        ));
+    }
+    let mut state = State {
+        slots: BTreeMap::new(),
         ledger: ScopedTaskLedger::default(),
         scopes: vec![],
         next_id: 1,
+        resources: BTreeSet::new(),
     };
+    let mut inputs = BTreeMap::new();
+    for (index, &(slot, ty)) in function.parameters.iter().enumerate() {
+        let value = if ty == ScalarType::OwnedBuffer {
+            let resource = state.next_id;
+            state.next_id += 1;
+            state
+                .ledger
+                .acquire(0, resource)
+                .map_err(|e| fail(function.span, format!("{e:?}")))?;
+            state.resources.insert(resource);
+            inputs.insert(resource, index);
+            AbstractValue::Owned(resource)
+        } else {
+            AbstractValue::Scalar(ty)
+        };
+        state.slots.insert(slot, AbstractSlot::Value(value));
+    }
+    let mut exits = vec![];
     let mut queue = vec![(function.entry, state)];
     let mut reached = BTreeSet::new();
     let mut scope_stacks = BTreeMap::<BlockId, Vec<ScopeId>>::new();
@@ -414,26 +535,46 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             let result: Result<(), String> = (|| {
                 match &instruction.kind {
                     TaskInstructionKind::BindScalar { slot, value } => {
-                        state.bind(*slot, AbstractSlot::Scalar(state.scalar(value)?))?
+                        let value = state.take(value)?;
+                        state.bind(*slot, AbstractSlot::Value(value))?;
+                    }
+                    TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
+                        state.buffer(*buffer)?;
+                        state.bind(
+                            *value_slot,
+                            AbstractSlot::Value(AbstractValue::Scalar(ScalarType::I32)),
+                        )?;
+                    }
+                    TaskInstructionKind::DropBuffer { buffer } => {
+                        let resource = state.buffer(*buffer)?;
+                        state
+                            .ledger
+                            .drop_resource(0, resource)
+                            .map_err(|e| format!("{e:?}"))?;
+                        state.slots.insert(*buffer, AbstractSlot::Consumed);
                     }
                     TaskInstructionKind::UnwrapInfallible {
                         result_slot,
                         value_slot,
                     } => {
-                        let Some(AbstractSlot::Result { scalar, errors }) =
-                            state.slots.get(result_slot).cloned()
+                        let Some(AbstractSlot::Result {
+                            value,
+                            declared_errors,
+                            ..
+                        }) = state.slots.get(result_slot).cloned()
                         else {
                             return Err(
                                 "infallible extraction requires an initialized Result slot".into(),
                             );
                         };
-                        if !errors.is_empty() {
+                        if !declared_errors.is_empty() {
                             return Err(
                                 "infallible extraction requires an empty declared error row".into(),
                             );
                         }
+                        let value = value.ok_or("infallible Result has no normal outcome")?;
                         state.slots.insert(*result_slot, AbstractSlot::Consumed);
-                        state.bind(*value_slot, AbstractSlot::Scalar(scalar))?;
+                        state.bind(*value_slot, AbstractSlot::Value(value))?;
                     }
                     TaskInstructionKind::EnterScope { scope } => {
                         state
@@ -457,6 +598,9 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                             worker,
                             child,
                             handle: runtime_handle,
+                            returned,
+                            errors,
+                            normal,
                         }) = state.slots.get(handle).cloned()
                         else {
                             return Err("join requires a live handle slot".into());
@@ -467,46 +611,31 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                         {
                             return Err("discarded join must have an infallible unit result".into());
                         }
-                        // Normal scalar payloads are symbolic here: there is no
-                        // scalar-dependent custody operation in this profile.
-                        // Check every declared error alternative too, then merge
-                        // only identical post-join ledgers. Actual i32 values and
-                        // exact tags are retained by the separate reference run.
-                        let normal = match worker.result {
-                            ScalarType::Unit => TaskOutcome::Unit,
-                            ScalarType::I32 => TaskOutcome::I32(0),
-                        };
-                        let outcomes = std::iter::once(normal)
-                            .chain(worker.errors.iter().cloned().map(TaskOutcome::Error));
-                        let mut joined = None;
-                        for outcome in outcomes {
-                            count += 1;
-                            if count > MAX_CHECK_STATES {
-                                return Err("task path exploration bound exhausted".into());
-                            }
-                            let mut ledger = state.ledger.clone();
-                            ledger
-                                .complete(child, outcome.clone(), &[])
-                                .map_err(|e| format!("{e:?}"))?;
-                            let capsule = ledger
-                                .join(0, runtime_handle)
-                                .map_err(|e| format!("{e:?}"))?;
-                            if capsule.outcome != outcome || !capsule.resources.is_empty() {
-                                return Err("join changed the modeled worker outcome".into());
-                            }
-                            if joined.as_ref().is_some_and(|prior| prior != &ledger) {
-                                return Err("worker outcomes disagree on post-join custody".into());
-                            }
-                            joined = Some(ledger);
+                        let capsule = state
+                            .ledger
+                            .join(0, runtime_handle)
+                            .map_err(|e| format!("{e:?}"))?;
+                        if capsule.resources != returned.into_iter().collect::<Vec<_>>() {
+                            return Err("join changed returned resource identity".into());
                         }
-                        state.ledger = joined.expect("normal outcome always modeled");
+                        if state.ledger.task_state(child)
+                            != Some(crate::scoped_tasks::TaskState::Joined)
+                        {
+                            return Err("join did not consume child".into());
+                        }
                         state.slots.insert(*handle, AbstractSlot::Consumed);
                         if let Some(slot) = outcome_slot {
+                            let value = normal.then(|| {
+                                returned
+                                    .map(AbstractValue::Owned)
+                                    .unwrap_or(AbstractValue::Scalar(worker.result))
+                            });
                             state.bind(
                                 *slot,
                                 AbstractSlot::Result {
-                                    scalar: worker.result,
-                                    errors: worker.errors.clone(),
+                                    value,
+                                    errors,
+                                    declared_errors: worker.errors.clone(),
                                 },
                             )?;
                         }
@@ -516,10 +645,32 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             })();
             result.map_err(|message| fail(instruction.span, message))?;
         }
-        let span = block.terminator.span;
         let result: Result<(), String> = (|| {
             match &block.terminator.kind {
                 TaskTerminatorKind::Goto { target } => queue.push((*target, state)),
+                TaskTerminatorKind::TryAllocateBuffer {
+                    initial,
+                    value_slot,
+                    success,
+                    allocation_error,
+                } => {
+                    if state.value(initial)?.ty() != ScalarType::I32 {
+                        return Err("buffer initialization requires a copy i32".into());
+                    }
+                    queue.push((*allocation_error, state.clone()));
+                    let resource = state.next_id;
+                    state.next_id += 1;
+                    state
+                        .ledger
+                        .acquire(0, resource)
+                        .map_err(|e| format!("{e:?}"))?;
+                    state.resources.insert(resource);
+                    state.bind(
+                        *value_slot,
+                        AbstractSlot::Value(AbstractValue::Owned(resource)),
+                    )?;
+                    queue.push((*success, state));
+                }
                 TaskTerminatorKind::TrySpawn {
                     scope,
                     worker,
@@ -538,16 +689,32 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                     if arguments.len() != callee.parameters.len() {
                         return Err("worker capture arity mismatch".into());
                     }
-                    for (argument, (_, expected)) in arguments.iter().zip(&callee.parameters) {
-                        if state.scalar(argument)? != *expected {
-                            return Err("worker copy capture type mismatch".into());
+                    let mut resources = vec![];
+                    let mut captured = BTreeMap::new();
+                    let mut consumed_slots = BTreeSet::new();
+                    for (index, (argument, (_, expected))) in
+                        arguments.iter().zip(&callee.parameters).enumerate()
+                    {
+                        let value = state.value(argument)?;
+                        if value.ty() != *expected {
+                            return Err("worker copy/move capture type mismatch".into());
+                        }
+                        if let Some(resource) = value.resource() {
+                            let ScalarOperand::Move(slot) = argument else {
+                                unreachable!()
+                            };
+                            if !consumed_slots.insert(*slot) {
+                                return Err("duplicate owned capture".into());
+                            }
+                            resources.push(resource);
+                            captured.insert(index, resource);
                         }
                     }
                     let reservation = state.next_id;
                     state.next_id += 1;
                     state
                         .ledger
-                        .reserve(0, *scope, reservation, &[])
+                        .reserve(0, *scope, reservation, &resources)
                         .map_err(|e| format!("{e:?}"))?;
                     let mut failed = state.clone();
                     failed
@@ -559,15 +726,65 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                         .ledger
                         .commit(0, reservation, reservation, reservation)
                         .map_err(|e| format!("{e:?}"))?;
-                    state.bind(
-                        *handle_slot,
-                        AbstractSlot::Handle {
-                            worker: *worker,
-                            child: reservation,
-                            handle: reservation,
-                        },
-                    )?;
-                    queue.push((*success, state));
+                    for slot in consumed_slots {
+                        state.slots.insert(slot, AbstractSlot::Consumed);
+                    }
+                    let worker_exits = summaries
+                        .get(worker)
+                        .ok_or("worker has no checked resource-effect summary")?;
+                    for exit in worker_exits {
+                        let mut success_state = state.clone();
+                        for input in &exit.dropped {
+                            let resource = *captured
+                                .get(input)
+                                .ok_or("worker drop does not refer to an owned capture")?;
+                            success_state
+                                .ledger
+                                .drop_resource(reservation, resource)
+                                .map_err(|e| format!("{e:?}"))?;
+                        }
+                        let returned = exit
+                            .returned
+                            .map(|input| {
+                                captured
+                                    .get(&input)
+                                    .copied()
+                                    .ok_or("worker return does not refer to an owned capture")
+                            })
+                            .transpose()?;
+                        let outcome = if let Some(tag) = &exit.error {
+                            TaskOutcome::Error(tag.clone())
+                        } else {
+                            match callee.result {
+                                ScalarType::Unit => TaskOutcome::Unit,
+                                ScalarType::I32 => TaskOutcome::I32(0),
+                                ScalarType::OwnedBuffer => TaskOutcome::OwnedBuffer(
+                                    returned
+                                        .ok_or("owned worker outcome has no checked identity")?,
+                                ),
+                            }
+                        };
+                        success_state
+                            .ledger
+                            .complete(
+                                reservation,
+                                outcome,
+                                &returned.into_iter().collect::<Vec<_>>(),
+                            )
+                            .map_err(|e| format!("{e:?}"))?;
+                        success_state.bind(
+                            *handle_slot,
+                            AbstractSlot::Handle {
+                                worker: *worker,
+                                child: reservation,
+                                handle: reservation,
+                                returned,
+                                errors: exit.error.clone().into_iter().collect(),
+                                normal: exit.error.is_none(),
+                            },
+                        )?;
+                        queue.push((*success, success_state));
+                    }
                 }
                 TaskTerminatorKind::TryOutcome {
                     result_slot,
@@ -576,23 +793,45 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                     success,
                     error,
                 } => {
-                    let Some(AbstractSlot::Result { scalar, errors }) =
+                    let Some(AbstractSlot::Result { value, errors, .. }) =
                         state.slots.get(result_slot).cloned()
                     else {
                         return Err("propagation requires an initialized Result slot".into());
                     };
                     state.slots.insert(*result_slot, AbstractSlot::Consumed);
-                    let mut failed = state.clone();
-                    failed.bind(*error_slot, AbstractSlot::Error(errors))?;
-                    queue.push((*error, failed));
-                    state.bind(*value_slot, AbstractSlot::Scalar(scalar))?;
-                    queue.push((*success, state));
+                    // Empty-error scalar matches retain the historical conservative
+                    // arm check. An owned Result never invents an error capsule.
+                    if !errors.is_empty()
+                        || value
+                            .as_ref()
+                            .is_some_and(|v| v.ty() != ScalarType::OwnedBuffer)
+                    {
+                        let mut failed = state.clone();
+                        failed.bind(*error_slot, AbstractSlot::Error(errors))?;
+                        queue.push((*error, failed));
+                    }
+                    if let Some(value) = value {
+                        state.bind(*value_slot, AbstractSlot::Value(value))?;
+                        queue.push((*success, state));
+                    }
                 }
                 TaskTerminatorKind::Return { value } => {
-                    if state.scalar(value)? != function.result {
-                        return Err("return scalar type mismatch".into());
+                    let value = state.take(value)?;
+                    if value.ty() != function.result {
+                        return Err("return scalar/owned type mismatch".into());
                     }
-                    state.exit()?;
+                    let returned = value.resource();
+                    state.exit(returned)?;
+                    exits.push(WorkerExit {
+                        returned: returned.and_then(|r| inputs.get(&r).copied()),
+                        dropped: inputs
+                            .iter()
+                            .filter_map(|(&resource, &index)| {
+                                (Some(resource) != returned).then_some(index)
+                            })
+                            .collect(),
+                        error: None,
+                    });
                 }
                 TaskTerminatorKind::Raise { error } => {
                     let errors = match error {
@@ -608,12 +847,19 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                     if !errors.is_subset(&function.errors) {
                         return Err("raised errors are absent from the declared row".into());
                     }
-                    state.exit()?;
+                    state.exit(None)?;
+                    for error in errors {
+                        exits.push(WorkerExit {
+                            returned: None,
+                            dropped: inputs.values().copied().collect(),
+                            error: Some(error),
+                        });
+                    }
                 }
             }
             Ok(())
         })();
-        result.map_err(|message| fail(span, message))?;
+        result.map_err(|message| fail(block.terminator.span, message))?;
     }
     if reached.len() != function.blocks.len() {
         return Err(fail(
@@ -621,7 +867,24 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             "unreachable blocks are outside the finite task profile".into(),
         ));
     }
-    Ok(())
+    // Scalar outcome values cannot affect custody in this profile. Once every
+    // actual worker exit drops every input, declared scalar/error alternatives
+    // are a safe overapproximation with that same checked resource effect.
+    if id != module.entry && function.result != ScalarType::OwnedBuffer {
+        let dropped = inputs.values().copied().collect::<Vec<_>>();
+        exits = std::iter::once(WorkerExit {
+            returned: None,
+            dropped: dropped.clone(),
+            error: None,
+        })
+        .chain(function.errors.iter().cloned().map(|error| WorkerExit {
+            returned: None,
+            dropped: dropped.clone(),
+            error: Some(error),
+        }))
+        .collect();
+    }
+    Ok(exits)
 }
 
 pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<TaskDiagnostic>> {
@@ -634,12 +897,23 @@ pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<T
     }
     let mut names = BTreeSet::new();
     let mut errors = Vec::new();
-    for (&id, function) in &module.functions {
+    let mut summaries = BTreeMap::new();
+    let order = module
+        .functions
+        .keys()
+        .copied()
+        .filter(|id| *id != module.entry)
+        .chain(std::iter::once(module.entry));
+    for id in order {
+        let function = &module.functions[&id];
         if !names.insert(function.name.clone()) {
             errors.push(problem(id, function.span, "duplicate function name"));
         }
-        if let Err(error) = check_function(module, id) {
-            errors.push(error);
+        match check_function(module, id, &summaries) {
+            Ok(exits) => {
+                summaries.insert(id, exits);
+            }
+            Err(error) => errors.push(error),
         }
     }
     if errors.is_empty() {

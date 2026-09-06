@@ -1,10 +1,22 @@
 {
   "id": "CT12",
-  "verdict": "accept",
-  "entry": "create",
+  "verdict": "native_owned_transfer",
+  "entry": "main",
   "diagnostics": [],
-  "outcome": { "error": "SpawnError" },
-  "trace": [],
-  "stages_executed": ["parser", "type_checker", "reference_execution", "cfg"],
-  "notes": "Failed task creation is modeled as a failed owned acquisition (Cycle 12 executable subset); the spec's task-handle linearity rule (a failed create must not produce a live join obligation) is witnessed by the empty acquisition trace and declared-error outcome of the CFG reference execution. Capture restoration beyond the empty capture, spawn syntax and the concurrency backend are not exercised."
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "notes": "Actual Linux C11 source tasks move a malloc-backed immutable i32 Buffer. Exact pointer allocation/free and join-before-environment-free are checked. Failure restores the original parent binding and creates no child. Lean transfer lemmas are separate model evidence, not native refinement.",
+  "evidence_target": "linux",
+  "native_owned_transfer": {
+    "header": "owned_transfer.h",
+    "fail_create": true,
+    "expected_i32": 42
+  }
 }

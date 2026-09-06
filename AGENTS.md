@@ -22,7 +22,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
-| `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped-copy source lowering. Depends on `qcore-core` only |
+| `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped copy/owned-buffer source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
@@ -154,10 +154,11 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **43/50 unmapped**
-  (CT02/CT12/CT16/CT37 retain sequential-core fixtures; CT19 checks real
-  sibling failure source, CT13 has Linux creation-recovery evidence and CT15
-  has Linux native join-failure evidence).
+  only; CT01–CT50 conformance corpus is **42/50 unmapped**
+  (CT01/CT12 execute Linux owned-buffer transfer/creation restoration; CT02
+  rejects actual post-move access. CT16/CT37 retain sequential-core fixtures;
+  CT19 checks real sibling failure source, CT13 has Linux creation-recovery
+  evidence and CT15 has Linux native join-failure evidence).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -497,7 +498,7 @@ CT19 uses a real second-spawn failure rejection and joined-sibling control.
 Explicit Result handlers now recover from failed creation while preserving and
 joining prior siblings; join handlers preserve exact worker errors. CT13 maps
 real Linux success, first/second-create failure and join-before-free controls.
-Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
+Coverage at that checkpoint was 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
 mutexes, nested workers, general control flow and other platforms remain open.
 Evidence: `docs/reports/w6-task-recovery/README.md`.
 
@@ -545,7 +546,8 @@ an outer-audit premise. Ten generic Lean frame-preservation theorems pass.
 No raw Cycle19 unit is promoted: 2 Safe /42 provisional Unsafe /137 Unknown
 plus four data-only units; three checked function contracts and 93 Unknown.
 The helper policy inventory is explicit report metadata; general lifecycle
-import, owned task execution and broader W5 consolidation remain open.
+import and broader W5 consolidation remain open. Owned task execution advances
+in the subsequent bounded W6 increment below.
 
 W7 diagnostic attribution now requires the exact selected plugin ID plus one
 1–128-byte ASCII local code (letters, digits, underscore or hyphen), in both
@@ -554,3 +556,18 @@ characters reject with QP007 before verdict admission. Valid provider codes and
 all existing evidence gates remain unchanged. This repairs attribution, not a
 previously demonstrated Safe-admission bypass. Evidence:
 `docs/reports/w7-diagnostic-attribution/README.md`.
+
+Owned source tasks (2026-09-07): `ScopedOwnedTasksV1` adds malloc-backed
+`own<Buffer>` captures and results to the checked finite task profile. Root
+allocation carries AllocError; failed creation restores exact parent bindings,
+while successful move consumes them permanently. Checked worker exits bind
+returned identities to original inputs and account for every other input.
+Native creator join returns the same buffer pointer before parent read/drop;
+failed native join aborts before reclaiming environment or payload. CT01 now
+maps the real round trip, CT02 rejects actual parent post-move access, and CT12
+executes failed creation/restoration with a successful control. Coverage is
+8/50 mapped, 42 unmapped. Lean transfer/typing lemmas and fixed native sanitizer
+runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
+owned errors, worker allocation, shared memory, mutexes, nested workers and
+other native platforms remain open. Evidence:
+`docs/reports/w6-owned-source-tasks/README.md`.

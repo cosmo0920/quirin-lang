@@ -1,0 +1,18 @@
+concurrency checked;
+fn worker(buffer: own<Buffer> use one) -> i32 {let payload=qcore_buffer_read(buffer);drop buffer;return payload;}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s worker(move buffer) {
+            Result::Ok { value: handle } => {
+                let returned = join move handle?;
+                return returned;
+            }
+            Result::Err { error: failure } => {
+                let value = qcore_buffer_read(buffer);
+                drop buffer;
+                return value;
+            }
+        }
+    }
+}

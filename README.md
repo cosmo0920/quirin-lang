@@ -521,7 +521,7 @@ CT19 uses a real second-spawn failure rejection and joined-sibling control.
 Explicit Result handlers now recover from failed creation while preserving and
 joining prior siblings; join handlers preserve exact worker errors. CT13 maps
 real Linux success, first/second-create failure and join-before-free controls.
-Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
+Coverage at that checkpoint was 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
 mutexes, nested workers, general control flow and other platforms remain open.
 Evidence: `docs/reports/w6-task-recovery/README.md`.
 
@@ -569,7 +569,8 @@ an outer-audit premise. Ten generic Lean frame-preservation theorems pass.
 No raw Cycle19 unit is promoted: 2 Safe /42 provisional Unsafe /137 Unknown
 plus four data-only units; three checked function contracts and 93 Unknown.
 The helper policy inventory is explicit report metadata; general lifecycle
-import, owned task execution and broader W5 consolidation remain open.
+import and broader W5 consolidation remain open. Owned task execution advances
+in the subsequent bounded W6 increment below.
 
 W7 diagnostic attribution now requires the exact selected plugin ID plus one
 1–128-byte ASCII local code (letters, digits, underscore or hyphen), in both
@@ -578,3 +579,18 @@ characters reject with QP007 before verdict admission. Valid provider codes and
 all existing evidence gates remain unchanged. This repairs attribution, not a
 previously demonstrated Safe-admission bypass. Evidence:
 `docs/reports/w7-diagnostic-attribution/README.md`.
+
+Owned source tasks (2026-09-07): `ScopedOwnedTasksV1` adds malloc-backed
+`own<Buffer>` captures and results to the checked finite task profile. Root
+allocation carries AllocError; failed creation restores exact parent bindings,
+while successful move consumes them permanently. Checked worker exits bind
+returned identities to original inputs and account for every other input.
+Native creator join returns the same buffer pointer before parent read/drop;
+failed native join aborts before reclaiming environment or payload. CT01 now
+maps the real round trip, CT02 rejects actual parent post-move access, and CT12
+executes failed creation/restoration with a successful control. Coverage is
+8/50 mapped, 42 unmapped. Lean transfer/typing lemmas and fixed native sanitizer
+runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
+owned errors, worker allocation, shared memory, mutexes, nested workers and
+other native platforms remain open. Evidence:
+`docs/reports/w6-owned-source-tasks/README.md`.

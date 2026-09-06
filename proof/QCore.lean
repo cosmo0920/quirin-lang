@@ -1,3 +1,4 @@
+import QCore.OwnedTaskExecution
 import QCore.TaskExecution
 import QCore.ScopedTasks
 import QCore.ContextualCustody

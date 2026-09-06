@@ -1,4 +1,4 @@
-//! Exact source lowering for the bounded copy-scalar scoped-task profile.
+//! Exact source lowering for bounded copy-scalar and owned-buffer scoped tasks.
 //!
 //! Structural task records are not admitted on their own: this pass consumes
 //! complete statements, checks every declaration and resolves immutable slots.
@@ -17,7 +17,8 @@ pub fn has_source_tasks(source: &SourceProgram) -> bool {
                 || s.value.nested_blocks().iter().any(|b| has_scope(b))
         })
     }
-    !source.task_expressions().is_empty()
+    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read"))
+        || !source.task_expressions().is_empty()
         || source
             .declarations
             .iter()
@@ -85,6 +86,7 @@ fn matching(tokens: &[Token], start: usize, open: Symbol, close: Symbol) -> Opti
 
 #[derive(Clone, Debug, Default)]
 struct ParsedEffects {
+    alloc: bool,
     spawn: bool,
     join: bool,
     may_block: bool,
@@ -93,12 +95,21 @@ struct ParsedEffects {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Scalar {
+    OwnedBuffer,
     I32,
     Unit,
 }
 
 fn scalar(tokens: &[Token]) -> Option<Scalar> {
     match tokens {
+        [own, lt, buffer, gt]
+            if word(Some(own), "own")
+                && symbol(Some(lt), Symbol::Less)
+                && word(Some(buffer), "Buffer")
+                && symbol(Some(gt), Symbol::Greater) =>
+        {
+            Some(Scalar::OwnedBuffer)
+        }
         [t] if word(Some(t), "i32") => Some(Scalar::I32),
         [t] if word(Some(t), "unit") => Some(Scalar::Unit),
         _ => None,
@@ -109,7 +120,7 @@ fn scalar(tokens: &[Token]) -> Option<Scalar> {
 struct Signature {
     id: SymbolId,
     name: String,
-    parameters: Vec<(SymbolId, String)>,
+    parameters: Vec<(SymbolId, String, Scalar)>,
     result: Scalar,
     effects: ParsedEffects,
 }
@@ -117,10 +128,16 @@ struct Signature {
 fn error_declarations(
     source: &SourceProgram,
 ) -> Result<BTreeMap<String, BTreeSet<String>>, SourceDiagnostic> {
-    let mut errors = BTreeMap::from([(
-        "SpawnError".to_owned(),
-        BTreeSet::from(["SpawnError".to_owned()]),
-    )]);
+    let mut errors = BTreeMap::from([
+        (
+            "AllocError".to_owned(),
+            BTreeSet::from(["AllocError".to_owned()]),
+        ),
+        (
+            "SpawnError".to_owned(),
+            BTreeSet::from(["SpawnError".to_owned()]),
+        ),
+    ]);
     for declaration in &source.declarations {
         if declaration.value.kind != DeclarationKind::ErrorType {
             continue;
@@ -212,24 +229,40 @@ fn signature(
     }
     let mut parameters = Vec::new();
     for (group, parameter) in groups.iter().zip(&typed.parameters) {
-        if group.len() != 3
-            || name(group.first()) != Some(parameter.name.as_str())
+        if name(group.first()) != Some(parameter.name.as_str())
             || !symbol(group.get(1), Symbol::Colon)
-            || !word(group.get(2), "i32")
-            || parameter.usage.is_some()
         {
-            return Err(bad(
-                "task parameters require explicit i32 without unsupported usage/type annotations",
-            ));
+            return Err(bad("task parameters require explicit types"));
         }
-        parameters.push((parameter.symbol, parameter.name.clone()));
+        let kind = if group.len() == 3 && word(group.get(2), "i32") && parameter.usage.is_none() {
+            Scalar::I32
+        } else if group.len() == 8
+            && scalar(&group[2..6]) == Some(Scalar::OwnedBuffer)
+            && word(group.get(6), "use")
+            && word(group.get(7), "one")
+            && parameter
+                .usage
+                .as_ref()
+                .is_some_and(|usage| usage.value == qcore_core::usage::Usage::ONE)
+        {
+            Scalar::OwnedBuffer
+        } else {
+            return Err(bad("task parameters require i32 or own<Buffer> use one"));
+        };
+        parameters.push((parameter.symbol, parameter.name.clone(), kind));
     }
     if !symbol(tokens.get(close + 1), Symbol::Arrow) {
-        return Err(bad("task functions require an explicit i32 or unit result"));
+        return Err(bad("task functions require an explicit result type"));
     }
-    let result = scalar(tokens.get(close + 2..close + 3).unwrap_or_default())
-        .ok_or_else(|| bad("task functions support only i32 and unit results"))?;
-    let mut cursor = close + 3;
+    let result_end = tokens
+        .iter()
+        .enumerate()
+        .skip(close + 2)
+        .find_map(|(i, t)| word(Some(t), "effects").then_some(i))
+        .unwrap_or(tokens.len());
+    let result = scalar(&tokens[close + 2..result_end])
+        .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?;
+    let mut cursor = result_end;
     let mut effects = ParsedEffects::default();
     if cursor < tokens.len() {
         if !word(tokens.get(cursor), "effects")
@@ -250,6 +283,11 @@ fn signature(
             let effect = name(tokens.get(cursor)).ok_or_else(|| bad("invalid task effect"))?;
             let key;
             match effect {
+                "alloc" => {
+                    effects.alloc = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
                 "spawn" => {
                     effects.spawn = true;
                     key = effect.to_owned();
@@ -314,6 +352,7 @@ use qcore_core::task_execution::{
 impl Scalar {
     fn core(self) -> ScalarType {
         match self {
+            Self::OwnedBuffer => ScalarType::OwnedBuffer,
             Self::I32 => ScalarType::I32,
             Self::Unit => ScalarType::Unit,
         }
@@ -403,6 +442,16 @@ fn lower(
         ));
     }
     for declaration in &source.declarations {
+        if matches!(
+            declaration.value.name.as_str(),
+            "qcore_buffer_new" | "qcore_buffer_read" | "AllocError"
+        ) {
+            return Err(failure(
+                declaration.span,
+                SemanticPass::NameResolution,
+                "reserved owned-buffer intrinsic or error name",
+            ));
+        }
         if !matches!(
             declaration.value.kind,
             DeclarationKind::ConcurrencyProfile
@@ -484,11 +533,12 @@ fn lower(
                 parameters: signature
                     .parameters
                     .iter()
-                    .map(|(symbol, _)| (symbol.0 as usize, ScalarType::I32))
+                    .map(|(symbol, _, kind)| (symbol.0 as usize, kind.core()))
                     .collect(),
                 result: signature.result.core(),
                 errors: signature.effects.errors.clone(),
                 declared_effects: TaskEffects {
+                    alloc: signature.effects.alloc,
                     spawn: signature.effects.spawn,
                     join: signature.effects.join,
                     may_block: signature.effects.may_block,
@@ -606,7 +656,7 @@ impl<'a> Builder<'a> {
                 signature
                     .parameters
                     .iter()
-                    .map(|(symbol, name)| (name.clone(), (*symbol, ValueType::Scalar(Scalar::I32))))
+                    .map(|(symbol, name, kind)| (name.clone(), (*symbol, ValueType::Scalar(*kind))))
                     .collect(),
             ],
             scopes: Vec::new(),
@@ -711,6 +761,100 @@ impl<'a> Builder<'a> {
         Ok(found)
     }
 
+    fn allocation_input(
+        &self,
+        tokens: &[Token],
+        span: Span,
+    ) -> Result<Option<ScalarOperand>, SourceDiagnostic> {
+        if !word(tokens.first(), "qcore_buffer_new") {
+            return Ok(None);
+        }
+        if !self.signature.effects.alloc {
+            return Err(failure(
+                span,
+                SemanticPass::TypedErrors,
+                "buffer allocation requires alloc effect",
+            ));
+        }
+        if !symbol(tokens.get(1), Symbol::LeftParen)
+            || matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
+                != Some(tokens.len().saturating_sub(1))
+        {
+            return Err(self.bad(
+                span,
+                "buffer constructor requires one complete i32 argument",
+            ));
+        }
+        let (initial, kind) = self.scalar_operand(&tokens[2..tokens.len() - 1], span)?;
+        if kind != Scalar::I32 {
+            return Err(self.bad(span, "buffer constructor requires i32"));
+        }
+        Ok(Some(initial))
+    }
+
+    fn buffer_initializer(
+        &mut self,
+        tokens: &[Token],
+        span: Span,
+        slot: usize,
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        if word(tokens.first(), "qcore_buffer_new") {
+            if !symbol(tokens.last(), Symbol::Question) {
+                return Err(self.bad(
+                    span,
+                    "buffer allocation requires ? or explicit Result match",
+                ));
+            }
+            let initial = self
+                .allocation_input(&tokens[..tokens.len() - 1], span)?
+                .unwrap();
+            if !self.signature.effects.errors.contains("AllocError") {
+                return Err(failure(
+                    span,
+                    SemanticPass::TypedErrors,
+                    "allocation propagation requires throws<AllocError>",
+                ));
+            }
+            let success = self.block_id(span)?;
+            let allocation_error =
+                self.error_block(span, ErrorOperand::Tag("AllocError".into()))?;
+            self.finish(
+                span,
+                TaskTerminatorKind::TryAllocateBuffer {
+                    initial,
+                    value_slot: slot,
+                    success,
+                    allocation_error,
+                },
+            );
+            self.current = success;
+            return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
+        }
+        if word(tokens.first(), "qcore_buffer_read") {
+            if tokens.len() != 4
+                || !symbol(tokens.get(1), Symbol::LeftParen)
+                || !symbol(tokens.get(3), Symbol::RightParen)
+            {
+                return Err(self.bad(span, "buffer read requires one exact owned-buffer name"));
+            }
+            let buffer =
+                name(tokens.get(2)).ok_or_else(|| self.bad(span, "buffer read requires a name"))?;
+            let (id, kind) = self.lookup(buffer, span)?;
+            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                return Err(self.bad(span, "buffer read requires own<Buffer>"));
+            }
+            self.instruction(
+                span,
+                TaskInstructionKind::ReadBuffer {
+                    buffer: id.0 as usize,
+                    value_slot: slot,
+                },
+            );
+            return Ok(Some(ValueType::Scalar(Scalar::I32)));
+        }
+        Ok(None)
+    }
+
     fn scalar_operand(
         &self,
         tokens: &[Token],
@@ -759,6 +903,12 @@ impl<'a> Builder<'a> {
                         "a scalar expression cannot copy a handle, result, or scope",
                     ));
                 };
+                if scalar == Scalar::OwnedBuffer {
+                    return Err(self.bad(
+                        span,
+                        "owned buffers require explicit move or a checked buffer read",
+                    ));
+                }
                 Ok((ScalarOperand::Slot(symbol.0 as usize), scalar))
             }
             _ => Err(self.bad(
@@ -836,19 +986,28 @@ impl<'a> Builder<'a> {
             return Err(self.bad(span, "worker capture arity mismatch"));
         }
         let mut arguments = Vec::new();
-        for capture in captures {
-            if capture.mode != SourceCaptureMode::Copy {
-                return Err(self.bad(capture.span, "move/read/write capture execution is not implemented in the copy-scalar profile"));
-            }
+        for (capture, (_, _, parameter_type)) in captures.iter().zip(&signature.parameters) {
             let (symbol, kind) = self.lookup_place(&capture.place)?;
-            if kind != ValueType::Scalar(Scalar::I32) {
+            if kind != ValueType::Scalar(*parameter_type) {
                 return Err(failure(
                     capture.span,
                     SemanticPass::OrdinaryTypes,
-                    "copy captures require immutable i32 bindings",
+                    "capture type does not match worker parameter",
                 ));
             }
-            arguments.push(ScalarOperand::Slot(symbol.0 as usize));
+            let operand = match (&capture.mode, parameter_type) {
+                (SourceCaptureMode::Copy, Scalar::I32) => ScalarOperand::Slot(symbol.0 as usize),
+                (SourceCaptureMode::Move, Scalar::OwnedBuffer) => {
+                    ScalarOperand::Move(symbol.0 as usize)
+                }
+                _ => {
+                    return Err(self.bad(
+                        capture.span,
+                        "only copy i32 and move own<Buffer> captures are executable",
+                    ));
+                }
+            };
+            arguments.push(operand);
         }
         Ok((scope_id, arguments))
     }
@@ -1024,7 +1183,25 @@ impl<'a> Builder<'a> {
                 );
                 (ValueType::Scalar(value), ValueType::Error(errors))
             }
-            None => return Err(self.bad(span, "unsupported Result match scrutinee")),
+            None => {
+                let scrutinee = tokens_for(self.source, syntax.scrutinee_span);
+                let initial = self
+                    .allocation_input(&scrutinee, span)?
+                    .ok_or_else(|| self.bad(span, "unsupported Result match scrutinee"))?;
+                self.finish(
+                    span,
+                    TaskTerminatorKind::TryAllocateBuffer {
+                        initial,
+                        value_slot: ok_binder.0 as usize,
+                        success,
+                        allocation_error: error,
+                    },
+                );
+                (
+                    ValueType::Scalar(Scalar::OwnedBuffer),
+                    ValueType::KnownError("AllocError".into()),
+                )
+            }
         };
         let outer_environment = self.environment.clone();
         let outer_scopes = self.scopes.clone();
@@ -1112,35 +1289,7 @@ impl<'a> Builder<'a> {
                         "spawn requires spawn and throws<SpawnError> effects",
                     ));
                 }
-                let scope_id = u64::from(scope.0);
-                if self.scopes.last() != Some(&scope_id) {
-                    return Err(self.bad(
-                        span,
-                        "this task profile requires spawning in the innermost active thread scope",
-                    ));
-                }
-                let signature = self
-                    .signatures
-                    .get(worker)
-                    .ok_or_else(|| self.bad(span, "unknown source worker"))?;
-                if captures.len() != signature.parameters.len() {
-                    return Err(self.bad(span, "worker capture arity mismatch"));
-                }
-                let mut arguments = Vec::new();
-                for capture in captures {
-                    if capture.mode != SourceCaptureMode::Copy {
-                        return Err(self.bad(capture.span, "move/read/write capture execution is not implemented in the copy-scalar profile"));
-                    }
-                    let (symbol, kind) = self.lookup_place(&capture.place)?;
-                    if kind != ValueType::Scalar(Scalar::I32) {
-                        return Err(failure(
-                            capture.span,
-                            SemanticPass::OrdinaryTypes,
-                            "copy captures require i32 values matching i32 worker parameters",
-                        ));
-                    }
-                    arguments.push(ScalarOperand::Slot(symbol.0 as usize));
-                }
+                let (scope_id, arguments) = self.spawn_inputs(span, *scope, *worker, captures)?;
                 let success = self.block_id(span)?;
                 let spawn_error = self.error_block(span, ErrorOperand::Tag("SpawnError".into()))?;
                 self.finish(
@@ -1294,22 +1443,17 @@ impl<'a> Builder<'a> {
                         .ok_or_else(|| {
                             self.bad(statement.span, "task locals require initialized values")
                         })?;
-                    let annotation = match equal {
-                        2 => None,
-                        4 if symbol(tokens.get(2), Symbol::Colon) => {
-                            Some(scalar(&tokens[3..4]).ok_or_else(|| {
-                                self.bad(
-                                    statement.span,
-                                    "only i32/unit local annotations are supported",
-                                )
-                            })?)
-                        }
-                        _ => {
-                            return Err(self.bad(
-                                statement.span,
-                                "unsupported binding pattern/type/usage annotation",
-                            ));
-                        }
+                    let annotation = if equal == 2 {
+                        None
+                    } else if equal > 3 && symbol(tokens.get(2), Symbol::Colon) {
+                        Some(scalar(&tokens[3..equal]).ok_or_else(|| {
+                            self.bad(statement.span, "unsupported task local type")
+                        })?)
+                    } else {
+                        return Err(self.bad(
+                            statement.span,
+                            "unsupported binding pattern/type annotation",
+                        ));
                     };
                     let rhs = &tokens[equal + 1..tokens.len() - 1];
                     let id = typed
@@ -1318,6 +1462,10 @@ impl<'a> Builder<'a> {
                     let kind = if !typed.task_expressions.is_empty() {
                         self.task_expression(typed, rhs, Some(id.0 as usize))?
                             .unwrap()
+                    } else if let Some(kind) =
+                        self.buffer_initializer(rhs, statement.span, id.0 as usize)?
+                    {
+                        kind
                     } else if rhs.len() == 2 && symbol(rhs.get(1), Symbol::Question) {
                         let source_name = name(rhs.first()).ok_or_else(|| {
                             self.bad(
@@ -1361,6 +1509,25 @@ impl<'a> Builder<'a> {
                         .unwrap()
                         .insert(binding.clone(), (id, kind));
                 }
+                StatementKind::Drop { place: Some(place) } => {
+                    if tokens.len() != 3
+                        || !word(tokens.first(), "drop")
+                        || name(tokens.get(1)) != Some(place.as_str())
+                        || !symbol(tokens.get(2), Symbol::Semicolon)
+                    {
+                        return Err(self.bad(statement.span, "buffer drop requires one exact name"));
+                    }
+                    let (id, kind) = self.lookup(place, statement.span)?;
+                    if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                        return Err(self.bad(statement.span, "drop requires an owned buffer"));
+                    }
+                    self.instruction(
+                        statement.span,
+                        TaskInstructionKind::DropBuffer {
+                            buffer: id.0 as usize,
+                        },
+                    );
+                }
                 StatementKind::Expression => {
                     if !symbol(tokens.last(), Symbol::Semicolon)
                         || typed.task_expressions.is_empty()
@@ -1379,7 +1546,18 @@ impl<'a> Builder<'a> {
                     {
                         return Err(self.bad(statement.span, "unsupported task return expression"));
                     }
-                    let (value, kind) = if tokens.len() == 2 {
+                    let (value, kind) = if tokens.len() == 4 && word(tokens.get(1), "move") {
+                        let buffer = name(tokens.get(2)).ok_or_else(|| {
+                            self.bad(statement.span, "owned return requires a name")
+                        })?;
+                        let (id, kind) = self.lookup(buffer, statement.span)?;
+                        if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                            return Err(
+                                self.bad(statement.span, "move return requires own<Buffer>")
+                            );
+                        }
+                        (ScalarOperand::Move(id.0 as usize), Scalar::OwnedBuffer)
+                    } else if tokens.len() == 2 {
                         (ScalarOperand::Unit, Scalar::Unit)
                     } else {
                         self.scalar_operand(&tokens[1..tokens.len() - 1], statement.span)?

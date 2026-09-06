@@ -5,6 +5,48 @@
 use std::process::Command;
 
 #[test]
+#[cfg(target_os = "linux")]
+fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let source = root.join("compiler/tests/fixtures/ct/CT01/case.qcore");
+    let directory = std::env::temp_dir().join(format!("qcore-cli-owned-{}", std::process::id()));
+    std::fs::create_dir(&directory).unwrap();
+    let c = directory.join("module.c");
+    let executable = directory.join("module");
+    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg(&source)
+        .output()
+        .unwrap();
+    assert!(checked.status.success(), "{checked:?}");
+    assert!(
+        String::from_utf8_lossy(&checked.stdout).contains("scoped owned-buffer tasks (Linux C11)")
+    );
+    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("emit")
+        .arg(&source)
+        .arg("-o")
+        .arg(&c)
+        .output()
+        .unwrap();
+    assert!(emitted.status.success(), "{emitted:?}");
+    let compiled = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()))
+        .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
+        .arg(&c)
+        .arg("-o")
+        .arg(&executable)
+        .output()
+        .unwrap();
+    assert!(compiled.status.success(), "{compiled:?}");
+    let output = Command::new(executable).output().unwrap();
+    assert!(output.status.success(), "{output:?}");
+    let trace = String::from_utf8_lossy(&output.stdout);
+    assert!(trace.contains("QCORE_TASK_RESULT 1 BUFFER 1\nQCORE_TASK_JOIN 1\n"));
+    assert!(trace.contains("QCORE_BUFFER_DROP 0 1\nQCORE_TASK_RESULT 0 I32 42\n"));
+    std::fs::remove_dir_all(directory).unwrap();
+}
+
+#[test]
 fn core_cli_works_without_clang() {
     let directory = std::env::temp_dir().join(format!("qcore-no-clang-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();

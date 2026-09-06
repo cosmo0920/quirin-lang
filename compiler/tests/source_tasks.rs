@@ -116,6 +116,7 @@ fn matches_reference(
         module.checked.as_scoped_tasks().unwrap(),
         &TaskExecutionScript {
             spawn_outcomes: decisions,
+            allocation_outcomes: vec![],
         },
     )
     .unwrap();

@@ -7,17 +7,18 @@
       "scenario": "Move an owned buffer to child; child returns it; parent joins and drops",
       "expected": "Accept",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Linux native allocation, pointer-preserving child return, creator join and exactly-once parent drop agree with reference execution. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT02",
@@ -26,7 +27,7 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "source_fixture": "compiler/tests/fixtures/ct/CT02/case.qcore",
-      "semantic_profile": "Cycle 12 executable subset, sequential ownership core: the move capture is modeled as an ownership transfer out of the parent frame and the parent's later use is statically rejected (Q202 ResourceNotLive). Spawn/capture syntax and the concurrency backend are not exercised.",
+      "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. The parent read after successful move rejects at Q600; CT01 supplies the accepted native control. Failed creation retains the original parent binding. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "stages": {
         "parser": "executed",
         "type_checker": "executed",
@@ -196,15 +197,16 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "source_fixture": "compiler/tests/fixtures/ct/CT12/case.qcore",
-      "semantic_profile": "Cycle 12 executable subset, sequential obligation core: failed creation modeled as a failed owned acquisition raising the declared error; the CFG reference execution witnesses an empty acquisition/release trace (no obligation created) and the declared-error outcome. Capture restoration beyond the empty capture, spawn syntax and the concurrency backend are not exercised.",
+      "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Injected native creation failure restores the original buffer binding for read/drop, with no child or join obligation. A successful-create control transfers the same pointer through child return and creator join. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open.",
       "stages": {
         "parser": "executed",
         "type_checker": "executed",
         "reference_execution": "executed",
         "cfg": "executed",
-        "native_backend": "unassessed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT13",

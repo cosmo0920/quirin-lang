@@ -34,7 +34,7 @@ compile database without temporary source/include dependencies.
 Per-change execution logs live under `docs/reports/`. The r0.3 acceptance ledger
 links the new semantic repairs after their gates pass. Mapped CT stages, model
 proofs, source projections, native observations and provider certificates remain
-separate evidence categories. Seven of 50 CT cases are mapped; no raw Cycle19
+separate evidence categories. Eight of 50 CT cases are mapped; no raw Cycle19
 unit is promoted by documentation or build success.
 
 The [combined revision integration](reports/r03-integration/README.md) records
@@ -150,3 +150,10 @@ under explicit source/build/ABI premises. Corpus pins are updated for 58 modules
 The full production comparison preserves all verdicts and source evidence;
 the final report adds the selected helper-policy inventory. No raw promotion;
 CT mappings remain 7/50, with 43 unmapped.
+
+The [owned source-task increment](reports/w6-owned-source-tasks/README.md)
+adds actual Buffer move/return and native creation rollback. CT01/CT02/CT12
+now use real capture syntax and typed Buffer custody. Its 29 new Lean theorems
+cover the model transfer/typing rules; fixed Linux native/sanitizer runs remain
+separate from unproved compiler/runtime refinement. All four full 185-unit
+Cycle19 artifacts retain exact byte parity with the preceding frame-helper report.

@@ -1,0 +1,96 @@
+{
+  "base_commit": "fa3e9475affc84584dd08fc5e0a7362c249b7ccc",
+  "status": "passed",
+  "workspace_tests": 754,
+  "provider_tests": 19,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 29,
+  "contract_modules": 58,
+  "ct_mapped": 8,
+  "ct_unmapped": 42,
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "uncompressed_sha256": "125bc23a86b8943ad09a7645dc46202e3b87cb6312acfde5846e491de7b57ae9"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "log": "checks.log.gz",
+      "uncompressed_sha256": "36726fe6d2e941621cc313087e6748948c3c245f8848b8aa1685cbedbbc4e1aa"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "log": "lean-build.log.gz",
+      "uncompressed_sha256": "9c45d573ceab646f55753b6f1f18c90b2de03ffe7898045a66456bafd629c98b"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "log": "lean-audits.log.gz",
+      "uncompressed_sha256": "2202b219210cd294802d565e67be3a243df82960ccc572b46e048c0630c6ef71"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "log": "providers.log.gz",
+      "uncompressed_sha256": "33c2af30e05211be0ea60d7900d26744e1479bb500e0e559233c4ca29d5e5b8c"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "log": "python.log.gz",
+      "uncompressed_sha256": "5a9c2ffa48632572a02350e4c83d4b4d848f49cd24de96a2ceca98b1995fe749"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-owned-source.json /tmp/qcore-owned-diagnostics.json",
+      "exit_code": 0,
+      "log": "audit.log.gz",
+      "uncompressed_sha256": "20364eb210f324d6db60141bf591fa0d1f4d6300f957945025408e67b3ff1ea7"
+    }
+  },
+  "source_sha256": {
+    "AGENTS.md": "4889b2203dfcd126e3b0529a264ac7ab932dae59794ea3c34f02bb1d9e66fad0",
+    "CLAUDE.md": "77ef6c6fc6bd071d2b2cb373c8a8e421ec747e240078b86552d6a982dbe3f5fc",
+    "README.md": "177de1653c768a341b044dbf9b2e0c0ab1a8d5e1a9864d63529d42d4e8684d6e",
+    "compiler/src/driver.rs": "f5d7170cc194da38b867c08da6574711d4bb1fc0b25a26d8c16f0a3826c01439",
+    "compiler/tests/ct_corpus.rs": "9d4c2d3154d04080c6c0c9d6bc9618c427a0e934bee462d25269267f532b7725",
+    "compiler/tests/fixtures/ct/CT01/case.qcore": "d84c3ddd99735eda114b8c798620e565a1857cca785d574bd2e69fc2697e450d",
+    "compiler/tests/fixtures/ct/CT01/expected.json": "593bf8fcfa92d67d80090423a88a822209d502c48717bc3504426dd870dddbc5",
+    "compiler/tests/fixtures/ct/CT01/owned_transfer.h": "b5e74449cef4fc3616194be01812c83d2cb59105938eda9ec86b11d0c26cfc63",
+    "compiler/tests/fixtures/ct/CT02/case.qcore": "b12ee155d29936afb0dfbab1cdee8700c6469eb4b9576ccebba2ddbff661179d",
+    "compiler/tests/fixtures/ct/CT02/expected.json": "b9d2f53653fecb0cb794c10bcb06d54a87f16f10406380627b4bb0b49e3c0bab",
+    "compiler/tests/fixtures/ct/CT12/case.qcore": "d84c3ddd99735eda114b8c798620e565a1857cca785d574bd2e69fc2697e450d",
+    "compiler/tests/fixtures/ct/CT12/expected.json": "9115c757429b81e2660f3ab56a880411ce1a130b7b6733c62d9ce0598d1ccd07",
+    "compiler/tests/fixtures/ct/CT12/owned_transfer.h": "b5e74449cef4fc3616194be01812c83d2cb59105938eda9ec86b11d0c26cfc63",
+    "compiler/tests/owned_source_tasks.rs": "de83f8754ef1f1c61871388a421e31c5d3dde2a38c3485eaaee4e7783c475708",
+    "compiler/tests/source_tasks.rs": "deab5b32a8ee071b5d5546dc3e6a04cd87aad892253afcb70f2cc4b2df753fb8",
+    "crates/qcore-core/src/scoped_tasks.rs": "2fc2e7b8357a922ca94794941561590ae236bb4e3726bf2011bff4a2196ac55a",
+    "crates/qcore-core/src/task_c_emit.rs": "d0629c3eaa760bd39d41752b13d53794cdfcf3c336006d2a1671e1375d35cc35",
+    "crates/qcore-core/src/task_execution.rs": "330b9ed830c13beed57799811a16f05aacbe2cb85bef819639c7d17dd1eaa9a8",
+    "crates/qcore-core/src/task_execution/reference.rs": "6a15b9a465dbfb81696bd80f4750ad1ed9049f58619413e8ea72abe35ef3f91f",
+    "crates/qcore-core/src/task_execution/tests.rs": "536e1571b7239cbc9127c291d633d924ea76a289f52e086c44f574557de1a037",
+    "crates/qcore-frontend/src/frontend.rs": "e275bbf5931b6443d5c6f606e0152ebbdf54e45b4b49021c6937c9723206e173",
+    "crates/qcore-frontend/src/source_tasks.rs": "80934d7207638673cbc255a22cd698a21692ea6eae14b3c29762dd2286cb10c3",
+    "crates/qcore-frontend/tests/owned_tasks.rs": "11a8092961064cd4fb4ef35c1b461c77004f51774901a2f96be95f5b27655ace",
+    "crates/qcore-frontend/tests/task_recovery.rs": "adcc9df90c167e11ba8bf2e8794b4fbffe10d1abf24316fd9bcb085bcdeab626",
+    "crates/qcorec/src/main.rs": "58f63e90d4f0c1dcce7d8a316df85910d52b6dab098e658e73e319dd930a23fe",
+    "crates/qcorec/tests/cli.rs": "c8d82dce60ae49ca16c6d85c990daa565f9eb40b50d64bf036b3dadbd023279a",
+    "docs/GENERALIZATION_PLAN.md": "b7a31aed4d0975e7779fe80982471e29793da17f132693517b20122207d83f66",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": "4b4819a0775a746e602a86c9658163cfedfc8c1e609fe9ecca230ee5c53b9a80",
+    "docs/QCORE_SPEC_r0_3.md": "c80799ed892bc6f2be6d0aaa031b0d21eb1bf7d02d0ee715db08af778eece7c6",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "8fdd08641a9f6a0d3b4e4d148ad528294ad2781ccf93ab43d2280a096fcead0c",
+    "docs/VALIDATION.md": "097beaed031b68f721845c67a0cdfd5ab909bac1e7e09892246f1e9782203ad8",
+    "docs/reevaluation/ct_manifest.json": "5ef7701cee5bdfb214ba639da20c57650a50f45c8819d600a521dcfe8dc34ded",
+    "docs/reports/w6-owned-source-tasks/README.md": "ca752d44de9773c9d82760e09a74a7b7817185069371d9c7ee06d90cea99073b",
+    "docs/reviews/r0_3/REVIEW.md": "9acaa77518bc741b253858261d86c6429509d3a21ee5eecc06149a405e7226c3",
+    "docs/reviews/r0_3/acceptance.json": "a2aac7bdf0d1529c10027f59031e943de161eafedd19e2d6048d40bb1775b8d2",
+    "proof/AuditCycle14.lean": "6d9c598be6363ad879c0c09556866a335ad6a2d2e4a1adbc171babf3f93d0c30",
+    "proof/QCore.lean": "b4b553aa3cba20506a06fd0560b50a3ed9356ec48c3ba33366bf9e2f3f2790aa",
+    "proof/QCore/OwnedTaskExecution.lean": "375392f72486309a8995a6c80c8a1dc9df34f269c09bdef50baf5947a2b677bd"
+  }
+}

@@ -1,14 +1,20 @@
-// CT12 (spec §55): create fails before any child starts; capture state is
-// restored and no task obligation exists.
-// Sequential obligation core: the failed creation is modeled as a failed owned
-// acquisition raising the declared error. The reference execution must show an
-// empty acquisition/release trace (no obligation was ever created) and the
-// declared error as the outcome. The success continuation still discharges the
-// obligation it would have created, so the static checker accepts both edges.
-module executable;
-error SpawnError { Failed; }
-fn create() -> i32 {
-    let task = qcore_acquire(7, false, SpawnError);
-    drop task;
-    return 0;
+concurrency checked;
+fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s worker(move buffer) {
+            Result::Ok { value: handle } => {
+                let returned = join move handle?;
+                let value = qcore_buffer_read(returned);
+                drop returned;
+                return value;
+            }
+            Result::Err { error: failure } => {
+                let value = qcore_buffer_read(buffer);
+                drop buffer;
+                return value;
+            }
+        }
+    }
 }

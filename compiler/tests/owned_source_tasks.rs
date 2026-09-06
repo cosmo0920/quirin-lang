@@ -1,0 +1,249 @@
+//! Actual source-to-native ownership transfer. Fault hooks affect only the
+//! requested allocation/thread boundary; they never manufacture checked IR.
+#![cfg(target_os = "linux")]
+use qcore_compiler::{CompileOptions, SourceFile, compile_files};
+use qcore_core::task_execution::{
+    TaskExecutionScript, execute_task_module, render_task_observation,
+};
+use std::fs;
+use std::process::{Command, Output};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+static NEXT: AtomicU64 = AtomicU64::new(0);
+const ROUND_TRIP: &str = include_str!("fixtures/ct/CT01/case.qcore");
+
+fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule, Output) {
+    let module = compile_files(
+        &[SourceFile::new("owned-tasks.qcore", source)],
+        &CompileOptions::default(),
+    )
+    .unwrap();
+    assert!(module.checked.as_scoped_tasks().is_some());
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-owned-native-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir(&directory).unwrap();
+    let c = directory.join("module.c");
+    let executable = directory.join("module");
+    fs::write(&c, module.c_source.as_ref().unwrap()).unwrap();
+    let mut compiler =
+        Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
+    compiler.args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"]);
+    if let Some(header) = header {
+        let path = directory.join("fault.h");
+        fs::write(&path, header).unwrap();
+        compiler.arg("-include").arg(path);
+    }
+    let compiled = compiler
+        .arg(&c)
+        .arg("-o")
+        .arg(&executable)
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{}\n{}",
+        String::from_utf8_lossy(&compiled.stderr),
+        c.display()
+    );
+    let output = Command::new(executable).output().unwrap();
+    fs::remove_dir_all(directory).unwrap();
+    (module, output)
+}
+
+fn matches_reference(
+    module: &qcore_compiler::CompiledModule,
+    output: &Output,
+    spawns: Vec<bool>,
+    allocations: Vec<bool>,
+) {
+    let reference = execute_task_module(
+        module.checked.as_scoped_tasks().unwrap(),
+        &TaskExecutionScript {
+            spawn_outcomes: spawns,
+            allocation_outcomes: allocations,
+        },
+    )
+    .unwrap();
+    assert!(output.status.success(), "{output:?}");
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout),
+        render_task_observation(&reference)
+    );
+}
+
+const TRACK_BUFFER: &str = r#"
+#include <stdio.h>
+#include <stdlib.h>
+static void *buffer_alloc(size_t size) { void *p = malloc(size); fprintf(stderr, "BUFFER_ALLOC %p\n", p); return p; }
+static void buffer_free(void *p) { fprintf(stderr, "BUFFER_FREE %p\n", p); free(p); }
+#define QCORE_BUFFER_MALLOC buffer_alloc
+#define QCORE_BUFFER_FREE buffer_free
+"#;
+
+fn one_buffer_released(output: &Output) {
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let allocated = stderr
+        .lines()
+        .filter_map(|line| line.strip_prefix("BUFFER_ALLOC "))
+        .collect::<Vec<_>>();
+    let freed = stderr
+        .lines()
+        .filter_map(|line| line.strip_prefix("BUFFER_FREE "))
+        .collect::<Vec<_>>();
+    assert_eq!(allocated.len(), 1, "{stderr}");
+    assert_eq!(allocated, freed, "{stderr}");
+}
+
+#[test]
+fn native_owned_buffer_round_trip_preserves_pointer_and_payload() {
+    let (module, output) = native(ROUND_TRIP, Some(TRACK_BUFFER));
+    assert_eq!(
+        module.execution_profile,
+        qcore_compiler::SourceExecutionProfile::ScopedOwnedTasksV1
+    );
+    assert_eq!(
+        module.result_profile.custody_payloads,
+        qcore_compiler::CustodyPayloadProfile::TypedTaskBuffers
+    );
+    assert_eq!(
+        module
+            .result_profile
+            .owned_buffer_results
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>(),
+        ["worker"]
+    );
+    assert!(!module.result_profile.scalar_results.contains_key("worker"));
+    matches_reference(&module, &output, vec![true], vec![true]);
+    assert!(output.status.success(), "{output:?}");
+    assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 42\n"));
+    one_buffer_released(&output);
+}
+
+#[test]
+fn source_allocation_failure_is_a_recoverable_outcome_without_free() {
+    let header = r#"
+#include <stdlib.h>
+static void *fail_buffer(size_t size) { (void)size; return NULL; }
+static void forbidden_free(void *p) { (void)p; abort(); }
+#define QCORE_BUFFER_MALLOC fail_buffer
+#define QCORE_BUFFER_FREE forbidden_free
+"#;
+    let (module, output) = native(ROUND_TRIP, Some(header));
+    matches_reference(&module, &output, vec![], vec![false]);
+    assert!(output.status.success(), "{output:?}");
+    assert!(
+        String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 ERROR AllocError\n")
+    );
+    assert!(!String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_SPAWN"));
+}
+
+#[test]
+fn failed_environment_allocation_and_create_restore_parent_buffer() {
+    for fault in [
+        r#"
+static void *fail_environment(size_t count, size_t size) { (void)count; (void)size; return NULL; }
+#define QCORE_TASK_CALLOC fail_environment
+"#,
+        r#"
+#include <threads.h>
+static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
+    (void)thread; (void)worker; (void)argument; return thrd_error;
+}
+#define QCORE_TASK_CREATE fail_create
+"#,
+    ] {
+        let (module, output) = native(ROUND_TRIP, Some(&format!("{TRACK_BUFFER}\n{fault}")));
+        matches_reference(&module, &output, vec![false], vec![true]);
+        assert!(output.status.success(), "{output:?}");
+        assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 42\n"));
+        assert!(!String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_SPAWN"));
+        one_buffer_released(&output);
+    }
+}
+
+#[test]
+fn native_join_failure_does_not_reclaim_environment_or_returned_buffer() {
+    let header = r#"
+#include <threads.h>
+#include <signal.h>
+#include <stdlib.h>
+static void caught_abort(int signal_number) { (void)signal_number; _Exit(77); }
+static int fail_join(thrd_t thread, int *result) { (void)thread; (void)result; signal(SIGABRT, caught_abort); return thrd_error; }
+static void forbidden_free(void *p) { (void)p; _Exit(91); }
+#define QCORE_TASK_JOIN fail_join
+#define QCORE_TASK_FREE forbidden_free
+#define QCORE_BUFFER_FREE forbidden_free
+"#;
+    let (_, output) = native(ROUND_TRIP, Some(header));
+    assert_eq!(output.status.code(), Some(77), "{output:?}");
+}
+
+#[test]
+fn child_reads_and_drops_exact_capture_before_scalar_completion() {
+    let source = ROUND_TRIP
+        .replace("-> own<Buffer> { return move buffer; }", "-> i32 { let payload = qcore_buffer_read(buffer); drop buffer; return payload; }")
+        .replace("let value = qcore_buffer_read(returned);\n                drop returned;\n                return value;", "return returned;");
+    let (module, output) = native(&source, Some(TRACK_BUFFER));
+    matches_reference(&module, &output, vec![true], vec![true]);
+    one_buffer_released(&output);
+    let transcript = String::from_utf8_lossy(&output.stdout);
+    let drop = transcript.find("QCORE_BUFFER_DROP 1 1\n").unwrap();
+    let completed = transcript.find("QCORE_TASK_RESULT 1 I32 42\n").unwrap();
+    assert!(drop < completed);
+}
+
+#[test]
+fn owned_child_drop_precedes_exact_recoverable_error_collection() {
+    let source = ROUND_TRIP
+        .replace("fn worker(buffer:", "error WorkerFailure { Broken; }\nfn worker(buffer:")
+        .replace("-> own<Buffer> { return move buffer; }", "-> i32 effects { throws<WorkerFailure> } { drop buffer; raise WorkerFailure::Broken; }")
+        .replace("throws<SpawnError>, spawn", "throws<SpawnError>, throws<WorkerFailure>, spawn")
+        .replace("let value = qcore_buffer_read(returned);\n                drop returned;\n                return value;", "return returned;");
+    let (module, output) = native(&source, Some(TRACK_BUFFER));
+    matches_reference(&module, &output, vec![true], vec![true]);
+    one_buffer_released(&output);
+    assert!(
+        String::from_utf8_lossy(&output.stdout)
+            .contains("QCORE_TASK_RESULT 0 ERROR WorkerFailure::Broken\n")
+    );
+}
+
+#[test]
+fn distinct_owned_captures_survive_partial_child_release_and_second_allocation_failure() {
+    let source = "concurrency checked;
+    fn worker(first:own<Buffer> use one,second:own<Buffer> use one)->own<Buffer> {drop first;return move second;}
+    fn main()->i32 effects {alloc,throws<AllocError>,spawn,join,may_block} {
+      let first=qcore_buffer_new(7)?;
+      match qcore_buffer_new(42) {
+       Result::Ok {value:second} => {thread scope s {
+        match spawn s worker(move first,move second) {
+         Result::Ok {value:h} => {let returned=join move h?;let value=qcore_buffer_read(returned);drop returned;return value;}
+         Result::Err {error:e} => {drop first;drop second;return 9;}
+        }
+       }}
+       Result::Err {error:e} => {drop first;return 8;}
+      }
+    }";
+    let (module, output) = native(source, None);
+    matches_reference(&module, &output, vec![true], vec![true, true]);
+    assert!(output.status.success());
+    let trace = String::from_utf8_lossy(&output.stdout);
+    assert!(trace.contains("QCORE_BUFFER_DROP 1 1\n"));
+    assert!(trace.contains("QCORE_TASK_RESULT 1 BUFFER 2\n"));
+    assert!(trace.contains("QCORE_BUFFER_DROP 0 2\n"));
+    let header = r#"
+#include <stdlib.h>
+static int calls;
+static void *second_fails(size_t size) { return ++calls == 2 ? NULL : malloc(size); }
+#define QCORE_BUFFER_MALLOC second_fails
+"#;
+    let (module, output) = native(source, Some(header));
+    matches_reference(&module, &output, vec![], vec![true, false]);
+    assert!(output.status.success());
+    assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 8\n"));
+}

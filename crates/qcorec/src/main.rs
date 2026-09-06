@@ -109,10 +109,14 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     })?;
     if command == "check" {
         if let Some(entry) = &module.entry {
-            let profile = if module.checked.as_scoped_tasks().is_some() {
-                "; scoped copy tasks (Linux C11)"
-            } else {
-                ""
+            let profile = match module.execution_profile {
+                qcore_compiler::SourceExecutionProfile::ScopedOwnedTasksV1 => {
+                    "; scoped owned-buffer tasks (Linux C11)"
+                }
+                qcore_compiler::SourceExecutionProfile::ScopedCopyTasksV1 => {
+                    "; scoped copy tasks (Linux C11)"
+                }
+                _ => "",
             };
             println!(
                 "checked {} function(s); entry `{entry}`{profile}",

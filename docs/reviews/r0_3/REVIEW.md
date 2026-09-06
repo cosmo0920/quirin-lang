@@ -15,14 +15,15 @@ reconstruct them. This ledger and source inventory are new local records.
 repaired until implementation, relevant Rust regressions, Lean parity where
 semantic rules change, and the standing gates have passed. Profile-qualified
 results do not imply complete language conformance. The CT manifest remains
-seven mapped and 43 unmapped, with separate stages and Linux-only native evidence for CT13/CT15.
+eight mapped and 42 unmapped, with separate stages and Linux-only native evidence
+for CT01/CT12/CT13/CT15. CT02 now rejects actual moved-buffer access.
 
 | Finding | Current acceptance | Evidence / remaining boundary |
 |---|---|---|
 | R01 | repaired model | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Live IDs are unique lifetimes in TrustedExplicitTrace. No arbitrary-source extraction or general callback lifetime proof. |
 | R02 | repaired model | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Active task state is separate from retained clock history. The [scoped-copy source path](../../reports/w6-native-source-tasks/README.md) now checks explicit task results and joins; [Result recovery](../../reports/w6-task-recovery/README.md) preserves prior siblings through failed creation; general authority/loan lowering remains open. |
 | R03 | explicit trust boundary | [Report](../../../docs/reports/r0-3-concurrency-lifetimes/README.md); Checked mutex-footprint invariants and reconstructed synchronization witnesses remain open; the model names the assumptions it consumes. |
-| R04 | partially repaired | [Report](../../../docs/reports/r0-3-source-validation/README.md); Explicit i32/unit scalar compatibility is checked. Separate custody payload metadata preserves the reduced model; full owned-result/per-exit typing remains open. |
+| R04 | partially repaired | [Report](../../../docs/reports/r0-3-source-validation/README.md); Explicit i32/unit scalar compatibility is checked. Separate custody payload metadata preserves the reduced model; [owned Buffer task results](../../reports/w6-owned-source-tasks/README.md) now retain exact original input identity; general owned/error payload typing remains open. |
 | R05 | repaired source | [Report](../../../docs/reports/r0-3-source-validation/README.md); Axis environment validation is unconditional; closed index/profile limits remain. |
 | R06 | repaired model | [Report](../../../docs/reports/r03-loop-counts/README.md); Nonzero-net positive maximum counts reject. Exact counts remain supplied premises; identity alternatives and general source loops remain unsupported. |
 | R07 | repaired consumers | [Report](../../../docs/reports/r0-3-source-validation/README.md); Full i32/i128 literal extrema are checked; arbitrary expression and result semantics are not added. |
@@ -58,3 +59,19 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
 Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 737 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nineteen separate provider tests also pass. The latest full pinned audit comparison is archived in the [configured frame-helper report](../../reports/w5-configured-frame-helpers/README.md). These counts are different suites, not interchangeable conformance cases.
+
+
+Owned source tasks (2026-09-07): `ScopedOwnedTasksV1` adds malloc-backed
+`own<Buffer>` captures and results to the checked finite task profile. Root
+allocation carries AllocError; failed creation restores exact parent bindings,
+while successful move consumes them permanently. Checked worker exits bind
+returned identities to original inputs and account for every other input.
+Native creator join returns the same buffer pointer before parent read/drop;
+failed native join aborts before reclaiming environment or payload. CT01 now
+maps the real round trip, CT02 rejects actual parent post-move access, and CT12
+executes failed creation/restoration with a successful control. Coverage is
+8/50 mapped, 42 unmapped. Lean transfer/typing lemmas and fixed native sanitizer
+runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
+owned errors, worker allocation, shared memory, mutexes, nested workers and
+other native platforms remain open. Evidence:
+[owned source task report](../../reports/w6-owned-source-tasks/README.md).

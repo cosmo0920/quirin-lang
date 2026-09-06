@@ -591,8 +591,11 @@ compose typed task/result IR and real Linux C11 create/join for scalar copies,
 with explicit checked failure paths. CT15 is newly mapped and CT19 upgraded
 to actual source. [Result recovery](reports/w6-task-recovery/README.md) adds
 explicit spawn/join handlers and CT13 sibling recovery with native storage
-checks; 7/50 mapped, 43 unmapped. Loans, move captures, usage/SSA rollback,
-typed owned results, general control flow and other platforms remain open.
+checks. [Owned source tasks](reports/w6-owned-source-tasks/README.md) now add
+actual affine Buffer moves/results, checked worker custody effects and native
+creation rollback. CT01 maps the round trip; CT02/CT12 use real moved buffers.
+Coverage is 8/50 mapped, 42 unmapped. Loans, general usage/SSA rollback, owned
+graphs/errors, shared memory, mutexes, general control and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to
 the spec's own generic conformance corpus, so "generic" is measured, not

@@ -36,6 +36,7 @@ fn failed_second_create_can_join_prior_sibling_and_recover() {
         let observation = execute_task_module(
             &module,
             &TaskExecutionScript {
+                allocation_outcomes: vec![],
                 spawn_outcomes: choices,
             },
         )
@@ -55,6 +56,7 @@ fn failed_second_create_can_join_prior_sibling_and_recover() {
     let observation = execute_task_module(
         &module,
         &TaskExecutionScript {
+            allocation_outcomes: vec![],
             spawn_outcomes: vec![true, false],
         },
     )
@@ -106,6 +108,7 @@ fn both_arms_continue_without_exporting_arm_locals_or_inventing_phi_values() {
             execute_task_module(
                 &module,
                 &TaskExecutionScript {
+                    allocation_outcomes: vec![],
                     spawn_outcomes: vec![succeeds]
                 }
             )
@@ -171,6 +174,7 @@ fn nested_handlers_and_same_name_binders_keep_their_lexical_identity() {
     let failed = execute_task_module(
         &module,
         &TaskExecutionScript {
+            allocation_outcomes: vec![],
             spawn_outcomes: vec![true, true, false],
         },
     )
@@ -195,6 +199,7 @@ fn match_error_arm_can_precede_success_and_one_arm_can_continue() {
             execute_task_module(
                 &module,
                 &TaskExecutionScript {
+                    allocation_outcomes: vec![],
                     spawn_outcomes: vec![succeeds]
                 }
             )
