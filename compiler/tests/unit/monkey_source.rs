@@ -697,3 +697,92 @@ fn stack_typedefs_require_the_actual_int_element_type() {
         ));
     }
 }
+
+#[test]
+fn injection_retains_a_structured_scan_and_function_early_return() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = include_str!("../fixtures/monkey/wrappers.c");
+    let results = wrappers(source);
+    let inject = summary(&results, 11);
+    assert_eq!(inject.paths().len(), 2);
+    let scan = inject.paths()[0]
+        .operations
+        .iter()
+        .find(|op| matches!(op, SourceOperation::ScanLoop { .. }))
+        .unwrap();
+    let SourceOperation::ScanLoop {
+        local,
+        initial,
+        header,
+        matches,
+        early_return,
+        increment,
+    } = scan
+    else {
+        unreachable!()
+    };
+    assert_eq!(initial.c_type, "unsigned long");
+    assert!(!header.operations.is_empty());
+    assert!(!matches.operations.is_empty());
+    assert_eq!(
+        early_return.result.expression,
+        SourceExpression::Integer { value: "0".into() }
+    );
+    assert!(early_return.operations.is_empty());
+    let mut found_index = false;
+    visit_value(increment, |value| {
+        found_index |= value.expression == SourceExpression::LoopIndex { local: *local };
+        Ok(())
+    })
+    .unwrap();
+    assert!(found_index);
+    assert!(
+        !inject.paths()[1]
+            .operations
+            .iter()
+            .any(|op| matches!(op, SourceOperation::ScanLoop { .. }))
+    );
+    for path in inject.paths() {
+        check_path_symbols(path).unwrap();
+    }
+    for (old, replacement) in [
+        ("index++)", "index--)"),
+        ("return 0;\n            }", "return 1;\n            }"),
+    ] {
+        let results = wrappers(&source.replace(old, replacement));
+        if replacement.contains("--") {
+            assert!(matches!(&results[11], MonkeySourceResult::Unknown { .. }));
+        } else {
+            assert_ne!(inject, summary(&results, 11));
+        }
+    }
+}
+
+#[test]
+fn scan_loops_reject_effects_and_induction_values_cannot_escape() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = include_str!("../fixtures/monkey/wrappers.c");
+    for replacement in [
+        "ctx->fired[index].data = event; if (ctx->fired[index].data == event)",
+        "if (event_del((struct event *)0) == 0)",
+    ] {
+        let results =
+            wrappers(&source.replace("if (ctx->fired[index].data == event)", replacement));
+        assert!(matches!(&results[11], MonkeySourceResult::Unknown { .. }));
+    }
+    let changed = source.replace("event->mask = mask;", "event->mask = index;");
+    assert!(matches!(
+        &wrappers(&changed)[11],
+        MonkeySourceResult::Unknown { .. }
+    ));
+    let invalid = MonkeySourcePath {
+        operations: vec![SourceOperation::ReturnValue {
+            value: value("int".into(), SourceExpression::LoopIndex { local: 3 }),
+        }],
+    };
+    assert!(check_path_symbols(&invalid).is_err());
+}

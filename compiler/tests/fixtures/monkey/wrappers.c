@@ -422,3 +422,33 @@ static inline int _mk_event_channel_create(struct mk_event_ctx *ctx,
 
     return 0;
 }
+
+static inline int _mk_event_inject(struct mk_event_loop *loop,
+                                   struct mk_event *event,
+                                   int mask,
+                                   int prevent_duplication)
+{
+    size_t               index;
+    struct mk_event_ctx *ctx;
+
+    ctx = loop->data;
+
+    if (prevent_duplication) {
+        for (index = 0 ; index < loop->n_events ; index++) {
+            if (ctx->fired[index].data == event) {
+                return 0;
+            }
+        }
+    }
+
+    event->mask = mask;
+
+    ctx->fired[ctx->fired_count].fd = event->fd;
+    ctx->fired[ctx->fired_count].mask = mask;
+    ctx->fired[ctx->fired_count].data = event;
+
+    ctx->fired_count++;
+    loop->n_events++;
+
+    return 0;
+}

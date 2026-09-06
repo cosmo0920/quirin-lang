@@ -522,3 +522,15 @@ and all 340 Rust tests pass, along with formatting, Clippy, Lean build/audit and
 the pinned audit. Generic resource inventory and Monkey source reports remain
 identical. Cross-unit source/build/ABI and caller identity remain explicit
 premises; full 19B–19E custody, lifecycle and event composition remain open.
+
+## Structured injection scan import (2026-09-06)
+
+The [scan-loop report](../reports/cycle19-scan-loop/README.md) records source
+projections for all 15 selected Monkey wrappers. The previous 81 flat paths
+remain; inject contributes two structured branches with explicit per-iteration
+reads, induction state and function-level early return. Loop safety, bounds and
+termination remain Unknown. Source report schema v2 exposes this distinction.
+Four Lean scan-prefix theorems and all 342 Rust tests pass with the required
+formatting, Clippy, Lean and pinned external checks. Generic resource counts,
+the native chunk sidecar, callbacks and the other 14 wrappers are unchanged.
+Full 19B–19E safety/custody composition remains open.

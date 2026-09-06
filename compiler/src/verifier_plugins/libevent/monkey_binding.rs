@@ -188,6 +188,9 @@ struct Replay<'a> {
 impl Replay<'_> {
     fn eval(&self, value: &SourceValue) -> Result<Value, String> {
         let result = match &value.expression {
+            E::LoopIndex { .. } => {
+                return Err("loop induction value outside callback replay profile".into());
+            }
             E::Aggregate { .. } => {
                 return Err("aggregate initializer outside callback replay profile".into());
             }
@@ -371,6 +374,9 @@ impl Replay<'_> {
                 return Err("operation after return".into());
             }
             match operation {
+                O::ScanLoop { .. } => {
+                    return Err("scan loop outside callback replay profile".into());
+                }
                 O::Terminate => {
                     return Err("nonreturning path outside callback replay profile".into());
                 }

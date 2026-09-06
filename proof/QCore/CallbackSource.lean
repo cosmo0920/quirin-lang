@@ -155,4 +155,45 @@ theorem terminal_macro_does_not_test_condition
     (records : List Nat) (falseGuard : Nat) :
     finishMacro ⟨records, .terminated⟩ falseGuard = ⟨records, .terminated⟩ := rfl
 
+/-! Finite observation account for structured read-only scan loops. Exhausted
+fuel is Unknown, never evidence of a false loop header or safe termination.
+Source integer arithmetic and memory bounds remain separate obligations. -/
+inductive ScanOutcome where
+  | returned (value : Int)
+  | exited
+  | unknown
+  deriving DecidableEq, Repr
+
+def scanPrefix (header hit : Nat → Bool) (result : Nat → Int) :
+    Nat → Nat → ScanOutcome
+  | 0, _ => .unknown
+  | fuel + 1, index =>
+      if header index then
+        if hit index then .returned (result index)
+        else scanPrefix header hit result fuel (index + 1)
+      else .exited
+
+theorem scan_without_fuel_stays_unknown
+    (header hit : Nat → Bool) (result : Nat → Int) (index : Nat) :
+    scanPrefix header hit result 0 index = .unknown := rfl
+
+theorem false_scan_header_exits
+    (header hit : Nat → Bool) (result : Nat → Int) (fuel index : Nat)
+    (finished : header index = false) :
+    scanPrefix header hit result (fuel + 1) index = .exited := by
+  simp [scanPrefix, finished]
+
+theorem scan_match_returns_before_next_iteration
+    (header hit : Nat → Bool) (result : Nat → Int) (fuel index : Nat)
+    (active : header index = true) (found : hit index = true) :
+    scanPrefix header hit result (fuel + 1) index = .returned (result index) := by
+  simp [scanPrefix, active, found]
+
+theorem unmatched_scan_retains_next_iteration
+    (header hit : Nat → Bool) (result : Nat → Int) (fuel index : Nat)
+    (active : header index = true) (missing : hit index = false) :
+    scanPrefix header hit result (fuel + 1) index =
+      scanPrefix header hit result fuel (index + 1) := by
+  simp [scanPrefix, active, missing]
+
 end QCore.CallbackSource

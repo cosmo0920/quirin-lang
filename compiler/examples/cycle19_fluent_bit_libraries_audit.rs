@@ -594,6 +594,11 @@ fn audit_monkey_callback_source(
         )?;
     for result in &wrappers {
         match result {
+            MonkeySourceResult::Summary(summary) if summary.has_scan_loop() => println!(
+                "  monkey-wrapper/{}: {} structured source branch(es) with scan loop; loop bounds, arithmetic, termination and custody Unknown",
+                summary.function(),
+                summary.paths().len()
+            ),
             MonkeySourceResult::Summary(summary) => println!(
                 "  monkey-wrapper/{}: {} complete symbolic source path(s); opaque calls and custody Unknown",
                 summary.function(),
@@ -632,7 +637,8 @@ fn audit_monkey_callback_source(
     }
     if let Some(report) = report {
         let output = serde_json::json!({
-            "schema_version": 1,
+            "schema_version": 2,
+            "scan_loop_semantics": "Each iteration evaluates header, then matches; a true match executes early_return and exits the function. Otherwise store increment in the induction local and repeat. A false header continues outside the loop. Iteration symbols are scoped to one iteration. Bounds, arithmetic, termination and memory safety remain obligations.",
             "source_revision": PINNED_FLUENT_BIT_COMMIT,
             "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
             "source_projection_only": true,

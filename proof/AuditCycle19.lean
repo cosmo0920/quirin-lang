@@ -111,3 +111,8 @@ import QCore.ChunkSource
 #print axioms QCore.ChunkSource.unlock_reset_success_path_clears_lock
 #print axioms QCore.ChunkSource.lock_effect_preserves_wrapper_busy
 #print axioms QCore.ChunkSource.lock_effect_preserves_other_identities
+
+#print axioms QCore.CallbackSource.scan_without_fuel_stays_unknown
+#print axioms QCore.CallbackSource.false_scan_header_exits
+#print axioms QCore.CallbackSource.scan_match_returns_before_next_iteration
+#print axioms QCore.CallbackSource.unmatched_scan_retains_next_iteration

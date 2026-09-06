@@ -58,6 +58,10 @@ pub enum SourceExpression {
     LocalStorage {
         local: usize,
     },
+    /// Typed induction value, scoped to the enclosing ScanLoop iteration.
+    LoopIndex {
+        local: usize,
+    },
     Integer {
         value: String,
     },
@@ -100,6 +104,17 @@ pub enum SourceExpression {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum SourceOperation {
+    /// Repeat header, then match test, then store increment into local. A true
+    /// match executes early_return and exits the FUNCTION; a false header continues outside
+    /// the loop. Bounds, arithmetic and termination are consumer obligations.
+    ScanLoop {
+        local: usize,
+        initial: SourceValue,
+        header: Box<SourceRegion>,
+        matches: Box<SourceRegion>,
+        early_return: Box<SourceRegion>,
+        increment: SourceValue,
+    },
     /// Storage type is carried by place; this operation yields that type.
     Read {
         place: SourceValue,
@@ -139,6 +154,14 @@ pub enum SourceOperation {
     Terminate,
 }
 
+/// Symbol indices continue from the enclosing path through the three regions
+/// of one iteration. Iteration producers are never available after loop exit.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceRegion {
+    pub operations: Vec<SourceOperation>,
+    pub result: SourceValue,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct MonkeySourcePath {
     pub operations: Vec<SourceOperation>,
@@ -162,6 +185,14 @@ impl MonkeySourceSummary {
     }
     pub fn paths(&self) -> &[MonkeySourcePath] {
         &self.paths
+    }
+
+    pub fn has_scan_loop(&self) -> bool {
+        self.paths.iter().any(|path| {
+            path.operations
+                .iter()
+                .any(|operation| matches!(operation, SourceOperation::ScanLoop { .. }))
+        })
     }
 }
 
@@ -397,6 +428,7 @@ enum Stmt {
     Call(Expr),
     NoReturnCall(Expr),
     DoOnce(Box<Self>, Expr),
+    ScanLoop(Box<Self>, String, String, Expr, Expr, Expr),
     If(Expr, Box<Self>, Option<Box<Self>>),
     Return(Option<Expr>),
 }
@@ -550,6 +582,22 @@ impl Importer<'_> {
                     name.into(),
                 ))
             }
+            ("MemberExpr", [base]) if node["isArrow"] == false => {
+                let name = node["name"].as_str().ok_or("missing field name")?;
+                let pointer_type = format!("{} *", c_type(base)?);
+                if self.fields.get(&(pointer_type.clone(), name.into())) != Some(&ty) {
+                    return Err("dot field outside selected ordinary record layout".into());
+                }
+                Ok(Expr::Field(
+                    ty,
+                    Box::new(Expr::Unary(
+                        pointer_type,
+                        "&".into(),
+                        Box::new(self.expression(base, depth + 1)?),
+                    )),
+                    name.into(),
+                ))
+            }
             ("ArraySubscriptExpr", [base, index]) => Ok(Expr::Index(
                 ty,
                 Box::new(self.expression(base, depth + 1)?),
@@ -650,6 +698,61 @@ impl Importer<'_> {
                     .collect::<Result<_, _>>()?,
             )),
             ("NullStmt", []) => Ok(Stmt::Block(vec![])),
+            ("ForStmt", [initial, condition_variable, condition, increment, body]) => {
+                if !kind(condition_variable).is_empty() {
+                    return Err("scan loop has a condition variable".into());
+                }
+                let [index] = children(increment) else {
+                    return Err("scan loop requires a local increment".into());
+                };
+                let Expr::Local(id, ty) = self.expression(index, depth + 1)? else {
+                    return Err("scan index is not local".into());
+                };
+                if kind(increment) != "UnaryOperator"
+                    || increment["opcode"] != "++"
+                    || !matches!(
+                        ty.as_str(),
+                        "int" | "unsigned int" | "unsigned long" | "unsigned long long"
+                    )
+                {
+                    return Err("scan loop requires a supported integer increment".into());
+                }
+                let initial = self.statement(initial, depth + 1)?;
+                if !matches!(&initial, Stmt::Assign(Expr::Local(target, _), _) if target == &id) {
+                    return Err("scan initializer must assign its induction local".into());
+                }
+                let condition = self.expression(condition, depth + 1)?;
+                let body = self.statement(body, depth + 1)?;
+                fn single(stmt: &Stmt) -> &Stmt {
+                    if let Stmt::Block(statements) = stmt
+                        && let [only] = statements.as_slice()
+                    {
+                        single(only)
+                    } else {
+                        stmt
+                    }
+                }
+                let Stmt::If(matches, yes, None) = single(&body) else {
+                    return Err("scan body requires one conditional early return".into());
+                };
+                let Stmt::Return(Some(result)) = single(yes) else {
+                    return Err("scan match must return from the function".into());
+                };
+                if [effects(&condition), effects(matches), effects(result)]
+                    .iter()
+                    .any(|effect| effect.1)
+                {
+                    return Err("scan expressions cannot contain opaque calls".into());
+                }
+                Ok(Stmt::ScanLoop(
+                    Box::new(initial),
+                    id,
+                    ty,
+                    condition,
+                    matches.clone(),
+                    result.clone(),
+                ))
+            }
             ("DoStmt", [body, condition]) => {
                 // Macro-style single execution only. Parse the entire body;
                 // break/continue and nonliteral conditions still fail closed.
@@ -997,7 +1100,34 @@ fn check_value_size(value: &SourceValue) -> Result<(), String> {
 fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
     let mut producers: Vec<Option<&str>> = Vec::new();
     for operation in &path.operations {
+        if let SourceOperation::ScanLoop {
+            local,
+            initial,
+            header,
+            matches,
+            early_return,
+            increment,
+        } = operation
+        {
+            check_references(initial, &producers, None)?;
+            let mut iteration_producers = producers.clone();
+            let scope = Some((*local, initial.c_type.as_str()));
+            for region in [header, matches, early_return] {
+                for operation in &region.operations {
+                    let SourceOperation::Read { place } = operation else {
+                        return Err("scan region contains an effect other than a read".into());
+                    };
+                    check_references(place, &iteration_producers, scope)?;
+                    iteration_producers.push(Some(&place.c_type));
+                }
+                check_references(&region.result, &iteration_producers, scope)?;
+            }
+            check_references(increment, &iteration_producers, scope)?;
+            producers.push(None);
+            continue;
+        }
         let (values, produced): (Vec<&SourceValue>, Option<&str>) = match operation {
+            SourceOperation::ScanLoop { .. } => unreachable!(),
             SourceOperation::Read { place } => (vec![place], Some(&place.c_type)),
             SourceOperation::Write { place, value } => (vec![place, value], None),
             SourceOperation::LocalWrite { value, .. } | SourceOperation::ReturnValue { value } => {
@@ -1015,18 +1145,34 @@ fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
             | SourceOperation::Terminate => (vec![], None),
         };
         for value in values {
-            visit_value(value, |value| {
-                if let SourceExpression::Symbol { operation } = value.expression
-                    && producers.get(operation).copied().flatten() != Some(value.c_type.as_str())
-                {
-                    return Err("symbol has no prior producer with its exact C type".into());
-                }
-                Ok(())
-            })?;
+            check_references(value, &producers, None)?;
         }
         producers.push(produced);
     }
     Ok(())
+}
+
+fn check_references(
+    value: &SourceValue,
+    producers: &[Option<&str>],
+    loop_index: Option<(usize, &str)>,
+) -> Result<(), String> {
+    visit_value(value, |value| {
+        match value.expression {
+            SourceExpression::Symbol { operation }
+                if producers.get(operation).copied().flatten() != Some(value.c_type.as_str()) =>
+            {
+                return Err("symbol has no prior producer with its exact C type".into());
+            }
+            SourceExpression::LoopIndex { local }
+                if loop_index != Some((local, value.c_type.as_str())) =>
+            {
+                return Err("induction value is outside its typed loop scope".into());
+            }
+            _ => {}
+        }
+        Ok(())
+    })
 }
 
 // C does not sequence operands/arguments. Pure ordinary reads are projected in
@@ -1094,6 +1240,65 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
             continue;
         }
         match statement {
+            Stmt::ScanLoop(initial, id, ty, header, matches, early_return) => {
+                let mut initialized = execute(initial, vec![path])?;
+                let mut path = initialized.pop().ok_or("missing scan initializer path")?;
+                if !initialized.is_empty() || path.addressed.contains(id) {
+                    return Err(
+                        "scan induction local must have unescaped single initialization".into(),
+                    );
+                }
+                let (local, _, initial) = path
+                    .locals
+                    .get(id)
+                    .ok_or("scan local outside scope")?
+                    .clone();
+                let initial = initial.ok_or("unknown scan initial value")?;
+                if initial.c_type != *ty {
+                    return Err("scan initial type mismatch".into());
+                }
+                let index = value(ty.clone(), SourceExpression::LoopIndex { local });
+                let mut iteration = path.clone();
+                iteration.locals.get_mut(id).unwrap().2 = Some(index.clone());
+                fn region(path: &mut Path, expr: &Expr) -> Result<SourceRegion, String> {
+                    let start = path.operations.len();
+                    let result = path.evaluate(expr)?;
+                    Ok(SourceRegion {
+                        operations: path.operations[start..].to_vec(),
+                        result,
+                    })
+                }
+                let header = region(&mut iteration, header)?;
+                let matches = region(&mut iteration, matches)?;
+                let early_return = region(&mut iteration, early_return)?;
+                let increment = value(
+                    ty.clone(),
+                    SourceExpression::Binary {
+                        operator: "+".into(),
+                        left: Box::new(index),
+                        right: Box::new(value(
+                            ty.clone(),
+                            SourceExpression::Integer { value: "1".into() },
+                        )),
+                    },
+                );
+                // The finite path evaluator does not infer the exit index.
+                // Its iteration symbols and induction value cannot escape.
+                path.locals.get_mut(id).unwrap().2 = None;
+                path.push(SourceOperation::ScanLoop {
+                    local,
+                    initial,
+                    header: Box::new(header),
+                    matches: Box::new(matches),
+                    early_return: Box::new(early_return),
+                    increment,
+                })?;
+                output.push(path);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
             Stmt::Declare(id, ty, initial) => {
                 let index = path.next_local;
                 path.next_local += 1;
@@ -1284,6 +1489,9 @@ fn derive(
     let paths = execute(&statement, vec![path])?
         .into_iter()
         .map(|mut path| {
+            if path.operations.iter().any(|operation| matches!(operation, SourceOperation::ScanLoop { early_return, .. } if early_return.result.c_type != return_type)) {
+                return Err("scan early return type differs from function signature".into());
+            }
             if path.terminated {
                 path.push(SourceOperation::Terminate)?;
             } else if return_type == "void" {
