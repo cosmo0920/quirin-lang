@@ -457,3 +457,34 @@ counts are unchanged. 19B identity mapping, 19C lifecycle/teardown imports,
 unsupported Monkey wrappers, failure-path custody and full event composition
 remain open. See [the native-rule report](../reports/cycle19-native-rules/README.md)
 for extraction scope, evidence, reproduction and remaining gates.
+
+## Generalization-aligned contract foundation (2026-09-06)
+
+Execution now follows the [generalization plan](../GENERALIZATION_PLAN.md) and
+[extended dependency roadmap](../ROADMAP_AFTER_CYCLE_9.md). The original proposal
+is preserved unchanged; implementation progress is recorded here and in reports.
+The first W1 increment supports the remaining 19B custody work by loading the
+19-function resource environment from five native QCore modules selected by
+`contract/cycle19-resource-contracts.json`. The audit's Rust production table is
+removed after pinned verdict/diagnostic parity; library source/profile routing
+remains in place.
+
+The loader maps an explicitly versioned, bounded custody vocabulary to the
+existing parameter/result modes. Every parameter and result must be declared;
+unknown predicates, richer requirements, error sentinels, conditional effects,
+duplicate functions and missing inputs reject the load without a partial
+fallback. Detailed observation and lifecycle modules retain their existing
+semantic interpreters. The new resource projection modules declare assumptions;
+they do not establish that the underlying C satisfies them.
+
+Exact source texts accompany the resource environment in safety certificates.
+Independent certificate replay reloads those texts and checks the resulting
+contract table; replacing a loaded mode without changing its recorded source
+invalidates the certificate. A resource-inventory sidecar records those same
+inputs for non-Safe units. See the [loader parity report](../reports/cycle19-contract-loader/README.md)
+for validation, signature differences, assumptions and reproduction.
+
+The remaining 19B source identity mapping, 19C lifecycle/teardown imports, 19D
+unsupported wrappers/failure custody/full event composition, and 19E complete
+formal composition stay open. W1 supplies their contract input boundary; it does
+not close them or bypass Cycle 20's semantic-witness firewall.

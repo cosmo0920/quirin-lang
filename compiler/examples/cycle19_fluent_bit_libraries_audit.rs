@@ -8,6 +8,7 @@ mod legacy_audit_report;
 use legacy_audit_report::AuditReport;
 
 use qcore_compiler::chunk_contract::check_chunk_source_contract;
+use qcore_compiler::contract_loader::load_resource_contract_manifest;
 use qcore_compiler::verifier_plugins::chunkio::{ChunkSourceResult, import_chunk_source};
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::verifier_plugins::libevent::monkey_source::{
@@ -15,8 +16,7 @@ use qcore_compiler::verifier_plugins::libevent::monkey_source::{
 };
 use qcore_compiler::{
     AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
-    LegacyFunctionScope, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
-    ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    LegacyFunctionScope, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
     classify_libevent_symbol, derive_library_summary_profile, legacy_c_source_functions,
     required_library_source_paths, validate_unrestricted_c11, verify_pinned_libevent_source,
 };
@@ -52,11 +52,15 @@ fn main() -> ExitCode {
     let monkey_source_report = arguments.next().map(PathBuf::from);
     let diagnostic_report = arguments.next().map(PathBuf::from);
     let binding_directory = arguments.next().map(PathBuf::from);
+    let contract_manifest = arguments.next().map(PathBuf::from).unwrap_or_else(|| {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../contract/cycle19-resource-contracts.json")
+    });
     if arguments.next().is_some() {
         eprintln!(
             "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
              [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
-             [resource-diagnostics.json] [native-observation-directory]"
+             [resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]"
         );
         return ExitCode::FAILURE;
     }
@@ -66,6 +70,7 @@ fn main() -> ExitCode {
         monkey_source_report.as_deref(),
         diagnostic_report.as_deref(),
         binding_directory.as_deref(),
+        &contract_manifest,
     ) {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
@@ -82,6 +87,7 @@ fn run(
     monkey_source_report: Option<&Path>,
     diagnostic_report: Option<&Path>,
     binding_directory: Option<&Path>,
+    contract_manifest: &Path,
 ) -> Result<bool, String> {
     let root = root
         .canonicalize()
@@ -138,73 +144,18 @@ fn run(
     let mut report = AuditReport::new(&revision);
     audit_library_summary_profiles(&root, &revision)?;
 
-    let mut contracts = ResourceContracts::new([
-        ("malloc", ResourceApiKind::Acquire),
-        ("calloc", ResourceApiKind::Acquire),
-        ("free", ResourceApiKind::Release),
-        ("mk_mem_alloc", ResourceApiKind::Acquire),
-        ("mk_mem_alloc_z", ResourceApiKind::Acquire),
-        ("mk_mem_free", ResourceApiKind::Release),
-        ("rd_malloc", ResourceApiKind::Acquire),
-        ("rd_calloc", ResourceApiKind::Acquire),
-        ("rd_strdup", ResourceApiKind::Acquire),
-        ("rd_strndup", ResourceApiKind::Acquire),
-        ("rd_free", ResourceApiKind::Release),
-        ("flb_malloc", ResourceApiKind::Acquire),
-        ("flb_calloc", ResourceApiKind::Acquire),
-        ("flb_free", ResourceApiKind::Release),
-        ("flb_sds_create_len", ResourceApiKind::Acquire),
-        ("flb_sds_destroy", ResourceApiKind::Release),
-        ("cio_chunk_open", ResourceApiKind::Acquire),
-        ("cio_chunk_close", ResourceApiKind::Release),
-    ]);
-    for name in [
-        "malloc",
-        "calloc",
-        "mk_mem_alloc",
-        "mk_mem_alloc_z",
-        "rd_malloc",
-        "rd_calloc",
-        "rd_strdup",
-        "rd_strndup",
-        "flb_malloc",
-        "flb_calloc",
-        "flb_sds_create_len",
-        "cio_chunk_open",
-    ] {
-        contracts.insert_contract(
-            name,
-            ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
-        );
+    let contracts = load_resource_contract_manifest(contract_manifest)?;
+    if let Some(path) = diagnostic_report {
+        let sidecar = path.with_extension("contracts.json");
+        let inputs = serde_json::json!({
+            "schema_version": 1,
+            "trust": "declared resource-projection assumptions, not verified C behavior",
+            "manifest": fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
+            "sources": contracts.source_assumptions(),
+        });
+        let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
+        fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }
-    for name in [
-        "free",
-        "mk_mem_free",
-        "rd_free",
-        "flb_free",
-        "flb_sds_destroy",
-    ] {
-        contracts.insert_contract(
-            name,
-            ResourceFunctionContract::new(
-                [ResourceParameterMode::Released { nullable: true }],
-                ResourceReturnMode::None,
-            ),
-        );
-    }
-    contracts.insert_contract(
-        "rd_realloc",
-        ResourceFunctionContract::new(
-            [
-                ResourceParameterMode::Owned { nullable: true },
-                ResourceParameterMode::Borrowed,
-            ],
-            ResourceReturnMode::Reallocated {
-                parameter: 0,
-                nullable: true,
-            },
-        ),
-    );
     let mut failed = false;
     for library in ["cmetrics", "ctraces"] {
         let source_root = root.join("lib").join(library).join("src");

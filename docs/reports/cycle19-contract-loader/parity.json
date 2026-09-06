@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "resource_inventory_byte_identical": true,
+  "archived_triage_inventory_byte_identical": true,
+  "callback_report_byte_identical": true,
+  "inventory_sha256": "d06fd972d9d328de794196a50a380b3ce7513a79767de9ec746fc788a4a07035",
+  "callback_report_sha256": "1f8a2c5b9412bbec2c275b467fa1ffeffb0142ffb03fb9bc9f7f96a3ea5a3ab3",
+  "unit_verdict_counts": {
+    "Unknown": 81,
+    "Unsafe": 98,
+    "data_only": 4,
+    "Safe": 2
+  },
+  "raw_source_functions": 4775,
+  "projected_functions": 4688,
+  "verdict_deltas": {
+    "Safe": 0,
+    "Unsafe": 0,
+    "Unknown": 0
+  },
+  "assumption_change": "Five exact native source texts are now retained. Previously implicit borrowed trailing arguments are explicit; resource modes are otherwise unchanged."
+}

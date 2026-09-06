@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "modules": [
+    "qcore/libc/memory.qcore",
+    "qcore/monkey/memory.qcore",
+    "qcore/librdkafka/memory.qcore",
+    "qcore/fluent_bit/resource_memory.qcore",
+    "qcore/chunkio/resource_open_close.qcore"
+  ]
+}

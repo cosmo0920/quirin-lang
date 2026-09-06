@@ -83,30 +83,60 @@ impl ResourceFunctionContract {
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct ResourceContracts(BTreeMap<String, ResourceFunctionContract>);
+pub struct ResourceContracts {
+    functions: BTreeMap<String, ResourceFunctionContract>,
+    // Exact trusted inputs travel with the environment into safety certificates.
+    source_assumptions: BTreeMap<String, String>,
+}
 
 impl ResourceContracts {
     #[must_use]
     pub fn new(contracts: impl IntoIterator<Item = (impl Into<String>, ResourceApiKind)>) -> Self {
-        Self(
-            contracts
+        Self {
+            functions: contracts
                 .into_iter()
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
-        )
+            source_assumptions: BTreeMap::new(),
+        }
     }
 
     pub fn insert(&mut self, name: impl Into<String>, kind: ResourceApiKind) {
-        self.0
+        self.functions
             .insert(name.into(), ResourceFunctionContract::from(kind));
     }
 
     pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
-        self.0.insert(name.into(), contract);
+        self.functions.insert(name.into(), contract);
     }
 
-    fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
-        self.0.get(name)
+    /// Exact source inputs, declared as assumptions rather than verified facts.
+    #[must_use]
+    pub fn source_assumptions(&self) -> &BTreeMap<String, String> {
+        &self.source_assumptions
+    }
+
+    pub(crate) fn set_source_assumptions(&mut self, sources: BTreeMap<String, String>) {
+        self.source_assumptions = sources;
+    }
+
+    /// Recheck the declarative environment without consulting mutable files.
+    pub fn check_source_assumptions(&self) -> Result<(), String> {
+        if !self.source_assumptions.is_empty() {
+            let loaded =
+                crate::contract_loader::load_resource_contract_sources(&self.source_assumptions)?;
+            if loaded.functions != self.functions {
+                return Err(
+                    "resource contracts differ from their declared source assumptions".into(),
+                );
+            }
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
+        self.functions.get(name)
     }
 }
 
@@ -549,6 +579,7 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
 pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,
 ) -> Result<(), String> {
+    certificate.contracts.check_source_assumptions()?;
     let selected = match certificate.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => {

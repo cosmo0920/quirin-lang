@@ -88,3 +88,40 @@ grammar. Compiling a QCore file alone checks syntax; the native runner connects
 these rules to recorded executions. The [native-rule report](../../docs/reports/cycle19-native-rules/README.md)
 records eight exercised callback paths, the labeled injected failure, bounded
 wrapper source projections and remaining composition gates.
+
+## Declarative resource-projection contracts
+
+`../cycle19-resource-contracts.json` explicitly selects five modules for the
+legacy-C audit: `libc/memory.qcore`, `monkey/memory.qcore`,
+`librdkafka/memory.qcore`, `fluent_bit/resource_memory.qcore`, and
+`chunkio/resource_open_close.qcore`. These 19 declarations replace the audit's
+Rust table. They are trusted resource-projection assumptions, separate from the
+more detailed execution and lifecycle profiles above. In particular the
+ChunkIO close declaration does not itself provide a nested teardown certificate.
+
+The version-1 vocabulary begins with `requires resource_contract_v1`. Normal
+postconditions use `resource_borrowed(p)`,
+`resource_{owned,consumed,released,out}(p, nullable|nonnull)`, or
+`resource_{stored,removed}(p, owner, nullable|nonnull)`. An aggregate owner must
+be a distinct owned parameter. Each parameter has exactly one mode; out requires
+a pointer-to-pointer. Results use `resource_return_none()`,
+`resource_return_owned(nullable|nonnull)`, or
+`resource_return_reallocated(p, nullable|nonnull)` with an owned input.
+
+This is the existing abstract resource model: borrowed arguments have no
+custody requirement, null reallocation failure preserves old custody, and
+successful replacement invalidates it once. Pointer types are opaque ABI
+projections rather than checked C layout declarations. Unsupported requirements,
+effects rows, error/any/quant clauses, non-null error sentinels, unknown modes,
+duplicates and incomplete mappings reject the entire selected environment.
+Do not add these clauses to an observation module and expect either interpreter
+to ignore clauses it cannot check.
+
+`contract_loader::load_resource_contract_manifest` loads these files at runtime;
+`load_resource_contract_files` and `load_resource_contract_sources` expose the
+same strict loader for other selections and immutable snapshots. Certificates
+retain the exact sources and reload them during independent checking. The audit
+writes the same inputs to `RESOURCE_REPORT.contracts.json` alongside a requested
+resource inventory; its optional sixth positional argument overrides the module
+selection manifest. Missing or unloadable input terminates the audit as an
+error, without reporting a safety result from a default environment.

@@ -1,0 +1,26 @@
+module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycle 19 audit table; they do not verify the C bodies.
+// Borrowed scalar/opaque arguments carry no resource custody requirement.
+// Detailed observation/lifecycle contracts remain separate semantic profiles.
+
+extern fn cio_chunk_open(ctx: ptr<mut, u8>, stream: ptr<mut, u8>, name: ptr<const, u8>, flags: i32, size: usize, err: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn cio_chunk_close(chunk: ptr<mut, u8>, delete: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(chunk, nonnull);
+    ensures normal resource_borrowed(delete);
+    ensures normal resource_return_none();
+};

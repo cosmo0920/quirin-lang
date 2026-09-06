@@ -24,6 +24,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         7,
     ),
     ("chunkio/lock_state.qcore", "cio_chunk_is_locked", 7),
+    ("chunkio/resource_open_close.qcore", "cio_chunk_open", 8),
+    ("chunkio/resource_open_close.qcore", "cio_chunk_close", 4),
     ("chunkio/stream_destructor.qcore", "cio_stream_destroy", 6),
     ("chunkio/stream_destructor.qcore", "cio_stream_delete", 5),
     (
@@ -36,11 +38,19 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/memory.qcore", "flb_realloc", 9),
     ("fluent_bit/memory.qcore", "flb_realloc_z", 12),
     ("fluent_bit/memory.qcore", "flb_free", 5),
+    ("fluent_bit/resource_memory.qcore", "flb_malloc", 3),
+    ("fluent_bit/resource_memory.qcore", "flb_calloc", 4),
+    ("fluent_bit/resource_memory.qcore", "flb_free", 3),
+    ("fluent_bit/resource_memory.qcore", "flb_sds_create_len", 4),
+    ("fluent_bit/resource_memory.qcore", "flb_sds_destroy", 3),
     (
         "language/quantified_indices.qcore",
         "preserve_five_chunk_credits",
         2,
     ),
+    ("libc/memory.qcore", "malloc", 3),
+    ("libc/memory.qcore", "calloc", 4),
+    ("libc/memory.qcore", "free", 3),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -66,6 +76,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "release_library_resource",
         3,
     ),
+    ("librdkafka/memory.qcore", "rd_malloc", 3),
+    ("librdkafka/memory.qcore", "rd_calloc", 4),
+    ("librdkafka/memory.qcore", "rd_strdup", 3),
+    ("librdkafka/memory.qcore", "rd_strndup", 4),
+    ("librdkafka/memory.qcore", "rd_free", 3),
+    ("librdkafka/memory.qcore", "rd_realloc", 4),
     (
         "librdkafka/queue_destructor.qcore",
         "rd_kafka_q_destroy_final",
@@ -123,6 +139,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "observation_complete",
         8,
     ),
+    ("monkey/memory.qcore", "mk_mem_alloc", 3),
+    ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
+    ("monkey/memory.qcore", "mk_mem_free", 3),
 ];
 
 fn corpus_root() -> PathBuf {
@@ -157,7 +176,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 17, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 22, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

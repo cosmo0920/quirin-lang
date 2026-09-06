@@ -29,6 +29,7 @@ pub mod chunk_lifecycle;
 mod clang;
 pub mod cleanup_lowering;
 pub mod concurrency;
+pub mod contract_loader;
 pub mod contract_observation;
 pub mod driver;
 pub mod error_region;

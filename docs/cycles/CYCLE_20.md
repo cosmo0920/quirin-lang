@@ -239,3 +239,20 @@ to each request and response JSON payload, with four additional header bytes;
 stderr has a separate 64 KiB cap. Unsupported non-Unix process execution returns
 a protocol failure before spawn. This does not add OS memory/network isolation
 or containment for descendants that deliberately leave the process group.
+
+## Generalization dependency extension (2026-09-06)
+
+The [generalization plan](../GENERALIZATION_PLAN.md), preserved as proposed,
+connects this milestone to the remaining Cycle 19 work and later genericity
+acceptance. The [roadmap](../ROADMAP_AFTER_CYCLE_9.md) records current status.
+W1 supplies declarative resource contracts, W2 supplies versioned source-set
+profiles, and W3 supplies core obligations and semantic-witness dispatch.
+These feed W5's configured audit driver and the existing 20C extraction order;
+W4 adds validated custody inference and W6 measures source-level CT coverage.
+W7 tracks namespace, naming, roadmap and CI maintenance.
+
+The Cycle 19 resource-audit contract loader is the first executed W1 increment.
+It does not implement plugin evidence v2, close VP05, establish provider parity
+or authorize removal of the existing source/profile routes. Review the W2
+manifest schema and W3 witness schema before their broad implementation, and
+archive each W5 provider comparison before deleting its predecessor.
