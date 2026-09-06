@@ -1,0 +1,310 @@
+{"case": 600, "sequence": 0, "kind": "begin_unmap_failure", "schema_version": 1, "root_length": 27, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 1, "kind": "allocation", "id": 1, "address": 136802453028928, "size": 136, "allocator": "calloc"}
+{"case": 600, "sequence": 2, "kind": "allocation", "id": 2, "address": 136046538784784, "size": 5, "allocator": "strdup"}
+{"case": 600, "sequence": 3, "kind": "allocation", "id": 3, "address": 136115258261568, "size": 28, "allocator": "strdup"}
+{"case": 600, "sequence": 4, "kind": "allocation", "id": 4, "address": 136183977738256, "size": 38, "allocator": "malloc"}
+{"case": 600, "sequence": 5, "kind": "free", "id": 4}
+{"case": 600, "sequence": 6, "kind": "allocation", "id": 5, "address": 136458855645216, "size": 88, "allocator": "malloc"}
+{"case": 600, "sequence": 7, "kind": "allocation", "id": 6, "address": 136046538784816, "size": 9, "allocator": "strdup"}
+{"case": 600, "sequence": 8, "kind": "allocation", "id": 7, "address": 136458855645344, "size": 96, "allocator": "malloc"}
+{"case": 600, "sequence": 9, "kind": "allocation", "id": 8, "address": 136046538784848, "size": 8, "allocator": "strdup"}
+{"case": 600, "sequence": 10, "kind": "allocation", "id": 9, "address": 136321416691744, "size": 50, "allocator": "malloc"}
+{"case": 600, "sequence": 11, "kind": "allocation", "id": 10, "address": 136733733552192, "size": 120, "allocator": "calloc"}
+{"case": 600, "sequence": 12, "kind": "open", "phase": "constructor", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 1}
+{"case": 600, "sequence": 13, "kind": "chmod", "phase": "constructor", "path": 9, "mode": 448, "result": 0, "errno": 0, "injected": 0}
+{"case": 600, "sequence": 14, "kind": "map", "phase": "constructor", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 1, "offset": 0, "result": 140307163619328, "errno": 0, "epoch": 1}
+{"case": 600, "sequence": 15, "kind": "constructor_result", "chunk": 7, "error": 0}
+{"case": 600, "sequence": 16, "kind": "probe", "label": "returned", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276819, "map": 140307163619328, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 17, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136802453029040, "next": 136458855645232, "prev": 136458855645232, "nodes": [{"owner": 5, "address": 136458855645232, "next": 136802453029040, "prev": 136802453029040}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 136458855645248, "next": 136458855645424, "prev": 136458855645424, "nodes": [{"owner": 7, "address": 136458855645424, "next": 136458855645248, "prev": 136458855645248}]}, "up_ring": {"sentinel": 136458855645264, "next": 136458855645408, "prev": 136458855645408, "nodes": [{"owner": 7, "address": 136458855645408, "next": 136458855645264, "prev": 136458855645264}]}, "down_ring": {"sentinel": 136458855645280, "next": 136458855645280, "prev": 136458855645280, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 140307163619328, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 600, "sequence": 18, "kind": "arm_unmap_failure", "unmap_count": 1, "sync_count": 0}
+{"case": 600, "sequence": 19, "kind": "suppressed_unmap", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 600, "sequence": 20, "kind": "unmap", "phase": "transition", "map": 140307163619328, "size": 4096, "epoch": 1, "result": -1, "errno": 5}
+{"case": 600, "sequence": 21, "kind": "operation", "name": "down_failed", "result": -1}
+{"case": 600, "sequence": 22, "kind": "probe", "label": "down_failed", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276819, "map": 140307163619328, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 23, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136802453029040, "next": 136458855645232, "prev": 136458855645232, "nodes": [{"owner": 5, "address": 136458855645232, "next": 136802453029040, "prev": 136802453029040}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 136458855645248, "next": 136458855645424, "prev": 136458855645424, "nodes": [{"owner": 7, "address": 136458855645424, "next": 136458855645248, "prev": 136458855645248}]}, "up_ring": {"sentinel": 136458855645264, "next": 136458855645408, "prev": 136458855645408, "nodes": [{"owner": 7, "address": 136458855645408, "next": 136458855645264, "prev": 136458855645264}]}, "down_ring": {"sentinel": 136458855645280, "next": 136458855645280, "prev": 136458855645280, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 140307163619328, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 600, "sequence": 24, "kind": "operation", "name": "up_still_mapped", "result": -1}
+{"case": 600, "sequence": 25, "kind": "probe", "label": "up_still_mapped", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276819, "map": 140307163619328, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 26, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136802453029040, "next": 136458855645232, "prev": 136458855645232, "nodes": [{"owner": 5, "address": 136458855645232, "next": 136802453029040, "prev": 136802453029040}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 136458855645248, "next": 136458855645424, "prev": 136458855645424, "nodes": [{"owner": 7, "address": 136458855645424, "next": 136458855645248, "prev": 136458855645248}]}, "up_ring": {"sentinel": 136458855645264, "next": 136458855645408, "prev": 136458855645408, "nodes": [{"owner": 7, "address": 136458855645408, "next": 136458855645264, "prev": 136458855645264}]}, "down_ring": {"sentinel": 136458855645280, "next": 136458855645280, "prev": 136458855645280, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 140307163619328, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 600, "sequence": 27, "kind": "unmap", "phase": "transition", "map": 140307163619328, "size": 4096, "epoch": 1, "result": 0, "errno": 0}
+{"case": 600, "sequence": 28, "kind": "close", "phase": "transition", "fd": 3, "epoch": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 600, "sequence": 29, "kind": "operation", "name": "down_retry", "result": 0}
+{"case": 600, "sequence": 30, "kind": "probe", "label": "down_retry", "fd": 3, "fd_epoch": 1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 140307163619328, "map_epoch": 1, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 31, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136802453029040, "next": 136458855645232, "prev": 136458855645232, "nodes": [{"owner": 5, "address": 136458855645232, "next": 136802453029040, "prev": 136802453029040}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 136458855645248, "next": 136458855645424, "prev": 136458855645424, "nodes": [{"owner": 7, "address": 136458855645424, "next": 136458855645248, "prev": 136458855645248}]}, "up_ring": {"sentinel": 136458855645264, "next": 136458855645264, "prev": 136458855645264, "nodes": []}, "down_ring": {"sentinel": 136458855645280, "next": 136458855645408, "prev": 136458855645408, "nodes": [{"owner": 7, "address": 136458855645408, "next": 136458855645280, "prev": 136458855645280}]}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": -1, "fd_epoch": 1, "map": 0, "map_epoch": 1, "size": 0, "fs_size": 4096, "data_size": 0, "synced": 1, "header_length": 0, "content": ""}]}]}}
+{"case": 600, "sequence": 32, "kind": "open", "phase": "transition", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 2}
+{"case": 600, "sequence": 33, "kind": "map", "phase": "transition", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 2, "offset": 0, "result": 140307163619328, "errno": 0, "epoch": 2}
+{"case": 600, "sequence": 34, "kind": "operation", "name": "up", "result": 0}
+{"case": 600, "sequence": 35, "kind": "probe", "label": "up", "fd": 3, "fd_epoch": 2, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276819, "map": 140307163619328, "map_epoch": 2, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 36, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136802453029040, "next": 136458855645232, "prev": 136458855645232, "nodes": [{"owner": 5, "address": 136458855645232, "next": 136802453029040, "prev": 136802453029040}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 136458855645248, "next": 136458855645424, "prev": 136458855645424, "nodes": [{"owner": 7, "address": 136458855645424, "next": 136458855645248, "prev": 136458855645248}]}, "up_ring": {"sentinel": 136458855645264, "next": 136458855645408, "prev": 136458855645408, "nodes": [{"owner": 7, "address": 136458855645408, "next": 136458855645264, "prev": 136458855645264}]}, "down_ring": {"sentinel": 136458855645280, "next": 136458855645280, "prev": 136458855645280, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 2, "map": 140307163619328, "map_epoch": 2, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 600, "sequence": 37, "kind": "enter", "function": "cio_destroy"}
+{"case": 600, "sequence": 38, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 600, "sequence": 39, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 600, "sequence": 40, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 600, "sequence": 41, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 600, "sequence": 42, "kind": "enter", "function": "cio_file_close"}
+{"case": 600, "sequence": 43, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 600, "sequence": 44, "kind": "unmap", "phase": "teardown", "map": 140307163619328, "size": 4096, "epoch": 2, "result": 0, "errno": 0}
+{"case": 600, "sequence": 45, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 600, "sequence": 46, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 600, "sequence": 47, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 600, "sequence": 48, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 600, "sequence": 49, "kind": "close", "phase": "teardown", "fd": 3, "epoch": 2, "result": 0, "errno": 0, "injected": 0}
+{"case": 600, "sequence": 50, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 600, "sequence": 51, "kind": "free", "id": 9}
+{"case": 600, "sequence": 52, "kind": "backend_release", "id": 10, "fd": -1, "map": 0, "size": 0, "fs_size": 4096, "data_size": 0, "up": 0}
+{"case": 600, "sequence": 53, "kind": "free", "id": 10}
+{"case": 600, "sequence": 54, "kind": "exit", "function": "cio_file_close"}
+{"case": 600, "sequence": 55, "kind": "free", "id": 8}
+{"case": 600, "sequence": 56, "kind": "chunk_state", "id": 7, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 600, "sequence": 57, "kind": "free", "id": 7}
+{"case": 600, "sequence": 58, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 600, "sequence": 59, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 600, "sequence": 60, "kind": "counter", "total": 0, "up": 0}
+{"case": 600, "sequence": 61, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 600, "sequence": 62, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 600, "sequence": 63, "kind": "free", "id": 6}
+{"case": 600, "sequence": 64, "kind": "stream_state", "id": 5, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 600, "sequence": 65, "kind": "free", "id": 5}
+{"case": 600, "sequence": 66, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 600, "sequence": 67, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 600, "sequence": 68, "kind": "free", "id": 2}
+{"case": 600, "sequence": 69, "kind": "free", "id": 3}
+{"case": 600, "sequence": 70, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 600, "sequence": 71, "kind": "free", "id": 1}
+{"case": 600, "sequence": 72, "kind": "exit", "function": "cio_destroy"}
+{"case": 600, "sequence": 73, "kind": "probe", "label": "parents_released", "fd": 3, "fd_epoch": 2, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 140307163619328, "map_epoch": 2, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276819}
+{"case": 600, "sequence": 74, "kind": "end", "live_allocations": 0}
+{"case": 601, "sequence": 0, "kind": "begin_unmap_failure", "schema_version": 1, "root_length": 27, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 1, "kind": "allocation", "id": 1, "address": 126298181468224, "size": 136, "allocator": "calloc"}
+{"case": 601, "sequence": 2, "kind": "allocation", "id": 2, "address": 125542267224080, "size": 5, "allocator": "strdup"}
+{"case": 601, "sequence": 3, "kind": "allocation", "id": 3, "address": 125610986700864, "size": 28, "allocator": "strdup"}
+{"case": 601, "sequence": 4, "kind": "allocation", "id": 4, "address": 125679706177552, "size": 38, "allocator": "malloc"}
+{"case": 601, "sequence": 5, "kind": "free", "id": 4}
+{"case": 601, "sequence": 6, "kind": "allocation", "id": 5, "address": 125954584084512, "size": 88, "allocator": "malloc"}
+{"case": 601, "sequence": 7, "kind": "allocation", "id": 6, "address": 125542267224112, "size": 9, "allocator": "strdup"}
+{"case": 601, "sequence": 8, "kind": "allocation", "id": 7, "address": 125954584084640, "size": 96, "allocator": "malloc"}
+{"case": 601, "sequence": 9, "kind": "allocation", "id": 8, "address": 125542267224144, "size": 8, "allocator": "strdup"}
+{"case": 601, "sequence": 10, "kind": "allocation", "id": 9, "address": 125817145131040, "size": 50, "allocator": "malloc"}
+{"case": 601, "sequence": 11, "kind": "allocation", "id": 10, "address": 126229461991488, "size": 120, "allocator": "calloc"}
+{"case": 601, "sequence": 12, "kind": "open", "phase": "constructor", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 1}
+{"case": 601, "sequence": 13, "kind": "chmod", "phase": "constructor", "path": 9, "mode": 448, "result": 0, "errno": 0, "injected": 0}
+{"case": 601, "sequence": 14, "kind": "map", "phase": "constructor", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 1, "offset": 0, "result": 129802892013568, "errno": 0, "epoch": 1}
+{"case": 601, "sequence": 15, "kind": "constructor_result", "chunk": 7, "error": 0}
+{"case": 601, "sequence": 16, "kind": "probe", "label": "returned", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276822, "map": 129802892013568, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 17, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084560, "prev": 125954584084560}]}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084576, "prev": 125954584084576, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 129802892013568, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 601, "sequence": 18, "kind": "operation", "name": "append", "result": 0}
+{"case": 601, "sequence": 19, "kind": "probe", "label": "append", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276822, "map": 129802892013568, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 20, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084560, "prev": 125954584084560}]}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084576, "prev": 125954584084576, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 129802892013568, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 601, "sequence": 21, "kind": "arm_unmap_failure", "unmap_count": 1, "sync_count": 0}
+{"case": 601, "sequence": 22, "kind": "sync", "phase": "transition", "map": 129802892013568, "size": 4096, "epoch": 1, "flags": 1, "result": 0, "errno": 0}
+{"case": 601, "sequence": 23, "kind": "suppressed_unmap", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 601, "sequence": 24, "kind": "unmap", "phase": "transition", "map": 129802892013568, "size": 4096, "epoch": 1, "result": -1, "errno": 5}
+{"case": 601, "sequence": 25, "kind": "operation", "name": "down_failed", "result": -1}
+{"case": 601, "sequence": 26, "kind": "probe", "label": "down_failed", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276822, "map": 129802892013568, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 27, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084560, "prev": 125954584084560}]}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084576, "prev": 125954584084576, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 129802892013568, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 1, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 601, "sequence": 28, "kind": "operation", "name": "up_still_mapped", "result": -1}
+{"case": 601, "sequence": 29, "kind": "probe", "label": "up_still_mapped", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276822, "map": 129802892013568, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 30, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084560, "prev": 125954584084560}]}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084576, "prev": 125954584084576, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 129802892013568, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 1, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 601, "sequence": 31, "kind": "unmap", "phase": "transition", "map": 129802892013568, "size": 4096, "epoch": 1, "result": 0, "errno": 0}
+{"case": 601, "sequence": 32, "kind": "close", "phase": "transition", "fd": 3, "epoch": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 601, "sequence": 33, "kind": "operation", "name": "down_retry", "result": 0}
+{"case": 601, "sequence": 34, "kind": "probe", "label": "down_retry", "fd": 3, "fd_epoch": 1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 129802892013568, "map_epoch": 1, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 35, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084560, "prev": 125954584084560, "nodes": []}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084576, "prev": 125954584084576}]}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": -1, "fd_epoch": 1, "map": 0, "map_epoch": 1, "size": 0, "fs_size": 4096, "data_size": 0, "synced": 1, "header_length": 0, "content": ""}]}]}}
+{"case": 601, "sequence": 36, "kind": "open", "phase": "transition", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 2}
+{"case": 601, "sequence": 37, "kind": "map", "phase": "transition", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 2, "offset": 0, "result": 129802892013568, "errno": 0, "epoch": 2}
+{"case": 601, "sequence": 38, "kind": "operation", "name": "up", "result": 0}
+{"case": 601, "sequence": 39, "kind": "probe", "label": "up", "fd": 3, "fd_epoch": 2, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276822, "map": 129802892013568, "map_epoch": 2, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 40, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 126298181468336, "next": 125954584084528, "prev": 125954584084528, "nodes": [{"owner": 5, "address": 125954584084528, "next": 126298181468336, "prev": 126298181468336}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 125954584084544, "next": 125954584084720, "prev": 125954584084720, "nodes": [{"owner": 7, "address": 125954584084720, "next": 125954584084544, "prev": 125954584084544}]}, "up_ring": {"sentinel": 125954584084560, "next": 125954584084704, "prev": 125954584084704, "nodes": [{"owner": 7, "address": 125954584084704, "next": 125954584084560, "prev": 125954584084560}]}, "down_ring": {"sentinel": 125954584084576, "next": 125954584084576, "prev": 125954584084576, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 2, "map": 129802892013568, "map_epoch": 2, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 1, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 601, "sequence": 41, "kind": "enter", "function": "cio_destroy"}
+{"case": 601, "sequence": 42, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 601, "sequence": 43, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 601, "sequence": 44, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 601, "sequence": 45, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 601, "sequence": 46, "kind": "enter", "function": "cio_file_close"}
+{"case": 601, "sequence": 47, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 601, "sequence": 48, "kind": "unmap", "phase": "teardown", "map": 129802892013568, "size": 4096, "epoch": 2, "result": 0, "errno": 0}
+{"case": 601, "sequence": 49, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 601, "sequence": 50, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 601, "sequence": 51, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 601, "sequence": 52, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 601, "sequence": 53, "kind": "close", "phase": "teardown", "fd": 3, "epoch": 2, "result": 0, "errno": 0, "injected": 0}
+{"case": 601, "sequence": 54, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 601, "sequence": 55, "kind": "free", "id": 9}
+{"case": 601, "sequence": 56, "kind": "backend_release", "id": 10, "fd": -1, "map": 0, "size": 0, "fs_size": 4096, "data_size": 0, "up": 0}
+{"case": 601, "sequence": 57, "kind": "free", "id": 10}
+{"case": 601, "sequence": 58, "kind": "exit", "function": "cio_file_close"}
+{"case": 601, "sequence": 59, "kind": "free", "id": 8}
+{"case": 601, "sequence": 60, "kind": "chunk_state", "id": 7, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 601, "sequence": 61, "kind": "free", "id": 7}
+{"case": 601, "sequence": 62, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 601, "sequence": 63, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 601, "sequence": 64, "kind": "counter", "total": 0, "up": 0}
+{"case": 601, "sequence": 65, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 601, "sequence": 66, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 601, "sequence": 67, "kind": "free", "id": 6}
+{"case": 601, "sequence": 68, "kind": "stream_state", "id": 5, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 601, "sequence": 69, "kind": "free", "id": 5}
+{"case": 601, "sequence": 70, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 601, "sequence": 71, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 601, "sequence": 72, "kind": "free", "id": 2}
+{"case": 601, "sequence": 73, "kind": "free", "id": 3}
+{"case": 601, "sequence": 74, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 601, "sequence": 75, "kind": "free", "id": 1}
+{"case": 601, "sequence": 76, "kind": "exit", "function": "cio_destroy"}
+{"case": 601, "sequence": 77, "kind": "probe", "label": "parents_released", "fd": 3, "fd_epoch": 2, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 129802892013568, "map_epoch": 2, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276822}
+{"case": 601, "sequence": 78, "kind": "end", "live_allocations": 0}
+{"case": 602, "sequence": 0, "kind": "begin_unmap_failure", "schema_version": 1, "root_length": 27, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 1, "kind": "allocation", "id": 1, "address": 135622259769408, "size": 136, "allocator": "calloc"}
+{"case": 602, "sequence": 2, "kind": "allocation", "id": 2, "address": 134866345525264, "size": 5, "allocator": "strdup"}
+{"case": 602, "sequence": 3, "kind": "allocation", "id": 3, "address": 134935065002048, "size": 28, "allocator": "strdup"}
+{"case": 602, "sequence": 4, "kind": "allocation", "id": 4, "address": 135003784478736, "size": 38, "allocator": "malloc"}
+{"case": 602, "sequence": 5, "kind": "free", "id": 4}
+{"case": 602, "sequence": 6, "kind": "allocation", "id": 5, "address": 135278662385696, "size": 88, "allocator": "malloc"}
+{"case": 602, "sequence": 7, "kind": "allocation", "id": 6, "address": 134866345525296, "size": 9, "allocator": "strdup"}
+{"case": 602, "sequence": 8, "kind": "allocation", "id": 7, "address": 135278662385824, "size": 96, "allocator": "malloc"}
+{"case": 602, "sequence": 9, "kind": "allocation", "id": 8, "address": 134866345525328, "size": 8, "allocator": "strdup"}
+{"case": 602, "sequence": 10, "kind": "allocation", "id": 9, "address": 135141223432224, "size": 50, "allocator": "malloc"}
+{"case": 602, "sequence": 11, "kind": "allocation", "id": 10, "address": 135553540292672, "size": 120, "allocator": "calloc"}
+{"case": 602, "sequence": 12, "kind": "open", "phase": "constructor", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 1}
+{"case": 602, "sequence": 13, "kind": "chmod", "phase": "constructor", "path": 9, "mode": 448, "result": 0, "errno": 0, "injected": 0}
+{"case": 602, "sequence": 14, "kind": "map", "phase": "constructor", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 1, "offset": 0, "result": 139126970187776, "errno": 0, "epoch": 1}
+{"case": 602, "sequence": 15, "kind": "constructor_result", "chunk": 7, "error": 0}
+{"case": 602, "sequence": 16, "kind": "probe", "label": "returned", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276825, "map": 139126970187776, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 17, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385744, "prev": 135278662385744}]}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385760, "prev": 135278662385760, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 139126970187776, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 602, "sequence": 18, "kind": "operation", "name": "append", "result": 0}
+{"case": 602, "sequence": 19, "kind": "probe", "label": "append", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276825, "map": 139126970187776, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 20, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385744, "prev": 135278662385744}]}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385760, "prev": 135278662385760, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 139126970187776, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 602, "sequence": 21, "kind": "arm_unmap_failure", "unmap_count": 1, "sync_count": 1}
+{"case": 602, "sequence": 22, "kind": "suppressed_sync", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 602, "sequence": 23, "kind": "sync", "phase": "transition", "map": 139126970187776, "size": 4096, "epoch": 1, "flags": 1, "result": -1, "errno": 5}
+{"case": 602, "sequence": 24, "kind": "suppressed_unmap", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 602, "sequence": 25, "kind": "unmap", "phase": "transition", "map": 139126970187776, "size": 4096, "epoch": 1, "result": -1, "errno": 5}
+{"case": 602, "sequence": 26, "kind": "operation", "name": "down_failed", "result": -1}
+{"case": 602, "sequence": 27, "kind": "probe", "label": "down_failed", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276825, "map": 139126970187776, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 28, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385744, "prev": 135278662385744}]}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385760, "prev": 135278662385760, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 139126970187776, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 602, "sequence": 29, "kind": "operation", "name": "up_still_mapped", "result": -1}
+{"case": 602, "sequence": 30, "kind": "probe", "label": "up_still_mapped", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276825, "map": 139126970187776, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 31, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385744, "prev": 135278662385744}]}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385760, "prev": 135278662385760, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 139126970187776, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 602, "sequence": 32, "kind": "sync", "phase": "transition", "map": 139126970187776, "size": 4096, "epoch": 1, "flags": 1, "result": 0, "errno": 0}
+{"case": 602, "sequence": 33, "kind": "unmap", "phase": "transition", "map": 139126970187776, "size": 4096, "epoch": 1, "result": 0, "errno": 0}
+{"case": 602, "sequence": 34, "kind": "close", "phase": "transition", "fd": 3, "epoch": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 602, "sequence": 35, "kind": "operation", "name": "down_retry", "result": 0}
+{"case": 602, "sequence": 36, "kind": "probe", "label": "down_retry", "fd": 3, "fd_epoch": 1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 139126970187776, "map_epoch": 1, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 37, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385744, "prev": 135278662385744, "nodes": []}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385760, "prev": 135278662385760}]}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": -1, "fd_epoch": 1, "map": 0, "map_epoch": 1, "size": 0, "fs_size": 4096, "data_size": 0, "synced": 1, "header_length": 0, "content": ""}]}]}}
+{"case": 602, "sequence": 38, "kind": "open", "phase": "transition", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 2}
+{"case": 602, "sequence": 39, "kind": "map", "phase": "transition", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 2, "offset": 0, "result": 139126970187776, "errno": 0, "epoch": 2}
+{"case": 602, "sequence": 40, "kind": "operation", "name": "up", "result": 0}
+{"case": 602, "sequence": 41, "kind": "probe", "label": "up", "fd": 3, "fd_epoch": 2, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276825, "map": 139126970187776, "map_epoch": 2, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 42, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 135622259769520, "next": 135278662385712, "prev": 135278662385712, "nodes": [{"owner": 5, "address": 135278662385712, "next": 135622259769520, "prev": 135622259769520}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 135278662385728, "next": 135278662385904, "prev": 135278662385904, "nodes": [{"owner": 7, "address": 135278662385904, "next": 135278662385728, "prev": 135278662385728}]}, "up_ring": {"sentinel": 135278662385744, "next": 135278662385888, "prev": 135278662385888, "nodes": [{"owner": 7, "address": 135278662385888, "next": 135278662385744, "prev": 135278662385744}]}, "down_ring": {"sentinel": 135278662385760, "next": 135278662385760, "prev": 135278662385760, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 2, "map": 139126970187776, "map_epoch": 2, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 1, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 602, "sequence": 43, "kind": "enter", "function": "cio_destroy"}
+{"case": 602, "sequence": 44, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 602, "sequence": 45, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 602, "sequence": 46, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 602, "sequence": 47, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 602, "sequence": 48, "kind": "enter", "function": "cio_file_close"}
+{"case": 602, "sequence": 49, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 602, "sequence": 50, "kind": "unmap", "phase": "teardown", "map": 139126970187776, "size": 4096, "epoch": 2, "result": 0, "errno": 0}
+{"case": 602, "sequence": 51, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 602, "sequence": 52, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 602, "sequence": 53, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 602, "sequence": 54, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 602, "sequence": 55, "kind": "close", "phase": "teardown", "fd": 3, "epoch": 2, "result": 0, "errno": 0, "injected": 0}
+{"case": 602, "sequence": 56, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 602, "sequence": 57, "kind": "free", "id": 9}
+{"case": 602, "sequence": 58, "kind": "backend_release", "id": 10, "fd": -1, "map": 0, "size": 0, "fs_size": 4096, "data_size": 0, "up": 0}
+{"case": 602, "sequence": 59, "kind": "free", "id": 10}
+{"case": 602, "sequence": 60, "kind": "exit", "function": "cio_file_close"}
+{"case": 602, "sequence": 61, "kind": "free", "id": 8}
+{"case": 602, "sequence": 62, "kind": "chunk_state", "id": 7, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 602, "sequence": 63, "kind": "free", "id": 7}
+{"case": 602, "sequence": 64, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 602, "sequence": 65, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 602, "sequence": 66, "kind": "counter", "total": 0, "up": 0}
+{"case": 602, "sequence": 67, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 602, "sequence": 68, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 602, "sequence": 69, "kind": "free", "id": 6}
+{"case": 602, "sequence": 70, "kind": "stream_state", "id": 5, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 602, "sequence": 71, "kind": "free", "id": 5}
+{"case": 602, "sequence": 72, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 602, "sequence": 73, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 602, "sequence": 74, "kind": "free", "id": 2}
+{"case": 602, "sequence": 75, "kind": "free", "id": 3}
+{"case": 602, "sequence": 76, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 602, "sequence": 77, "kind": "free", "id": 1}
+{"case": 602, "sequence": 78, "kind": "exit", "function": "cio_destroy"}
+{"case": 602, "sequence": 79, "kind": "probe", "label": "parents_released", "fd": 3, "fd_epoch": 2, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 139126970187776, "map_epoch": 2, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276825}
+{"case": 602, "sequence": 80, "kind": "end", "live_allocations": 0}
+{"case": 603, "sequence": 0, "kind": "begin_unmap_failure", "schema_version": 1, "root_length": 27, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 1, "kind": "allocation", "id": 1, "address": 131025046732864, "size": 136, "allocator": "calloc"}
+{"case": 603, "sequence": 2, "kind": "allocation", "id": 2, "address": 130269132488720, "size": 5, "allocator": "strdup"}
+{"case": 603, "sequence": 3, "kind": "allocation", "id": 3, "address": 130337851965504, "size": 28, "allocator": "strdup"}
+{"case": 603, "sequence": 4, "kind": "allocation", "id": 4, "address": 130406571442192, "size": 38, "allocator": "malloc"}
+{"case": 603, "sequence": 5, "kind": "free", "id": 4}
+{"case": 603, "sequence": 6, "kind": "allocation", "id": 5, "address": 130681449349152, "size": 88, "allocator": "malloc"}
+{"case": 603, "sequence": 7, "kind": "allocation", "id": 6, "address": 130269132488752, "size": 9, "allocator": "strdup"}
+{"case": 603, "sequence": 8, "kind": "allocation", "id": 7, "address": 130681449349280, "size": 96, "allocator": "malloc"}
+{"case": 603, "sequence": 9, "kind": "allocation", "id": 8, "address": 130269132488784, "size": 8, "allocator": "strdup"}
+{"case": 603, "sequence": 10, "kind": "allocation", "id": 9, "address": 130544010395680, "size": 50, "allocator": "malloc"}
+{"case": 603, "sequence": 11, "kind": "allocation", "id": 10, "address": 130956327256128, "size": 120, "allocator": "calloc"}
+{"case": 603, "sequence": 12, "kind": "open", "phase": "constructor", "path": 9, "flags": 66, "mode": 384, "result": 3, "errno": 0, "epoch": 1}
+{"case": 603, "sequence": 13, "kind": "chmod", "phase": "constructor", "path": 9, "mode": 448, "result": 0, "errno": 0, "injected": 0}
+{"case": 603, "sequence": 14, "kind": "map", "phase": "constructor", "address": 0, "size": 4096, "prot": 3, "flags": 1, "fd": 3, "fd_epoch": 1, "offset": 0, "result": 134529757286400, "errno": 0, "epoch": 1}
+{"case": 603, "sequence": 15, "kind": "constructor_result", "chunk": 7, "error": 0}
+{"case": 603, "sequence": 16, "kind": "probe", "label": "returned", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276828, "map": 134529757286400, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 17, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 131025046732976, "next": 130681449349168, "prev": 130681449349168, "nodes": [{"owner": 5, "address": 130681449349168, "next": 131025046732976, "prev": 131025046732976}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 130681449349184, "next": 130681449349360, "prev": 130681449349360, "nodes": [{"owner": 7, "address": 130681449349360, "next": 130681449349184, "prev": 130681449349184}]}, "up_ring": {"sentinel": 130681449349200, "next": 130681449349344, "prev": 130681449349344, "nodes": [{"owner": 7, "address": 130681449349344, "next": 130681449349200, "prev": 130681449349200}]}, "down_ring": {"sentinel": 130681449349216, "next": 130681449349216, "prev": 130681449349216, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 134529757286400, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 4, "synced": 1, "header_length": 4, "content": "73656564"}]}]}}
+{"case": 603, "sequence": 18, "kind": "operation", "name": "append", "result": 0}
+{"case": 603, "sequence": 19, "kind": "probe", "label": "append", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276828, "map": 134529757286400, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 20, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 131025046732976, "next": 130681449349168, "prev": 130681449349168, "nodes": [{"owner": 5, "address": 130681449349168, "next": 131025046732976, "prev": 131025046732976}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 130681449349184, "next": 130681449349360, "prev": 130681449349360, "nodes": [{"owner": 7, "address": 130681449349360, "next": 130681449349184, "prev": 130681449349184}]}, "up_ring": {"sentinel": 130681449349200, "next": 130681449349344, "prev": 130681449349344, "nodes": [{"owner": 7, "address": 130681449349344, "next": 130681449349200, "prev": 130681449349200}]}, "down_ring": {"sentinel": 130681449349216, "next": 130681449349216, "prev": 130681449349216, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 134529757286400, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 603, "sequence": 21, "kind": "arm_unmap_failure", "unmap_count": 1, "sync_count": 1}
+{"case": 603, "sequence": 22, "kind": "suppressed_sync", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 603, "sequence": 23, "kind": "sync", "phase": "transition", "map": 134529757286400, "size": 4096, "epoch": 1, "flags": 1, "result": -1, "errno": 5}
+{"case": 603, "sequence": 24, "kind": "suppressed_unmap", "phase": "transition", "epoch": 1, "remaining": 0}
+{"case": 603, "sequence": 25, "kind": "unmap", "phase": "transition", "map": 134529757286400, "size": 4096, "epoch": 1, "result": -1, "errno": 5}
+{"case": 603, "sequence": 26, "kind": "operation", "name": "down_failed", "result": -1}
+{"case": 603, "sequence": 27, "kind": "probe", "label": "down_failed", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276828, "map": 134529757286400, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 28, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 131025046732976, "next": 130681449349168, "prev": 130681449349168, "nodes": [{"owner": 5, "address": 130681449349168, "next": 131025046732976, "prev": 131025046732976}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 130681449349184, "next": 130681449349360, "prev": 130681449349360, "nodes": [{"owner": 7, "address": 130681449349360, "next": 130681449349184, "prev": 130681449349184}]}, "up_ring": {"sentinel": 130681449349200, "next": 130681449349344, "prev": 130681449349344, "nodes": [{"owner": 7, "address": 130681449349344, "next": 130681449349200, "prev": 130681449349200}]}, "down_ring": {"sentinel": 130681449349216, "next": 130681449349216, "prev": 130681449349216, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 134529757286400, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 603, "sequence": 29, "kind": "operation", "name": "up_still_mapped", "result": -1}
+{"case": 603, "sequence": 30, "kind": "probe", "label": "up_still_mapped", "fd": 3, "fd_epoch": 1, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 276828, "map": 134529757286400, "map_epoch": 1, "map_result": 0, "map_errno": 0, "size": 4096, "mode": 448, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 31, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 131025046732976, "next": 130681449349168, "prev": 130681449349168, "nodes": [{"owner": 5, "address": 130681449349168, "next": 131025046732976, "prev": 131025046732976}]}, "streams": [{"id": 5, "name": 6, "context": 1, "memory": 0, "ring": {"sentinel": 130681449349184, "next": 130681449349360, "prev": 130681449349360, "nodes": [{"owner": 7, "address": 130681449349360, "next": 130681449349184, "prev": 130681449349184}]}, "up_ring": {"sentinel": 130681449349200, "next": 130681449349344, "prev": 130681449349344, "nodes": [{"owner": 7, "address": 130681449349344, "next": 130681449349200, "prev": 130681449349200}]}, "down_ring": {"sentinel": 130681449349216, "next": 130681449349216, "prev": 130681449349216, "nodes": []}, "chunks": [{"id": 7, "name": 8, "context": 1, "stream": 5, "locked": 0, "transaction": 0, "tx_length": 0, "error": 0, "backend": 10, "path": 9, "fd": 3, "fd_epoch": 1, "map": 134529757286400, "map_epoch": 1, "size": 4096, "fs_size": 4096, "data_size": 7, "synced": 0, "header_length": 7, "content": "73656564616464"}]}]}}
+{"case": 603, "sequence": 32, "kind": "enter", "function": "cio_destroy"}
+{"case": 603, "sequence": 33, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 603, "sequence": 34, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 603, "sequence": 35, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 603, "sequence": 36, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 603, "sequence": 37, "kind": "enter", "function": "cio_file_close"}
+{"case": 603, "sequence": 38, "kind": "enter", "function": "cio_file_sync"}
+{"case": 603, "sequence": 39, "kind": "enter", "function": "cio_file_native_sync"}
+{"case": 603, "sequence": 40, "kind": "sync", "phase": "teardown", "map": 134529757286400, "size": 4096, "epoch": 1, "flags": 1, "result": 0, "errno": 0}
+{"case": 603, "sequence": 41, "kind": "exit", "function": "cio_file_native_sync"}
+{"case": 603, "sequence": 42, "kind": "exit", "function": "cio_file_sync"}
+{"case": 603, "sequence": 43, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 603, "sequence": 44, "kind": "unmap", "phase": "teardown", "map": 134529757286400, "size": 4096, "epoch": 1, "result": 0, "errno": 0}
+{"case": 603, "sequence": 45, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 603, "sequence": 46, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 603, "sequence": 47, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 603, "sequence": 48, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 603, "sequence": 49, "kind": "close", "phase": "teardown", "fd": 3, "epoch": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 603, "sequence": 50, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 603, "sequence": 51, "kind": "free", "id": 9}
+{"case": 603, "sequence": 52, "kind": "backend_release", "id": 10, "fd": -1, "map": 0, "size": 0, "fs_size": 4096, "data_size": 0, "up": 0}
+{"case": 603, "sequence": 53, "kind": "free", "id": 10}
+{"case": 603, "sequence": 54, "kind": "exit", "function": "cio_file_close"}
+{"case": 603, "sequence": 55, "kind": "free", "id": 8}
+{"case": 603, "sequence": 56, "kind": "chunk_state", "id": 7, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 603, "sequence": 57, "kind": "free", "id": 7}
+{"case": 603, "sequence": 58, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 603, "sequence": 59, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 603, "sequence": 60, "kind": "counter", "total": 0, "up": 0}
+{"case": 603, "sequence": 61, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 603, "sequence": 62, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 603, "sequence": 63, "kind": "free", "id": 6}
+{"case": 603, "sequence": 64, "kind": "stream_state", "id": 5, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 603, "sequence": 65, "kind": "free", "id": 5}
+{"case": 603, "sequence": 66, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 603, "sequence": 67, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 603, "sequence": 68, "kind": "free", "id": 2}
+{"case": 603, "sequence": 69, "kind": "free", "id": 3}
+{"case": 603, "sequence": 70, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 603, "sequence": 71, "kind": "free", "id": 1}
+{"case": 603, "sequence": 72, "kind": "exit", "function": "cio_destroy"}
+{"case": 603, "sequence": 73, "kind": "probe", "label": "parents_released", "fd": 3, "fd_epoch": 1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "map": 134529757286400, "map_epoch": 1, "map_result": -1, "map_errno": 12, "size": 4096, "mode": 448, "device": 47, "inode": 276828}
+{"case": 603, "sequence": 74, "kind": "end", "live_allocations": 0}

@@ -246,3 +246,14 @@ process mutations and five Lean theorems preserve these bounded observations.
 Other transition failures, general callers, full sync/durability, aggregate
 custody, wrapper lifecycle and full event composition remain open. No raw unit
 is promoted.
+
+## Failed native unmap and down recovery (2026-09-06)
+
+[Four native failed-down sequences](reports/cycle19-file-unmap-failures/README.md) release all 40 allocation generations and
+seven OS epochs. Suppressed unmap retains the original mapping, descriptor,
+up ring and counter. A successful preceding sync remains visible after failure;
+combined sync/unmap failure remains unsynced. Retry or parent teardown later
+releases the original epoch. A 19-clause policy, 75 mutations and five Lean
+theorems preserve this boundary. Failed close/reopen, other sync failures,
+general callers, full sync/durability, aggregate custody, wrapper lifecycle and
+full event composition remain open. No raw unit is promoted.

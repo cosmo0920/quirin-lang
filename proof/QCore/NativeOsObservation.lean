@@ -338,4 +338,35 @@ theorem observed_failed_sync_down_commit_does_not_prove_sync :
     committed.2.file.transaction = false ∧
     (nativeReload committed.2.file).logicalLength = 7 := by decide
 
+-- The input is a mapped chunk. Failure is an explicitly supplied suppressed
+-- unmap result; successful close/size update remain premises of the other arm.
+def nativeDownUnmap (s : NativeSyncState) (syncSucceeded unmapSucceeded : Bool) :
+    Int × NativeSyncState :=
+  if unmapSucceeded then (0, nativeDownSync s syncSucceeded)
+  else (-1, { s with synced := s.synced || syncSucceeded })
+
+theorem failed_unmap_preserves_file_state (s : NativeSyncState) (synced : Bool) :
+    (nativeDownUnmap s synced false).1 = -1 ∧
+    (nativeDownUnmap s synced false).2.file = s.file := ⟨rfl, rfl⟩
+
+theorem successful_sync_survives_failed_unmap (s : NativeSyncState) :
+    (nativeDownUnmap s true false).2.synced = true := by
+  simp [nativeDownUnmap]
+
+theorem combined_sync_unmap_failure_retains_state (s : NativeSyncState) :
+    nativeDownUnmap s false false = (-1, s) := by
+  simp [nativeDownUnmap]
+
+theorem retry_after_failed_unmap_releases_same_epoch (s : NativeSyncState) (synced : Bool) :
+    let retry := nativeDownUnmap (nativeDownUnmap s synced false).2 true true
+    retry.1 = 0 ∧ retry.2.file.mapped = false ∧
+    retry.2.file.epoch = s.file.epoch ∧ retry.2.file.logicalLength = 0 :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem observed_sync_before_unmap_failure_changes_only_sync :
+    let dirty : NativeSyncState := ⟨⟨7,7,0,false,false,true,1⟩,false⟩
+    let failed := nativeDownUnmap dirty true false
+    failed.1 = -1 ∧ failed.2.file = dirty.file ∧ failed.2.synced = true ∧
+    failed.2 ≠ dirty := by decide
+
 end QCore.NativeOsObservation

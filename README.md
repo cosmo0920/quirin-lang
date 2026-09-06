@@ -143,6 +143,12 @@ transaction and retry clears it. Down continues cleanup after failed sync;
 commit while unmapped succeeds without syncing. These fixed injected observations
 do not establish general OS failure behavior or durability.
 
+[Four failed-down sequences](docs/reports/cycle19-file-unmap-failures/README.md)
+release 40 more generations and seven OS epochs. Failed unmap retains the
+original mapping, descriptor, up ring and counter; preceding successful sync
+remains visible. Retry or parent teardown then releases that original epoch.
+Failed close/reopen and general transition guarantees remain open.
+
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a
 length-delimited JSON protocol, manifests, a fail-closed registry, bounded

@@ -1,0 +1,23 @@
+{
+  "workspace": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "report-tests": 0,
+  "probe": 0,
+  "followup": 0,
+  "audit": 0,
+  "workspace_tests": 407,
+  "contract_modules": 55,
+  "python_tests": 35,
+  "new_trace_process_mutations": 75,
+  "native_executions": 4,
+  "native_asan_ubsan_lsan": true,
+  "observed_allocation_generations": 40,
+  "recorded_releases": 40,
+  "observed_open_epochs": 7,
+  "observed_mapping_epochs": 7,
+  "native_operation_results": 17,
+  "lean_build": true,
+  "cycle19_axiom_audit": true,
+  "raw_units_promoted": 0
+}
