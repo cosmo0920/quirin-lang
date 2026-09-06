@@ -257,3 +257,18 @@ releases the original epoch. A 19-clause policy, 75 mutations and five Lean
 theorems preserve this boundary. Failed close/reopen, other sync failures,
 general callers, full sync/durability, aggregate custody, wrapper lifecycle and
 full event composition remain open. No raw unit is promoted.
+
+## Native down/reopen descriptor failures (2026-09-06)
+
+[Four native sequences](reports/cycle19-file-descriptor-failures/README.md)
+release all 40 allocation generations and acquire five descriptor/mapping epochs.
+Failed close after unmap moves the chunk into the down ring with a zero up
+counter but retains its original descriptor. Down/up retries reject without
+releasing it. Parent teardown either releases it or, with a second suppressed
+close, leaves an observed descriptor residual after enclosing allocations are
+freed. Harness reclamation remains separate. Suppressed reopen creates no new
+epoch; successful retry acquires one. The independent adapter, 20-clause runtime
+policy and seven Lean theorems preserve this conditional observation boundary.
+General reopen size/map failures, production caller provenance, aggregate custody,
+remaining wrapper lifecycle and full event composition remain open. No raw unit
+is promoted.

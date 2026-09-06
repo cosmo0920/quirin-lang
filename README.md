@@ -147,7 +147,13 @@ do not establish general OS failure behavior or durability.
 release 40 more generations and seven OS epochs. Failed unmap retains the
 original mapping, descriptor, up ring and counter; preceding successful sync
 remains visible. Retry or parent teardown then releases that original epoch.
-Failed close/reopen and general transition guarantees remain open.
+[Four descriptor-failure sequences](docs/reports/cycle19-file-descriptor-failures/README.md)
+release 40 further generations and acquire five OS epochs. Failed close moves
+the chunk down but retains its descriptor; down/up retries reject. A second
+suppressed close leaves that descriptor live after parent release, with harness
+reclamation recorded separately. Failed reopen creates no epoch; a successful
+retry creates a fresh one. General reopen failures, production caller provenance,
+aggregate custody and full event composition remain open.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

@@ -369,3 +369,11 @@ mapped-header state and records successful direct write while locked. A new
 mapping/open epoch is required on reload regardless of numeric address/fd reuse.
 The 16-clause policy is a bounded runtime observation gate, not a universal
 transaction, synchronization or production-caller guarantee.
+
+`chunkio/filesystem_descriptor_failure_observation.qcore` checks four bounded
+native down/reopen failure sequences. Its 20 clauses separate allocation release,
+down-ring membership, descriptor epochs and parent residuals; harness reclamation
+cannot count as library cleanup. Suppressed close retains a descriptor even when
+down; suppressed reopen creates no new epoch. These runtime-only facts do not
+establish arbitrary kernel failures, production reachability or durability. See
+the [descriptor failure report](../../docs/reports/cycle19-file-descriptor-failures/README.md).

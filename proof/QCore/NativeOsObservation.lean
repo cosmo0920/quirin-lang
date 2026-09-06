@@ -370,3 +370,71 @@ theorem observed_sync_before_unmap_failure_changes_only_sync :
     failed.2 ≠ dirty := by decide
 
 end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Bounded descriptor-failure projection, separate from arbitrary kernel errors.
+-- Close suppression leaves the actual descriptor open. A down operation here
+-- assumes successful unmap and size update on an initially mapped clean chunk.
+-- The epoch names the same descriptor/inode witness checked by the adapter.
+structure NativeDescriptorState where
+  mapped : Bool
+  upMember : Bool
+  descriptorHeld : Bool
+  epoch : Nat
+  deriving DecidableEq, Repr
+
+def nativeDescriptorDown (s : NativeDescriptorState) (closeSuppressed : Bool) :
+    Int × NativeDescriptorState :=
+  if !s.mapped then (-1, s)
+  else (if closeSuppressed then -1 else 0,
+        { s with mapped := false, upMember := false, descriptorHeld := closeSuppressed })
+
+-- Open failure executes no syscall in this profile. Successful reopen assumes
+-- the observed size/map/header operations succeed before up membership changes.
+def nativeDescriptorUp (s : NativeDescriptorState) (openSuppressed : Bool) :
+    Int × NativeDescriptorState :=
+  if s.mapped || s.descriptorHeld || openSuppressed then (-1, s)
+  else (0, ⟨true, true, true, s.epoch + 1⟩)
+
+-- Parent allocations are released independently; the output is the remaining
+-- descriptor epoch ledger, before any separately observed harness reclamation.
+def nativeDescriptorParentResidual (s : NativeDescriptorState) (closeSuppressed : Bool) :
+    List Nat :=
+  if s.descriptorHeld && closeSuppressed then [s.epoch] else []
+
+theorem suppressed_close_moves_down_but_retains_identity {s : NativeDescriptorState}
+    (mapped : s.mapped = true) :
+    (nativeDescriptorDown s true).1 = -1 ∧
+    (nativeDescriptorDown s true).2 = ⟨false, false, true, s.epoch⟩ := by
+  simp [nativeDescriptorDown, mapped]
+
+theorem down_retry_after_suppressed_close_preserves_descriptor {s : NativeDescriptorState}
+    (mapped : s.mapped = true) :
+    let down := (nativeDescriptorDown s true).2
+    nativeDescriptorDown down false = (-1, down) := by
+  simp [nativeDescriptorDown, mapped]
+
+theorem reopen_after_suppressed_close_rejects_without_new_epoch {s : NativeDescriptorState}
+    (mapped : s.mapped = true) :
+    let down := (nativeDescriptorDown s true).2
+    nativeDescriptorUp down false = (-1, down) := by
+  simp [nativeDescriptorDown, nativeDescriptorUp, mapped]
+
+theorem suppressed_open_preserves_descriptor_state (s : NativeDescriptorState) :
+    nativeDescriptorUp s true = (-1, s) := by simp [nativeDescriptorUp]
+
+theorem successful_reopen_acquires_fresh_epoch {s : NativeDescriptorState}
+    (unmapped : s.mapped = false) (closed : s.descriptorHeld = false) :
+    nativeDescriptorUp s false = (0, ⟨true, true, true, s.epoch + 1⟩) := by
+  simp [nativeDescriptorUp, unmapped, closed]
+
+theorem second_suppressed_close_retains_original_parent_residual {s : NativeDescriptorState}
+    (mapped : s.mapped = true) :
+    nativeDescriptorParentResidual (nativeDescriptorDown s true).2 true = [s.epoch] := by
+  simp [nativeDescriptorDown, nativeDescriptorParentResidual, mapped]
+
+theorem successful_parent_close_discharges_descriptor (s : NativeDescriptorState) :
+    nativeDescriptorParentResidual s false = [] := by simp [nativeDescriptorParentResidual]
+
+end QCore.NativeOsObservation

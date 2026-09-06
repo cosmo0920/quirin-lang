@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (55 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (56 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -105,9 +105,16 @@ It also ships a conservative checker for *existing* C source (the
   Suppressed unmap retains mapping/descriptor identity, up ring and counter;
   prior successful sync survives failure, while combined sync/unmap failure
   stays unsynced. Retry or parent teardown later releases the original epoch.
-  Failed close/reopen and general transition guarantees remain open.
-  Latest evidence: `docs/reports/cycle19-file-unmap-failures/README.md`
-  (407 workspace tests, 55 contract modules; prior source/verdict parity preserved).
+  Four descriptor-failure sequences release 40 more generations and acquire five
+  OS epochs. Failed close during down leaves the original descriptor in the down
+  ring with no mapping and a zero up counter; retries of down/up reject. Parent
+  teardown releases that descriptor unless its close is also suppressed, retaining
+  one observed residual after parent free. Harness reclamation is separate.
+  Failed reopen acquires no epoch; successful retry acquires a fresh one. General
+  reopen failures, caller provenance, aggregate custody and event composition
+  remain open. Latest evidence:
+  `docs/reports/cycle19-file-descriptor-failures/README.md`
+  (407 workspace tests, 56 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

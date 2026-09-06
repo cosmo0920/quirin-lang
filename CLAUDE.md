@@ -5,7 +5,7 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-file-unmap-failures/README.md` and the AGENTS.md status
+  `docs/reports/cycle19-file-descriptor-failures/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/
   ring provenance and rollback. General caller/failure, filesystem and event-
   composition gates remain open. Unsupported backend close now has a symbolic
@@ -42,7 +42,12 @@ Claude-specific additions:
   Failed unmap preserves mapping/descriptor identity, up ring and counter; prior
   successful sync survives failure. Combined sync/unmap failure stays unsynced,
   with recovery through retry or parent teardown releasing the original epoch.
-  Failed close/reopen and general transition guarantees remain open.
+  Four descriptor-failure sequences release 40 further generations and acquire
+  five OS epochs. Failed close moves the chunk down but retains its descriptor;
+  down/up retries reject. A second suppressed close retains that descriptor after
+  parent free, with harness reclamation recorded separately. Failed reopen creates
+  no epoch; successful retry creates a fresh one. General reopen failure paths,
+  caller provenance, aggregate custody and full event composition remain open.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants
