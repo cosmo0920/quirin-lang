@@ -1,0 +1,17 @@
+{
+  "baseline": "46549a8",
+  "baseline_file": "compiler/src/verifier_plugins/libevent/event_driven.rs",
+  "core_file": "crates/qcore-core/src/event_reactor.rs",
+  "checker_body_sha256_after_documented_normalization": "de3d7a89c4359e192b35dd54a508075282fa69a55a015c54ff4742f0513b5f9b",
+  "exact_normalization_replacements": {
+    "BaseState<P>": "BaseState",
+    "!accepted_profiles.contains(profile)": "!profile.accepted(accepted_builds)",
+    "!bases[&state.base].profile.threading_enabled()": "bases[&state.base].profile.threads == ThreadMode::Disabled",
+    "!bases[base].profile.threading_enabled()": "bases[base].profile.threads == ThreadMode::Disabled",
+    "!state.profile.threading_enabled()": "state.profile.threads == ThreadMode::Disabled"
+  },
+  "body_equal_after_these_replacements_only": true,
+  "profile_adapter_equivalence": "For each supplied CreateBase profile, the adapter includes it iff its original accepted(accepted_builds) predicate holds. Equality on LibeventBuildProfile remains derived over all four original fields.",
+  "hash_range": "Exact UTF-8 function body interior between the opening and matching closing braces, retaining whitespace; signature and braces excluded.",
+  "compatibility_facade": "Original concrete EventOperation and EventProgram declarations preserved; exhaustive From conversion transfers all 27 variants and fields without interpretation. External named/glob variant imports tested."
+}

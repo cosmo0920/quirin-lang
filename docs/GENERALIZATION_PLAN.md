@@ -488,8 +488,10 @@ Unknown without witnesses. Two clean builds reproduce executable/manifest/
 archive hashes. [Provider packaging evidence](reports/w5-provider-packages/README.md)
 and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
 
-Task2's specialized semantic extraction, task3's reactor/descriptor model
-split, registry-based Fluent Bit composition, task4 route deletion, remaining
+Task3's generic reactor lifecycle/descriptor model now lives in core with an
+explicit profile policy and compatible Libevent facade ([evidence](reports/w5-generic-reactor/README.md)).
+Task2's specialized semantic extraction, task3's callback wire schema,
+registry-based Fluent Bit composition, task4 route deletion and remaining
 compiler consolidation remain open. [CLI package lifecycle](reports/w5-cli-packages/README.md)
 now supports explicit verification and pinned enable/disable selection. Existing
 in-process/source routes are retained until semantic parity meets these gates.

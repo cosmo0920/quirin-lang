@@ -632,3 +632,60 @@ fn adapter_observation_must_refine_the_checked_trace() {
         Err(EventDiagnostic::L12TraceRefinement { .. })
     ));
 }
+
+#[test]
+fn generic_profile_bridge_preserves_loaded_build_matrix_and_empty_rejection() {
+    let mut profiles = Vec::new();
+    for backend in [
+        EventBackend::Epoll,
+        EventBackend::Poll,
+        EventBackend::Select,
+        EventBackend::Kqueue,
+        EventBackend::Iocp,
+    ] {
+        for threads in [
+            ThreadMode::Disabled,
+            ThreadMode::Pthreads,
+            ThreadMode::WindowsThreads,
+        ] {
+            for openssl in [false, true] {
+                for debug_mode in [false, true] {
+                    profiles.push(LibeventBuildProfile {
+                        backend,
+                        threads,
+                        openssl,
+                        debug_mode,
+                    });
+                }
+            }
+        }
+    }
+    for left in &profiles {
+        for right in &profiles {
+            let program = EventProgram {
+                live_arguments: BTreeSet::new(),
+                operations: vec![
+                    EventOperation::CreateBase {
+                        base: 1,
+                        profile: *left,
+                    },
+                    EventOperation::CreateBase {
+                        base: 2,
+                        profile: *right,
+                    },
+                    EventOperation::FreeBase { base: 1 },
+                    EventOperation::FreeBase { base: 2 },
+                ],
+            };
+            let result = check_event_program(&program, builds());
+            assert_eq!(
+                result.is_ok(),
+                left.accepted(builds()) && right.accepted(builds()),
+                "{left:?}, {right:?}: {result:?}"
+            );
+            let rejected = check_event_program(&program, &[]).unwrap_err();
+            assert!(rejected.contains(&EventDiagnostic::L09UnknownProfile { operation: 0 }));
+            assert!(rejected.contains(&EventDiagnostic::L09UnknownProfile { operation: 1 }));
+        }
+    }
+}

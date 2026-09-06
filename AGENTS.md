@@ -21,7 +21,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | Path | Contents |
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
-| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models and chunk lifecycle. No runtime or workspace dependencies; W5 consolidation remains bounded |
+| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle and generic reactor/descriptor custody. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; source-import certificates remain opaque in the compiler adapter |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
@@ -64,9 +64,9 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   sanitizer and deployed observation-hook evidence pending.
 - **Cycle 19: in progress.** Unrestricted-C gateway applied to pinned Fluent
   Bit (CMetrics, CTraces, librdkafka, ChunkIO, input-chunk wrapper, Monkey).
-  Latest triage: 185 TUs, 4,775 raw functions, 98.2% projected — **3 Safe /
-  94 provisional Unsafe / 84 Unknown**, plus four data-only units
-  (`docs/reports/w4-out-forwarding/README.md`). **Raw units remain unpromoted** until
+  Latest triage: 185 TUs, 4,775 raw functions, 98.2% projected — **2 Safe /
+  47 provisional Unsafe / 132 Unknown**, plus four data-only units
+  (`docs/reports/w4-indirect-access/README.md`). **Raw units remain unpromoted** until
   per-path identity imports and real observation evidence satisfy the
   fail-closed gates in `docs/cycles/CYCLE_19.md`.
   Source-bound context/stream/chunk/backend teardown now composes bounded
@@ -411,8 +411,18 @@ W4 output forwarding and identity invalidation (2026-09-07): direct output
 pointer forwarding now validates original sanctioned slots on every exit.
 Formal shadowing, pointer mutation and direct alias chains cannot reuse stale
 resource identity. Evidence: `docs/reports/w4-out-forwarding/README.md`.
-The 185-unit audit is now 3 Safe / 94 provisional Unsafe / 84 Unknown /
-4 data-only: four units and 25 functions downgrade to Unknown, with no
-promotions. Earlier parity counts above remain historical. General pointer
-aliases, recursion and unmodeled indirect-access checking remain open; the
-last item has a confirmed synthetic read-after-release probe under repair.
+That increment measured 3 Safe / 94 provisional Unsafe / 84 Unknown /
+4 data-only, with no promotions. The subsequent indirect-access repair
+(`docs/reports/w4-indirect-access/README.md`) rejects unmodeled dereference,
+member and indexed access instead of erasing it from the resource projection.
+The current 185-unit audit is 2 Safe / 47 provisional Unsafe / 132 Unknown /
+4 data-only: 48 units and 455 functions downgrade, with no promotions.
+These are withdrawn unsupported results, not proven upstream defects.
+Typed access evidence, general pointer aliases and recursion remain open.
+
+The generic reactor lifecycle and descriptor model now resides in
+`crates/qcore-core/src/event_reactor.rs`, parameterized by an explicit accepted
+profile list. The Libevent adapter retains build matching and pinned source
+checks, and preserves concrete enum imports through a lossless facade.
+Evidence: `docs/reports/w5-generic-reactor/README.md`. Callback wire schemas,
+specialized provider extraction and registry-based corpus composition remain open.

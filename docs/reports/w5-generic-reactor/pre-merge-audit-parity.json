@@ -1,0 +1,14 @@
+{
+  "baseline": "46549a8",
+  "note": "Reactor-only audit before indirect-access repair; 3 Safe / 94 provisional Unsafe / 84 Unknown / 4 data-only.",
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "sha256": "b0a82ea20e0904251b916c1755d71e0c5e62554ae4669a5b2d0ba753957597df"
+    }
+  }
+}

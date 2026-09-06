@@ -1,0 +1,8 @@
+{
+  "workspace_tests": 589,
+  "python_tests": 43,
+  "lean_audits": 19,
+  "standing_gate": "passed",
+  "full_language_conformance": false,
+  "callback_wire_schema": "open"
+}

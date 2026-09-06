@@ -62,3 +62,8 @@ passes579 workspace tests, the standing gate and19 Lean audits. Fresh full185
 audit output matches the merged W4 forwarding result exactly:3 Safe /94
 provisional Unsafe /84 Unknown /4 data-only. The report separately records an
 open synthetic indirect-access probe; broader conformance is not claimed.
+
+The [generic reactor integration](reports/w5-generic-reactor/README.md), including
+the merged indirect-access repair, passes 589 workspace tests, 43 Python tests,
+the standing gate and all 19 Lean audits. Unsupported reads now remain Unknown;
+typed access restoration and broader conformance remain open.

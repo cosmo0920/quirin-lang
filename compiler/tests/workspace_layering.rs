@@ -209,3 +209,61 @@ fn trusted_replay_and_derivation_are_verification_owned() {
         TypeId::of::<qcore_verification::witness_replay::ChunkLifecycleReplay<'static>>()
     );
 }
+
+#[test]
+fn reactor_models_are_core_owned_and_adapter_api_is_preserved() {
+    use std::any::TypeId;
+    assert_eq!(
+        TypeId::of::<qcore_compiler::EventKey>(),
+        TypeId::of::<qcore_core::event_reactor::EventKey>()
+    );
+    let model: qcore_core::event_reactor::EventProgram<qcore_compiler::LibeventBuildProfile> =
+        qcore_compiler::EventProgram::default().into();
+    assert!(model.operations.is_empty());
+    assert!(model.live_arguments.is_empty());
+    type Checker =
+        fn(
+            &qcore_compiler::EventProgram,
+            &[qcore_schemas::profile::BuildProfileSelector],
+        )
+            -> Result<qcore_compiler::EventCertificate, Vec<qcore_compiler::EventDiagnostic>>;
+    let _: Checker = qcore_compiler::check_event_program;
+    assert_eq!(qcore_compiler::EventProgram::default().operations.len(), 0);
+}
+
+#[test]
+fn reactor_adapter_enum_supports_external_variant_imports() {
+    // This integration test is an external consumer of qcore_compiler.
+    // A type alias to a generic enum cannot satisfy either import form.
+    use qcore_compiler::EventOperation::*;
+    let pair = CreateSocketPair {
+        descriptors: Some((3, 4)),
+    };
+    let close = {
+        use qcore_compiler::EventOperation::CloseSocket;
+        CloseSocket {
+            descriptor: 3,
+            succeeds: true,
+        }
+    };
+    let program = qcore_compiler::EventProgram {
+        live_arguments: std::collections::BTreeSet::from([9]),
+        operations: vec![pair, close, DropArgument { argument: 9 }],
+    };
+    let model: qcore_core::event_reactor::EventProgram<qcore_compiler::LibeventBuildProfile> =
+        program.into();
+    assert_eq!(model.live_arguments, std::collections::BTreeSet::from([9]));
+    assert_eq!(
+        model.operations,
+        vec![
+            qcore_core::event_reactor::EventOperation::CreateSocketPair {
+                descriptors: Some((3, 4))
+            },
+            qcore_core::event_reactor::EventOperation::CloseSocket {
+                descriptor: 3,
+                succeeds: true
+            },
+            qcore_core::event_reactor::EventOperation::DropArgument { argument: 9 },
+        ]
+    );
+}
