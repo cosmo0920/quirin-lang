@@ -80,6 +80,68 @@ theorem checked_loop_scales_total
   rw [equal]
   rfl
 
+/-! Revision 0.3 distinguishes exact repetition from a maximum count.
+The finite count is supplied model evidence, not reconstructed source evidence.
+The zero-net maximum keeps one body's entry/peak and scales only total cost.
+This scalar projection does not establish allocation identity correspondence. -/
+
+inductive LoopCount where
+  | exact (iterations : Nat)
+  | atMost (bound : Nat)
+  | unbounded
+  deriving DecidableEq, Repr
+
+def summarizeBoundedLoop (body : LoopBody) : LoopCount → Option LoopSummary
+  | .exact n => some (summarizeLoop body n)
+  | .atMost 0 => some (summarizeLoop body 0)
+  | .atMost (n + 1) =>
+    if body.net = 0 then
+      some { iterations := n + 1, net := 0, peak := body.peak,
+             total := (n + 1) * body.total, requiredEntry := body.requiredEntry }
+    else none
+  | .unbounded => none
+
+theorem exact_count_retains_exact_net (body : LoopBody) (n : Nat) :
+    summarizeBoundedLoop body (.exact n) = some (summarizeLoop body n) := rfl
+
+theorem positive_maximum_nonzero_net_rejected (body : LoopBody) (n : Nat)
+    (nonzero : body.net ≠ 0) :
+    summarizeBoundedLoop body (.atMost (n + 1)) = none := by
+  simp [summarizeBoundedLoop, nonzero]
+
+theorem accepted_maximum_has_zero_net {body : LoopBody} {n : Nat}
+    {summary : LoopSummary}
+    (accepted : summarizeBoundedLoop body (.atMost n) = some summary) :
+    summary.net = 0 := by
+  cases n with
+  | zero =>
+    simp [summarizeBoundedLoop, summarizeLoop] at accepted
+    subst summary
+    rfl
+  | succ n =>
+    simp only [summarizeBoundedLoop] at accepted
+    split at accepted
+    · cases accepted
+      rfl
+    · contradiction
+
+theorem maximum_total_covers_early_exit {body : LoopBody} {bound actual : Nat}
+    {summary : LoopSummary}
+    (accepted : summarizeBoundedLoop body (.atMost bound) = some summary)
+    (within : actual ≤ bound) : actual * body.total ≤ summary.total := by
+  cases bound with
+  | zero =>
+    simp [summarizeBoundedLoop, summarizeLoop] at accepted
+    subst summary
+    have : actual = 0 := Nat.eq_zero_of_le_zero within
+    simp [this]
+  | succ n =>
+    simp only [summarizeBoundedLoop] at accepted
+    split at accepted
+    · cases accepted
+      exact Nat.mul_le_mul_right body.total within
+    · contradiction
+
 /-! Unrestricted-C uses a conservative three-way verdict.  Only `safe` with a
 separately checked summary can yield a certificate. -/
 

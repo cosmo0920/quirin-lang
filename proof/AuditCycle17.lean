@@ -21,3 +21,8 @@ import QCore.ResearchExtensions
 #print axioms QCore.ResearchExtensions.combined_cycle17_certificate
 #print axioms QCore.ResearchExtensions.all_promoted_research_is_discharged
 #print axioms QCore.Metatheory.cycle17_research_boundary_is_discharged
+
+#print axioms QCore.ResearchExtensions.exact_count_retains_exact_net
+#print axioms QCore.ResearchExtensions.positive_maximum_nonzero_net_rejected
+#print axioms QCore.ResearchExtensions.accepted_maximum_has_zero_net
+#print axioms QCore.ResearchExtensions.maximum_total_covers_early_exit

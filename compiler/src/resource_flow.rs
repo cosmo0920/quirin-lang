@@ -288,13 +288,13 @@ impl Flow {
         })
     }
 
-    /// Exact summary for at most `iterations` executions of an arbitrary body.
+    /// Exact summary for exactly `iterations` executions of an arbitrary body.
     ///
     /// Unlike `bounded_zero_net_loop`, this accepts positive and negative net
     /// changes.  `required_entry` records the invariant needed to make every
     /// release in every iteration defined.  Exponentiation by squaring keeps a
     /// very large checked bound from making the checker itself linear in it.
-    pub fn bounded_loop(&self, iterations: u64) -> Result<Self, FlowError> {
+    pub fn repeat_exact(&self, iterations: u64) -> Result<Self, FlowError> {
         let mut remaining = iterations;
         let mut result = Self::zero();
         let mut power = self.clone();
@@ -308,6 +308,12 @@ impl Flow {
             }
         }
         Ok(result)
+    }
+
+    /// Historical spelling for exact repetition; this is not an at-most bound.
+    /// Use `bounded_zero_net_loop` for supported maximum-count summaries.
+    pub fn bounded_loop(&self, iterations: u64) -> Result<Self, FlowError> {
+        self.repeat_exact(iterations)
     }
 }
 

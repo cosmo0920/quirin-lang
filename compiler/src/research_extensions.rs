@@ -18,7 +18,12 @@ use crate::weak_memory::{
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum LoopBoundEvidence {
-    /// A termination proof supplied an exact upper bound.
+    /// A supplied exact-count premise. The producer must establish this count;
+    /// this model API does not derive source control-flow or identity evidence.
+    Exact(u64),
+    /// Any count from zero through this maximum may execute.
+    AtMost(u64),
+    /// A termination proof supplied a maximum, not an exact execution count.
     Terminating(u64),
     /// Abstract interpretation widened to this checked maximum iteration count.
     Widened(u64),
@@ -36,6 +41,7 @@ pub struct LoopSummaryCertificate {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LoopSummaryError {
     Unbounded,
+    NonExactCustody,
     Arithmetic(FlowError),
     InvalidCertificate,
 }
@@ -44,15 +50,23 @@ pub fn summarize_general_loop(
     body: &Flow,
     evidence: LoopBoundEvidence,
 ) -> Result<LoopSummaryCertificate, LoopSummaryError> {
-    let iterations = match evidence {
-        LoopBoundEvidence::Terminating(iterations) | LoopBoundEvidence::Widened(iterations) => {
-            iterations
+    let summary = match evidence {
+        LoopBoundEvidence::Exact(iterations) => body.repeat_exact(iterations),
+        LoopBoundEvidence::AtMost(0)
+        | LoopBoundEvidence::Terminating(0)
+        | LoopBoundEvidence::Widened(0) => Ok(Flow::zero()),
+        LoopBoundEvidence::AtMost(bound)
+        | LoopBoundEvidence::Terminating(bound)
+        | LoopBoundEvidence::Widened(bound) => {
+            if !body.net().is_zero() {
+                // One exact-net Flow cannot cover both zero and one iteration.
+                return Err(LoopSummaryError::NonExactCustody);
+            }
+            body.bounded_zero_net_loop(bound)
         }
         LoopBoundEvidence::Unbounded => return Err(LoopSummaryError::Unbounded),
-    };
-    let summary = body
-        .bounded_loop(iterations)
-        .map_err(LoopSummaryError::Arithmetic)?;
+    }
+    .map_err(LoopSummaryError::Arithmetic)?;
     Ok(LoopSummaryCertificate {
         body: body.clone(),
         evidence,
@@ -85,6 +99,7 @@ pub enum CategoryError {
     InvalidDelta { morphism: String, axis: String },
     EndpointMismatch { left: String, right: String },
     EmptyAccount,
+    InvalidLoopSummary,
 }
 
 impl LedgerMorphism {
@@ -144,6 +159,7 @@ impl LedgerMorphism {
 pub fn loop_ledger_morphism(
     certificate: &LoopSummaryCertificate,
 ) -> Result<LedgerMorphism, CategoryError> {
+    check_loop_summary(certificate).map_err(|_| CategoryError::InvalidLoopSummary)?;
     let source = certificate
         .summary
         .required_entry()
