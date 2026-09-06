@@ -202,6 +202,15 @@ theorem acquired_then_released_is_safe (resource : ResourceId) :
   simp [analyze, run, transfer, initial, lookup, update, close, classify,
     hasSafetyIssue, leakFree]
 
+/-- The importer maps unsupported reads to the existing unsupported effect.
+    Releasing an allocation first cannot turn that missing access model into
+    a neutral instruction. This theorem assumes that import decision; it is
+    not a theorem about arbitrary C reads or lexical parsing. -/
+theorem released_then_unmodeled_access_is_indeterminate (resource : ResourceId) :
+    analyze [.acquire resource, .release resource, .unsupported] = .indeterminate := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
 /-- The may-state used at CFG joins.  Each bit records a possible concrete
     state; join preserves every possibility from either predecessor. -/
 structure MayStatus where

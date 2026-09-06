@@ -2,7 +2,10 @@
 //!
 //! The parser intentionally accepts more C than the analyzer models.  Every
 //! construct outside the supported structured subset becomes an `Unknown`
-//! instruction, so an incomplete model can never produce a `Safe` verdict.
+//! instruction. `Safe` concerns the supported custody projection under its
+//! declared resource contracts, not arbitrary C memory safety. Indirect reads,
+//! aggregate/indexed accesses and ambiguous expression forms without a model
+//! remain unsupported; symbolic resource place spelling is not access proof.
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
@@ -1237,7 +1240,7 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
-                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
+                    condition_supported: supported_neutral_expression(&condition),
                     null_condition: pointer_null_condition(&condition),
                     then_body,
                     else_body,
@@ -1249,7 +1252,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
-                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
+                    condition_supported: supported_neutral_expression(&condition),
                     null_condition: pointer_null_condition(&condition),
                     body,
                 })
@@ -1274,7 +1277,7 @@ impl Parser<'_> {
                     line,
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
+                    condition_supported: supported_neutral_expression(&condition),
                     null_condition: pointer_null_condition(&condition),
                     increment,
                     body,
@@ -1294,7 +1297,7 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::DoWhile {
                     line,
-                    condition_supported: !contains_call(&condition) && !contains_braces(&condition),
+                    condition_supported: supported_neutral_expression(&condition),
                     null_condition: pointer_null_condition(&condition),
                     body,
                 })
@@ -1305,8 +1308,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
-                    expression_supported: !contains_call(&expression)
-                        && !contains_braces(&expression),
+                    expression_supported: supported_neutral_expression(&expression),
                     body,
                 })
             }
@@ -1315,8 +1317,7 @@ impl Parser<'_> {
                 let expression = self.consume_to_colon()?;
                 Ok(Statement::Case {
                     line,
-                    expression_supported: !contains_call(&expression)
-                        && !contains_braces(&expression),
+                    expression_supported: supported_neutral_expression(&expression),
                     is_default: false,
                 })
             }
@@ -1370,8 +1371,7 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
-                    expression_supported: !contains_call(&expression)
-                        && !contains_braces(&expression),
+                    expression_supported: supported_neutral_expression(&expression),
                     returned_place: canonical_place(&texts),
                 })
             }
@@ -1536,6 +1536,30 @@ impl Parser<'_> {
                 description: "local declaration may shadow a formal resource identity".into(),
             };
         }
+        // Explicit Out stores remain a separate modeled instruction. Reading
+        // through a pointer, member or subscript has no heap/liveness model and
+        // must never disappear into scalar NoOp or borrowed-call argument erasure.
+        let unsupported_access = if let Some(equal) = assignment {
+            let destination = direct_assignment_destination(&texts[..equal]);
+            destination.as_deref().is_some_and(|place| {
+                place.contains('.') || place.contains('[') || place.contains("->")
+            }) || contains_unmodeled_access(&texts[equal + 1..])
+        } else if declaration_like
+            && texts
+                .first()
+                .is_some_and(|first| DECLARATION_SPECIFIERS.contains(first))
+        {
+            // Declarator stars do not evaluate a pointer. Array bounds and
+            // aggregate declarations still need an importer we do not have.
+            texts.contains(&"[") || texts.contains(&".")
+        } else {
+            contains_unmodeled_access(&texts)
+        };
+        if unsupported_access {
+            return LegacyInstruction::Unknown {
+                description: "indirect memory access is outside the resource projection".into(),
+            };
+        }
         let call = find_call(&texts);
 
         if let Some((call_index, function)) = call {
@@ -1691,6 +1715,50 @@ fn contains_call(tokens: &[Token]) -> bool {
     find_call(&texts).is_some()
 }
 
+/// This is a lexical exclusion boundary, not a proof of C memory safety.
+/// Only multiplication with a plain left operand is identifiable here; a star
+/// after a closing parenthesis may follow a typedef cast and remains unknown.
+fn contains_unmodeled_access(texts: &[&str]) -> bool {
+    texts.windows(2).any(|pair| pair == ["-", ">"])
+        || texts.iter().enumerate().any(|(index, text)| match *text {
+            "[" | "]" => true,
+            "." => {
+                !texts
+                    .get(index.wrapping_sub(1))
+                    .is_some_and(|left| left.bytes().all(|byte| byte.is_ascii_digit()))
+                    || !texts
+                        .get(index + 1)
+                        .is_some_and(|right| right.bytes().all(|byte| byte.is_ascii_digit()))
+            }
+            "*" => !texts.get(index.wrapping_sub(1)).is_some_and(|left| {
+                (is_identifier(left) || left.bytes().all(|byte| byte.is_ascii_digit()))
+                    && !matches!(
+                        *left,
+                        "sizeof"
+                            | "_Alignof"
+                            | "alignof"
+                            | "__extension__"
+                            | "__real__"
+                            | "__real"
+                            | "__imag__"
+                            | "__imag"
+                    )
+            }),
+            _ => false,
+        })
+}
+
+fn supported_neutral_expression(tokens: &[Token]) -> bool {
+    !contains_call(tokens)
+        && !contains_braces(tokens)
+        && !contains_unmodeled_access(
+            &tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>(),
+        )
+}
+
 fn contains_braces(tokens: &[Token]) -> bool {
     tokens
         .iter()
@@ -1719,6 +1787,9 @@ fn pointer_null_condition(tokens: &[Token]) -> Option<PointerNullCondition> {
         .iter()
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
+    if !supported_neutral_expression(tokens) {
+        return None;
+    }
     null_condition_text(&texts)
 }
 
@@ -2001,7 +2072,9 @@ impl CfgBuilder {
             } => {
                 let instruction = if !*expression_supported {
                     LegacyInstruction::Unknown {
-                        description: "call or braced expression in return expression".to_owned(),
+                        description:
+                            "unmodeled call, aggregate or indirect access in return expression"
+                                .to_owned(),
                     }
                 } else if let Some(source) = returned_place {
                     LegacyInstruction::EscapeIfOwned {
@@ -2030,7 +2103,9 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call or braced expression in branch condition".to_owned(),
+                        description:
+                            "unmodeled call, aggregate or indirect access in branch condition"
+                                .to_owned(),
                     }
                 };
                 self.push(instruction, vec![then_entry, else_entry], *line, false)
@@ -2050,7 +2125,9 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call or braced expression in loop condition".to_owned(),
+                        description:
+                            "unmodeled call, aggregate or indirect access in loop condition"
+                                .to_owned(),
                     }
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -2074,7 +2151,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
-                    "call or braced expression in for-loop condition",
+                    "unmodeled call, aggregate or indirect access in for-loop condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 let increment_entry = increment.as_ref().map_or(header, |clause| {
@@ -2105,7 +2182,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
-                    "call or braced expression in do-while condition",
+                    "unmodeled call, aggregate or indirect access in do-while condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 self.break_targets.push(continuation);
@@ -2136,7 +2213,9 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call or braced expression in switch expression".to_owned(),
+                        description:
+                            "unmodeled call, aggregate or indirect access in switch expression"
+                                .to_owned(),
                     }
                 };
                 self.push(instruction, successors, *line, false)
@@ -2150,7 +2229,9 @@ impl CfgBuilder {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
-                        description: "call or braced expression in case expression".to_owned(),
+                        description:
+                            "unmodeled call, aggregate or indirect access in case expression"
+                                .to_owned(),
                     }
                 };
                 let entry = self.push(instruction, vec![continuation], *line, false);

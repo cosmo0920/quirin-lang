@@ -1,0 +1,17 @@
+{
+  "commands": {
+    "workspace": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "lean-audits": 0
+  },
+  "workspace_tests": 582,
+  "lean_audits": 19,
+  "baseline_regression_exit_code": 101,
+  "after_audit_exit_code": 0,
+  "baseline_audit": "reused successful combined-main full185 at f9a3009",
+  "interrupted_attempts": "Initial full builds hit shared disk quota; completed worktree caches were removed and all gates/audit rerun successfully."
+}
