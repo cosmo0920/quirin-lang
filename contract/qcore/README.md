@@ -259,3 +259,9 @@ clauses. These remain caller provenance obligations; see the
 unlink outcomes without consuming record/path allocations. Its nonnull record,
 readable path and external-call frames remain explicit premises. See the
 [native deletion report](../../docs/reports/cycle19-delete-outcomes/README.md).
+
+`chunkio/file_close_delete.qcore` extends the checked close chain to delete one.
+Thirty conditional cases retain blocked, failed, successful and absent-backend
+outcomes through the following frees. Both delete modes together cover all four
+source paths; success still needs bound OS/caller premises. See the
+[deleting close report](../../docs/reports/cycle19-deleting-close/README.md).

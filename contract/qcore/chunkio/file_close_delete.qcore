@@ -1,0 +1,22 @@
+module contract;
+
+// Delete==1 extension to the checked delete==0 chain. Native eligibility uses
+// post-cleanup fd/map fields; allocation release cannot erase failed deletion.
+// The earlier zero-delete premise is replaced by one; its custody/frame/ABI
+// obligations remain. A null backend makes no deletion attempt.
+extern fn file_close_delete() -> unit
+contract {
+    requires inherited_no_delete_custody_frame_and_abi_premises;
+    requires delete_argument_is_one;
+    requires nonnull_backend_has_live_owned_terminated_path;
+    requires native_delete_and_logging_return_and_preserve_all_record_identities;
+    requires successful_unlink_removes_the_bound_backing_path;
+    ensures normal delete_calls == was_nonnull;
+    ensures normal diagnostic_calls == delete_failed;
+    ensures normal path_released == was_nonnull;
+    ensures normal backend_released == was_nonnull;
+    ensures normal cleanup_results_ignored;
+    ensures normal not deletion_succeeded or (not mapping_unresolved and not descriptor_unresolved);
+    ensures normal was_nonnull or not deletion_succeeded;
+    ensures normal chunk_root_preserved;
+};

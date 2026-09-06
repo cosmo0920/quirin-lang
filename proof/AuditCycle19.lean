@@ -238,3 +238,7 @@ import QCore.ChunkSource
 #print axioms QCore.GuardedDelete.eligible_success_returns_zero
 
 #print axioms QCore.GuardedDelete.delete_preserves_record_and_path
+
+#print axioms QCore.FileClose.allocation_release_cannot_hide_failed_deletion
+#print axioms QCore.FileClose.null_backend_is_not_successful_deletion
+#print axioms QCore.FileClose.accepted_deletion_has_no_nested_obligation

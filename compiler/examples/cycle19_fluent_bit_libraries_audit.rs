@@ -495,7 +495,12 @@ fn audit_library(
             .into_iter()
             .find(|c| c.field() == "total_chunks_up" && c.delta() == -1)
             .ok_or("missing up counter certificate")?;
-        filesystem_deps = Some((native, counter, close));
+        let delete =
+            qcore_compiler::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+                &native_unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
+        filesystem_deps = Some((native, counter, close, delete));
     }
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
@@ -526,7 +531,7 @@ fn audit_library(
             teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
         }
         if library == "chunkio" && file == "cio_file.c" {
-            let (native, counter, close) = filesystem_deps
+            let (native, counter, close, delete) = filesystem_deps
                 .as_ref()
                 .ok_or("missing filesystem dependencies")?;
             let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
@@ -550,6 +555,15 @@ fn audit_library(
                     .enumerate()
                     .filter(|(i, _)| close_evidence.require_nested_discharge(*i).is_err())
                     .count()
+            );
+            let deleting = qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_deletion_source(&unit,PINNED_FLUENT_BIT_COMMIT,&certificate,close,delete)?;
+            println!(
+                "qcore-custody cio_file_close delete: {} conditional cases, {} uncovered source paths across both modes",
+                deleting.deleting_cases().len(),
+                deleting.uncovered_paths().len()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"filesystem_close_with_delete", "evidence":deleting}),
             );
             teardown_results.push(
                 serde_json::json!({"kind":"filesystem_close_no_delete", "evidence":close_evidence}),

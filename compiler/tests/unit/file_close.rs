@@ -204,3 +204,165 @@ fn file_close_native_policy_cannot_hide_failure_custody() {
         }
     }
 }
+
+fn deletion_fixture() -> String {
+    format!(
+        "{}{}",
+        fixture().replace(
+            "delete failed %s:%s",
+            "[cio file] error deleting file at close %s:%s"
+        ),
+        r#"
+int unlink(const char *);
+int cio_file_native_delete(struct cio_file *cf){if(cf->fd!=-1 || cf->map!=(void*)0)return -1;int r=unlink(cf->path);if(r==-1){cio_errno_print(*__errno_location(),"test.c",1);return -1;}return 0;}
+"#
+    )
+}
+#[test]
+fn deleting_close_covers_all_paths_and_keeps_failure_classifications() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = deletion_fixture();
+    let (unmap, close) = dependencies(&c);
+    let delete = crate::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+    )
+    .unwrap();
+    let evidence = check_file_close_deletion_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &unmap,
+        &close,
+        &delete,
+    )
+    .unwrap();
+    assert_eq!(evidence.deleting_cases().len(), 30);
+    assert!(evidence.uncovered_paths().is_empty());
+    assert_eq!(evidence.no_delete.cases().len(), 43);
+    for (kind, count) in [
+        (DeletionOutcome::NoBackend, 1),
+        (DeletionOutcome::BlockedByFields, 13),
+        (DeletionOutcome::SyscallFailed, 8),
+        (DeletionOutcome::SyscallSucceeded, 8),
+    ] {
+        assert_eq!(
+            evidence
+                .deleting_cases()
+                .iter()
+                .filter(|c| c.deletion == kind)
+                .count(),
+            count
+        );
+    }
+    for (i, case) in evidence.deleting_cases().iter().enumerate() {
+        assert_eq!(
+            evidence.require_successful_deletion(i).is_ok(),
+            case.deletion == DeletionOutcome::SyscallSucceeded
+        );
+        assert_eq!(case.backend_released, case.unmap_case.is_some());
+        assert_eq!(case.path_released, case.backend_released);
+        if case.deletion == DeletionOutcome::BlockedByFields {
+            assert!(
+                case.mapping == ResidualCustody::Unresolved
+                    || case.descriptor == ResidualCustody::Unresolved
+            );
+        }
+    }
+    assert!(evidence.require_successful_deletion(30).is_err());
+}
+#[test]
+fn deleting_close_rejects_wrong_delete_guards_args_logs_and_early_free() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = deletion_fixture();
+    let (unmap, close) = dependencies(&c);
+    let delete = crate::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+    )
+    .unwrap();
+    for (old, new) in [
+        (
+            "int r=cio_file_native_delete(cf)",
+            "int r=cio_file_native_delete((void*)0)",
+        ),
+        (
+            "int r=cio_file_native_delete(cf)",
+            "free(cf);int r=cio_file_native_delete(cf)",
+        ),
+        ("if(r!=0)cio_log_print", "if(r==0)cio_log_print"),
+        ("if(r!=0)cio_log_print", "if(r!=0)return;else cio_log_print"),
+        ("if(delete==1)", "if(delete==0)"),
+        (
+            "[cio file] error deleting file at close %s:%s\",ch->st->name,ch->name",
+            "[cio file] error deleting file at close %s:%s\",ch->name,ch->st->name",
+        ),
+    ] {
+        let changed = c.replace(old, new);
+        assert!(
+            check_file_close_deletion_source(
+                &C11TranslationUnit {
+                    source: &changed,
+                    ..Default::default()
+                },
+                PINNED_FLUENT_BIT_REVISION,
+                &unmap,
+                &close,
+                &delete
+            )
+            .is_err(),
+            "accepted {old} -> {new}"
+        );
+    }
+}
+#[test]
+fn deleting_close_executes_all_native_contract_clauses() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = deletion_fixture();
+    let (unmap, close) = dependencies(&c);
+    let delete = crate::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+    )
+    .unwrap();
+    let base = check_file_close_source(
+        &C11TranslationUnit {
+            source: &c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &unmap,
+        &close,
+    )
+    .unwrap();
+    for marker in ["requires ", "ensures normal "] {
+        for (i, _) in DELETE_CONTRACT.match_indices(marker) {
+            let j = i + DELETE_CONTRACT[i..].find(';').unwrap();
+            for pred in ["false", "unknown_delete_fact"] {
+                let changed = format!(
+                    "{}{marker}{pred}{}",
+                    &DELETE_CONTRACT[..i],
+                    &DELETE_CONTRACT[j..]
+                );
+                assert!(check_deletion(base.clone(), &delete, &changed).is_err());
+            }
+        }
+    }
+}

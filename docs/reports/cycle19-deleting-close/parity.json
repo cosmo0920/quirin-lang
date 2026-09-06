@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-delete-outcomes",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "deleting_close_cases": 30,
+  "combined_uncovered_paths": 0,
+  "workspace_tests": 381
+}

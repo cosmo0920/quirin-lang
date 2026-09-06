@@ -49,3 +49,29 @@ theorem duplicate_backend_release_rejected (mapping descriptor : Custody) :
     releaseBackend ⟨false, mapping, descriptor⟩ = none := rfl
 
 end QCore.FileClose
+
+namespace QCore.FileClose
+
+inductive DeletionOutcome where
+  | noBackend | blocked | failed | succeeded
+  deriving DecidableEq
+
+def deletionAccepted (state : State) (outcome : DeletionOutcome) : Bool :=
+  nestedDischarged state && outcome == .succeeded
+
+theorem allocation_release_cannot_hide_failed_deletion (state : State) :
+    deletionAccepted {state with backendLive := false} .failed = false := by
+  simp [deletionAccepted]
+
+theorem null_backend_is_not_successful_deletion (state : State) :
+    deletionAccepted state .noBackend = false := by simp [deletionAccepted]
+
+theorem accepted_deletion_has_no_nested_obligation {state : State} {outcome : DeletionOutcome}
+    (h : deletionAccepted state outcome = true) :
+    state.mapping = .absent ∧ state.descriptor = .absent ∧ outcome = .succeeded := by
+  simp only [deletionAccepted, Bool.and_eq_true, beq_iff_eq] at h
+  obtain ⟨resources, result⟩ := h
+  obtain ⟨mapping, descriptor⟩ := accepted_nested_discharge_has_no_unresolved_resource resources
+  exact ⟨mapping,descriptor,result⟩
+
+end QCore.FileClose

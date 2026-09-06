@@ -680,3 +680,14 @@ under explicit path/lifetime/external-call premises. Five Lean theorems and 378
 workspace tests pass with every required check and identical prior evidence.
 Actual deletion observation and outer deleting-close composition remain open,
 along with full sync, OS/provenance binding, traversal and event composition.
+
+## Deleting backend close composition (2026-09-06)
+
+The [deleting close report](../reports/cycle19-deleting-close/README.md) connects
+post-cleanup fields to checked native deletion and its outer error diagnostic.
+Thirty new deleting cases and 43 unchanged non-deleting cases cover all four
+source paths. Only eight deleting cases conditionally establish success; null,
+blocked and failed requests remain distinct through backend release. Three new
+Lean theorems, 381 workspace tests and all required checks pass with identical
+prior evidence. Full sync frames, real OS/caller binding, enclosing filesystem
+chunk close, traversal and full event composition still remain open.
