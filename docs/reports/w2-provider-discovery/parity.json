@@ -1,0 +1,16 @@
+{
+  "baseline": "9dbaadc (same gateway output independently archived at cdae145)",
+  "units": 185,
+  "counts": {
+    "Unknown": 80,
+    "Unsafe": 98,
+    "data_only": 4,
+    "Safe": 3
+  },
+  "diagnostics_byte_identical": true,
+  "source_byte_identical": true,
+  "diagnostics_sha256": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+  "source_sha256": "134b16d867cabf6669ce34eb361d063b5af1e6bb9b8fead77069a0a7ec97a315",
+  "verdict_deltas": [],
+  "manifest_records_unchanged": 5
+}

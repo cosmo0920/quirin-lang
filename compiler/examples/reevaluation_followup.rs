@@ -80,7 +80,10 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
         std::env::temp_dir().join(format!("qcore-followup-{}-{unique}", std::process::id()));
     fs::create_dir(&package).unwrap();
     let script = package.join("provider.sh");
-    let mut manifest = first_party_manifests().remove(0);
+    let mut manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     manifest.entrypoint = PluginEntrypoint::Executable {
         path: "provider.sh".into(),
     };
@@ -159,7 +162,10 @@ fn main() {
     let mut registry = VerifierRegistry::default();
     registry
         .register(Arc::new(CountingProvider {
-            manifest: first_party_manifests().remove(0),
+            manifest: first_party_manifests()
+                .into_iter()
+                .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+                .expect("Libevent fixture manifest"),
             calls: calls.clone(),
         }))
         .unwrap();

@@ -106,3 +106,7 @@ concurrency semantics are implemented. CT mapping remains 5/50.
   describe recorded runs under `observations_trusted`; lifecycle source
   derivation stays incomplete until real effect/ABI import exists. The host
   relocation is a separate remaining step, and v1 Safe refusal is unchanged.
+
+- W2 H6 provider metadata now loads from profile packages; see
+  `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
+  into processes or change the v1 Safe refusal.

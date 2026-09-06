@@ -17,9 +17,7 @@ use qcore_compiler::source_profiles::{
     FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile, profiles_root,
 };
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
-use qcore_compiler::{
-    PINNED_FLUENT_BIT_REVISION, ProfileDisposition, classify_libevent_symbol, first_party_manifests,
-};
+use qcore_compiler::{PINNED_FLUENT_BIT_REVISION, ProfileDisposition, classify_libevent_symbol};
 use qcore_schemas::profile::{
     ApiDisposition, PROFILE_MANIFEST_VERSION, SUPPORTED_PROFILE_MANIFEST_VERSIONS, WitnessCheck,
 };
@@ -240,11 +238,10 @@ fn declared_boolean_field_models_match_the_retained_rust_pairs() {
 }
 
 /// H6 parity artifact: the on-disk provider manifests are exactly the
-/// first-party manifests the registry builds from Rust literals today. The
-/// literals are retained (their deletion is not part of this change), so this
-/// equality is what keeps the two representations identical.
+/// first-party manifests previously built from Rust literals. The frozen
+/// pre-discovery archive makes this an independent parity expectation.
 #[test]
-fn on_disk_provider_manifests_equal_the_first_party_literals() {
+fn on_disk_provider_manifests_equal_the_archived_pre_discovery_manifests() {
     let mut on_disk = Vec::new();
     for source_set in [FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET] {
         let profile = load_profile(source_set).expect("profile loads");
@@ -252,7 +249,10 @@ fn on_disk_provider_manifests_equal_the_first_party_literals() {
     }
     on_disk.sort_by(|left, right| left.plugin_id.as_str().cmp(right.plugin_id.as_str()));
 
-    let mut literals = first_party_manifests();
+    let mut literals: Vec<qcore_compiler::PluginManifest> = serde_json::from_str(include_str!(
+        "../../docs/reports/w2-provider-discovery/baseline-manifests.json"
+    ))
+    .expect("archived literal manifests");
     literals.sort_by(|left, right| left.plugin_id.as_str().cmp(right.plugin_id.as_str()));
 
     assert_eq!(on_disk, literals);

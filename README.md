@@ -324,3 +324,11 @@ reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
+
+
+W2 H6 provider metadata discovery is implemented (2026-09-07;
+`docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
+are removed after field-for-field parity; registry metadata is loaded atomically
+from profile packages with stable plugin-id ordering and no compiled fallback.
+All shipped providers remain v1 built-ins returning Unknown; process extraction
+is still W5 work. Full 185-TU diagnostic/source parity is unchanged.
