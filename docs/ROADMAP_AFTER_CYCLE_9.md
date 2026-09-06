@@ -121,6 +121,10 @@ checks both traversal loops and parent destructors, composes memory-backed model
 identities, and preserves residual filesystem/counter obligations through parent
 release. All 400 workspace tests pass with unchanged pinned aggregate verdicts;
 these conditional cases do not close the remaining native and event gates.
+Five [native memory teardown executions](reports/cycle19-native-teardown/README.md)
+now bind real constructor allocations and reciprocal ring snapshots to exact
+release order under sanitizers. General caller and failure-path provenance and
+the filesystem/event gates remain open.
 
 ## Cycle 20: Verifier plugin ecosystem
 

@@ -289,3 +289,10 @@ All component and native caller/provenance/OS premises remain explicit.
 These policies do not turn source matching, selected conditional outcomes or a
 checked lifecycle prefix into a whole-unit Safe verdict. See the
 [nested cleanup report](../../docs/reports/cycle19-nested-cleanup/README.md).
+
+`chunkio/teardown_observation.qcore` checks five bounded native memory executions.
+Its adapter derives ownership, reciprocal rings, nested release order and exact
+counters from the pinned observer's allocation generations and event stream.
+The observer/build and exclusive execution are trusted. The contract is runtime
+evaluation only; it cannot establish a static certificate. See the
+[native teardown report](../../docs/reports/cycle19-native-teardown/README.md).

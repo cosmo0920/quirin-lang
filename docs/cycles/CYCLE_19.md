@@ -770,3 +770,18 @@ All 400 workspace tests, 43 modules and required checks pass with identical prio
 pinned evidence. Native caller/constructor/ring provenance, full sync/OS frames,
 unsupported backend classification, general aggregate custody, remaining wrapper
 lifecycle functions and full Monkey/Cycle 18 event composition remain open.
+
+## Native constructor and memory teardown observations (2026-09-06)
+
+The [native teardown report](../reports/cycle19-native-teardown/README.md) records
+five real pinned memory-constructor/destructor executions. All fourteen selected
+ChunkIO/CRC units are rebuilt with ASan/UBSan; leak checking also passes. The
+observer records 82 allocation generations, reciprocal embedded-list snapshots,
+13 chunk-counter decrements and exact nested release order. An independent
+structural adapter rejects altered records and evaluates an 11-clause QCore
+runtime policy. Five Lean theorems model the final exact-release-plan gate only.
+All 400 workspace tests, 44 modules and required checks pass with unchanged
+pinned evidence. Instrumentation and exclusive harness execution remain trusted;
+these observations neither prove arbitrary callers nor promote raw units. Native
+allocation failures, general caller provenance, full sync/OS guarantees, aggregate
+custody, wrapper lifecycle and full Monkey/Cycle 18 composition remain open.

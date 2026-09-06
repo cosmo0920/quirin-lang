@@ -85,14 +85,15 @@ observation evidence satisfy the cycle's fail-closed gates — see the
 [library audit record](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md)
 and the archived [evidence reports](docs/reports/).
 
-The [latest teardown work](docs/reports/cycle19-nested-cleanup/README.md)
-checks the complete context → stream → chunk → backend source chain, binds
-memory-backed model identities, and preserves failed filesystem cleanup through
-parent release. Of 43 conditional mixed-backend cases, 26 retain unresolved OS
-custody. All 400 workspace tests and the pinned audit pass; aggregate verdicts
-are unchanged. These checks still require native caller and allocation
-provenance, ring bindings and filesystem guarantees. General aggregate custody,
-remaining wrapper lifecycle paths and full event composition are also open.
+The [latest teardown observations](docs/reports/cycle19-native-teardown/README.md)
+run the pinned native constructors and complete context → stream → chunk →
+backend memory teardown under ASan, UBSan and leak checking. Five executions
+bind 82 allocation generations and 13 chunks to reciprocal rings and exact
+release order. The source chain also preserves unresolved OS custody through
+parent release in 26 of 43 conditional mixed-backend cases. All 400 workspace
+tests and the pinned audit pass; aggregate verdicts are unchanged. General
+caller provenance, allocation failure paths, filesystem guarantees, aggregate
+custody, remaining wrapper lifecycle and full event composition remain open.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

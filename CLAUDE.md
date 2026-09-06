@@ -5,9 +5,9 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-nested-cleanup/README.md` and the AGENTS.md status
-  ledger. Its conditional source/model cases do not close native provenance,
-  filesystem or event-composition gates.
+  `docs/reports/cycle19-native-teardown/README.md` and the AGENTS.md status
+  ledger. Its five native memory observations bind concrete allocation/ring provenance
+  but do not close general caller, failure, filesystem or event-composition gates.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants

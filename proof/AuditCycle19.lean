@@ -1,3 +1,4 @@
+import QCore.NativeTeardownObservation
 import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
@@ -271,3 +272,13 @@ import QCore.ChunkSource
 #print axioms QCore.NestedCleanup.up_counter_underflow_rejected
 #print axioms QCore.NestedCleanup.accepted_discharge_has_no_child_or_counter_obligation
 #print axioms QCore.NestedCleanup.unresolved_child_blocks_discharge
+
+#print axioms QCore.NativeTeardownObservation.accepted_preserves_exact_generation_order
+
+#print axioms QCore.NativeTeardownObservation.accepted_has_no_duplicate_release
+
+#print axioms QCore.NativeTeardownObservation.accepted_releases_every_planned_generation
+
+#print axioms QCore.NativeTeardownObservation.accepted_conserves_release_count
+
+#print axioms QCore.NativeTeardownObservation.changed_release_order_rejected
