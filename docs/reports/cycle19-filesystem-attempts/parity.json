@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-memory-close",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "new_filesystem_source_functions": 4,
+  "new_filesystem_source_paths": 20,
+  "workspace_tests": 361
+}

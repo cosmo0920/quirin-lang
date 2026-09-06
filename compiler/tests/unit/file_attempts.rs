@@ -1,0 +1,112 @@
+use super::*;
+const SOURCE: &str = "struct cio_file{char *path;};struct cio_chunk{void *backend;struct cio_ctx *ctx;};struct cio_ctx{};int munmap_file(struct cio_ctx*,struct cio_chunk*);int cio_file_native_close(struct cio_file*);void free(void*);void cio_file_close(struct cio_chunk *ch,int delete){struct cio_file *cf=ch->backend;if(!cf)return;munmap_file(ch->ctx,ch);cio_file_native_close(cf);free(cf->path);free(cf);}";
+fn source(c: &str) -> SourceSummary {
+    let summaries = import_source_functions(
+        &C11TranslationUnit {
+            source: c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &["cio_file_close"],
+        &SourceImportProfile {
+            records: &["cio_file", "cio_chunk", "cio_ctx"],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )
+    .unwrap();
+    let SourceResult::Summary(source) = &summaries[0] else {
+        panic!("{summaries:?}")
+    };
+    source.clone()
+}
+#[test]
+fn file_close_preserves_ignored_results_as_unresolved_cleanup() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let summary = source(SOURCE);
+    let evidence = check(&summary, CONTRACT).unwrap();
+    assert_eq!(evidence.calls.len(), 2);
+    let calls = &evidence.calls[1].calls;
+    assert_eq!(calls[0].function, "munmap_file");
+    assert!(calls[0].uses.is_empty());
+    assert_eq!(calls[1].function, "cio_file_native_close");
+    assert!(calls[1].uses.is_empty());
+    assert!(evidence.status.contains("Unknown"));
+    for (old, new) in [
+        (
+            "cio_file_native_close(cf);",
+            "if(cio_file_native_close(cf))return;",
+        ),
+        ("free(cf->path);free(cf);", "free(cf);"),
+        ("munmap_file(ch->ctx,ch);", ""),
+    ] {
+        assert!(check(&source(&SOURCE.replace(old, new)), CONTRACT).is_err());
+    }
+    for (i, _) in
+        CONTRACT[..CONTRACT.find("extern fn file_unmap").unwrap()].match_indices("ensures normal ")
+    {
+        let j = i + CONTRACT[i..].find(';').unwrap();
+        for predicate in ["false", "unknown_fact"] {
+            let changed = format!(
+                "{}ensures normal {predicate}{}",
+                &CONTRACT[..i],
+                &CONTRACT[j..]
+            );
+            assert!(check(&summary, &changed).is_err());
+        }
+    }
+}
+
+#[test]
+fn native_and_wrapper_guards_and_each_policy_predicate_are_checked() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = "struct cio_file {int fd;void *map;unsigned long len;}; struct cio_ctx {int x;}; struct cio_chunk {void *backend;}; int close(int); int munmap(void *,unsigned long); int cio_file_native_close(struct cio_file *cf){int r=close(cf->fd);if(r==-1)return -1;return 0;} int cio_file_native_unmap(struct cio_file *cf){int r=munmap(cf->map,cf->len);if(r!=0)return -1;return 0;} int munmap_file(struct cio_ctx *ctx,struct cio_chunk *ch){int r=cio_file_native_unmap(ch->backend);if(r!=0)return -1;return 0;}";
+    let summaries = import_source_functions(
+        &C11TranslationUnit {
+            source: c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &[
+            "cio_file_native_close",
+            "cio_file_native_unmap",
+            "munmap_file",
+        ],
+        &SourceImportProfile {
+            records: &["cio_file", "cio_ctx", "cio_chunk"],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )
+    .unwrap();
+    for (result, policy) in summaries.iter().zip([
+        "native_close_result_use",
+        "native_unmap_result_use",
+        "file_unmap_result_use",
+    ]) {
+        let SourceResult::Summary(summary) = result else {
+            panic!("{result:?}")
+        };
+        check(summary, CONTRACT).unwrap();
+        let start = CONTRACT.find(&format!("extern fn {policy}(")).unwrap();
+        let end = start + CONTRACT[start..].find("};").unwrap();
+        for (offset, _) in CONTRACT[start..end].match_indices("ensures normal ") {
+            let i = start + offset;
+            let j = i + CONTRACT[i..].find(';').unwrap();
+            for predicate in ["false", "unsupported_predicate"] {
+                let changed = format!(
+                    "{}ensures normal {predicate}{}",
+                    &CONTRACT[..i],
+                    &CONTRACT[j..]
+                );
+                assert!(check(summary, &changed).is_err());
+            }
+        }
+    }
+}

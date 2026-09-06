@@ -592,3 +592,15 @@ premises remain explicit; backend root-disjointness is now required separately.
 Six new Lean theorems, all 357 workspace tests and required checks pass. Generic
 verdicts and previous projections remain unchanged. Stream/context iteration,
 filesystem error outcomes and full library/event composition still remain open.
+
+## Filesystem cleanup result-use boundary (2026-09-06)
+
+The [filesystem attempts report](../reports/cycle19-filesystem-attempts/README.md)
+records 20 complete paths across file close, unmap and their Unix native helpers.
+Four native QCore policies check producer-use facts: the outer close ignores
+both cleanup results before subsequent free calls; the lower functions guard
+their selected cleanup results. OS outcomes and failure custody remain Unknown.
+Three new Lean producer-use theorems and 361 workspace tests pass with every
+required check. Prior verdicts and certificates are identical. This exposes the
+filesystem composition gap explicitly and does not promote it to Safe; broader
+source custody, stream/context and Monkey event work remain open.

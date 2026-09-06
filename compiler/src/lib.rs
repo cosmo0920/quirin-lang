@@ -51,6 +51,7 @@ pub mod quant_index;
 pub mod research_closure;
 pub mod research_extensions;
 pub mod resource_flow;
+pub mod source_call_use;
 mod source_contract;
 pub mod translation_validation;
 mod typed_c_ast;

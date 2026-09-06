@@ -460,6 +460,17 @@ fn audit_library(
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
+        if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
+            let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
+            for function in &evidence {
+                println!(
+                    "qcore-result-use {}: Checked ({} source paths; OS cleanup success and custody Unknown)",
+                    function.source().function(),
+                    function.source().paths().len()
+                );
+            }
+            teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
+        }
         if library == "chunkio" && file == "cio_chunk.c" {
             let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
             println!(

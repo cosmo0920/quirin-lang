@@ -1,3 +1,4 @@
+import QCore.CallResultUse
 import QCore.MemoryClose
 import QCore.ListUnlink
 import QCore.CounterSource
@@ -170,3 +171,9 @@ import QCore.ChunkSource
 #print axioms QCore.MemoryClose.duplicate_counter_rejected
 
 #print axioms QCore.MemoryClose.empty_trace_preserves_state
+
+#print axioms QCore.CallResultUse.ignored_result_has_no_recorded_use
+
+#print axioms QCore.CallResultUse.guarded_result_is_used
+
+#print axioms QCore.CallResultUse.ignored_outcomes_are_indistinguishable

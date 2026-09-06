@@ -1,0 +1,1215 @@
+Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+librdkafka source summaries: 3 contract(s), 3 file(s), {ReferenceCount, IntrusiveList, TypedQueue, CascadingDestructor, ThreadHandoff}
+cfl source summaries: 2 contract(s), 2 file(s), {IntrusiveList, Arena, CascadingDestructor}
+chunkio source summaries: 3 contract(s), 3 file(s), {IntrusiveList, CascadingDestructor}
+  cmetrics/cmetrics.c: Unknown (6/6): resource projection unresolved: 56 unsupported operation(s), 5 unresolved alias(es)
+    resource diagnostics: unknown_alias=5, unsupported=56
+    cmt_create: preprocessed line 5590: unsupported: call to uncontracted function `cmt_errno_print`
+    cmt_create: preprocessed line 5593: unsupported: call to uncontracted function `cmt_labels_create`
+    cmt_create: preprocessed line 5595: unknown_alias: unresolved resource identity `cmt`
+    58 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_atomic_gcc.c: Unknown (4/4): resource projection unresolved: 3 unsupported operation(s), 0 unresolved alias(es)
+    resource diagnostics: unsupported=3
+    cmt_atomic_compare_exchange: preprocessed line 105: unsupported: call or braced expression in return expression
+    cmt_atomic_load: preprocessed line 114: unsupported: call or braced expression in return expression
+    cmt_atomic_store: preprocessed line 110: unsupported: call to uncontracted function `__atomic_store_n`
+  cmetrics/cmt_cat.c: Unsafe (23/23)
+    resource diagnostics: leak=10, unknown_alias=78, unsupported=173
+    append_context: preprocessed line 6407: unknown_alias: unresolved resource identity `head->next`
+    append_context: preprocessed line 6407: unsupported: unsupported assignment expression
+    append_context: preprocessed line 6408: unsupported: braced initializer, expression, or declaration is not modeled
+    258 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_counter.c: Unsafe (7/7)
+    resource diagnostics: leak=2, unknown_alias=3, unsupported=33
+    cmt_counter_add: preprocessed line 5522: unsupported: call to uncontracted function `cmt_map_metric_get`
+    cmt_counter_add: preprocessed line 5526: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_counter_add: preprocessed line 5529: unsupported: call to uncontracted function `cmt_metric_add`
+    35 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_decode_msgpack.c: Unsafe (80/80)
+    resource diagnostics: leak=17, unknown_alias=100, unsupported=288
+    append_unpacked_counter_to_metrics_context: preprocessed line 8428: unknown_alias: unresolved resource identity `map->parent`
+    append_unpacked_counter_to_metrics_context: preprocessed line 8429: unknown_alias: unresolved resource identity `counter`
+    append_unpacked_counter_to_metrics_context: preprocessed line 8432: unknown_alias: unresolved resource identity `context`
+    402 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_decode_opentelemetry.c: Unsafe (40/40)
+    resource diagnostics: leak=19, unknown_alias=92, unsupported=319
+    append_new_map_label_key: preprocessed line 7446: unsupported: call to uncontracted function `create_label`
+    append_new_map_label_key: preprocessed line 7450: unsupported: call to uncontracted function `cfl_list_add`
+    append_new_metric_label_value: preprocessed line 7457: unsupported: call to uncontracted function `create_label`
+    427 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_decode_prometheus_remote_write.c: Unsafe (18/18)
+    resource diagnostics: leak=9, unknown_alias=73, unsupported=105
+    __cmt_allocator_alloc: preprocessed line 6440: unsupported: call or braced expression in return expression
+    __cmt_allocator_free: preprocessed line 6443: unknown_alias: unresolved resource identity `ptr`
+    append_new_map_label_key: preprocessed line 6499: unsupported: call to uncontracted function `create_map_label`
+    184 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_decode_statsd.c: Unsafe (15/15)
+    resource diagnostics: leak=1, unknown_alias=43, unsupported=106
+    append_new_map_label_key: preprocessed line 5578: unsupported: call to uncontracted function `create_map_label`
+    append_new_map_label_key: preprocessed line 5582: unsupported: call to uncontracted function `cfl_list_add`
+    append_new_metric_label_value: preprocessed line 5589: unsupported: call to uncontracted function `create_map_label`
+    147 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_cloudwatch_emf.c: Unknown (12/12): resource projection unresolved: 169 unsupported operation(s), 38 unresolved alias(es)
+    resource diagnostics: unknown_alias=38, unsupported=169
+    cmt_encode_cloudwatch_emf_create: preprocessed line 7424: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    cmt_encode_cloudwatch_emf_create: preprocessed line 7425: unsupported: call to uncontracted function `pack_emf_payload`
+    cmt_encode_cloudwatch_emf_create: preprocessed line 7426: unsupported: call or braced expression in branch condition
+    204 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_influx.c: Unknown (9/9): resource projection unresolved: 100 unsupported operation(s), 21 unresolved alias(es)
+    resource diagnostics: unknown_alias=21, unsupported=100
+    append_histogram_metric_value: preprocessed line 5643: unsupported: unsupported assignment expression
+    append_histogram_metric_value: preprocessed line 5644: unknown_alias: unresolved resource identity `histogram->buckets`
+    append_histogram_metric_value: preprocessed line 5647: unsupported: call to uncontracted function `snprintf`
+    118 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_msgpack.c: Unknown (11/11): resource projection unresolved: 211 unsupported operation(s), 15 unresolved alias(es)
+    resource diagnostics: unknown_alias=15, unsupported=211
+    cmt_encode_msgpack_create: preprocessed line 7427: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    cmt_encode_msgpack_create: preprocessed line 7428: unsupported: call to uncontracted function `pack_context`
+    cmt_encode_msgpack_create: preprocessed line 7429: unsupported: call or braced expression in branch condition
+    223 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_opentelemetry.c: Unsafe (100/100)
+    resource diagnostics: leak=43, unknown_alias=250, unsupported=517
+    append_attribute_to_data_point: preprocessed line 8650: unsupported: call or braced expression in return expression
+    append_attribute_to_data_point: preprocessed line 8654: unsupported: call or braced expression in return expression
+    append_attribute_to_data_point: preprocessed line 8658: unsupported: call or braced expression in return expression
+    807 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_opentelemetry_batch.c: Unsafe (19/19)
+    resource diagnostics: leak=9, unknown_alias=47, unsupported=116
+    append_original_payload: preprocessed line 6919: unsupported: call to uncontracted function `cfl_sds_create_size`
+    append_original_payload: preprocessed line 6923: unsupported: call to uncontracted function `memcpy`
+    append_original_payload: preprocessed line 6924: unsupported: call to uncontracted function `cfl_sds_len_set`
+    169 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_prometheus.c: Unsafe (15/15)
+    resource diagnostics: leak=1, unknown_alias=34, unsupported=197
+    add_label: preprocessed line 6005: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    add_label: preprocessed line 6006: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    add_label: preprocessed line 6007: unsupported: call to uncontracted function `metric_escape`
+    229 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_prometheus_remote_write.c: Unsafe (19/19)
+    resource diagnostics: leak=10, unknown_alias=108, unsupported=223
+    append_entry_to_prometheus_label_list: preprocessed line 6674: unsupported: discarded owned result of resource API `calloc`
+    append_entry_to_prometheus_label_list: preprocessed line 6676: unsupported: call to uncontracted function `cmt_errno_print`
+    append_entry_to_prometheus_label_list: preprocessed line 6679: unsupported: call to uncontracted function `prometheus__label__init`
+    338 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_splunk_hec.c: Unsafe (19/19)
+    resource diagnostics: leak=1, unknown_alias=38, unsupported=234
+    append_bucket_metric: preprocessed line 5841: unsupported: call to uncontracted function `format_metric_name`
+    append_bucket_metric: preprocessed line 5842: unsupported: call to uncontracted function `cmt_metric_hist_get_value`
+    append_bucket_metric: preprocessed line 5843: unsupported: call to uncontracted function `double_to_string`
+    270 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_encode_text.c: Unknown (16/16): resource projection unresolved: 162 unsupported operation(s), 18 unresolved alias(es)
+    resource diagnostics: unknown_alias=18, unsupported=162
+    append_array_value: preprocessed line 5629: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    append_array_value: preprocessed line 5631: unsupported: call to uncontracted function `cfl_array_fetch_by_index`
+    append_array_value: preprocessed line 5636: unsupported: call to uncontracted function `cfl_sds_cat_safe`
+    177 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_exp_histogram.c: Unsafe (5/5)
+    resource diagnostics: leak=10, unknown_alias=29, unsupported=65
+    cmt_exp_histogram_create: preprocessed line 5769: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_exp_histogram_create: preprocessed line 5773: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_exp_histogram_create: preprocessed line 5776: unsupported: call or braced expression in branch condition
+    101 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_filter.c: Unknown (10/10): resource projection unresolved: 145 unsupported operation(s), 35 unresolved alias(es)
+    resource diagnostics: unknown_alias=35, unsupported=145
+    cmt_filter: preprocessed line 6116: unsupported: call to uncontracted function `filter_context_fqname`
+    cmt_filter: preprocessed line 6118: unknown_alias: unresolved resource identity `ret`
+    cmt_filter: preprocessed line 6123: unsupported: call to uncontracted function `filter_context_label_key`
+    177 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_gauge.c: Unsafe (8/8)
+    resource diagnostics: leak=2, unknown_alias=3, unsupported=35
+    cmt_gauge_add: preprocessed line 5539: unsupported: call to uncontracted function `cmt_map_metric_get`
+    cmt_gauge_add: preprocessed line 5542: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_gauge_add: preprocessed line 5545: unsupported: call to uncontracted function `cmt_metric_add`
+    37 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_histogram.c: Unsafe (12/12)
+    resource diagnostics: leak=8, unknown_alias=20, unsupported=58
+    check_buckets: preprocessed line 5590: unsupported: unsupported assignment expression
+    cmt_histogram_buckets_create: preprocessed line 5497: unsupported: call to uncontracted function `__builtin_va_start`
+    cmt_histogram_buckets_create: preprocessed line 5499: unsupported: call to uncontracted function `__builtin_va_arg`
+    83 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_label.c: Unsafe (4/4)
+    resource diagnostics: leak=1, unknown_alias=7, unsupported=13
+    cmt_labels_add_kv: preprocessed line 5308: unsupported: call to uncontracted function `cmt_errno_print`
+    cmt_labels_add_kv: preprocessed line 5311: unsupported: call to uncontracted function `cfl_sds_create`
+    cmt_labels_add_kv: preprocessed line 5313: unknown_alias: unresolved resource identity `l`
+    18 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_log.c: Unknown (2/3): resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=7
+    cmt_errno_print: preprocessed line 5299: unsupported: call to uncontracted function `strerror_r`
+    cmt_errno_print: preprocessed line 5300: unsupported: call to uncontracted function `fprintf`
+    cmt_log_print: preprocessed line 5281: unknown_alias: unresolved resource identity `ctx`
+    5 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_map.c: Unsafe (18/18)
+    resource diagnostics: leak=7, unknown_alias=44, unsupported=105
+    cmt_map_create: preprocessed line 5565: unsupported: call to uncontracted function `cmt_errno_print`
+    cmt_map_create: preprocessed line 5568: unknown_alias: unresolved resource identity `type`
+    cmt_map_create: preprocessed line 5569: unknown_alias: unresolved resource identity `opts`
+    153 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_metric.c: Unsafe (29/29)
+    resource diagnostics: leak=2, unknown_alias=11, unsupported=83
+    add: preprocessed line 5399: unsupported: call to uncontracted function `cmt_metric_get_value`
+    add: preprocessed line 5400: unsupported: unsupported assignment expression
+    add: preprocessed line 5401: unsupported: call to uncontracted function `metric_exchange`
+    93 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_metric_histogram.c: Unknown (12/12): resource projection unresolved: 27 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=27
+    cmt_metric_hist_count_inc: preprocessed line 5441: unsupported: call to uncontracted function `cmt_atomic_load`
+    cmt_metric_hist_count_inc: preprocessed line 5442: unsupported: unsupported assignment expression
+    cmt_metric_hist_count_inc: preprocessed line 5443: unsupported: call to uncontracted function `metric_hist_count_exchange`
+    27 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_mpack_utils.c: Unknown (7/7): resource projection unresolved: 49 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=49
+    cmt_mpack_consume_double_tag: preprocessed line 6241: unsupported: call to uncontracted function `mpack_read_tag`
+    cmt_mpack_consume_double_tag: preprocessed line 6242: unsupported: call or braced expression in branch condition
+    cmt_mpack_consume_double_tag: preprocessed line 6245: unsupported: call or braced expression in branch condition
+    52 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_opts.c: Unknown (2/2): resource projection unresolved: 17 unsupported operation(s), 4 unresolved alias(es)
+    resource diagnostics: unknown_alias=4, unsupported=17
+    cmt_opts_exit: preprocessed line 5348: unsupported: call to uncontracted function `cfl_sds_destroy`
+    cmt_opts_exit: preprocessed line 5351: unsupported: call to uncontracted function `cfl_sds_destroy`
+    cmt_opts_exit: preprocessed line 5354: unsupported: call to uncontracted function `cfl_sds_destroy`
+    18 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_summary.c: Unsafe (12/12)
+    resource diagnostics: leak=5, unknown_alias=8, unsupported=49
+    cmt_summary_count_set: preprocessed line 5633: unsupported: call to uncontracted function `cmt_atomic_load`
+    cmt_summary_count_set: preprocessed line 5634: unknown_alias: unresolved resource identity `count`
+    cmt_summary_count_set: preprocessed line 5635: unsupported: call to uncontracted function `summary_count_exchange`
+    59 more diagnostic(s); full inventory in optional resource report
+  cmetrics/cmt_time.c: Unknown (1/1): resource projection unresolved: 2 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=2
+    cmt_time_from_ns: preprocessed line 215: unknown_alias: unresolved resource identity `ns`
+    cmt_time_from_ns: preprocessed line 218: unsupported: unsupported assignment expression
+    cmt_time_from_ns: preprocessed line 219: unsupported: unsupported assignment expression
+  cmetrics/cmt_untyped.c: Unsafe (4/4)
+    resource diagnostics: leak=2, unknown_alias=3, unsupported=25
+    cmt_untyped_create: preprocessed line 5444: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_untyped_create: preprocessed line 5448: unsupported: call to uncontracted function `cmt_log_print`
+    cmt_untyped_create: preprocessed line 5451: unsupported: call or braced expression in branch condition
+    27 more diagnostic(s); full inventory in optional resource report
+cmetrics: 31 unit(s), 540 source function(s), 539 projected; 0 data-only, 0 Safe, 19 Unsafe, 12 Unknown, 0 gateway failure(s)
+  ctraces/ctr_attributes.c: Unknown (9/9): resource projection unresolved: 10 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=10
+    ctr_attributes_count: preprocessed line 6785: unsupported: call or braced expression in return expression
+    ctr_attributes_create: preprocessed line 6766: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_attributes_create: preprocessed line 6769: unsupported: call to uncontracted function `cfl_kvlist_create`
+    10 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_decode_msgpack.c: Unknown (48/48): resource projection unresolved: 124 unsupported operation(s), 45 unresolved alias(es)
+    resource diagnostics: unknown_alias=45, unsupported=124
+    ctr_decode_msgpack_create: preprocessed line 7753: unsupported: call to uncontracted function `memset`
+    ctr_decode_msgpack_create: preprocessed line 7754: unsupported: call to uncontracted function `ctr_create`
+    ctr_decode_msgpack_create: preprocessed line 7758: unsupported: unrecognized assignment destination
+    166 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_decode_opentelemetry.c: Unknown (16/16): resource projection unresolved: 120 unsupported operation(s), 18 unresolved alias(es)
+    resource diagnostics: unknown_alias=18, unsupported=120
+    convert_any_value: preprocessed line 8716: unsupported: call to uncontracted function `convert_string_value`
+    convert_any_value: preprocessed line 8722: unsupported: call to uncontracted function `convert_bool_value`
+    convert_any_value: preprocessed line 8725: unsupported: call to uncontracted function `convert_int_value`
+    135 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_encode_msgpack.c: Unknown (18/18): resource projection unresolved: 170 unsupported operation(s), 15 unresolved alias(es)
+    resource diagnostics: unknown_alias=15, unsupported=170
+    ctr_encode_msgpack_create: preprocessed line 7086: unsupported: call to uncontracted function `mpack_writer_init_growable`
+    ctr_encode_msgpack_create: preprocessed line 7087: unsupported: call to uncontracted function `mpack_start_map`
+    ctr_encode_msgpack_create: preprocessed line 7088: unsupported: call to uncontracted function `mpack_write_cstr`
+    182 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_encode_opentelemetry.c: Unsafe (70/70)
+    resource diagnostics: leak=6, unknown_alias=116, unsupported=189
+    create_export_service_request: preprocessed line 9328: unsupported: call to uncontracted function `initialize_export_service_request`
+    create_export_service_request: preprocessed line 9332: unsupported: call to uncontracted function `cfl_list_size`
+    create_export_service_request: preprocessed line 9333: unsupported: call to uncontracted function `set_resource_spans`
+    308 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_encode_text.c: Unknown (15/15): resource projection unresolved: 163 unsupported operation(s), 10 unresolved alias(es)
+    resource diagnostics: unknown_alias=10, unsupported=163
+    ctr_encode_text_create: preprocessed line 7075: unsupported: call to uncontracted function `cfl_sds_create_size`
+    ctr_encode_text_create: preprocessed line 7079: unknown_alias: unresolved resource identity `head->next`
+    ctr_encode_text_create: preprocessed line 7079: unsupported: unsupported assignment expression
+    170 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_id.c: Unknown (10/10): resource projection unresolved: 35 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=35
+    ctr_id_cmp: preprocessed line 6824: unsupported: call to uncontracted function `cfl_sds_len`
+    ctr_id_cmp: preprocessed line 6825: unsupported: call to uncontracted function `cfl_sds_len`
+    ctr_id_cmp: preprocessed line 6829: unsupported: call or braced expression in branch condition
+    38 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_link.c: Unknown (7/7): resource projection unresolved: 17 unsupported operation(s), 7 unresolved alias(es)
+    resource diagnostics: unknown_alias=7, unsupported=17
+    ctr_link_create: preprocessed line 6768: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_link_create: preprocessed line 6772: unsupported: call to uncontracted function `ctr_id_create`
+    ctr_link_create: preprocessed line 6774: unknown_alias: unresolved resource identity `link`
+    21 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_log.c: Unknown (2/3): resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=7
+    ctr_errno_print: preprocessed line 6785: unsupported: call to uncontracted function `strerror_r`
+    ctr_errno_print: preprocessed line 6786: unsupported: call to uncontracted function `fprintf`
+    ctr_log_print: preprocessed line 6767: unknown_alias: unresolved resource identity `ctx`
+    5 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_mpack_utils.c: Unknown (16/16): resource projection unresolved: 90 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=90
+    ctr_mpack_consume_binary_or_nil_tag: preprocessed line 1987: unsupported: call or braced expression in branch condition
+    ctr_mpack_consume_binary_or_nil_tag: preprocessed line 1988: unsupported: call to uncontracted function `ctr_mpack_consume_binary_tag`
+    ctr_mpack_consume_binary_or_nil_tag: preprocessed line 1990: unsupported: call or braced expression in branch condition
+    93 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_random.c: Unknown (1/1): resource projection unresolved: 5 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=5
+    ctr_random_get: preprocessed line 6879: unsupported: call to uncontracted function `open`
+    ctr_random_get: preprocessed line 6881: unsupported: call to uncontracted function `read`
+    ctr_random_get: preprocessed line 6882: unsupported: call to uncontracted function `close`
+    5 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_resource.c: Unsafe (9/9)
+    resource diagnostics: leak=1, unknown_alias=8, unsupported=19
+    ctr_resource_create: preprocessed line 6766: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_resource_create: preprocessed line 6769: unsupported: call to uncontracted function `ctr_attributes_create`
+    ctr_resource_create: preprocessed line 6771: unsupported: call to uncontracted function `ctr_resource_destroy`
+    25 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_scope.c: Unknown (6/6): resource projection unresolved: 19 unsupported operation(s), 8 unresolved alias(es)
+    resource diagnostics: unknown_alias=8, unsupported=19
+    ctr_instrumentation_scope_create: preprocessed line 6818: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_instrumentation_scope_create: preprocessed line 6822: unsupported: call to uncontracted function `cfl_sds_create`
+    ctr_instrumentation_scope_create: preprocessed line 6825: unsupported: call to uncontracted function `cfl_sds_create`
+    24 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_span.c: Unknown (40/40): resource projection unresolved: 74 unsupported operation(s), 23 unresolved alias(es)
+    resource diagnostics: unknown_alias=23, unsupported=74
+    ctr_span_create: preprocessed line 6769: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_span_create: preprocessed line 6772: unknown_alias: unresolved resource identity `scope_span`
+    ctr_span_create: preprocessed line 6773: unknown_alias: unresolved resource identity `ctx`
+    94 more diagnostic(s); full inventory in optional resource report
+  ctraces/ctr_utils.c: data-only gateway pass
+  ctraces/ctr_version.c: Safe (1/1)
+  ctraces/ctraces.c: Unknown (5/5): resource projection unresolved: 7 unsupported operation(s), 2 unresolved alias(es)
+    resource diagnostics: unknown_alias=2, unsupported=7
+    ctr_create: preprocessed line 6782: unsupported: call to uncontracted function `ctr_errno_print`
+    ctr_create: preprocessed line 6785: unsupported: call to uncontracted function `cfl_list_init`
+    ctr_create: preprocessed line 6786: unsupported: call to uncontracted function `cfl_list_init`
+    6 more diagnostic(s); full inventory in optional resource report
+ctraces: 17 unit(s), 274 source function(s), 273 projected; 1 data-only, 1 Safe, 2 Unsafe, 13 Unknown, 0 gateway failure(s)
+  librdkafka/cJSON.c: Unknown (113/116): resource projection unresolved: 413 unsupported operation(s), 149 unresolved alias(es)
+    resource diagnostics: unknown_alias=149, unsupported=413
+    add_item_to_array: preprocessed line 2851: unknown_alias: unresolved resource identity `array->child`
+    add_item_to_array: preprocessed line 2852: unknown_alias: unresolved resource identity `child`
+    add_item_to_array: preprocessed line 2854: unknown_alias: unresolved resource identity `item`
+    559 more diagnostic(s); full inventory in optional resource report
+  librdkafka/crc32c.c: Unknown (12/12): resource projection unresolved: 82 unsupported operation(s), 5 unresolved alias(es)
+    resource diagnostics: unknown_alias=5, unsupported=82
+    crc32c_hw: preprocessed line 3001: unknown_alias: unresolved resource identity `buf`
+    crc32c_hw: preprocessed line 3004: unsupported: unsupported assignment expression
+    crc32c_hw: preprocessed line 3006: unsupported: call to uncontracted function `__asm__`
+    84 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lz4.c: Unknown (87/87): resource projection unresolved: 551 unsupported operation(s), 46 unresolved alias(es)
+    resource diagnostics: unknown_alias=46, unsupported=551
+    LZ4_NbCommonBytes: preprocessed line 449: unsupported: call or braced expression in branch condition
+    LZ4_NbCommonBytes: preprocessed line 450: unsupported: call or braced expression in branch condition
+    LZ4_NbCommonBytes: preprocessed line 451: unsupported: call or braced expression in return expression
+    594 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lz4frame.c: Unknown (54/54): resource projection unresolved: 460 unsupported operation(s), 108 unresolved alias(es)
+    resource diagnostics: unknown_alias=108, unsupported=460
+    LZ4F_calloc: preprocessed line 1052: unsupported: call or braced expression in return expression
+    LZ4F_calloc: preprocessed line 1055: unsupported: call or braced expression in return expression
+    LZ4F_calloc: preprocessed line 1057: unsupported: call to uncontracted function `customAlloc`
+    565 more diagnostic(s); full inventory in optional resource report
+  librdkafka/lz4hc.c: Unknown (58/58): resource projection unresolved: 396 unsupported operation(s), 88 unresolved alias(es)
+    resource diagnostics: unknown_alias=88, unsupported=396
+    LZ4HC_FindLongerMatch: preprocessed line 1510: unsupported: braced initializer, expression, or declaration is not modeled
+    LZ4HC_FindLongerMatch: preprocessed line 1512: unsupported: call to uncontracted function `LZ4HC_InsertAndGetWiderMatch`
+    LZ4HC_FindLongerMatch: preprocessed line 1515: unsupported: unsupported assignment expression
+    481 more diagnostic(s); full inventory in optional resource report
+  librdkafka/nanopb/pb_common.c: Unknown (11/12): resource projection unresolved: 62 unsupported operation(s), 10 unresolved alias(es)
+    resource diagnostics: unknown_alias=10, unsupported=62
+    advance_iterator: preprocessed line 427: unsupported: unsupported assignment expression
+    advance_iterator: preprocessed line 428: unsupported: unsupported assignment expression
+    advance_iterator: preprocessed line 429: unsupported: unsupported assignment expression
+    69 more diagnostic(s); full inventory in optional resource report
+  librdkafka/nanopb/pb_decode.c: Unknown (37/42): resource projection unresolved: 191 unsupported operation(s), 22 unresolved alias(es)
+    resource diagnostics: unknown_alias=22, unsupported=191
+    buf_read: preprocessed line 368: unsupported: unsupported assignment expression
+    buf_read: preprocessed line 369: unsupported: unsupported assignment expression
+    buf_read: preprocessed line 372: unsupported: call to uncontracted function `memcpy`
+    210 more diagnostic(s); full inventory in optional resource report
+  librdkafka/nanopb/pb_encode.c: Unknown (30/31): resource projection unresolved: 134 unsupported operation(s), 19 unresolved alias(es)
+    resource diagnostics: unknown_alias=19, unsupported=134
+    buf_write: preprocessed line 360: unsupported: unsupported assignment expression
+    buf_write: preprocessed line 361: unsupported: unsupported assignment expression
+    buf_write: preprocessed line 362: unsupported: call to uncontracted function `memcpy`
+    150 more diagnostic(s); full inventory in optional resource report
+  librdkafka/opentelemetry/common.pb.c: data-only gateway pass
+  librdkafka/opentelemetry/metrics.pb.c: data-only gateway pass
+  librdkafka/opentelemetry/resource.pb.c: data-only gateway pass
+  librdkafka/rdaddr.c: Unknown (4/4): resource projection unresolved: 43 unsupported operation(s), 16 unresolved alias(es)
+    resource diagnostics: unknown_alias=16, unsupported=43
+    rd_addrinfo_prepare: preprocessed line 4002: unsupported: unrecognized assignment destination
+    rd_addrinfo_prepare: preprocessed line 4003: unsupported: unrecognized assignment destination
+    rd_addrinfo_prepare: preprocessed line 4005: unsupported: call or braced expression in branch condition
+    56 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdavl.c: Unknown (9/9): resource projection unresolved: 33 unsupported operation(s), 11 unresolved alias(es)
+    resource diagnostics: unknown_alias=11, unsupported=33
+    rd_avl_balance_node: preprocessed line 19577: unsupported: unsupported assignment expression
+    rd_avl_balance_node: preprocessed line 19581: unsupported: call to uncontracted function `rd_avl_rotate`
+    rd_avl_balance_node: preprocessed line 19583: unsupported: call or braced expression in return expression
+    41 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdbase64.c: Unsafe (4/5)
+    resource diagnostics: leak=2, unknown_alias=4, unsupported=15
+    rd_base64_decode: preprocessed line 9817: unsupported: unsupported assignment expression
+    rd_base64_decode: preprocessed line 9819: unsupported: call or braced expression in branch condition
+    rd_base64_decode: preprocessed line 9821: unknown_alias: unresolved resource identity `out->ptr`
+    18 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdbuf.c: Unsafe (55/55)
+    resource diagnostics: leak=3, unknown_alias=66, unsupported=446
+    do_unittest_erase: preprocessed line 4201: unsupported: braced initializer, expression, or declaration is not modeled
+    do_unittest_erase: preprocessed line 4280: unsupported: call to uncontracted function `strlen`
+    do_unittest_erase: preprocessed line 4285: unsupported: call to uncontracted function `rd_buf_init`
+    512 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdcrc32.c: Unknown (1/1): resource projection unresolved: 4 unsupported operation(s), 0 unresolved alias(es)
+    resource diagnostics: unsupported=4
+    rd_crc32_reflect: preprocessed line 3136: unsupported: unsupported assignment expression
+    rd_crc32_reflect: preprocessed line 3137: unsupported: unsupported assignment expression
+    rd_crc32_reflect: preprocessed line 3138: unsupported: unrecognized assignment destination
+    1 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rddl.c: Unknown (5/5): resource projection unresolved: 21 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=21
+    rd_dl_close: preprocessed line 2994: unsupported: call to uncontracted function `dlclose`
+    rd_dl_error: preprocessed line 2951: unsupported: call to uncontracted function `dlerror`
+    rd_dl_error: preprocessed line 2953: unsupported: call or braced expression in return expression
+    24 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdfnv1a.c: Unknown (2/2): resource projection unresolved: 12 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=12
+    rd_fnv1a: preprocessed line 2877: unsupported: unsupported assignment expression
+    rd_fnv1a: preprocessed line 2878: unsupported: unsupported assignment expression
+    rd_fnv1a: preprocessed line 2880: unknown_alias: unresolved resource identity `offset`
+    12 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdgz.c: Unknown (1/1): resource projection unresolved: 16 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=16
+    rd_gz_decompress: preprocessed line 3078: unsupported: unsupported assignment expression
+    rd_gz_decompress: preprocessed line 3083: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_gz_decompress: preprocessed line 3088: unsupported: call or braced expression in branch condition
+    19 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdhdrhistogram.c: Unknown (36/36): resource projection unresolved: 204 unsupported operation(s), 24 unresolved alias(es)
+    resource diagnostics: unknown_alias=24, unsupported=204
+    bitLen: preprocessed line 4095: unsupported: unrecognized assignment destination
+    bitLen: preprocessed line 4096: unsupported: unrecognized assignment destination
+    bitLen: preprocessed line 4098: unsupported: unrecognized assignment destination
+    225 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdhttp.c: Unsafe (21/21)
+    resource diagnostics: leak=5, unknown_alias=29, unsupported=176
+    rd_http_error_destroy: preprocessed line 21241: unknown_alias: unresolved resource identity `herr`
+    rd_http_error_new: preprocessed line 21249: unsupported: call to uncontracted function `__builtin_va_start`
+    rd_http_error_new: preprocessed line 21252: unsupported: call to uncontracted function `__builtin_va_copy`
+    207 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka.c: Unsafe (19/19)
+    resource diagnostics: leak=1, unknown_alias=6, unsupported=59
+    rd_kafka_global_cnt_decr: preprocessed line 21176: unsupported: call to uncontracted function `mtx_lock`
+    rd_kafka_global_cnt_decr: preprocessed line 21177: unsupported: call or braced expression in branch condition
+    rd_kafka_global_cnt_decr: preprocessed line 21177: unsupported: call to uncontracted function `rd_kafka_crash`
+    63 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_admin.c: Unsafe (354/354)
+    resource diagnostics: double_release=16, leak=62, unknown_alias=804, unsupported=3324
+    rd_kafka_AclBindingFilter_copy: preprocessed line 23427: unsupported: call to uncontracted function `rd_kafka_AclBindingFilter_new`
+    rd_kafka_AclBindingFilter_copy: preprocessed line 23430: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_kafka_AclBindingFilter_new: preprocessed line 23364: unsupported: call to uncontracted function `snprintf`
+    4203 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_assignment.c: Unsafe (21/21)
+    resource diagnostics: leak=1, unknown_alias=13, unsupported=232
+    rd_kafka_assignment_add: preprocessed line 20577: unsupported: unsupported assignment expression
+    rd_kafka_assignment_add: preprocessed line 20580: unsupported: call or braced expression in return expression
+    rd_kafka_assignment_add: preprocessed line 20581: unsupported: call to uncontracted function `rd_kafka_topic_partition_list_sort`
+    243 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_assignor.c: Unsafe (38/38)
+    resource diagnostics: leak=3, unknown_alias=39, unsupported=280
+    isFullyBalanced0: preprocessed line 20950: unsupported: unsupported assignment expression
+    isFullyBalanced0: preprocessed line 20951: unsupported: unsupported assignment expression
+    isFullyBalanced0: preprocessed line 20954: unsupported: unsupported assignment expression
+    319 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_aux.c: Unsafe (35/35)
+    resource diagnostics: leak=4, unknown_alias=24, unsupported=39
+    rd_kafka_Node_copy: preprocessed line 19774: unsupported: call or braced expression in return expression
+    rd_kafka_Node_destroy: preprocessed line 19777: unknown_alias: unresolved resource identity `node->host`
+    rd_kafka_Node_destroy: preprocessed line 19779: unknown_alias: unresolved resource identity `node->rack`
+    64 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_background.c: Unknown (4/4): resource projection unresolved: 43 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=43
+    rd_kafka_background_queue_serve: preprocessed line 20141: unsupported: call or braced expression in branch condition
+    rd_kafka_background_queue_serve: preprocessed line 20142: unsupported: call to uncontracted function `rd_kafka_call_background_event_cb`
+    rd_kafka_background_queue_serve: preprocessed line 20145: unsupported: call to uncontracted function `rd_kafka_poll_cb`
+    41 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_broker.c: Unsafe (122/122)
+    resource diagnostics: leak=6, unknown_alias=181, unsupported=1644
+    rd_kafka_all_brokers_wakeup: preprocessed line 23989: unsupported: call to uncontracted function `rwlock_rdlock`
+    rd_kafka_all_brokers_wakeup: preprocessed line 23990: unknown_alias: unresolved resource identity `rkb->rkb_link.tqe_next`
+    rd_kafka_all_brokers_wakeup: preprocessed line 23990: unsupported: unsupported assignment expression
+    1828 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_buf.c: Unknown (19/19): resource projection unresolved: 129 unsupported operation(s), 24 unresolved alias(es)
+    resource diagnostics: unknown_alias=24, unsupported=129
+    rd_kafka_buf_calc_timeout: preprocessed line 19806: unsupported: call or braced expression in branch condition
+    rd_kafka_buf_calc_timeout: preprocessed line 19807: unsupported: unsupported assignment expression
+    rd_kafka_buf_calc_timeout: preprocessed line 19809: unsupported: unsupported assignment expression
+    150 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_cert.c: Unsafe (7/8)
+    resource diagnostics: leak=1, unknown_alias=27, unsupported=88
+    rd_kafka_cert_destroy: preprocessed line 20179: unsupported: call or braced expression in branch condition
+    rd_kafka_cert_destroy: preprocessed line 20182: unsupported: call to uncontracted function `X509_free`
+    rd_kafka_cert_destroy: preprocessed line 20184: unsupported: call to uncontracted function `OPENSSL_sk_pop_free`
+    113 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_cgrp.c: Unsafe (146/146)
+    resource diagnostics: double_release=2, leak=30, unknown_alias=336, unsupported=2090
+    PartitionMemberInfo_free: preprocessed line 20433: unknown_alias: unresolved resource identity `p`
+    PartitionMemberInfo_free: preprocessed line 20434: unknown_alias: unresolved resource identity `pmi`
+    PartitionMemberInfo_new: preprocessed line 20428: unknown_alias: unresolved resource identity `member`
+    2455 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_conf.c: Unsafe (91/91)
+    resource diagnostics: leak=7, unknown_alias=85, unsupported=592
+    rd_kafka_anyconf_clear: preprocessed line 24771: unsupported: call to uncontracted function `rd_kafka_anyconf_prop_desensitize`
+    rd_kafka_anyconf_clear: preprocessed line 24774: unsupported: unsupported assignment expression
+    rd_kafka_anyconf_clear: preprocessed line 24777: unsupported: call to uncontracted function `set`
+    681 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_coord.c: Unsafe (18/18)
+    resource diagnostics: leak=4, unknown_alias=46, unsupported=165
+    rd_kafka_coord_cache_add: preprocessed line 0: leak: live obligation acquired at preprocessed line 20198
+    rd_kafka_coord_cache_add: preprocessed line 0: leak: live obligation acquired at preprocessed line 20200
+    rd_kafka_coord_cache_add: preprocessed line 20193: unsupported: call or braced expression in branch condition
+    212 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_error.c: Unknown (18/18): resource projection unresolved: 33 unsupported operation(s), 10 unresolved alias(es)
+    resource diagnostics: unknown_alias=10, unsupported=33
+    rd_kafka_error_copy: preprocessed line 19595: unsupported: call to uncontracted function `strlen`
+    rd_kafka_error_copy: preprocessed line 19598: unknown_alias: unresolved resource identity `src->code`
+    rd_kafka_error_copy: preprocessed line 19599: unknown_alias: unresolved resource identity `src->fatal`
+    40 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_event.c: Unknown (38/38): resource projection unresolved: 26 unsupported operation(s), 4 unresolved alias(es)
+    resource diagnostics: unknown_alias=4, unsupported=26
+    rd_kafka_event_debug_contexts: preprocessed line 19819: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_kafka_event_debug_contexts: preprocessed line 19824: unsupported: call or braced expression in branch condition
+    rd_kafka_event_debug_contexts: preprocessed line 19826: unsupported: call to uncontracted function `rd_flags2str`
+    27 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_feature.c: Unknown (9/9): resource projection unresolved: 64 unsupported operation(s), 6 unresolved alias(es)
+    resource diagnostics: unknown_alias=6, unsupported=64
+    rd_kafka_ApiVersion_check: preprocessed line 19800: unsupported: call to uncontracted function `_Generic`
+    rd_kafka_ApiVersion_check: preprocessed line 19801: unsupported: call or braced expression in branch condition
+    rd_kafka_ApiVersion_is_queryable: preprocessed line 19790: unsupported: call or braced expression in branch condition
+    67 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_fetcher.c: Unsafe (47/47)
+    resource diagnostics: double_release=3, leak=8, unknown_alias=293, unsupported=1531
+    can_use_topic_ids: preprocessed line 21637: unknown_alias: unresolved resource identity `rkb->rkb_active_toppar_next`
+    can_use_topic_ids: preprocessed line 21638: unsupported: call or braced expression in do-while condition
+    can_use_topic_ids: preprocessed line 21639: unsupported: call or braced expression in branch condition
+    1832 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_header.c: Unsafe (11/11)
+    resource diagnostics: leak=1, unknown_alias=10, unsupported=44
+    rd_kafka_header_add: preprocessed line 19599: unsupported: C operator `sizeof` requires type/operand analysis
+    rd_kafka_header_add: preprocessed line 19600: unsupported: C operator `sizeof` requires type/operand analysis
+    rd_kafka_header_add: preprocessed line 19602: unsupported: call to uncontracted function `strlen`
+    52 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_idempotence.c: Unknown (18/18): resource projection unresolved: 164 unsupported operation(s), 13 unresolved alias(es)
+    resource diagnostics: unknown_alias=13, unsupported=164
+    rd_kafka_idemp_broker_any: preprocessed line 20278: unsupported: call to uncontracted function `rd_kafka_broker_any_up`
+    rd_kafka_idemp_broker_any: preprocessed line 20284: unsupported: unrecognized assignment destination
+    rd_kafka_idemp_broker_any: preprocessed line 20285: unsupported: call to uncontracted function `snprintf`
+    174 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_interceptor.c: Unsafe (39/39)
+    resource diagnostics: leak=1, unknown_alias=12, unsupported=111
+    rd_kafka_conf_interceptor_add_on_conf_destroy: preprocessed line 20036: unsupported: call or braced expression in return expression
+    rd_kafka_conf_interceptor_add_on_conf_dup: preprocessed line 20027: unsupported: call or braced expression in return expression
+    rd_kafka_conf_interceptor_add_on_conf_set: preprocessed line 20018: unsupported: call or braced expression in return expression
+    121 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_lz4.c: Unsafe (4/4)
+    resource diagnostics: leak=2, unknown_alias=20, unsupported=149
+    rd_kafka_lz4_compress: preprocessed line 19849: unknown_alias: unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`
+    rd_kafka_lz4_compress: preprocessed line 19850: unsupported: call to uncontracted function `rd_slice_abs_offset`
+    rd_kafka_lz4_compress: preprocessed line 19856: unsupported: braced initializer, expression, or declaration is not modeled
+    168 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_metadata.c: Unsafe (34/34)
+    resource diagnostics: leak=5, unknown_alias=172, unsupported=788
+    rd_kafka_has_reliable_leader_epochs: preprocessed line 20372: unsupported: call or braced expression in return expression
+    rd_kafka_metadata: preprocessed line 20216: unsupported: call to uncontracted function `rd_timeout_init`
+    rd_kafka_metadata: preprocessed line 20218: unknown_alias: unresolved resource identity `rk->rk_conf.allow_auto_create_topics`
+    962 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_metadata_cache.c: Unsafe (33/33)
+    resource diagnostics: leak=2, unknown_alias=21, unsupported=181
+    rd_kafka_metadata_cache_delete: preprocessed line 20145: unsupported: call to uncontracted function `rd_avl_remove_elm`
+    rd_kafka_metadata_cache_delete: preprocessed line 20146: unsupported: call or braced expression in branch condition
+    rd_kafka_metadata_cache_delete: preprocessed line 20147: unsupported: call to uncontracted function `rd_avl_remove_elm`
+    201 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_mock.c: Unsafe (138/138)
+    resource diagnostics: leak=40, unknown_alias=272, unsupported=1003
+    rd_kafka_mock_broker_add: preprocessed line 22487: unsupported: call to uncontracted function `rd_kafka_op_new0`
+    rd_kafka_mock_broker_add: preprocessed line 22488: unknown_alias: unresolved resource identity `broker_id`
+    rd_kafka_mock_broker_add: preprocessed line 22489: unknown_alias: unresolved resource identity `RD_KAFKA_MOCK_CMD_BROKER_ADD`
+    1312 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_mock_cgrp.c: Unsafe (57/57)
+    resource diagnostics: leak=12, unknown_alias=93, unsupported=305
+    rd_kafka_mcgrp_rebalance_timer_cb: preprocessed line 21001: unknown_alias: unresolved resource identity `arg`
+    rd_kafka_mcgrp_rebalance_timer_cb: preprocessed line 21002: unsupported: call to uncontracted function `rd_kafka_mock_cgrp_classic_fsm_timeout`
+    rd_kafka_mock_cgrp_classic_check_state: preprocessed line 20753: unknown_alias: unresolved resource identity `request->rkbuf_reqhdr.ApiKey`
+    407 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_mock_handlers.c: Unsafe (54/54)
+    resource diagnostics: double_release=6, leak=12, unknown_alias=747, unsupported=2976
+    rd_kafka_mock_Fetch_reply_tags_partition_write: preprocessed line 22250: unsupported: unsupported assignment expression
+    rd_kafka_mock_Fetch_reply_tags_partition_write: preprocessed line 22252: unsupported: call to uncontracted function `rd_kafka_mock_partition_next_leader_response`
+    rd_kafka_mock_Fetch_reply_tags_partition_write: preprocessed line 22255: unknown_alias: unresolved resource identity `mpart_leader->leader_id`
+    3738 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_mock_sharegrp.c: Unsafe (37/37)
+    resource diagnostics: leak=4, unknown_alias=91, unsupported=213
+    rd_kafka_mock_sgrp_expire_locks: preprocessed line 22473: unknown_alias: unresolved resource identity `pmeta->link.tqe_next`
+    rd_kafka_mock_sgrp_expire_locks: preprocessed line 22473: unsupported: unsupported assignment expression
+    rd_kafka_mock_sgrp_expire_locks: preprocessed line 22475: unknown_alias: unresolved resource identity `tmp`
+    305 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_msg.c: Unsafe (63/63)
+    resource diagnostics: leak=4, unknown_alias=134, unsupported=538
+    rd_kafka_Produce_result_copy: preprocessed line 20943: unsupported: unrecognized assignment destination
+    rd_kafka_Produce_result_copy: preprocessed line 20951: unsupported: unrecognized assignment destination
+    rd_kafka_Produce_result_copy: preprocessed line 20957: leak: live obligation acquired at preprocessed line 20945
+    673 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_msgset_reader.c: Unsafe (24/24)
+    resource diagnostics: leak=4, unknown_alias=202, unsupported=794
+    rd_kafka_aborted_txn_cmp_by_pid: preprocessed line 20500: unsupported: unsupported assignment expression
+    rd_kafka_aborted_txn_node_destroy: preprocessed line 20504: unknown_alias: unresolved resource identity `_node_ptr`
+    rd_kafka_aborted_txn_node_destroy: preprocessed line 20505: unsupported: call to uncontracted function `rd_list_destroy`
+    997 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_msgset_writer.c: Unsafe (23/23)
+    resource diagnostics: leak=1, unknown_alias=39, unsupported=293
+    rd_kafka_gzip_compress: preprocessed line 20101: unsupported: call to uncontracted function `rd_slice_abs_offset`
+    rd_kafka_gzip_compress: preprocessed line 20105: unsupported: call to uncontracted function `memset`
+    rd_kafka_gzip_compress: preprocessed line 20106: unsupported: call to uncontracted function `deflateInit2_`
+    330 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_offset.c: Unsafe (37/37)
+    resource diagnostics: leak=4, unknown_alias=64, unsupported=280
+    mk_esc_filename: preprocessed line 20845: unknown_alias: unresolved resource identity `in`
+    mk_esc_filename: preprocessed line 20846: unknown_alias: unresolved resource identity `out`
+    mk_esc_filename: preprocessed line 20852: unknown_alias: unresolved resource identity `__qcore_literal__`
+    345 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_op.c: Unsafe (25/25)
+    resource diagnostics: leak=4, unknown_alias=55, unsupported=155
+    rd_kafka_consumer_err: preprocessed line 0: leak: live obligation acquired at preprocessed line 20122
+    rd_kafka_consumer_err: preprocessed line 20115: unsupported: call to uncontracted function `__builtin_va_start`
+    rd_kafka_consumer_err: preprocessed line 20116: unsupported: call to uncontracted function `vsnprintf`
+    211 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_partition.c: Unsafe (161/161)
+    resource diagnostics: double_release=1, leak=8, unknown_alias=199, unsupported=858
+    rd_kafka_broker_consumer_toppar_serve: preprocessed line 21254: unsupported: call or braced expression in return expression
+    rd_kafka_fetch_pos2str: preprocessed line 22852: unsupported: unsupported assignment expression
+    rd_kafka_fetch_pos2str: preprocessed line 22853: unsupported: call to uncontracted function `snprintf`
+    1063 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_pattern.c: Unsafe (12/12)
+    resource diagnostics: leak=2, unknown_alias=12, unsupported=28
+    rd_kafka_pattern_add: preprocessed line 19573: unsupported: unrecognized assignment destination
+    rd_kafka_pattern_add: preprocessed line 19573: unsupported: unsupported assignment expression
+    rd_kafka_pattern_destroy: preprocessed line 19566: unsupported: unrecognized assignment destination
+    39 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_plugin.c: Unsafe (5/5)
+    resource diagnostics: leak=2, unknown_alias=4, unsupported=35
+    rd_kafka_plugin_cmp: preprocessed line 19586: unsupported: unsupported assignment expression
+    rd_kafka_plugin_cmp: preprocessed line 19587: unsupported: call or braced expression in return expression
+    rd_kafka_plugin_destroy: preprocessed line 19627: unsupported: call to uncontracted function `rd_dl_close`
+    38 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_queue.c: Unsafe (42/42)
+    resource diagnostics: leak=2, unknown_alias=51, unsupported=291
+    rd_kafka_enq_once_trigger_destroy: preprocessed line 20524: unknown_alias: unresolved resource identity `ptr`
+    rd_kafka_enq_once_trigger_destroy: preprocessed line 20525: unsupported: call to uncontracted function `rd_kafka_enq_once_trigger`
+    rd_kafka_op_filter: preprocessed line 19881: unsupported: call or braced expression in branch condition
+    341 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_range_assignor.c: Unsafe (34/34)
+    resource diagnostics: leak=3, unknown_alias=18, unsupported=432
+    rd_kafka_assign_co_partitioned: preprocessed line 19793: unsupported: call to uncontracted function `rd_list_elem`
+    rd_kafka_assign_co_partitioned: preprocessed line 19798: unknown_alias: unresolved resource identity `first_rktas->topic->metadata->partition_cnt`
+    rd_kafka_assign_co_partitioned: preprocessed line 19799: unsupported: unsupported assignment expression
+    450 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_request.c: Unsafe (94/94)
+    resource diagnostics: double_release=1, leak=24, unknown_alias=416, unsupported=2328
+    rd_kafka_AclBinding_request_size: preprocessed line 23649: unsupported: call or braced expression in return expression
+    rd_kafka_AddOffsetsToTxnRequest: preprocessed line 24086: unsupported: call to uncontracted function `rd_kafka_broker_ApiVersion_supported`
+    rd_kafka_AddOffsetsToTxnRequest: preprocessed line 24089: unsupported: call to uncontracted function `snprintf`
+    2766 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_roundrobin_assignor.c: Unknown (2/2): resource projection unresolved: 11 unsupported operation(s), 0 unresolved alias(es)
+    resource diagnostics: unsupported=11
+    rd_kafka_roundrobin_assignor_assign_cb: preprocessed line 19577: unsupported: unsupported assignment expression
+    rd_kafka_roundrobin_assignor_assign_cb: preprocessed line 19578: unsupported: call to uncontracted function `qsort`
+    rd_kafka_roundrobin_assignor_assign_cb: preprocessed line 19580: unsupported: call to uncontracted function `qsort`
+    8 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl.c: Unsafe (23/23)
+    resource diagnostics: leak=2, unknown_alias=13, unsupported=101
+    rd_kafka_queue_get_sasl: preprocessed line 20867: unsupported: call or braced expression in return expression
+    rd_kafka_sasl_auth_done: preprocessed line 20782: unsupported: call to uncontracted function `rd_kafka_broker_connect_up`
+    rd_kafka_sasl_background_callbacks_enable: preprocessed line 20932: unsupported: call or braced expression in branch condition
+    113 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl_cyrus.c: Unsafe (19/19)
+    resource diagnostics: leak=6, unknown_alias=34, unsupported=147
+    rd_kafka_sasl_cyrus_cb_canon: preprocessed line 20629: unknown_alias: unresolved resource identity `context`
+    rd_kafka_sasl_cyrus_cb_canon: preprocessed line 20630: unsupported: call or braced expression in branch condition
+    rd_kafka_sasl_cyrus_cb_canon: preprocessed line 20631: unsupported: call to uncontracted function `snprintf`
+    184 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl_oauthbearer.c: Unsafe (36/36)
+    resource diagnostics: double_release=2, leak=16, unknown_alias=71, unsupported=361
+    check_oauthbearer_extension_key: preprocessed line 20274: unsupported: call or braced expression in branch condition
+    check_oauthbearer_extension_key: preprocessed line 20275: unsupported: call to uncontracted function `snprintf`
+    check_oauthbearer_extension_key: preprocessed line 20279: unsupported: call to uncontracted function `snprintf`
+    447 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c: Unsafe (28/28)
+    resource diagnostics: double_release=3, leak=85, unknown_alias=116, unsupported=442
+    rd_kafka_jwt_b64_decode_payload: preprocessed line 21294: unsupported: call to uncontracted function `strlen`
+    rd_kafka_jwt_b64_decode_payload: preprocessed line 21299: unsupported: unrecognized assignment destination
+    rd_kafka_jwt_b64_decode_payload: preprocessed line 21302: unsupported: unrecognized assignment destination
+    643 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl_plain.c: Unknown (3/3): resource projection unresolved: 28 unsupported operation(s), 2 unresolved alias(es)
+    resource diagnostics: unknown_alias=2, unsupported=28
+    rd_kafka_sasl_plain_client_new: preprocessed line 20175: unknown_alias: unresolved resource identity `rktrans->rktrans_rkb`
+    rd_kafka_sasl_plain_client_new: preprocessed line 20176: unknown_alias: unresolved resource identity `rkb->rkb_rk`
+    rd_kafka_sasl_plain_client_new: preprocessed line 20181: unsupported: call to uncontracted function `mtx_lock`
+    27 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sasl_scram.c: Unsafe (19/19)
+    resource diagnostics: leak=6, unknown_alias=62, unsupported=168
+    rd_kafka_sasl_safe_string: preprocessed line 20260: unsupported: unsupported assignment expression
+    rd_kafka_sasl_safe_string: preprocessed line 20265: unknown_alias: unresolved resource identity `str`
+    rd_kafka_sasl_safe_string: preprocessed line 20266: unknown_alias: unresolved resource identity `pass`
+    233 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_share_acknowledgement.c: Unsafe (52/52)
+    resource diagnostics: leak=1, unknown_alias=49, unsupported=193
+    rd_kafka_share_ack_all: preprocessed line 19717: unsupported: unsupported assignment expression
+    rd_kafka_share_ack_all: preprocessed line 19720: unsupported: call or braced expression in branch condition
+    rd_kafka_share_ack_all: preprocessed line 19720: unsupported: call to uncontracted function `rd_kafka_log0`
+    240 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_ssl.c: Unknown (34/38): resource projection unresolved: 407 unsupported operation(s), 36 unresolved alias(es)
+    resource diagnostics: unknown_alias=36, unsupported=407
+    rd_kafka_ssl_OSSL_PROVIDER_free: preprocessed line 21083: unknown_alias: unresolved resource identity `ptr`
+    rd_kafka_ssl_OSSL_PROVIDER_free: preprocessed line 21084: unsupported: call to uncontracted function `OSSL_PROVIDER_unload`
+    rd_kafka_ssl_PKEY_from_string: preprocessed line 20598: unsupported: call to uncontracted function `BIO_new_mem_buf`
+    440 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_sticky_assignor.c: Unsafe (83/85)
+    resource diagnostics: leak=3, unknown_alias=48, unsupported=1311
+    ConsumerGenerationPair_cmp_generation: preprocessed line 21309: unsupported: unsupported assignment expression
+    ConsumerGenerationPair_destroy: preprocessed line 21297: unknown_alias: unresolved resource identity `ptr`
+    ConsumerGenerationPair_destroy: preprocessed line 21298: unknown_alias: unresolved resource identity `cgpair`
+    1359 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_subscription.c: Unknown (17/17): resource projection unresolved: 59 unsupported operation(s), 15 unresolved alias(es)
+    resource diagnostics: unknown_alias=15, unsupported=59
+    _invalid_topic_cb: preprocessed line 19596: unsupported: call or braced expression in branch condition
+    _invalid_topic_cb: preprocessed line 19598: unsupported: call to uncontracted function `rd_regex_destroy`
+    rd_kafka_assign: preprocessed line 19697: unsupported: call to uncontracted function `rd_kafka_assign0`
+    71 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_telemetry.c: Unsafe (18/18)
+    resource diagnostics: leak=8, unknown_alias=35, unsupported=134
+    rd_kafka_filter_broker_by_GetTelemetrySubscription: preprocessed line 20705: unsupported: call or braced expression in branch condition
+    rd_kafka_get_preferred_broker: preprocessed line 20712: unsupported: call to uncontracted function `mtx_lock`
+    rd_kafka_get_preferred_broker: preprocessed line 20714: unknown_alias: unresolved resource identity `rk->rk_telemetry.preferred_broker`
+    174 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_telemetry_decode.c: Unsafe (38/38)
+    resource diagnostics: leak=86, unknown_alias=49, unsupported=328
+    clear_unit_test_data: preprocessed line 21461: unsupported: call to uncontracted function `memset`
+    clear_unit_test_data: preprocessed line 21462: unknown_alias: unresolved resource identity `RD_KAFKA_TELEMETRY_METRIC_TYPE_GAUGE`
+    clear_unit_test_data: preprocessed line 21463: unknown_alias: unresolved resource identity `STATE_LABELS`
+    460 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_telemetry_encode.c: Unsafe (54/54)
+    resource diagnostics: leak=10, unknown_alias=51, unsupported=232
+    calculate_broker_avg_rtt: preprocessed line 20288: unsupported: braced initializer, expression, or declaration is not modeled
+    calculate_broker_avg_rtt: preprocessed line 20289: unsupported: unsupported assignment expression
+    calculate_broker_max_rtt: preprocessed line 20296: unsupported: braced initializer, expression, or declaration is not modeled
+    290 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_timer.c: Unknown (19/19): resource projection unresolved: 84 unsupported operation(s), 16 unresolved alias(es)
+    resource diagnostics: unknown_alias=16, unsupported=84
+    rd_kafka_timer_cmp: preprocessed line 19577: unsupported: unsupported assignment expression
+    rd_kafka_timer_exp_backoff: preprocessed line 19660: unsupported: call to uncontracted function `rd_kafka_timers_lock`
+    rd_kafka_timer_exp_backoff: preprocessed line 19661: unsupported: call or braced expression in branch condition
+    97 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_topic.c: Unsafe (47/47)
+    resource diagnostics: leak=3, unknown_alias=93, unsupported=460
+    rd_kafka_local_topic_ids_to_list: preprocessed line 21014: unsupported: call to uncontracted function `rwlock_rdlock`
+    rd_kafka_local_topic_ids_to_list: preprocessed line 21015: unsupported: call to uncontracted function `rd_list_grow`
+    rd_kafka_local_topic_ids_to_list: preprocessed line 21016: unknown_alias: unresolved resource identity `rkt->rkt_link.tqe_next`
+    553 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_transport.c: Unknown (25/32): resource projection unresolved: 187 unsupported operation(s), 28 unresolved alias(es)
+    resource diagnostics: unknown_alias=28, unsupported=187
+    rd_kafka_transport_close: preprocessed line 20239: unknown_alias: unresolved resource identity `rktrans`
+    rd_kafka_transport_close: preprocessed line 20241: unsupported: call to uncontracted function `rd_kafka_transport_ssl_close`
+    rd_kafka_transport_close: preprocessed line 20242: unsupported: call to uncontracted function `rd_kafka_sasl_close`
+    212 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_txnmgr.c: Unsafe (50/50)
+    resource diagnostics: leak=2, unknown_alias=121, unsupported=774
+    rd_kafka_abort_transaction: preprocessed line 21706: unsupported: call or braced expression in branch condition
+    rd_kafka_abort_transaction: preprocessed line 21710: unsupported: call or braced expression in branch condition
+    rd_kafka_abort_transaction: preprocessed line 21711: unsupported: call or braced expression in return expression
+    894 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdkafka_zstd.c: Unsafe (2/2)
+    resource diagnostics: leak=2, unknown_alias=11, unsupported=74
+    rd_kafka_zstd_compress: preprocessed line 19853: unknown_alias: unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`
+    rd_kafka_zstd_compress: preprocessed line 19854: unsupported: call to uncontracted function `rd_slice_abs_offset`
+    rd_kafka_zstd_compress: preprocessed line 19857: unsupported: unrecognized assignment destination
+    84 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdlist.c: Unsafe (43/43)
+    resource diagnostics: leak=2, unknown_alias=12, unsupported=105
+    rd_list_add: preprocessed line 3024: unsupported: call to uncontracted function `rd_list_grow`
+    rd_list_add: preprocessed line 3025: unsupported: unrecognized assignment destination
+    rd_list_add: preprocessed line 3027: unsupported: unrecognized assignment destination
+    116 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdlog.c: Unknown (3/3): resource projection unresolved: 13 unsupported operation(s), 0 unresolved alias(es)
+    resource diagnostics: unsupported=13
+    rd_hexdump: preprocessed line 19622: unsupported: unsupported assignment expression
+    rd_hexdump: preprocessed line 19625: unsupported: call to uncontracted function `fprintf`
+    rd_hexdump: preprocessed line 19626: unsupported: unrecognized assignment destination
+    10 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdmap.c: Unsafe (26/26)
+    resource diagnostics: leak=1, unknown_alias=18, unsupported=128
+    mykey_cmp: preprocessed line 3447: unsupported: unsupported assignment expression
+    mykey_hash: preprocessed line 3451: unknown_alias: unresolved resource identity `_key`
+    person_cmp: preprocessed line 3490: unsupported: unsupported assignment expression
+    144 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdmurmur2.c: Unknown (2/2): resource projection unresolved: 30 unsupported operation(s), 4 unresolved alias(es)
+    resource diagnostics: unknown_alias=4, unsupported=30
+    rd_murmur2: preprocessed line 2877: unsupported: unsupported assignment expression
+    rd_murmur2: preprocessed line 2878: unsupported: unsupported assignment expression
+    rd_murmur2: preprocessed line 2879: unsupported: unsupported assignment expression
+    31 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdports.c: Unknown (2/2): resource projection unresolved: 2 unsupported operation(s), 2 unresolved alias(es)
+    resource diagnostics: unknown_alias=2, unsupported=2
+    rd_qsort_r: preprocessed line 2879: unknown_alias: unresolved resource identity `compar`
+    rd_qsort_r: preprocessed line 2880: unknown_alias: unresolved resource identity `arg`
+    rd_qsort_r: preprocessed line 2881: unsupported: call to uncontracted function `qsort`
+    1 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdrand.c: Unknown (6/7): resource projection unresolved: 22 unsupported operation(s), 0 unresolved alias(es)
+    resource diagnostics: unsupported=22
+    rd_array_shuffle: preprocessed line 6112: unsupported: call to uncontracted function `__builtin_alloca`
+    rd_array_shuffle: preprocessed line 6113: unsupported: unsupported assignment expression
+    rd_array_shuffle: preprocessed line 6114: unsupported: call to uncontracted function `rd_jitter`
+    19 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdregex.c: Unknown (4/4): resource projection unresolved: 9 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=9
+    rd_regex_comp: preprocessed line 3027: unsupported: call to uncontracted function `regcomp`
+    rd_regex_comp: preprocessed line 3030: unsupported: call to uncontracted function `regerror`
+    rd_regex_comp: preprocessed line 3031: unknown_alias: unresolved resource identity `re`
+    9 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdstring.c: Unknown (17/17): resource projection unresolved: 89 unsupported operation(s), 23 unresolved alias(es)
+    resource diagnostics: unknown_alias=23, unsupported=89
+    _rd_strcasestr: preprocessed line 3113: unsupported: call to uncontracted function `strlen`
+    _rd_strcasestr: preprocessed line 3114: unsupported: call to uncontracted function `strlen`
+    _rd_strcasestr: preprocessed line 3118: unsupported: call or braced expression in return expression
+    109 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdunittest.c: Unsafe (4/9)
+    resource diagnostics: double_release=1, leak=7, unknown_alias=12, unsupported=62
+    rd_unittest: preprocessed line 20489: unsupported: braced initializer, expression, or declaration is not modeled
+    rd_unittest: preprocessed line 20529: unsupported: call to uncontracted function `rd_getenv`
+    rd_unittest: preprocessed line 20531: unsupported: call or braced expression in branch condition
+    79 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdunittest_acknowledge.c: Unsafe (27/27)
+    resource diagnostics: leak=14, unknown_alias=14, unsupported=482
+    unittest_share_acknowledge: preprocessed line 20070: unsupported: call to uncontracted function `fprintf`
+    unittest_share_acknowledge: preprocessed line 20071: unsupported: call to uncontracted function `fprintf`
+    unittest_share_acknowledge: preprocessed line 20072: unsupported: call to uncontracted function `fprintf`
+    507 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdunittest_fetcher.c: Unknown (35/35): resource projection unresolved: 557 unsupported operation(s), 3 unresolved alias(es)
+    resource diagnostics: unknown_alias=3, unsupported=557
+    unittest_ack_details_all_accept: preprocessed line 19824: unsupported: call to uncontracted function `ut_create_mock_rkshare`
+    unittest_ack_details_all_accept: preprocessed line 19825: unsupported: call to uncontracted function `rd_kafka_Uuid_random`
+    unittest_ack_details_all_accept: preprocessed line 19829: unsupported: call to uncontracted function `ut_create_rktpar_with_id`
+    557 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdunittest_msgset_errors.c: Unsafe (21/21)
+    resource diagnostics: leak=106, unknown_alias=16, unsupported=622
+    rd_kafka_unittest_msgset_errors: preprocessed line 20451: unsupported: call to uncontracted function `unittest_msgset_crc_error_share_consumer`
+    rd_kafka_unittest_msgset_errors: preprocessed line 20452: unsupported: call to uncontracted function `unittest_msgset_decompression_error_share_consumer`
+    rd_kafka_unittest_msgset_errors: preprocessed line 20453: unsupported: call to uncontracted function `unittest_msgset_unsupported_magic_share_consumer`
+    741 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdvarint.c: Unknown (2/2): resource projection unresolved: 44 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=44
+    do_test_rd_uvarint_enc_i64: preprocessed line 3219: unsupported: braced initializer, expression, or declaration is not modeled
+    do_test_rd_uvarint_enc_i64: preprocessed line 3221: unsupported: call to uncontracted function `rd_uvarint_enc_i64`
+    do_test_rd_uvarint_enc_i64: preprocessed line 3227: unsupported: call or braced expression in branch condition
+    42 more diagnostic(s); full inventory in optional resource report
+  librdkafka/rdxxhash.c: Unknown (46/46): resource projection unresolved: 353 unsupported operation(s), 14 unresolved alias(es)
+    resource diagnostics: unknown_alias=14, unsupported=353
+    XXH32: preprocessed line 886: unsupported: call to uncontracted function `XXH_isLittleEndian`
+    XXH32: preprocessed line 890: unsupported: call or braced expression in return expression
+    XXH32: preprocessed line 892: unsupported: call or braced expression in return expression
+    364 more diagnostic(s); full inventory in optional resource report
+  librdkafka/snappy.c: Unsafe (53/57)
+    resource diagnostics: leak=9, unknown_alias=34, unsupported=306
+    append: preprocessed line 19801: unsupported: unsupported assignment expression
+    append: preprocessed line 19802: unsupported: call to uncontracted function `n_bytes_after_addr`
+    append: preprocessed line 19803: unsupported: unsupported assignment expression
+    346 more diagnostic(s); full inventory in optional resource report
+  librdkafka/tinycthread.c: Unknown (0/30): C function `_cnd_timedwait_win32` was not found
+  librdkafka/tinycthread_extra.c: Unknown (12/14): resource projection unresolved: 33 unsupported operation(s), 5 unresolved alias(es)
+    resource diagnostics: unknown_alias=5, unsupported=33
+    cnd_timedwait_abs: preprocessed line 3026: unknown_alias: unresolved resource identity `thrd_timedout`
+    cnd_timedwait_abs: preprocessed line 3029: unsupported: call or braced expression in return expression
+    cnd_timedwait_abs: preprocessed line 3033: unsupported: call to uncontracted function `rd_timeout_remains`
+    35 more diagnostic(s); full inventory in optional resource report
+librdkafka: 94 unit(s), 3410 source function(s), 3343 projected; 3 data-only, 0 Safe, 53 Unsafe, 38 Unknown, 0 gateway failure(s)
+qcore-contract cio_error_reset: Checked (3 postconditions; complete constant-field helper body, live/exclusive premises assumed)
+chunk-source dependency cio_error_reset: source-validated constant field writes; revision/build/ABI supplied by pinned audit
+  chunkio/chunkio.c: Unsafe (13/13)
+    resource diagnostics: leak=3, unknown_alias=16, unsupported=55
+    check_root_path: preprocessed line 2243: unsupported: call to uncontracted function `strlen`
+    check_root_path: preprocessed line 2247: unsupported: call to uncontracted function `cio_os_isdir`
+    check_root_path: preprocessed line 2249: unsupported: call to uncontracted function `cio_os_mkpath`
+    71 more diagnostic(s); full inventory in optional resource report
+qcore-contract mk_list_del + __mk_list_del: Checked (2 neighbor alias cases; live reciprocal/exclusive links assumed)
+qcore-contract ChunkIO counters: Checked (4 complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)
+qcore-contract cio_chunk_close memory scope: Checked (2 null/memory paths; 2 source paths uncovered; enclosing stream/context teardown open)
+  chunk-source chunkio/cio_chunk.c/chunk_state_sync: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_close: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_close_stream: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_sub: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_up_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_counter_total_up_sub: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_down: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_copy: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_end_pos: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_content_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_get_real_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_hash: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_file: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_locked: field-summary Locked; [ChunkSourcePath { initial_value: false, final_value: false, return_value: 0, branches: [], writes: [], frame_writes: [] }, ChunkSourcePath { initial_value: true, final_value: true, return_value: 1, branches: [], writes: [], frame_writes: [] }]
+  qcore-contract cio_chunk_is_locked: Checked (4 Boolean pre-states; live/exclusive/domain preconditions assumed)
+  chunk-source chunkio/cio_chunk.c/cio_chunk_is_up: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_lock: Unknown: unmodeled expression CallExpr
+  chunk-source chunkio/cio_chunk.c/cio_chunk_open: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_sync: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_begin: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_commit: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_tx_rollback: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_unlock: field-summary Locked; [ChunkSourcePath { initial_value: false, final_value: false, return_value: -1, branches: [true], writes: [], frame_writes: [("error_n", 0)] }, ChunkSourcePath { initial_value: true, final_value: false, return_value: 0, branches: [false], writes: [false], frame_writes: [("error_n", 0)] }]
+  qcore-contract cio_chunk_unlock: Checked (4 Boolean pre-states; live/exclusive/domain preconditions assumed)
+  chunk-source chunkio/cio_chunk.c/cio_chunk_up: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_up_force: Unknown: unmodeled statement DeclStmt
+  chunk-source chunkio/cio_chunk.c/cio_chunk_write: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_chunk_write_at: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source chunkio/cio_chunk.c/cio_version: Unknown: outside single borrowed chunk / int-result source profile
+chunk-source chunkio/cio_chunk.c: 30 function(s), 2 field summary(s), 2 QCore contract(s) checked, 28 Unknown; no whole-unit lifecycle certificate
+  chunkio/cio_chunk.c: Unknown (30/30): resource projection unresolved: 80 unsupported operation(s), 75 unresolved alias(es)
+    resource diagnostics: unknown_alias=75, unsupported=80
+    chunk_state_sync: preprocessed line 2382: unsupported: call to uncontracted function `mk_list_del`
+    chunk_state_sync: preprocessed line 2383: unknown_alias: unresolved resource identity `ch->st`
+    chunk_state_sync: preprocessed line 2384: unsupported: call or braced expression in branch condition
+    152 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_error.c: Unknown (4/4): resource projection unresolved: 1 unsupported operation(s), 2 unresolved alias(es)
+    resource diagnostics: unknown_alias=2, unsupported=1
+    cio_error_get_str: preprocessed line 1721: unsupported: call to uncontracted function `cio_error_get`
+    cio_error_set: preprocessed line 1739: unknown_alias: unresolved resource identity `status`
+    cio_error_set: preprocessed line 1741: unknown_alias: unresolved resource identity `status`
+qcore-result-use cio_file_close: Checked (4 source paths; OS cleanup success and custody Unknown)
+qcore-result-use munmap_file: Checked (8 source paths; OS cleanup success and custody Unknown)
+  chunkio/cio_file.c: Unsafe (32/32)
+    resource diagnostics: leak=1, unknown_alias=45, unsupported=221
+    _cio_file_up: preprocessed line 3354: unsupported: unsupported assignment expression
+    _cio_file_up: preprocessed line 3356: unsupported: call to uncontracted function `cio_log_print`
+    _cio_file_up: preprocessed line 3360: unsupported: call to uncontracted function `cio_log_print`
+    264 more diagnostic(s); full inventory in optional resource report
+qcore-result-use cio_file_native_close: Checked (4 source paths; OS cleanup success and custody Unknown)
+qcore-result-use cio_file_native_unmap: Checked (4 source paths; OS cleanup success and custody Unknown)
+  chunkio/cio_file_unix.c: Unknown (15/15): resource projection unresolved: 70 unsupported operation(s), 12 unresolved alias(es)
+    resource diagnostics: unknown_alias=12, unsupported=70
+    cio_file_native_apply_acl_and_settings: preprocessed line 3139: unsupported: unsupported assignment expression
+    cio_file_native_apply_acl_and_settings: preprocessed line 3140: unsupported: unsupported assignment expression
+    cio_file_native_apply_acl_and_settings: preprocessed line 3142: unsupported: unsupported assignment expression
+    79 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_log.c: Unknown (2/3): resource projection unresolved: 7 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=7
+    cio_errno_print: preprocessed line 2126: unsupported: call to uncontracted function `strerror_r`
+    cio_errno_print: preprocessed line 2127: unsupported: call to uncontracted function `fprintf`
+    cio_log_print: preprocessed line 2108: unknown_alias: unresolved resource identity `ctx`
+    5 more diagnostic(s); full inventory in optional resource report
+qcore-contract cio_memfs_close: Checked (9 nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)
+  chunkio/cio_memfs.c: Unsafe (5/5)
+    resource diagnostics: leak=2, unknown_alias=17, unsupported=22
+    cio_memfs_close: preprocessed line 2168: unknown_alias: unresolved resource identity `ch->backend`
+    cio_memfs_close: preprocessed line 2169: unknown_alias: unresolved resource identity `mf`
+    cio_memfs_close: preprocessed line 2172: unknown_alias: unresolved resource identity `mf->name`
+    38 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_meta.c: Unsafe (4/4)
+    resource diagnostics: leak=1, unknown_alias=5, unsupported=21
+    cio_meta_cmp: preprocessed line 2445: unknown_alias: unresolved resource identity `ch->backend`
+    cio_meta_cmp: preprocessed line 2448: unsupported: unsupported assignment expression
+    cio_meta_cmp: preprocessed line 2455: unsupported: call or braced expression in branch condition
+    24 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_os.c: Unknown (2/3): resource projection unresolved: 8 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=8
+    cio_os_isdir: preprocessed line 2076: unsupported: call to uncontracted function `stat`
+    cio_os_mkpath: preprocessed line 2090: unsupported: call to uncontracted function `__errno_location`
+    cio_os_mkpath: preprocessed line 2093: unsupported: call or braced expression in branch condition
+    6 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_scan.c: Unknown (3/3): resource projection unresolved: 31 unsupported operation(s), 4 unresolved alias(es)
+    resource diagnostics: unknown_alias=4, unsupported=31
+    cio_scan_dump: preprocessed line 2347: unsupported: call to uncontracted function `cio_log_print`
+    cio_scan_dump: preprocessed line 2348: unknown_alias: unresolved resource identity `head->next`
+    cio_scan_dump: preprocessed line 2348: unsupported: unsupported assignment expression
+    32 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_stats.c: Unknown (2/2): resource projection unresolved: 14 unsupported operation(s), 2 unresolved alias(es)
+    resource diagnostics: unknown_alias=2, unsupported=14
+    cio_stats_get: preprocessed line 2114: unsupported: call to uncontracted function `memset`
+    cio_stats_get: preprocessed line 2115: unknown_alias: unresolved resource identity `head->next`
+    cio_stats_get: preprocessed line 2115: unsupported: unsupported assignment expression
+    13 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_stream.c: Unknown (8/8): resource projection unresolved: 47 unsupported operation(s), 19 unresolved alias(es)
+    resource diagnostics: unknown_alias=19, unsupported=47
+    check_stream_path: preprocessed line 2128: unsupported: call to uncontracted function `strlen`
+    check_stream_path: preprocessed line 2131: unsupported: call to uncontracted function `cio_errno_print`
+    check_stream_path: preprocessed line 2134: unsupported: call to uncontracted function `snprintf`
+    63 more diagnostic(s); full inventory in optional resource report
+  chunkio/cio_utils.c: Unsafe (3/4)
+    resource diagnostics: leak=1, unknown_alias=4, unsupported=25
+    cio_getpagesize: preprocessed line 2298: unsupported: call or braced expression in return expression
+    cio_utils_read_file: preprocessed line 2264: unsupported: call to uncontracted function `fopen`
+    cio_utils_read_file: preprocessed line 2266: unsupported: call to uncontracted function `perror`
+    27 more diagnostic(s); full inventory in optional resource report
+chunkio: 13 unit(s), 126 source function(s), 123 projected; 0 data-only, 0 Safe, 5 Unsafe, 8 Unknown, 0 gateway failure(s)
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/append_to_ring_buffer: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/destroy_chunk_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_chunk_route_plugin_matches: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_append_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_append_raw_local: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_create: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy_corrupted: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_destroy_direct_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_down: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_drop_task_route: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_find_space_new_data: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_flush: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_direct_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_event_type: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_projected_write_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_real_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_tag: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_direct_routes: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_other_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_overlimit_routes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_mem_overlimit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_storage_overlimit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_task_safe_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_is_up: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_map: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_size_subtract: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_would_exceed_limit: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_place_new_chunk: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_prefers_physical_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_protect: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_lock: field-summary Busy; [ChunkSourcePath { initial_value: false, final_value: false, return_value: -1, branches: [true], writes: [], frame_writes: [] }, ChunkSourcePath { initial_value: true, final_value: false, return_value: 0, branches: [false], writes: [false], frame_writes: [] }]
+  qcore-contract flb_input_chunk_release_lock: Checked (4 Boolean pre-states; live/exclusive/domain preconditions assumed)
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_route: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_space: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_release_space_compound: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_cleanup: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_collector: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_enqueue: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_ring_buffer_enqueue_log_routing: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_safe_delete: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_limits: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_up: Unknown: unmodeled expression CallExpr
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_up_down: Unknown: unmodeled statement DeclStmt
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_total_size: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_update_output_instances: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write_at: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write_header_v2: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/generate_chunk_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/get_input_chunk_record_count: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/get_input_chunk_source_name: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_append_raw: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_collect_output_references: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_get: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_has_magic_bytes: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_metadata_view: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_output_size_add: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/input_chunk_write_header: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/logs_tag_records_metrics_enabled: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/memrb_input_chunk_release_space: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/sb_get_releasable_output_queue_space: Unknown: expected one selected definition after preprocessing, found 0
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/sb_release_output_queue_space: Unknown: expected one selected definition after preprocessing, found 0
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_metrics: Unknown: outside single borrowed chunk / int-result source profile
+  chunk-source fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_untracked: Unknown: outside single borrowed chunk / int-result source profile
+chunk-source fluent-bit-chunk/flb_input_chunk.c: 66 function(s), 1 field summary(s), 1 QCore contract(s) checked, 65 Unknown; no whole-unit lifecycle certificate
+  fluent-bit-chunk/flb_input_chunk.c: Unsafe (64/66)
+    resource diagnostics: leak=40, unknown_alias=179, unsupported=725
+    append_to_ring_buffer: preprocessed line 20258: unsupported: unsupported assignment expression
+    append_to_ring_buffer: preprocessed line 20261: unsupported: call or braced expression in branch condition
+    append_to_ring_buffer: preprocessed line 20261: unsupported: call to uncontracted function `flb_log_print`
+    941 more diagnostic(s); full inventory in optional resource report
+fluent-bit-chunk: 1 unit(s), 66 source function(s), 64 projected; 0 data-only, 0 Safe, 1 Unsafe, 0 Unknown, 0 gateway failure(s)
+monkey-libevent adapter: 10 accepted Cycle 18 API symbol(s): event_add, event_base_free, event_base_loop, event_base_new, event_del, event_free, event_new, evutil_closesocket, evutil_socket_geterror, evutil_socketpair
+monkey-libevent adapter: 0 symbol(s) remain Unknown:
+monkey bundled Libevent: 7 Cycle 18 contract file(s) byte-identical
+  monkey-libevent/cb_event: 4 source access path(s); custody, failure paths, and runtime access refinement Unknown
+  monkey-libevent/cb_timeout: 3 source access path(s); custody, failure paths, and runtime access refinement Unknown
+  monkey-libevent/cb_wait_2_timeout: 1 source access path(s); custody, failure paths, and runtime access refinement Unknown
+  monkey-wrapper/mk_event_libevent_socketpair: 1 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_init: 1 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_loop_create: 4 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_loop_destroy: 1 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_update: 24 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_add: 20 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_del: 12 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_timeout_create: 4 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_timeout_destroy: 3 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_channel_create: 4 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_channel_destroy: 2 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_inject: 2 structured source branch(es) with scan loop; loop bounds, arithmetic, termination and custody Unknown
+  monkey-wrapper/_mk_event_wait_with_flags: 1 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_wait_2: 3 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-wrapper/_mk_event_backend: 1 complete symbolic source path(s); opaque calls and custody Unknown
+  monkey-libevent/mk_core/mk_event.c: Unsafe (14/14)
+    resource diagnostics: leak=1, unknown_alias=11, unsupported=23
+    mk_event_add: preprocessed line 3611: unknown_alias: unresolved resource identity `loop->data`
+    mk_event_add: preprocessed line 3612: unsupported: call to uncontracted function `_mk_event_add`
+    mk_event_backend: preprocessed line 3687: unsupported: call or braced expression in return expression
+    32 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_file.c: Unsafe (2/2)
+    resource diagnostics: leak=1, unknown_alias=4, unsupported=20
+    mk_file_get_info: preprocessed line 4175: unsupported: call or braced expression in branch condition
+    mk_file_get_info: preprocessed line 4176: unsupported: call or braced expression in branch condition
+    mk_file_get_info: preprocessed line 4177: unsupported: unsupported assignment expression
+    22 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_iov.c: Unknown (8/8): resource projection unresolved: 28 unsupported operation(s), 9 unresolved alias(es)
+    resource diagnostics: unknown_alias=9, unsupported=28
+    mk_iov_consume: preprocessed line 2201: unsupported: unsupported assignment expression
+    mk_iov_consume: preprocessed line 2206: unsupported: unsupported assignment expression
+    mk_iov_consume: preprocessed line 2207: unsupported: unsupported assignment expression
+    34 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_memory.c: Unsafe (5/5)
+    resource diagnostics: leak=1, unknown_alias=3, unsupported=10
+    mk_ptr_create: preprocessed line 1822: unsupported: unsupported assignment expression
+    mk_ptr_create: preprocessed line 1824: unsupported: unsupported assignment expression
+    mk_ptr_create: preprocessed line 1827: unsupported: unsupported assignment expression
+    11 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_rconf.c: Unsafe (17/17)
+    resource diagnostics: leak=7, unknown_alias=48, unsupported=138
+    check_indent: preprocessed line 1887: unsupported: call or braced expression in branch condition
+    check_indent: preprocessed line 1888: unsupported: call to uncontracted function `mk_print`
+    check_indent: preprocessed line 1891: unsupported: call to uncontracted function `mk_print`
+    190 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_string.c: Unsafe (16/20)
+    resource diagnostics: leak=2, unknown_alias=23, unsupported=92
+    _mk_string_search: preprocessed line 2087: unsupported: unsupported assignment expression
+    _mk_string_search: preprocessed line 2092: unsupported: call to uncontracted function `_Generic`
+    _mk_string_search: preprocessed line 2095: unsupported: call to uncontracted function `strcasestr`
+    114 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_core/mk_utils.c: Unknown (7/11): resource projection unresolved: 45 unsupported operation(s), 14 unresolved alias(es)
+    resource diagnostics: unknown_alias=14, unsupported=45
+    mk_print: preprocessed line 2546: unknown_alias: unresolved resource identity `__qcore_literal__`
+    mk_print: preprocessed line 2547: unknown_alias: unresolved resource identity `__qcore_literal__`
+    mk_print: preprocessed line 2548: unknown_alias: unresolved resource identity `__qcore_literal__`
+    56 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_cache.c: Unsafe (2/2)
+    resource diagnostics: leak=5, unknown_alias=1, unsupported=14
+    mk_cache_worker_exit: preprocessed line 5612: unsupported: call to uncontracted function `mk_ptr_free`
+    mk_cache_worker_exit: preprocessed line 5613: unsupported: arguments do not match resource contract for `mk_mem_free`
+    mk_cache_worker_exit: preprocessed line 5614: unsupported: call to uncontracted function `mk_ptr_free`
+    17 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_clock.c: Unsafe (6/8)
+    resource diagnostics: leak=5, unknown_alias=9, unsupported=23
+    mk_clock_exit: preprocessed line 3780: unsupported: call to uncontracted function `pthread_cancel`
+    mk_clock_exit: preprocessed line 3781: unsupported: call to uncontracted function `pthread_join`
+    mk_clock_exit: preprocessed line 3782: unknown_alias: unresolved resource identity `server->clock_context->header_time_buffers[0]`
+    34 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_config.c: Unknown (13/13): resource projection unresolved: 135 unsupported operation(s), 44 unresolved alias(es)
+    resource diagnostics: unknown_alias=44, unsupported=135
+    mk_config_free_all: preprocessed line 5974: unsupported: call to uncontracted function `mk_vhost_free_all`
+    mk_config_free_all: preprocessed line 5975: unsupported: call to uncontracted function `mk_mimetype_free_all`
+    mk_config_free_all: preprocessed line 5977: unsupported: call to uncontracted function `mk_rconf_free`
+    176 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_fifo.c: Unsafe (16/16)
+    resource diagnostics: leak=2, unknown_alias=29, unsupported=92
+    consume_bytes: preprocessed line 5333: unsupported: call to uncontracted function `memmove`
+    fifo_drop_msg: preprocessed line 5339: unsupported: unsupported assignment expression
+    fifo_drop_msg: preprocessed line 5340: unsupported: C operator `sizeof` requires type/operand analysis
+    120 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_header.c: Unknown (5/5): resource projection unresolved: 61 unsupported operation(s), 11 unresolved alias(es)
+    resource diagnostics: unknown_alias=11, unsupported=61
+    cb_stream_iov_extended_free: preprocessed line 5901: unknown_alias: unresolved resource identity `in->buffer`
+    cb_stream_iov_extended_free: preprocessed line 5902: unsupported: call to uncontracted function `mk_iov_free`
+    mk_header_cb_finished: preprocessed line 5895: unknown_alias: unresolved resource identity `in->buffer`
+    69 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_http.c: Unsafe (26/26)
+    resource diagnostics: leak=6, unknown_alias=84, unsupported=283
+    cb_stream_page_finished: preprocessed line 6903: unknown_alias: unresolved resource identity `in->buffer`
+    cb_stream_page_finished: preprocessed line 6904: unsupported: call to uncontracted function `mk_ptr_free`
+    cb_stream_page_finished: preprocessed line 6905: unknown_alias: unresolved resource identity `page`
+    370 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_http_parser.c: Unsafe (18/18)
+    resource diagnostics: leak=1, unknown_alias=76, unsupported=163
+    cb_copy_chunk: preprocessed line 5895: unsupported: call to uncontracted function `memcpy`
+    cb_copy_chunk: preprocessed line 5896: unsupported: unrecognized assignment destination
+    cb_debug_chunk_complete: preprocessed line 5781: unsupported: call to uncontracted function `memcpy`
+    237 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_http_thread.c: Unknown (10/10): resource projection unresolved: 38 unsupported operation(s), 23 unresolved alias(es)
+    resource diagnostics: unknown_alias=23, unsupported=38
+    mk_http_thread_create: preprocessed line 6083: unsupported: call to uncontracted function `mk_sched_get_thread_conf`
+    mk_http_thread_create: preprocessed line 6087: unsupported: call to uncontracted function `mk_thread_new`
+    mk_http_thread_create: preprocessed line 6088: unknown_alias: unresolved resource identity `th`
+    58 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_kernel.c: Unknown (3/3): resource projection unresolved: 19 unsupported operation(s), 4 unresolved alias(es)
+    resource diagnostics: unknown_alias=4, unsupported=19
+    mk_kernel_features: preprocessed line 5824: unsupported: unrecognized assignment destination
+    mk_kernel_features: preprocessed line 5827: unsupported: unrecognized assignment destination
+    mk_kernel_features: preprocessed line 5829: unknown_alias: unresolved resource identity `flags`
+    20 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_lib.c: Unsafe (26/26)
+    resource diagnostics: leak=4, unknown_alias=43, unsupported=141
+    bool_val: preprocessed line 6448: unsupported: call or braced expression in branch condition
+    bool_val: preprocessed line 6451: unsupported: call or braced expression in branch condition
+    chunk_header: preprocessed line 6865: unsupported: unsupported assignment expression
+    185 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_mimetype.c: Unsafe (7/7)
+    resource diagnostics: leak=3, unknown_alias=18, unsupported=36
+    mk_mimetype_add: preprocessed line 5809: unsupported: call to uncontracted function `strlen`
+    mk_mimetype_add: preprocessed line 5812: unknown_alias: unresolved resource identity `name`
+    mk_mimetype_add: preprocessed line 5813: unsupported: call to uncontracted function `tolower`
+    54 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_net.c: Unsafe (11/11)
+    resource diagnostics: leak=1, unknown_alias=14, unsupported=50
+    mk_net_conn_create: preprocessed line 5967: unsupported: C operator `sizeof` requires type/operand analysis
+    mk_net_conn_create: preprocessed line 5974: unsupported: call to uncontracted function `mk_socket_create`
+    mk_net_conn_create: preprocessed line 5976: unknown_alias: unresolved resource identity `conn`
+    62 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_plugin.c: Unsafe (26/26)
+    resource diagnostics: leak=6, unknown_alias=109, unsupported=126
+    mk_handler_param_get: preprocessed line 6550: unknown_alias: unresolved resource identity `head->next`
+    mk_handler_param_get: preprocessed line 6550: unknown_alias: unresolved resource identity `params->next`
+    mk_handler_param_get: preprocessed line 6552: unsupported: call or braced expression in return expression
+    238 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_scheduler.c: Unsafe (31/31)
+    resource diagnostics: leak=10, unknown_alias=42, unsupported=146
+    _next_target: preprocessed line 6477: unsupported: unsupported assignment expression
+    _next_target: preprocessed line 6478: unknown_alias: unresolved resource identity `server->sched_ctx`
+    _next_target: preprocessed line 6480: unsupported: unsupported assignment expression
+    195 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_server.c: Unsafe (12/12)
+    resource diagnostics: leak=5, unknown_alias=28, unsupported=113
+    mk_server_capacity: preprocessed line 6176: unsupported: call to uncontracted function `getrlimit`
+    mk_server_capacity: preprocessed line 6177: unknown_alias: unresolved resource identity `lim.rlim_cur`
+    mk_server_capacity: preprocessed line 6179: unknown_alias: unresolved resource identity `server->fd_limit`
+    143 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_socket.c: Unknown (14/14): resource projection unresolved: 73 unsupported operation(s), 9 unresolved alias(es)
+    resource diagnostics: unknown_alias=9, unsupported=73
+    mk_socket_accept: preprocessed line 6007: unsupported: C operator `sizeof` requires type/operand analysis
+    mk_socket_accept: preprocessed line 6008: unsupported: call to uncontracted function `accept4`
+    mk_socket_bind: preprocessed line 5907: unsupported: call to uncontracted function `bind`
+    79 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_stream.c: Unknown (9/9): resource projection unresolved: 48 unsupported operation(s), 15 unresolved alias(es)
+    resource diagnostics: unknown_alias=15, unsupported=48
+    channel_write_in_file: preprocessed line 5792: unsupported: call to uncontracted function `send_file`
+    channel_write_in_file: preprocessed line 5794: unknown_alias: unresolved resource identity `bytes`
+    mk_channel_clean: preprocessed line 5985: unsupported: unsupported assignment expression
+    60 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_user.c: Unknown (3/3): resource projection unresolved: 29 unsupported operation(s), 1 unresolved alias(es)
+    resource diagnostics: unknown_alias=1, unsupported=29
+    mk_user_init: preprocessed line 5998: unsupported: unsupported assignment expression
+    mk_user_init: preprocessed line 5999: unsupported: unsupported assignment expression
+    mk_user_init: preprocessed line 6006: unsupported: call to uncontracted function `mk_string_char_search`
+    27 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_utils.c: Unsafe (11/14)
+    resource diagnostics: leak=1, unknown_alias=11, unsupported=87
+    mk_buffer_cat: preprocessed line 5976: unsupported: call or braced expression in branch condition
+    mk_buffer_cat: preprocessed line 5980: unsupported: call to uncontracted function `memcpy`
+    mk_buffer_cat: preprocessed line 5981: unsupported: call to uncontracted function `memcpy`
+    96 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/mk_vhost.c: Unsafe (18/18)
+    resource diagnostics: leak=26, unknown_alias=68, unsupported=165
+    mk_vhost_close: preprocessed line 6138: unsupported: call or braced expression in return expression
+    mk_vhost_destroy: preprocessed line 6496: unsupported: unsupported assignment expression
+    mk_vhost_destroy: preprocessed line 6497: unsupported: braced initializer, expression, or declaration is not modeled
+    256 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/mk_server/monkey.c: Unknown (5/5): resource projection unresolved: 66 unsupported operation(s), 9 unresolved alias(es)
+    resource diagnostics: unknown_alias=9, unsupported=66
+    mk_exit_all: preprocessed line 6118: unsupported: unsupported assignment expression
+    mk_exit_all: preprocessed line 6119: unsupported: call to uncontracted function `mk_sched_broadcast_signal`
+    mk_exit_all: preprocessed line 6120: unsupported: call to uncontracted function `mk_sched_workers_join`
+    72 more diagnostic(s); full inventory in optional resource report
+  monkey-libevent/tls/tls_stub.c: Safe (5/5)
+monkey-libevent: 29 unit(s), 359 source function(s), 346 projected; 0 data-only, 1 Safe, 18 Unsafe, 10 Unknown, 0 gateway failure(s)
+Resource diagnostics: /tmp/cycle19-file-attempts-diagnostics.json
