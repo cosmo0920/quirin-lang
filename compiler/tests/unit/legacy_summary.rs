@@ -36,6 +36,10 @@ const Q_CONTAINER_STORE: (&str, &str) = (
     "q_container_store.qcore",
     include_str!("../fixtures/contracts/q_container_store.qcore"),
 );
+const Q_CONTAINER_REMOVE: (&str, &str) = (
+    "q_container_remove.qcore",
+    include_str!("../fixtures/contracts/q_container_remove.qcore"),
+);
 
 fn fixture_contracts(modules: &[(&str, &str)]) -> ResourceContracts {
     let sources = modules
@@ -53,16 +57,20 @@ fn base(source: &str) -> LegacyProgramSummary {
     analyze(source, &[Q_BASE])
 }
 
-fn summary_of(source: &str, function: &str) -> ResourceFunctionContract {
+fn summary_in(source: &str, modules: &[(&str, &str)], function: &str) -> ResourceFunctionContract {
     let tokens = tokenize(source);
     let names = legacy_c_source_functions(source);
-    let derivation = derive_custody_summaries(&tokens, &names, &fixture_contracts(&[Q_BASE]));
-    derivation
+    let record = derive_custody_summaries(&tokens, &names, &fixture_contracts(modules))
         .records()
         .into_iter()
         .find(|record| record.function == function)
-        .unwrap_or_else(|| panic!("no validated summary for `{function}`"))
-        .contract
+        .unwrap_or_else(|| panic!("no validated summary for `{function}`"));
+    assert_eq!(record.trust, ContractTrust::InferredValidated);
+    record.contract
+}
+
+fn summary_of(source: &str, function: &str) -> ResourceFunctionContract {
+    summary_in(source, &[Q_BASE], function)
 }
 
 fn no_summary(source: &str, modules: &[(&str, &str)], function: &str) -> bool {
@@ -292,6 +300,32 @@ fn self_recursive_allocation_wrapper_stays_unknown() {
 }
 
 #[test]
+fn a_self_consistent_recursive_summary_is_never_accepted() {
+    // `bad` is consistent with "releases `p`" — but only for executions that
+    // never terminate. The ascending iteration starts from the empty summary
+    // set, `bad`'s own call is uncontracted on the first round, so nothing
+    // installs and the least fixed point stays empty. Accepting the greatest
+    // fixed point here would certify a non-terminating program as `Safe`.
+    let source = "void bad(void *p) { bad(p); } \
+                  void subject(void) { void *p = q_alloc(); bad(p); }";
+    let summary = base(source);
+    assert!(no_summary(source, &[Q_BASE], "bad"));
+    assert_eq!(summary.functions["bad"].status, AnalysisStatus::Unknown);
+    assert!(has(&summary, "bad", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Unsupported { description }
+            if description.contains("uncontracted function `bad`")
+    )));
+    // With no summary for `bad`, the caller's acquisition is an undischarged
+    // obligation rather than one a self-consistent summary explained away.
+    assert_eq!(summary.status, AnalysisStatus::Unsafe);
+    assert!(has(&summary, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+}
+
+#[test]
 fn mutual_recursion_stays_unknown_for_every_member() {
     let summary = base(
         "void *even(int n); \
@@ -309,35 +343,170 @@ fn mutual_recursion_stays_unknown_for_every_member() {
     }
 }
 
-// --- Out parameters and realloc -------------------------------------------
+// --- Out parameters --------------------------------------------------------
 
 #[test]
-fn out_parameter_wrappers_are_not_inferred() {
-    // `*out = p` is outside the modeled place vocabulary, so the body is not
-    // fully modeled, no summary is derived, and the call stays uncontracted.
+fn an_out_parameter_wrapper_is_inferred_and_validated() {
+    // `*out = p` is a store the contract in force sanctions as an out slot;
+    // the resource it leaves there is the caller's obligation, not a leak.
     let source = "int fill(void **out) { void *p = q_alloc(); *out = p; return 0; } \
                   void subject(void) { void *p; int rc = fill(&p); q_free(p); }";
     let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
-    assert_ne!(summary.status, AnalysisStatus::Safe);
-    assert!(has(&summary, "subject", |kind| matches!(
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_RICH_MODES], "fill"),
+        ResourceFunctionContract::new(
+            [ResourceParameterMode::Out { nullable: false }],
+            ResourceReturnMode::None,
+        )
+    );
+
+    // The obligation the summary hands the caller is a real one.
+    let leaked = analyze(
+        "int fill(void **out) { void *p = q_alloc(); *out = p; return 0; } \
+         void subject(void) { void *p; int rc = fill(&p); return; }",
+        &[Q_BASE, Q_RICH_MODES],
+    );
+    assert_eq!(leaked.status, AnalysisStatus::Unsafe);
+    assert!(has(&leaked, "subject", |kind| matches!(
         kind,
-        LegacyDiagnosticKind::Unsupported { description }
-            if description.contains("uncontracted function `fill`")
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+}
+
+#[test]
+fn an_out_slot_left_unwritten_on_some_path_yields_no_summary() {
+    // A path that stores nothing leaves the caller's variable as it was, which
+    // no `Out` mode describes: the caller would be told to discharge a
+    // resource that was never produced.
+    let source = "int fill(void **out, int c) { if (c) { void *p = q_alloc(); *out = p; } return 0; } \
+                  void subject(void) { void *p; int rc = fill(&p, 1); q_free(p); }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(no_summary(source, &[Q_BASE, Q_RICH_MODES], "fill"));
+}
+
+#[test]
+fn an_out_slot_nulled_on_a_failure_path_is_nullable() {
+    let source = "int fill(void **out, int c) { if (c) { void *p = q_alloc(); *out = p; return 0; } *out = 0; return -1; } \
+                  void subject(void) { void *p; int rc = fill(&p, 1); if (p) { q_free(p); } }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_RICH_MODES], "fill"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Out { nullable: true },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::None,
+        )
+    );
+
+    // Without the caller's null check the unit stays unresolved.
+    let unchecked = analyze(
+        "int fill(void **out, int c) { if (c) { void *p = q_alloc(); *out = p; return 0; } *out = 0; return -1; } \
+         void subject(void) { void *p; int rc = fill(&p, 1); q_free(p); }",
+        &[Q_BASE, Q_RICH_MODES],
+    );
+    assert_eq!(unchecked.status, AnalysisStatus::Unknown);
+}
+
+#[test]
+fn a_possibly_null_out_store_without_a_callee_side_test_yields_no_summary() {
+    // The callee stores an acquisition it never resolved. Claiming a non-null
+    // slot would be false, and claiming a nullable one would still hide that
+    // the caller's null test is the only thing standing between it and a
+    // dereference the callee never justified.
+    let source = "int fill(void **out) { void *p = q_maybe_alloc(); *out = p; return 0; } \
+                  void subject(void) { void *p; int rc = fill(&p); if (p) { q_free(p); } }";
+    let summary = analyze(source, &[Q_BASE, Q_NULLABLE, Q_RICH_MODES]);
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(no_summary(
+        source,
+        &[Q_BASE, Q_NULLABLE, Q_RICH_MODES],
+        "fill"
+    ));
+}
+
+#[test]
+fn an_overwritten_out_slot_leaks_the_first_resource() {
+    // Only what the slot holds at the exit is the caller's; the resource the
+    // second store displaced is a leak in the callee, and the exemption does
+    // not cover it.
+    let source = "int fill(void **out) { void *p = q_alloc(); *out = p; void *q = q_alloc(); *out = q; return 0; } \
+                  void subject(void) { void *p; int rc = fill(&p); q_free(p); }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_eq!(summary.status, AnalysisStatus::Unsafe);
+    assert!(has(&summary, "fill", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
     )));
     assert!(no_summary(source, &[Q_BASE, Q_RICH_MODES], "fill"));
 }
 
 #[test]
-fn realloc_wrappers_are_not_inferred() {
-    // A reallocation leaves the argument's custody dependent on whether the
-    // result was null. The analyzer refuses to return a possibly-null place, so
-    // no settled exit describes the wrapper and no summary is published; the
-    // caller keeps the obligation to resolve both outcomes itself.
+fn a_formal_written_through_an_out_slot_yields_no_summary() {
+    // The caller already owns `p`. Reporting it back through the slot as a
+    // fresh resource would mint a second custody for one object.
+    let source = "int move_it(void *p, void **out) { *out = p; return 0; } \
+                  void subject(void) { void *p = q_alloc(); void *q; int rc = move_it(p, &q); q_free(q); }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(no_summary(source, &[Q_BASE, Q_RICH_MODES], "move_it"));
+}
+
+#[test]
+fn a_returned_out_slot_resource_yields_no_summary() {
+    // Handing the same resource back twice — once through the slot, once as
+    // the result — is the same double custody seen from the other side.
+    let source = "void *fill(void **out) { void *p = q_alloc(); *out = p; return p; } \
+                  void subject(void) { void *p; void *q = fill(&p); q_free(q); }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(no_summary(source, &[Q_BASE, Q_RICH_MODES], "fill"));
+}
+
+#[test]
+fn a_store_through_a_local_pointer_stays_unmodeled() {
+    // Naming `*slot` is not the same as modeling it. Without an out-parameter
+    // contract sanctioning the slot the store is as opaque as it ever was.
+    let source = "void keep(void **slot) { void *p = q_alloc(); void **local = slot; *local = p; } \
+                  void subject(void) { void **slot; keep(slot); }";
+    let summary = analyze(source, &[Q_BASE, Q_RICH_MODES]);
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(has(&summary, "keep", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Unsupported { description }
+            if description.contains("store through `*local` without an out-parameter contract")
+    )));
+    assert!(no_summary(source, &[Q_BASE, Q_RICH_MODES], "keep"));
+}
+
+// --- Reallocation ----------------------------------------------------------
+
+#[test]
+fn a_realloc_wrapper_is_inferred_as_reallocated() {
+    // The wrapper passes the reallocation's conditional custody straight
+    // through: on success the argument is gone, on failure the caller still
+    // holds it, and only the caller's null test tells the two apart.
     let source = "void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); return q; } \
                   void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); } else { q_free(p); } }";
     let summary = analyze(source, &[Q_BASE, Q_REALLOC]);
-    assert_ne!(summary.status, AnalysisStatus::Safe);
-    assert!(no_summary(source, &[Q_BASE, Q_REALLOC], "grow"));
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_REALLOC], "grow"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::Reallocated {
+                parameter: 0,
+                nullable: true,
+            },
+        )
+    );
 
     // The same reallocation written inline still resolves both outcomes.
     let inline = analyze(
@@ -345,6 +514,156 @@ fn realloc_wrappers_are_not_inferred() {
         &[Q_BASE, Q_REALLOC],
     );
     assert_eq!(inline.status, AnalysisStatus::Safe);
+}
+
+#[test]
+fn a_realloc_wrapper_caller_that_also_frees_the_old_pointer_is_unsafe() {
+    // On the success path the old pointer was replaced. Freeing it as well is
+    // the double release the summary exists to expose.
+    let summary = analyze(
+        "void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); return q; } \
+         void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); q_free(p); } else { q_free(p); } }",
+        &[Q_BASE, Q_REALLOC],
+    );
+    assert_eq!(summary.status, AnalysisStatus::Unsafe);
+    assert!(has(&summary, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::DoubleRelease { .. }
+    )));
+}
+
+#[test]
+fn a_realloc_wrapper_that_discards_its_argument_is_not_reallocated() {
+    // The classic double-custody trap. This wrapper frees the old pointer on
+    // the failure path, so `Reallocated` — which promises the caller keeps it
+    // — would be a false summary. The derived summary releases the formal
+    // unconditionally instead, and a caller written for realloc semantics is
+    // reported rather than certified.
+    let source = "void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); if (q) { return q; } q_free(p); return 0; } \
+                  void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); } }";
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_REALLOC], "grow"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Released { nullable: false },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::Owned { nullable: true },
+        )
+    );
+    assert_eq!(
+        analyze(source, &[Q_BASE, Q_REALLOC]).status,
+        AnalysisStatus::Safe
+    );
+
+    let double_freed = analyze(
+        "void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); if (q) { return q; } q_free(p); return 0; } \
+         void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); } else { q_free(p); } }",
+        &[Q_BASE, Q_REALLOC],
+    );
+    assert_eq!(double_freed.status, AnalysisStatus::Unsafe);
+    assert!(has(&double_freed, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::DoubleRelease { .. }
+    )));
+}
+
+#[test]
+fn a_realloc_wrapper_that_resolves_its_own_null_test_is_reallocated() {
+    // The callee splits the two outcomes itself: one exit releases the old
+    // resource and returns a non-null fresh one, the other keeps the old and
+    // returns nothing. That is precisely what `Reallocated` means, and no
+    // single parameter mode describes it.
+    let source = "void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); if (q) { return q; } return 0; } \
+                  void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); } else { q_free(p); } }";
+    let summary = analyze(source, &[Q_BASE, Q_REALLOC]);
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_REALLOC], "grow"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::Reallocated {
+                parameter: 0,
+                nullable: true,
+            },
+        )
+    );
+}
+
+// --- Aggregate custody -----------------------------------------------------
+
+#[test]
+fn a_stored_parameter_is_inferred_with_its_owner() {
+    let source = "void add(void *owner, void *item) { q_store(owner, item); } \
+                  void subject(void) { void *c = q_alloc(); void *i = q_alloc(); add(c, i); q_free(c); }";
+    let summary = analyze(source, &[Q_BASE, Q_CONTAINER_STORE]);
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_CONTAINER_STORE], "add"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Stored {
+                    owner_parameter: 0,
+                    nullable: false,
+                },
+            ],
+            ResourceReturnMode::None,
+        )
+    );
+}
+
+#[test]
+fn releasing_a_stored_item_after_the_call_is_a_custody_conflict() {
+    let summary = analyze(
+        "void add(void *owner, void *item) { q_store(owner, item); } \
+         void subject(void) { void *c = q_alloc(); void *i = q_alloc(); add(c, i); q_free(i); q_free(c); }",
+        &[Q_BASE, Q_CONTAINER_STORE],
+    );
+    assert_eq!(summary.status, AnalysisStatus::Unsafe);
+    assert!(has(&summary, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::CustodyConflict { .. }
+    )));
+}
+
+#[test]
+fn a_removal_wrapper_is_not_inferred() {
+    // `Removed` describes an item the caller's aggregate *already* holds, and
+    // the entry state seeds such a formal as an ordinary live resource rather
+    // than a contained one. The body's detach therefore reports a custody
+    // conflict against its own entry state and never validates. Fixing this
+    // needs a richer entry state, not richer summary logic.
+    let source = "void take(void *owner, void *item) { q_remove(owner, item); } \
+                  void subject(void) { void *c = q_alloc(); q_free(c); }";
+    assert!(no_summary(source, &[Q_BASE, Q_CONTAINER_REMOVE], "take"));
+}
+
+// --- Nullable results ------------------------------------------------------
+
+#[test]
+fn a_wrapper_returning_an_unresolved_acquisition_is_nullable() {
+    // A body may return a possibly-null place only under a result mode that
+    // obliges its callers to null-check; the mode is then re-checked against a
+    // run that grants exactly that permission and no more.
+    let source = "void *make(void) { void *p = q_maybe_alloc(); return p; } \
+                  void subject(void) { void *p = make(); if (p) { q_free(p); } }";
+    let summary = analyze(source, &[Q_BASE, Q_NULLABLE]);
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_NULLABLE], "make"),
+        ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true })
+    );
+
+    let unchecked = analyze(
+        "void *make(void) { void *p = q_maybe_alloc(); return p; } \
+         void subject(void) { void *p = make(); q_free(p); }",
+        &[Q_BASE, Q_NULLABLE],
+    );
+    assert_eq!(unchecked.status, AnalysisStatus::Unknown);
 }
 
 // --- Fail-closed boundaries ------------------------------------------------
@@ -521,4 +840,55 @@ fn components_are_returned_callees_first() {
     // before `nested` was analyzed.
     assert!(derived.contains(&"make".to_owned()));
     assert!(derived.contains(&"nested".to_owned()));
+}
+
+#[test]
+fn reassigned_out_formals_do_not_describe_the_callers_slot() {
+    for assignment in ["out = 0;", "out = q_alloc();", "q_make(&out);"] {
+        let source = format!(
+            "int fill(void **out) {{ {assignment} void *p = q_alloc(); *out = p; return 0; }} void subject(void) {{ void *p; int rc = fill(&p); q_free(p); }}"
+        );
+        assert!(
+            no_summary(&source, &[Q_BASE, Q_RICH_MODES], "fill"),
+            "{assignment}"
+        );
+        assert_ne!(
+            analyze(&source, &[Q_BASE, Q_RICH_MODES]).status,
+            AnalysisStatus::Safe
+        );
+    }
+}
+
+#[test]
+fn extended_summary_certificates_are_rederived_and_reject_tampering() {
+    use crate::legacy_c::{
+        C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+        check_legacy_safety_certificate,
+    };
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    for source in [
+        "void *q_alloc(void); void q_free(void *); int fill(void **out) { void *p = q_alloc(); *out = p; return 0; } void subject(void) { void *p; int rc = fill(&p); q_free(p); }",
+        "void *q_alloc(void); void q_free(void *); void *q_realloc(void *, unsigned long); void *grow(void *p) { void *q = q_realloc(p, 8); return q; } void subject(void) { void *p = q_alloc(); void *q = grow(p); if (q) { q_free(q); } else { q_free(p); } }",
+    ] {
+        let unit = C11TranslationUnit {
+            source,
+            ..C11TranslationUnit::default()
+        };
+        let result =
+            analyze_unrestricted_c11(&unit, "subject", &fixture_contracts(&[Q_BASE, Q_REALLOC]))
+                .unwrap();
+        let UnrestrictedLegacyResult::Safe(mut certificate) = result else {
+            panic!("{result:?}")
+        };
+        check_legacy_safety_certificate(&certificate).unwrap();
+        let record = certificate
+            .summaries
+            .iter_mut()
+            .find(|record| record.function != "subject")
+            .unwrap();
+        record.contract = ResourceFunctionContract::new([], ResourceReturnMode::None);
+        assert!(check_legacy_safety_certificate(&certificate).is_err());
+    }
 }

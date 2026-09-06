@@ -62,8 +62,11 @@ Claude-specific additions:
   summary be published without validation, do not seed a formal parameter with
   entry custody the body did not demand (that asserts non-nullness and deletes
   failure paths), and do not accept an assume-guarantee fixed point for a
-  recursive component. `Out`, `Stored`, `Removed` and `Reallocated` modes are
-  deliberately not inferred; the `qcore-c-gateway` relocation is still open.
+  recursive component. The 2026-09-07 extension validates direct `Out` slots,
+  `Stored` formals, `Reallocated` results and possibly-null owned returns
+  (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
+  `Removed` inference and recursive components remain unsupported; the
+  `qcore-c-gateway` relocation is still open.
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass. If a pinned table (contract corpus counts,
   submodule revision, archived report) conflicts with your change, the change

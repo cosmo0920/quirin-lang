@@ -25,10 +25,14 @@
 //! 3. every reachable exit disposes of every formal exactly as the candidate
 //!    says (released, consumed, or still live), with no disagreement between
 //!    exits;
-//! 4. no fresh resource is left attached to a caller-owned formal, because such
-//!    a transfer is invisible at the call site;
+//! 4. the containment attached to sites the caller holds is exactly what the
+//!    contract's `Stored` modes declare, because any other transfer into a
+//!    caller-held aggregate is invisible at the call site;
 //! 5. the returned value matches the declared result mode on every exit, and a
-//!    formal's own site is never returned as if it were fresh.
+//!    formal's own site is never returned as if it were fresh;
+//! 6. every out slot the contract declares holds a distinct fresh live
+//!    resource at every exit (or a null constant, if the mode is nullable),
+//!    and no formal without an `Out` mode is written through.
 //!
 //! A candidate that fails any of these yields no summary at all, and the call
 //! stays an uncontracted call — that is, `Unknown`. Precision is never bought
@@ -58,22 +62,18 @@
 //!
 //! # What is deliberately not inferred
 //!
-//! The inferred vocabulary is `Borrowed`/`Owned`/`Consumed`/`Released`
-//! parameters and `None`/`Owned` results. `Out`, `Stored`, `Removed`, and
-//! `Reallocated` are not derived, and a body that needs one of them yields no
-//! summary at all:
-//!
-//! - an `Out` formal is written through `*out = …`, a place the reduced
-//!   importer does not model, so the body is not fully modeled;
-//! - `Stored` would hand a fresh resource to a caller-owned aggregate, which
-//!   condition (4) rejects outright;
-//! - `Reallocated` makes the argument's custody depend on whether the result
-//!   was null, and the analyzer refuses to escape a possibly-null place — the
-//!   settled shape a validator would need never arises.
+//! The inferred vocabulary is `Borrowed`/`Owned`/`Consumed`/`Released`/`Out`/
+//! `Stored` parameters and `None`/`Owned`/`Reallocated` results. `Removed` is
+//! not derived: [`EntryCustody::build`] seeds such a formal as an ordinary
+//! live resource rather than as one already contained in the owner formal's
+//! aggregate, so a body that actually detaches it reports a custody conflict
+//! and never validates. Inferring it needs a richer entry state, not richer
+//! summary logic.
 //!
 //! Likewise, a formal handed straight back to the caller, a formal whose
-//! disposition differs between exits, and a possibly-null result returned
-//! without a null test in the callee all yield no summary. Every one of these
+//! disposition differs between exits with no reallocation explaining it, an
+//! out slot left unwritten on some path, and an out slot holding a value the
+//! callee never resolved to non-null all yield no summary. Every one of these
 //! leaves the call uncontracted, hence `Unknown`.
 //!
 //! # Recursion
@@ -99,9 +99,9 @@ use qcore_schemas::contract::{
 };
 
 use crate::legacy_c::{
-    AnalysisStatus, EntryCustody, ExitObservation, LegacyDiagnosticKind, LegacyFunctionSummary,
-    ReturnedValue, SiteDisposition, Token, analyze_cfg_with_entry, build_function_cfg,
-    direct_calls, function_parameters,
+    AnalysisStatus, EntryCustody, ExitObservation, LegacyCfg, LegacyDiagnosticKind,
+    LegacyFunctionSummary, LegacyInstruction, OutSlotValue, ReturnedValue, SiteDisposition, Token,
+    analyze_cfg_with_entry, build_function_cfg, direct_calls, function_parameters,
 };
 
 /// The custody environment a translation unit's analysis runs under, together
@@ -223,6 +223,10 @@ fn infer_validated_summary(
 ) -> Option<ResourceFunctionContract> {
     let parameters = function_parameters(tokens, function)?;
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
+    // Which formals the body writes through. Unlike a bound formal, an out
+    // slot asserts nothing about the entry state, so it can be marked from the
+    // syntax alone without deleting any path.
+    let out = out_parameter_candidates(&cfg, &parameters);
 
     // Start with no formal bound. Seeding a formal with a live non-null
     // resource is not a neutral act: it also asserts the formal is *not null*,
@@ -230,8 +234,17 @@ fn infer_validated_summary(
     // failure paths a summary has to describe. A formal is bound only once the
     // analysis reports that the body already treats it as a resource it owns.
     let mut bound = vec![false; parameters.len()];
+    // The binding set only grows and each retry binds at least one further
+    // formal, so the loop settles after at most one round per formal. The
+    // bound is written out rather than left implicit in the loop's shape.
     for _ in 0..=parameters.len() {
-        let probe = binding_contract(&parameters, &bound);
+        // A formal is either a resource the caller already owns or a slot the
+        // callee initializes. A body that treats one formal as both is outside
+        // this vocabulary.
+        if bound.iter().zip(&out).any(|(bound, out)| *bound && *out) {
+            return None;
+        }
+        let probe = probe_contract(&parameters, &bound, &out);
         let entry = EntryCustody::build(&cfg, &parameters, &probe)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
         if bind_unresolved_formals(&mut bound, &parameters, &summary) {
@@ -242,7 +255,7 @@ fn infer_validated_summary(
         }
         // The binding pattern is stable, so read the modes off the settled
         // observations and check the resulting contract against a fresh run.
-        let candidate = propose_contract(&probe, &entry, &observations)?;
+        let candidate = propose_contract(&entry, &observations)?;
         let entry = EntryCustody::build(&cfg, &parameters, &candidate)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
         return observations_match_contract(&candidate, &entry, &summary, &observations)
@@ -251,71 +264,305 @@ fn infer_validated_summary(
     None
 }
 
-/// The contract that binds exactly the formals marked in `bound`. Only the
-/// binding pattern matters here: `Owned`, `Consumed`, and `Released` all seed
+/// Formals the body stores through (`*out = …`). Reading this off the CFG
+/// rather than off a diagnostic keeps the candidate set syntactic and
+/// deterministic; whether the store is *modeled* is still decided by the
+/// contract in force, and whether the resulting mode is *true* is decided by
+/// validation.
+fn out_parameter_candidates(cfg: &LegacyCfg, parameters: &[Option<String>]) -> Vec<bool> {
+    let written = cfg
+        .nodes
+        .iter()
+        .filter_map(|node| match &node.instruction {
+            LegacyInstruction::Alias { destination, .. }
+            | LegacyInstruction::Clear { destination }
+            | LegacyInstruction::ContractCall {
+                destination: Some(destination),
+                ..
+            } => destination.strip_prefix('*'),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
+    parameters
+        .iter()
+        .map(|name| name.as_deref().is_some_and(|name| written.contains(name)))
+        .collect()
+}
+
+/// The contract the observation run uses. Only the binding pattern and the out
+/// slots matter here: `Owned`, `Consumed`, `Released`, and `Stored` all seed
 /// the same live non-null entry resource, so the eventual mode is read from the
 /// observed exit disposition rather than guessed up front.
-fn binding_contract(parameters: &[Option<String>], bound: &[bool]) -> ResourceFunctionContract {
+///
+/// The result is deliberately permissive. A probe that forbade a possibly-null
+/// return would report an unresolved alias and hide the exit state the proposal
+/// has to read; the mode the summary actually claims is derived below and
+/// re-checked against a fresh, non-permissive run.
+fn probe_contract(
+    parameters: &[Option<String>],
+    bound: &[bool],
+    out: &[bool],
+) -> ResourceFunctionContract {
     ResourceFunctionContract::new(
         parameters
             .iter()
             .zip(bound)
-            .map(|(name, bound)| match (name, bound) {
-                (Some(_), true) => ResourceParameterMode::Owned { nullable: false },
+            .zip(out)
+            .map(|((name, bound), out)| match (name, bound, out) {
+                (Some(_), _, true) => ResourceParameterMode::Out { nullable: true },
+                (Some(_), true, false) => ResourceParameterMode::Owned { nullable: false },
                 _ => ResourceParameterMode::Borrowed,
             }),
-        ResourceReturnMode::None,
+        ResourceReturnMode::Owned { nullable: true },
     )
 }
 
 /// Read a candidate contract off the probe run's exit observations.
+///
+/// The ordinary parameter/return shape is tried first, so a body that fits it
+/// keeps the summary it had before reallocation was inferable. Only when no
+/// single parameter mode and result describe every exit is the reallocation
+/// shape considered — which is exactly the case a `Reallocated` result exists
+/// to express.
 fn propose_contract(
-    probe: &ResourceFunctionContract,
     entry: &EntryCustody,
     observations: &[ExitObservation],
 ) -> Option<ResourceFunctionContract> {
-    let mut modes = Vec::with_capacity(probe.parameters.len());
-    for index in 0..probe.parameters.len() {
-        if entry.parameter_sites[index].is_none() {
-            modes.push(ResourceParameterMode::Borrowed);
-            continue;
-        }
-        let mut disposition = None;
-        for observation in observations {
-            let current = observation.parameters[index]?;
-            match disposition {
-                None => disposition = Some(current),
-                Some(previous) if previous == current => {}
-                // Released on one path and live on another: no single mode.
-                Some(_) => return None,
-            }
-        }
-        modes.push(match disposition? {
-            // The formal is bound because the body needs it live, and it is
-            // still live at every exit: the caller keeps custody.
-            SiteDisposition::Live => ResourceParameterMode::Owned { nullable: false },
-            SiteDisposition::Released => ResourceParameterMode::Released { nullable: false },
-            SiteDisposition::Escaped => ResourceParameterMode::Consumed { nullable: false },
-            SiteDisposition::Contained | SiteDisposition::Absent | SiteDisposition::Mixed => {
-                return None;
-            }
-        });
-    }
+    ordinary_contract(entry, observations).or_else(|| reallocated_contract(entry, observations))
+}
 
+fn ordinary_contract(
+    entry: &EntryCustody,
+    observations: &[ExitObservation],
+) -> Option<ResourceFunctionContract> {
+    let mut modes = Vec::with_capacity(entry.parameter_sites.len());
+    for index in 0..entry.parameter_sites.len() {
+        modes.push(parameter_mode(index, entry, observations)?);
+    }
     let result = propose_result(entry, observations)?;
     Some(ResourceFunctionContract::new(modes, result))
+}
+
+/// The mode one formal's settled observations read as.
+fn parameter_mode(
+    index: usize,
+    entry: &EntryCustody,
+    observations: &[ExitObservation],
+) -> Option<ResourceParameterMode> {
+    if entry.out_slots[index].is_some() {
+        return out_mode(index, observations);
+    }
+    if entry.parameter_sites[index].is_none() {
+        return Some(ResourceParameterMode::Borrowed);
+    }
+    let mut disposition = None;
+    for observation in observations {
+        let current = observation.parameters[index]?;
+        match disposition {
+            None => disposition = Some(current),
+            Some(previous) if previous == current => {}
+            // Released on one path and live on another: no single mode.
+            Some(_) => return None,
+        }
+    }
+    match disposition? {
+        // The formal is bound because the body needs it live, and it is
+        // still live at every exit: the caller keeps custody.
+        SiteDisposition::Live => Some(ResourceParameterMode::Owned { nullable: false }),
+        SiteDisposition::Released => Some(ResourceParameterMode::Released { nullable: false }),
+        SiteDisposition::Escaped => Some(ResourceParameterMode::Consumed { nullable: false }),
+        SiteDisposition::Contained => stored_mode(index, entry, observations),
+        SiteDisposition::Absent | SiteDisposition::Mixed => None,
+    }
+}
+
+/// A formal the body attached to another formal's aggregate.
+///
+/// The owner is read off the containment the exit states record — the same
+/// relation a declared `Stored` contract installs at a call site — and it has
+/// to be the *same* caller-held formal at every exit. A resource attached to
+/// anything else (a local aggregate, or an owner that differs between paths)
+/// is a transfer no mode describes, and yields no summary.
+fn stored_mode(
+    index: usize,
+    entry: &EntryCustody,
+    observations: &[ExitObservation],
+) -> Option<ResourceParameterMode> {
+    let site = entry.parameter_sites[index]?;
+    let mut owner_parameter = None;
+    for observation in observations {
+        let mut owners = observation
+            .caller_containment
+            .iter()
+            .filter(|(_, children)| children.contains(&site))
+            .map(|(owner, _)| *owner);
+        let owner = owners.next()?;
+        if owners.next().is_some() {
+            return None;
+        }
+        let position = entry
+            .parameter_sites
+            .iter()
+            .position(|parameter| *parameter == Some(owner))?;
+        match owner_parameter {
+            None => owner_parameter = Some(position),
+            Some(previous) if previous == position => {}
+            Some(_) => return None,
+        }
+    }
+    Some(ResourceParameterMode::Stored {
+        owner_parameter: owner_parameter?,
+        nullable: false,
+    })
+}
+
+/// The mode an out slot's settled observations read as.
+///
+/// `Out` promises the caller a fresh resource in the slot on return, so every
+/// reachable exit has to have stored one. A slot left unwritten on some path
+/// leaves the caller's variable as it was, and a stored value the callee never
+/// resolved to non-null would hand back a resource that may not exist without
+/// saying so: both yield no summary. `nullable` is claimed only for the one
+/// determinate case — an exit that stores a null constant.
+fn out_mode(index: usize, observations: &[ExitObservation]) -> Option<ResourceParameterMode> {
+    let mut nullable = false;
+    let mut delivered = false;
+    for observation in observations {
+        match observation.out_slots[index]? {
+            OutSlotValue::Site {
+                nullable: site_nullable,
+                disposition,
+                ..
+            } => {
+                if site_nullable || disposition != SiteDisposition::Live {
+                    return None;
+                }
+                delivered = true;
+            }
+            OutSlotValue::Null => nullable = true,
+            OutSlotValue::Unwritten | OutSlotValue::Ambiguous => return None,
+        }
+    }
+    delivered.then_some(ResourceParameterMode::Out { nullable })
+}
+
+/// How one exit treats the formal a `Reallocated` result would name.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ReallocationExit {
+    /// The replacement is unresolved: the result may be null, and the old
+    /// resource is still live pending the caller's null test.
+    Pending,
+    /// The callee resolved the success case itself: the old resource is gone
+    /// and a definitely non-null fresh one is handed back.
+    Replaced,
+    /// The failure case: nothing is handed back and the caller keeps the old
+    /// resource.
+    Kept,
+}
+
+fn reallocation_exit(
+    observation: &ExitObservation,
+    index: usize,
+    site: usize,
+    parameter_sites: &BTreeSet<usize>,
+) -> Option<ReallocationExit> {
+    let disposition = observation.parameters.get(index).copied().flatten();
+    match observation.returned {
+        ReturnedValue::Ambiguous => None,
+        ReturnedValue::None => (observation.pending_replacements.is_empty()
+            && disposition == Some(SiteDisposition::Live))
+        .then_some(ReallocationExit::Kept),
+        ReturnedValue::Site {
+            site: returned,
+            nullable,
+            disposition: returned_disposition,
+        } => {
+            if parameter_sites.contains(&returned)
+                || returned_disposition != SiteDisposition::Escaped
+            {
+                return None;
+            }
+            match observation.pending_replacements.get(&returned) {
+                Some(replaced)
+                    if observation.pending_replacements.len() == 1
+                        && replaced.len() == 1
+                        && replaced.contains(&site) =>
+                {
+                    (nullable && disposition == Some(SiteDisposition::Live))
+                        .then_some(ReallocationExit::Pending)
+                }
+                None if observation.pending_replacements.is_empty() => (!nullable
+                    && disposition == Some(SiteDisposition::Released))
+                .then_some(ReallocationExit::Replaced),
+                _ => None,
+            }
+        }
+    }
+}
+
+/// The formal a `Reallocated` result would name, if one describes every exit.
+///
+/// Both outcomes have to be present: some exit hands back a fresh resource,
+/// and some exit leaves the old one with the caller. A body that releases its
+/// argument on *every* path is not a reallocation — it is a `Released` formal
+/// with an owned result, which `ordinary_contract` already derived and which
+/// is the summary a caller needs to avoid double-freeing the old pointer.
+fn reallocated_parameter(entry: &EntryCustody, observations: &[ExitObservation]) -> Option<usize> {
+    let parameter_sites = parameter_sites(entry);
+    (0..entry.parameter_sites.len()).find(|&index| {
+        let Some(site) = entry.parameter_sites[index] else {
+            return false;
+        };
+        let mut fresh = false;
+        let mut kept = false;
+        for observation in observations {
+            match reallocation_exit(observation, index, site, &parameter_sites) {
+                Some(ReallocationExit::Pending) => {
+                    fresh = true;
+                    kept = true;
+                }
+                Some(ReallocationExit::Replaced) => fresh = true,
+                Some(ReallocationExit::Kept) => kept = true,
+                None => return false,
+            }
+        }
+        fresh && kept
+    })
+}
+
+fn reallocated_contract(
+    entry: &EntryCustody,
+    observations: &[ExitObservation],
+) -> Option<ResourceFunctionContract> {
+    let parameter = reallocated_parameter(entry, observations)?;
+    let mut modes = Vec::with_capacity(entry.parameter_sites.len());
+    for index in 0..entry.parameter_sites.len() {
+        modes.push(if index == parameter {
+            // The caller must hand over a live non-null resource; what happens
+            // to it afterwards is what the result mode says, not this one.
+            ResourceParameterMode::Owned { nullable: false }
+        } else {
+            parameter_mode(index, entry, observations)?
+        });
+    }
+    Some(ResourceFunctionContract::new(
+        modes,
+        ResourceReturnMode::Reallocated {
+            parameter,
+            nullable: true,
+        },
+    ))
+}
+
+fn parameter_sites(entry: &EntryCustody) -> BTreeSet<usize> {
+    entry.parameter_sites.iter().flatten().copied().collect()
 }
 
 fn propose_result(
     entry: &EntryCustody,
     observations: &[ExitObservation],
 ) -> Option<ResourceReturnMode> {
-    let parameter_sites = entry
-        .parameter_sites
-        .iter()
-        .flatten()
-        .copied()
-        .collect::<BTreeSet<_>>();
+    let parameter_sites = parameter_sites(entry);
     let mut returns_nothing = false;
     let mut returned = Vec::new();
 
@@ -415,20 +662,19 @@ pub(crate) fn observations_match_contract(
     if contract.parameters.len() != entry.parameter_sites.len() {
         return false;
     }
-    let parameter_sites = entry
-        .parameter_sites
-        .iter()
-        .flatten()
-        .copied()
-        .collect::<BTreeSet<_>>();
+    let parameter_sites = parameter_sites(entry);
+    // (4) The containment the contract sanctions, and nothing else.
+    let Some(sanctioned) = sanctioned_containment(contract, entry) else {
+        return false;
+    };
     let reallocated = match contract.result {
         ResourceReturnMode::Reallocated { parameter, .. } => Some(parameter),
         _ => None,
     };
     observations.iter().all(|observation| {
-        // (4) Custody may not leak into a caller-owned aggregate unannounced.
-        !observation.attached_to_parameter
+        observation.caller_containment == sanctioned
             && observation.parameters.len() == contract.parameters.len()
+            && observation.out_slots.len() == contract.parameters.len()
             && contract
                 .parameters
                 .iter()
@@ -438,8 +684,88 @@ pub(crate) fn observations_match_contract(
                     reallocated == Some(index)
                         || parameter_matches(mode, observation.parameters[index])
                 })
-            && result_matches(contract, observation, &parameter_sites)
+            && out_slots_match(contract, observation, &parameter_sites)
+            && result_matches(contract, entry, observation, &parameter_sites)
     })
+}
+
+/// (4) The containment a contract sanctions: exactly one entry per `Stored`
+/// formal, attaching that formal's site to its declared owner's site.
+///
+/// Everything else attached to a site the caller holds refutes the summary,
+/// because such a transfer is invisible at the call site. `None` here means
+/// the contract itself is unusable — a `Stored` mode naming a formal that
+/// carries no site, or a resource stored inside itself.
+fn sanctioned_containment(
+    contract: &ResourceFunctionContract,
+    entry: &EntryCustody,
+) -> Option<BTreeMap<usize, BTreeSet<usize>>> {
+    let mut containment: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+    for (index, mode) in contract.parameters.iter().copied().enumerate() {
+        let ResourceParameterMode::Stored {
+            owner_parameter, ..
+        } = mode
+        else {
+            continue;
+        };
+        let child = entry.parameter_sites.get(index).copied().flatten()?;
+        let owner = entry
+            .parameter_sites
+            .get(owner_parameter)
+            .copied()
+            .flatten()?;
+        if owner == child {
+            return None;
+        }
+        containment.entry(owner).or_default().insert(child);
+    }
+    Some(containment)
+}
+
+/// (6) Every out slot's disposition at one exit, and the freshness of what the
+/// exit hands back.
+///
+/// Each resource the caller receives — through the result or through a slot —
+/// has to be a *distinct* site. Handing the same one back twice, or handing
+/// back a formal the caller already owns, would mint a second custody for one
+/// resource, which is the failure this whole pass exists to prevent.
+fn out_slots_match(
+    contract: &ResourceFunctionContract,
+    observation: &ExitObservation,
+    parameter_sites: &BTreeSet<usize>,
+) -> bool {
+    let mut claimed = BTreeSet::new();
+    if let ReturnedValue::Site { site, .. } = observation.returned {
+        claimed.insert(site);
+    }
+    contract
+        .parameters
+        .iter()
+        .copied()
+        .enumerate()
+        .all(|(index, mode)| {
+            let ResourceParameterMode::Out { nullable } = mode else {
+                // A formal the contract does not declare `Out` writes through
+                // no slot, so the analysis registered none for it.
+                return observation.out_slots[index].is_none();
+            };
+            match observation.out_slots[index] {
+                Some(OutSlotValue::Site {
+                    site,
+                    nullable: site_nullable,
+                    disposition,
+                }) => {
+                    disposition == SiteDisposition::Live
+                        && !site_nullable
+                        && !parameter_sites.contains(&site)
+                        && claimed.insert(site)
+                }
+                // A null store is only consistent with a slot the caller has
+                // been told to null-check.
+                Some(OutSlotValue::Null) => nullable,
+                _ => false,
+            }
+        })
 }
 
 /// (3) One formal's exit disposition against its declared mode.
@@ -456,8 +782,11 @@ fn parameter_matches(mode: ResourceParameterMode, observed: Option<SiteDispositi
     let (expected, nullable) = match mode {
         ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. } => return false,
         ResourceParameterMode::Owned { nullable }
-        | ResourceParameterMode::Stored { nullable, .. }
         | ResourceParameterMode::Removed { nullable, .. } => (SiteDisposition::Live, nullable),
+        // A stored formal ends up inside the owner's aggregate, not in the
+        // caller's direct custody; `sanctioned_containment` checks which
+        // aggregate it landed in.
+        ResourceParameterMode::Stored { nullable, .. } => (SiteDisposition::Contained, nullable),
         ResourceParameterMode::Consumed { nullable } => (SiteDisposition::Escaped, nullable),
         ResourceParameterMode::Released { nullable } => (SiteDisposition::Released, nullable),
     };
@@ -468,6 +797,7 @@ fn parameter_matches(mode: ResourceParameterMode, observed: Option<SiteDispositi
 /// (5) One exit's returned value against the declared result mode.
 fn result_matches(
     contract: &ResourceFunctionContract,
+    entry: &EntryCustody,
     observation: &ExitObservation,
     parameter_sites: &BTreeSet<usize>,
 ) -> bool {
@@ -491,14 +821,23 @@ fn result_matches(
                     && observation.pending_replacements.is_empty()
             }
         },
-        // A conditional replacement makes the argument's custody depend on
-        // whether the result was null, which this validator cannot confirm from
-        // a may-alias exit state: the analyzer refuses to escape a possibly-null
-        // place in the first place, so the shape never reaches a settled exit.
-        // A function declared `Reallocated` therefore falls back to the
-        // contract-free analysis rather than being certified against a claim
-        // that was never checked.
-        ResourceReturnMode::Reallocated { .. } => false,
+        // A reallocation makes the argument's custody depend on whether the
+        // result was null, so the exit has to exhibit one of the three shapes
+        // that dependence can take: an unresolved replacement, the success
+        // case the callee resolved itself, or the failure case that leaves the
+        // old resource with the caller. A non-nullable `Reallocated` describes
+        // no such dependence — it is a released formal with an owned result,
+        // and is validated as one — so it is refused here.
+        ResourceReturnMode::Reallocated {
+            parameter,
+            nullable,
+        } => match entry.parameter_sites.get(parameter).copied().flatten() {
+            Some(site) => {
+                nullable
+                    && reallocation_exit(observation, parameter, site, parameter_sites).is_some()
+            }
+            None => false,
+        },
     }
 }
 

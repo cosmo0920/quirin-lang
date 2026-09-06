@@ -7,6 +7,10 @@ Date: 2026-09-06. Status: W4 of the
 scope. Cycle 19's raw units remain **unpromoted**; nothing here changes the
 verdict contract, and the projection numbers below are coverage, not safety.
 
+The historical restrictions below are superseded for direct `Out`, `Stored`,
+`Reallocated` and nullable-return inference by the
+[2026-09-07 bounded extension](../w4-custody-extensions/README.md).
+
 ## What landed
 
 `compiler/src/legacy_summary.rs` adds a bottom-up, SCC-ordered summary pass over
