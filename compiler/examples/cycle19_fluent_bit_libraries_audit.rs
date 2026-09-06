@@ -688,6 +688,17 @@ fn audit_library(
                 file.combined_uncovered_paths().len()
             );
             filesystem_chunk = Some(file.clone());
+            let unsupported = qcore_compiler::verifier_plugins::chunkio::unsupported_close::check_unsupported_close_source(&file)?;
+            if file.combined_uncovered_paths() != [unsupported.source_path()] {
+                return Err("chunk close path partition has additional unclassified paths".into());
+            }
+            println!(
+                "qcore-custody cio_chunk_close unsupported backend: Unknown (complete symbolic int domain excluding {:?}; outer release preserves unresolved backend custody)",
+                unsupported.excluded_kinds()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"unsupported_chunk_close", "evidence":unsupported}),
+            );
             teardown_results
                 .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
         }

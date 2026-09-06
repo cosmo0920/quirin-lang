@@ -645,7 +645,7 @@ backend/path identities and no-delete cleanup/free sequence to rechecked unmap
 and native close dependencies. It retains 43 conditional cases: 17 have no
 nested obligation under the premises, while 26 fail the nested-discharge gate
 because OS custody remains unresolved despite backend allocation release.
-Deletion paths remain uncovered. Six Lean theorems, 371 workspace tests and
+Deletion paths remain uncovered. Eight Lean theorems, 371 workspace tests and
 required checks pass with unchanged prior verdicts/certificates. Actual outcome
 and caller/provenance binding, full sync/deletion handling, enclosing filesystem
 chunk close and the remaining lifecycle/event gates stay open.
@@ -656,7 +656,7 @@ The [short-circuit report](../reports/cycle19-short-circuit/README.md) adds boun
 `&&`/`||` condition paths to the shared typed importer, preserving left-to-right
 sequencing and skipped effects. The native deletion helper now has four retained
 source paths and a guarded-unlink-result policy, while deletion custody remains
-Unknown. Six Lean theorems, 375 workspace tests and required checks pass with
+Unknown. Eight Lean theorems, 375 workspace tests and required checks pass with
 byte-identical prior source/verdict evidence. Unsupported value contexts and
 path overflow still reject. Deletion outcomes, full sync/caller/OS binding,
 enclosing filesystem close and the wider lifecycle/event gates remain open.
@@ -803,3 +803,19 @@ all standing checks and identical pinned audit evidence. General callers, other
 failure combinations, full filesystem sync/OS guarantees, unsupported backend
 classification, aggregate custody, wrapper lifecycle and full event composition
 remain open. No raw unit is promoted.
+
+## Unsupported backend close classification (2026-09-06)
+
+The [unsupported close report](../reports/cycle19-unsupported-close/README.md)
+classifies the remaining nonnull `cio_chunk_close` path for the complete integer
+domain excluding the source-probed memory and filesystem constants. A symbolic
+class avoids representative-value sampling; extra backend comparisons, truth
+tests that split the class and changed effects reject. The source skips backend
+cleanup, releases both links/name/chunk and decrements only the total counter.
+Backend custody and constructor reachability stay unresolved, with explicit
+`Unknown` and no nested-discharge permission. Twelve native QCore clauses, four
+Rust tests and eight Lean theorems record that boundary. Existing null/memory/file
+certificates and aggregate verdicts remain unchanged. Propagating this opaque
+obligation through parent teardown, native caller/failure provenance, full
+filesystem guarantees, aggregate custody, wrapper lifecycle and full event
+composition remain open. No raw unit is promoted.

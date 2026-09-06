@@ -16,6 +16,7 @@ pub mod parent_teardown;
 pub mod teardown_source;
 pub mod traversal;
 pub mod unmap_wrapper;
+pub mod unsupported_close;
 pub use chunk_source::*;
 
 pub const PINNED_FLUENT_BIT_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";

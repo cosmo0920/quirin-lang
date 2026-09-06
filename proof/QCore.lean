@@ -1,4 +1,5 @@
 import QCore.GuardedDelete
+import QCore.UnsupportedClose
 import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.FilesystemChunkClose

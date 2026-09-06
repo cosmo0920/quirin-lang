@@ -90,13 +90,16 @@ run the pinned native constructors and complete context → stream → chunk →
 backend memory teardown under ASan, UBSan and leak checking. Five executions
 bind 82 allocation generations and 13 chunks to reciprocal rings and exact
 release order. The source chain also preserves unresolved OS custody through
-parent release in 26 of 43 conditional mixed-backend cases. All 400 workspace
+parent release in 26 of 43 conditional mixed-backend cases. All 404 workspace
 tests and the pinned audit pass; aggregate verdicts are unchanged. A further
 [nine allocation failures and control](docs/reports/cycle19-constructor-failures/README.md)
 account for 55 generations across rollback and teardown, preserving null-field
 successes and zero error outputs on backend failure. General caller/failure
 provenance, filesystem guarantees, aggregate custody, remaining wrapper lifecycle
-and full event composition remain open.
+and full event composition remain open. The
+[unsupported backend close classification](docs/reports/cycle19-unsupported-close/README.md)
+checks all other integer backend kinds symbolically: outer chunk release
+preserves unresolved backend custody, so the result remains `Unknown`.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

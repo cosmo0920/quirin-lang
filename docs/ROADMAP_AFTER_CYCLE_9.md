@@ -128,6 +128,10 @@ the filesystem/event gates remain open. A
 [controlled constructor failure matrix](reports/cycle19-constructor-failures/README.md)
 adds nine failures and one control with complete observed rollback/teardown
 accounting; returned null fields and error-output conventions remain explicit.
+The [unsupported close classification](reports/cycle19-unsupported-close/README.md)
+checks the remaining backend discriminant class symbolically. It retains an
+explicit `Unknown` after outer chunk release because backend custody and native
+constructor reachability are unresolved.
 
 ## Cycle 20: Verifier plugin ecosystem
 

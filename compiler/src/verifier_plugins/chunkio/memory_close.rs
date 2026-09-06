@@ -218,6 +218,7 @@ fn check(
                 nonnull,
                 memory_kind,
                 filesystem: false,
+                other_kind: None,
                 delete: false,
                 freed: false,
                 backend: false,
@@ -352,12 +353,16 @@ enum Value {
     PrimaryLink,
     StateLink,
     Integer(i32),
+    /// Any int except the two source-derived backend constants. Comparing this
+    /// class with any other integer must reject, rather than sample one value.
+    OtherBackend(i32, i32),
     Boolean(bool),
 }
 struct Replay<'a> {
     nonnull: bool,
     memory_kind: i32,
     filesystem: bool,
+    other_kind: Option<(i32, i32)>,
     delete: bool,
     freed: bool,
     backend: bool,
@@ -370,6 +375,15 @@ struct Replay<'a> {
     deps: &'a MemoryCloseDependencies,
 }
 impl Replay<'_> {
+    fn truth(value: Value) -> Result<bool, String> {
+        match value {
+            Value::OtherBackend(memory, file) if memory != 0 && file != 0 => {
+                Err("truth test splits the symbolic unsupported backend domain".into())
+            }
+            Value::Null | Value::Boolean(false) | Value::Integer(0) => Ok(false),
+            _ => Ok(true),
+        }
+    }
     fn value(&self, value: &SourceValue) -> Result<Value, String> {
         match &value.expression {
             Expr::Parameter { index: 0 } => Ok(if self.nonnull {
@@ -377,7 +391,7 @@ impl Replay<'_> {
             } else {
                 Value::Null
             }),
-            Expr::Parameter { index: 1 } if self.filesystem => {
+            Expr::Parameter { index: 1 } if self.filesystem || self.other_kind.is_some() => {
                 Ok(Value::Integer(i32::from(self.delete)))
             }
             Expr::Symbol { operation } => self
@@ -392,10 +406,9 @@ impl Replay<'_> {
             Expr::Cast { cast, value } if matches!(cast.as_str(), "BitCast" | "NoOp") => {
                 self.value(value)
             }
-            Expr::Unary { operator, value } if operator == "!" => Ok(Value::Boolean(matches!(
-                self.value(value)?,
-                Value::Null | Value::Boolean(false) | Value::Integer(0)
-            ))),
+            Expr::Unary { operator, value } if operator == "!" => {
+                Ok(Value::Boolean(!Self::truth(self.value(value)?)?))
+            }
             Expr::Binary {
                 operator,
                 left,
@@ -409,6 +422,20 @@ impl Replay<'_> {
                 };
                 let left = integer_bool(self.value(left)?);
                 let right = integer_bool(self.value(right)?);
+                if let (Value::OtherBackend(memory, file), Value::Integer(value))
+                | (Value::Integer(value), Value::OtherBackend(memory, file)) = (&left, &right)
+                {
+                    return if value == memory || value == file {
+                        Ok(Value::Boolean(false))
+                    } else {
+                        Err("backend comparison splits the symbolic unsupported domain".into())
+                    };
+                }
+                if matches!(left, Value::OtherBackend(..))
+                    || matches!(right, Value::OtherBackend(..))
+                {
+                    return Err("unmodeled symbolic backend comparison".into());
+                }
                 if matches!(&left, Value::Integer(_)) != matches!(&right, Value::Integer(_)) {
                     return Err("mixed pointer/integer close comparison".into());
                 }
@@ -438,10 +465,7 @@ impl Replay<'_> {
             match op {
                 Op::Guard { condition, taken } => {
                     let value = self.value(condition)?;
-                    let truth = !matches!(
-                        value,
-                        Value::Null | Value::Boolean(false) | Value::Integer(0)
-                    );
+                    let truth = Self::truth(value)?;
                     if truth != *taken {
                         return Ok(false);
                     }
@@ -463,9 +487,11 @@ impl Replay<'_> {
                         (Value::Chunk, "name") if !self.name && place.c_type == "char *" => {
                             Value::Name
                         }
-                        (Value::Stream, "type") if place.c_type == "int" => {
-                            Value::Integer(self.memory_kind)
-                        }
+                        (Value::Stream, "type") if place.c_type == "int" => self
+                            .other_kind
+                            .map_or(Value::Integer(self.memory_kind), |(m, f)| {
+                                Value::OtherBackend(m, f)
+                            }),
                         _ => return Err("close read lacks modeled provenance".into()),
                     };
                     self.symbols.insert(index, v);
@@ -494,6 +520,7 @@ impl Replay<'_> {
                     {
                     } else if !self.freed
                         && !self.backend
+                        && self.other_kind.is_none()
                         && if self.filesystem {
                             function == "cio_file_close"
                                 && signature == "void (struct cio_chunk *, int)"
@@ -510,7 +537,7 @@ impl Replay<'_> {
                     } else if function == self.deps.unlink.source().function()
                         && signature == self.deps.unlink.source().signature()
                         && !self.freed
-                        && self.backend
+                        && (self.backend || self.other_kind.is_some())
                     {
                         match args.as_slice() {
                             [Value::PrimaryLink] if !self.primary => self.primary = true,
@@ -520,7 +547,7 @@ impl Replay<'_> {
                     } else if function == "free"
                         && signature == "void (void *)"
                         && result_type == "void"
-                        && self.backend
+                        && (self.backend || self.other_kind.is_some())
                         && self.primary
                         && self.state_link
                     {
@@ -599,6 +626,7 @@ pub(super) fn filesystem_path(
             nonnull,
             memory_kind: kind,
             filesystem: true,
+            other_kind: None,
             delete,
             freed: false,
             backend: false,
@@ -630,6 +658,53 @@ pub(super) fn filesystem_path(
     }
     let [index] = selected.as_slice() else {
         return Err("filesystem chunk entry must select exactly one complete source path".into());
+    };
+    Ok(*index)
+}
+
+/// The symbolic class excludes exactly the source-probed memory/file values.
+/// No representative integer stands in for arbitrary unmodeled discriminants.
+pub(super) fn unsupported_path(
+    memory: &MemoryCloseCertificate,
+    filesystem_kind: i32,
+    delete: bool,
+) -> Result<usize, String> {
+    let mut selected = Vec::new();
+    for (index, path) in memory.source.paths().iter().enumerate() {
+        let mut replay = Replay {
+            nonnull: true,
+            memory_kind: memory.memory_kind()?,
+            filesystem: false,
+            other_kind: Some((memory.memory_kind()?, filesystem_kind)),
+            delete,
+            freed: false,
+            backend: false,
+            primary: false,
+            state_link: false,
+            name: false,
+            counter: false,
+            calls: 0,
+            symbols: BTreeMap::new(),
+            deps: &memory.dependencies,
+        };
+        if replay.run(&path.operations)? {
+            if !replay.freed
+                || !replay.primary
+                || !replay.state_link
+                || !replay.name
+                || !replay.counter
+                || replay.backend
+                || replay.calls != 6
+            {
+                return Err(
+                    "unsupported backend path lacks the exact partial release chain".into(),
+                );
+            }
+            selected.push(index);
+        }
+    }
+    let [index] = selected.as_slice() else {
+        return Err("unsupported backend class must select one complete source path".into());
     };
     Ok(*index)
 }

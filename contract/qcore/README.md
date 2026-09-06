@@ -304,3 +304,11 @@ observed allocation. Null optional fields, a null chunk name on a successful
 return, and unchanged zero error output on backend failure remain explicit
 observations, not general API guarantees. See the
 [constructor failure report](../../docs/reports/cycle19-constructor-failures/README.md).
+
+`chunkio/unsupported_close.qcore` specifies the conditional partial release for
+all non-memory/non-filesystem integer backend kinds. The source interpreter
+uses an excluded-constant symbolic class and rejects any further split of that
+domain. Both links, name and chunk are released and the total counter decrements;
+backend custody remains unresolved. This 12-clause policy cannot establish a
+reachable caller, successful backing deletion or nested discharge. See the
+[unsupported close report](../../docs/reports/cycle19-unsupported-close/README.md).

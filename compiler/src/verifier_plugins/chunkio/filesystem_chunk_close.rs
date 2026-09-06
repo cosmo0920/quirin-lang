@@ -60,6 +60,9 @@ impl FilesystemChunkCloseEvidence {
     pub(super) fn memory_scope(&self) -> &MemoryCloseCertificate {
         &self.memory_scope
     }
+    pub(super) fn filesystem_kind_probe(&self) -> &SourceSummary {
+        &self.filesystem_kind_probe
+    }
     pub fn cases(&self) -> &[FilesystemChunkCloseCase] {
         &self.cases
     }

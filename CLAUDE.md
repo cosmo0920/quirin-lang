@@ -5,10 +5,11 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-constructor-failures/README.md` and the AGENTS.md status
+  `docs/reports/cycle19-unsupported-close/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/
   ring provenance and rollback. General caller/failure, filesystem and event-
-  composition gates remain open.
+  composition gates remain open. Unsupported backend close now has a symbolic
+  partial-release classification with unresolved backend custody and `Unknown`.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants

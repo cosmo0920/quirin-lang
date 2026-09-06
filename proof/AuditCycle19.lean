@@ -1,4 +1,5 @@
 import QCore.NativeTeardownObservation
+import QCore.UnsupportedClose
 import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
@@ -285,3 +286,12 @@ import QCore.ChunkSource
 
 #print axioms QCore.NativeTeardownObservation.rollback_and_teardown_conserve_count
 #print axioms QCore.NativeTeardownObservation.rollback_and_teardown_are_disjoint
+
+#print axioms QCore.UnsupportedClose.finish_preserves_backend_obligations
+#print axioms QCore.UnsupportedClose.finish_decrements_only_total
+#print axioms QCore.UnsupportedClose.unclassified_backend_cannot_discharge
+#print axioms QCore.UnsupportedClose.finish_cannot_establish_discharge
+#print axioms QCore.UnsupportedClose.zero_total_rejects
+#print axioms QCore.UnsupportedClose.duplicate_release_rejects
+#print axioms QCore.UnsupportedClose.symbolic_class_skips_both_backend_guards
+#print axioms QCore.UnsupportedClose.zero_belongs_unless_explicitly_excluded
