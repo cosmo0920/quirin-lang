@@ -180,6 +180,8 @@ pub struct DerivationInputs<'a> {
     pub contract_sources: BTreeMap<String, String>,
     /// Hooks the provider's manifest declares it requires observations for.
     pub required_observation_hooks: BTreeSet<String>,
+    /// Caller conditions are preserved. Observation derivation adds its required
+    /// conditional trust flag only when absent; explicit false fails closed.
     pub assumptions: BTreeMap<String, bool>,
 }
 
@@ -755,7 +757,18 @@ fn derive_observation_hooks(
     // Recorded observations are a declared trusted assumption (plan §2.6), so
     // the assumption is named on the task and echoed by every certificate
     // rather than being laundered into an unqualified `Safe`.
-    task.assumptions.insert("observations_trusted".into(), true);
+    // An omitted flag requests the design's conditional observation claim;
+    // an explicit refusal must never be rewritten into permission to trust.
+    let trusted = *task
+        .assumptions
+        .entry("observations_trusted".into())
+        .or_insert(true);
+    if !trusted {
+        task.derivation_incomplete.push(DerivationIncomplete {
+            capability,
+            reason: "caller refuses the observations_trusted assumption required for recorded observation replay".into(),
+        });
+    }
     task.bounds = TaskBounds::observed_runs();
     let mut inventory = ObservationInventory {
         contract_sources: inputs.contract_sources.clone(),

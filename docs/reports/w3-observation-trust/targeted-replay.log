@@ -1,0 +1,15 @@
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-host-extraction/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.89s
+     Running tests/w3_evidence_v2.rs (target/debug/deps/w3_evidence_v2-40ae3eca604b59f3)
+
+running 7 tests
+test explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate ... ok
+test composition_requires_exact_nonempty_inventory ... ok
+test complete_scope_dispatch_replays_observations_and_retains_claim_bounds ... ok
+test task_envelope_cannot_be_rebound_and_incomplete_derivations_stay_unknown ... ok
+test replay_requires_declared_trust_and_observed_run_bounds ... ok
+test malicious_v2_proposals_cannot_change_the_denominator_or_replay ... ok
+test out_of_process_v2_conformance_replays_and_rejects_a_forged_observation ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.31s
+

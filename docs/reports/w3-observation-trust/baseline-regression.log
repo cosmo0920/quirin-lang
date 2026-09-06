@@ -1,0 +1,24 @@
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-host-extraction/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running tests/w3_evidence_v2.rs (target/debug/deps/w3_evidence_v2-40ae3eca604b59f3)
+
+running 1 test
+test explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate ... FAILED
+
+failures:
+
+---- explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate stdout ----
+
+thread 'explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate' (146) panicked at compiler/tests/w3_evidence_v2.rs:410:5:
+assertion `left == right` failed
+  left: Some(true)
+ right: Some(false)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-compiler --test w3_evidence_v2`

@@ -10,6 +10,8 @@ structure Task where
   complete : Bool
   requiredHooks : List Nat
   expectedOutput : Nat
+  observationsTrusted : Bool
+  observedRunsOnly : Bool
   deriving DecidableEq, Repr
 
 structure Observation where
@@ -29,7 +31,8 @@ def Accepts (task : Task) (records : List Observation) : Prop :=
   task.complete = true ∧ task.requiredHooks ≠ [] ∧
   task.requiredHooks.all (fun hook => records.any (counts task hook)) = true ∧
   records.all (fun record =>
-    !(meetsPrecondition record) || meetsPostcondition task record) = true
+    !(meetsPrecondition record) || meetsPostcondition task record) = true ∧
+  task.observationsTrusted = true ∧ task.observedRunsOnly = true
 
 instance (task : Task) (records : List Observation) : Decidable (Accepts task records) := by
   unfold Accepts
@@ -67,5 +70,30 @@ theorem false_precondition_never_counts (task : Task) (hook : Nat)
     (record : Observation) (outside : record.input = 0) :
     counts task hook record = false := by
   simp [counts, meetsPrecondition, outside]
+
+/-- Record the conditional trust requirement without overriding explicit refusal. -/
+def applyObservationTrust (declared : Option Bool) (task : Task) : Task :=
+  { task with
+    observationsTrusted := declared.getD true
+    observedRunsOnly := true
+    complete := task.complete && declared.getD true }
+
+theorem accepted_requires_observation_trust_and_bounds
+    (task : Task) (records : List Observation) (accepted : replay task records = true) :
+    task.observationsTrusted = true ∧ task.observedRunsOnly = true := by
+  have valid : Accepts task records := of_decide_eq_true accepted
+  exact valid.2.2.2.2
+
+theorem explicit_refusal_is_preserved (task : Task) :
+    (applyObservationTrust (some false) task).observationsTrusted = false := by
+  rfl
+
+theorem explicit_refusal_derivation_rejects (task : Task) (records : List Observation) :
+    replay (applyObservationTrust (some false) task) records = false := by
+  simp [applyObservationTrust, replay, Accepts]
+
+theorem absent_flag_names_conditional_trust (task : Task) :
+    (applyObservationTrust none task).observationsTrusted = true := by
+  rfl
 
 end QCore.VerifierEvidenceV2

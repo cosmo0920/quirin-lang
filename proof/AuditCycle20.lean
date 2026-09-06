@@ -15,3 +15,8 @@ import QCore.VerifierPlugin
 #print axioms QCore.VerifierEvidenceV2.incomplete_inventory_rejects
 #print axioms QCore.VerifierEvidenceV2.empty_inventory_rejects
 #print axioms QCore.VerifierEvidenceV2.false_precondition_never_counts
+
+#print axioms QCore.VerifierEvidenceV2.accepted_requires_observation_trust_and_bounds
+#print axioms QCore.VerifierEvidenceV2.explicit_refusal_is_preserved
+#print axioms QCore.VerifierEvidenceV2.explicit_refusal_derivation_rejects
+#print axioms QCore.VerifierEvidenceV2.absent_flag_names_conditional_trust
