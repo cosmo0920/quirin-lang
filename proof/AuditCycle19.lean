@@ -1,3 +1,4 @@
+import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.UnmapWrapper
@@ -227,3 +228,13 @@ import QCore.ChunkSource
 #print axioms QCore.ShortCircuit.or_result_is_disjunction
 
 #print axioms QCore.ShortCircuit.skipped_right_cannot_change_result
+
+#print axioms QCore.GuardedDelete.active_descriptor_blocks_delete
+
+#print axioms QCore.GuardedDelete.active_mapping_blocks_delete
+
+#print axioms QCore.GuardedDelete.eligible_failure_is_reported
+
+#print axioms QCore.GuardedDelete.eligible_success_returns_zero
+
+#print axioms QCore.GuardedDelete.delete_preserves_record_and_path

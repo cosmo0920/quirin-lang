@@ -459,3 +459,153 @@ impl<'a> Replay<'a> {
         Err("cleanup path lacks terminal return".into())
     }
 }
+
+/// Conditional deletion of backing content. The record and its path allocation
+/// remain live; only a successful external syscall can establish content removal.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct GuardedDeleteCase {
+    pub descriptor_field_active: bool,
+    pub mapping_field_active: bool,
+    pub syscall_result: Option<i32>,
+    pub source_path: usize,
+    pub returned: i32,
+    pub syscall_calls: usize,
+    pub diagnostic_calls: usize,
+    pub fields_preserved: bool,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct GuardedDeleteCertificate {
+    source: SourceSummary,
+    profile: CleanupProfile,
+    mapping_field: String,
+    contract_source: String,
+    cases: Vec<GuardedDeleteCase>,
+}
+impl GuardedDeleteCertificate {
+    pub fn source(&self) -> &SourceSummary {
+        &self.source
+    }
+    pub fn cases(&self) -> &[GuardedDeleteCase] {
+        &self.cases
+    }
+}
+
+pub fn check_guarded_delete_outcomes(
+    source: &SourceSummary,
+    profile: &CleanupProfile,
+    mapping_field: &str,
+    contract: &str,
+) -> Result<GuardedDeleteCertificate, String> {
+    let field = |name: &str| profile.fields.iter().find(|f| f.name == name);
+    let [path_field] = profile.argument_fields.as_slice() else {
+        return Err("delete requires one path argument".into());
+    };
+    if source.function() != profile.function
+        || source.signature() != format!("int ({})", profile.root_type)
+        || source.has_scan_loop()
+        || profile.fields.len() != 3
+        || profile
+            .fields
+            .iter()
+            .map(|f| &f.name)
+            .collect::<BTreeSet<_>>()
+            .len()
+            != 3
+        || path_field == mapping_field
+        || path_field == &profile.presence_field
+        || mapping_field == profile.presence_field
+        || !field(&profile.presence_field)
+            .is_some_and(|f| f.c_type == "int" && f.reset == ResetValue::Integer(-1))
+        || !field(mapping_field)
+            .is_some_and(|f| f.c_type == "char *" && f.reset == ResetValue::Null)
+        || !field(path_field).is_some_and(|f| f.c_type == "char *" && f.reset == ResetValue::Null)
+    {
+        return Err("guarded delete source/field profile mismatch".into());
+    }
+    let mut cases = Vec::new();
+    let mut covered = BTreeSet::new();
+    for (open, mapped, outcome) in [
+        (true, false, None),
+        (true, true, None),
+        (false, true, None),
+        (false, false, Some(-1)),
+        (false, false, Some(0)),
+    ] {
+        let mut selected = Vec::new();
+        for (index, path) in source.paths().iter().enumerate() {
+            let mut replay = Replay::new(profile, CleanupEntry::Present, outcome);
+            if !open {
+                replay
+                    .fields
+                    .insert(profile.presence_field.clone(), Value::Integer(-1));
+            }
+            if !mapped {
+                replay.fields.insert(mapping_field.into(), Value::Null);
+            }
+            replay.initial = replay.fields.clone();
+            if let Some(returned) = replay.run(&path.operations)? {
+                let preserved = replay.fields == replay.initial && replay.writes.is_empty();
+                let success = outcome == Some(0);
+                if !preserved
+                    || returned != if success { 0 } else { -1 }
+                    || replay.calls != usize::from(outcome.is_some())
+                    || replay.errno_calls != usize::from(outcome == Some(-1))
+                    || replay.reports != replay.errno_calls
+                {
+                    return Err(
+                        "guarded delete violates eligibility/outcome/frame transition".into(),
+                    );
+                }
+                crate::contract_observation::check_contract_facts(
+                    contract,
+                    &profile.policy,
+                    &[
+                        ("nonnull_live_exclusive_record", 1),
+                        ("path_is_live_readable_terminated_string", 1),
+                        (
+                            "syscall_returns_zero_or_minus_one_and_frames_record_and_path",
+                            1,
+                        ),
+                        ("diagnostics_return_and_frame_record_and_path", 1),
+                        ("source_and_abi_bindings", 1),
+                        ("descriptor_field_active", i128::from(open)),
+                        ("mapping_field_active", i128::from(mapped)),
+                        ("syscall_calls", replay.calls as i128),
+                        ("syscall_succeeded", i128::from(success)),
+                        ("syscall_failed", i128::from(outcome == Some(-1))),
+                        ("diagnostic_calls", replay.reports as i128),
+                        ("returned", i128::from(returned)),
+                        ("fields_preserved", i128::from(preserved)),
+                        ("record_and_path_allocations_preserved", 1),
+                    ],
+                )?;
+                selected.push(GuardedDeleteCase {
+                    descriptor_field_active: open,
+                    mapping_field_active: mapped,
+                    syscall_result: outcome,
+                    source_path: index,
+                    returned,
+                    syscall_calls: replay.calls,
+                    diagnostic_calls: replay.reports,
+                    fields_preserved: preserved,
+                });
+            }
+        }
+        if selected.len() != 1 {
+            return Err("delete entry/outcome must select exactly one complete source path".into());
+        }
+        let case = selected.remove(0);
+        covered.insert(case.source_path);
+        cases.push(case);
+    }
+    if covered.len() != source.paths().len() {
+        return Err("delete has uncovered source paths".into());
+    }
+    Ok(GuardedDeleteCertificate {
+        source: source.clone(),
+        profile: profile.clone(),
+        mapping_field: mapping_field.into(),
+        contract_source: contract.into(),
+        cases,
+    })
+}

@@ -559,6 +559,18 @@ fn audit_library(
             );
         }
         if library == "chunkio" && file == "cio_file_unix.c" {
+            let deletion =
+                qcore_compiler::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+                    &unit,
+                    PINNED_FLUENT_BIT_COMMIT,
+                )?;
+            println!(
+                "qcore-outcomes cio_file_native_delete: Checked ({} eligibility/outcome cases; unlink framing assumed)",
+                deletion.cases().len()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}),
+            );
             let delete =
                 qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_delete_source(
                     &unit,

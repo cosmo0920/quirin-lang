@@ -1,3 +1,4 @@
+import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.UnmapWrapper

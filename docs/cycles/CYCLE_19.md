@@ -670,3 +670,13 @@ and required checks pass. Apart from the exact strengthened contract texts,
 all source/case/effect/residual evidence and generic verdicts remain unchanged.
 Caller allocation provenance remains an obligation, and Cycle 19's outstanding
 deletion, sync, OS binding, traversal and event-composition work stays open.
+
+## Native deletion outcomes (2026-09-06)
+
+The [deletion outcome report](../reports/cycle19-delete-outcomes/README.md) binds
+five eligibility/outcome cases to all four native delete source paths. It checks
+original path identity, return/diagnostic behavior and unchanged allocations
+under explicit path/lifetime/external-call premises. Five Lean theorems and 378
+workspace tests pass with every required check and identical prior evidence.
+Actual deletion observation and outer deleting-close composition remain open,
+along with full sync, OS/provenance binding, traversal and event composition.

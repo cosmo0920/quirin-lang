@@ -1,0 +1,20 @@
+module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, not proof of current OS custody. Unlink/diagnostic effects
+// are framed premises. Deleting content never frees the record or path storage.
+extern fn native_delete_outcomes() -> unit
+contract {
+    requires nonnull_live_exclusive_record;
+    requires path_is_live_readable_terminated_string;
+    requires syscall_returns_zero_or_minus_one_and_frames_record_and_path;
+    requires diagnostics_return_and_frame_record_and_path;
+    requires source_and_abi_bindings;
+    ensures normal syscall_calls == (not descriptor_field_active and not mapping_field_active);
+    ensures normal not (descriptor_field_active or mapping_field_active) or returned == -1;
+    ensures normal not syscall_failed or returned == -1;
+    ensures normal not syscall_succeeded or returned == 0;
+    ensures normal diagnostic_calls == syscall_failed;
+    ensures normal fields_preserved;
+    ensures normal record_and_path_allocations_preserved;
+};

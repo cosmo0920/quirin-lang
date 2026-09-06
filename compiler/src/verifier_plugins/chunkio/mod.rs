@@ -6,6 +6,7 @@
 pub mod chunk_source;
 pub mod file_attempts;
 pub mod file_close;
+pub mod file_delete;
 pub mod file_outcomes;
 pub mod memory_close;
 pub mod teardown_source;

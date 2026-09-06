@@ -254,3 +254,8 @@ unmap's chunk/backend/context/stream storage is disjoint, and file close's owned
 backend/path are disjoint from the borrowed chunk root. Both policies have 17
 clauses. These remain caller provenance obligations; see the
 [cleanup frame report](../../docs/reports/cycle19-cleanup-frames/README.md).
+
+`chunkio/filesystem_delete.qcore` checks native deletion eligibility and both
+unlink outcomes without consuming record/path allocations. Its nonnull record,
+readable path and external-call frames remain explicit premises. See the
+[native deletion report](../../docs/reports/cycle19-delete-outcomes/README.md).
