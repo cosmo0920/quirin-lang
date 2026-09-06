@@ -149,6 +149,13 @@ OS residual identities after injected unmap/close failures and cleanup after
 sync failure. These bounded cases account for 66 allocation generations without
 closing general filesystem or static custody gates.
 
+[Twelve filesystem allocation-failure/control processes](reports/cycle19-file-constructor-failures/README.md)
+add 81 acquired generations, 73 recorded releases and eight outstanding prefix
+generations. Two null-argument UBSan terminations preserve interrupted execution;
+only ten returning cases complete teardown and leak checking. Next constructor
+work includes other options, OS failures and multiple-failure combinations;
+source-wide caller/custody and wrapper/event gates remain open.
+
 ## Cycle 20: Verifier plugin ecosystem
 
 **Status: active; foundation implemented, semantic dispatch and provider parity

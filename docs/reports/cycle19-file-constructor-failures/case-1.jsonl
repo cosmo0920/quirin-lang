@@ -1,0 +1,7 @@
+{"case":101,"sequence":0,"kind":"begin_file_failure","schema_version":1,"fail_at":1,"root_length":27}
+{"case":101,"sequence":1,"kind":"attempt","ordinal":1,"allocator":"calloc","size":136,"failed":1}
+{"case":101,"sequence":2,"kind":"context_result","context":0,"chmod":0,"root":0}
+{"case":101,"sequence":3,"kind":"constructor_result","context":0,"stream":0,"chunk":0,"error":-999,"attempts":1}
+{"case":101,"sequence":4,"kind":"enter","function":"cio_destroy"}
+{"case":101,"sequence":5,"kind":"exit","function":"cio_destroy"}
+{"case":101,"sequence":6,"kind":"end","live_allocations":0}

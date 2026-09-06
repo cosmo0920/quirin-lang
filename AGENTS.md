@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (49 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (50 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -76,9 +76,14 @@ It also ships a conservative checker for *existing* C source (the
   one-file constructor/teardown cases account for 66 allocation generations.
   Suppressed unmap/close calls returning EIO leave observed mapping/descriptor
   residuals after parent free; failed sync still allows cleanup. These fixtures
-  do not prove general filesystem callers, failures or durability. Latest evidence:
-  `docs/reports/cycle19-file-tree/README.md` (407 workspace tests,
-  49 contract modules; prior source/verdict parity preserved).
+  do not prove general filesystem callers, failures or durability. Twelve filesystem
+  allocation-failure/control processes now account for 81 acquired generations:
+  73 recorded releases and eight outstanding prefix generations across two UBSan
+  null-argument terminations. Ten returning cases complete leak checking; the two
+  interrupted cases do not establish teardown. Failed root/chunk-name copies,
+  null chmod success and a stream returned without a directory stay distinct.
+  Latest evidence: `docs/reports/cycle19-file-constructor-failures/README.md`
+  (407 workspace tests, 50 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

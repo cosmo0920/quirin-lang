@@ -123,8 +123,10 @@ static void observe_file(unsigned number) {
     assert(rmdir(stream_path)==0 && rmdir(root)==0);
     prefix("end");printf(",\"live_allocations\":%u,\"fixture_cleanup_complete\":1}\n",live);
 }
+#ifndef QCORE_FILE_OBSERVER_NO_MAIN
 int main(void) {
     backend_snapshot_hook=file_snapshot;before_free_hook=file_before_free;extra_function_name=file_function;
     for(unsigned i=0;i<6;i++) observe_file(i);
     return 0;
 }
+#endif

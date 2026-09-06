@@ -1,0 +1,10 @@
+/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:65:18: runtime error: null pointer passed as argument 1, which is declared to never be null
+/usr/include/string.h:440:33: note: nonnull attribute specified here
+    #0 0x572f8bc21a49 in check_stream_path /home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:65:11
+    #1 0x572f8bc21309 in cio_stream_create /home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:151:15
+    #2 0x572f8bbfb581 in main /home/cosmo/Documents/GitHub/qcore-c/compiler/examples/chunk_file_constructor_failure_observation.c:47:14
+    #3 0x723bd1c2a600 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #4 0x723bd1c2a717 in __libc_start_main csu/../csu/libc-start.c:360:3
+    #5 0x572f8bb0e4e4 in _start (/tmp/cycle19-file-constructor-failures/chunk_file_constructor_failure_observation+0x4b4e4) (BuildId: d1b56969811187b6668dded2709276ab017e729f)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/src/cio_stream.c:65:18 

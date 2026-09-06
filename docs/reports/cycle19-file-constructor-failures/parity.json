@@ -1,0 +1,6 @@
+{
+  "source.json": true,
+  "diagnostics.json": true,
+  "diagnostics.chunk-contracts.json": true,
+  "diagnostics.contracts.json": true
+}

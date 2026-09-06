@@ -1,0 +1,23 @@
+module contract;
+
+// Bounded native ENOMEM observations. Interrupted prefixes retain their
+// unreleased generations; process exit and fixture removal are not C teardown.
+extern fn native_file_constructor_failure_observation() -> unit
+contract {
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_fixture;
+    ensures normal exact_constructor_prefix;
+    ensures normal attempts == expected_attempts;
+    ensures normal injected_failures == expected_failures;
+    ensures normal exact_native_outcome;
+    ensures normal allocations == releases + prefix_outstanding;
+    ensures normal releases == transient_releases + rollback_releases + teardown_releases;
+    ensures normal teardown_completed + sanitizer_interrupted == 1;
+    ensures normal not teardown_completed or prefix_outstanding == 0;
+    ensures normal not sanitizer_interrupted or prefix_outstanding > 0;
+    ensures normal not sanitizer_interrupted or teardown_releases == 0;
+    ensures normal native_leak_check_completed == teardown_completed;
+    ensures normal fixture_cleanup_complete;
+    ensures normal static_certificate == 0;
+    ensures normal durability_proved == 0;
+};

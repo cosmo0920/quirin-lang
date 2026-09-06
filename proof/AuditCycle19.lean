@@ -310,3 +310,7 @@ import QCore.ChunkSource
 #print axioms QCore.NativeOsObservation.accepted_teardown_preserves_residual_identity
 #print axioms QCore.NativeOsObservation.live_residual_prevents_empty_terminal
 #print axioms QCore.NativeOsObservation.released_allocations_can_coexist_with_mapping_residual
+#print axioms QCore.NativeOsObservation.accepted_prefix_conserves_generations
+#print axioms QCore.NativeOsObservation.interrupted_prefix_cannot_claim_teardown
+#print axioms QCore.NativeOsObservation.completed_prefix_has_no_outstanding_generations
+#print axioms QCore.NativeOsObservation.accepted_prefix_never_promotes_static

@@ -882,3 +882,18 @@ regressions and pinned source/verdict parity pass. These fixed one-file Linux
 cases do not prove general constructor/caller/failure paths, full sync/durability,
 aggregate source custody, remaining wrapper lifecycle or full event composition.
 Cycle 19 remains in progress and no raw unit is promoted.
+
+## Native filesystem constructor allocation failures (2026-09-06)
+
+The [filesystem constructor failure report](../reports/cycle19-file-constructor-failures/README.md)
+records eleven ENOMEM injections and a control in fresh native processes. Ten
+returning cases complete teardown and leak checking. Two UBSan null-argument
+terminations after failed root/chunk-name copying retain incomplete prefixes:
+no constructor result or completed teardown is invented. The 81 acquired
+generations partition into 17 temporary, 10 rollback and 46 teardown releases,
+plus eight outstanding prefix generations. A returned stream without a directory
+and subsequent ENOENT chunk failure remains distinct from null-stream rollback.
+A 16-clause policy, 55 trace/process mutations and four Lean prefix-accounting
+theorems preserve these boundaries. General callers/options, multiple failures,
+OS failure combinations, full sync/durability, aggregate source custody, remaining
+wrapper lifecycle and full event composition remain open. No raw unit is promoted.
