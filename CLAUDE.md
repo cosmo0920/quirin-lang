@@ -5,7 +5,7 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-file-os-constructors/README.md` and the AGENTS.md status
+  `docs/reports/cycle19-file-existing/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/
   ring provenance and rollback. General caller/failure, filesystem and event-
   composition gates remain open. Unsupported backend close now has a symbolic
@@ -26,7 +26,10 @@ Claude-specific additions:
   further constructor OS-failure/control processes release all 88 generations;
   a suppressed rollback close retains the original descriptor/inode after null
   chunk return and parent release. POSIX resize return values and errno remain
-  separate. These observations do not establish arbitrary kernel failure rules.
+  separate. Seven existing-file profiles additionally release all 70 generations,
+  preserving original inode/content, distinct corrupted/read-only errors and
+  descriptor custody after suppressed chmod/rollback-close failures. These
+  observations do not establish arbitrary kernel failure rules.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants

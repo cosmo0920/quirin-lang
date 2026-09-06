@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (51 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (52 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -87,8 +87,12 @@ It also ships a conservative checker for *existing* C source (the
   suppressed mapping plus rollback-close failures retain the original descriptor/
   inode after null chunk return and parent release. Harness reclamation is separate.
   These observations do not prove arbitrary kernel failure post-states.
-  Latest evidence: `docs/reports/cycle19-file-os-constructors/README.md`
-  (407 workspace tests, 51 contract modules; prior source/verdict parity preserved).
+  Seven existing-file profiles release all 70 allocation generations while
+  retaining original inode/content and distinct corruption/read-only errors.
+  Suppressed chmod plus rollback-close failures preserve descriptor custody after
+  parent release; harness reclamation stays separate. General profiles remain open.
+  Latest evidence: `docs/reports/cycle19-file-existing/README.md`
+  (407 workspace tests, 52 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

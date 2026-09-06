@@ -913,3 +913,15 @@ Arbitrary callers/options, ACL failures, existing-file and residency/transaction
 paths, other combined OS failures, full sync/durability, aggregate source custody,
 remaining wrapper lifecycle and full event composition remain open. No raw unit
 is promoted.
+
+## Existing-file profile observations (2026-09-06)
+
+[Seven native existing-file profiles](../reports/cycle19-file-existing/README.md)
+release all 70 allocation generations: seven temporary, 20 rollback and 43
+parent-teardown releases. Original inode/bytes, read-only mapping permissions,
+malformed-magic/short-header/empty-read-only errors and a descriptor residual
+after suppressed chmod plus rollback-close failures stay distinct. A 17-clause
+policy, strict trace mutations and four Lean theorems check this bounded evidence.
+General profiles, residency/transaction paths, caller provenance, full OS and
+sync guarantees, aggregate source custody, wrapper lifecycle and full event
+composition remain open. No raw unit is promoted.

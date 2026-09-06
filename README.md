@@ -124,6 +124,12 @@ add 88 fully released allocation generations. A suppressed rollback close retain
 the original descriptor/inode after null chunk return and parent release; harness
 reclamation is recorded separately. File-size fallback and POSIX allocation
 return/errno conventions remain distinct, with general OS guarantees still open.
+[Seven existing-file profiles](docs/reports/cycle19-file-existing/README.md)
+release all 70 allocation generations. Valid and read-only content, malformed
+magic, short headers and read-only empty files retain distinct outcomes and their
+original inode/bytes. Suppressed chmod plus rollback-close failures preserve a
+descriptor residual after parent release. General caller and lifecycle gates
+remain open.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

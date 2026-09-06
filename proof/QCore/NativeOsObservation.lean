@@ -168,3 +168,53 @@ theorem null_constructor_can_release_allocations_and_retain_descriptor :
   decide
 
 end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Bounded existing-file observations distinguish the public constructor result
+-- from the chunk-local error recorded before rollback releases that object.
+-- No assertion is made about unobserved bytes, flags or native callers.
+inductive ExistingProfile where
+  | validRW | chmodFailure | chmodCloseFailure | badMagic | shortHeader | emptyRD | validRD
+  deriving DecidableEq, Repr
+
+def existingErrors : ExistingProfile → Int × Int
+  | .validRW | .validRD => (0, 0)
+  | .chmodFailure | .chmodCloseFailure => (-1, 0)
+  | .badMagic => (-3, -11)
+  | .shortHeader => (-3, -13)
+  | .emptyRD => (-3, -12)
+
+structure ExistingFileObservation where
+  profile : ExistingProfile
+  publicError : Int
+  localError : Int
+  initialBytes : List Nat
+  finalBytes : List Nat
+  before : DescriptorWitness
+  after : DescriptorWitness
+  staticCertificate : Bool
+  durabilityProved : Bool
+
+def acceptedExisting (o : ExistingFileObservation) : Prop :=
+  (o.publicError, o.localError) = existingErrors o.profile ∧
+  o.finalBytes = o.initialBytes ∧ o.after = o.before ∧
+  o.staticCertificate = false ∧ o.durabilityProved = false
+
+theorem existing_corruption_preserves_specific_error {o : ExistingFileObservation}
+    (h : acceptedExisting o) (profile : o.profile = .badMagic) :
+    o.publicError = -3 ∧ o.localError = -11 := by
+  have errors := h.1
+  simpa [profile, existingErrors, Prod.mk.injEq] using errors
+
+theorem readonly_empty_differs_from_short_header :
+    existingErrors .emptyRD ≠ existingErrors .shortHeader := by decide
+
+theorem accepted_existing_retains_bytes_and_identity {o : ExistingFileObservation}
+    (h : acceptedExisting o) : o.finalBytes = o.initialBytes ∧ o.after = o.before :=
+  ⟨h.2.1, h.2.2.1⟩
+
+theorem accepted_existing_never_promotes_static_or_durability {o : ExistingFileObservation}
+    (h : acceptedExisting o) : o.staticCertificate = false ∧ o.durabilityProved = false := h.2.2.2
+
+end QCore.NativeOsObservation
