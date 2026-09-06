@@ -222,3 +222,16 @@ policy, strict trace mutations and four Lean theorems check this bounded evidenc
 General profiles, residency/transaction paths, caller provenance, full OS and
 sync guarantees, aggregate source custody, wrapper lifecycle and full event
 composition remain open. No raw unit is promoted.
+
+## Native residency and transaction observations (2026-09-06)
+
+[Five native sequences](reports/cycle19-file-transitions/README.md) release
+all 50 allocation generations and seven descriptor/mapping epochs. The adapter
+checks 26 operation results, ring/counter transitions and separate logical/header
+lengths. Rollback restores logical length without restoring the mapped header;
+down/up reloads appended bytes. Locked begin returns retry while direct write
+succeeds. A 16-clause runtime policy and six executable Lean projection theorems
+preserve those outcomes. Failed transition syscalls, capacity/metadata/checksum
+variants, arbitrary production callers, full sync/durability, aggregate custody,
+remaining wrapper lifecycle and full event composition remain open. No raw unit
+is promoted.

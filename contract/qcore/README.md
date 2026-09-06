@@ -362,3 +362,10 @@ original inode/bytes, distinct errors and descriptor residuals after suppressed
 chmod/close failures. Read-only flags do not bypass configured chmod in these
 observations. The 17-clause policy does not promote raw units or infer general
 caller, corruption, ACL, OS-failure or durability behavior.
+
+`chunkio/filesystem_transition_observation.qcore` checks five native residency,
+transaction and lock sequences. It retains logical rollback separately from
+mapped-header state and records successful direct write while locked. A new
+mapping/open epoch is required on reload regardless of numeric address/fd reuse.
+The 16-clause policy is a bounded runtime observation gate, not a universal
+transaction, synchronization or production-caller guarantee.

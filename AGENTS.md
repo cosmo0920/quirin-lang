@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (52 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (53 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -91,8 +91,13 @@ It also ships a conservative checker for *existing* C source (the
   retaining original inode/content and distinct corruption/read-only errors.
   Suppressed chmod plus rollback-close failures preserve descriptor custody after
   parent release; harness reclamation stays separate. General profiles remain open.
-  Latest evidence: `docs/reports/cycle19-file-existing/README.md`
-  (407 workspace tests, 52 contract modules; prior source/verdict parity preserved).
+  Five native residency/transaction/lock sequences release all 50 allocation
+  generations and seven OS epochs. Rollback preserves mapped header length even
+  while restoring logical length; down/up reloads appended bytes. Locked begin
+  returns retry while direct write still succeeds. These fixed observations do
+  not establish production reachability or general transaction/lock guarantees.
+  Latest evidence: `docs/reports/cycle19-file-transitions/README.md`
+  (407 workspace tests, 53 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

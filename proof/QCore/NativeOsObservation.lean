@@ -218,3 +218,71 @@ theorem accepted_existing_never_promotes_static_or_durability {o : ExistingFileO
     (h : acceptedExisting o) : o.staticCertificate = false ∧ o.durabilityProved = false := h.2.2.2
 
 end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Executable projection of the bounded, successful-syscall native sequences.
+-- The mapped header length is deliberately distinct from cf->data_size.
+-- This is not a total contract for arbitrary flags, capacity or OS failures.
+structure NativeFileState where
+  logicalLength : Nat
+  headerLength : Nat
+  checkpoint : Nat
+  transaction : Bool
+  locked : Bool
+  mapped : Bool
+  epoch : Nat
+  deriving DecidableEq, Repr
+
+def nativeBegin (s : NativeFileState) : Int × NativeFileState :=
+  if s.locked then (-2, s)
+  else if s.transaction then (0, s)
+  else (0, { s with transaction := true, checkpoint := s.logicalLength })
+
+def nativeRollback (s : NativeFileState) : Int × NativeFileState :=
+  if s.transaction then
+    (0, { s with logicalLength := s.checkpoint, transaction := false })
+  else (-1, s)
+
+-- Caller supplies the fixed mapped buffer/capacity premise. The observed
+-- cio_chunk_write path does not consult the chunk lock flag.
+def nativeAppend (s : NativeFileState) (count : Nat) : NativeFileState :=
+  { s with logicalLength := s.logicalLength + count, headerLength := s.logicalLength + count }
+
+def nativeDown (s : NativeFileState) : NativeFileState :=
+  { s with logicalLength := 0, mapped := false }
+
+def nativeReload (s : NativeFileState) : NativeFileState :=
+  { s with logicalLength := s.headerLength, mapped := true, epoch := s.epoch + 1 }
+
+theorem native_rollback_preserves_mapped_header (s : NativeFileState) :
+    (nativeRollback s).2.headerLength = s.headerLength := by
+  unfold nativeRollback
+  split <;> rfl
+
+theorem native_rollback_restores_checkpoint {s : NativeFileState}
+    (active : s.transaction = true) :
+    (nativeRollback s).2.logicalLength = s.checkpoint ∧
+    (nativeRollback s).2.transaction = false := by
+  simp [nativeRollback, active]
+
+theorem native_locked_begin_is_retry {s : NativeFileState} (locked : s.locked = true) :
+    nativeBegin s = (-2, s) := by simp [nativeBegin, locked]
+
+theorem native_append_preserves_lock_and_updates_lengths (s : NativeFileState) (count : Nat) :
+    (nativeAppend s count).locked = s.locked ∧
+    (nativeAppend s count).logicalLength = s.logicalLength + count ∧
+    (nativeAppend s count).headerLength = s.logicalLength + count := ⟨rfl, rfl, rfl⟩
+
+theorem native_reload_advances_epoch_and_uses_header (s : NativeFileState) :
+    (nativeReload (nativeDown s)).epoch = s.epoch + 1 ∧
+    (nativeReload (nativeDown s)).logicalLength = s.headerLength := ⟨rfl, rfl⟩
+
+theorem observed_rollback_reload_restores_appended_length :
+    let initial : NativeFileState := ⟨4,4,0,false,false,true,1⟩
+    let appended := nativeAppend (nativeBegin initial).2 3
+    let rolledBack := (nativeRollback appended).2
+    rolledBack.logicalLength = 4 ∧ rolledBack.headerLength = 7 ∧
+      (nativeReload (nativeDown rolledBack)).logicalLength = 7 := by decide
+
+end QCore.NativeOsObservation
