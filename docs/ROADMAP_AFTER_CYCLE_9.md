@@ -235,3 +235,14 @@ preserve those outcomes. Failed transition syscalls, capacity/metadata/checksum
 variants, arbitrary production callers, full sync/durability, aggregate custody,
 remaining wrapper lifecycle and full event composition remain open. No raw unit
 is promoted.
+
+## Native synchronization failure and retries (2026-09-06)
+
+[Three native one-shot sync-failure sequences](reports/cycle19-file-sync-failures/README.md) release all 30 allocation
+generations and four OS epochs. Failed commit retains the active transaction;
+retry clears it. Down still unmaps/closes after failed sync, and commit while
+unmapped clears the transaction without syncing. An 18-clause policy, 73 trace/
+process mutations and five Lean theorems preserve these bounded observations.
+Other transition failures, general callers, full sync/durability, aggregate
+custody, wrapper lifecycle and full event composition remain open. No raw unit
+is promoted.

@@ -5,7 +5,7 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-file-transitions/README.md` and the AGENTS.md status
+  `docs/reports/cycle19-file-sync-failures/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/
   ring provenance and rollback. General caller/failure, filesystem and event-
   composition gates remain open. Unsupported backend close now has a symbolic
@@ -34,6 +34,10 @@ Claude-specific additions:
   epochs. Logical rollback leaves the mapped header length unchanged and down/up
   reloads appended bytes. Locked begin retries while direct write succeeds;
   general transaction, lock and production-caller guarantees remain open.
+  Three sync-failure sequences release 30 generations and four OS epochs.
+  Failed commit retains the transaction and retry clears it. Down continues
+  cleanup after failed sync; unmapped commit succeeds without syncing. These
+  injected observations do not establish general OS failure or durability rules.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants

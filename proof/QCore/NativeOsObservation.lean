@@ -285,4 +285,57 @@ theorem observed_rollback_reload_restores_appended_length :
     rolledBack.logicalLength = 4 ∧ rolledBack.headerLength = 7 ∧
       (nativeReload (nativeDown rolledBack)).logicalLength = 7 := by decide
 
+-- Conditional projection of the fixed one-shot msync suppression profiles.
+-- Other size/trim/checksum failures are outside this model. The down operation
+-- assumes successful unmap, size update and close; the native adapter checks
+-- their concrete identities and results separately.
+structure NativeSyncState where
+  file : NativeFileState
+  synced : Bool
+  deriving DecidableEq, Repr
+
+def nativeCommitSync (s : NativeSyncState) (syncSucceeded : Bool) : Int × NativeSyncState :=
+  if !s.file.mapped || s.synced then
+    (0, { s with file := { s.file with transaction := false } })
+  else if syncSucceeded then
+    (0, { file := { s.file with transaction := false }, synced := true })
+  else (-1, s)
+
+def nativeDownSync (s : NativeSyncState) (syncSucceeded : Bool) : NativeSyncState :=
+  { file := nativeDown s.file, synced := s.synced || syncSucceeded }
+
+theorem failed_native_commit_preserves_entire_state {s : NativeSyncState}
+    (mapped : s.file.mapped = true) (dirty : s.synced = false) :
+    nativeCommitSync s false = (-1, s) := by
+  simp [nativeCommitSync, mapped, dirty]
+
+theorem retried_native_commit_clears_transaction {s : NativeSyncState}
+    (mapped : s.file.mapped = true) (dirty : s.synced = false) :
+    (nativeCommitSync s true).1 = 0 ∧
+    (nativeCommitSync s true).2.file.transaction = false ∧
+    (nativeCommitSync s true).2.synced = true := by
+  simp [nativeCommitSync, mapped, dirty]
+
+theorem unmapped_native_commit_can_succeed_without_sync {s : NativeSyncState}
+    (unmapped : s.file.mapped = false) :
+    (nativeCommitSync s false).1 = 0 ∧
+    (nativeCommitSync s false).2.file.transaction = false ∧
+    (nativeCommitSync s false).2.synced = s.synced := by
+  simp [nativeCommitSync, unmapped]
+
+theorem failed_sync_down_preserves_transaction_and_header (s : NativeSyncState) :
+    (nativeDownSync s false).file.transaction = s.file.transaction ∧
+    (nativeDownSync s false).file.headerLength = s.file.headerLength ∧
+    (nativeDownSync s false).file.mapped = false ∧
+    (nativeDownSync s false).synced = s.synced := by
+  simp [nativeDownSync, nativeDown]
+
+theorem observed_failed_sync_down_commit_does_not_prove_sync :
+    let dirty : NativeSyncState := ⟨⟨7,7,4,true,false,true,1⟩,false⟩
+    let down := nativeDownSync dirty false
+    let committed := nativeCommitSync down false
+    committed.1 = 0 ∧ committed.2.synced = false ∧
+    committed.2.file.transaction = false ∧
+    (nativeReload committed.2.file).logicalLength = 7 := by decide
+
 end QCore.NativeOsObservation

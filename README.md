@@ -137,6 +137,12 @@ Locked begin retries while direct write succeeds. These bounded observations
 preserve the native behavior without claiming production reachability or general
 transaction/lock guarantees.
 
+[Three sync-failure sequences](docs/reports/cycle19-file-sync-failures/README.md)
+release 30 more generations and four OS epochs. Failed commit preserves the
+transaction and retry clears it. Down continues cleanup after failed sync;
+commit while unmapped succeeds without syncing. These fixed injected observations
+do not establish general OS failure behavior or durability.
+
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a
 length-delimited JSON protocol, manifests, a fail-closed registry, bounded
