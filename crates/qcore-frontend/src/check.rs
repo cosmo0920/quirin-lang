@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use crate::ast::{AxisDecl, Declaration, DimensionRef, Program};
+use qcore_core::ast::{AxisDecl, Declaration, DimensionRef, Program};
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct StaticEnvironment {

@@ -3,11 +3,11 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::ast::{AxisMode, DimensionRef};
 use crate::check::StaticEnvironment;
 use crate::frontend::{Located, SourceParseError};
-use crate::index::IndexTerm;
 use crate::lexer::{Span, Symbol, Token, TokenKind};
+use qcore_core::ast::{AxisMode, DimensionRef};
+use qcore_core::index::IndexTerm;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum NaturalExpression {

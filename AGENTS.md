@@ -19,6 +19,9 @@ It also ships a conservative checker for *existing* C source (the
 | Path | Contents |
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, legacy-C analyzer, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `crates/qcore-core/` | L1 semantic-kernel seed (W1 relocation): `usage`, `ast`, `index`. No workspace dependencies; the rest of the kernel arrives at W5 consolidation |
+| `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
+| `crates/qcore-contract/` | L1 contract machinery (W1 relocation): total-or-reject `contract_loader`, `contract_observation`. Depends on core/frontend/schemas; `chunk_contract` joins after the W5 chunk-summary schema split |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `compiler/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
@@ -137,9 +140,13 @@ It also ships a conservative checker for *existing* C source (the
   workspace has three members (`qcore-schemas` L0 surface, `qcore-compiler`
   grab-bag, `qcorec` CLI) with a layering-guard test; providers remain
   compile-time crates for now (decision recorded there — the plan's
-  out-of-process step is deferred, not abandoned). W1 is
-  partially executed: `compiler/src/contract_loader.rs` (total-or-reject v1)
-  feeds the Cycle 19 audit from a contract manifest. Execution is tracked in
+  out-of-process step is deferred, not abandoned). W1's loader
+  (total-or-reject v1) feeds the Cycle 19 audit from a contract manifest,
+  and its relocation is executed (2026-09-06,
+  `docs/reports/w1-contract-crate/README.md`): `qcore-core`,
+  `qcore-frontend`, and `qcore-contract` are extracted with a
+  dependency-matrix guard test; W1's remaining items are literal-site
+  migration and the richer clause vocabulary. Execution is tracked in
   `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)

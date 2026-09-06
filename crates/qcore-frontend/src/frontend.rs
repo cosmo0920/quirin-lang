@@ -12,7 +12,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::lexer::{LexError, Span, Symbol, Token, TokenKind, lex};
-use crate::usage::Usage;
+use qcore_core::usage::Usage;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Located<T> {

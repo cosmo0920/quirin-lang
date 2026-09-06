@@ -27,14 +27,14 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::frontend::{
+use qcore_frontend::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, SourceDeclaration,
     SourceModuleMode, parse_source_program,
 };
-use crate::legacy_c::{
+use qcore_frontend::lexer::{Symbol, TokenKind, lex};
+use qcore_schemas::contract::{
     ResourceContracts, ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
 };
-use crate::lexer::{Symbol, TokenKind, lex};
 
 /// Load all selected modules atomically. No partial environment escapes on error.
 pub fn load_resource_contract_files(paths: &[PathBuf]) -> Result<ResourceContracts, String> {

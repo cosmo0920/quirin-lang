@@ -244,8 +244,13 @@ logic.
 implements the total-or-reject v1 vocabulary and the Cycle 19 audit consumes
 a contract manifest — see the
 [contract-loader parity record](reports/cycle19-contract-loader/README.md).
-Remaining: relocation into `crates/qcore-contract` (per §3), migration of the
-leftover literal sites, and the richer clause vocabulary noted below.
+The relocation into `crates/qcore-contract` is executed (2026-09-06, with
+`crates/qcore-core` and `crates/qcore-frontend` extracted beneath it so the
+loader sits below the certificate recheck — see the
+[W1 relocation record](reports/w1-contract-crate/README.md); `chunk_contract`
+follows once the W5 task 3 chunk-summary schema split lands). Remaining:
+migration of the leftover literal sites and the richer clause vocabulary
+noted below.
 
 **Goal.** One loader from `contract/qcore` contract modules to the analyzer's
 `ResourceContracts`, eliminating every Rust-literal production contract table.

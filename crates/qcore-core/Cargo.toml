@@ -1,0 +1,6 @@
+[package]
+name = "qcore-core"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Trusted semantic kernel seed of QCore-C: interval usage grades, the axis/dimension AST, and index environments."

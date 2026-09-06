@@ -37,6 +37,9 @@ execution.
 | Path | Contents |
 |---|---|
 | [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C analyzer, verifier-plugin host |
+| [`crates/qcore-core/`](crates/qcore-core/) | Semantic-kernel seed: usage grades, axis/dimension AST, index environments |
+| [`crates/qcore-frontend/`](crates/qcore-frontend/) | QCore language front end: lexer, parsers, quant-index resolution, elaboration |
+| [`crates/qcore-contract/`](crates/qcore-contract/) | Declarative `.qcore` contract loader and observation interpreter |
 | [`crates/qcore-schemas/`](crates/qcore-schemas/) | Published, versioned schema surface (serde types crossing the core/provider boundary; no analysis logic) |
 | [`crates/qcorec/`](crates/qcorec/) | CLI binary `qcorec` over the compiler library |
 | [`proof/`](proof/) | Lean 4 executable core and safety proofs; per-cycle axiom audits |
@@ -183,7 +186,10 @@ surface and out-of-process providers. W0 is executed
 ([record](docs/reports/w0-schema-crate/README.md)): the schema surface and
 the CLI are standalone crates, with a test guarding the downward-only
 dependency rule; providers stay compile-time crates for now (decision
-recorded in the W0 report).
+recorded in the W0 report). The W1 relocation is executed
+([record](docs/reports/w1-contract-crate/README.md)): the contract loader
+and observation interpreter live in `crates/qcore-contract`, above the new
+`qcore-core` kernel seed and `qcore-frontend` front-end crates.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

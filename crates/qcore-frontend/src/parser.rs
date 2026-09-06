@@ -1,7 +1,7 @@
 use std::fmt;
 
-use crate::ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
 use crate::lexer::{LexError, Span, Symbol, Token, TokenKind, lex};
+use qcore_core::ast::{AxisDecl, AxisMode, Declaration, DimensionDecl, DimensionRef, Program};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ParseError {

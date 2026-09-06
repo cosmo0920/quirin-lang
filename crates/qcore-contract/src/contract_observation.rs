@@ -4,10 +4,10 @@
 //! source certificate, and does not authenticate observations or prove caller
 //! preconditions. Producers must record their source/build and instrumentation.
 
-use crate::frontend::{
+use qcore_frontend::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
 };
-use crate::lexer::{Symbol, TokenKind, lex};
+use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
