@@ -472,19 +472,45 @@ impl ProcessProvider {
         let mut error_output = Vec::new();
         let (mut output_done, mut error_done) = (false, false);
         let mut status = None;
+        let mut input_failure = None;
         loop {
+            // Observe direct-child exit before deciding which bound failed.
+            // An exited provider can leave descendant-held output pipes even
+            // when its input reader vanished before our first write.
+            if status.is_none() {
+                status = child
+                    .0
+                    .try_wait()
+                    .map_err(|error| ProviderFailure::Io(error.to_string()))?;
+            }
             if Instant::now() >= deadline {
+                if status.is_none()
+                    && let Some(error) = input_failure
+                {
+                    return Err(error);
+                }
                 return Err(ProviderFailure::Timeout);
             }
             if let Some(input) = stdin.as_mut() {
                 match input.write(&frame[sent..]) {
-                    Ok(0) => return Err(ProviderFailure::Io("provider stdin closed".into())),
+                    Ok(0) => {
+                        input_failure = Some(ProviderFailure::Io("provider stdin closed".into()));
+                        stdin = None;
+                    }
                     Ok(count) => sent += count,
                     Err(error)
                         if matches!(
                             error.kind(),
                             std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
                         ) => {}
+                    Err(error) if error.kind() == std::io::ErrorKind::BrokenPipe => {
+                        // Do not let write-vs-exit scheduling decide whether
+                        // inherited output pipes count as a timeout. Remember
+                        // incomplete input while draining under the same bound;
+                        // it must still prevent successful response decoding.
+                        input_failure = Some(ProviderFailure::Io(error.to_string()));
+                        stdin = None;
+                    }
                     Err(error) => return Err(ProviderFailure::Io(error.to_string())),
                 }
                 if sent == frame.len() {
@@ -497,17 +523,14 @@ impl ProcessProvider {
             if !error_done {
                 error_done = read_available(&mut stderr, &mut error_output, 64 * 1024)?;
             }
-            if status.is_none() {
-                status = child
-                    .0
-                    .try_wait()
-                    .map_err(|error| ProviderFailure::Io(error.to_string()))?;
-            }
             if let Some(status) = status
                 && output_done
                 && error_done
                 && stdin.is_none()
             {
+                if let Some(error) = input_failure {
+                    return Err(error);
+                }
                 if !status.success() {
                     return Err(ProviderFailure::Crashed(status.code())
                         .with_detail(&String::from_utf8_lossy(&error_output)));
