@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "source_set": "fluent-bit",
+  "pins": {
+    "fluent-bit": {
+      "git_commit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "clean_paths": [
+        "lib/cmetrics/src",
+        "lib/ctraces/src",
+        "lib/librdkafka-2.15.0/src",
+        "lib/chunkio/src",
+        "lib/chunkio/include",
+        "lib/cfl/src/cfl_arena.c",
+        "lib/cfl/include/cfl/cfl_list.h",
+        "lib/monkey",
+        "src/flb_input_chunk.c",
+        "include/fluent-bit/flb_input_chunk.h",
+        "include/fluent-bit/flb_mem.h",
+        "include/fluent-bit/flb_macros.h"
+      ],
+      "description": "fluent-bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    }
+  },
+  "libraries": {
+    "cmetrics": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/cmetrics/src",
+          "selection": "top_level"
+        }
+      ],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": {
+        "plugin_id": "qcore.cmetrics",
+        "diagnostic_namespace": "QP",
+        "lean_theorem_family": "QCore.Resource"
+      }
+    },
+    "ctraces": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/ctraces/src",
+          "selection": "top_level"
+        }
+      ],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": {
+        "plugin_id": "qcore.ctraces",
+        "diagnostic_namespace": "QP",
+        "lean_theorem_family": "QCore.Resource"
+      }
+    },
+    "librdkafka": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/librdkafka-2.15.0/src",
+          "selection": "recursive"
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "lib/librdkafka-2.15.0/src/rd.h",
+          "sha256": "00ab63a66691e80c1a28a5e14b90a7e8df3fc7a25e998b184fcd6390c15f7b0b"
+        },
+        {
+          "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+          "sha256": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2"
+        },
+        {
+          "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+          "sha256": "a1d55367a2f020e67965661a29fbf2cf121b1d61e5b2ab6b52df875315c0acc7"
+        }
+      ],
+      "source_witnesses": [
+        {
+          "name": "librdkafka-refcount",
+          "file": "lib/librdkafka-2.15.0/src/rd.h",
+          "check": {
+            "digest": {
+              "construct": "rd_refcnt_add0/rd_refcnt_sub0 over rd_atomic32_sub, with the rd_refcnt_destroywrapper macro invoking the destructor only on the last release"
+            }
+          },
+          "mechanisms": [
+            "reference_count"
+          ]
+        },
+        {
+          "name": "librdkafka-typed-queue",
+          "file": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+          "check": {
+            "digest": {
+              "construct": "rd_kafka_q_enq0/rd_kafka_q_deq0 splicing rko_link into rkq_q under rkq_lock, documented as callable from any thread"
+            }
+          },
+          "mechanisms": [
+            "intrusive_list",
+            "typed_queue",
+            "thread_handoff"
+          ]
+        },
+        {
+          "name": "librdkafka-queue-destructor",
+          "file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+          "check": {
+            "digest": {
+              "construct": "rd_kafka_q_destroy_final purging the queue and destroying its mutex and condition variable"
+            }
+          },
+          "mechanisms": [
+            "cascading_destructor"
+          ]
+        }
+      ],
+      "permitted_mechanisms": [
+        "reference_count",
+        "intrusive_list",
+        "typed_queue",
+        "cascading_destructor",
+        "atomic_publication",
+        "thread_handoff",
+        "reclamation"
+      ],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": {
+        "plugin_id": "qcore.librdkafka",
+        "diagnostic_namespace": "QP",
+        "lean_theorem_family": "QCore.Concurrency"
+      }
+    },
+    "cfl": {
+      "pin": "fluent-bit",
+      "source_roots": [],
+      "audited_files": [
+        {
+          "path": "lib/cfl/include/cfl/cfl_list.h",
+          "sha256": "fb8762edf6dab66e627e2f1d786580f47a5cecf0ae27f66e51d482069eba5bd3"
+        },
+        {
+          "path": "lib/cfl/src/cfl_arena.c",
+          "sha256": "3cc7c5265e40046554d450c401a751ef33478b52882d816e25bc88217453774d"
+        }
+      ],
+      "source_witnesses": [
+        {
+          "name": "cfl-intrusive-list",
+          "file": "lib/cfl/include/cfl/cfl_list.h",
+          "check": {
+            "digest": {
+              "construct": "cfl_list_add/cfl_list_del splicing an entry and clearing both links on removal"
+            }
+          },
+          "mechanisms": [
+            "intrusive_list"
+          ]
+        },
+        {
+          "name": "cfl-arena-lifetime",
+          "file": "lib/cfl/src/cfl_arena.c",
+          "check": {
+            "digest": {
+              "construct": "cfl_arena_create_with_options allocating through the injected allocator and cfl_arena_destroy releasing external blocks, chunks and the arena record"
+            }
+          },
+          "mechanisms": [
+            "arena",
+            "cascading_destructor"
+          ]
+        }
+      ],
+      "permitted_mechanisms": [
+        "intrusive_list",
+        "arena",
+        "cascading_destructor",
+        "atomic_publication",
+        "thread_handoff"
+      ],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    },
+    "chunkio": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/chunkio/src",
+          "selection": "recursive"
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "lib/chunkio/src/chunkio.c",
+          "sha256": "70e82e18a3b9f42eb01e5cdd2a2530229fd6ebfa76519d15e15d864577ff89bd"
+        },
+        {
+          "path": "lib/chunkio/src/cio_stream.c",
+          "sha256": "5226efb40578e3fc78de3c57cdb9e9e6adfa17b5d3aa2252c9545a7b777a2634"
+        },
+        {
+          "path": "lib/chunkio/src/cio_chunk.c",
+          "sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+        }
+      ],
+      "source_witnesses": [
+        {
+          "name": "chunkio-context-destructor",
+          "file": "lib/chunkio/src/chunkio.c",
+          "check": {
+            "digest": {
+              "construct": "cio_destroy destroying every stream before freeing the context"
+            }
+          },
+          "mechanisms": [
+            "cascading_destructor"
+          ]
+        },
+        {
+          "name": "chunkio-stream-destructor",
+          "file": "lib/chunkio/src/cio_stream.c",
+          "check": {
+            "digest": {
+              "construct": "cio_stream_destroy closing the stream's chunks, unlinking it from the context list and freeing its name and record"
+            }
+          },
+          "mechanisms": [
+            "intrusive_list",
+            "cascading_destructor"
+          ]
+        },
+        {
+          "name": "chunkio-chunk-destructor",
+          "file": "lib/chunkio/src/cio_chunk.c",
+          "check": {
+            "digest": {
+              "construct": "cio_chunk_close releasing the memfs or file backend, unlinking both list heads, freeing the name and decrementing the context counter"
+            }
+          },
+          "mechanisms": [
+            "intrusive_list",
+            "cascading_destructor"
+          ]
+        }
+      ],
+      "permitted_mechanisms": [
+        "intrusive_list",
+        "cascading_destructor"
+      ],
+      "operation_summaries": {
+        "create_context": "cio_create",
+        "create_stream": "cio_stream_create",
+        "open_chunk": "cio_chunk_open",
+        "residency_up": "cio_chunk_up",
+        "residency_down": "cio_chunk_down",
+        "lock": "cio_chunk_lock",
+        "unlock": "cio_chunk_unlock",
+        "begin_transaction": "cio_chunk_tx_begin",
+        "commit_transaction": "cio_chunk_tx_commit",
+        "rollback_transaction": "cio_chunk_tx_rollback",
+        "close_chunk": "cio_chunk_close",
+        "delete_stream_content": "cio_stream_delete",
+        "destroy_stream": "cio_stream_destroy",
+        "destroy_context": "cio_destroy"
+      },
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [
+        {
+          "record": "cio_chunk",
+          "field": "lock",
+          "set_operation": "lock",
+          "clear_operation": "unlock"
+        }
+      ],
+      "provider": {
+        "plugin_id": "qcore.chunkio",
+        "diagnostic_namespace": "QP",
+        "lean_theorem_family": "QCore.ChunkLifecycle"
+      }
+    },
+    "fluent_bit": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "src",
+          "selection": {
+            "exact": {
+              "file": "src/flb_input_chunk.c"
+            }
+          }
+        }
+      ],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {
+        "set_busy": "flb_input_chunk_busy_state",
+        "task_custody": "flb_input_chunk_task_custody",
+        "route_custody": "flb_input_chunk_route_custody"
+      },
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [
+        {
+          "record": "flb_input_chunk",
+          "field": "busy",
+          "set_operation": "set_busy",
+          "clear_operation": "set_busy"
+        }
+      ],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "../../cycle19-resource-contracts.json",
+  "provider_manifests": [
+    "providers/qcore.chunkio.json",
+    "providers/qcore.cmetrics.json",
+    "providers/qcore.ctraces.json",
+    "providers/qcore.librdkafka.json"
+  ]
+}

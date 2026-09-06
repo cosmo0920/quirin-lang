@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "source_set": "libevent",
+  "pins": {
+    "libevent": {
+      "git_commit": "d82464a277d0f42703702c4dfd9af6af38595a83",
+      "clean_paths": [],
+      "description": "release-2.2.2-alpha-11-gd82464a2"
+    }
+  },
+  "libraries": {
+    "libevent": {
+      "pin": "libevent",
+      "source_roots": [],
+      "audited_files": [
+        {
+          "path": "include/event2/event.h",
+          "sha256": "5ab88982a95c0a29c655b2cf5f3e8858ff26451e51e05bb2b50af9d843f0f901"
+        },
+        {
+          "path": "event.c",
+          "sha256": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346"
+        },
+        {
+          "path": "bufferevent.c",
+          "sha256": "a53f140ef9594f14d89aae614e9814e98d23ad10c21c9253938f2510504b3f9c"
+        },
+        {
+          "path": "include/event2/thread.h",
+          "sha256": "a7057d7b654a9f21efbeb71f0d14af9bdc90f48e7b0ca2b84668baa50e86d1e4"
+        },
+        {
+          "path": "include/event2/util.h",
+          "sha256": "603b182ea8bf70884a588cdb327e7e6b6981ab8841c970a9cca40472251b65df"
+        },
+        {
+          "path": "evutil.c",
+          "sha256": "2273f20507eda04ee11cb747567d184abdb9b25f21a173743e6b4eec73fa0915"
+        },
+        {
+          "path": "epoll.c",
+          "sha256": "0ec28d24574a7498673127107dcd429f4ef4c4f183bc78a110cfd5edbebc3311"
+        },
+        {
+          "path": "kqueue.c",
+          "sha256": "af5663d446ee91efd6866285a09d92eaf747375fd8d1cb455ef56ae40244eca9"
+        },
+        {
+          "path": "win32select.c",
+          "sha256": "767d4534a8acf24c72e02fa652ef99184fbcc3774d4496c6c95e225ea1241192"
+        },
+        {
+          "path": "event_iocp.c",
+          "sha256": "20955580924afbad439c3ee361888c65f04bf32e16775ea4015a3686fa0b3a07"
+        },
+        {
+          "path": "buffer_iocp.c",
+          "sha256": "aaaf396dac4bcc2208b7723fa9f985df2f856264e07b6f9e0e97c883a5694446"
+        },
+        {
+          "path": "bufferevent_async.c",
+          "sha256": "748757329bb6f76dd4e0adbc2e9f6e7dc8ae519f6133f01c115f6e239aea98a5"
+        }
+      ],
+      "source_witnesses": [
+        {
+          "name": "libevent-public-event-api",
+          "file": "include/event2/event.h",
+          "check": {
+            "substrings": {
+              "needles": [
+                "int event_del_noblock(struct event *ev);",
+                "int event_del_block(struct event *ev);",
+                "int event_finalize(unsigned, struct event *",
+                "void event_active(struct event *ev, int res, short ncalls);",
+                "EVENT_BASE_FLAG_STARTUP_IOCP = 0x04"
+              ],
+              "rationale": "construct must survive deliberate pin updates without re-deriving the whole-file digest baseline (design 1.3 case 1): these are the public declarations the bounded event model depends on"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-dispatch-loop",
+          "file": "event.c",
+          "check": {
+            "digest": {
+              "construct": "the running-loop guard, EVENT_DEL_NOBLOCK deletion handling, the EVLIST_FINALIZING check and event_process_active dispatch"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-bufferevent-callbacks",
+          "file": "bufferevent.c",
+          "check": {
+            "digest": {
+              "construct": "the deferred-callback locking discipline (UNLOCK_CALLBACKS requires DEFER_CALLBACKS), bufferevent_run_deferred_callbacks_unlocked and bufferevent_enable_locking_"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-public-thread-api",
+          "file": "include/event2/thread.h",
+          "check": {
+            "substrings": {
+              "needles": [
+                "int evthread_use_pthreads(void);",
+                "int evthread_use_windows_threads(void);"
+              ],
+              "rationale": "construct must survive deliberate pin updates without re-deriving the whole-file digest baseline (design 1.3 case 1): these are the public declarations the bounded event model depends on"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-public-socket-api",
+          "file": "include/event2/util.h",
+          "check": {
+            "substrings": {
+              "needles": [
+                "int evutil_socketpair(int domain, int type, int protocol, evutil_socket_t sv[2]);",
+                "int evutil_closesocket(evutil_socket_t sock);",
+                "int evutil_socket_geterror(evutil_socket_t sock);"
+              ],
+              "rationale": "construct must survive deliberate pin updates without re-deriving the whole-file digest baseline (design 1.3 case 1): these are the public declarations the bounded event model depends on"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-socket-utilities",
+          "file": "evutil.c",
+          "check": {
+            "digest": {
+              "construct": "the evutil_closesocket, evutil_socket_geterror and evutil_socketpair definitions"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-epoll-backend",
+          "file": "epoll.c",
+          "check": {
+            "digest": {
+              "construct": "the epollops eventop table and its epoll_wait dispatch"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-kqueue-backend",
+          "file": "kqueue.c",
+          "check": {
+            "digest": {
+              "construct": "the kqops eventop table, kqueue() acquisition and kevent dispatch"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-win32select-backend",
+          "file": "win32select.c",
+          "check": {
+            "digest": {
+              "construct": "the win32ops eventop table and its select dispatch"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-iocp-port",
+          "file": "event_iocp.c",
+          "check": {
+            "digest": {
+              "construct": "IOCP port creation, launch and completion-status dispatch"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-iocp-buffers",
+          "file": "buffer_iocp.c",
+          "check": {
+            "digest": {
+              "construct": "the evbuffer_launch_read_ and evbuffer_launch_write_ overlapped submissions"
+            }
+          },
+          "mechanisms": []
+        },
+        {
+          "name": "libevent-iocp-bufferevents",
+          "file": "bufferevent_async.c",
+          "check": {
+            "digest": {
+              "construct": "bufferevent_async_new_ and its ConnectEx submission"
+            }
+          },
+          "mechanisms": []
+        }
+      ],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {
+        "event_base_new": "accepted",
+        "event_base_new_with_config": "accepted",
+        "event_base_dispatch": "accepted",
+        "event_base_loop": "accepted",
+        "event_base_loopbreak": "accepted",
+        "event_base_loopcontinue": "accepted",
+        "event_base_loopexit": "accepted",
+        "event_base_free": "accepted",
+        "event_new": "accepted",
+        "event_assign": "accepted",
+        "event_add": "accepted",
+        "event_del": "accepted",
+        "event_del_block": "accepted",
+        "event_del_noblock": "accepted",
+        "event_active": "accepted",
+        "event_pending": "accepted",
+        "event_priority_set": "accepted",
+        "event_finalize": "accepted",
+        "event_free_finalize": "accepted",
+        "event_free": "accepted",
+        "evthread_use_pthreads": "accepted",
+        "evthread_use_windows_threads": "accepted",
+        "bufferevent_socket_new": "accepted",
+        "bufferevent_setcb": "accepted",
+        "bufferevent_setwatermark": "accepted",
+        "bufferevent_enable": "accepted",
+        "bufferevent_disable": "accepted",
+        "bufferevent_lock": "accepted",
+        "bufferevent_unlock": "accepted",
+        "bufferevent_free": "accepted",
+        "evbuffer_new": "accepted",
+        "evbuffer_add": "accepted",
+        "evbuffer_remove": "accepted",
+        "evbuffer_free": "accepted",
+        "evutil_closesocket": "accepted",
+        "evutil_socket_geterror": "accepted",
+        "evutil_socketpair": "accepted",
+        "evdns_base_new": {
+          "unknown": {
+            "reason": "DNS is outside the bounded Cycle 18 event model"
+          }
+        },
+        "evhttp_new": {
+          "unknown": {
+            "reason": "HTTP is outside the bounded Cycle 18 event model"
+          }
+        },
+        "evrpc_init": {
+          "unknown": {
+            "reason": "RPC is outside the bounded Cycle 18 event model"
+          }
+        },
+        "bufferevent_openssl_socket_new": {
+          "unknown": {
+            "reason": "OpenSSL bufferevents are outside the bounded Cycle 18 event model"
+          }
+        },
+        "evconnlistener_new": {
+          "unknown": {
+            "reason": "connection listeners are outside the bounded Cycle 18 event model"
+          }
+        },
+        "event_set_mem_functions": {
+          "unknown": {
+            "reason": "custom allocators are outside the bounded Cycle 18 event model"
+          }
+        },
+        "evthread_set_lock_callbacks": {
+          "unknown": {
+            "reason": "custom lock callbacks are outside the bounded Cycle 18 event model"
+          }
+        },
+        "event_reinit": {
+          "unknown": {
+            "reason": "post-fork repair is outside the bounded Cycle 18 event model"
+          }
+        }
+      },
+      "accepted_builds": [
+        {
+          "backend": "epoll",
+          "threads": "pthreads",
+          "forbid": [
+            "openssl"
+          ]
+        },
+        {
+          "backend": "poll",
+          "threads": "pthreads",
+          "forbid": [
+            "openssl"
+          ]
+        },
+        {
+          "backend": "select",
+          "threads": "pthreads",
+          "forbid": [
+            "openssl"
+          ]
+        },
+        {
+          "backend": "kqueue",
+          "threads": "pthreads",
+          "forbid": [
+            "openssl"
+          ]
+        },
+        {
+          "backend": "select",
+          "threads": "windows_threads",
+          "forbid": [
+            "openssl"
+          ]
+        },
+        {
+          "backend": "iocp",
+          "threads": "windows_threads",
+          "forbid": [
+            "openssl"
+          ]
+        }
+      ],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": {
+        "plugin_id": "qcore.libevent",
+        "diagnostic_namespace": "QP",
+        "lean_theorem_family": "QCore.EventDriven"
+      }
+    }
+  },
+  "resource_contract_manifest": null,
+  "provider_manifests": [
+    "providers/qcore.libevent.json"
+  ]
+}

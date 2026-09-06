@@ -2,6 +2,8 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use qcore_schemas::profile::{BuildProfileSelector, OperationKind};
+
 use crate::chunk_lifecycle::{
     ChunkCertificate, ChunkDiagnostic, ChunkOperation, ChunkProgram, check_chunk_program,
 };
@@ -457,49 +459,18 @@ fn require_evidence(
 
 pub use crate::verifier_plugins::chunkio::PINNED_FLUENT_BIT_REVISION;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum AuditedLibrary {
-    Librdkafka2150,
-    Cfl,
-    ChunkIo,
-}
-
 pub use qcore_schemas::mechanism::LibraryMechanismSummary;
 
-impl AuditedLibrary {
-    pub fn permits(self, summary: LibraryMechanismSummary) -> bool {
-        match self {
-            Self::Librdkafka2150 => matches!(
-                summary,
-                LibraryMechanismSummary::ReferenceCount
-                    | LibraryMechanismSummary::IntrusiveList
-                    | LibraryMechanismSummary::TypedQueue
-                    | LibraryMechanismSummary::CascadingDestructor
-                    | LibraryMechanismSummary::AtomicPublication
-                    | LibraryMechanismSummary::ThreadHandoff
-                    | LibraryMechanismSummary::Reclamation
-            ),
-            Self::Cfl => matches!(
-                summary,
-                LibraryMechanismSummary::IntrusiveList
-                    | LibraryMechanismSummary::Arena
-                    | LibraryMechanismSummary::CascadingDestructor
-                    | LibraryMechanismSummary::AtomicPublication
-                    | LibraryMechanismSummary::ThreadHandoff
-            ),
-            Self::ChunkIo => matches!(
-                summary,
-                LibraryMechanismSummary::IntrusiveList
-                    | LibraryMechanismSummary::CascadingDestructor
-            ),
-        }
-    }
-}
-
+/// W2 replaced the closed `AuditedLibrary` enum and its per-library `permits`
+/// match arms with the `libraries` map of a source-set profile: the library is
+/// now a name declared in data, and the permitted mechanism set is
+/// `LibraryProfile::permitted_mechanisms`. A library with no profile entry has
+/// no permitted set, so every summary is unsupported and the import stays
+/// Unknown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LibrarySummaryProfile {
     pub source_revision: String,
-    pub library: AuditedLibrary,
+    pub library: String,
     pub summaries: BTreeSet<LibraryMechanismSummary>,
 }
 
@@ -512,7 +483,7 @@ pub struct ImportedLibraryCustodyProgram {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LibraryImportCertificate {
     pub source_revision: String,
-    pub library: AuditedLibrary,
+    pub library: String,
     pub used_summaries: BTreeSet<LibraryMechanismSummary>,
     pub custody: LibraryCustodyCertificate,
 }
@@ -525,15 +496,21 @@ pub enum LibraryImportDiagnostic {
     Custody(Vec<LibraryCustodyDiagnostic>),
 }
 
+/// `permitted` is the library's declared `permitted_mechanisms` set and
+/// `expected_revision` its declared pin, both supplied by the loaded source-set
+/// profile. A summary outside the permitted set, or a used summary the source
+/// audit did not grant, remains fail-closed.
 pub fn check_imported_library_custody(
     program: &ImportedLibraryCustodyProgram,
+    permitted: &BTreeSet<LibraryMechanismSummary>,
+    expected_revision: &str,
 ) -> Result<LibraryImportCertificate, Vec<LibraryImportDiagnostic>> {
     let mut diagnostics = BTreeSet::new();
-    if program.profile.source_revision != PINNED_FLUENT_BIT_REVISION {
+    if program.profile.source_revision != expected_revision {
         diagnostics.insert(LibraryImportDiagnostic::SourceRevisionMismatch);
     }
     for summary in &program.profile.summaries {
-        if !program.profile.library.permits(*summary) {
+        if !permitted.contains(summary) {
             diagnostics.insert(LibraryImportDiagnostic::UnsupportedSummary(*summary));
         }
     }
@@ -552,7 +529,7 @@ pub fn check_imported_library_custody(
         .map_err(|errors| vec![LibraryImportDiagnostic::Custody(errors)])?;
     Ok(LibraryImportCertificate {
         source_revision: program.profile.source_revision.clone(),
-        library: program.profile.library,
+        library: program.profile.library.clone(),
         used_summaries,
         custody,
     })
@@ -636,63 +613,90 @@ pub struct ChunkImportCertificate {
 pub enum ChunkImportDiagnostic {
     SourceRevisionMismatch,
     IncompleteControlFlow,
-    MissingSummary(&'static str),
+    MissingSummary(String),
+    /// The operation's kind has no `operation_summaries` entry in the loaded
+    /// profile, so no required summary can be derived (design §3, F13). Absent
+    /// is never "no requirement": the import stays Unknown.
+    UnmodeledOperation(OperationKind),
     Lifecycle(Vec<ChunkDiagnostic>),
 }
 
-pub fn required_chunk_summary(operation: &ChunkOperation) -> &'static str {
+/// The abstract operation kind a concrete chunk operation belongs to. The
+/// kind vocabulary is the published closed enum, so a profile cannot name an
+/// operation the checker does not model.
+#[must_use]
+pub const fn chunk_operation_kind(operation: &ChunkOperation) -> OperationKind {
     match operation {
-        ChunkOperation::CreateContext { .. } => "cio_create",
-        ChunkOperation::CreateStream { .. } => "cio_stream_create",
-        ChunkOperation::OpenChunk { .. } | ChunkOperation::FailOpenChunk { .. } => "cio_chunk_open",
+        ChunkOperation::CreateContext { .. } => OperationKind::CreateContext,
+        ChunkOperation::CreateStream { .. } => OperationKind::CreateStream,
+        ChunkOperation::OpenChunk { .. } | ChunkOperation::FailOpenChunk { .. } => {
+            OperationKind::OpenChunk
+        }
         ChunkOperation::SetResidency { residency, .. } => match residency {
-            crate::chunk_lifecycle::ChunkResidency::Up => "cio_chunk_up",
-            crate::chunk_lifecycle::ChunkResidency::Down => "cio_chunk_down",
+            crate::chunk_lifecycle::ChunkResidency::Up => OperationKind::ResidencyUp,
+            crate::chunk_lifecycle::ChunkResidency::Down => OperationKind::ResidencyDown,
         },
-        ChunkOperation::Lock { .. } => "cio_chunk_lock",
-        ChunkOperation::Unlock { .. } => "cio_chunk_unlock",
-        ChunkOperation::SetBusy { .. } => "flb_input_chunk_busy_state",
+        ChunkOperation::Lock { .. } => OperationKind::Lock,
+        ChunkOperation::Unlock { .. } => OperationKind::Unlock,
+        ChunkOperation::SetBusy { .. } => OperationKind::SetBusy,
         ChunkOperation::AttachTask { .. } | ChunkOperation::DetachTask { .. } => {
-            "flb_input_chunk_task_custody"
+            OperationKind::TaskCustody
         }
         ChunkOperation::AddRoute { .. } | ChunkOperation::RemoveRoute { .. } => {
-            "flb_input_chunk_route_custody"
+            OperationKind::RouteCustody
         }
-        ChunkOperation::BeginTransaction { .. } => "cio_chunk_tx_begin",
-        ChunkOperation::CommitTransaction { .. } => "cio_chunk_tx_commit",
-        ChunkOperation::RollbackTransaction { .. } => "cio_chunk_tx_rollback",
-        ChunkOperation::CloseChunk { .. } => "cio_chunk_close",
-        ChunkOperation::DeleteStreamContent { .. } => "cio_stream_delete",
-        ChunkOperation::DestroyStream { .. } => "cio_stream_destroy",
-        ChunkOperation::DestroyContext { .. } => "cio_destroy",
+        ChunkOperation::BeginTransaction { .. } => OperationKind::BeginTransaction,
+        ChunkOperation::CommitTransaction { .. } => OperationKind::CommitTransaction,
+        ChunkOperation::RollbackTransaction { .. } => OperationKind::RollbackTransaction,
+        ChunkOperation::CloseChunk { .. } => OperationKind::CloseChunk,
+        ChunkOperation::DeleteStreamContent { .. } => OperationKind::DeleteStreamContent,
+        ChunkOperation::DestroyStream { .. } => OperationKind::DestroyStream,
+        ChunkOperation::DestroyContext { .. } => OperationKind::DestroyContext,
     }
 }
 
+/// The summary name an operation requires, looked up in the operation table a
+/// source-set profile declares (W2 replaced the hardcoded name table). `None`
+/// means the profile models no summary for that kind: fail-closed.
+#[must_use]
+pub fn required_chunk_summary<'table>(
+    operation: &ChunkOperation,
+    summaries: &'table BTreeMap<OperationKind, String>,
+) -> Option<&'table str> {
+    summaries
+        .get(&chunk_operation_kind(operation))
+        .map(String::as_str)
+}
+
+/// `summaries` is the operation table declared by the loaded source-set
+/// profile (the ChunkIO and input-chunk entries, merged), `expected_revision`
+/// the declared pin.
 pub fn check_imported_chunk_program(
     program: &ImportedChunkProgram,
+    summaries: &BTreeMap<OperationKind, String>,
+    expected_revision: &str,
 ) -> Result<ChunkImportCertificate, Vec<ChunkImportDiagnostic>> {
     let mut diagnostics = Vec::new();
-    if program.profile.source_revision != PINNED_FLUENT_BIT_REVISION {
+    if program.profile.source_revision != expected_revision {
         diagnostics.push(ChunkImportDiagnostic::SourceRevisionMismatch);
     }
     if !program.profile.control_flow_complete {
         diagnostics.push(ChunkImportDiagnostic::IncompleteControlFlow);
     }
-    let used_summaries = program
-        .operations
-        .iter()
-        .map(required_chunk_summary)
-        .map(str::to_owned)
-        .collect::<BTreeSet<_>>();
+    let mut used_summaries = BTreeSet::new();
+    for operation in &program.operations {
+        match required_chunk_summary(operation, summaries) {
+            Some(summary) => {
+                used_summaries.insert(summary.to_owned());
+            }
+            None => diagnostics.push(ChunkImportDiagnostic::UnmodeledOperation(
+                chunk_operation_kind(operation),
+            )),
+        }
+    }
     for summary in &used_summaries {
         if !program.profile.summaries.contains(summary) {
-            let required = program
-                .operations
-                .iter()
-                .map(required_chunk_summary)
-                .find(|candidate| *candidate == summary)
-                .expect("summary came from an operation");
-            diagnostics.push(ChunkImportDiagnostic::MissingSummary(required));
+            diagnostics.push(ChunkImportDiagnostic::MissingSummary(summary.clone()));
         }
     }
     if !diagnostics.is_empty() {
@@ -804,14 +808,20 @@ pub enum MonkeyCompositionDiagnostic {
     Observation(EventDiagnostic),
 }
 
+/// Monkey composition is **not** migrated to profiles in W2 (design Q5 keeps
+/// the binding/observation contract text in Rust, and the callback-summary and
+/// composition-boolean rows remain hardcoded pending their own parity record).
+/// It takes the Libevent acceptance matrix from the loaded `libevent` profile
+/// because the event checker it composes with does.
 pub fn check_monkey_composition(
     program: &MonkeyCompositionProgram,
+    accepted_builds: &[BuildProfileSelector],
 ) -> Result<MonkeyCompositionCertificate, Vec<MonkeyCompositionDiagnostic>> {
     let mut diagnostics = Vec::new();
     if program.profile.source_revision != PINNED_FLUENT_BIT_REVISION {
         diagnostics.push(MonkeyCompositionDiagnostic::SourceRevisionMismatch);
     }
-    if !program.profile.build.accepted() {
+    if !program.profile.build.accepted(accepted_builds) {
         diagnostics.push(MonkeyCompositionDiagnostic::UnknownBuildProfile);
     }
     for callback in [
@@ -884,7 +894,7 @@ pub fn check_monkey_composition(
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
-    let event = check_event_program(&program.events)
+    let event = check_event_program(&program.events, accepted_builds)
         .map_err(|errors| vec![MonkeyCompositionDiagnostic::Event(errors)])?;
     check_observation_refinement(&event, &program.observation.trace)
         .map_err(|error| vec![MonkeyCompositionDiagnostic::Observation(error)])?;

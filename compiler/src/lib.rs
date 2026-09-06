@@ -32,6 +32,7 @@ pub mod cleanup_outcome;
 pub mod concurrency;
 pub use qcore_contract::contract_loader;
 pub use qcore_contract::contract_observation;
+pub use qcore_contract::profile_loader;
 pub mod counter_contract;
 pub mod driver;
 pub mod error_region;
@@ -55,6 +56,7 @@ pub mod research_extensions;
 pub mod resource_flow;
 pub mod source_call_use;
 mod source_contract;
+pub mod source_profiles;
 pub mod translation_validation;
 mod typed_c_ast;
 pub mod typed_errors;
@@ -110,11 +112,10 @@ pub use event_driven::{
     CallbackContext, CallbackSummary, DeleteMode, DescriptorId, EventBackend, EventBaseId,
     EventCertificate, EventDiagnostic, EventFlags, EventId, EventKey, EventLifecycle,
     EventOperation, EventProgram, ExecutionContextId, Generation, InvalidOrderingEvidence,
-    LIBEVENT_API_PROFILE, LibeventBuildProfile, LibeventSourceError, LibeventSourceEvidence,
-    LoopControl, ObservedEvent, ObservedKind, PINNED_LIBEVENT_COMMIT, PINNED_LIBEVENT_DESCRIPTION,
-    PayloadAccessKind, PayloadId, ProfileDisposition, ThreadMode, check_event_program,
-    check_observation_refinement, classify_libevent_symbol, explore_activation_orders,
-    verify_pinned_libevent_source,
+    LIBEVENT_SUBMODULE_PATH, LibeventBuildProfile, LibeventSourceError, LibeventSourceEvidence,
+    LoopControl, ObservedEvent, ObservedKind, PayloadAccessKind, PayloadId, ProfileDisposition,
+    ThreadMode, check_event_program, check_observation_refinement, classify_libevent_symbol,
+    explore_activation_orders, verify_pinned_libevent_source,
 };
 pub use executable_model::{
     ErrorIdentity as ModelErrorIdentity, ExecutableModel, ModelBuildError, ModelCleanupPack,
@@ -123,20 +124,20 @@ pub use executable_model::{
     UsageBinding as ModelUsageBinding, UsageGrade as ModelUsageGrade, Variable as ModelVariable,
 };
 pub use external_integration::{
-    AuditedLibrary, ChunkImportCertificate, ChunkImportDiagnostic, ChunkImportProfile,
-    DispatcherObservation, ExternalContainerId, ExternalContainerKind, ExternalContextId,
-    ExternalEvidenceId, ExternalHolder, ExternalResourceId, ImportedChunkProgram,
-    ImportedLibraryCustodyProgram, LibraryCustodyCertificate, LibraryCustodyDiagnostic,
-    LibraryCustodyOperation, LibraryCustodyProgram, LibraryImportCertificate,
-    LibraryImportDiagnostic, LibraryMechanismSummary, LibrarySummaryProfile, MonkeyCallback,
-    MonkeyCallbackSummary, MonkeyCompositionCertificate, MonkeyCompositionDiagnostic,
-    MonkeyCompositionProfile, MonkeyCompositionProgram, PINNED_FLUENT_BIT_REVISION,
-    SynchronizationEvidenceKind, check_imported_chunk_program, check_imported_library_custody,
-    check_library_custody, check_monkey_composition, required_chunk_summary,
+    ChunkImportCertificate, ChunkImportDiagnostic, ChunkImportProfile, DispatcherObservation,
+    ExternalContainerId, ExternalContainerKind, ExternalContextId, ExternalEvidenceId,
+    ExternalHolder, ExternalResourceId, ImportedChunkProgram, ImportedLibraryCustodyProgram,
+    LibraryCustodyCertificate, LibraryCustodyDiagnostic, LibraryCustodyOperation,
+    LibraryCustodyProgram, LibraryImportCertificate, LibraryImportDiagnostic,
+    LibraryMechanismSummary, LibrarySummaryProfile, MonkeyCallback, MonkeyCallbackSummary,
+    MonkeyCompositionCertificate, MonkeyCompositionDiagnostic, MonkeyCompositionProfile,
+    MonkeyCompositionProgram, PINNED_FLUENT_BIT_REVISION, SynchronizationEvidenceKind,
+    check_imported_chunk_program, check_imported_library_custody, check_library_custody,
+    check_monkey_composition, chunk_operation_kind, required_chunk_summary,
 };
 pub use external_source::{
     ExternalSourceBundle, LibrarySourceCertificate, LibrarySourceDiagnostic,
-    derive_library_summary_profile, required_library_source_paths,
+    derive_library_summary_profile,
 };
 pub use frontend::{
     DeclarationKind as SourceDeclarationKind, Located, SemanticPass, SourceBlock,

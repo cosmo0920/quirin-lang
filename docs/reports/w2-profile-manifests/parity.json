@@ -1,0 +1,29 @@
+{
+  "baseline_commit": "43040e7d7ed006bc8a98b8987d7e0f2d3974c929",
+  "units": 185,
+  "verdict_counts": {
+    "Unknown": 80,
+    "Unsafe": 98,
+    "data_only": 4,
+    "Safe": 3
+  },
+  "diagnostic_counts": {
+    "double_release": 35,
+    "leak": 947,
+    "unknown_alias": 8700,
+    "unsupported": 42123
+  },
+  "diagnostics_byte_identical": true,
+  "source_byte_identical": true,
+  "diagnostics_sha256": "df7fd7ddf04749b5a464b857a2afa7f39a18daf7d6be268d84e46b49a2fd5846",
+  "source_sha256": "134b16d867cabf6669ce34eb361d063b5af1e6bb9b8fead77069a0a7ec97a315",
+  "verdict_deltas": [],
+  "audit_exit_codes": {
+    "baseline": 0,
+    "after": 0
+  },
+  "profile_digests": {
+    "libevent": "fb7f0a8771137c8ebfc0d67c0d874793837d7dc22249bc3ea3d226b4d0e3f38f",
+    "fluent-bit": "bf288d7f0a3c6b1e0308954d0d6cc0d57716df7fdb9eb8c36a40d760e3432063"
+  }
+}

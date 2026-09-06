@@ -1,0 +1,3 @@
+    Checking qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3b1d738cf84884a7/compiler)
+    Checking qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3b1d738cf84884a7/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.28s

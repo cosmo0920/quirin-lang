@@ -74,3 +74,7 @@ Claude-specific additions:
 - Run the full standing per-change gate from AGENTS.md before reporting a
   task complete; report probe/example exit codes honestly (a nonzero probe
   exit is a finding, not a build failure).
+
+- W2's bounded profile migration and full 185-TU parity are recorded in
+  `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
+  orchestration work is explicit there. Profile data remains declared trust.

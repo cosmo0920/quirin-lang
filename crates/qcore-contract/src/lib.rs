@@ -9,3 +9,4 @@
 
 pub mod contract_loader;
 pub mod contract_observation;
+pub mod profile_loader;

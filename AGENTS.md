@@ -240,3 +240,14 @@ open gates: `docs/cycles/CYCLE_20.md`. Trust/verdict rules and audit history:
 `docs/QCORE_SPEC_r0_2.md`, `docs/QCORE_MODULE_MODES.md`,
 `docs/QTT_ALIGNMENT.md`. Contract corpus conventions:
 `contract/qcore/README.md`.
+
+
+W2 bounded profile migration landed (2026-09-07;
+`docs/reports/w2-profile-manifests/README.md`): schema v1 and total-or-reject
+loading replace the library enum, source inventories, mechanism/operation
+summary tables and Libevent API/build/source tables with declared profile data.
+Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
+(3 Safe / 98 provisional Unsafe / 80 Unknown / 4 data-only; the third Safe was
+already W4's measured change). Raw production units stay unpromoted. Monkey
+typed imports, Boolean field routing, first-party registration literals and
+configured orchestration remain W2/W5 work; this does not complete W2.

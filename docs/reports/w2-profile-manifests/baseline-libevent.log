@@ -1,0 +1,16 @@
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-w2-baseline-43040e7/compiler)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running `target/debug/examples/cycle18_libevent_audit /home/cosmo/Documents/GitHub/qcore-c/third_party/libevent`
+verified Libevent release-2.2.2-alpha-11-gd82464a2 at d82464a277d0f42703702c4dfd9af6af38595a83
+checked include/event2/event.h
+checked event.c
+checked bufferevent.c
+checked include/event2/thread.h
+checked include/event2/util.h
+checked evutil.c
+checked epoll.c
+checked kqueue.c
+checked win32select.c
+checked event_iocp.c
+checked buffer_iocp.c
+checked bufferevent_async.c

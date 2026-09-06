@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use qcore_compiler::event_driven::LIBEVENT_SUBMODULE_PATH;
-use qcore_compiler::{PINNED_LIBEVENT_COMMIT, verify_pinned_libevent_source};
+use qcore_compiler::source_profiles::{LIBEVENT_SOURCE_SET, load_profile};
+use qcore_compiler::verify_pinned_libevent_source;
 
 #[test]
 fn libevent_submodule_matches_the_audited_revision() {
@@ -10,7 +11,17 @@ fn libevent_submodule_matches_the_audited_revision() {
         .expect("compiler crate must be inside the repository")
         .join(LIBEVENT_SUBMODULE_PATH);
 
-    let evidence = verify_pinned_libevent_source(&root).unwrap_or_else(|error| {
+    // The pinned revision is declared in `contract/profiles/libevent`
+    // (W2); this test still asserts the checkout matches it exactly.
+    let profile = load_profile(LIBEVENT_SOURCE_SET).expect("libevent source-set profile loads");
+    let library = profile
+        .library(LIBEVENT_SOURCE_SET)
+        .expect("the libevent profile declares its library");
+    let pin = profile
+        .pin_for(LIBEVENT_SOURCE_SET)
+        .expect("the libevent library binds a pin");
+
+    let evidence = verify_pinned_libevent_source(&root, pin, library).unwrap_or_else(|error| {
         panic!(
             "failed to verify the Libevent submodule at {}: {error}\n\
              initialize it with `git submodule update --init --recursive`",
@@ -18,7 +29,12 @@ fn libevent_submodule_matches_the_audited_revision() {
         )
     });
 
-    assert_eq!(evidence.commit, PINNED_LIBEVENT_COMMIT);
+    assert_eq!(evidence.commit, pin.git_commit);
+    assert_eq!(evidence.checked_files.len(), library.audited_files.len());
+    assert_eq!(
+        evidence.checked_witnesses.len(),
+        library.source_witnesses.len()
+    );
     assert!(
         evidence.checked_files.iter().any(|path| path == "epoll.c"),
         "the pinned source audit must cover the Linux backend"

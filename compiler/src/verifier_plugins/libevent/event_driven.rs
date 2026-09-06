@@ -1,18 +1,28 @@
 //! Cycle 18 bounded Libevent event-driven concurrency model.
 //!
 //! The model is deliberately fail closed.  It accepts only the public API
-//! surface named in [`LIBEVENT_API_PROFILE`], one dispatcher per event base,
-//! explicit callback summaries, and explicit synchronization evidence for
-//! conflicting cross-context payload accesses.  Trace order alone is never
-//! treated as happens-before evidence.
+//! surface, build profiles and pinned source constructs declared by the
+//! `libevent` source-set profile (`contract/profiles/libevent/profile.json`,
+//! W2), one dispatcher per event base, explicit callback summaries, and
+//! explicit synchronization evidence for conflicting cross-context payload
+//! accesses.  Trace order alone is never treated as happens-before evidence.
+//!
+//! Before W2 the API disposition table, the accepted-build matrix and the
+//! pinned commit plus per-file needle audit were Rust constants in this file.
+//! They are now data; nothing about the acceptance rules changed, and an
+//! absent profile grants nothing.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
-pub const PINNED_LIBEVENT_COMMIT: &str = "d82464a277d0f42703702c4dfd9af6af38595a83";
-pub const PINNED_LIBEVENT_DESCRIPTION: &str = "release-2.2.2-alpha-11-gd82464a2";
+use qcore_contract::profile_loader::{
+    FileAuditDiagnostic, PinDiagnostic, load_audited_bundle, verify_pin,
+};
+use qcore_schemas::profile::{
+    ApiDisposition, BuildProfileSelector, LibraryProfile, SourcePin, WitnessCheck,
+};
+
 pub const LIBEVENT_SUBMODULE_PATH: &str = "third_party/libevent";
 
 pub type EventBaseId = u32;
@@ -72,6 +82,33 @@ pub struct LibeventBuildProfile {
     pub debug_mode: bool,
 }
 
+impl EventBackend {
+    /// The name a profile's [`BuildProfileSelector::backend`] uses.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Epoll => "epoll",
+            Self::Poll => "poll",
+            Self::Select => "select",
+            Self::Kqueue => "kqueue",
+            Self::Iocp => "iocp",
+        }
+    }
+}
+
+impl ThreadMode {
+    /// The name a profile's [`BuildProfileSelector::threads`] uses. Disabled
+    /// threading has no name: no selector can match it, so it stays Unknown.
+    #[must_use]
+    pub const fn as_str(self) -> Option<&'static str> {
+        match self {
+            Self::Disabled => None,
+            Self::Pthreads => Some("pthreads"),
+            Self::WindowsThreads => Some("windows_threads"),
+        }
+    }
+}
+
 impl LibeventBuildProfile {
     pub const LINUX_EPOLL: Self = Self {
         backend: EventBackend::Epoll,
@@ -80,18 +117,27 @@ impl LibeventBuildProfile {
         debug_mode: true,
     };
 
-    pub const fn accepted(self) -> bool {
-        matches!(
-            (self.backend, self.threads),
-            (
-                EventBackend::Epoll | EventBackend::Poll | EventBackend::Select,
-                ThreadMode::Pthreads
-            ) | (EventBackend::Kqueue, ThreadMode::Pthreads)
-                | (
-                    EventBackend::Select | EventBackend::Iocp,
-                    ThreadMode::WindowsThreads
-                )
-        ) && !self.openssl
+    /// Accepted only when some selector in the loaded profile's
+    /// `accepted_builds` matches exactly and none of its forbidden features is
+    /// enabled. An empty selector list accepts nothing (W2 replaced the
+    /// hardcoded acceptance matrix; absence is never acceptance).
+    #[must_use]
+    pub fn accepted(self, accepted_builds: &[BuildProfileSelector]) -> bool {
+        let Some(threads) = self.threads.as_str() else {
+            return false;
+        };
+        accepted_builds.iter().any(|selector| {
+            selector.backend == self.backend.as_str()
+                && selector.threads == threads
+                && selector
+                    .forbid
+                    .iter()
+                    .all(|feature| match feature.as_str() {
+                        "openssl" => !self.openssl,
+                        "debug_mode" => !self.debug_mode,
+                        _ => false,
+                    })
+        })
     }
 }
 
@@ -101,66 +147,20 @@ pub enum ProfileDisposition {
     Unknown,
 }
 
-/// The complete set of symbols recognized by the bounded event importer.
-/// Cycle 19 adds the three descriptor utilities used by Monkey to the initial
-/// Cycle 18 surface. Anything absent is `Unknown`, including DNS, HTTP, RPC,
-/// OpenSSL, listeners, custom allocators/locks, fork repair, and private APIs.
-pub const LIBEVENT_API_PROFILE: &[(&str, ProfileDisposition)] = &[
-    ("event_base_new", ProfileDisposition::Accepted),
-    ("event_base_new_with_config", ProfileDisposition::Accepted),
-    ("event_base_dispatch", ProfileDisposition::Accepted),
-    ("event_base_loop", ProfileDisposition::Accepted),
-    ("event_base_loopbreak", ProfileDisposition::Accepted),
-    ("event_base_loopcontinue", ProfileDisposition::Accepted),
-    ("event_base_loopexit", ProfileDisposition::Accepted),
-    ("event_base_free", ProfileDisposition::Accepted),
-    ("event_new", ProfileDisposition::Accepted),
-    ("event_assign", ProfileDisposition::Accepted),
-    ("event_add", ProfileDisposition::Accepted),
-    ("event_del", ProfileDisposition::Accepted),
-    ("event_del_block", ProfileDisposition::Accepted),
-    ("event_del_noblock", ProfileDisposition::Accepted),
-    ("event_active", ProfileDisposition::Accepted),
-    ("event_pending", ProfileDisposition::Accepted),
-    ("event_priority_set", ProfileDisposition::Accepted),
-    ("event_finalize", ProfileDisposition::Accepted),
-    ("event_free_finalize", ProfileDisposition::Accepted),
-    ("event_free", ProfileDisposition::Accepted),
-    ("evthread_use_pthreads", ProfileDisposition::Accepted),
-    ("evthread_use_windows_threads", ProfileDisposition::Accepted),
-    ("bufferevent_socket_new", ProfileDisposition::Accepted),
-    ("bufferevent_setcb", ProfileDisposition::Accepted),
-    ("bufferevent_setwatermark", ProfileDisposition::Accepted),
-    ("bufferevent_enable", ProfileDisposition::Accepted),
-    ("bufferevent_disable", ProfileDisposition::Accepted),
-    ("bufferevent_lock", ProfileDisposition::Accepted),
-    ("bufferevent_unlock", ProfileDisposition::Accepted),
-    ("bufferevent_free", ProfileDisposition::Accepted),
-    ("evbuffer_new", ProfileDisposition::Accepted),
-    ("evbuffer_add", ProfileDisposition::Accepted),
-    ("evbuffer_remove", ProfileDisposition::Accepted),
-    ("evbuffer_free", ProfileDisposition::Accepted),
-    ("evutil_closesocket", ProfileDisposition::Accepted),
-    ("evutil_socket_geterror", ProfileDisposition::Accepted),
-    ("evutil_socketpair", ProfileDisposition::Accepted),
-    ("evdns_base_new", ProfileDisposition::Unknown),
-    ("evhttp_new", ProfileDisposition::Unknown),
-    ("evrpc_init", ProfileDisposition::Unknown),
-    (
-        "bufferevent_openssl_socket_new",
-        ProfileDisposition::Unknown,
-    ),
-    ("evconnlistener_new", ProfileDisposition::Unknown),
-    ("event_set_mem_functions", ProfileDisposition::Unknown),
-    ("evthread_set_lock_callbacks", ProfileDisposition::Unknown),
-    ("event_reinit", ProfileDisposition::Unknown),
-];
-
-pub fn classify_libevent_symbol(symbol: &str) -> ProfileDisposition {
-    LIBEVENT_API_PROFILE
-        .iter()
-        .find_map(|(name, disposition)| (*name == symbol).then_some(*disposition))
-        .unwrap_or(ProfileDisposition::Unknown)
+/// Classify a symbol against the API disposition table a source-set profile
+/// declares (W2 replaced the 45-entry Rust table with
+/// `contract/profiles/libevent/profile.json`). Absence from the table and an
+/// explicit `ApiDisposition::Unknown` classify identically: `Unknown`. There
+/// is no accept-by-default and no `Safe` disposition.
+#[must_use]
+pub fn classify_libevent_symbol(
+    dispositions: &BTreeMap<String, ApiDisposition>,
+    symbol: &str,
+) -> ProfileDisposition {
+    match dispositions.get(symbol) {
+        Some(ApiDisposition::Accepted) => ProfileDisposition::Accepted,
+        Some(ApiDisposition::Unknown { .. }) | None => ProfileDisposition::Unknown,
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -562,8 +562,12 @@ fn reason_allowed(flags: EventFlags, reason: ActivationReason) -> bool {
 
 /// Check one explicit partial-order trace and return its independently useful
 /// lifecycle/refinement certificate.
+/// `accepted_builds` is the declared acceptance matrix from the loaded
+/// `libevent` library profile; an empty slice accepts no build profile, so
+/// every base creation is `Q709UnknownProfile`.
 pub fn check_event_program(
     program: &EventProgram,
+    accepted_builds: &[BuildProfileSelector],
 ) -> Result<EventCertificate, Vec<EventDiagnostic>> {
     let mut diagnostics = BTreeSet::new();
     let mut bases = BTreeMap::<EventBaseId, BaseState>::new();
@@ -588,7 +592,7 @@ pub fn check_event_program(
                     diagnostics.insert(EventDiagnostic::Q700InvalidLifecycle {
                         operation: operation_index,
                     });
-                } else if !profile.accepted() {
+                } else if !profile.accepted(accepted_builds) {
                     diagnostics.insert(EventDiagnostic::Q709UnknownProfile {
                         operation: operation_index,
                     });
@@ -1452,15 +1456,17 @@ pub struct LibeventSourceEvidence {
     pub root: PathBuf,
     pub commit: String,
     pub checked_files: Vec<PathBuf>,
+    /// Witness names that passed, in declared order. Digest witnesses are
+    /// established by the audited file's verified digest; substring witnesses
+    /// re-check their declared needles.
+    pub checked_witnesses: Vec<String>,
 }
 
 #[derive(Debug)]
 pub enum LibeventSourceError {
-    GitUnavailable,
-    WrongCommit { actual: String },
-    DirtyCheckout,
-    MissingContract { file: PathBuf, needle: &'static str },
-    Io(std::io::Error),
+    Pin(PinDiagnostic),
+    FileAudit(Vec<FileAuditDiagnostic>),
+    MissingContract { file: PathBuf, needle: String },
 }
 
 impl fmt::Display for LibeventSourceError {
@@ -1471,143 +1477,54 @@ impl fmt::Display for LibeventSourceError {
 
 impl std::error::Error for LibeventSourceError {}
 
-impl From<std::io::Error> for LibeventSourceError {
-    fn from(error: std::io::Error) -> Self {
-        Self::Io(error)
-    }
-}
-
-/// Verify the pinned checkout and the upstream source contracts relied on by
-/// the initial event model.  This is a source audit, not a proof about C.
+/// Verify the pinned checkout and the upstream source constructs relied on by
+/// the event model, against the declared `libevent` library profile. This is a
+/// source audit, not a proof about C.
+///
+/// W2 moved the commit pin, the 12-file inventory and the ~40 substring
+/// needles out of this function into
+/// `contract/profiles/libevent/profile.json`. The audit is strictly stronger
+/// than before: every audited file is now digest-checked as well, and the
+/// public-header needles (the constructs intended to survive deliberate pin
+/// updates) are still re-checked.
 pub fn verify_pinned_libevent_source(
     root: impl AsRef<Path>,
+    pin: &SourcePin,
+    profile: &LibraryProfile,
 ) -> Result<LibeventSourceEvidence, LibeventSourceError> {
     let root = root.as_ref();
-    let output = Command::new("git")
-        .args(["-C"])
-        .arg(root)
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .map_err(|_| LibeventSourceError::GitUnavailable)?;
-    if !output.status.success() {
-        return Err(LibeventSourceError::GitUnavailable);
-    }
-    let actual = String::from_utf8_lossy(&output.stdout).trim().to_owned();
-    if actual != PINNED_LIBEVENT_COMMIT {
-        return Err(LibeventSourceError::WrongCommit { actual });
-    }
-    let status = Command::new("git")
-        .args(["-C"])
-        .arg(root)
-        .args(["status", "--porcelain", "--untracked-files=no"])
-        .output()
-        .map_err(|_| LibeventSourceError::GitUnavailable)?;
-    if !status.status.success() {
-        return Err(LibeventSourceError::GitUnavailable);
-    }
-    if !status.stdout.is_empty() {
-        return Err(LibeventSourceError::DirtyCheckout);
-    }
-    let contracts = [
-        (
-            "include/event2/event.h",
-            &[
-                "int event_del_noblock(struct event *ev);",
-                "int event_del_block(struct event *ev);",
-                "int event_finalize(unsigned, struct event *",
-                "void event_active(struct event *ev, int res, short ncalls);",
-                "EVENT_BASE_FLAG_STARTUP_IOCP = 0x04",
-            ][..],
-        ),
-        (
-            "event.c",
-            &[
-                "if (base->running_loop)",
-                "blocking != EVENT_DEL_NOBLOCK",
-                "if (ev->ev_flags & EVLIST_FINALIZING)",
-                "event_process_active(base)",
-            ][..],
-        ),
-        (
-            "bufferevent.c",
-            &[
-                "UNLOCK_CALLBACKS requires DEFER_CALLBACKS",
-                "bufferevent_run_deferred_callbacks_unlocked",
-                "bufferevent_enable_locking_",
-            ][..],
-        ),
-        (
-            "include/event2/thread.h",
-            &[
-                "int evthread_use_pthreads(void);",
-                "int evthread_use_windows_threads(void);",
-            ][..],
-        ),
-        (
-            "include/event2/util.h",
-            &[
-                "int evutil_socketpair(int domain, int type, int protocol, evutil_socket_t sv[2]);",
-                "int evutil_closesocket(evutil_socket_t sock);",
-                "int evutil_socket_geterror(evutil_socket_t sock);",
-            ][..],
-        ),
-        (
-            "evutil.c",
-            &[
-                "evutil_closesocket(evutil_socket_t sock)",
-                "evutil_socket_geterror(evutil_socket_t sock)",
-                "evutil_socketpair(int family, int type, int protocol, evutil_socket_t fd[2])",
-            ][..],
-        ),
-        (
-            "epoll.c",
-            &["const struct eventop epollops", "epoll_wait("][..],
-        ),
-        (
-            "kqueue.c",
-            &[
-                "const struct eventop kqops",
-                "if ((kq = kqueue()) == -1)",
-                "res = kevent(kqop->kq",
-            ][..],
-        ),
-        (
-            "win32select.c",
-            &["struct eventop win32ops", "res = select(fd_count"][..],
-        ),
-        (
-            "event_iocp.c",
-            &[
-                "GetQueuedCompletionStatus(p, &bytes, &key",
-                "event_iocp_port_launch_(int n_cpus)",
-                "CreateIoCompletionPort(INVALID_HANDLE_VALUE",
-                "PostQueuedCompletionStatus(port->port",
-            ][..],
-        ),
-        (
-            "buffer_iocp.c",
-            &["evbuffer_launch_read_", "evbuffer_launch_write_"][..],
-        ),
-        (
-            "bufferevent_async.c",
-            &["bufferevent_async_new_", "ext->ConnectEx(fd, sa"][..],
-        ),
-    ];
-    let mut checked_files = Vec::new();
-    for (relative, needles) in contracts {
-        let path = root.join(relative);
-        let source = std::fs::read_to_string(&path)?;
-        for &needle in needles {
-            if !source.contains(needle) {
-                return Err(LibeventSourceError::MissingContract { file: path, needle });
+    let commit = verify_pin("libevent", pin, root).map_err(LibeventSourceError::Pin)?;
+    let bundle =
+        load_audited_bundle(profile, root, &commit).map_err(LibeventSourceError::FileAudit)?;
+    let mut checked_witnesses = Vec::new();
+    for witness in &profile.source_witnesses {
+        let contents = bundle.files.get(&witness.file).ok_or_else(|| {
+            LibeventSourceError::MissingContract {
+                file: root.join(&witness.file),
+                needle: witness.name.clone(),
+            }
+        })?;
+        if let WitnessCheck::Substrings { needles, .. } = &witness.check {
+            for needle in needles {
+                if !contents.contains(needle) {
+                    return Err(LibeventSourceError::MissingContract {
+                        file: root.join(&witness.file),
+                        needle: needle.clone(),
+                    });
+                }
             }
         }
-        checked_files.push(PathBuf::from(relative));
+        checked_witnesses.push(witness.name.clone());
     }
     Ok(LibeventSourceEvidence {
         root: root.to_path_buf(),
-        commit: actual,
-        checked_files,
+        commit,
+        checked_files: profile
+            .audited_files
+            .iter()
+            .map(|audited| PathBuf::from(&audited.path))
+            .collect(),
+        checked_witnesses,
     })
 }
 
