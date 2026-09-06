@@ -22,7 +22,7 @@ fn summary(body: &str) -> ChunkSourceSummary {
     let [ChunkSourceResult::Summary(summary)] = results.as_slice() else {
         panic!("{results:?}")
     };
-    summary.clone()
+    summary.as_ref().clone()
 }
 
 fn busy_summary() -> ChunkSourceSummary {

@@ -324,3 +324,11 @@ reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
+
+Boolean field profile routing landed (2026-09-07,
+`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+Boolean operation routes come from loaded profile data, with exact declared
+assumptions on summaries. An unrelated record fixture exercises both supported
+models. Full 185-TU resource diagnostics and source projections are unchanged;
+chunk reports add only three assumption maps. Frame-helper ABI generalization
+and source-to-model identity premises remain open.

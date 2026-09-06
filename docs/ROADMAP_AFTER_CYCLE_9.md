@@ -273,3 +273,11 @@ policy and seven Lean theorems preserve this conditional observation boundary.
 General reopen size/map failures, production caller provenance, aggregate custody,
 remaining wrapper lifecycle and full event composition remain open. No raw unit
 is promoted.
+
+Boolean field profile routing landed (2026-09-07,
+`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+Boolean operation routes come from loaded profile data, with exact declared
+assumptions on summaries. An unrelated record fixture exercises both supported
+models. Full 185-TU resource diagnostics and source projections are unchanged;
+chunk reports add only three assumption maps. Frame-helper ABI generalization
+and source-to-model identity premises remain open.

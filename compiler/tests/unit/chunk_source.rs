@@ -26,7 +26,7 @@ fn release_summary() -> ChunkSourceSummary {
     let [ChunkSourceResult::Summary(summary)] = results.as_slice() else {
         panic!("expected source summary: {results:?}")
     };
-    summary.clone()
+    summary.as_ref().clone()
 }
 
 fn prefix() -> Vec<ChunkOperation> {
@@ -265,7 +265,7 @@ fn unlock_with(helper: &ChunkFrameSummary) -> ChunkSourceSummary {
     let [ChunkSourceResult::Summary(summary)] = result.as_slice() else {
         panic!("{result:?}");
     };
-    summary.clone()
+    summary.as_ref().clone()
 }
 
 #[test]
@@ -454,4 +454,155 @@ fn native_helper_contract_checks_values_footprint_and_signature() {
     )
     .unwrap();
     assert!(crate::chunk_contract::check_chunk_frame_contract(&helper, &contract).is_err());
+}
+
+fn field_profile(models: serde_json::Value) -> Result<LoadedProfile, String> {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static SEQUENCE: AtomicU64 = AtomicU64::new(0);
+    let original =
+        crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+            .unwrap();
+    let mut value = serde_json::to_value(original.manifest()).unwrap();
+    let mut library = value["libraries"]["chunkio"].clone();
+    library["provider"] = serde_json::Value::Null;
+    library["audited_files"] = serde_json::json!([]);
+    library["source_witnesses"] = serde_json::json!([]);
+    library["boolean_field_models"] = models;
+    value["source_set"] = "field-fixture".into();
+    value["libraries"] = serde_json::json!({ "custom": library });
+    value["provider_manifests"] = serde_json::json!([]);
+    value["resource_contract_manifest"] = serde_json::Value::Null;
+    value["pins"]["fluent-bit"]["git_commit"] = "b".repeat(40).into();
+    let root = std::env::temp_dir().join(format!(
+        "qcore-field-profile-{}-{}",
+        std::process::id(),
+        SEQUENCE.fetch_add(1, Ordering::Relaxed)
+    ));
+    std::fs::create_dir_all(root.join("field-fixture")).unwrap();
+    std::fs::write(
+        root.join("field-fixture/profile.json"),
+        serde_json::to_vec(&value).unwrap(),
+    )
+    .unwrap();
+    let loaded = qcore_contract::profile_loader::load_source_set_profile(&root, "field-fixture")
+        .map_err(|error| error.to_string());
+    std::fs::remove_dir_all(root).unwrap();
+    loaded
+}
+
+fn field_model(record: &str, field: &str, set: &str, clear: &str) -> serde_json::Value {
+    serde_json::json!({"record":record,"field":field,"set_operation":set,"clear_operation":clear})
+}
+
+#[test]
+fn profile_models_route_unrelated_records_and_retain_their_assumptions() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source =
+        "struct widget { int held; }; int clear(struct widget *p) { p->held = 0; return 0; }";
+    let unit = C11TranslationUnit {
+        source,
+        ..Default::default()
+    };
+    for (set, clear, expected) in [
+        ("lock", "unlock", ChunkSourceField::Locked),
+        ("set_busy", "set_busy", ChunkSourceField::Busy),
+    ] {
+        let profile = field_profile(serde_json::json!([field_model(
+            "widget", "held", set, clear
+        )]))
+        .unwrap();
+        let results =
+            import_chunk_source_with_profile(&unit, &"b".repeat(40), &profile, &["custom"], &[])
+                .unwrap();
+        let [ChunkSourceResult::Summary(summary)] = results.as_slice() else {
+            panic!("{results:?}");
+        };
+        assert_eq!(summary.field(), expected);
+        assert_eq!(summary.paths()[0].writes, [false]);
+        assert_eq!(summary.paths()[1].writes, [false]);
+        assert_eq!(summary.profile_assumptions(), &profile.assumptions());
+        assert!(!summary.profile_assumptions().is_empty());
+        let serialized = serde_json::to_value(summary).unwrap();
+        assert!(serialized["profile_assumptions"].is_object());
+        assert!(
+            import_chunk_source_with_profile(&unit, &"a".repeat(40), &profile, &["custom"], &[])
+                .is_err()
+        );
+        assert!(
+            import_chunk_source_with_profile(&unit, &"b".repeat(40), &profile, &["missing"], &[])
+                .is_err()
+        );
+    }
+}
+
+#[test]
+fn absent_ambiguous_or_unsupported_field_models_never_gain_fallback_routes() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let unit = C11TranslationUnit {
+        source: "struct widget { int held; }; int clear(struct widget *p) { p->held = 0; return 0; }",
+        ..Default::default()
+    };
+    for models in [
+        serde_json::json!([]),
+        serde_json::json!([field_model("widget", "other", "lock", "unlock")]),
+        serde_json::json!([field_model("other", "held", "lock", "unlock")]),
+    ] {
+        let profile = field_profile(models).unwrap();
+        let results =
+            import_chunk_source_with_profile(&unit, &"b".repeat(40), &profile, &["custom"], &[])
+                .unwrap();
+        assert!(
+            matches!(results.as_slice(), [ChunkSourceResult::Unknown { .. }]),
+            "{results:?}"
+        );
+    }
+    for models in [
+        serde_json::json!([field_model("widget", "held", "lock", "lock")]),
+        serde_json::json!([field_model("widget", "held", "destroy_context", "unlock")]),
+        serde_json::json!([
+            field_model("widget", "held", "lock", "unlock"),
+            field_model("widget", "other", "set_busy", "set_busy")
+        ]),
+    ] {
+        let profile = field_profile(models).unwrap();
+        assert!(
+            import_chunk_source_with_profile(&unit, &"b".repeat(40), &profile, &["custom"], &[])
+                .is_err()
+        );
+    }
+    let model = field_model("widget", "held", "lock", "unlock");
+    assert!(field_profile(serde_json::json!([model, model])).is_err());
+}
+
+#[test]
+fn data_selected_field_does_not_weaken_typed_source_validation() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let profile = field_profile(serde_json::json!([field_model(
+        "widget", "held", "lock", "unlock"
+    )]))
+    .unwrap();
+    for source in [
+        "struct widget { int held:1; }; int clear(struct widget *p) { p->held = 0; return 0; }",
+        "struct widget { volatile int held; }; int clear(struct widget *p) { p->held = 0; return 0; }",
+        "struct widget { int held; }; int clear(struct widget *p) { p->held = 2; return 0; }",
+        "struct widget { int held; }; int clear(struct widget *p) { struct widget *q=p; q->held = 0; return 0; }",
+    ] {
+        let unit = C11TranslationUnit {
+            source,
+            ..Default::default()
+        };
+        let results =
+            import_chunk_source_with_profile(&unit, &"b".repeat(40), &profile, &["custom"], &[])
+                .unwrap();
+        assert!(
+            matches!(results.as_slice(), [ChunkSourceResult::Unknown { .. }]),
+            "{results:?}"
+        );
+    }
 }

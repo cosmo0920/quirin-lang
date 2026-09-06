@@ -106,3 +106,11 @@ concurrency semantics are implemented. CT mapping remains 5/50.
   describe recorded runs under `observations_trusted`; lifecycle source
   derivation stays incomplete until real effect/ABI import exists. The host
   relocation is a separate remaining step, and v1 Safe refusal is unchanged.
+
+Boolean field profile routing landed (2026-09-07,
+`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+Boolean operation routes come from loaded profile data, with exact declared
+assumptions on summaries. An unrelated record fixture exercises both supported
+models. Full 185-TU resource diagnostics and source projections are unchanged;
+chunk reports add only three assumption maps. Frame-helper ABI generalization
+and source-to-model identity premises remain open.

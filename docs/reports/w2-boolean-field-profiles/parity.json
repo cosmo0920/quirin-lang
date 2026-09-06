@@ -1,0 +1,34 @@
+{
+  "resource_sha256": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+  "resource_diagnostics_byte_identical_to_w4_extensions": true,
+  "source_byte_identical": true,
+  "chunk_contracts_equal_except_added_declared_assumptions": true,
+  "added_assumptions": {
+    "/results/16/summary/profile_assumptions": {
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "bf288d7f0a3c6b1e0308954d0d6cc0d57716df7fdb9eb8c36a40d760e3432063",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior"
+    },
+    "/results/24/summary/profile_assumptions": {
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "bf288d7f0a3c6b1e0308954d0d6cc0d57716df7fdb9eb8c36a40d760e3432063",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior"
+    },
+    "/results/63/summary/profile_assumptions": {
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "bf288d7f0a3c6b1e0308954d0d6cc0d57716df7fdb9eb8c36a40d760e3432063",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior"
+    }
+  },
+  "units": 185,
+  "Safe": 3,
+  "provisional_Unsafe": 98,
+  "Unknown": 80,
+  "data_only": 4
+}

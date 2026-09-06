@@ -8,6 +8,8 @@
 //! does not unlock the underlying ChunkIO chunk.
 
 use crate::typed_c_ast::{ast_declarations, function_ast};
+use qcore_contract::profile_loader::LoadedProfile;
+use qcore_schemas::profile::{BooleanFieldModel, OperationKind};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -45,6 +47,8 @@ pub struct ChunkSourceSummary {
     field: ChunkSourceField,
     paths: [ChunkSourcePath; 2],
     dependencies: BTreeMap<String, String>,
+    /// Exact declared profile identities retained with this bounded claim.
+    profile_assumptions: BTreeMap<String, String>,
 }
 
 impl ChunkSourceSummary {
@@ -68,9 +72,15 @@ impl ChunkSourceSummary {
         &self.dependencies
     }
 
+    pub fn profile_assumptions(&self) -> &BTreeMap<String, String> {
+        &self.profile_assumptions
+    }
+
     /// Bind the source parameter to one live model identity. The caller must
-    /// establish that its C pointer denotes this chunk and has exclusive access
-    /// to the field. This does not infer pointer provenance or synchronization.
+    /// establish that its C pointer denotes this chunk, has exclusive access,
+    /// and that the concrete field equals this model state's Boolean value.
+    /// A declared record/field mapping alone proves none of those premises.
+    /// This does not infer pointer provenance or synchronization.
     /// Non-lifecycle helper writes remain in paths/frame_writes and the native
     /// contract certificate; ChunkState does not model error/metadata storage.
     pub fn instantiate(
@@ -256,7 +266,7 @@ pub fn import_chunk_frame_helper(
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum ChunkSourceResult {
     /// A complete field-effect summary, not a Safe translation-unit verdict.
-    Summary(ChunkSourceSummary),
+    Summary(Box<ChunkSourceSummary>),
     Unknown {
         function: String,
         reason: String,
@@ -278,8 +288,52 @@ pub fn import_chunk_source_with_helpers(
     source_revision: &str,
     helpers: &[ChunkFrameSummary],
 ) -> Result<Vec<ChunkSourceResult>, String> {
-    if source_revision != PINNED_FLUENT_BIT_REVISION {
-        return Err("ChunkIO source revision does not match the pinned revision".into());
+    let profile =
+        crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+            .map_err(|error| error.to_string())?;
+    let libraries = profile
+        .manifest()
+        .libraries
+        .iter()
+        .filter(|(_, library)| !library.boolean_field_models.is_empty())
+        .map(|(name, _)| name.as_str())
+        .collect::<Vec<_>>();
+    import_chunk_source_with_profile(unit, source_revision, &profile, &libraries, helpers)
+}
+
+/// Import selected single-field models from declared profile data. The revision
+/// is a caller assertion, as in the compatibility API; the outer audit must bind
+/// actual checkout/build identity. Missing models never gain an implicit route.
+/// The model/assumption mapping is part of every returned bounded summary.
+pub fn import_chunk_source_with_profile(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    profile: &LoadedProfile,
+    libraries: &[&str],
+    helpers: &[ChunkFrameSummary],
+) -> Result<Vec<ChunkSourceResult>, String> {
+    let mut models = BTreeMap::new();
+    for name in libraries {
+        let library = profile
+            .library(name)
+            .ok_or_else(|| format!("unknown field-model library `{name}`"))?;
+        let pin = profile
+            .pin_for(name)
+            .ok_or("missing field-model source pin")?;
+        if source_revision != pin.git_commit {
+            return Err("ChunkIO source revision does not match the pinned revision".into());
+        }
+        for model in &library.boolean_field_models {
+            field_kind(model)?;
+            // The supported function ABI has one record pointer. Multiple field
+            // routes for that record are ambiguous until a richer importer exists.
+            if models
+                .insert(format!("int (struct {} *)", model.record), model)
+                .is_some()
+            {
+                return Err("ambiguous Boolean field models for one record ABI".into());
+            }
+        }
     }
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     let mut checked_helpers = BTreeMap::new();
@@ -320,21 +374,30 @@ pub fn import_chunk_source_with_helpers(
             checked_helpers.insert(helper.function.clone(), helper);
         }
     }
-    let layouts = [("flb_input_chunk", "busy"), ("cio_chunk", "lock")]
-        .map(|(record, field)| validate_field_layout(&source, unit, record, field));
+    let layouts = models
+        .iter()
+        .map(|(abi, model)| {
+            (
+                abi.as_str(),
+                validate_field_layout(&source, unit, &model.record, &model.field),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
     let mut results = Vec::new();
     for function in legacy_c_source_functions(unit.source) {
         let result = function_ast(&source, unit, &function).and_then(|ast| {
-            let summary = derive_summary(&ast, &function, source_revision, &checked_helpers)?;
-            layouts[match summary.field {
-                ChunkSourceField::Busy => 0,
-                ChunkSourceField::Locked => 1,
-            }]
-            .clone()?;
+            let abi = ast["type"]["qualType"].as_str().unwrap_or("");
+            let model = models
+                .get(abi)
+                .ok_or("outside single borrowed chunk / int-result source profile")?;
+            let mut summary =
+                derive_summary(&ast, &function, source_revision, &checked_helpers, model)?;
+            layouts[abi].clone()?;
+            summary.profile_assumptions = profile.assumptions();
             Ok(summary)
         });
         results.push(match result {
-            Ok(summary) => ChunkSourceResult::Summary(summary),
+            Ok(summary) => ChunkSourceResult::Summary(Box::new(summary)),
             Err(reason) => ChunkSourceResult::Unknown { function, reason },
         });
     }
@@ -589,17 +652,23 @@ impl Importer<'_> {
     }
 }
 
+fn field_kind(model: &BooleanFieldModel) -> Result<ChunkSourceField, String> {
+    match (model.set_operation, model.clear_operation) {
+        (OperationKind::SetBusy, OperationKind::SetBusy) => Ok(ChunkSourceField::Busy),
+        (OperationKind::Lock, OperationKind::Unlock) => Ok(ChunkSourceField::Locked),
+        _ => Err("unsupported Boolean field operation mapping".into()),
+    }
+}
+
 fn derive_summary(
     ast: &Value,
     function: &str,
     source_revision: &str,
     helpers: &BTreeMap<String, &ChunkFrameSummary>,
+    model: &BooleanFieldModel,
 ) -> Result<ChunkSourceSummary, String> {
-    let (field, field_name) = match ast["type"]["qualType"].as_str() {
-        Some("int (struct flb_input_chunk *)") => (ChunkSourceField::Busy, "busy"),
-        Some("int (struct cio_chunk *)") => (ChunkSourceField::Locked, "lock"),
-        _ => return Err("outside single borrowed chunk / int-result source profile".into()),
-    };
+    let field = field_kind(model)?;
+    let field_name = model.field.as_str();
     // Do not silently discard attributes, nested declarations, extra parameters,
     // or other definition children that can change execution semantics.
     let [parameter, body] = children(ast) else {
@@ -641,6 +710,7 @@ fn derive_summary(
         field,
         paths: [evaluate(false)?, evaluate(true)?],
         dependencies: importer.dependencies,
+        profile_assumptions: BTreeMap::new(),
     })
 }
 
