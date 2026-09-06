@@ -15,7 +15,7 @@ From the repository root:
 
 ```sh
 cargo test -p qcore-compiler --test qcore_contract_corpus
-cargo run -p qcore-compiler --bin qcorec -- check \
+cargo run -p qcorec -- check \
   contract/qcore/chunkio/import_composition.qcore
 ```
 

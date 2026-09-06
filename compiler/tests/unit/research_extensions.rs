@@ -173,29 +173,36 @@ fn maximum_counts_cannot_forge_exact_final_custody() {
 
 #[test]
 fn zero_net_maximum_covers_every_admitted_early_exit() {
-    let body = Flow::acquire(q(2), q(1))
-        .then(&Flow::release(q(2), q(1)))
-        .unwrap();
-    for bound in 0..=2 {
-        let certificate = summarize_general_loop(&body, LoopBoundEvidence::AtMost(bound)).unwrap();
-        check_loop_summary(&certificate).unwrap();
-        for actual in 0..=bound {
-            assert!(
-                body.repeat_exact(actual)
-                    .unwrap()
-                    .is_covered_by(&certificate.summary)
-            );
-        }
-        if bound == 0 {
-            assert_eq!(certificate.summary, Flow::zero());
-        }
-        if bound == 2 {
-            let mut forged = certificate;
-            forged.summary = body.repeat_exact(1).unwrap();
-            assert_eq!(
-                check_loop_summary(&forged),
-                Err(LoopSummaryError::InvalidCertificate)
-            );
+    for body in [
+        Flow::acquire(q(2), q(1))
+            .then(&Flow::release(q(2), q(1)))
+            .unwrap(),
+        Flow::release(q(2), q(1))
+            .then(&Flow::acquire(q(2), q(1)))
+            .unwrap(),
+    ] {
+        for bound in 0..=2 {
+            let certificate =
+                summarize_general_loop(&body, LoopBoundEvidence::AtMost(bound)).unwrap();
+            check_loop_summary(&certificate).unwrap();
+            for actual in 0..=bound {
+                assert!(
+                    body.repeat_exact(actual)
+                        .unwrap()
+                        .is_covered_by(&certificate.summary)
+                );
+            }
+            if bound == 0 {
+                assert_eq!(certificate.summary, Flow::zero());
+            }
+            if bound == 2 {
+                let mut forged = certificate;
+                forged.summary = body.repeat_exact(1).unwrap();
+                assert_eq!(
+                    check_loop_summary(&forged),
+                    Err(LoopSummaryError::InvalidCertificate)
+                );
+            }
         }
     }
     // Scalar balance does not prove which allocation identities survive;

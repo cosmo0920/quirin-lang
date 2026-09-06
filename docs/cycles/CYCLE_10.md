@@ -6,7 +6,7 @@ Cycle 10 implements the source-front-end prerequisite in the post-Cycle-9
 roadmap. It preserves the checked IR APIs from Cycles 1–9 while adding one
 canonical, source-located boundary for later whole-program integration.
 
-The consolidated revision 0.2 specification in `../QCORE_SPEC_r0_2.md`
+The consolidated revision 0.2 specification in `../obsolete/QCORE_SPEC_r0_2.md`
 already incorporates the checked-concurrency amendment. Cycle 10 recognizes
 its new surface forms for forward compatibility, but it does not claim the
 concurrency safety results assigned to the later C0–C7 concurrency roadmap.

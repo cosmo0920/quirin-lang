@@ -1,5 +1,10 @@
 # QCore-C: Quantitative Types, Checked Concurrency, and Resource-Safe Error Unwinding
 
+> Historical revision. [Revision 0.3](../QCORE_SPEC_r0_3.md) and its
+> [contract companion](../QCORE_CONTRACT_SPEC_r0_3.md) supersede conflicting
+> requirements and implementation claims. Historical evidence remains scoped
+> to its original artifact and date.
+
 **Status:** Proposed research specification, revision 0.2; implementation and proof completion are not claimed.  
 **Audience:** An implementation and verification LLM agent  
 **Normative language:** “MUST”, “MUST NOT”, “SHOULD”, and “MAY” are requirements at their usual standards meanings.  

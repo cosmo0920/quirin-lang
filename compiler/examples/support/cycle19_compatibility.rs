@@ -42,6 +42,19 @@ pub fn run(
     binding_directory: Option<&Path>,
     contract_manifest: Option<&Path>,
 ) -> Result<bool, String> {
+    // Validate the external build input before running any expensive audit.
+    let monkey_input = monkey_database.map(|path| {
+        let database = fs::read_to_string(path)
+            .map_err(|error| format!("could not read Monkey compile database {}: {error}", path.display()))?;
+        if database.trim().is_empty() {
+            return Err(format!("Monkey compile database {} is empty; generate persistent inputs with scripts/prepare_cycle19_monkey.py", path.display()));
+        }
+        let entries = compile_entries(&database)
+            .map_err(|error| format!("invalid Monkey compile database {}: {error}", path.display()))?;
+        let source_root = monkey_source_root(&entries)
+            .map_err(|error| format!("Monkey compile database {}: {error}", path.display()))?;
+        Ok::<_, String>((entries, source_root))
+    }).transpose()?;
     let root = root
         .canonicalize()
         .map_err(|error| format!("could not resolve {}: {error}", root.display()))?;
@@ -157,14 +170,7 @@ pub fn run(
         );
     }
     audit_monkey_libevent_contract(&root)?;
-    if let Some(database_path) = monkey_database {
-        let database_path = database_path
-            .canonicalize()
-            .map_err(|error| format!("could not resolve {}: {error}", database_path.display()))?;
-        let database = fs::read_to_string(&database_path)
-            .map_err(|error| format!("could not read {}: {error}", database_path.display()))?;
-        let monkey_entries = compile_entries(&database)?;
-        let source_root = monkey_source_root(&monkey_entries)?;
+    if let Some((monkey_entries, source_root)) = monkey_input {
         let mut selected = monkey_entries
             .into_iter()
             .filter(|entry| is_monkey_unit(&source_root, &entry.file))

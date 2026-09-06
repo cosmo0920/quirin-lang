@@ -44,7 +44,7 @@ finding VP05), `compiler/src/chunk_lifecycle.rs`
 (`check_contract_observation`), `crates/qcore-contract/src/contract_loader.rs`,
 `compiler/examples/reevaluation_probe.rs` (VP01/VP02),
 `compiler/examples/reevaluation_followup.rs` (VP04–VP08, LC01, WM05),
-`docs/QCORE_SPEC_r0_2.md` §54 (the Q700–Q712 table) and the verify-scope
+`docs/obsolete/QCORE_SPEC_r0_2.md` §54 (the Q700–Q712 table) and the verify-scope
 grammar note near §5.1.
 
 ---

@@ -1,0 +1,628 @@
+# QCore extended design grammar, revision 0.3 (2026-09-07)
+# TARGET ONLY: not a statement of parser, type-checker, or driver conformance.
+# Collected from all 19 BNF blocks in QCORE_SPEC_r0_2.md; module header added.
+# Consumer grammars and semantic side conditions: QCORE_IMPLEMENTED_GRAMMARS_r0_3.md.
+# Normative semantics and open implementation requirements: QCORE_SPEC_r0_3.md
+# and QCORE_CONTRACT_SPEC_r0_3.md. Policy-consumer syntax is specified separately.
+# Lexical terminals are <IDENTIFIER-TOKEN>, <INTEGER-TOKEN>, <FLOAT-TOKEN>, <STRING-TOKEN>, <CHAR-TOKEN>.
+# epsilon denotes the empty production. This file preserves the original ε notation.
+
+<identifier> ::= <IDENTIFIER-TOKEN>
+<index-identifier> ::= <IDENTIFIER-TOKEN>
+<constant-index-identifier> ::= <IDENTIFIER-TOKEN>
+<integer-literal> ::= <INTEGER-TOKEN>
+<literal> ::= <INTEGER-TOKEN>
+            | <FLOAT-TOKEN>
+            | <STRING-TOKEN>
+            | <CHAR-TOKEN>
+            | "true"
+            | "false"
+<literal-pattern> ::= <literal>
+
+<program> ::= <module-header-opt> <declaration-list>
+
+<module-header-opt> ::= "module" <module-mode> ";" | ε
+<module-mode> ::= "executable" | "library" | "contract"
+
+<declaration-list> ::= ε
+                     | <declaration> <declaration-list>
+
+<declaration> ::= <dimension-declaration>
+                | <axis-declaration>
+                | <type-declaration>
+                | <resource-type-declaration>
+                | <error-declaration>
+                | <constant-declaration>
+                | <extern-function-declaration>
+                | <function-declaration>
+                | <concurrency-profile-declaration>
+                | <verifier-scope-declaration>
+
+<dimension-declaration> ::= "dimension" <identifier> ":" "Idx" "+" "Ordered" ";"
+
+<axis-declaration> ::= "quant" "axis" <identifier> ":" <axis-mode> "<" <dimension-reference> ">" ";"
+
+<axis-mode> ::= "credit"
+              | "live"
+              | "cost.total"
+              | "cost.peak"
+
+<dimension-reference> ::= <identifier>
+                        | "Count" "<" <identifier> ">"
+
+<type-declaration> ::= "type" <identifier> <optional-type-parameters> "=" <type> ";"
+
+<constant-declaration> ::= "const" <identifier> ":" <type> "=" <expression> ";"
+
+<verifier-scope-declaration> ::= "verify" "scope" <identifier> "{"
+                                   <verifier-provider-list> "}"
+
+<verifier-provider-list> ::= <verifier-provider>
+                           | <verifier-provider> <verifier-provider-list>
+
+<verifier-provider> ::= "plugin" <plugin-id> <optional-plugin-version>
+                        "profile" <plugin-value>
+                        "capabilities" "{" <capability-list> "}" ";"
+
+<plugin-id> ::= <identifier> "." <identifier>
+              | <identifier> "." <plugin-id>
+
+<optional-plugin-version> ::= ε
+                            | "version" <plugin-value>
+
+<plugin-value> ::= <identifier>
+                 | <STRING-TOKEN>
+
+<capability-list> ::= <identifier>
+                    | <identifier> "," <capability-list>
+
+<optional-type-parameters> ::= ε
+                             | "[" <type-parameter-list> "]"
+
+<type-parameter-list> ::= <type-parameter>
+                        | <type-parameter> "," <type-parameter-list>
+
+<type-parameter> ::= <identifier> ":" "Type"
+                   | <identifier> ":" "Idx" "<" <dimension-reference> ">"
+                   | <identifier> ":" "Usage"
+                   | <identifier> ":" "Lifetime"
+                   | <identifier> ":" "Share"
+
+<type> ::= <atomic-type>
+         | <named-type>
+         | <tuple-type>
+         | <array-type>
+         | <slice-type>
+         | <pointer-type>
+         | <owned-type>
+         | <borrow-type>
+         | <quant-type>
+         | <result-type>
+         | <function-type>
+         | <access-quant-type>
+         | <task-type>
+         | <mutex-type>
+         | "never"
+
+<atomic-type> ::= "unit"
+                | "bool"
+                | "i8"
+                | "i16"
+                | "i32"
+                | "i64"
+                | "u8"
+                | "u16"
+                | "u32"
+                | "u64"
+                | "isize"
+                | "usize"
+                | "f32"
+                | "f64"
+
+<named-type> ::= <identifier> <optional-type-arguments>
+
+<optional-type-arguments> ::= ε
+                            | "<" <type-argument-list> ">"
+
+<type-argument-list> ::= <type-argument>
+                       | <type-argument> "," <type-argument-list>
+
+<type-argument> ::= <type>
+                  | <index-expression>
+                  | <usage-expression>
+                  | <lifetime>
+                  | <share-expression>
+
+<tuple-type> ::= "(" <type-list> ")"
+
+<type-list> ::= <type>
+              | <type> "," <type-list>
+
+<array-type> ::= "array" "<" <type> "," <index-expression> ">"
+
+<slice-type> ::= "slice" "<" <type> "," <index-expression> ">"
+
+<pointer-type> ::= "ptr" "<" <mutability> "," <type> ">"
+
+<owned-type> ::= "own" "<" <type> ">"
+
+<borrow-type> ::= "borrow" "<" <lifetime> "," <mutability> "," <type> ">"
+
+<mutability> ::= "const"
+               | "mut"
+
+<lifetime> ::= "'" <identifier>
+
+<quant-type> ::= "quant" "<" <quant-mode> "," <quant-expression> <optional-where> ">"
+
+<quant-mode> ::= "credit"
+               | "live"
+               | "cost"
+
+<result-type> ::= "result" "<" <type> "," <error-row> ">"
+
+<function-type> ::= "fn" "(" <optional-parameter-type-list> ")" "->" <type> <optional-effects> <optional-quant-summary>
+
+<optional-parameter-type-list> ::= ε
+                                 | <parameter-type-list>
+
+<parameter-type-list> ::= <parameter-type>
+                        | <parameter-type> "," <parameter-type-list>
+
+<parameter-type> ::= <type> "use" <usage-expression>
+
+<resource-type-declaration> ::= "resource" "type" <identifier> <optional-type-parameters> "{"
+                                <resource-member-list>
+                                "}"
+
+<resource-member-list> ::= <resource-member>
+                         | <resource-member> <resource-member-list>
+
+<resource-member> ::= "repr" ":" <type> ";"
+                    | "state" ":" <identifier> ";"
+                    | "footprint" ":" <quant-expression> ";"
+                    | "destructor" ":" <identifier> "noexcept" ";"
+                    | "copy" ":" "forbidden" ";"
+                    | "move" ":" "allowed" ";"
+
+<error-declaration> ::= "error" <identifier> <optional-type-parameters> "{"
+                        <error-variant-list>
+                        "}"
+
+<error-variant-list> ::= <error-variant>
+                       | <error-variant> <error-variant-list>
+
+<error-variant> ::= <identifier> ";"
+                  | <identifier> "{" <field-list> "}" ";"
+
+<field-list> ::= <field>
+               | <field> "," <field-list>
+
+<field> ::= <identifier> ":" <type>
+
+<error-row> ::= "{" <optional-error-type-list> "}"
+
+<optional-error-type-list> ::= ε
+                             | <error-type-list>
+
+<error-type-list> ::= <type>
+                    | <type> "," <error-type-list>
+
+<function-declaration> ::= "fn" <identifier> <optional-type-parameters>
+                           "(" <optional-parameter-list> ")"
+                           "->" <type>
+                           <optional-where>
+                           <optional-effects>
+                           <optional-quant-summary>
+                           <optional-contract>
+                           <block>
+
+<extern-function-declaration> ::= "extern" "fn" <identifier> <optional-type-parameters>
+                                  "(" <optional-parameter-list> ")"
+                                  "->" <type>
+                                  <optional-where>
+                                  <optional-effects>
+                                  <optional-quant-summary>
+                                  <optional-contract>
+                                  ";"
+
+<optional-parameter-list> ::= ε
+                            | <parameter-list>
+
+<parameter-list> ::= <parameter>
+                   | <parameter> "," <parameter-list>
+
+<parameter> ::= <identifier> ":" <type> <optional-index-alias> <optional-usage>
+
+<optional-index-alias> ::= ε
+                         | "as" "idx" <identifier>
+
+<optional-usage> ::= ε
+                   | "use" <usage-expression>
+
+<optional-effects> ::= ε
+                     | "effects" <effect-row>
+
+<effect-row> ::= "{" <optional-effect-list> "}"
+
+<optional-effect-list> ::= ε
+                         | <effect-list>
+
+<effect-list> ::= <effect-item>
+                | <effect-item> "," <effect-list>
+
+<effect-item> ::= <identifier>
+                | "throws" "<" <type> ">"
+                | "unsafe"
+
+<optional-quant-summary> ::= ε
+                           | "quant" <quant-summary-block>
+
+<optional-contract> ::= ε
+                      | "contract" "{"
+                        <contract-clause-list>
+                        "}"
+
+<contract-clause-list> ::= ε
+                         | <contract-clause> <contract-clause-list>
+
+<contract-clause> ::= "requires" <constraint> ";"
+                    | "ensures" <exit-selector> <constraint> ";"
+                    | "quant" <exit-selector> <quant-relation> ";"
+                    | <access-contract-clause>
+
+<exit-selector> ::= "normal"
+                  | "error" "(" <type> ")"
+                  | "any"
+
+<quant-relation> ::= <quant-expression> <relation-operator> <quant-expression>
+
+<quant-summary-block> ::= "{"
+                          <quant-summary-clause-list>
+                          "}"
+
+<quant-summary-clause-list> ::= ε
+                              | <quant-summary-clause> <quant-summary-clause-list>
+
+<quant-summary-clause> ::= "peak.live" <relation-operator> <quant-expression> ";"
+                         | "total" <relation-operator> <quant-expression> ";"
+                         | "normal.live" <relation-operator> <quant-expression> ";"
+                         | "error" "(" <error-pattern> ")" "." "live" <relation-operator> <quant-expression> ";"
+
+<optional-where> ::= ε
+                   | "where" <where-item-list>
+
+<where-item-list> ::= <where-item>
+                    | <where-item> "," <where-item-list>
+
+<where-item> ::= <constraint>
+               | <identifier> ":=" <index-expression>
+
+<constraint> ::= "true"
+               | <index-expression> <relation-operator> <index-expression>
+               | <quant-expression> <relation-operator> <quant-expression>
+               | "(" <constraint> ")"
+               | <constraint> "and" <constraint>
+
+<relation-operator> ::= "=="
+                      | "!="
+                      | "<"
+                      | "<="
+                      | ">"
+                      | ">="
+
+<index-expression> ::= <index-atom>
+                     | "(" <index-expression> ")"
+                     | <index-expression> "+" <index-expression>
+                     | <index-expression> "*" <index-constant>
+                     | <index-constant> "*" <index-expression>
+                     | "min" "(" <index-expression> "," <index-expression> ")"
+                     | "max" "(" <index-expression> "," <index-expression> ")"
+                     | "monus" "(" <index-expression> "," <index-expression> ")"
+                     | "sizeof" "<" <type> ">"
+
+<index-atom> ::= <integer-literal>
+               | <index-identifier>
+               | <quant-projection>
+
+<index-constant> ::= <integer-literal>
+                   | <constant-index-identifier>
+
+<quant-projection> ::= <identifier> "." <identifier>
+
+<quant-expression> ::= <quant-atom>
+                     | "(" <quant-expression> ")"
+                     | <quant-expression> "+" <quant-expression>
+                     | "join" "(" <quant-expression> "," <quant-expression> ")"
+                     | "scale" "(" <index-expression> "," <quant-expression> ")"
+                     | "monus" "(" <quant-expression> "," <quant-expression> ")"
+
+<quant-atom> ::= "zero"
+               | <identifier>
+               | "{" <optional-quant-field-list> "}"
+
+<optional-quant-field-list> ::= ε
+                              | <quant-field-list>
+
+<quant-field-list> ::= <quant-field>
+                     | <quant-field> "," <quant-field-list>
+
+<quant-field> ::= <identifier> "=" <index-expression>
+
+<usage-expression> ::= "zero"
+                     | "one"
+                     | "affine"
+                     | "relevant"
+                     | "many"
+                     | <integer-literal>
+                     | "[" <index-expression> "," <usage-upper> "]"
+                     | <identifier>
+
+<usage-upper> ::= <index-expression>
+                | "inf"
+
+<block> ::= "{" <statement-list> "}"
+
+<statement-list> ::= ε
+                   | <statement> <statement-list>
+
+<statement> ::= <let-statement>
+              | <let-index-statement>
+              | <assignment-statement>
+              | <expression-statement>
+              | <drop-statement>
+              | <move-statement>
+              | <discharge-statement>
+              | <guard-statement>
+              | <if-statement>
+              | <match-statement>
+              | <while-statement>
+              | <return-statement>
+              | <raise-statement>
+              | <break-statement>
+              | <continue-statement>
+              | <defer-statement>
+              | <error-region-statement>
+              | <unsafe-statement>
+              | <thread-scope-statement>
+              | <footprint-statement>
+              | <with-lock-statement>
+
+<let-statement> ::= "let" <pattern> <optional-type-ascription> "=" <expression> ";"
+
+<optional-type-ascription> ::= ε
+                             | ":" <type>
+
+<let-index-statement> ::= "let" "idx" <identifier> "=" <scalar-expression> ";"
+
+<assignment-statement> ::= <place-expression> "=" <expression> ";"
+
+<expression-statement> ::= <expression> ";"
+
+<drop-statement> ::= "drop" <place-expression> ";"
+
+<move-statement> ::= "move" <place-expression> ";"
+
+<discharge-statement> ::= "discharge" <identifier> ";"
+
+<guard-statement> ::= "guard" <constraint> "else" "raise" <expression> ";"
+
+<if-statement> ::= "if" "(" <expression> ")" <block> <optional-else>
+
+<optional-else> ::= ε
+                  | "else" <block>
+                  | "else" <if-statement>
+
+<match-statement> ::= "match" <expression> "{"
+                      <match-arm-list>
+                      "}"
+
+<match-arm-list> ::= <match-arm>
+                   | <match-arm> <match-arm-list>
+
+<match-arm> ::= <pattern> "=>" <block>
+
+<while-statement> ::= "while" "(" <expression> ")"
+                      "invariant" <constraint>
+                      "quant" "invariant" <quant-relation>
+                      <optional-loop-bound>
+                      <block>
+
+<optional-loop-bound> ::= ε
+                        | "bound" <index-expression>
+
+<return-statement> ::= "return" <optional-expression> ";"
+
+<optional-expression> ::= ε
+                        | <expression>
+
+<raise-statement> ::= "raise" <expression> ";"
+
+<break-statement> ::= "break" <optional-label> ";"
+
+<continue-statement> ::= "continue" <optional-label> ";"
+
+<optional-label> ::= ε
+                   | "'" <identifier>
+
+<defer-statement> ::= "defer" <expression> ";"
+
+<unsafe-statement> ::= "unsafe" <block>
+
+<error-region-statement> ::= "error" "region" <identifier>
+                             <block>
+                             <catch-clause-list>
+
+<catch-clause-list> ::= <catch-clause>
+                      | <catch-clause> <catch-clause-list>
+
+<catch-clause> ::= "catch" "(" <error-pattern> ")"
+                   <optional-quant-open>
+                   <block>
+
+<optional-quant-open> ::= ε
+                        | "quant" "open" <identifier> "as" <identifier>
+
+<error-pattern> ::= <pattern>
+                  | "_"
+
+<pattern> ::= <identifier>
+            | <identifier> ":" <type>
+            | "_"
+            | <literal-pattern>
+            | <variant-pattern>
+            | <tuple-pattern>
+
+<variant-pattern> ::= <identifier> "::" <identifier>
+                    | <identifier> "::" <identifier> "{" <pattern-field-list> "}"
+
+<pattern-field-list> ::= <pattern-field>
+                       | <pattern-field> "," <pattern-field-list>
+
+<pattern-field> ::= <identifier>
+                  | <identifier> ":" <pattern>
+
+<tuple-pattern> ::= "(" <pattern-list> ")"
+
+<pattern-list> ::= <pattern>
+                 | <pattern> "," <pattern-list>
+
+<expression> ::= <primary-expression>
+               | <unary-expression>
+               | <binary-expression>
+               | <call-expression>
+               | <field-expression>
+               | <indexing-expression>
+               | <borrow-expression>
+               | <move-expression>
+               | <try-propagation-expression>
+               | <constructor-expression>
+               | <spawn-expression>
+               | <join-expression>
+
+<primary-expression> ::= <identifier>
+                       | <literal>
+                       | "(" <expression> ")"
+                       | <unit-expression>
+                       | <tuple-expression>
+
+<unary-expression> ::= <unary-operator> <expression>
+
+<unary-operator> ::= "-"
+                   | "!"
+                   | "*"
+
+<binary-expression> ::= <expression> <binary-operator> <expression>
+
+<binary-operator> ::= "+"
+                    | "-"
+                    | "*"
+                    | "/"
+                    | "%"
+                    | "=="
+                    | "!="
+                    | "<"
+                    | "<="
+                    | ">"
+                    | ">="
+                    | "and"
+                    | "or"
+
+<call-expression> ::= <expression> "(" <optional-argument-list> ")"
+
+<optional-argument-list> ::= ε
+                           | <argument-list>
+
+<argument-list> ::= <expression>
+                  | <expression> "," <argument-list>
+
+<field-expression> ::= <expression> "." <identifier>
+
+<indexing-expression> ::= <expression> "[" <expression> "]"
+
+<borrow-expression> ::= "&" <expression>
+                      | "&" "mut" <expression>
+
+<move-expression> ::= "move" <expression>
+
+<try-propagation-expression> ::= <expression> "?"
+
+<constructor-expression> ::= <identifier> "::" <identifier>
+                           | <identifier> "::" <identifier> "(" <optional-argument-list> ")"
+                           | <identifier> "::" <identifier> "{" <optional-initializer-list> "}"
+
+<optional-initializer-list> ::= ε
+                              | <initializer-list>
+
+<initializer-list> ::= <initializer>
+                     | <initializer> "," <initializer-list>
+
+<initializer> ::= <identifier> ":" <expression>
+
+<scalar-expression> ::= <expression>
+
+<place-expression> ::= <identifier>
+                     | <place-expression> "." <identifier>
+                     | "*" <place-expression>
+                     | <place-expression> "[" <expression> "]"
+
+<concurrency-profile-declaration> ::= "concurrency" "checked" ";"
+
+<access-quant-type> ::= "quant" "<" "access" "," <identifier> "," <share-expression> ">"
+
+<share-expression> ::= "FULL"
+                     | <integer-literal>
+                     | <identifier>
+                     | "(" <share-expression> ")"
+                     | <share-expression> "+" <share-expression>
+
+<task-type> ::= "task" "<" <lifetime> "," <type> "," <error-row> ">"
+
+<mutex-type> ::= "mutex" "<" <type> ">"
+
+<thread-scope-statement> ::= "thread" "scope" <identifier> <block>
+
+<footprint-statement> ::= "footprint" <identifier> "=" <place-expression> ";"
+                        | "footprint" <identifier> "=" <place-expression>
+                          "range" "[" <index-expression> "," <index-expression> ")" ";"
+
+<with-lock-statement> ::= "with" "lock" <place-expression> "as" <identifier> <block>
+
+<spawn-expression> ::= "spawn" <identifier> <identifier>
+                       "(" <optional-capture-list> ")"
+
+<optional-capture-list> ::= ε
+                         | <capture-list>
+
+<capture-list> ::= <capture>
+                 | <capture> "," <capture-list>
+
+<capture> ::= "copy" <place-expression>
+            | "move" <place-expression>
+            | "read" <place-expression> "share" <share-expression>
+            | "write" <place-expression>
+
+<join-expression> ::= "join" "move" <place-expression>
+
+<access-contract-clause> ::= "access" <access-action> <place-expression> ";"
+                          | "access" <access-action> <place-expression>
+                            "range" "[" <index-expression> "," <index-expression> ")" ";"
+                          | "thread" <thread-property> <identifier> ";"
+                          | "share" "requires" <share-constraint> ";"
+
+<share-constraint> ::= <share-expression> <relation-operator> <share-expression>
+                     | "(" <share-constraint> ")"
+                     | <share-constraint> "and" <share-constraint>
+
+<access-action> ::= "read"
+                  | "write"
+                  | "release"
+                  | "atomic"
+
+<thread-property> ::= "requires_send"
+                    | "requires_sync"
+
+<unit-expression> ::= "(" ")"
+<tuple-expression> ::= "(" <expression> "," <expression> <tuple-expression-tail> ")"
+<tuple-expression-tail> ::= ε
+                         | "," <expression> <tuple-expression-tail>

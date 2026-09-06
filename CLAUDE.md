@@ -2,6 +2,11 @@
 
 @AGENTS.md
 
+Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract
+companion. Follow `docs/reviews/r0_3/acceptance.json` for current repair status;
+the supplied archive review is older than merged W2–W5 implementations.
+Persistent audit setup: `docs/CYCLE19_BUILD_INPUTS.md`.
+
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
@@ -143,3 +148,13 @@ retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged
 syntax projections and trusted declarations, not proofs of source custody or
 whole-program safety. General source/model binding and provider consolidation
 remain open; configured auditing is recorded separately above.
+
+Revision 0.3 implementation review (2026-09-07): resource/task lifetime checks,
+unconditional axis validation, signed literal extrema and exact/maximum loop
+custody are repaired at their stated model/source boundaries. Ordinary i32/unit
+result compatibility is checked with an explicit separate custody payload;
+full owned-result typing remains open. Concurrency certificates retain declared
+mutex/synchronization premises; checked invariant/source authority remains open.
+Observation replay rejects scope/module/bounds substitution. Current requirements
+and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
+`docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.

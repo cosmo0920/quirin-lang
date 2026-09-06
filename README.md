@@ -7,9 +7,13 @@ builds a conservative, fail-closed checker for *existing* C source — the
 "unrestricted-C gateway" — currently exercised against a pinned Fluent Bit
 corpus.
 
-- Language design: [`docs/QCORE_SPEC_r0_2.md`](docs/QCORE_SPEC_r0_2.md)
-  (proposed revision 0.2). Its inherited sequential baseline is
-  [`docs/qcore_quantitative_types_spec.md`](docs/qcore_quantitative_types_spec.md).
+- Current specification: [QCore revision 0.3](docs/QCORE_SPEC_r0_3.md), with
+  [contract semantics](docs/QCORE_CONTRACT_SPEC_r0_3.md),
+  [implemented grammars](docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md), and the
+  [implementation acceptance ledger](docs/reviews/r0_3/REVIEW.md).
+  Full language conformance is not claimed; revision 0.2 remains historical.
+- [Persistent Cycle 19 build inputs](docs/CYCLE19_BUILD_INPUTS.md) replaces
+  ephemeral `/tmp` build paths for new audits.
 - Working with the repo as an AI agent? Start at [`AGENTS.md`](AGENTS.md) —
   the compressed status ledger, invariants, and per-change gate live there.
 
@@ -28,9 +32,10 @@ overloading one number:
 - **Effect rows and per-exit post-states** — what a function may do and what
   remains at each exit, including typed error exits.
 
-Checked programs lower to C11 with a tagged-error ABI and cleanup-explicit
-control flow, validated by translation certificates and native differential
-execution.
+The supported executable source subset lowers to C11 with a tagged-error ABI
+and explicit cleanup. Translation checks and native differential runs cover
+that reduced model; broader structural syntax and separately checked semantic
+models do not imply complete source-language support.
 
 ## Repository layout
 
@@ -310,7 +315,6 @@ and retains the new descriptor. Fixed retries and already-synced behavior remain
 observations, not general OS failure or durability guarantees. Evidence:
 `docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.
 
-
 W2 bounded profile migration landed (2026-09-07;
 `docs/reports/w2-profile-manifests/README.md`): schema v1 and total-or-reject
 loading replace the library enum, source inventories, mechanism/operation
@@ -328,7 +332,6 @@ reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
-
 
 W2 H6 provider metadata discovery is implemented (2026-09-07;
 `docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
@@ -354,8 +357,6 @@ models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
 
-
-
 W5's bounded configured-audit extraction is implemented (2026-09-07;
 `docs/reports/w5-configured-audit/README.md`). New L3 `qcore-audit` owns
 compile-db ingestion, source selection, per-unit projection and reports over
@@ -375,3 +376,13 @@ retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged
 syntax projections and trusted declarations, not proofs of source custody or
 whole-program safety. General source/model binding and provider consolidation
 remain open; configured auditing is recorded separately above.
+
+Revision 0.3 implementation review (2026-09-07): resource/task lifetime checks,
+unconditional axis validation, signed literal extrema and exact/maximum loop
+custody are repaired at their stated model/source boundaries. Ordinary i32/unit
+result compatibility is checked with an explicit separate custody payload;
+full owned-result typing remains open. Concurrency certificates retain declared
+mutex/synchronization premises; checked invariant/source authority remains open.
+Observation replay rejects scope/module/bounds substitution. Current requirements
+and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
+`docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.

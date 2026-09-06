@@ -25,7 +25,9 @@ maximum summaries still requires explicit alternatives or a richer abstraction.
 Lean adds a reduced count-evidence model, proves rejection of positive maxima
 with nonzero net, zero net for accepted maxima, preservation of exact evidence,
 and total-cost coverage of early exits. It does not prove Rust/Lean refinement
-or identity/custody completeness from numeric balance.
+or identity/custody completeness from numeric balance. The older Lean exact
+summary scales peak/entry conservatively; it is not identical to Rust's tighter
+sequential fold. The new theorems concern count/net and total cost only.
 
 All standing gates passed on the combined c7039ad integration plus this change
 and the independent audit preflight: 529 workspace tests, format, Clippy, both

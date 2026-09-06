@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "spec_revision": "0.3",
+  "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
+  "full_conformance": false,
+  "ct_mapped": 5,
+  "ct_unmapped": 45,
+  "findings": [
+    {
+      "id": "R01",
+      "requirement": "Destroyed-generation access and destruction quiescence",
+      "area": "concurrency",
+      "status": "repaired_model",
+      "evidence": [
+        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+      ],
+      "remaining_boundary": "Live IDs are unique lifetimes in TrustedExplicitTrace. No arbitrary-source extraction or general callback lifetime proof."
+    },
+    {
+      "id": "R02",
+      "requirement": "Terminal child task execution after join",
+      "area": "concurrency",
+      "status": "repaired_model",
+      "evidence": [
+        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+      ],
+      "remaining_boundary": "Active task state is separate from retained clock history; source concurrency lowering remains unsupported."
+    },
+    {
+      "id": "R03",
+      "requirement": "Explicit mutex and synchronization trust boundary",
+      "area": "concurrency",
+      "status": "explicit_trust_boundary",
+      "evidence": [
+        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+      ],
+      "remaining_boundary": "Checked mutex-footprint invariants and reconstructed synchronization witnesses remain open; the model names the assumptions it consumes."
+    },
+    {
+      "id": "R04",
+      "requirement": "Ordinary source result type and exit compatibility",
+      "area": "frontend",
+      "status": "partially_repaired",
+      "evidence": [
+        "docs/reports/r0-3-source-validation/README.md"
+      ],
+      "remaining_boundary": "Explicit i32/unit scalar compatibility is checked. Separate custody payload metadata preserves the reduced model; full owned-result/per-exit typing remains open."
+    },
+    {
+      "id": "R05",
+      "requirement": "Unconditional axis declaration validation",
+      "area": "frontend",
+      "status": "repaired_source",
+      "evidence": [
+        "docs/reports/r0-3-source-validation/README.md"
+      ],
+      "remaining_boundary": "Axis environment validation is unconditional; closed index/profile limits remain."
+    },
+    {
+      "id": "R06",
+      "requirement": "Exact versus maximum loop custody",
+      "area": "resource_flow",
+      "status": "repaired_model",
+      "evidence": [
+        "docs/reports/r03-loop-counts/README.md"
+      ],
+      "remaining_boundary": "Nonzero-net positive maximum counts reject. Exact counts remain supplied premises; identity alternatives and general source loops remain unsupported."
+    },
+    {
+      "id": "R07",
+      "requirement": "Signed decimal minimum literals",
+      "area": "frontend/observation",
+      "status": "repaired_consumers",
+      "evidence": [
+        "docs/reports/r0-3-source-validation/README.md"
+      ],
+      "remaining_boundary": "Full i32/i128 literal extrema are checked; arbitrary expression and result semantics are not added."
+    },
+    {
+      "id": "R08",
+      "requirement": "Consumer-specific contract coverage",
+      "area": "contracts",
+      "status": "validated_bounded_consumers",
+      "evidence": [
+        "docs/reports/r03-contract-evidence/README.md"
+      ],
+      "remaining_boundary": "Resource loading, structural retention and observation replay remain separate; arbitrary contract theorem proving and source caller-precondition discharge remain open."
+    },
+    {
+      "id": "R09",
+      "requirement": "Current specification, commands and diagnostic ownership",
+      "area": "documentation",
+      "status": "reconciled",
+      "evidence": [
+        "docs/reports/r03-integration/README.md"
+      ],
+      "remaining_boundary": "Current specs, commands, diagnostics, validation and obsolete navigation updated; historical reports retain their original provenance."
+    },
+    {
+      "id": "R10",
+      "requirement": "Artifact/evidence composition and snapshot provenance",
+      "area": "verification",
+      "status": "hardened_bounded_evidence",
+      "evidence": [
+        "docs/reports/r03-contract-evidence/README.md"
+      ],
+      "remaining_boundary": "Observation scope/module/bounds substitution rejects. Native provenance is declared trusted evidence; whole-program/source-model refinement remains open."
+    }
+  ],
+  "validation": {
+    "workspace_tests": 549,
+    "python_evidence_validator_tests": 43,
+    "lean_audits": 19,
+    "standing_gate": "passed",
+    "full_language_conformance": false
+  },
+  "documentation_revision": "0.3"
+}

@@ -43,9 +43,9 @@ to select an entry. Every supported function body still goes through the same
 semantic checks in each mode.
 
 ```sh
-cargo run -p qcore-compiler --bin qcorec -- check \
+cargo run -p qcorec -- check \
   contract/qcore/fluent_bit/memory.qcore
-cargo run -p qcore-compiler --bin qcorec -- check \
+cargo run -p qcorec -- check \
   contract/qcore/language/quantified_indices.qcore
 ```
 

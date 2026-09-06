@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
+  "reviewed_archive_supplied": false,
+  "original_review_files_sha256": {
+    "unverified_specs/QCORE_CONTRACT_SPEC_r0_3.md": "e6a1123ba732c17c09c959e6c3cd5e430860286bed1ecf0d35b68d96f0425c69",
+    "unverified_specs/QCORE_DESIGN_GRAMMAR_r0_3.bnf": "c5b95d0ae1c7dcd5169e3d4dcd5bd7b2beef3bc9ded6be9825c1b895e1148186",
+    "unverified_specs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": "03229340138d676483d368a437ab7d26a6149f579d11d5d6c4af00100ba62d07",
+    "unverified_specs/QCORE_SPEC_r0_3.md": "ad857b40b3f6c2fa042b3b44d7e3b1eb978017d5707db96c7396e2afddb74d1b",
+    "unverified_specs/REVIEW.md": "11120c8a297eacf661dc3fcb37a1dbd84589eb93939a9a6525002192dc3440ff"
+  },
+  "integration_working_files_sha256": {
+    "compiler/src/concurrency.rs": "fbd1d821acf43670aae2468d672d6172f349bf29f082b928c978b0813c3eb1b1",
+    "compiler/src/driver.rs": "65afc82919535f51bae0ce2ecfc4a440413668edf8c65d500766a53d1306493c",
+    "compiler/src/resource_flow.rs": "689f991d244d008048d4105c09eb0256efb5558f98f48d3a904765465cee3668",
+    "compiler/src/research_extensions.rs": "127467aec8086564bf21f60c692eec5fc728b6c850d43c63c45da13073faa72c",
+    "crates/qcore-frontend/src/frontend.rs": "e0c15b082bd267e271036c9d4c154191aed912a1a85dc1c2a4927855c15c9d4f",
+    "crates/qcore-contract/src/contract_observation.rs": "71abccca4185fbf333d391d1e3f6fc1fd571b8fabb4d907a3166dd45127e2fce",
+    "compiler/src/obligation_derivation.rs": "d2620b82d00a4ed02b608e864e4751eba9adf86ccc1d66626ef7167146938210",
+    "compiler/src/witness_replay.rs": "d7adcb1f0a39ce06b2ffe9d36b3ec82ebaf69caf1d79aa4a70002b665059d725"
+  },
+  "note": "Hashes bind the final reviewed source content before the documentation integration commit; base revision identifies its merged ancestry. Original archive implementation hashes were not supplied.",
+  "supplied_archive_copy": "docs/reviews/r0_3/supplied"
+}

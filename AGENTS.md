@@ -9,9 +9,11 @@ when project status changes; this file is the source of truth for agents.
 QCore-C is a research language for quantitative types, owned resources, typed
 recoverable errors, checked cleanup, and checked concurrency, lowering to C11.
 It also ships a conservative checker for *existing* C source (the
-"unrestricted-C gateway"). Normative design: `docs/QCORE_SPEC_r0_2.md`
-(revision 0.2; §§0–37 inherited from `docs/qcore_quantitative_types_spec.md`,
-§§38–59 the concurrency amendment). Work proceeds in numbered bounded
+"unrestricted-C gateway"). Normative specification: `docs/QCORE_SPEC_r0_3.md` and
+`docs/QCORE_CONTRACT_SPEC_r0_3.md`. Current consumer grammars are in
+`docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md`; implementation acceptance is tracked
+in `docs/reviews/r0_3/acceptance.json`. Revision 0.2 remains historical; broad
+parser/model support is not full source-language conformance. Work proceeds in numbered bounded
 "cycles" recorded under `docs/cycles/`.
 
 ## Repository map
@@ -32,7 +34,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (56 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (57 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -40,6 +42,9 @@ It also ships a conservative checker for *existing* C source (the
 | `third_party/libevent` | Submodule pinned to the audited revision; a test fails if absent or moved |
 
 ## Status ledger (do not overstate)
+
+Cycle completion labels describe their bounded milestone evidence, not full
+revision-0.3 source-language conformance. The current workspace has nine crates.
 
 - **Cycles 1–16: complete.** Sequential language (dimensions, quant axes,
   interval usage grades, ownership, resource flow, typed errors, error-region
@@ -153,8 +158,8 @@ It also ships a conservative checker for *existing* C source (the
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
-  executed (2026-09-06, `docs/reports/w0-schema-crate/README.md`): the
-  workspace has three members (`qcore-schemas` L0 surface, `qcore-compiler`
+  executed (2026-09-06, `docs/reports/w0-schema-crate/README.md`): the initial
+  workspace had three members (`qcore-schemas` L0 surface, `qcore-compiler`
   grab-bag, `qcorec` CLI) with a layering-guard test; providers remain
   compile-time crates for now (decision recorded there — the plan's
   out-of-process step is deferred, not abandoned). W1's loader
@@ -167,7 +172,7 @@ It also ships a conservative checker for *existing* C source (the
   `docs/reports/w1-literal-sites/README.md`). **W1 is executed**
   (2026-09-06, `docs/reports/w1-clause-vocabulary/README.md`): the
   `requires resource_contract_v1` marker is pinned corpus-wide as the
-  interpreter selector — 19 declarations load and 141 are rejected, not
+  interpreter selector — 19 declarations load and 142 are rejected, not
   skipped — the clause-family → owner table is documented in the loader
   header and `contract/qcore/README.md`, and the C ABI scalar type table is
   complete (borrowed-only, no semantic change; audit diagnostics/callbacks
@@ -278,7 +283,8 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 Direction and tasks: `docs/GENERALIZATION_PLAN.md`. Architecture boundary and
 open gates: `docs/cycles/CYCLE_20.md`. Trust/verdict rules and audit history:
 `docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`. Language:
-`docs/QCORE_SPEC_r0_2.md`, `docs/QCORE_MODULE_MODES.md`,
+`docs/QCORE_SPEC_r0_3.md`, `docs/QCORE_CONTRACT_SPEC_r0_3.md`,
+`docs/QCORE_MODULE_MODES.md`,
 `docs/QTT_ALIGNMENT.md`. Contract corpus conventions:
 `contract/qcore/README.md`.
 
@@ -292,7 +298,6 @@ stores MAP_FAILED, reports up-ring membership without incrementing the counter,
 and retains the new descriptor. Fixed retries and already-synced behavior remain
 observations, not general OS failure or durability guarantees. Evidence:
 `docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.
-
 
 W2 bounded profile migration landed (2026-09-07;
 `docs/reports/w2-profile-manifests/README.md`): schema v1 and total-or-reject
@@ -312,7 +317,6 @@ only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
 
-
 W2 H6 provider metadata discovery is implemented (2026-09-07;
 `docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
 are removed after field-for-field parity; registry metadata is loaded atomically
@@ -327,8 +331,6 @@ assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
-
-
 
 W5's bounded configured-audit extraction is implemented (2026-09-07;
 `docs/reports/w5-configured-audit/README.md`). New L3 `qcore-audit` owns
@@ -349,3 +351,13 @@ retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged
 syntax projections and trusted declarations, not proofs of source custody or
 whole-program safety. General source/model binding and provider consolidation
 remain open; configured auditing is recorded separately above.
+
+Revision 0.3 implementation review (2026-09-07): resource/task lifetime checks,
+unconditional axis validation, signed literal extrema and exact/maximum loop
+custody are repaired at their stated model/source boundaries. Ordinary i32/unit
+result compatibility is checked with an explicit separate custody payload;
+full owned-result typing remains open. Concurrency certificates retain declared
+mutex/synchronization premises; checked invariant/source authority remains open.
+Observation replay rejects scope/module/bounds substitution. Current requirements
+and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
+`docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.
