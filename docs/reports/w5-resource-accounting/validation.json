@@ -1,0 +1,12 @@
+{
+  "workspace_tests": 565,
+  "python_tests": 43,
+  "lean_audits": 19,
+  "cargo_fmt": "passed",
+  "cargo_clippy": "passed",
+  "reevaluation_probe": "passed",
+  "reevaluation_followup": "passed",
+  "lake_build": "passed",
+  "runtime_dependencies_of_core": 0,
+  "full_W5_acceptance": false
+}

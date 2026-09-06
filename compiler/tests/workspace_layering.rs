@@ -164,3 +164,20 @@ fn whole_program_qualified_apis_are_frontend_owned() {
     let _: Checker = qcore_frontend::whole_program::check_whole_program;
     let _: Checker = qcore_frontend::check_whole_program;
 }
+
+#[test]
+fn loop_and_ledger_certificates_are_core_owned() {
+    use std::any::TypeId;
+    assert_eq!(
+        TypeId::of::<qcore_compiler::research_extensions::LoopSummaryCertificate>(),
+        TypeId::of::<qcore_core::resource_accounting::LoopSummaryCertificate>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::research_extensions::LedgerMorphism>(),
+        TypeId::of::<qcore_core::resource_accounting::LedgerMorphism>()
+    );
+    let _: fn(
+        &qcore_core::resource_accounting::LoopSummaryCertificate,
+    ) -> Result<(), qcore_core::resource_accounting::LoopSummaryError> =
+        qcore_compiler::research_extensions::check_loop_summary;
+}

@@ -41,3 +41,9 @@ The [combined revision integration](reports/r03-integration/README.md) records
 549 Rust tests, 43 Python validator tests, both probes, format/Clippy, Lean and
 19 axiom audits passing, plus the unchanged 185-unit audit using persistent build
 inputs. This is bounded validation, not full language conformance.
+
+The later [W5 combined integration](reports/w5-resource-accounting/README.md)
+passes 565 Rust tests, 43 Python tests, the standing gate and 19 Lean audits.
+Separate provider-package tests and two reproducible builds against schemas
+0.2.0 are archived in [the package report](reports/w5-provider-packages/README.md).
+This adds architectural/transport evidence, not new language conformance.

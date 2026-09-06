@@ -377,3 +377,15 @@ live detached exit, with independent certificate rederivation and matching
 Lean relations (`docs/reports/w4-removed-custody/README.md`). All 185 pinned
 resource/source results remain unchanged; recursion, general removal aliases,
 provider model extraction and broader source/CT coverage remain open.
+
+W5 standalone packaging and frontend consolidation (2026-09-07): five
+schema-only executable providers reproduce built-in v1 Unknown responses and
+explicitly return v2 Unknown without witnesses. Package verification and two
+clean reproducible builds pass; default registry selection is unchanged.
+`providers/README.md` documents build/installation/rollback. Specialized
+provider models and registry-based Fluent Bit composition remain open.
+Whole-program checking now lives in frontend; generic loop/ledger checking
+lives in core, with preserved compiler APIs and exact implementation/test body
+parity. Evidence: `docs/reports/w5-provider-packages/README.md`,
+`docs/reports/w5-whole-program-frontend/README.md`, and
+`docs/reports/w5-resource-accounting/README.md`.

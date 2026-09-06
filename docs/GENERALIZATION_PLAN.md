@@ -473,6 +473,22 @@ inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
 
+**Status (2026-09-07).** Configured audit orchestration is extracted with a
+second-codebase fixture and pinned parity. The sequential/concurrent kernel,
+chunk lifecycle and generic loop/ledger checks reside in core; whole-program
+checking resides in frontend. Declared chunk-path evaluation is in contract,
+with portable schema0.2.0 records and an opaque source-import boundary.
+Five standalone schema-only executables now reproduce the built-in v1 Unknown
+responses and reject malformed requests; v2 capabilities explicitly return
+Unknown without witnesses. Two clean builds reproduce executable/manifest/
+archive hashes. [Provider packaging evidence](reports/w5-provider-packages/README.md)
+and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
+
+Task2's specialized semantic extraction, task3's reactor/descriptor model
+split, registry-based Fluent Bit composition, task4 route deletion, remaining
+compiler consolidation and CLI package enable/disable remain open. Existing
+in-process/source routes are retained until semantic parity meets these gates.
+
 **Goal.** Finish moving library semantics behind the plugin boundary — as
 separate crates and ultimately separate processes — and turn the 966-line
 audit example into a reusable, configured driver.

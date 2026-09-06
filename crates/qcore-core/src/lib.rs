@@ -93,3 +93,5 @@ pub use weak_memory::{
 };
 
 pub mod chunk_lifecycle;
+
+pub mod resource_accounting;
