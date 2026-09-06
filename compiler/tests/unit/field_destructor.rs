@@ -146,6 +146,7 @@ fn contract_signature_domains_and_every_postcondition_fail_closed() {
         ("use one", ""),
         ("-> unit", "-> i32"),
         ("requires root_is_live;", ""),
+        ("requires owned_fields_are_disjoint_from_root;", ""),
         ("requires free_resolves_to_libc;", "requires unknown;"),
         ("requires owned_or_null__backend;", ""),
         (

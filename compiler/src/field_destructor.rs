@@ -127,6 +127,7 @@ pub fn check_field_destructor(
         "root_is_live",
         "exclusive_access",
         "disjoint_owned_fields",
+        "owned_fields_are_disjoint_from_root",
         "free_resolves_to_libc",
     ];
     if required.iter().any(|p| !premises.contains(*p))

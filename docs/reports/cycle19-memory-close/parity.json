@@ -1,0 +1,18 @@
+{
+  "baseline": "cycle19-list-unlink",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_identical": true,
+  "scalar_function_results_identical": true,
+  "unlink_and_counter_certificates_identical": true,
+  "backend_source_and_cases_identical": true,
+  "backend_contract_change": "explicit owned-fields/root-disjointness premise",
+  "memory_close_checked_paths": [
+    0,
+    1
+  ],
+  "memory_close_uncovered_paths": [
+    2,
+    3
+  ],
+  "workspace_tests": 357
+}

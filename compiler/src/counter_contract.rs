@@ -19,6 +19,9 @@ pub struct CounterCertificate {
     root_qcore_type: String,
 }
 impl CounterCertificate {
+    pub fn source(&self) -> &SourceSummary {
+        &self.source
+    }
     pub fn field(&self) -> &str {
         &self.field
     }

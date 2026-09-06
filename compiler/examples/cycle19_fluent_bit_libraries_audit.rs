@@ -399,6 +399,7 @@ fn audit_library(
 ) -> Result<AuditCounts, String> {
     let mut counts = AuditCounts::default();
     let mut chunk_helpers = Vec::new();
+    let mut memory_backend = None;
     if library == "chunkio" {
         let entry = entries
             .iter()
@@ -425,6 +426,22 @@ fn audit_library(
         println!(
             "chunk-source dependency cio_error_reset: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
         );
+    }
+    if library == "chunkio" {
+        let entry = entries
+            .iter()
+            .find(|entry| entry.file.ends_with("cio_memfs.c"))
+            .ok_or("missing compiled memory backend")?;
+        let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+        let options = compiler_options(entry)?;
+        let unit = C11TranslationUnit {
+            source: &source,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        memory_backend = Some(qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?);
     }
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
@@ -460,9 +477,39 @@ fn audit_library(
                 certificates.len()
             );
             teardown_results.push(serde_json::json!({"kind": "unsigned_counters", "status": "checked_source_updates", "certificates": certificates}));
+            let dependencies =
+                qcore_compiler::verifier_plugins::chunkio::memory_close::MemoryCloseDependencies {
+                    reset: chunk_helpers[0].clone(),
+                    backend: memory_backend
+                        .as_ref()
+                        .ok_or("missing memory backend dependency")?
+                        .clone(),
+                    unlink: unlink.clone(),
+                    counter: certificates
+                        .iter()
+                        .find(|certificate| {
+                            certificate.field() == "total_chunks" && certificate.delta() == -1
+                        })
+                        .ok_or("missing total decrement dependency")?
+                        .clone(),
+                };
+            let close =
+                qcore_compiler::verifier_plugins::chunkio::memory_close::check_memory_close_source(
+                    &unit,
+                    PINNED_FLUENT_BIT_COMMIT,
+                    &dependencies,
+                )?;
+            println!(
+                "qcore-contract cio_chunk_close memory scope: Checked ({} null/memory paths; {} source paths uncovered; enclosing stream/context teardown open)",
+                close.checked_paths().len(),
+                close.uncovered_paths().len()
+            );
+            teardown_results.push(serde_json::json!({"kind":"memory_chunk_close", "status":"checked_null_and_memory_paths", "certificate":close}));
         }
         if library == "chunkio" && file == "cio_memfs.c" {
-            let certificate = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+            let certificate = memory_backend
+                .as_ref()
+                .ok_or("missing memory backend certificate")?;
             println!(
                 "qcore-contract cio_memfs_close: Checked ({} nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)",
                 certificate.cases().len()

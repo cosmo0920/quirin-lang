@@ -1,3 +1,4 @@
+import QCore.MemoryClose
 import QCore.ListUnlink
 import QCore.CounterSource
 import QCore.FieldDestructor
@@ -157,3 +158,15 @@ import QCore.ChunkSource
 #print axioms QCore.ListUnlink.singleton_unlink_restores_head
 
 #print axioms QCore.ListUnlink.unlink_preserves_other_cells
+
+#print axioms QCore.MemoryClose.source_order_discharges_memory_chunk
+
+#print axioms QCore.MemoryClose.accepted_counter_uses_saved_context
+
+#print axioms QCore.MemoryClose.accepted_counter_requires_chunk_discharge
+
+#print axioms QCore.MemoryClose.accepted_counter_decrements_once
+
+#print axioms QCore.MemoryClose.duplicate_counter_rejected
+
+#print axioms QCore.MemoryClose.empty_trace_preserves_state

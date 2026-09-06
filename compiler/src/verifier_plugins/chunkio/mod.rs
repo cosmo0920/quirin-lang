@@ -4,6 +4,7 @@
 //! extraction. Source summaries retain their private construction boundary.
 
 pub mod chunk_source;
+pub mod memory_close;
 pub mod teardown_source;
 pub use chunk_source::*;
 

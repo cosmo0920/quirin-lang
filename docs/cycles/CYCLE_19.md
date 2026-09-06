@@ -579,3 +579,16 @@ preserved object custody. Six new Lean theorems and 354 workspace tests pass
 with every required check. Prior pinned verdicts and backend/counter evidence
 remain identical. Binding the two embedded chunk links and composing the full
 close path with backend and context counter discharge still remain open.
+
+## Source-derived memory chunk close (2026-09-06)
+
+The [memory close report](../reports/cycle19-memory-close/README.md) composes
+source-checked reset, backend, both embedded unlinks and the saved-context
+counter for `cio_chunk_close`. Null/memory paths 0 and 1 are checked; filesystem
+and other-backend paths 2 and 3 remain uncovered. A concrete identity binding
+feeds the core lifecycle checker and rejects repeat close and outstanding
+wrapper obligations. Lifetime, membership, constructor provenance and ABI
+premises remain explicit; backend root-disjointness is now required separately.
+Six new Lean theorems, all 357 workspace tests and required checks pass. Generic
+verdicts and previous projections remain unchanged. Stream/context iteration,
+filesystem error outcomes and full library/event composition still remain open.

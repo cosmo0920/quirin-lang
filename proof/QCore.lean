@@ -11,6 +11,7 @@ import QCore.EventDriven
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
+import QCore.MemoryClose
 import QCore.ListUnlink
 import QCore.CounterSource
 import QCore.FieldDestructor

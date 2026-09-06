@@ -202,3 +202,11 @@ concrete values against a supplied target maximum when instantiated. See the
 Both distinct and equal neighbor identities are replayed; the entry is distinct
 from its neighbors. The contracts check link clearing/reconnection and preserve
 object custody. See the [list unlink report](../../docs/reports/cycle19-list-unlink/README.md).
+
+`chunkio/memory_close.qcore` composes the checked dependencies for the null and
+memory-backed `cio_chunk_close` paths. It binds both embedded links and the saved
+context counter after chunk release; filesystem/other paths stay uncovered.
+The caller must establish context/stream lifetime, distinct memberships, owned
+provenance and source/ABI equality. The backend contract now explicitly requires
+owned fields to be distinct from the borrowed root. See the
+[memory close report](../../docs/reports/cycle19-memory-close/README.md).

@@ -11,6 +11,7 @@ contract {
     requires root_is_live;
     requires exclusive_access;
     requires disjoint_owned_fields;
+    requires owned_fields_are_disjoint_from_root;
     requires free_resolves_to_libc;
     requires owned_or_null__backend;
     requires owned_or_null__backend__name;

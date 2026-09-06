@@ -27,6 +27,12 @@ pub struct ListUnlinkCertificate {
     cases: Vec<UnlinkCase>,
 }
 impl ListUnlinkCertificate {
+    pub fn source(&self) -> &SourceSummary {
+        &self.source
+    }
+    pub fn helper_source(&self) -> &SourceSummary {
+        &self.helper_source
+    }
     pub fn cases(&self) -> &[UnlinkCase] {
         &self.cases
     }
