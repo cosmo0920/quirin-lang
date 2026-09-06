@@ -1,0 +1,12 @@
+{
+  "workspace_tests": 473,
+  "format": "passed",
+  "clippy": "passed",
+  "reevaluation_probe": "exit 0",
+  "reevaluation_followup": "exit 0",
+  "lean_build": "passed, 53 jobs",
+  "audit_files": 18,
+  "qcore_declarations": 7493,
+  "project_axioms_or_placeholders": 0,
+  "hosted_ci": "not run; awaits push"
+}

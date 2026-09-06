@@ -551,6 +551,12 @@ fans out well across parallel agents).
 
 ### W7 — Hygiene: names, diagnostics, roadmap
 
+The [Lean CI gate](reports/w7-lean-ci/README.md) and
+[bounded generic model names](reports/w7-generic-lean-names/README.md) are
+implemented and locally validated (2026-09-07); hosted CI awaits a push.
+Historical model names remain compatibility aliases. Diagnostic renumbering
+is a separate work item.
+
 Small, continuous, do-with-adjacent-work:
 
 - Resolve the `Q700–Q712` collision: spec §54 names Libevent-specific

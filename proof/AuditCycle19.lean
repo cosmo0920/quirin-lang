@@ -20,7 +20,7 @@ import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
 import QCore.ChunkLifecycle
-import QCore.MonkeyEvent
+import QCore.DescriptorCustody
 import QCore.ControlFlow
 import QCore.ExternalIntegration
 import QCore.ChunkSource
@@ -37,12 +37,12 @@ import QCore.ChunkSource
 #print axioms QCore.ChunkLifecycle.accepted_failed_open_has_no_residual_obligation
 #print axioms QCore.ChunkLifecycle.accepted_teardown_records_nested_order_and_partial_delete
 #print axioms QCore.ChunkLifecycle.combined_chunk_safety
-#print axioms QCore.MonkeyEvent.accepted_successful_socketpair_creates_two_distinct_owned_descriptors
-#print axioms QCore.MonkeyEvent.accepted_failed_socketpair_creates_no_custody
-#print axioms QCore.MonkeyEvent.accepted_successful_close_discharges_once
-#print axioms QCore.MonkeyEvent.accepted_failed_close_retains_custody
-#print axioms QCore.MonkeyEvent.accepted_error_query_is_borrowed
-#print axioms QCore.MonkeyEvent.accepted_monkey_descriptor_teardown_is_complete_and_unique
+#print axioms QCore.DescriptorCustody.accepted_successful_socketpair_creates_two_distinct_owned_descriptors
+#print axioms QCore.DescriptorCustody.accepted_failed_socketpair_creates_no_custody
+#print axioms QCore.DescriptorCustody.accepted_successful_close_discharges_once
+#print axioms QCore.DescriptorCustody.accepted_failed_close_retains_custody
+#print axioms QCore.DescriptorCustody.accepted_error_query_is_borrowed
+#print axioms QCore.DescriptorCustody.accepted_descriptor_teardown_is_complete_and_unique
 #print axioms QCore.ControlFlow.accepted_import_preserves_declared_control_edges
 #print axioms QCore.ControlFlow.accepted_import_has_no_unresolved_jump
 #print axioms QCore.ControlFlow.accepted_import_edges_reference_known_nodes
@@ -60,7 +60,7 @@ import QCore.ChunkSource
 #print axioms QCore.ExternalIntegration.accepted_monkey_source_is_pinned
 #print axioms QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate
 #print axioms QCore.ChunkSource.accepted_contract_holds_on_every_source_path
-#print axioms QCore.ChunkSource.busy_effect_preserves_chunkio_lock
+#print axioms QCore.ChunkSource.busy_effect_preserves_lock
 #print axioms QCore.ChunkSource.bound_effect_preserves_other_identities
 #print axioms QCore.ChunkSource.release_busy_error_path_preserves_state
 #print axioms QCore.ChunkSource.release_busy_success_path_clears_busy

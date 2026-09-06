@@ -1,187 +1,231 @@
+import QCore.DescriptorCustody
+
+/-! Compatibility namespace for the former provider-named generic model.
+All historical exported declarations, including generated structure helpers,
+resolve to the generic implementation. New code should use DescriptorCustody. -/
+
 namespace QCore.MonkeyEvent
-
-/-! Formal boundary for the three Libevent descriptor utilities used by
-Monkey. The executable checker supplies these branch and custody facts;
-accepted evidence cannot turn a failed pair/close into a discharged resource. -/
-
-abbrev DescriptorId := Nat
-
-structure SocketPair where
-  succeeded : Bool
-  outputPresent : Bool
-  read : DescriptorId
-  write : DescriptorId
-  liveAfter : List DescriptorId
-  deriving DecidableEq, Repr
-
-def SocketPair.Valid (pair : SocketPair) : Prop :=
-  (pair.succeeded = true ∧ pair.outputPresent = true ∧
-    pair.read ≠ pair.write ∧ pair.liveAfter = [pair.read, pair.write]) ∨
-  (pair.succeeded = false ∧ pair.outputPresent = false ∧
-    pair.liveAfter = [])
-
-instance (pair : SocketPair) : Decidable pair.Valid := by
-  unfold SocketPair.Valid
-  infer_instance
-
-structure SocketPairCertificate where
-  checked : SocketPair
-  deriving DecidableEq, Repr
-
-def checkSocketPair (pair : SocketPair) : Option SocketPairCertificate :=
-  if pair.Valid then some { checked := pair } else none
-
-private theorem checkSocketPair_valid
-    {pair : SocketPair} {certificate : SocketPairCertificate}
-    (result : checkSocketPair pair = some certificate) : pair.Valid := by
-  unfold checkSocketPair at result
-  split at result
-  · assumption
-  · contradiction
-
-theorem accepted_successful_socketpair_creates_two_distinct_owned_descriptors
-    {pair : SocketPair} {certificate : SocketPairCertificate}
-    (result : checkSocketPair pair = some certificate)
-    (succeeded : pair.succeeded = true) :
-    pair.outputPresent = true ∧ pair.read ≠ pair.write ∧
-      pair.liveAfter = [pair.read, pair.write] := by
-  have valid := checkSocketPair_valid result
-  rcases valid with valid | valid
-  · exact valid.2
-  · rw [succeeded] at valid
-    cases valid.1
-
-theorem accepted_failed_socketpair_creates_no_custody
-    {pair : SocketPair} {certificate : SocketPairCertificate}
-    (result : checkSocketPair pair = some certificate)
-    (failed : pair.succeeded = false) :
-    pair.outputPresent = false ∧ pair.liveAfter = [] := by
-  have valid := checkSocketPair_valid result
-  rcases valid with valid | valid
-  · rw [failed] at valid
-    cases valid.1
-  · exact valid.2
-
-structure Close where
-  liveBefore : Bool
-  succeeded : Bool
-  liveAfter : Bool
-  closeRecorded : Bool
-  deriving DecidableEq, Repr
-
-def Close.Valid (close : Close) : Prop :=
-  (close.liveBefore = true ∧ close.succeeded = true ∧
-    close.liveAfter = false ∧ close.closeRecorded = true) ∨
-  (close.liveBefore = true ∧ close.succeeded = false ∧
-    close.liveAfter = true ∧ close.closeRecorded = false)
-
-instance (close : Close) : Decidable close.Valid := by
-  unfold Close.Valid
-  infer_instance
-
-structure CloseCertificate where
-  checked : Close
-  deriving DecidableEq, Repr
-
-def checkClose (close : Close) : Option CloseCertificate :=
-  if close.Valid then some { checked := close } else none
-
-private theorem checkClose_valid
-    {close : Close} {certificate : CloseCertificate}
-    (result : checkClose close = some certificate) : close.Valid := by
-  unfold checkClose at result
-  split at result
-  · assumption
-  · contradiction
-
-theorem accepted_successful_close_discharges_once
-    {close : Close} {certificate : CloseCertificate}
-    (result : checkClose close = some certificate)
-    (succeeded : close.succeeded = true) :
-    close.liveBefore = true ∧ close.liveAfter = false ∧
-      close.closeRecorded = true := by
-  have valid := checkClose_valid result
-  rcases valid with valid | valid
-  · exact ⟨valid.1, valid.2.2⟩
-  · rw [succeeded] at valid
-    cases valid.2.1
-
-theorem accepted_failed_close_retains_custody
-    {close : Close} {certificate : CloseCertificate}
-    (result : checkClose close = some certificate)
-    (failed : close.succeeded = false) :
-    close.liveBefore = true ∧ close.liveAfter = true ∧
-      close.closeRecorded = false := by
-  have valid := checkClose_valid result
-  rcases valid with valid | valid
-  · rw [failed] at valid
-    cases valid.2.1
-  · exact ⟨valid.1, valid.2.2⟩
-
-structure ErrorQuery where
-  knownClosed : Bool
-  custodyPreserved : Bool
-  deriving DecidableEq, Repr
-
-def ErrorQuery.Valid (query : ErrorQuery) : Prop :=
-  query.knownClosed = false ∧ query.custodyPreserved = true
-
-instance (query : ErrorQuery) : Decidable query.Valid := by
-  unfold ErrorQuery.Valid
-  infer_instance
-
-structure ErrorQueryCertificate where
-  checked : ErrorQuery
-  deriving DecidableEq, Repr
-
-def checkErrorQuery (query : ErrorQuery) : Option ErrorQueryCertificate :=
-  if query.Valid then some { checked := query } else none
-
-private theorem checkErrorQuery_valid
-    {query : ErrorQuery} {certificate : ErrorQueryCertificate}
-    (result : checkErrorQuery query = some certificate) : query.Valid := by
-  unfold checkErrorQuery at result
-  split at result
-  · assumption
-  · contradiction
-
-theorem accepted_error_query_is_borrowed
-    {query : ErrorQuery} {certificate : ErrorQueryCertificate}
-    (result : checkErrorQuery query = some certificate) :
-    query.knownClosed = false ∧ query.custodyPreserved = true :=
-  checkErrorQuery_valid result
-
-structure Teardown where
-  liveOwned : List DescriptorId
-  closed : List DescriptorId
-  deriving DecidableEq, Repr
-
-def Teardown.Valid (teardown : Teardown) : Prop :=
-  teardown.liveOwned = [] ∧ teardown.closed.Nodup
-
-instance (teardown : Teardown) : Decidable teardown.Valid := by
-  unfold Teardown.Valid
-  infer_instance
-
-structure TeardownCertificate where
-  checked : Teardown
-  deriving DecidableEq, Repr
-
-def checkTeardown (teardown : Teardown) : Option TeardownCertificate :=
-  if teardown.Valid then some { checked := teardown } else none
-
-private theorem checkTeardown_valid
-    {teardown : Teardown} {certificate : TeardownCertificate}
-    (result : checkTeardown teardown = some certificate) : teardown.Valid := by
-  unfold checkTeardown at result
-  split at result
-  · assumption
-  · contradiction
-
-theorem accepted_monkey_descriptor_teardown_is_complete_and_unique
-    {teardown : Teardown} {certificate : TeardownCertificate}
-    (result : checkTeardown teardown = some certificate) :
-    teardown.liveOwned = [] ∧ teardown.closed.Nodup :=
-  checkTeardown_valid result
-
+export QCore.DescriptorCustody (
+  Close
+  CloseCertificate
+  DescriptorId
+  ErrorQuery
+  ErrorQueryCertificate
+  SocketPair
+  SocketPairCertificate
+  Teardown
+  TeardownCertificate
+  accepted_error_query_is_borrowed
+  accepted_failed_close_retains_custody
+  accepted_failed_socketpair_creates_no_custody
+  accepted_monkey_descriptor_teardown_is_complete_and_unique
+  accepted_successful_close_discharges_once
+  accepted_successful_socketpair_creates_two_distinct_owned_descriptors
+  checkClose
+  checkErrorQuery
+  checkSocketPair
+  checkTeardown
+  instDecidableEqClose
+  instDecidableEqCloseCertificate
+  instDecidableEqErrorQuery
+  instDecidableEqErrorQueryCertificate
+  instDecidableEqSocketPair
+  instDecidableEqSocketPairCertificate
+  instDecidableEqTeardown
+  instDecidableEqTeardownCertificate
+  instDecidableValid
+  instDecidableValid_1
+  instDecidableValid_2
+  instDecidableValid_3
+  instReprClose
+  instReprCloseCertificate
+  instReprErrorQuery
+  instReprErrorQueryCertificate
+  instReprSocketPair
+  instReprSocketPairCertificate
+  instReprTeardown
+  instReprTeardownCertificate
+  Close.Valid
+  Close._sizeOf_1
+  Close._sizeOf_inst
+  Close.casesOn
+  Close.closeRecorded
+  Close.ctorIdx
+  Close.liveAfter
+  Close.liveBefore
+  Close.mk
+  Close.noConfusion
+  Close.noConfusionType
+  Close.rec
+  Close.recOn
+  Close.succeeded
+  CloseCertificate._sizeOf_1
+  CloseCertificate._sizeOf_inst
+  CloseCertificate.casesOn
+  CloseCertificate.checked
+  CloseCertificate.ctorIdx
+  CloseCertificate.mk
+  CloseCertificate.noConfusion
+  CloseCertificate.noConfusionType
+  CloseCertificate.rec
+  CloseCertificate.recOn
+  ErrorQuery.Valid
+  ErrorQuery._sizeOf_1
+  ErrorQuery._sizeOf_inst
+  ErrorQuery.casesOn
+  ErrorQuery.ctorIdx
+  ErrorQuery.custodyPreserved
+  ErrorQuery.knownClosed
+  ErrorQuery.mk
+  ErrorQuery.noConfusion
+  ErrorQuery.noConfusionType
+  ErrorQuery.rec
+  ErrorQuery.recOn
+  ErrorQueryCertificate._sizeOf_1
+  ErrorQueryCertificate._sizeOf_inst
+  ErrorQueryCertificate.casesOn
+  ErrorQueryCertificate.checked
+  ErrorQueryCertificate.ctorIdx
+  ErrorQueryCertificate.mk
+  ErrorQueryCertificate.noConfusion
+  ErrorQueryCertificate.noConfusionType
+  ErrorQueryCertificate.rec
+  ErrorQueryCertificate.recOn
+  SocketPair.Valid
+  SocketPair._sizeOf_1
+  SocketPair._sizeOf_inst
+  SocketPair.casesOn
+  SocketPair.ctorIdx
+  SocketPair.liveAfter
+  SocketPair.mk
+  SocketPair.noConfusion
+  SocketPair.noConfusionType
+  SocketPair.outputPresent
+  SocketPair.read
+  SocketPair.rec
+  SocketPair.recOn
+  SocketPair.succeeded
+  SocketPair.write
+  SocketPairCertificate._sizeOf_1
+  SocketPairCertificate._sizeOf_inst
+  SocketPairCertificate.casesOn
+  SocketPairCertificate.checked
+  SocketPairCertificate.ctorIdx
+  SocketPairCertificate.mk
+  SocketPairCertificate.noConfusion
+  SocketPairCertificate.noConfusionType
+  SocketPairCertificate.rec
+  SocketPairCertificate.recOn
+  Teardown.Valid
+  Teardown._sizeOf_1
+  Teardown._sizeOf_inst
+  Teardown.casesOn
+  Teardown.closed
+  Teardown.ctorIdx
+  Teardown.liveOwned
+  Teardown.mk
+  Teardown.noConfusion
+  Teardown.noConfusionType
+  Teardown.rec
+  Teardown.recOn
+  TeardownCertificate._sizeOf_1
+  TeardownCertificate._sizeOf_inst
+  TeardownCertificate.casesOn
+  TeardownCertificate.checked
+  TeardownCertificate.ctorIdx
+  TeardownCertificate.mk
+  TeardownCertificate.noConfusion
+  TeardownCertificate.noConfusionType
+  TeardownCertificate.rec
+  TeardownCertificate.recOn
+  instDecidableEqClose.decEq
+  instDecidableEqCloseCertificate.decEq
+  instDecidableEqErrorQuery.decEq
+  instDecidableEqErrorQueryCertificate.decEq
+  instDecidableEqSocketPair.decEq
+  instDecidableEqSocketPairCertificate.decEq
+  instDecidableEqTeardown.decEq
+  instDecidableEqTeardownCertificate.decEq
+  instReprClose.repr
+  instReprCloseCertificate.repr
+  instReprErrorQuery.repr
+  instReprErrorQueryCertificate.repr
+  instReprSocketPair.repr
+  instReprSocketPairCertificate.repr
+  instReprTeardown.repr
+  instReprTeardownCertificate.repr
+  Close.mk._flat_ctor
+  Close.mk.inj
+  Close.mk.injEq
+  Close.mk.noConfusion
+  Close.mk.sizeOf_spec
+  CloseCertificate.mk._flat_ctor
+  CloseCertificate.mk.inj
+  CloseCertificate.mk.injEq
+  CloseCertificate.mk.noConfusion
+  CloseCertificate.mk.sizeOf_spec
+  ErrorQuery.mk._flat_ctor
+  ErrorQuery.mk.inj
+  ErrorQuery.mk.injEq
+  ErrorQuery.mk.noConfusion
+  ErrorQuery.mk.sizeOf_spec
+  ErrorQueryCertificate.mk._flat_ctor
+  ErrorQueryCertificate.mk.inj
+  ErrorQueryCertificate.mk.injEq
+  ErrorQueryCertificate.mk.noConfusion
+  ErrorQueryCertificate.mk.sizeOf_spec
+  SocketPair.mk._flat_ctor
+  SocketPair.mk.inj
+  SocketPair.mk.injEq
+  SocketPair.mk.noConfusion
+  SocketPair.mk.sizeOf_spec
+  SocketPairCertificate.mk._flat_ctor
+  SocketPairCertificate.mk.inj
+  SocketPairCertificate.mk.injEq
+  SocketPairCertificate.mk.noConfusion
+  SocketPairCertificate.mk.sizeOf_spec
+  Teardown.mk._flat_ctor
+  Teardown.mk.inj
+  Teardown.mk.injEq
+  Teardown.mk.noConfusion
+  Teardown.mk.sizeOf_spec
+  TeardownCertificate.mk._flat_ctor
+  TeardownCertificate.mk.inj
+  TeardownCertificate.mk.injEq
+  TeardownCertificate.mk.noConfusion
+  TeardownCertificate.mk.sizeOf_spec
+  instDecidableEqClose.decEq._proof_1
+  instDecidableEqClose.decEq._proof_2
+  instDecidableEqClose.decEq._proof_3
+  instDecidableEqClose.decEq._proof_4
+  instDecidableEqClose.decEq._proof_5
+  instDecidableEqClose.decEq.match_1
+  instDecidableEqCloseCertificate.decEq._proof_1
+  instDecidableEqCloseCertificate.decEq._proof_2
+  instDecidableEqCloseCertificate.decEq.match_1
+  instDecidableEqErrorQuery.decEq._proof_1
+  instDecidableEqErrorQuery.decEq._proof_2
+  instDecidableEqErrorQuery.decEq._proof_3
+  instDecidableEqErrorQuery.decEq.match_1
+  instDecidableEqErrorQueryCertificate.decEq._proof_1
+  instDecidableEqErrorQueryCertificate.decEq._proof_2
+  instDecidableEqErrorQueryCertificate.decEq.match_1
+  instDecidableEqSocketPair.decEq._proof_1
+  instDecidableEqSocketPair.decEq._proof_2
+  instDecidableEqSocketPair.decEq._proof_3
+  instDecidableEqSocketPair.decEq._proof_4
+  instDecidableEqSocketPair.decEq._proof_5
+  instDecidableEqSocketPair.decEq._proof_6
+  instDecidableEqSocketPair.decEq.match_1
+  instDecidableEqSocketPairCertificate.decEq._proof_1
+  instDecidableEqSocketPairCertificate.decEq._proof_2
+  instDecidableEqSocketPairCertificate.decEq.match_1
+  instDecidableEqTeardown.decEq._proof_1
+  instDecidableEqTeardown.decEq._proof_2
+  instDecidableEqTeardown.decEq._proof_3
+  instDecidableEqTeardown.decEq.match_1
+  instDecidableEqTeardownCertificate.decEq._proof_1
+  instDecidableEqTeardownCertificate.decEq._proof_2
+  instDecidableEqTeardownCertificate.decEq.match_1
+)
 end QCore.MonkeyEvent

@@ -237,6 +237,12 @@ compiled QCore axiom closure, allowing only `propext`, `Classical.choice` and
 examples are included in Linux and Clang-enabled Windows CI. Local execution
 is verified; hosted CI awaits a push. See `docs/reports/w7-lean-ci/README.md`.
 
+Generic Lean names are also available with historical aliases:
+`QCore.DescriptorCustody`, `EventComposition` / `checkEventComposition`, and
+`busy_effect_preserves_lock`. The old Monkey module, composition accessors and
+ChunkIO lock theorem remain usable. See
+`docs/reports/w7-generic-lean-names/README.md` for name-only parity and compatibility audits.
+
 ## Standing per-change gate
 
 Run before claiming any change complete:

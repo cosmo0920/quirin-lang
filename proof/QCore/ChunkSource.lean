@@ -120,10 +120,16 @@ abbrev ChunkFields := Nat → Bool × Bool
 def bindBusy (state : ChunkFields) (identity : Nat) (after : Bool) : ChunkFields :=
   fun other => if other = identity then (after, (state other).2) else state other
 
-theorem busy_effect_preserves_chunkio_lock
+theorem busy_effect_preserves_lock
     (state : ChunkFields) (identity : Nat) (after : Bool) :
     (bindBusy state identity after identity).2 = (state identity).2 := by
   simp [bindBusy]
+
+/-- Historical provider-specific name retained for existing audits. -/
+theorem busy_effect_preserves_chunkio_lock
+    (state : ChunkFields) (identity : Nat) (after : Bool) :
+    (bindBusy state identity after identity).2 = (state identity).2 :=
+  busy_effect_preserves_lock state identity after
 
 theorem bound_effect_preserves_other_identities
     (state : ChunkFields) (identity other : Nat) (after : Bool)
