@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "source_set": "sample",
+  "pins": {
+    "sample": {
+      "git_commit": "78a0ea53f811aa4cbb90f5645aa272bed01d2592",
+      "clean_paths": [],
+      "description": "Synthetic resource projection demo"
+    }
+  },
+  "libraries": {
+    "sample": {
+      "pin": "sample",
+      "source_roots": [
+        {
+          "root": "src",
+          "selection": "top_level"
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "src/balanced.c",
+          "sha256": "237d4a46748dcaec57d36dd69d8eb7e56d362eb7492f4311f206ba0efb96d43c"
+        },
+        {
+          "path": "src/leak.c",
+          "sha256": "22049c4e8759dfde8f61d0b7e24fd0e2b2c508bda5aff225dfef928e8aa3acad"
+        },
+        {
+          "path": "src/opaque.c",
+          "sha256": "0e8c35202892def7f79c637c01bc7f9c45f03c78b96435722dca41a997574c05"
+        }
+      ],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "../../contracts.json",
+  "provider_manifests": []
+}

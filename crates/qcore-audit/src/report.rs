@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 
-use qcore_compiler::{
+use qcore_c_gateway::legacy_c::{
     LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, UnrestrictedLegacyResult,
 };
 use serde_json::{Value, json};
@@ -110,8 +110,13 @@ impl AuditReport {
     }
 
     pub fn write(&self, path: &Path) -> Result<(), String> {
+        self.write_with_revision_key(path, "source_revision")
+    }
+
+    /// Compatibility with an existing report schema; verdict contents are unchanged.
+    pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
         let report = json!({
-            "schema_version": 1, "fluent_bit_revision": self.revision,
+            "schema_version": 1, revision_key: self.revision,
             "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
             "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
             "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
@@ -162,8 +167,8 @@ fn diagnostic_description(diagnostic: &LegacyDiagnostic) -> (&'static str, Strin
 #[cfg(test)]
 mod tests {
     use super::*;
-    use qcore_compiler::analyze_legacy_c_translation_unit;
-    use qcore_compiler::contract_loader::load_resource_contract_sources;
+    use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
+    use qcore_contract::contract_loader::load_resource_contract_sources;
     use std::collections::BTreeMap;
 
     #[test]
@@ -171,7 +176,7 @@ mod tests {
         // W1 literal-site migration: loaded from a `.qcore` fixture module.
         let contracts = load_resource_contract_sources(&BTreeMap::from([(
             "alloc_acquire.qcore".to_owned(),
-            include_str!("../../tests/fixtures/contracts/alloc_acquire.qcore").to_owned(),
+            include_str!("../tests/fixtures/alloc_acquire.qcore").to_owned(),
         )]))
         .unwrap();
         let summary = analyze_legacy_c_translation_unit(

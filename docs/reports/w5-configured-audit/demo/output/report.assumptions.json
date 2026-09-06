@@ -1,0 +1,21 @@
+{
+  "compile_database_sha256": "04a94529c6ef7c363a88bf7189fb71093c06ebf9c96bd050260a7b9025682af7",
+  "contract_manifest": "{\n  \"schema_version\": 1,\n  \"modules\": [\n    \"memory.qcore\"\n  ]\n}\n",
+  "contracts": {
+    "/tmp/qcore-generic-audit-demo/profiles/sample/../../memory.qcore": "module contract;\nextern fn alloc() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nonnull);\n};\nextern fn dispose(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nonnull);\n    ensures normal resource_return_none();\n};\n"
+  },
+  "profile": {
+    "pin.sample": "78a0ea53f811aa4cbb90f5645aa272bed01d2592",
+    "profile_digest": "81f1c113ae140186b0fe4bf9bfae06e4ae320d062d2f51fb04336f3bcc5ae305",
+    "schema_version": "1",
+    "source_set": "sample",
+    "trust": "declared source-set assumptions, not verified upstream behavior"
+  },
+  "schema_version": 1,
+  "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+  "source_sha256": {
+    "sample/src/balanced.c": "237d4a46748dcaec57d36dd69d8eb7e56d362eb7492f4311f206ba0efb96d43c",
+    "sample/src/leak.c": "22049c4e8759dfde8f61d0b7e24fd0e2b2c508bda5aff225dfef928e8aa3acad",
+    "sample/src/opaque.c": "0e8c35202892def7f79c637c01bc7f9c45f03c78b96435722dca41a997574c05"
+  }
+}

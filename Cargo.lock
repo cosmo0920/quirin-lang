@@ -46,6 +46,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "qcore-audit"
+version = "0.1.0"
+dependencies = [
+ "qcore-c-gateway",
+ "qcore-contract",
+ "qcore-schemas",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "qcore-c-gateway"
 version = "0.1.0"
 dependencies = [
@@ -59,6 +70,7 @@ name = "qcore-compiler"
 version = "0.1.0"
 dependencies = [
  "cc",
+ "qcore-audit",
  "qcore-c-gateway",
  "qcore-contract",
  "qcore-core",

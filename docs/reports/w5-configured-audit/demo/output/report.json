@@ -1,0 +1,83 @@
+{
+  "diagnostic_counts": {
+    "leak": 1,
+    "unsupported": 1
+  },
+  "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
+  "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
+  "schema_version": 1,
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
+  "source_revision": "78a0ea53f811aa4cbb90f5645aa272bed01d2592",
+  "units": [
+    {
+      "diagnostic_counts": {},
+      "file": "src/balanced.c",
+      "functions": [
+        {
+          "diagnostics": [],
+          "function": "balanced",
+          "status": "Safe"
+        }
+      ],
+      "library": "sample",
+      "not_projected": [],
+      "reason": null,
+      "source_functions": [
+        "balanced"
+      ],
+      "status": "Safe"
+    },
+    {
+      "diagnostic_counts": {
+        "leak": 1
+      },
+      "file": "src/leak.c",
+      "functions": [
+        {
+          "diagnostics": [
+            {
+              "category": "leak",
+              "description": "live obligation acquired at preprocessed line 2",
+              "line": 0
+            }
+          ],
+          "function": "leak",
+          "status": "Unsafe"
+        }
+      ],
+      "library": "sample",
+      "not_projected": [],
+      "reason": null,
+      "source_functions": [
+        "leak"
+      ],
+      "status": "Unsafe"
+    },
+    {
+      "diagnostic_counts": {
+        "unsupported": 1
+      },
+      "file": "src/opaque.c",
+      "functions": [
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `opaque`",
+              "line": 2
+            }
+          ],
+          "function": "unknown_effect",
+          "status": "Unknown"
+        }
+      ],
+      "library": "sample",
+      "not_projected": [],
+      "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "source_functions": [
+        "unknown_effect"
+      ],
+      "status": "Unknown"
+    }
+  ]
+}

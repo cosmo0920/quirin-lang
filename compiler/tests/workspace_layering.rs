@@ -26,6 +26,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "compiler",
         &[
+            "qcore-audit", // examples-only dev dependency, not the compiler library
             "qcore-c-gateway",
             "qcore-contract",
             "qcore-core",
@@ -33,6 +34,10 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-schemas",
             "qcore-verifier-host",
         ],
+    ),
+    (
+        "crates/qcore-audit",
+        &["qcore-c-gateway", "qcore-contract", "qcore-schemas"],
     ),
     ("crates/qcorec", &["qcore-compiler"]),
 ];
@@ -74,6 +79,20 @@ fn workspace_dependencies_point_strictly_downward() {
                 "{crate_path} must not depend on `{dependency}` \
                  (allowed workspace dependencies: {allowed:?})"
             );
+        }
+    }
+}
+
+#[test]
+fn compiler_uses_audit_only_for_examples() {
+    let manifest = include_str!("../Cargo.toml");
+    let mut section = "";
+    for line in manifest.lines().map(str::trim) {
+        if line.starts_with('[') {
+            section = line;
+        }
+        if line.starts_with("qcore-audit =") {
+            assert_eq!(section, "[dev-dependencies]");
         }
     }
 }

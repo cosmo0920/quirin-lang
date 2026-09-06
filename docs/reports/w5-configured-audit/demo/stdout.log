@@ -1,0 +1,11 @@
+   Compiling qcore-audit v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-audit)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running `target/debug/qcore-audit /tmp/qcore-generic-audit-demo/audit.json`
+  sample/src/balanced.c: Safe (1/1)
+  sample/src/leak.c: Unsafe (1/1)
+    resource diagnostics: leak=1
+    leak: preprocessed line 0: leak: live obligation acquired at preprocessed line 2
+  sample/src/opaque.c: Unknown (1/1): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=1
+    unknown_effect: preprocessed line 2: unsupported: call to uncontracted function `opaque`
+3 units: 1 Safe / 1 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures

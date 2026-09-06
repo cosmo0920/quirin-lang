@@ -1,0 +1,8 @@
+✔ [46/53] Built QCore.VerifierEvidenceV2 (1.0s)
+✔ [47/53] Built QCore.Frontend (1.3s)
+✔ [48/53] Built QCore.WholeProgram (1.1s)
+✔ [49/53] Built QCore.Compiler (483ms)
+✔ [50/53] Built QCore.TranslationValidation (244ms)
+✔ [51/53] Built QCore.Metatheory (354ms)
+✔ [52/53] Built QCore (175ms)
+Build completed successfully (53 jobs).

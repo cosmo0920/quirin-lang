@@ -129,3 +129,7 @@ assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
+
+- The generic `qcore-audit` driver and retained Cycle19 compatibility adapter
+  are documented in `docs/reports/w5-configured-audit/README.md`. No provider
+  module is linked by the new driver; production evidence routes remain.
