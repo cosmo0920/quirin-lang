@@ -4,7 +4,8 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use qcore_compiler::{
-    CompileOptions, PluginId, SourceFile, compile_files, first_party_registry, format_diagnostic,
+    CompileOptions, PluginId, SourceFile, compile_files, format_diagnostic,
+    load_first_party_registry,
 };
 
 const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] FILE...\n  qcorec emit [--entry NAME] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list\n  qcorec plugins inspect PLUGIN_ID\n";
@@ -113,7 +114,8 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
 }
 
 fn plugins_command(arguments: &[String]) -> Result<(), String> {
-    let registry = first_party_registry();
+    let registry = load_first_party_registry(&qcore_compiler::source_profiles::profiles_root())
+        .map_err(|error| format!("provider discovery failed: {error}"))?;
     match arguments {
         [command] if command == "list" => {
             for manifest in registry.manifests() {

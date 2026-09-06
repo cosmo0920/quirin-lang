@@ -29,7 +29,7 @@ use std::path::{Component, Path, PathBuf};
 use std::process::Command;
 
 use qcore_schemas::identity::ExternalSourceBundle;
-use qcore_schemas::plugin::PluginManifest;
+use qcore_schemas::plugin::{PluginId, PluginManifest};
 use qcore_schemas::profile::{
     LibraryProfile, ProfileManifest, SUPPORTED_PROFILE_MANIFEST_VERSIONS, SourcePin, WitnessCheck,
 };
@@ -168,6 +168,7 @@ pub struct LoadedProfile {
     manifest_text: String,
     manifest_digest: String,
     providers: Vec<PluginManifest>,
+    provider_directories: BTreeMap<PluginId, PathBuf>,
 }
 
 impl LoadedProfile {
@@ -198,6 +199,12 @@ impl LoadedProfile {
     #[must_use]
     pub fn providers(&self) -> &[PluginManifest] {
         &self.providers
+    }
+
+    /// Directory relative to which a validated provider executable is resolved.
+    #[must_use]
+    pub fn provider_directory(&self, id: &PluginId) -> Option<&Path> {
+        self.provider_directories.get(id).map(PathBuf::as_path)
     }
 
     /// The library entry, or `None`. An unmatched library is Unknown at the
@@ -338,13 +345,15 @@ pub fn load_profile_directory(directory: &Path) -> Result<LoadedProfile, Profile
         });
     }
     validate_manifest(&manifest)?;
-    let providers = load_provider_manifests(directory, &manifest)?;
+    let mut provider_directories = BTreeMap::new();
+    let providers = load_provider_manifests(directory, &manifest, &mut provider_directories)?;
     Ok(LoadedProfile {
         manifest_digest: sha256_hex(text.as_bytes()),
         manifest,
         directory: directory.to_path_buf(),
         manifest_text: text,
         providers,
+        provider_directories,
     })
 }
 
@@ -516,6 +525,7 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
 fn load_provider_manifests(
     directory: &Path,
     manifest: &ProfileManifest,
+    provider_directories: &mut BTreeMap<PluginId, PathBuf>,
 ) -> Result<Vec<PluginManifest>, ProfileDiagnostic> {
     let mut providers = Vec::new();
     for relative in &manifest.provider_manifests {
@@ -538,6 +548,10 @@ fn load_provider_manifests(
                 path: path.display().to_string(),
                 error: error.to_string(),
             })?;
+        provider_directories.insert(
+            plugin.plugin_id.clone(),
+            path.parent().unwrap_or(directory).to_path_buf(),
+        );
         providers.push(plugin);
     }
     providers.sort_by(|left, right| left.plugin_id.as_str().cmp(right.plugin_id.as_str()));

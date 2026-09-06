@@ -276,3 +276,11 @@ Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
 already W4's measured change). Raw production units stay unpromoted. Monkey
 typed imports, Boolean field routing, first-party registration literals and
 configured orchestration remain W2/W5 work; this does not complete W2.
+
+
+W2 H6 provider metadata discovery is implemented (2026-09-07;
+`docs/reports/w2-provider-discovery/README.md`). First-party manifest literals
+are removed after field-for-field parity; registry metadata is loaded atomically
+from profile packages with stable plugin-id ordering and no compiled fallback.
+All shipped providers remain v1 built-ins returning Unknown; process extraction
+is still W5 work. Full 185-TU diagnostic/source parity is unchanged.

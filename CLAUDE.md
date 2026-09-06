@@ -92,3 +92,7 @@ observations, not general OS failure or durability guarantees. Evidence:
 - W2's bounded profile migration and full 185-TU parity are recorded in
   `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
   orchestration work is explicit there. Profile data remains declared trust.
+
+- W2 H6 provider metadata now loads from profile packages; see
+  `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
+  into processes or change the v1 Safe refusal.

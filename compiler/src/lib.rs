@@ -51,6 +51,7 @@ pub mod native_concurrency;
 pub mod ownership;
 pub use qcore_frontend::parser;
 pub use qcore_frontend::quant_index;
+pub mod first_party;
 pub mod research_closure;
 pub mod research_extensions;
 pub mod resource_flow;
@@ -210,7 +211,8 @@ pub use verifier_plugin::{
     ScopeResolutionError, SupportedTarget, TargetProfile, UnitIdentity, VerificationOutcome,
     VerificationRequest, VerificationResponse, VerifierCapability, VerifierProvider,
     VerifierRegistry, compose_certificates, compose_verification, decode_protocol_frame,
-    encode_protocol_frame, first_party_manifests, first_party_registry,
+    encode_protocol_frame, first_party_manifests, first_party_registry, load_first_party_manifests,
+    load_first_party_registry,
 };
 pub use weak_memory::{
     C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,

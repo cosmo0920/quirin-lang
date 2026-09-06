@@ -61,3 +61,19 @@ fn cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output()
     );
     std::fs::remove_dir_all(&directory).unwrap();
 }
+
+#[test]
+fn plugin_discovery_errors_are_reported_without_builtin_fallback() {
+    let missing =
+        std::env::temp_dir().join(format!("qcore-absent-profiles-{}", std::process::id()));
+    for value in [missing.as_os_str(), std::ffi::OsStr::new("")] {
+        let output = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+            .env("QCORE_PROFILES", value)
+            .args(["plugins", "list"])
+            .output()
+            .unwrap();
+        assert!(!output.status.success());
+        assert!(output.stdout.is_empty());
+        assert!(String::from_utf8_lossy(&output.stderr).contains("provider discovery failed"));
+    }
+}

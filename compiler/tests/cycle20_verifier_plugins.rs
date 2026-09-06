@@ -82,10 +82,14 @@ fn extracted_plugins_preserve_manifests_and_fail_closed_for_every_capability() {
     use qcore_compiler::verifier_plugins::{chunkio, libevent};
 
     let mut registry = VerifierRegistry::default();
-    registry.register(Arc::new(libevent::provider())).unwrap();
-    registry.register(Arc::new(chunkio::provider())).unwrap();
+    registry
+        .register(Arc::new(libevent::provider().unwrap()))
+        .unwrap();
+    registry
+        .register(Arc::new(chunkio::provider().unwrap()))
+        .unwrap();
     let first_party = first_party_registry();
-    for manifest in [libevent::manifest(), chunkio::manifest()] {
+    for manifest in [libevent::manifest().unwrap(), chunkio::manifest().unwrap()] {
         assert!(registry.manifests().contains(&&manifest));
         assert!(first_party.manifests().contains(&&manifest));
         for capability in &manifest.capabilities {
@@ -334,7 +338,10 @@ fn package_discovery_loads_a_versioned_manifest() {
     let root = std::env::temp_dir().join(format!("qcore-plugin-discovery-{unique}"));
     let package = root.join("example-discovered");
     fs::create_dir_all(&package).unwrap();
-    let mut manifest = first_party_manifests().remove(0);
+    let mut manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     manifest.plugin_id = PluginId::new("example.discovered").unwrap();
     manifest.entrypoint = PluginEntrypoint::Executable {
         path: "provider".into(),
@@ -406,7 +413,10 @@ fn verifier_scope_rejects_unknown_capabilities_and_plugins() {
 
 #[test]
 fn reproducibility_metadata_does_not_establish_semantic_evidence() {
-    let manifest = first_party_manifests().remove(0);
+    let manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     let req = request("qcore.libevent", "libevent");
     let response = echo_response(&manifest, &req);
     let evidence = response.evidence.unwrap();
@@ -478,7 +488,10 @@ fn vp01_predicate_source_profile_and_capability_mutations_cannot_mint_safety() {
 
 #[test]
 fn vp02_empty_in_process_evidence_is_rejected_by_the_core() {
-    let manifest = first_party_manifests().remove(0);
+    let manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     let mut registry = VerifierRegistry::default();
     registry
         .register(Arc::new(EchoingProvider(
@@ -515,7 +528,10 @@ fn vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety() {
     )
     .unwrap();
     fs::set_permissions(&executable, fs::Permissions::from_mode(0o700)).unwrap();
-    let mut manifest = first_party_manifests().remove(0);
+    let mut manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     manifest.plugin_id = PluginId::new("example.echo").unwrap();
     manifest.entrypoint = PluginEntrypoint::Executable {
         path: "provider.sh".into(),
@@ -575,7 +591,12 @@ fn vp06_unverified_unsafe_is_unknown_and_cannot_dominate_composition() {
     }
     let mut registry = VerifierRegistry::default();
     registry
-        .register(Arc::new(Allegation(first_party_manifests().remove(0))))
+        .register(Arc::new(Allegation(
+            first_party_manifests()
+                .into_iter()
+                .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+                .expect("Libevent fixture manifest"),
+        )))
         .unwrap();
     let outcome = registry.verify(&request("qcore.libevent", "libevent"));
     assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
@@ -627,7 +648,10 @@ fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
     ));
     fs::create_dir(&package).unwrap();
     let script = package.join("provider.sh");
-    let mut manifest = first_party_manifests().remove(0);
+    let mut manifest = first_party_manifests()
+        .into_iter()
+        .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
+        .expect("Libevent fixture manifest");
     manifest.entrypoint = PluginEntrypoint::Executable {
         path: "provider.sh".into(),
     };
