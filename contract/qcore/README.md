@@ -223,3 +223,10 @@ The typed symbolic interpreter binds actual syscall arguments and every field
 write. External outcome/framing premises remain explicit; an error preserves C
 fields but leaves OS custody unresolved. See the
 [filesystem outcomes report](../../docs/reports/cycle19-filesystem-outcomes/README.md).
+
+`chunkio/filesystem_observation.qcore` checks endpoint observations from actual
+compiled Unix helpers with controlled syscall outcomes. Eighteen sanitized
+executions cover both helpers' null/absent/error/success behavior and record
+call identity, diagnostics and field frames. These hooks do not release OS
+resources. See the
+[cleanup observation report](../../docs/reports/cycle19-cleanup-observations/README.md).

@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-filesystem-outcomes",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "entire_chunk_contract_report_byte_identical": true,
+  "fixture_matches_native_execution": true,
+  "controlled_native_executions": 18,
+  "os_cleanup_performed": false,
+  "workspace_tests": 365
+}

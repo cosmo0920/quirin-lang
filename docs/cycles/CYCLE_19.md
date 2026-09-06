@@ -615,3 +615,14 @@ failed close leaves OS custody unresolved even though its C fd field remains.
 Two native policies, six Lean theorems, 364 workspace tests and required checks
 pass with unchanged prior verdicts and certificates. Actual outcome observation,
 wrapper failure composition and the wider Cycle 19 lifecycle gates remain open.
+
+## Controlled native cleanup executions (2026-09-06)
+
+The [cleanup observation report](../reports/cycle19-cleanup-observations/README.md)
+records 18 sanitized executions of the actual pinned Unix helper bodies with
+controlled close/unmap results. Both helpers' null/absent/error/success cases
+check returns, call identities, diagnostics and endpoint field preservation or
+reset against native QCore. All 365 workspace tests and required checks pass;
+prior audit sidecars are byte-identical. These are injected outcomes, not actual
+OS resource discharge or a full filesystem custody certificate. Wrapper failure
+composition and the remaining lifecycle/event gates are still open.

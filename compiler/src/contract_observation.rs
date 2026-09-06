@@ -259,3 +259,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/contract_observation.rs"]
+mod cleanup_observation_tests;

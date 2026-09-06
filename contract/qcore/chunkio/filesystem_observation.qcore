@@ -1,0 +1,22 @@
+module contract;
+
+// Endpoint observations from actual compiled helper bodies with injected
+// zero/-1 syscall results. No OS resources are allocated or discharged by the
+// hooks. No claim about assignment count or paths outside these executions.
+extern fn native_cleanup_observation() -> unit
+contract {
+    requires controlled_returning_syscall_hooks;
+    requires exclusive_live_record_or_null;
+    requires compiled_source_and_build_recorded;
+    requires diagnostic_hook_frames_record;
+    ensures normal not was_null or returned == -1;
+    ensures normal was_null or was_present or returned == 0;
+    ensures normal not injected_failure or returned == -1;
+    ensures normal not injected_success or returned == 0;
+    ensures normal cleanup_calls == was_present;
+    ensures normal diagnostic_calls == injected_failure;
+    ensures normal arguments_match;
+    ensures normal injected_success or fields_preserved;
+    ensures normal not injected_success or fields_reset;
+    ensures normal other_fields_preserved;
+};
