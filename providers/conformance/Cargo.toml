@@ -1,0 +1,10 @@
+[package]
+name = "qcore-provider-conformance"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dev-dependencies]
+qcore-schemas.workspace = true
+qcore-verifier-host = { path = "../../crates/qcore-verifier-host" }
+serde_json.workspace = true

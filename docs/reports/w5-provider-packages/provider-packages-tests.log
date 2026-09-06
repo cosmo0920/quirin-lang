@@ -1,0 +1,61 @@
+   Compiling qcore-core v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-core)
+   Compiling qcore-schemas v0.2.0 (/tmp/qcore-provider-packages/crates/qcore-schemas)
+   Compiling qcore-frontend v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-frontend)
+   Compiling qcore-verifier-host v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-verifier-host)
+   Compiling qcore-provider-chunkio v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-chunkio)
+   Compiling qcore-provider-libevent v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-libevent)
+   Compiling qcore-provider-ctraces v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-ctraces)
+   Compiling qcore-provider-librdkafka v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-librdkafka)
+   Compiling qcore-provider-cmetrics v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-cmetrics)
+   Compiling qcore-provider-conformance v0.1.0 (/tmp/qcore-provider-packages/providers/conformance)
+    Finished `test` profile [unoptimized] target(s) in 2.09s
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_chunkio-86a6efc6708761f5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_cmetrics-38c222786f33380f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/qcore_provider_conformance-935ec4130fae91d1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/packages.rs (providers/target/debug/deps/packages-fb98c76e7dc10407)
+
+running 2 tests
+test artifact_dependencies_are_only_schemas_and_serialization ... ok
+test real_packages_preserve_unknown_and_reject_mutations ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.65s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_ctraces-90342ae3d34a1935)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_libevent-4e06928937600072)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_librdkafka-124f5651c96bc9a5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_provider_conformance
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
