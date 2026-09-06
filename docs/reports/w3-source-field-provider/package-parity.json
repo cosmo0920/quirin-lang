@@ -1,0 +1,7 @@
+{
+  "indexes_identical": true,
+  "artifacts_identical_to_audited_packages": true,
+  "fresh_target_builds": 2,
+  "executable_manifest_archive_matches": 5,
+  "index_profile_label_corrected": true
+}

@@ -73,3 +73,10 @@ passes 600 workspace tests, 43 Python tests, the standing gate and 19 Lean
 audits, plus three excluded provider conformance tests. Full 185-unit source
 and diagnostic output is byte-identical. Callback source derivation and
 protocol witness admission remain open.
+
+[Source-derived field provider integration](reports/w3-source-field-provider/README.md)
+passes 611 workspace tests, 43 Python tests, the standing gate and 19 Lean
+audits, plus four excluded provider conformance tests. The real ChunkIO process
+provides replayed evidence for three bounded function contracts; 93 selected
+functions remain Unknown. Full 185-unit source/diagnostic output and the prior
+contract sidecar remain byte-identical. General lifecycle import remains open.

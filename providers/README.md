@@ -7,14 +7,15 @@ This separate Cargo workspace builds five executable packages:
 source introduces no Rust crate dependency. The conformance harness depends
 on the real verifier host and is never linked into an artifact.
 
-These are **Unknown-only executable packages**. They reproduce the existing
-first-party protocol-v1 adapter responses; they do not extract the specialized
-Libevent/Monkey, ChunkIO, CMetrics, CTraces or librdkafka source/model checkers.
-Every supported v2 capability explicitly returns Unknown without evidence.
-Capabilities and theorem-family labels in the manifests remain routing
-metadata, not claims of implemented witness generation. Existing in-process
-and Cycle 19 routes remain required. W5 semantic extraction and aggregate
-Cycle 20 acceptance remain open.
+All protocol-v1 responses remain Unknown. ChunkIO 0.2.0 additionally proposes
+source-derived Boolean-field contract witnesses for the explicit
+`qcore.c_boolean_field_contract.v1` profile. The trusted receiver binds the typed
+source/build snapshot and independently evaluates the contract. Other v2
+requests remain Unknown. This bounded function property does not establish
+whole-unit custody, caller provenance, general lifecycle or synchronization.
+The other four packages remain Unknown-only. Specialized provider source
+analysis and aggregate Cycle20 acceptance are still open. See the
+[source-field integration](../docs/reports/w3-source-field-provider/README.md).
 
 ## Build, verify and reproduce
 
@@ -59,12 +60,12 @@ capabilities, oversized/truncated frames, unknown fields and trailing frames
 fail with a nonzero exit and no response. The host reports these failures as
 Unknown. Valid v1 responses match the built-in diagnostic and no-evidence
 response exactly, including when the submitted facts are empty or false.
-Valid v2 requests return explicit semantic-evidence-unavailable diagnostics.
+V2 requests outside the explicit ChunkIO source-field path return semantic-evidence-unavailable diagnostics.
 
-The existing manifest target wildcards are preserved for routing parity.
+Existing wildcard routes are retained; ChunkIO adds a bounded `fluent_bit` source-field target and explicit C dialects.
 A request still selects a concrete nonempty revision, profile, platform and
 backend. Wildcard routing is never source/revision verification or safety
-coverage; these packages always return Unknown.
+coverage; every admitted source-field result still needs trusted replay.
 
 Extract a verified archive into a versioned directory and register its
 absolute package path using the existing host API:
@@ -117,3 +118,20 @@ record-exchange fixture. Its paired test uses the trusted declared-reactor
 consumer and rejects authority/identity/coverage mutations. It is not one of the
 five packaged providers and speaks no plugin protocol. See
 [callback record evidence](../docs/reports/w5-reactor-callback-records/README.md).
+
+For the real field-contract audit, select the durable verified package:
+
+```sh
+python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
+QCORE_CHUNKIO_PACKAGE="$PWD/build/cycle19/provider-packages/qcore.chunkio" \
+  cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
+  /home/cosmo/Documents/GitHub/fluent-bit \
+  build/cycle19/monkey-build/compile_commands.json \
+  build/cycle19/reports/source-effect-source.json \
+  build/cycle19/reports/source-effect-diagnostics.json
+```
+
+On a fresh checkout, first build that package set with `python3 -B providers/package.py build --output build/cycle19/provider-packages`. The explicit process mode
+retains unsupported functions in the `.source-effects.json` sidecar and fails
+on missing/incompatible/rejected providers. Direct evaluation remains a parity
+comparison; source-scope lifecycle inference remains incomplete.

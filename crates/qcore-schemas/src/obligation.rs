@@ -80,6 +80,8 @@ pub enum ObligationProperty {
     CustodyDischarged,
     ParameterModeRespected,
     NoUnknownCallEffect,
+    /// Both Boolean prestates satisfy a source-derived borrowed-field contract.
+    BooleanFieldContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -106,6 +108,7 @@ impl ObligationProperty {
             Self::CustodyDischarged => "custody_discharged",
             Self::ParameterModeRespected => "parameter_mode_respected",
             Self::NoUnknownCallEffect => "no_unknown_call_effect",
+            Self::BooleanFieldContract => "boolean_field_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

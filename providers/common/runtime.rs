@@ -1,4 +1,4 @@
-//! Bounded Unknown-only provider transport. Included as source by each artifact
+//! Bounded provider transport with optional capability-specific v2 proposals. Included as source by each artifact
 //! crate so no host/compiler dependency enters its dependency graph.
 use qcore_schemas::plugin::*;
 use qcore_schemas::sha256_hex;
@@ -85,7 +85,13 @@ fn validate(request: &VerificationRequest, manifest: &PluginManifest) -> Result<
     Ok(())
 }
 
-fn response(payload: &[u8], manifest: &PluginManifest) -> Result<Vec<u8>, String> {
+type V2Proposal = fn(&VerificationRequestV2, &PluginManifest) -> Option<VerificationResponseV2>;
+
+fn response(
+    payload: &[u8],
+    manifest: &PluginManifest,
+    propose: Option<V2Proposal>,
+) -> Result<Vec<u8>, String> {
     // Inspect the evidence selector, then deserialize the original bytes into
     // the strict versioned schema (including duplicate/unknown field checks).
     let selector: serde_json::Value = serde_json::from_slice(payload).map_err(|e| e.to_string())?;
@@ -120,6 +126,9 @@ fn response(payload: &[u8], manifest: &PluginManifest) -> Result<Vec<u8>, String
                 serde_json::from_slice(payload).map_err(|e| e.to_string())?;
             request.validate().map_err(|e| e.to_string())?;
             validate(&request.base(), manifest)?;
+            if let Some(response) = propose.and_then(|propose| propose(&request, manifest)) {
+                return frame(&response, manifest.limits.output_bytes);
+            }
             frame(&VerificationResponseV2 {
                 protocol_version: 1,
                 request_id: request.request_id,
@@ -137,7 +146,12 @@ fn response(payload: &[u8], manifest: &PluginManifest) -> Result<Vec<u8>, String
     }
 }
 
+#[allow(dead_code)]
 pub fn run(template: &str) -> Result<(), String> {
+    run_with_v2(template, None)
+}
+
+pub fn run_with_v2(template: &str, propose: Option<V2Proposal>) -> Result<(), String> {
     let manifest = package(template)?;
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args == ["--verify-package"] {
@@ -151,7 +165,7 @@ pub fn run(template: &str) -> Result<(), String> {
         return Err("expected no arguments, or --verify-package".into());
     }
     let payload = read_frame(&mut std::io::stdin().lock(), manifest.limits.output_bytes)?;
-    let response = response(&payload, &manifest)?;
+    let response = response(&payload, &manifest, propose)?;
     std::io::stdout()
         .lock()
         .write_all(&response)

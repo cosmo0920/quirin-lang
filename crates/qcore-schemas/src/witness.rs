@@ -303,6 +303,7 @@ pub struct ContractObservationWitness {
 pub enum SemanticWitness {
     ChunkLifecycle(ChunkLifecycleWitness),
     ContractObservation(ContractObservationWitness),
+    BooleanFieldContract(Box<crate::chunk_summary::BooleanFieldContractWitness>),
 }
 
 impl SemanticWitness {
@@ -314,6 +315,7 @@ impl SemanticWitness {
         match self {
             Self::ChunkLifecycle(witness) => &witness.task_digest,
             Self::ContractObservation(witness) => &witness.task_digest,
+            Self::BooleanFieldContract(witness) => &witness.task_digest,
         }
     }
 
@@ -322,6 +324,7 @@ impl SemanticWitness {
         match self {
             Self::ChunkLifecycle(_) => "chunk_lifecycle",
             Self::ContractObservation(_) => "contract_observation",
+            Self::BooleanFieldContract(_) => "boolean_field_contract",
         }
     }
 }

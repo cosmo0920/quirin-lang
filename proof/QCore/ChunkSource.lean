@@ -115,6 +115,75 @@ theorem accepted_contract_holds_on_every_source_path
   · exact both.1
   · exact both.2
 
+/-! Finite path portion of the source-effect witness firewall. The imported
+summary is produced by `summarize`; the provider cannot replace it. Equality
+of `Summary` includes final values, returns, branches, ordered field writes and
+ordered frame writes. The explicit labels also prevent omitted, duplicated or
+swapped Boolean prestates. `post` represents the pinned contract under its
+declared live/exclusive/Boolean-domain premises.
+
+Rust additionally checks the task and source/build/profile/helper identities.
+Those checks, Clang decoding, contract-text interpretation and runtime caller
+provenance are not proved by this finite-state theorem. -/
+
+structure SourceEffectWitness where
+  falseInitial : Bool
+  trueInitial : Bool
+  paths : Summary
+  deriving Repr, DecidableEq
+
+def sourceEffectWitnessAgrees (imported : Summary) (proposed : SourceEffectWitness) : Bool :=
+  decide (proposed.falseInitial = false ∧ proposed.trueInitial = true ∧
+    proposed.paths = imported)
+
+def checkSourceEffectWitness (imported : Summary) (proposed : SourceEffectWitness)
+    (post : Bool → Case → Bool) : Bool :=
+  sourceEffectWitnessAgrees imported proposed && checkContract imported post
+
+theorem accepted_source_effect_witness_has_exact_paths
+    {imported : Summary} {proposed : SourceEffectWitness} {post : Bool → Case → Bool}
+    (accepted : checkSourceEffectWitness imported proposed post = true) :
+    proposed.falseInitial = false ∧ proposed.trueInitial = true ∧
+      proposed.paths = imported := by
+  have gates : sourceEffectWitnessAgrees imported proposed = true ∧
+      checkContract imported post = true := by
+    simpa [checkSourceEffectWitness] using accepted
+  simpa [sourceEffectWitnessAgrees] using gates.1
+
+theorem accepted_source_effect_witness_covers_every_boolean_prestate
+    {statement : Stmt} {imported : Summary} {proposed : SourceEffectWitness}
+    {post : Bool → Case → Bool}
+    (sourceImport : summarize statement = some imported)
+    (accepted : checkSourceEffectWitness imported proposed post = true) (initial : Bool) :
+    run statement initial = some (proposed.paths.select initial) ∧
+      post initial (proposed.paths.select initial) = true := by
+  have exactPaths := accepted_source_effect_witness_has_exact_paths accepted
+  have gates : sourceEffectWitnessAgrees imported proposed = true ∧
+      checkContract imported post = true := by
+    simpa [checkSourceEffectWitness] using accepted
+  rw [exactPaths.2.2]
+  exact accepted_contract_holds_on_every_source_path sourceImport gates.2 initial
+
+theorem changed_source_effect_paths_reject
+    {imported : Summary} {proposed : SourceEffectWitness} (post : Bool → Case → Bool)
+    (changed : proposed.paths ≠ imported) :
+    checkSourceEffectWitness imported proposed post = false := by
+  simp [checkSourceEffectWitness, sourceEffectWitnessAgrees, changed]
+
+theorem wrong_source_effect_prestate_labels_reject
+    {imported : Summary} {proposed : SourceEffectWitness} (post : Bool → Case → Bool)
+    (wrong : proposed.falseInitial ≠ false ∨ proposed.trueInitial ≠ true) :
+    checkSourceEffectWitness imported proposed post = false := by
+  rcases wrong with wrong | wrong
+  · simp [checkSourceEffectWitness, sourceEffectWitnessAgrees, wrong]
+  · simp [checkSourceEffectWitness, sourceEffectWitnessAgrees, wrong]
+
+theorem matching_source_effect_witness_cannot_hide_contract_failure
+    {imported : Summary} (proposed : SourceEffectWitness) {post : Bool → Case → Bool}
+    (failed : checkContract imported post = false) :
+    checkSourceEffectWitness imported proposed post = false := by
+  simp [checkSourceEffectWitness, failed]
+
 abbrev ChunkFields := Nat → Bool × Bool
 
 def bindBusy (state : ChunkFields) (identity : Nat) (after : Bool) : ChunkFields :=

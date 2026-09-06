@@ -60,6 +60,11 @@ import QCore.ChunkSource
 #print axioms QCore.ExternalIntegration.accepted_monkey_source_is_pinned
 #print axioms QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate
 #print axioms QCore.ChunkSource.accepted_contract_holds_on_every_source_path
+#print axioms QCore.ChunkSource.accepted_source_effect_witness_has_exact_paths
+#print axioms QCore.ChunkSource.accepted_source_effect_witness_covers_every_boolean_prestate
+#print axioms QCore.ChunkSource.changed_source_effect_paths_reject
+#print axioms QCore.ChunkSource.wrong_source_effect_prestate_labels_reject
+#print axioms QCore.ChunkSource.matching_source_effect_witness_cannot_hide_contract_failure
 #print axioms QCore.ChunkSource.busy_effect_preserves_lock
 #print axioms QCore.ChunkSource.bound_effect_preserves_other_identities
 #print axioms QCore.ChunkSource.release_busy_error_path_preserves_state

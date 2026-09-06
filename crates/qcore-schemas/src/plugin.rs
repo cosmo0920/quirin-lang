@@ -420,6 +420,10 @@ pub struct VerificationRequestV2 {
     /// The core-derived obligation inventory. A provider proposes witnesses,
     /// never this list.
     pub obligations: Vec<Obligation>,
+    /// Optional, separately digest-bound source input for the explicit Boolean
+    /// field contract profile. Omitted for existing v2 exchanges and every v1.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_effect: Option<crate::chunk_summary::BooleanFieldSourceInput>,
 }
 
 impl VerificationRequestV2 {
@@ -461,6 +465,25 @@ impl VerificationRequestV2 {
             })
         {
             return Err(RequestError::InvalidObligations);
+        }
+        let field_obligations = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property == crate::obligation::ObligationProperty::BooleanFieldContract
+            })
+            .count();
+        match &self.source_effect {
+            Some(input)
+                if self.capability == VerifierCapability::ResourceContracts
+                    && field_obligations == 1
+                    && self.obligations.len() == 1
+                    && matches!(&self.obligations[0].subject,
+                    crate::obligation::ObligationSubject::Function { symbol, translation_unit }
+                    if symbol == &input.summary.function && translation_unit == &self.unit.translation_unit) =>
+                {}
+            None if field_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
         }
         Ok(())
     }

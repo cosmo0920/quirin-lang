@@ -1,0 +1,11 @@
+{
+  "workspace_tests": 611,
+  "python_validator_tests": 43,
+  "lean_axiom_audits": 19,
+  "provider_conformance_tests": 4,
+  "standing_gate": "passed",
+  "provider_fmt": "passed",
+  "provider_clippy": "passed",
+  "full_language_conformance": false,
+  "raw_units_promoted": 0
+}

@@ -84,7 +84,7 @@ def build(output, target):
                           "manifest_sha256": digest(package / "verifier-plugin.json"),
                           "archive_sha256": digest(archive_path)})
     record = {"schema_version": 1, "protocol_version": 1, "evidence_versions": [1, 2],
-              "semantic_profile": "unknown_only_transport", "artifacts": artifacts,
+              "semantic_profile": "per_package_declared_profiles", "artifacts": artifacts,
               "rustc": subprocess.check_output(["rustc", "-vV"], text=True),
               "lock_sha256": digest(ROOT / "Cargo.lock")}
     (output / "packages.json").write_text(json.dumps(record, indent=2) + "\n")

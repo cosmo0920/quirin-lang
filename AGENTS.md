@@ -23,14 +23,14 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle and generic reactor/descriptor custody. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
-| `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; source-import certificates remain opaque in the compiler adapter |
+| `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
-| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery and typed-AST transport; depends only on contract/schemas plus JSON transport |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
 | `crates/qcore-verifier-host/` | L2 generic registry, source-scope resolution, bounded process transport, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
-| `crates/qcore-verification/` | Trusted adapter: core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/host, never providers |
+| `crates/qcore-verification/` | Trusted adapter: core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation/dispatch live in `qcore-verification` |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
@@ -435,3 +435,16 @@ witness admission or source-derived authority; Monkey effect records retain
 their separate interpretation. Evidence:
 `docs/reports/w5-reactor-callback-records/README.md`. Source binding,
 specialized provider extraction and registry composition remain open.
+
+Source-derived field-contract provider path (2026-09-07): the typed Boolean
+importer now lives in `qcore-c-gateway`, with opaque source/build/profile/helper
+identity snapshots and compiler compatibility APIs. `qcore-verification` derives
+function-scoped evidence-v2 tasks and replays exact source paths plus pinned
+contracts. The real ChunkIO 0.2.0 package proposes witnesses; the audit selects
+it explicitly with `QCORE_CHUNKIO_PACKAGE`. Three real functions check across
+four Boolean-state combinations each; 93 other selected functions remain
+Unknown. Source, resource diagnostics and existing contract sidecars retain
+byte parity. Raw unit totals remain 2 Safe / 47 provisional Unsafe / 132 Unknown /
+4 data-only. Evidence: `docs/reports/w3-source-field-provider/README.md`.
+Full lifecycle source inference, provider-owned source analysis and aggregate
+registry composition remain open; this bounded property does not discharge them.

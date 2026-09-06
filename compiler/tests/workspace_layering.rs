@@ -26,6 +26,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "crates/qcore-verification",
         &[
+            "qcore-c-gateway",
             "qcore-core",
             "qcore-frontend",
             "qcore-contract",

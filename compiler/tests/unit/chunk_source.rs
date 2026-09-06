@@ -606,3 +606,187 @@ fn data_selected_field_does_not_weaken_typed_source_validation() {
         );
     }
 }
+
+#[test]
+fn checked_source_identity_binds_inputs_configuration_profile_and_policy() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    use crate::legacy_c::{CCompilerDialect, LegacyFunctionScope};
+    use qcore_c_gateway::boolean_source as gateway;
+    let profile = field_profile(serde_json::json!([field_model(
+        "widget", "held", "lock", "unlock"
+    )]))
+    .unwrap();
+    let source =
+        "struct widget { int held; }; int clear(struct widget *p) { p->held = 0; return 0; }";
+    let unit = C11TranslationUnit {
+        source,
+        ..Default::default()
+    };
+    let import = |unit: &C11TranslationUnit<'_>, profile: &LoadedProfile, rules: &str| {
+        let mut results = gateway::import_chunk_source_with_profile(
+            unit,
+            &"b".repeat(40),
+            profile,
+            &["custom"],
+            &[],
+            rules,
+        )
+        .unwrap();
+        let gateway::ChunkSourceResult::Summary(summary) = results.remove(0) else {
+            panic!("expected checked source summary");
+        };
+        summary
+    };
+    let original = import(&unit, &profile, crate::source_contract::RULES);
+    let identity = original.input_identity();
+    assert_eq!(
+        identity.raw_source_digest(),
+        qcore_schemas::sha256_hex(source.as_bytes())
+    );
+    assert_eq!(
+        identity.preprocessed_source_digest(),
+        qcore_schemas::sha256_hex(
+            crate::legacy_c::validate_unrestricted_c11(&unit)
+                .unwrap()
+                .as_bytes()
+        )
+    );
+    assert!(identity.compiler_version().contains("clang version"));
+    assert_eq!(identity.dialect(), "c11");
+    assert!(!identity.compiler_target().is_empty());
+    assert!(identity.profile_digest().is_some());
+    assert_eq!(
+        serde_json::to_value(&original).unwrap(),
+        serde_json::to_value(&**original).unwrap(),
+        "checked provenance must not alter the compatibility record serialization"
+    );
+    let commented = format!("{source}\n// another source snapshot\n");
+    let changed = import(
+        &C11TranslationUnit {
+            source: &commented,
+            ..unit.clone()
+        },
+        &profile,
+        crate::source_contract::RULES,
+    );
+    assert_ne!(
+        identity.raw_source_digest(),
+        changed.input_identity().raw_source_digest()
+    );
+    assert_eq!(
+        identity.preprocessed_source_digest(),
+        changed.input_identity().preprocessed_source_digest()
+    );
+    for changed_unit in [
+        C11TranslationUnit {
+            definitions: vec!["UNUSED=1".into()],
+            ..unit.clone()
+        },
+        C11TranslationUnit {
+            include_paths: vec![".".into()],
+            ..unit.clone()
+        },
+        C11TranslationUnit {
+            dialect: CCompilerDialect::Gnu11,
+            ..unit.clone()
+        },
+        C11TranslationUnit {
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..unit.clone()
+        },
+    ] {
+        let changed = import(&changed_unit, &profile, crate::source_contract::RULES);
+        assert_eq!(
+            serde_json::to_value(&original).unwrap(),
+            serde_json::to_value(&changed).unwrap()
+        );
+        assert_ne!(
+            identity.configuration_digest(),
+            changed.input_identity().configuration_digest()
+        );
+    }
+    let changed_rules = format!("{}\n// identity change\n", crate::source_contract::RULES);
+    let changed = import(&unit, &profile, &changed_rules);
+    assert_ne!(
+        identity.source_contract_digest(),
+        changed.input_identity().source_contract_digest()
+    );
+    let changed_profile = field_profile(serde_json::json!([field_model(
+        "widget", "held", "set_busy", "set_busy"
+    )]))
+    .unwrap();
+    let changed = import(&unit, &changed_profile, crate::source_contract::RULES);
+    assert_ne!(
+        identity.profile_digest(),
+        changed.input_identity().profile_digest()
+    );
+}
+
+#[test]
+fn checked_helper_build_identity_survives_source_import_and_raw_record_parity() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    use qcore_c_gateway::boolean_source as gateway;
+    let helper_source = "struct cio_chunk { int lock; int error; }; void reset(struct cio_chunk *p) { p->error = 0; }";
+    let helper_unit = C11TranslationUnit {
+        source: helper_source,
+        ..Default::default()
+    };
+    let helper = gateway::import_chunk_frame_helper(
+        &helper_unit,
+        PINNED_FLUENT_BIT_REVISION,
+        PINNED_FLUENT_BIT_REVISION,
+        "reset",
+        crate::source_contract::RULES,
+    )
+    .unwrap();
+    let changed_helper = gateway::import_chunk_frame_helper(
+        &C11TranslationUnit {
+            definitions: vec!["UNUSED=1".into()],
+            ..helper_unit
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        PINNED_FLUENT_BIT_REVISION,
+        "reset",
+        crate::source_contract::RULES,
+    )
+    .unwrap();
+    assert_eq!(
+        serde_json::to_value(&helper).unwrap(),
+        serde_json::to_value(&changed_helper).unwrap()
+    );
+    assert_ne!(helper.input_identity(), changed_helper.input_identity());
+    let unit = C11TranslationUnit {
+        source: "struct cio_chunk { int lock; int error; }; void reset(struct cio_chunk *); int clear(struct cio_chunk *p) { reset(p); p->lock = 0; return 0; }",
+        ..Default::default()
+    };
+    let checked = |helper: &ChunkFrameSummary| {
+        let mut results = import_chunk_source_with_helpers(
+            &unit,
+            PINNED_FLUENT_BIT_REVISION,
+            std::slice::from_ref(helper),
+        )
+        .unwrap();
+        let ChunkSourceResult::Summary(summary) = results.remove(0) else {
+            panic!("expected checked source")
+        };
+        summary
+    };
+    let first = checked(&helper);
+    let second = checked(&changed_helper);
+    assert_eq!(
+        serde_json::to_value(&first).unwrap(),
+        serde_json::to_value(&second).unwrap()
+    );
+    assert_eq!(
+        first.source_checked().input_identity().helpers()["reset"],
+        *helper.input_identity()
+    );
+    assert_ne!(
+        first.source_checked().input_identity(),
+        second.source_checked().input_identity()
+    );
+}

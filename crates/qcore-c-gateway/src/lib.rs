@@ -8,6 +8,7 @@
 //! [`typed_c_ast`] provides raw Clang JSON transport for source-profile
 //! interpreters. Its output alone is never a safety certificate.
 
+pub mod boolean_source;
 mod clang;
 pub mod legacy_c;
 mod legacy_summary;

@@ -60,6 +60,7 @@ fn task_with_assumptions(assumptions: BTreeMap<String, bool>) -> DerivedTask {
 
 fn request(task: &VerificationTask) -> VerificationRequestV2 {
     VerificationRequestV2 {
+        source_effect: None,
         protocol_version: 1,
         evidence_version: 2,
         request_id: format!(

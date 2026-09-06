@@ -230,3 +230,16 @@ witness admission or source-derived authority; Monkey effect records retain
 their separate interpretation. Evidence:
 `docs/reports/w5-reactor-callback-records/README.md`. Source binding,
 specialized provider extraction and registry composition remain open.
+
+Source-derived field-contract provider path (2026-09-07): the typed Boolean
+importer now lives in `qcore-c-gateway`, with opaque source/build/profile/helper
+identity snapshots and compiler compatibility APIs. `qcore-verification` derives
+function-scoped evidence-v2 tasks and replays exact source paths plus pinned
+contracts. The real ChunkIO 0.2.0 package proposes witnesses; the audit selects
+it explicitly with `QCORE_CHUNKIO_PACKAGE`. Three real functions check across
+four Boolean-state combinations each; 93 other selected functions remain
+Unknown. Source, resource diagnostics and existing contract sidecars retain
+byte parity. Raw unit totals remain 2 Safe / 47 provisional Unsafe / 132 Unknown /
+4 data-only. Evidence: `docs/reports/w3-source-field-provider/README.md`.
+Full lifecycle source inference, provider-owned source analysis and aggregate
+registry composition remain open; this bounded property does not discharge them.

@@ -78,6 +78,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
     };
     (
         VerificationRequestV2 {
+            source_effect: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),
@@ -160,7 +161,31 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
         normalized.entrypoint = baseline.entrypoint.clone();
         normalized.package_digest = baseline.package_digest.clone();
         normalized.evidence_versions = baseline.evidence_versions.clone();
-        assert_eq!(normalized, baseline, "routing metadata parity for {id}");
+        let mut expected = baseline.clone();
+        if id == "qcore.chunkio" {
+            // Explicit additive source-contract package revision. Existing v1
+            // capabilities keep their Unknown behavior below; no built-in route
+            // or source-set profile is silently updated by package installation.
+            expected.package_version = "0.2.0".into();
+            expected.certificate_checker = "qcore.boolean_field_contract.v1".into();
+            expected.lean_theorem_family = "QCore.ChunkSource".into();
+            expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]
+                .into_iter()
+                .map(str::to_owned)
+                .collect();
+            expected.targets.push(SupportedTarget {
+                library: "fluent_bit".into(),
+                revisions: ["*".into()].into(),
+                profiles: ["qcore.c_boolean_field_contract.v1".into()].into(),
+                dialects: ["c11", "gnu99", "gnu11", "gnu17"]
+                    .into_iter()
+                    .map(str::to_owned)
+                    .collect(),
+                platforms: ["*".into()].into(),
+                backends: ["*".into()].into(),
+            });
+        }
+        assert_eq!(normalized, expected, "declared routing metadata for {id}");
         let builtin = BuiltInProvider::new(baseline.clone()).unwrap();
         let mut registry = VerifierRegistry::default();
         registry
@@ -267,7 +292,7 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
         for mutate in 0..4 {
             let mut changed = manifest.clone();
             match mutate {
-                0 => changed.package_version = "0.2.0".into(),
+                0 => changed.package_version = "999.0.0".into(),
                 1 => changed.targets[0].profiles = ["other".into()].into(),
                 2 => changed.package_digest = "f".repeat(64),
                 _ => changed.evidence_versions = [1].into(),

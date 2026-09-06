@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "semantic_profile": "per_package_declared_profiles",
+  "artifacts": [
+    {
+      "plugin_id": "qcore.chunkio",
+      "executable_sha256": "ca4876dfcbb7e2e876e20bc516ebd5a1a6a357e4637f3af63ac251e813913fa2",
+      "manifest_sha256": "00c4bee5ae4a05480d8b59ea6c87fefdede456f81bca2d8e7b72c8b083fafaa2",
+      "archive_sha256": "d35fd4cd7d769b739c9e8667b4263c7b9a19ed02ca34104c8b1926ae9b098a6f"
+    },
+    {
+      "plugin_id": "qcore.cmetrics",
+      "executable_sha256": "32f9cdd58038f65a3131987d445443e9b817defa7df8b02f327039f4aede8bef",
+      "manifest_sha256": "0d1dee85a075e2ec1654179639bb203484a76725d3d1947893aaeab9d70e1a41",
+      "archive_sha256": "b3bc2af84a43aca4d593af925ce6e9dab1bba7e4da8905a0854703f2426beec8"
+    },
+    {
+      "plugin_id": "qcore.ctraces",
+      "executable_sha256": "126ee6c29052674a4f9f98003b3f0c936c59c45aa03f2d215c9f2ba82fe26796",
+      "manifest_sha256": "d5ffb1f136c78dc86f2d28b0c49c1db9254f26835d3f46b036ac7750c28a5b28",
+      "archive_sha256": "a5054b89cce52cb01d946729266c0e5acf76502f162d50ee08ef62b2109dcdd5"
+    },
+    {
+      "plugin_id": "qcore.libevent",
+      "executable_sha256": "1efb299bda18739a8947ee266acb4e1de99b8d7a786eeb67aebe2dfd98c86a31",
+      "manifest_sha256": "d9269dec85271b06f718c51686c6433eb7153f5944280ef74eabd096d1d1a4db",
+      "archive_sha256": "1e5c41f5e66c78e0d8abdcda6a32f504591207b4d2f9762422bc588a63eb5c9c"
+    },
+    {
+      "plugin_id": "qcore.librdkafka",
+      "executable_sha256": "5c2030b5410a903922e77debaa7284cd88172855e125b37aa37ace419f72a315",
+      "manifest_sha256": "9e5fda2aee0ac05706da5c5cedf5627b88af0de8ad4da2059ae05eabbd11e777",
+      "archive_sha256": "f87b0a4044444b13d6830ea4e9304b1b026940e4b7a9968d51f27766257a8494"
+    }
+  ],
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+  "lock_sha256": "8b07fa68ad7e0e35f8718414c65592d7ea7649a34fbbc5003358636228ac0f20"
+}

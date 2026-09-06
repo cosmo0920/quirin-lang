@@ -1,0 +1,26 @@
+{
+  "baseline": "de5b239",
+  "unit_count": 185,
+  "safe": 2,
+  "provisional_unsafe": 47,
+  "unknown": 132,
+  "data_only": 4,
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac"
+    },
+    "chunk_contracts": {
+      "byte_identical": true,
+      "sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a"
+    }
+  },
+  "source_effect_function_counts": {
+    "unknown": 93,
+    "checked_function_contract": 3
+  }
+}

@@ -137,12 +137,12 @@ crates/qcore-frontend         # L1: front end, elaboration + whole-program check
 crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
 crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
-  interprocedural summary inference (W4).
+  interprocedural summary inference (W4), opaque typed Boolean-field source import.
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
   composition and certificate admission orchestration (W3).
-crates/qcore-verification     # Trusted adapter above L1 + verifier host:
+crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier host:
   obligation derivation, witness replay, scope dispatch. No provider dependency.
-  Keeps host/frontend/contract/schema integration out of the dependency-free kernel.
+  Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
 crates/qcore-audit            # L3: orchestration-as-configuration (W5):
   compile-db ingest, pin verification, per-unit iteration, report emission.
 crates/qcorec                 # L3: CLI binary.
@@ -476,6 +476,13 @@ interaction with `MAX_ALIAS_TARGETS`). Insist on the "validated, not just
 inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
+
+[Source-field provider integration](reports/w3-source-field-provider/README.md)
+now derives bounded tasks from opaque Clang imports and dispatches the real
+ChunkIO package for three production function contracts. This closes that
+source-effect exchange slice; general lifecycle effect import and provider-owned
+source analysis remain open. The selected audit mode has no provider fallback,
+and retains direct evaluation until broader composition parity is established.
 
 **Status (2026-09-07).** Configured audit orchestration is extracted with a
 second-codebase fixture and pinned parity. The sequential/concurrent kernel,

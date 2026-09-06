@@ -49,3 +49,31 @@ pub struct ChunkFrameSummaryRecord {
     pub layout: Vec<(String, String)>,
     pub writes: Vec<(String, i32)>,
 }
+
+/// Restricted source projection supplied by the trusted importer to a provider.
+/// This raw record conveys no import authority by itself. Its digest is pinned
+/// in the core task and its paths are independently checked during replay.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BooleanFieldSourceInput {
+    pub summary: ChunkSourceSummaryRecord,
+}
+
+pub const BOOLEAN_FIELD_SOURCE_INPUT_KEY: &str = "qcore:boolean-field-source-input:v1";
+
+impl BooleanFieldSourceInput {
+    pub fn digest(&self) -> String {
+        crate::digest::sha256_hex(
+            &serde_json::to_vec(self).expect("serializable source projection"),
+        )
+    }
+}
+
+/// Proposed finite-state source results. The trusted checker also evaluates the
+/// pinned contract; equality with this proposal alone never discharges it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BooleanFieldContractWitness {
+    pub task_digest: String,
+    pub summary: ChunkSourceSummaryRecord,
+}

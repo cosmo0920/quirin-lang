@@ -89,7 +89,8 @@ impl DispatchReport {
 
 fn predicate_for(property: ObligationProperty) -> FactPredicate {
     match property {
-        ObligationProperty::CustodyDischarged
+        ObligationProperty::BooleanFieldContract
+        | ObligationProperty::CustodyDischarged
         | ObligationProperty::ParameterModeRespected
         | ObligationProperty::NoUnknownCallEffect => FactPredicate::ResourceBalanced,
         ObligationProperty::ContextDischarged
@@ -375,6 +376,7 @@ fn dispatch_capability(
         .contains(&PLUGIN_EVIDENCE_VERSION_V2);
     if supports_v2 {
         let request = VerificationRequestV2 {
+            source_effect: None,
             protocol_version: PLUGIN_PROTOCOL_VERSION,
             evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
             request_id,

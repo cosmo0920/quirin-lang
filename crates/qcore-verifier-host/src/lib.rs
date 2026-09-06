@@ -906,6 +906,17 @@ impl VerifierRegistry {
                 "the request's task digest is not the digest of the core-derived task",
             );
         }
+        if let Some(input) = &request.source_effect
+            && task
+                .contract_sources
+                .get(qcore_schemas::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_KEY)
+                != Some(&input.digest())
+        {
+            return VerificationOutcome::unknown(
+                "QP001",
+                "source projection is not bound to the core task",
+            );
+        }
         // A capability whose derivation could not classify every construct can
         // never reach `Safe`, whatever a provider returns (design §1.4).
         if task.is_incomplete_for(request.capability) {

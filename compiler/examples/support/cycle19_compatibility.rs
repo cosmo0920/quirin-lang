@@ -42,6 +42,8 @@ pub fn run(
     binding_directory: Option<&Path>,
     contract_manifest: Option<&Path>,
 ) -> Result<bool, String> {
+    // Explicit process selection is checked before any expensive source audit.
+    let _ = source_effect_registry()?;
     // Validate the external build input before running any expensive audit.
     let monkey_input = monkey_database.map(|path| {
         let database = fs::read_to_string(path)
@@ -209,6 +211,16 @@ pub fn run(
     }
     if let Some(path) = diagnostic_report {
         report.write_with_revision_key(path, "fluent_bit_revision")?;
+        let (provider_results, native_results): (Vec<_>, Vec<_>) = native_results
+            .into_iter()
+            .partition(|record| record["kind"] == "provider_source_effect");
+        if !provider_results.is_empty() {
+            fs::write(path.with_extension("source-effects.json"), serde_json::to_vec_pretty(&serde_json::json!({
+                "schema_version": 1,
+                "scope": "source-derived Boolean-field function contracts under explicit caller preconditions; no whole-unit promotion",
+                "results": provider_results,
+            })).map_err(|error| error.to_string())?).map_err(|error| error.to_string())?;
+        }
         let sidecar = path.with_extension("chunk-contracts.json");
         let inputs = serde_json::json!({
             "schema_version": 1, "source_revision": revision,
@@ -751,6 +763,27 @@ fn audit_library(
     Ok(counts)
 }
 
+/// Explicit process selection has no built-in or missing-package fallback.
+fn source_effect_registry() -> Result<Option<qcore_compiler::VerifierRegistry>, String> {
+    let Some(package) = std::env::var_os("QCORE_CHUNKIO_PACKAGE") else {
+        return Ok(None);
+    };
+    let provider =
+        qcore_compiler::verifier_plugin::verify_executable_package(PathBuf::from(package))
+            .map_err(|error| error.to_string())?;
+    use qcore_compiler::verifier_plugin::VerifierProvider;
+    if provider.manifest().plugin_id.as_str() != "qcore.chunkio"
+        || provider.manifest().certificate_checker != "qcore.boolean_field_contract.v1"
+    {
+        return Err("selected package is not the ChunkIO source-contract provider".into());
+    }
+    let mut registry = qcore_compiler::VerifierRegistry::default();
+    registry
+        .register(std::sync::Arc::new(provider))
+        .map_err(|error| error.to_string())?;
+    Ok(Some(registry))
+}
+
 fn audit_chunk_source(
     unit: &C11TranslationUnit<'_>,
     library: &str,
@@ -763,6 +796,7 @@ fn audit_chunk_source(
         "chunkio" => include_str!("../../../contract/qcore/chunkio/lock_state.qcore"),
         _ => return Err("missing native QCore chunk contract file".into()),
     };
+    let provider = source_effect_registry()?;
     let results = import_chunk_source_with_helpers(unit, PINNED_FLUENT_BIT_COMMIT, helpers)?;
     let mut summaries = 0;
     let mut checked_contracts = 0;
@@ -779,6 +813,57 @@ fn audit_chunk_source(
                 match check_chunk_source_contract(summary, contract_source) {
                     Ok(certificate) => {
                         checked_contracts += 1;
+                        if let Some(registry) = &provider {
+                            let replay = qcore_verification::source_effect::BooleanFieldSourceTask::derive(
+                                summary.source_checked(), &format!("{library}/{file}"), contract_source,
+                                qcore_schemas::TargetProfile {
+                                    library: summary.source_checked().input_identity().model_library()
+                                        .ok_or("checked source lacks model library identity")?.into(), revision: PINNED_FLUENT_BIT_COMMIT.into(),
+                                    profile: qcore_verification::source_effect::BOOLEAN_FIELD_SEMANTIC_PROFILE.into(),
+                                    dialect: match unit.dialect {
+                                        qcore_compiler::CCompilerDialect::C11 => "c11",
+                                        qcore_compiler::CCompilerDialect::Gnu99 => "gnu99",
+                                        qcore_compiler::CCompilerDialect::Gnu11 => "gnu11",
+                                        qcore_compiler::CCompilerDialect::Gnu17 => "gnu17",
+                                    }.into(),
+                                    platform: std::env::consts::OS.into(), backend: "native".into(),
+                                },
+                            )?;
+                            let request = replay.request(
+                                qcore_schemas::PluginId::new("qcore.chunkio")
+                                    .map_err(|e| e.to_string())?,
+                            );
+                            let outcome =
+                                registry.verify_v2(&request, replay.task(), Some(&replay));
+                            if outcome.verdict != qcore_schemas::ProposedVerdict::Safe {
+                                return Err(format!(
+                                    "process source-contract evidence rejected for {}: {:?}",
+                                    summary.function(),
+                                    outcome.diagnostics
+                                ));
+                            }
+                            let checked = outcome
+                                .certificate
+                                .ok_or("source-contract outcome lacks certificate")?;
+                            let repeated = replay.evaluate()?;
+                            if repeated.checked_states() != certificate.checked_states()
+                                || repeated.contract_source() != certificate.contract_source()
+                                || repeated.dependency_sources() != certificate.dependency_sources()
+                            {
+                                return Err("process/direct source-contract parity mismatch".into());
+                            }
+                            native_results.push(serde_json::json!({
+                                "kind": "provider_source_effect", "library": library, "file": file,
+                                "function": summary.function(), "status": "checked_function_contract",
+                                "task": checked.task(), "witness": checked.witness(),
+                                "evidence": checked.evidence(), "bounds": checked.obligation_bounds(),
+                                "import_identity": summary.source_checked().input_identity(),
+                            }));
+                            println!(
+                                "  qcore-provider-source {}: Checked (four Boolean-state combinations; explicit live/exclusive/domain assumptions)",
+                                summary.function()
+                            );
+                        }
                         native_results.push(serde_json::json!({
                             "library": library, "file": file, "function": summary.function(),
                             "status": "checked", "summary": summary,
@@ -800,6 +885,10 @@ fn audit_chunk_source(
                 }
             }
             ChunkSourceResult::Unknown { function, reason } => {
+                if provider.is_some() {
+                    native_results.push(serde_json::json!({ "kind": "provider_source_effect", "library": library, "file": file,
+                        "function": function, "status": "unknown", "reason": reason }));
+                }
                 native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason }));
                 println!("  chunk-source {library}/{file}/{function}: Unknown: {reason}")
             }

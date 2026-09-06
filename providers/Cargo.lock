@@ -30,6 +30,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "qcore-c-gateway"
+version = "0.1.0"
+dependencies = [
+ "qcore-contract",
+ "qcore-schemas",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "qcore-contract"
 version = "0.1.0"
 dependencies = [
@@ -73,6 +83,8 @@ dependencies = [
 name = "qcore-provider-conformance"
 version = "0.1.0"
 dependencies = [
+ "qcore-c-gateway",
+ "qcore-contract",
  "qcore-core",
  "qcore-schemas",
  "qcore-verification",
@@ -119,11 +131,13 @@ dependencies = [
 name = "qcore-verification"
 version = "0.1.0"
 dependencies = [
+ "qcore-c-gateway",
  "qcore-contract",
  "qcore-core",
  "qcore-frontend",
  "qcore-schemas",
  "qcore-verifier-host",
+ "serde_json",
 ]
 
 [[package]]
