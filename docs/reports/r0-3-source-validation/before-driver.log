@@ -1,0 +1,30 @@
+   Compiling qcore-core v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-core)
+   Compiling qcore-schemas v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-schemas)
+   Compiling qcore-frontend v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-c-gateway)
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-review-r04-r05-r07/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.63s
+     Running unittests src/lib.rs (/tmp/qcore-audit-extraction/target/debug/deps/qcore_compiler-100fb335d192de28)
+
+running 2 tests
+
+thread 'driver::tests::review_r04_checks_declared_results_before_lowering' (628) panicked at compiler/src/../tests/unit/driver.rs:308:9:
+accepted fn main() -> bool { return 2; }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test driver::tests::review_r04_checks_declared_results_before_lowering ... FAILED
+
+thread 'driver::tests::review_r07_driver_signed_literal_boundaries' (629) panicked at compiler/src/../tests/unit/driver.rs:14:6:
+called `Result::unwrap()` on an `Err` value: [FileDiagnostic { code: "Q020", pass: OrdinaryTypes, location: SourceLocation { path: "main.qc", line: 1, column: 20, line_source: "fn main() -> i32 { return -2147483648; }" }, message: "return value must be a signed 32-bit integer literal" }]
+test driver::tests::review_r07_driver_signed_literal_boundaries ... FAILED
+
+failures:
+
+failures:
+    driver::tests::review_r04_checks_declared_results_before_lowering
+    driver::tests::review_r07_driver_signed_literal_boundaries
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 296 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --lib`

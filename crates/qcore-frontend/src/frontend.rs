@@ -39,6 +39,7 @@ pub struct SourceDeclaration {
     pub kind: DeclarationKind,
     pub name: String,
     pub parameters: Vec<SourceParameter>,
+    pub result_type: Option<SourceResultType>,
     pub quant_index_types: Vec<crate::quant_index::SourceQuantIndexType>,
     pub body: Option<SourceBlock>,
     pub function_contract: Option<SourceFunctionContract>,
@@ -111,6 +112,32 @@ pub enum SourceTypeKind {
     Never,
     Task,
     Mutex,
+}
+
+/// Exact declared result syntax. Retention is structural; only the explicitly
+/// recognized executable profile below is admitted by the source driver.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceResultType {
+    pub kind: SourceTypeKind,
+    pub span: Span,
+    pub source: String,
+    pub tokens: Vec<TokenKind>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ExecutableResultType {
+    I32,
+    Unit,
+}
+
+impl SourceResultType {
+    pub fn executable_type(&self) -> Option<ExecutableResultType> {
+        match self.tokens.as_slice() {
+            [TokenKind::Word(name)] if name == "i32" => Some(ExecutableResultType::I32),
+            [TokenKind::Word(name)] if name == "unit" => Some(ExecutableResultType::Unit),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -458,6 +485,14 @@ impl<'a> SourceParser<'a> {
         } else {
             Vec::new()
         };
+        let result_type = if matches!(
+            kind,
+            DeclarationKind::Function | DeclarationKind::ExternFunction
+        ) {
+            Some(self.function_result_type(start, body_open.unwrap_or(end - 1))?)
+        } else {
+            None
+        };
         let span = self.range_span(start, end);
         let quant_index_types =
             crate::quant_index::parse_quant_index_types(&self.tokens[start..end])?;
@@ -468,6 +503,7 @@ impl<'a> SourceParser<'a> {
                     kind,
                     name,
                     parameters,
+                    result_type,
                     quant_index_types,
                     body,
                     function_contract,
@@ -480,6 +516,59 @@ impl<'a> SourceParser<'a> {
             },
             end,
         ))
+    }
+
+    fn function_result_type(
+        &self,
+        start: usize,
+        limit: usize,
+    ) -> Result<SourceResultType, SourceParseError> {
+        let params = self.find_symbol(start, Symbol::LeftParen)?;
+        let type_start = self.close(params)? + 2; // skip the validated arrow
+        let mut cursor = type_start;
+        let quantitative_types =
+            crate::quant_index::parse_quant_index_types(&self.tokens[type_start..limit])?;
+        let mut angle_depth = 0_u32;
+        while cursor < limit {
+            // Quantitative predicates can contain comparison `>` tokens. Use
+            // their parser's span instead of treating comparisons as brackets.
+            if let Some(quantitative) = quantitative_types
+                .iter()
+                .find(|ty| ty.span.start == self.tokens[cursor].span.start)
+            {
+                while cursor < limit && self.tokens[cursor].span.start < quantitative.span.end {
+                    cursor += 1;
+                }
+                continue;
+            }
+            if angle_depth == 0 && (self.word(cursor, "effects") || self.word(cursor, "contract")) {
+                break;
+            }
+            if self.symbol(cursor, Symbol::Less) {
+                angle_depth += 1;
+            } else if self.symbol(cursor, Symbol::Greater) {
+                angle_depth = angle_depth
+                    .checked_sub(1)
+                    .ok_or_else(|| self.error(cursor, "unmatched result type delimiter"))?;
+            }
+            cursor = self.skip_group(cursor);
+        }
+        if cursor == type_start || angle_depth != 0 {
+            return Err(self.error(
+                type_start,
+                "function requires a nonempty balanced result type",
+            ));
+        }
+        let span = self.range_span(type_start, cursor);
+        Ok(SourceResultType {
+            kind: self.type_kind(type_start),
+            span,
+            source: self.source[span.start..span.end].to_owned(),
+            tokens: self.tokens[type_start..cursor]
+                .iter()
+                .map(|token| token.kind.clone())
+                .collect(),
+        })
     }
 
     fn function_contract(
@@ -1441,6 +1530,7 @@ pub struct TypedSourceDeclaration {
     pub name: String,
     pub span: Span,
     pub parameters: Vec<TypedBinding>,
+    pub result_type: Option<SourceResultType>,
     pub quant_index_types: Vec<crate::quant_index::ResolvedQuantIndexType>,
     pub function_contract: Option<SourceFunctionContract>,
     pub statements: Vec<TypedStatement>,
@@ -1514,10 +1604,7 @@ pub fn elaborate_source(
 
     let mut declarations = Vec::new();
     let mut index_environment = crate::check::StaticEnvironment::default();
-    if program
-        .declarations
-        .iter()
-        .any(|declaration| !declaration.value.quant_index_types.is_empty())
+    // Declaration validity is independent of whether a quantitative type uses it.
     {
         let axis_source = program
             .declarations
@@ -1628,6 +1715,7 @@ pub fn elaborate_source(
             name: declaration.value.name.clone(),
             span: declaration.span,
             parameters,
+            result_type: declaration.value.result_type.clone(),
             quant_index_types,
             function_contract: declaration.value.function_contract.clone(),
             statements,

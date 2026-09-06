@@ -111,3 +111,64 @@ fn native_cleanup_observations_execute_every_policy_predicate() {
     assert_eq!(outcomes.len(), 8);
     assert_eq!(observations.lines().count(), 18);
 }
+
+#[test]
+fn review_r07_observation_signed_literal_boundaries() {
+    let values = BTreeMap::from([("minimum".into(), i128::MIN)]);
+    for text in [
+        "0".to_owned(),
+        "-0".to_owned(),
+        i128::MAX.to_string(),
+        i128::MIN.to_string(),
+    ] {
+        assert_eq!(
+            evaluate(&text, &values).unwrap(),
+            text.parse::<i128>().unwrap()
+        );
+    }
+    for text in [
+        "170141183460469231731687303715884105728",
+        "-170141183460469231731687303715884105729",
+        "-minimum",
+        "minimum - 1",
+        "minimum / -1",
+        "minimum % -1",
+        "--170141183460469231731687303715884105728",
+    ] {
+        assert!(evaluate(text, &values).is_err(), "accepted {text}");
+    }
+    assert_eq!(evaluate("minimum + 1", &values).unwrap(), i128::MIN + 1);
+    assert_eq!(evaluate("minimum - minimum", &values).unwrap(), 0);
+    assert_eq!(
+        evaluate(
+            "minimum == -170141183460469231731687303715884105728",
+            &values
+        )
+        .unwrap(),
+        1
+    );
+    assert_eq!(evaluate("-(minimum + 1)", &values).unwrap(), i128::MAX);
+}
+
+#[test]
+fn review_r07_public_observer_checks_minimum_facts() {
+    let source = format!(
+        "extern fn observed() -> unit contract {{ ensures normal minimum == {}; ensures normal minimum + 1 == {}; }};",
+        i128::MIN,
+        i128::MIN + 1
+    );
+    let values = BTreeMap::from([("minimum".into(), i128::MIN)]);
+    assert_eq!(
+        check_contract_observation(&source, "observed", &values),
+        Ok(ObservationVerdict::Checked { postconditions: 2 })
+    );
+    assert!(
+        check_contract_observation(
+            &source,
+            "observed",
+            &BTreeMap::from([("minimum".into(), i128::MIN + 1)])
+        )
+        .is_err()
+    );
+    assert!(check_contract_observation(&source, "observed", &BTreeMap::new()).is_err());
+}

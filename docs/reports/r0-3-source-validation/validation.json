@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "base_commit": "5d0fb6d",
+  "date": "2026-09-07",
+  "findings": {
+    "R04": {
+      "status": "bounded_partial",
+      "reproduced": true,
+      "implemented": "i32/unit scalar return annotation and shape checks; explicit separate custody profile",
+      "remaining": [
+        "general ordinary type/alias resolution",
+        "owned-result typing",
+        "general per-exit result payload typing"
+      ]
+    },
+    "R05": {
+      "status": "repaired",
+      "reproduced": true,
+      "implemented": "unconditional dimension/axis validation; nominal Count remains structural"
+    },
+    "R07": {
+      "status": "repaired",
+      "reproduced": true,
+      "implemented": "full signed i32/i128 decimal boundaries with checked arithmetic"
+    }
+  },
+  "gates": {
+    "cargo_test_workspace": {
+      "exit_code": 0,
+      "passed_tests": 521
+    },
+    "cargo_fmt": {
+      "exit_code": 0
+    },
+    "cargo_clippy_all_targets_deny_warnings": {
+      "exit_code": 0
+    },
+    "reevaluation_probe": {
+      "exit_code": 0
+    },
+    "reevaluation_followup": {
+      "exit_code": 0
+    },
+    "lake_build": {
+      "exit_code": 0,
+      "jobs": 55
+    },
+    "lean_axiom_audit": {
+      "exit_code": 0,
+      "project_axioms": [],
+      "standard_axioms": [
+        "propext"
+      ]
+    }
+  },
+  "evidence_scope": {
+    "native_scalar_extrema_and_unit_reference_parity": true,
+    "ct_mappings_changed": false,
+    "pinned_source_routes_changed": false,
+    "full_owned_result_typing_claimed": false,
+    "rust_lean_c_refinement_claimed": false
+  },
+  "logs": {
+    "axioms.log": "944a649258c4e8f73513e26c2c93b387ba4ca189c4b71fea4c5ca6d1cbe86df7",
+    "before-declarations.log": "4fbe41bee36a255560b32145734f755c68f9479407ebc1126bd62d70d509b932",
+    "before-driver.log": "fc0ef5763170bb1f51864aa65a2b9914b2648b208b82108160db1453797a538a",
+    "clippy.log": "91fb9ed740c04471d857853b27278b5359cd889f0001f5d7250ca12a4b3ffc19",
+    "fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "followup.log": "a98269383afc05a860a2f30e226dc6b74e4ec61023486db24c3e60d32e8d9483",
+    "lean.log": "14a60757d041fef4f1ee06bb77cc8e5a2e40bdb8167cb74b95caddcdb0052601",
+    "probe.log": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd",
+    "workspace.log": "d893b536fe098f96f181493c1a7c171f3ca000dedc943a24f6e6a931411f66d2"
+  }
+}
