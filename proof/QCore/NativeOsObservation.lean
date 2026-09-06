@@ -75,3 +75,43 @@ theorem released_allocations_can_coexist_with_mapping_residual :
   decide
 
 end QCore.NativeOsObservation
+
+namespace QCore.NativeOsObservation
+
+-- Partition an observed execution prefix. The process exit does not append
+-- releases: instrumentation and the Python replay remain external premises.
+structure ConstructorPrefix where
+  transient : List Nat
+  rollback : List Nat
+  teardown : List Nat
+  outstanding : List Nat
+  acquired : List Nat
+  interrupted : Bool
+  staticCertificate : Bool
+
+def acceptedPrefix (p : ConstructorPrefix) : Prop :=
+  (p.transient ++ p.rollback ++ p.teardown ++ p.outstanding).Nodup ∧
+  p.acquired.Perm (p.transient ++ p.rollback ++ p.teardown ++ p.outstanding) ∧
+  (p.interrupted = true → p.teardown = [] ∧ p.outstanding ≠ []) ∧
+  (p.interrupted = false → p.outstanding = []) ∧
+  p.staticCertificate = false
+
+theorem accepted_prefix_conserves_generations {p : ConstructorPrefix}
+    (h : acceptedPrefix p) :
+    p.acquired.length = p.transient.length + p.rollback.length +
+      p.teardown.length + p.outstanding.length := by
+  have length := h.2.1.length_eq
+  simpa only [List.length_append] using length
+
+theorem interrupted_prefix_cannot_claim_teardown {p : ConstructorPrefix}
+    (h : acceptedPrefix p) (interrupted : p.interrupted = true) :
+    p.teardown = [] ∧ p.outstanding ≠ [] := h.2.2.1 interrupted
+
+theorem completed_prefix_has_no_outstanding_generations {p : ConstructorPrefix}
+    (h : acceptedPrefix p) (completed : p.interrupted = false) :
+    p.outstanding = [] := h.2.2.2.1 completed
+
+theorem accepted_prefix_never_promotes_static {p : ConstructorPrefix}
+    (h : acceptedPrefix p) : p.staticCertificate = false := h.2.2.2.2
+
+end QCore.NativeOsObservation

@@ -113,7 +113,12 @@ durability. [Six enclosing native filesystem runs](docs/reports/cycle19-file-tre
 add constructor, ring, release-order and OS endpoint evidence for one-file trees.
 All 66 allocation generations are released. Injected unmap/close failures retain
 live OS resources after parent release, and sync failure still allows cleanup.
-General caller/failure guarantees remain open; no raw unit is promoted.
+[Eleven filesystem allocation failures and a control](docs/reports/cycle19-file-constructor-failures/README.md)
+now account for 81 acquired generations and 73 recorded releases. Failed root
+and chunk-name copies trigger two observed UBSan null-argument terminations;
+eight generations remain outstanding in those interrupted prefixes. Ten returning
+cases complete leak checking. These observations do not establish general caller
+or failure guarantees, and no raw unit is promoted.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

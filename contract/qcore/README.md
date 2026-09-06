@@ -341,3 +341,10 @@ complete allocation release while retaining mapping, descriptor and up-counter
 residuals separately. Neither successful `msync` nor released parent allocations
 prove durability. See the
 [filesystem tree report](../../docs/reports/cycle19-file-tree/README.md).
+
+`chunkio/filesystem_constructor_failure_observation.qcore` checks eleven ENOMEM
+injections and a control on the bounded filesystem constructor path. Its 16
+clauses conserve acquired generations across temporary, rollback and teardown
+releases plus outstanding prefix generations. Sanitizer-interrupted processes
+cannot claim completed teardown or leak checking; fixture cleanup is separate.
+See the [filesystem failure report](../../docs/reports/cycle19-file-constructor-failures/README.md).

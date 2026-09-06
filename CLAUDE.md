@@ -5,7 +5,7 @@
 Claude-specific additions:
 
 - The current Cycle 19 nested-teardown boundary is recorded in
-  `docs/reports/cycle19-file-tree/README.md` and the AGENTS.md status
+  `docs/reports/cycle19-file-constructor-failures/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/
   ring provenance and rollback. General caller/failure, filesystem and event-
   composition gates remain open. Unsupported backend close now has a symbolic
@@ -17,7 +17,12 @@ Claude-specific additions:
   exclusive temporary fixtures. Six native one-file constructor/teardown runs
   bind 66 allocation generations and preserve mapping/descriptor residuals after
   parent free under EIO injection. General filesystem callers, arbitrary OS
-  failure behavior, full sync guarantees and durability remain open.
+  failure behavior, full sync guarantees and durability remain open. Twelve
+  filesystem allocation-failure/control processes account for 81 acquired
+  generations and 73 recorded releases. Two UBSan null-argument terminations
+  retain eight outstanding prefix generations; only the ten returning cases
+  complete teardown and leak checking. Failed root/chunk-name copies and a
+  stream returned without a directory remain distinct observed outcomes.
 
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants
