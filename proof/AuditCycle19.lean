@@ -1,3 +1,4 @@
+import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
@@ -214,3 +215,15 @@ import QCore.ChunkSource
 #print axioms QCore.FileClose.accepted_nested_discharge_has_no_unresolved_resource
 
 #print axioms QCore.FileClose.duplicate_backend_release_rejected
+
+#print axioms QCore.ShortCircuit.and_false_skips_right
+
+#print axioms QCore.ShortCircuit.or_true_skips_right
+
+#print axioms QCore.ShortCircuit.evaluated_right_follows_left
+
+#print axioms QCore.ShortCircuit.and_result_is_conjunction
+
+#print axioms QCore.ShortCircuit.or_result_is_disjunction
+
+#print axioms QCore.ShortCircuit.skipped_right_cannot_change_result

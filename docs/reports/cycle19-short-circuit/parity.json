@@ -1,0 +1,9 @@
+{
+  "baseline": "cycle19-file-close",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "new_native_delete_source_paths": 4,
+  "workspace_tests": 375
+}

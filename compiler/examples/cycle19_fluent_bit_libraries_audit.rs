@@ -559,6 +559,17 @@ fn audit_library(
             );
         }
         if library == "chunkio" && file == "cio_file_unix.c" {
+            let delete =
+                qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_delete_source(
+                    &unit,
+                    PINNED_FLUENT_BIT_COMMIT,
+                )?;
+            println!(
+                "qcore-result-use cio_file_native_delete: Checked ({} short-circuit source paths; deletion custody Unknown)",
+                delete.source().paths().len()
+            );
+            teardown_results
+                .push(serde_json::json!({"kind":"filesystem_delete_attempt", "evidence":delete}));
             let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;
             for certificate in &certificates {
                 println!(

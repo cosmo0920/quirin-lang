@@ -110,3 +110,62 @@ fn native_and_wrapper_guards_and_each_policy_predicate_are_checked() {
         }
     }
 }
+
+#[test]
+fn native_delete_preserves_short_circuit_reads_and_guarded_unlink_result() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let c = "struct cio_file {int fd;void *map;char *path;};int unlink(const char*);int cio_file_native_delete(struct cio_file *cf){if(cf->fd != -1 || cf->map != (void*)0)return -1;int r=unlink(cf->path);if(r == -1)return -1;return 0;}";
+    let evidence = check_file_delete_source(
+        &C11TranslationUnit {
+            source: c,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+    )
+    .unwrap();
+    assert_eq!(evidence.source().paths().len(), 4);
+    let paths = evidence.source().paths();
+    let reads = |index: usize| {
+        paths[index]
+            .operations
+            .iter()
+            .filter(|op| matches!(op, crate::typed_source::SourceOperation::Read { .. }))
+            .count()
+    };
+    assert_eq!(reads(0), 1); // open fd skips reading map and calling unlink
+    assert_eq!(reads(1), 2); // mapped file skips reading path and calling unlink
+    assert!(evidence.calls()[0].calls.is_empty());
+    assert!(evidence.calls()[1].calls.is_empty());
+    for p in &evidence.calls()[2..] {
+        assert_eq!(p.calls.len(), 1);
+        assert_eq!(p.calls[0].function, "unlink");
+        assert!(!p.calls[0].guard_uses.is_empty());
+    }
+    let ignored = c.replace(
+        "int r=unlink(cf->path);if(r == -1)return -1;",
+        "unlink(cf->path);",
+    );
+    assert!(
+        check_file_delete_source(
+            &C11TranslationUnit {
+                source: &ignored,
+                ..Default::default()
+            },
+            PINNED_FLUENT_BIT_REVISION
+        )
+        .is_err()
+    );
+    for (i, _) in DELETE_CONTRACT.match_indices("ensures normal ") {
+        let j = i + DELETE_CONTRACT[i..].find(';').unwrap();
+        for predicate in ["false", "unknown_delete_outcome"] {
+            let mutated = format!(
+                "{}ensures normal {predicate}{}",
+                &DELETE_CONTRACT[..i],
+                &DELETE_CONTRACT[j..]
+            );
+            assert!(check(evidence.source(), &mutated).is_err());
+        }
+    }
+}

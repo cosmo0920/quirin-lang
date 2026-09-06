@@ -627,7 +627,7 @@ impl Importer<'_> {
             ("BinaryOperator", [left, right])
                 if matches!(
                     node["opcode"].as_str(),
-                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/" | "%")
+                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/" | "%" | "&&" | "||")
                 ) =>
             {
                 Ok(Expr::Binary(
@@ -924,6 +924,9 @@ impl Path {
                         value: Box::new(self.evaluate(child)?),
                     },
                 )
+            }
+            Expr::Binary(_, operator, _, _) if matches!(operator.as_str(), "&&" | "||") => {
+                return Err("short-circuit values require a supported branch condition".into());
             }
             Expr::Binary(ty, operator, left, right) => {
                 reject_unsequenced(&[left, right])?;
@@ -1228,6 +1231,53 @@ fn reject_unsequenced(expressions: &[&Expr]) -> Result<(), String> {
     }
 }
 
+// Preserve C sequencing without adding eager logical operators to SourceValue.
+// Only branch conditions receive this expansion; logical values in assignments,
+// arguments, comparisons or scan regions remain Unknown. Cap every intermediate
+// frontier as well as completed function paths.
+fn branch_condition(condition: &Expr, path: Path, taken: bool) -> Result<Vec<Path>, String> {
+    fn contains_logical(expr: &Expr) -> bool {
+        match expr {
+            Expr::Binary(_, op, _, _) if matches!(op.as_str(), "&&" | "||") => true,
+            Expr::Unary(_, op, child) if op == "!" => contains_logical(child),
+            _ => false,
+        }
+    }
+    match condition {
+        Expr::Unary(_, op, child) if op == "!" && contains_logical(child) => {
+            branch_condition(child, path, !taken)
+        }
+        Expr::Binary(_, op, left, right) if matches!(op.as_str(), "&&" | "||") => {
+            let is_and = op == "&&";
+            let mut output = Vec::new();
+            // true-first ordering matches existing conditional path ordering.
+            for left_taken in [true, false] {
+                let evaluate_right = left_taken == is_and;
+                if !evaluate_right && taken != left_taken {
+                    continue;
+                }
+                for left_path in branch_condition(left, path.clone(), left_taken)? {
+                    if evaluate_right {
+                        output.extend(branch_condition(right, left_path, taken)?);
+                    } else {
+                        output.push(left_path);
+                    }
+                    if output.len() > MAX_PATHS {
+                        return Err("short-circuit path limit exceeded".into());
+                    }
+                }
+            }
+            Ok(output)
+        }
+        _ => {
+            let mut path = path;
+            let condition = path.evaluate(condition)?;
+            path.push(SourceOperation::Guard { condition, taken })?;
+            Ok(vec![path])
+        }
+    }
+}
+
 fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
     if let Stmt::Block(statements) = statement {
         let declared: Vec<_> = statements
@@ -1403,21 +1453,13 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                 continue;
             }
             Stmt::If(condition, yes, no) => {
-                let condition = path.evaluate(condition)?;
-                let mut other = path.clone();
-                path.push(SourceOperation::Guard {
-                    condition: condition.clone(),
-                    taken: true,
-                })?;
-                other.push(SourceOperation::Guard {
-                    condition,
-                    taken: false,
-                })?;
-                output.extend(execute(yes, vec![path])?);
+                let yes_paths = branch_condition(condition, path.clone(), true)?;
+                let no_paths = branch_condition(condition, path, false)?;
+                output.extend(execute(yes, yes_paths)?);
                 output.extend(if let Some(no) = no {
-                    execute(no, vec![other])?
+                    execute(no, no_paths)?
                 } else {
-                    vec![other]
+                    no_paths
                 });
                 if output.len() > MAX_PATHS {
                     return Err("callback path limit exceeded".into());
@@ -1565,3 +1607,7 @@ fn derive(
 #[cfg(test)]
 #[path = "../tests/unit/monkey_source.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/short_circuit_source.rs"]
+mod short_circuit_tests;

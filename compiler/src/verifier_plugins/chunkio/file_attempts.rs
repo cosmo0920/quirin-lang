@@ -58,6 +58,33 @@ pub fn check_file_attempt_sources(
         })
         .collect()
 }
+pub const DELETE_CONTRACT: &str =
+    include_str!("../../../../contract/qcore/chunkio/filesystem_delete_attempt.qcore");
+
+pub fn check_file_delete_source(
+    unit: &C11TranslationUnit<'_>,
+    revision: &str,
+) -> Result<FileAttemptEvidence, String> {
+    if revision != PINNED_FLUENT_BIT_REVISION {
+        return Err("filesystem delete revision mismatch".into());
+    }
+    let sources = import_source_functions(
+        unit,
+        revision,
+        &["cio_file_native_delete"],
+        &SourceImportProfile {
+            records: &["cio_file"],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )?;
+    match sources.as_slice() {
+        [SourceResult::Summary(source)] => check(source, DELETE_CONTRACT),
+        _ => Err(format!("filesystem delete import incomplete: {sources:?}")),
+    }
+}
+
 fn check(source: &SourceSummary, contract: &str) -> Result<FileAttemptEvidence, String> {
     let calls = analyze_source_call_uses(source)?;
     let (policy, first, second, signature) = match source.function() {
@@ -82,6 +109,12 @@ fn check(source: &SourceSummary, contract: &str) -> Result<FileAttemptEvidence, 
         "cio_file_native_unmap" => (
             "native_unmap_result_use",
             "munmap",
+            None,
+            "int (struct cio_file *)",
+        ),
+        "cio_file_native_delete" => (
+            "native_delete_result_use",
+            "unlink",
             None,
             "int (struct cio_file *)",
         ),

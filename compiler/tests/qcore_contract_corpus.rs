@@ -53,6 +53,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     (
+        "chunkio/filesystem_delete_attempt.qcore",
+        "native_delete_result_use",
+        3,
+    ),
+    (
         "chunkio/filesystem_observation.qcore",
         "native_cleanup_observation",
         14,
@@ -260,7 +265,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 34, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 35, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

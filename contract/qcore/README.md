@@ -242,3 +242,9 @@ checked unmap/counter and descriptor helpers. It retains unresolved OS custody
 through the subsequent backend allocation release: 26 of 43 conditional cases
 fail the nested-discharge gate. Deletion paths remain uncovered. See the
 [file close report](../../docs/reports/cycle19-file-close/README.md).
+
+`chunkio/filesystem_delete_attempt.qcore` checks guarded unlink result use in the
+four source paths of `cio_file_native_delete`. The shared importer now preserves
+short-circuit fd/mapping guards and skipped reads/calls. Actual deletion outcome
+and custody still require proof. See the
+[short-circuit report](../../docs/reports/cycle19-short-circuit/README.md).

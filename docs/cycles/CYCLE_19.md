@@ -649,3 +649,14 @@ Deletion paths remain uncovered. Six Lean theorems, 371 workspace tests and
 required checks pass with unchanged prior verdicts/certificates. Actual outcome
 and caller/provenance binding, full sync/deletion handling, enclosing filesystem
 chunk close and the remaining lifecycle/event gates stay open.
+
+## Shared short-circuit condition import (2026-09-06)
+
+The [short-circuit report](../reports/cycle19-short-circuit/README.md) adds bounded
+`&&`/`||` condition paths to the shared typed importer, preserving left-to-right
+sequencing and skipped effects. The native deletion helper now has four retained
+source paths and a guarded-unlink-result policy, while deletion custody remains
+Unknown. Six Lean theorems, 375 workspace tests and required checks pass with
+byte-identical prior source/verdict evidence. Unsupported value contexts and
+path overflow still reject. Deletion outcomes, full sync/caller/OS binding,
+enclosing filesystem close and the wider lifecycle/event gates remain open.
