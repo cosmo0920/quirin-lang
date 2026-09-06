@@ -6,6 +6,7 @@ members = [
     "crates/qcore-core",
     "crates/qcore-frontend",
     "crates/qcore-schemas",
+    "crates/qcore-verifier-host",
     "crates/qcorec",
 ]
 resolver = "2"

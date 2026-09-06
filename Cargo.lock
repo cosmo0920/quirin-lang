@@ -59,12 +59,12 @@ name = "qcore-compiler"
 version = "0.1.0"
 dependencies = [
  "cc",
- "libc",
  "qcore-c-gateway",
  "qcore-contract",
  "qcore-core",
  "qcore-frontend",
  "qcore-schemas",
+ "qcore-verifier-host",
  "serde",
  "serde_json",
 ]
@@ -95,6 +95,17 @@ dependencies = [
 name = "qcore-schemas"
 version = "0.1.0"
 dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "qcore-verifier-host"
+version = "0.1.0"
+dependencies = [
+ "libc",
+ "qcore-frontend",
+ "qcore-schemas",
  "serde",
  "serde_json",
 ]

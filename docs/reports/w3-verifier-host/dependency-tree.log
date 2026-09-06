@@ -1,0 +1,23 @@
+qcore-verifier-host v0.1.0 (/tmp/qcore-host-extraction/crates/qcore-verifier-host)
+├── libc v0.2.189
+├── qcore-frontend v0.1.0 (/tmp/qcore-host-extraction/crates/qcore-frontend)
+│   └── qcore-core v0.1.0 (/tmp/qcore-host-extraction/crates/qcore-core)
+├── qcore-schemas v0.1.0 (/tmp/qcore-host-extraction/crates/qcore-schemas)
+│   ├── serde v1.0.229
+│   │   ├── serde_core v1.0.229
+│   │   └── serde_derive v1.0.229 (proc-macro)
+│   │       ├── proc-macro2 v1.0.107
+│   │       │   └── unicode-ident v1.0.24
+│   │       ├── quote v1.0.47
+│   │       │   └── proc-macro2 v1.0.107 (*)
+│   │       └── syn v3.0.3
+│   │           ├── proc-macro2 v1.0.107 (*)
+│   │           ├── quote v1.0.47 (*)
+│   │           └── unicode-ident v1.0.24
+│   └── serde_json v1.0.151
+│       ├── itoa v1.0.18
+│       ├── memchr v2.8.3
+│       ├── serde_core v1.0.229
+│       └── zmij v1.0.23
+├── serde v1.0.229 (*)
+└── serde_json v1.0.151 (*)

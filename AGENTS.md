@@ -18,7 +18,7 @@ It also ships a conservative checker for *existing* C source (the
 
 | Path | Contents |
 |---|---|
-| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway compatibility API, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
 | `crates/qcore-core/` | L1 semantic-kernel seed (W1 relocation): `usage`, `ast`, `index`. No workspace dependencies; the rest of the kernel arrives at W5 consolidation |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery (W1 relocation): total-or-reject `contract_loader`, `contract_observation`. Depends on core/frontend/schemas; `chunk_contract` joins after the W5 chunk-summary schema split |
@@ -27,7 +27,8 @@ It also ships a conservative checker for *existing* C source (the
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
-| `compiler/src/verifier_plugin.rs` | Cycle 20 plugin protocol v1, manifests, registry, process providers, certificate firewall |
+| `crates/qcore-verifier-host/` | L2 generic registry, source-scope resolution, bounded process transport, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
+| `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation remain in compiler pending kernel consolidation |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
@@ -132,7 +133,9 @@ It also ships a conservative checker for *existing* C source (the
   schemas-only process fixture exercises positive and forged evidence.
   Lifecycle source effect/ABI import stays incomplete, all unsupported and
   empty inventories stay `Unknown`, and first-party v1 providers remain
-  unpromoted. Host relocation and production profile/source import remain open.
+  unpromoted. Host registry/transport/firewall/composition relocation is executed
+  (`docs/reports/w3-verifier-host/README.md`); production profile/source import
+  and remaining trusted-kernel relocation stay open.
   See `docs/reports/w3-evidence-v2/README.md`.
 - **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
