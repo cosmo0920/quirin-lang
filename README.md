@@ -124,6 +124,18 @@ add 88 fully released allocation generations. A suppressed rollback close retain
 the original descriptor/inode after null chunk return and parent release; harness
 reclamation is recorded separately. File-size fallback and POSIX allocation
 return/errno conventions remain distinct, with general OS guarantees still open.
+[Seven existing-file profiles](docs/reports/cycle19-file-existing/README.md)
+release all 70 allocation generations. Valid and read-only content, malformed
+magic, short headers and read-only empty files retain distinct outcomes and their
+original inode/bytes. Suppressed chmod plus rollback-close failures preserve a
+descriptor residual after parent release. General caller and lifecycle gates
+remain open.
+[Five native transition sequences](docs/reports/cycle19-file-transitions/README.md)
+release all 50 generations and seven descriptor/mapping epochs. Logical rollback
+leaves the mapped header length unchanged, so down/up reloads appended bytes.
+Locked begin retries while direct write succeeds. These bounded observations
+preserve the native behavior without claiming production reachability or general
+transaction/lock guarantees.
 
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a

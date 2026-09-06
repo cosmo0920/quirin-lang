@@ -210,3 +210,28 @@ under `docs/reports/`.
 Later cycles may be split into consecutive numbers if their executable and
 proof scope is too large, but none may be skipped without updating this
 dependency order and its acceptance criteria.
+
+## Existing-file profile observations (2026-09-06)
+
+[Seven native existing-file profiles](reports/cycle19-file-existing/README.md)
+release all 70 allocation generations: seven temporary, 20 rollback and 43
+parent-teardown releases. Original inode/bytes, read-only mapping permissions,
+malformed-magic/short-header/empty-read-only errors and a descriptor residual
+after suppressed chmod plus rollback-close failures stay distinct. A 17-clause
+policy, strict trace mutations and four Lean theorems check this bounded evidence.
+General profiles, residency/transaction paths, caller provenance, full OS and
+sync guarantees, aggregate source custody, wrapper lifecycle and full event
+composition remain open. No raw unit is promoted.
+
+## Native residency and transaction observations (2026-09-06)
+
+[Five native sequences](reports/cycle19-file-transitions/README.md) release
+all 50 allocation generations and seven descriptor/mapping epochs. The adapter
+checks 26 operation results, ring/counter transitions and separate logical/header
+lengths. Rollback restores logical length without restoring the mapped header;
+down/up reloads appended bytes. Locked begin returns retry while direct write
+succeeds. A 16-clause runtime policy and six executable Lean projection theorems
+preserve those outcomes. Failed transition syscalls, capacity/metadata/checksum
+variants, arbitrary production callers, full sync/durability, aggregate custody,
+remaining wrapper lifecycle and full event composition remain open. No raw unit
+is promoted.
