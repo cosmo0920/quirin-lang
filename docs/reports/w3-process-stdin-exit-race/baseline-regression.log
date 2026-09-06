@@ -1,0 +1,24 @@
+   Compiling qcore-verifier-host v0.1.0 (/tmp/qcore-host-extraction/crates/qcore-verifier-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.04s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-144f19f4ff42a88b)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... FAILED
+
+failures:
+
+---- closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request stdout ----
+
+thread 'closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request' (264) panicked at crates/qcore-verifier-host/tests/standalone_host.rs:172:5:
+assertion `left == right` failed
+  left: Err(Io("Broken pipe (os error 32)"))
+ right: Err(Timeout)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p qcore-verifier-host --test standalone_host`

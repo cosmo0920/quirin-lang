@@ -133,3 +133,75 @@ fn standalone_host_refuses_v1_assertions_with_empty_and_nonempty_coverage() {
         assert_eq!(outcome.diagnostics[0].code, "QP009");
     }
 }
+
+#[cfg(unix)]
+#[test]
+fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
+    use std::{
+        fs,
+        os::unix::fs::PermissionsExt,
+        time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    };
+    let package = std::env::temp_dir().join(format!(
+        "qcore-host-closed-input-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    fs::create_dir(&package).unwrap();
+    let script = package.join("provider.sh");
+    let mut manifest = manifest();
+    manifest.entrypoint = PluginEntrypoint::Executable {
+        path: "provider.sh".into(),
+    };
+    manifest.package_digest = "a".repeat(64);
+    manifest.limits.timeout_ms = 40;
+    let mut request = request();
+    // Larger than an ordinary pipe buffer: closing input necessarily interrupts
+    // transmission, even if the parent gets the first scheduler time slice.
+    request.request_id = "x".repeat(1024 * 1024);
+    let write_script = |body: &str| {
+        fs::write(&script, format!("#!/bin/sh\n{body}\n")).unwrap();
+        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+    };
+    write_script("exec 0<&-\n(/bin/sleep 0.3; : > descendant.marker) &\nexit 0");
+    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
+    let start = Instant::now();
+    assert_eq!(provider.verify(&request), Err(ProviderFailure::Timeout));
+    assert!(start.elapsed() < Duration::from_secs(1));
+    std::thread::sleep(Duration::from_millis(350));
+    assert!(!package.join("descendant.marker").exists());
+
+    write_script("exec 0<&-\n/bin/sleep 0.3\n: > live.marker");
+    assert!(matches!(
+        provider.verify(&request),
+        Err(ProviderFailure::Io(_))
+    ));
+    std::thread::sleep(Duration::from_millis(350));
+    assert!(!package.join("live.marker").exists());
+
+    // Even a valid response cannot erase the host's incomplete-request state.
+    let response = VerificationResponse {
+        protocol_version: request.protocol_version,
+        request_id: request.request_id.clone(),
+        plugin_id: request.plugin_id.clone(),
+        verdict: ProposedVerdict::Unknown,
+        evidence: None,
+        diagnostics: vec![],
+    };
+    fs::write(
+        package.join("response.bin"),
+        encode_protocol_frame(&response, DEFAULT_MAX_FRAME_BYTES).unwrap(),
+    )
+    .unwrap();
+    write_script("exec 0<&-\n/bin/cat response.bin");
+    manifest.limits.timeout_ms = 1000;
+    let provider = ProcessProvider::new(manifest, &package).unwrap();
+    assert!(matches!(
+        provider.verify(&request),
+        Err(ProviderFailure::Io(_))
+    ));
+    fs::remove_dir_all(package).unwrap();
+}
