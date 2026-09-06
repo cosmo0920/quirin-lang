@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use qcore_compiler::contract_loader::{
-    check_source_assumptions, load_resource_contract_files, load_resource_contract_manifest,
-    load_resource_contract_sources,
+    POINTER_ABI_TYPES, SCALAR_ABI_TYPES, check_source_assumptions, load_resource_contract_files,
+    load_resource_contract_manifest, load_resource_contract_sources,
 };
 use qcore_compiler::{
     AnalysisStatus, CCompilerDialect, ContractTrust, LegacyFunctionScope, LegacySafetyCertificate,
@@ -340,6 +340,177 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
             .unwrap_err()
             .contains("source assumptions")
     );
+}
+
+/// Every scalar in the ABI table is an opaque borrowed-only projection: it can
+/// be a borrowed argument or a plain result, and every custody mode on it is
+/// rejected rather than approximated.
+#[test]
+fn every_abi_scalar_is_a_borrowed_only_projection() {
+    assert_eq!(
+        SCALAR_ABI_TYPES,
+        [
+            "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize"
+        ]
+    );
+    assert_eq!(
+        POINTER_ABI_TYPES,
+        ["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"]
+    );
+    for scalar in SCALAR_ABI_TYPES {
+        let argument = format!(
+            "module contract;
+        extern fn probe(n: {scalar}) -> ptr<mut, u8> contract {{
+            requires resource_contract_v1;
+            ensures normal resource_borrowed(n);
+            ensures normal resource_return_owned(nullable);
+        }};"
+        );
+        let contracts = load(&argument).unwrap_or_else(|e| panic!("{scalar} argument: {e}"));
+        assert_eq!(
+            contracts.contract("probe").unwrap(),
+            &ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+            "{scalar}"
+        );
+        let result = format!(
+            "module contract;
+        extern fn probe(p: ptr<mut, u8>) -> {scalar} contract {{
+            requires resource_contract_v1;
+            ensures normal resource_released(p, nonnull);
+            ensures normal resource_return_none();
+        }};"
+        );
+        let contracts = load(&result).unwrap_or_else(|e| panic!("{scalar} result: {e}"));
+        assert_eq!(
+            contracts.contract("probe").unwrap(),
+            &ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+            "{scalar}"
+        );
+        // A scalar never carries custody, and a non-`None` result needs a
+        // pointer return type.
+        for bad in [
+            argument.replace("resource_borrowed(n)", "resource_owned(n, nonnull)"),
+            argument.replace("resource_borrowed(n)", "resource_released(n, nonnull)"),
+            argument.replace("resource_borrowed(n)", "resource_out(n, nonnull)"),
+            result.replace("resource_return_none()", "resource_return_owned(nullable)"),
+        ] {
+            assert!(load(&bad).is_err(), "accepted {bad}");
+        }
+    }
+    // Types outside the table stay rejected: `unit` is a result type only, and
+    // floats have no resource API in scope.
+    for parameter in ["unit", "f32", "f64", "ptr<const, ptr<const, u8>>"] {
+        let source = format!(
+            "module contract;
+        extern fn probe(n: {parameter}) -> unit contract {{
+            requires resource_contract_v1;
+            ensures normal resource_borrowed(n);
+            ensures normal resource_return_none();
+        }};"
+        );
+        assert!(load(&source).is_err(), "accepted parameter {parameter}");
+    }
+}
+
+/// The `requires resource_contract_v1` marker is the interpreter selector.
+/// Asking this loader for a `ResourceContracts` environment over an
+/// observation/lifecycle module must fail closed — never silently drop the
+/// clauses it cannot check and return a weaker table.
+#[test]
+fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contract/qcore");
+    let mut modules = Vec::new();
+    collect_qcore_sources(&root, &mut modules);
+    modules.sort();
+    assert_eq!(modules.len(), 56, "corpus module count");
+
+    let mut selected = 0;
+    let mut v1_declarations = 0;
+    let mut rejected_declarations = 0;
+    for path in &modules {
+        let relative = path
+            .strip_prefix(&root)
+            .unwrap()
+            .to_string_lossy()
+            .replace('\\', "/");
+        let source = std::fs::read_to_string(path).unwrap();
+        let parsed = qcore_compiler::parse_source_program(&source).unwrap();
+        let marked = |declaration: &qcore_compiler::SourceDeclaration| {
+            declaration.function_contract.as_ref().is_some_and(|c| {
+                c.clauses
+                    .iter()
+                    .any(|clause| clause.value.expression_source.trim() == "resource_contract_v1")
+            })
+        };
+        let all_marked = parsed.declarations.iter().all(|d| marked(&d.value));
+        let loaded =
+            load_resource_contract_sources(&BTreeMap::from([(relative.clone(), source.clone())]));
+        assert_eq!(
+            loaded.is_ok(),
+            all_marked,
+            "{relative}: marker and loadability disagree ({loaded:?})"
+        );
+        if all_marked {
+            selected += 1;
+        }
+        // Per declaration, so a marked declaration cannot smuggle an unmarked
+        // sibling through a module that happens to load.
+        for declaration in &parsed.declarations {
+            let text = &source[declaration.span.start..declaration.span.end];
+            let single =
+                BTreeMap::from([(relative.clone(), format!("module contract;\n{text}\n"))]);
+            let outcome = load_resource_contract_sources(&single);
+            assert_eq!(
+                outcome.is_ok(),
+                marked(&declaration.value),
+                "{relative}: {} marker and loadability disagree ({outcome:?})",
+                declaration.value.name
+            );
+            if marked(&declaration.value) {
+                v1_declarations += 1;
+            } else {
+                rejected_declarations += 1;
+            }
+        }
+    }
+    // The five manifest-selected resource projections and their 19 assumptions;
+    // every other declaration belongs to another interpreter and is rejected.
+    assert_eq!(
+        (selected, v1_declarations, rejected_declarations),
+        (5, 19, 141)
+    );
+    assert_eq!(
+        load_resource_contract_manifest(&manifest())
+            .unwrap()
+            .functions()
+            .len(),
+        v1_declarations
+    );
+
+    // The marker is a selector, not a bypass: attaching it to a lifecycle
+    // declaration still rejects, because the rest of that declaration is
+    // owned by the language front end.
+    let lifecycle = std::fs::read_to_string(root.join("chunkio/chunk_destructor.qcore")).unwrap();
+    let marked = lifecycle.replace(
+        "requires chunk_is_live;",
+        "requires resource_contract_v1; requires chunk_is_live;",
+    );
+    assert_ne!(marked, lifecycle);
+    assert!(load(&marked).is_err());
+}
+
+fn collect_qcore_sources(directory: &Path, sources: &mut Vec<PathBuf>) {
+    for entry in std::fs::read_dir(directory).expect("contract directory is readable") {
+        let path = entry.expect("contract entry is readable").path();
+        if path.is_dir() {
+            collect_qcore_sources(&path, sources);
+        } else if path
+            .extension()
+            .is_some_and(|extension| extension == "qcore")
+        {
+            sources.push(path);
+        }
+    }
 }
 
 #[test]

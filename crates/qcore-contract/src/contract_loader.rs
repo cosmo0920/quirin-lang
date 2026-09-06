@@ -1,9 +1,33 @@
 //! Total-or-reject bridge from native contract modules to legacy-C custody.
 //!
-//! Version 1 accepts only raw scalar/pointer extern signatures and the clauses
-//! below. Every parameter and the result must occur exactly once. The marker
-//! `requires resource_contract_v1` selects this trusted assumption vocabulary;
-//! all remaining clauses must be `ensures normal` calls:
+//! # Interpreter selection
+//!
+//! `contract/qcore` is shared by three consumers with disjoint vocabularies.
+//! The **`requires resource_contract_v1` marker is the selector**: a declaration
+//! that carries it must map completely into [`ResourceFunctionContract`], and a
+//! declaration that does not carry it is rejected here rather than skipped, so
+//! asking this loader for a `ResourceContracts` environment over an
+//! observation/lifecycle module fails closed instead of silently producing a
+//! weaker table. `compiler/tests/contract_loader.rs::
+//! every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped` pins
+//! that split over the whole corpus.
+//!
+//! | Clause family | Owner |
+//! | --- | --- |
+//! | `requires resource_contract_v1` + the `resource_*` predicates below | this loader |
+//! | integer/Boolean ghost predicates (`result == 0`, `field_NAME`, `busy`, `lock`, `allocations`, `releases`, `old(...)` arithmetic) | `contract_observation` and the ChunkIO/source interpreters |
+//! | named atomic lifecycle propositions (`chunk_is_live`, `arena_is_discharged`, `descriptor_custody_is_discharged_once`, ...) | the mechanism/lifecycle interpreters |
+//! | `own<T>` / `borrow<'a, _, T>` parameters, `use` annotations, `effects { .. }` rows, `quant` clauses, `ensures any`, `ensures error(E)`, `result<T, E>` returns, `resource type` / `error` / `axis` declarations | the QCore language front end and checker |
+//!
+//! These families are not approximated into custody modes. A resource
+//! projection of a lifecycle module is written as its own v1 module (as
+//! `fluent_bit/resource_memory.qcore` projects `fluent_bit/memory.qcore`);
+//! it is never inferred by dropping predicates this loader cannot check.
+//!
+//! # Version 1 vocabulary
+//!
+//! Every parameter and the result must occur exactly once, and all clauses
+//! other than the marker must be `ensures normal` calls:
 //!
 //! - `resource_borrowed(p)` -> Borrowed (no custody requirement).
 //! - `resource_{owned,consumed,released,out}(p, nullable|nonnull)` -> that mode.
@@ -12,13 +36,26 @@
 //! - `resource_return_reallocated(p, nullability)` -> Reallocated, requiring
 //!   an Owned parameter; null failure preserves it, success replaces it once.
 //!
+//! Signatures are opaque C ABI projections, not checked C layouts. The type
+//! vocabulary is likewise an explicit table, not a wildcard:
+//!
+//! - [`SCALAR_ABI_TYPES`] — sizes, counts, flags, descriptors and offsets.
+//!   Borrowed only: a scalar cannot carry custody, so every custody mode on
+//!   one is rejected. Float scalars are deliberately absent; no resource API
+//!   in scope passes one, and this loader adds no vocabulary without a use.
+//! - [`POINTER_ABI_TYPES`] — the custody-bearing projections. `resource_out`
+//!   additionally requires `ptr<mut, ptr<mut, u8>>`, and any non-`None` result
+//!   requires a pointer return type.
+//! - `unit` is a result type only, never a parameter type.
+//!
 //! Acquire/Release/Escape/Neutral compatibility kinds map respectively to Owned
 //! results, Released/Consumed parameters, and borrowed-only/None contracts.
-//! Non-null error sentinels, conditional effects, quantitative clauses, effects
-//! rows, arbitrary predicates and other exits cannot be expressed by the target
-//! interface and are rejected. This loader does not weaken a richer contract by
-//! dropping its predicates. Observation and lifecycle modules use their own
-//! interpreters and are not implicitly selected by this loader.
+//! Non-null error sentinels (a resource returned as `MAP_FAILED` or `-1` rather
+//! than null) remain unrepresentable: [`ResourceReturnMode`] records only
+//! nullability, so expressing them needs target-interface work, not loader
+//! vocabulary, and they are rejected meanwhile. Conditional effects, effects
+//! rows, quantitative clauses, arbitrary predicates and other exits are
+//! likewise rejected.
 //!
 //! Files are trusted assumptions, not proofs. The exact input texts are retained
 //! in ResourceContracts and independently reloaded by the certificate checker.
@@ -35,6 +72,24 @@ use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use qcore_schemas::contract::{
     ResourceContracts, ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
 };
+
+/// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
+/// flags, descriptors and offsets, never custody. Widening this table changes
+/// which signatures can be *written*, never what a loaded contract means.
+pub const SCALAR_ABI_TYPES: &[&str] = &[
+    "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
+];
+
+/// Opaque C ABI pointer projections. These are the custody-bearing types.
+pub const POINTER_ABI_TYPES: &[&str] =
+    &["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"];
+
+/// The result vocabulary: `unit` plus every parameter type.
+fn result_abi_types() -> impl Iterator<Item = &'static str> {
+    std::iter::once("unit")
+        .chain(SCALAR_ABI_TYPES.iter().copied())
+        .chain(POINTER_ABI_TYPES.iter().copied())
+}
 
 /// Load all selected modules atomically. No partial environment escapes on error.
 pub fn load_resource_contract_files(paths: &[PathBuf]) -> Result<ResourceContracts, String> {
@@ -145,22 +200,14 @@ fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, S
         .clauses;
     // Reconstruct the entire declaration, allowing only plain C ABI types and
     // the exact parsed contract block. No ignored signature/tail syntax.
-    let allowed_types = [
-        "unit",
-        "i32",
-        "u32",
-        "u8",
-        "usize",
-        "ptr<mut, u8>",
-        "ptr<const, u8>",
-        "ptr<mut, ptr<mut, u8>>",
-    ];
+    // `unit` is a result type only, and usage annotations belong to the
+    // language-level lifecycle vocabulary, not to this projection.
     for parameter in &decl.parameters {
         let tokens = token_kinds(&parameter.type_source)?;
         if parameter.usage.is_some()
-            || parameter.type_source == "unit"
-            || !allowed_types
+            || !SCALAR_ABI_TYPES
                 .iter()
+                .chain(POINTER_ABI_TYPES.iter())
                 .any(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens))
         {
             return Err("unsupported parameter type or usage annotation".into());
@@ -186,8 +233,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, S
         })
         .collect::<Result<Vec<_>, _>>()?
         .join(" ");
-    let return_type = allowed_types
-        .iter()
+    let return_type = result_abi_types()
         .find(|ty| {
             let expected = format!(
                 "extern fn {}({parameter_text}) -> {ty} contract {{ {clause_text} }};",

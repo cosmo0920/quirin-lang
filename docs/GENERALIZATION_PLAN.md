@@ -241,7 +241,7 @@ logic.
 
 ### W1 — Contract loader: make `.qcore` the single source of contracts
 
-**Status.** Partially executed (2026-09-06): `compiler/src/contract_loader.rs`
+**Status.** Executed (2026-09-06). `compiler/src/contract_loader.rs`
 implements the total-or-reject v1 vocabulary and the Cycle 19 audit consumes
 a contract manifest — see the
 [contract-loader parity record](reports/cycle19-contract-loader/README.md).
@@ -253,8 +253,17 @@ follows once the W5 task 3 chunk-summary schema split lands). The leftover
 literal sites are migrated (2026-09-06): tests and examples load `.qcore`
 fixture modules through the loader, and only the loader's own mapping tests
 still construct literals — see the
-[literal-site record](reports/w1-literal-sites/README.md). Remaining: the
-richer clause vocabulary noted below.
+[literal-site record](reports/w1-literal-sites/README.md). The richer clause
+vocabulary is closed (see the
+[clause-vocabulary record](reports/w1-clause-vocabulary/README.md)): the
+`requires resource_contract_v1` marker is pinned corpus-wide as the
+interpreter selector (19 declarations load, 141 are rejected rather than
+skipped), the clause-family → owner table is documented in the loader header
+and the corpus guide, and the C ABI scalar type table is complete. Unifying
+the resource loader with the observation/lifecycle interpreters is
+**W5-adjacent** — it depends on the W5 task 3 chunk-summary schema split —
+and non-null error sentinels need target-interface work in `qcore-schemas`
+plus the analyzer, not loader vocabulary.
 
 **Goal.** One loader from `contract/qcore` contract modules to the analyzer's
 `ResourceContracts`, eliminating every Rust-literal production contract table.

@@ -109,14 +109,47 @@ a pointer-to-pointer. Results use `resource_return_none()`,
 `resource_return_owned(nullable|nonnull)`, or
 `resource_return_reallocated(p, nullable|nonnull)` with an owned input.
 
+Signatures are opaque C ABI projections, not checked C layouts, and their type
+vocabulary is an explicit table rather than a wildcard. The custody-bearing
+pointer projections are `ptr<mut, u8>`, `ptr<const, u8>` and
+`ptr<mut, ptr<mut, u8>>`. The scalar projections — `bool`, `i8`, `i16`, `i32`,
+`i64`, `isize`, `u8`, `u16`, `u32`, `u64`, `usize` — carry sizes, counts,
+flags, descriptors and offsets, so they are **borrowed only**: every custody
+mode on a scalar is rejected. `unit` is a result type only. Float scalars are
+deliberately absent; no resource API in scope passes one, and the loader adds
+no vocabulary without a use.
+
 This is the existing abstract resource model: borrowed arguments have no
 custody requirement, null reallocation failure preserves old custody, and
-successful replacement invalidates it once. Pointer types are opaque ABI
-projections rather than checked C layout declarations. Unsupported requirements,
+successful replacement invalidates it once. Unsupported requirements,
 effects rows, error/any/quant clauses, non-null error sentinels, unknown modes,
 duplicates and incomplete mappings reject the entire selected environment.
 Do not add these clauses to an observation module and expect either interpreter
 to ignore clauses it cannot check.
+
+### Which interpreter owns which clause family
+
+`contract/qcore` is shared by three consumers with disjoint vocabularies, and
+`requires resource_contract_v1` is the selector between them. Of the corpus's
+160 declarations, 19 carry the marker and load; the other 141 are **rejected**
+by the resource loader, not skipped, so asking it for a `ResourceContracts`
+environment over an observation or lifecycle module fails closed instead of
+quietly returning a weaker table.
+
+| Clause family | Owner |
+| --- | --- |
+| `requires resource_contract_v1` and the `resource_*` predicates above | `contract_loader` (this section) |
+| integer/Boolean ghost predicates — `result == 0`, `field_NAME`, `busy`, `lock`, `allocations`, `releases`, `old(...)` arithmetic | `contract_observation` and the ChunkIO/source interpreters |
+| named atomic lifecycle propositions — `chunk_is_live`, `arena_is_discharged`, `descriptor_custody_is_discharged_once`, … | the mechanism/lifecycle interpreters |
+| `own<T>` / `borrow<'a, _, T>` parameters, `use` annotations, `effects { .. }` rows, `quant` clauses, `ensures any`, `ensures error(E)`, `result<T, E>` returns, and `resource type` / `error` / `axis` declarations | the QCore language front end and checker |
+
+A resource projection of a lifecycle module is written as its own v1 module —
+`fluent_bit/resource_memory.qcore` projects `fluent_bit/memory.qcore`, and
+`chunkio/resource_open_close.qcore` projects the ChunkIO destructors — and is
+never inferred by dropping predicates the loader cannot check. Non-null error
+sentinels (a resource returned as `MAP_FAILED` or `-1` rather than null) stay
+unrepresentable: the target interface records only nullability, so they need
+interface work rather than loader vocabulary.
 
 `contract_loader::load_resource_contract_manifest` loads these files at runtime;
 `load_resource_contract_files` and `load_resource_contract_sources` expose the

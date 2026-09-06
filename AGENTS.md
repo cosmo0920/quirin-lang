@@ -153,8 +153,16 @@ It also ships a conservative checker for *existing* C source (the
   `qcore-frontend`, and `qcore-contract` are extracted with a
   dependency-matrix guard test. The leftover literal contract sites are
   migrated to loader-fed `.qcore` fixtures (2026-09-06,
-  `docs/reports/w1-literal-sites/README.md`); W1's remaining item is the
-  richer clause vocabulary. W6's CT harness is stood up
+  `docs/reports/w1-literal-sites/README.md`). **W1 is executed**
+  (2026-09-06, `docs/reports/w1-clause-vocabulary/README.md`): the
+  `requires resource_contract_v1` marker is pinned corpus-wide as the
+  interpreter selector — 19 declarations load and 141 are rejected, not
+  skipped — the clause-family → owner table is documented in the loader
+  header and `contract/qcore/README.md`, and the C ABI scalar type table is
+  complete (borrowed-only, no semantic change; audit diagnostics/callbacks
+  byte-identical). Unifying the resource loader with the observation/
+  lifecycle interpreters is W5-adjacent; non-null error sentinels need
+  target-interface work, not loader vocabulary. W6's CT harness is stood up
   (2026-09-06, `docs/reports/w6-ct-harness/README.md`):
   `compiler/tests/ct_corpus.rs` executes every case
   `docs/reevaluation/ct_manifest.json` marks mapped through the real source
