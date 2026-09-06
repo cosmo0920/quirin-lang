@@ -54,7 +54,7 @@ Claude-specific additions:
   (§2); do not add new code to the monolithic grab-bag once a target crate
   exists.
 - W4 is executed for parameter/return custody with validation
-  (`compiler/src/legacy_summary.rs`,
+  (`crates/qcore-c-gateway/src/legacy_summary.rs`,
   `docs/reports/w4-custody-inference/README.md`). A call into an internal C
   function is modeled only through a declared `.qcore` contract or a summary
   that `observations_match_contract` validated against a fresh analyzer run;
@@ -66,7 +66,8 @@ Claude-specific additions:
   `Stored` formals, `Reallocated` results and possibly-null owned returns
   (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
   `Removed` inference and recursive components remain unsupported; the
-  `qcore-c-gateway` relocation is still open.
+  `qcore-c-gateway` relocation is executed with compiler compatibility reexports
+  (`docs/reports/w4-gateway-crate/README.md`).
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass. If a pinned table (contract corpus counts,
   submodule revision, archived report) conflicts with your change, the change

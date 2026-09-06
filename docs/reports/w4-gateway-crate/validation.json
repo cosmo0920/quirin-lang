@@ -1,0 +1,10 @@
+{
+  "workspace_tests": 453,
+  "gateway_tests": 87,
+  "submodule_init": "passed",
+  "format": "passed",
+  "clippy_all_targets": "passed",
+  "reevaluation_probe": "exit 0",
+  "reevaluation_followup": "exit 0",
+  "lean_build": "passed, 52 jobs"
+}

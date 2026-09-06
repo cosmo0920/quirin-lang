@@ -1,0 +1,29 @@
+{
+  "base_revision": "43e64a38cb0930bbc81fdb49f8bb9b548c7a9ebc",
+  "exact_moves": [
+    {
+      "module": "legacy_c",
+      "sha256": "56da0f5c05aadd7368eb01d3b7dc36aa5985aa80a3e6af6c9e7c978841addd44",
+      "bytes_identical": true
+    },
+    {
+      "module": "legacy_summary",
+      "sha256": "c9223e9bb41c04da03545323269cd32a256534624120b987a6f790ebfbd3c896",
+      "bytes_identical": true
+    },
+    {
+      "test_module": "legacy_c",
+      "sha256": "242af94b69239110ea777647e37d732fa7c6cfcf1fb8ea6dde2e703362ffd367",
+      "bytes_identical": true
+    },
+    {
+      "test_module": "legacy_summary",
+      "sha256": "e03b4e765d9e1d7ab51f218262ec86681b6185ff29734b4e35fe7e9a2e1bcd39",
+      "bytes_identical": true
+    }
+  ],
+  "clang_change": "command visibility pub(crate) to pub; reexported as clang_command",
+  "typed_c_ast_change": "four helper functions become public with API and trust-boundary documentation; bodies unchanged",
+  "fixtures": "seven .qcore test fixtures moved without changes",
+  "test_ownership": "87 tests now run in qcore-c-gateway; existing compiler compatibility and process tests retained"
+}

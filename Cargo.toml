@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "compiler",
+    "crates/qcore-c-gateway",
     "crates/qcore-contract",
     "crates/qcore-core",
     "crates/qcore-frontend",

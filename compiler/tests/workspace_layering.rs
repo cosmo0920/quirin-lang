@@ -16,8 +16,13 @@ const ALLOWED: &[(&str, &[&str])] = &[
         &["qcore-core", "qcore-frontend", "qcore-schemas"],
     ),
     (
+        "crates/qcore-c-gateway",
+        &["qcore-contract", "qcore-schemas"],
+    ),
+    (
         "compiler",
         &[
+            "qcore-c-gateway",
             "qcore-contract",
             "qcore-core",
             "qcore-frontend",
