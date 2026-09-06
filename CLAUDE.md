@@ -121,3 +121,11 @@ See `docs/reports/w7-lean-ci/README.md`.
 W7 generic Lean naming is complete for the bounded targets: DescriptorCustody,
 EventComposition and busy_effect_preserves_lock, with historical aliases and
 unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
+
+Boolean field profile routing landed (2026-09-07,
+`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+Boolean operation routes come from loaded profile data, with exact declared
+assumptions on summaries. An unrelated record fixture exercises both supported
+models. Full 185-TU resource diagnostics and source projections are unchanged;
+chunk reports add only three assumption maps. Frame-helper ABI generalization
+and source-to-model identity premises remain open.

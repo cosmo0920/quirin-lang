@@ -502,7 +502,13 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
                 )));
             }
         }
+        let mut field_models = BTreeSet::new();
         for model in &library.boolean_field_models {
+            if !field_models.insert((&model.record, &model.field)) {
+                return Err(inconsistent(format!(
+                    "library `{name}` declares a duplicate Boolean field model"
+                )));
+            }
             if model.record.trim().is_empty() || model.field.trim().is_empty() {
                 return Err(inconsistent(format!(
                     "library `{name}` declares an unnamed Boolean field model"

@@ -1,0 +1,9 @@
+{
+  "workspace_tests": 505,
+  "format": "passed",
+  "clippy": "passed",
+  "reevaluation_probe": "passed",
+  "reevaluation_followup": "passed",
+  "lake_build": "passed",
+  "focused_chunk_source_tests": 14
+}

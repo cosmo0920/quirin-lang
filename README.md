@@ -344,3 +344,11 @@ Local checks passed; the hosted workflow has not yet run.
 [Generic Lean naming](docs/reports/w7-generic-lean-names/README.md) makes the
 descriptor-custody model, event composition and busy/lock preservation theorem
 available under library-independent names while keeping historical aliases.
+
+Boolean field profile routing landed (2026-09-07,
+`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+Boolean operation routes come from loaded profile data, with exact declared
+assumptions on summaries. An unrelated record fixture exercises both supported
+models. Full 185-TU resource diagnostics and source projections are unchanged;
+chunk reports add only three assumption maps. Frame-helper ABI generalization
+and source-to-model identity premises remain open.
