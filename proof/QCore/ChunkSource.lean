@@ -29,12 +29,14 @@ inductive Stmt where
   | branch (condition : Expr) (yes no : Stmt)
   | assign (value : Expr)
   | ret (value : Expr)
+  | frameAssign (field : String) (value : Int)
   deriving Repr, DecidableEq
 
 structure State where
   value : Bool
   writes : List Bool := []
   branches : List Bool := []
+  frameWrites : List (String × Int) := []
   deriving Repr, DecidableEq
 
 def Stmt.eval : Stmt → State → Option (State × Option Int)
@@ -56,6 +58,8 @@ def Stmt.eval : Stmt → State → Option (State × Option Int)
         some ({ state with value := next, writes := writes }, none)
       else none
   | .ret value, state => some (state, some (value.eval state.value))
+  | .frameAssign field value, state =>
+      some ({ state with frameWrites := state.frameWrites ++ [(field, value)] }, none)
 
 structure Case where
   state : State
@@ -140,5 +144,40 @@ theorem release_busy_success_path_clears_busy :
     run releaseBusy true = some {
       state := { value := false, writes := [false], branches := [false] }, result := 0 } := by
   decide
+
+/-! A validated frame helper is lowered only after its complete C body has
+been checked to write ordinary, disjoint metadata fields. This abstract account
+assumes that source/layout check and does not prove cross-unit C ABI equality. -/
+theorem frame_assignment_preserves_boolean_state
+    (state : State) (field : String) (value : Int) :
+    (Stmt.frameAssign field value).eval state =
+      some ({ state with frameWrites := state.frameWrites ++ [(field, value)] }, none) := rfl
+
+def unlockWithReset : Stmt :=
+  .sequence (.frameAssign "error_n" 0) releaseBusy
+
+theorem unlock_reset_error_path_retains_metadata_write :
+    run unlockWithReset false = some {
+      state := { value := false, writes := [], branches := [true], frameWrites := [("error_n", 0)] }, result := -1 } := by
+  decide
+
+theorem unlock_reset_success_path_clears_lock :
+    run unlockWithReset true = some {
+      state := { value := false, writes := [false], branches := [false], frameWrites := [("error_n", 0)] }, result := 0 } := by
+  decide
+
+def bindLock (state : ChunkFields) (identity : Nat) (after : Bool) : ChunkFields :=
+  fun other => if other = identity then ((state other).1, after) else state other
+
+theorem lock_effect_preserves_wrapper_busy
+    (state : ChunkFields) (identity : Nat) (after : Bool) :
+    (bindLock state identity after identity).1 = (state identity).1 := by
+  simp [bindLock]
+
+theorem lock_effect_preserves_other_identities
+    (state : ChunkFields) (identity other : Nat) (after : Bool)
+    (different : other ≠ identity) :
+    bindLock state identity after other = state other := by
+  simp [bindLock, different]
 
 end QCore.ChunkSource

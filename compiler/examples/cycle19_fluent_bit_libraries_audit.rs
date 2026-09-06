@@ -9,7 +9,10 @@ use legacy_audit_report::AuditReport;
 
 use qcore_compiler::chunk_contract::check_chunk_source_contract;
 use qcore_compiler::contract_loader::load_resource_contract_manifest;
-use qcore_compiler::verifier_plugins::chunkio::{ChunkSourceResult, import_chunk_source};
+use qcore_compiler::verifier_plugins::chunkio::{
+    ChunkFrameSummary, ChunkSourceResult, import_chunk_frame_helper,
+    import_chunk_source_with_helpers,
+};
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
 use qcore_compiler::verifier_plugins::libevent::monkey_source::{
     MonkeySourceResult, import_monkey_callbacks,
@@ -142,6 +145,7 @@ fn run(
     }
     println!("Fluent Bit {revision}");
     let mut report = AuditReport::new(&revision);
+    let mut native_results = Vec::new();
     audit_library_summary_profiles(&root, &revision)?;
 
     let contracts = load_resource_contract_manifest(contract_manifest)?;
@@ -176,7 +180,14 @@ fn run(
                 "compile database contains no top-level {library} sources"
             ));
         }
-        let counts = audit_library(library, &source_root, &selected, &contracts, &mut report)?;
+        let counts = audit_library(
+            library,
+            &source_root,
+            &selected,
+            &contracts,
+            &mut report,
+            &mut native_results,
+        )?;
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
@@ -202,7 +213,14 @@ fn run(
                 "compile database contains no built {library} sources"
             ));
         }
-        let counts = audit_library(library, &source_root, &selected, &contracts, &mut report)?;
+        let counts = audit_library(
+            library,
+            &source_root,
+            &selected,
+            &contracts,
+            &mut report,
+            &mut native_results,
+        )?;
         failed |= counts.gateway_failures != 0;
         println!(
             "{library}: {} unit(s), {} source function(s), {} projected; \
@@ -228,6 +246,7 @@ fn run(
         &selected,
         &contracts,
         &mut report,
+        &mut native_results,
     )?;
     failed |= counts.gateway_failures != 0;
     println!(
@@ -265,6 +284,7 @@ fn run(
             &selected,
             &contracts,
             &mut report,
+            &mut native_results,
         )?;
         failed |= counts.gateway_failures != 0;
         println!(
@@ -287,6 +307,17 @@ fn run(
     }
     if let Some(path) = diagnostic_report {
         report.write(path)?;
+        let sidecar = path.with_extension("chunk-contracts.json");
+        let inputs = serde_json::json!({
+            "schema_version": 1, "source_revision": revision,
+            "scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
+            "results": native_results,
+        });
+        fs::write(
+            &sidecar,
+            serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
         println!("Resource diagnostics: {}", path.display());
     }
     Ok(failed)
@@ -355,8 +386,33 @@ fn audit_library(
     entries: &[CompileEntry],
     contracts: &ResourceContracts,
     report: &mut AuditReport,
+    native_results: &mut Vec<serde_json::Value>,
 ) -> Result<AuditCounts, String> {
     let mut counts = AuditCounts::default();
+    let mut chunk_helpers = Vec::new();
+    if library == "chunkio" {
+        let entry = entries
+            .iter()
+            .find(|entry| entry.file.ends_with("cio_error.c"))
+            .ok_or("missing compiled ChunkIO error helper")?;
+        let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+        let options = compiler_options(entry)?;
+        let unit = C11TranslationUnit {
+            source: &source,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        chunk_helpers.push(import_chunk_frame_helper(
+            &unit,
+            PINNED_FLUENT_BIT_COMMIT,
+            "cio_error_reset",
+        )?);
+        println!(
+            "chunk-source dependency cio_error_reset: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
+        );
+    }
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
@@ -375,7 +431,7 @@ fn audit_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
         if library == "fluent-bit-chunk" || (library == "chunkio" && file == "cio_chunk.c") {
-            audit_chunk_source(&unit, library, &file)?;
+            audit_chunk_source(&unit, library, &file, &chunk_helpers, native_results)?;
         }
         counts.units += 1;
         if source_functions.is_empty() {
@@ -442,13 +498,15 @@ fn audit_chunk_source(
     unit: &C11TranslationUnit<'_>,
     library: &str,
     file: &str,
+    helpers: &[ChunkFrameSummary],
+    native_results: &mut Vec<serde_json::Value>,
 ) -> Result<(), String> {
     let contract_source = match library {
         "fluent-bit-chunk" => include_str!("../../contract/qcore/fluent_bit/busy_state.qcore"),
         "chunkio" => include_str!("../../contract/qcore/chunkio/lock_state.qcore"),
         _ => return Err("missing native QCore chunk contract file".into()),
     };
-    let results = import_chunk_source(unit, PINNED_FLUENT_BIT_COMMIT)?;
+    let results = import_chunk_source_with_helpers(unit, PINNED_FLUENT_BIT_COMMIT, helpers)?;
     let mut summaries = 0;
     let mut checked_contracts = 0;
     for result in &results {
@@ -464,6 +522,12 @@ fn audit_chunk_source(
                 match check_chunk_source_contract(summary, contract_source) {
                     Ok(certificate) => {
                         checked_contracts += 1;
+                        native_results.push(serde_json::json!({
+                            "library": library, "file": file, "function": summary.function(),
+                            "status": "checked", "summary": summary,
+                            "contract_source": certificate.contract_source(),
+                            "checked_states": certificate.checked_states(),
+                        }));
                         println!(
                             "  qcore-contract {}: Checked ({} Boolean pre-states; live/exclusive/domain preconditions assumed)",
                             certificate.function(),
@@ -479,6 +543,7 @@ fn audit_chunk_source(
                 }
             }
             ChunkSourceResult::Unknown { function, reason } => {
+                native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason }));
                 println!("  chunk-source {library}/{file}/{function}: Unknown: {reason}")
             }
         }

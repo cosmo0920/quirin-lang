@@ -228,3 +228,178 @@ fn bitfields_and_volatile_members_cannot_receive_boolean_field_summaries() {
         );
     }
 }
+
+const HELPER_LAYOUT: &str = "struct cio_chunk { int lock; int error_n; };";
+
+fn frame_helper(body: &str) -> Result<ChunkFrameSummary, String> {
+    import_chunk_frame_helper(
+        &C11TranslationUnit {
+            source: &format!("{HELPER_LAYOUT} {body}"),
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        "reset",
+    )
+}
+
+fn unlock_with(helper: &ChunkFrameSummary) -> ChunkSourceSummary {
+    let source = format!(
+        "{HELPER_LAYOUT} void reset(struct cio_chunk *); int cio_chunk_unlock(struct cio_chunk *ch) {{ reset(ch); if (ch->lock == 0) return -1; ch->lock = 0; return 0; }}"
+    );
+    let unit = C11TranslationUnit {
+        source: &source,
+        ..Default::default()
+    };
+    assert!(matches!(
+        import_chunk_source(&unit, PINNED_FLUENT_BIT_REVISION)
+            .unwrap()
+            .as_slice(),
+        [ChunkSourceResult::Unknown { .. }]
+    ));
+    let result = import_chunk_source_with_helpers(
+        &unit,
+        PINNED_FLUENT_BIT_REVISION,
+        std::slice::from_ref(helper),
+    )
+    .unwrap();
+    let [ChunkSourceResult::Summary(summary)] = result.as_slice() else {
+        panic!("{result:?}");
+    };
+    summary.clone()
+}
+
+#[test]
+fn validated_frame_helper_connects_unlock_to_identity_and_native_contract() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let helper = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 0; }").unwrap();
+    let summary = unlock_with(&helper);
+    assert_eq!(summary.paths()[0].return_value, -1);
+    assert_eq!(summary.paths()[1].return_value, 0);
+    for path in summary.paths() {
+        assert_eq!(path.frame_writes, [("error_n".into(), 0)]);
+    }
+    let contract = include_str!("../../../contract/qcore/chunkio/lock_state.qcore");
+    let certificate =
+        crate::chunk_contract::check_chunk_source_contract(&summary, contract).unwrap();
+    assert_eq!(certificate.dependency_sources()["reset"], helper.source);
+    let mut operations = prefix();
+    operations.push(ChunkOperation::Lock { chunk: 7 });
+    let state = execute_chunk_prefix(&operations).unwrap().final_state;
+    assert_eq!(
+        summary.instantiate(&state, 7).unwrap(),
+        (0, vec![ChunkOperation::Unlock { chunk: 7 }])
+    );
+    operations.extend(summary.instantiate(&state, 7).unwrap().1);
+    operations.push(ChunkOperation::DestroyContext { context: 3 });
+    assert!(check_chunk_program(&ChunkProgram { operations }).is_ok());
+    for changed in [
+        contract.replace("field_error_n == 0", "field_error_n == 1"),
+        contract.replace("ensures normal field_error_n == 0;", ""),
+        contract.replace("mut, Chunk", "const, Chunk"),
+    ] {
+        assert!(crate::chunk_contract::check_chunk_source_contract(&summary, &changed).is_err());
+    }
+    let changed = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 1; }").unwrap();
+    assert!(
+        crate::chunk_contract::check_chunk_source_contract(&unlock_with(&changed), contract)
+            .is_err()
+    );
+}
+
+#[test]
+fn helper_import_rejects_hidden_effects_aliasing_and_nonconstant_writes() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    for body in [
+        "void reset(struct cio_chunk *ch) { ch->lock = 0; }",
+        "void reset(struct cio_chunk *ch) { ch->error_n = ch->error_n; }",
+        "void opaque(void); void reset(struct cio_chunk *ch) { ch->error_n = 0; if (0) opaque(); }",
+        "void reset(struct cio_chunk *ch) { struct cio_chunk *alias = ch; alias->error_n = 0; }",
+        "void reset(struct cio_chunk *ch) { ch->error_n = 0; return; ch->lock = 0; }",
+        "struct cio_chunk *global; void reset(struct cio_chunk *ch) { global->error_n = 0; }",
+        "void reset(struct cio_chunk *ch) { }",
+    ] {
+        assert!(frame_helper(body).is_err(), "accepted {body}");
+    }
+    let source = "struct cio_chunk { int lock; volatile int error_n; }; void reset(struct cio_chunk *ch) { ch->error_n = 0; }";
+    assert!(
+        import_chunk_frame_helper(
+            &C11TranslationUnit {
+                source,
+                ..Default::default()
+            },
+            PINNED_FLUENT_BIT_REVISION,
+            "reset"
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn helper_dependencies_reject_layout_duplicates_and_wrong_pointer_binding() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let helper = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 0; }").unwrap();
+    let source = format!(
+        "{HELPER_LAYOUT} void reset(struct cio_chunk *); int f(struct cio_chunk *ch) {{ reset(ch); return ch->lock; }}"
+    );
+    let unit = C11TranslationUnit {
+        source: &source,
+        ..Default::default()
+    };
+    assert!(
+        import_chunk_source_with_helpers(
+            &unit,
+            PINNED_FLUENT_BIT_REVISION,
+            &[helper.clone(), helper.clone()]
+        )
+        .is_err()
+    );
+    let changed = source.replace("int error_n;", "long error_n;");
+    assert!(
+        import_chunk_source_with_helpers(
+            &C11TranslationUnit {
+                source: &changed,
+                ..Default::default()
+            },
+            PINNED_FLUENT_BIT_REVISION,
+            std::slice::from_ref(&helper)
+        )
+        .is_err()
+    );
+    for declaration in [
+        "static void reset(struct cio_chunk *ch) { ch->lock = 1; }",
+        "void reset(struct cio_chunk *ch) { ch->lock = 1; }",
+    ] {
+        let changed = source.replace("void reset(struct cio_chunk *);", declaration);
+        assert!(
+            import_chunk_source_with_helpers(
+                &C11TranslationUnit {
+                    source: &changed,
+                    ..Default::default()
+                },
+                PINNED_FLUENT_BIT_REVISION,
+                std::slice::from_ref(&helper)
+            )
+            .is_err()
+        );
+    }
+    let changed = source.replace("reset(ch);", "reset((struct cio_chunk *)0);");
+    let results = import_chunk_source_with_helpers(
+        &C11TranslationUnit {
+            source: &changed,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        &[helper],
+    )
+    .unwrap();
+    assert!(matches!(
+        results.as_slice(),
+        [ChunkSourceResult::Unknown { .. }]
+    ));
+}

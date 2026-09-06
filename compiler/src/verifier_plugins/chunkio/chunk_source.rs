@@ -2,25 +2,27 @@
 //!
 //! Clang's typed AST is the input boundary. Every statement and expression must
 //! belong to the supported grammar before either initial Boolean state is
-//! evaluated. Calls, pointer aliases, loops, other fields, and fallthrough are
-//! Unknown. A summary describes a borrowed live chunk, not complete teardown or
+//! evaluated. Calls need independently source-validated constant-field helper
+//! bodies. Other calls, pointer aliases, loops, and fallthrough remain Unknown. A summary describes a borrowed live chunk, not complete teardown or
 //! C memory safety. In particular, Fluent Bit's release_lock clears `busy`; it
 //! does not unlock the underlying ChunkIO chunk.
 
 use crate::typed_c_ast::{ast_declarations, function_ast};
+use serde::Serialize;
 use serde_json::Value;
+use std::collections::BTreeMap;
 
 use super::PINNED_FLUENT_BIT_REVISION;
 use crate::chunk_lifecycle::{ChunkId, ChunkOperation, ChunkState};
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum ChunkSourceField {
     Busy,
     Locked,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct ChunkSourcePath {
     pub initial_value: bool,
     pub final_value: bool,
@@ -29,17 +31,20 @@ pub struct ChunkSourcePath {
     pub branches: Vec<bool>,
     /// Every field assignment, including idempotent writes, in source order.
     pub writes: Vec<bool>,
+    /// Source-validated helper writes outside the modeled Boolean field.
+    pub frame_writes: Vec<(String, i32)>,
 }
 
 /// Only the typed source importer can construct this summary. The complete
 /// finite pre-state domain is exactly {false, true}, under the documented
 /// borrowed-live-chunk and exclusive-field-access preconditions.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct ChunkSourceSummary {
     function: String,
     source_revision: String,
     field: ChunkSourceField,
     paths: [ChunkSourcePath; 2],
+    dependencies: BTreeMap<String, String>,
 }
 
 impl ChunkSourceSummary {
@@ -59,9 +64,15 @@ impl ChunkSourceSummary {
         &self.paths
     }
 
+    pub fn dependencies(&self) -> &BTreeMap<String, String> {
+        &self.dependencies
+    }
+
     /// Bind the source parameter to one live model identity. The caller must
     /// establish that its C pointer denotes this chunk and has exclusive access
     /// to the field. This does not infer pointer provenance or synchronization.
+    /// Non-lifecycle helper writes remain in paths/frame_writes and the native
+    /// contract certificate; ChunkState does not model error/metadata storage.
     pub fn instantiate(
         &self,
         state: &ChunkState,
@@ -99,7 +110,134 @@ impl ChunkSourceSummary {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// A checked, nonrecursive helper with one borrowed ChunkIO pointer and only
+/// constant writes to ordinary int fields outside lock/busy. Source text is
+/// retained; the audit must establish revision, build and cross-unit ABI identity.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct ChunkFrameSummary {
+    function: String,
+    source: String,
+    layout: Vec<(String, String)>,
+    writes: Vec<(String, i32)>,
+}
+
+fn record_layout(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<Vec<(String, String)>, String> {
+    let declarations = ast_declarations(source, unit, "cio_chunk")?;
+    let exact: Vec<_> = declarations
+        .iter()
+        .filter(|node| {
+            kind(node) == "RecordDecl"
+                && node["name"] == "cio_chunk"
+                && node["completeDefinition"] == true
+                && node["tagUsed"] == "struct"
+        })
+        .collect();
+    let [record] = exact.as_slice() else {
+        return Err("expected one ordinary ChunkIO record".into());
+    };
+    children(record)
+        .iter()
+        .map(|field| {
+            if kind(field) != "FieldDecl"
+                || field["isBitfield"] == true
+                || !children(field).is_empty()
+            {
+                return Err("chunk dependency layout has unmodeled attributes or fields".into());
+            }
+            Ok((
+                field["name"].as_str().ok_or("unnamed chunk field")?.into(),
+                field["type"]["qualType"]
+                    .as_str()
+                    .ok_or("missing chunk field type")?
+                    .into(),
+            ))
+        })
+        .collect()
+}
+
+pub fn import_chunk_frame_helper(
+    unit: &C11TranslationUnit<'_>,
+    revision: &str,
+    function: &str,
+) -> Result<ChunkFrameSummary, String> {
+    if revision != PINNED_FLUENT_BIT_REVISION {
+        return Err("chunk helper source revision mismatch".into());
+    }
+    let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    let ast = function_ast(&source, unit, function)?;
+    if ast["type"]["qualType"] != "void (struct cio_chunk *)" {
+        return Err("helper requires one ChunkIO pointer and void result".into());
+    }
+    let [parameter, body] = children(&ast) else {
+        return Err("unmodeled helper parameters or attributes".into());
+    };
+    if kind(parameter) != "ParmVarDecl"
+        || !children(parameter).is_empty()
+        || kind(body) != "CompoundStmt"
+    {
+        return Err("unmodeled helper definition".into());
+    }
+    let layout = record_layout(&source, unit)?;
+    let id = parameter["id"]
+        .as_str()
+        .ok_or("missing helper parameter identity")?;
+    let mut writes = Vec::new();
+    for statement in children(body) {
+        let [place, expression] = children(statement) else {
+            return Err("helper requires direct constant field assignments".into());
+        };
+        let field = place["name"]
+            .as_str()
+            .ok_or("helper requires a named field")?;
+        if kind(statement) != "BinaryOperator"
+            || statement["opcode"] != "="
+            || matches!(field, "busy" | "lock")
+            || !layout.contains(&(field.into(), "int".into()))
+        {
+            return Err(
+                "helper must preserve lifecycle fields and write ordinary int fields".into(),
+            );
+        }
+        let mut importer = Importer {
+            parameter_id: id,
+            field_name: field,
+            used_field: false,
+            helpers: &BTreeMap::new(),
+            dependencies: BTreeMap::new(),
+        };
+        if !importer.field(place) {
+            return Err("helper field is not bound to its borrowed parameter".into());
+        }
+        let expr = importer.expression(expression, 0)?;
+        // Constant syntax only: checking two sample values would not establish
+        // independence from arbitrary initial error/metadata fields.
+        fn constant(expr: &Expression) -> bool {
+            match expr {
+                Expression::Integer(_) => true,
+                Expression::Negate(value) => constant(value),
+                _ => false,
+            }
+        }
+        if !constant(&expr) {
+            return Err("helper assignment is not a constant".into());
+        }
+        writes.push((field.into(), expr.evaluate(false)?));
+    }
+    if writes.is_empty() {
+        return Err("helper has no checked field writes".into());
+    }
+    Ok(ChunkFrameSummary {
+        function: function.into(),
+        source,
+        layout,
+        writes,
+    })
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum ChunkSourceResult {
     /// A complete field-effect summary, not a Safe translation-unit verdict.
     Summary(ChunkSourceSummary),
@@ -116,16 +254,53 @@ pub fn import_chunk_source(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
 ) -> Result<Vec<ChunkSourceResult>, String> {
+    import_chunk_source_with_helpers(unit, source_revision, &[])
+}
+
+pub fn import_chunk_source_with_helpers(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    helpers: &[ChunkFrameSummary],
+) -> Result<Vec<ChunkSourceResult>, String> {
     if source_revision != PINNED_FLUENT_BIT_REVISION {
         return Err("ChunkIO source revision does not match the pinned revision".into());
     }
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    let mut checked_helpers = BTreeMap::new();
+    if !helpers.is_empty() {
+        let layout = record_layout(&source, unit)?;
+        for helper in helpers {
+            let declarations = ast_declarations(&source, unit, &helper.function)?;
+            let exact: Vec<_> = declarations
+                .iter()
+                .filter(|node| kind(node) == "FunctionDecl" && node["name"] == helper.function)
+                .collect();
+            if exact.is_empty()
+                || exact.iter().any(|decl| {
+                    decl["storageClass"] == "static"
+                        || decl["type"]["qualType"] != "void (struct cio_chunk *)"
+                        || children(decl)
+                            .iter()
+                            .any(|child| kind(child) != "ParmVarDecl")
+                })
+            {
+                return Err("frame dependency requires matching external declarations without local definitions".into());
+            }
+            if helper.layout != layout
+                || checked_helpers
+                    .insert(helper.function.clone(), helper)
+                    .is_some()
+            {
+                return Err("helper layout mismatch or duplicate helper".into());
+            }
+        }
+    }
     let layouts = [("flb_input_chunk", "busy"), ("cio_chunk", "lock")]
         .map(|(record, field)| validate_field_layout(&source, unit, record, field));
     let mut results = Vec::new();
     for function in legacy_c_source_functions(unit.source) {
         let result = function_ast(&source, unit, &function).and_then(|ast| {
-            let summary = derive_summary(&ast, &function, source_revision)?;
+            let summary = derive_summary(&ast, &function, source_revision, &checked_helpers)?;
             layouts[match summary.field {
                 ChunkSourceField::Busy => 0,
                 ChunkSourceField::Locked => 1,
@@ -215,6 +390,7 @@ enum Statement {
     If(Expression, Box<Self>, Option<Box<Self>>),
     Assign(Expression),
     Return(Expression),
+    FrameWrites(Vec<(String, i32)>),
 }
 
 impl Statement {
@@ -250,6 +426,10 @@ impl Statement {
                 Ok(None)
             }
             Self::Return(value) => value.evaluate(path.final_value).map(Some),
+            Self::FrameWrites(writes) => {
+                path.frame_writes.extend(writes.clone());
+                Ok(None)
+            }
         }
     }
 }
@@ -258,6 +438,8 @@ struct Importer<'a> {
     parameter_id: &'a str,
     field_name: &'a str,
     used_field: bool,
+    helpers: &'a BTreeMap<String, &'a ChunkFrameSummary>,
+    dependencies: BTreeMap<String, String>,
 }
 
 impl Importer<'_> {
@@ -327,6 +509,37 @@ impl Importer<'_> {
             return Err("source statement exceeds the import depth limit".into());
         }
         match (kind(node), children(node)) {
+            ("CallExpr", [callee, argument]) => {
+                let [reference] = children(callee) else {
+                    return Err("unmodeled helper callee".into());
+                };
+                let [parameter] = children(argument) else {
+                    return Err("helper requires direct borrowed parameter".into());
+                };
+                let name = reference["referencedDecl"]["name"]
+                    .as_str()
+                    .ok_or("missing helper identity")?;
+                if kind(callee) != "ImplicitCastExpr"
+                    || callee["castKind"] != "FunctionToPointerDecay"
+                    || kind(reference) != "DeclRefExpr"
+                    || reference["referencedDecl"]["kind"] != "FunctionDecl"
+                    || reference["type"]["qualType"] != "void (struct cio_chunk *)"
+                    || kind(argument) != "ImplicitCastExpr"
+                    || argument["castKind"] != "LValueToRValue"
+                    || kind(parameter) != "DeclRefExpr"
+                    || parameter["referencedDecl"]["kind"] != "ParmVarDecl"
+                    || parameter["referencedDecl"]["id"].as_str() != Some(self.parameter_id)
+                    || self.field_name != "lock"
+                {
+                    return Err("helper signature or parameter binding mismatch".into());
+                }
+                let helper = self
+                    .helpers
+                    .get(name)
+                    .ok_or("call lacks source-validated frame helper")?;
+                self.dependencies.insert(name.into(), helper.source.clone());
+                Ok(Statement::FrameWrites(helper.writes.clone()))
+            }
             ("CompoundStmt", inner) => inner
                 .iter()
                 .map(|node| self.statement(node, depth + 1))
@@ -355,6 +568,7 @@ fn derive_summary(
     ast: &Value,
     function: &str,
     source_revision: &str,
+    helpers: &BTreeMap<String, &ChunkFrameSummary>,
 ) -> Result<ChunkSourceSummary, String> {
     let (field, field_name) = match ast["type"]["qualType"].as_str() {
         Some("int (struct flb_input_chunk *)") => (ChunkSourceField::Busy, "busy"),
@@ -375,6 +589,8 @@ fn derive_summary(
             .ok_or("missing parameter identity")?,
         field_name,
         used_field: false,
+        helpers,
+        dependencies: BTreeMap::new(),
     };
     let statement = importer.statement(body, 0)?;
     if !importer.used_field {
@@ -387,6 +603,7 @@ fn derive_summary(
             return_value: 0,
             branches: Vec::new(),
             writes: Vec::new(),
+            frame_writes: Vec::new(),
         };
         path.return_value = statement
             .execute(&mut path)?
@@ -398,6 +615,7 @@ fn derive_summary(
         source_revision: source_revision.to_owned(),
         field,
         paths: [evaluate(false)?, evaluate(true)?],
+        dependencies: importer.dependencies,
     })
 }
 

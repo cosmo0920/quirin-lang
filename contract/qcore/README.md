@@ -125,3 +125,27 @@ writes the same inputs to `RESOURCE_REPORT.contracts.json` alongside a requested
 resource inventory; its optional sixth positional argument overrides the module
 selection manifest. Missing or unloadable input terminates the audit as an
 error, without reporting a safety result from a default environment.
+
+## Source-validated chunk helper dependencies
+
+The bounded chunk-field importer can compose a helper only after independently
+checking its complete body as constant writes to ordinary int metadata fields,
+with a matching external declaration, matching direct record field layout, and
+the same borrowed parameter identity. The pinned audit supplies the source,
+build and cross-unit ABI identity; the importer does not prove linker resolution
+or complete ABI equivalence. Helper source text travels in the field summary
+and native contract certificate. This is a bounded dependency check, not general
+SCC/fixed-point custody inference.
+
+`chunkio/lock_state.qcore` now includes `cio_chunk_unlock`. Its `field_error_n`
+postcondition checks the source-validated `cio_error_reset` write on both exits.
+Every helper-written field requires a `field_NAME` postcondition; absent or
+unsupported ghost values reject the contract. Const borrows reject helper writes
+as well as direct field writes. `ChunkState` models busy/lock lifecycle effects;
+metadata writes remain in the source paths and native contract result.
+
+When a resource inventory path is supplied, the pinned audit also writes
+`RESOURCE_REPORT.chunk-contracts.json`, containing all 96 selected native
+chunk-function results, exact checked QCore contracts and dependency sources.
+Unknown results remain in that inventory. The generic resource report and its
+Safe/Unsafe/Unknown classifications are separate and unchanged by these checks.

@@ -509,3 +509,16 @@ Lean control theorems and 337 workspace tests pass along with formatting,
 Clippy, Lean audit and the pinned external audit. Resource inventory and callback
 summaries are unchanged. Terminal paths do not claim teardown, and source
 projections do not close the remaining custody or composition gates.
+
+## Source-validated ChunkIO helper composition (2026-09-06)
+
+The [chunk helper report](../reports/cycle19-chunk-helper/README.md) records a
+checked `cio_chunk_unlock` contract composed with the actual `cio_error_reset`
+body. The helper's metadata write and exact source are retained, local helper
+shadowing and unsupported effects reject composition, and the contract checks
+all four busy/lock pre-states. The new sidecar inventories all 96 selected
+functions: three checked field contracts and 93 Unknown. Five new Lean theorems
+and all 340 Rust tests pass, along with formatting, Clippy, Lean build/audit and
+the pinned audit. Generic resource inventory and Monkey source reports remain
+identical. Cross-unit source/build/ABI and caller identity remain explicit
+premises; full 19B–19E custody, lifecycle and event composition remain open.

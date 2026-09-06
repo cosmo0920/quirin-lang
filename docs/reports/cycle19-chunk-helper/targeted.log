@@ -1,0 +1,65 @@
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.42s
+     Running unittests src/lib.rs (target/debug/deps/qcore_compiler-cb674beb6e2ac3af)
+
+running 10 tests
+test verifier_plugins::chunkio::chunk_source::tests::releasing_wrapper_busy_does_not_discharge_chunkio_lock ... ok
+test verifier_plugins::chunkio::chunk_source::tests::typed_ast_preserves_else_and_ordered_writes ... ok
+test verifier_plugins::chunkio::chunk_source::tests::derives_both_returns_and_instantiates_the_actual_identity ... ok
+test verifier_plugins::chunkio::chunk_source::tests::exact_ast_definition_selection_does_not_confuse_name_prefixes ... ok
+test verifier_plugins::chunkio::chunk_source::tests::source_configuration_and_parameter_qualifiers_are_not_erased ... ok
+test verifier_plugins::chunkio::chunk_source::tests::bitfields_and_volatile_members_cannot_receive_boolean_field_summaries ... ok
+test verifier_plugins::chunkio::chunk_source::tests::helper_dependencies_reject_layout_duplicates_and_wrong_pointer_binding ... ok
+test verifier_plugins::chunkio::chunk_source::tests::validated_frame_helper_connects_unlock_to_identity_and_native_contract ... ok
+test verifier_plugins::chunkio::chunk_source::tests::helper_import_rejects_hidden_effects_aliasing_and_nonconstant_writes ... ok
+test verifier_plugins::chunkio::chunk_source::tests::rejects_unmodeled_effects_even_on_unexecuted_paths ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 284 filtered out; finished in 1.28s
+
+     Running unittests src/main.rs (target/debug/deps/qcorec-55c80663a37f2c9c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contract_loader.rs (target/debug/deps/contract_loader-47230a52bbe0ea9d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-9423f79292664fed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.00s
+
+     Running tests/libevent_submodule.rs (target/debug/deps/libevent_submodule-5872b7ce3ba69b74)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/module_modes.rs (target/debug/deps/module_modes-1c5caaddf373907d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-c55dbc7f65336f3e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quant_index_contracts.rs (target/debug/deps/quant_index_contracts-b2b0885bfedfb092)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/toolchain_compatibility.rs (target/debug/deps/toolchain_compatibility-0fa9939fdf3d859d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s

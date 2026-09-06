@@ -15,6 +15,7 @@ pub struct ChunkContractCertificate {
     function: String,
     contract_source: String,
     checked_states: usize,
+    dependency_sources: BTreeMap<String, String>,
 }
 
 impl ChunkContractCertificate {
@@ -28,6 +29,10 @@ impl ChunkContractCertificate {
 
     pub fn checked_states(&self) -> usize {
         self.checked_states
+    }
+
+    pub fn dependency_sources(&self) -> &BTreeMap<String, String> {
+        &self.dependency_sources
     }
 }
 
@@ -82,7 +87,12 @@ pub fn check_chunk_source_contract(
     {
         return Err("QCore parameter does not match the C chunk field profile".into());
     }
-    if mode == "const" && summary.paths().iter().any(|path| !path.writes.is_empty()) {
+    if mode == "const"
+        && summary
+            .paths()
+            .iter()
+            .any(|path| !path.writes.is_empty() || !path.frame_writes.is_empty())
+    {
         return Err("C source writes through a const QCore borrow".into());
     }
     let arrow = declaration
@@ -160,18 +170,33 @@ pub fn check_chunk_source_contract(
         return Err("contract must constrain result and both exit fields".into());
     }
     for path in summary.paths() {
+        let mut frame_values = BTreeMap::new();
+        for (field, number) in &path.frame_writes {
+            let name = format!("field_{field}");
+            if !variables.contains(&name) {
+                return Err(format!(
+                    "contract must constrain helper-written field {name}"
+                ));
+            }
+            frame_values.insert(name, i64::from(*number));
+        }
         for other in [false, true] {
             let (old_busy, old_lock, busy, lock) = match summary.field() {
                 ChunkSourceField::Busy => (path.initial_value, other, path.final_value, other),
                 ChunkSourceField::Locked => (other, path.initial_value, other, path.final_value),
             };
-            let values = BTreeMap::from([
+            let mut values = BTreeMap::from([
                 ("old_busy", i64::from(old_busy)),
                 ("old_lock", i64::from(old_lock)),
                 ("busy", i64::from(busy)),
                 ("lock", i64::from(lock)),
                 ("result", i64::from(path.return_value)),
             ]);
+            values.extend(
+                frame_values
+                    .iter()
+                    .map(|(name, number)| (name.as_str(), *number)),
+            );
             for (source, predicate) in &postconditions {
                 if predicate.evaluate(&values)? == 0 {
                     return Err(format!(
@@ -191,6 +216,7 @@ pub fn check_chunk_source_contract(
         function: summary.function().to_owned(),
         contract_source: contract_source.to_owned(),
         checked_states: 4,
+        dependency_sources: summary.dependencies().clone(),
     })
 }
 
@@ -314,7 +340,7 @@ impl PredicateParser<'_> {
                 if matches!(
                     name.as_str(),
                     "old_busy" | "old_lock" | "busy" | "lock" | "result"
-                ) =>
+                ) || name.starts_with("field_") =>
             {
                 self.variables.insert(name.clone());
                 Ok(Predicate::Variable(name.clone()))

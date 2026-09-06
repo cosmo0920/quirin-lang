@@ -1,0 +1,15 @@
+{
+  "resource_inventory_byte_identical": true,
+  "resource_inventory_sha256": "d06fd972d9d328de794196a50a380b3ce7513a79767de9ec746fc788a4a07035",
+  "monkey_source_report_byte_identical": true,
+  "workspace_tests_passed": 340,
+  "native_chunk_functions": 96,
+  "checked_before": 2,
+  "checked_after": 3,
+  "unknown_after": 93,
+  "checked_functions": [
+    "cio_chunk_is_locked",
+    "cio_chunk_unlock",
+    "flb_input_chunk_release_lock"
+  ]
+}

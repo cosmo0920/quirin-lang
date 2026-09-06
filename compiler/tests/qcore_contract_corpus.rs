@@ -24,6 +24,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         7,
     ),
     ("chunkio/lock_state.qcore", "cio_chunk_is_locked", 7),
+    ("chunkio/lock_state.qcore", "cio_chunk_unlock", 8),
     ("chunkio/resource_open_close.qcore", "cio_chunk_open", 8),
     ("chunkio/resource_open_close.qcore", "cio_chunk_close", 4),
     ("chunkio/stream_destructor.qcore", "cio_stream_destroy", 6),
