@@ -1,0 +1,26 @@
+{
+  "baseline": "0d344b4",
+  "workspace_tests": 686,
+  "provider_tests": 9,
+  "python_tests": 43,
+  "lean_audits": 20,
+  "task_execution_theorems": 49,
+  "standing_gate": "passed",
+  "ct_mapped": 7,
+  "ct_unmapped": 43,
+  "new_ct_mapping": "CT13 Linux explicit creation recovery and retained sibling start record",
+  "source_execution_profile": "source.tasks.copy.v1 / ScopedCopyTasksV1",
+  "native_target": "Linux C11 threads",
+  "sanitizers": "ASan/UBSan/LSan passed for normal and second-create failure outside tracing; environmental traced failures retained in sanitizer-results.json",
+  "full_185_audit": "all four outputs byte-identical; no raw promotions",
+  "full_language_conformance": false,
+  "remaining": [
+    "move/loan captures and usage/SSA rollback",
+    "owned result payloads",
+    "shared memory and mutexes",
+    "nested workers and general control flow",
+    "entry-free task modules",
+    "other native platforms",
+    "source/Rust/Lean/C refinement"
+  ]
+}

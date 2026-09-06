@@ -220,7 +220,8 @@ CT02/CT12/CT16 are mapped as sequential-core fixtures. Batch 2
 ([record](docs/reports/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
 records the full triage of all 47 then-unmapped cases. The later
 [native task increment](docs/reports/w6-native-source-tasks/README.md) maps CT15
-and upgrades CT19 to actual task source; 44 of 50 remain unmapped. W4 is
+and upgrades CT19 to actual task source; [explicit recovery](docs/reports/w6-task-recovery/README.md)
+adds CT13, leaving 43 of 50 unmapped. W4 is
 executed for parameter/return custody with validation
 ([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
 infers each internal function's parameter and return custody summary bottom-up
@@ -517,6 +518,9 @@ survive until creator join; unexpected join failure aborts before reclamation.
 `CompiledModule.checked` explicitly separates sequential and task evidence.
 CT15 now maps actual native join failure with a successful join/free control;
 CT19 uses a real second-spawn failure rejection and joined-sibling control.
-Coverage is 6/50 mapped, 44 unmapped. Moves/loans, owned results, shared memory,
-mutexes, nested workers, sibling recovery and other platforms remain open.
-Evidence: `docs/reports/w6-native-source-tasks/README.md`.
+Explicit Result handlers now recover from failed creation while preserving and
+joining prior siblings; join handlers preserve exact worker errors. CT13 maps
+real Linux success, first/second-create failure and join-before-free controls.
+Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
+mutexes, nested workers, general control flow and other platforms remain open.
+Evidence: `docs/reports/w6-task-recovery/README.md`.

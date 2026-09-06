@@ -291,3 +291,126 @@ fn unsupported_native_target_rejects_explicitly() {
         "{errors:?}"
     );
 }
+
+#[test]
+#[cfg(target_os = "linux")]
+fn explicit_creation_recovery_joins_prior_sibling_on_each_dynamic_outcome() {
+    let source = include_str!("fixtures/ct/CT13/case.qcore");
+    let (module, output) = native(source, None);
+    assert_eq!(
+        matches_reference(&module, &output, vec![true, true]),
+        TaskOutcome::I32(7)
+    );
+    let header = r#"
+#include <threads.h>
+static int count;
+static int fail_second(thrd_t *thread, thrd_start_t worker, void *arg) {
+    if (++count == 2) return thrd_error;
+    return thrd_create(thread, worker, arg);
+}
+#define QCORE_TASK_CREATE fail_second
+"#;
+    let (module, output) = native(source, Some(header));
+    assert_eq!(
+        matches_reference(&module, &output, vec![true, false]),
+        TaskOutcome::I32(42)
+    );
+    let text = String::from_utf8(output.stdout).unwrap();
+    assert!(text.contains("QCORE_TASK_JOIN 1\n"));
+    assert!(!text.contains("QCORE_TASK_SPAWN 2 "));
+    let rethrow = source.replace("return first_result;", "raise failure;");
+    let (module, output) = native(&rethrow, Some(header));
+    assert_eq!(
+        matches_reference(&module, &output, vec![true, false]),
+        TaskOutcome::Error("SpawnError".into())
+    );
+}
+
+#[test]
+fn failed_creation_handler_cannot_drop_an_existing_sibling() {
+    let errors = compile_files(
+        &[SourceFile::new(
+            "unjoined-recovery.qcore",
+            include_str!("fixtures/ct/CT13/unjoined_failure.qcore"),
+        )],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.code == "Q600" && error.message.contains("ScopeBusy")),
+        "{errors:?}"
+    );
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+fn result_handlers_collect_siblings_before_rethrowing_exact_worker_errors() {
+    let direct = r#"
+concurrency checked;
+error WorkerFailure { First; Second; }
+fn worker(x: i32) -> i32 { return x; }
+fn failing() -> i32 effects { throws<WorkerFailure> } { raise WorkerFailure::Second; }
+fn main() -> i32 effects { throws<SpawnError>, throws<WorkerFailure>, spawn, join, may_block } {
+    let x = 42;
+    thread scope s {
+        let first = spawn s worker(copy x)?;
+        match spawn s failing() {
+            Result::Ok { value: second } => {
+                match join move second {
+                    Result::Ok { value: value } => {
+                        let saved = join move first?;
+                        return value;
+                    }
+                    Result::Err { error: worker_error } => {
+                        let saved = join move first?;
+                        raise worker_error;
+                    }
+                }
+            }
+            Result::Err { error: creation } => {
+                let saved = join move first?;
+                raise creation;
+            }
+        }
+    }
+}
+"#;
+    for source in [
+        direct.to_owned(),
+        direct.replace(
+            "match join move second {",
+            "let collected = join move second; match collected {",
+        ),
+    ] {
+        let (module, output) = native(&source, None);
+        assert_eq!(
+            matches_reference(&module, &output, vec![true, true]),
+            TaskOutcome::Error("WorkerFailure::Second".into())
+        );
+        let transcript = String::from_utf8(output.stdout).unwrap();
+        assert!(transcript.contains("QCORE_TASK_JOIN 2\n"));
+        assert!(transcript.contains("QCORE_TASK_JOIN 1\n"));
+    }
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+fn second_start_allocation_failure_preserves_the_prior_native_task() {
+    let header = r#"
+#include <stdlib.h>
+static int allocations;
+static void *fail_second_allocation(size_t n, size_t size) {
+    if (++allocations == 2) return NULL;
+    return calloc(n, size);
+}
+#define QCORE_TASK_CALLOC fail_second_allocation
+"#;
+    let (module, output) = native(include_str!("fixtures/ct/CT13/case.qcore"), Some(header));
+    assert_eq!(
+        matches_reference(&module, &output, vec![true, false]),
+        TaskOutcome::I32(42)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_JOIN 1\n"));
+}

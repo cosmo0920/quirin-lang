@@ -470,3 +470,198 @@ fn finite_outcome_exploration_exhaustion_rejects_instead_of_sampling_success() {
         "{errors:?}"
     );
 }
+
+fn infallible_module() -> TaskModule {
+    use TaskInstructionKind as I;
+    let mut input = module(None);
+    let main = input.functions.get_mut(&0).unwrap();
+    let joined = main.blocks.get_mut(&1).unwrap();
+    joined.instructions.extend([
+        instruction(I::UnwrapInfallible {
+            result_slot: 2,
+            value_slot: 3,
+        }),
+        instruction(I::ExitScope { scope: 1 }),
+    ]);
+    joined.terminator.kind = TaskTerminatorKind::Return {
+        value: ScalarOperand::Slot(3),
+    };
+    main.blocks.remove(&3);
+    main.blocks.remove(&4);
+    input
+}
+
+#[test]
+fn infallible_result_extraction_keeps_an_existing_sibling_live_until_explicit_join() {
+    use TaskInstructionKind as I;
+    use TaskTerminatorKind as T;
+    let mut input = infallible_module();
+    let main = input.functions.get_mut(&0).unwrap();
+    let T::TrySpawn { success, .. } = &mut main.blocks.get_mut(&0).unwrap().terminator.kind else {
+        unreachable!()
+    };
+    *success = 5;
+    main.blocks.insert(
+        5,
+        block(
+            vec![],
+            T::TrySpawn {
+                scope: 1,
+                worker: 1,
+                arguments: vec![ScalarOperand::I32(7)],
+                handle_slot: 10,
+                success: 6,
+                spawn_error: 1,
+            },
+        ),
+    );
+    main.blocks.insert(
+        6,
+        block(
+            vec![
+                I::Join {
+                    handle: 10,
+                    outcome_slot: Some(11),
+                },
+                I::UnwrapInfallible {
+                    result_slot: 11,
+                    value_slot: 12,
+                },
+            ],
+            T::Goto { target: 1 },
+        ),
+    );
+    let checked = check_task_module(&input).unwrap();
+    let observed = execute_task_module(&checked, &TaskExecutionScript::default()).unwrap();
+    assert_eq!(observed.root_outcome, TaskOutcome::I32(-42));
+    assert_eq!(observed.tasks[2].outcome, TaskOutcome::I32(7));
+    assert_eq!(
+        render_task_observation(&observed),
+        "QCORE_TASK_SPAWN 1 1\nQCORE_TASK_SPAWN 2 1\nQCORE_TASK_RESULT 2 I32 7\nQCORE_TASK_JOIN 2\nQCORE_TASK_RESULT 1 I32 -42\nQCORE_TASK_JOIN 1\nQCORE_TASK_RESULT 0 I32 -42\n"
+    );
+    let failure = execute_task_module(
+        &checked,
+        &TaskExecutionScript {
+            spawn_outcomes: vec![true, false],
+        },
+    )
+    .unwrap();
+    assert_eq!(failure.root_outcome, TaskOutcome::I32(-42));
+    assert_eq!(failure.tasks.len(), 2);
+    assert!(failure.tasks[1].joined);
+    // The later explicit first join is necessary: extraction cannot quietly
+    // discharge it, even though the second result has no error alternative.
+    let main = input.functions.get_mut(&0).unwrap();
+    main.blocks.get_mut(&1).unwrap().instructions.clear();
+    main.blocks
+        .get_mut(&1)
+        .unwrap()
+        .instructions
+        .push(instruction(I::ExitScope { scope: 1 }));
+    main.blocks.get_mut(&1).unwrap().terminator.kind = T::Return {
+        value: ScalarOperand::I32(0),
+    };
+    let errors = check_task_module(&input).unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.message.contains("ScopeBusy")),
+        "{errors:?}"
+    );
+}
+
+#[test]
+fn infallible_extraction_rejects_error_rows_consumed_or_wrong_slots_and_type_mismatch() {
+    use TaskInstructionKind as I;
+    for mutation in 0..8 {
+        let mut input = infallible_module();
+        match mutation {
+            // A worker may currently return normally while its declared row
+            // still permits an error. Only the declared empty row suffices.
+            0 => {
+                input
+                    .functions
+                    .get_mut(&1)
+                    .unwrap()
+                    .errors
+                    .insert("Worker::Maybe".into());
+            }
+            1 => input
+                .functions
+                .get_mut(&0)
+                .unwrap()
+                .blocks
+                .get_mut(&1)
+                .unwrap()
+                .instructions
+                .insert(
+                    2,
+                    instruction(I::UnwrapInfallible {
+                        result_slot: 2,
+                        value_slot: 8,
+                    }),
+                ),
+            2..=4 => {
+                input
+                    .functions
+                    .get_mut(&0)
+                    .unwrap()
+                    .blocks
+                    .get_mut(&1)
+                    .unwrap()
+                    .instructions[1]
+                    .kind = I::UnwrapInfallible {
+                    result_slot: [0, 1, 99][mutation - 2],
+                    value_slot: 3,
+                };
+            }
+            5 => {
+                input
+                    .functions
+                    .get_mut(&0)
+                    .unwrap()
+                    .blocks
+                    .get_mut(&1)
+                    .unwrap()
+                    .instructions[1]
+                    .kind = I::UnwrapInfallible {
+                    result_slot: 2,
+                    value_slot: 2,
+                };
+            }
+            6 => input.functions.get_mut(&0).unwrap().result = ScalarType::Unit,
+            7 => input
+                .functions
+                .get_mut(&0)
+                .unwrap()
+                .blocks
+                .get_mut(&2)
+                .unwrap()
+                .instructions
+                .insert(
+                    0,
+                    instruction(I::UnwrapInfallible {
+                        result_slot: 2,
+                        value_slot: 9,
+                    }),
+                ),
+            _ => unreachable!(),
+        }
+        assert!(check_task_module(&input).is_err(), "mutation {mutation}");
+    }
+}
+
+#[test]
+fn infallible_unit_result_preserves_unit_type_and_reference_value() {
+    let mut input = infallible_module();
+    input.functions.get_mut(&0).unwrap().result = ScalarType::Unit;
+    let worker = input.functions.get_mut(&1).unwrap();
+    worker.result = ScalarType::Unit;
+    worker.blocks.get_mut(&0).unwrap().terminator.kind = TaskTerminatorKind::Return {
+        value: ScalarOperand::Unit,
+    };
+    let checked = check_task_module(&input).unwrap();
+    let observed = execute_task_module(&checked, &TaskExecutionScript::default()).unwrap();
+    assert_eq!(observed.root_outcome, TaskOutcome::Unit);
+    assert_eq!(observed.tasks[1].outcome, TaskOutcome::Unit);
+}

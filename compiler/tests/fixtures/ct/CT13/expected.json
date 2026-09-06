@@ -1,0 +1,23 @@
+{
+  "id": "CT13",
+  "verdict": "native_create_recovery",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "native_create_recovery": {
+    "header": "create_failure.h",
+    "unjoined_source": "unjoined_failure.qcore",
+    "success_i32": 7,
+    "recovery_i32": 42
+  },
+  "notes": "Linux scoped-copy source recovery. First creation succeeds and second creation can fail dynamically; the explicit Err arm joins the exact first native thread before returning its copied value. Successful control joins both children; initial failure creates no child. Runtime adapters inject failures without source success flags. The matching source failure arm without its first join rejects at Q600 ScopeBusy. No move/loan/SSA capture restoration or full native refinement is claimed. Other hosts verify the supported-target rejection and report native/reference evidence unexecuted there."
+}

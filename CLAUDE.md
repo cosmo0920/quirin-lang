@@ -287,6 +287,9 @@ survive until creator join; unexpected join failure aborts before reclamation.
 `CompiledModule.checked` explicitly separates sequential and task evidence.
 CT15 now maps actual native join failure with a successful join/free control;
 CT19 uses a real second-spawn failure rejection and joined-sibling control.
-Coverage is 6/50 mapped, 44 unmapped. Moves/loans, owned results, shared memory,
-mutexes, nested workers, sibling recovery and other platforms remain open.
-Evidence: `docs/reports/w6-native-source-tasks/README.md`.
+Explicit Result handlers now recover from failed creation while preserving and
+joining prior siblings; join handlers preserve exact worker errors. CT13 maps
+real Linux success, first/second-create failure and join-before-free controls.
+Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
+mutexes, nested workers, general control flow and other platforms remain open.
+Evidence: `docs/reports/w6-task-recovery/README.md`.

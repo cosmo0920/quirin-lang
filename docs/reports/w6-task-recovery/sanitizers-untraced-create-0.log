@@ -1,0 +1,16 @@
+command: ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/qcore-task-recovery-sanitizers/ct13-fail-0
+exit_code=0
+combined tool output:
+CREATE_OK:1
+CREATE_OK:2
+JOIN_OK:2
+FREE
+JOIN_OK:1
+FREE
+QCORE_TASK_SPAWN 1 0
+QCORE_TASK_SPAWN 2 0
+QCORE_TASK_RESULT 2 I32 7
+QCORE_TASK_JOIN 2
+QCORE_TASK_RESULT 1 I32 42
+QCORE_TASK_JOIN 1
+QCORE_TASK_RESULT 0 I32 7

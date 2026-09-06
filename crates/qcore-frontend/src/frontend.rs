@@ -16,6 +16,13 @@ pub use tasks::{
     SourceTaskCapture, SourceTaskExpression, SourceTaskExpressionKind,
 };
 
+#[path = "frontend_result_match.rs"]
+mod result_match;
+pub use result_match::{
+    ResolvedResultMatch, ResolvedResultMatchArm, ResolvedResultMatchScrutinee, ResultPatternKind,
+    SourceResultMatch, SourceResultMatchArm, SourceResultPattern,
+};
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -250,11 +257,17 @@ pub struct SourceProgram {
     source: String,
     lexical_tokens: Vec<Token>,
     task_expressions: Vec<SourceTaskExpression>,
+    result_matches: Vec<SourceResultMatch>,
     tokens: Vec<TokenKind>,
     pub declarations: Vec<Located<SourceDeclaration>>,
 }
 
 impl SourceProgram {
+    /// Full match syntax with optional exact builtin Result-pattern recognition.
+    pub fn result_matches(&self) -> &[SourceResultMatch] {
+        &self.result_matches
+    }
+
     /// Parsed task syntax only; executable checking remains a separate gate.
     pub fn task_expressions(&self) -> &[SourceTaskExpression] {
         &self.task_expressions
@@ -421,8 +434,10 @@ impl<'a> SourceParser<'a> {
             cursor = next;
         }
         let task_expressions = tasks::parse_inventory(&self, &declarations)?;
+        let result_matches = result_match::parse_inventory(&self, &declarations)?;
         Ok(SourceProgram {
             task_expressions,
+            result_matches,
             mode,
             mode_span,
             source: self.source.to_owned(),
@@ -1533,6 +1548,8 @@ pub struct TypedBinding {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TypedStatement {
+    /// Structured arm-local names; not evidence of result typing/exhaustiveness.
+    pub result_match: Option<ResolvedResultMatch>,
     /// Identity introduced by this statement, after its initializer resolves.
     /// Assignments retain the existing identity and introduce no new binding.
     pub binding: Option<SymbolId>,
@@ -1702,6 +1719,16 @@ pub fn elaborate_source(
             let mut forbidden_names = forbidden_names.clone();
             if let Some(body) = &declaration.value.body {
                 visible_local_names(body, source_type.span.start, &mut forbidden_names);
+                for syntax in program.result_matches() {
+                    for arm in &syntax.arms {
+                        if arm.body.span.start <= source_type.span.start
+                            && source_type.span.start < arm.body.span.end
+                            && let Some(pattern) = &arm.pattern
+                        {
+                            forbidden_names.insert(pattern.binding.value.clone());
+                        }
+                    }
+                }
             }
             match crate::quant_index::resolve_quant_index_type(
                 source_type,
@@ -1834,18 +1861,63 @@ fn elaborate_block(
             (name, thread_scope, symbol)
         });
         let mut nested = Vec::new();
-        for child in statement.value.nested_blocks() {
-            nested.extend(elaborate_block(
-                child,
-                scopes,
-                globals,
-                context,
-                next_symbol,
-                diagnostics,
-                body_binding,
-            ));
-        }
+        let match_syntax = context
+            .program
+            .result_matches()
+            .iter()
+            .find(|syntax| syntax.span == statement.span)
+            .cloned();
+        let resolved_match = if let Some(syntax) = match_syntax {
+            // Resolve the scrutinee in the enclosing environment before any arm
+            // binder exists. Arm scopes and identities are mutually isolated.
+            let scrutinee =
+                result_match::resolve_scrutinee(&syntax, &task_expressions, scopes, globals);
+            let mut arms = Vec::new();
+            for arm in &syntax.arms {
+                let arm_binding = arm.pattern.as_ref().map(|pattern| {
+                    let symbol = SymbolId(*next_symbol);
+                    *next_symbol += 1;
+                    (pattern.binding.value.as_str(), false, symbol)
+                });
+                let statements = elaborate_block(
+                    &arm.body,
+                    scopes,
+                    globals,
+                    context,
+                    next_symbol,
+                    diagnostics,
+                    arm_binding,
+                );
+                let start = nested.len();
+                nested.extend(statements);
+                let statement_range = start..nested.len();
+                arms.push(ResolvedResultMatchArm {
+                    syntax: arm.clone(),
+                    binding: arm_binding.map(|(_, _, symbol)| symbol),
+                    statement_range,
+                });
+            }
+            Some(ResolvedResultMatch {
+                syntax,
+                scrutinee,
+                arms,
+            })
+        } else {
+            for child in statement.value.nested_blocks() {
+                nested.extend(elaborate_block(
+                    child,
+                    scopes,
+                    globals,
+                    context,
+                    next_symbol,
+                    diagnostics,
+                    body_binding,
+                ));
+            }
+            None
+        };
         typed.push(TypedStatement {
+            result_match: resolved_match,
             binding: binding_symbol,
             body_binding: body_binding.map(|(_, _, symbol)| symbol),
             task_expressions,

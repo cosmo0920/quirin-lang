@@ -35,7 +35,8 @@ fn scalar_copy_source_lowers_to_dynamic_creation_and_explicit_collection() {
     assert!(
         main.blocks
             .values()
-            .any(|b| matches!(b.terminator.kind, TaskTerminatorKind::TryOutcome { .. }))
+            .flat_map(|b| &b.instructions)
+            .any(|i| matches!(i.kind, TaskInstructionKind::UnwrapInfallible { .. }))
     );
     assert!(
         main.blocks

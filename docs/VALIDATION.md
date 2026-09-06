@@ -34,7 +34,7 @@ compile database without temporary source/include dependencies.
 Per-change execution logs live under `docs/reports/`. The r0.3 acceptance ledger
 links the new semantic repairs after their gates pass. Mapped CT stages, model
 proofs, source projections, native observations and provider certificates remain
-separate evidence categories. Five of 50 CT cases are mapped; no raw Cycle19
+separate evidence categories. Seven of 50 CT cases are mapped; no raw Cycle19
 unit is promoted by documentation or build success.
 
 The [combined revision integration](reports/r03-integration/README.md) records
@@ -109,3 +109,11 @@ One native copy fixture passes ASan/UBSan/LSan outside the tracing sandbox.
 CT15 is newly mapped with target-specific stages; CT19 now uses actual sibling
 failure source. Coverage is 6/50 mapped, 44 unmapped. All four full 185-unit
 audit outputs are byte-identical; raw verdicts remain unchanged.
+
+[Explicit task recovery](reports/w6-task-recovery/README.md) passes 686 workspace
+tests, nine provider tests, 43 Python tests and every standing/Lean gate, with
+20 axiom audit modules. Result handlers preserve prior siblings and exact worker
+errors. CT13 maps actual Linux creation recovery with retained-storage checks;
+coverage is 7/50 mapped, 43 unmapped. Normal and second-create failure controls
+pass ASan/UBSan/LSan outside tracing; environmental tracing failures are archived.
+All four full 185-unit audit outputs remain byte-identical with no promotions.

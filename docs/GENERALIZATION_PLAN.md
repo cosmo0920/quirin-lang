@@ -491,7 +491,7 @@ and retains direct evaluation until broader composition parity is established.
 second-codebase fixture and pinned parity. The sequential/concurrent kernel,
 chunk lifecycle and generic loop/ledger checks reside in core; whole-program
 checking resides in frontend. Declared chunk-path evaluation is in contract,
-with portable schema0.2.0 records and an opaque source-import boundary.
+with portable schema1.0.0 records and an opaque source-import boundary.
 Five standalone schema-only executables now reproduce the built-in v1 Unknown
 responses and reject malformed requests. ChunkIO 0.3.0 now computes bounded
 Boolean-field witnesses from typed statement inputs through v2; other v2
@@ -565,8 +565,10 @@ checked owned-resource reservation/completion/join ledger with Lean transfer
 proofs. [Native source tasks](reports/w6-native-source-tasks/README.md) now
 compose typed task/result IR and real Linux C11 create/join for scalar copies,
 with explicit checked failure paths. CT15 is newly mapped and CT19 upgraded
-to actual source; 6/50 mapped, 44 unmapped. Loans, move captures, usage/SSA
-rollback, typed owned results, sibling recovery and other platforms remain open.
+to actual source. [Result recovery](reports/w6-task-recovery/README.md) adds
+explicit spawn/join handlers and CT13 sibling recovery with native storage
+checks; 7/50 mapped, 43 unmapped. Loans, move captures, usage/SSA rollback,
+typed owned results, general control flow and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to
 the spec's own generic conformance corpus, so "generic" is measured, not

@@ -30,7 +30,7 @@ use serde::Deserialize;
 
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
-const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT15", "CT16", "CT19", "CT37"];
+const MAPPED_CASES: &[&str] = &["CT02", "CT12", "CT13", "CT15", "CT16", "CT19", "CT37"];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parser",
@@ -84,7 +84,18 @@ struct ExpectedCase {
     #[serde(default)]
     native_join_failure: Option<NativeJoinFailure>,
     #[serde(default)]
+    native_create_recovery: Option<NativeCreateRecovery>,
+    #[serde(default)]
     positive_control: Option<PositiveControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeCreateRecovery {
+    header: String,
+    unjoined_source: String,
+    success_i32: i32,
+    recovery_i32: i32,
 }
 
 #[derive(Deserialize)]
@@ -180,8 +191,13 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert_eq!(
+        expected.native_create_recovery.is_some(),
+        expected.verdict == "native_create_recovery"
+    );
+    assert_eq!(
         expected.evidence_target.as_deref(),
-        expected.native_join_failure.as_ref().map(|_| "linux"),
+        (expected.native_join_failure.is_some() || expected.native_create_recovery.is_some())
+            .then_some("linux"),
         "{}: only the native fault mode carries target-scoped evidence",
         case.id
     );
@@ -196,6 +212,15 @@ fn run_mapped_case(case: &ManifestCase) {
         assert_eq!(native.header, "join_failure.h");
         assert_eq!(native.abort_exit_code, 77);
         required_files.insert(native.header.clone());
+    }
+    if let Some(native) = &expected.native_create_recovery {
+        assert_eq!(case.id, "CT13");
+        assert_eq!(native.header, "create_failure.h");
+        assert_eq!(native.unjoined_source, "unjoined_failure.qcore");
+        assert_eq!(native.success_i32, 7);
+        assert_eq!(native.recovery_i32, 42);
+        required_files.insert(native.header.clone());
+        required_files.insert(native.unjoined_source.clone());
     }
     if let Some(control) = &expected.positive_control {
         assert_eq!(control.source, "joined_sibling.qcore");
@@ -263,7 +288,7 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     let allowed_stages: BTreeSet<&str> = match expected.verdict.as_str() {
-        "native_join_failure" => [
+        "native_join_failure" | "native_create_recovery" => [
             "parser",
             "type_checker",
             "reference_execution",
@@ -319,6 +344,14 @@ fn run_mapped_case(case: &ManifestCase) {
         run_positive_control(&directory, control);
     }
     match expected.verdict.as_str() {
+        "native_create_recovery" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none()
+            );
+            run_native_create_recovery(&directory, &expected, result);
+        }
         "native_join_failure" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -526,8 +559,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 6 of 50 CT cases are mapped
-/// as executed source-level tests; 44 remain unmapped. CT15 native evidence is Linux-scoped. This test exists so the
+/// The moving count is the W6 genericity metric: 7 of 50 CT cases are mapped
+/// as executed source-level tests; 43 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
@@ -684,11 +717,23 @@ fn run_native_join_failure(
 }
 
 fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process::Output {
+    native_fault_run(
+        source,
+        header,
+        if fail_join {
+            "-DQCORE_CT_FAIL_JOIN=1"
+        } else {
+            "-DQCORE_CT_FAIL_JOIN=0"
+        },
+    )
+}
+
+fn native_fault_run(source: &str, header: &Path, define: &str) -> std::process::Output {
     use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
     let directory = std::env::temp_dir().join(format!(
-        "qcore-ct15-{}-{}",
+        "qcore-ct-native-{}-{}",
         std::process::id(),
         NEXT.fetch_add(1, Ordering::Relaxed)
     ));
@@ -699,11 +744,7 @@ fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process
     let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
     let compiled = Command::new(compiler)
         .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
-        .arg(if fail_join {
-            "-DQCORE_CT_FAIL_JOIN=1"
-        } else {
-            "-DQCORE_CT_FAIL_JOIN=0"
-        })
+        .arg(define)
         .arg("-include")
         .arg(header)
         .arg(&c_path)
@@ -713,11 +754,103 @@ fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process
         .unwrap();
     assert!(
         compiled.status.success(),
-        "CT15 emitted C failed: {} (artifact {})",
+        "CT emitted C failed: {} (artifact {})",
         String::from_utf8_lossy(&compiled.stderr),
         c_path.display()
     );
     let output = Command::new(&exe_path).output().unwrap();
     fs::remove_dir_all(directory).unwrap();
     output
+}
+
+fn run_native_create_recovery(
+    directory: &Path,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    use qcore_core::scoped_tasks::TaskOutcome;
+    use qcore_core::task_execution::{
+        TaskExecutionScript, execute_task_module, render_task_observation,
+    };
+    let native = expected.native_create_recovery.as_ref().unwrap();
+    // The corresponding failure arm that omits its join must reject at the
+    // task-state gate, not merely because matching syntax is unsupported.
+    let bad_path = directory.join(&native.unjoined_source);
+    let errors = compile_files(
+        &[SourceFile::new(
+            bad_path.to_string_lossy(),
+            fs::read_to_string(&bad_path).unwrap(),
+        )],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.code == "Q600" && error.message.contains("ScopeBusy")),
+        "{errors:?}"
+    );
+    if !cfg!(target_os = "linux") {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "CT13: source/core checked; Linux native/reference creation-recovery evidence unexecuted on this host"
+        );
+        return;
+    }
+    let module = result.expect("CT13 recovery source must check before fault injection");
+    let checked = module.checked.as_scoped_tasks().unwrap();
+    for (failed_create, decisions, outcome, children, stderr) in [
+        (
+            0,
+            vec![true, true],
+            TaskOutcome::I32(native.success_i32),
+            2,
+            "CREATE_OK:1\nCREATE_OK:2\nJOIN_OK:2\nFREE\nJOIN_OK:1\nFREE\n",
+        ),
+        (
+            1,
+            vec![false],
+            TaskOutcome::Error("SpawnError".into()),
+            0,
+            "CREATE_FAILED:1\nFREE\n",
+        ),
+        (
+            2,
+            vec![true, false],
+            TaskOutcome::I32(native.recovery_i32),
+            1,
+            "CREATE_OK:1\nCREATE_FAILED:2\nFREE\nJOIN_OK:1\nFREE\n",
+        ),
+    ] {
+        let reference = execute_task_module(
+            checked,
+            &TaskExecutionScript {
+                spawn_outcomes: decisions,
+            },
+        )
+        .unwrap();
+        assert_eq!(reference.root_outcome, outcome);
+        let actual_children = reference
+            .tasks
+            .iter()
+            .filter(|task| task.parent.is_some())
+            .collect::<Vec<_>>();
+        assert_eq!(actual_children.len(), children);
+        assert!(actual_children.iter().all(|task| task.joined));
+        let run = native_fault_run(
+            module.c_source.as_deref().unwrap(),
+            &directory.join(&native.header),
+            &format!("-DQCORE_CT_FAIL_CREATE={failed_create}"),
+        );
+        assert!(
+            run.status.success(),
+            "CT13 native mode {failed_create} failed: {run:?}"
+        );
+        assert_eq!(run.stdout, render_task_observation(&reference).as_bytes());
+        assert_eq!(
+            run.stderr,
+            stderr.as_bytes(),
+            "must join the exact earlier native thread after second creation failure"
+        );
+    }
 }

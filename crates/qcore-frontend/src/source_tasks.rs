@@ -336,6 +336,8 @@ enum ValueType {
         errors: BTreeSet<String>,
     },
     Scope,
+    KnownError(String),
+    Error(BTreeSet<String>),
 }
 
 /// Lower complete source syntax into task execution IR. This checks the source
@@ -543,6 +545,11 @@ fn next_temporary(function: &TypedSourceDeclaration) -> Result<usize, SourceDiag
                 s.binding
                     .into_iter()
                     .chain(s.body_binding)
+                    .chain(
+                        s.result_match
+                            .iter()
+                            .flat_map(|m| m.arms.iter().filter_map(|a| a.binding)),
+                    )
                     .map(|id| id.0 as usize)
                     .chain(std::iter::once(statement_max(&s.nested)))
                     .max()
@@ -776,6 +783,16 @@ impl<'a> Builder<'a> {
                 "propagated task errors are absent from the function's throws effects",
             ));
         }
+        if errors.is_empty() {
+            self.instruction(
+                span,
+                TaskInstructionKind::UnwrapInfallible {
+                    result_slot,
+                    value_slot,
+                },
+            );
+            return Ok(ValueType::Scalar(value));
+        }
         let success = self.block_id(span)?;
         let error_slot = self.temporary(span)?;
         let error = self.error_block(span, ErrorOperand::Slot(error_slot))?;
@@ -791,6 +808,265 @@ impl<'a> Builder<'a> {
         );
         self.current = success;
         Ok(ValueType::Scalar(value))
+    }
+
+    fn spawn_inputs(
+        &self,
+        span: Span,
+        scope: SymbolId,
+        worker: SymbolId,
+        captures: &[ResolvedTaskCapture],
+    ) -> Result<(u64, Vec<ScalarOperand>), SourceDiagnostic> {
+        if !self.signature.effects.spawn {
+            return Err(failure(
+                span,
+                SemanticPass::TypedErrors,
+                "spawn requires its declared effect",
+            ));
+        }
+        let scope_id = u64::from(scope.0);
+        if self.scopes.last() != Some(&scope_id) {
+            return Err(self.bad(span, "spawn requires the innermost active thread scope"));
+        }
+        let signature = self
+            .signatures
+            .get(&worker)
+            .ok_or_else(|| self.bad(span, "unknown source worker"))?;
+        if captures.len() != signature.parameters.len() {
+            return Err(self.bad(span, "worker capture arity mismatch"));
+        }
+        let mut arguments = Vec::new();
+        for capture in captures {
+            if capture.mode != SourceCaptureMode::Copy {
+                return Err(self.bad(capture.span, "move/read/write capture execution is not implemented in the copy-scalar profile"));
+            }
+            let (symbol, kind) = self.lookup_place(&capture.place)?;
+            if kind != ValueType::Scalar(Scalar::I32) {
+                return Err(failure(
+                    capture.span,
+                    SemanticPass::OrdinaryTypes,
+                    "copy captures require immutable i32 bindings",
+                ));
+            }
+            arguments.push(ScalarOperand::Slot(symbol.0 as usize));
+        }
+        Ok((scope_id, arguments))
+    }
+
+    fn result_match(
+        &mut self,
+        statement: &TypedStatement,
+        tokens: &[Token],
+    ) -> Result<bool, SourceDiagnostic> {
+        let span = statement.span;
+        let resolved = statement
+            .result_match
+            .as_ref()
+            .ok_or_else(|| self.bad(span, "missing resolved Result match metadata"))?;
+        let syntax = &resolved.syntax;
+        if syntax.span != span
+            || resolved.arms.len() != 2
+            || syntax.arms.len() != 2
+            || !word(tokens.first(), "match")
+            || tokens.get(1).map(|t| t.span.start) != Some(syntax.scrutinee_span.start)
+        {
+            return Err(self.bad(
+                span,
+                "Result match requires one complete scrutinee and exactly two canonical arms",
+            ));
+        }
+        let open = tokens
+            .iter()
+            .position(|t| t.span.start >= syntax.scrutinee_span.end)
+            .ok_or_else(|| self.bad(span, "missing Result match body"))?;
+        if open < 2
+            || tokens[open - 1].span.end != syntax.scrutinee_span.end
+            || matching(tokens, open, Symbol::LeftBrace, Symbol::RightBrace)
+                != Some(tokens.len() - 1)
+        {
+            return Err(self.bad(
+                span,
+                "Result match must consume its complete expression and outer body",
+            ));
+        }
+        let mut cursor = open + 1;
+        let mut ok = None;
+        let mut err = None;
+        for (index, arm) in resolved.arms.iter().enumerate() {
+            if arm.syntax != syntax.arms[index] {
+                return Err(self.bad(span, "Result arm metadata disagrees with source"));
+            }
+            let pattern = arm.syntax.pattern.as_ref().ok_or_else(|| self.bad(arm.syntax.pattern_span, "only exact Result::Ok { value: name } and Result::Err { error: name } patterns are supported"))?;
+            let binder = arm.binding.ok_or_else(|| {
+                self.bad(
+                    arm.syntax.pattern_span,
+                    "missing resolved Result arm binder",
+                )
+            })?;
+            let end = tokens
+                .iter()
+                .position(|t| t.span.end == arm.syntax.pattern_span.end)
+                .ok_or_else(|| self.bad(span, "Result pattern boundary is unavailable"))?;
+            if tokens.get(cursor).map(|t| t.span.start) != Some(arm.syntax.pattern_span.start)
+                || end < cursor
+                || !symbol(tokens.get(end + 1), Symbol::FatArrow)
+                || tokens.get(end + 2).map(|t| t.span.start) != Some(arm.syntax.body.span.start)
+            {
+                return Err(self.bad(span, "unsupported tokens around Result match arm"));
+            }
+            let body_end = matching(tokens, end + 2, Symbol::LeftBrace, Symbol::RightBrace)
+                .ok_or_else(|| self.bad(span, "invalid Result arm body"))?;
+            if tokens[body_end].span.end != arm.syntax.body.span.end {
+                return Err(self.bad(span, "Result arm body boundary mismatch"));
+            }
+            cursor = body_end + 1;
+            let slot = match pattern.kind {
+                ResultPatternKind::Ok => &mut ok,
+                ResultPatternKind::Err => &mut err,
+            };
+            if slot.replace((index, binder)).is_some() {
+                return Err(self.bad(arm.syntax.pattern_span, "duplicate Result match variant"));
+            }
+        }
+        if cursor != tokens.len() - 1 {
+            return Err(self.bad(span, "unsupported trailing Result match tokens"));
+        }
+        let (ok_index, ok_binder) =
+            ok.ok_or_else(|| self.bad(span, "Result match lacks Ok arm"))?;
+        let (err_index, err_binder) =
+            err.ok_or_else(|| self.bad(span, "Result match lacks Err arm"))?;
+        let success = self.block_id(span)?;
+        let error = self.block_id(span)?;
+        let (ok_type, err_type) = match resolved.scrutinee.as_ref() {
+            Some(ResolvedResultMatchScrutinee::Task(task)) => {
+                if task.syntax.propagates_error || task.syntax.span != syntax.scrutinee_span {
+                    return Err(self.bad(
+                        span,
+                        "Result match requires the whole unpropagated task expression",
+                    ));
+                }
+                match &task.kind {
+                    ResolvedTaskExpressionKind::Spawn {
+                        scope,
+                        worker,
+                        captures,
+                    } => {
+                        let (scope, arguments) =
+                            self.spawn_inputs(span, *scope, *worker, captures)?;
+                        self.finish(
+                            span,
+                            TaskTerminatorKind::TrySpawn {
+                                scope,
+                                worker: worker.0 as usize,
+                                arguments,
+                                handle_slot: ok_binder.0 as usize,
+                                success,
+                                spawn_error: error,
+                            },
+                        );
+                        (
+                            ValueType::Handle(*worker),
+                            ValueType::KnownError("SpawnError".into()),
+                        )
+                    }
+                    ResolvedTaskExpressionKind::Join { .. } => {
+                        let result_slot = self.temporary(span)?;
+                        let mut scrutinee_statement = statement.clone();
+                        scrutinee_statement.task_expressions = vec![(**task).clone()];
+                        let kind = self
+                            .task_expression(
+                                &scrutinee_statement,
+                                &tokens[1..open],
+                                Some(result_slot),
+                            )?
+                            .ok_or_else(|| self.bad(span, "join match requires a Result value"))?;
+                        let ValueType::Result { value, errors } = kind else {
+                            return Err(self.bad(span, "join match scrutinee is not a Result"));
+                        };
+                        self.finish(
+                            span,
+                            TaskTerminatorKind::TryOutcome {
+                                result_slot,
+                                value_slot: ok_binder.0 as usize,
+                                error_slot: err_binder.0 as usize,
+                                success,
+                                error,
+                            },
+                        );
+                        (ValueType::Scalar(value), ValueType::Error(errors))
+                    }
+                }
+            }
+            Some(ResolvedResultMatchScrutinee::Value(symbol_id)) => {
+                let [token] = &tokens[1..open] else {
+                    return Err(
+                        self.bad(span, "Result match requires one immutable Result binding")
+                    );
+                };
+                let spelling =
+                    name(Some(token)).ok_or_else(|| self.bad(span, "invalid Result binding"))?;
+                let (found, kind) = self.lookup(spelling, syntax.scrutinee_span)?;
+                if found != *symbol_id {
+                    return Err(self.bad(span, "Result binding identity mismatch"));
+                }
+                let ValueType::Result { value, errors } = kind else {
+                    return Err(self.bad(span, "match requires an initialized task Result"));
+                };
+                self.finish(
+                    span,
+                    TaskTerminatorKind::TryOutcome {
+                        result_slot: found.0 as usize,
+                        value_slot: ok_binder.0 as usize,
+                        error_slot: err_binder.0 as usize,
+                        success,
+                        error,
+                    },
+                );
+                (ValueType::Scalar(value), ValueType::Error(errors))
+            }
+            None => return Err(self.bad(span, "unsupported Result match scrutinee")),
+        };
+        let outer_environment = self.environment.clone();
+        let outer_scopes = self.scopes.clone();
+        let mut continuation = None;
+        for (index, arm) in resolved.arms.iter().enumerate() {
+            let (target, binder, kind) = if index == ok_index {
+                (success, ok_binder, ok_type.clone())
+            } else {
+                debug_assert_eq!(index, err_index);
+                (error, err_binder, err_type.clone())
+            };
+            self.current = target;
+            self.environment = outer_environment.clone();
+            self.scopes = outer_scopes.clone();
+            self.environment.push(BTreeMap::from([(
+                arm.syntax.pattern.as_ref().unwrap().binding.value.clone(),
+                (binder, kind),
+            )]));
+            let arm_statements = statement
+                .nested
+                .get(arm.statement_range.clone())
+                .ok_or_else(|| self.bad(span, "Result arm statement range is invalid"))?;
+            let terminated = self.block(&arm.syntax.body, arm_statements)?;
+            self.environment.pop();
+            if !terminated {
+                let join = match continuation {
+                    Some(id) => id,
+                    None => {
+                        let id = self.block_id(span)?;
+                        continuation = Some(id);
+                        id
+                    }
+                };
+                self.finish(span, TaskTerminatorKind::Goto { target: join });
+            }
+        }
+        self.environment = outer_environment;
+        self.scopes = outer_scopes;
+        if let Some(block) = continuation {
+            self.current = block;
+        }
+        Ok(continuation.is_none())
     }
 
     fn task_expression(
@@ -956,6 +1232,9 @@ impl<'a> Builder<'a> {
             }
             let tokens = tokens_for(self.source, statement.span);
             match &statement.value {
+                StatementKind::Match { .. } => {
+                    terminated = self.result_match(typed, &tokens)?;
+                }
                 StatementKind::ThreadScope { name, body } => {
                     if tokens.len() < 5
                         || !word(tokens.first(), "thread")
@@ -1118,41 +1397,75 @@ impl<'a> Builder<'a> {
                     terminated = true;
                 }
                 StatementKind::Raise => {
-                    if tokens.len() != 5
-                        || !word(tokens.first(), "raise")
-                        || !symbol(tokens.get(2), Symbol::ColonColon)
-                        || !symbol(tokens.get(4), Symbol::Semicolon)
+                    let error = if tokens.len() == 3
+                        && word(tokens.first(), "raise")
+                        && symbol(tokens.get(2), Symbol::Semicolon)
                     {
-                        return Err(self.bad(
-                            statement.span,
-                            "task raise requires one payload-free Error::Variant",
-                        ));
-                    }
-                    let error_type = name(tokens.get(1))
-                        .ok_or_else(|| self.bad(statement.span, "invalid error type"))?;
-                    let variant = name(tokens.get(3))
-                        .ok_or_else(|| self.bad(statement.span, "invalid error variant"))?;
-                    let tag = format!("{error_type}::{variant}");
-                    if !self
-                        .errors
-                        .get(error_type)
-                        .is_some_and(|errors| errors.contains(&tag))
-                        || !self.signature.effects.errors.contains(&tag)
-                    {
-                        return Err(failure(
-                            statement.span,
-                            SemanticPass::TypedErrors,
-                            "raised variant must be declared and covered by throws effects",
-                        ));
-                    }
+                        let binding = name(tokens.get(1)).ok_or_else(|| {
+                            self.bad(statement.span, "raise requires a bound typed error")
+                        })?;
+                        let (id, kind) = self.lookup(binding, statement.span)?;
+                        match kind {
+                            ValueType::KnownError(tag) => {
+                                if !self.signature.effects.errors.contains(&tag) {
+                                    return Err(failure(
+                                        statement.span,
+                                        SemanticPass::TypedErrors,
+                                        "bound error is absent from throws effects",
+                                    ));
+                                }
+                                ErrorOperand::Tag(tag)
+                            }
+                            ValueType::Error(errors) => {
+                                if !errors.is_subset(&self.signature.effects.errors) {
+                                    return Err(failure(
+                                        statement.span,
+                                        SemanticPass::TypedErrors,
+                                        "bound error variants are absent from throws effects",
+                                    ));
+                                }
+                                ErrorOperand::Slot(id.0 as usize)
+                            }
+                            _ => {
+                                return Err(self.bad(
+                                    statement.span,
+                                    "raise requires a typed error arm binding",
+                                ));
+                            }
+                        }
+                    } else {
+                        if tokens.len() != 5
+                            || !word(tokens.first(), "raise")
+                            || !symbol(tokens.get(2), Symbol::ColonColon)
+                            || !symbol(tokens.get(4), Symbol::Semicolon)
+                        {
+                            return Err(self.bad(
+                                statement.span,
+                                "task raise requires a bound error or payload-free Error::Variant",
+                            ));
+                        }
+                        let error_type = name(tokens.get(1))
+                            .ok_or_else(|| self.bad(statement.span, "invalid error type"))?;
+                        let variant = name(tokens.get(3))
+                            .ok_or_else(|| self.bad(statement.span, "invalid error variant"))?;
+                        let tag = format!("{error_type}::{variant}");
+                        if !self
+                            .errors
+                            .get(error_type)
+                            .is_some_and(|errors| errors.contains(&tag))
+                            || !self.signature.effects.errors.contains(&tag)
+                        {
+                            return Err(failure(
+                                statement.span,
+                                SemanticPass::TypedErrors,
+                                "raised variant must be declared and covered by throws effects",
+                            ));
+                        }
+                        ErrorOperand::Tag(tag)
+                    };
                     self.instructions
                         .extend(self.exit_instructions(statement.span));
-                    self.finish(
-                        statement.span,
-                        TaskTerminatorKind::Raise {
-                            error: ErrorOperand::Tag(tag),
-                        },
-                    );
+                    self.finish(statement.span, TaskTerminatorKind::Raise { error });
                     terminated = true;
                 }
                 _ => {

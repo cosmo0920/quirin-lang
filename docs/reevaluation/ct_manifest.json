@@ -211,17 +211,18 @@
       "scenario": "Second create fails after first succeeds",
       "expected": "First task must still be joined",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "semantic_profile": "Linux ScopedCopyTasksV1 explicit creation recovery: real source matches the second spawn result. Failure preserves the first task until the Err arm explicitly joins its exact native thread, then returns42. Success joins both children and returns7; initial failure has no child. A failure arm omitting the prior join rejects with Q600 ScopeBusy. Reference and native outcomes agree for all3 fixture creation scripts. This tests scalar copies and task obligations, not owned/loan capture restoration, arbitrary handlers or other native platforms.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT14",

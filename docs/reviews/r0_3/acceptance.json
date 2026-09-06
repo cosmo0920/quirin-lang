@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 6,
-  "ct_unmapped": 44,
+  "ct_mapped": 7,
+  "ct_unmapped": 43,
   "findings": [
     {
       "id": "R01",
@@ -24,9 +24,10 @@
       "evidence": [
         "docs/reports/r0-3-concurrency-lifetimes/README.md",
         "docs/reports/w6-source-task-foundations/README.md",
-        "docs/reports/w6-native-source-tasks/README.md"
+        "docs/reports/w6-native-source-tasks/README.md",
+        "docs/reports/w6-task-recovery/README.md"
       ],
-      "remaining_boundary": "Active task state is separate from clock history. The scoped-copy source profile now checks task/result identities and real Linux native joins; move/loan authority and general concurrency lowering remain open."
+      "remaining_boundary": "Active task state is separate from clock history. The scoped-copy source profile checks task/result identities, explicit creation/worker-error recovery and real Linux native joins. Move/loan authority, owned results and general concurrency lowering remain open."
     },
     {
       "id": "R03",
@@ -110,12 +111,12 @@
     }
   ],
   "validation": {
-    "workspace_tests": 663,
+    "workspace_tests": 686,
     "python_evidence_validator_tests": 43,
     "lean_audits": 20,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w6-native-source-tasks/README.md"
+    "latest_integration_evidence": "docs/reports/w6-task-recovery/README.md"
   },
   "documentation_revision": "0.3",
   "open_followups": [

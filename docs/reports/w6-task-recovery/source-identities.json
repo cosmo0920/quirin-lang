@@ -1,0 +1,26 @@
+{
+  "base_revision": "0d344b403fbe2e920631dbf172dc6c0094bf5464",
+  "state": "validated working tree before integration commit",
+  "files": {
+    "compiler/tests/ct_corpus.rs": "a64b011a8cf6d568f706d3bbeb8bfed15d47e999f938b4078a94164cf96f48c7",
+    "compiler/tests/fixtures/ct/CT13/case.qcore": "d3534a76fecdbbf61239a61d8a4e017d33dec87b4f490974eea1437e7ef5efa4",
+    "compiler/tests/fixtures/ct/CT13/create_failure.h": "fc553156e230dbab6b6e2b89fac26fd1f8cbd5a6f94b702e67accf6271bbbeaa",
+    "compiler/tests/fixtures/ct/CT13/expected.json": "63cbc0c1613f9c59104c10c61e5df4683b2338ebb8a9175273ed5cf3a0654902",
+    "compiler/tests/fixtures/ct/CT13/unjoined_failure.qcore": "dc2f9962f5f6aa4bfb3dd1d3b1b3c54338eb00d41ac688ac31b82539b3e3082d",
+    "compiler/tests/source_tasks.rs": "5cf31e690b42f44a19a0796562876f6ba2c7c8e7df24a78c082dd0666e0bcbd8",
+    "crates/qcore-core/src/task_c_emit.rs": "781d256689dce20438de53380c86ac984e965b45cf9fdfdbf45615cb74993fdb",
+    "crates/qcore-core/src/task_execution.rs": "a9b126742ea6ddb4131b684240fd1e2f8442811051fbd0cf625e03cc457196d7",
+    "crates/qcore-core/src/task_execution/reference.rs": "41fefa3c9fd08d433be6fcc313a0e1c49983d26105a325800de3984180d42998",
+    "crates/qcore-core/src/task_execution/tests.rs": "992c7614c01dea506e52d9fbb69e1ba9c629bf09aa5f7c7597271c4775819255",
+    "crates/qcore-frontend/src/frontend.rs": "eb53ef222516e19eda30aebe108d60038986253a4c97a37e4e8cc6748ecb7fc1",
+    "crates/qcore-frontend/src/frontend_result_match.rs": "8cd2a664c8f969cf56ec24ab98e63fee35ffc7412e1d3f8dad172f0e7db1df3a",
+    "crates/qcore-frontend/src/source_tasks.rs": "483722d011bc638bb0fe53163cef9b2c8482e75c467d660600cd24bf4cfea8fc",
+    "crates/qcore-frontend/tests/result_match_syntax.rs": "60eb5e859e8604865d4edcb273c77d75f7897c3ddc1828ddd4ffa6340cbb8bf5",
+    "crates/qcore-frontend/tests/source_tasks.rs": "63a03de9b89e34df31328737fc1db84146e3e37e22c85d9495a0a2492caf614d",
+    "crates/qcore-frontend/tests/task_recovery.rs": "de9e0a089c1f60731ab048fecba4de4650a0e48cd55f92f49e32c449425bd38e",
+    "crates/qcorec/tests/cli.rs": "b422aa3841efb3a766677dcf7a8fee084fee3d0499ab978664d3e07ea4b37ef3",
+    "docs/reevaluation/ct_manifest.json": "b541f1c982978948fc73df42cdab02ee27c477e2c68a23e6d4140630397c960f",
+    "proof/AuditTaskExecution.lean": "6999143d8a1035c9ed460d526b74a985e3f84d8d388f08c7558c91df9de5c84d",
+    "proof/QCore/TaskExecution.lean": "50702660f62ec19ba084a233c9bcf607239cd3d6670ca675f1715ff02db4d720"
+  }
+}

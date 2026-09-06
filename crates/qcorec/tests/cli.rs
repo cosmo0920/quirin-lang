@@ -155,3 +155,62 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     assert_eq!(std::fs::read(&c).unwrap(), original);
     std::fs::remove_dir_all(directory).unwrap();
 }
+
+#[test]
+#[cfg(target_os = "linux")]
+fn cli_recovery_joins_first_child_after_second_creation_fails() {
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../compiler/tests/fixtures/ct/CT13");
+    let directory =
+        std::env::temp_dir().join(format!("qcore-cli-task-recovery-{}", std::process::id()));
+    std::fs::create_dir_all(&directory).unwrap();
+    let source = fixture.join("case.qcore");
+    let c = directory.join("recovery.c");
+    let exe = directory.join("recovery");
+    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg(&source)
+        .output()
+        .unwrap();
+    assert!(checked.status.success(), "{checked:?}");
+    assert!(String::from_utf8_lossy(&checked.stdout).contains("scoped copy tasks (Linux C11)"));
+    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("emit")
+        .arg(&source)
+        .arg("-o")
+        .arg(&c)
+        .output()
+        .unwrap();
+    assert!(emitted.status.success(), "{emitted:?}");
+    // An explicit invalid QCORE_CLANG must fail this test, never skip it.
+    let compiled = Command::new(std::env::var_os("QCORE_CLANG").unwrap_or_else(|| "clang".into()))
+        .args([
+            "-std=c11",
+            "-pthread",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-DQCORE_CT_FAIL_CREATE=2",
+            "-include",
+        ])
+        .arg(fixture.join("create_failure.h"))
+        .arg(&c)
+        .arg("-o")
+        .arg(&exe)
+        .output()
+        .unwrap();
+    assert!(compiled.status.success(), "{compiled:?}");
+    let executed = Command::new(&exe).output().unwrap();
+    assert!(executed.status.success(), "{executed:?}");
+    assert_eq!(
+        String::from_utf8_lossy(&executed.stdout),
+        "QCORE_TASK_SPAWN 1 0\nQCORE_TASK_CREATE_FAILED 0\nQCORE_TASK_RESULT 1 I32 42\nQCORE_TASK_JOIN 1\nQCORE_TASK_RESULT 0 I32 42\n"
+    );
+    // The header identifies the exact native thread and aborts if its record
+    // is freed before join. The first FREE is the failed creation's record.
+    assert_eq!(
+        String::from_utf8_lossy(&executed.stderr),
+        "CREATE_OK:1\nCREATE_FAILED:2\nFREE\nJOIN_OK:1\nFREE\n"
+    );
+    std::fs::remove_dir_all(directory).unwrap();
+}

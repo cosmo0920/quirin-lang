@@ -1,0 +1,13 @@
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+exit_code=1
+stdout:
+stderr:
+CREATE_OK:1
+CREATE_FAILED:2
+FREE
+JOIN_OK:1
+FREE
+==33==LeakSanitizer has encountered a fatal error.
+==33==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==33==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)

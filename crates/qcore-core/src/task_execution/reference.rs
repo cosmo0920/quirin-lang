@@ -94,6 +94,27 @@ impl Runtime<'_> {
                         TaskInstructionKind::BindScalar { slot, value } => {
                             slots.insert(*slot, Value::Scalar(scalar(&slots, value)?));
                         }
+                        TaskInstructionKind::UnwrapInfallible {
+                            result_slot,
+                            value_slot,
+                        } => {
+                            let Some(Value::Result(outcome)) = slots.get(result_slot).cloned()
+                            else {
+                                return Err("reference infallible Result unavailable".into());
+                            };
+                            let value = match outcome {
+                                TaskOutcome::Unit => ScalarValue::Unit,
+                                TaskOutcome::I32(value) => ScalarValue::I32(value),
+                                TaskOutcome::Error(_) => {
+                                    return Err(
+                                        "reference error contradicts checked infallible Result"
+                                            .into(),
+                                    );
+                                }
+                            };
+                            slots.insert(*result_slot, Value::Consumed);
+                            slots.insert(*value_slot, Value::Scalar(value));
+                        }
                         TaskInstructionKind::EnterScope { scope } => {
                             let actual = self.next_scope;
                             self.next_scope += 1;

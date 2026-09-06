@@ -294,9 +294,12 @@ immutable i32 copies, leaf workers with i32/unit results, dynamic creation
 failure, explicit creator join, collected Results and separate `?` propagation.
 The source execution profile and checked-artifact variant are explicit. Native
 join failure aborts before environment reclamation. General capture authority,
-shared memory, mutexes, owned payloads and sibling recovery handlers remain
-open. See [implemented grammar G02a](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02a-scoped-copy-task-execution)
-and the [execution evidence](reports/w6-native-source-tasks/README.md).
+shared memory, mutexes and owned payloads remain open. Explicit two-arm Result
+handlers now handle spawn failure or collected worker errors, preserving any
+prior sibling until its explicit join. Arm-local bindings cannot escape.
+Infallible `?` consumes a checked empty-error Result without adding an
+impossible error exit; a nonempty error row retains both alternatives. See [implemented grammar G02a](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02a-scoped-copy-task-execution)
+and the [recovery evidence](reports/w6-task-recovery/README.md).
 
 ## L15. Lowering, observations, and translation certificates
 
@@ -390,7 +393,7 @@ This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUG
 
 The implementation matrix MUST track stages separately: parsing, semantic checking, reference execution, CFG/lowering, native execution, and proof. One checked IR test does not complete a source-language CT case. One passed platform run does not cover another target or backend.
 
-The current CT manifest has six mapped cases—CT02, CT12, CT15, CT16, CT19, and CT37—and 44 unmapped cases. CT15 has Linux native join-failure evidence; CT19 now checks actual sibling-failure source. The other four retain their stated sequential profiles. Individual stage/target statuses remain authoritative; mappings do not imply fully completed end-to-end proofs. The current corpus contains 57 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
+The current CT manifest has seven mapped cases—CT02, CT12, CT13, CT15, CT16, CT19, and CT37—and 43 unmapped cases. CT13 has Linux native creation-recovery and retained-sibling evidence; CT15 has Linux native join-failure evidence; CT19 checks actual sibling-failure source. The other four retain their stated sequential profiles. Individual stage/target statuses remain authoritative; mappings do not imply fully completed end-to-end proofs. The current corpus contains 57 `.qcore` modules and a five-module resource-v1 selection; the original reviewed archive contained 56 modules.
 
 The supplied archive review reported 39 Python evidence-validator tests and no Rust/Lean/native execution; its Libevent directory was empty. This repository integration has complete pinned inputs and separately executes Rust, Lean, Python and the configured audit. Current results are recorded in [VALIDATION.md](VALIDATION.md) and the acceptance ledger. Historical runs are never substituted for fresh checks.
 

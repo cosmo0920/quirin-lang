@@ -154,9 +154,10 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **44/50 unmapped**
+  only; CT01–CT50 conformance corpus is **43/50 unmapped**
   (CT02/CT12/CT16/CT37 retain sequential-core fixtures; CT19 checks real
-  sibling failure source and CT15 has Linux native join-failure evidence).
+  sibling failure source, CT13 has Linux creation-recovery evidence and CT15
+  has Linux native join-failure evidence).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -187,11 +188,12 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   pipeline and fails closed on manifest/fixture disagreement; CT02, CT12,
   CT16 and CT37 retain Cycle 12 sequential ownership/typed-error/cleanup
   fixtures. CT19 now checks actual sibling-failure source; CT15 executes
-  Linux native join-failure and successful reclamation controls. Shares and
+  Linux native join-failure and successful reclamation controls. CT13 checks
+  explicit creation recovery and retained sibling storage. Shares and
   mutex source paths remain unexercised. Batch 2 (2026-09-06,
   `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
-  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); the later native task increment leaves 44 cases
+  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); the later task recovery increment leaves 43 cases
   unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
@@ -492,6 +494,9 @@ survive until creator join; unexpected join failure aborts before reclamation.
 `CompiledModule.checked` explicitly separates sequential and task evidence.
 CT15 now maps actual native join failure with a successful join/free control;
 CT19 uses a real second-spawn failure rejection and joined-sibling control.
-Coverage is 6/50 mapped, 44 unmapped. Moves/loans, owned results, shared memory,
-mutexes, nested workers, sibling recovery and other platforms remain open.
-Evidence: `docs/reports/w6-native-source-tasks/README.md`.
+Explicit Result handlers now recover from failed creation while preserving and
+joining prior siblings; join handlers preserve exact worker errors. CT13 maps
+real Linux success, first/second-create failure and join-before-free controls.
+Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
+mutexes, nested workers, general control flow and other platforms remain open.
+Evidence: `docs/reports/w6-task-recovery/README.md`.

@@ -72,6 +72,12 @@ pub enum TaskInstructionKind {
         slot: SlotId,
         value: ScalarOperand,
     },
+    /// Eliminate a Result with an empty declared error row. It is still consumed
+    /// exactly once; no failure edge or implicit sibling join is introduced.
+    UnwrapInfallible {
+        result_slot: SlotId,
+        value_slot: SlotId,
+    },
     EnterScope {
         scope: ScopeId,
     },
@@ -301,6 +307,7 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
             }
             let defined = match &instruction.kind {
                 TaskInstructionKind::BindScalar { slot, .. } => Some(*slot),
+                TaskInstructionKind::UnwrapInfallible { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::Join { outcome_slot, .. } => {
                     effects.join = true;
                     effects.may_block = true;
@@ -408,6 +415,25 @@ fn check_function(module: &TaskModule, id: FunctionId) -> Result<(), TaskDiagnos
                 match &instruction.kind {
                     TaskInstructionKind::BindScalar { slot, value } => {
                         state.bind(*slot, AbstractSlot::Scalar(state.scalar(value)?))?
+                    }
+                    TaskInstructionKind::UnwrapInfallible {
+                        result_slot,
+                        value_slot,
+                    } => {
+                        let Some(AbstractSlot::Result { scalar, errors }) =
+                            state.slots.get(result_slot).cloned()
+                        else {
+                            return Err(
+                                "infallible extraction requires an initialized Result slot".into(),
+                            );
+                        };
+                        if !errors.is_empty() {
+                            return Err(
+                                "infallible extraction requires an empty declared error row".into(),
+                            );
+                        }
+                        state.slots.insert(*result_slot, AbstractSlot::Consumed);
+                        state.bind(*value_slot, AbstractSlot::Scalar(scalar))?;
                     }
                     TaskInstructionKind::EnterScope { scope } => {
                         state

@@ -1,0 +1,9 @@
+/home/cosmo/Documents/GitHub/qcore-c/target/debug/qcorec emit /home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT13/case.qcore -o /tmp/qcore-task-recovery-sanitizers/ct13.c
+clang --version
+clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined -DQCORE_CT_FAIL_CREATE=0 -include /home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT13/create_failure.h /tmp/qcore-task-recovery-sanitizers/ct13.c -o /tmp/qcore-task-recovery-sanitizers/ct13-fail-0
+/tmp/qcore-task-recovery-sanitizers/ct13-fail-0
+clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined -DQCORE_CT_FAIL_CREATE=2 -include /home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT13/create_failure.h /tmp/qcore-task-recovery-sanitizers/ct13.c -o /tmp/qcore-task-recovery-sanitizers/ct13-fail-2
+/tmp/qcore-task-recovery-sanitizers/ct13-fail-2
+# The same binaries were subsequently executed with require_escalated outside ptrace:
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/qcore-task-recovery-sanitizers/ct13-fail-0
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/qcore-task-recovery-sanitizers/ct13-fail-2

@@ -88,6 +88,9 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     InstructionKind::BindScalar { slot, .. } => {
                         slots.insert(*slot);
                     }
+                    InstructionKind::UnwrapInfallible { value_slot, .. } => {
+                        slots.insert(*value_slot);
+                    }
                     InstructionKind::Join {
                         outcome_slot: Some(slot),
                         ..
@@ -130,6 +133,16 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                 match &instruction.kind {
                     InstructionKind::BindScalar { slot, value } => {
                         writeln!(source, "    s_{slot}.scalar = {};", scalar(value)).unwrap()
+                    }
+                    InstructionKind::UnwrapInfallible {
+                        result_slot,
+                        value_slot,
+                    } => {
+                        writeln!(
+                            source,
+                            "    s_{value_slot}.scalar = s_{result_slot}.result.value;"
+                        )
+                        .unwrap();
                     }
                     InstructionKind::EnterScope { scope } => {
                         writeln!(source, "    /* checked scope {scope} begins */").unwrap()

@@ -332,4 +332,269 @@ theorem completed_handle_cannot_be_recreated
     create before caller handle choice = none := by
   simp [create, completed]
 
+/-! Explicit creation-result handlers. This is the pure-copy handle relation:
+there are no owned moves, loans, capture usage or SSA refinements to restore.
+The finite handler trace records actual collect operations; failure itself
+cannot manufacture such an operation or erase an earlier sibling. -/
+
+theorem failed_create_preserves_prior_sibling
+    {before after : Handles} {creator newHandle sibling : Nat} {result : CreateResult}
+    (checked : create before creator newHandle .failed = some (after, result)) :
+    after sibling = before sibling := by
+  rw [(failed_create_changes_no_handles checked).1]
+
+theorem failed_create_does_not_join_or_cancel_running_sibling
+    {before after : Handles} {creator newHandle sibling owner : Nat} {result : CreateResult}
+    (checked : create before creator newHandle .failed = some (after, result))
+    (running : before sibling = .running owner) :
+    after sibling = .running owner ∧ after sibling ≠ .joined ∧ after sibling ≠ .absent := by
+  rw [failed_create_preserves_prior_sibling checked, running]
+  simp
+
+theorem failed_create_retains_completed_sibling_for_explicit_join
+    {before after : Handles} {creator newHandle sibling owner : Nat} {result : CreateResult}
+    {outcome : Outcome}
+    (checked : create before creator newHandle .failed = some (after, result))
+    (completed : before sibling = .completed owner outcome) :
+    after sibling = .completed owner outcome ∧
+    join after owner sibling = some (put after sibling .joined, outcome) := by
+  have preserved := (failed_create_preserves_prior_sibling checked).trans completed
+  exact ⟨preserved, explicit_creator_join_collects_exact_outcome preserved⟩
+
+theorem creation_cannot_mark_an_unjoined_sibling_joined
+    {before after : Handles} {creator newHandle sibling : Nat} {choice : CreateChoice}
+    {result : CreateResult}
+    (checked : create before creator newHandle choice = some (after, result))
+    (joined : after sibling = .joined) : before sibling = .joined := by
+  cases choice with
+  | failed =>
+    rw [(failed_create_changes_no_handles checked).1] at joined
+    exact joined
+  | created =>
+    by_cases same : sibling = newHandle
+    · subst sibling
+      have running := (successful_create_commits_fresh_handle checked).2.1
+      rw [running] at joined
+      cases joined
+    · exact (create_preserves_other_handle same checked).symm.trans joined
+
+theorem completion_cannot_mark_an_unjoined_sibling_joined
+    {before after : Handles} {handle sibling : Nat} {outcome : Outcome}
+    (checked : complete before handle outcome = some after)
+    (joined : after sibling = .joined) : before sibling = .joined := by
+  unfold complete at checked
+  split at checked <;> try contradiction
+  cases checked
+  by_cases same : sibling = handle
+  · simp [put, same] at joined
+  · simpa [put, same] using joined
+
+/-- Every step uses the existing checked operation. The list records only the
+explicit creator joins that actually occurred, in their execution order. -/
+inductive HandlerRun : Handles → Handles → List Nat → Prop where
+  | nil (before) : HandlerRun before before []
+  | create {before middle after creator handle choice result joins}
+      (checked : TaskExecution.create before creator handle choice = some (middle, result))
+      (rest : HandlerRun middle after joins) : HandlerRun before after joins
+  | complete {before middle after handle outcome joins}
+      (checked : TaskExecution.complete before handle outcome = some middle)
+      (rest : HandlerRun middle after joins) : HandlerRun before after joins
+  | collect {before middle after creator handle outcome joins}
+      (checked : TaskExecution.join before creator handle = some (middle, outcome))
+      (rest : HandlerRun middle after joins) : HandlerRun before after (handle :: joins)
+
+theorem handler_cannot_discharge_sibling_without_explicit_join
+    {before after : Handles} {sibling : Nat} {joins : List Nat}
+    (run : HandlerRun before after joins)
+    (unjoined : before sibling ≠ .joined)
+    (joined : after sibling = .joined) : sibling ∈ joins := by
+  induction run with
+  | nil => exact False.elim (unjoined joined)
+  | create checked _ ih =>
+    exact ih (fun middleJoined => unjoined
+      (creation_cannot_mark_an_unjoined_sibling_joined checked middleJoined)) joined
+  | complete checked _ ih =>
+    exact ih (fun middleJoined => unjoined
+      (completion_cannot_mark_an_unjoined_sibling_joined checked middleJoined)) joined
+  | @collect before middle after creator handle outcome joins checked _ ih =>
+    by_cases same : sibling = handle
+    · simp [same]
+    · have middleUnjoined : middle sibling ≠ .joined := by
+        intro middleJoined
+        exact unjoined ((join_preserves_other_handle same checked).symm.trans middleJoined)
+      exact List.mem_cons_of_mem handle (ih middleUnjoined joined)
+
+/-- A handler may return normally or rethrow the original creation/worker error.
+Both outcomes use the same finite inventory check. No joins are inserted here. -/
+def finishHandler (handles : Handles) (leaving : List Nat) (outcome : Outcome) : Option Outcome :=
+  if (leaving.all fun handle =>
+      decide (handles handle = .absent ∨ handles handle = .joined)) then
+    some outcome
+  else none
+
+theorem checked_handler_exit_is_quiescent_and_preserves_outcome
+    {handles : Handles} {leaving : List Nat} {outcome returned : Outcome}
+    (checked : finishHandler handles leaving outcome = some returned) :
+    quiescent handles leaving ∧ returned = outcome := by
+  unfold finishHandler at checked
+  split at checked
+  · cases checked
+    exact ⟨by simpa [quiescent, List.all_eq_true] using ‹(leaving.all fun handle =>
+      decide (handles handle = .absent ∨ handles handle = .joined)) = true›, rfl⟩
+  · contradiction
+
+theorem checked_normal_and_error_handlers_both_require_quiescence
+    {normalHandles errorHandles : Handles} {leaving : List Nat}
+    {value : Scalar} {tag : ErrorTag}
+    (normal : finishHandler normalHandles leaving (.normal value) = some (.normal value))
+    (error : finishHandler errorHandles leaving (.error tag) = some (.error tag)) :
+    quiescent normalHandles leaving ∧ quiescent errorHandles leaving := by
+  exact ⟨(checked_handler_exit_is_quiescent_and_preserves_outcome normal).1,
+    (checked_handler_exit_is_quiescent_and_preserves_outcome error).1⟩
+
+theorem handler_join_preserves_exact_worker_error
+    {before after : Handles} {creator sibling : Nat} {tag : ErrorTag} {collected : Outcome}
+    (completed : before sibling = .completed creator (.error tag))
+    (checked : join before creator sibling = some (after, collected)) :
+    collected = .error tag ∧ after sibling = .joined := by
+  rw [explicit_creator_join_collects_exact_outcome completed] at checked
+  cases checked
+  exact ⟨rfl, by simp [put]⟩
+
+theorem failed_create_then_handler_join_preserves_worker_error
+    {before failed after : Handles} {creator newHandle sibling : Nat}
+    {tag : ErrorTag} {result : CreateResult} {collected : Outcome}
+    (creation : create before creator newHandle .failed = some (failed, result))
+    (completed : before sibling = .completed creator (.error tag))
+    (collection : join failed creator sibling = some (after, collected)) :
+    result = .failure spawnError ∧ collected = .error tag ∧ after sibling = .joined := by
+  have preserved := (failed_create_preserves_prior_sibling creation).trans completed
+  exact ⟨(failed_create_changes_no_handles creation).2,
+    handler_join_preserves_exact_worker_error preserved collection⟩
+
+theorem create_preserves_nonabsent_sibling
+    {before after : Handles} {creator newHandle sibling : Nat} {choice : CreateChoice}
+    {result : CreateResult}
+    (checked : create before creator newHandle choice = some (after, result))
+    (live : before sibling ≠ .absent) : after sibling ≠ .absent := by
+  cases choice with
+  | failed => simpa [(failed_create_changes_no_handles checked).1] using live
+  | created =>
+    by_cases same : sibling = newHandle
+    · subst sibling
+      rw [(successful_create_commits_fresh_handle checked).2.1]
+      intro impossible
+      cases impossible
+    · rw [create_preserves_other_handle same checked]
+      exact live
+
+theorem complete_preserves_nonabsent_sibling
+    {before after : Handles} {handle sibling : Nat} {outcome : Outcome}
+    (checked : complete before handle outcome = some after)
+    (live : before sibling ≠ .absent) : after sibling ≠ .absent := by
+  unfold complete at checked
+  split at checked <;> try contradiction
+  cases checked
+  by_cases same : sibling = handle
+  · simp [put, same]
+  · simpa [put, same] using live
+
+theorem join_preserves_nonabsent_sibling
+    {before after : Handles} {creator handle sibling : Nat} {outcome : Outcome}
+    (checked : join before creator handle = some (after, outcome))
+    (live : before sibling ≠ .absent) : after sibling ≠ .absent := by
+  by_cases same : sibling = handle
+  · subst sibling
+    rw [(checked_join_consumes_handle_once checked).1]
+    intro impossible
+    cases impossible
+  · rw [join_preserves_other_handle same checked]
+    exact live
+
+theorem handler_cannot_erase_existing_handle
+    {before after : Handles} {sibling : Nat} {joins : List Nat}
+    (run : HandlerRun before after joins)
+    (live : before sibling ≠ .absent) : after sibling ≠ .absent := by
+  induction run with
+  | nil => exact live
+  | create checked _ ih => exact ih (create_preserves_nonabsent_sibling checked live)
+  | complete checked _ ih => exact ih (complete_preserves_nonabsent_sibling checked live)
+  | collect checked _ ih => exact ih (join_preserves_nonabsent_sibling checked live)
+
+theorem handler_exit_requires_explicit_join_of_every_prior_sibling
+    {before after : Handles} {sibling : Nat} {joins leaving : List Nat}
+    {outcome returned : Outcome}
+    (run : HandlerRun before after joins)
+    (live : before sibling ≠ .absent)
+    (unjoined : before sibling ≠ .joined)
+    (member : sibling ∈ leaving)
+    (exit : finishHandler after leaving outcome = some returned) : sibling ∈ joins := by
+  have quiet := (checked_handler_exit_is_quiescent_and_preserves_outcome exit).1
+  have afterJoined : after sibling = .joined := by
+    cases quiet sibling member with
+    | inl absent => exact False.elim ((handler_cannot_erase_existing_handle run live) absent)
+    | inr joined => exact joined
+  exact handler_cannot_discharge_sibling_without_explicit_join run unjoined afterJoined
+
+/-- CT13's handle obligation: after a second creation fails, a handler that
+leaves the scope must contain an explicit join of each pre-existing sibling.
+This holds for either a normal return or a rethrown error outcome. -/
+theorem failed_creation_handler_exit_joins_prior_sibling
+    {before failed after : Handles} {creator newHandle sibling : Nat}
+    {result : CreateResult} {joins leaving : List Nat} {outcome returned : Outcome}
+    (creation : create before creator newHandle .failed = some (failed, result))
+    (handler : HandlerRun failed after joins)
+    (live : before sibling ≠ .absent)
+    (unjoined : before sibling ≠ .joined)
+    (member : sibling ∈ leaving)
+    (exit : finishHandler after leaving outcome = some returned) : sibling ∈ joins := by
+  have same := (failed_create_changes_no_handles creation).1
+  exact handler_exit_requires_explicit_join_of_every_prior_sibling handler
+    (by simpa [same] using live) (by simpa [same] using unjoined) member exit
+
+/-! Empty-error-row elimination is not propagation. It consumes one Result and
+returns its typed scalar without introducing a phantom error edge or performing
+any handle operation. Native scalar extraction relies on the opaque checked
+module and on correspondence with this typed outcome relation. -/
+
+def unwrapInfallible (errors : List ErrorTag) : Option Outcome → Option (Option Outcome × Scalar)
+  | some (.normal value) => if errors = [] then some (none, value) else none
+  | _ => none
+
+theorem empty_declared_error_row_rules_out_error (resultType : ScalarType) (tag : ErrorTag) :
+    ¬ outcomeTyped resultType [] (.error tag) := by
+  simp [outcomeTyped]
+
+theorem typed_empty_error_row_has_normal_scalar
+    {resultType : ScalarType} {outcome : Outcome}
+    (typed : outcomeTyped resultType [] outcome) :
+    ∃ value, outcome = .normal value ∧ scalarType value = resultType := by
+  cases outcome with
+  | normal value => exact ⟨value, rfl, typed⟩
+  | error tag => exact False.elim (empty_declared_error_row_rules_out_error resultType tag typed)
+
+theorem typed_infallible_extraction_preserves_value_and_consumes_result
+    {resultType : ScalarType} {outcome : Outcome}
+    (typed : outcomeTyped resultType [] outcome) :
+    ∃ value, outcome = .normal value ∧ scalarType value = resultType ∧
+      unwrapInfallible [] (some outcome) = some (none, value) := by
+  obtain ⟨value, normal, scalar⟩ := typed_empty_error_row_has_normal_scalar typed
+  exact ⟨value, normal, scalar, by simp [normal, unwrapInfallible]⟩
+
+theorem checked_infallible_extraction_requires_empty_declared_errors
+    {errors : List ErrorTag} {slot consumed : Option Outcome} {value : Scalar}
+    (checked : unwrapInfallible errors slot = some (consumed, value)) :
+    errors = [] ∧ consumed = none ∧ slot = some (.normal value) := by
+  unfold unwrapInfallible at checked
+  split at checked <;> try contradiction
+  split at checked <;> try contradiction
+  cases checked
+  exact ⟨by assumption, rfl, rfl⟩
+
+theorem infallible_extraction_does_not_accept_actual_error (errors : List ErrorTag) (tag : ErrorTag) :
+    unwrapInfallible errors (some (.error tag)) = none := rfl
+
+theorem consumed_infallible_result_cannot_be_extracted_again (errors : List ErrorTag) :
+    unwrapInfallible errors none = none := rfl
+
 end QCore.TaskExecution

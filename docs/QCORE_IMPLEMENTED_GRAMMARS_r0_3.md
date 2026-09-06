@@ -106,16 +106,39 @@ collects the worker's typed Result; `?` is a separate propagation operation.
 an infallible unit result. Scope exits, returns and propagation reject live
 handles or unconsumed Results, including the failure edge of a later spawn.
 There is no automatic join. Sequential spawn/join pairs are supported.
+An infallible `?` consumes the Result and extracts its scalar value without
+inventing an error exit; the core requires an empty declared error set.
+
+Explicit recovery uses exactly one of each canonical arm, in either order:
+
+```qcore
+match spawn s worker(copy x) {
+    Result::Ok { value: h } => { let y = join move h?; return y; }
+    Result::Err { error: failure } => { return 0; }
+}
+```
+
+The scrutinee may instead be `join move h` or an existing Result binding.
+Scrutinees are whole expressions without `?`. Each arm binds one local name;
+its checked body may return, raise or continue with outer identities. Arm
+bindings do not escape. `raise failure;` rethrows a bound error with its exact
+tag; `raise E::Variant;` remains supported. Handled creation errors need no
+`throws<SpawnError>` permission unless propagated. Spawn itself requires its
+spawn effect. Prior live siblings remain obligations on every arm and must be
+explicitly joined before exit. Other patterns, guards, arm values, arbitrary
+match scrutinees and general branching remain unsupported. Explicit matching
+of an infallible Result conservatively checks both arms; only infallible `?`
+uses the empty-error extraction rule.
 
 Captures must be `copy` of direct immutable i32 local/parameter names. General
-expressions, assignments, loops, branches, resources, loans, move/read/write
+expressions, assignments, loops, general branches, resources, loans, move/read/write
 captures, mutexes, externs, globals, user contracts and task-bearing workers
 reject in every definition. Entry-free task modules are not admitted yet.
 The native driver currently supports Linux C11 threads and explicitly rejects
 other targets. Its start record survives until successful native join; failed
 join aborts without reclaiming possibly accessed storage. These rules do not
 establish general C11/shared-memory or cross-platform refinement. See the
-[execution record](reports/w6-native-source-tasks/README.md).
+[recovery execution record](reports/w6-task-recovery/README.md).
 
 ## G03. Source parameter usage grades
 
