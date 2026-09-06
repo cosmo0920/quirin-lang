@@ -1,0 +1,102 @@
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-review-concurrency/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.23s
+     Running unittests src/lib.rs (/tmp/qcore-host-extraction/target/debug/deps/qcore_compiler-253e6cf82051604b)
+
+running 22 tests
+test concurrency::tests::atomic_to_atomic_access_is_not_a_data_race ... ok
+test concurrency::tests::destroyed_generation_rejects_transfer ... ok
+test concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal ... ok
+test concurrency::tests::different_mutexes_do_not_hide_a_race ... ok
+test concurrency::tests::conflicting_unordered_accesses_report_a_race ... ok
+test concurrency::tests::destroyed_generation_rejects_all_access_kinds ... ok
+test concurrency::tests::future_permissions_and_spawned_access_cannot_revive_destroyed_generation ... ok
+test concurrency::tests::certificates_name_trusted_model_authority_without_removing_guard_semantics ... ok
+test concurrency::tests::destruction_requires_ordered_accesses_and_closed_other_guards ... ok
+test concurrency::tests::nested_join_requires_child_quiescence_and_consumes_handle_once ... ok
+test concurrency::tests::same_mutex_establishes_happens_before ... ok
+test concurrency::tests::join_requires_quiescence_and_all_handles_are_linear ... ok
+test concurrency::tests::synchronized_transfer_moves_unique_destruction_custody ... ok
+test concurrency::tests::lock_capabilities_and_rank_order_are_linear ... ok
+test concurrency::tests::terminal_tasks_cannot_receive_custody_or_unlock ... ok
+test native_concurrency::tests::every_deferred_concurrency_feature_is_classified ... ok
+test native_concurrency::tests::platform_gaps_are_failures_not_inferences ... ok
+test concurrency::tests::joined_child_cannot_execute_any_event ... ok
+test concurrency::tests::shared_reads_with_conserved_permissions_are_accepted ... ok
+test concurrency::tests::join_orders_prejoin_access_and_allows_destruction_then_distinct_generation ... ok
+test native_concurrency::tests::wrong_custody_and_incomplete_cleanup_fail ... ok
+test native_concurrency::tests::native_workers_preserve_transfer_cleanup_and_observation ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 284 filtered out; finished in 0.00s
+
+     Running tests/contract_loader.rs (/tmp/qcore-host-extraction/target/debug/deps/contract_loader-57d8a4322c992106)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/ct_corpus.rs (/tmp/qcore-host-extraction/target/debug/deps/ct_corpus-dd1da7ea91d27d29)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/cycle20_verifier_plugins.rs (/tmp/qcore-host-extraction/target/debug/deps/cycle20_verifier_plugins-ea7504dcd94a658a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.00s
+
+     Running tests/first_party_discovery.rs (/tmp/qcore-host-extraction/target/debug/deps/first_party_discovery-b54d488bae9830df)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/libevent_submodule.rs (/tmp/qcore-host-extraction/target/debug/deps/libevent_submodule-585a573798389ac9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/module_modes.rs (/tmp/qcore-host-extraction/target/debug/deps/module_modes-1458b894b6c6958e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/profile_loader.rs (/tmp/qcore-host-extraction/target/debug/deps/profile_loader-b2add33ba0b8e143)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.00s
+
+     Running tests/qcore_contract_corpus.rs (/tmp/qcore-host-extraction/target/debug/deps/qcore_contract_corpus-ad6b140aaf0b4af7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quant_index_contracts.rs (/tmp/qcore-host-extraction/target/debug/deps/quant_index_contracts-1a270609dbe8fd78)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/toolchain_compatibility.rs (/tmp/qcore-host-extraction/target/debug/deps/toolchain_compatibility-b5775503ffc06fdb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/w3_evidence_v2.rs (/tmp/qcore-host-extraction/target/debug/deps/w3_evidence_v2-40ae3eca604b59f3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/workspace_layering.rs (/tmp/qcore-host-extraction/target/debug/deps/workspace_layering-fd2cb872fb00f451)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
