@@ -545,3 +545,16 @@ policies; the pinned audit checks the helper contract and records all exact
 inputs. Wrapper behavioral/custody replay remains open. All 345 Rust tests,
 formatting, Clippy, Lean build/audit and the pinned audit pass. Resource inventory,
 callback/wrapper projections and native chunk-function results are unchanged.
+
+## Source-derived memory backend custody (2026-09-06)
+
+The [memory backend report](../reports/cycle19-memory-backend/README.md) records
+an executable `cio_memfs_close` native contract over nine nullable ownership
+states. All 13 postconditions check the source-derived child/object release,
+order and borrowed-root frame. The backend pointer remains unchanged and may
+dangle after close. Provenance, distinct owned fields, exclusive access and libc
+binding remain premises. A shared typed C importer now serves Monkey and the
+ChunkIO destructor checker with exact pinned projection parity. Seven new Lean
+theorems and 348 workspace tests pass with all required checks. Complete chunk
+close, list/counter discharge, filesystem backend and higher-level composition
+remain open; generic resource verdicts and the 96 scalar results are unchanged.

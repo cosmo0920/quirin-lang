@@ -1,4 +1,6 @@
 use super::*;
+use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
+use crate::verifier_plugins::libevent::monkey_source::*;
 
 const FIXTURE: &str = include_str!("../fixtures/monkey/callbacks.c");
 

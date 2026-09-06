@@ -146,6 +146,7 @@ fn run(
     println!("Fluent Bit {revision}");
     let mut report = AuditReport::new(&revision);
     let mut native_results = Vec::new();
+    let mut teardown_results = Vec::new();
     audit_library_summary_profiles(&root, &revision)?;
 
     let contracts = load_resource_contract_manifest(contract_manifest)?;
@@ -187,6 +188,7 @@ fn run(
             &contracts,
             &mut report,
             &mut native_results,
+            &mut teardown_results,
         )?;
         failed |= counts.gateway_failures != 0;
         println!(
@@ -220,6 +222,7 @@ fn run(
             &contracts,
             &mut report,
             &mut native_results,
+            &mut teardown_results,
         )?;
         failed |= counts.gateway_failures != 0;
         println!(
@@ -247,6 +250,7 @@ fn run(
         &contracts,
         &mut report,
         &mut native_results,
+        &mut teardown_results,
     )?;
     failed |= counts.gateway_failures != 0;
     println!(
@@ -285,6 +289,7 @@ fn run(
             &contracts,
             &mut report,
             &mut native_results,
+            &mut teardown_results,
         )?;
         failed |= counts.gateway_failures != 0;
         println!(
@@ -312,6 +317,7 @@ fn run(
             "schema_version": 1, "source_revision": revision,
             "scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
             "results": native_results,
+            "backend_teardown": teardown_results,
             "source_policy_contract": include_str!("../../contract/qcore/library/source_projection.qcore"),
             "frame_helper_contract": include_str!("../../contract/qcore/chunkio/error_state.qcore"),
         });
@@ -389,6 +395,7 @@ fn audit_library(
     contracts: &ResourceContracts,
     report: &mut AuditReport,
     native_results: &mut Vec<serde_json::Value>,
+    teardown_results: &mut Vec<serde_json::Value>,
 ) -> Result<AuditCounts, String> {
     let mut counts = AuditCounts::default();
     let mut chunk_helpers = Vec::new();
@@ -436,6 +443,14 @@ fn audit_library(
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
+        if library == "chunkio" && file == "cio_memfs.c" {
+            let certificate = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+            println!(
+                "qcore-contract cio_memfs_close: Checked ({} nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)",
+                certificate.cases().len()
+            );
+            teardown_results.push(serde_json::json!({"function": "cio_memfs_close", "status": "checked_field_custody", "certificate": certificate}));
+        }
         if library == "fluent-bit-chunk" || (library == "chunkio" && file == "cio_chunk.c") {
             audit_chunk_source(&unit, library, &file, &chunk_helpers, native_results)?;
         }

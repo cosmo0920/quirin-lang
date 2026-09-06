@@ -1,3 +1,4 @@
+import QCore.FieldDestructor
 import QCore.CallbackBinding
 import QCore.CallbackSource
 import QCore.DescriptorObservation
@@ -116,3 +117,17 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackSource.false_scan_header_exits
 #print axioms QCore.CallbackSource.scan_match_returns_before_next_iteration
 #print axioms QCore.CallbackSource.unmatched_scan_retains_next_iteration
+
+#print axioms QCore.FieldDestructor.null_release_preserves_custody
+
+#print axioms QCore.FieldDestructor.accepted_release_was_live
+
+#print axioms QCore.FieldDestructor.accepted_release_discharges_identity
+
+#print axioms QCore.FieldDestructor.accepted_release_preserves_other
+
+#print axioms QCore.FieldDestructor.duplicate_release_rejected
+
+#print axioms QCore.FieldDestructor.parent_release_requires_discharged_children
+
+#print axioms QCore.FieldDestructor.accepted_teardown_has_no_owned_field

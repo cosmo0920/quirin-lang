@@ -1,0 +1,11 @@
+{
+  "baseline": "cycle19-contract-extraction",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_identical": true,
+  "scalar_function_results_identical": true,
+  "scalar_functions": 96,
+  "checked_backend_functions": 1,
+  "nullable_backend_states": 9,
+  "postconditions_per_state": 13,
+  "workspace_tests": 348
+}

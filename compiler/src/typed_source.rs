@@ -1,0 +1,1505 @@
+//! Bounded typed C access paths shared by library source importers.
+//!
+//! These are source projections, NOT safety or custody certificates.
+//! Reads and calls yield fresh symbols; pointer aliases retain those symbols.
+//! Calls remain opaque (in particular, a recorded close call is not discharge).
+//! All branches are retained, including infeasible alternatives. Consumers must
+//! establish guards, pointer provenance, live/bounded storage, arithmetic, call
+//! contracts, and synchronization before interpreting a path as safe.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use serde::Serialize;
+use serde_json::Value;
+
+use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
+use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
+
+const MAX_PATHS: usize = 64;
+const MAX_OPERATIONS: usize = 512;
+
+/// Typed symbolic values. A symbol refers to an earlier Read or Call in this
+/// same path. Integer casts and sizeof remain explicit, never host-evaluated.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceValue {
+    pub c_type: String,
+    pub expression: SourceExpression,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum SourceExpression {
+    Function {
+        name: String,
+        signature: String,
+    },
+    Parameter {
+        index: usize,
+    },
+    LocalStorage {
+        local: usize,
+    },
+    /// Typed induction value, scoped to the enclosing ScanLoop iteration.
+    LoopIndex {
+        local: usize,
+    },
+    Integer {
+        value: String,
+    },
+    String {
+        value: String,
+    },
+    SizeOf {
+        argument_type: String,
+    },
+    /// Ordered initializer elements; layouts and bounds remain consumer obligations.
+    Aggregate {
+        elements: Vec<SourceValue>,
+    },
+    Symbol {
+        operation: usize,
+    },
+    Cast {
+        cast: String,
+        value: Box<SourceValue>,
+    },
+    Unary {
+        operator: String,
+        value: Box<SourceValue>,
+    },
+    Binary {
+        operator: String,
+        left: Box<SourceValue>,
+        right: Box<SourceValue>,
+    },
+    Field {
+        base: Box<SourceValue>,
+        name: String,
+    },
+    Index {
+        base: Box<SourceValue>,
+        index: Box<SourceValue>,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum SourceOperation {
+    /// Repeat header, then match test, then store increment into local. A true
+    /// match executes early_return and exits the FUNCTION; a false header continues outside
+    /// the loop. Bounds, arithmetic and termination are consumer obligations.
+    ScanLoop {
+        local: usize,
+        initial: SourceValue,
+        header: Box<SourceRegion>,
+        matches: Box<SourceRegion>,
+        early_return: Box<SourceRegion>,
+        increment: SourceValue,
+    },
+    /// Storage type is carried by place; this operation yields that type.
+    Read {
+        place: SourceValue,
+    },
+    Write {
+        place: SourceValue,
+        value: SourceValue,
+    },
+    /// Stack values are retained for address-taking (e.g. send's &val).
+    LocalWrite {
+        local: usize,
+        value: SourceValue,
+    },
+    LocalStart {
+        local: usize,
+        c_type: String,
+    },
+    /// Signature is the source declaration's type, not an assumed API contract.
+    Call {
+        function: String,
+        signature: String,
+        arguments: Vec<SourceValue>,
+        result_type: String,
+    },
+    Guard {
+        condition: SourceValue,
+        taken: bool,
+    },
+    LocalEnd {
+        local: usize,
+    },
+    ReturnValue {
+        value: SourceValue,
+    },
+    Return,
+    /// A source-declared nonreturning call ended this path. This is not teardown.
+    Terminate,
+}
+
+/// Symbol indices continue from the enclosing path through the three regions
+/// of one iteration. Iteration producers are never available after loop exit.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceRegion {
+    pub operations: Vec<SourceOperation>,
+    pub result: SourceValue,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourcePath {
+    pub operations: Vec<SourceOperation>,
+}
+
+/// Construction is private: every definition node must pass the importer.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceSummary {
+    function: String,
+    source_revision: String,
+    signature: String,
+    paths: Vec<SourcePath>,
+}
+
+impl SourceSummary {
+    pub fn signature(&self) -> &str {
+        &self.signature
+    }
+    pub fn function(&self) -> &str {
+        &self.function
+    }
+    pub fn source_revision(&self) -> &str {
+        &self.source_revision
+    }
+    pub fn paths(&self) -> &[SourcePath] {
+        &self.paths
+    }
+
+    pub fn has_scan_loop(&self) -> bool {
+        self.paths.iter().any(|path| {
+            path.operations
+                .iter()
+                .any(|operation| matches!(operation, SourceOperation::ScanLoop { .. }))
+        })
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "result", rename_all = "snake_case")]
+pub enum SourceResult {
+    Summary(SourceSummary),
+    Unknown { function: String, reason: String },
+}
+
+/// Syntax-selection inputs only; these confer no call effects or safety claims.
+pub struct SourceImportProfile<'a> {
+    pub records: &'a [&'a str],
+    pub sizeof_types: &'a [&'a str],
+    pub signature_constraints: &'a [(&'a str, &'a str, &'a [&'a str])],
+    /// Functions with an exact signature use this bounded call vocabulary.
+    pub restricted_calls: &'a [&'a str],
+}
+
+pub fn import_source_functions(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    functions: &[&str],
+    profile: &SourceImportProfile<'_>,
+) -> Result<Vec<SourceResult>, String> {
+    let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    // Field IDs from independent Clang invocations are not stable. Validate the
+    // selected complete records by name/type, then bind each MemberExpr to its
+    // typed base and direct field (anonymous/union/bitfield access is rejected).
+    let mut fields = BTreeMap::new();
+    for &record in profile.records {
+        let declarations = ast_declarations(&source, unit, record)?;
+        let definitions: Vec<_> = declarations
+            .iter()
+            .filter(|node| {
+                kind(node) == "RecordDecl"
+                    && node["name"] == record
+                    && node["completeDefinition"] == true
+                    && node["tagUsed"] == "struct"
+            })
+            .collect();
+        if let [definition] = definitions.as_slice() {
+            for field in children(definition)
+                .iter()
+                .filter(|node| kind(node) == "FieldDecl")
+            {
+                if field["isBitfield"] != true
+                    && children(field).is_empty()
+                    && let (Some(name), Ok(ty)) = (field["name"].as_str(), c_type(field))
+                {
+                    fields.insert((format!("struct {record} *"), name.to_owned()), ty);
+                }
+            }
+        }
+    }
+    Ok(functions
+        .iter()
+        .map(|function| {
+            let result = function_ast(&source, unit, function).and_then(|ast| {
+                let constants = enum_constants(&ast, &source, unit)?;
+                let arrays = array_types(&ast, &source, unit)?;
+                derive(
+                    &ast,
+                    function,
+                    source_revision,
+                    &fields,
+                    &constants,
+                    &arrays,
+                    profile,
+                )
+            });
+            match result {
+                Ok(summary) => SourceResult::Summary(summary),
+                Err(reason) => SourceResult::Unknown {
+                    function: (*function).into(),
+                    reason,
+                },
+            }
+        })
+        .collect())
+}
+
+// Clang preserves typedef spelling inside arrays. Resolve their element type
+// from declarations in the same source rather than assuming a socket ABI.
+fn array_types(
+    ast: &Value,
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<BTreeSet<String>, String> {
+    fn collect(node: &Value, types: &mut BTreeSet<String>) {
+        if kind(node) == "VarDecl"
+            && let Ok(ty) = c_type(node)
+            && ty.ends_with("[2]")
+        {
+            types.insert(ty);
+        }
+        for child in children(node) {
+            collect(child, types);
+        }
+    }
+    let mut types = BTreeSet::from(["int[2]".into()]);
+    collect(ast, &mut types);
+    for ty in &types {
+        let base = ty.strip_suffix("[2]").unwrap();
+        if base == "int" {
+            continue;
+        }
+        let declarations = ast_declarations(source, unit, base)?;
+        let exact: Vec<_> = declarations
+            .iter()
+            .filter(|node| kind(node) == "TypedefDecl" && node["name"] == base)
+            .collect();
+        if !matches!(exact.as_slice(), [decl] if c_type(decl).as_deref() == Ok("int")) {
+            return Err("stack array element is not an unambiguous int typedef".into());
+        }
+    }
+    Ok(types)
+}
+
+// Resolve explicit enum values from this same preprocessed input, never from
+// host constants. Ambiguous names (including shadowing) and implicit enum values
+// remain outside this profile. Clang's constant evaluator is a trusted boundary.
+fn enum_constants(
+    ast: &Value,
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<BTreeMap<String, SourceValue>, String> {
+    fn references(node: &Value, names: &mut BTreeSet<String>) {
+        if kind(node) == "DeclRefExpr"
+            && node["referencedDecl"]["kind"] == "EnumConstantDecl"
+            && let Some(name) = node["referencedDecl"]["name"].as_str()
+        {
+            names.insert(name.into());
+        }
+        for child in children(node) {
+            references(child, names);
+        }
+    }
+    let mut names = BTreeSet::new();
+    references(ast, &mut names);
+    let mut constants = BTreeMap::new();
+    for name in names {
+        let declarations = ast_declarations(source, unit, &name)?;
+        let exact: Vec<_> = declarations
+            .iter()
+            .filter(|node| kind(node) == "EnumConstantDecl" && node["name"] == name)
+            .collect();
+        let [decl] = exact.as_slice() else {
+            return Err("enum constant requires one unambiguous declaration".into());
+        };
+        let [initial] = children(decl) else {
+            return Err("enum constant requires an explicit evaluated initializer".into());
+        };
+        crate::source_contract::check(
+            "source_enum_value",
+            &[
+                (
+                    "evaluated_constant",
+                    i128::from(kind(initial) == "ConstantExpr"),
+                ),
+                (
+                    "type_matches",
+                    i128::from(c_type(initial)? == c_type(decl)?),
+                ),
+            ],
+        )?;
+        let integer = initial["value"]
+            .as_str()
+            .ok_or("missing evaluated enum value")?;
+        integer
+            .parse::<i128>()
+            .map_err(|_| "enum value outside integer profile")?;
+        constants.insert(
+            name,
+            value(
+                c_type(decl)?,
+                SourceExpression::Integer {
+                    value: integer.into(),
+                },
+            ),
+        );
+    }
+    Ok(constants)
+}
+
+fn c_type(node: &Value) -> Result<String, String> {
+    let ty = node["type"]["desugaredQualType"]
+        .as_str()
+        .or_else(|| node["type"]["qualType"].as_str())
+        .ok_or("missing C type")?;
+    if ty.contains("volatile") || ty.contains("_Atomic") || ty.contains("restrict") {
+        return Err("qualified access requires additional synchronization/alias evidence".into());
+    }
+    Ok(ty.into())
+}
+
+fn value(ty: String, expression: SourceExpression) -> SourceValue {
+    SourceValue {
+        c_type: ty,
+        expression,
+    }
+}
+
+#[derive(Clone)]
+enum Expr {
+    Local(String, String),
+    Literal(SourceValue),
+    Cast(String, String, Box<Self>),
+    Unary(String, String, Box<Self>),
+    Binary(String, String, Box<Self>, Box<Self>),
+    Field(String, Box<Self>, String),
+    Index(String, Box<Self>, Box<Self>),
+    Read(String, Box<Self>),
+    Call(String, String, String, Vec<Self>),
+    Aggregate(String, Vec<Self>),
+}
+
+#[derive(Clone)]
+enum Stmt {
+    Block(Vec<Self>),
+    Declare(String, String, Option<Expr>),
+    Assign(Expr, Expr),
+    OrAssign(Expr, Expr),
+    Increment(Expr),
+    Call(Expr),
+    NoReturnCall(Expr),
+    DoOnce(Box<Self>, Expr),
+    ScanLoop(Box<Self>, String, String, Expr, Expr, Expr),
+    If(Expr, Box<Self>, Option<Box<Self>>),
+    Return(Option<Expr>),
+}
+
+struct Importer<'a> {
+    fields: &'a BTreeMap<(String, String), String>,
+    constants: &'a BTreeMap<String, SourceValue>,
+    allowed_calls: Option<&'a [&'a str]>,
+    sizeof_types: &'a [&'a str],
+    arrays: &'a BTreeSet<String>,
+    locals: BTreeSet<String>,
+    nodes: usize,
+}
+
+impl Importer<'_> {
+    fn budget(&mut self, depth: usize) -> Result<(), String> {
+        self.nodes += 1;
+        if depth > 64 || self.nodes > 2048 {
+            return Err("callback exceeds bounded source import size/depth".into());
+        }
+        Ok(())
+    }
+
+    fn expression(&mut self, node: &Value, depth: usize) -> Result<Expr, String> {
+        self.budget(depth)?;
+        let ty = c_type(node)?;
+        let inner = children(node);
+        match (kind(node), inner) {
+            ("DeclRefExpr", []) if node["referencedDecl"]["kind"] == "EnumConstantDecl" => {
+                let constant = node["referencedDecl"]["name"]
+                    .as_str()
+                    .and_then(|name| self.constants.get(name))
+                    .filter(|constant| constant.c_type == ty)
+                    .ok_or("unresolved or mismatched enum constant")?;
+                Ok(Expr::Literal(constant.clone()))
+            }
+            ("InitListExpr", elements) if ty == "struct timeval" => {
+                if elements.len() != 2
+                    || !self
+                        .fields
+                        .contains_key(&("struct timeval *".into(), "tv_sec".into()))
+                    || !self
+                        .fields
+                        .contains_key(&("struct timeval *".into(), "tv_usec".into()))
+                {
+                    return Err("record initializer outside fixed timeval profile".into());
+                }
+                Ok(Expr::Aggregate(
+                    ty,
+                    elements
+                        .iter()
+                        .map(|element| self.expression(element, depth + 1))
+                        .collect::<Result<_, _>>()?,
+                ))
+            }
+            ("DeclRefExpr", [])
+                if matches!(
+                    node["referencedDecl"]["kind"].as_str(),
+                    Some("VarDecl" | "ParmVarDecl")
+                ) =>
+            {
+                let id = node["referencedDecl"]["id"]
+                    .as_str()
+                    .ok_or("missing local ID")?;
+                if !self.locals.contains(id) {
+                    return Err("global or unresolved local reference".into());
+                }
+                Ok(Expr::Local(id.into(), ty))
+            }
+            ("DeclRefExpr", []) if node["referencedDecl"]["kind"] == "FunctionDecl" => {
+                Ok(Expr::Literal(value(
+                    ty.clone(),
+                    SourceExpression::Function {
+                        name: node["referencedDecl"]["name"]
+                            .as_str()
+                            .ok_or("missing function identity")?
+                            .into(),
+                        signature: ty,
+                    },
+                )))
+            }
+            ("IntegerLiteral", []) | ("StringLiteral", []) => {
+                let literal = node["value"].as_str().ok_or("missing literal")?.to_owned();
+                Ok(Expr::Literal(value(
+                    ty,
+                    if kind(node) == "IntegerLiteral" {
+                        SourceExpression::Integer { value: literal }
+                    } else {
+                        SourceExpression::String { value: literal }
+                    },
+                )))
+            }
+            ("UnaryExprOrTypeTraitExpr", []) if node["name"] == "sizeof" => {
+                let argument_type = node["argType"]["desugaredQualType"]
+                    .as_str()
+                    .or_else(|| node["argType"]["qualType"].as_str())
+                    .ok_or("unsupported sizeof operand")?;
+                // Reject variably modified sizeof, whose operand can execute.
+                if !self.sizeof_types.contains(&argument_type) {
+                    return Err("sizeof outside fixed scalar type profile".into());
+                }
+                Ok(Expr::Literal(value(
+                    ty,
+                    SourceExpression::SizeOf {
+                        argument_type: argument_type.into(),
+                    },
+                )))
+            }
+            ("ParenExpr", [child]) => self.expression(child, depth + 1),
+            ("PredefinedExpr", [child]) if kind(child) == "StringLiteral" => {
+                self.expression(child, depth + 1)
+            }
+            ("ImplicitCastExpr", [child]) if node["castKind"] == "LValueToRValue" => {
+                Ok(Expr::Read(ty, Box::new(self.expression(child, depth + 1)?)))
+            }
+            ("ImplicitCastExpr" | "CStyleCastExpr", [child])
+                if matches!(
+                    node["castKind"].as_str(),
+                    Some(
+                        "BitCast"
+                            | "IntegralCast"
+                            | "NoOp"
+                            | "ArrayToPointerDecay"
+                            | "NullToPointer"
+                            | "FunctionToPointerDecay"
+                    )
+                ) =>
+            {
+                Ok(Expr::Cast(
+                    ty,
+                    node["castKind"].as_str().unwrap().into(),
+                    Box::new(self.expression(child, depth + 1)?),
+                ))
+            }
+            ("MemberExpr", [base]) if node["isArrow"] == true => {
+                let name = node["name"].as_str().ok_or("missing field name")?;
+                if self.fields.get(&(c_type(base)?, name.into())) != Some(&ty) {
+                    return Err("field is not a direct ordinary field of a selected record".into());
+                }
+                Ok(Expr::Field(
+                    ty,
+                    Box::new(self.expression(base, depth + 1)?),
+                    name.into(),
+                ))
+            }
+            ("MemberExpr", [base]) if node["isArrow"] == false => {
+                let name = node["name"].as_str().ok_or("missing field name")?;
+                let pointer_type = format!("{} *", c_type(base)?);
+                if self.fields.get(&(pointer_type.clone(), name.into())) != Some(&ty) {
+                    return Err("dot field outside selected ordinary record layout".into());
+                }
+                Ok(Expr::Field(
+                    ty,
+                    Box::new(Expr::Unary(
+                        pointer_type,
+                        "&".into(),
+                        Box::new(self.expression(base, depth + 1)?),
+                    )),
+                    name.into(),
+                ))
+            }
+            ("ArraySubscriptExpr", [base, index]) => Ok(Expr::Index(
+                ty,
+                Box::new(self.expression(base, depth + 1)?),
+                Box::new(self.expression(index, depth + 1)?),
+            )),
+            ("UnaryOperator", [child])
+                if matches!(node["opcode"].as_str(), Some("&" | "*" | "-" | "!")) =>
+            {
+                Ok(Expr::Unary(
+                    ty,
+                    node["opcode"].as_str().unwrap().into(),
+                    Box::new(self.expression(child, depth + 1)?),
+                ))
+            }
+            ("BinaryOperator", [left, right])
+                if matches!(
+                    node["opcode"].as_str(),
+                    Some("&" | "|" | "==" | "!=" | "<" | ">" | "+" | "*" | "/" | "%")
+                ) =>
+            {
+                Ok(Expr::Binary(
+                    ty,
+                    node["opcode"].as_str().unwrap().into(),
+                    Box::new(self.expression(left, depth + 1)?),
+                    Box::new(self.expression(right, depth + 1)?),
+                ))
+            }
+            ("CallExpr", [callee, arguments @ ..]) => {
+                let [reference] = children(callee) else {
+                    return Err("indirect or unmodeled call".into());
+                };
+                if kind(callee) != "ImplicitCastExpr"
+                    || !matches!(
+                        callee["castKind"].as_str(),
+                        Some("FunctionToPointerDecay" | "BuiltinFnToFnPtr")
+                    )
+                    || kind(reference) != "DeclRefExpr"
+                    || reference["referencedDecl"]["kind"] != "FunctionDecl"
+                {
+                    return Err("indirect or unmodeled call".into());
+                }
+                let name = reference["referencedDecl"]["name"]
+                    .as_str()
+                    .ok_or("missing call name")?;
+                // This list bounds syntax only. It does not assume these calls
+                // succeed or have a particular custody/destruction effect.
+                if self
+                    .allowed_calls
+                    .is_some_and(|calls| !calls.contains(&name))
+                {
+                    return Err(format!(
+                        "call {name} is outside the callback source profile"
+                    ));
+                }
+                Ok(Expr::Call(
+                    ty,
+                    name.into(),
+                    c_type(reference)?,
+                    arguments
+                        .iter()
+                        .map(|arg| self.expression(arg, depth + 1))
+                        .collect::<Result<_, _>>()?,
+                ))
+            }
+            _ => Err(format!("unmodeled callback expression {}", kind(node))),
+        }
+    }
+
+    fn statement(&mut self, node: &Value, depth: usize) -> Result<Stmt, String> {
+        self.budget(depth)?;
+        match (kind(node), children(node)) {
+            ("CompoundStmt", statements) => Ok(Stmt::Block(
+                statements
+                    .iter()
+                    .map(|stmt| self.statement(stmt, depth + 1))
+                    .collect::<Result<_, _>>()?,
+            )),
+            ("NullStmt", []) => Ok(Stmt::Block(vec![])),
+            ("ForStmt", [initial, condition_variable, condition, increment, body]) => {
+                if !kind(condition_variable).is_empty() {
+                    return Err("scan loop has a condition variable".into());
+                }
+                let [index] = children(increment) else {
+                    return Err("scan loop requires a local increment".into());
+                };
+                let Expr::Local(id, ty) = self.expression(index, depth + 1)? else {
+                    return Err("scan index is not local".into());
+                };
+                if kind(increment) != "UnaryOperator"
+                    || increment["opcode"] != "++"
+                    || !matches!(
+                        ty.as_str(),
+                        "int" | "unsigned int" | "unsigned long" | "unsigned long long"
+                    )
+                {
+                    return Err("scan loop requires a supported integer increment".into());
+                }
+                let initial = self.statement(initial, depth + 1)?;
+                if !matches!(&initial, Stmt::Assign(Expr::Local(target, _), _) if target == &id) {
+                    return Err("scan initializer must assign its induction local".into());
+                }
+                let condition = self.expression(condition, depth + 1)?;
+                let body = self.statement(body, depth + 1)?;
+                fn single(stmt: &Stmt) -> &Stmt {
+                    if let Stmt::Block(statements) = stmt
+                        && let [only] = statements.as_slice()
+                    {
+                        single(only)
+                    } else {
+                        stmt
+                    }
+                }
+                let Stmt::If(matches, yes, None) = single(&body) else {
+                    return Err("scan body requires one conditional early return".into());
+                };
+                let Stmt::Return(Some(result)) = single(yes) else {
+                    return Err("scan match must return from the function".into());
+                };
+                crate::source_contract::check(
+                    "source_scan_effects",
+                    &[
+                        ("header_calls", i128::from(effects(&condition).1)),
+                        ("match_calls", i128::from(effects(matches).1)),
+                        ("return_calls", i128::from(effects(result).1)),
+                    ],
+                )?;
+                Ok(Stmt::ScanLoop(
+                    Box::new(initial),
+                    id,
+                    ty,
+                    condition,
+                    matches.clone(),
+                    result.clone(),
+                ))
+            }
+            ("DoStmt", [body, condition]) => {
+                // Macro-style single execution only. Parse the entire body;
+                // break/continue and nonliteral conditions still fail closed.
+                let mut literal = condition;
+                while kind(literal) == "ParenExpr" && children(literal).len() == 1 {
+                    literal = &children(literal)[0];
+                }
+                if kind(literal) != "IntegerLiteral" || literal["value"] != "0" {
+                    return Err("do loop requires a literal zero condition".into());
+                }
+                Ok(Stmt::DoOnce(
+                    Box::new(self.statement(body, depth + 1)?),
+                    self.expression(condition, depth + 1)?,
+                ))
+            }
+            ("DeclStmt", [decl])
+                if kind(decl) == "VarDecl" && decl.get("storageClass").is_none() =>
+            {
+                let id = decl["id"]
+                    .as_str()
+                    .ok_or("missing declaration ID")?
+                    .to_owned();
+                let ty = c_type(decl)?;
+                // Fixed storage only: no VLA, implicit aggregate initialization,
+                // or destructor attributes. Array cells are explicit memory reads.
+                if !(ty.ends_with('*')
+                    || self.arrays.contains(&ty)
+                    || matches!(
+                        ty.as_str(),
+                        "int"
+                            | "short"
+                            | "unsigned int"
+                            | "unsigned long"
+                            | "unsigned long long"
+                            | "long"
+                            | "int[2]"
+                            | "struct timeval"
+                    ))
+                {
+                    return Err("local outside scalar/pointer callback profile".into());
+                }
+                let initial = match children(decl) {
+                    [] => None,
+                    [expr] => Some(self.expression(expr, depth + 1)?),
+                    _ => return Err("unmodeled local initialization/attributes".into()),
+                };
+                self.locals.insert(id.clone());
+                Ok(Stmt::Declare(id, ty, initial))
+            }
+            ("BinaryOperator", [left, right]) if node["opcode"] == "=" => Ok(Stmt::Assign(
+                self.expression(left, depth + 1)?,
+                self.expression(right, depth + 1)?,
+            )),
+            ("CompoundAssignOperator", [left, right]) if node["opcode"] == "|=" => {
+                if c_type(left)? != "int" || c_type(right)? != "int" {
+                    return Err("compound assignment requires int operands".into());
+                }
+                Ok(Stmt::OrAssign(
+                    self.expression(left, depth + 1)?,
+                    self.expression(right, depth + 1)?,
+                ))
+            }
+            ("UnaryOperator", [place]) if node["opcode"] == "++" && c_type(node)? == "int" => {
+                Ok(Stmt::Increment(self.expression(place, depth + 1)?))
+            }
+            ("IfStmt", [condition, yes]) if node["hasElse"] != true => Ok(Stmt::If(
+                self.expression(condition, depth + 1)?,
+                Box::new(self.statement(yes, depth + 1)?),
+                None,
+            )),
+            ("IfStmt", [condition, yes, no]) if node["hasElse"] == true => Ok(Stmt::If(
+                self.expression(condition, depth + 1)?,
+                Box::new(self.statement(yes, depth + 1)?),
+                Some(Box::new(self.statement(no, depth + 1)?)),
+            )),
+            ("CallExpr", _) => {
+                let expr = self.expression(node, depth + 1)?;
+                if matches!(&expr, Expr::Call(_, _, signature, _) if signature.ends_with(" __attribute__((noreturn))"))
+                {
+                    Ok(Stmt::NoReturnCall(expr))
+                } else {
+                    Ok(Stmt::Call(expr))
+                }
+            }
+            ("ReturnStmt", []) => Ok(Stmt::Return(None)),
+            ("ReturnStmt", [result]) => Ok(Stmt::Return(Some(self.expression(result, depth + 1)?))),
+            _ => Err(format!("unmodeled callback statement {}", kind(node))),
+        }
+    }
+}
+
+#[derive(Clone, Default)]
+struct Path {
+    locals: BTreeMap<String, (usize, String, Option<SourceValue>)>,
+    addressed: BTreeSet<String>,
+    operations: Vec<SourceOperation>,
+    returned: bool,
+    terminated: bool,
+    return_value: Option<SourceValue>,
+    next_local: usize,
+}
+
+impl Path {
+    fn push(&mut self, operation: SourceOperation) -> Result<usize, String> {
+        if self.operations.len() >= MAX_OPERATIONS {
+            return Err("callback operation limit exceeded".into());
+        }
+        let index = self.operations.len();
+        self.operations.push(operation);
+        Ok(index)
+    }
+
+    fn read(&mut self, expression: &Expr, ty: &str) -> Result<SourceValue, String> {
+        if let Expr::Local(id, _) = expression {
+            return self
+                .locals
+                .get(id)
+                .and_then(|local| local.2.clone())
+                .ok_or_else(|| "uninitialized, escaped, or out-of-scope local read".into());
+        }
+        let place = self.evaluate(expression)?;
+        let operation = self.push(SourceOperation::Read { place })?;
+        Ok(value(ty.into(), SourceExpression::Symbol { operation }))
+    }
+
+    fn evaluate(&mut self, expression: &Expr) -> Result<SourceValue, String> {
+        let result = match expression {
+            Expr::Local(id, ty) => {
+                let local = self.locals.get(id).ok_or("local outside its scope")?;
+                value(
+                    ty.clone(),
+                    SourceExpression::LocalStorage { local: local.0 },
+                )
+            }
+            Expr::Literal(value) => value.clone(),
+            Expr::Aggregate(ty, elements) => {
+                reject_unsequenced(&elements.iter().collect::<Vec<_>>())?;
+                value(
+                    ty.clone(),
+                    SourceExpression::Aggregate {
+                        elements: elements
+                            .iter()
+                            .map(|element| self.evaluate(element))
+                            .collect::<Result<_, _>>()?,
+                    },
+                )
+            }
+            Expr::Read(ty, place) => self.read(place, ty)?,
+            Expr::Cast(ty, cast, child) => value(
+                ty.clone(),
+                SourceExpression::Cast {
+                    cast: cast.clone(),
+                    value: Box::new(self.evaluate(child)?),
+                },
+            ),
+            Expr::Unary(ty, operator, child) => {
+                if operator == "&"
+                    && let Expr::Local(id, _) = child.as_ref()
+                {
+                    self.addressed.insert(id.clone());
+                }
+                value(
+                    ty.clone(),
+                    SourceExpression::Unary {
+                        operator: operator.clone(),
+                        value: Box::new(self.evaluate(child)?),
+                    },
+                )
+            }
+            Expr::Binary(ty, operator, left, right) => {
+                reject_unsequenced(&[left, right])?;
+                value(
+                    ty.clone(),
+                    SourceExpression::Binary {
+                        operator: operator.clone(),
+                        left: Box::new(self.evaluate(left)?),
+                        right: Box::new(self.evaluate(right)?),
+                    },
+                )
+            }
+            Expr::Field(ty, base, name) => value(
+                ty.clone(),
+                SourceExpression::Field {
+                    base: Box::new(self.evaluate(base)?),
+                    name: name.clone(),
+                },
+            ),
+            Expr::Index(ty, base, index) => {
+                reject_unsequenced(&[base, index])?;
+                value(
+                    ty.clone(),
+                    SourceExpression::Index {
+                        base: Box::new(self.evaluate(base)?),
+                        index: Box::new(self.evaluate(index)?),
+                    },
+                )
+            }
+            Expr::Call(ty, function, signature, arguments) => {
+                if signature.contains("noreturn") {
+                    return Err("nonreturning call requires a terminal statement".into());
+                }
+                self.call(ty, function, signature, arguments)?
+            }
+        };
+        check_value_size(&result)?;
+        Ok(result)
+    }
+
+    fn call(
+        &mut self,
+        ty: &str,
+        function: &str,
+        signature: &str,
+        arguments: &[Expr],
+    ) -> Result<SourceValue, String> {
+        reject_unsequenced(&arguments.iter().collect::<Vec<_>>())?;
+        let arguments = arguments
+            .iter()
+            .map(|arg| self.evaluate(arg))
+            .collect::<Result<_, _>>()?;
+        let operation = self.push(SourceOperation::Call {
+            function: function.into(),
+            signature: signature.into(),
+            arguments,
+            result_type: ty.into(),
+        })?;
+        // Calls may change any escaped local, including through const aliases.
+        self.invalidate_addressed();
+        Ok(value(ty.into(), SourceExpression::Symbol { operation }))
+    }
+
+    fn update(&mut self, place: &Expr, operator: &str, right: SourceValue) -> Result<(), String> {
+        // C evaluates a compound-assignment lvalue only once. Preserve the
+        // resolved address rather than introducing a second nested field read.
+        let resolved = if matches!(place, Expr::Local(..)) {
+            None
+        } else {
+            Some(self.evaluate(place)?)
+        };
+        let left = if let Some(place) = &resolved {
+            let operation = self.push(SourceOperation::Read {
+                place: place.clone(),
+            })?;
+            value("int".into(), SourceExpression::Symbol { operation })
+        } else {
+            self.read(place, "int")?
+        };
+        let result = value(
+            "int".into(),
+            SourceExpression::Binary {
+                operator: operator.into(),
+                left: Box::new(left),
+                right: Box::new(right),
+            },
+        );
+        check_value_size(&result)?;
+        if let Some(place) = resolved {
+            self.push(SourceOperation::Write {
+                place,
+                value: result,
+            })?;
+            self.invalidate_addressed();
+            Ok(())
+        } else {
+            self.write(place, result)
+        }
+    }
+
+    fn invalidate_addressed(&mut self) {
+        for id in &self.addressed {
+            if let Some(local) = self.locals.get_mut(id) {
+                local.2 = None;
+            }
+        }
+    }
+
+    fn write(&mut self, place: &Expr, result: SourceValue) -> Result<(), String> {
+        check_value_size(&result)?;
+        if let Expr::Local(id, _) = place {
+            let local = self
+                .locals
+                .get_mut(id)
+                .ok_or("assignment outside local scope")?;
+            local.2 = Some(result.clone());
+            let index = local.0;
+            self.push(SourceOperation::LocalWrite {
+                local: index,
+                value: result,
+            })?;
+        } else {
+            let place = self.evaluate(place)?;
+            self.push(SourceOperation::Write {
+                place,
+                value: result,
+            })?;
+            // An indirect write may alias any address-taken local.
+            self.invalidate_addressed();
+        }
+        Ok(())
+    }
+}
+
+// Bound alias substitution as well as the input AST: repeated x = x | x
+// must not allocate an exponentially growing symbolic report.
+fn visit_value(
+    value: &SourceValue,
+    mut visit: impl FnMut(&SourceValue) -> Result<(), String>,
+) -> Result<(), String> {
+    let mut pending = vec![(value, 0)];
+    let mut count = 0;
+    while let Some((value, depth)) = pending.pop() {
+        count += 1;
+        if count > 2048 || depth > 128 {
+            return Err("symbolic expression limit exceeded".into());
+        }
+        visit(value)?;
+        match &value.expression {
+            SourceExpression::Cast { value, .. } | SourceExpression::Unary { value, .. } => {
+                pending.push((value, depth + 1))
+            }
+            SourceExpression::Field { base, .. } => pending.push((base, depth + 1)),
+            SourceExpression::Binary { left, right, .. } => {
+                pending.push((left, depth + 1));
+                pending.push((right, depth + 1));
+            }
+            SourceExpression::Index { base, index } => {
+                pending.push((base, depth + 1));
+                pending.push((index, depth + 1));
+            }
+            SourceExpression::Aggregate { elements } => {
+                pending.extend(elements.iter().map(|element| (element, depth + 1)));
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+fn check_value_size(value: &SourceValue) -> Result<(), String> {
+    visit_value(value, |_| Ok(()))
+}
+
+// Validate the symbolic-reference projection independently of construction.
+// This establishes only prior typed producers, not memory/alias/call safety.
+fn check_path_symbols(path: &SourcePath) -> Result<(), String> {
+    let mut producers: Vec<Option<&str>> = Vec::new();
+    for operation in &path.operations {
+        if let SourceOperation::ScanLoop {
+            local,
+            initial,
+            header,
+            matches,
+            early_return,
+            increment,
+        } = operation
+        {
+            check_references(initial, &producers, None)?;
+            let mut iteration_producers = producers.clone();
+            let scope = Some((*local, initial.c_type.as_str()));
+            for region in [header, matches, early_return] {
+                for operation in &region.operations {
+                    crate::source_contract::check(
+                        "source_scan_region",
+                        &[(
+                            "read_only",
+                            i128::from(matches!(operation, SourceOperation::Read { .. })),
+                        )],
+                    )?;
+                    let SourceOperation::Read { place } = operation else {
+                        return Err("scan region has no read place".into());
+                    };
+                    check_references(place, &iteration_producers, scope)?;
+                    iteration_producers.push(Some(&place.c_type));
+                }
+                check_references(&region.result, &iteration_producers, scope)?;
+            }
+            check_references(increment, &iteration_producers, scope)?;
+            producers.push(None);
+            continue;
+        }
+        let (values, produced): (Vec<&SourceValue>, Option<&str>) = match operation {
+            SourceOperation::ScanLoop { .. } => unreachable!(),
+            SourceOperation::Read { place } => (vec![place], Some(&place.c_type)),
+            SourceOperation::Write { place, value } => (vec![place, value], None),
+            SourceOperation::LocalWrite { value, .. } | SourceOperation::ReturnValue { value } => {
+                (vec![value], None)
+            }
+            SourceOperation::Call {
+                arguments,
+                result_type,
+                ..
+            } => (arguments.iter().collect(), Some(result_type)),
+            SourceOperation::Guard { condition, .. } => (vec![condition], None),
+            SourceOperation::LocalStart { .. }
+            | SourceOperation::LocalEnd { .. }
+            | SourceOperation::Return
+            | SourceOperation::Terminate => (vec![], None),
+        };
+        for value in values {
+            check_references(value, &producers, None)?;
+        }
+        producers.push(produced);
+    }
+    Ok(())
+}
+
+fn check_references(
+    value: &SourceValue,
+    producers: &[Option<&str>],
+    loop_index: Option<(usize, &str)>,
+) -> Result<(), String> {
+    visit_value(value, |value| {
+        match value.expression {
+            SourceExpression::Symbol { operation } => {
+                crate::source_contract::check(
+                    "source_symbol",
+                    &[(
+                        "producer_type_matches",
+                        i128::from(
+                            producers.get(operation).copied().flatten()
+                                == Some(value.c_type.as_str()),
+                        ),
+                    )],
+                )?;
+            }
+            SourceExpression::LoopIndex { local } => {
+                crate::source_contract::check(
+                    "source_loop_index",
+                    &[(
+                        "scope_matches",
+                        i128::from(loop_index == Some((local, value.c_type.as_str()))),
+                    )],
+                )?;
+            }
+            _ => {}
+        }
+        Ok(())
+    })
+}
+
+// C does not sequence operands/arguments. Pure ordinary reads are projected in
+// AST order under the exclusive-access boundary; an opaque call plus another
+// read/call cannot be assigned an invented order.
+fn effects(expr: &Expr) -> (bool, bool) {
+    let combine = |a: (bool, bool), b: (bool, bool)| (a.0 || b.0, a.1 || b.1);
+    match expr {
+        Expr::Local(..) | Expr::Literal(..) => (false, false),
+        Expr::Read(_, child) => combine((true, false), effects(child)),
+        Expr::Cast(_, _, child) | Expr::Unary(_, _, child) | Expr::Field(_, child, _) => {
+            effects(child)
+        }
+        Expr::Binary(_, _, left, right) | Expr::Index(_, left, right) => {
+            combine(effects(left), effects(right))
+        }
+        Expr::Call(..) => (true, true),
+        Expr::Aggregate(_, elements) => elements.iter().fold((false, false), |prior, element| {
+            combine(prior, effects(element))
+        }),
+    }
+}
+
+fn reject_unsequenced(expressions: &[&Expr]) -> Result<(), String> {
+    let effects: Vec<_> = expressions.iter().map(|expr| effects(expr)).collect();
+    if effects.iter().any(|effect| effect.1) && effects.iter().filter(|effect| effect.0).count() > 1
+    {
+        Err("unsequenced call/read operands require an explicit ordering model".into())
+    } else {
+        Ok(())
+    }
+}
+
+fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
+    if let Stmt::Block(statements) = statement {
+        let declared: Vec<_> = statements
+            .iter()
+            .filter_map(|statement| {
+                if let Stmt::Declare(id, _, _) = statement {
+                    Some(id.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let mut paths = paths;
+        for statement in statements {
+            paths = execute(statement, paths)?;
+        }
+        for path in &mut paths {
+            // Remove block storage even on an early return. The final Return
+            // operation is emitted after these lexical lifetime exits.
+            for id in declared.iter().rev() {
+                if let Some((local, _, _)) = path.locals.remove(id) {
+                    path.push(SourceOperation::LocalEnd { local })?;
+                }
+            }
+        }
+        return Ok(paths);
+    }
+    let mut output = Vec::new();
+    for mut path in paths {
+        if path.returned || path.terminated {
+            output.push(path);
+            continue;
+        }
+        match statement {
+            Stmt::ScanLoop(initial, id, ty, header, matches, early_return) => {
+                let mut initialized = execute(initial, vec![path])?;
+                let mut path = initialized.pop().ok_or("missing scan initializer path")?;
+                crate::source_contract::check(
+                    "source_scan_initial",
+                    &[
+                        ("remaining_paths", initialized.len() as i128),
+                        ("index_escaped", i128::from(path.addressed.contains(id))),
+                    ],
+                )?;
+                let (local, _, initial) = path
+                    .locals
+                    .get(id)
+                    .ok_or("scan local outside scope")?
+                    .clone();
+                let initial = initial.ok_or("unknown scan initial value")?;
+                crate::source_contract::check(
+                    "source_type_match",
+                    &[("type_matches", i128::from(initial.c_type == *ty))],
+                )?;
+                let index = value(ty.clone(), SourceExpression::LoopIndex { local });
+                let mut iteration = path.clone();
+                iteration.locals.get_mut(id).unwrap().2 = Some(index.clone());
+                fn region(path: &mut Path, expr: &Expr) -> Result<SourceRegion, String> {
+                    let start = path.operations.len();
+                    let result = path.evaluate(expr)?;
+                    Ok(SourceRegion {
+                        operations: path.operations[start..].to_vec(),
+                        result,
+                    })
+                }
+                let header = region(&mut iteration, header)?;
+                let matches = region(&mut iteration, matches)?;
+                let early_return = region(&mut iteration, early_return)?;
+                let increment = value(
+                    ty.clone(),
+                    SourceExpression::Binary {
+                        operator: "+".into(),
+                        left: Box::new(index),
+                        right: Box::new(value(
+                            ty.clone(),
+                            SourceExpression::Integer { value: "1".into() },
+                        )),
+                    },
+                );
+                // The finite path evaluator does not infer the exit index.
+                // Its iteration symbols and induction value cannot escape.
+                path.locals.get_mut(id).unwrap().2 = None;
+                path.push(SourceOperation::ScanLoop {
+                    local,
+                    initial,
+                    header: Box::new(header),
+                    matches: Box::new(matches),
+                    early_return: Box::new(early_return),
+                    increment,
+                })?;
+                output.push(path);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
+            Stmt::Declare(id, ty, initial) => {
+                let index = path.next_local;
+                path.next_local += 1;
+                let result = initial
+                    .as_ref()
+                    .map(|expr| path.evaluate(expr))
+                    .transpose()?;
+                path.locals
+                    .insert(id.clone(), (index, ty.clone(), result.clone()));
+                if ty.ends_with("[2]") || ty == "struct timeval" {
+                    path.push(SourceOperation::LocalStart {
+                        local: index,
+                        c_type: ty.clone(),
+                    })?;
+                }
+                if let Some(value) = result {
+                    path.push(SourceOperation::LocalWrite {
+                        local: index,
+                        value,
+                    })?;
+                }
+            }
+            Stmt::Assign(place, expr) => {
+                // A direct field base read from an unescaped pointer local
+                // cannot be changed by the RHS call. Other addresses retain
+                // the conservative call/read ordering gate.
+                let stable_base = matches!(place, Expr::Field(_, base, _) if matches!(base.as_ref(), Expr::Read(_, local) if matches!(local.as_ref(), Expr::Local(id, _) if !path.addressed.contains(id))));
+                if !stable_base {
+                    reject_unsequenced(&[place, expr])?;
+                }
+                let result = path.evaluate(expr)?;
+                path.write(place, result)?;
+            }
+            Stmt::OrAssign(place, expr) => {
+                reject_unsequenced(&[place, expr])?;
+                // Include the old lvalue read in ordering checks: an RHS call
+                // could change an address-taken local before it is read.
+                if effects(expr).1 {
+                    return Err("compound assignment with an opaque call".into());
+                }
+                let right = path.evaluate(expr)?;
+                path.update(place, "|", right)?;
+            }
+            Stmt::Increment(place) => {
+                if effects(place).1 {
+                    return Err("increment with an effectful address".into());
+                }
+                path.update(
+                    place,
+                    "+",
+                    value(
+                        "int".into(),
+                        SourceExpression::Integer { value: "1".into() },
+                    ),
+                )?;
+            }
+            Stmt::Call(expr) => {
+                path.evaluate(expr)?;
+            }
+            Stmt::NoReturnCall(Expr::Call(ty, function, signature, arguments)) => {
+                path.call(ty, function, signature, arguments)?;
+                path.terminated = true;
+            }
+            Stmt::NoReturnCall(_) => unreachable!(),
+            Stmt::DoOnce(body, condition) => {
+                let mut once = execute(body, vec![path])?;
+                for path in &mut once {
+                    if !path.returned && !path.terminated {
+                        let condition = path.evaluate(condition)?;
+                        path.push(SourceOperation::Guard {
+                            condition,
+                            taken: false,
+                        })?;
+                    }
+                }
+                output.extend(once);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
+            Stmt::If(condition, yes, no) => {
+                let condition = path.evaluate(condition)?;
+                let mut other = path.clone();
+                path.push(SourceOperation::Guard {
+                    condition: condition.clone(),
+                    taken: true,
+                })?;
+                other.push(SourceOperation::Guard {
+                    condition,
+                    taken: false,
+                })?;
+                output.extend(execute(yes, vec![path])?);
+                output.extend(if let Some(no) = no {
+                    execute(no, vec![other])?
+                } else {
+                    vec![other]
+                });
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
+            Stmt::Return(result) => {
+                path.return_value = result
+                    .as_ref()
+                    .map(|value| path.evaluate(value))
+                    .transpose()?;
+                path.returned = true;
+            }
+            Stmt::Block(_) => unreachable!(),
+        }
+        output.push(path);
+        if output.len() > MAX_PATHS {
+            return Err("callback path limit exceeded".into());
+        }
+    }
+    Ok(output)
+}
+
+fn derive(
+    ast: &Value,
+    function: &str,
+    revision: &str,
+    fields: &BTreeMap<(String, String), String>,
+    constants: &BTreeMap<String, SourceValue>,
+    arrays: &BTreeSet<String>,
+    profile: &SourceImportProfile<'_>,
+) -> Result<SourceSummary, String> {
+    let expected_signature = profile
+        .signature_constraints
+        .iter()
+        .find(|(name, _, _)| *name == function);
+    let signature = c_type(ast)?;
+    let return_type = signature
+        .split('(')
+        .next()
+        .ok_or("missing return type")?
+        .trim();
+    if ast["variadic"] == true
+        || expected_signature.is_some_and(|(_, expected, _)| return_type != *expected)
+    {
+        return Err("function signature is outside the selected Unix profile".into());
+    }
+    if !matches!(return_type, "void" | "void *" | "int" | "char *") {
+        return Err("wrapper return type outside bounded profile".into());
+    }
+    let Some((body, parameters)) = children(ast).split_last() else {
+        return Err("missing function body".into());
+    };
+    if kind(body) != "CompoundStmt"
+        || expected_signature.is_some_and(|(_, _, types)| parameters.len() != types.len())
+    {
+        return Err("unmodeled function parameters/attributes".into());
+    }
+    let mut importer = Importer {
+        fields,
+        constants,
+        allowed_calls: expected_signature.map(|_| profile.restricted_calls),
+        sizeof_types: profile.sizeof_types,
+        arrays,
+        locals: BTreeSet::new(),
+        nodes: 0,
+    };
+    let mut path = Path {
+        next_local: parameters.len(),
+        ..Path::default()
+    };
+    for (index, parameter) in parameters.iter().enumerate() {
+        if kind(parameter) != "ParmVarDecl" || !children(parameter).is_empty() {
+            return Err("unmodeled callback parameter".into());
+        }
+        let id = parameter["id"]
+            .as_str()
+            .ok_or("missing parameter ID")?
+            .to_owned();
+        let ty = c_type(parameter)?;
+        if expected_signature.map_or_else(
+            || !(ty.ends_with('*') || matches!(ty.as_str(), "int" | "unsigned int" | "long")),
+            |(_, _, types)| ty != types[index],
+        ) {
+            return Err("callback parameter type outside selected Unix profile".into());
+        }
+        importer.locals.insert(id.clone());
+        path.locals.insert(
+            id,
+            (
+                index,
+                ty.clone(),
+                Some(value(ty, SourceExpression::Parameter { index })),
+            ),
+        );
+    }
+    // Parse all statements before executing any path; unreachable unsupported
+    // operations still make the entire callback Unknown.
+    let statement = importer.statement(body, 0)?;
+    let paths = execute(&statement, vec![path])?
+        .into_iter()
+        .map(|mut path| {
+            if path.operations.iter().any(|operation| matches!(operation, SourceOperation::ScanLoop { early_return, .. } if early_return.result.c_type != return_type)) {
+                return Err("scan early return type differs from function signature".into());
+            }
+            if path.terminated {
+                path.push(SourceOperation::Terminate)?;
+            } else if return_type == "void" {
+                if path.return_value.is_some() {
+                    return Err("value returned from void function".into());
+                }
+                path.push(SourceOperation::Return)?;
+            } else {
+                let value = path
+                    .return_value
+                    .take()
+                    .ok_or("missing nonvoid return on a source path")?;
+                crate::source_contract::check("source_type_match", &[("type_matches", i128::from(value.c_type == return_type))])?;
+                path.push(SourceOperation::ReturnValue { value })?;
+            }
+            let path = SourcePath {
+                operations: path.operations,
+            };
+            check_path_symbols(&path)?;
+            Ok(path)
+        })
+        .collect::<Result<_, String>>()?;
+    Ok(SourceSummary {
+        function: function.into(),
+        source_revision: revision.into(),
+        signature,
+        paths,
+    })
+}
+
+#[cfg(test)]
+#[path = "../tests/unit/monkey_source.rs"]
+mod tests;

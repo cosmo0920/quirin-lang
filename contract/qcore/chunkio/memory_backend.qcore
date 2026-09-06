@@ -1,0 +1,32 @@
+module contract;
+
+// Complete source-derived nullable-field release profile for cio_memfs_close.
+// Each owned_or_null__ path denotes a distinct allocation or null. Nested
+// fields exist only under a nonnull backend. Caller provenance, exclusive access
+// and binding free to libc are assumptions. The borrowed chunk remains live;
+// its backend field is unchanged and can retain a dangling pointer after close.
+// This is backend field custody, not the complete chunk/list/counter teardown.
+extern fn cio_memfs_close(chunk: borrow<'call, mut, Chunk> use one) -> unit
+contract {
+    requires root_is_live;
+    requires exclusive_access;
+    requires disjoint_owned_fields;
+    requires free_resolves_to_libc;
+    requires owned_or_null__backend;
+    requires owned_or_null__backend__name;
+    requires owned_or_null__backend__buf_data;
+    requires owned_or_null__backend__meta_data;
+    ensures normal root_preserved;
+    ensures normal fields_unchanged;
+    ensures normal released__backend == old_live__backend;
+    ensures normal released__backend__name == old_live__backend__name;
+    ensures normal released__backend__buf_data == old_live__backend__buf_data;
+    ensures normal released__backend__meta_data == old_live__backend__meta_data;
+    ensures normal live__backend == 0;
+    ensures normal live__backend__name == 0;
+    ensures normal live__backend__buf_data == 0;
+    ensures normal live__backend__meta_data == 0;
+    ensures normal not old_live__backend__name or release_rank__backend__name < release_rank__backend;
+    ensures normal not old_live__backend__buf_data or release_rank__backend__buf_data < release_rank__backend;
+    ensures normal not old_live__backend__meta_data or release_rank__backend__meta_data < release_rank__backend;
+};

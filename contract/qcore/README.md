@@ -179,3 +179,13 @@ are intentionally outside the declarative resource-projection manifest: their
 predicates are not approximated as acquire/release annotations. Corpus tests pin
 all declarations and clauses across 25 modules; mutation regressions exercise
 every extracted policy. See the [extraction report](../../docs/reports/cycle19-contract-extraction/README.md).
+
+`chunkio/memory_backend.qcore` is checked against the complete typed
+`cio_memfs_close` body over nine nullable ownership states. The shared field
+replay derives `old_live__PATH`, `live__PATH`, `released__PATH` and
+`release_rank__PATH` facts from `owned_or_null__PATH` premises. Double underscores
+separate field components, so `backend__buf_data` denotes `chunk->backend->buf_data`.
+The borrowed chunk and its pointer fields remain unchanged; source-derived
+release does not make a dangling backend pointer reusable. The
+[memory backend report](../../docs/reports/cycle19-memory-backend/README.md)
+records the provenance/libc assumptions and remaining enclosing teardown gates.

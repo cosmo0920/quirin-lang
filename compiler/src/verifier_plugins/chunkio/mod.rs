@@ -4,6 +4,7 @@
 //! extraction. Source summaries retain their private construction boundary.
 
 pub mod chunk_source;
+pub mod teardown_source;
 pub use chunk_source::*;
 
 pub const PINNED_FLUENT_BIT_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";

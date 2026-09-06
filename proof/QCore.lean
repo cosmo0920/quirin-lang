@@ -11,6 +11,7 @@ import QCore.EventDriven
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
+import QCore.FieldDestructor
 import QCore.ChunkSource
 import QCore.ControlFlow
 import QCore.ExecutableModel
