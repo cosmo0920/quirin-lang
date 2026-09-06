@@ -1,0 +1,19 @@
+{
+  "baseline": "d938970",
+  "workspace_tests": 636,
+  "provider_tests": 9,
+  "python_tests": 43,
+  "lean_audits": 19,
+  "standing_gate": "passed",
+  "ct_mapped": 5,
+  "ct_unmapped": 45,
+  "source_task_execution": false,
+  "model_only_boundaries": [
+    "capture types and Send/Sync",
+    "loans and mutexes",
+    "scalar/usage/SSA rollback",
+    "typed owned results",
+    "native creation/join refinement"
+  ],
+  "schema_migration_evidence": "../schema-1-compatibility/README.md"
+}

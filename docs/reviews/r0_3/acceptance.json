@@ -22,7 +22,8 @@
       "area": "concurrency",
       "status": "repaired_model",
       "evidence": [
-        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+        "docs/reports/r0-3-concurrency-lifetimes/README.md",
+        "docs/reports/w6-source-task-foundations/README.md"
       ],
       "remaining_boundary": "Active task state is separate from retained clock history; source concurrency lowering remains unsupported."
     },
@@ -108,12 +109,12 @@
     }
   ],
   "validation": {
-    "workspace_tests": 619,
+    "workspace_tests": 636,
     "python_evidence_validator_tests": 43,
     "lean_audits": 19,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w4-contextual-recursion/README.md"
+    "latest_integration_evidence": "docs/reports/w6-source-task-foundations/README.md"
   },
   "documentation_revision": "0.3",
   "open_followups": [

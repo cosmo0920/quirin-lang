@@ -1,4 +1,4 @@
-# qcore-schemas
+# qcore-schemas 1.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -34,7 +34,7 @@ The crate is semver-versioned independently of the compiler:
   assumptions*, not verified facts; certificates must record which ones were
   assumed (plan invariant 6).
 
-## Boolean path records (0.2.0)
+## Boolean path records (introduced in 0.2.0)
 
 `chunk_summary` adds portable Boolean-field and frame summary records. These
 records deserialize untrusted proposed paths. They carry no source-import
@@ -43,6 +43,42 @@ under declared premises. The compiler's source importer retains opaque,
 serialize-only wrappers; raw records cannot construct those wrappers or the
 source-checked compatibility certificate.
 
-This additive surface bumps this crate to 0.2.0. Plugin protocol v1/v2 and
-witness admission rules are unchanged. Existing built-in providers still live
-in the compiler; process packaging and semantic extraction are tracked in W5.
+The original additive path-record surface introduced crate version 0.2.0.
+That addition did not change plugin protocol version 1 or evidence versions
+1 and 2. Later source-program exchange requires the compatibility event below.
+
+## Source-program compatibility event (1.0.0)
+
+Version 1.0.0 makes the breaking Rust/schema transition explicit. During the
+source-provider work, `BooleanFieldSourceInput` changed from a required
+`summary: ChunkSourceSummaryRecord` field to required `schema_version`,
+`function`, `source_revision`, `field`, `program`, `dependencies`, and
+`profile_assumptions` fields. It now sends typed statements and expressions
+without expected execution paths. Reusing 0.2.0 for that shape violated the
+major-version policy above; all workspace consumers and standalone providers
+now require 1.0.0 and their lockfiles record it.
+
+Consumers constructing the old input must migrate to the version-2 statement
+input. Trusted callers obtain it from the opaque C gateway import's
+`source_input()` method. A raw deserialized input still conveys no source
+identity authority. Old result-bearing inputs are rejected, including inputs
+that attach a `summary` field to the new shape; there is no silent conversion.
+Providers derive output paths independently, and trusted replay compares them
+with the original source import before evaluating the pinned contract.
+
+These version numbers describe separate boundaries:
+
+| Boundary | Current value | Meaning |
+|---|---|---|
+| Rust schema crate | 1.0.0 | Public API and serde compatibility |
+| Plugin protocol | 1 | Existing manifest/request/response envelope |
+| Evidence | 1 and 2 | Existing negotiation and admission rules |
+| Boolean source input | 2 | Required statement-program schema |
+| Boolean source profile | `qcore.c_boolean_field_contract.v2` | Program-input verification task |
+| Input digest key | `qcore:boolean-field-source-input:v2` | Complete program identity in the task |
+| ChunkIO provider package | 0.3.0 | Independent program execution introduced before this crate-version repair |
+
+This crate bump does not renumber protocol or evidence versions, change
+existing data-profile versions, or grant new witness authority. Provider
+package versions remain independent; rebuilding records exact artifact
+identity through the package manifest and digest.

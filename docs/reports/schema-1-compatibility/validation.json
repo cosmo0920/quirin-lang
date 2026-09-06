@@ -1,0 +1,20 @@
+{
+  "schema_crate_version": "1.0.0",
+  "cargo_package_verified": true,
+  "workspace_all_targets_locked_offline_check": true,
+  "provider_workspace_all_targets_locked_offline_check": true,
+  "external_packaged_consumer_roundtrip_and_old_shape_rejection": true,
+  "obsolete_0_2_constraint_rejected": true,
+  "external_consumer_reproduction_script_verified": true,
+  "clean_provider_builds": 2,
+  "verified_packages_per_build": 5,
+  "deterministic_executable_manifest_archive_hashes": true,
+  "full_corpus_audit_exit_code": 0,
+  "standing_gate": "passed; ../w6-source-task-foundations contains combined gate evidence",
+  "full_language_conformance": false,
+  "workspace_tests": 636,
+  "provider_tests": 9,
+  "python_tests": 43,
+  "lean_axiom_audits": 19,
+  "audited_package_promoted_without_rebuild": true
+}

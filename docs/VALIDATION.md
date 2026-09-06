@@ -93,3 +93,10 @@ passes 619 workspace tests, including eight new public-API tests with actual C
 imports and certificate rederivation, plus nine provider tests, 43 Python tests
 and all standing/Lean gates. Zero/nonzero integer contexts cover bounded
 decreasing calls; general recursive inference and source conformance remain open.
+
+[Source task foundations](reports/w6-source-task-foundations/README.md) pass 636
+workspace tests, nine provider tests, 43 Python tests and all standing/Lean gates.
+Structured task resolution and the owned-resource ledger are checked separately;
+the source driver still rejects task execution and CT coverage remains 5/50.
+The companion [schema 1.0 migration](reports/schema-1-compatibility/README.md)
+records standalone consumer compatibility and rebuilt provider identity parity.

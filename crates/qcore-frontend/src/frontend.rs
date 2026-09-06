@@ -8,6 +8,14 @@
 //! revision 0.2 concurrency forms are parsed as well, but are deliberately not
 //! certified by the sequential Cycle 10 elaborator.
 
+#[path = "frontend_tasks.rs"]
+mod tasks;
+pub use tasks::{
+    ResolvedTaskCapture, ResolvedTaskExpression, ResolvedTaskExpressionKind, ResolvedTaskPlace,
+    SourceCaptureMode, SourceIndexExpression, SourcePlace, SourceShareExpression,
+    SourceTaskCapture, SourceTaskExpression, SourceTaskExpressionKind,
+};
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -241,11 +249,17 @@ pub struct SourceProgram {
     pub mode_span: Option<Span>,
     source: String,
     lexical_tokens: Vec<Token>,
+    task_expressions: Vec<SourceTaskExpression>,
     tokens: Vec<TokenKind>,
     pub declarations: Vec<Located<SourceDeclaration>>,
 }
 
 impl SourceProgram {
+    /// Parsed task syntax only; executable checking remains a separate gate.
+    pub fn task_expressions(&self) -> &[SourceTaskExpression] {
+        &self.task_expressions
+    }
+
     pub fn source(&self) -> &str {
         &self.source
     }
@@ -406,7 +420,9 @@ impl<'a> SourceParser<'a> {
             declarations.push(declaration);
             cursor = next;
         }
+        let task_expressions = tasks::parse_inventory(&self, &declarations)?;
         Ok(SourceProgram {
+            task_expressions,
             mode,
             mode_span,
             source: self.source.to_owned(),
@@ -1517,6 +1533,11 @@ pub struct TypedBinding {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TypedStatement {
+    /// Identity introduced by this statement, after its initializer resolves.
+    /// Assignments retain the existing identity and introduce no new binding.
+    pub binding: Option<SymbolId>,
+    /// Role-specific name resolution; no task lifetime or capture authority claim.
+    pub task_expressions: Vec<ResolvedTaskExpression>,
     pub span: Span,
     pub pass: SemanticPass,
     pub referenced_symbols: Vec<SymbolId>,
@@ -1703,7 +1724,10 @@ pub fn elaborate_source(
                     body,
                     &mut scopes,
                     &globals,
-                    &program.lexical_tokens,
+                    &mut tasks::ResolutionContext {
+                        program,
+                        live_scopes: BTreeSet::new(),
+                    },
                     &mut next_symbol,
                     &mut diagnostics,
                     None,
@@ -1737,21 +1761,27 @@ fn elaborate_block(
     block: &SourceBlock,
     scopes: &mut Vec<BTreeMap<String, SymbolId>>,
     globals: &BTreeMap<String, SymbolId>,
-    lexical_tokens: &[Token],
+    context: &mut tasks::ResolutionContext<'_>,
     next_symbol: &mut u32,
     diagnostics: &mut Vec<SourceDiagnostic>,
-    body_binding: Option<&str>,
+    body_binding: Option<(&str, bool)>,
 ) -> Vec<TypedStatement> {
     let mut scope = BTreeMap::new();
-    if let Some(name) = body_binding {
-        scope.insert(name.to_owned(), SymbolId(*next_symbol));
+    let mut introduced_scope = None;
+    if let Some((name, thread_scope)) = body_binding {
+        let symbol = SymbolId(*next_symbol);
+        if thread_scope {
+            context.live_scopes.insert(symbol);
+            introduced_scope = Some(symbol);
+        }
+        scope.insert(name.to_owned(), symbol);
         *next_symbol += 1;
     }
     scopes.push(scope);
     let mut typed = Vec::new();
     for statement in &block.statements {
         let (binding, reference, pass) = statement_metadata(&statement.value);
-        let mut references = lexical_references(statement, lexical_tokens);
+        let mut references = lexical_references(statement, &context.program.lexical_tokens);
         if let Some(reference) = reference {
             references.insert(reference.to_owned());
         }
@@ -1774,6 +1804,9 @@ fn elaborate_block(
                 });
             }
         }
+        let task_expressions =
+            tasks::resolve_tasks(statement.span, scopes, globals, context, diagnostics);
+        let mut binding_symbol = None;
         if let Some(binding) = binding {
             let scope = scopes.last_mut().expect("block scope exists");
             if scope.contains_key(binding) {
@@ -1784,7 +1817,9 @@ fn elaborate_block(
                     message: format!("duplicate local binding `{binding}`"),
                 });
             } else {
-                scope.insert(binding.to_owned(), SymbolId(*next_symbol));
+                let symbol = SymbolId(*next_symbol);
+                scope.insert(binding.to_owned(), symbol);
+                binding_symbol = Some(symbol);
                 *next_symbol += 1;
             }
         }
@@ -1794,17 +1829,19 @@ fn elaborate_block(
                 child,
                 scopes,
                 globals,
-                lexical_tokens,
+                context,
                 next_symbol,
                 diagnostics,
                 match &statement.value {
-                    StatementKind::WithLock { guard, .. } => Some(guard),
-                    StatementKind::ThreadScope { name, .. } => Some(name),
+                    StatementKind::WithLock { guard, .. } => Some((guard, false)),
+                    StatementKind::ThreadScope { name, .. } => Some((name, true)),
                     _ => None,
                 },
             ));
         }
         typed.push(TypedStatement {
+            binding: binding_symbol,
+            task_expressions,
             span: statement.span,
             pass,
             referenced_symbols,
@@ -1812,6 +1849,9 @@ fn elaborate_block(
         });
     }
     scopes.pop();
+    if let Some(symbol) = introduced_scope {
+        context.live_scopes.remove(&symbol);
+    }
     typed
 }
 

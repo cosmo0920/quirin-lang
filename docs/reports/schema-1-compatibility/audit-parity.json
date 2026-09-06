@@ -1,0 +1,52 @@
+{
+  "baseline_commit": "d938970",
+  "baseline_report": "docs/reports/w4-contextual-recursion",
+  "unit_count": 185,
+  "safe": 2,
+  "provisional_unsafe": 47,
+  "unknown": 132,
+  "data_only": 4,
+  "raw_units_promoted": 0,
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "new_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    },
+    "diagnostics": {
+      "byte_identical": true,
+      "baseline_sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac",
+      "new_sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac"
+    },
+    "chunk-contracts": {
+      "byte_identical": true,
+      "baseline_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "new_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a"
+    },
+    "source-effects": {
+      "byte_identical": false,
+      "baseline_sha256": "9bbdeb65499153419519c0d945a73b15a1a7d579204d169857ebb08aac23f93c",
+      "new_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "exact_changed_leaves": [
+        {
+          "json_pointer": "/results/16/evidence/reproducibility/package_digest",
+          "old": "901460299b1c09b65650c276b3182f81470251db7e548aa6bad483b2104302d3",
+          "new": "44eebd1d2add60a98cc6d1508f2be8304ec873c751c7dd098dd0e1c5345d227e"
+        },
+        {
+          "json_pointer": "/results/24/evidence/reproducibility/package_digest",
+          "old": "901460299b1c09b65650c276b3182f81470251db7e548aa6bad483b2104302d3",
+          "new": "44eebd1d2add60a98cc6d1508f2be8304ec873c751c7dd098dd0e1c5345d227e"
+        },
+        {
+          "json_pointer": "/results/63/evidence/reproducibility/package_digest",
+          "old": "901460299b1c09b65650c276b3182f81470251db7e548aa6bad483b2104302d3",
+          "new": "44eebd1d2add60a98cc6d1508f2be8304ec873c751c7dd098dd0e1c5345d227e"
+        }
+      ],
+      "byte_identical_after_exact_package_digest_replacement": true,
+      "checked_function_contracts": 3,
+      "unknown_functions": 93
+    }
+  }
+}

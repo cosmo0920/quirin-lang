@@ -1,0 +1,14 @@
+{
+  "Cargo.lock": {
+    "schema_version": "1.0.0",
+    "sha256": "cebd078408bce0b7e59cc1c1f9f6ce52f98b6889b2a85f3b27032a1e4e5b26e4"
+  },
+  "providers/Cargo.lock": {
+    "schema_version": "1.0.0",
+    "sha256": "77044e64e8402b9884655a34135f042115a4f0e36513cd4b530ee9eeb532e7fc"
+  },
+  "compiler/tests/fixtures/w3/provider/Cargo.lock": {
+    "schema_version": "1.0.0",
+    "sha256": "3265f407996bbccbc19e98064ca40f50feacfb0e0cac329f0ce8eaf81dee7193"
+  }
+}

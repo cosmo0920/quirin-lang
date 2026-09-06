@@ -29,6 +29,15 @@ Recognized declaration categories are concurrency profile, verifier scope, dimen
 
 A header may occur at most once and only before declarations. The default is executable mode. A contract module is entry-free; it is not automatically an observation policy or a resource table. Multiple input modes combine as executable first, library second, contract last. Each file still has its own header constraint, and declarations share one namespace.
 
+Task syntax now has structured records in `frontend_tasks.rs`: `spawn S worker(...)`
+retains ordered `copy`, `move`, `read ... share ...` and `write` place captures;
+`join move H` retains its handle place. An immediately following `?` is retained.
+Name resolution identifies a live scope, a source worker with matching arity,
+capture roots and the handle binder. Typed statements preserve new binder IDs
+after resolving their initializers. Place/share syntax is not proof of capture
+types, permissions or live handles. These records do not extend G02's executable
+profile; see the [task foundations record](reports/w6-source-task-foundations/README.md).
+
 ## G02. Source execution profile
 
 The following is the supported canonical body syntax, not a claim that every possible structurally accepted spelling of a declaration has ordinary type semantics:

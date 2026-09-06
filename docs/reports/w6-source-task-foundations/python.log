@@ -1,0 +1,48 @@
+test_mutations_reject (test_constructor_failure_trace.ConstructorFailureTraceTests.test_mutations_reject) ... ok
+test_real_failure_matrix (test_constructor_failure_trace.ConstructorFailureTraceTests.test_real_failure_matrix) ... ok
+test_native_matrix (test_file_constructor_failure_trace.FileConstructorFailureTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_constructor_failure_trace.FileConstructorFailureTests.test_process_mutations_reject) ... ok
+test_trace_mutations_reject (test_file_constructor_failure_trace.FileConstructorFailureTests.test_trace_mutations_reject) ... ok
+test_native_matrix (test_file_descriptor_failure_trace.DescriptorFailureTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_descriptor_failure_trace.DescriptorFailureTests.test_process_mutations_reject) ... ok
+test_reopen_can_reuse_or_relocate_descriptor_and_map (test_file_descriptor_failure_trace.DescriptorFailureTests.test_reopen_can_reuse_or_relocate_descriptor_and_map) ... ok
+test_trace_mutations_reject (test_file_descriptor_failure_trace.DescriptorFailureTests.test_trace_mutations_reject) ... ok
+test_native_matrix (test_file_existing_trace.ExistingFileTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_existing_trace.ExistingFileTests.test_process_mutations_reject) ... ok
+test_trace_mutations_reject (test_file_existing_trace.ExistingFileTests.test_trace_mutations_reject) ... ok
+test_native_matrix (test_file_os_constructor_trace.OsConstructorTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_os_constructor_trace.OsConstructorTests.test_process_mutations_reject) ... ok
+test_trace_mutations_reject (test_file_os_constructor_trace.OsConstructorTests.test_trace_mutations_reject) ... ok
+test_duplicate_json_keys_reject (test_file_os_trace.FileOsTests.test_duplicate_json_keys_reject) ... ok
+test_mutations_reject (test_file_os_trace.FileOsTests.test_mutations_reject) ... ok
+test_native_matrix (test_file_os_trace.FileOsTests.test_native_matrix) ... ok
+test_native_matrix (test_file_reopen_failure_trace.ReopenFailureTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_reopen_failure_trace.ReopenFailureTests.test_process_mutations_reject) ... ok
+test_reopen_can_reuse_or_relocate_descriptor_and_map (test_file_reopen_failure_trace.ReopenFailureTests.test_reopen_can_reuse_or_relocate_descriptor_and_map) ... ok
+test_trace_mutations_reject (test_file_reopen_failure_trace.ReopenFailureTests.test_trace_mutations_reject) ... ok
+test_native_matrix (test_file_sync_failure_trace.SyncFailureTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_sync_failure_trace.SyncFailureTests.test_process_mutations_reject) ... ok
+test_trace_mutations_reject (test_file_sync_failure_trace.SyncFailureTests.test_trace_mutations_reject) ... ok
+test_mutations_reject (test_file_teardown_trace.FileTeardownTests.test_mutations_reject) ... ok
+test_native_matrix (test_file_teardown_trace.FileTeardownTests.test_native_matrix) ... ok
+test_native_matrix (test_file_transition_trace.TransitionTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_transition_trace.TransitionTests.test_process_mutations_reject) ... ok
+test_reopened_mapping_may_change_address (test_file_transition_trace.TransitionTests.test_reopened_mapping_may_change_address) ... ok
+test_trace_mutations_reject (test_file_transition_trace.TransitionTests.test_trace_mutations_reject) ... ok
+test_native_matrix (test_file_unmap_failure_trace.UnmapFailureTests.test_native_matrix) ... ok
+test_process_mutations_reject (test_file_unmap_failure_trace.UnmapFailureTests.test_process_mutations_reject) ... ok
+test_reopen_can_relocate_mapping (test_file_unmap_failure_trace.UnmapFailureTests.test_reopen_can_relocate_mapping) ... ok
+test_trace_mutations_reject (test_file_unmap_failure_trace.UnmapFailureTests.test_trace_mutations_reject) ... ok
+test_duplicate_json_keys_reject (test_teardown_trace.TeardownTraceTests.test_duplicate_json_keys_reject) ... ok
+test_duplicate_release_rejects (test_teardown_trace.TeardownTraceTests.test_duplicate_release_rejects) ... ok
+test_mutated_traces_reject (test_teardown_trace.TeardownTraceTests.test_mutated_traces_reject) ... ok
+test_real_native_trace (test_teardown_trace.TeardownTraceTests.test_real_native_trace) ... ok
+test_record_reordering_rejects (test_teardown_trace.TeardownTraceTests.test_record_reordering_rejects) ... ok
+test_mutations_reject (test_unsupported_constructor_trace.UnsupportedConstructorTests.test_mutations_reject) ... ok
+test_native_matrix (test_unsupported_constructor_trace.UnsupportedConstructorTests.test_native_matrix) ... ok
+test_nonmemory_tree_cannot_interpret_a_chunk (test_unsupported_constructor_trace.UnsupportedConstructorTests.test_nonmemory_tree_cannot_interpret_a_chunk) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 3.930s
+
+OK

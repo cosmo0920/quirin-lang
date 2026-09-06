@@ -8,6 +8,6 @@ description = "Configured existing-C resource projection and reproducible audit 
 [dependencies]
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "0.2.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "1.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

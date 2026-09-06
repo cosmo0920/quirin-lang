@@ -1,0 +1,21 @@
+{
+  "operations": [
+    {
+      "rename_from": "build/cycle19/provider-packages",
+      "rename_to": "build/cycle19/provider-packages-schema0.2",
+      "index_sha256": "c5b82436f7b2d410a307e352800d11c31feda8899b202fe2eb594d98e2e16b20"
+    },
+    {
+      "rename_from": "build/cycle19/schema1-packages-a",
+      "rename_to": "build/cycle19/provider-packages",
+      "index_sha256": "453555c74b791ed5dd7d6ea303506392e597fceb2b2a0929d6a5081f3bf499a0"
+    }
+  ],
+  "active_packages": "build/cycle19/provider-packages",
+  "preserved_prior_packages": "build/cycle19/provider-packages-schema0.2",
+  "independent_reproduction_packages": "build/cycle19/schema1-packages-b",
+  "all_artifact_hashes_rechecked_before_promotion": true,
+  "index_has_no_build_output_or_temporary_path_assumptions": true,
+  "symlinks": false,
+  "audit_repeated_after_rename": false
+}

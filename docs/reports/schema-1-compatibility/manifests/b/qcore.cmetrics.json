@@ -1,0 +1,52 @@
+{
+  "plugin_id": "qcore.cmetrics",
+  "package_version": "0.1.0",
+  "protocol_versions": [
+    1
+  ],
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "entrypoint": {
+    "kind": "executable",
+    "path": "provider"
+  },
+  "package_digest": "6dcd26ec3cdc458a5430dd64f5a856c98efd4e085afb4bfbab85ac6ff09b5e65",
+  "targets": [
+    {
+      "library": "cmetrics",
+      "revisions": [
+        "*"
+      ],
+      "profiles": [
+        "*"
+      ],
+      "dialects": [
+        "c11",
+        "qcore"
+      ],
+      "platforms": [
+        "*"
+      ],
+      "backends": [
+        "*"
+      ]
+    }
+  ],
+  "capabilities": [
+    "resource_contracts"
+  ],
+  "required_foreign_summaries": [],
+  "required_observation_hooks": [],
+  "filesystem_inputs": [],
+  "network_access": false,
+  "limits": {
+    "timeout_ms": 5000,
+    "memory_bytes": 268435456,
+    "output_bytes": 4194304
+  },
+  "trust_class": "first_party",
+  "certificate_checker": "qcore.unsupported_assertions.v1",
+  "lean_theorem_family": "QCore.Resource"
+}

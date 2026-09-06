@@ -1,3 +1,4 @@
+import QCore.ScopedTasks
 import QCore.Concurrency
 
 #print axioms QCore.Concurrency.accepted_accesses_are_authorized
@@ -23,3 +24,14 @@ import QCore.Concurrency
 #print axioms QCore.Concurrency.Lifetime.step_preserves_terminal
 #print axioms QCore.Concurrency.Lifetime.run_preserves_destroyed
 #print axioms QCore.Concurrency.Lifetime.run_preserves_terminal
+
+#print axioms QCore.ScopedTasks.checked_transfer_had_original_custody
+#print axioms QCore.ScopedTasks.checked_transfer_places_exact_resources
+#print axioms QCore.ScopedTasks.transfer_preserves_live_identity_domain
+#print axioms QCore.ScopedTasks.transfer_preserves_unselected_resource
+#print axioms QCore.ScopedTasks.rollback_restores_original_custody
+#print axioms QCore.ScopedTasks.reserved_resource_is_unavailable_to_parent
+#print axioms QCore.ScopedTasks.unjoined_capsule_is_unavailable_to_every_task
+#print axioms QCore.ScopedTasks.completed_task_cannot_execute_resource_use
+#print axioms QCore.ScopedTasks.joined_task_cannot_execute_resource_use
+#print axioms QCore.ScopedTasks.checked_join_returns_capsule_resources_to_creator

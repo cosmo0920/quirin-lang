@@ -1,3 +1,4 @@
+import QCore.ScopedTasks
 import QCore.ContextualCustody
 import QCore.SourceValidation
 import QCore.VerifierEvidenceV2

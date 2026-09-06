@@ -261,3 +261,19 @@ Release, owned-return and bounded mutual-recursion source cases pass; mutations,
 nondecreasing calls, zero cycles and broader controls remain outside this route.
 Evidence: `docs/reports/w4-contextual-recursion/README.md`. General recursive
 fixed points, arithmetic rankings, aliases and cost summaries remain open.
+
+Source task foundations (2026-09-07): structured spawn/join records now retain
+ordered captures, resolved scope/worker/place symbols and initializer-before-binder
+identity. The core scoped-task ledger checks reservation rollback, completion
+capsules, creator-only join and scope exits; matching Lean transfer theorems and
+adversarial scenarios pass. These components are not yet composed into source
+execution: the driver still rejects task scopes with Q500, and CT coverage stays
+5/50. Typed task/result IR and native C lowering are next. Evidence:
+`docs/reports/w6-source-task-foundations/README.md`.
+
+Schema compatibility (2026-09-07): `qcore-schemas` is now 1.0.0 and all Rust
+consumers require that major version. The version-2 typed program input replaced
+a public summary field, requiring the documented breaking-change policy.
+Protocol v1, evidence v2, program schema/profile v2 and ChunkIO package 0.3.0
+retain their separate versions. Evidence:
+`docs/reports/schema-1-compatibility/README.md`.

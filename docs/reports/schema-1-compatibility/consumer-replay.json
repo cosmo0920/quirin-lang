@@ -1,0 +1,10 @@
+{
+  "current": {
+    "exit_code": 0,
+    "expected_result_observed": true
+  },
+  "obsolete": {
+    "exit_code": 101,
+    "expected_result_observed": true
+  }
+}

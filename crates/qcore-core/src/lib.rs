@@ -97,3 +97,5 @@ pub mod chunk_lifecycle;
 pub mod resource_accounting;
 
 pub mod event_reactor;
+
+pub mod scoped_tasks;
