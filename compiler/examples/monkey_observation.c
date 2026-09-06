@@ -14,6 +14,8 @@
 #include <event2/event.h>
 #include <event2/util.h>
 #include <mk_core/mk_event.h>
+#include <mk_core/mk_memory.h>
+#include <stdint.h>
 
 static void cb_event(evutil_socket_t, short, void *);
 static void cb_timeout(evutil_socket_t, short, void *);
@@ -30,10 +32,26 @@ struct observed_callback {
     int freed;
 };
 
+/* Separate schema: references the exact records in the identity trace. */
+static unsigned int sequence;
+static FILE *bindings;
+static int binding_active;
+static unsigned int binding_calls;
+static void *released_map;
+static void binding_begin(struct observed_callback *, evutil_socket_t, short);
+static void binding_end(struct observed_callback *);
+static void binding_call(const char *name, const char *arguments, long result,
+                         long memory_value)
+{
+    if (!binding_active) { return; }
+    fprintf(bindings, "%s{\"function\":\"%s\",\"arguments\":%s,\"result\":%ld,"
+            "\"sequence\":%u,\"memory_value\":%ld}",
+            binding_calls++ ? "," : "", name, arguments, result, sequence, memory_value);
+}
+
 static struct observed_callback callbacks[16];
 static unsigned int callback_count;
 static unsigned int base_id;
-static unsigned int sequence;
 static struct event_base *dispatch_base;
 static pthread_t dispatcher;
 static int dispatching;
@@ -116,6 +134,15 @@ static ssize_t observed_send(int fd, const void *buffer, size_t length, int flag
     ssize_t result = send(fd, buffer, length, flags);
     int saved_errno = errno;
     record_descriptor("descriptor_use", fd, generation, result);
+    if (binding_active) {
+        char args[256];
+        uint64_t value;
+        assert(length == sizeof(value));
+        memcpy(&value, buffer, sizeof(value));
+        snprintf(args, sizeof(args), "[%d,{\"value\":%lu,\"size\":%lu},%lu,%d]",
+                 fd, (unsigned long) value, (unsigned long) length, (unsigned long) length, flags);
+        binding_call("send", args, result, 0);
+    }
     errno = saved_errno;
     return result;
 }
@@ -164,8 +191,10 @@ static void callback_hook(evutil_socket_t fd, short flags, void *argument)
     if (entry->callback == cb_event) { seen_event++; }
     if (entry->callback == cb_timeout) { seen_timeout++; }
     if (entry->callback == cb_wait_2_timeout) { seen_wait_timeout++; }
+    binding_begin(entry, fd, flags);
     entry->callback(fd, flags, entry->argument);
     record("callback_exit", entry->identity, callback_name(entry->callback), 0);
+    binding_end(entry);
 }
 
 static struct event_base *observed_base_new(void)
@@ -193,6 +222,9 @@ static struct event *observed_event_new(struct event_base *base, evutil_socket_t
     entry->event = event_new(base, fd, flags, callback_hook, entry);
     assert(entry->event != NULL);
     record("event_new", entry->identity, callback_name(callback), 0);
+    fprintf(bindings, "{\"kind\":\"registration\",\"schema_version\":1,\"sequence\":%u,"
+            "\"event\":%u,\"argument\":%lu,\"event_pointer\":%lu}\n",
+            sequence, entry->identity, (unsigned long) argument, (unsigned long) entry->event);
     return entry->event;
 }
 
@@ -220,15 +252,21 @@ static int observed_event_del(struct event *event)
     struct observed_callback *entry = find_event(event);
     int result = event_del(event);
     record("event_del", entry->identity, callback_name(entry->callback), result);
+    char args[64];
+    snprintf(args, sizeof(args), "[%lu]", (unsigned long) event);
+    binding_call("event_del", args, result, 0);
     return result;
 }
 
 static void observed_event_free(struct event *event)
 {
     struct observed_callback *entry = find_event(event);
+    char args[64];
+    snprintf(args, sizeof(args), "[%lu]", (unsigned long) event);
     entry->freed = 1;
     event_free(event);
     record("event_free", entry->identity, callback_name(entry->callback), 0);
+    binding_call("event_free", args, 0, 0);
 }
 
 static int observed_loop(struct event_base *base, int flags)
@@ -254,6 +292,9 @@ static int observed_close(evutil_socket_t fd)
     int saved_errno = errno;
     if (result == 0) { entry->live = 0; }
     record_descriptor("descriptor_close", fd, generation, result);
+    char args[64];
+    snprintf(args, sizeof(args), "[%d]", fd);
+    binding_call("evutil_closesocket", args, result, 0);
     errno = saved_errno;
     return result;
 }
@@ -265,6 +306,36 @@ static void observed_base_free(struct event_base *base)
     record("base_free", 0, "", 0);
 }
 
+static int *observed_errno_location(void)
+{
+    int *location = __errno_location();
+    int value = *location;
+    binding_call("__errno_location", "[]", (long) location, value);
+    *location = value;
+    return location;
+}
+
+static void observed_perror(const char *message)
+{
+    int saved_errno = errno;
+    assert(!binding_active || strcmp(message, "write") == 0);
+    binding_call("perror", "[\"write\"]", 0, 0);
+    errno = saved_errno;
+    perror(message);
+}
+
+static void observed_mem_free(void *pointer)
+{
+    char args[64];
+    snprintf(args, sizeof(args), "[%lu]", (unsigned long) pointer);
+    if (binding_active) { assert(released_map == NULL); released_map = pointer; }
+    binding_call("mk_mem_free", args, 0, 0);
+    mk_mem_free(pointer);
+}
+
+#define __errno_location observed_errno_location
+#define perror observed_perror
+#define mk_mem_free observed_mem_free
 #define event_base_new observed_base_new
 #define event_new observed_event_new
 #define event_add observed_event_add
@@ -286,6 +357,75 @@ static void observed_base_free(struct event_base *base)
 #undef evutil_closesocket
 #undef evutil_socketpair
 #undef send
+#undef __errno_location
+#undef perror
+#undef mk_mem_free
+
+/* Read actual typed objects before/after the callback; never dereference a freed map.
+ * Ordinary reads/writes between these snapshots are reconstructed from source
+ * under the checked exclusive-dispatch scope, not individually instrumented. */
+static void cell(void *object, const char *field, const char *type, long value, int *count)
+{
+    fprintf(bindings, "%s{\"object\":%lu,\"field\":\"%s\",\"c_type\":\"%s\",\"value\":%ld}",
+            (*count)++ ? "," : "", (unsigned long) object, field, type, value);
+}
+
+static void snapshot(struct observed_callback *entry)
+{
+    int count = 0;
+    fprintf(bindings, "[");
+    if (entry->callback == cb_event) {
+        struct mk_event *payload = entry->argument;
+        struct ev_map *map = payload->data;
+        struct mk_event_ctx *ctx = map->ctx;
+        assert(ctx->base == entry->base);
+        assert(ctx->queue_size > 0 && ctx->queue_size <= 64);
+        cell(payload, "data", "void *", (long) map, &count);
+        cell(payload, "fd", "int", payload->fd, &count);
+        cell(map, "ctx", "struct mk_event_ctx *", (long) ctx, &count);
+        cell(ctx, "fired", "struct mk_event *", (long) ctx->fired, &count);
+        cell(ctx, "fired_count", "int", ctx->fired_count, &count);
+        for (int i = 0; i < ctx->queue_size; i++) {
+            cell(&ctx->fired[i], "fd", "int", ctx->fired[i].fd, &count);
+            cell(&ctx->fired[i], "mask", "unsigned int", ctx->fired[i].mask, &count);
+            cell(&ctx->fired[i], "data", "void *", (long) ctx->fired[i].data, &count);
+        }
+    }
+    else if (entry->callback == cb_timeout && !released_map) {
+        struct ev_map *map = entry->argument;
+        assert(map->ctx->base == entry->base && map->event == entry->event);
+        cell(map, "pipe[1]", "int", map->pipe[1], &count);
+        cell(map, "event", "struct event *", (long) map->event, &count);
+    }
+    fprintf(bindings, "]");
+}
+
+static void binding_begin(struct observed_callback *entry, evutil_socket_t fd, short flags)
+{
+    int saved_errno = errno;
+    assert(!binding_active);
+    released_map = NULL;
+    binding_calls = 0;
+    fprintf(bindings, "{\"kind\":\"callback\",\"schema_version\":1,\"enter\":%u,"
+            "\"event\":%u,\"fd\":%d,\"flags\":%d,\"argument\":%lu,"
+            "\"event_size\":%lu,\"before\":",
+            sequence, entry->identity, fd, flags, (unsigned long) entry->argument,
+            (unsigned long) sizeof(struct mk_event));
+    snapshot(entry);
+    fprintf(bindings, ",\"calls\":[");
+    binding_active = 1;
+    errno = saved_errno;
+}
+
+static void binding_end(struct observed_callback *entry)
+{
+    int saved_errno = errno;
+    binding_active = 0;
+    fprintf(bindings, "],\"exit\":%u,\"after\":", sequence);
+    snapshot(entry);
+    fprintf(bindings, "}\n");
+    errno = saved_errno;
+}
 
 int main(void)
 {
@@ -297,6 +437,8 @@ int main(void)
     unsigned int index;
     char value = 'x';
 
+    bindings = fopen(getenv("QCORE_MONKEY_BINDINGS"), "w");
+    assert(bindings != NULL);
     /* Timer teardown relies on observing a failed send to the closed reader. */
     setvbuf(stdout, NULL, _IONBF, 0);
     signal(SIGPIPE, SIG_IGN);
@@ -329,5 +471,6 @@ int main(void)
     for (index = 0; index < callback_count; index++) { assert(callbacks[index].freed); }
     for (index = 0; index < descriptor_count; index++) { assert(!descriptors[index].live); }
     record("completed", 0, "", 0);
+    assert(fclose(bindings) == 0);
     return 0;
 }

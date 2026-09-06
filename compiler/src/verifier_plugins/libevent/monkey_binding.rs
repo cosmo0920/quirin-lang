@@ -1,0 +1,738 @@
+//! Replay imported callback paths against supplied native snapshots and call hooks.
+//!
+//! This is bounded execution refinement, not a static or plugin certificate.
+//! The native producer is trusted for object liveness, layout, ordinary memory
+//! snapshots, and exclusive access. Addresses are scoped to a registered event
+//! and callback interval; they are not allocation provenance certificates.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use serde::Deserialize;
+use serde::Serialize;
+
+use super::monkey_observation::{
+    EventAction, MonkeyObservation, ObservationAction, check_monkey_observations,
+};
+use super::monkey_source::{
+    MonkeySourcePath, MonkeySourceResult, SourceExpression as E, SourceOperation as O, SourceValue,
+};
+use crate::contract_observation::{ObservationVerdict, check_contract_observation};
+use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+enum Binding {
+    Registration {
+        schema_version: u16,
+        sequence: u64,
+        event: u64,
+        argument: u64,
+        event_pointer: u64,
+    },
+    Callback(Callback),
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Callback {
+    schema_version: u16,
+    enter: u64,
+    exit: u64,
+    event: u64,
+    fd: i32,
+    flags: i16,
+    argument: u64,
+    event_size: u64,
+    before: Vec<Cell>,
+    after: Vec<Cell>,
+    calls: Vec<Call>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Cell {
+    object: u64,
+    field: String,
+    c_type: String,
+    value: i64,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(untagged)]
+enum Argument {
+    Integer(i64),
+    String(String),
+    Buffer(Buffer),
+}
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Buffer {
+    value: u64,
+    size: u64,
+}
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Call {
+    function: String,
+    arguments: Vec<Argument>,
+    result: i64,
+    sequence: u64,
+    memory_value: i64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CallbackBindingReport {
+    pub function: String,
+    pub checked_executions: usize,
+    pub checked_paths: BTreeSet<usize>,
+    pub unknown_paths: Vec<usize>,
+    pub unknown_reasons: Vec<String>,
+    pub checked_postconditions: usize,
+}
+#[derive(Debug, Serialize)]
+pub struct MonkeyBindingReport {
+    pub callbacks: Vec<CallbackBindingReport>,
+    pub unknown: Vec<String>,
+    pub static_certificate: bool,
+}
+
+type Memory = BTreeMap<(u64, String), (String, i64)>;
+
+fn memory(cells: &[Cell]) -> Result<Memory, String> {
+    let mut result = Memory::new();
+    if cells.len() > 256 {
+        return Err("snapshot exceeds bounded memory profile".into());
+    }
+    for cell in cells {
+        if cell.object == 0
+            || result
+                .insert(
+                    (cell.object, cell.field.clone()),
+                    (cell.c_type.clone(), cell.value),
+                )
+                .is_some()
+        {
+            return Err("null or duplicate snapshot cell".into());
+        }
+        scalar(cell.value, &cell.c_type)?;
+    }
+    Ok(result)
+}
+
+// LP64 Linux profile. Narrowing outside the representable range remains Unknown;
+// implementation-defined conversions and modular arithmetic are not guessed.
+fn scalar(value: i64, ty: &str) -> Result<i64, String> {
+    let valid = match ty {
+        "int" => i32::try_from(value).is_ok(),
+        "short" => i16::try_from(value).is_ok(),
+        "unsigned int" => u32::try_from(value).is_ok(),
+        "long" => true,
+        "unsigned long" => value >= 0,
+        _ if ty.ends_with('*') => value >= 0,
+        _ => false,
+    };
+    if valid {
+        Ok(value)
+    } else {
+        Err(format!("unsupported type or out-of-range value: {ty}"))
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum Value {
+    Scalar(i64),
+    Place(u64, String),
+    Local(usize),
+    Text(String),
+}
+impl Value {
+    fn number(&self) -> Result<i64, String> {
+        if let Self::Scalar(value) = self {
+            Ok(*value)
+        } else {
+            Err("expected scalar value".into())
+        }
+    }
+}
+
+struct Replay<'a> {
+    binding: &'a Callback,
+    memory: Memory,
+    symbols: BTreeMap<usize, (String, Value)>,
+    locals: BTreeMap<usize, (String, Value)>,
+    call_index: usize,
+    writes: BTreeSet<(u64, String)>,
+    releases: Vec<u64>,
+    closed: usize,
+}
+impl Replay<'_> {
+    fn eval(&self, value: &SourceValue) -> Result<Value, String> {
+        let result = match &value.expression {
+            E::Parameter { index } => Value::Scalar(match index {
+                0 => self.binding.fd.into(),
+                1 => self.binding.flags.into(),
+                2 => self
+                    .binding
+                    .argument
+                    .try_into()
+                    .map_err(|_| "pointer out of range")?,
+                _ => return Err("unknown parameter".into()),
+            }),
+            E::Integer { value } => Value::Scalar(value.parse().map_err(|_| "invalid integer")?),
+            E::String { value } => Value::Text(value.clone()),
+            E::LocalStorage { local } => {
+                if !self.locals.contains_key(local) {
+                    return Err("dead or uninitialized local".into());
+                }
+                Value::Local(*local)
+            }
+            E::SizeOf { argument_type } => Value::Scalar(match argument_type.as_str() {
+                "unsigned long" | "long" => 8,
+                "int" | "unsigned int" => 4,
+                "short" => 2,
+                _ => return Err("sizeof outside LP64 scalar profile".into()),
+            }),
+            E::Symbol { operation } => {
+                let (ty, result) = self.symbols.get(operation).ok_or("absent prior symbol")?;
+                if ty != &value.c_type {
+                    return Err("symbol type mismatch".into());
+                }
+                result.clone()
+            }
+            E::Cast { cast, value: inner } => {
+                let result = self.eval(inner)?;
+                match cast.as_str() {
+                    "IntegralCast" => Value::Scalar(scalar(result.number()?, &value.c_type)?),
+                    "NoOp" if inner.c_type == value.c_type.trim_start_matches("const ") => result,
+                    "BitCast" if inner.c_type.ends_with('*') && value.c_type.ends_with('*') => {
+                        result
+                    }
+                    "ArrayToPointerDecay"
+                        if matches!(result, Value::Place(..) | Value::Text(_)) =>
+                    {
+                        result
+                    }
+                    _ => return Err(format!("unmodeled cast: {cast}")),
+                }
+            }
+            E::Unary {
+                operator,
+                value: inner,
+            } => {
+                let result = self.eval(inner)?;
+                match operator.as_str() {
+                    "&" => result,
+                    "*" => Value::Place(
+                        result
+                            .number()?
+                            .try_into()
+                            .map_err(|_| "negative pointer")?,
+                        String::new(),
+                    ),
+                    "-" => Value::Scalar(result.number()?.checked_neg().ok_or("integer overflow")?),
+                    "!" => Value::Scalar(i64::from(result.number()? == 0)),
+                    _ => return Err(format!("unmodeled unary operator: {operator}")),
+                }
+            }
+            E::Binary {
+                operator,
+                left,
+                right,
+            } => {
+                let l = self.eval(left)?.number()?;
+                let r = self.eval(right)?.number()?;
+                Value::Scalar(match operator.as_str() {
+                    "+" => l.checked_add(r).ok_or("integer overflow")?,
+                    "&" => l & r,
+                    "|" => l | r,
+                    "==" => i64::from(l == r),
+                    "!=" => i64::from(l != r),
+                    _ => return Err(format!("unmodeled binary operator: {operator}")),
+                })
+            }
+            E::Field { base, name } => {
+                let base = self
+                    .eval(base)?
+                    .number()?
+                    .try_into()
+                    .map_err(|_| "negative object")?;
+                Value::Place(base, name.clone())
+            }
+            E::Index { base, index } => {
+                let index = self.eval(index)?.number()?;
+                if !(0..64).contains(&index) {
+                    return Err("index outside bounded storage".into());
+                }
+                match self.eval(base)? {
+                    Value::Place(object, field) if base.c_type == "int *" => {
+                        Value::Place(object, format!("{field}[{index}]"))
+                    }
+                    Value::Scalar(address) if base.c_type == "struct mk_event *" => {
+                        let stride =
+                            i64::try_from(self.binding.event_size).map_err(|_| "invalid layout")?;
+                        let offset = index.checked_mul(stride).ok_or("pointer overflow")?;
+                        Value::Scalar(address.checked_add(offset).ok_or("pointer overflow")?)
+                    }
+                    _ => return Err("unmodeled array base".into()),
+                }
+            }
+        };
+        // A scalar expression's C range is checked at each intermediate step.
+        if let Value::Scalar(number) = &result
+            && value.c_type != "struct mk_event"
+        {
+            scalar(*number, &value.c_type)?;
+        }
+        Ok(result)
+    }
+
+    fn place(&self, value: &SourceValue) -> Result<(u64, String), String> {
+        let Value::Place(object, field) = self.eval(value)? else {
+            return Err("unmodeled memory place".into());
+        };
+        if object == 0 {
+            return Err("null memory access".into());
+        }
+        let (ty, _) = self
+            .memory
+            .get(&(object, field.clone()))
+            .ok_or("absent, out-of-bounds, or released memory cell")?;
+        if ty != &value.c_type {
+            return Err("memory access type mismatch".into());
+        }
+        Ok((object, field))
+    }
+
+    fn argument(&self, value: &SourceValue) -> Result<Argument, String> {
+        Ok(match self.eval(value)? {
+            Value::Scalar(value) => Argument::Integer(value),
+            Value::Text(value) => Argument::String(value.trim_matches('"').to_owned()),
+            Value::Local(local) => {
+                let (ty, value) = self.locals.get(&local).ok_or("dead call buffer")?;
+                if ty != "unsigned long" {
+                    return Err("unmodeled call buffer type".into());
+                }
+                Argument::Buffer(Buffer {
+                    value: value.number()?.try_into().map_err(|_| "negative buffer")?,
+                    size: 8,
+                })
+            }
+            _ => return Err("unmodeled call argument".into()),
+        })
+    }
+
+    fn run(&mut self, path: &MonkeySourcePath) -> Result<(), String> {
+        let mut returned = false;
+        for (index, operation) in path.operations.iter().enumerate() {
+            if returned {
+                return Err("operation after return".into());
+            }
+            match operation {
+                O::Read { place } => {
+                    let key = self.place(place)?;
+                    self.symbols.insert(
+                        index,
+                        (place.c_type.clone(), Value::Scalar(self.memory[&key].1)),
+                    );
+                }
+                O::Write { place, value } => {
+                    let key = self.place(place)?;
+                    let result = scalar(self.eval(value)?.number()?, &place.c_type)?;
+                    self.memory.get_mut(&key).expect("checked cell").1 = result;
+                    self.writes.insert(key);
+                }
+                O::LocalWrite { local, value } => {
+                    self.locals
+                        .insert(*local, (value.c_type.clone(), self.eval(value)?));
+                }
+                O::LocalEnd { local } => {
+                    self.locals.remove(local);
+                }
+                O::Guard { condition, taken } => {
+                    if (self.eval(condition)?.number()? != 0) != *taken {
+                        return Err("source guard differs from execution".into());
+                    }
+                }
+                O::Call {
+                    function,
+                    arguments,
+                    result_type,
+                    ..
+                } => {
+                    let call = self
+                        .binding
+                        .calls
+                        .get(self.call_index)
+                        .ok_or("missing observed source call")?;
+                    let arguments = arguments
+                        .iter()
+                        .map(|v| self.argument(v))
+                        .collect::<Result<Vec<_>, _>>()?;
+                    if function != &call.function || arguments != call.arguments {
+                        return Err("source call arguments/order differ from observation".into());
+                    }
+                    match function.as_str() {
+                        "__errno_location" => {
+                            let address =
+                                u64::try_from(call.result).map_err(|_| "invalid errno pointer")?;
+                            if address == 0
+                                || self.memory.keys().any(|(object, _)| *object == address)
+                            {
+                                return Err("errno pointer aliases observed object".into());
+                            }
+                            scalar(call.memory_value, "int")?;
+                            self.memory.insert(
+                                (address, String::new()),
+                                ("int".into(), call.memory_value),
+                            );
+                        }
+                        "send" => {
+                            if !matches!(
+                                call.arguments.as_slice(),
+                                [
+                                    Argument::Integer(_),
+                                    Argument::Buffer(Buffer { size: 8, .. }),
+                                    Argument::Integer(8),
+                                    Argument::Integer(0)
+                                ]
+                            ) || !(-1..=8).contains(&call.result)
+                            {
+                                return Err("send outside bounded call profile".into());
+                            }
+                        }
+                        "perror" => {
+                            if call.result != 0 {
+                                return Err("nonvoid result on perror".into());
+                            }
+                        }
+                        "evutil_closesocket" => {
+                            if call.result != 0 {
+                                return Err("unresolved native close failure".into());
+                            }
+                            self.closed += 1;
+                        }
+                        "event_del" | "event_free" => {
+                            if call.result != 0 {
+                                return Err("unresolved event cleanup failure".into());
+                            }
+                        }
+                        "mk_mem_free" => {
+                            if arguments != [Argument::Integer(self.binding.argument as i64)]
+                                || call.result != 0
+                                || !self.releases.is_empty()
+                            {
+                                return Err("wrong or duplicate map release".into());
+                            }
+                            self.memory
+                                .retain(|(object, _), _| *object != self.binding.argument);
+                            self.releases.push(self.binding.argument);
+                        }
+                        _ => return Err("unmodeled call effects".into()),
+                    }
+                    let result = if result_type == "void" {
+                        Value::Scalar(0)
+                    } else {
+                        Value::Scalar(scalar(call.result, result_type)?)
+                    };
+                    self.symbols.insert(index, (result_type.clone(), result));
+                    self.call_index += 1;
+                }
+                O::Return => returned = true,
+            }
+        }
+        // errno belongs to the thread, outside the callback snapshot footprint.
+        self.memory.retain(|(_, field), _| !field.is_empty());
+        if !returned
+            || self.call_index != self.binding.calls.len()
+            || self.memory != memory(&self.binding.after)?
+        {
+            return Err("incomplete source execution or post-state mismatch".into());
+        }
+        Ok(())
+    }
+}
+
+fn row(rows: &[MonkeyObservation], sequence: u64) -> Result<&MonkeyObservation, String> {
+    rows.get(sequence.checked_sub(1).ok_or("zero sequence")? as usize)
+        .ok_or_else(|| "binding refers outside observation".into())
+}
+
+// Every runtime effect inside a callback must have exactly one corresponding
+// intercepted source call. The accepted v1 checker supplies generation/base/
+// dispatcher/thread and active-event checks; no second observation is invented.
+fn effects(
+    binding: &Callback,
+    rows: &[MonkeyObservation],
+    event_pointer: u64,
+) -> Result<(), String> {
+    let mut consumed = BTreeSet::new();
+    let mut prior = binding.enter;
+    for call in &binding.calls {
+        if call.sequence < prior || call.sequence >= binding.exit {
+            return Err("call outside callback or reordered".into());
+        }
+        prior = call.sequence;
+        let observed = row(rows, call.sequence)?;
+        let arg = |n| match call.arguments.get(n) {
+            Some(Argument::Integer(value)) => Ok(*value),
+            _ => Err("invalid effect argument"),
+        };
+        let runtime = match call.function.as_str() {
+            "send" => {
+                matches!(&observed.action, ObservationAction::DescriptorUse { descriptor, result } if i64::from(descriptor.fd) == arg(0)? && *result == call.result)
+            }
+            "evutil_closesocket" => {
+                matches!(&observed.action, ObservationAction::DescriptorClose { descriptor, result } if i64::from(descriptor.fd) == arg(0)? && i64::from(*result) == call.result)
+            }
+            "event_del" | "event_free" => {
+                if arg(0)? != event_pointer as i64 {
+                    return Err("callback cleanup targets another event".into());
+                }
+                let expected = if call.function == "event_del" {
+                    EventAction::EventDel
+                } else {
+                    EventAction::EventFree
+                };
+                matches!(&observed.action, ObservationAction::Event { operation, event, result, .. } if *operation == expected && *event == binding.event && i64::from(*result) == call.result)
+            }
+            "__errno_location" | "perror" | "mk_mem_free" => continue,
+            _ => return Err("unknown effect call".into()),
+        };
+        if !runtime || !consumed.insert(call.sequence) {
+            return Err("call has no unique matching runtime effect".into());
+        }
+    }
+    for sequence in binding.enter + 1..binding.exit {
+        if !consumed.contains(&sequence) {
+            return Err("unbound runtime effect inside callback".into());
+        }
+    }
+    Ok(())
+}
+
+/// Supply private, freshly imported summaries; serialized summaries cannot be
+/// deserialized into this interface. Contracts are parsed/evaluated at runtime.
+pub fn check_monkey_bindings(
+    summaries: &[MonkeySourceResult],
+    observations: &str,
+    bindings: &str,
+    contracts: &str,
+) -> Result<MonkeyBindingReport, String> {
+    check_monkey_observations(observations)?;
+    let rows = observations
+        .lines()
+        .map(serde_json::from_str)
+        .collect::<Result<Vec<MonkeyObservation>, _>>()
+        .map_err(|e| e.to_string())?;
+    let mut registrations = BTreeMap::new();
+    let mut executions = BTreeMap::new();
+    for line in bindings.lines() {
+        let binding: Binding = serde_json::from_str(line).map_err(|e| e.to_string())?;
+        match binding {
+            Binding::Registration {
+                schema_version,
+                sequence,
+                event,
+                argument,
+                event_pointer,
+            } => {
+                if schema_version != 1
+                    || event_pointer == 0
+                    || argument == 0
+                    || event_pointer > i64::MAX as u64
+                    || argument > i64::MAX as u64
+                    || !matches!(&row(&rows, sequence)?.action, ObservationAction::Event { operation: EventAction::EventNew, event: id, .. } if *id == event)
+                    || registrations
+                        .insert(event, (sequence, argument, event_pointer))
+                        .is_some()
+                {
+                    return Err("invalid or duplicate registration binding".into());
+                }
+            }
+            Binding::Callback(binding) => {
+                if binding.schema_version != 1
+                    || binding.enter >= binding.exit
+                    || binding.event_size == 0
+                    || binding.event_size > 4096
+                    || binding.calls.len() > 32
+                    || executions.insert(binding.enter, binding).is_some()
+                {
+                    return Err("invalid or duplicate callback binding".into());
+                }
+            }
+        }
+    }
+    let mut by_function: BTreeMap<String, Vec<&Callback>> = BTreeMap::new();
+    for observed in &rows {
+        let ObservationAction::Event {
+            operation,
+            event,
+            callback,
+            descriptor,
+            ..
+        } = &observed.action
+        else {
+            continue;
+        };
+        if *operation == EventAction::EventNew && !registrations.contains_key(event) {
+            return Err("missing registration payload binding".into());
+        }
+        if *operation != EventAction::CallbackEnter {
+            continue;
+        }
+        let binding = executions
+            .get(&observed.sequence)
+            .ok_or("missing callback payload binding")?;
+        let (created, argument, event_pointer) = registrations
+            .get(event)
+            .ok_or("absent callback registration")?;
+        let exit = row(&rows, binding.exit)?;
+        if *created >= binding.enter
+            || binding.event != *event
+            || binding.argument != *argument
+            || binding.fd != descriptor.map_or(-1, |key| key.fd)
+            || (exit.base, exit.dispatcher, exit.thread)
+                != (observed.base, observed.dispatcher, observed.thread)
+            || !matches!(&exit.action, ObservationAction::Event { operation: EventAction::CallbackExit, event: id, .. } if id == event)
+        {
+            return Err("callback payload/descriptor/dispatcher differs from registration".into());
+        }
+        effects(binding, &rows, *event_pointer)?;
+        by_function
+            .entry(callback.clone())
+            .or_default()
+            .push(binding);
+    }
+    if by_function.values().map(Vec::len).sum::<usize>() != executions.len() {
+        return Err("orphan callback binding".into());
+    }
+    let mut report = MonkeyBindingReport {
+        callbacks: Vec::new(),
+        unknown: vec![
+            "allocation and registration failure source imports are not covered".into(),
+            "allocation provenance and complete wrapper/map custody remain unproved".into(),
+            "observed backend/dispatcher is checked by the runtime checker; no Cycle 18 event-program composition certificate is issued".into(),
+        ],
+        static_certificate: false,
+    };
+    let mut names = BTreeSet::new();
+    for source in summaries {
+        let (name, summary, reason) = match source {
+            MonkeySourceResult::Summary(summary) => (summary.function(), Some(summary), None),
+            MonkeySourceResult::Unknown { function, reason } => {
+                (function.as_str(), None, Some(reason.clone()))
+            }
+        };
+        if !["cb_event", "cb_timeout", "cb_wait_2_timeout"].contains(&name) || !names.insert(name) {
+            return Err("invalid callback source set".into());
+        }
+        let mut result = CallbackBindingReport {
+            function: name.into(),
+            checked_executions: 0,
+            checked_paths: BTreeSet::new(),
+            unknown_paths: Vec::new(),
+            unknown_reasons: reason.into_iter().collect(),
+            checked_postconditions: 0,
+        };
+        if let Some(summary) = summary {
+            if summary.source_revision() != PINNED_FLUENT_BIT_REVISION {
+                return Err("source revision mismatch".into());
+            }
+            for binding in by_function.get(name).into_iter().flatten() {
+                let mut matches = Vec::new();
+                let mut failures = BTreeSet::new();
+                for (index, path) in summary.paths().iter().enumerate() {
+                    let mut replay = Replay {
+                        binding,
+                        memory: memory(&binding.before)?,
+                        symbols: BTreeMap::new(),
+                        locals: BTreeMap::new(),
+                        call_index: 0,
+                        writes: BTreeSet::new(),
+                        releases: Vec::new(),
+                        closed: 0,
+                    };
+                    match replay.run(path) {
+                        Ok(()) => matches.push((index, replay)),
+                        Err(reason) => {
+                            failures.insert(reason);
+                        }
+                    }
+                }
+                let [(index, replay)] = matches.as_slice() else {
+                    result.unknown_reasons.push(format!(
+                        "execution {}: expected one refining source path, found {}; {}",
+                        binding.enter,
+                        matches.len(),
+                        failures.into_iter().collect::<Vec<_>>().join("; ")
+                    ));
+                    continue;
+                };
+                let values = BTreeMap::from([
+                    ("callback_argument_is_borrowed".into(), 1),
+                    (
+                        "fired_event_array_is_written".into(),
+                        i128::from(
+                            replay.writes.iter().any(|(_, field)| field == "fd")
+                                && replay.writes.iter().any(|(_, field)| field == "mask")
+                                && replay.writes.iter().any(|(_, field)| field == "data"),
+                        ),
+                    ),
+                    (
+                        "callback_argument_custody_is_preserved".into(),
+                        i128::from(replay.releases.is_empty()),
+                    ),
+                    (
+                        "descriptor_may_be_closed".into(),
+                        i128::from(replay.closed <= 1),
+                    ),
+                    (
+                        "event_map_may_be_released".into(),
+                        i128::from(replay.releases.len() <= 1),
+                    ),
+                    (
+                        "every_release_is_reflected_in_custody".into(),
+                        i128::from(
+                            replay
+                                .releases
+                                .iter()
+                                .all(|object| !replay.memory.keys().any(|(key, _)| key == object)),
+                        ),
+                    ),
+                    (
+                        "callback_has_no_resource_effect".into(),
+                        i128::from(binding.calls.is_empty() && replay.writes.is_empty()),
+                    ),
+                ]);
+                match check_contract_observation(contracts, name, &values) {
+                    Ok(ObservationVerdict::Checked { postconditions }) => {
+                        result.checked_executions += 1;
+                        result.checked_paths.insert(*index);
+                        result.checked_postconditions += postconditions;
+                    }
+                    other => result.unknown_reasons.push(format!(
+                        "execution {}: native callback contract not checked: {other:?}",
+                        binding.enter
+                    )),
+                }
+            }
+            result.unknown_paths = (0..summary.paths().len())
+                .filter(|index| !result.checked_paths.contains(index))
+                .collect();
+            if !result.unknown_paths.is_empty() {
+                result
+                    .unknown_reasons
+                    .push("unobserved source paths remain Unknown".into());
+            }
+        }
+        report.callbacks.push(result);
+    }
+    if names.len() != 3 {
+        return Err("missing callback source result".into());
+    }
+    Ok(report)
+}
+
+#[cfg(test)]
+#[path = "../../../tests/unit/monkey_binding.rs"]
+mod tests;

@@ -347,3 +347,15 @@ for each imported callback. The native observation regression still checks the
 bind the new symbolic payload/map/fired-slot accesses to those observations.
 The table's generic projection and Safe/Unsafe/Unknown counts are unchanged.
 See [the callback source report](../reports/cycle19-callback-source/README.md).
+
+
+## 19D callback binding follow-up (2026-09-06)
+
+The [callback binding report](../reports/cycle19-callback-binding/README.md)
+records one checked native execution for each of the three Monkey callbacks,
+six checked native QCore postconditions, and 20 audited Lean binding theorems.
+It joins freshly imported source paths to registration arguments, memory
+snapshots, calls, and the same 48-record descriptor/event observation. Five
+unobserved callback paths and unimported allocation/registration failures remain
+explicitly `Unknown`; complete wrapper custody and static event-program
+composition are not claimed. The generic audit counts above are unchanged.

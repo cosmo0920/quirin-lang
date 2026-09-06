@@ -1,0 +1,51 @@
+{
+  "callbacks": [
+    {
+      "function": "cb_event",
+      "checked_executions": 1,
+      "checked_paths": [
+        1
+      ],
+      "unknown_paths": [
+        0,
+        2,
+        3
+      ],
+      "unknown_reasons": [
+        "unobserved source paths remain Unknown"
+      ],
+      "checked_postconditions": 2
+    },
+    {
+      "function": "cb_timeout",
+      "checked_executions": 1,
+      "checked_paths": [
+        0
+      ],
+      "unknown_paths": [
+        1,
+        2
+      ],
+      "unknown_reasons": [
+        "unobserved source paths remain Unknown"
+      ],
+      "checked_postconditions": 3
+    },
+    {
+      "function": "cb_wait_2_timeout",
+      "checked_executions": 1,
+      "checked_paths": [
+        0
+      ],
+      "unknown_paths": [],
+      "unknown_reasons": [],
+      "checked_postconditions": 1
+    }
+  ],
+  "unknown": [
+    "allocation and registration failure source imports are not covered",
+    "allocation provenance and complete wrapper/map custody remain unproved",
+    "observed backend/dispatcher is checked by the runtime checker; no Cycle 18 event-program composition certificate is issued"
+  ],
+  "static_certificate": false
+}

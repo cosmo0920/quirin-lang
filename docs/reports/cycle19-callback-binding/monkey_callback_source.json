@@ -1,0 +1,3344 @@
+{
+  "callbacks": [
+    {
+      "function": "cb_event",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "0"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 8,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 2
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 7,
+              "value": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 4
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "2"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  },
+                  "operator": "|",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "binary",
+                      "left": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "0"
+                        }
+                      },
+                      "operator": "|",
+                      "right": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "|",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 10
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 6,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "&",
+                  "value": {
+                    "c_type": "struct mk_event",
+                    "expression": {
+                      "base": {
+                        "c_type": "struct mk_event *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 12
+                        }
+                      },
+                      "index": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 10
+                        }
+                      },
+                      "kind": "index"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 12
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 14
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 12
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "mask"
+                }
+              },
+              "value": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "binary",
+                      "left": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "binary",
+                          "left": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "integer",
+                              "value": "0"
+                            }
+                          },
+                          "operator": "|",
+                          "right": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "integer",
+                              "value": "1"
+                            }
+                          }
+                        }
+                      },
+                      "operator": "|",
+                      "right": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "4"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 12
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              },
+              "value": {
+                "c_type": "void *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 18
+                    }
+                  },
+                  "operator": "+",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_end",
+              "local": 8
+            },
+            {
+              "kind": "local_end",
+              "local": 7
+            },
+            {
+              "kind": "local_end",
+              "local": 6
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "0"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 8,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 2
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 7,
+              "value": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 4
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "2"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  },
+                  "operator": "|",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 9
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 6,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "&",
+                  "value": {
+                    "c_type": "struct mk_event",
+                    "expression": {
+                      "base": {
+                        "c_type": "struct mk_event *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 11
+                        }
+                      },
+                      "index": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 9
+                        }
+                      },
+                      "kind": "index"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 13
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "mask"
+                }
+              },
+              "value": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "binary",
+                      "left": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "0"
+                        }
+                      },
+                      "operator": "|",
+                      "right": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              },
+              "value": {
+                "c_type": "void *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 17
+                    }
+                  },
+                  "operator": "+",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_end",
+              "local": 8
+            },
+            {
+              "kind": "local_end",
+              "local": 7
+            },
+            {
+              "kind": "local_end",
+              "local": 6
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "0"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 8,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 2
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 7,
+              "value": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 4
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "2"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  },
+                  "operator": "|",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 9
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 6,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "&",
+                  "value": {
+                    "c_type": "struct mk_event",
+                    "expression": {
+                      "base": {
+                        "c_type": "struct mk_event *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 11
+                        }
+                      },
+                      "index": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 9
+                        }
+                      },
+                      "kind": "index"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 13
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "mask"
+                }
+              },
+              "value": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "binary",
+                      "left": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "0"
+                        }
+                      },
+                      "operator": "|",
+                      "right": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "4"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 11
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 9
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              },
+              "value": {
+                "c_type": "void *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 17
+                    }
+                  },
+                  "operator": "+",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_end",
+              "local": 8
+            },
+            {
+              "kind": "local_end",
+              "local": 7
+            },
+            {
+              "kind": "local_end",
+              "local": 6
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "0"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 8,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 2
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 7,
+              "value": {
+                "c_type": "struct mk_event_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 4
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "2"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "short",
+                        "expression": {
+                          "index": 1,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "&",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "4"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 8
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 6,
+              "value": {
+                "c_type": "struct mk_event *",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "&",
+                  "value": {
+                    "c_type": "struct mk_event",
+                    "expression": {
+                      "base": {
+                        "c_type": "struct mk_event *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 10
+                        }
+                      },
+                      "index": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 8
+                        }
+                      },
+                      "kind": "index"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 8
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fd"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 12
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 8
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "mask"
+                }
+              },
+              "value": {
+                "c_type": "unsigned int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "&",
+                      "value": {
+                        "c_type": "struct mk_event",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct mk_event *",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 10
+                            }
+                          },
+                          "index": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "symbol",
+                              "operation": 8
+                            }
+                          },
+                          "kind": "index"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "data"
+                }
+              },
+              "value": {
+                "c_type": "void *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "struct mk_event *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "struct mk_event_ctx *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "kind": "field",
+                  "name": "fired_count"
+                }
+              },
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 16
+                    }
+                  },
+                  "operator": "+",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_end",
+              "local": 8
+            },
+            {
+              "kind": "local_end",
+              "local": 7
+            },
+            {
+              "kind": "local_end",
+              "local": 6
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "result": "summary",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    },
+    {
+      "function": "cb_timeout",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "unsigned long",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "int *",
+                    "expression": {
+                      "cast": "ArrayToPointerDecay",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "int[2]",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct ev_map *",
+                            "expression": {
+                              "cast": "BitCast",
+                              "kind": "cast",
+                              "value": {
+                                "c_type": "void *",
+                                "expression": {
+                                  "index": 2,
+                                  "kind": "parameter"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "field",
+                          "name": "pipe"
+                        }
+                      }
+                    }
+                  },
+                  "index": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  },
+                  "kind": "index"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                },
+                {
+                  "c_type": "const void *",
+                  "expression": {
+                    "cast": "BitCast",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "cast": "BitCast",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "uint64_t *",
+                          "expression": {
+                            "kind": "unary",
+                            "operator": "&",
+                            "value": {
+                              "c_type": "unsigned long",
+                              "expression": {
+                                "kind": "local_storage",
+                                "local": 4
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "c_type": "unsigned long",
+                  "expression": {
+                    "argument_type": "unsigned long",
+                    "kind": "size_of"
+                  }
+                },
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "integer",
+                    "value": "0"
+                  }
+                }
+              ],
+              "function": "send",
+              "kind": "call",
+              "result_type": "long",
+              "signature": "ssize_t (int, const void *, size_t, int)"
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "long",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 3
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "long",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 3
+                        }
+                      }
+                    }
+                  },
+                  "operator": "==",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "arguments": [],
+              "function": "__errno_location",
+              "kind": "call",
+              "result_type": "int *",
+              "signature": "int *(void)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "*",
+                  "value": {
+                    "c_type": "int *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 6
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 7
+                    }
+                  },
+                  "operator": "!=",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "103"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "const char *",
+                  "expression": {
+                    "cast": "NoOp",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "cast": "ArrayToPointerDecay",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "char[6]",
+                          "expression": {
+                            "kind": "string",
+                            "value": "\"write\""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "function": "perror",
+              "kind": "call",
+              "result_type": "void",
+              "signature": "void (const char *)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "int *",
+                    "expression": {
+                      "cast": "ArrayToPointerDecay",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "int[2]",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct ev_map *",
+                            "expression": {
+                              "cast": "BitCast",
+                              "kind": "cast",
+                              "value": {
+                                "c_type": "void *",
+                                "expression": {
+                                  "index": 2,
+                                  "kind": "parameter"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "field",
+                          "name": "pipe"
+                        }
+                      }
+                    }
+                  },
+                  "index": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  },
+                  "kind": "index"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 10
+                  }
+                }
+              ],
+              "function": "evutil_closesocket",
+              "kind": "call",
+              "result_type": "int",
+              "signature": "int (int)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "event"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "struct event *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 12
+                  }
+                }
+              ],
+              "function": "event_del",
+              "kind": "call",
+              "result_type": "int",
+              "signature": "int (struct event *)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "event"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "struct event *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 14
+                  }
+                }
+              ],
+              "function": "event_free",
+              "kind": "call",
+              "result_type": "void",
+              "signature": "void (struct event *)"
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "cast": "BitCast",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "struct ev_map *",
+                      "expression": {
+                        "cast": "BitCast",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "void *",
+                          "expression": {
+                            "index": 2,
+                            "kind": "parameter"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "function": "mk_mem_free",
+              "kind": "call",
+              "result_type": "void",
+              "signature": "void (void *)"
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "unsigned long",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "int *",
+                    "expression": {
+                      "cast": "ArrayToPointerDecay",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "int[2]",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct ev_map *",
+                            "expression": {
+                              "cast": "BitCast",
+                              "kind": "cast",
+                              "value": {
+                                "c_type": "void *",
+                                "expression": {
+                                  "index": 2,
+                                  "kind": "parameter"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "field",
+                          "name": "pipe"
+                        }
+                      }
+                    }
+                  },
+                  "index": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  },
+                  "kind": "index"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                },
+                {
+                  "c_type": "const void *",
+                  "expression": {
+                    "cast": "BitCast",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "cast": "BitCast",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "uint64_t *",
+                          "expression": {
+                            "kind": "unary",
+                            "operator": "&",
+                            "value": {
+                              "c_type": "unsigned long",
+                              "expression": {
+                                "kind": "local_storage",
+                                "local": 4
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "c_type": "unsigned long",
+                  "expression": {
+                    "argument_type": "unsigned long",
+                    "kind": "size_of"
+                  }
+                },
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "integer",
+                    "value": "0"
+                  }
+                }
+              ],
+              "function": "send",
+              "kind": "call",
+              "result_type": "long",
+              "signature": "ssize_t (int, const void *, size_t, int)"
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "long",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 3
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "long",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 3
+                        }
+                      }
+                    }
+                  },
+                  "operator": "==",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": true
+            },
+            {
+              "arguments": [],
+              "function": "__errno_location",
+              "kind": "call",
+              "result_type": "int *",
+              "signature": "int *(void)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "*",
+                  "value": {
+                    "c_type": "int *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 6
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 7
+                    }
+                  },
+                  "operator": "!=",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "103"
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "int *",
+                    "expression": {
+                      "cast": "ArrayToPointerDecay",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "int[2]",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct ev_map *",
+                            "expression": {
+                              "cast": "BitCast",
+                              "kind": "cast",
+                              "value": {
+                                "c_type": "void *",
+                                "expression": {
+                                  "index": 2,
+                                  "kind": "parameter"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "field",
+                          "name": "pipe"
+                        }
+                      }
+                    }
+                  },
+                  "index": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  },
+                  "kind": "index"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 9
+                  }
+                }
+              ],
+              "function": "evutil_closesocket",
+              "kind": "call",
+              "result_type": "int",
+              "signature": "int (int)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "event"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "struct event *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 11
+                  }
+                }
+              ],
+              "function": "event_del",
+              "kind": "call",
+              "result_type": "int",
+              "signature": "int (struct event *)"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct event *",
+                "expression": {
+                  "base": {
+                    "c_type": "struct ev_map *",
+                    "expression": {
+                      "cast": "BitCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "index": 2,
+                          "kind": "parameter"
+                        }
+                      }
+                    }
+                  },
+                  "kind": "field",
+                  "name": "event"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "struct event *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 13
+                  }
+                }
+              ],
+              "function": "event_free",
+              "kind": "call",
+              "result_type": "void",
+              "signature": "void (struct event *)"
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "cast": "BitCast",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "struct ev_map *",
+                      "expression": {
+                        "cast": "BitCast",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "void *",
+                          "expression": {
+                            "index": 2,
+                            "kind": "parameter"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "function": "mk_mem_free",
+              "kind": "call",
+              "result_type": "void",
+              "signature": "void (void *)"
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "local_write",
+              "local": 4,
+              "value": {
+                "c_type": "unsigned long",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 5,
+              "value": {
+                "c_type": "struct ev_map *",
+                "expression": {
+                  "cast": "BitCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "index": 2,
+                      "kind": "parameter"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "base": {
+                    "c_type": "int *",
+                    "expression": {
+                      "cast": "ArrayToPointerDecay",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "int[2]",
+                        "expression": {
+                          "base": {
+                            "c_type": "struct ev_map *",
+                            "expression": {
+                              "cast": "BitCast",
+                              "kind": "cast",
+                              "value": {
+                                "c_type": "void *",
+                                "expression": {
+                                  "index": 2,
+                                  "kind": "parameter"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "field",
+                          "name": "pipe"
+                        }
+                      }
+                    }
+                  },
+                  "index": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  },
+                  "kind": "index"
+                }
+              }
+            },
+            {
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                },
+                {
+                  "c_type": "const void *",
+                  "expression": {
+                    "cast": "BitCast",
+                    "kind": "cast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "cast": "BitCast",
+                        "kind": "cast",
+                        "value": {
+                          "c_type": "uint64_t *",
+                          "expression": {
+                            "kind": "unary",
+                            "operator": "&",
+                            "value": {
+                              "c_type": "unsigned long",
+                              "expression": {
+                                "kind": "local_storage",
+                                "local": 4
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "c_type": "unsigned long",
+                  "expression": {
+                    "argument_type": "unsigned long",
+                    "kind": "size_of"
+                  }
+                },
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "integer",
+                    "value": "0"
+                  }
+                }
+              ],
+              "function": "send",
+              "kind": "call",
+              "result_type": "long",
+              "signature": "ssize_t (int, const void *, size_t, int)"
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "cast": "IntegralCast",
+                  "kind": "cast",
+                  "value": {
+                    "c_type": "long",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 3
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "cast": "IntegralCast",
+                      "kind": "cast",
+                      "value": {
+                        "c_type": "long",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 3
+                        }
+                      }
+                    }
+                  },
+                  "operator": "==",
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "kind": "guard",
+              "taken": false
+            },
+            {
+              "kind": "local_end",
+              "local": 5
+            },
+            {
+              "kind": "local_end",
+              "local": 4
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "result": "summary",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    },
+    {
+      "function": "cb_wait_2_timeout",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "result": "summary",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    }
+  ],
+  "compile_entry": {
+    "command": "/usr/bin/cc -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK_HAVE_MEMMEM -DMK_HAVE_MEMRCHR -DMK_HAVE_STAT_H -DMK_HAVE_SYS_UIO_H -DMK_HAVE_TIMERFD_CREATE -DMK_HAVE_UNISTD_H -DMK_HAVE_VALGRIND -DMK_THREADS_POSIX -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/mk_core/../include/monkey -I/tmp/qcore-cycle19-monkey-build-codex-20260905/mk_core/deps/libevent/include -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/mk_core/deps/libevent/include -I/tmp/qcore-cycle19-monkey-build-codex-20260905/include/monkey -I/tmp/qcore-cycle19-monkey-build-codex-20260905/include -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/include/monkey -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/include -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/deps/regex -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/deps/flb_libco -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/deps/rbtree -I/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/.  -std=gnu99 -Wall -Wextra -D__FILENAME__='\"$$(subst /tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/,,$$(abspath $$<))\"' -g -o CMakeFiles/mk_core.dir/mk_event.c.o -c /tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/mk_core/mk_event.c",
+    "directory": "/tmp/qcore-cycle19-monkey-build-codex-20260905/mk_core",
+    "file": "/tmp/qcore-cycle19-monkey-src-codex-20260905/monkey/mk_core/mk_event.c"
+  },
+  "schema_version": 1,
+  "source_projection_only": true,
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+}

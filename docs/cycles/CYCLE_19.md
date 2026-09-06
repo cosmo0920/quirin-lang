@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — native field contracts and allocator/descriptor observations checked; all three Monkey callback access paths imported; custody/lifecycle and source/runtime composition gates remain**
+**Status: In progress — all three recorded Monkey callbacks bound to source and QCore contracts; Lean binding models verified; custody/lifecycle, unobserved failures, and full event composition remain**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
@@ -400,3 +400,29 @@ chunk/callback contract coverage are unchanged. General 19B identity mapping,
 19C lifecycle/teardown imports, and 19D source/runtime/failure composition remain
 open. See [the triage report](../reports/cycle19-resource-triage/README.md) for
 the full before/after inventory, validation, and next implementation targets.
+
+## Source/runtime callback binding and Lean verification
+
+The 19D binder now connects all three freshly imported Monkey callback summaries
+with actual registration arguments, pre/post memory snapshots, and intercepted
+calls from the same generation-checked native observation used by Cycle 18.
+The actual pinned run checks one execution of each callback and six native
+QCore postconditions. It retains five unobserved source paths as explicit
+`Unknown`; observed path indices are execution evidence, not universal path
+proofs. Unsupported bindings and contracts remain fail-closed.
+
+`QCore.CallbackBinding` verifies the abstract binding models with 20 audited
+theorems covering scope equality, unique path selection, retained obligations,
+typed memory/symbol binding, exact-cell writes, release invalidation/frame
+properties, duplicate-release rejection, and ordered call consumption. Normal
+Lean builds include the module. The dependency audit has no placeholders or
+project axioms. C/Clang, the Rust interpreter, supplied native hooks and
+snapshots, and allocation provenance remain explicit trusted boundaries.
+
+All 318 Rust tests, formatting, Clippy, Lean build/audit, sanitized native
+regression, and the pinned external audit pass. Generic projection and safety
+counts remain unchanged. Allocation/registration failure source imports,
+complete wrapper/map custody, and the full Cycle 18 event-program composition
+remain `Unknown`; no static event or plugin certificate is issued. 19B and 19C
+source custody/lifecycle work also remains open. See the [binding report](../reports/cycle19-callback-binding/README.md)
+for evidence, reproduction, assumptions, and the exact remaining gates.

@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-06",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "scope": "Supplied callback executions and Lean abstract binding models; no static event or plugin certificate.",
+  "sha256": {
+    "docs/reports/cycle19-callback-binding/clippy.log": "306c8287c68cc58eb3886677da705d9ac2d11ca093810e155be04479d5bf6a0b",
+    "docs/reports/cycle19-callback-binding/flb_mem_contract_result.json": "2796691c805875f58b9788004e5a9505469a4190804cf7ece218eea64343e6df",
+    "docs/reports/cycle19-callback-binding/fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/cycle19-callback-binding/lean-audit.log": "243007b9c48920a7f768bb5ee7a243eb6c6ac9ac3b2d77182e07be1c1348eda1",
+    "docs/reports/cycle19-callback-binding/lean.log": "26116a8c02bc89a0d7521d5006efc700f627e5a91e32bc5432b0594ba19df7ed",
+    "docs/reports/cycle19-callback-binding/metadata.json": "73c1b7b57be38a5fd6712fcaaecab8811301757d40458e4ed5718a26a8740234",
+    "docs/reports/cycle19-callback-binding/monkey_binding_result.json": "6ca8b7f8dcf935f9ff83813653519215ede8b01563b7aa0e7597061f097ae657",
+    "docs/reports/cycle19-callback-binding/monkey_bindings.jsonl": "ae40729064f4d89892e0be5a0c762f6244302a75abbe2471fdf6d56b3b36c75a",
+    "docs/reports/cycle19-callback-binding/monkey_callback_source.json": "a97025d354ec71809b981511bab90dfd7f4ccf373633ab77432a8ca320e247bd",
+    "docs/reports/cycle19-callback-binding/monkey_identity_result.json": "56250d192d92f24f3e907c07530376918e371e3921b975fcb54357ec4a2985f8",
+    "docs/reports/cycle19-callback-binding/monkey_observation.jsonl": "f5787b3c79aadbc7663496a7f9a32fb29f2b9d0998a484c10662c327d76b418e",
+    "docs/reports/cycle19-callback-binding/monkey_observation.stderr": "345d72794d8a7e6ebe6bcdcd0ddc21343363a25c2bdc815d0529ab44dfe1c806",
+    "docs/reports/cycle19-callback-binding/source-audit.log": "8328dd41e9471ceb663c6f87c90c9bcaccb32e97c836644afbdaf0b1718be51d",
+    "docs/reports/cycle19-callback-binding/tests.log": "0af2288f9558313f8c0d282b65d5dbc0fc518909831042bcdc8efd3cbdb031ca"
+  },
+  "implementation_sha256": {
+    "compiler/src/verifier_plugins/libevent/monkey_binding.rs": "66c1748d3f9c0fa601cc2cc934fd8a4e91720baecba3b60e3234ddcefd0a0e78",
+    "compiler/examples/monkey_observation.c": "04d6d0b76545d41d94c95ccf8e605231f8637cafe099194e43232cafbbcfec42",
+    "scripts/cycle19_native_observations.py": "e2d458a85585ba0faeec22359d74019f01c5913f343b810276110dc2d39f1591",
+    "proof/QCore/CallbackBinding.lean": "e031e2688a5f87b184a5e81650b9eca4d8c9c0557f302232801b6ee18bb6e96b",
+    "proof/AuditCycle19.lean": "e2a7e3a7f5342d1cc7be3803c61f8d3350d2024402378a30f506dd0dc9cb07da",
+    "contract/qcore/monkey/composition.qcore": "98bdd22b59994d3c35a5ecb5d3fee3dfb438ccc096269e23ef5f9b657a0425b5"
+  }
+}

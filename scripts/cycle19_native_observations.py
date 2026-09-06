@@ -52,7 +52,8 @@ def build_and_run(name, entry, flags, libraries, output):
                "-lpthread", "-o", str(binary)]
     run(command, cwd=entry["directory"])
     environment = dict(os.environ, ASAN_OPTIONS="detect_leaks=1:halt_on_error=1",
-                       UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1")
+                       UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1",
+                       QCORE_MONKEY_BINDINGS=str(output / "monkey_bindings.jsonl"))
     with (output / (name + ".jsonl")).open("w") as stdout, (output / (name + ".stderr")).open("w") as stderr:
         run([str(binary)], stdout=stdout, stderr=stderr, env=environment)
     # Clang depfiles escape spaces and continued lines; this checkout's paths
@@ -135,9 +136,27 @@ def main():
             raise RuntimeError(f"unobserved callbacks: {report['callbacks']}")
         if report["socketpair_failures"] != 1 or report["descriptor_acquisitions"] != 4:
             raise RuntimeError(f"missing descriptor creation/failure scenarios: {report}")
+        # Import fresh private source summaries under the same checked build;
+        # serialized symbolic reports are never accepted as trusted summaries.
+        source_report = output / "monkey_callback_source.json"
+        diagnostics = output / "resource_diagnostics.json"
+        with (output / "source-audit.log").open("w") as audit:
+            run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
+                 "cycle19_fluent_bit_libraries_audit", "--", str(root), str(db),
+                 str(source_report), str(diagnostics), str(output)],
+                cwd=REPO, stdout=audit, stderr=subprocess.STDOUT)
+        binding_result = json.loads((output / "monkey_binding_result.json").read_text())
+        if any(row["checked_executions"] < 1 for row in binding_result["callbacks"]):
+            raise RuntimeError(f"callback binding regression: {binding_result}")
+        metadata["monkey_binding"] = {
+            "schema_version": 1,
+            "database_sha256": sha(db),
+            "contract_sha256": sha(REPO / "contract/qcore/monkey/composition.qcore"),
+            "bindings_sha256": sha(output / "monkey_bindings.jsonl"),
+            "source_report_sha256": sha(source_report),
+            "result_sha256": sha(output / "monkey_binding_result.json")}
         metadata["monkey_result"] = {"identity_projection": report,
-            "static_certificate": False,
-            "unknown": "source/runtime callback access refinement, allocation/registration failure paths"}
+            "callback_binding": binding_result, "static_certificate": False}
         print(json.dumps(metadata["monkey_result"]))
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
 

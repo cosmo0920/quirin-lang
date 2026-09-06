@@ -51,11 +51,12 @@ fn main() -> ExitCode {
     let monkey_database = arguments.next().map(PathBuf::from);
     let monkey_source_report = arguments.next().map(PathBuf::from);
     let diagnostic_report = arguments.next().map(PathBuf::from);
+    let binding_directory = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
             "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
              [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
-             [resource-diagnostics.json]"
+             [resource-diagnostics.json] [native-observation-directory]"
         );
         return ExitCode::FAILURE;
     }
@@ -64,6 +65,7 @@ fn main() -> ExitCode {
         monkey_database.as_deref(),
         monkey_source_report.as_deref(),
         diagnostic_report.as_deref(),
+        binding_directory.as_deref(),
     ) {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
@@ -79,6 +81,7 @@ fn run(
     monkey_database: Option<&Path>,
     monkey_source_report: Option<&Path>,
     diagnostic_report: Option<&Path>,
+    binding_directory: Option<&Path>,
 ) -> Result<bool, String> {
     let root = root
         .canonicalize()
@@ -304,7 +307,7 @@ fn run(
         selected.sort_by(|left, right| left.file.cmp(&right.file));
         selected.dedup_by(|left, right| left.file == right.file);
         verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
-        audit_monkey_callback_source(&selected, monkey_source_report)?;
+        audit_monkey_callback_source(&selected, monkey_source_report, binding_directory)?;
         let counts = audit_library(
             "monkey-libevent",
             &source_root,
@@ -540,6 +543,7 @@ fn audit_chunk_source(
 fn audit_monkey_callback_source(
     entries: &[CompileEntry],
     report: Option<&Path>,
+    binding_directory: Option<&Path>,
 ) -> Result<(), String> {
     let entry = entries
         .iter()
@@ -566,6 +570,32 @@ fn audit_monkey_callback_source(
                 println!("  monkey-libevent/{function}: callback source Unknown: {reason}")
             }
         }
+    }
+    if let Some(directory) = binding_directory {
+        let read =
+            |name| fs::read_to_string(directory.join(name)).map_err(|error| error.to_string());
+        let bound =
+            qcore_compiler::verifier_plugins::libevent::monkey_binding::check_monkey_bindings(
+                &results,
+                &read("monkey_observation.jsonl")?,
+                &read("monkey_bindings.jsonl")?,
+                include_str!("../../contract/qcore/monkey/composition.qcore"),
+            )?;
+        for callback in &bound.callbacks {
+            println!(
+                "  monkey-libevent/{}: {} bound native execution(s), checked paths {:?}, Unknown paths {:?}; {:?}",
+                callback.function,
+                callback.checked_executions,
+                callback.checked_paths,
+                callback.unknown_paths,
+                callback.unknown_reasons
+            );
+        }
+        fs::write(
+            directory.join("monkey_binding_result.json"),
+            serde_json::to_string_pretty(&bound).map_err(|e| e.to_string())? + "\n",
+        )
+        .map_err(|e| e.to_string())?;
     }
     if let Some(report) = report {
         let output = serde_json::json!({

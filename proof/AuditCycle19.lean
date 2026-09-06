@@ -1,3 +1,4 @@
+import QCore.CallbackBinding
 import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
@@ -67,3 +68,26 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackSource.nonproducing_record_cannot_supply_symbol
 #print axioms QCore.CallbackSource.branch_preserves_taken_alternative
 #print axioms QCore.CallbackSource.branch_preserves_not_taken_alternative
+
+#print axioms QCore.CallbackBinding.accepted_scope_is_registered
+#print axioms QCore.CallbackBinding.accepted_has_exactly_one_refining_path
+#print axioms QCore.CallbackBinding.selected_path_retains_all_obligations
+#print axioms QCore.CallbackBinding.changed_scope_is_rejected
+#print axioms QCore.CallbackBinding.uncovered_path_remains_unknown
+#print axioms QCore.CallbackBinding.checked_path_is_not_unknown
+
+#print axioms QCore.CallbackBinding.accepted_read_binds_live_typed_cell
+#print axioms QCore.CallbackBinding.accepted_read_appends_exact_symbol
+#print axioms QCore.CallbackBinding.absent_symbol_is_rejected
+#print axioms QCore.CallbackBinding.store_changes_exact_cell
+#print axioms QCore.CallbackBinding.store_preserves_other_cells
+#print axioms QCore.CallbackBinding.write_rejects_absent_cell
+#print axioms QCore.CallbackBinding.release_clears_all_object_cells
+#print axioms QCore.CallbackBinding.release_preserves_other_objects
+#print axioms QCore.CallbackBinding.release_prevents_subsequent_read
+#print axioms QCore.CallbackBinding.release_prevents_subsequent_write
+#print axioms QCore.CallbackBinding.release_prevents_duplicate_release
+#print axioms QCore.CallbackBinding.accepted_call_consumes_exact_next_record
+
+#print axioms QCore.CallbackBinding.accepted_write_preserves_binding
+#print axioms QCore.CallbackBinding.accepted_release_requires_live_object
