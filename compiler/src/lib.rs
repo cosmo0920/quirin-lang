@@ -67,7 +67,7 @@ pub mod verifier_plugin;
 pub mod verifier_plugins;
 pub mod verify_dispatch;
 pub use qcore_core::weak_memory;
-pub mod whole_program;
+pub use qcore_frontend::whole_program;
 pub mod witness_replay;
 
 // Compatibility paths for callers predating the in-process plugin extraction.

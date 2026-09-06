@@ -3,7 +3,7 @@ name = "qcore-frontend"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-description = "QCore language front end: lexer, parsers, quant-index resolution, and source elaboration."
+description = "QCore language front end: lexer, parsers, quant-index resolution, source elaboration, and whole-program semantic integration."
 
 [dependencies]
 qcore-core = { path = "../qcore-core", version = "0.1.0" }
