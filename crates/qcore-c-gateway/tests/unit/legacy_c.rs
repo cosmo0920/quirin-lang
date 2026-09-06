@@ -474,7 +474,7 @@ fn indirect_pointer_expressions_cannot_be_silently_accepted() {
     assert_eq!(field.status, AnalysisStatus::Unsafe);
     assert!(has(&field, |kind| matches!(
         kind,
-        LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p->field"
+        LegacyDiagnosticKind::Unsupported { description } if description.contains("indirect memory access")
     )));
 }
 
@@ -614,11 +614,11 @@ fn unrestricted_gateway_accepts_data_only_translation_units() {
 }
 
 #[test]
-fn imports_struct_fields_and_constant_array_elements() {
+fn aggregate_resource_places_require_an_access_importer() {
     let summary = analyze(
         "struct Pair { void *left; void *right[2]; };\nvoid subject(void) {\n struct Pair p;\n p.left = q_alloc();\n p.right[0] = q_alloc();\n q_free(p.right[0]);\n q_free(p.left);\n}",
     );
-    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert_eq!(summary.status, AnalysisStatus::Unknown);
 }
 
 #[test]
@@ -838,5 +838,152 @@ fn lc01_explicit_internal_return_contract_is_preserved() {
             &node.instruction, LegacyInstruction::ContractCall { function, contract, .. }
             if function == "make" && contract.result == ResourceReturnMode::Owned { nullable: false }
         )));
+    }
+}
+
+#[test]
+fn unmodeled_memory_reads_do_not_become_neutral_effects() {
+    let mut accepted = Vec::new();
+    for (label, setup, tail) in [
+        (
+            "return dereference",
+            "int *p = q_alloc(); q_free(p);",
+            "return *p;",
+        ),
+        (
+            "discarded dereference",
+            "int *p = q_alloc(); q_free(p);",
+            "*p; return 0;",
+        ),
+        (
+            "alias dereference",
+            "int *p = q_alloc(); int *alias = p; q_free(p);",
+            "return *alias;",
+        ),
+        (
+            "return subscript",
+            "int *p = q_alloc(); q_free(p);",
+            "return p[0];",
+        ),
+        (
+            "discarded subscript",
+            "int *p = q_alloc(); q_free(p);",
+            "p[0]; return 0;",
+        ),
+        (
+            "return member",
+            "struct Cell *p = q_alloc(); q_free(p);",
+            "return p->field;",
+        ),
+        (
+            "discarded member",
+            "struct Cell *p = q_alloc(); q_free(p);",
+            "p->field; return 0;",
+        ),
+        (
+            "condition dereference",
+            "int *p = q_alloc(); q_free(p);",
+            "if (*p) { return 1; } return 0;",
+        ),
+        (
+            "condition subscript",
+            "int *p = q_alloc(); q_free(p);",
+            "if (p[0] == 0) { return 1; } return 0;",
+        ),
+        (
+            "loop member",
+            "struct Cell *p = q_alloc(); q_free(p);",
+            "while (p->field) { break; } return 0;",
+        ),
+        (
+            "borrowed argument",
+            "int *p = q_alloc(); q_free(p);",
+            "q_observe(*p); return 0;",
+        ),
+        (
+            "cast dereference",
+            "int *p = q_alloc(); q_free(p);",
+            "return (int)*p;",
+        ),
+    ] {
+        let source =
+            format!("struct Cell {{ int field; }}; int subject(void) {{ {setup} {tail} }}");
+        let result = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_RICH_MODES]),
+        )
+        .unwrap();
+        if result.status == AnalysisStatus::Safe {
+            accepted.push(label);
+        }
+    }
+    assert!(
+        accepted.is_empty(),
+        "unmodeled reads were Safe: {accepted:?}"
+    );
+}
+
+#[test]
+fn memory_access_boundary_preserves_identifiable_scalar_expressions() {
+    for body in [
+        "int subject(int n) { return n * 2 + 1; }",
+        "int subject(int n) { n++; if (n > 0) { return n; } return 0; }",
+        "int subject(void) { int n = 0; n; return 3 * (4 + 5); }",
+    ] {
+        assert_eq!(analyze(body).status, AnalysisStatus::Safe, "{body}");
+    }
+    // A multiplication followed by dereference cannot be confused with a
+    // typedef pointer declarator. No symbol-type evidence is available here.
+    assert_ne!(
+        analyze("int subject(int n) { int *p = q_alloc(); q_free(p); n **p; return 0; }").status,
+        AnalysisStatus::Safe
+    );
+}
+
+#[test]
+fn c11_memory_read_projection_and_certificate_recheck_fail_closed() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let prefix = "void *q_alloc(void); void q_free(void *);";
+    for tail in [
+        "return *p;",
+        "p[0]; return 0;",
+        "if (*p) { return 1; } return 0;",
+    ] {
+        let source =
+            format!("{prefix} int subject(void) {{ int *p = q_alloc(); q_free(p); {tail} }}");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "subject",
+            &contracts(),
+        )
+        .unwrap();
+        assert!(
+            matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
+            "{tail}: {result:?}"
+        );
+    }
+    let source =
+        format!("{prefix} int subject(void) {{ int *p = q_alloc(); q_free(p); return 0; }}");
+    let UnrestrictedLegacyResult::Safe(certificate) = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "subject",
+        &contracts(),
+    )
+    .unwrap() else {
+        panic!("scalar control must certify")
+    };
+    for replacement in ["return *p;", "*p; return 0;", "p[0]; return 0;"] {
+        let mut forged = certificate.clone();
+        forged.preprocessed_source = forged.preprocessed_source.replace("return 0;", replacement);
+        assert!(check_legacy_safety_certificate(&forged).is_err());
     }
 }
