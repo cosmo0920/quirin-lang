@@ -691,3 +691,15 @@ blocked and failed requests remain distinct through backend release. Three new
 Lean theorems, 381 workspace tests and all required checks pass with identical
 prior evidence. Full sync frames, real OS/caller binding, enclosing filesystem
 chunk close, traversal and full event composition still remain open.
+
+## Controlled native deletion observations (2026-09-06)
+
+The [native delete observation report](../reports/cycle19-delete-observations/README.md)
+records 16 sanitized executions of the pinned native-delete body: 14 blocked,
+one eligible failure and one eligible success. The original 18 native cleanup
+executions still pass unchanged. A new 12-clause QCore policy evaluates eligibility,
+argument identity, status, diagnostics and preserved record/path endpoints.
+All 382 workspace tests and 38 contract modules pass with the required checks.
+The complete source evidence and aggregate inventory remain unchanged. Controlled
+hooks do not establish actual filesystem deletion or close the remaining sync,
+OS/caller provenance, enclosing teardown, traversal and event-composition gates.

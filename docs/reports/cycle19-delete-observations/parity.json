@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-deleting-close",
+  "workspace_tests": 382,
+  "contract_modules": 38,
+  "controlled_native_executions": 34,
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "chunk_contract_sidecar_byte_identical": true,
+  "both_native_fixtures_byte_identical": true
+}

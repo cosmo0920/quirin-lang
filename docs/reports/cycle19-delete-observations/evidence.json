@@ -1,0 +1,21 @@
+{
+  "README.md": "7d2b9ee85742da9b711890a17b370ebd43ada3865b1a025db3894652ea0dfbb6",
+  "audit.log": "d856915ec8ba2c40cefdec9a4284aaa8b3244ad81c84e92ae6fe4bd8d2317de6",
+  "chunk-contracts.json.gz": "16b1ba84c2d07dc066a5def871c82ed4a38527ff133348d35ba004778c261b10",
+  "clippy.log": "51c41a6e5437e3fc23e6a3cefdeba85a5b7be856b8b6f6090d965952f73b5dc2",
+  "contract_result.json": "f02292f6c8f096e2101e68f444944d9f5a86474940fa6744c498918147e188d5",
+  "delete_contract_result.json": "cdf1aa1ad25f02f14aa749992580ed2662ef623c2ca2cb99e1a67ad9397c2ed9",
+  "file_cleanup_observation.jsonl": "3beec05505c9a801b3e18f8bf14651d6df0bfde76aa35faffb13bba69e4aee68",
+  "file_cleanup_observation.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "file_delete_observation.jsonl": "a3d90480a8fe12089b5861e0deb385d43c4a967239000dacbd63fb8255b8bd6d",
+  "file_delete_observation.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "fmt.log": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+  "followup.log": "abd641af2764b4a08dddaa0c383155a70b2d4a59ebae6f3c5bd2e139aad6cb9c",
+  "lean-audit.log": "0eb945cc1e6d6f8068be2c2905a28bb23d340310be0b48e54a5632f7551ca35e",
+  "lean-build.log": "f3e352bcd627724f4d6babeed1c33f27f4852a4346ada2c4f187f71c926e260d",
+  "metadata.json": "b368de4e32ab9f3d328ec787b7e7817362c340a6d3901414ffeb851b76e1c839",
+  "parity.json": "594591f4f6a7362c678b80cb456808cc0f2d4a36bb76a500d1622b09c24577a7",
+  "probe.log": "12229cb904bde8c318d0f11809fd5e8df548bd49ed6158951303741c435b09de",
+  "report-tests.log": "c720ceba6229f64b25fbf3b3d0f6957a8398293d7ebc3f739f992e523afa7cf3",
+  "tests.log": "75d78ee15e9ee12ad429e63584fae511a0a48925ef9d45e60d13e75c49715f6b"
+}

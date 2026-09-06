@@ -265,3 +265,9 @@ Thirty conditional cases retain blocked, failed, successful and absent-backend
 outcomes through the following frees. Both delete modes together cover all four
 source paths; success still needs bound OS/caller premises. See the
 [deleting close report](../../docs/reports/cycle19-deleting-close/README.md).
+
+`chunkio/filesystem_delete_observation.qcore` evaluates 16 controlled executions
+of the actual pinned native-delete body. It checks eligibility, path forwarding,
+status/diagnostic counts and record/path endpoint preservation. The returning
+unlink hook performs no deletion. See the
+[native delete observation report](../../docs/reports/cycle19-delete-observations/README.md).
