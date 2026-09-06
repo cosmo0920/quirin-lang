@@ -1,0 +1,9 @@
+{
+  "source.json": true,
+  "diagnostics.json": true,
+  "diagnostics.contracts.json": true,
+  "prior_chunk_contracts_unchanged": true,
+  "added_teardown_entries": [
+    "nested_unsupported_source"
+  ]
+}

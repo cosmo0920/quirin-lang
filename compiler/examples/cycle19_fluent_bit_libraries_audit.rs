@@ -869,6 +869,35 @@ fn audit_library(
                 .count()
         );
         teardown_results.push(serde_json::json!({"kind":"nested_cleanup_source", "source":cleanup, "conditional_examples":conditional_examples}));
+        let unsupported = qcore_compiler::verifier_plugins::chunkio::unsupported_close::check_unsupported_close_source(filesystem)?;
+        let extended = cleanup.with_unsupported(&unsupported)?;
+        let mut examples = Vec::new();
+        for kind in [i32::MIN, -1, 2, i32::MAX] {
+            let case = extended.project(
+                1,
+                &[
+                    ConditionalStream {
+                        stream: 10,
+                        chunks: vec![ChildCase::Memory { chunk: 11 }],
+                    },
+                    ConditionalStream {
+                        stream: 20,
+                        chunks: vec![ChildCase::Unsupported { chunk: 21, kind }],
+                    },
+                ],
+                2,
+                0,
+            )?;
+            if case.require_conditional_discharge().is_ok() || case.opaque_residuals().len() != 1 {
+                return Err("unsupported parent teardown erased opaque child custody".into());
+            }
+            examples.push(case);
+        }
+        println!(
+            "qcore-nested-unsupported: {} conditional examples retain exact opaque child identities after parent release; constructor reachability Unknown",
+            examples.len()
+        );
+        teardown_results.push(serde_json::json!({"kind":"nested_unsupported_source", "source":extended, "conditional_examples":examples}));
     }
     Ok(counts)
 }

@@ -312,3 +312,10 @@ domain. Both links, name and chunk are released and the total counter decrements
 backend custody remains unresolved. This 12-clause policy cannot establish a
 reachable caller, successful backing deletion or nested discharge. See the
 [unsupported close report](../../docs/reports/cycle19-unsupported-close/README.md).
+
+The existing `nested_cleanup` policy also counts unclassified backend children
+in its residual inventory when matching symbolic close evidence is supplied.
+Opaque stream/chunk/backend-kind identities survive parent teardown separately
+from typed OS residuals; either inventory blocks discharge. The original
+memory/filesystem cases retain their exact results. See the
+[opaque parent report](../../docs/reports/cycle19-nested-unsupported/README.md).

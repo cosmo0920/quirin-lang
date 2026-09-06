@@ -65,8 +65,9 @@ It also ships a conservative checker for *existing* C source (the
   aggregate custody, remaining wrapper lifecycle and full Monkey/Cycle 18
   composition remain open. The unsupported backend close arm is now classified
   symbolically: outer releases retain unresolved backend custody and an explicit
-  `Unknown`; constructor reachability is not inferred. Latest evidence:
-  `docs/reports/cycle19-unsupported-close/README.md` (404 workspace tests,
+  `Unknown`; constructor reachability is not inferred. Conditional parent teardown
+  now preserves exact opaque stream/chunk/backend-kind identities. Latest evidence:
+  `docs/reports/cycle19-nested-unsupported/README.md` (407 workspace tests,
   46 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all

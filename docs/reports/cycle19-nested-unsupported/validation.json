@@ -1,0 +1,14 @@
+{
+  "workspace": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "report-tests": 0,
+  "probe": 0,
+  "followup": 0,
+  "audit": 0,
+  "workspace_tests": 407,
+  "contract_modules": 46,
+  "lean_build": true,
+  "cycle19_axiom_audit": true,
+  "raw_units_promoted": 0
+}

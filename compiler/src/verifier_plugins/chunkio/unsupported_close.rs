@@ -30,6 +30,12 @@ pub struct UnsupportedCloseEvidence {
 }
 
 impl UnsupportedCloseEvidence {
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        check(&self.memory_scope, &self.filesystem_kind_probe, CONTRACT)
+    }
+    pub(super) fn memory_scope(&self) -> &MemoryCloseCertificate {
+        &self.memory_scope
+    }
     pub fn source_path(&self) -> usize {
         self.source_path
     }

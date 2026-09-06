@@ -2,7 +2,7 @@
 //! residual after stream/context allocation release; no native outcome is inferred.
 use super::{
     file_close::ResidualCustody, filesystem_chunk_close::FilesystemChunkCloseEvidence,
-    nested_memory::NestedMemorySource,
+    nested_memory::NestedMemorySource, unsupported_close::UnsupportedCloseEvidence,
 };
 use serde::Serialize;
 use std::collections::BTreeSet;
@@ -14,11 +14,24 @@ pub struct NestedCleanupSource {
     chain: NestedMemorySource,
     filesystem: FilesystemChunkCloseEvidence,
     contract_source: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    unsupported: Option<UnsupportedCloseEvidence>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum ChildCase {
-    Memory { chunk: u32 },
-    Filesystem { chunk: u32, case: usize },
+    Memory {
+        chunk: u32,
+    },
+    Filesystem {
+        chunk: u32,
+        case: usize,
+    },
+    /// Conditional live input only: no native constructor is inferred to have
+    /// returned a chunk with this unrecognized stream discriminant.
+    Unsupported {
+        chunk: u32,
+        kind: i32,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct ConditionalStream {
@@ -33,6 +46,12 @@ pub struct ChildResidual {
     pub descriptor: ResidualCustody,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct OpaqueChildResidual {
+    pub stream: u32,
+    pub chunk: u32,
+    pub backend_kind: i32,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NestedCleanupCase {
     context: u32,
     selected_streams: Vec<ConditionalStream>,
@@ -42,10 +61,17 @@ pub struct NestedCleanupCase {
     total_counter_after: usize,
     up_counter_after: usize,
     residuals: Vec<ChildResidual>,
+    /// Unclassified backend custody includes any nested memory/OS obligations;
+    /// absence from the typed OS residual list is not evidence of their absence.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    opaque_residuals: Vec<OpaqueChildResidual>,
 }
 impl NestedCleanupCase {
     pub fn residuals(&self) -> &[ChildResidual] {
         &self.residuals
+    }
+    pub fn opaque_residuals(&self) -> &[OpaqueChildResidual] {
+        &self.opaque_residuals
     }
     pub fn up_counter_after(&self) -> usize {
         self.up_counter_after
@@ -56,8 +82,11 @@ impl NestedCleanupCase {
     /// Conditional source gate only. Caller provenance and observed OS outcomes
     /// still need independent binding even when this gate accepts.
     pub fn require_conditional_discharge(&self) -> Result<(), String> {
-        if !self.residuals.is_empty() || self.up_counter_after != 0 {
-            Err("Unknown: parent release retains child OS/counter obligations".into())
+        if !self.residuals.is_empty()
+            || !self.opaque_residuals.is_empty()
+            || self.up_counter_after != 0
+        {
+            Err("Unknown: parent release retains child backend/OS/counter obligations".into())
         } else {
             Ok(())
         }
@@ -77,9 +106,21 @@ pub fn check_nested_cleanup_source(
         chain,
         filesystem,
         contract_source: CONTRACT.into(),
+        unsupported: None,
     })
 }
 impl NestedCleanupSource {
+    /// Bind the independently rechecked symbolic dispatch to this exact chain.
+    /// The existing constructor remains fail-closed for unsupported child cases.
+    pub fn with_unsupported(&self, evidence: &UnsupportedCloseEvidence) -> Result<Self, String> {
+        let mut source = check_nested_cleanup_source(&self.chain, &self.filesystem)?;
+        let evidence = evidence.recheck()?;
+        if evidence.memory_scope() != source.chain.memory() {
+            return Err("unsupported child and parent chain source/dependencies differ".into());
+        }
+        source.unsupported = Some(evidence);
+        Ok(source)
+    }
     /// Select conditional child source cases, not runtime observations. Each
     /// selected case's entry/frame/outcome premises must be bound externally.
     pub fn project(
@@ -105,6 +146,7 @@ impl NestedCleanupSource {
         let mut stream_ids = BTreeSet::new();
         let mut chunk_ids = BTreeSet::new();
         let mut residuals = Vec::new();
+        let mut opaque_residuals = Vec::new();
         let mut released_chunks = Vec::new();
         let mut released_streams = Vec::new();
         let mut up = up_entry;
@@ -114,6 +156,24 @@ impl NestedCleanupSource {
             }
             for child in &stream.chunks {
                 let (chunk, mapping, descriptor, decrements) = match *child {
+                    ChildCase::Unsupported { chunk, kind } => {
+                        let evidence = self.unsupported.as_ref().ok_or(
+                            "unsupported child requires source-bound symbolic close evidence",
+                        )?;
+                        if evidence.excluded_kinds().contains(&kind) {
+                            return Err(
+                                "known backend cannot select an unsupported child case".into()
+                            );
+                        }
+                        opaque_residuals.push(OpaqueChildResidual {
+                            stream: stream.stream,
+                            chunk,
+                            backend_kind: kind,
+                        });
+                        // Only the outer releases/counter decrement are composed.
+                        // All backend obligations remain in the opaque inventory.
+                        (chunk, ResidualCustody::Absent, ResidualCustody::Absent, 0)
+                    }
                     ChildCase::Memory { chunk } => {
                         (chunk, ResidualCustody::Absent, ResidualCustody::Absent, 0)
                     }
@@ -183,11 +243,17 @@ impl NestedCleanupSource {
                 ("up_after", up as i128),
                 ("entry_up", up_entry as i128),
                 ("up_decrements", (up_entry - up) as i128),
-                ("residual_child_count", residuals.len() as i128),
-                ("post_parent_residual_child_count", residuals.len() as i128),
+                (
+                    "residual_child_count",
+                    (residuals.len() + opaque_residuals.len()) as i128,
+                ),
+                (
+                    "post_parent_residual_child_count",
+                    (residuals.len() + opaque_residuals.len()) as i128,
+                ),
                 (
                     "conditional_discharge_permitted",
-                    i128::from(residuals.is_empty() && up == 0),
+                    i128::from(residuals.is_empty() && opaque_residuals.is_empty() && up == 0),
                 ),
                 ("backing_deletion_established", 0),
             ],
@@ -201,6 +267,7 @@ impl NestedCleanupSource {
             total_counter_after: 0,
             up_counter_after: up,
             residuals,
+            opaque_residuals,
         })
     }
 }

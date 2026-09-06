@@ -132,6 +132,9 @@ The [unsupported close classification](reports/cycle19-unsupported-close/README.
 checks the remaining backend discriminant class symbolically. It retains an
 explicit `Unknown` after outer chunk release because backend custody and native
 constructor reachability are unresolved.
+The [parent composition](reports/cycle19-nested-unsupported/README.md) now
+preserves exact opaque stream/chunk/backend-kind identities through parent free,
+alongside typed filesystem and up-counter residuals.
 
 ## Cycle 20: Verifier plugin ecosystem
 

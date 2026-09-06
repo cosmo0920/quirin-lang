@@ -819,3 +819,19 @@ certificates and aggregate verdicts remain unchanged. Propagating this opaque
 obligation through parent teardown, native caller/failure provenance, full
 filesystem guarantees, aggregate custody, wrapper lifecycle and full event
 composition remain open. No raw unit is promoted.
+
+## Opaque backend custody through parent release (2026-09-06)
+
+The [opaque parent teardown report](../reports/cycle19-nested-unsupported/README.md)
+composes the symbolic unsupported close class with the checked context/stream
+chain. Exact stream/chunk/backend-kind identities survive both parent releases.
+Typed filesystem residuals and opaque obligations are tracked separately; empty
+typed OS lists cannot erase unclassified backend custody. Source/dependency
+mismatch, known discriminants in the unsupported class, missing evidence,
+duplicate identities and counter mismatches reject. The existing 12-clause
+policy counts both inventories for its discharge gate. Three Rust tests and
+three Lean theorems cover the new composition; previous source cases remain
+unchanged. These conditional live-child premises do not establish a native
+constructor result. General caller/failure provenance, full filesystem
+guarantees, aggregate custody, wrapper lifecycle and event composition remain
+open. No raw unit is promoted.

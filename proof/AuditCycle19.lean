@@ -295,3 +295,6 @@ import QCore.ChunkSource
 #print axioms QCore.UnsupportedClose.duplicate_release_rejects
 #print axioms QCore.UnsupportedClose.symbolic_class_skips_both_backend_guards
 #print axioms QCore.UnsupportedClose.zero_belongs_unless_explicitly_excluded
+#print axioms QCore.NestedCleanup.opaque_finish_preserves_exact_inventory
+#print axioms QCore.NestedCleanup.opaque_residual_blocks_parent_discharge
+#print axioms QCore.NestedCleanup.opaque_discharge_requires_both_inventories_empty
