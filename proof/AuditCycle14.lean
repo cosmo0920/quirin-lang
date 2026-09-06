@@ -5,3 +5,21 @@ import QCore.Concurrency
 #print axioms QCore.Concurrency.accepted_lock_capabilities_are_linear
 #print axioms QCore.Concurrency.accepted_destruction_custody_is_unique
 #print axioms QCore.Concurrency.accepted_scope_is_quiescent
+
+#print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_access
+#print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_transfer
+#print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_access
+#print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_action
+#print axioms QCore.Concurrency.Lifetime.destruction_invalidates_generation
+#print axioms QCore.Concurrency.Lifetime.accepted_destruction_requires_quiescence
+#print axioms QCore.Concurrency.Lifetime.join_terminates_child
+#print axioms QCore.Concurrency.Lifetime.destruction_prevents_later_access
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_action
+
+#print axioms QCore.Concurrency.accepted_lifetimes_replay
+#print axioms QCore.Concurrency.accepted_certificate_names_trusted_profile_and_assumptions
+
+#print axioms QCore.Concurrency.Lifetime.step_preserves_destroyed
+#print axioms QCore.Concurrency.Lifetime.step_preserves_terminal
+#print axioms QCore.Concurrency.Lifetime.run_preserves_destroyed
+#print axioms QCore.Concurrency.Lifetime.run_preserves_terminal

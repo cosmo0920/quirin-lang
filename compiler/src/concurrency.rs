@@ -4,11 +4,19 @@
 //! sequenced-before, spawn/join, and mutex release/acquire edges; input order
 //! alone never orders different tasks.  This makes the checker useful as a
 //! bounded model without pretending to cover general C11 executions.
+//!
+//! Initial permissions/custody, guard-to-footprint authority and synchronized
+//! handoffs are trusted model inputs, not reconstructed source evidence. Every
+//! accepted certificate names that profile and its premises. Each resource ID
+//! denotes one unique lifetime; using a fresh ID is required for a new generation.
+//! Join is the explicit completion/collection event in this reduced model: it
+//! terminates the child without implicitly returning its permissions or custody.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 pub type TaskId = u32;
+/// A unique lifetime identity, never a reusable address or descriptor.
 pub type SharedResourceId = u32;
 pub type MutexId = u32;
 pub type LockRank = u32;
@@ -124,6 +132,22 @@ pub enum ConcurrencyDiagnostic {
         event: usize,
         task: TaskId,
     },
+    TerminalTask {
+        event: usize,
+        task: TaskId,
+    },
+    NonquiescentJoin {
+        event: usize,
+        child: TaskId,
+    },
+    DeadResource {
+        event: usize,
+        resource: SharedResourceId,
+    },
+    NonquiescentDestruction {
+        event: usize,
+        resource: SharedResourceId,
+    },
     DuplicateTask {
         event: usize,
         child: TaskId,
@@ -176,8 +200,27 @@ pub enum ConcurrencyDiagnostic {
     },
 }
 
+/// No source-to-trace or checked mutex-invariant claim is made by this profile.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ConcurrencyProfile {
+    TrustedExplicitTrace,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ConcurrencyAssumption {
+    /// Input permissions/custody describe the admitted initial authority and
+    /// resource IDs distinguish lifetimes; unmodeled authority is outside scope.
+    InitialAuthorityAndUniqueLifetimeIds,
+    /// Each supplied guarded access belongs to its named mutex invariant.
+    GuardFootprintAuthority,
+    /// Each true handoff flag represents a real synchronization edge.
+    SynchronizedCustodyEdges,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ConcurrencyCertificate {
+    pub profile: ConcurrencyProfile,
+    pub assumptions: BTreeSet<ConcurrencyAssumption>,
     pub checked_events: usize,
     pub completed_tasks: Vec<TaskId>,
     pub destroyed_resources: Vec<SharedResourceId>,
@@ -232,6 +275,10 @@ pub fn check_concurrent(
     let mut clocks = BTreeMap::from([(0, BTreeMap::from([(0, 0)]))]);
     let mut task_parents = BTreeMap::<TaskId, TaskId>::new();
     let mut joined = BTreeSet::new();
+    // Clock history survives join; execution authority does not.
+    let mut active = BTreeSet::from([0]);
+    let mut assumptions =
+        BTreeSet::from([ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds]);
     let mut locks = BTreeMap::<MutexId, (TaskId, LockRank)>::new();
     let mut held = BTreeMap::<TaskId, Vec<(MutexId, LockRank)>>::new();
     let mut releases = BTreeMap::<MutexId, VectorClock>::new();
@@ -242,11 +289,7 @@ pub fn check_concurrent(
     for (event_index, event) in program.events.iter().enumerate() {
         match *event {
             ConcurrentEvent::Spawn { parent, child } => {
-                if !clocks.contains_key(&parent) {
-                    diagnostics.insert(ConcurrencyDiagnostic::UnknownTask {
-                        event: event_index,
-                        task: parent,
-                    });
+                if !active_task(&clocks, &active, event_index, parent, &mut diagnostics) {
                     continue;
                 }
                 if clocks.contains_key(&child) || child == 0 {
@@ -259,13 +302,14 @@ pub fn check_concurrent(
                 tick(&mut clocks, parent);
                 let parent_clock = clocks[&parent].clone();
                 clocks.insert(child, parent_clock);
+                active.insert(child);
                 task_parents.insert(child, parent);
             }
             ConcurrentEvent::Join { parent, child } => {
-                if !known_task(&clocks, event_index, parent, &mut diagnostics) {
+                if !active_task(&clocks, &active, event_index, parent, &mut diagnostics) {
                     continue;
                 }
-                if task_parents.get(&child) != Some(&parent) || !joined.insert(child) {
+                if task_parents.get(&child) != Some(&parent) || joined.contains(&child) {
                     diagnostics.insert(ConcurrencyDiagnostic::UnknownJoin {
                         event: event_index,
                         child,
@@ -278,6 +322,19 @@ pub fn check_concurrent(
                         task: parent,
                     });
                 }
+                if held.get(&child).is_some_and(|guards| !guards.is_empty())
+                    || task_parents
+                        .iter()
+                        .any(|(descendant, owner)| *owner == child && !joined.contains(descendant))
+                {
+                    diagnostics.insert(ConcurrencyDiagnostic::NonquiescentJoin {
+                        event: event_index,
+                        child,
+                    });
+                    continue;
+                }
+                joined.insert(child);
+                active.remove(&child);
                 let child_clock = clocks.get(&child).cloned().unwrap_or_default();
                 merge_clock(
                     clocks.get_mut(&parent).expect("parent was checked"),
@@ -286,7 +343,7 @@ pub fn check_concurrent(
                 tick(&mut clocks, parent);
             }
             ConcurrentEvent::Lock { task, mutex, rank } => {
-                if !known_task(&clocks, event_index, task, &mut diagnostics) {
+                if !active_task(&clocks, &active, event_index, task, &mut diagnostics) {
                     continue;
                 }
                 if locks.contains_key(&mutex) {
@@ -314,7 +371,7 @@ pub fn check_concurrent(
                 held.entry(task).or_default().push((mutex, rank));
             }
             ConcurrentEvent::Unlock { task, mutex } => {
-                if !known_task(&clocks, event_index, task, &mut diagnostics) {
+                if !active_task(&clocks, &active, event_index, task, &mut diagnostics) {
                     continue;
                 }
                 if locks.get(&mutex).map(|owner| owner.0) != Some(task) {
@@ -339,7 +396,14 @@ pub fn check_concurrent(
                 kind,
                 guarded_by,
             } => {
-                if !known_task(&clocks, event_index, task, &mut diagnostics) {
+                if !active_task(&clocks, &active, event_index, task, &mut diagnostics) {
+                    continue;
+                }
+                if destroyed.contains(&footprint.resource) {
+                    diagnostics.insert(ConcurrencyDiagnostic::DeadResource {
+                        event: event_index,
+                        resource: footprint.resource,
+                    });
                     continue;
                 }
                 if !footprint.is_valid() {
@@ -350,6 +414,7 @@ pub fn check_concurrent(
                 }
                 let guarded = guarded_by.is_some_and(|mutex| {
                     if locks.get(&mutex).map(|owner| owner.0) == Some(task) {
+                        assumptions.insert(ConcurrencyAssumption::GuardFootprintAuthority);
                         true
                     } else {
                         diagnostics.insert(ConcurrencyDiagnostic::WrongMutexInvariant {
@@ -393,9 +458,16 @@ pub fn check_concurrent(
                 resource,
                 synchronized,
             } => {
-                if !known_task(&clocks, event_index, from, &mut diagnostics)
-                    || !known_task(&clocks, event_index, to, &mut diagnostics)
+                if !active_task(&clocks, &active, event_index, from, &mut diagnostics)
+                    || !active_task(&clocks, &active, event_index, to, &mut diagnostics)
                 {
+                    continue;
+                }
+                if destroyed.contains(&resource) {
+                    diagnostics.insert(ConcurrencyDiagnostic::DeadResource {
+                        event: event_index,
+                        resource,
+                    });
                     continue;
                 }
                 if custody.get(&resource) != Some(&from) {
@@ -409,6 +481,7 @@ pub fn check_concurrent(
                         resource,
                     });
                 } else {
+                    assumptions.insert(ConcurrencyAssumption::SynchronizedCustodyEdges);
                     tick(&mut clocks, from);
                     let from_clock = clocks[&from].clone();
                     merge_clock(clocks.get_mut(&to).expect("task was checked"), &from_clock);
@@ -416,15 +489,46 @@ pub fn check_concurrent(
                 }
             }
             ConcurrentEvent::Destroy { task, resource } => {
-                if !known_task(&clocks, event_index, task, &mut diagnostics) {
+                if !active_task(&clocks, &active, event_index, task, &mut diagnostics) {
                     continue;
                 }
-                if custody.get(&resource) != Some(&task) || !destroyed.insert(resource) {
+                if destroyed.contains(&resource) {
+                    diagnostics.insert(ConcurrencyDiagnostic::DeadResource {
+                        event: event_index,
+                        resource,
+                    });
+                    continue;
+                }
+                if custody.get(&resource) != Some(&task) {
                     diagnostics.insert(ConcurrencyDiagnostic::WrongCustodian {
                         event: event_index,
                         resource,
                     });
+                    continue;
                 }
+                // Fixed permissions belonging to other nonterminal (including
+                // future) tasks cannot be silently revoked. Guard footprints are
+                // trusted rather than represented, so conservatively require all
+                // other tasks' currently held guards to be closed.
+                let outstanding_authority = program.permissions.iter().any(|permission| {
+                    permission.footprint.resource == resource
+                        && permission.share > 0
+                        && permission.task != task
+                        && !joined.contains(&permission.task)
+                }) || locks.values().any(|(owner, _)| *owner != task);
+                let unordered_access = accesses.iter().any(|access| {
+                    access.footprint.resource == resource
+                        && !happens_before(&access.clock, &clocks[&task])
+                });
+                if outstanding_authority || unordered_access {
+                    diagnostics.insert(ConcurrencyDiagnostic::NonquiescentDestruction {
+                        event: event_index,
+                        resource,
+                    });
+                    continue;
+                }
+                destroyed.insert(resource);
+                custody.remove(&resource);
                 tick(&mut clocks, task);
             }
         }
@@ -440,6 +544,8 @@ pub fn check_concurrent(
     }
     if diagnostics.is_empty() {
         Ok(ConcurrencyCertificate {
+            profile: ConcurrencyProfile::TrustedExplicitTrace,
+            assumptions,
             checked_events: program.events.len(),
             completed_tasks: joined.into_iter().collect(),
             destroyed_resources: destroyed.into_iter().collect(),
@@ -449,14 +555,18 @@ pub fn check_concurrent(
     }
 }
 
-fn known_task(
+fn active_task(
     clocks: &BTreeMap<TaskId, VectorClock>,
+    active: &BTreeSet<TaskId>,
     event: usize,
     task: TaskId,
     diagnostics: &mut BTreeSet<ConcurrencyDiagnostic>,
 ) -> bool {
-    if clocks.contains_key(&task) {
+    if active.contains(&task) {
         true
+    } else if clocks.contains_key(&task) {
+        diagnostics.insert(ConcurrencyDiagnostic::TerminalTask { event, task });
+        false
     } else {
         diagnostics.insert(ConcurrencyDiagnostic::UnknownTask { event, task });
         false

@@ -96,9 +96,9 @@ pub use cleanup_lowering::{
     LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,
 };
 pub use concurrency::{
-    AccessFootprint, AccessKind, AccessPermission, ConcurrencyCertificate, ConcurrencyDiagnostic,
-    ConcurrentEvent, ConcurrentProgram, FULL_ACCESS, LockRank, MutexId, SharedResourceId, TaskId,
-    check_concurrent,
+    AccessFootprint, AccessKind, AccessPermission, ConcurrencyAssumption, ConcurrencyCertificate,
+    ConcurrencyDiagnostic, ConcurrencyProfile, ConcurrentEvent, ConcurrentProgram, FULL_ACCESS,
+    LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
 };
 pub use driver::{
     CompileOptions, CompiledModule, EmittedSourceMap, FileDiagnostic, SourceFile, SourceLocation,

@@ -1,0 +1,52 @@
+   Compiling qcore-core v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-core)
+   Compiling qcore-schemas v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-schemas)
+   Compiling qcore-frontend v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/tmp/qcore-review-concurrency/crates/qcore-c-gateway)
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-review-concurrency/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.10s
+     Running unittests src/lib.rs (/tmp/qcore-host-extraction/target/debug/deps/qcore_compiler-253e6cf82051604b)
+
+running 16 tests
+
+thread 'concurrency::tests::destroyed_generation_rejects_transfer' (2449) panicked at compiler/src/../tests/unit/concurrency.rs:321:5:
+assertion failed: check_concurrent(&program).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'concurrency::tests::destroyed_generation_rejects_all_access_kinds' (2448) panicked at compiler/src/../tests/unit/concurrency.rs:306:13:
+destroyed Read, guard=None
+
+thread 'concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal' (2450) panicked at compiler/src/../tests/unit/concurrency.rs:333:5:
+assertion failed: check_concurrent(&program).is_err()
+test concurrency::tests::atomic_to_atomic_access_is_not_a_data_race ... ok
+test concurrency::tests::conflicting_unordered_accesses_report_a_race ... ok
+test concurrency::tests::join_requires_quiescence_and_all_handles_are_linear ... ok
+test concurrency::tests::different_mutexes_do_not_hide_a_race ... ok
+test concurrency::tests::destroyed_generation_rejects_transfer ... FAILED
+
+thread 'concurrency::tests::joined_child_cannot_execute_any_event' (2453) panicked at compiler/src/../tests/unit/concurrency.rs:356:9:
+terminal child: Access { task: 1, footprint: AccessFootprint { resource: 7, start: 0, end: 8 }, kind: Read, guarded_by: None }
+test concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal ... FAILED
+test concurrency::tests::destroyed_generation_rejects_all_access_kinds ... FAILED
+test native_concurrency::tests::every_deferred_concurrency_feature_is_classified ... ok
+test concurrency::tests::shared_reads_with_conserved_permissions_are_accepted ... ok
+test native_concurrency::tests::platform_gaps_are_failures_not_inferences ... ok
+test concurrency::tests::synchronized_transfer_moves_unique_destruction_custody ... ok
+test concurrency::tests::joined_child_cannot_execute_any_event ... FAILED
+test concurrency::tests::lock_capabilities_and_rank_order_are_linear ... ok
+test concurrency::tests::same_mutex_establishes_happens_before ... ok
+test native_concurrency::tests::native_workers_preserve_transfer_cleanup_and_observation ... ok
+test native_concurrency::tests::wrong_custody_and_incomplete_cleanup_fail ... ok
+
+failures:
+
+failures:
+    concurrency::tests::destroyed_generation_rejects_all_access_kinds
+    concurrency::tests::destroyed_generation_rejects_transfer
+    concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal
+    concurrency::tests::joined_child_cannot_execute_any_event
+
+test result: FAILED. 12 passed; 4 failed; 0 ignored; 0 measured; 284 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-compiler --lib`
