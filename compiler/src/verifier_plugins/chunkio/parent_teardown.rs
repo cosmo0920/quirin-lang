@@ -2,7 +2,7 @@
 //! equality is conditional on separate child effects and allocation provenance.
 use super::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::C11TranslationUnit;
-use crate::typed_source_match::{SourceMatch, check_source_match};
+use crate::typed_source_match::{SourceFieldProfile, SourceMatch, check_source_match};
 use serde::Serialize;
 
 pub const CONTRACT: &str = include_str!("../../../../contract/qcore/chunkio/parent_teardown.qcore");
@@ -40,7 +40,32 @@ pub fn check_parent_source(
         ParentKind::Stream => ("cio_stream_destroy", STREAM),
         ParentKind::Context => ("cio_destroy", CONTEXT),
     };
-    let source = check_source_match(unit, revision, function, reference)?;
+    let fields: SourceFieldProfile<'_> = match kind {
+        ParentKind::Stream => &[(
+            "cio_stream",
+            &[("_head", "struct mk_list"), ("name", "char *")],
+        )],
+        ParentKind::Context => &[
+            (
+                "cio_ctx",
+                &[
+                    ("options", "struct cio_options"),
+                    ("processed_user", "void *"),
+                    ("processed_group", "void *"),
+                ],
+            ),
+            (
+                "cio_options",
+                &[
+                    ("user", "char *"),
+                    ("group", "char *"),
+                    ("chmod", "char *"),
+                    ("root_path", "char *"),
+                ],
+            ),
+        ],
+    };
+    let source = check_source_match(unit, revision, function, reference, fields)?;
     check_policy(CONTRACT)?;
     Ok(ParentSource {
         kind,

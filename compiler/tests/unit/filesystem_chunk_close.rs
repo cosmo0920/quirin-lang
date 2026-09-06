@@ -2,7 +2,7 @@ use super::*;
 use crate::verifier_plugins::chunkio::{file_close, file_delete};
 use memory_close::tests::{FIXTURE, dependencies};
 
-fn backend() -> FileCloseDeletionEvidence {
+pub(crate) fn backend() -> FileCloseDeletionEvidence {
     let source = file_close::tests::deletion_fixture();
     let (unmap, close) = file_close::tests::dependencies(&source);
     let unit = C11TranslationUnit {

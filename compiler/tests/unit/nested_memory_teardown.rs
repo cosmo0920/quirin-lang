@@ -6,7 +6,7 @@ use crate::legacy_c::{C11TranslationUnit, CCompilerDialect};
 use crate::verifier_plugins::chunkio::{memory_close, parent_teardown, traversal};
 use ChunkOperation as C;
 
-fn source() -> NestedMemorySource {
+pub(crate) fn source() -> NestedMemorySource {
     let unit = C11TranslationUnit {
         source: traversal::tests::FIXTURE,
         dialect: CCompilerDialect::Gnu11,

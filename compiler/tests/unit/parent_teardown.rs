@@ -4,7 +4,7 @@ pub(crate) const RECORDS: &str = r#"
 #include <stdlib.h>
 struct mk_list { struct mk_list *prev, *next; };
 struct cio_options { char *user, *group, *chmod, *root_path; };
-struct cio_ctx { struct cio_options options; char *processed_user, *processed_group; struct mk_list streams; };
+struct cio_ctx { struct cio_options options; void *processed_user, *processed_group; struct mk_list streams; };
 struct cio_stream { struct mk_list _head; char *name; };
 void cio_chunk_close_stream(struct cio_stream *);
 void mk_list_del(struct mk_list *);
@@ -114,4 +114,26 @@ fn parent_policy_rejects_false_or_unknown_facts() {
         )
         .is_err()
     );
+}
+
+#[test]
+fn parent_reference_cannot_share_a_corrupted_owned_field_representation() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    for (kind, old, new) in [
+        (ParentKind::Stream, "char *name;", "long name;"),
+        (
+            ParentKind::Context,
+            "void *processed_user, *processed_group;",
+            "long processed_user, processed_group;",
+        ),
+        (
+            ParentKind::Context,
+            "char *user, *group, *chmod, *root_path;",
+            "long user, group, chmod, root_path;",
+        ),
+    ] {
+        assert!(check(&fixture().replace(old, new), kind).is_err());
+    }
 }

@@ -3,10 +3,12 @@
 //! compiled after preprocessing so input macros cannot rewrite the specification.
 //! Clang, its JSON transport, and the reference's interpretation are trusted.
 use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
-use crate::typed_c_ast::{children, function_ast, kind};
+use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
+
+pub(crate) type SourceFieldProfile<'a> = &'a [(&'a str, &'a [(&'a str, &'a str)])];
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct SourceMatch {
@@ -31,8 +33,43 @@ pub(crate) fn check_source_match(
     revision: &str,
     function: &str,
     reference: &str,
+    fields: SourceFieldProfile<'_>,
 ) -> Result<SourceMatch, String> {
     let source = validate_unrestricted_c11(unit).map_err(|e| e.to_string())?;
+    // The reference shares the source's declarations, so body equality alone
+    // cannot validate a maliciously changed field representation.
+    for (record, required) in fields {
+        let declarations = ast_declarations(&source, unit, record)?;
+        let records: Vec<_> = declarations
+            .iter()
+            .filter(|d| {
+                kind(d) == "RecordDecl"
+                    && d["name"] == *record
+                    && d["completeDefinition"] == true
+                    && d["tagUsed"] == "struct"
+            })
+            .collect();
+        let [definition] = records.as_slice() else {
+            return Err(format!("missing ordinary record {record}"));
+        };
+        for (field, expected) in *required {
+            let matches: Vec<_> = children(definition)
+                .iter()
+                .filter(|f| kind(f) == "FieldDecl" && f["name"] == *field)
+                .collect();
+            let [decl] = matches.as_slice() else {
+                return Err(format!("missing ordinary field {record}.{field}"));
+            };
+            if decl["isBitfield"] == true
+                || !children(decl).is_empty()
+                || decl["type"]["qualType"] != *expected
+            {
+                return Err(format!(
+                    "unsupported field representation {record}.{field}; expected {expected}"
+                ));
+            }
+        }
+    }
     let actual = function_ast(&source, unit, function)?;
     let combined = format!("{source}\n{reference}\n");
     let expected = function_ast(&combined, unit, "qcore_source_reference")?;

@@ -407,6 +407,7 @@ fn audit_library(
     let mut stream_traversal = None;
     let mut stream_parent = None;
     let mut context_parent = None;
+    let mut filesystem_chunk = None;
     if library == "chunkio" {
         let entry = entries
             .iter()
@@ -686,6 +687,7 @@ fn audit_library(
                     .count(),
                 file.combined_uncovered_paths().len()
             );
+            filesystem_chunk = Some(file.clone());
             teardown_results
                 .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
         }
@@ -820,6 +822,42 @@ fn audit_library(
         );
         teardown_results
             .push(serde_json::json!({"kind":"nested_memory_source", "certificate":certificate}));
+        use qcore_compiler::verifier_plugins::chunkio::nested_cleanup::{
+            ChildCase, ConditionalStream, check_nested_cleanup_source,
+        };
+        let filesystem = filesystem_chunk
+            .as_ref()
+            .ok_or("missing filesystem chunk close")?;
+        let cleanup = check_nested_cleanup_source(&certificate, filesystem)?;
+        let mut conditional_examples = Vec::new();
+        for (case, c) in filesystem
+            .cases()
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| c.chunk_present && !c.delete)
+        {
+            conditional_examples.push(cleanup.project(
+                1,
+                &[ConditionalStream {
+                    stream: 1,
+                    chunks: vec![
+                        ChildCase::Memory { chunk: 1 },
+                        ChildCase::Filesystem { chunk: 2, case },
+                    ],
+                }],
+                2,
+                c.up_counter_decrements,
+            )?);
+        }
+        println!(
+            "qcore-nested-cleanup: {} mixed-backend conditional cases, {} retain child OS/counter obligations after parent free; native entry/outcome binding remains Unknown",
+            conditional_examples.len(),
+            conditional_examples
+                .iter()
+                .filter(|c| c.require_conditional_discharge().is_err())
+                .count()
+        );
+        teardown_results.push(serde_json::json!({"kind":"nested_cleanup_source", "source":cleanup, "conditional_examples":conditional_examples}));
     }
     Ok(counts)
 }

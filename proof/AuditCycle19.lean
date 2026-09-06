@@ -4,6 +4,7 @@ import QCore.FileClose
 import QCore.FilesystemChunkClose
 import QCore.TeardownTraversal
 import QCore.ParentTeardown
+import QCore.NestedCleanup
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
@@ -264,3 +265,9 @@ import QCore.ChunkSource
 #print axioms QCore.ParentTeardown.parent_free_cannot_establish_nested_discharge
 #print axioms QCore.ParentTeardown.accepted_parent_free_releases_parent_and_fields
 #print axioms QCore.ParentTeardown.duplicate_parent_free_rejected
+
+#print axioms QCore.NestedCleanup.accepted_finish_preserves_residual_identities
+#print axioms QCore.NestedCleanup.accepted_finish_balances_up_counter
+#print axioms QCore.NestedCleanup.up_counter_underflow_rejected
+#print axioms QCore.NestedCleanup.accepted_discharge_has_no_child_or_counter_obligation
+#print axioms QCore.NestedCleanup.unresolved_child_blocks_discharge

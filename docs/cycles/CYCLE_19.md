@@ -755,3 +755,18 @@ and cross-unit ABI/call bindings remain explicit premises in a 10-clause policy.
 All 396 workspace tests, 42 modules and required checks pass with identical prior
 audit evidence. Filesystem residual composition and the broader native custody,
 sync/OS, constructor and event-composition gates remain open.
+
+## Residual custody through nested parent teardown (2026-09-06)
+
+The [nested cleanup report](../reports/cycle19-nested-cleanup/README.md) composes
+the full context/stream source chain with all 43 non-deleting filesystem cases.
+Twenty-six retain unresolved OS obligations through parent allocation release;
+17 conditionally discharge them. Exact child identities, total-counter equality,
+up-counter subtraction and residual up obligations remain explicit. Five Lean
+theorems, a 12-clause QCore policy and mutation tests cover residual identity
+preservation and discharge rejection. Reference matching now rejects corrupted
+record-field types even when both compared bodies share those declarations.
+All 400 workspace tests, 43 modules and required checks pass with identical prior
+pinned evidence. Native caller/constructor/ring provenance, full sync/OS frames,
+unsupported backend classification, general aggregate custody, remaining wrapper
+lifecycle functions and full Monkey/Cycle 18 event composition remain open.

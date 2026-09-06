@@ -10,6 +10,7 @@ pub mod file_delete;
 pub mod file_outcomes;
 pub mod filesystem_chunk_close;
 pub mod memory_close;
+pub mod nested_cleanup;
 pub mod nested_memory;
 pub mod parent_teardown;
 pub mod teardown_source;

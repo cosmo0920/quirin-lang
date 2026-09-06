@@ -49,6 +49,17 @@ pub struct FilesystemChunkCloseEvidence {
     combined_uncovered_paths: Vec<usize>,
 }
 impl FilesystemChunkCloseEvidence {
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        check(
+            &self.memory_scope,
+            &self.filesystem_kind_probe,
+            &self.backend,
+            CONTRACT,
+        )
+    }
+    pub(super) fn memory_scope(&self) -> &MemoryCloseCertificate {
+        &self.memory_scope
+    }
     pub fn cases(&self) -> &[FilesystemChunkCloseCase] {
         &self.cases
     }
@@ -274,4 +285,4 @@ fn check(
 
 #[cfg(test)]
 #[path = "../../../tests/unit/filesystem_chunk_close.rs"]
-mod tests;
+pub(crate) mod tests;

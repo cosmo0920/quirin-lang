@@ -3,7 +3,7 @@
 //! exact child destructor frames remain premises; calls alone discharge nothing.
 use super::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::C11TranslationUnit;
-use crate::typed_source_match::{SourceMatch, check_source_match};
+use crate::typed_source_match::{SourceFieldProfile, SourceMatch, check_source_match};
 use serde::Serialize;
 
 pub const CONTRACT: &str =
@@ -42,7 +42,25 @@ pub fn check_traversal_source(
         TraversalKind::Chunks => ("cio_chunk_close_stream", CHUNKS),
         TraversalKind::Streams => ("cio_stream_destroy_all", STREAMS),
     };
-    let source = check_source_match(unit, revision, function, reference)?;
+    let owner_fields: SourceFieldProfile<'_> = match kind {
+        TraversalKind::Chunks => &[
+            (
+                "mk_list",
+                &[("prev", "struct mk_list *"), ("next", "struct mk_list *")],
+            ),
+            ("cio_stream", &[("chunks", "struct mk_list")]),
+            ("cio_chunk", &[("_head", "struct mk_list")]),
+        ],
+        TraversalKind::Streams => &[
+            (
+                "mk_list",
+                &[("prev", "struct mk_list *"), ("next", "struct mk_list *")],
+            ),
+            ("cio_ctx", &[("streams", "struct mk_list")]),
+            ("cio_stream", &[("_head", "struct mk_list")]),
+        ],
+    };
+    let source = check_source_match(unit, revision, function, reference, owner_fields)?;
     check_policy(CONTRACT)?;
     Ok(TraversalSource {
         kind,

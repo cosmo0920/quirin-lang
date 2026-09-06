@@ -69,6 +69,18 @@ pub fn check_nested_memory_source(
 }
 
 impl NestedMemorySource {
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        check_nested_memory_source(
+            &self.chunks,
+            &self.streams,
+            &self.stream_parent,
+            &self.context_parent,
+            &self.memory,
+        )
+    }
+    pub(super) fn memory(&self) -> &MemoryCloseCertificate {
+        &self.memory
+    }
     /// Return source-bound teardown operations, checked against an existing
     /// model execution prefix. This is conditional source/model composition,
     /// not a native allocation-provenance or whole-program Safe certificate.
@@ -182,4 +194,4 @@ fn check_policy(contract: &str) -> Result<(), String> {
 
 #[cfg(test)]
 #[path = "../../../tests/unit/nested_memory_teardown.rs"]
-mod tests;
+pub(crate) mod tests;

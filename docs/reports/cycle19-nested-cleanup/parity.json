@@ -1,0 +1,11 @@
+{
+  "baseline": "cycle19-nested-memory",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_results_identical": true,
+  "prior_teardown_evidence_identical": true,
+  "conditional_mixed_backend_cases": 43,
+  "unresolved_after_parent_release": 26,
+  "workspace_tests": 400,
+  "contract_modules": 43
+}
