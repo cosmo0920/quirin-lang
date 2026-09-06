@@ -1,0 +1,43 @@
+{
+  "baseline": "49806a7",
+  "workspace_tests": 716,
+  "provider_tests": 9,
+  "python_tests": 43,
+  "lean_audits": 20,
+  "new_lean_theorems": 48,
+  "public_c11_tests": 19,
+  "standing_gate": "passed",
+  "ct_mapped": 7,
+  "ct_unmapped": 43,
+  "false_safe_regressions": {
+    "before_safe_with_certificate_recheck": 10,
+    "after_unknown": 6,
+    "after_unsafe": 4,
+    "after_safe": 0,
+    "provenance": "adversarial-probes/recheck.json"
+  },
+  "full_185_audit": {
+    "safe": 2,
+    "provisional_unsafe": 42,
+    "unknown": 137,
+    "data_only": 4,
+    "unsafe_to_unknown": 5,
+    "diagnostics_changed_units": 22,
+    "source_byte_identical": true,
+    "chunk_contracts_byte_identical": true,
+    "source_effects_byte_identical": true,
+    "raw_promotions": 0
+  },
+  "source_effects": {
+    "checked_function_contracts": 3,
+    "unknown_functions": 93
+  },
+  "full_language_conformance": false,
+  "remaining": [
+    "general removal/out-slot aliases and heap-link inference",
+    "relational branch correlation",
+    "general recursive fixed points and costs",
+    "source/Clang/Rust/Lean correspondence",
+    "remaining W2-W7 and Cycle19 requirements"
+  ]
+}

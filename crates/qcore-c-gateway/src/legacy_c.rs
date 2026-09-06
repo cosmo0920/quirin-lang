@@ -2356,6 +2356,9 @@ struct AbstractState {
     nullable_sites: BTreeSet<usize>,
     conditional_replacements: BTreeMap<usize, BTreeSet<usize>>,
     contained: BTreeMap<usize, BTreeSet<usize>>,
+    /// Custody retained after a rejected effect; its residual is not a proven
+    /// leak because the unmodeled action may have discharged it.
+    unresolved_effect_sites: BTreeSet<usize>,
     widened: bool,
 }
 
@@ -2408,6 +2411,8 @@ impl AbstractState {
         }
         self.nullable_sites
             .extend(incoming.nullable_sites.iter().copied());
+        self.unresolved_effect_sites
+            .extend(incoming.unresolved_effect_sites.iter().copied());
         for pointer in self.pointers.values() {
             if pointer.may_be_null {
                 self.nullable_sites.extend(pointer.targets.iter().copied());
@@ -2665,6 +2670,9 @@ fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
 }
 
 fn site_disposition(state: &AbstractState, site: usize) -> SiteDisposition {
+    if state.unresolved_effect_sites.contains(&site) {
+        return SiteDisposition::Mixed;
+    }
     match state.resources.get(&site).copied() {
         None => SiteDisposition::Absent,
         Some(LIVE) => SiteDisposition::Live,
@@ -3217,7 +3225,10 @@ fn apply_resource_action(
             unknown: true,
             may_be_null: true,
         });
-    if pointer.unknown || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null)) {
+    let unresolved = pointer.unknown
+        || pointer.targets.len() > 1
+        || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null));
+    if unresolved {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -3226,12 +3237,12 @@ fn apply_resource_action(
             },
         });
     }
-    if !nullable
+    let unresolved_nullability = !nullable
         && pointer
             .targets
             .iter()
-            .any(|site| state.nullable_sites.contains(site))
-    {
+            .any(|site| state.nullable_sites.contains(site));
+    if unresolved_nullability {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -3240,8 +3251,35 @@ fn apply_resource_action(
             },
         });
     }
+    if unresolved || unresolved_nullability {
+        // One source action cannot discharge every possible selected target.
+        // Preserve the residual obligations when target identity is unknown.
+        mark_unresolved_effect(state, &pointer);
+        return;
+    }
+    if !cascade_is_unambiguous(state, &pointer.targets) {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: source.to_owned(),
+            },
+        });
+        mark_unresolved_effect(state, &pointer);
+        return;
+    }
     for site in pointer.targets {
         let status = state.resources.get(&site).copied().unwrap_or(0);
+        if escape && status != LIVE {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::CustodyConflict {
+                    acquisition_line: acquisition_line(acquisition_lines, site),
+                },
+            });
+            continue;
+        }
         if status & CONTAINED != 0 {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
@@ -3282,6 +3320,45 @@ fn apply_resource_action(
     }
 }
 
+fn mark_unresolved_effect(state: &mut AbstractState, pointer: &AbstractPointer) {
+    let mut pending = if pointer.unknown {
+        state.resources.keys().copied().collect::<BTreeSet<_>>()
+    } else {
+        pointer.targets.clone()
+    };
+    let mut visited = BTreeSet::new();
+    while let Some(site) = pending.pop_first() {
+        if visited.insert(site) {
+            state.unresolved_effect_sites.insert(site);
+            if let Some(children) = state.contained.get(&site) {
+                pending.extend(children);
+            }
+        }
+    }
+}
+
+fn cascade_is_unambiguous(state: &AbstractState, roots: &BTreeSet<usize>) -> bool {
+    let mut pending = roots.clone();
+    let mut visited = BTreeSet::new();
+    while let Some(owner) = pending.pop_first() {
+        if !visited.insert(owner) {
+            return false;
+        }
+        for child in state.contained.get(&owner).into_iter().flatten() {
+            if state.resources.get(child) != Some(&CONTAINED)
+                || state
+                    .contained
+                    .iter()
+                    .any(|(other, children)| *other != owner && children.contains(child))
+            {
+                return false;
+            }
+            pending.insert(*child);
+        }
+    }
+    true
+}
+
 fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool) {
     let mut pending = state.contained.remove(&owner).unwrap_or_default();
     let mut visited = BTreeSet::new();
@@ -3313,6 +3390,46 @@ fn apply_contract_call(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    // Reallocation consumes at most one proven live original on success.
+    // A null old value carries no custody only when its input contract permits it.
+    // Validate it before any other parameter effect or result allocation.
+    if let ResourceReturnMode::Reallocated { parameter, .. } = contract.result {
+        let input_nullable = matches!(
+            contract.parameters.get(parameter),
+            Some(ResourceParameterMode::Owned { nullable: true })
+        );
+        let source = arguments.get(parameter).and_then(Option::as_deref);
+        let old = source
+            .and_then(|source| state.pointers.get(source))
+            .cloned();
+        let valid = old.as_ref().is_some_and(|old| {
+            !old.unknown
+                && old.targets.len() <= 1
+                && (input_nullable || (old.targets.len() == 1 && !old.may_be_null))
+                && old.targets.iter().all(|site| {
+                    state.resources.get(site) == Some(&LIVE)
+                        && (input_nullable || !state.nullable_sites.contains(site))
+                        && !state.unresolved_effect_sites.contains(site)
+                })
+        });
+        if !valid {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::UnknownAlias {
+                    variable: source.unwrap_or(called).to_owned(),
+                },
+            });
+            mark_unresolved_effect(
+                state,
+                &old.unwrap_or(AbstractPointer {
+                    unknown: true,
+                    ..Default::default()
+                }),
+            );
+            return;
+        }
+    }
     let mut sites = produced_sites.iter().copied();
     // Apply input custody effects before assigning a return value. This is
     // essential when the destination aliases a consumed/reallocated argument.
@@ -3439,7 +3556,11 @@ fn apply_contract_call(
                 });
                 return;
             };
-            if old.unknown || old.targets.is_empty() {
+            let input_nullable = matches!(
+                contract.parameters.get(parameter),
+                Some(ResourceParameterMode::Owned { nullable: true })
+            );
+            if old.unknown || old.targets.len() > 1 || (old.targets.is_empty() && !input_nullable) {
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line,
@@ -3447,6 +3568,8 @@ fn apply_contract_call(
                         variable: source.to_owned(),
                     },
                 });
+                mark_unresolved_effect(state, &old);
+                return;
             }
             create_resource(state, destination, site, nullable);
             state
@@ -3471,6 +3594,8 @@ fn apply_contract_call(
 }
 
 fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nullable: bool) {
+    // Acquisition sites may repeat in loops; retain prior uncertainty rather
+    // than assuming this abstract site is a fresh runtime generation.
     state.resources.insert(site, LIVE);
     if nullable {
         state.nullable_sites.insert(site);
@@ -3501,15 +3626,20 @@ fn attach_contained_resource(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
-    require_live_resource(function, line, owner, false, state, diagnostics);
-    require_live_resource(function, line, source, nullable, state, diagnostics);
+    let owner_live = require_live_resource(function, line, owner, false, state, diagnostics);
+    let child_live = require_live_resource(function, line, source, nullable, state, diagnostics);
     let Some(owners) = state.pointers.get(owner).cloned() else {
         return;
     };
     let Some(children) = state.pointers.get(source).cloned() else {
         return;
     };
-    if owners.unknown || children.unknown || owners.targets.len() != 1 {
+    if !owner_live || !child_live {
+        mark_unresolved_effect(state, &children);
+        return;
+    }
+    if owners.unknown || children.unknown || owners.targets.len() != 1 || children.targets.len() > 1
+    {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -3517,6 +3647,7 @@ fn attach_contained_resource(
                 variable: format!("{owner}/{source}"),
             },
         });
+        mark_unresolved_effect(state, &children);
         return;
     }
     let owner_site = *owners.targets.first().expect("one owner target");
@@ -3548,7 +3679,7 @@ fn detach_contained_resource(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
-    require_live_resource(function, line, owner, false, state, diagnostics);
+    let owner_live = require_live_resource(function, line, owner, false, state, diagnostics);
     let Some(owners) = state.pointers.get(owner).cloned() else {
         return;
     };
@@ -3562,9 +3693,13 @@ fn detach_contained_resource(
         });
         return;
     };
-    if owners.unknown
+    if !owner_live
+        || owners.unknown
         || children.unknown
         || owners.targets.len() != 1
+        // A call detaches one child, not every possible target of an alias
+        // joined from different paths. Their correlation is not represented.
+        || children.targets.len() > 1
         || (!nullable && (children.targets.is_empty() || children.may_be_null))
     {
         diagnostics.insert(LegacyDiagnostic {
@@ -3578,12 +3713,18 @@ fn detach_contained_resource(
     }
     let owner_site = *owners.targets.first().expect("one owner target");
     for child in children.targets {
-        let attached = state
+        let containing_owners = state
             .contained
-            .get(&owner_site)
-            .is_some_and(|contained| contained.contains(&child));
+            .iter()
+            .filter_map(|(owner, children)| children.contains(&child).then_some(*owner))
+            .collect::<BTreeSet<_>>();
         let status = state.resources.get(&child).copied().unwrap_or(0);
-        if !attached || status & CONTAINED == 0 {
+        // Every represented path must still own this exact child through the
+        // owner. A joined CONTAINED|LIVE state includes an already-detached
+        // path; removing the CONTAINED bit would erase its repeated removal.
+        // The union of two different possible owners is not proof that the
+        // requested owner contains the child on every represented path.
+        if containing_owners != BTreeSet::from([owner_site]) || status != CONTAINED {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,
@@ -3610,7 +3751,7 @@ fn require_live_resource(
     nullable: bool,
     state: &AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
-) {
+) -> bool {
     let Some(pointer) = state.pointers.get(source) else {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
@@ -3619,20 +3760,19 @@ fn require_live_resource(
                 variable: source.to_owned(),
             },
         });
-        return;
+        return false;
     };
-    if pointer.unknown
+    let invalid = pointer.unknown
         || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null))
         || (!nullable
             && pointer
                 .targets
                 .iter()
                 .any(|site| state.nullable_sites.contains(site)))
-        || pointer
-            .targets
-            .iter()
-            .any(|site| state.resources.get(site).copied().unwrap_or(0) & LIVE == 0)
-    {
+        || pointer.targets.iter().any(|site| {
+            state.resources.get(site) != Some(&LIVE) || state.unresolved_effect_sites.contains(site)
+        });
+    if invalid {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
             line,
@@ -3641,6 +3781,7 @@ fn require_live_resource(
             },
         });
     }
+    !invalid
 }
 
 fn report_unsupported_contract(
@@ -3705,6 +3846,12 @@ fn refine_pointer_null(
         state.resources.remove(&site);
         state.nullable_sites.remove(&site);
         state.conditional_replacements.remove(&site);
+        // The null alternative has no child at this site. Remove precisely
+        // its incoming aggregate edges, retaining every sibling obligation.
+        state.contained.retain(|_, children| {
+            children.remove(&site);
+            !children.is_empty()
+        });
         for alias in state.pointers.values_mut() {
             if alias.targets.remove(&site) {
                 alias.may_be_null = true;
@@ -3736,7 +3883,10 @@ fn report_leaks(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (&site, &status) in &state.resources {
-        if status & LIVE != 0 && !exempt.contains(&site) {
+        if status & LIVE != 0
+            && !exempt.contains(&site)
+            && !state.unresolved_effect_sites.contains(&site)
+        {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,

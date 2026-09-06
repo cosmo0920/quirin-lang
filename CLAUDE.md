@@ -211,7 +211,7 @@ That increment measured 3 Safe / 94 provisional Unsafe / 84 Unknown /
 4 data-only, with no promotions. The subsequent indirect-access repair
 (`docs/reports/w4-indirect-access/README.md`) rejects unmodeled dereference,
 member and indexed access instead of erasing it from the resource projection.
-The current 185-unit audit is 2 Safe / 47 provisional Unsafe / 132 Unknown /
+The current 185-unit audit is 2 Safe / 42 provisional Unsafe / 137 Unknown /
 4 data-only: 48 units and 455 functions downgrade, with no promotions.
 These are withdrawn unsupported results, not proven upstream defects.
 Typed access evidence, general pointer aliases and recursion remain open.
@@ -240,7 +240,7 @@ contracts. The real ChunkIO 0.2.0 package proposes witnesses; the audit selects
 it explicitly with `QCORE_CHUNKIO_PACKAGE`. Three real functions check across
 four Boolean-state combinations each; 93 other selected functions remain
 Unknown. Source, resource diagnostics and existing contract sidecars retain
-byte parity. Raw unit totals remain 2 Safe / 47 provisional Unsafe / 132 Unknown /
+byte parity. Raw unit totals remain 2 Safe / 42 provisional Unsafe / 137 Unknown /
 4 data-only. Evidence: `docs/reports/w3-source-field-provider/README.md`.
 Full lifecycle source inference, provider-owned source analysis and aggregate
 registry composition remain open; this bounded property does not discharge them.
@@ -293,3 +293,18 @@ real Linux success, first/second-create failure and join-before-free controls.
 Coverage is 7/50 mapped, 43 unmapped. Moves/loans, owned results, shared memory,
 mutexes, nested workers, general control flow and other platforms remain open.
 Evidence: `docs/reports/w6-task-recovery/README.md`.
+
+Nullable removal and custody transfer validation (2026-09-07): W4 now validates
+nullable `Removed` preconditions, including null-guarded nonnull removal and
+reordered direct forwarding. Null refinement removes only the absent child's
+containment edges; original owners and other children remain accounted for.
+Confirmed false-Safe cases in merged removal, alias-selected actions, aggregate
+cleanup and terminal custody reuse are repaired. Ambiguous effects retain
+unresolved custody; independent leak evidence remains visible. General aliases,
+heap-link discovery and relational branch analysis remain open. Evidence:
+`docs/reports/w4-nullable-removal/README.md`.
+The fresh 185-unit audit records 2 Safe /42 provisional Unsafe /137 Unknown
+plus four data-only units. Five previous provisional Unsafe units now remain
+Unknown because their residual leaks depended on unresolved effects. Source,
+chunk-contract and source-effect reports are byte-identical; 22 units have
+diagnostic changes. No raw unit is promoted.

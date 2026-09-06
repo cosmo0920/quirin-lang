@@ -39,8 +39,11 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
   rejects; accepted observation evidence stays bounded to recorded runs.
   Lifecycle source derivation is still incomplete; v1 Safe refusal is unchanged.
 - W4 adds validated direct Out/Stored/Reallocated and nullable returns, including
-  the out-formal reassignment regression. Removed/recursion/general aliases and
-  cost inference remain unsupported; gateway code is in its own crate.
+  the out-formal reassignment regression. Direct nullable Removed wrappers and
+  context-specific recursion now validate; general aliases/recursive fixed points
+  and cost inference remain open. The [custody transfer repairs](../../reports/w4-nullable-removal/README.md)
+  reject ten reproduced false-Safe patterns while retaining unresolved effects;
+  gateway code is in its own crate.
 - W5 has a configured provider-free audit runner and a second-codebase example;
   specialized production adapters and provider/kernel consolidation remain.
 - W6 rejects ignored source function contracts with Q021 and resolves body-local
@@ -52,4 +55,4 @@ seven mapped and 43 unmapped, with separate stages and Linux-only native evidenc
   validated. Fixed observations do not promote raw Cycle19 source units.
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
-Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 686 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nine separate provider tests also pass. The full pinned audit preserves all four reports for 185 units. These counts are different suites, not interchangeable conformance cases.
+Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 716 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nine separate provider tests also pass. The latest full pinned audit comparison is archived in the [custody transfer report](../../reports/w4-nullable-removal/README.md). These counts are different suites, not interchangeable conformance cases.

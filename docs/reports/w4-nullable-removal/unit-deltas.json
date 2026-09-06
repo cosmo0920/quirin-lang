@@ -1,0 +1,438 @@
+{
+  "baseline_report": "docs/reports/w6-task-recovery",
+  "baseline_commit": "49806a7",
+  "changed_unit_count": 22,
+  "status_changed_unit_count": 5,
+  "status_transitions": {
+    "Unsafe -> Unknown": 5
+  },
+  "status_deltas": [
+    {
+      "library": "cmetrics",
+      "file": "cmt_cat.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 24,
+        "unsupported": 280
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 24,
+        "unsupported": 280
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 36,
+        "unsupported": 126
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 36,
+        "unsupported": 126
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 20,
+        "unsupported": 99
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 20,
+        "unsupported": 99
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "double_release": 3,
+        "leak": 3,
+        "unknown_alias": 496,
+        "unsupported": 2644
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 496,
+        "unsupported": 2644
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_fifo.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 14,
+        "unsupported": 117
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 14,
+        "unsupported": 117
+      }
+    }
+  ],
+  "all_changed_units": [
+    {
+      "library": "cmetrics",
+      "file": "cmt_cat.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 24,
+        "unsupported": 280
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 24,
+        "unsupported": 280
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_opentelemetry.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 10,
+        "unknown_alias": 73,
+        "unsupported": 481
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 73,
+        "unsupported": 481
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_prometheus_remote_write.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 6,
+        "unknown_alias": 59,
+        "unsupported": 163
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 59,
+        "unsupported": 163
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 36,
+        "unsupported": 126
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 36,
+        "unsupported": 126
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 19,
+        "unknown_alias": 95,
+        "unsupported": 896
+      },
+      "after_diagnostic_counts": {
+        "leak": 18,
+        "unknown_alias": 95,
+        "unsupported": 896
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry_batch.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 9,
+        "unknown_alias": 23,
+        "unsupported": 204
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 23,
+        "unsupported": 204
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus_remote_write.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 10,
+        "unknown_alias": 66,
+        "unsupported": 328
+      },
+      "after_diagnostic_counts": {
+        "leak": 6,
+        "unknown_alias": 66,
+        "unsupported": 328
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_exp_histogram.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 10,
+        "unknown_alias": 16,
+        "unsupported": 82
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 16,
+        "unsupported": 82
+      }
+    },
+    {
+      "library": "cmetrics",
+      "file": "cmt_map.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 5,
+        "unknown_alias": 12,
+        "unsupported": 170
+      },
+      "after_diagnostic_counts": {
+        "leak": 3,
+        "unknown_alias": 12,
+        "unsupported": 170
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 20,
+        "unsupported": 99
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 20,
+        "unsupported": 99
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "double_release": 3,
+        "leak": 3,
+        "unknown_alias": 496,
+        "unsupported": 2644
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 496,
+        "unsupported": 2644
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 189,
+        "unsupported": 2250
+      },
+      "after_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 189,
+        "unsupported": 2250
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "double_release": 3,
+        "leak": 33,
+        "unknown_alias": 111,
+        "unsupported": 490
+      },
+      "after_diagnostic_counts": {
+        "leak": 28,
+        "unknown_alias": 111,
+        "unsupported": 490
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 5,
+        "unknown_alias": 16,
+        "unsupported": 355
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 16,
+        "unsupported": 355
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 21,
+        "unknown_alias": 109,
+        "unsupported": 946
+      },
+      "after_diagnostic_counts": {
+        "leak": 10,
+        "unknown_alias": 109,
+        "unsupported": 946
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_rconf.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 7,
+        "unknown_alias": 36,
+        "unsupported": 180
+      },
+      "after_diagnostic_counts": {
+        "leak": 5,
+        "unknown_alias": 36,
+        "unsupported": 180
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_string.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 18,
+        "unsupported": 106
+      },
+      "after_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 18,
+        "unsupported": 106
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_fifo.c",
+      "before_status": "Unsafe",
+      "after_status": "Unknown",
+      "before_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 14,
+        "unsupported": 117
+      },
+      "after_diagnostic_counts": {
+        "unknown_alias": 14,
+        "unsupported": 117
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_plugin.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 6,
+        "unknown_alias": 10,
+        "unsupported": 261
+      },
+      "after_diagnostic_counts": {
+        "leak": 1,
+        "unknown_alias": 10,
+        "unsupported": 261
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_scheduler.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 9,
+        "unknown_alias": 19,
+        "unsupported": 204
+      },
+      "after_diagnostic_counts": {
+        "leak": 7,
+        "unknown_alias": 19,
+        "unsupported": 204
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_server.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 5,
+        "unknown_alias": 6,
+        "unsupported": 164
+      },
+      "after_diagnostic_counts": {
+        "leak": 4,
+        "unknown_alias": 6,
+        "unsupported": 164
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_vhost.c",
+      "before_status": "Unsafe",
+      "after_status": "Unsafe",
+      "before_diagnostic_counts": {
+        "leak": 17,
+        "unknown_alias": 28,
+        "unsupported": 257
+      },
+      "after_diagnostic_counts": {
+        "leak": 8,
+        "unknown_alias": 28,
+        "unsupported": 257
+      }
+    }
+  ]
+}

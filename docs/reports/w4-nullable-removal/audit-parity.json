@@ -1,0 +1,69 @@
+{
+  "baseline_report": "docs/reports/w6-task-recovery",
+  "baseline_commit": "49806a7",
+  "audited_base_head": "49806a7766b6f2ba00108d0ddaced2a2b1b7b002",
+  "audited_source_state": "frozen working tree including nullable removal inference and generalized custody transfer hardening",
+  "audited_gateway_source_sha256": {
+    "crates/qcore-c-gateway/src/legacy_c.rs": "28fcf130b9c7930b95ccf79d9ed5417c5edf122d278bb534269cc762332aae3d",
+    "crates/qcore-c-gateway/src/legacy_summary.rs": "4f2bfc995bcbad315d74ed75b242dd6b9fe7d24d240ee27653f210fefe69dcff"
+  },
+  "audit_exit_code": 0,
+  "command": "QCORE_CHUNKIO_PACKAGE=build/cycle19/provider-packages/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-nullable-removal-source.json /tmp/qcore-nullable-removal-diagnostics.json",
+  "unit_count": 185,
+  "baseline_status_counts": {
+    "Safe": 2,
+    "Unknown": 132,
+    "Unsafe": 47,
+    "data_only": 4
+  },
+  "new_status_counts": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+  },
+  "source_effect_status_counts": {
+    "checked_function_contract": 3,
+    "unknown": 93
+  },
+  "status_transitions": {
+    "Unsafe -> Unknown": 5
+  },
+  "raw_units_promoted": 0,
+  "package_rebuilt_for_this_audit": false,
+  "checks": {
+    "source": {
+      "byte_identical": true,
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "new_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "uncompressed_bytes": 1663331,
+      "diff_uncompressed_bytes": 0,
+      "diff": "source.diff.txt.gz"
+    },
+    "diagnostics": {
+      "byte_identical": false,
+      "baseline_sha256": "d18b0b247b1f51af038e31c31fe008ed0ad3af543f39e0484e2342b95e9f82ac",
+      "new_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "uncompressed_bytes": 11006128,
+      "diff_uncompressed_bytes": 39265,
+      "diff": "diagnostics.diff.txt.gz"
+    },
+    "chunk-contracts": {
+      "byte_identical": true,
+      "baseline_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "new_sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+      "uncompressed_bytes": 4139889,
+      "diff_uncompressed_bytes": 0,
+      "diff": "chunk-contracts.diff.txt.gz"
+    },
+    "source-effects": {
+      "byte_identical": true,
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "new_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "uncompressed_bytes": 113871,
+      "diff_uncompressed_bytes": 0,
+      "diff": "source-effects.diff.txt.gz"
+    }
+  },
+  "unit_deltas": "unit-deltas.json"
+}

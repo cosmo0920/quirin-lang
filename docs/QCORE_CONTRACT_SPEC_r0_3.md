@@ -183,7 +183,17 @@ The schema tag alone is not evidence. The `ResourceContracts` function map does 
 
 The current inference in `crates/qcore-c-gateway/src/legacy_summary.rs` is conservative and bottom-up. It binds formals without silently assuming every nullable pointer is non-null, requires a Safe/diagnostic-free analysis, requires reachable exits and a compatible disposition across those exits, distinguishes fresh returned custody from a returned formal identity, and refuses unsupported hidden custody changes. Declared contracts take precedence; mismatches are conflicts rather than permission to overwrite a declaration.
 
-Current inference supports the basic formal/return modes plus bounded direct `Out`, `Stored`, `Reallocated` and nullable returns. `Removed`, general out-slot aliases, recursive components and cost inference remain unsupported. The W4 extension report records validation and pinned verdict parity. Recursive or otherwise unresolved dependencies MUST remain unresolved unless the implementation's actual validation establishes the needed summary; empty optimistic summaries are not evidence.
+Current inference supports the basic formal/return modes plus bounded direct
+`Out`, `Stored`, `Removed`, `Reallocated` and nullable returns. A direct Removed
+wrapper starts with the original child contained in its distinct nonnull owner.
+Nullable preconditions are proposed one at a time and retained only after full
+re-analysis validates all admitted alternatives, including prior nullable
+children. A null child carries no custody; every nonnull exit must preserve its
+original identity as directly live and detached, and preserve the owner.
+Guarded nonnull removal calls and reordered direct forwarding can validate.
+General removal/out-slot aliases, relational branch analysis, general recursive
+fixed points and cost inference remain unsupported; zero/nonzero context-specific
+recursion uses strictly lower-rank independently validated summaries. The W4 extension report records validation and pinned verdict parity. Recursive or otherwise unresolved dependencies MUST remain unresolved unless the implementation's actual validation establishes the needed summary; empty optimistic summaries are not evidence.
 
 An inferred summary MUST be invalidated when the function, its relevant callees, compilation profile, contract environment or source-import coverage changes. In particular, an output parameter's old relationship MUST NOT survive reassignment to a different destination. The merged W4 extension has a regression for out-formal reassignment; the summary cannot keep the prior destination identity.
 
@@ -242,6 +252,17 @@ A source-bound contract result MUST identify the imported function or source uni
 A result-use analysis can establish that a return value was compared or checked; that does not establish that the external operation succeeded. Similarly, an observed field reset is not proof that a resource was discharged, and a named release function call is not an endpoint release unless its trusted contract or actual result semantics support that conclusion.
 
 When source extraction cannot determine nested calls, pointer identity, conditional cleanup, control-flow exits or relevant loop dependencies, the affected property MUST remain Unknown. In particular, every nested lifecycle operation relevant to a requested obligation must be visited or conservatively accounted for. The merged W3 tests cover nested effects and other scanner gaps, and lifecycle source derivation remains incomplete instead of claiming sufficient import coverage.
+
+Custody transfer requires sufficient identity information for its update.
+A pointer that may select either of two resources cannot strongly release,
+escape, store, detach or replace both. Detachment additionally requires the
+exact contained disposition and a unique matching owner across the represented
+alternatives. Aggregate cleanup must establish those conditions for each
+contained descendant; a directly live alternative cannot disappear in cleanup.
+Released or previously escaped custody cannot be consumed again. Unsupported
+correlations retain unresolved effects and cannot produce Safe. Retained state
+following an unresolved operation is not itself proof of a leak; independently
+established leaks remain evidence. See the [transfer validation report](reports/w4-nullable-removal/README.md).
 
 ## C09. Custody, access, lifetime and quantitative clauses
 

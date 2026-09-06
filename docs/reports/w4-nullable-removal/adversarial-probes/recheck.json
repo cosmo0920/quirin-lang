@@ -1,0 +1,108 @@
+{
+  "rlib": "/tmp/qcore-custody-final-artifacts/libqcore_c_gateway-3f7ca196450eb137.rlib",
+  "rlib_sha256": "e0aeb5dee099b2238cf5afedf2d036f972e733093fbd26a00dcacab27252789c",
+  "cases": {
+    "nullable-review": {
+      "source": "qcore-nullable-review-probe.rs",
+      "source_sha256": "d0071361b9b387671ebe3b4709460ced55c4641edad5647da0b49b8cbf6b820c",
+      "before": "nullable-review.before.log.gz",
+      "after": "nullable-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "containment-owner-review": {
+      "source": "qcore-containment-owner-review-probe.rs",
+      "source_sha256": "3e2a1b2097e7ef585725218d162d804f5a77a78eee694252c7fb8973682686e2",
+      "before": "containment-owner-review.before.log.gz",
+      "after": "containment-owner-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unsafe",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "removal-multi-target": {
+      "source": "qcore-removal-multi-target-probe.rs",
+      "source_sha256": "1da988d74a6a42b2094eaaba1980e99e5ca1762c5580509f87cf452796216e8f",
+      "before": "removal-multi-target.before.log.gz",
+      "after": "removal-multi-target.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unsafe",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "release-multi-target": {
+      "source": "qcore-release-multi-target-probe.rs",
+      "source_sha256": "76d6220f313b497d6c20c67a6e2308ec532ac58b3e44c36c3f95a610f903f5b0",
+      "before": "release-multi-target.before.log.gz",
+      "after": "release-multi-target.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "store-multi-target": {
+      "source": "qcore-store-multi-target-probe.rs",
+      "source_sha256": "262393d8eee1ed77ac694dda30291f06ccac779ea1eb6ff1019ed78ab586763c",
+      "before": "store-multi-target.before.log.gz",
+      "after": "store-multi-target.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "realloc-review": {
+      "source": "qcore-realloc-review-probe.rs",
+      "source_sha256": "735b40cc3462bd36298cc4f9ee7cb924cd7c99eebcd2641b70e3ca78a9ca35c0",
+      "before": "realloc-review.before.log.gz",
+      "after": "realloc-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "cascade_optional-review": {
+      "source": "qcore-cascade_optional-review-probe.rs",
+      "source_sha256": "b5a420c2219ed711449d317fca33a250b889fe9b954311c561b7d7d11d81d05f",
+      "before": "cascade_optional-review.before.log.gz",
+      "after": "cascade_optional-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "escape_released-review": {
+      "source": "qcore-escape_released-review-probe.rs",
+      "source_sha256": "4945e5a7cacef724fc4de7e33f817b5c0ce640867efb1c624a94c13c459edde5",
+      "before": "escape_released-review.before.log.gz",
+      "after": "escape_released-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unsafe",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "escape_escaped-review": {
+      "source": "qcore-escape_escaped-review-probe.rs",
+      "source_sha256": "f40b0cdbb2cb000d134fc1d91310bf6bb344a324a2799d5417db683dc73d8782",
+      "before": "escape_escaped-review.before.log.gz",
+      "after": "escape_escaped-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unsafe",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    },
+    "realloc-mixed-review": {
+      "source": "qcore-realloc-mixed-review-probe.rs",
+      "source_sha256": "fb631bdfbdeeef991c4ce04bdd095f5002d066b314a6a9c6b335384327265f19",
+      "before": "realloc-mixed-review.before.log.gz",
+      "after": "realloc-mixed-review.after.log.gz",
+      "before_safe_and_rechecked": true,
+      "after_safe": false,
+      "after_class": "Unknown",
+      "before_provenance": "Public Clang analysis and independent certificate recheck using target/debug/deps/libqcore_c_gateway-3f7ca196450eb137.rlib. First nullable-review probe used the pre-increment 05:09 gateway build. Other probes were run during partial working-tree repairs based on 49806a7; exact intermediate artifact hashes were not captured. They must not be presented as all ten measured on pristine 49806a7."
+    }
+  },
+  "after_base_head": "49806a7766b6f2ba00108d0ddaced2a2b1b7b002",
+  "after_source_state": "frozen working tree including nullable removal inference and generalized custody transfer hardening"
+}

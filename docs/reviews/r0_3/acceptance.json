@@ -111,12 +111,12 @@
     }
   ],
   "validation": {
-    "workspace_tests": 686,
+    "workspace_tests": 716,
     "python_evidence_validator_tests": 43,
     "lean_audits": 20,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w6-task-recovery/README.md"
+    "latest_integration_evidence": "docs/reports/w4-nullable-removal/README.md"
   },
   "documentation_revision": "0.3",
   "open_followups": [
@@ -124,6 +124,11 @@
       "area": "unrestricted_c_indirect_access",
       "status": "unsupported_access_rejects_typed_access_evidence_open",
       "evidence": "docs/reports/w4-indirect-access/README.md"
+    },
+    {
+      "area": "unrestricted_c_custody_transfers",
+      "status": "ten_false_safe_patterns_repaired_general_relational_alias_analysis_open",
+      "evidence": "docs/reports/w4-nullable-removal/README.md"
     }
   ]
 }

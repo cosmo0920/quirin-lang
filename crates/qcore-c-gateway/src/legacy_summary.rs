@@ -65,8 +65,9 @@
 //! The inferred vocabulary includes bounded direct `Removed` wrappers: the
 //! child starts contained in the distinct non-null owner formal named by a
 //! modeled `Removed` call, and validation requires it detached/live on every
-//! exit. General heap-link extraction, alias-selected removal and nullable
-//! removal preconditions are not inferred. The ordinary live-entry search
+//! non-null exit; nullable formals carry no child custody on null paths.
+//! General heap-link extraction and alias-selected removal are not inferred.
+//! The ordinary live-entry search
 //! still takes precedence, so store-then-remove does not gain a false entry
 //! containment requirement.
 //!
@@ -362,7 +363,9 @@ fn infer_cfg_summary(
 
 /// Infer only the contained precondition explicitly demanded by a modeled
 /// Removed call whose child and owner arguments are direct formal names.
-/// This does not discover heap links, nullable detach effects or local aliases.
+/// This does not discover heap links or local aliases. Nullable preconditions
+/// are proposed only by weakening a validated entry and rechecking the whole
+/// body, including the newly admitted null paths.
 /// The syntactic candidate is never evidence: a fresh full analysis must show
 /// the original child live and detached, and the original owner still live,
 /// at every reachable exit. Reassigning either formal cannot change those sites.
@@ -386,8 +389,7 @@ fn infer_removed_wrapper(
         };
         for (index, mode) in contract.parameters.iter().copied().enumerate() {
             let ResourceParameterMode::Removed {
-                owner_parameter,
-                nullable: false,
+                owner_parameter, ..
             } = mode
             else {
                 continue;
@@ -424,10 +426,38 @@ fn infer_removed_wrapper(
     if !found {
         return None;
     }
-    let candidate = ResourceFunctionContract::new(modes, ResourceReturnMode::None);
-    let entry = EntryCustody::build(&cfg, &parameters, &candidate)?;
-    let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
-    observations_match_contract(&candidate, &entry, &summary, &observations).then_some(candidate)
+    let validates = |candidate: &ResourceFunctionContract| {
+        let Some(entry) = EntryCustody::build(&cfg, &parameters, candidate) else {
+            return false;
+        };
+        let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
+        observations_match_contract(candidate, &entry, &summary, &observations)
+    };
+    let mut candidate = ResourceFunctionContract::new(modes, ResourceReturnMode::None);
+    if !validates(&candidate) {
+        return None;
+    }
+    // Admit null independently for each child only when *all* currently
+    // admitted entry alternatives validate. Later weakenings retain earlier
+    // ones, so the final run also checks their combinations. This is a bounded
+    // linear search, not a syntactic assertion that a null guard is sufficient.
+    for index in 0..candidate.parameters.len() {
+        let ResourceParameterMode::Removed {
+            owner_parameter, ..
+        } = candidate.parameters[index]
+        else {
+            continue;
+        };
+        let mut nullable = candidate.clone();
+        nullable.parameters[index] = ResourceParameterMode::Removed {
+            owner_parameter,
+            nullable: true,
+        };
+        if validates(&nullable) {
+            candidate = nullable;
+        }
+    }
+    Some(candidate)
 }
 
 /// Formals the body stores through (`*out = …`). Reading this off the CFG

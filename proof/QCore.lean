@@ -52,5 +52,6 @@ import QCore.VerifierPlugin
 import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.DescriptorObservation
+import QCore.NullableRemoval
 
 /-! The executable formal core of QCore-C revision 0.1. -/

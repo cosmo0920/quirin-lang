@@ -345,7 +345,14 @@ Unsupported control flow, unresolved alias identities, missing contracts, and in
 
 External resource declarations are assumptions. W4 may infer an internal summary, but a candidate is published only after body re-analysis validates its entry assumptions, every modeled exit, formal disposition, result custody, and absence of unmodeled escape. The certificate checker re-derives summaries instead of trusting serialized labels.
 
-The current W4 implementation adds bounded direct Out, Stored, Reallocated and nullable-return inference to the earlier formal/return modes, with re-analysis and independent rederivation. Removed, recursive components, cost summaries and general out-slot aliases remain unsupported. Declared contracts take precedence; disagreement is a SummaryConflict, not a silent override. Unresolved recursive components do not acquire a self-justifying inferred summary. See the companion contract specification for the exact trust and mode rules.
+The current W4 implementation supports bounded direct Out, Stored, Removed,
+Reallocated and nullable-return inference with re-analysis and independent
+rederivation. Removed wrappers may admit null only after validating every newly
+admitted path: the null child has no custody; the nonnull child starts contained
+and ends detached/live with its original owner retained. Context-specific
+zero/nonzero recursion requires strictly lower-rank validated calls. General
+removal/out-slot aliases, relational branch analysis, general recursive fixed
+points and cost summaries remain unsupported. Declared contracts take precedence; disagreement is a SummaryConflict, not a silent override. Unresolved recursive components do not acquire a self-justifying inferred summary. See the companion contract specification for the exact trust and mode rules.
 
 ## L19. Contract clauses and verifier scopes
 

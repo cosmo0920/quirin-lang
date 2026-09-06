@@ -421,8 +421,12 @@ possibly-null owned returns. [Direct Removed wrappers](reports/w4-removed-custod
 now validate contained entry and detached/live exits with matching Lean relations.
 [Direct Out forwarding](reports/w4-out-forwarding/README.md) now validates
 original slots and invalidates mutation/shadow/alias identity assumptions.
-Remaining: general removal aliases and nullable removal, general out-slot
-aliases, general recursive components and the Juliet stretch corpus.
+[Nullable removal](reports/w4-nullable-removal/README.md) now validates null
+and nonnull alternatives with exact owner/child preservation. Adjacent generic
+transfers reject ambiguous strong updates and terminal custody reuse; unresolved
+effects retain custody without fabricating proven leaks. Remaining: general
+removal/out-slot aliases, relational branch analysis, general recursive
+components and the Juliet stretch corpus.
 [Context-specific recursion](reports/w4-contextual-recursion/README.md) now
 validates exhaustive zero/nonzero integer controls using strictly lower-rank
 base summaries, including bounded mutual recursion. Arithmetic rankings and

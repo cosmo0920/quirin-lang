@@ -261,9 +261,9 @@ fn braced_declarations_retain_following_cleanup_without_certifying_their_effects
         assert!(
             has(&summary, |kind| matches!(
                 kind,
-                LegacyDiagnosticKind::DoubleRelease { .. }
+                LegacyDiagnosticKind::UnknownAlias { .. }
             )),
-            "{declaration}"
+            "unsupported effects must keep subsequent cleanup unresolved: {declaration}"
         );
     }
     let returned = analyze("struct pair subject(void) { return (struct pair){.value = 0}; }");

@@ -973,7 +973,7 @@ fn removed_formal_identity_and_all_exit_dispositions_are_rechecked() {
 }
 
 #[test]
-fn general_alias_and_nullable_removal_discovery_remain_unsupported() {
+fn general_alias_removal_discovery_remains_unsupported() {
     for body in [
         "void *alias = item; q_remove(owner, alias);",
         "void *alias = owner; q_remove(alias, item);",
@@ -986,15 +986,231 @@ fn general_alias_and_nullable_removal_discovery_remain_unsupported() {
             "accepted {body}"
         );
     }
+}
+
+#[test]
+fn nullable_removal_validates_null_and_nonnull_exits_and_forwarding() {
     let nullable = Q_CONTAINER_REMOVE.1.replace(
         "resource_removed(item, owner, nonnull)",
         "resource_removed(item, owner, nullable)",
     );
-    assert!(no_summary(
-        "void take(void *owner, void *item) { q_remove(owner, item); }",
-        &[Q_BASE, ("nullable.qcore", &nullable)],
-        "take"
-    ));
+    for (body, remove_contract) in [
+        ("q_remove(owner, item);", nullable.as_str()),
+        ("if (item) { q_remove(owner, item); }", Q_CONTAINER_REMOVE.1),
+        (
+            "if (!item) { return; } q_remove(owner, item);",
+            Q_CONTAINER_REMOVE.1,
+        ),
+    ] {
+        let source = format!(
+            "void take(void *owner, void *item) {{ {body} }} void reverse(void *item, void *owner) {{ take(owner, item); }}"
+        );
+        assert_eq!(
+            summary_in(
+                &source,
+                &[Q_BASE, ("remove.qcore", remove_contract)],
+                "reverse"
+            ),
+            ResourceFunctionContract::new(
+                [
+                    ResourceParameterMode::Removed {
+                        owner_parameter: 1,
+                        nullable: true
+                    },
+                    ResourceParameterMode::Owned { nullable: false }
+                ],
+                ResourceReturnMode::None,
+            ),
+            "{body}"
+        );
+    }
+}
+
+#[test]
+fn nullable_removal_keeps_siblings_and_independent_entry_modes() {
+    let source = "void take(void *owner, void *item, void *sibling) { if (item) { q_remove(owner, item); } q_remove(owner, sibling); }";
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_CONTAINER_REMOVE], "take"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Removed {
+                    owner_parameter: 0,
+                    nullable: true
+                },
+                ResourceParameterMode::Removed {
+                    owner_parameter: 0,
+                    nullable: false
+                }
+            ],
+            ResourceReturnMode::None,
+        )
+    );
+    let source = "void take(void *owner, void *item, void *sibling) { q_remove(owner, item); if (sibling) { q_remove(owner, sibling); } }";
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_CONTAINER_REMOVE], "take").parameters[1],
+        ResourceParameterMode::Removed {
+            owner_parameter: 0,
+            nullable: false
+        }
+    );
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_CONTAINER_REMOVE], "take").parameters[2],
+        ResourceParameterMode::Removed {
+            owner_parameter: 0,
+            nullable: true
+        }
+    );
+}
+
+#[test]
+fn partial_and_repeated_nullable_removal_do_not_publish() {
+    let nullable = Q_CONTAINER_REMOVE.1.replace(
+        "resource_removed(item, owner, nonnull)",
+        "resource_removed(item, owner, nullable)",
+    );
+    for body in [
+        "if (flag) { q_remove(owner, item); }",
+        "if (flag) { q_remove(owner, item); } q_remove(owner, item);",
+        "if (item) { item = other; q_remove(owner, item); }",
+        "if (item) { owner = other; q_remove(owner, item); }",
+        "if (item) { q_remove(owner, item); q_free(item); }",
+    ] {
+        let source =
+            format!("void take(void *owner, void *item, void *other, int flag) {{ {body} }}");
+        for remove in [Q_CONTAINER_REMOVE.1, nullable.as_str()] {
+            assert!(
+                no_summary(&source, &[Q_BASE, ("remove.qcore", remove)], "take"),
+                "accepted {body}"
+            );
+        }
+    }
+    // Clearing a borrowed argument before a nullable no-op is valid ordinary
+    // behavior, but must not claim to detach the original argument's resource.
+    let cleared = summary_in(
+        "void take(void *owner, void *item) { item = 0; q_remove(owner, item); }",
+        &[Q_BASE, ("remove.qcore", &nullable)],
+        "take",
+    );
+    assert_eq!(cleared.parameters[1], ResourceParameterMode::Borrowed);
+}
+
+#[test]
+fn invalid_null_path_does_not_gain_a_nullable_precondition() {
+    for body in [
+        "if (!item) { q_free(owner); return; } q_remove(owner, item);",
+        "if (!item) { opaque(owner); return; } q_remove(owner, item);",
+    ] {
+        let source = format!("void take(void *owner, void *item) {{ {body} }}");
+        let summary = summary_in(&source, &[Q_BASE, Q_CONTAINER_REMOVE], "take");
+        assert_eq!(
+            summary.parameters[1],
+            ResourceParameterMode::Removed {
+                owner_parameter: 0,
+                nullable: false
+            }
+        );
+    }
+}
+
+#[test]
+fn joined_alternative_containing_owners_cannot_authorize_detachment() {
+    let source = "void subject(int flag) { void *a = q_alloc(); void *b = q_alloc(); void *p = q_alloc(); if (flag) { q_store(a, p); } else { q_store(b, p); } q_remove(a, p); q_free(p); q_free(a); q_free(b); }";
+    let result = analyze(source, &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]);
+    assert_ne!(result.status, AnalysisStatus::Safe);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::CustodyConflict { .. }
+    )));
+}
+
+#[test]
+fn joined_child_alias_cannot_detach_all_possible_targets() {
+    let source = "void subject(int flag) { void *o = q_alloc(); void *p = q_alloc(); void *q = q_alloc(); void *x; q_store(o, p); q_store(o, q); if (flag) { x = p; } else { x = q; } q_remove(o, x); q_free(p); q_free(q); q_free(o); }";
+    let result = analyze(source, &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]);
+    assert_ne!(result.status, AnalysisStatus::Safe);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::UnknownAlias { .. }
+    )));
+}
+
+#[test]
+fn one_selected_resource_action_cannot_discharge_both_alias_targets() {
+    for operation in [
+        "q_free(x); q_free(o);",
+        "q_store(o, x); q_free(o);",
+        "void *r = q_realloc(x, 8); if (r) { q_free(r); } else { q_free(x); } q_free(o);",
+    ] {
+        let source = format!(
+            "void subject(int flag) {{ void *o = q_alloc(); void *p = q_alloc(); void *q = q_alloc(); void *x; if (flag) {{ x = p; }} else {{ x = q; }} {operation} }}"
+        );
+        let result = analyze(&source, &[Q_BASE, Q_CONTAINER_STORE, Q_REALLOC]);
+        assert_ne!(result.status, AnalysisStatus::Safe, "{operation}");
+        assert!(
+            has(&result, "subject", |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::UnknownAlias { .. }
+            )),
+            "{operation}"
+        );
+        assert_eq!(result.status, AnalysisStatus::Unknown, "{operation}");
+    }
+}
+
+#[test]
+fn uncertain_selected_release_does_not_hide_an_independent_leak() {
+    let source = "void subject(int flag) { void *leaked = q_alloc(); void *p = q_alloc(); void *q = q_alloc(); void *x; if (flag) { x = p; } else { x = q; } q_free(x); }";
+    let result = base(source);
+    assert_eq!(result.status, AnalysisStatus::Unsafe);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::UnknownAlias { .. }
+    )));
+}
+
+#[test]
+fn conditional_containment_cannot_erase_direct_custody_during_cascade() {
+    let source = "void subject(int flag) { void *o = q_alloc(); void *p = q_alloc(); if (flag) { q_store(o, p); } q_free(o); }";
+    let result = analyze(source, &[Q_BASE, Q_CONTAINER_STORE]);
+    assert_eq!(result.status, AnalysisStatus::Unknown);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::UnknownAlias { .. }
+    )));
+}
+
+#[test]
+fn consumed_resources_require_live_direct_custody() {
+    for body in ["q_free(p); q_transfer(p);", "q_transfer(p); q_transfer(p);"] {
+        let result = base(&format!(
+            "void subject(void) {{ void *p = q_alloc(); {body} }}"
+        ));
+        assert_eq!(result.status, AnalysisStatus::Unsafe, "{body}");
+        assert!(has(&result, "subject", |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::CustodyConflict { .. }
+        )));
+    }
+}
+
+#[test]
+fn reallocation_requires_live_custody_on_every_incoming_path() {
+    let nonnull = Q_REALLOC.1.replace(
+        "resource_return_reallocated(p, nullable)",
+        "resource_return_reallocated(p, nonnull)",
+    );
+    let source = "void subject(int flag) { void *p = q_alloc(); if (flag) { q_free(p); } void *r = q_realloc(p, 8); q_free(r); }";
+    let result = analyze(source, &[Q_BASE, ("realloc.qcore", &nonnull)]);
+    assert_eq!(result.status, AnalysisStatus::Unknown);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::UnknownAlias { .. }
+    )));
 }
 
 #[test]

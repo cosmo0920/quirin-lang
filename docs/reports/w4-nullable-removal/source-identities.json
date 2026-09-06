@@ -1,0 +1,14 @@
+{
+  "base_revision": "49806a7766b6f2ba00108d0ddaced2a2b1b7b002",
+  "state": "validated working tree before integration commit",
+  "files": {
+    "compiler/tests/nullable_removed.rs": "0a068941b9a3e5cc239a1da6d6427e07c3bb87fa508b167c8ae68d268c8e5ff8",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "28fcf130b9c7930b95ccf79d9ed5417c5edf122d278bb534269cc762332aae3d",
+    "crates/qcore-c-gateway/src/legacy_summary.rs": "4f2bfc995bcbad315d74ed75b242dd6b9fe7d24d240ee27653f210fefe69dcff",
+    "crates/qcore-c-gateway/tests/unit/legacy_c.rs": "75f92c04e223d13f838c11d0c8ea3e5173faaa0a68972511d427c85fe0c67f81",
+    "crates/qcore-c-gateway/tests/unit/legacy_summary.rs": "0975317946fe859fcf90a95bed2887b1cff2d9239a4c1d68c88712a0c1bd0190",
+    "proof/AuditW4.lean": "a6a5357d450670145fd2c5ca16c1ee325967e54b71207ecfe710f5bf121fcaac",
+    "proof/QCore.lean": "89bd3080f9a691e0fee311b16d219bdfdf02140ece8e1349a35b2562846e0bbc",
+    "proof/QCore/NullableRemoval.lean": "aa65e2d9045ac564a6e23c057fd30c9b20e47fa26f1c8c1a5d63d9c0b735d098"
+  }
+}

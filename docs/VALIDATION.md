@@ -117,3 +117,15 @@ errors. CT13 maps actual Linux creation recovery with retained-storage checks;
 coverage is 7/50 mapped, 43 unmapped. Normal and second-create failure controls
 pass ASan/UBSan/LSan outside tracing; environmental tracing failures are archived.
 All four full 185-unit audit outputs remain byte-identical with no promotions.
+
+[Nullable removal and custody transfers](reports/w4-nullable-removal/README.md)
+pass 716 workspace tests, nine provider tests, 43 Python tests, all standing
+gates and 20 axiom audits, including 48 new model theorems. Nineteen public C11
+tests cover nullable removal, ten reproduced false-Safe patterns, certificate
+rederivation, singleton controls and nullable-old reallocation. Final replay of
+the ten original probes gives six Unknown/four Unsafe, with no remaining Safe.
+The full 185 audit has 2 Safe/42 provisional Unsafe/137 Unknown/four data-only;
+five prior provisional Unsafe units become Unknown and 22 units change diagnostics.
+Three other reports remain byte-identical and no raw unit is promoted. CT
+coverage remains 7 mapped/43 unmapped; broader source and model correspondence
+remain open.
