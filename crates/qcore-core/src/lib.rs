@@ -1,9 +1,10 @@
-//! Provider-independent sequential semantic kernel of QCore-C (layer L1).
+//! Provider-independent semantic kernel of QCore-C (layer L1).
 //!
 //! Includes interval usage and index vocabulary, ownership and resource flow,
 //! typed recoverable errors and cleanup, CFG interpretation and C11 emission,
-//! executable sequential models, advanced control and principal inference.
-//! Source parsing/driving, external C analysis and concurrency live in higher
+//! executable models, advanced control, principal inference, bounded concurrency,
+//! explicit weak-memory candidates, native model execution and translation validation.
+//! Source parsing/driving, external C analysis and library adapters live in higher
 //! layers. This crate has no runtime dependencies and no workspace dependencies.
 
 pub mod advanced_control;
@@ -11,14 +12,19 @@ pub mod ast;
 pub mod c_emit;
 pub mod cfg;
 pub mod cleanup_lowering;
+pub mod concurrency;
 pub mod error_region;
 pub mod executable_model;
 pub mod index;
 pub mod inference;
+pub mod native_concurrency;
 pub mod ownership;
+pub mod research_closure;
 pub mod resource_flow;
+pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;
+pub mod weak_memory;
 
 pub use advanced_control::{
     AdvancedControlError, AdvancedExecution, AdvancedOp, AdvancedOutcome, AdvancedProgram,
@@ -59,4 +65,29 @@ pub use typed_errors::{
     CallExit, CallSummary, CatchClause, Effect, EffectRow, ErrorDeclarations, ErrorLedger,
     ErrorName, ErrorOp, ExitMap, ExitState, ExitTag, LedgerTransition, TypedErrorError,
     analyze_typed_errors, check_no_unhandled_errors,
+};
+
+pub use concurrency::{
+    AccessFootprint, AccessKind, AccessPermission, ConcurrencyAssumption, ConcurrencyCertificate,
+    ConcurrencyDiagnostic, ConcurrencyProfile, ConcurrentEvent, ConcurrentProgram, FULL_ACCESS,
+    LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
+};
+pub use native_concurrency::{
+    FeatureDisposition, NativeBackendError, NativeCellId, NativeExecutionCertificate,
+    NativeOperation, NativeProgram, NativeResourceId, NativeScheduleStep, NativeTaskId,
+    PROMOTED_FEATURE_PROFILE, PlatformMatrixCertificate, PlatformMatrixError, PlatformRun,
+    PromotedConcurrencyFeature, RequiredPlatform, check_platform_matrix, run_native_backend,
+};
+pub use research_closure::{
+    OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, PROMOTED_RESEARCH_QUESTIONS, Progress,
+    ResearchClosureCertificate, ResearchClosureError, ResearchProgram, ResourceSafetyCertificate,
+    close_research_program,
+};
+pub use translation_validation::{
+    TranslationCertificate, TranslationValidationError, validate_cfg_boundary, validate_translation,
+};
+pub use weak_memory::{
+    C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,
+    MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
+    check_c11_execution,
 };

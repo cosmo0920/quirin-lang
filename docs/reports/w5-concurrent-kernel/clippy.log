@@ -1,0 +1,9 @@
+    Checking qcore-core v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-core)
+    Checking qcore-frontend v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-contract)
+    Checking qcore-verifier-host v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-c-gateway)
+    Checking qcore-audit v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcore-audit)
+    Checking qcore-compiler v0.1.0 (/tmp/qcore-w5-sequential-kernel/compiler)
+    Checking qcorec v0.1.0 (/tmp/qcore-w5-sequential-kernel/crates/qcorec)
+    Finished `dev` profile [unoptimized] target(s) in 15.89s

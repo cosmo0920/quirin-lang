@@ -1,0 +1,86 @@
+{
+  "baseline": "8b51696",
+  "normalization": "none: exact byte parity before and after physical relocation",
+  "files": [
+    {
+      "kind": "module",
+      "from": "compiler/src/concurrency.rs",
+      "to": "crates/qcore-core/src/concurrency.rs",
+      "before_sha256": "fbd1d821acf43670aae2468d672d6172f349bf29f082b928c978b0813c3eb1b1",
+      "after_sha256": "fbd1d821acf43670aae2468d672d6172f349bf29f082b928c978b0813c3eb1b1",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/concurrency.rs",
+      "to": "crates/qcore-core/tests/unit/concurrency.rs",
+      "before_sha256": "3b06b0ba25588340c76bd57e24fe60dda7dca0300b4a1036e01997bed957928a",
+      "after_sha256": "3b06b0ba25588340c76bd57e24fe60dda7dca0300b4a1036e01997bed957928a",
+      "byte_identical": true
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/weak_memory.rs",
+      "to": "crates/qcore-core/src/weak_memory.rs",
+      "before_sha256": "4b535cbd1ef3f4cda2760ce1227ab03bf1eb59aff0975646c75205ce4656d61e",
+      "after_sha256": "4b535cbd1ef3f4cda2760ce1227ab03bf1eb59aff0975646c75205ce4656d61e",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/weak_memory.rs",
+      "to": "crates/qcore-core/tests/unit/weak_memory.rs",
+      "before_sha256": "c2d4c25cdfaa55b526d9f1990d3e4774d4920568614a7a77fafaabfe93d52eaf",
+      "after_sha256": "c2d4c25cdfaa55b526d9f1990d3e4774d4920568614a7a77fafaabfe93d52eaf",
+      "byte_identical": true
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/native_concurrency.rs",
+      "to": "crates/qcore-core/src/native_concurrency.rs",
+      "before_sha256": "0b4c2c6a5eb656e050dba13a6c92032811306f5abc35b13d8f06cca695d107ea",
+      "after_sha256": "0b4c2c6a5eb656e050dba13a6c92032811306f5abc35b13d8f06cca695d107ea",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/native_concurrency.rs",
+      "to": "crates/qcore-core/tests/unit/native_concurrency.rs",
+      "before_sha256": "cd7465df1b3d32035ba941afc89b57c275a2f8d1cfe2d2a25f8bd2b59ad3f80e",
+      "after_sha256": "cd7465df1b3d32035ba941afc89b57c275a2f8d1cfe2d2a25f8bd2b59ad3f80e",
+      "byte_identical": true
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/translation_validation.rs",
+      "to": "crates/qcore-core/src/translation_validation.rs",
+      "before_sha256": "1f9eb9e13ef78db9e241c029b1915cfb87b5987db63edec918a727dbbbec84d0",
+      "after_sha256": "1f9eb9e13ef78db9e241c029b1915cfb87b5987db63edec918a727dbbbec84d0",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/translation_validation.rs",
+      "to": "crates/qcore-core/tests/unit/translation_validation.rs",
+      "before_sha256": "2f3106ab5a52be6cb8e7b0b9a56d2b2ff93bfd9fb563234c75e28113d825657a",
+      "after_sha256": "2f3106ab5a52be6cb8e7b0b9a56d2b2ff93bfd9fb563234c75e28113d825657a",
+      "byte_identical": true
+    },
+    {
+      "kind": "module",
+      "from": "compiler/src/research_closure.rs",
+      "to": "crates/qcore-core/src/research_closure.rs",
+      "before_sha256": "a04215bb0eb9e5940078613bc556ab98d6911d28d1b380ef9ab47a6068a0f50a",
+      "after_sha256": "a04215bb0eb9e5940078613bc556ab98d6911d28d1b380ef9ab47a6068a0f50a",
+      "byte_identical": true
+    },
+    {
+      "kind": "unit_tests",
+      "from": "compiler/tests/unit/research_closure.rs",
+      "to": "crates/qcore-core/tests/unit/research_closure.rs",
+      "before_sha256": "ce165a68daa46b77713a2c082737637ba526c09c77959f1bee9e31063d80dcbd",
+      "after_sha256": "ce165a68daa46b77713a2c082737637ba526c09c77959f1bee9e31063d80dcbd",
+      "byte_identical": true
+    }
+  ]
+}
