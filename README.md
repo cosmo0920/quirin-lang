@@ -193,7 +193,12 @@ and observation interpreter live in `crates/qcore-contract`, above the new
 literal-site migration is executed
 ([record](docs/reports/w1-literal-sites/README.md)): the remaining Rust
 contract-table literals in tests and examples now load `.qcore` fixture
-modules through the loader; the richer clause vocabulary remains open.
+modules through the loader; the richer clause vocabulary remains open. The
+W6 CT conformance harness is stood up
+([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
+executes the manifest-mapped spec §55 cases through the real source pipeline;
+CT02/CT12/CT16 are mapped as sequential-core fixtures and 47 of 50 cases
+remain unmapped, counted by a pinned test.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

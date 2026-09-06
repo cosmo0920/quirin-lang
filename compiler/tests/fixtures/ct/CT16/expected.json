@@ -1,0 +1,10 @@
+{
+  "id": "CT16",
+  "verdict": "accept",
+  "entry": "worker",
+  "diagnostics": [],
+  "outcome": { "error": "WorkerError" },
+  "trace": ["acquire:3", "release:3"],
+  "stages_executed": ["parser", "type_checker", "reference_execution", "cfg"],
+  "notes": "Clean locals and the declared payload are witnessed by the CFG reference execution: the local acquisition is released on the error path and the outcome carries the declared error type (the interpreter rejects any error exit with live resources). Borrowed-loan return, worker/parent composition and the concurrency backend are not exercised."
+}

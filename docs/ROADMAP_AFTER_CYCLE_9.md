@@ -195,7 +195,7 @@ binding: G1 containment precedes provider expansion; G4 parity precedes deletion
 | W3: obligations and dispatch | Core-derived inventories, v2 semantic witness design/review and replay, fail-closed source dispatch | Planned; VP05 and semantic-provider acceptance remain open |
 | W4: validated custody inference | Depends on W1; SCC/fixed-point parameter and return summaries, independent certificate rederivation, LC01 regressions | [Bounded chunk dependency check](reports/cycle19-chunk-helper/README.md) validates constant-field helper bodies; general SCC/fixed-point custody inference and LC01 remain open |
 | W5: configured audit and provider extraction | Depends on W1–W3, uses W4 as available; reusable orchestration, second-codebase demonstration and per-provider parity before deletion | Planned; Cycle 19 audit route retained |
-| W6: generic CT corpus | Continuous; source-level CT01–CT50 tests consume W3/W4 results; unmapped and Unknown cases remain visible | Planned; loader regressions do not mark CT cases complete |
+| W6: generic CT corpus | Continuous; source-level CT01–CT50 tests consume W3/W4 results; unmapped and Unknown cases remain visible | [W6 harness record](reports/w6-ct-harness/README.md): manifest-keyed harness executes mapped cases through the real source pipeline and fails closed on manifest/fixture disagreement; CT02/CT12/CT16 mapped as sequential-core fixtures (2026-09-06); 47 cases remain unmapped, counted by a pinned test |
 | W7: hygiene | Continuous; diagnostic namespaces, generic model names, roadmap and Lean CI | Roadmap updated; diagnostic/model renames and Lean CI remain open |
 
 Continue Cycle 19 using these generic interfaces as they become available;

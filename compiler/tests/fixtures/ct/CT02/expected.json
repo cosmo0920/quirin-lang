@@ -1,0 +1,12 @@
+{
+  "id": "CT02",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    { "code": "Q202", "message_contains": "ResourceNotLive(1)" }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parser", "type_checker"],
+  "notes": "Move capture is modeled as an ownership transfer out of the parent frame (Cycle 12 executable subset). The rejection is the source pipeline's static refusal of the parent's post-move use; spawn/capture syntax and the concurrency backend are not exercised, so reference execution, CFG, native backend and proof stages stay unassessed."
+}

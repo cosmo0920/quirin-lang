@@ -1,0 +1,14 @@
+// CT16 (spec §55): worker typed error after partial local acquisition; the
+// worker must clean its locals and carry the declared payload.
+// Sequential typed-error core: the worker acquires one local resource, then a
+// checked operation fails with the declared error. Implicit cleanup must
+// release the local before the error leaves the worker; the reference
+// execution witnesses the acquire/release pairing and the declared error.
+module executable;
+error WorkerError { Failed; }
+fn worker() -> i32 {
+    let local = qcore_acquire(3, true, WorkerError);
+    qcore_check(false, WorkerError);
+    drop local;
+    return 0;
+}

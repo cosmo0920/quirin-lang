@@ -1,0 +1,14 @@
+// CT12 (spec §55): create fails before any child starts; capture state is
+// restored and no task obligation exists.
+// Sequential obligation core: the failed creation is modeled as a failed owned
+// acquisition raising the declared error. The reference execution must show an
+// empty acquisition/release trace (no obligation was ever created) and the
+// declared error as the outcome. The success continuation still discharges the
+// obligation it would have created, so the static checker accepts both edges.
+module executable;
+error SpawnError { Failed; }
+fn create() -> i32 {
+    let task = qcore_acquire(7, false, SpawnError);
+    drop task;
+    return 0;
+}
