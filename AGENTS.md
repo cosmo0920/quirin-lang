@@ -300,3 +300,14 @@ reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
+
+
+W5's bounded configured-audit extraction is implemented (2026-09-07;
+`docs/reports/w5-configured-audit/README.md`). New L3 `qcore-audit` owns
+compile-db ingestion, source selection, per-unit projection and reports over
+W2 profiles/W1 contracts, depending only on gateway/contract/schemas. A separate
+synthetic repository runs from data alone (1 Safe / 1 provisional Unsafe /
+1 Unknown). Full 185-TU compatibility output is byte-identical; raw production
+units stay unpromoted. The old example is a small wrapper; specialized native
+and source evidence remains in `compiler/examples/support/cycle19_compatibility.rs`
+until provider extraction/parity replaces it. This is not full W5 completion.

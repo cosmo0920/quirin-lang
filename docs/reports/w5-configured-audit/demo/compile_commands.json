@@ -1,0 +1,38 @@
+[
+  {
+    "directory": "/tmp/qcore-generic-audit-demo/checkout",
+    "file": "src/balanced.c",
+    "arguments": [
+      "cc",
+      "-std=c11",
+      "-c",
+      "src/balanced.c",
+      "-o",
+      "balanced.c.o"
+    ]
+  },
+  {
+    "directory": "/tmp/qcore-generic-audit-demo/checkout",
+    "file": "src/leak.c",
+    "arguments": [
+      "cc",
+      "-std=c11",
+      "-c",
+      "src/leak.c",
+      "-o",
+      "leak.c.o"
+    ]
+  },
+  {
+    "directory": "/tmp/qcore-generic-audit-demo/checkout",
+    "file": "src/opaque.c",
+    "arguments": [
+      "cc",
+      "-std=c11",
+      "-c",
+      "src/opaque.c",
+      "-o",
+      "opaque.c.o"
+    ]
+  }
+]

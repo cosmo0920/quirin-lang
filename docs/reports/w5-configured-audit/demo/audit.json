@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "profile_directory": "profiles/sample",
+  "checkout": "checkout",
+  "compile_database": "compile_commands.json",
+  "libraries": [
+    "sample"
+  ],
+  "report": "output/report.json"
+}

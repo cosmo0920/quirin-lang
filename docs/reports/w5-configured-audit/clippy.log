@@ -1,0 +1,3 @@
+    Checking qcore-audit v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-audit)
+    Checking qcore-compiler v0.1.0 (/tmp/qcore-audit-extraction/compiler)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.09s

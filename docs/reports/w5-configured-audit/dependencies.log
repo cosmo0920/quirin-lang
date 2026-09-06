@@ -1,0 +1,31 @@
+qcore-audit v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-audit)
+├── qcore-c-gateway v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-c-gateway)
+│   ├── qcore-contract v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-contract)
+│   │   ├── qcore-core v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-core)
+│   │   ├── qcore-frontend v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-frontend)
+│   │   │   └── qcore-core v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-core)
+│   │   ├── qcore-schemas v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-schemas)
+│   │   │   ├── serde v1.0.229
+│   │   │   │   ├── serde_core v1.0.229
+│   │   │   │   └── serde_derive v1.0.229 (proc-macro)
+│   │   │   │       ├── proc-macro2 v1.0.107
+│   │   │   │       │   └── unicode-ident v1.0.24
+│   │   │   │       ├── quote v1.0.47
+│   │   │   │       │   └── proc-macro2 v1.0.107 (*)
+│   │   │   │       └── syn v3.0.3
+│   │   │   │           ├── proc-macro2 v1.0.107 (*)
+│   │   │   │           ├── quote v1.0.47 (*)
+│   │   │   │           └── unicode-ident v1.0.24
+│   │   │   └── serde_json v1.0.151
+│   │   │       ├── itoa v1.0.18
+│   │   │       ├── memchr v2.8.3
+│   │   │       ├── serde_core v1.0.229
+│   │   │       └── zmij v1.0.23
+│   │   ├── serde v1.0.229 (*)
+│   │   └── serde_json v1.0.151 (*)
+│   ├── qcore-schemas v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-schemas) (*)
+│   └── serde_json v1.0.151 (*)
+├── qcore-contract v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-contract) (*)
+├── qcore-schemas v0.1.0 (/tmp/qcore-audit-extraction/crates/qcore-schemas) (*)
+├── serde v1.0.229 (*)
+└── serde_json v1.0.151 (*)

@@ -110,3 +110,7 @@ concurrency semantics are implemented. CT mapping remains 5/50.
   describe recorded runs under `observations_trusted`; lifecycle source
   derivation stays incomplete until real effect/ABI import exists. The host
   relocation is a separate remaining step, and v1 Safe refusal is unchanged.
+
+- The generic `qcore-audit` driver and retained Cycle19 compatibility adapter
+  are documented in `docs/reports/w5-configured-audit/README.md`. No provider
+  module is linked by the new driver; production evidence routes remain.
