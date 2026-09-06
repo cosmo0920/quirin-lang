@@ -729,3 +729,16 @@ source matching discharges no child custody. Six Lean finite-traversal theorems,
 388 workspace tests, 40 contract modules and all required checks pass. Prior
 source/diagnostic/certificate evidence is unchanged. Enclosing allocation release
 and identity/dependency composition remain open with the wider lifecycle/event gates.
+
+## Stream and context parent release (2026-09-06)
+
+The [parent teardown report](../reports/cycle19-parent-teardown/README.md) checks
+complete `cio_stream_destroy` and `cio_destroy` bodies, retaining null guards,
+child-first traversal, stream unlinking and all optional context-field frees.
+Parent release never discharges a child's unresolved obligation. Four Lean
+theorems and an 11-clause QCore policy state this conditional boundary. The
+shared source matcher now preserves offsetof token boundaries; a regression
+rejects colliding struct/typedef spellings. All 392 workspace tests, 41 modules
+and required checks pass. Prior evidence is unchanged apart from the two
+traversal witnesses' explicit offsetof token representation. Concrete nested
+identity/dependency composition and the broader custody/event work remain open.

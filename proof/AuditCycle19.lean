@@ -3,6 +3,7 @@ import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.FilesystemChunkClose
 import QCore.TeardownTraversal
+import QCore.ParentTeardown
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
@@ -258,3 +259,8 @@ import QCore.ChunkSource
 #print axioms QCore.TeardownTraversal.accepted_step_decreases_remaining
 #print axioms QCore.TeardownTraversal.completed_traversal_preserves_exact_identities
 #print axioms QCore.TeardownTraversal.completed_distinct_ring_has_no_duplicate_calls
+
+#print axioms QCore.ParentTeardown.parent_free_preserves_child_obligations
+#print axioms QCore.ParentTeardown.parent_free_cannot_establish_nested_discharge
+#print axioms QCore.ParentTeardown.accepted_parent_free_releases_parent_and_fields
+#print axioms QCore.ParentTeardown.duplicate_parent_free_rejected

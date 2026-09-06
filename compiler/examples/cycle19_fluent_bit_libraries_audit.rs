@@ -701,6 +701,24 @@ fn audit_library(
                 serde_json::json!({"kind":"teardown_traversal", "file":file, "evidence":evidence}),
             );
         }
+        if library == "chunkio" && matches!(file.as_ref(), "cio_stream.c" | "chunkio.c") {
+            use qcore_compiler::verifier_plugins::chunkio::parent_teardown::{
+                ParentKind, check_parent_source,
+            };
+            let kind = if file == "cio_stream.c" {
+                ParentKind::Stream
+            } else {
+                ParentKind::Context
+            };
+            let evidence = check_parent_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+            println!(
+                "qcore-parent {}: complete allocation-release body checked; child effects and allocation provenance remain premises",
+                evidence.source().function()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"parent_teardown", "file":file, "evidence":evidence}),
+            );
+        }
         if library == "chunkio" && file == "cio_memfs.c" {
             let certificate = memory_backend
                 .as_ref()

@@ -3,6 +3,7 @@ import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.FilesystemChunkClose
 import QCore.TeardownTraversal
+import QCore.ParentTeardown
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallbackBinding

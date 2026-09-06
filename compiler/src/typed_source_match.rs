@@ -131,11 +131,37 @@ fn normalize(node: &Value, source: &str, ids: &BTreeMap<String, String>) -> Resu
                     .ok_or("offsetof range invalid")?;
                 result.insert(
                     "operand_source".into(),
-                    Value::String(text.chars().filter(|c| !c.is_whitespace()).collect()),
+                    Value::Array(c_tokens(text)?.into_iter().map(Value::String).collect()),
                 );
             }
             Ok(Value::Object(result))
         }
         other => Ok(other.clone()),
     }
+}
+
+// Keep token boundaries: `struct record` must never equal a typedef named
+// `structrecord`. Whitespace is irrelevant, identifier concatenation is not.
+fn c_tokens(text: &str) -> Result<Vec<String>, String> {
+    if !text.is_ascii() {
+        return Err("non-ASCII offsetof outside reference profile".into());
+    }
+    let mut tokens = Vec::new();
+    let mut word = String::new();
+    for ch in text.chars() {
+        if ch.is_ascii_alphanumeric() || ch == '_' {
+            word.push(ch);
+        } else {
+            if !word.is_empty() {
+                tokens.push(std::mem::take(&mut word));
+            }
+            if !ch.is_ascii_whitespace() {
+                tokens.push(ch.to_string());
+            }
+        }
+    }
+    if !word.is_empty() {
+        tokens.push(word);
+    }
+    Ok(tokens)
 }

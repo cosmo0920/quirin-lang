@@ -136,3 +136,15 @@ fn traversal_policy_and_revision_fail_closed() {
         .is_err()
     );
 }
+
+#[test]
+fn offsetof_token_boundaries_cannot_alias_a_different_record() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = format!(
+        "typedef struct {{ int padding; struct {{ void *p; }} _head; }} structcio_chunk;\n{FIXTURE}"
+    );
+    let bad = source.replace("offsetof(type,member)", "offsetof(structcio_chunk,member)");
+    assert!(check(&bad, TraversalKind::Chunks).is_err());
+}

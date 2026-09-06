@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-teardown-traversal",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_results_identical": true,
+  "prior_teardown_identical_except_offsetof_tokenization": true,
+  "new_parent_witnesses": 2,
+  "workspace_tests": 392,
+  "contract_modules": 41
+}
