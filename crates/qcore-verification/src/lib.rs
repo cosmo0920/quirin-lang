@@ -8,3 +8,5 @@ pub(crate) use qcore_verifier_host as verifier_plugin;
 pub mod obligation_derivation;
 pub mod verify_dispatch;
 pub mod witness_replay;
+
+pub mod reactor_callback;

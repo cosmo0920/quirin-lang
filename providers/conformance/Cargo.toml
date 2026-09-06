@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2024"
 publish = false
 
-[dev-dependencies]
+[dependencies]
 qcore-schemas.workspace = true
-qcore-verifier-host = { path = "../../crates/qcore-verifier-host" }
 serde_json.workspace = true
+
+[dev-dependencies]
+qcore-verifier-host = { path = "../../crates/qcore-verifier-host" }
+qcore-verification = { path = "../../crates/qcore-verification" }
+qcore-core = { path = "../../crates/qcore-core" }

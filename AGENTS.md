@@ -424,5 +424,14 @@ The generic reactor lifecycle and descriptor model now resides in
 `crates/qcore-core/src/event_reactor.rs`, parameterized by an explicit accepted
 profile list. The Libevent adapter retains build matching and pinned source
 checks, and preserves concrete enum imports through a lossless facade.
-Evidence: `docs/reports/w5-generic-reactor/README.md`. Callback wire schemas,
-specialized provider extraction and registry-based corpus composition remain open.
+Evidence: `docs/reports/w5-generic-reactor/README.md`. Callback source binding/protocol admission, specialized provider extraction
+and registry-based corpus composition remain open.
+
+Generic callback records (2026-09-07): `qcore-schemas::reactor` and
+`qcore-verification::reactor_callback` support strict declared-model record
+exchange against the complete assignment inventory. A schemas-only process
+fixture exercises matching and adversarial proposals. This adds no protocol
+witness admission or source-derived authority; Monkey effect records retain
+their separate interpretation. Evidence:
+`docs/reports/w5-reactor-callback-records/README.md`. Source binding,
+specialized provider extraction and registry composition remain open.

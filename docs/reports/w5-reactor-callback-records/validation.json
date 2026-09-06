@@ -1,0 +1,24 @@
+{
+  "workspace_tests": 600,
+  "python_tests": 43,
+  "lean_audits": 19,
+  "provider_conformance_tests": 3,
+  "commands": {
+    "workspace": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "lean-audits": 0,
+    "python": 0,
+    "provider-conformance": 0,
+    "process-clippy": 0,
+    "process-fmt": 0,
+    "audit": 0
+  },
+  "baseline": "0a23d6a",
+  "full_language_conformance": false,
+  "protocol_callback_witness_admission": false,
+  "source_callback_authority_derivation": false
+}

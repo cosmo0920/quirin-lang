@@ -490,7 +490,9 @@ and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
 
 Task3's generic reactor lifecycle/descriptor model now lives in core with an
 explicit profile policy and compatible Libevent facade ([evidence](reports/w5-generic-reactor/README.md)).
-Task2's specialized semantic extraction, task3's callback wire schema,
+Task3's [callback records and declared-model exchange](reports/w5-reactor-callback-records/README.md)
+are implemented with a schemas-only process fixture; source binding and callback
+protocol witness admission remain open. Task2's specialized semantic extraction,
 registry-based Fluent Bit composition, task4 route deletion and remaining
 compiler consolidation remain open. [CLI package lifecycle](reports/w5-cli-packages/README.md)
 now supports explicit verification and pinned enable/disable selection. Existing

@@ -111,3 +111,9 @@ The process-host containment remains its existing Unix process-group,
 deadline/output behavior; package creation does not add an OS sandbox or a
 new memory-limit enforcement mechanism. Core/host build and tests remain
 independent of this workspace and of installed provider packages.
+
+The conformance workspace also contains `callback_proposal_writer`, a schema-only
+record-exchange fixture. Its paired test uses the trusted declared-reactor
+consumer and rejects authority/identity/coverage mutations. It is not one of the
+five packaged providers and speaks no plugin protocol. See
+[callback record evidence](../docs/reports/w5-reactor-callback-records/README.md).

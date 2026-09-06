@@ -13,6 +13,7 @@ pub mod mechanism;
 pub mod obligation;
 pub mod plugin;
 pub mod profile;
+pub mod reactor;
 
 pub mod witness;
 

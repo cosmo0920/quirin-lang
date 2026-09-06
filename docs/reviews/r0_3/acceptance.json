@@ -108,12 +108,12 @@
     }
   ],
   "validation": {
-    "workspace_tests": 589,
+    "workspace_tests": 600,
     "python_evidence_validator_tests": 43,
     "lean_audits": 19,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w5-generic-reactor/README.md"
+    "latest_integration_evidence": "docs/reports/w5-reactor-callback-records/README.md"
   },
   "documentation_revision": "0.3",
   "open_followups": [

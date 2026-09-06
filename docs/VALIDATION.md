@@ -67,3 +67,9 @@ The [generic reactor integration](reports/w5-generic-reactor/README.md), includi
 the merged indirect-access repair, passes 589 workspace tests, 43 Python tests,
 the standing gate and all 19 Lean audits. Unsupported reads now remain Unknown;
 typed access restoration and broader conformance remain open.
+
+[Declared callback record integration](reports/w5-reactor-callback-records/README.md)
+passes 600 workspace tests, 43 Python tests, the standing gate and 19 Lean
+audits, plus three excluded provider conformance tests. Full 185-unit source
+and diagnostic output is byte-identical. Callback source derivation and
+protocol witness admission remain open.
