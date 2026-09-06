@@ -1,0 +1,8 @@
+'QCore.SourceValidation.admitted_return_has_declared_shape' depends on axioms: [propext]
+'QCore.SourceValidation.unsupported_result_rejected' depends on axioms: [propext]
+'QCore.SourceValidation.integer_cannot_satisfy_unit' depends on axioms: [propext]
+'QCore.SourceValidation.bare_cannot_satisfy_integer' depends on axioms: [propext]
+'QCore.SourceValidation.signed_literal_is_in_range' depends on axioms: [propext]
+'QCore.SourceValidation.declaration_validation_independent_of_uses' does not depend on any axioms
+'QCore.SourceValidation.accepted_declarations_are_valid' does not depend on any axioms
+'QCore.SourceValidation.scalar_check_preserves_separate_custody' depends on axioms: [propext]

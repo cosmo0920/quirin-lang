@@ -226,10 +226,20 @@ impl Predicate<'_> {
                 .values
                 .get(&name)
                 .ok_or_else(|| format!("missing observation: {name}"))?,
-            TokenKind::Symbol(Symbol::Minus) => self
-                .expression(6, depth + 1)?
-                .checked_neg()
-                .ok_or("predicate overflow")?,
+            TokenKind::Symbol(Symbol::Minus) => {
+                if let Some(TokenKind::Integer(number)) = self.tokens.get(self.cursor) {
+                    // Range-check the signed spelling, including i128::MIN;
+                    // arithmetic negation of nonliteral terms remains checked.
+                    self.cursor += 1;
+                    format!("-{number}")
+                        .parse()
+                        .map_err(|_| "invalid predicate integer")?
+                } else {
+                    self.expression(6, depth + 1)?
+                        .checked_neg()
+                        .ok_or("predicate overflow")?
+                }
+            }
             TokenKind::Symbol(Symbol::LeftParen) => {
                 let value = self.expression(0, depth + 1)?;
                 if self.tokens.get(self.cursor) != Some(&TokenKind::Symbol(Symbol::RightParen)) {

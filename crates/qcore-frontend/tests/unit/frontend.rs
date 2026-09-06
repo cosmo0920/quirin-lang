@@ -330,3 +330,99 @@ fn concurrency_binders_do_not_hide_unresolved_inputs_or_escape_their_body() {
         );
     }
 }
+
+#[test]
+fn review_r05_checks_axes_even_without_quantitative_types() {
+    for suffix in [
+        "",
+        " quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>;",
+    ] {
+        let source = format!("quant axis bad : credit<Missing>;{suffix}");
+        let parsed = parse_source_program(&source).unwrap();
+        let errors = elaborate_source(&parsed).unwrap_err();
+        assert!(
+            errors
+                .iter()
+                .any(|error| error.code == "Q016" && error.message.contains("unknown dimension")),
+            "{errors:?}"
+        );
+        for prefix in [
+            "dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>;",
+            "quant axis bad : missing<Count<T>>;",
+            "dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered;",
+        ] {
+            let source = format!("{prefix}{suffix}");
+            assert!(
+                parse_source_program(&source)
+                    .map(|program| elaborate_source(&program).is_err())
+                    .unwrap_or(true),
+                "accepted {source}"
+            );
+        }
+        for prefix in [
+            "quant axis objects : live<Count<UndeclaredNominal>>;",
+            "quant axis memory : credit<Bytes>; dimension Bytes : Idx + Ordered;",
+        ] {
+            let source = format!("{prefix}{suffix}");
+            assert!(
+                elaborate_source(&parse_source_program(&source).unwrap()).is_ok(),
+                "{source}"
+            );
+        }
+    }
+}
+
+#[test]
+fn review_r04_retains_result_annotation_and_profile() {
+    let source = "extern fn external() -> result<own<Item>, {Failure}> effects { unsafe }; fn main() -> i32 /* retained */ { return 0; }";
+    let parsed = parse_source_program(source).unwrap();
+    let typed = elaborate_source(&parsed).unwrap();
+    for (declaration, typed) in parsed.declarations.iter().zip(&typed.declarations) {
+        let result = declaration.value.result_type.as_ref().unwrap();
+        assert_eq!(&source[result.span.start..result.span.end], result.source);
+        assert_eq!(typed.result_type.as_ref(), Some(result));
+    }
+    assert_eq!(
+        typed.declarations[0].result_type.as_ref().unwrap().source,
+        "result<own<Item>, {Failure}>"
+    );
+    assert_eq!(
+        typed.declarations[0]
+            .result_type
+            .as_ref()
+            .unwrap()
+            .executable_type(),
+        None
+    );
+    assert_eq!(
+        typed.declarations[1]
+            .result_type
+            .as_ref()
+            .unwrap()
+            .executable_type(),
+        Some(ExecutableResultType::I32)
+    );
+    for source in [
+        "fn main() -> { return 0; }",
+        "extern fn f() -> ;",
+        "fn main() -> own<Item { return 0; }",
+    ] {
+        assert!(parse_source_program(source).is_err(), "accepted {source}");
+    }
+}
+
+#[test]
+fn review_r04_preserves_quantitative_result_comparison_syntax() {
+    let source = "quant axis slots : credit<Count<Slot>>; extern fn measured() -> quant<n where n := 4, n > 3> effects { unsafe };";
+    let parsed = parse_source_program(source).unwrap();
+    let typed = elaborate_source(&parsed).unwrap();
+    let result = typed
+        .declarations
+        .last()
+        .unwrap()
+        .result_type
+        .as_ref()
+        .unwrap();
+    assert_eq!(result.source, "quant<n where n := 4, n > 3>");
+    assert_eq!(result.executable_type(), None);
+}

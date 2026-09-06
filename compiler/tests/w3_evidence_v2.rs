@@ -8,7 +8,7 @@ use qcore_compiler::{
     CompileOptions, SourceFile, compile_files_with_registry, parse_source_program,
 };
 
-const SOURCE: &str = "extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };\nverify scope observed { plugin example.conformance profile default capabilities { observation_hooks }; }\nfn main() -> i64 { return 7; }";
+const SOURCE: &str = "extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };\nverify scope observed { plugin example.conformance profile default capabilities { observation_hooks }; }\nfn main() -> i32 { return 7; }";
 
 fn manifest() -> PluginManifest {
     let mut manifest = first_party_manifests().remove(0);

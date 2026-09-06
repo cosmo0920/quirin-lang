@@ -1,0 +1,11 @@
+import QCore.SourceValidation
+
+#print axioms QCore.SourceValidation.admitted_return_has_declared_shape
+#print axioms QCore.SourceValidation.unsupported_result_rejected
+#print axioms QCore.SourceValidation.integer_cannot_satisfy_unit
+#print axioms QCore.SourceValidation.bare_cannot_satisfy_integer
+#print axioms QCore.SourceValidation.signed_literal_is_in_range
+#print axioms QCore.SourceValidation.declaration_validation_independent_of_uses
+#print axioms QCore.SourceValidation.accepted_declarations_are_valid
+
+#print axioms QCore.SourceValidation.scalar_check_preserves_separate_custody

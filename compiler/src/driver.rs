@@ -9,9 +9,9 @@ use std::fmt;
 
 use crate::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram, interpret_source};
 use crate::frontend::{
-    DeclarationKind, Located, SemanticPass, SourceDeclaration, SourceDiagnostic, SourceModuleMode,
-    SourceProgram, StatementKind, TypedSourceDeclaration, TypedSourceProgram, elaborate_source,
-    parse_source_program,
+    DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceDeclaration,
+    SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
+    TypedSourceProgram, elaborate_source, parse_source_program,
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind, lex};
 use crate::ownership::{Footprint, OwnershipOp, ResourceId};
@@ -67,10 +67,29 @@ pub struct EmittedSourceMap {
     pub source: SourceLocation,
 }
 
+/// The executable profile checks the declared scalar slot separately from
+/// Cycle 12's resource-identity payload. It does not elaborate owned-result
+/// types, result/error type constructors, or general per-exit payload types.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceResultProfile {
+    /// Body definitions only; external contracts retain structural annotations.
+    pub scalar_results: BTreeMap<String, ExecutableResultType>,
+    pub custody_payloads: CustodyPayloadProfile,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CustodyPayloadProfile {
+    /// `move` appends a live acquired identity to a separate completion ledger.
+    /// The ownership/cleanup model checks that ledger, but the scalar result
+    /// annotation does not type its identities as `own<T>` payloads.
+    SeparateIdentityLedger,
+}
+
 #[derive(Clone, Debug)]
 pub struct CompiledModule {
     pub checked: CheckedProgram,
     pub mode: SourceModuleMode,
+    pub result_profile: SourceResultProfile,
     pub entry: Option<String>,
     pub c_source: Option<String>,
     pub source_map: Vec<EmittedSourceMap>,
@@ -100,6 +119,9 @@ struct FileRange {
 /// emits a standalone C11 translation unit for an executable module. Explicit
 /// library/contract modules return checked declarations without an entry or C
 /// artifact. Their contracts are not automatically discharged by compilation.
+/// `CompiledModule::result_profile` records the bounded scalar/custody profile:
+/// i32/unit scalar checking does not establish typed ownership of the separate
+/// completion payload. General result/error and owned-result ABIs are rejected.
 pub fn compile_files(
     files: &[SourceFile],
     options: &CompileOptions,
@@ -266,10 +288,29 @@ pub fn compile_files_with_registry(
             .collect::<Vec<_>>()
     })?;
 
+    let result_profile = SourceResultProfile {
+        scalar_results: typed
+            .declarations
+            .iter()
+            .filter(|declaration| declaration.kind == DeclarationKind::Function)
+            .map(|declaration| {
+                (
+                    declaration.name.clone(),
+                    declaration
+                        .result_type
+                        .as_ref()
+                        .and_then(|annotation| annotation.executable_type())
+                        .expect("function synthesis validated every scalar result"),
+                )
+            })
+            .collect(),
+        custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
+    };
     if mode != SourceModuleMode::Executable {
         return Ok(CompiledModule {
             checked,
             mode,
+            result_profile,
             entry: None,
             c_source: None,
             source_map: Vec::new(),
@@ -313,6 +354,7 @@ pub fn compile_files_with_registry(
     Ok(CompiledModule {
         checked,
         mode,
+        result_profile,
         entry: Some(entry),
         c_source: Some(c_source),
         source_map,
@@ -367,6 +409,17 @@ fn synthesize_function(
     typed: &TypedSourceProgram,
     errors: &BTreeSet<String>,
 ) -> Result<FunctionSemantics, SourceDiagnostic> {
+    let annotation = typed_declaration.result_type.as_ref().ok_or_else(|| {
+        diagnostic(
+            SemanticPass::OrdinaryTypes,
+            declaration.span,
+            "missing declared result type",
+        )
+    })?;
+    let result_type = annotation.executable_type().ok_or_else(|| {
+        diagnostic(SemanticPass::OrdinaryTypes, annotation.span,
+            "the executable result profile supports only i32 and unit; other result types require an implemented typed ABI")
+    })?;
     let Some(body) = &declaration.value.body else {
         return Err(diagnostic(
             SemanticPass::CleanupLowering,
@@ -609,11 +662,16 @@ fn synthesize_function(
                 live = live.saturating_sub(1);
             }
             StatementKind::Return => {
-                let value = parse_return(&tokens).ok_or_else(|| {
+                let value = parse_return(&tokens, result_type).ok_or_else(|| {
                     diagnostic(
                         SemanticPass::OrdinaryTypes,
                         statement.span,
-                        "return value must be a signed 32-bit integer literal",
+                        match result_type {
+                            ExecutableResultType::I32 => {
+                                "an i32 result requires a signed 32-bit integer literal return"
+                            }
+                            ExecutableResultType::Unit => "a unit result requires a bare return",
+                        },
                     )
                 })?;
                 lowering.push(SourceOp::Return(value));
@@ -907,7 +965,7 @@ fn parse_zero_argument_call(tokens: &[Token]) -> Option<String> {
     }
 }
 
-fn parse_return(tokens: &[Token]) -> Option<i32> {
+fn parse_return(tokens: &[Token], result_type: ExecutableResultType) -> Option<i32> {
     match tokens {
         [
             Token {
@@ -918,7 +976,7 @@ fn parse_return(tokens: &[Token]) -> Option<i32> {
                 kind: TokenKind::Symbol(Symbol::Semicolon),
                 ..
             },
-        ] if word == "return" => Some(0),
+        ] if word == "return" && result_type == ExecutableResultType::Unit => Some(0),
         [
             Token {
                 kind: TokenKind::Word(word),
@@ -932,7 +990,7 @@ fn parse_return(tokens: &[Token]) -> Option<i32> {
                 kind: TokenKind::Symbol(Symbol::Semicolon),
                 ..
             },
-        ] if word == "return" => value.parse().ok(),
+        ] if word == "return" && result_type == ExecutableResultType::I32 => value.parse().ok(),
         [
             Token {
                 kind: TokenKind::Word(word),
@@ -950,7 +1008,10 @@ fn parse_return(tokens: &[Token]) -> Option<i32> {
                 kind: TokenKind::Symbol(Symbol::Semicolon),
                 ..
             },
-        ] if word == "return" => value.parse::<i32>().ok()?.checked_neg(),
+        ] if word == "return" && result_type == ExecutableResultType::I32 => {
+            // Parse the final signed spelling: the minimum's magnitude is not an i32.
+            format!("-{value}").parse().ok()
+        }
         _ => None,
     }
 }

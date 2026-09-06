@@ -1,0 +1,38 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (/tmp/qcore-audit-extraction/target/debug/deps/qcore_contract-73939afcf3ddd64c)
+
+running 1 test
+
+thread 'contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries' (14) panicked at crates/qcore-contract/src/../tests/unit/contract_observation.rs:119:45:
+called `Result::unwrap()` on an `Err` value: "invalid predicate integer"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries ... FAILED
+
+failures:
+
+failures:
+    contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-contract --lib`
+     Running unittests src/lib.rs (/tmp/qcore-audit-extraction/target/debug/deps/qcore_frontend-36d26aac4f8aa3e1)
+
+running 1 test
+
+thread 'frontend::tests::review_r05_checks_axes_even_without_quantitative_types' (16) panicked at crates/qcore-frontend/src/../tests/unit/frontend.rs:341:9:
+accepted quant axis bad : credit<Missing>;
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test frontend::tests::review_r05_checks_axes_even_without_quantitative_types ... FAILED
+
+failures:
+
+failures:
+    frontend::tests::review_r05_checks_axes_even_without_quantitative_types
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-frontend --lib`
+error: 2 targets failed:
+    `-p qcore-contract --lib`
+    `-p qcore-frontend --lib`

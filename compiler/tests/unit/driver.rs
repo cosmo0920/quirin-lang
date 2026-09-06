@@ -91,6 +91,14 @@ fn preserves_error_cleanup_and_ownership_transfer_observations() {
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(9, true, Failure); move r; return -3; }",
     );
     assert_eq!(
+        moved.result_profile.scalar_results["main"],
+        ExecutableResultType::I32
+    );
+    assert_eq!(
+        moved.result_profile.custody_payloads,
+        CustodyPayloadProfile::SeparateIdentityLedger
+    );
+    assert_eq!(
         moved.reference_observation.as_ref().unwrap().outcome,
         ExecutionOutcome::Ok {
             value: -3,
@@ -209,6 +217,9 @@ fn emitted_c_matches_reference_for_value_error_trace_and_transfer() {
         .get_compiler();
     for source in [
         "fn main() -> i32 { return 17; }",
+        "fn main() -> i32 { return -2147483648; }",
+        "fn main() -> i32 { return 2147483647; }",
+        "fn main() -> unit { return; }",
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(1, true, Failure); qcore_check(false, Failure); drop r; return 0; }",
         "error Failure { Failed; } fn main() -> i32 { let r = qcore_acquire(2, true, Failure); move r; return 5; }",
     ] {
@@ -289,4 +300,77 @@ fn resolved_scope_and_guard_still_require_concurrency_lowering() {
             "{errors:?}"
         );
     }
+}
+
+#[test]
+fn review_r04_checks_declared_results_before_lowering() {
+    for source in [
+        "fn main() -> bool { return 2; }",
+        "fn main() -> Missing { return 0; }",
+        "fn main() -> own<File> { return 0; }",
+        "fn main() -> result<i32, Failure> { return 0; }",
+        "fn main() -> i32 { return; }",
+        "fn main() -> unit { return 0; }",
+        "fn main() -> i32 {}",
+        "fn main() -> i32 { return 0; return; }",
+        "fn leaf() -> bool { return 1; } fn main() -> i32 { leaf(); return 0; }",
+        "fn leaf() -> unit { return; } fn main() -> i32 { return leaf(); }",
+    ] {
+        assert!(
+            compile_files(
+                &[SourceFile::new("result.qcore", source)],
+                &CompileOptions::default()
+            )
+            .is_err(),
+            "accepted {source}"
+        );
+    }
+    compile("fn main() -> unit { return; }");
+    compile("fn leaf() -> unit { return; } fn main() -> i32 { leaf(); return 0; }");
+}
+
+#[test]
+fn review_r07_driver_signed_literal_boundaries() {
+    for value in ["0", "-0", "2147483647", "-2147483648"] {
+        let module = compile(&format!("fn main() -> i32 {{ return {value}; }}"));
+        assert_eq!(
+            module.reference_observation.unwrap().outcome,
+            ExecutionOutcome::Ok {
+                value: value.parse().unwrap(),
+                payload: Vec::new()
+            }
+        );
+    }
+    for value in [
+        "2147483648",
+        "-2147483649",
+        "999999999999999999999999999999999999999999",
+    ] {
+        assert!(
+            compile_files(
+                &[SourceFile::new(
+                    "literal.qcore",
+                    format!("fn main() -> i32 {{ return {value}; }}")
+                )],
+                &CompileOptions::default()
+            )
+            .is_err()
+        );
+    }
+}
+
+#[test]
+fn review_r04_does_not_emit_unencoded_callee_payloads() {
+    let source = "error Failure { Failed; } fn leaf() -> i32 { let r = qcore_acquire(8, true, Failure); move r; return 0; } fn main() -> unit { leaf(); return; }";
+    let errors = compile_files(
+        &[SourceFile::new("payload.qcore", source)],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| matches!(error.code.as_str(), "Q200" | "Q500")),
+        "{errors:?}"
+    );
 }

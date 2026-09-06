@@ -1,0 +1,7 @@
+    Checking qcore-frontend v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-contract)
+    Checking qcore-verifier-host v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcore-c-gateway)
+    Checking qcore-compiler v0.1.0 (/tmp/qcore-review-r04-r05-r07/compiler)
+    Checking qcorec v0.1.0 (/tmp/qcore-review-r04-r05-r07/crates/qcorec)
+    Finished `dev` profile [unoptimized] target(s) in 3.56s
