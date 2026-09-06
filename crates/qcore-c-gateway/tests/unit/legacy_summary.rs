@@ -631,15 +631,24 @@ fn releasing_a_stored_item_after_the_call_is_a_custody_conflict() {
 }
 
 #[test]
-fn a_removal_wrapper_is_not_inferred() {
-    // `Removed` describes an item the caller's aggregate *already* holds, and
-    // the entry state seeds such a formal as an ordinary live resource rather
-    // than a contained one. The body's detach therefore reports a custody
-    // conflict against its own entry state and never validates. Fixing this
-    // needs a richer entry state, not richer summary logic.
+fn a_removal_wrapper_restores_direct_custody_for_its_caller() {
     let source = "void take(void *owner, void *item) { q_remove(owner, item); } \
-                  void subject(void) { void *c = q_alloc(); q_free(c); }";
-    assert!(no_summary(source, &[Q_BASE, Q_CONTAINER_REMOVE], "take"));
+                  void subject(void) { void *c = q_alloc(); void *i = q_alloc(); q_store(c, i); take(c, i); q_free(c); q_free(i); }";
+    let modules = &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE];
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "take"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Removed {
+                    owner_parameter: 0,
+                    nullable: false
+                }
+            ],
+            ResourceReturnMode::None
+        )
+    );
 }
 
 // --- Nullable results ------------------------------------------------------
@@ -891,4 +900,223 @@ fn extended_summary_certificates_are_rederived_and_reject_tampering() {
         record.contract = ResourceFunctionContract::new([], ResourceReturnMode::None);
         assert!(check_legacy_safety_certificate(&certificate).is_err());
     }
+}
+
+#[test]
+fn removal_summary_composes_through_reordered_direct_formals() {
+    let source = "void take(void *owner, void *item) { q_remove(owner, item); } void reverse(void *item, void *owner) { take(owner, item); }";
+    assert_eq!(
+        summary_in(source, &[Q_BASE, Q_CONTAINER_REMOVE], "reverse"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Removed {
+                    owner_parameter: 1,
+                    nullable: false
+                },
+                ResourceParameterMode::Owned { nullable: false }
+            ],
+            ResourceReturnMode::None
+        )
+    );
+}
+
+#[test]
+fn a_store_then_remove_keeps_its_live_entry_contract() {
+    let source =
+        "void roundtrip(void *owner, void *item) { q_store(owner, item); q_remove(owner, item); }";
+    assert_eq!(
+        summary_in(
+            source,
+            &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE],
+            "roundtrip"
+        ),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Owned { nullable: false }
+            ],
+            ResourceReturnMode::None
+        )
+    );
+}
+
+#[test]
+fn removed_formal_identity_and_all_exit_dispositions_are_rechecked() {
+    for body in [
+        "item = other; q_remove(owner, item);",
+        "owner = other; q_remove(owner, item);",
+        "item = 0; q_remove(owner, item);",
+        "owner = 0; q_remove(owner, item);",
+        "item = owner; q_remove(owner, item);",
+        "if (flag) { q_remove(owner, item); }",
+        "q_remove(owner, item); q_remove(owner, item);",
+        "q_remove(owner, item); q_store(owner, item);",
+        "q_remove(owner, item); q_free(item);",
+        "q_remove(owner, item); q_free(owner);",
+        "q_remove(owner, item); opaque(item);",
+        "q_remove(owner, item); return item;",
+        "q_remove(other, item); q_remove(owner, item);",
+    ] {
+        let source =
+            format!("void take(void *owner, void *item, void *other, int flag) {{ {body} }}");
+        assert!(
+            no_summary(
+                &source,
+                &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE],
+                "take"
+            ),
+            "accepted {body}"
+        );
+    }
+}
+
+#[test]
+fn general_alias_and_nullable_removal_discovery_remain_unsupported() {
+    for body in [
+        "void *alias = item; q_remove(owner, alias);",
+        "void *alias = owner; q_remove(alias, item);",
+        "q_remove(owner, item->child);",
+        "take(owner, item);",
+    ] {
+        let source = format!("void take(void *owner, void *item) {{ {body} }}");
+        assert!(
+            no_summary(&source, &[Q_BASE, Q_CONTAINER_REMOVE], "take"),
+            "accepted {body}"
+        );
+    }
+    let nullable = Q_CONTAINER_REMOVE.1.replace(
+        "resource_removed(item, owner, nonnull)",
+        "resource_removed(item, owner, nullable)",
+    );
+    assert!(no_summary(
+        "void take(void *owner, void *item) { q_remove(owner, item); }",
+        &[Q_BASE, ("nullable.qcore", &nullable)],
+        "take"
+    ));
+}
+
+#[test]
+fn removal_callers_must_supply_the_exact_contained_child_and_keep_its_obligation() {
+    let prefix = "void take(void *owner, void *item) { q_remove(owner, item); }";
+    for body in [
+        "void *o = q_alloc(); void *p = q_alloc(); take(o, p); q_free(o); q_free(p);",
+        "void *o = q_alloc(); void *p = q_alloc(); void *other = q_alloc(); q_store(o, p); take(other, p); q_free(o); q_free(other);",
+        "void *o = q_alloc(); void *p = q_alloc(); q_store(o, p); take(o, p); q_free(o);",
+        "void *o = q_alloc(); void *p = q_alloc(); q_store(o, p); q_free(o); take(o, p);",
+        "void *o = q_alloc(); void *p = q_alloc(); q_store(o, p); take(o, p); take(o, p); q_free(o); q_free(p);",
+        "void *o = q_alloc(); take(o, o); q_free(o);",
+        "void *o = q_alloc(); take(o, 0); q_free(o);",
+    ] {
+        let source = format!("{prefix} void subject(void) {{ {body} }}");
+        assert_ne!(
+            analyze(&source, &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]).status,
+            AnalysisStatus::Safe,
+            "accepted {body}"
+        );
+    }
+    let source = format!(
+        "{prefix} void subject(void) {{ void *o = q_alloc(); void *p = q_alloc(); q_store(o, p); take(o, p); q_free(o); }}"
+    );
+    let result = analyze(&source, &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]);
+    assert!(has(&result, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+}
+
+#[test]
+fn removed_summary_keeps_declared_precedence_and_records_conflicts() {
+    let declared = Q_CONTAINER_REMOVE.1.replace("q_remove(", "take(").replace(
+        "resource_removed(item, owner, nonnull)",
+        "resource_owned(item, nonnull)",
+    );
+    let source = "void take(void *owner, void *item) { q_remove(owner, item); } void subject(void) { return; }";
+    let result = analyze(
+        source,
+        &[Q_BASE, Q_CONTAINER_REMOVE, ("take.qcore", &declared)],
+    );
+    assert!(has(&result, "take", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::SummaryConflict { .. }
+    )));
+    let tokens = tokenize(source);
+    let names = legacy_c_source_functions(source);
+    let contracts = fixture_contracts(&[Q_BASE, Q_CONTAINER_REMOVE, ("take.qcore", &declared)]);
+    let derived = derive_custody_summaries(&tokens, &names, &contracts);
+    assert_eq!(
+        derived.environment().contract("take"),
+        contracts.contract("take")
+    );
+    assert!(derived.records().iter().all(|r| r.function != "take"));
+}
+
+#[test]
+fn removed_certificate_rederives_owner_and_child_effects() {
+    use crate::legacy_c::{
+        C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+        check_legacy_safety_certificate,
+    };
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = "void *q_alloc(void); void q_free(void *); void q_store(void *, void *); void q_remove(void *, void *); void take(void *owner, void *item) { q_remove(owner, item); } void subject(void) { void *o = q_alloc(); void *p = q_alloc(); q_store(o, p); take(o, p); q_free(o); q_free(p); }";
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &fixture_contracts(&[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE]),
+    )
+    .unwrap();
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("{result:?}")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let mut changed_source = certificate.clone();
+    changed_source.preprocessed_source = changed_source
+        .preprocessed_source
+        .replace("q_remove(", "unknown_remove(");
+    assert_ne!(
+        changed_source.preprocessed_source,
+        certificate.preprocessed_source
+    );
+    assert!(check_legacy_safety_certificate(&changed_source).is_err());
+    for mode in [
+        ResourceParameterMode::Owned { nullable: false },
+        ResourceParameterMode::Removed {
+            owner_parameter: 1,
+            nullable: false,
+        },
+        ResourceParameterMode::Removed {
+            owner_parameter: 0,
+            nullable: true,
+        },
+    ] {
+        let mut changed = certificate.clone();
+        changed
+            .summaries
+            .iter_mut()
+            .find(|record| record.function == "take")
+            .unwrap()
+            .contract
+            .parameters[1] = mode;
+        assert!(check_legacy_safety_certificate(&changed).is_err());
+    }
+}
+
+#[test]
+fn removal_preserves_other_children_and_rejects_aliased_removal_arguments() {
+    let modules = &[Q_BASE, Q_CONTAINER_STORE, Q_CONTAINER_REMOVE];
+    let source = "void take(void *owner, void *item) { q_remove(owner, item); } void subject(void) { void *o = q_alloc(); void *p = q_alloc(); void *q = q_alloc(); q_store(o, p); q_store(o, q); take(o, p); q_free(o); q_free(p); }";
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    let prefix = "void take2(void *owner, void *first, void *second) { q_remove(owner, first); q_remove(owner, second); }";
+    let valid = format!(
+        "{prefix} void subject(void) {{ void *o = q_alloc(); void *p = q_alloc(); void *q = q_alloc(); q_store(o, p); q_store(o, q); take2(o, p, q); q_free(o); q_free(p); q_free(q); }}"
+    );
+    assert_eq!(analyze(&valid, modules).status, AnalysisStatus::Safe);
+    assert_ne!(
+        analyze(&valid.replace("take2(o, p, q)", "take2(o, p, p)"), modules).status,
+        AnalysisStatus::Safe
+    );
 }

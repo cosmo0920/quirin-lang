@@ -2176,6 +2176,37 @@ impl EntryCustody {
             }
             custody.parameter_sites[index] = Some(site);
         }
+        // A Removed formal is supplied inside its owner's aggregate, not in
+        // direct custody. Bind every formal first so argument order cannot
+        // change the owner identity. Unsupported owner shapes fail closed.
+        for (index, mode) in contract.parameters.iter().copied().enumerate() {
+            if let ResourceParameterMode::Removed {
+                owner_parameter, ..
+            } = mode
+            {
+                if index == owner_parameter
+                    || !matches!(
+                        contract.parameters.get(owner_parameter),
+                        Some(ResourceParameterMode::Owned { nullable: false })
+                    )
+                {
+                    return None;
+                }
+                let child = custody.parameter_sites[index]?;
+                let owner = custody
+                    .parameter_sites
+                    .get(owner_parameter)
+                    .copied()
+                    .flatten()?;
+                custody.state.resources.insert(child, CONTAINED);
+                custody
+                    .state
+                    .contained
+                    .entry(owner)
+                    .or_default()
+                    .insert(child);
+            }
+        }
         Some(custody)
     }
 

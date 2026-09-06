@@ -31,3 +31,11 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.a_returned_formal_is_no_reallocation
 #print axioms QCore.CustodySummary.realloc_passthrough_validates_as_reallocated
 #print axioms QCore.CustodySummary.discarding_realloc_wrapper_is_no_reallocation
+
+#print axioms QCore.CustodySummary.validated_from_entry_has_original_custody
+#print axioms QCore.CustodySummary.removed_formal_is_live_after_validation
+#print axioms QCore.CustodySummary.direct_removal_validates_from_contained_entry
+#print axioms QCore.CustodySummary.removal_from_uncontained_entry_rejects
+#print axioms QCore.CustodySummary.removal_from_wrong_owner_rejects
+#print axioms QCore.CustodySummary.removal_left_contained_at_an_exit_rejects
+#print axioms QCore.CustodySummary.removed_formal_is_detached_after_validation

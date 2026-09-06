@@ -62,13 +62,13 @@
 //!
 //! # What is deliberately not inferred
 //!
-//! The inferred vocabulary is `Borrowed`/`Owned`/`Consumed`/`Released`/`Out`/
-//! `Stored` parameters and `None`/`Owned`/`Reallocated` results. `Removed` is
-//! not derived: [`EntryCustody::build`] seeds such a formal as an ordinary
-//! live resource rather than as one already contained in the owner formal's
-//! aggregate, so a body that actually detaches it reports a custody conflict
-//! and never validates. Inferring it needs a richer entry state, not richer
-//! summary logic.
+//! The inferred vocabulary includes bounded direct `Removed` wrappers: the
+//! child starts contained in the distinct non-null owner formal named by a
+//! modeled `Removed` call, and validation requires it detached/live on every
+//! exit. General heap-link extraction, alias-selected removal and nullable
+//! removal preconditions are not inferred. The ordinary live-entry search
+//! still takes precedence, so store-then-remove does not gain a false entry
+//! containment requirement.
 //!
 //! Likewise, a formal handed straight back to the caller, a formal whose
 //! disposition differs between exits with no reallocation explaining it, an
@@ -221,6 +221,17 @@ fn infer_validated_summary(
     function: &str,
     environment: &ResourceContracts,
 ) -> Option<ResourceFunctionContract> {
+    infer_live_entry_summary(tokens, function, environment)
+        .or_else(|| infer_removed_wrapper(tokens, function, environment))
+}
+
+/// Preserve the existing least-binding search before considering a contained
+/// entry. In particular, store-then-remove remains an ordinary Owned wrapper.
+fn infer_live_entry_summary(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<ResourceFunctionContract> {
     let parameters = function_parameters(tokens, function)?;
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
     // Which formals the body writes through. Unlike a bound formal, an out
@@ -262,6 +273,76 @@ fn infer_validated_summary(
             .then_some(candidate);
     }
     None
+}
+
+/// Infer only the contained precondition explicitly demanded by a modeled
+/// Removed call whose child and owner arguments are direct formal names.
+/// This does not discover heap links, nullable detach effects or local aliases.
+/// The syntactic candidate is never evidence: a fresh full analysis must show
+/// the original child live and detached, and the original owner still live,
+/// at every reachable exit. Reassigning either formal cannot change those sites.
+fn infer_removed_wrapper(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<ResourceFunctionContract> {
+    let parameters = function_parameters(tokens, function)?;
+    let cfg = build_function_cfg(tokens, function, environment).ok()?;
+    let mut modes = vec![ResourceParameterMode::Borrowed; parameters.len()];
+    let mut found = false;
+    for node in &cfg.nodes {
+        let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+        else {
+            continue;
+        };
+        for (index, mode) in contract.parameters.iter().copied().enumerate() {
+            let ResourceParameterMode::Removed {
+                owner_parameter,
+                nullable: false,
+            } = mode
+            else {
+                continue;
+            };
+            let formal = |argument: usize| {
+                let name = arguments.get(argument)?.as_ref()?;
+                parameters
+                    .iter()
+                    .position(|parameter| parameter.as_ref() == Some(name))
+            };
+            let child = formal(index)?;
+            let owner = formal(owner_parameter)?;
+            if child == owner {
+                return None;
+            }
+            for (index, required) in [
+                (owner, ResourceParameterMode::Owned { nullable: false }),
+                (
+                    child,
+                    ResourceParameterMode::Removed {
+                        owner_parameter: owner,
+                        nullable: false,
+                    },
+                ),
+            ] {
+                if modes[index] != ResourceParameterMode::Borrowed && modes[index] != required {
+                    return None;
+                }
+                modes[index] = required;
+            }
+            found = true;
+        }
+    }
+    if !found {
+        return None;
+    }
+    let candidate = ResourceFunctionContract::new(modes, ResourceReturnMode::None);
+    let entry = EntryCustody::build(&cfg, &parameters, &candidate)?;
+    let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
+    observations_match_contract(&candidate, &entry, &summary, &observations).then_some(candidate)
 }
 
 /// Formals the body stores through (`*out = …`). Reading this off the CFG

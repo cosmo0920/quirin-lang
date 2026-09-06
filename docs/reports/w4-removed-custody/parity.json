@@ -1,0 +1,21 @@
+{
+  "base_commit": "6a66f99",
+  "units": 185,
+  "verdicts": {
+    "Safe": 3,
+    "provisional Unsafe": 98,
+    "Unknown": 80,
+    "data_only": 4
+  },
+  "unit_changes": [],
+  "function_changes": [],
+  "diagnostic_changes": {},
+  "diagnostics_byte_identical": true,
+  "source_byte_identical": true,
+  "hashes": {
+    "baseline-source.json": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "baseline-diagnostics.json": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+    "after-source.json": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "after-diagnostics.json": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82"
+  }
+}
