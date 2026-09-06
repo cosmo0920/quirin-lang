@@ -125,9 +125,15 @@ It also ships a conservative checker for *existing* C source (the
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`
-  proposals downgrade to `Unknown` (`QP010`). `verify scope` in source is
-  configuration validation only — compiling a resolved scope fails with
-  `Q701`; obligation generation and dispatch are unimplemented (finding VP05).
+  proposals downgrade to `Unknown` (`QP010`). W3's bounded evidence-v2
+  increment derives source obligations and dispatches resolved scopes; trusted
+  observation replay can certify recorded agreement only, under the explicit
+  `observations_trusted` assumption and observed-run bounds. A standalone
+  schemas-only process fixture exercises positive and forged evidence.
+  Lifecycle source effect/ABI import stays incomplete, all unsupported and
+  empty inventories stay `Unknown`, and first-party v1 providers remain
+  unpromoted. Host relocation and production profile/source import remain open.
+  See `docs/reports/w3-evidence-v2/README.md`.
 - **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
   boundaries that remain true statements: interprocedural parameter/return
@@ -135,8 +141,8 @@ It also ships a conservative checker for *existing* C source (the
   validation** (LC01, W4, extended 2026-09-07 with validated `Out`,
   `Stored`, `Reallocated` and possibly-null returns; `Removed`, recursive
   call-graph components, and cost summaries are still not inferred, and every such body
-  keeps its callers `Unknown`); semantic witness schema v2
-  is unimplemented; process providers have process-group containment, not an
+  keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
+  replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
   only; CT01–CT50 conformance corpus is **45/50 unmapped**
   (CT02/CT12/CT16/CT19/CT37 are mapped as sequential-core source fixtures;
@@ -246,8 +252,8 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 - CLI: `qcorec check <file>`, `qcorec emit -o out.c <file>`,
   `qcorec plugins list|inspect <id>`.
 - Diagnostics namespaces: `Q1xx–Q4xx` core, `Q6xx` concurrency, `Q7xx`
-  event/scope (note: `Q700/Q701` currently collide between spec §54 and
-  Cycle 20 scope resolution — see plan W7), `QP***` plugin protocol.
+  event/scope (`Q700`–`Q703` are core scope diagnostics; Libevent uses
+  `qcore.libevent.L00`–`L12`, see `docs/CHANGELOG_r0_2.md`), `QP***` plugin protocol.
 
 ## Where to read more
 

@@ -24,13 +24,48 @@ use serde::{Deserialize, Serialize};
 
 use crate::frontend::SourceProgram;
 
+pub use qcore_schemas::obligation::{
+    ChunkEntityRef, DerivationIncomplete, Obligation, ObligationProperty, ObligationScope,
+    ObligationSubject, PathBounds, TaskBounds, VERIFICATION_TASK_VERSION, VerificationTask,
+};
 pub use qcore_schemas::plugin::{
     DEFAULT_MAX_FRAME_BYTES, EvidenceClaim, FactPredicate, ManifestError, NormalizedFact,
     PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION, PluginDiagnostic, PluginEntrypoint, PluginId,
-    PluginLimits, PluginManifest, PluginTrustClass, ProposedEvidence, ProposedVerdict,
-    Reproducibility, RequestError, SupportedTarget, TargetProfile, UnitIdentity,
-    VerificationRequest, VerificationResponse, VerifierCapability,
+    PluginLimits, PluginManifest, PluginTrustClass, ProposedEvidence, ProposedEvidenceV2,
+    ProposedVerdict, Reproducibility, RequestError, SupportedTarget, TargetProfile, UnitIdentity,
+    VerificationRequest, VerificationRequestV2, VerificationResponse, VerificationResponseV2,
+    VerifierCapability,
 };
+pub use qcore_schemas::witness::{
+    BoundOperation, ChunkBackendRecord, ChunkLifecycleWitness, ChunkOperationRecord,
+    ChunkResidencyRecord, ContractObservationRecord, ContractObservationWitness, NativeRunBinding,
+    ObservedRun, PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness, SourceSite,
+};
+
+/// The evidence-v2 firewall's capability-specific replay hook.
+///
+/// The *trait* belongs to the verifier host, which orchestrates but never
+/// decides; every *implementation* belongs to a trusted-core crate
+/// (`docs/design/W3_OBLIGATIONS_EVIDENCE_V2.md` open question 5). No
+/// provider-reachable code can influence checking, and a capability with no
+/// registered checker is `Unknown` (QP016), never `Safe`.
+pub trait WitnessChecker {
+    /// The capability this checker replays witnesses for.
+    fn capability(&self) -> VerifierCapability;
+
+    /// Replays `witness` against core-derived inputs held by the checker and
+    /// returns the identifiers of the obligations the replay discharged.
+    ///
+    /// Implementations must satisfy the anti-vacuousness rule (design §2.2):
+    /// no acceptance path may terminate in an equality comparison against
+    /// provider-supplied data, and the empty case of every quantifier must be
+    /// decided against a core-computed denominator.
+    fn check(
+        &self,
+        task: &VerificationTask,
+        witness: &SemanticWitness,
+    ) -> Result<BTreeSet<String>, String>;
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CoreCertificate {
@@ -38,6 +73,17 @@ pub struct CoreCertificate {
     capability: VerifierCapability,
     unit: UnitIdentity,
     evidence: ProposedEvidence,
+    /// Evidence v2 only: the semantic witness the core replayed, retained so
+    /// the certificate records what was actually checked (including the
+    /// `NativeRunBinding`s behind an observed-agreement claim).
+    witness: Option<SemanticWitness>,
+    /// Evidence v2 only: the bound each discharged obligation was checked
+    /// under. Composition refuses to merge incomparable bounds.
+    obligation_bounds: BTreeMap<String, TaskBounds>,
+    /// Evidence v2 only: the digest of the core-derived task this certificate
+    /// discharges obligations of.
+    task_digest: Option<String>,
+    task: Option<VerificationTask>,
 }
 
 impl CoreCertificate {
@@ -55,6 +101,28 @@ impl CoreCertificate {
 
     pub fn evidence(&self) -> &ProposedEvidence {
         &self.evidence
+    }
+
+    /// The replayed semantic witness, present exactly for evidence v2.
+    pub fn witness(&self) -> Option<&SemanticWitness> {
+        self.witness.as_ref()
+    }
+
+    /// The obligation identifiers this certificate discharges.
+    pub fn coverage(&self) -> &BTreeSet<String> {
+        &self.evidence.coverage
+    }
+
+    pub fn obligation_bounds(&self) -> &BTreeMap<String, TaskBounds> {
+        &self.obligation_bounds
+    }
+
+    pub fn task(&self) -> Option<&VerificationTask> {
+        self.task.as_ref()
+    }
+
+    pub fn task_digest(&self) -> Option<&str> {
+        self.task_digest.as_deref()
     }
 }
 
@@ -79,12 +147,34 @@ impl VerificationOutcome {
     }
 }
 
+/// A firewall rejection with the reason code it is reported under. Distinct
+/// codes keep "invalid evidence" separable from "no core checker"
+/// (`docs/REEVALUATION_SPEC.md` §1's reason-code rule).
+struct EvidenceRejection {
+    code: &'static str,
+    reason: String,
+}
+
 pub trait VerifierProvider: Send + Sync {
     fn manifest(&self) -> &PluginManifest;
     fn verify(
         &self,
         request: &VerificationRequest,
     ) -> Result<VerificationResponse, ProviderFailure>;
+
+    /// Evidence-v2 dispatch. The default fails closed, so a provider written
+    /// against protocol v1 alone can never be mistaken for one that speaks
+    /// evidence v2; the manifest's `evidence_versions` gate (QP004) normally
+    /// rejects such a provider before this point.
+    fn verify_v2(
+        &self,
+        request: &VerificationRequestV2,
+    ) -> Result<VerificationResponseV2, ProviderFailure> {
+        let _ = request;
+        Err(ProviderFailure::Protocol(
+            "provider does not implement evidence schema v2".into(),
+        ))
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -230,6 +320,27 @@ impl VerifierProvider for ProcessProvider {
             ))
         }
     }
+
+    fn verify_v2(
+        &self,
+        request: &VerificationRequestV2,
+    ) -> Result<VerificationResponseV2, ProviderFailure> {
+        // Identical framing, limits, deadline, and process-group behavior;
+        // only the payload schema differs (design §2.1: protocol v1 framing
+        // stays).
+        let frame = encode_protocol_frame(request, self.manifest.limits.output_bytes)?;
+        #[cfg(unix)]
+        {
+            self.verify_process(frame)
+        }
+        #[cfg(not(unix))]
+        {
+            let _ = frame;
+            Err(ProviderFailure::Protocol(
+                "bounded process providers require Unix process groups".into(),
+            ))
+        }
+    }
 }
 
 #[cfg(unix)]
@@ -311,7 +422,10 @@ fn read_available(
 
 #[cfg(unix)]
 impl ProcessProvider {
-    fn verify_process(&self, frame: Vec<u8>) -> Result<VerificationResponse, ProviderFailure> {
+    fn verify_process<T: for<'de> Deserialize<'de>>(
+        &self,
+        frame: Vec<u8>,
+    ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
@@ -733,6 +847,245 @@ impl VerifierRegistry {
         self.check_response(manifest, request, response)
     }
 
+    /// Evidence-v2 dispatch (design §3.1). The manifest gates QP001–QP005 are
+    /// the v1 gates verbatim; the provider then runs through the unchanged
+    /// spawn/deadline/output machinery; only the firewall differs, and only a
+    /// core witness replay can produce a certificate.
+    ///
+    /// `checker` is the trusted-core replay hook for `request.capability`.
+    /// `None` — a capability with no core checker — is `Unknown` (QP016).
+    pub fn verify_v2(
+        &self,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+    ) -> VerificationOutcome {
+        if let Err(error) = request.validate() {
+            return VerificationOutcome::unknown("QP001", error.to_string());
+        }
+        if let Err(error) = task.validate() {
+            return VerificationOutcome::unknown("QP001", error.to_string());
+        }
+        if task.task_digest() != request.task_digest
+            || request.unit != task.unit
+            || request.target != task.target
+            || request.assumptions != task.assumptions
+            || request.evidence_version != task.evidence_version
+            || request.obligations
+                != task
+                    .obligations_for(request.capability)
+                    .into_iter()
+                    .cloned()
+                    .collect::<Vec<_>>()
+        {
+            return VerificationOutcome::unknown(
+                "QP001",
+                "the request's task digest is not the digest of the core-derived task",
+            );
+        }
+        // A capability whose derivation could not classify every construct can
+        // never reach `Safe`, whatever a provider returns (design §1.4).
+        if task.is_incomplete_for(request.capability) {
+            return VerificationOutcome::unknown(
+                "QP016",
+                format!(
+                    "the core derivation is incomplete for `{}`; no witness can discharge \
+                     an unknown obligation inventory",
+                    request.capability
+                ),
+            );
+        }
+        let Some(entry) = self.entries.get(&request.plugin_id) else {
+            return VerificationOutcome::unknown(
+                "QP002",
+                format!("plugin `{}` is not installed", request.plugin_id),
+            );
+        };
+        if !entry.enabled {
+            return VerificationOutcome::unknown(
+                "QP003",
+                format!("plugin `{}` is disabled", request.plugin_id),
+            );
+        }
+        let manifest = entry.provider.manifest();
+        if !manifest
+            .protocol_versions
+            .contains(&request.protocol_version)
+            || !manifest
+                .evidence_versions
+                .contains(&request.evidence_version)
+        {
+            return VerificationOutcome::unknown("QP004", "incompatible protocol version");
+        }
+        if !manifest.supports(request.capability, &request.target) {
+            return VerificationOutcome::unknown(
+                "QP005",
+                "plugin does not declare the requested capability and target profile",
+            );
+        }
+        let response = match entry.provider.verify_v2(request) {
+            Ok(response) => response,
+            Err(error) => return VerificationOutcome::unknown("QP006", error.to_string()),
+        };
+        self.check_response_v2(manifest, request, task, checker, response)
+    }
+
+    fn check_response_v2(
+        &self,
+        manifest: &PluginManifest,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        response: VerificationResponseV2,
+    ) -> VerificationOutcome {
+        if response.protocol_version != request.protocol_version
+            || response.request_id != request.request_id
+            || response.plugin_id != request.plugin_id
+            || response.diagnostics.iter().any(|diagnostic| {
+                !diagnostic
+                    .code
+                    .starts_with(&format!("{}.", manifest.plugin_id))
+            })
+        {
+            return VerificationOutcome::unknown("QP007", "invalid plugin response envelope");
+        }
+        match response.verdict {
+            ProposedVerdict::Unknown => VerificationOutcome {
+                verdict: ProposedVerdict::Unknown,
+                diagnostics: response.diagnostics,
+                certificate: None,
+            },
+            ProposedVerdict::Unsafe => {
+                // Evidence v2 ships no counterexample checker, so an `Unsafe`
+                // proposal stays an allegation (design open question 4).
+                let mut outcome = VerificationOutcome::unknown(
+                    "QP010",
+                    "unverified provider allegation: evidence v2 has no counterexample checker",
+                );
+                outcome.diagnostics.extend(response.diagnostics);
+                outcome
+            }
+            ProposedVerdict::Safe => {
+                let Some(evidence) = response.evidence else {
+                    return VerificationOutcome::unknown("QP008", "safe result has no evidence");
+                };
+                let discharged =
+                    match self.check_evidence_v2(manifest, request, task, checker, &evidence) {
+                        Ok(discharged) => discharged,
+                        Err(EvidenceRejection { code, reason }) => {
+                            return VerificationOutcome::unknown(code, reason);
+                        }
+                    };
+                let obligation_bounds = task
+                    .obligations_for(request.capability)
+                    .into_iter()
+                    .map(|obligation| (obligation.obligation_id.clone(), obligation.bounds.clone()))
+                    .collect();
+                VerificationOutcome {
+                    verdict: ProposedVerdict::Safe,
+                    diagnostics: response.diagnostics,
+                    certificate: Some(CoreCertificate {
+                        plugin_id: request.plugin_id.clone(),
+                        capability: request.capability,
+                        unit: request.unit.clone(),
+                        evidence: ProposedEvidence {
+                            evidence_version: evidence.evidence_version,
+                            unit: evidence.unit.clone(),
+                            capability: evidence.capability,
+                            // v2 carries no Boolean claims; the checked
+                            // relation is the witness replay, and coverage
+                            // refers to core obligation identifiers.
+                            claims: Vec::new(),
+                            coverage: discharged,
+                            assumptions_used: evidence.assumptions_used.clone(),
+                            reproducibility: evidence.reproducibility.clone(),
+                        },
+                        witness: Some(evidence.witness),
+                        obligation_bounds,
+                        task_digest: Some(request.task_digest.clone()),
+                        task: Some(task.clone()),
+                    }),
+                }
+            }
+        }
+    }
+
+    /// The v2 firewall. The v1 envelope checks run first and remain necessary
+    /// but never sufficient; only the trusted-core witness replay can accept.
+    fn check_evidence_v2(
+        &self,
+        manifest: &PluginManifest,
+        request: &VerificationRequestV2,
+        task: &VerificationTask,
+        checker: Option<&dyn WitnessChecker>,
+        evidence: &ProposedEvidenceV2,
+    ) -> Result<BTreeSet<String>, EvidenceRejection> {
+        let reject = |code: &'static str, reason: String| EvidenceRejection { code, reason };
+        if evidence.evidence_version != request.evidence_version
+            || evidence.evidence_version < PLUGIN_EVIDENCE_VERSION_V2
+        {
+            return Err(reject(
+                "QP009",
+                "the evidence version does not match the negotiated request".into(),
+            ));
+        }
+        if evidence.unit != request.unit
+            || evidence.capability != request.capability
+            || evidence.assumptions_used != request.assumptions
+            || evidence.reproducibility.provider_version != manifest.package_version
+            || evidence.reproducibility.package_digest != manifest.package_digest
+            || !evidence.reproducibility.deterministic
+        {
+            return Err(reject(
+                "QP009",
+                "the core certificate checker rejected the evidence envelope".into(),
+            ));
+        }
+        if evidence.witness.task_digest() != request.task_digest {
+            return Err(reject(
+                "QP009",
+                "the witness is bound to a different verification task".into(),
+            ));
+        }
+        let Some(checker) = checker.filter(|checker| checker.capability() == request.capability)
+        else {
+            return Err(reject(
+                "QP016",
+                format!(
+                    "no core witness checker for capability `{}` at evidence version {}",
+                    request.capability, evidence.evidence_version
+                ),
+            ));
+        };
+        // The denominator is the core's inventory, never the witness's own
+        // account of what it covered (design §2.2).
+        let required = task.coverage_for(request.capability);
+        if required.is_empty() {
+            return Err(reject(
+                "QP016",
+                "the core derived no obligations; an empty inventory has no independently \
+                 checked no-obligations argument"
+                    .into(),
+            ));
+        }
+        let discharged = checker
+            .check(task, &evidence.witness)
+            .map_err(|reason| reject("QP009", reason))?;
+        if discharged != required {
+            return Err(reject(
+                "QP009",
+                "the witness replay did not discharge every core-derived obligation".into(),
+            ));
+        }
+        if evidence.coverage != required {
+            return Err(reject(
+                "QP009",
+                "the proposal's coverage is not the core's obligation inventory".into(),
+            ));
+        }
+        Ok(discharged)
+    }
+
     fn check_response(
         &self,
         manifest: &PluginManifest,
@@ -779,6 +1132,10 @@ impl VerifierRegistry {
                         capability: request.capability,
                         unit: request.unit.clone(),
                         evidence,
+                        witness: None,
+                        obligation_bounds: BTreeMap::new(),
+                        task_digest: None,
+                        task: None,
                     }),
                 }
             }
@@ -973,6 +1330,63 @@ pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationO
     }
 }
 
+/// Composition with explicit required-set validation (design §3.3).
+///
+/// `compose_verification`'s conflict rules are kept verbatim and extended with
+/// the two things protocol v1 could not express: the union of certificate
+/// coverages must equal the scope's full core-derived obligation-ID set, and
+/// an obligation discharged under two incomparable bounds does not merge. A
+/// missing required provider or capability is therefore detected from the
+/// inventory, not inferred from an absent certificate.
+pub fn compose_verification_with_inventory(
+    outcomes: Vec<VerificationOutcome>,
+    required: &BTreeSet<String>,
+) -> VerificationOutcome {
+    if required.is_empty() {
+        // §3.5: a complete derivation with zero obligations is not promoted in
+        // this increment. Callers must not reach composition with an empty
+        // inventory; refuse rather than compose vacuously.
+        return VerificationOutcome::unknown(
+            "QP016",
+            "no obligations were derived; empty-scope promotion requires a \
+             derivation-coverage witness",
+        );
+    }
+    let composed = compose_verification(outcomes.clone());
+    if composed.verdict != ProposedVerdict::Safe {
+        return composed;
+    }
+    let mut covered = BTreeSet::new();
+    let mut bounds = BTreeMap::<String, TaskBounds>::new();
+    for certificate in outcomes
+        .iter()
+        .filter_map(|outcome| outcome.certificate.as_ref())
+    {
+        for id in certificate.coverage() {
+            covered.insert(id.clone());
+        }
+        for (id, bound) in certificate.obligation_bounds() {
+            if bounds
+                .insert(id.clone(), bound.clone())
+                .is_some_and(|previous| previous != *bound)
+            {
+                return VerificationOutcome::unknown(
+                    "QP013",
+                    format!("obligation `{id}` is discharged under incomparable bounds"),
+                );
+            }
+        }
+    }
+    let missing = required.difference(&covered).count();
+    if missing != 0 || covered != *required {
+        return VerificationOutcome::unknown(
+            "QP011",
+            format!("{missing} core-derived obligation(s) are not covered by any certificate"),
+        );
+    }
+    composed
+}
+
 pub fn compose_certificates(
     outcomes: &[VerificationOutcome],
 ) -> Result<CompositeCertificate, Box<VerificationOutcome>> {
@@ -1112,6 +1526,10 @@ mod tests {
                             deterministic: true,
                         },
                     },
+                    witness: None,
+                    obligation_bounds: BTreeMap::new(),
+                    task_digest: None,
+                    task: None,
                 }),
             }
         };

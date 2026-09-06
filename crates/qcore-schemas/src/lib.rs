@@ -7,23 +7,34 @@
 //! only; the trusted core re-exports these types for compatibility.
 
 pub mod contract;
+pub mod digest;
 pub mod identity;
 pub mod mechanism;
+pub mod obligation;
 pub mod plugin;
 pub mod profile;
+
+pub mod witness;
 
 pub use contract::{
     ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
+pub use digest::{CANONICAL_SERIALIZER, sha256_hex};
 pub use identity::ExternalSourceBundle;
 pub use mechanism::LibraryMechanismSummary;
+pub use obligation::{
+    ChunkEntityRef, DerivationIncomplete, Obligation, ObligationProperty, ObligationScope,
+    ObligationSubject, PathBounds, TaskBounds, TaskError, VERIFICATION_TASK_VERSION,
+    VerificationTask,
+};
 pub use plugin::{
     DEFAULT_MAX_FRAME_BYTES, EvidenceClaim, FactPredicate, ManifestError, NormalizedFact,
     PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION, PluginDiagnostic, PluginEntrypoint, PluginId,
-    PluginLimits, PluginManifest, PluginTrustClass, ProposedEvidence, ProposedVerdict,
-    Reproducibility, RequestError, SupportedTarget, TargetProfile, UnitIdentity,
-    VerificationRequest, VerificationResponse, VerifierCapability,
+    PluginLimits, PluginManifest, PluginTrustClass, ProposedEvidence, ProposedEvidenceV2,
+    ProposedVerdict, Reproducibility, RequestError, SupportedTarget, TargetProfile, UnitIdentity,
+    VerificationRequest, VerificationRequestV2, VerificationResponse, VerificationResponseV2,
+    VerifierCapability,
 };
 pub use profile::{
     ApiDisposition, AuditedFile, BooleanFieldModel, BuildProfileSelector, CallbackEffectSummary,
@@ -31,4 +42,9 @@ pub use profile::{
     ProviderBinding, RequiredEvidenceKind, SUPPORTED_PROFILE_MANIFEST_VERSIONS,
     SignatureConstraint, SourcePin, SourceRootSelection, SourceWitness, TypedImportProfile,
     UnitSelection, WitnessCheck,
+};
+pub use witness::{
+    BoundOperation, ChunkBackendRecord, ChunkLifecycleWitness, ChunkOperationRecord,
+    ChunkResidencyRecord, ContractObservationRecord, ContractObservationWitness, NativeRunBinding,
+    ObservedRun, PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness, SourceSite,
 };

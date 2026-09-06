@@ -3953,19 +3953,32 @@ Q626  backend/profile/permission-scale incompatibility
 Q627  permission reconstructed from a pointer, literal, or copied view
 Q628  unsupported dynamic protected ownership shape
 Q629  post-start task failure misclassified as creation failure
-Q700  event/base lifecycle transition is invalid or stale
-Q701  event, base, bufferevent, or callback argument used after free
-Q702  callback argument outlives its ownership or borrow contract
-Q703  file-descriptor or close-on-free custody is duplicated
-Q704  cross-thread Libevent operation lacks supported thread initialization
-Q705  callback access conflicts across bases, callers, or worker tasks
-Q706  deletion, finalization, or teardown lacks callback quiescence
-Q707  persistent event or deferred callback leaves an owned obligation
-Q708  priority, readiness, or timing is used as synchronization evidence
-Q709  callback target, Libevent API, backend, or build profile is unknown
-Q710  bufferevent callback mode or lock contract is violated
-Q711  loop exit leaves unaccounted event or callback custody
-Q712  observed Libevent trace does not refine the checked event model
+qcore.libevent.L00  event/base lifecycle transition is invalid or stale
+qcore.libevent.L01  event, base, bufferevent, or callback argument used after free
+qcore.libevent.L02  callback argument outlives its ownership or borrow contract
+qcore.libevent.L03  file-descriptor or close-on-free custody is duplicated
+qcore.libevent.L04  cross-thread Libevent operation lacks supported thread initialization
+qcore.libevent.L05  callback access conflicts across bases, callers, or worker tasks
+qcore.libevent.L06  deletion, finalization, or teardown lacks callback quiescence
+qcore.libevent.L07  persistent event or deferred callback leaves an owned obligation
+qcore.libevent.L08  priority, readiness, or timing is used as synchronization evidence
+qcore.libevent.L09  callback target, Libevent API, backend, or build profile is unknown
+qcore.libevent.L10  bufferevent callback mode or lock contract is violated
+qcore.libevent.L11  loop exit leaves unaccounted event or callback custody
+qcore.libevent.L12  observed Libevent trace does not refine the checked event model
+```
+
+These identifiers were `Q700`–`Q712` through revision 0.2's assembly. They are
+library-specific conditions, so they belong to the Libevent provider's manifest
+namespace; the core allocates no numbers for library-specific conditions.
+`Q700`–`Q719` are reserved for core `verify scope` resolution and dispatch:
+
+```
+Q700  verify scope failed to resolve against the registry
+Q701  verify scope unverified: core-derived obligations were not discharged
+Q702  verify scope unverified: providers returned conflicting evidence or assumptions
+Q703  verify scope carries an unverified provider allegation
+Q704-Q719  reserved, unallocated
 ```
 
 Diagnostics SHOULD show both relevant threads/sites, the overlapping footprint, permission amounts, current custody, missing synchronization or loan-return edge, and whether the issue is a proved violation, potential violation, or unknown analysis state.

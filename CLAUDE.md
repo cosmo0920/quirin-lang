@@ -100,3 +100,9 @@ reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; nested concurrency lowering still rejects with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
 concurrency semantics are implemented. CT mapping remains 5/50.
+
+- W3 bounded evidence-v2 replay/dispatch is recorded in
+  `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
+  describe recorded runs under `observations_trusted`; lifecycle source
+  derivation stays incomplete until real effect/ABI import exists. The host
+  relocation is a separate remaining step, and v1 Safe refusal is unchanged.

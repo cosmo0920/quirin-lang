@@ -1,3 +1,4 @@
+import QCore.VerifierEvidenceV2
 import QCore.VerifierPlugin
 
 #print axioms QCore.VerifierPlugin.checked_safe_has_valid_evidence
@@ -8,3 +9,9 @@ import QCore.VerifierPlugin
 #print axioms QCore.VerifierPlugin.unknown_plugin_prevents_safe
 
 #print axioms QCore.VerifierPlugin.rejected_proposal_is_unknown
+
+#print axioms QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory
+#print axioms QCore.VerifierEvidenceV2.accepted_hook_has_recomputed_observation
+#print axioms QCore.VerifierEvidenceV2.incomplete_inventory_rejects
+#print axioms QCore.VerifierEvidenceV2.empty_inventory_rejects
+#print axioms QCore.VerifierEvidenceV2.false_precondition_never_counts

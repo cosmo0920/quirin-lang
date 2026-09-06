@@ -15,6 +15,9 @@ use std::path::{Component, Path};
 
 use serde::{Deserialize, Serialize};
 
+use crate::obligation::Obligation;
+use crate::witness::{PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness};
+
 pub const PLUGIN_PROTOCOL_VERSION: u16 = 1;
 pub const PLUGIN_EVIDENCE_VERSION: u16 = 1;
 pub const DEFAULT_MAX_FRAME_BYTES: usize = 4 * 1024 * 1024;
@@ -389,6 +392,89 @@ impl VerificationRequest {
     }
 }
 
+/// The evidence-v2 request frame (design §1.1).
+///
+/// The protocol frame version and framing are unchanged; only the evidence
+/// schema moves, so v2 is expressed as a *parallel* frame type rather than as
+/// optional fields on [`VerificationRequest`]. This keeps every v1 frame
+/// byte-identical, makes it structurally impossible for a v1 envelope to
+/// carry a witness, and satisfies design open question 8's requirement that
+/// the v2 fields are omitted entirely when negotiating evidence v1.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct VerificationRequestV2 {
+    pub protocol_version: u16,
+    pub evidence_version: u16,
+    pub request_id: String,
+    pub plugin_id: PluginId,
+    pub capability: VerifierCapability,
+    pub target: TargetProfile,
+    pub unit: UnitIdentity,
+    /// Retained for envelope compatibility. In v2 the obligation inventory,
+    /// not this list, is the obligation carrier.
+    pub facts: Vec<NormalizedFact>,
+    pub assumptions: BTreeMap<String, bool>,
+    /// Digest of the core's `VerificationTask`; every witness must be bound
+    /// to it.
+    pub task_digest: String,
+    /// The core-derived obligation inventory. A provider proposes witnesses,
+    /// never this list.
+    pub obligations: Vec<Obligation>,
+}
+
+impl VerificationRequestV2 {
+    /// The v1-shaped envelope this request carries, used for the identity and
+    /// envelope checks that v2 inherits from v1.
+    #[must_use]
+    pub fn base(&self) -> VerificationRequest {
+        VerificationRequest {
+            protocol_version: self.protocol_version,
+            evidence_version: self.evidence_version,
+            request_id: self.request_id.clone(),
+            plugin_id: self.plugin_id.clone(),
+            capability: self.capability,
+            target: self.target.clone(),
+            unit: self.unit.clone(),
+            facts: self.facts.clone(),
+            assumptions: self.assumptions.clone(),
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), RequestError> {
+        self.base().validate()?;
+        if self.protocol_version != PLUGIN_PROTOCOL_VERSION
+            || self.evidence_version != PLUGIN_EVIDENCE_VERSION_V2
+            || !valid_digest(&self.task_digest)
+        {
+            return Err(RequestError::InvalidObligations);
+        }
+        let ids = self
+            .obligations
+            .iter()
+            .map(|obligation| obligation.obligation_id.as_str())
+            .collect::<BTreeSet<_>>();
+        if ids.len() != self.obligations.len()
+            || self.obligations.iter().any(|obligation| {
+                obligation.obligation_id.is_empty()
+                    || obligation.capability != self.capability
+                    || obligation.evidence_version != self.evidence_version
+            })
+        {
+            return Err(RequestError::InvalidObligations);
+        }
+        Ok(())
+    }
+
+    /// Identifiers of every obligation in this request's inventory.
+    #[must_use]
+    pub fn coverage(&self) -> BTreeSet<String> {
+        self.obligations
+            .iter()
+            .map(|obligation| obligation.obligation_id.clone())
+            .collect()
+    }
+}
+
 fn valid_digest(value: &str) -> bool {
     value.len() == 64
         && value
@@ -401,6 +487,7 @@ fn valid_digest(value: &str) -> bool {
 pub enum RequestError {
     InvalidIdentity,
     InvalidFacts,
+    InvalidObligations,
 }
 
 impl fmt::Display for RequestError {
@@ -408,6 +495,9 @@ impl fmt::Display for RequestError {
         match self {
             Self::InvalidIdentity => formatter.write_str("invalid request identity"),
             Self::InvalidFacts => formatter.write_str("normalized facts are invalid"),
+            Self::InvalidObligations => {
+                formatter.write_str("the obligation inventory does not match the evidence version")
+            }
         }
     }
 }
@@ -468,4 +558,32 @@ pub struct VerificationResponse {
     pub verdict: ProposedVerdict,
     pub diagnostics: Vec<PluginDiagnostic>,
     pub evidence: Option<ProposedEvidence>,
+}
+
+/// Evidence-v2 proposal (design §2.1). `coverage` refers to `obligation_id`s
+/// from the core inventory, not to submitted fact counts, and `witness`
+/// carries the semantic witness the core replays. There is no way to express
+/// a v2 proposal without a witness kind, and no way to attach a witness to a
+/// v1 frame.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProposedEvidenceV2 {
+    pub evidence_version: u16,
+    pub unit: UnitIdentity,
+    pub capability: VerifierCapability,
+    pub coverage: BTreeSet<String>,
+    pub assumptions_used: BTreeMap<String, bool>,
+    pub reproducibility: Reproducibility,
+    pub witness: SemanticWitness,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct VerificationResponseV2 {
+    pub protocol_version: u16,
+    pub request_id: String,
+    pub plugin_id: PluginId,
+    pub verdict: ProposedVerdict,
+    pub diagnostics: Vec<PluginDiagnostic>,
+    pub evidence: Option<ProposedEvidenceV2>,
 }

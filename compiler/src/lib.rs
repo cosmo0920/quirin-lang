@@ -46,6 +46,7 @@ pub use qcore_c_gateway::legacy_c;
 pub use qcore_frontend::lexer;
 pub mod list_unlink_contract;
 pub mod native_concurrency;
+pub mod obligation_derivation;
 pub mod ownership;
 pub use qcore_frontend::parser;
 pub use qcore_frontend::quant_index;
@@ -63,8 +64,10 @@ pub mod typed_source_match;
 pub use qcore_core::usage;
 pub mod verifier_plugin;
 pub mod verifier_plugins;
+pub mod verify_dispatch;
 pub mod weak_memory;
 pub mod whole_program;
+pub mod witness_replay;
 
 // Compatibility paths for callers predating the in-process plugin extraction.
 pub use verifier_plugins::chunkio::chunk_source;
@@ -200,14 +203,20 @@ pub use usage::{
     UsageUpper, UsageViolation, check_usage,
 };
 pub use verifier_plugin::{
-    BuiltInProvider, CompositeCertificate, CoreCertificate, EvidenceClaim, FactPredicate,
-    ManifestError, NormalizedFact, PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION,
-    PackageLoadError, PluginDiagnostic, PluginEntrypoint, PluginId, PluginLimits, PluginManifest,
-    PluginTrustClass, ProcessProvider, ProposedEvidence, ProposedVerdict, ProviderFailure,
+    BoundOperation, BuiltInProvider, ChunkBackendRecord, ChunkEntityRef, ChunkLifecycleWitness,
+    ChunkOperationRecord, ChunkResidencyRecord, CompositeCertificate, ContractObservationRecord,
+    ContractObservationWitness, CoreCertificate, DerivationIncomplete, EvidenceClaim,
+    FactPredicate, ManifestError, NativeRunBinding, NormalizedFact, Obligation, ObligationProperty,
+    ObligationScope, ObligationSubject, ObservedRun, PLUGIN_EVIDENCE_VERSION,
+    PLUGIN_EVIDENCE_VERSION_V2, PLUGIN_PROTOCOL_VERSION, PackageLoadError, PathBounds,
+    PluginDiagnostic, PluginEntrypoint, PluginId, PluginLimits, PluginManifest, PluginTrustClass,
+    ProcessProvider, ProposedEvidence, ProposedEvidenceV2, ProposedVerdict, ProviderFailure,
     RegistryError, Reproducibility, ResolvedVerifierScope, ResolvedVerifierUse,
-    ScopeResolutionError, SupportedTarget, TargetProfile, UnitIdentity, VerificationOutcome,
-    VerificationRequest, VerificationResponse, VerifierCapability, VerifierProvider,
-    VerifierRegistry, compose_certificates, compose_verification, decode_protocol_frame,
+    ScopeResolutionError, SemanticWitness, SourceSite, SupportedTarget, TargetProfile, TaskBounds,
+    UnitIdentity, VERIFICATION_TASK_VERSION, VerificationOutcome, VerificationRequest,
+    VerificationRequestV2, VerificationResponse, VerificationResponseV2, VerificationTask,
+    VerifierCapability, VerifierProvider, VerifierRegistry, WitnessChecker, compose_certificates,
+    compose_verification, compose_verification_with_inventory, decode_protocol_frame,
     encode_protocol_frame, first_party_manifests, first_party_registry,
 };
 pub use weak_memory::{
