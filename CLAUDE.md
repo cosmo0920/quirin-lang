@@ -4,6 +4,11 @@
 
 Claude-specific additions:
 
+- The current Cycle 19 nested-teardown boundary is recorded in
+  `docs/reports/cycle19-nested-cleanup/README.md` and the AGENTS.md status
+  ledger. Its conditional source/model cases do not close native provenance,
+  filesystem or event-composition gates.
+
 - Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
   and land code according to its target crate layering (§3) and invariants
   (§2); do not add new code to the monolithic grab-bag once a target crate

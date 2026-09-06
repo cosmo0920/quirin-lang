@@ -85,6 +85,15 @@ observation evidence satisfy the cycle's fail-closed gates — see the
 [library audit record](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md)
 and the archived [evidence reports](docs/reports/).
 
+The [latest teardown work](docs/reports/cycle19-nested-cleanup/README.md)
+checks the complete context → stream → chunk → backend source chain, binds
+memory-backed model identities, and preserves failed filesystem cleanup through
+parent release. Of 43 conditional mixed-backend cases, 26 retain unresolved OS
+custody. All 400 workspace tests and the pinned audit pass; aggregate verdicts
+are unchanged. These checks still require native caller and allocation
+provenance, ring bindings and filesystem guarantees. General aggregate custody,
+remaining wrapper lifecycle paths and full event composition are also open.
+
 **Active (Cycle 20).** Extraction of library-specific verification into a
 [versioned verifier-plugin ecosystem](docs/cycles/CYCLE_20.md): a
 length-delimited JSON protocol, manifests, a fail-closed registry, bounded

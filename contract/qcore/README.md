@@ -278,3 +278,14 @@ decrement. Its 75 conditional cases retain 39 unresolved OS cleanup outcomes;
 only eight cases establish conditional backing deletion. Memory plus filesystem
 coverage leaves unsupported backend kinds open. See the
 [filesystem chunk close report](../../docs/reports/cycle19-filesystem-chunk/README.md).
+
+The nested chain now has four additional executable policy modules:
+`chunkio/teardown_traversal.qcore` records saved-next traversal and exact child
+arguments; `chunkio/parent_teardown.qcore` records child-first parent allocation
+release; `chunkio/nested_memory_teardown.qcore` binds complete ordered model
+identities to the checked memory chain; and `chunkio/nested_cleanup.qcore`
+preserves each filesystem residual and up-counter obligation through parent free.
+All component and native caller/provenance/OS premises remain explicit.
+These policies do not turn source matching, selected conditional outcomes or a
+checked lifecycle prefix into a whole-unit Safe verdict. See the
+[nested cleanup report](../../docs/reports/cycle19-nested-cleanup/README.md).

@@ -1,6 +1,6 @@
 # Cycle 19: Fluent Bit Resource and Event Integration
 
-**Status: In progress — native QCore replay/identity rules, eight exercised Monkey callback paths, and bounded wrapper failure imports verified; source custody/lifecycle and full event composition remain**
+**Status: In progress — source-bound nested teardown, native QCore replay/identity rules and eight Monkey callback paths checked; native provenance, wider custody/lifecycle and full event composition remain**
 
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim

@@ -108,12 +108,19 @@ treating priority, readiness, or wall-clock timing as synchronization evidence.
 
 Build on Cycle 17 custody and Cycle 18 event semantics. The remaining work is
 19B source-to-identity mapping for aggregates, lists, queues, refcounts and
-arenas; 19C source-derived wrapper/ChunkIO lifecycle, failure and nested
-teardown paths; and 19D complete wrapper/map custody, unsupported wrappers,
+arenas; 19C remaining wrapper lifecycle paths, native constructor/caller/ring
+bindings and full sync/OS guarantees for the now source-bound nested teardown
+chain; and 19D complete wrapper/map custody, remaining wrapper execution bindings,
 failure-path binding and full event-program composition. 19E audits their
 composition. Recorded callback executions and projected C functions do not
 close these static safety gates. Cycle 18 and 19 share the same observation
 rather than counting it as independent evidence.
+
+The [nested teardown continuation](reports/cycle19-nested-cleanup/README.md)
+checks both traversal loops and parent destructors, composes memory-backed model
+identities, and preserves residual filesystem/counter obligations through parent
+release. All 400 workspace tests pass with unchanged pinned aggregate verdicts;
+these conditional cases do not close the remaining native and event gates.
 
 ## Cycle 20: Verifier plugin ecosystem
 
