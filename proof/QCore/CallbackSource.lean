@@ -117,4 +117,42 @@ theorem storage_end_preserves_other_identity
     (present : other ∈ live) : other ∈ endStorage live slot := by
   simp [endStorage, different, present]
 
+/-! Terminal control is retained separately from normal return. A literal-zero
+macro executes its body once, and a nonreturning prefix never gains a suffix. -/
+inductive ExitKind where
+  | running
+  | returned
+  | terminated
+  deriving DecidableEq, Repr
+
+structure ControlPath where
+  records : List Nat
+  exitKind : ExitKind
+  deriving DecidableEq, Repr
+
+def appendRunning (path : ControlPath) (suffix : List Nat) : ControlPath :=
+  match path.exitKind with
+  | .running => { path with records := path.records ++ suffix }
+  | _ => path
+
+def finishMacro (path : ControlPath) (falseGuard : Nat) : ControlPath :=
+  appendRunning path [falseGuard]
+
+theorem terminated_path_has_no_following_effects
+    (records suffix : List Nat) :
+    appendRunning ⟨records, .terminated⟩ suffix = ⟨records, .terminated⟩ := rfl
+
+theorem returned_path_has_no_following_effects
+    (records suffix : List Nat) :
+    appendRunning ⟨records, .returned⟩ suffix = ⟨records, .returned⟩ := rfl
+
+theorem running_macro_retains_body_and_false_guard
+    (records : List Nat) (falseGuard : Nat) :
+    finishMacro ⟨records, .running⟩ falseGuard =
+      ⟨records ++ [falseGuard], .running⟩ := rfl
+
+theorem terminal_macro_does_not_test_condition
+    (records : List Nat) (falseGuard : Nat) :
+    finishMacro ⟨records, .terminated⟩ falseGuard = ⟨records, .terminated⟩ := rfl
+
 end QCore.CallbackSource

@@ -498,3 +498,14 @@ retained with lexical identities; unsupported initialization and aggregate
 callback replay remain Unknown. Four Lean storage-identity theorems are audited.
 All checks pass and the pinned generic inventory and callback summaries remain
 identical. The other five wrappers and full 19B–19E composition remain open.
+
+## Wrapper assertion and terminal-control imports (2026-09-06)
+
+The [wrapper control report](../reports/cycle19-wrapper-control/README.md)
+records 81 symbolic paths from 14/15 wrappers. Literal-zero macro bodies,
+nonreturning assertion exits, opaque direct calls and source-resolved array
+typedefs are retained. Inject's variable-bound loop remains Unknown. Four new
+Lean control theorems and 337 workspace tests pass along with formatting,
+Clippy, Lean audit and the pinned external audit. Resource inventory and callback
+summaries are unchanged. Terminal paths do not claim teardown, and source
+projections do not close the remaining custody or composition gates.

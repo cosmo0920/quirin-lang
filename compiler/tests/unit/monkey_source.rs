@@ -488,7 +488,7 @@ fn wrapper_import_retains_nullable_and_registration_failure_exits() {
         calls(&summary(&results, 3).paths()[0]),
         ["event_base_free", "mk_mem_free", "mk_mem_free"]
     );
-    assert!(matches!(&results[5], MonkeySourceResult::Unknown { .. }));
+    assert!(matches!(&results[5], MonkeySourceResult::Summary(_)));
 }
 
 #[test]
@@ -561,6 +561,7 @@ fn stack_socketpair_cells_remain_memory_reads_after_opaque_calls() {
         return;
     }
     let original = include_str!("../fixtures/monkey/wrappers.c");
+    let original = original.replace("_mk_event_channel_create", "_fixture_channel_create");
     let source = format!(
         "{original}\nint _mk_event_channel_create(int *out) {{ int fd[2]; int ret = mk_event_libevent_socketpair(fd); if (ret == -1) return -1; *out = fd[1]; return fd[0]; }}"
     );
@@ -605,4 +606,94 @@ fn aggregate_symbol_validation_rejects_nested_forward_reference() {
         }],
     };
     assert!(check_path_symbols(&path).is_err());
+}
+
+#[test]
+fn wrapper_assertions_retain_abort_paths_and_stop_following_calls() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let results = wrappers(include_str!("../fixtures/monkey/wrappers.c"));
+    for index in [5, 6, 7, 9] {
+        let imported = summary(&results, index);
+        assert!(
+            imported
+                .paths()
+                .iter()
+                .any(|path| matches!(path.operations.last(), Some(SourceOperation::Terminate)))
+        );
+        assert!(imported.paths().iter().any(|path| matches!(
+            path.operations.last(),
+            Some(SourceOperation::ReturnValue { .. })
+        )));
+        for path in imported.paths() {
+            if calls(path).contains(&"abort") {
+                assert_eq!(calls(path).last(), Some(&"abort"));
+                assert_eq!(path.operations.last(), Some(&SourceOperation::Terminate));
+            }
+            check_path_symbols(path).unwrap();
+        }
+    }
+}
+
+#[test]
+fn single_iteration_macros_do_not_erase_control_or_terminal_failures() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let prefix = "void stop(void) __attribute__((noreturn)); void opaque(void);";
+    let source = format!(
+        "{prefix} int _mk_event_init(void) {{ do {{ if (1) stop(); opaque(); }} while (0); return 4; }}"
+    );
+    let results = wrappers(&source);
+    let imported = summary(&results, 1);
+    assert_eq!(imported.paths().len(), 2);
+    assert_eq!(calls(&imported.paths()[0]), ["stop"]);
+    assert_eq!(
+        imported.paths()[0].operations.last(),
+        Some(&SourceOperation::Terminate)
+    );
+    assert_eq!(calls(&imported.paths()[1]), ["opaque"]);
+    assert!(imported.paths()[1].operations.iter().any(|op| matches!(op, SourceOperation::Guard { taken: false, condition: SourceValue { expression: SourceExpression::Integer { value }, .. } } if value == "0")));
+    for replacement in ["while (1)", "while (0 + 0)"] {
+        assert!(matches!(
+            &wrappers(&source.replace("while (0)", replacement))[1],
+            MonkeySourceResult::Unknown { .. }
+        ));
+    }
+    for body in [
+        "stop(); while (0) {}",
+        "do { break; } while (0)",
+        "do { continue; } while (0)",
+    ] {
+        let source = format!("{prefix} int _mk_event_init(void) {{ {body}; return 0; }}");
+        assert!(matches!(
+            &wrappers(&source)[1],
+            MonkeySourceResult::Unknown { .. }
+        ));
+    }
+    let source = "int stop(void) __attribute__((noreturn)); int _mk_event_init(void) { int x = stop(); return x; }";
+    assert!(matches!(
+        &wrappers(source)[1],
+        MonkeySourceResult::Unknown { .. }
+    ));
+}
+
+#[test]
+fn stack_typedefs_require_the_actual_int_element_type() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    for ty in ["long", "volatile int", "int[3]"] {
+        let typedef = if ty == "int[3]" {
+            "typedef int slot_t[3];".to_string()
+        } else {
+            format!("typedef {ty} slot_t;")
+        };
+        let source = format!("{typedef} int _mk_event_init(void) {{ slot_t slots[2]; return 0; }}");
+        assert!(matches!(
+            &wrappers(&source)[1],
+            MonkeySourceResult::Unknown { .. }
+        ));
+    }
 }

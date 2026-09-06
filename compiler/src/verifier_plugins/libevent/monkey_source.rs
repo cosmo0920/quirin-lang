@@ -135,6 +135,8 @@ pub enum SourceOperation {
         value: SourceValue,
     },
     Return,
+    /// A source-declared nonreturning call ended this path. This is not teardown.
+    Terminate,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -239,7 +241,15 @@ fn import_functions(
         .map(|function| {
             let result = function_ast(&source, unit, function).and_then(|ast| {
                 let constants = enum_constants(&ast, &source, unit)?;
-                derive(&ast, function, source_revision, &fields, &constants)
+                let arrays = array_types(&ast, &source, unit)?;
+                derive(
+                    &ast,
+                    function,
+                    source_revision,
+                    &fields,
+                    &constants,
+                    &arrays,
+                )
             });
             match result {
                 Ok(summary) => MonkeySourceResult::Summary(summary),
@@ -250,6 +260,43 @@ fn import_functions(
             }
         })
         .collect())
+}
+
+// Clang preserves typedef spelling inside arrays. Resolve their element type
+// from declarations in the same source rather than assuming a socket ABI.
+fn array_types(
+    ast: &Value,
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+) -> Result<BTreeSet<String>, String> {
+    fn collect(node: &Value, types: &mut BTreeSet<String>) {
+        if kind(node) == "VarDecl"
+            && let Ok(ty) = c_type(node)
+            && ty.ends_with("[2]")
+        {
+            types.insert(ty);
+        }
+        for child in children(node) {
+            collect(child, types);
+        }
+    }
+    let mut types = BTreeSet::from(["int[2]".into()]);
+    collect(ast, &mut types);
+    for ty in &types {
+        let base = ty.strip_suffix("[2]").unwrap();
+        if base == "int" {
+            continue;
+        }
+        let declarations = ast_declarations(source, unit, base)?;
+        let exact: Vec<_> = declarations
+            .iter()
+            .filter(|node| kind(node) == "TypedefDecl" && node["name"] == base)
+            .collect();
+        if !matches!(exact.as_slice(), [decl] if c_type(decl).as_deref() == Ok("int")) {
+            return Err("stack array element is not an unambiguous int typedef".into());
+        }
+    }
+    Ok(types)
 }
 
 // Resolve explicit enum values from this same preprocessed input, never from
@@ -348,6 +395,8 @@ enum Stmt {
     OrAssign(Expr, Expr),
     Increment(Expr),
     Call(Expr),
+    NoReturnCall(Expr),
+    DoOnce(Box<Self>, Expr),
     If(Expr, Box<Self>, Option<Box<Self>>),
     Return(Option<Expr>),
 }
@@ -355,6 +404,8 @@ enum Stmt {
 struct Importer<'a> {
     fields: &'a BTreeMap<(String, String), String>,
     constants: &'a BTreeMap<String, SourceValue>,
+    opaque_direct_calls: bool,
+    arrays: &'a BTreeSet<String>,
     locals: BTreeSet<String>,
     nodes: usize,
 }
@@ -463,6 +514,9 @@ impl Importer<'_> {
                 )))
             }
             ("ParenExpr", [child]) => self.expression(child, depth + 1),
+            ("PredefinedExpr", [child]) if kind(child) == "StringLiteral" => {
+                self.expression(child, depth + 1)
+            }
             ("ImplicitCastExpr", [child]) if node["castKind"] == "LValueToRValue" => {
                 Ok(Expr::Read(ty, Box::new(self.expression(child, depth + 1)?)))
             }
@@ -528,7 +582,10 @@ impl Importer<'_> {
                     return Err("indirect or unmodeled call".into());
                 };
                 if kind(callee) != "ImplicitCastExpr"
-                    || callee["castKind"] != "FunctionToPointerDecay"
+                    || !matches!(
+                        callee["castKind"].as_str(),
+                        Some("FunctionToPointerDecay" | "BuiltinFnToFnPtr")
+                    )
                     || kind(reference) != "DeclRefExpr"
                     || reference["referencedDecl"]["kind"] != "FunctionDecl"
                 {
@@ -539,30 +596,32 @@ impl Importer<'_> {
                     .ok_or("missing call name")?;
                 // This list bounds syntax only. It does not assume these calls
                 // succeed or have a particular custody/destruction effect.
-                if !matches!(
-                    name,
-                    "send"
-                        | "__errno_location"
-                        | "evutil_socket_geterror"
-                        | "perror"
-                        | "evutil_closesocket"
-                        | "event_del"
-                        | "event_free"
-                        | "mk_mem_free"
-                        | "mk_mem_alloc_z"
-                        | "event_base_new"
-                        | "event_base_free"
-                        | "event_new"
-                        | "event_add"
-                        | "event_base_loop"
-                        | "evutil_socketpair"
-                        | "_mk_event_init"
-                        | "_mk_event_update"
-                        | "_mk_event_add"
-                        | "_mk_event_del"
-                        | "mk_event_libevent_socketpair"
-                        | "_mk_event_wait_with_flags"
-                ) {
+                if !self.opaque_direct_calls
+                    && !matches!(
+                        name,
+                        "send"
+                            | "__errno_location"
+                            | "evutil_socket_geterror"
+                            | "perror"
+                            | "evutil_closesocket"
+                            | "event_del"
+                            | "event_free"
+                            | "mk_mem_free"
+                            | "mk_mem_alloc_z"
+                            | "event_base_new"
+                            | "event_base_free"
+                            | "event_new"
+                            | "event_add"
+                            | "event_base_loop"
+                            | "evutil_socketpair"
+                            | "_mk_event_init"
+                            | "_mk_event_update"
+                            | "_mk_event_add"
+                            | "_mk_event_del"
+                            | "mk_event_libevent_socketpair"
+                            | "_mk_event_wait_with_flags"
+                    )
+                {
                     return Err(format!(
                         "call {name} is outside the callback source profile"
                     ));
@@ -590,6 +649,22 @@ impl Importer<'_> {
                     .map(|stmt| self.statement(stmt, depth + 1))
                     .collect::<Result<_, _>>()?,
             )),
+            ("NullStmt", []) => Ok(Stmt::Block(vec![])),
+            ("DoStmt", [body, condition]) => {
+                // Macro-style single execution only. Parse the entire body;
+                // break/continue and nonliteral conditions still fail closed.
+                let mut literal = condition;
+                while kind(literal) == "ParenExpr" && children(literal).len() == 1 {
+                    literal = &children(literal)[0];
+                }
+                if kind(literal) != "IntegerLiteral" || literal["value"] != "0" {
+                    return Err("do loop requires a literal zero condition".into());
+                }
+                Ok(Stmt::DoOnce(
+                    Box::new(self.statement(body, depth + 1)?),
+                    self.expression(condition, depth + 1)?,
+                ))
+            }
             ("DeclStmt", [decl])
                 if kind(decl) == "VarDecl" && decl.get("storageClass").is_none() =>
             {
@@ -601,6 +676,7 @@ impl Importer<'_> {
                 // Fixed storage only: no VLA, implicit aggregate initialization,
                 // or destructor attributes. Array cells are explicit memory reads.
                 if !(ty.ends_with('*')
+                    || self.arrays.contains(&ty)
                     || matches!(
                         ty.as_str(),
                         "int"
@@ -649,7 +725,15 @@ impl Importer<'_> {
                 Box::new(self.statement(yes, depth + 1)?),
                 Some(Box::new(self.statement(no, depth + 1)?)),
             )),
-            ("CallExpr", _) => Ok(Stmt::Call(self.expression(node, depth + 1)?)),
+            ("CallExpr", _) => {
+                let expr = self.expression(node, depth + 1)?;
+                if matches!(&expr, Expr::Call(_, _, signature, _) if signature.ends_with(" __attribute__((noreturn))"))
+                {
+                    Ok(Stmt::NoReturnCall(expr))
+                } else {
+                    Ok(Stmt::Call(expr))
+                }
+            }
             ("ReturnStmt", []) => Ok(Stmt::Return(None)),
             ("ReturnStmt", [result]) => Ok(Stmt::Return(Some(self.expression(result, depth + 1)?))),
             _ => Err(format!("unmodeled callback statement {}", kind(node))),
@@ -663,6 +747,7 @@ struct Path {
     addressed: BTreeSet<String>,
     operations: Vec<SourceOperation>,
     returned: bool,
+    terminated: bool,
     return_value: Option<SourceValue>,
     next_local: usize,
 }
@@ -763,25 +848,37 @@ impl Path {
                 )
             }
             Expr::Call(ty, function, signature, arguments) => {
-                reject_unsequenced(&arguments.iter().collect::<Vec<_>>())?;
-                let arguments = arguments
-                    .iter()
-                    .map(|arg| self.evaluate(arg))
-                    .collect::<Result<_, _>>()?;
-                let operation = self.push(SourceOperation::Call {
-                    function: function.clone(),
-                    signature: signature.clone(),
-                    arguments,
-                    result_type: ty.clone(),
-                })?;
-                // Opaque calls can change any escaped local, even if the
-                // callee's declaration uses const. Do not reuse its old value.
-                self.invalidate_addressed();
-                value(ty.clone(), SourceExpression::Symbol { operation })
+                if signature.contains("noreturn") {
+                    return Err("nonreturning call requires a terminal statement".into());
+                }
+                self.call(ty, function, signature, arguments)?
             }
         };
         check_value_size(&result)?;
         Ok(result)
+    }
+
+    fn call(
+        &mut self,
+        ty: &str,
+        function: &str,
+        signature: &str,
+        arguments: &[Expr],
+    ) -> Result<SourceValue, String> {
+        reject_unsequenced(&arguments.iter().collect::<Vec<_>>())?;
+        let arguments = arguments
+            .iter()
+            .map(|arg| self.evaluate(arg))
+            .collect::<Result<_, _>>()?;
+        let operation = self.push(SourceOperation::Call {
+            function: function.into(),
+            signature: signature.into(),
+            arguments,
+            result_type: ty.into(),
+        })?;
+        // Calls may change any escaped local, including through const aliases.
+        self.invalidate_addressed();
+        Ok(value(ty.into(), SourceExpression::Symbol { operation }))
     }
 
     fn update(&mut self, place: &Expr, operator: &str, right: SourceValue) -> Result<(), String> {
@@ -914,7 +1011,8 @@ fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
             SourceOperation::Guard { condition, .. } => (vec![condition], None),
             SourceOperation::LocalStart { .. }
             | SourceOperation::LocalEnd { .. }
-            | SourceOperation::Return => (vec![], None),
+            | SourceOperation::Return
+            | SourceOperation::Terminate => (vec![], None),
         };
         for value in values {
             visit_value(value, |value| {
@@ -991,7 +1089,7 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
     }
     let mut output = Vec::new();
     for mut path in paths {
-        if path.returned {
+        if path.returned || path.terminated {
             output.push(path);
             continue;
         }
@@ -1005,7 +1103,7 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                     .transpose()?;
                 path.locals
                     .insert(id.clone(), (index, ty.clone(), result.clone()));
-                if ty == "int[2]" || ty == "struct timeval" {
+                if ty.ends_with("[2]") || ty == "struct timeval" {
                     path.push(SourceOperation::LocalStart {
                         local: index,
                         c_type: ty.clone(),
@@ -1055,6 +1153,28 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
             Stmt::Call(expr) => {
                 path.evaluate(expr)?;
             }
+            Stmt::NoReturnCall(Expr::Call(ty, function, signature, arguments)) => {
+                path.call(ty, function, signature, arguments)?;
+                path.terminated = true;
+            }
+            Stmt::NoReturnCall(_) => unreachable!(),
+            Stmt::DoOnce(body, condition) => {
+                let mut once = execute(body, vec![path])?;
+                for path in &mut once {
+                    if !path.returned && !path.terminated {
+                        let condition = path.evaluate(condition)?;
+                        path.push(SourceOperation::Guard {
+                            condition,
+                            taken: false,
+                        })?;
+                    }
+                }
+                output.extend(once);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
             Stmt::If(condition, yes, no) => {
                 let condition = path.evaluate(condition)?;
                 let mut other = path.clone();
@@ -1100,6 +1220,7 @@ fn derive(
     revision: &str,
     fields: &BTreeMap<(String, String), String>,
     constants: &BTreeMap<String, SourceValue>,
+    arrays: &BTreeSet<String>,
 ) -> Result<MonkeySourceSummary, String> {
     let callback = CALLBACKS.contains(&function);
     let signature = c_type(ast)?;
@@ -1123,6 +1244,8 @@ fn derive(
     let mut importer = Importer {
         fields,
         constants,
+        opaque_direct_calls: !callback,
+        arrays,
         locals: BTreeSet::new(),
         nodes: 0,
     };
@@ -1161,7 +1284,9 @@ fn derive(
     let paths = execute(&statement, vec![path])?
         .into_iter()
         .map(|mut path| {
-            if return_type == "void" {
+            if path.terminated {
+                path.push(SourceOperation::Terminate)?;
+            } else if return_type == "void" {
                 if path.return_value.is_some() {
                     return Err("value returned from void function".into());
                 }

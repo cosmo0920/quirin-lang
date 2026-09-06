@@ -100,3 +100,8 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackSource.accepted_storage_start_retains_existing
 #print axioms QCore.CallbackSource.storage_end_removes_identity
 #print axioms QCore.CallbackSource.storage_end_preserves_other_identity
+
+#print axioms QCore.CallbackSource.terminated_path_has_no_following_effects
+#print axioms QCore.CallbackSource.returned_path_has_no_following_effects
+#print axioms QCore.CallbackSource.running_macro_retains_body_and_false_guard
+#print axioms QCore.CallbackSource.terminal_macro_does_not_test_condition

@@ -1,0 +1,9 @@
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.34s
+     Running unittests examples/cycle19_fluent_bit_libraries_audit.rs (target/debug/examples/cycle19_fluent_bit_libraries_audit-098d339b28e9844c)
+
+running 2 tests
+test legacy_audit_report::tests::inventory_retains_failure_reason_without_a_partial_summary ... ok
+test legacy_audit_report::tests::inventory_keeps_unknown_diagnostics_inside_unsafe_units_and_unprojected_names ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

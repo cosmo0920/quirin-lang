@@ -1,0 +1,11 @@
+{
+  "resource_inventory_byte_identical": true,
+  "resource_inventory_sha256": "d06fd972d9d328de794196a50a380b3ce7513a79767de9ec746fc788a4a07035",
+  "callback_summaries_identical": true,
+  "workspace_tests_passed": 337,
+  "imported_wrappers_before": 10,
+  "imported_wrappers_after": 14,
+  "symbolic_paths_before": 41,
+  "symbolic_paths_after": 81,
+  "terminal_paths": 7
+}

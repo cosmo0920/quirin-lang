@@ -371,6 +371,9 @@ impl Replay<'_> {
                 return Err("operation after return".into());
             }
             match operation {
+                O::Terminate => {
+                    return Err("nonreturning path outside callback replay profile".into());
+                }
                 O::LocalStart { .. } => {
                     return Err("aggregate storage outside callback replay profile".into());
                 }
