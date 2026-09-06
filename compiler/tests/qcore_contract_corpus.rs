@@ -18,6 +18,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/chunk_destructor.qcore", "cio_chunk_close", 10),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_delete", 5),
     ("chunkio/context_destructor.qcore", "cio_destroy", 7),
+    ("chunkio/error_state.qcore", "cio_error_reset", 5),
     (
         "chunkio/import_composition.qcore",
         "check_imported_chunk_program",
@@ -77,6 +78,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "release_library_resource",
         3,
     ),
+    ("library/source_projection.qcore", "source_enum_value", 2),
+    ("library/source_projection.qcore", "source_scan_effects", 3),
+    ("library/source_projection.qcore", "source_scan_initial", 2),
+    ("library/source_projection.qcore", "source_type_match", 1),
+    ("library/source_projection.qcore", "source_symbol", 1),
+    ("library/source_projection.qcore", "source_loop_index", 1),
+    ("library/source_projection.qcore", "source_scan_region", 1),
+    ("library/source_projection.qcore", "frame_write", 2),
+    ("library/source_projection.qcore", "frame_declaration", 2),
+    ("library/source_projection.qcore", "frame_dependency", 2),
     ("librdkafka/memory.qcore", "rd_malloc", 3),
     ("librdkafka/memory.qcore", "rd_calloc", 4),
     ("librdkafka/memory.qcore", "rd_strdup", 3),
@@ -143,6 +154,25 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
+    (
+        "monkey/wrapper_paths.qcore",
+        "mk_event_libevent_socketpair",
+        3,
+    ),
+    ("monkey/wrapper_paths.qcore", "_mk_event_init", 3),
+    ("monkey/wrapper_paths.qcore", "_mk_event_loop_create", 5),
+    ("monkey/wrapper_paths.qcore", "_mk_event_loop_destroy", 4),
+    ("monkey/wrapper_paths.qcore", "_mk_event_update", 5),
+    ("monkey/wrapper_paths.qcore", "_mk_event_add", 7),
+    ("monkey/wrapper_paths.qcore", "_mk_event_del", 7),
+    ("monkey/wrapper_paths.qcore", "_mk_event_timeout_create", 7),
+    ("monkey/wrapper_paths.qcore", "_mk_event_timeout_destroy", 4),
+    ("monkey/wrapper_paths.qcore", "_mk_event_channel_create", 5),
+    ("monkey/wrapper_paths.qcore", "_mk_event_channel_destroy", 4),
+    ("monkey/wrapper_paths.qcore", "_mk_event_inject", 6),
+    ("monkey/wrapper_paths.qcore", "_mk_event_wait_with_flags", 4),
+    ("monkey/wrapper_paths.qcore", "_mk_event_wait_2", 5),
+    ("monkey/wrapper_paths.qcore", "_mk_event_backend", 3),
 ];
 
 fn corpus_root() -> PathBuf {
@@ -177,7 +207,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 22, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 25, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

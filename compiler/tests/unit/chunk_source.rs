@@ -403,3 +403,55 @@ fn helper_dependencies_reject_layout_duplicates_and_wrong_pointer_binding() {
         [ChunkSourceResult::Unknown { .. }]
     ));
 }
+
+#[test]
+fn native_helper_contract_checks_values_footprint_and_signature() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let contract = include_str!("../../../contract/qcore/chunkio/error_state.qcore")
+        .replace("cio_error_reset", "reset");
+    let helper = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 0; }").unwrap();
+    assert_eq!(
+        crate::chunk_contract::check_chunk_frame_contract(&helper, &contract).unwrap(),
+        3
+    );
+    for (old, replacement) in [
+        ("field_error_n == 0", "field_error_n == 1"),
+        ("field_error_n == 0", "unknown_predicate"),
+        ("field_error_n == 0", "field_missing == 0"),
+        ("requires chunk_is_live;", ""),
+        (
+            "requires exclusive_chunk_access;",
+            "requires invented_assumption;",
+        ),
+        ("ensures normal writes_only_declared_fields;", ""),
+        ("mut, Chunk", "const, Chunk"),
+        ("-> unit", "-> i32"),
+        (" use one", ""),
+        ("ensures normal", "ensures any"),
+        ("reset(", "different("),
+    ] {
+        assert!(
+            crate::chunk_contract::check_chunk_frame_contract(
+                &helper,
+                &contract.replace(old, replacement)
+            )
+            .is_err(),
+            "accepted {replacement}"
+        );
+    }
+    let helper = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 1; }").unwrap();
+    assert!(crate::chunk_contract::check_chunk_frame_contract(&helper, &contract).is_err());
+    let source = "struct cio_chunk { int lock; int error_n; int extra; }; void reset(struct cio_chunk *ch) { ch->error_n = 0; ch->extra = 0; }";
+    let helper = import_chunk_frame_helper(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        PINNED_FLUENT_BIT_REVISION,
+        "reset",
+    )
+    .unwrap();
+    assert!(crate::chunk_contract::check_chunk_frame_contract(&helper, &contract).is_err());
+}

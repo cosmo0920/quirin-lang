@@ -7,7 +7,7 @@ use std::process::{Command, ExitCode};
 mod legacy_audit_report;
 use legacy_audit_report::AuditReport;
 
-use qcore_compiler::chunk_contract::check_chunk_source_contract;
+use qcore_compiler::chunk_contract::{check_chunk_frame_contract, check_chunk_source_contract};
 use qcore_compiler::contract_loader::load_resource_contract_manifest;
 use qcore_compiler::verifier_plugins::chunkio::{
     ChunkFrameSummary, ChunkSourceResult, import_chunk_frame_helper,
@@ -312,6 +312,8 @@ fn run(
             "schema_version": 1, "source_revision": revision,
             "scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
             "results": native_results,
+            "source_policy_contract": include_str!("../../contract/qcore/library/source_projection.qcore"),
+            "frame_helper_contract": include_str!("../../contract/qcore/chunkio/error_state.qcore"),
         });
         fs::write(
             &sidecar,
@@ -404,11 +406,15 @@ fn audit_library(
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
-        chunk_helpers.push(import_chunk_frame_helper(
-            &unit,
-            PINNED_FLUENT_BIT_COMMIT,
-            "cio_error_reset",
-        )?);
+        let helper = import_chunk_frame_helper(&unit, PINNED_FLUENT_BIT_COMMIT, "cio_error_reset")?;
+        let postconditions = check_chunk_frame_contract(
+            &helper,
+            include_str!("../../contract/qcore/chunkio/error_state.qcore"),
+        )?;
+        println!(
+            "qcore-contract cio_error_reset: Checked ({postconditions} postconditions; complete constant-field helper body, live/exclusive premises assumed)"
+        );
+        chunk_helpers.push(helper);
         println!(
             "chunk-source dependency cio_error_reset: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
         );
@@ -642,6 +648,9 @@ fn audit_monkey_callback_source(
             "source_revision": PINNED_FLUENT_BIT_COMMIT,
             "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
             "source_projection_only": true,
+            "source_policy_contract": include_str!("../../contract/qcore/library/source_projection.qcore"),
+            "wrapper_behavior_specification": include_str!("../../contract/qcore/monkey/wrapper_paths.qcore"),
+            "wrapper_behavior_specification_status": "syntax-preserved source findings; custody and behavioral predicate replay not certified",
             "callbacks": results,
             "wrappers": wrappers,
         });

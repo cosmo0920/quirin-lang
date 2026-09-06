@@ -23,7 +23,7 @@ The clauses are retained in the source AST for future semantic passes. Today,
 the driver checks their grammar and preserves their spans and expressions; it
 does not yet use arbitrary contract predicates to mint a safety certificate.
 
-Two contracts now have a bounded semantic check against actual C source:
+Two contract modules contain three bounded semantic checks against actual C source:
 `fluent_bit/busy_state.qcore` and `chunkio/lock_state.qcore`. Their function
 names, preconditions, return relations, and frame conditions are defined here;
 the Rust checker interprets these files rather than duplicating their
@@ -34,13 +34,14 @@ and checks every `ensures normal` clause over all four entry combinations of
 the Boolean ghost fields `busy` and `lock`. `old_busy` and `old_lock` denote
 entry values; `busy` and `lock` denote exit values; `result` is the C integer
 return. The bounded predicate language supports integer literals, these five
-ghost names, addition, subtraction, parentheses, and `==`/`!=`. Unknown
+ghost names plus helper-written `field_NAME` values, addition, subtraction, parentheses, and `==`/`!=`. Unknown
 predicates and unsupported clause kinds are rejected, not assumed true.
 
 The live-chunk, exclusive-access, and Boolean-domain `requires` clauses are
 caller assumptions. Source checking does not establish them at arbitrary call
-sites. The imported body may access only the selected field; this establishes
-the other field's frame condition in this bounded model. A negative C return
+sites. The imported body may access the selected field and source-validated constant-field
+helpers; their disjoint write footprints establish the other field's frame condition
+in this bounded model. A negative C return
 is still an `ensures normal` exit, not a QCore typed exception.
 
 Run the semantic source checks with the existing Fluent Bit build database:
@@ -50,10 +51,10 @@ cargo run --quiet -p qcore-compiler \
   --example cycle19_fluent_bit_libraries_audit -- ../fluent-bit
 ```
 
-Look for `qcore-contract ...: Checked` for both functions. The audit additionally
+Look for `qcore-contract ...: Checked` for the three field functions. The audit additionally
 prints an explicit `Unknown` for every unmodeled function in `cio_chunk.c` and
 `flb_input_chunk.c`. Unsupported source bodies never receive a field summary.
-These two contract checks do not promote either translation unit to `Safe`.
+These field contract checks do not promote either translation unit to `Safe`.
 The ordinary `qcorec check FILE.qcore` command continues to perform the compiler
 and contract-syntax checks; use the audit above to bind these contracts to C.
 
@@ -66,7 +67,7 @@ for syntax, multi-file behavior, compiler API changes, and current boundaries.
 `include/fluent-bit/flb_mem.h`, compiled with Fluent Bit's include/define
 profile and allocator observation hooks. Its five functions passed 145
 recorded executions, including deterministic allocator failures. This is
-runtime contract evaluation, separate from the two static Boolean-field
+runtime contract evaluation, separate from the static Boolean-field
 source checks above. See the [native evaluation report](../../docs/reports/cycle19-native-contracts/README.md)
 for reproducible commands, assumptions, and exclusions.
 
@@ -149,3 +150,32 @@ When a resource inventory path is supplied, the pinned audit also writes
 chunk-function results, exact checked QCore contracts and dependency sources.
 Unknown results remain in that inventory. The generic resource report and its
 Safe/Unsafe/Unknown classifications are separate and unchanged by these checks.
+
+## Extracted wrapper and source-policy contracts
+
+The latest source findings are retained in three additional modules:
+
+- `library/source_projection.qcore`: ten **executable** policies for evaluated
+  enum values, scan effects/initialization, typed symbols and induction scope,
+  source type matching, read-only scan regions, and frame-write/declaration/
+  dependency checks. Both source importers consume these rules through the
+  shared predicate interpreter. AST decoding and operational semantics stay
+  in Rust; arbitrary C safety is not inferred from policy acceptance.
+- `chunkio/error_state.qcore`: the **executable** `cio_error_reset` frame
+  contract. `check_chunk_frame_contract` checks the reset constant, explicit
+  write footprint and preserved lock against the source-validated helper.
+  It requires an explicit mutable Chunk borrow with `use one`, unit result,
+  live-storage and exclusive-access premises. Changed values, unmentioned
+  writes, unsupported predicates and signature mismatches reject the check.
+- `monkey/wrapper_paths.qcore`: **syntax-preserved behavioral specifications**
+  for all 15 selected wrappers, including allocation/registration failures,
+  descriptor close calls, timed waits and the injection scan. These predicates
+  do not yet have behavioral/custody replay and do not issue a safety certificate.
+  A close/free call is not asserted to have discharged its resource obligation.
+
+The audit sidecars retain the exact executable source-policy/helper inputs and
+label the wrapper behavioral specifications as unverified. These three modules
+are intentionally outside the declarative resource-projection manifest: their
+predicates are not approximated as acquire/release annotations. Corpus tests pin
+all declarations and clauses across 25 modules; mutation regressions exercise
+every extracted policy. See the [extraction report](../../docs/reports/cycle19-contract-extraction/README.md).

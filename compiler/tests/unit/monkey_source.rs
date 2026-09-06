@@ -786,3 +786,15 @@ fn scan_loops_reject_effects_and_induction_values_cannot_escape() {
     };
     assert!(check_path_symbols(&invalid).is_err());
 }
+
+#[test]
+fn native_wrapper_specs_cover_the_exact_selected_source_functions() {
+    let source = include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
+    let parsed = crate::frontend::parse_source_program(source).unwrap();
+    let names: Vec<_> = parsed
+        .declarations
+        .iter()
+        .map(|decl| decl.value.name.as_str())
+        .collect();
+    assert_eq!(names, WRAPPERS);
+}

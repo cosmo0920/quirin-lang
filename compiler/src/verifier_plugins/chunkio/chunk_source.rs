@@ -121,6 +121,15 @@ pub struct ChunkFrameSummary {
     writes: Vec<(String, i32)>,
 }
 
+impl ChunkFrameSummary {
+    pub fn function(&self) -> &str {
+        &self.function
+    }
+    pub fn writes(&self) -> &[(String, i32)] {
+        &self.writes
+    }
+}
+
 fn record_layout(
     source: &str,
     unit: &C11TranslationUnit<'_>,
@@ -192,15 +201,22 @@ pub fn import_chunk_frame_helper(
         let field = place["name"]
             .as_str()
             .ok_or("helper requires a named field")?;
-        if kind(statement) != "BinaryOperator"
-            || statement["opcode"] != "="
-            || matches!(field, "busy" | "lock")
-            || !layout.contains(&(field.into(), "int".into()))
-        {
-            return Err(
-                "helper must preserve lifecycle fields and write ordinary int fields".into(),
-            );
+        if kind(statement) != "BinaryOperator" || statement["opcode"] != "=" {
+            return Err("helper requires a direct assignment".into());
         }
+        crate::source_contract::check(
+            "frame_write",
+            &[
+                (
+                    "lifecycle_field",
+                    i128::from(matches!(field, "busy" | "lock")),
+                ),
+                (
+                    "ordinary_int_field",
+                    i128::from(layout.contains(&(field.into(), "int".into()))),
+                ),
+            ],
+        )?;
         let mut importer = Importer {
             parameter_id: id,
             field_name: field,
@@ -275,24 +291,33 @@ pub fn import_chunk_source_with_helpers(
                 .iter()
                 .filter(|node| kind(node) == "FunctionDecl" && node["name"] == helper.function)
                 .collect();
-            if exact.is_empty()
-                || exact.iter().any(|decl| {
-                    decl["storageClass"] == "static"
-                        || decl["type"]["qualType"] != "void (struct cio_chunk *)"
-                        || children(decl)
-                            .iter()
-                            .any(|child| kind(child) != "ParmVarDecl")
-                })
-            {
-                return Err("frame dependency requires matching external declarations without local definitions".into());
-            }
-            if helper.layout != layout
-                || checked_helpers
-                    .insert(helper.function.clone(), helper)
-                    .is_some()
-            {
-                return Err("helper layout mismatch or duplicate helper".into());
-            }
+            crate::source_contract::check(
+                "frame_declaration",
+                &[
+                    ("declaration_count", exact.len() as i128),
+                    (
+                        "all_external_prototypes",
+                        i128::from(exact.iter().all(|decl| {
+                            decl["storageClass"] != "static"
+                                && decl["type"]["qualType"] == "void (struct cio_chunk *)"
+                                && children(decl)
+                                    .iter()
+                                    .all(|child| kind(child) == "ParmVarDecl")
+                        })),
+                    ),
+                ],
+            )?;
+            crate::source_contract::check(
+                "frame_dependency",
+                &[
+                    ("layout_matches", i128::from(helper.layout == layout)),
+                    (
+                        "duplicate",
+                        i128::from(checked_helpers.contains_key(&helper.function)),
+                    ),
+                ],
+            )?;
+            checked_helpers.insert(helper.function.clone(), helper);
         }
     }
     let layouts = [("flb_input_chunk", "busy"), ("cio_chunk", "lock")]

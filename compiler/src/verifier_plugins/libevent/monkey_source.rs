@@ -364,9 +364,19 @@ fn enum_constants(
         let [initial] = children(decl) else {
             return Err("enum constant requires an explicit evaluated initializer".into());
         };
-        if kind(initial) != "ConstantExpr" || c_type(initial)? != c_type(decl)? {
-            return Err("enum initializer outside evaluated scalar profile".into());
-        }
+        crate::source_contract::check(
+            "source_enum_value",
+            &[
+                (
+                    "evaluated_constant",
+                    i128::from(kind(initial) == "ConstantExpr"),
+                ),
+                (
+                    "type_matches",
+                    i128::from(c_type(initial)? == c_type(decl)?),
+                ),
+            ],
+        )?;
         let integer = initial["value"]
             .as_str()
             .ok_or("missing evaluated enum value")?;
@@ -738,12 +748,14 @@ impl Importer<'_> {
                 let Stmt::Return(Some(result)) = single(yes) else {
                     return Err("scan match must return from the function".into());
                 };
-                if [effects(&condition), effects(matches), effects(result)]
-                    .iter()
-                    .any(|effect| effect.1)
-                {
-                    return Err("scan expressions cannot contain opaque calls".into());
-                }
+                crate::source_contract::check(
+                    "source_scan_effects",
+                    &[
+                        ("header_calls", i128::from(effects(&condition).1)),
+                        ("match_calls", i128::from(effects(matches).1)),
+                        ("return_calls", i128::from(effects(result).1)),
+                    ],
+                )?;
                 Ok(Stmt::ScanLoop(
                     Box::new(initial),
                     id,
@@ -1114,8 +1126,15 @@ fn check_path_symbols(path: &MonkeySourcePath) -> Result<(), String> {
             let scope = Some((*local, initial.c_type.as_str()));
             for region in [header, matches, early_return] {
                 for operation in &region.operations {
+                    crate::source_contract::check(
+                        "source_scan_region",
+                        &[(
+                            "read_only",
+                            i128::from(matches!(operation, SourceOperation::Read { .. })),
+                        )],
+                    )?;
                     let SourceOperation::Read { place } = operation else {
-                        return Err("scan region contains an effect other than a read".into());
+                        return Err("scan region has no read place".into());
                     };
                     check_references(place, &iteration_producers, scope)?;
                     iteration_producers.push(Some(&place.c_type));
@@ -1159,15 +1178,26 @@ fn check_references(
 ) -> Result<(), String> {
     visit_value(value, |value| {
         match value.expression {
-            SourceExpression::Symbol { operation }
-                if producers.get(operation).copied().flatten() != Some(value.c_type.as_str()) =>
-            {
-                return Err("symbol has no prior producer with its exact C type".into());
+            SourceExpression::Symbol { operation } => {
+                crate::source_contract::check(
+                    "source_symbol",
+                    &[(
+                        "producer_type_matches",
+                        i128::from(
+                            producers.get(operation).copied().flatten()
+                                == Some(value.c_type.as_str()),
+                        ),
+                    )],
+                )?;
             }
-            SourceExpression::LoopIndex { local }
-                if loop_index != Some((local, value.c_type.as_str())) =>
-            {
-                return Err("induction value is outside its typed loop scope".into());
+            SourceExpression::LoopIndex { local } => {
+                crate::source_contract::check(
+                    "source_loop_index",
+                    &[(
+                        "scope_matches",
+                        i128::from(loop_index == Some((local, value.c_type.as_str()))),
+                    )],
+                )?;
             }
             _ => {}
         }
@@ -1243,20 +1273,23 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
             Stmt::ScanLoop(initial, id, ty, header, matches, early_return) => {
                 let mut initialized = execute(initial, vec![path])?;
                 let mut path = initialized.pop().ok_or("missing scan initializer path")?;
-                if !initialized.is_empty() || path.addressed.contains(id) {
-                    return Err(
-                        "scan induction local must have unescaped single initialization".into(),
-                    );
-                }
+                crate::source_contract::check(
+                    "source_scan_initial",
+                    &[
+                        ("remaining_paths", initialized.len() as i128),
+                        ("index_escaped", i128::from(path.addressed.contains(id))),
+                    ],
+                )?;
                 let (local, _, initial) = path
                     .locals
                     .get(id)
                     .ok_or("scan local outside scope")?
                     .clone();
                 let initial = initial.ok_or("unknown scan initial value")?;
-                if initial.c_type != *ty {
-                    return Err("scan initial type mismatch".into());
-                }
+                crate::source_contract::check(
+                    "source_type_match",
+                    &[("type_matches", i128::from(initial.c_type == *ty))],
+                )?;
                 let index = value(ty.clone(), SourceExpression::LoopIndex { local });
                 let mut iteration = path.clone();
                 iteration.locals.get_mut(id).unwrap().2 = Some(index.clone());
@@ -1504,9 +1537,7 @@ fn derive(
                     .return_value
                     .take()
                     .ok_or("missing nonvoid return on a source path")?;
-                if value.c_type != return_type {
-                    return Err("returned value type differs from signature".into());
-                }
+                crate::source_contract::check("source_type_match", &[("type_matches", i128::from(value.c_type == return_type))])?;
                 path.push(SourceOperation::ReturnValue { value })?;
             }
             let path = MonkeySourcePath {

@@ -534,3 +534,14 @@ Four Lean scan-prefix theorems and all 342 Rust tests pass with the required
 formatting, Clippy, Lean and pinned external checks. Generic resource counts,
 the native chunk sidecar, callbacks and the other 14 wrappers are unchanged.
 Full 19B–19E safety/custody composition remains open.
+
+## Native extraction of new source contracts (2026-09-06)
+
+The [contract extraction report](../reports/cycle19-contract-extraction/README.md)
+records 26 new declarations across three QCore modules: ten executable source
+policies, the executable `cio_error_reset` frame contract, and 15 syntax-preserved
+Monkey wrapper behavior specifications. The importers consume the extracted
+policies; the pinned audit checks the helper contract and records all exact
+inputs. Wrapper behavioral/custody replay remains open. All 345 Rust tests,
+formatting, Clippy, Lean build/audit and the pinned audit pass. Resource inventory,
+callback/wrapper projections and native chunk-function results are unchanged.

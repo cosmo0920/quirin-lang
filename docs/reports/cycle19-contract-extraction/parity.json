@@ -1,0 +1,22 @@
+{
+  "resource_inventory_byte_identical": true,
+  "resource_inventory_sha256": "d06fd972d9d328de794196a50a380b3ce7513a79767de9ec746fc788a4a07035",
+  "monkey_callback_and_wrapper_results_identical": true,
+  "native_chunk_function_results_identical": true,
+  "workspace_tests_passed": 345,
+  "extracted_contracts": {
+    "chunkio/error_state.qcore": {
+      "declarations": 1,
+      "postconditions": 3
+    },
+    "library/source_projection.qcore": {
+      "declarations": 10,
+      "postconditions": 17
+    },
+    "monkey/wrapper_paths.qcore": {
+      "declarations": 15,
+      "postconditions": 51
+    }
+  },
+  "new_native_helper_contract_checked": "cio_error_reset"
+}

@@ -8,7 +8,131 @@ use crate::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
 };
 use crate::lexer::{Symbol, TokenKind, lex};
-use crate::verifier_plugins::chunkio::{ChunkSourceField, ChunkSourceSummary};
+use crate::verifier_plugins::chunkio::{ChunkFrameSummary, ChunkSourceField, ChunkSourceSummary};
+
+/// Check a native metadata contract against a complete source-validated helper
+/// body. Live storage and exclusive access are caller premises, not facts proved
+/// by this function. Unknown predicates and unmentioned writes fail closed.
+pub fn check_chunk_frame_contract(
+    summary: &ChunkFrameSummary,
+    source: &str,
+) -> Result<usize, String> {
+    let parsed = parse_source_program(source).map_err(|error| error.to_string())?;
+    let declarations: Vec<_> = parsed
+        .declarations
+        .iter()
+        .filter(|decl| decl.value.name == summary.function())
+        .collect();
+    let [decl] = declarations.as_slice() else {
+        return Err("expected one native frame-helper declaration".into());
+    };
+    let decl = &decl.value;
+    if decl.kind != DeclarationKind::ExternFunction || decl.parameters.len() != 1 {
+        return Err("frame helper requires one borrowed external parameter".into());
+    }
+    if decl.parameters[0].usage.as_ref().map(|usage| usage.value) != Some(crate::usage::Usage::ONE)
+    {
+        return Err("frame helper requires explicit use one".into());
+    }
+    let parameter = tokens(&decl.parameters[0].type_source)?;
+    let expected = tokens("borrow<'call, mut, Chunk>")?;
+    // Lifetimes are binders; their spelling does not change the borrow mode.
+    if parameter.len() != expected.len()
+        || parameter
+            .iter()
+            .zip(&expected)
+            .enumerate()
+            .any(|(index, (actual, expected))| index != 3 && actual != expected)
+        || !matches!(parameter.get(3), Some(TokenKind::Word(_)))
+    {
+        return Err("frame helper requires a mutable Chunk borrow".into());
+    }
+    let arrow = decl
+        .tokens
+        .iter()
+        .position(|token| *token == TokenKind::Symbol(Symbol::Arrow))
+        .ok_or("missing frame helper result")?;
+    if decl.tokens.get(arrow + 1) != Some(&TokenKind::Word("unit".into()))
+        || decl.tokens.get(arrow + 2) != Some(&TokenKind::Word("contract".into()))
+    {
+        return Err("frame helper requires unit result without additional effects".into());
+    }
+    let contract = decl
+        .function_contract
+        .as_ref()
+        .ok_or("missing frame contract")?;
+    let mut requirements = BTreeSet::new();
+    let mut fields = BTreeSet::new();
+    let mut ghost_names = BTreeSet::new();
+    for clause in &contract.clauses {
+        let clause_tokens = tokens(&clause.value.expression_source)?;
+        match clause.value.kind {
+            SourceContractClauseKind::Requires => {
+                let [TokenKind::Word(name)] = clause_tokens.as_slice() else {
+                    return Err("unsupported frame precondition".into());
+                };
+                if !requirements.insert(name.clone()) {
+                    return Err("duplicate frame precondition".into());
+                }
+            }
+            SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
+                for token in clause_tokens {
+                    if let TokenKind::Word(name) = token {
+                        if let Some(field) = name.strip_prefix("field_") {
+                            fields.insert(field.to_owned());
+                        }
+                        ghost_names.insert(name);
+                    }
+                }
+            }
+            _ => {
+                return Err(
+                    "frame contract supports requires and normal postconditions only".into(),
+                );
+            }
+        }
+    }
+    if requirements != BTreeSet::from(["chunk_is_live".into(), "exclusive_chunk_access".into()]) {
+        return Err("frame contract must require live storage and exclusive access".into());
+    }
+    if !ghost_names.contains("writes_only_declared_fields")
+        || !ghost_names.contains("lock_is_preserved")
+    {
+        return Err("frame contract must constrain the write footprint and lock frame".into());
+    }
+    let mut facts = BTreeMap::from([
+        ("chunk_is_live".into(), 1),
+        ("exclusive_chunk_access".into(), 1),
+        (
+            "writes_only_declared_fields".into(),
+            i128::from(
+                summary
+                    .writes()
+                    .iter()
+                    .all(|(field, _)| fields.contains(field)),
+            ),
+        ),
+        (
+            "lock_is_preserved".into(),
+            i128::from(summary.writes().iter().all(|(field, _)| field != "lock")),
+        ),
+    ]);
+    for (field, value) in summary.writes() {
+        facts.insert(format!("field_{field}"), i128::from(*value));
+    }
+    match crate::contract_observation::check_contract_observation(
+        source,
+        summary.function(),
+        &facts,
+    )? {
+        crate::contract_observation::ObservationVerdict::Checked { postconditions } => {
+            Ok(postconditions)
+        }
+        crate::contract_observation::ObservationVerdict::OutsidePreconditions { predicate } => {
+            Err(format!("unmet frame precondition {predicate}"))
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ChunkContractCertificate {
