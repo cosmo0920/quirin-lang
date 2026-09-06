@@ -351,19 +351,37 @@ fn infer_removed_wrapper(
 /// contract in force, and whether the resulting mode is *true* is decided by
 /// validation.
 fn out_parameter_candidates(cfg: &LegacyCfg, parameters: &[Option<String>]) -> Vec<bool> {
-    let written = cfg
-        .nodes
-        .iter()
-        .filter_map(|node| match &node.instruction {
+    let mut written = BTreeSet::new();
+    for node in &cfg.nodes {
+        let destination = match &node.instruction {
             LegacyInstruction::Alias { destination, .. }
             | LegacyInstruction::Clear { destination }
             | LegacyInstruction::ContractCall {
                 destination: Some(destination),
                 ..
-            } => destination.strip_prefix('*'),
+            } => Some(destination),
             _ => None,
-        })
-        .collect::<BTreeSet<_>>();
+        };
+        if let Some(name) = destination.and_then(|place| place.strip_prefix('*')) {
+            written.insert(name);
+        }
+        if let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+        {
+            for (mode, argument) in contract.parameters.iter().zip(arguments) {
+                if matches!(mode, ResourceParameterMode::Out { .. })
+                    && let Some(name) = argument
+                        .as_deref()
+                        .and_then(|place| place.strip_prefix('*'))
+                {
+                    written.insert(name);
+                }
+            }
+        }
+    }
     parameters
         .iter()
         .map(|name| name.as_deref().is_some_and(|name| written.contains(name)))

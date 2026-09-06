@@ -39,3 +39,9 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.removal_from_wrong_owner_rejects
 #print axioms QCore.CustodySummary.removal_left_contained_at_an_exit_rejects
 #print axioms QCore.CustodySummary.removed_formal_is_detached_after_validation
+
+#print axioms QCore.CustodySummary.forwarded_out_keeps_original_slot
+#print axioms QCore.CustodySummary.reassigned_out_pointer_cannot_forward
+#print axioms QCore.CustodySummary.unsanctioned_out_pointer_cannot_forward
+#print axioms QCore.CustodySummary.forwarded_nullable_site_does_not_discharge_nonnull_out
+#print axioms QCore.CustodySummary.direct_fresh_forwarding_discharges_out

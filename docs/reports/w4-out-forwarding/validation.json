@@ -1,0 +1,20 @@
+{
+  "commands": {
+    "workspace": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "lean-audits": 0
+  },
+  "workspace_tests": 567,
+  "lean_audits": 19,
+  "baseline_forwarding_regression_exit_code": 101,
+  "intermediate_shadow_regression_exit_code": 101,
+  "intermediate_alias_regression_exit_code": 101,
+  "local_owned_alias_regression_exit_code": 0,
+  "after_audit_exit_code": 0,
+  "baseline_audit": "reused successful Removed after-audit at 6ffcf6e",
+  "interrupted_attempts": "Earlier gates and audit were interrupted by the shared disk quota; successful final logs replace interrupted runs. An intermediate clippy manual_contains warning was fixed before the final full gate."
+}
