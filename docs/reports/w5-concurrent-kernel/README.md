@@ -1,0 +1,13 @@
+# W5 bounded concurrency and translation kernel consolidation
+
+Baseline: main `8b51696`, following the sequential kernel extraction. Five further provider-independent modules now reside physically in `crates/qcore-core`: `concurrency`, `weak_memory`, `native_concurrency`, `translation_validation`, and `research_closure`. Their five unit-test files moved with them.
+
+All ten files are byte-identical to the baseline (2000 implementation lines; 3833 implementation/test lines). `file-parity.json` records both hashes without normalization. Compiler module paths and root reexports remain source compatible, and the facade regression checks that all five representative certificate types are the core-owned types. The r0.3 resource/task lifetime checks, explicit trusted-model assumptions, weak-memory candidate rules, native execution and translation validation behavior are preserved exactly.
+
+Core still has no runtime or workspace crate dependencies. Its existing `cc` development dependency supplies generated-C test builds; no frontend, contract, gateway, provider, host or audit crate participates in core-only tests. The runtime/build and test dependency trees are archived. Native execution uses the same standard-library threads, synchronization and process facilities as before; dependency-free does not mean effects-free.
+
+The standalone core suite passes 127 tests, including native worker execution, the r0.3 lifetime regressions, and the translation corpus under the available native sanitizer profiles. The workspace passes 551 tests, including dependency-layering and both sequential/concurrent compiler-facade guards. Formatting, Clippy with warnings denied, both reevaluation probes, `lake build` and all 19 Lean audits pass. The worktree's Libevent submodule remains initialized at pinned `d82464a277d0f42703702c4dfd9af6af38595a83`; the pin test passes.
+
+Gate commands use only this worktree's cache with `CARGO_INCREMENTAL=0`, `CARGO_PROFILE_DEV_DEBUG=0`, and `CARGO_PROFILE_TEST_DEBUG=0`. Results and logs are listed in `gate-results.json`. No Lean definitions changed: existing model proofs and the whole-project axiom audit continue to check the same semantics. Relocation is not a new Rust/Lean/C refinement result.
+
+Whole-program checking and the source driver remain outside core. The separate library lifecycle/schema/contract split and first-party provider extraction are not included in this commit. No source-import/profile/contract route changed, so no new full 185-TU audit is claimed here; the coordinated combined-main audit covers the independent source-import changes. No source verdict, coverage, raw-unit promotion, new platform guarantee or broader trust claim is introduced.

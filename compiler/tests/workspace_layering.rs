@@ -121,3 +121,21 @@ fn sequential_kernel_compatibility_paths_are_core_types() {
     same_type!(advanced_control, AdvancedProgram);
     same_type!(inference, InferenceCertificate);
 }
+
+#[test]
+fn concurrent_kernel_compatibility_paths_are_core_types() {
+    use std::any::TypeId;
+    macro_rules! same_type {
+        ($module:ident, $name:ident) => {
+            assert_eq!(
+                TypeId::of::<qcore_compiler::$module::$name>(),
+                TypeId::of::<qcore_core::$module::$name>()
+            );
+        };
+    }
+    same_type!(concurrency, ConcurrencyCertificate);
+    same_type!(weak_memory, C11ExecutionCertificate);
+    same_type!(native_concurrency, NativeExecutionCertificate);
+    same_type!(translation_validation, TranslationCertificate);
+    same_type!(research_closure, ResearchClosureCertificate);
+}
