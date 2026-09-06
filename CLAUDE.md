@@ -201,3 +201,13 @@ implementations/tests and compiler reexports. It depends on core, frontend,
 contract, schemas and host; providers cannot link it. Lifecycle source effects
 remain incomplete and cannot promote a result. Evidence:
 `docs/reports/w5-verification-adapter/README.md`.
+
+W4 output forwarding and identity invalidation (2026-09-07): direct output
+pointer forwarding now validates original sanctioned slots on every exit.
+Formal shadowing, pointer mutation and direct alias chains cannot reuse stale
+resource identity. Evidence: `docs/reports/w4-out-forwarding/README.md`.
+The 185-unit audit is now 3 Safe / 94 provisional Unsafe / 84 Unknown /
+4 data-only: four units and 25 functions downgrade to Unknown, with no
+promotions. Earlier parity counts above remain historical. General pointer
+aliases, recursion and unmodeled indirect-access checking remain open; the
+last item has a confirmed synthetic read-after-release probe under repair.

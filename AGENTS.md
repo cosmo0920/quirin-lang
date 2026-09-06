@@ -64,8 +64,9 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   sanitizer and deployed observation-hook evidence pending.
 - **Cycle 19: in progress.** Unrestricted-C gateway applied to pinned Fluent
   Bit (CMetrics, CTraces, librdkafka, ChunkIO, input-chunk wrapper, Monkey).
-  Latest triage: 185 TUs, 4,775 raw functions, 98.2% projected — **2 Safe /
-  98 provisional Unsafe / 81 Unknown**. **Raw units remain unpromoted** until
+  Latest triage: 185 TUs, 4,775 raw functions, 98.2% projected — **3 Safe /
+  94 provisional Unsafe / 84 Unknown**, plus four data-only units
+  (`docs/reports/w4-out-forwarding/README.md`). **Raw units remain unpromoted** until
   per-path identity imports and real observation evidence satisfy the
   fail-closed gates in `docs/cycles/CYCLE_19.md`.
   Source-bound context/stream/chunk/backend teardown now composes bounded
@@ -405,3 +406,13 @@ implementations/tests and compiler reexports. It depends on core, frontend,
 contract, schemas and host; providers cannot link it. Lifecycle source effects
 remain incomplete and cannot promote a result. Evidence:
 `docs/reports/w5-verification-adapter/README.md`.
+
+W4 output forwarding and identity invalidation (2026-09-07): direct output
+pointer forwarding now validates original sanctioned slots on every exit.
+Formal shadowing, pointer mutation and direct alias chains cannot reuse stale
+resource identity. Evidence: `docs/reports/w4-out-forwarding/README.md`.
+The 185-unit audit is now 3 Safe / 94 provisional Unsafe / 84 Unknown /
+4 data-only: four units and 25 functions downgrade to Unknown, with no
+promotions. Earlier parity counts above remain historical. General pointer
+aliases, recursion and unmodeled indirect-access checking remain open; the
+last item has a confirmed synthetic read-after-release probe under repair.

@@ -1,0 +1,28 @@
+{
+  "code_revision": "f9a3009",
+  "workspace_tests": 579,
+  "lean_audits": 19,
+  "standing_gate": "passed",
+  "provider_packages_separate_tests": "docs/reports/w5-provider-packages/validation.json",
+  "persistent_monkey_compile_database": "build/cycle19/monkey-build/compile_commands.json",
+  "audit": {
+    "translation_units": 185,
+    "safe": 3,
+    "provisional_unsafe": 94,
+    "unknown": 84,
+    "data_only": 4,
+    "raw_units_promoted": false
+  },
+  "parity": {
+    "diagnostics": {
+      "byte_identical_to_w4_forwarding": true,
+      "sha256": "b0a82ea20e0904251b916c1755d71e0c5e62554ae4669a5b2d0ba753957597df"
+    },
+    "source": {
+      "byte_identical_to_w4_forwarding": true,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    }
+  },
+  "goal_completed": false,
+  "open_probe": "synthetic indirect resource reads accepted as Safe; separate follow-on in progress"
+}

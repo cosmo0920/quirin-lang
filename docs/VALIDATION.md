@@ -56,3 +56,9 @@ source correctness or immunity to later package-file mutation.
 The [trusted verification adapter integration](reports/w5-verification-adapter/README.md)
 passes 571 workspace tests and the standing/Lean gates. All relocated
 derivation/replay/dispatch implementations retain byte parity.
+
+The [generalization checkpoint](reports/generalization-integration-20260907/README.md)
+passes579 workspace tests, the standing gate and19 Lean audits. Fresh full185
+audit output matches the merged W4 forwarding result exactly:3 Safe /94
+provisional Unsafe /84 Unknown /4 data-only. The report separately records an
+open synthetic indirect-access probe; broader conformance is not claimed.

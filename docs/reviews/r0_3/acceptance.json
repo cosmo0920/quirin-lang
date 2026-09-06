@@ -108,12 +108,19 @@
     }
   ],
   "validation": {
-    "workspace_tests": 571,
+    "workspace_tests": 579,
     "python_evidence_validator_tests": 43,
     "lean_audits": 19,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w5-verification-adapter/README.md"
+    "latest_integration_evidence": "docs/reports/generalization-integration-20260907/README.md"
   },
-  "documentation_revision": "0.3"
+  "documentation_revision": "0.3",
+  "open_followups": [
+    {
+      "area": "unrestricted_c_indirect_access",
+      "status": "probe_under_repair",
+      "evidence": "docs/reports/generalization-integration-20260907/README.md"
+    }
+  ]
 }

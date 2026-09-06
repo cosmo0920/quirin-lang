@@ -419,6 +419,8 @@ a `SummaryConflict` diagnostic. The [2026-09-07 extension](reports/w4-custody-ex
 adds validated direct `Out` slots, `Stored` formals, `Reallocated` results and
 possibly-null owned returns. [Direct Removed wrappers](reports/w4-removed-custody/README.md)
 now validate contained entry and detached/live exits with matching Lean relations.
+[Direct Out forwarding](reports/w4-out-forwarding/README.md) now validates
+original slots and invalidates mutation/shadow/alias identity assumptions.
 Remaining: general removal aliases and nullable removal, general out-slot
 aliases, recursive components (least fixed point is empty by construction),
 and the Juliet stretch corpus. The [gateway relocation](reports/w4-gateway-crate/README.md)
