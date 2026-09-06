@@ -6,9 +6,10 @@ use qcore_compiler::contract_loader::{
     load_resource_contract_sources,
 };
 use qcore_compiler::{
-    AnalysisStatus, CCompilerDialect, LegacyFunctionScope, LegacySafetyCertificate,
+    AnalysisStatus, CCompilerDialect, ContractTrust, LegacyFunctionScope, LegacySafetyCertificate,
     ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode as P,
-    ResourceReturnMode as R, analyze_legacy_c_translation_unit, check_legacy_safety_certificate,
+    ResourceReturnMode as R, ResourceSummaryRecord, analyze_legacy_c_translation_unit,
+    check_legacy_safety_certificate,
 };
 
 fn manifest() -> PathBuf {
@@ -321,6 +322,13 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
         function_scope: LegacyFunctionScope::PreprocessedTranslationUnit,
         checked_functions: summary.functions.keys().cloned().collect(),
         summary,
+        // `test` takes no parameters, releases its own acquisition, and
+        // returns nothing, so its validated summary is the neutral contract.
+        summaries: vec![ResourceSummaryRecord::new(
+            "test",
+            ContractTrust::InferredValidated,
+            ResourceFunctionContract::default(),
+        )],
     };
     check_legacy_safety_certificate(&certificate).unwrap();
     assert_eq!(certificate.contracts.source_assumptions().len(), 5);

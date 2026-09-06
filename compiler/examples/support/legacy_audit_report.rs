@@ -149,6 +149,13 @@ fn diagnostic_description(diagnostic: &LegacyDiagnostic) -> (&'static str, Strin
             "custody_conflict",
             format!("conflicting custody of acquisition at preprocessed line {acquisition_line}"),
         ),
+        LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
+            "summary_conflict",
+            format!(
+                "inferred custody summary {inferred:?} contradicts the declared contract \
+                 {declared:?}; the declared contract governs every call site"
+            ),
+        ),
     }
 }
 

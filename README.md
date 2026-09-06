@@ -173,9 +173,9 @@ dispatched.
 [reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six
 certificate/weak-memory discrepancies, followed by a
 [seven-finding follow-up](docs/REEVALUATION_FOLLOWUP.md); all thirteen are
-repaired, with the remaining boundaries (interprocedural custody inference,
-semantic plugin witnesses, OS-level provider sandboxing) documented rather
-than papered over.
+repaired, with the remaining boundaries (semantic plugin witnesses, OS-level
+provider sandboxing, and the custody modes W4 still does not infer) documented
+rather than papered over.
 
 **Direction.** The [generalization plan](docs/GENERALIZATION_PLAN.md)
 reviews the architecture and orders the work to (a) make the checker generic
@@ -198,7 +198,17 @@ W6 CT conformance harness is stood up
 ([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
 executes the manifest-mapped spec §55 cases through the real source pipeline;
 CT02/CT12/CT16 are mapped as sequential-core fixtures and 47 of 50 cases
-remain unmapped, counted by a pinned test.
+remain unmapped, counted by a pinned test. W4 is
+executed for parameter/return custody with validation
+([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
+infers each internal function's parameter and return custody summary bottom-up
+over the call graph and publishes it only after re-running the intraprocedural
+analyzer against it, so a wrapper around a contracted API is analyzed instead
+of being `Unknown`. Declared contracts always take precedence, a disagreement
+is reported rather than resolved silently, and the safety certificate's recheck
+re-derives every summary independently. Recursive functions, out-parameters,
+aggregate stores and reallocation wrappers are still not summarized and keep
+their callers `Unknown`.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

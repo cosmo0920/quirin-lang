@@ -795,12 +795,18 @@ fn source_function_discovery_enters_cxx_linkage_blocks() {
 }
 
 #[test]
-fn lc01_internal_calls_require_explicit_custody_contracts() {
+fn internal_definitions_never_receive_an_automatic_neutral_contract() {
+    // LC01's rule survives W4: being defined in the translation unit buys a
+    // function nothing. A call is modeled only through a declared contract or a
+    // custody summary that validated, and each body below defeats validation
+    // for a different reason — an unmodeled statement, an unresolved alias, a
+    // path-dependent parameter disposition, and recursion.
+    // Positive movement from validated summaries is pinned in
+    // `compiler/tests/unit/legacy_summary.rs`.
     for source in [
-        "void *make(void) { void *p = q_alloc(); return p; } void subject(void) { void *p = make(); return; }",
-        "void *make(void) { void *p = q_alloc(); return p; } void subject(void) { void *p = make(); q_free(p); return; }",
-        "void *make(void) { void *p = q_alloc(); return p; } void *nested(void) { void *p = make(); return p; } void subject(void) { void *p = nested(); return; }",
-        "void consume(void *p) { q_free(p); } void subject(void) { void *p = q_alloc(); consume(p); return; }",
+        "void helper(void *p) { int a[2] = { 1, 2 }; q_free(p); } void subject(void) { void *p = q_alloc(); helper(p); q_free(p); }",
+        "void helper(void) { q_free(missing); } void subject(void) { void *p = q_alloc(); helper(); q_free(p); }",
+        "void helper(void *p, int c) { if (c) { q_free(p); } } void subject(void) { void *p = q_alloc(); helper(p, 1); }",
         "void subject(void) { subject(); return; }",
     ] {
         let summary = analyze_legacy_c_translation_unit(source, "subject", &contracts()).unwrap();
@@ -810,7 +816,8 @@ fn lc01_internal_calls_require_explicit_custody_contracts() {
                 .cfg
                 .nodes
                 .iter()
-                .any(|node| matches!(node.instruction, LegacyInstruction::Unknown { .. }))
+                .any(|node| matches!(node.instruction, LegacyInstruction::Unknown { .. })),
+            "{source}"
         );
     }
 }

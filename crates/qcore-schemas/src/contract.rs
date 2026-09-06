@@ -9,18 +9,19 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ResourceApiKind {
     Acquire,
     Release,
     Escape,
-    /// A trusted resource-neutral call. Internal definitions do not establish
-    /// this contract automatically; custody summaries are not yet inferred.
+    /// A trusted resource-neutral call. Internal definitions never establish
+    /// this contract automatically; a neutral summary for an internal function
+    /// has to be inferred and validated like any other (see [`ContractTrust`]).
     Neutral,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ResourceParameterMode {
     /// The call observes the argument without requiring resource custody.
@@ -47,7 +48,7 @@ pub enum ResourceParameterMode {
     },
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ResourceReturnMode {
     #[default]
@@ -64,7 +65,7 @@ pub enum ResourceReturnMode {
     },
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ResourceFunctionContract {
     pub parameters: Vec<ResourceParameterMode>,
     pub result: ResourceReturnMode,
@@ -98,6 +99,53 @@ impl From<ResourceApiKind> for ResourceFunctionContract {
                 ResourceReturnMode::None,
             ),
             ResourceApiKind::Neutral => Self::default(),
+        }
+    }
+}
+
+/// How much trust a [`ResourceFunctionContract`] carries.
+///
+/// The three producers of a contract — a loaded `.qcore` module, the C
+/// gateway's interprocedural inference (W4 of `docs/GENERALIZATION_PLAN.md`),
+/// and a verifier plugin — emit the *same* data with different trust labels.
+/// The label is not a verdict: `Declared` is a trusted assumption that no
+/// checker discharged, `InferredValidated` records that the gateway re-ran its
+/// intraprocedural analyzer against the summary, and `Proposed` is unchecked
+/// until the certificate firewall validates it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ContractTrust {
+    /// Loaded from a trusted `.qcore` contract module. An assumption.
+    Declared,
+    /// Inferred from a function body and validated by re-running the
+    /// intraprocedural analyzer against the inferred summary.
+    InferredValidated,
+    /// Proposed by a verifier plugin. Unchecked until the core validates it;
+    /// never sufficient on its own for a `Safe` verdict.
+    Proposed,
+}
+
+/// One custody summary with its provenance. Inferred summaries, loaded
+/// contracts, and provider proposals share this record shape so a consumer
+/// can route them by trust label rather than by origin-specific types.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct ResourceSummaryRecord {
+    pub function: String,
+    pub trust: ContractTrust,
+    pub contract: ResourceFunctionContract,
+}
+
+impl ResourceSummaryRecord {
+    #[must_use]
+    pub fn new(
+        function: impl Into<String>,
+        trust: ContractTrust,
+        contract: ResourceFunctionContract,
+    ) -> Self {
+        Self {
+            function: function.into(),
+            trust,
+            contract,
         }
     }
 }

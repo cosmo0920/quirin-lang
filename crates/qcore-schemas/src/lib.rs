@@ -12,8 +12,8 @@ pub mod mechanism;
 pub mod plugin;
 
 pub use contract::{
-    ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode,
+    ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 pub use identity::ExternalSourceBundle;
 pub use mechanism::LibraryMechanismSummary;

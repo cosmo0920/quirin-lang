@@ -14,6 +14,7 @@ import QCore.Index
 import QCore.QuantIndexBinding
 import QCore.AdvancedControl
 import QCore.LegacyCAnalyzer
+import QCore.CustodySummary
 import QCore.Lowering
 import QCore.Metatheory
 import QCore.ErrorRegion
