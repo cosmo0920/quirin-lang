@@ -2,7 +2,7 @@
 Summary validation for the unrestricted-C gateway's interprocedural custody
 inference (W4 of `docs/GENERALIZATION_PLAN.md`).
 
-`compiler/src/legacy_summary.rs` derives a candidate custody summary for an
+`crates/qcore-c-gateway/src/legacy_summary.rs` derives a candidate custody summary for an
 internal C function and then *validates* it by re-running the intraprocedural
 analyzer under the entry state the candidate prescribes. Only a validated
 summary is trusted at call sites; anything else leaves the call uncontracted
@@ -14,10 +14,10 @@ about a flag: each theorem states what a validated summary necessarily implies
 about every reachable exit of the body it summarizes.
 
 The vocabulary covers the modes the pass infers: `borrowed`/`owned`/
-`consumed`/`released`/`out`/`stored` formals and neutral/owned/reallocated
-results. `removed` is absent here for the same reason it is not inferred — the
-entry state seeds such a formal as an ordinary live resource rather than a
-contained one, so no body that detaches it validates.
+`consumed`/`released`/`out`/`stored`/`removed` formals and neutral/owned/reallocated
+results. Bounded non-null removal starts with the original child contained in
+its distinct owned formal and requires that same child live and detached on
+every exit. This relation does not extract general C heap links or aliases.
 -/
 
 namespace QCore.CustodySummary
@@ -53,6 +53,8 @@ inductive ParameterMode where
   /-- The callee attaches this formal to the aggregate passed at `owner`;
       destroying the owner cascades to it. -/
   | stored (owner : Nat)
+  /-- Entry containment in the given owner becomes direct custody at exit. -/
+  | removed (owner : Nat)
   deriving DecidableEq, Repr
 
 inductive ResultMode where
@@ -123,6 +125,7 @@ def parameterMatches : ParameterMode → Option Disposition → Bool
   | .borrowed, Option.none => true
   | .out _, Option.none => true
   | .owned, Option.some .live => true
+  | .removed _, Option.some .live => true
   | .consumed, Option.some .escaped => true
   | .released, Option.some .released => true
   | .stored _, Option.some .contained => true
@@ -232,6 +235,43 @@ def exitMatches (summary : Summary) (observation : ExitObservation) : Bool :=
     reachable exit, and every exit agreeing with the summary. -/
 def validate (summary : Summary) (analysisSafe : Bool) (exits : List ExitObservation) : Bool :=
   analysisSafe && !exits.isEmpty && exits.all (exitMatches summary)
+
+/-- The pre-state required by each formal. Formal positions stand for the
+    distinct stable sites allocated by Rust EntryCustody, not mutable names. -/
+def entryDisposition : ParameterMode → Option Disposition
+  | .borrowed | .out _ => none
+  | .removed _ => some .contained
+  | _ => some .live
+
+def entryOwner : ParameterMode → Option Nat
+  | .removed owner => some owner
+  | _ => none
+
+def validRemovedOwners (summary : Summary) : Bool :=
+  (summary.parameters.mapIdx fun index mode => match mode with
+    | .removed owner => index != owner && summary.parameters[owner]? == some .owned
+    | _ => true).all id
+
+def entryMatches (summary : Summary) (states : List (Option Disposition))
+    (owners : List (Option Nat)) : Bool :=
+  validRemovedOwners summary && states == summary.parameters.map entryDisposition &&
+    owners == summary.parameters.map entryOwner
+
+/-- Full entry/exit relation for removal; the earlier validate relation states
+    the exit conditions alone. The entry is constructed independently before
+    re-analysis, and cannot be substituted with a live uncontained child. -/
+def validateFromEntry (summary : Summary) (states : List (Option Disposition))
+    (owners : List (Option Nat)) (safe : Bool) (exits : List ExitObservation) : Bool :=
+  entryMatches summary states owners && validate summary safe exits
+
+theorem validated_from_entry_has_original_custody (summary : Summary)
+    (states : List (Option Disposition)) (owners : List (Option Nat))
+    (safe : Bool) (exits : List ExitObservation)
+    (valid : validateFromEntry summary states owners safe exits = true) :
+    states = summary.parameters.map entryDisposition ∧
+    owners = summary.parameters.map entryOwner := by
+  simp only [validateFromEntry, entryMatches, Bool.and_eq_true, beq_iff_eq] at valid
+  exact ⟨valid.1.1.2, valid.1.2⟩
 
 /-- A body the analyzer could not clear never yields a summary. This is the
     "validated, not just inferred" discipline: an unsupported construct, an
@@ -593,5 +633,53 @@ theorem discarding_realloc_wrapper_is_no_reallocation (nullable : Bool) :
         (Returned.site false Disposition.escaped false) false,
        oneFormalExit (Option.some Disposition.released) Returned.nothing false] = false := by
   cases nullable <;> decide
+
+/-- Removal preserves the original child's identity: the governed formal is
+    live at every reachable exit, not merely replaced by another allocation. -/
+theorem removed_formal_is_live_after_validation (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (owner : Nat) (disposition : Option Disposition)
+    (paired : (some (ParameterMode.removed owner), disposition) ∈
+      (governedModes summary).zip observation.parameters) :
+    disposition = some .live := by
+  have matched := validated_summary_parameters_match summary safe exits valid observation member
+    (some (ParameterMode.removed owner)) disposition paired
+  cases disposition with
+  | none => simp [governedMatches, parameterMatches] at matched
+  | some current => cases current <;> simp_all [governedMatches, parameterMatches]
+
+theorem removed_formal_is_detached_after_validation (summary : Summary) (safe : Bool)
+    (exits : List ExitObservation) (valid : validate summary safe exits = true)
+    (observation : ExitObservation) (member : observation ∈ exits)
+    (owner : Nat) (actual : Option Nat)
+    (paired : (ParameterMode.removed owner, actual) ∈ summary.parameters.zip observation.containedIn) :
+    actual = none := by
+  have matched := validated_summary_containment_matches summary safe exits valid observation member
+    (ParameterMode.removed owner) actual paired
+  cases actual with
+  | none => rfl
+  | some _ => simp [containmentMatches] at matched
+
+def removalSummary : Summary := ⟨[.owned, .removed 0], .neutral⟩
+def removalExit : ExitObservation :=
+  ⟨[some .live, some .live], [none, none], [none, none], [false, false],
+    .nothing, false, true⟩
+
+theorem direct_removal_validates_from_contained_entry :
+    validateFromEntry removalSummary [some .live, some .contained] [none, some 0]
+      true [removalExit] = true := by decide
+
+theorem removal_from_uncontained_entry_rejects :
+    validateFromEntry removalSummary [some .live, some .live] [none, none]
+      true [removalExit] = false := by decide
+
+theorem removal_from_wrong_owner_rejects :
+    validateFromEntry removalSummary [some .live, some .contained] [none, some 1]
+      true [removalExit] = false := by decide
+
+theorem removal_left_contained_at_an_exit_rejects :
+    validate removalSummary true
+      [removalExit, { removalExit with parameters := [some .live, some .contained], containedIn := [none, some 0] }] = false := by decide
 
 end QCore.CustodySummary
