@@ -569,3 +569,13 @@ conservation theorems and 351 workspace tests pass with the required checks.
 All prior pinned verdicts, Monkey/scalar results and memory-backend evidence
 are identical. The actual close call's context identity and list/teardown
 composition still need binding; these helper results do not close Cycle 19.
+
+## Source-derived intrusive-list unlink (2026-09-06)
+
+The [list unlink report](../reports/cycle19-list-unlink/README.md) records native
+contracts for `mk_list_del` and its source-validated helper. Both distinct and
+aliased neighbor cases check all four writes, reconnection, entry clearing and
+preserved object custody. Six new Lean theorems and 354 workspace tests pass
+with every required check. Prior pinned verdicts and backend/counter evidence
+remain identical. Binding the two embedded chunk links and composing the full
+close path with backend and context counter discharge still remain open.

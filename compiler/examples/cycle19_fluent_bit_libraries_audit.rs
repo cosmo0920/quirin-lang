@@ -444,6 +444,12 @@ fn audit_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
         if library == "chunkio" && file == "cio_chunk.c" {
+            let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+            println!(
+                "qcore-contract mk_list_del + __mk_list_del: Checked ({} neighbor alias cases; live reciprocal/exclusive links assumed)",
+                unlink.cases().len()
+            );
+            teardown_results.push(serde_json::json!({"kind":"list_unlink", "status":"checked_source_links", "certificate":unlink}));
             let certificates =
                 qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
                     &unit,

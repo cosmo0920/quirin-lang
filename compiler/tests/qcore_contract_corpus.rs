@@ -36,6 +36,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "check_imported_chunk_program",
         7,
     ),
+    ("chunkio/list_unlink.qcore", "__mk_list_del", 6),
+    ("chunkio/list_unlink.qcore", "mk_list_del", 12),
     ("chunkio/lock_state.qcore", "cio_chunk_is_locked", 7),
     ("chunkio/lock_state.qcore", "cio_chunk_unlock", 8),
     ("chunkio/memory_backend.qcore", "cio_memfs_close", 21),
@@ -220,7 +222,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 27, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 28, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

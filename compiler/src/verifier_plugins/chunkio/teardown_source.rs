@@ -76,3 +76,38 @@ pub fn check_counter_sources(
         })
         .collect()
 }
+
+pub const LIST_UNLINK_CONTRACT: &str =
+    include_str!("../../../../contract/qcore/chunkio/list_unlink.qcore");
+
+pub fn check_list_unlink_source(
+    unit: &C11TranslationUnit<'_>,
+    revision: &str,
+) -> Result<crate::list_unlink_contract::ListUnlinkCertificate, String> {
+    if revision != PINNED_FLUENT_BIT_REVISION {
+        return Err("ChunkIO list revision mismatch".into());
+    }
+    let results = import_source_functions(
+        unit,
+        revision,
+        &["mk_list_del", "__mk_list_del"],
+        &SourceImportProfile {
+            records: &["mk_list"],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )?;
+    match results.as_slice() {
+        [SourceResult::Summary(outer), SourceResult::Summary(helper)] => {
+            crate::list_unlink_contract::check_list_unlink(
+                outer,
+                helper,
+                LIST_UNLINK_CONTRACT,
+                "struct mk_list *",
+                "ListNode",
+            )
+        }
+        _ => Err(format!("list source import incomplete: {results:?}")),
+    }
+}

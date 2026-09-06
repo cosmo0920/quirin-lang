@@ -1,3 +1,4 @@
+import QCore.ListUnlink
 import QCore.CounterSource
 import QCore.FieldDestructor
 import QCore.CallbackBinding
@@ -144,3 +145,15 @@ import QCore.ChunkSource
 #print axioms QCore.CounterSource.increment_then_decrement_conserves_counter
 
 #print axioms QCore.CounterSource.decrement_then_increment_conserves_counter
+
+#print axioms QCore.ListUnlink.unlink_clears_entry_prev
+
+#print axioms QCore.ListUnlink.unlink_clears_entry_next
+
+#print axioms QCore.ListUnlink.unlink_reconnects_previous
+
+#print axioms QCore.ListUnlink.unlink_reconnects_next
+
+#print axioms QCore.ListUnlink.singleton_unlink_restores_head
+
+#print axioms QCore.ListUnlink.unlink_preserves_other_cells

@@ -1,0 +1,9 @@
+{
+  "baseline": "cycle19-counters",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_identical": true,
+  "scalar_function_results_identical": true,
+  "backend_and_counter_certificates_identical": true,
+  "new_unlink_alias_cases": 2,
+  "workspace_tests": 354
+}

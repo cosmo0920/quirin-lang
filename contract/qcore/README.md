@@ -196,3 +196,9 @@ field, source-derived unit `delta`, updated return and write footprint.
 premises; the C source does not guard against wraparound. The certificate checks
 concrete values against a supplied target maximum when instantiated. See the
 [counter report](../../docs/reports/cycle19-counters/README.md).
+
+`chunkio/list_unlink.qcore` checks `mk_list_del` and its complete
+`__mk_list_del` dependency under live reciprocal/exclusive link premises.
+Both distinct and equal neighbor identities are replayed; the entry is distinct
+from its neighbors. The contracts check link clearing/reconnection and preserve
+object custody. See the [list unlink report](../../docs/reports/cycle19-list-unlink/README.md).

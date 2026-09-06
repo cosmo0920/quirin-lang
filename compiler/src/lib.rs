@@ -43,6 +43,7 @@ pub mod index;
 pub mod inference;
 pub mod legacy_c;
 pub mod lexer;
+pub mod list_unlink_contract;
 pub mod native_concurrency;
 pub mod ownership;
 pub mod parser;
