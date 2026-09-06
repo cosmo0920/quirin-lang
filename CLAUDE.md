@@ -129,3 +129,14 @@ assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
+
+
+Monkey typed import profiles landed (2026-09-07,
+`docs/reports/w2-monkey-typed-profile/README.md`): function roles, records,
+sizeof bounds, exact callback signatures, callee bounds and callback effects
+load from profile data. Malformed or unavailable declarations reject; wrappers
+retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged;
+18 syntax summaries now retain explicit declared profile assumptions. These are
+syntax projections and trusted declarations, not proofs of source custody or
+whole-program safety. Configured orchestration and general source/model binding
+remain open.

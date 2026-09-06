@@ -1,0 +1,243 @@
+{
+  "CALLBACKS": {
+    "old": [
+      "cb_event",
+      "cb_timeout",
+      "cb_wait_2_timeout"
+    ],
+    "new": [
+      "cb_event",
+      "cb_timeout",
+      "cb_wait_2_timeout"
+    ],
+    "equal_as_sets": true
+  },
+  "WRAPPERS": {
+    "old": [
+      "mk_event_libevent_socketpair",
+      "_mk_event_init",
+      "_mk_event_loop_create",
+      "_mk_event_loop_destroy",
+      "_mk_event_update",
+      "_mk_event_add",
+      "_mk_event_del",
+      "_mk_event_timeout_create",
+      "_mk_event_timeout_destroy",
+      "_mk_event_channel_create",
+      "_mk_event_channel_destroy",
+      "_mk_event_inject",
+      "_mk_event_wait_with_flags",
+      "_mk_event_wait_2",
+      "_mk_event_backend"
+    ],
+    "new": [
+      "_mk_event_add",
+      "_mk_event_backend",
+      "_mk_event_channel_create",
+      "_mk_event_channel_destroy",
+      "_mk_event_del",
+      "_mk_event_init",
+      "_mk_event_inject",
+      "_mk_event_loop_create",
+      "_mk_event_loop_destroy",
+      "_mk_event_timeout_create",
+      "_mk_event_timeout_destroy",
+      "_mk_event_update",
+      "_mk_event_wait_2",
+      "_mk_event_wait_with_flags",
+      "mk_event_libevent_socketpair"
+    ],
+    "equal_as_sets": true
+  },
+  "records": {
+    "old": [
+      "mk_event",
+      "mk_event_ctx",
+      "ev_map",
+      "mk_event_loop",
+      "timeval"
+    ],
+    "new": [
+      "mk_event",
+      "mk_event_ctx",
+      "ev_map",
+      "mk_event_loop",
+      "timeval"
+    ],
+    "equal_as_sets": true
+  },
+  "sizeof_types": {
+    "old": [
+      "unsigned long",
+      "unsigned long long",
+      "int",
+      "short",
+      "struct mk_event_ctx",
+      "struct mk_event",
+      "struct ev_map"
+    ],
+    "new": [
+      "unsigned long",
+      "unsigned long long",
+      "int",
+      "short",
+      "struct mk_event_ctx",
+      "struct mk_event",
+      "struct ev_map"
+    ],
+    "equal_as_sets": true
+  },
+  "restricted_calls": {
+    "old": [
+      "send",
+      "__errno_location",
+      "evutil_socket_geterror",
+      "perror",
+      "evutil_closesocket",
+      "event_del",
+      "event_free",
+      "mk_mem_free",
+      "mk_mem_alloc_z",
+      "event_base_new",
+      "event_base_free",
+      "event_new",
+      "event_add",
+      "event_base_loop",
+      "evutil_socketpair",
+      "_mk_event_init",
+      "_mk_event_update",
+      "_mk_event_add",
+      "_mk_event_del",
+      "mk_event_libevent_socketpair",
+      "_mk_event_wait_with_flags"
+    ],
+    "new": [
+      "send",
+      "__errno_location",
+      "evutil_socket_geterror",
+      "perror",
+      "evutil_closesocket",
+      "event_del",
+      "event_free",
+      "mk_mem_free",
+      "mk_mem_alloc_z",
+      "event_base_new",
+      "event_base_free",
+      "event_new",
+      "event_add",
+      "event_base_loop",
+      "evutil_socketpair",
+      "_mk_event_init",
+      "_mk_event_update",
+      "_mk_event_add",
+      "_mk_event_del",
+      "mk_event_libevent_socketpair",
+      "_mk_event_wait_with_flags"
+    ],
+    "equal_as_sets": true
+  },
+  "signature_constraints": {
+    "old": {
+      "cb_event": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      },
+      "cb_timeout": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      },
+      "cb_wait_2_timeout": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      }
+    },
+    "new": {
+      "cb_event": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      },
+      "cb_timeout": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      },
+      "cb_wait_2_timeout": {
+        "result": "void",
+        "parameters": [
+          "int",
+          "short",
+          "void *"
+        ]
+      }
+    },
+    "equal": true
+  },
+  "callback_summaries": {
+    "old": {
+      "cb_event": {
+        "argument_borrowed": true,
+        "writes_fired_array": true,
+        "releases_event_map": false,
+        "closes_descriptor": false,
+        "no_effect": false
+      },
+      "cb_timeout": {
+        "argument_borrowed": true,
+        "writes_fired_array": false,
+        "releases_event_map": true,
+        "closes_descriptor": true,
+        "no_effect": false
+      },
+      "cb_wait_2_timeout": {
+        "argument_borrowed": true,
+        "writes_fired_array": false,
+        "releases_event_map": false,
+        "closes_descriptor": false,
+        "no_effect": true
+      }
+    },
+    "new": {
+      "cb_event": {
+        "argument_borrowed": true,
+        "writes_fired_array": true,
+        "releases_event_map": false,
+        "closes_descriptor": false,
+        "no_effect": false
+      },
+      "cb_timeout": {
+        "argument_borrowed": true,
+        "writes_fired_array": false,
+        "releases_event_map": true,
+        "closes_descriptor": true,
+        "no_effect": false
+      },
+      "cb_wait_2_timeout": {
+        "argument_borrowed": true,
+        "writes_fired_array": false,
+        "releases_event_map": false,
+        "closes_descriptor": false,
+        "no_effect": true
+      }
+    },
+    "equal": true
+  }
+}

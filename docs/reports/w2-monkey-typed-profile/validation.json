@@ -1,0 +1,12 @@
+{
+  "workspace": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean_build": 0,
+  "lean_audits": 0,
+  "full185_audit": 0,
+  "workspace_tests_passed": 521,
+  "audit_files": 18
+}

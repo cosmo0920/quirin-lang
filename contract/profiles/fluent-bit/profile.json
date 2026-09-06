@@ -345,6 +345,134 @@
         }
       ],
       "provider": null
+    },
+    "monkey": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/monkey",
+          "selection": "recursive"
+        }
+      ],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": {
+        "functions": {
+          "cb_event": "callback",
+          "cb_timeout": "callback",
+          "cb_wait_2_timeout": "callback",
+          "mk_event_libevent_socketpair": "wrapper",
+          "_mk_event_init": "wrapper",
+          "_mk_event_loop_create": "wrapper",
+          "_mk_event_loop_destroy": "wrapper",
+          "_mk_event_update": "wrapper",
+          "_mk_event_add": "wrapper",
+          "_mk_event_del": "wrapper",
+          "_mk_event_timeout_create": "wrapper",
+          "_mk_event_timeout_destroy": "wrapper",
+          "_mk_event_channel_create": "wrapper",
+          "_mk_event_channel_destroy": "wrapper",
+          "_mk_event_inject": "wrapper",
+          "_mk_event_wait_with_flags": "wrapper",
+          "_mk_event_wait_2": "wrapper",
+          "_mk_event_backend": "wrapper"
+        },
+        "records": [
+          "mk_event",
+          "mk_event_ctx",
+          "ev_map",
+          "mk_event_loop",
+          "timeval"
+        ],
+        "sizeof_types": [
+          "unsigned long",
+          "unsigned long long",
+          "int",
+          "short",
+          "struct mk_event_ctx",
+          "struct mk_event",
+          "struct ev_map"
+        ],
+        "signature_constraints": {
+          "cb_event": {
+            "result": "void",
+            "parameters": [
+              "int",
+              "short",
+              "void *"
+            ]
+          },
+          "cb_timeout": {
+            "result": "void",
+            "parameters": [
+              "int",
+              "short",
+              "void *"
+            ]
+          },
+          "cb_wait_2_timeout": {
+            "result": "void",
+            "parameters": [
+              "int",
+              "short",
+              "void *"
+            ]
+          }
+        },
+        "restricted_calls": [
+          "send",
+          "__errno_location",
+          "evutil_socket_geterror",
+          "perror",
+          "evutil_closesocket",
+          "event_del",
+          "event_free",
+          "mk_mem_free",
+          "mk_mem_alloc_z",
+          "event_base_new",
+          "event_base_free",
+          "event_new",
+          "event_add",
+          "event_base_loop",
+          "evutil_socketpair",
+          "_mk_event_init",
+          "_mk_event_update",
+          "_mk_event_add",
+          "_mk_event_del",
+          "mk_event_libevent_socketpair",
+          "_mk_event_wait_with_flags"
+        ]
+      },
+      "callback_summaries": {
+        "cb_event": {
+          "argument_borrowed": true,
+          "writes_fired_array": true,
+          "releases_event_map": false,
+          "closes_descriptor": false,
+          "no_effect": false
+        },
+        "cb_timeout": {
+          "argument_borrowed": true,
+          "writes_fired_array": false,
+          "releases_event_map": true,
+          "closes_descriptor": true,
+          "no_effect": false
+        },
+        "cb_wait_2_timeout": {
+          "argument_borrowed": true,
+          "writes_fired_array": false,
+          "releases_event_map": false,
+          "closes_descriptor": false,
+          "no_effect": true
+        }
+      },
+      "boolean_field_models": [],
+      "provider": null
     }
   },
   "resource_contract_manifest": "../../cycle19-resource-contracts.json",

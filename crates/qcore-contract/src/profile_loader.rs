@@ -322,6 +322,12 @@ pub fn load_profile_directory(directory: &Path) -> Result<LoadedProfile, Profile
             error: error.to_string(),
         }
     })?;
+    let unique = crate::profile_json::parse(&text).map_err(|error| {
+        ProfileDiagnostic::ProfileUnreadable {
+            path: manifest_path.display().to_string(),
+            error,
+        }
+    })?;
     // F3 before F4: the version is read first so an unknown version is
     // reported as such rather than as a field error against v1's shape.
     let version = declared_schema_version(&text, &manifest_path)?;
@@ -332,7 +338,7 @@ pub fn load_profile_directory(directory: &Path) -> Result<LoadedProfile, Profile
         });
     }
     let manifest: ProfileManifest =
-        serde_json::from_str(&text).map_err(|error| ProfileDiagnostic::ProfileUnreadable {
+        serde_json::from_value(unique).map_err(|error| ProfileDiagnostic::ProfileUnreadable {
             path: manifest_path.display().to_string(),
             error: error.to_string(),
         })?;
@@ -411,6 +417,8 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
         }
     }
     for (name, library) in &manifest.libraries {
+        crate::typed_profile::validate_typed_profile(library)
+            .map_err(|detail| inconsistent(format!("library `{name}`: {detail}")))?;
         if !manifest.pins.contains_key(&library.pin) {
             return Err(inconsistent(format!(
                 "library `{name}` references unknown pin `{}`",

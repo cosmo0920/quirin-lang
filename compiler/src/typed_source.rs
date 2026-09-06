@@ -155,9 +155,15 @@ pub struct SourceSummary {
     source_revision: String,
     signature: String,
     paths: Vec<SourcePath>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    profile_assumptions: BTreeMap<String, String>,
 }
 
 impl SourceSummary {
+    pub fn profile_assumptions(&self) -> &BTreeMap<String, String> {
+        &self.profile_assumptions
+    }
+
     pub fn signature(&self) -> &str {
         &self.signature
     }
@@ -194,6 +200,83 @@ pub struct SourceImportProfile<'a> {
     pub signature_constraints: &'a [(&'a str, &'a str, &'a [&'a str])],
     /// Functions with an exact signature use this bounded call vocabulary.
     pub restricted_calls: &'a [&'a str],
+}
+
+/// Import a role-selected syntax surface from a validated, explicit source profile.
+/// Function names are returned in deterministic lexical order. Callback signatures
+/// are mandatory; wrappers without signatures preserve opaque unrestricted calls.
+/// Successful summaries retain the exact declared profile assumption record.
+pub fn import_source_functions_from_profile(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    role: qcore_schemas::profile::ImportRole,
+) -> Result<Vec<SourceResult>, String> {
+    let selected = profile
+        .library(library)
+        .ok_or_else(|| format!("no library `{library}` in source profile"))?;
+    let pin = profile
+        .manifest()
+        .pin_for(library)
+        .ok_or("library has no source pin")?;
+    if source_revision != pin.git_commit {
+        return Err("source revision does not match the declared profile pin".into());
+    }
+    let typed = selected
+        .typed_import
+        .as_ref()
+        .ok_or("library has no typed import profile")?;
+    let functions = typed
+        .functions
+        .iter()
+        .filter_map(|(name, found)| (*found == role).then_some(name.as_str()))
+        .collect::<Vec<_>>();
+    if functions.is_empty() {
+        return Err(format!("profile has no {role:?} functions"));
+    }
+    let records = typed.records.iter().map(String::as_str).collect::<Vec<_>>();
+    let sizeof_types = typed
+        .sizeof_types
+        .iter()
+        .map(String::as_str)
+        .collect::<Vec<_>>();
+    let restricted_calls = typed
+        .restricted_calls
+        .iter()
+        .map(String::as_str)
+        .collect::<Vec<_>>();
+    let parameters = typed
+        .signature_constraints
+        .values()
+        .map(|s| s.parameters.iter().map(String::as_str).collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let signatures = typed
+        .signature_constraints
+        .iter()
+        .zip(&parameters)
+        .map(|((name, s), p)| (name.as_str(), s.result.as_str(), p.as_slice()))
+        .collect::<Vec<_>>();
+    let mut results = import_source_functions(
+        unit,
+        source_revision,
+        &functions,
+        &SourceImportProfile {
+            records: &records,
+            sizeof_types: &sizeof_types,
+            signature_constraints: &signatures,
+            restricted_calls: &restricted_calls,
+        },
+    )?;
+    let mut assumptions = profile.assumptions();
+    assumptions.insert("library".into(), library.into());
+    assumptions.insert("typed_import_role".into(), format!("{role:?}"));
+    for result in &mut results {
+        if let SourceResult::Summary(summary) = result {
+            summary.profile_assumptions = assumptions.clone();
+        }
+    }
+    Ok(results)
 }
 
 pub fn import_source_functions(
@@ -1601,6 +1684,7 @@ fn derive(
         source_revision: revision.into(),
         signature,
         paths,
+        profile_assumptions: BTreeMap::new(),
     })
 }
 

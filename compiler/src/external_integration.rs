@@ -729,31 +729,46 @@ pub struct MonkeyCallbackSummary {
     pub no_effect: bool,
 }
 
-impl MonkeyCallbackSummary {
-    pub const fn audited(callback: MonkeyCallback) -> Self {
-        match callback {
-            MonkeyCallback::Event => Self {
-                argument_borrowed: true,
-                writes_fired_array: true,
-                releases_event_map: false,
-                closes_descriptor: false,
-                no_effect: false,
-            },
-            MonkeyCallback::Timeout => Self {
-                argument_borrowed: true,
-                writes_fired_array: false,
-                releases_event_map: true,
-                closes_descriptor: true,
-                no_effect: false,
-            },
-            MonkeyCallback::WaitTwoTimeout => Self {
-                argument_borrowed: true,
-                writes_fired_array: false,
-                releases_event_map: false,
-                closes_descriptor: false,
-                no_effect: true,
-            },
+impl MonkeyCallback {
+    fn function_name(self) -> &'static str {
+        match self {
+            Self::Event => "cb_event",
+            Self::Timeout => "cb_timeout",
+            Self::WaitTwoTimeout => "cb_wait_2_timeout",
         }
+    }
+}
+
+impl MonkeyCallbackSummary {
+    /// Read the default declared callback effect. Unavailable profiles are an
+    /// error, never fabricated no-effect summaries or built-in fallback tables.
+    pub fn audited(callback: MonkeyCallback) -> Result<Self, String> {
+        let profile =
+            crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+                .map_err(|error| error.to_string())?;
+        Self::audited_from_profile(&profile, callback)
+    }
+
+    pub fn audited_from_profile(
+        profile: &qcore_contract::profile_loader::LoadedProfile,
+        callback: MonkeyCallback,
+    ) -> Result<Self, String> {
+        let declared = profile
+            .library("monkey")
+            .and_then(|library| library.callback_summaries.get(callback.function_name()))
+            .ok_or_else(|| {
+                format!(
+                    "profile lacks callback summary `{}`",
+                    callback.function_name()
+                )
+            })?;
+        Ok(Self {
+            argument_borrowed: declared.argument_borrowed,
+            writes_fired_array: declared.writes_fired_array,
+            releases_event_map: declared.releases_event_map,
+            closes_descriptor: declared.closes_descriptor,
+            no_effect: declared.no_effect,
+        })
     }
 }
 
@@ -784,6 +799,7 @@ pub struct MonkeyCompositionProgram {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MonkeyCompositionCertificate {
+    pub profile_assumptions: BTreeMap<String, String>,
     pub source_revision: String,
     pub event: EventCertificate,
     pub callbacks: BTreeMap<MonkeyCallback, MonkeyCallbackSummary>,
@@ -793,6 +809,7 @@ pub struct MonkeyCompositionCertificate {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum MonkeyCompositionDiagnostic {
+    ProfileUnavailable(String),
     SourceRevisionMismatch,
     UnknownBuildProfile,
     MissingCallback(MonkeyCallback),
@@ -808,17 +825,35 @@ pub enum MonkeyCompositionDiagnostic {
     Observation(EventDiagnostic),
 }
 
-/// Monkey composition is **not** migrated to profiles in W2 (design Q5 keeps
-/// the binding/observation contract text in Rust, and the callback-summary and
-/// composition-boolean rows remain hardcoded pending their own parity record).
-/// It takes the Libevent acceptance matrix from the loaded `libevent` profile
-/// because the event checker it composes with does.
+/// Compose under the default declared source profile. Q5 source-contract text
+/// remains an interpreter input; callback effect expectations come from data.
 pub fn check_monkey_composition(
     program: &MonkeyCompositionProgram,
     accepted_builds: &[BuildProfileSelector],
 ) -> Result<MonkeyCompositionCertificate, Vec<MonkeyCompositionDiagnostic>> {
+    let profile =
+        crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+            .map_err(|error| {
+                vec![MonkeyCompositionDiagnostic::ProfileUnavailable(
+                    error.to_string(),
+                )]
+            })?;
+    check_monkey_composition_with_profile(program, accepted_builds, &profile)
+}
+
+/// The explicit profile is a declared assumption, retained in the certificate.
+pub fn check_monkey_composition_with_profile(
+    program: &MonkeyCompositionProgram,
+    accepted_builds: &[BuildProfileSelector],
+    source_profile: &qcore_contract::profile_loader::LoadedProfile,
+) -> Result<MonkeyCompositionCertificate, Vec<MonkeyCompositionDiagnostic>> {
+    let pin = source_profile.manifest().pin_for("monkey").ok_or_else(|| {
+        vec![MonkeyCompositionDiagnostic::ProfileUnavailable(
+            "missing Monkey pin".into(),
+        )]
+    })?;
     let mut diagnostics = Vec::new();
-    if program.profile.source_revision != PINNED_FLUENT_BIT_REVISION {
+    if program.profile.source_revision != pin.git_commit {
         diagnostics.push(MonkeyCompositionDiagnostic::SourceRevisionMismatch);
     }
     if !program.profile.build.accepted(accepted_builds) {
@@ -829,9 +864,11 @@ pub fn check_monkey_composition(
         MonkeyCallback::Timeout,
         MonkeyCallback::WaitTwoTimeout,
     ] {
+        let expected = MonkeyCallbackSummary::audited_from_profile(source_profile, callback)
+            .map_err(|error| vec![MonkeyCompositionDiagnostic::ProfileUnavailable(error)])?;
         match program.profile.callbacks.get(&callback) {
             None => diagnostics.push(MonkeyCompositionDiagnostic::MissingCallback(callback)),
-            Some(summary) if *summary != MonkeyCallbackSummary::audited(callback) => {
+            Some(summary) if *summary != expected => {
                 diagnostics.push(MonkeyCompositionDiagnostic::InvalidCallbackSummary(
                     callback,
                 ));
@@ -898,7 +935,10 @@ pub fn check_monkey_composition(
         .map_err(|errors| vec![MonkeyCompositionDiagnostic::Event(errors)])?;
     check_observation_refinement(&event, &program.observation.trace)
         .map_err(|error| vec![MonkeyCompositionDiagnostic::Observation(error)])?;
+    let mut profile_assumptions = source_profile.assumptions();
+    profile_assumptions.insert("library".into(), "monkey".into());
     Ok(MonkeyCompositionCertificate {
+        profile_assumptions,
         source_revision: program.profile.source_revision.clone(),
         event,
         callbacks: program.profile.callbacks.clone(),

@@ -10,3 +10,6 @@
 pub mod contract_loader;
 pub mod contract_observation;
 pub mod profile_loader;
+
+mod profile_json;
+pub mod typed_profile;

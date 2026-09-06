@@ -301,8 +301,9 @@ summary tables and Libevent API/build/source tables with declared profile data.
 Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
 (3 Safe / 98 provisional Unsafe / 80 Unknown / 4 data-only; the third Safe was
 already W4's measured change). Raw production units stay unpromoted. Monkey
-typed imports, Boolean field routing, first-party registration literals and
-configured orchestration remain W2/W5 work; this does not complete W2.
+typed imports, Boolean field routing and first-party registration are migrated
+in subsequent bounded increments below; configured orchestration remains W2/W5
+work. This does not complete W2.
 
 Frontend gates repaired (2026-09-07,
 `docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
@@ -326,3 +327,14 @@ assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
+
+
+Monkey typed import profiles landed (2026-09-07,
+`docs/reports/w2-monkey-typed-profile/README.md`): function roles, records,
+sizeof bounds, exact callback signatures, callee bounds and callback effects
+load from profile data. Malformed or unavailable declarations reject; wrappers
+retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged;
+18 syntax summaries now retain explicit declared profile assumptions. These are
+syntax projections and trusted declarations, not proofs of source custody or
+whole-program safety. Configured orchestration and general source/model binding
+remain open.

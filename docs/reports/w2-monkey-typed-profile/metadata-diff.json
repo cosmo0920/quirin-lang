@@ -1,0 +1,218 @@
+[
+  {
+    "path": "/callbacks/0/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Callback"
+    }
+  },
+  {
+    "path": "/callbacks/1/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Callback"
+    }
+  },
+  {
+    "path": "/callbacks/2/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Callback"
+    }
+  },
+  {
+    "path": "/wrappers/0/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/1/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/2/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/3/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/4/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/5/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/6/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/7/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/8/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/9/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/10/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/11/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/12/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/13/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  },
+  {
+    "path": "/wrappers/14/profile_assumptions",
+    "value": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "7722bebd110c623870b6499ab21d4a53464ce9c0249b2ec04ab4957f0b1c358e",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Wrapper"
+    }
+  }
+]

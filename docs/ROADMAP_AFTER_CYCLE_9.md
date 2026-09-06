@@ -191,7 +191,7 @@ binding: G1 containment precedes provider expansion; G4 parity precedes deletion
 | --- | --- | --- |
 | W0: workspace layering | Schema surface + CLI extracted with unchanged behavior; downward-only dependency guard | [W0 schema-crate record](reports/w0-schema-crate/README.md): `qcore-schemas` and `qcorec` extracted 2026-09-06; providers stay compile-time crates by recorded decision |
 | W1: contracts as data | Total-or-reject native contract loader, explicit trusted inputs, pinned verdict/diagnostic parity | [Cycle 19 resource loader](reports/cycle19-contract-loader/README.md): audit table migrated; [W1 relocation](reports/w1-contract-crate/README.md): loader/observation extracted to `crates/qcore-contract` over new `qcore-core`/`qcore-frontend` crates (2026-09-06); [W1 literal sites](reports/w1-literal-sites/README.md): leftover test/example literals migrated to loader-fed `.qcore` fixtures (2026-09-06); [W1 clause vocabulary](reports/w1-clause-vocabulary/README.md): interpreter boundary documented and pinned corpus-wide, ABI scalar table completed (2026-09-06) — **executed**; interpreter unification is W5-adjacent and error sentinels need target-interface work |
-| W2: profiles as data | Versioned source/build/profile manifests; schema review before mass migration; parity before removing tables | Bounded migration executed: schema/loader, library/source/mechanism/operation and Libevent tables; full 185-TU parity archived in [W2 report](reports/w2-profile-manifests/README.md). H6 first-party registration also loads data ([record](reports/w2-provider-discovery/README.md)); typed imports, Boolean routing and configured orchestration remain |
+| W2: profiles as data | Versioned source/build/profile manifests; schema review before mass migration; parity before removing tables | Bounded migration executed: schema/loader, library/source/mechanism/operation and Libevent tables; full 185-TU parity archived in [W2 report](reports/w2-profile-manifests/README.md). H6 first-party registration also loads data ([record](reports/w2-provider-discovery/README.md)); typed imports and Boolean routing also load data (bounded reports below); configured orchestration remains |
 | W3: obligations and dispatch | Core-derived inventories, v2 semantic witness design/review and replay, fail-closed source dispatch | [Bounded W3 replay/dispatch](reports/w3-evidence-v2/README.md): source scopes dispatch, observed-agreement v2 replay and schemas-only process conformance run; [host extraction](reports/w3-verifier-host/README.md) moves registry/process/firewall/composition to qcore-verifier-host; lifecycle source effects, production profile import and trusted-kernel consolidation remain open; no first-party promotion |
 | W4: validated custody inference | Depends on W1; SCC/fixed-point parameter and return summaries, independent certificate rederivation, LC01 regressions | Executed for parameter/return custody with validation ([record](reports/w4-custody-inference/README.md)): SCC-ordered inference validated by re-analysis, certificate re-derivation, LC01 regression suite, Lean relation. [Bounded extension](reports/w4-custody-extensions/README.md) adds direct `Out`, `Stored`, `Reallocated` and nullable returns; [Gateway relocation](reports/w4-gateway-crate/README.md) executed with exact 185-unit parity; `Removed`, general out-slot aliases and recursive components remain open |
 | W5: configured audit and provider extraction | Depends on W1–W3, uses W4 as available; reusable orchestration, second-codebase demonstration and per-provider parity before deletion | Planned; Cycle 19 audit route retained |
@@ -281,3 +281,14 @@ assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
 chunk reports add only three assumption maps. Frame-helper ABI generalization
 and source-to-model identity premises remain open.
+
+
+Monkey typed import profiles landed (2026-09-07,
+`docs/reports/w2-monkey-typed-profile/README.md`): function roles, records,
+sizeof bounds, exact callback signatures, callee bounds and callback effects
+load from profile data. Malformed or unavailable declarations reject; wrappers
+retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged;
+18 syntax summaries now retain explicit declared profile assumptions. These are
+syntax projections and trusted declarations, not proofs of source custody or
+whole-program safety. Configured orchestration and general source/model binding
+remain open.
