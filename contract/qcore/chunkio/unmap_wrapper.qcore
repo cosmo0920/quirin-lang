@@ -8,6 +8,7 @@ extern fn unmap_file_outcomes() -> unit
 contract {
     requires live_exclusive_chunk_and_nullable_owned_file_backend;
     requires parameter_context_is_live_chunk_context;
+    requires chunk_backend_context_and_stream_have_disjoint_storage;
     requires sync_flag_is_boolean;
     requires sync_returns_zero_or_minus_one_and_preserves_backend_and_mappedness;
     requires sync_and_logging_preserve_chunk_identities_mappedness_counter_and_lifetimes;

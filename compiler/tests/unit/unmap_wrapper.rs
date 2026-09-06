@@ -165,11 +165,13 @@ fn unmap_native_contract_clauses_are_executed() {
     }
     let (native, counter) = dependencies();
     let source = import(SOURCE, "munmap_file");
-    for (i, _) in CONTRACT.match_indices("ensures normal ") {
-        let j = i + CONTRACT[i..].find(';').unwrap();
-        for pred in ["false", "unbound_unmap_fact"] {
-            let mutated = format!("{}ensures normal {pred}{}", &CONTRACT[..i], &CONTRACT[j..]);
-            assert!(check(&source, &native, &counter, &mutated).is_err());
+    for marker in ["requires ", "ensures normal "] {
+        for (i, _) in CONTRACT.match_indices(marker) {
+            let j = i + CONTRACT[i..].find(';').unwrap();
+            for pred in ["false", "unbound_unmap_fact"] {
+                let mutated = format!("{}{marker}{pred}{}", &CONTRACT[..i], &CONTRACT[j..]);
+                assert!(check(&source, &native, &counter, &mutated).is_err());
+            }
         }
     }
 }

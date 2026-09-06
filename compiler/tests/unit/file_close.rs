@@ -194,11 +194,13 @@ fn file_close_native_policy_cannot_hide_failure_custody() {
     let c = fixture();
     let (unmap, close) = dependencies(&c);
     let source = import(&c, "cio_file_close");
-    for (i, _) in CONTRACT.match_indices("ensures normal ") {
-        let j = i + CONTRACT[i..].find(';').unwrap();
-        for pred in ["false", "unbound_file_custody"] {
-            let mutated = format!("{}ensures normal {pred}{}", &CONTRACT[..i], &CONTRACT[j..]);
-            assert!(check(&source, &unmap, &close, &mutated).is_err());
+    for marker in ["requires ", "ensures normal "] {
+        for (i, _) in CONTRACT.match_indices(marker) {
+            let j = i + CONTRACT[i..].find(';').unwrap();
+            for pred in ["false", "unbound_file_custody"] {
+                let mutated = format!("{}{marker}{pred}{}", &CONTRACT[..i], &CONTRACT[j..]);
+                assert!(check(&source, &unmap, &close, &mutated).is_err());
+            }
         }
     }
 }

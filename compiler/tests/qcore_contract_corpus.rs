@@ -31,7 +31,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         10,
     ),
     ("chunkio/error_state.qcore", "cio_error_reset", 5),
-    ("chunkio/file_close.qcore", "file_close_no_delete", 16),
+    ("chunkio/file_close.qcore", "file_close_no_delete", 17),
     (
         "chunkio/filesystem_attempts.qcore",
         "file_close_result_use",
@@ -87,7 +87,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/resource_open_close.qcore", "cio_chunk_close", 4),
     ("chunkio/stream_destructor.qcore", "cio_stream_destroy", 6),
     ("chunkio/stream_destructor.qcore", "cio_stream_delete", 5),
-    ("chunkio/unmap_wrapper.qcore", "unmap_file_outcomes", 16),
+    ("chunkio/unmap_wrapper.qcore", "unmap_file_outcomes", 17),
     (
         "fluent_bit/busy_state.qcore",
         "flb_input_chunk_release_lock",

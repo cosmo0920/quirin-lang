@@ -660,3 +660,13 @@ Unknown. Six Lean theorems, 375 workspace tests and required checks pass with
 byte-identical prior source/verdict evidence. Unsupported value contexts and
 path overflow still reject. Deletion outcomes, full sync/caller/OS binding,
 enclosing filesystem close and the wider lifecycle/event gates remain open.
+
+## Explicit filesystem storage frames (2026-09-06)
+
+The [cleanup frame report](../reports/cycle19-cleanup-frames/README.md) strengthens
+unmap and non-deleting close with explicit disjoint-storage/root premises and
+extends mutation coverage to every native precondition. All 375 workspace tests
+and required checks pass. Apart from the exact strengthened contract texts,
+all source/case/effect/residual evidence and generic verdicts remain unchanged.
+Caller allocation provenance remains an obligation, and Cycle 19's outstanding
+deletion, sync, OS binding, traversal and event-composition work stays open.

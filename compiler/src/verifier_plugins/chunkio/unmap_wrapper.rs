@@ -172,6 +172,7 @@ fn check(
                     &[
                         ("live_exclusive_chunk_and_nullable_owned_file_backend", 1),
                         ("parameter_context_is_live_chunk_context", 1),
+                        ("chunk_backend_context_and_stream_have_disjoint_storage", 1),
                         ("sync_flag_is_boolean", 1),
                         (
                             "sync_returns_zero_or_minus_one_and_preserves_backend_and_mappedness",

@@ -1,0 +1,13 @@
+{
+  "baseline": "cycle19-short-circuit",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_source_cases_and_effects_identical": true,
+  "only_canonical_contract_premises_changed": [
+    "/backend_teardown/4/evidence/contract_source",
+    "/backend_teardown/4/evidence/unmap/contract_source",
+    "/backend_teardown/5/certificate/contract_source"
+  ],
+  "workspace_tests": 375
+}

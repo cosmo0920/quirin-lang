@@ -7,6 +7,7 @@ extern fn file_close_no_delete() -> unit
 contract {
     requires live_exclusive_chunk_with_nullable_owned_file_backend;
     requires backend_and_nullable_path_disjoint_owned_provenance;
+    requires backend_and_path_are_disjoint_from_chunk_root;
     requires delete_argument_is_zero;
     requires chunk_context_stream_and_names_outlive_calls;
     requires unmap_dependency_premises_and_counter_bounds;

@@ -248,3 +248,9 @@ four source paths of `cio_file_native_delete`. The shared importer now preserves
 short-circuit fd/mapping guards and skipped reads/calls. Actual deletion outcome
 and custody still require proof. See the
 [short-circuit report](../../docs/reports/cycle19-short-circuit/README.md).
+
+The filesystem wrapper policies now also state storage separation explicitly:
+unmap's chunk/backend/context/stream storage is disjoint, and file close's owned
+backend/path are disjoint from the borrowed chunk root. Both policies have 17
+clauses. These remain caller provenance obligations; see the
+[cleanup frame report](../../docs/reports/cycle19-cleanup-frames/README.md).

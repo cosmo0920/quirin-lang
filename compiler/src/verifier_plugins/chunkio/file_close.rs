@@ -165,6 +165,7 @@ fn check(
                     &[
                         ("live_exclusive_chunk_with_nullable_owned_file_backend", 1),
                         ("backend_and_nullable_path_disjoint_owned_provenance", 1),
+                        ("backend_and_path_are_disjoint_from_chunk_root", 1),
                         ("delete_argument_is_zero", 1),
                         ("chunk_context_stream_and_names_outlive_calls", 1),
                         ("unmap_dependency_premises_and_counter_bounds", 1),
