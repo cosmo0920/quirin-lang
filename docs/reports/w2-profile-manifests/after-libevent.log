@@ -1,0 +1,18 @@
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3b1d738cf84884a7/crates/qcore-contract)
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3b1d738cf84884a7/compiler)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.85s
+     Running `target/debug/examples/cycle18_libevent_audit /home/cosmo/Documents/GitHub/qcore-c/third_party/libevent`
+source profile assumptions: {"pin.libevent": "d82464a277d0f42703702c4dfd9af6af38595a83", "profile_digest": "fb7f0a8771137c8ebfc0d67c0d874793837d7dc22249bc3ea3d226b4d0e3f38f", "schema_version": "1", "source_set": "libevent", "trust": "declared source-set assumptions, not verified upstream behavior"}
+verified Libevent release-2.2.2-alpha-11-gd82464a2 at d82464a277d0f42703702c4dfd9af6af38595a83
+checked include/event2/event.h
+checked event.c
+checked bufferevent.c
+checked include/event2/thread.h
+checked include/event2/util.h
+checked evutil.c
+checked epoll.c
+checked kqueue.c
+checked win32select.c
+checked event_iocp.c
+checked buffer_iocp.c
+checked bufferevent_async.c

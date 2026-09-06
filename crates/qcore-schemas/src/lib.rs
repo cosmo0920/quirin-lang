@@ -10,6 +10,7 @@ pub mod contract;
 pub mod identity;
 pub mod mechanism;
 pub mod plugin;
+pub mod profile;
 
 pub use contract::{
     ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
@@ -23,4 +24,11 @@ pub use plugin::{
     PluginLimits, PluginManifest, PluginTrustClass, ProposedEvidence, ProposedVerdict,
     Reproducibility, RequestError, SupportedTarget, TargetProfile, UnitIdentity,
     VerificationRequest, VerificationResponse, VerifierCapability,
+};
+pub use profile::{
+    ApiDisposition, AuditedFile, BooleanFieldModel, BuildProfileSelector, CallbackEffectSummary,
+    ImportRole, LibraryProfile, OperationKind, PROFILE_MANIFEST_VERSION, ProfileManifest,
+    ProviderBinding, RequiredEvidenceKind, SUPPORTED_PROFILE_MANIFEST_VERSIONS,
+    SignatureConstraint, SourcePin, SourceRootSelection, SourceWitness, TypedImportProfile,
+    UnitSelection, WitnessCheck,
 };

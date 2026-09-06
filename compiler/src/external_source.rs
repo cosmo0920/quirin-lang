@@ -1,22 +1,22 @@
 //! Source-derived profiles for pinned external-library custody summaries.
+//!
+//! W2 (`docs/GENERALIZATION_PLAN.md`, design
+//! `docs/design/W2_PROFILE_MANIFEST_SCHEMA.md`) moved this module's pinned
+//! path constants and `contents.contains` fragment tables into the data
+//! profiles under `contract/profiles/<source-set>/`. What stays here is the
+//! derivation rule, which is unchanged: the pinned revision must match, every
+//! audited file must be present, and every declared construct witness must
+//! pass before any mechanism summary is granted. A failed witness rejects the
+//! whole library certificate, exactly as the hardcoded contract tables did.
+//!
+//! Digests are checked again at this public boundary: callers may construct
+//! `ExternalSourceBundle` directly, so loader provenance cannot be assumed.
 
 use std::collections::BTreeSet;
 
-use crate::external_integration::{
-    AuditedLibrary, LibraryMechanismSummary, LibrarySummaryProfile, PINNED_FLUENT_BIT_REVISION,
-};
+use qcore_schemas::profile::{LibraryProfile, WitnessCheck};
 
-const LIBRDKAFKA_FILES: &[&str] = &[
-    "lib/librdkafka-2.15.0/src/rd.h",
-    "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
-    "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
-];
-const CFL_FILES: &[&str] = &["lib/cfl/include/cfl/cfl_list.h", "lib/cfl/src/cfl_arena.c"];
-const CHUNK_IO_FILES: &[&str] = &[
-    "lib/chunkio/src/chunkio.c",
-    "lib/chunkio/src/cio_stream.c",
-    "lib/chunkio/src/cio_chunk.c",
-];
+use crate::external_integration::LibrarySummaryProfile;
 
 pub use qcore_schemas::identity::ExternalSourceBundle;
 
@@ -31,54 +31,69 @@ pub struct LibrarySourceCertificate {
 pub enum LibrarySourceDiagnostic {
     SourceRevisionMismatch,
     MissingFile(String),
-    ContractMismatch { file: String, contract: String },
+    DigestMismatch {
+        file: String,
+        expected: String,
+        actual: String,
+    },
+    ContractMismatch {
+        file: String,
+        contract: String,
+    },
 }
 
-#[must_use]
-pub const fn required_library_source_paths(library: AuditedLibrary) -> &'static [&'static str] {
-    match library {
-        AuditedLibrary::Librdkafka2150 => LIBRDKAFKA_FILES,
-        AuditedLibrary::Cfl => CFL_FILES,
-        AuditedLibrary::ChunkIo => CHUNK_IO_FILES,
-    }
-}
-
+/// Derive a library's granted mechanism summaries from its declared profile
+/// and an audited source bundle. `expected_revision` is the pin the profile
+/// binds the library to; a mismatch is fail-closed, never a warning.
 pub fn derive_library_summary_profile(
-    library: AuditedLibrary,
+    library: &str,
+    profile: &LibraryProfile,
+    expected_revision: &str,
     source: &ExternalSourceBundle,
 ) -> Result<LibrarySourceCertificate, Vec<LibrarySourceDiagnostic>> {
     let mut diagnostics = BTreeSet::new();
-    if source.source_revision != PINNED_FLUENT_BIT_REVISION {
+    if source.source_revision != expected_revision {
         diagnostics.insert(LibrarySourceDiagnostic::SourceRevisionMismatch);
     }
-    for path in required_library_source_paths(library) {
-        if !source.files.contains_key(*path) {
-            diagnostics.insert(LibrarySourceDiagnostic::MissingFile((*path).to_owned()));
+    for audited in &profile.audited_files {
+        match source.files.get(&audited.path) {
+            None => {
+                diagnostics.insert(LibrarySourceDiagnostic::MissingFile(audited.path.clone()));
+            }
+            Some(contents) => {
+                let actual = qcore_contract::profile_loader::sha256_hex(contents.as_bytes());
+                if actual != audited.sha256 {
+                    diagnostics.insert(LibrarySourceDiagnostic::DigestMismatch {
+                        file: audited.path.clone(),
+                        expected: audited.sha256.clone(),
+                        actual,
+                    });
+                }
+            }
         }
     }
 
-    let contracts = match library {
-        AuditedLibrary::Librdkafka2150 => librdkafka_contracts(),
-        AuditedLibrary::Cfl => cfl_contracts(),
-        AuditedLibrary::ChunkIo => chunk_io_contracts(),
-    };
     let mut summaries = BTreeSet::new();
     let mut checked_contracts = BTreeSet::new();
-    for contract in contracts {
-        let Some(contents) = source.files.get(contract.file) else {
+    for witness in &profile.source_witnesses {
+        let Some(contents) = source.files.get(&witness.file) else {
             continue;
         };
-        if contract
-            .fragments
-            .iter()
-            .all(|fragment| contents.contains(fragment))
-        {
-            summaries.extend(contract.summaries);
-            checked_contracts.insert(contract.name.to_owned());
+        let established = match &witness.check {
+            // The file's digest is rechecked at this boundary above, so
+            // the construct this witness names is established by identity.
+            WitnessCheck::Digest { .. } => true,
+            WitnessCheck::Substrings { needles, .. } => {
+                needles.iter().all(|needle| contents.contains(needle))
+            }
+        };
+        if established {
+            summaries.extend(witness.mechanisms.iter().copied());
+            checked_contracts.insert(witness.name.clone());
         } else {
             diagnostics.insert(LibrarySourceDiagnostic::ContractMismatch {
-                file: contract.file.to_owned(),
-                contract: contract.name.to_owned(),
+                file: witness.file.clone(),
+                contract: witness.name.clone(),
             });
         }
     }
@@ -89,151 +104,16 @@ pub fn derive_library_summary_profile(
     Ok(LibrarySourceCertificate {
         profile: LibrarySummaryProfile {
             source_revision: source.source_revision.clone(),
-            library,
+            library: library.to_owned(),
             summaries,
         },
-        checked_files: required_library_source_paths(library)
+        checked_files: profile
+            .audited_files
             .iter()
-            .map(|path| (*path).to_owned())
+            .map(|audited| audited.path.clone())
             .collect(),
         checked_contracts,
     })
-}
-
-struct SourceContract {
-    name: &'static str,
-    file: &'static str,
-    fragments: &'static [&'static str],
-    summaries: &'static [LibraryMechanismSummary],
-}
-
-fn librdkafka_contracts() -> Vec<SourceContract> {
-    vec![
-        SourceContract {
-            name: "librdkafka-refcount",
-            file: LIBRDKAFKA_FILES[0],
-            fragments: &[
-                "static RD_INLINE RD_UNUSED int rd_refcnt_add0",
-                "static RD_INLINE RD_UNUSED int rd_refcnt_sub0",
-                "r = rd_atomic32_sub(R, 1);",
-                "if (r < 0)",
-                "#define rd_refcnt_destroywrapper",
-                "if (rd_refcnt_sub(REFCNT) > 0)",
-                "DESTROY_CALL;",
-            ],
-            summaries: &[LibraryMechanismSummary::ReferenceCount],
-        },
-        SourceContract {
-            name: "librdkafka-typed-queue",
-            file: LIBRDKAFKA_FILES[1],
-            fragments: &[
-                "rd_kafka_q_enq0",
-                "TAILQ_INSERT_TAIL(&rkq->rkq_q, rko, rko_link)",
-                "rd_kafka_q_deq0",
-                "TAILQ_REMOVE(&rkq->rkq_q, rko, rko_link)",
-                "mtx_lock(&rkq->rkq_lock);",
-                "mtx_unlock(&rkq->rkq_lock);",
-                "@locality any thread.",
-            ],
-            summaries: &[
-                LibraryMechanismSummary::IntrusiveList,
-                LibraryMechanismSummary::TypedQueue,
-                LibraryMechanismSummary::ThreadHandoff,
-            ],
-        },
-        SourceContract {
-            name: "librdkafka-queue-destructor",
-            file: LIBRDKAFKA_FILES[2],
-            fragments: &[
-                "void rd_kafka_q_destroy_final",
-                "rd_kafka_q_purge0(rkq, 0 /*no-lock*/);",
-                "mtx_destroy(&rkq->rkq_lock);",
-                "cnd_destroy(&rkq->rkq_cond);",
-            ],
-            summaries: &[LibraryMechanismSummary::CascadingDestructor],
-        },
-    ]
-}
-
-fn cfl_contracts() -> Vec<SourceContract> {
-    vec![
-        SourceContract {
-            name: "cfl-intrusive-list",
-            file: CFL_FILES[0],
-            fragments: &[
-                "static inline void cfl_list_del",
-                "__cfl_list_del(entry->prev, entry->next);",
-                "entry->prev = NULL;",
-                "entry->next = NULL;",
-                "static inline void cfl_list_add",
-                "__cfl_list_add(_new, head->prev, head);",
-            ],
-            summaries: &[LibraryMechanismSummary::IntrusiveList],
-        },
-        SourceContract {
-            name: "cfl-arena-lifetime",
-            file: CFL_FILES[1],
-            fragments: &[
-                "struct cfl_arena *cfl_arena_create_with_options",
-                "arena = malloc_fn(allocator_context, sizeof(struct cfl_arena));",
-                "void cfl_arena_destroy(struct cfl_arena *arena)",
-                "arena_external_destroy(arena);",
-                "arena_chunks_destroy(arena);",
-                "arena->free_fn(arena->allocator_context, arena);",
-            ],
-            summaries: &[
-                LibraryMechanismSummary::Arena,
-                LibraryMechanismSummary::CascadingDestructor,
-            ],
-        },
-    ]
-}
-
-fn chunk_io_contracts() -> Vec<SourceContract> {
-    vec![
-        SourceContract {
-            name: "chunkio-context-destructor",
-            file: CHUNK_IO_FILES[0],
-            fragments: &[
-                "void cio_destroy(struct cio_ctx *ctx)",
-                "cio_stream_destroy_all(ctx);",
-                "free(ctx);",
-            ],
-            summaries: &[LibraryMechanismSummary::CascadingDestructor],
-        },
-        SourceContract {
-            name: "chunkio-stream-destructor",
-            file: CHUNK_IO_FILES[1],
-            fragments: &[
-                "void cio_stream_destroy(struct cio_stream *st)",
-                "cio_chunk_close_stream(st);",
-                "mk_list_del(&st->_head);",
-                "free(st->name);",
-                "free(st);",
-            ],
-            summaries: &[
-                LibraryMechanismSummary::IntrusiveList,
-                LibraryMechanismSummary::CascadingDestructor,
-            ],
-        },
-        SourceContract {
-            name: "chunkio-chunk-destructor",
-            file: CHUNK_IO_FILES[2],
-            fragments: &[
-                "void cio_chunk_close(struct cio_chunk *ch, int delete)",
-                "cio_memfs_close(ch);",
-                "cio_file_close(ch, delete);",
-                "mk_list_del(&ch->_head);",
-                "mk_list_del(&ch->_state_head);",
-                "free(ch->name);",
-                "cio_chunk_counter_total_sub(ctx);",
-            ],
-            summaries: &[
-                LibraryMechanismSummary::IntrusiveList,
-                LibraryMechanismSummary::CascadingDestructor,
-            ],
-        },
-    ]
 }
 
 #[cfg(test)]

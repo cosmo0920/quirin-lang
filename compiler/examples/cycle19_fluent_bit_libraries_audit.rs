@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
 
 #[path = "support/legacy_audit_report.rs"]
 mod legacy_audit_report;
@@ -9,6 +9,8 @@ use legacy_audit_report::AuditReport;
 
 use qcore_compiler::chunk_contract::{check_chunk_frame_contract, check_chunk_source_contract};
 use qcore_compiler::contract_loader::load_resource_contract_manifest;
+use qcore_compiler::profile_loader::{LoadedProfile, load_audited_bundle, verify_pin};
+use qcore_compiler::source_profiles::{FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile};
 use qcore_compiler::verifier_plugins::chunkio::{
     ChunkFrameSummary, ChunkSourceResult, import_chunk_frame_helper,
     import_chunk_source_with_helpers,
@@ -18,13 +20,20 @@ use qcore_compiler::verifier_plugins::libevent::monkey_source::{
     MonkeySourceResult, import_monkey_callbacks,
 };
 use qcore_compiler::{
-    AuditedLibrary, C11TranslationUnit, CCompilerDialect, ExternalSourceBundle,
-    LegacyFunctionScope, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
-    classify_libevent_symbol, derive_library_summary_profile, legacy_c_source_functions,
-    required_library_source_paths, validate_unrestricted_c11, verify_pinned_libevent_source,
+    C11TranslationUnit, CCompilerDialect, LegacyFunctionScope, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, classify_libevent_symbol,
+    derive_library_summary_profile, legacy_c_source_functions, validate_unrestricted_c11,
+    verify_pinned_libevent_source,
 };
 
-const PINNED_FLUENT_BIT_COMMIT: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+/// W2: the pinned revision, the clean-path list and the audited-file
+/// inventories below come from `contract/profiles/<source-set>/profile.json`.
+/// An unloadable profile audits nothing; it never falls back to a built-in
+/// table. The ChunkIO provider modules still carry their own revision
+/// constant (their migration is not part of this change), so the checks that
+/// take a revision string take it from there; a test asserts the profile pin
+/// and that constant agree.
+use qcore_compiler::PINNED_FLUENT_BIT_REVISION as PINNED_FLUENT_BIT_COMMIT;
 
 #[derive(Clone, Debug)]
 struct CompileEntry {
@@ -99,55 +108,25 @@ fn run(
     let database = fs::read_to_string(&database_path)
         .map_err(|error| format!("could not read {}: {error}", database_path.display()))?;
     let entries = compile_entries(&database)?;
-    let revision = Command::new("git")
-        .args([
-            "-C",
-            root.to_str().ok_or("non-UTF-8 Fluent Bit root")?,
-            "rev-parse",
-            "HEAD",
-        ])
-        .output()
-        .map_err(|error| format!("could not run git: {error}"))?;
-    if !revision.status.success() {
-        return Err("could not identify the Fluent Bit revision".into());
-    }
-    let revision = String::from_utf8_lossy(&revision.stdout).trim().to_owned();
-    if revision != PINNED_FLUENT_BIT_COMMIT {
-        return Err(format!(
-            "expected Fluent Bit {PINNED_FLUENT_BIT_COMMIT}, found {revision}"
-        ));
-    }
-    let source_status = Command::new("git")
-        .args(["-C"])
-        .arg(&root)
-        .args([
-            "diff",
-            "--quiet",
-            "HEAD",
-            "--",
-            "lib/cmetrics/src",
-            "lib/ctraces/src",
-            "lib/librdkafka-2.15.0/src",
-            "lib/chunkio/src",
-            "lib/chunkio/include",
-            "lib/cfl/src/cfl_arena.c",
-            "lib/cfl/include/cfl/cfl_list.h",
-            "lib/monkey",
-            "src/flb_input_chunk.c",
-            "include/fluent-bit/flb_input_chunk.h",
-            "include/fluent-bit/flb_mem.h",
-            "include/fluent-bit/flb_macros.h",
-        ])
-        .status()
-        .map_err(|error| format!("could not inspect Fluent Bit source state: {error}"))?;
-    if !source_status.success() {
-        return Err("audited Fluent Bit library sources contain tracked modifications".into());
-    }
+    let profile = load_profile(FLUENT_BIT_SOURCE_SET)
+        .map_err(|error| format!("Fluent Bit source-set profile unavailable: {error}"))?;
+    let pin = profile
+        .manifest()
+        .pins
+        .get(FLUENT_BIT_SOURCE_SET)
+        .ok_or("the fluent-bit profile declares no `fluent-bit` pin")?;
+    let revision = verify_pin(FLUENT_BIT_SOURCE_SET, pin, &root)
+        .map_err(|error| format!("Fluent Bit pin check failed: {error}"))?;
     println!("Fluent Bit {revision}");
+    println!(
+        "source profile assumptions: {}",
+        serde_json::to_string(&profile.assumptions())
+            .map_err(|error| format!("could not serialize profile assumptions: {error}"))?
+    );
     let mut report = AuditReport::new(&revision);
     let mut native_results = Vec::new();
     let mut teardown_results = Vec::new();
-    audit_library_summary_profiles(&root, &revision)?;
+    audit_library_summary_profiles(&root, &revision, &profile)?;
 
     let contracts = load_resource_contract_manifest(contract_manifest)?;
     if let Some(path) = diagnostic_report {
@@ -157,6 +136,7 @@ fn run(
             "trust": "declared resource-projection assumptions, not verified C behavior",
             "manifest": fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
             "sources": contracts.source_assumptions(),
+            "source_profile": profile.assumptions(),
         });
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
@@ -331,27 +311,22 @@ fn run(
     Ok(failed)
 }
 
-fn audit_library_summary_profiles(root: &Path, revision: &str) -> Result<(), String> {
-    for (name, library) in [
-        ("librdkafka", AuditedLibrary::Librdkafka2150),
-        ("cfl", AuditedLibrary::Cfl),
-        ("chunkio", AuditedLibrary::ChunkIo),
-    ] {
-        let mut files = std::collections::BTreeMap::new();
-        for relative in required_library_source_paths(library) {
-            let path = root.join(relative);
-            let contents = fs::read_to_string(&path)
-                .map_err(|error| format!("could not read {}: {error}", path.display()))?;
-            files.insert((*relative).to_owned(), contents);
-        }
-        let certificate = derive_library_summary_profile(
-            library,
-            &ExternalSourceBundle {
-                source_revision: revision.to_owned(),
-                files,
-            },
-        )
-        .map_err(|diagnostics| format!("{name} source-summary contract failed: {diagnostics:?}"))?;
+fn audit_library_summary_profiles(
+    root: &Path,
+    revision: &str,
+    profile: &LoadedProfile,
+) -> Result<(), String> {
+    for name in ["librdkafka", "cfl", "chunkio"] {
+        let library = profile
+            .library(name)
+            .ok_or_else(|| format!("the fluent-bit profile declares no `{name}` library"))?;
+        let bundle = load_audited_bundle(library, root, revision).map_err(|diagnostics| {
+            format!("{name} audited source inventory failed: {diagnostics:?}")
+        })?;
+        let certificate = derive_library_summary_profile(name, library, revision, &bundle)
+            .map_err(|diagnostics| {
+                format!("{name} source-summary contract failed: {diagnostics:?}")
+            })?;
         println!(
             "{name} source summaries: {} contract(s), {} file(s), {:?}",
             certificate.checked_contracts.len(),
@@ -1154,7 +1129,15 @@ fn audit_monkey_libevent_contract(fluent_root: &Path) -> Result<(), String> {
         .parent()
         .ok_or("compiler crate must be inside the QCore-C repository")?;
     let reference_root = repository_root.join(LIBEVENT_SUBMODULE_PATH);
-    verify_pinned_libevent_source(&reference_root)
+    let libevent = load_profile(LIBEVENT_SOURCE_SET)
+        .map_err(|error| format!("Libevent source-set profile unavailable: {error}"))?;
+    let libevent_library = libevent
+        .library(LIBEVENT_SOURCE_SET)
+        .ok_or("the libevent profile declares no `libevent` library")?;
+    let libevent_pin = libevent
+        .pin_for(LIBEVENT_SOURCE_SET)
+        .ok_or("the libevent library binds no pin")?;
+    verify_pinned_libevent_source(&reference_root, libevent_pin, libevent_library)
         .map_err(|error| format!("could not verify Cycle 18 Libevent source: {error}"))?;
 
     let bundled_root = fluent_root.join("lib/monkey/mk_core/deps/libevent");
@@ -1186,7 +1169,7 @@ fn audit_monkey_libevent_contract(fluent_root: &Path) -> Result<(), String> {
     let mut accepted = Vec::new();
     let mut unknown = Vec::new();
     for symbol in symbols {
-        match classify_libevent_symbol(&symbol) {
+        match classify_libevent_symbol(&libevent_library.api_dispositions, &symbol) {
             qcore_compiler::ProfileDisposition::Accepted => accepted.push(symbol),
             qcore_compiler::ProfileDisposition::Unknown => unknown.push(symbol),
         }

@@ -1,9 +1,57 @@
 use super::*;
+
+use std::sync::LazyLock;
+
+use qcore_contract::profile_loader::LoadedProfile;
+
 use crate::chunk_lifecycle::{ChunkBackend, ChunkResidency};
 use crate::event_driven::{
     ActivationReason, ArgumentMode, CallbackSummary, EventFlags, EventKey, PayloadAccessKind,
     ThreadMode,
 };
+use crate::source_profiles::{FLUENT_BIT_SOURCE_SET, LIBEVENT_SOURCE_SET, load_profile};
+
+/// The declared source-set profiles (W2). The permitted mechanism sets, the
+/// operation-summary table and the accepted-build matrix under test are the
+/// shipped data, not permissive fixtures.
+static FLUENT_BIT: LazyLock<LoadedProfile> =
+    LazyLock::new(|| load_profile(FLUENT_BIT_SOURCE_SET).expect("fluent-bit profile loads"));
+static LIBEVENT: LazyLock<LoadedProfile> =
+    LazyLock::new(|| load_profile(LIBEVENT_SOURCE_SET).expect("libevent profile loads"));
+
+fn library(name: &str) -> &'static qcore_schemas::profile::LibraryProfile {
+    FLUENT_BIT
+        .library(name)
+        .expect("the fluent-bit profile declares this library")
+}
+
+fn permitted(name: &str) -> &'static BTreeSet<LibraryMechanismSummary> {
+    &library(name).permitted_mechanisms
+}
+
+static CHUNK_SUMMARIES: LazyLock<BTreeMap<OperationKind, String>> = LazyLock::new(|| {
+    FLUENT_BIT
+        .merged_operation_summaries(&["chunkio", "fluent_bit"])
+        .expect("the chunk operation table merges without conflict")
+});
+
+fn chunk_summaries() -> &'static BTreeMap<OperationKind, String> {
+    &CHUNK_SUMMARIES
+}
+
+fn revision() -> &'static str {
+    &FLUENT_BIT
+        .pin_for("chunkio")
+        .expect("chunkio binds a pin")
+        .git_commit
+}
+
+fn builds() -> &'static [BuildProfileSelector] {
+    &LIBEVENT
+        .library(LIBEVENT_SOURCE_SET)
+        .expect("the libevent profile declares its library")
+        .accepted_builds
+}
 
 #[test]
 fn queue_refcounts_and_synchronized_publication_discharge() {
@@ -75,8 +123,8 @@ fn queue_refcounts_and_synchronized_publication_discharge() {
 
     let imported = ImportedLibraryCustodyProgram {
         profile: LibrarySummaryProfile {
-            source_revision: PINNED_FLUENT_BIT_REVISION.to_owned(),
-            library: AuditedLibrary::Librdkafka2150,
+            source_revision: revision().to_owned(),
+            library: "librdkafka".to_owned(),
             summaries: BTreeSet::from([
                 LibraryMechanismSummary::ReferenceCount,
                 LibraryMechanismSummary::TypedQueue,
@@ -87,8 +135,9 @@ fn queue_refcounts_and_synchronized_publication_discharge() {
         },
         custody: program,
     };
-    let imported_certificate = check_imported_library_custody(&imported).unwrap();
-    assert_eq!(imported_certificate.library, AuditedLibrary::Librdkafka2150);
+    let imported_certificate =
+        check_imported_library_custody(&imported, permitted("librdkafka"), revision()).unwrap();
+    assert_eq!(imported_certificate.library, "librdkafka");
 
     let mut missing = imported.clone();
     missing
@@ -96,7 +145,7 @@ fn queue_refcounts_and_synchronized_publication_discharge() {
         .summaries
         .remove(&LibraryMechanismSummary::TypedQueue);
     assert!(
-        check_imported_library_custody(&missing)
+        check_imported_library_custody(&missing, permitted("librdkafka"), revision())
             .unwrap_err()
             .contains(&LibraryImportDiagnostic::MissingSummary(
                 LibraryMechanismSummary::TypedQueue
@@ -104,9 +153,9 @@ fn queue_refcounts_and_synchronized_publication_discharge() {
     );
 
     let mut wrong_library = imported;
-    wrong_library.profile.library = AuditedLibrary::Cfl;
+    "cfl".clone_into(&mut wrong_library.profile.library);
     assert!(
-        check_imported_library_custody(&wrong_library)
+        check_imported_library_custody(&wrong_library, permitted("cfl"), revision())
             .unwrap_err()
             .contains(&LibraryImportDiagnostic::UnsupportedSummary(
                 LibraryMechanismSummary::TypedQueue
@@ -228,23 +277,26 @@ fn chunk_import_requires_pinned_source_complete_cfg_and_every_summary() {
     let operations = chunk_operations();
     let summaries = operations
         .iter()
-        .map(required_chunk_summary)
-        .map(str::to_owned)
+        .map(|operation| {
+            required_chunk_summary(operation, chunk_summaries())
+                .expect("the profile models every operation in this program")
+                .to_owned()
+        })
         .collect();
     let program = ImportedChunkProgram {
         profile: ChunkImportProfile {
-            source_revision: PINNED_FLUENT_BIT_REVISION.to_owned(),
+            source_revision: revision().to_owned(),
             control_flow_complete: true,
             summaries,
         },
         operations,
     };
-    assert!(check_imported_chunk_program(&program).is_ok());
+    assert!(check_imported_chunk_program(&program, chunk_summaries(), revision()).is_ok());
 
     let mut incomplete = program.clone();
     incomplete.profile.control_flow_complete = false;
     assert!(
-        check_imported_chunk_program(&incomplete)
+        check_imported_chunk_program(&incomplete, chunk_summaries(), revision())
             .unwrap_err()
             .contains(&ChunkImportDiagnostic::IncompleteControlFlow)
     );
@@ -252,9 +304,11 @@ fn chunk_import_requires_pinned_source_complete_cfg_and_every_summary() {
     let mut missing = program;
     missing.profile.summaries.remove("cio_chunk_down");
     assert!(
-        check_imported_chunk_program(&missing)
+        check_imported_chunk_program(&missing, chunk_summaries(), revision())
             .unwrap_err()
-            .contains(&ChunkImportDiagnostic::MissingSummary("cio_chunk_down"))
+            .contains(&ChunkImportDiagnostic::MissingSummary(
+                "cio_chunk_down".to_owned()
+            ))
     );
 }
 
@@ -307,7 +361,7 @@ fn monkey_events() -> EventProgram {
 #[test]
 fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation() {
     let events = monkey_events();
-    let event_certificate = check_event_program(&events).unwrap();
+    let event_certificate = check_event_program(&events, builds()).unwrap();
     let trace = event_certificate
         .trace
         .iter()
@@ -342,30 +396,38 @@ fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation()
             trace,
         },
     };
-    assert!(check_monkey_composition(&program).is_ok());
+    assert!(check_monkey_composition(&program, builds()).is_ok());
 
     let mut wrong_source = program.clone();
     wrong_source.profile.source_revision = "unpinned".into();
     assert!(
-        check_monkey_composition(&wrong_source)
+        check_monkey_composition(&wrong_source, builds())
             .unwrap_err()
             .contains(&MonkeyCompositionDiagnostic::SourceRevisionMismatch)
     );
 
     let mut missing = program.clone();
     missing.profile.callbacks.remove(&MonkeyCallback::Timeout);
-    assert!(check_monkey_composition(&missing).unwrap_err().contains(
-        &MonkeyCompositionDiagnostic::MissingCallback(MonkeyCallback::Timeout)
-    ));
+    assert!(
+        check_monkey_composition(&missing, builds())
+            .unwrap_err()
+            .contains(&MonkeyCompositionDiagnostic::MissingCallback(
+                MonkeyCallback::Timeout
+            ))
+    );
 
     let mut invalid = program.clone();
     invalid.profile.callbacks.insert(
         MonkeyCallback::Timeout,
         MonkeyCallbackSummary::audited(MonkeyCallback::Event),
     );
-    assert!(check_monkey_composition(&invalid).unwrap_err().contains(
-        &MonkeyCompositionDiagnostic::InvalidCallbackSummary(MonkeyCallback::Timeout)
-    ));
+    assert!(
+        check_monkey_composition(&invalid, builds())
+            .unwrap_err()
+            .contains(&MonkeyCompositionDiagnostic::InvalidCallbackSummary(
+                MonkeyCallback::Timeout
+            ))
+    );
 
     let mut wrong_event_build = program.clone();
     let Some(EventOperation::CreateBase { profile, .. }) =
@@ -375,7 +437,7 @@ fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation()
     };
     profile.backend = EventBackend::Poll;
     assert!(
-        check_monkey_composition(&wrong_event_build)
+        check_monkey_composition(&wrong_event_build, builds())
             .unwrap_err()
             .contains(&MonkeyCompositionDiagnostic::EventBuildMismatch)
     );
@@ -383,7 +445,7 @@ fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation()
     let mut wrong_backend = program;
     wrong_backend.observation.backend = EventBackend::Poll;
     assert!(
-        check_monkey_composition(&wrong_backend)
+        check_monkey_composition(&wrong_backend, builds())
             .unwrap_err()
             .contains(&MonkeyCompositionDiagnostic::BackendMismatch)
     );

@@ -88,3 +88,7 @@ stores MAP_FAILED, reports up-ring membership without incrementing the counter,
 and retains the new descriptor. Fixed retries and already-synced behavior remain
 observations, not general OS failure or durability guarantees. Evidence:
 `docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.
+
+- W2's bounded profile migration and full 185-TU parity are recorded in
+  `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
+  orchestration work is explicit there. Profile data remains declared trust.

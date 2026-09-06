@@ -2,8 +2,9 @@ use std::env;
 use std::path::Path;
 use std::process::ExitCode;
 
+use qcore_compiler::source_profiles::{LIBEVENT_SOURCE_SET, load_profile};
 use qcore_compiler::verifier_plugins::libevent::LIBEVENT_SUBMODULE_PATH;
-use qcore_compiler::{PINNED_LIBEVENT_DESCRIPTION, verify_pinned_libevent_source};
+use qcore_compiler::verify_pinned_libevent_source;
 
 fn main() -> ExitCode {
     let root = env::args_os().nth(1).map_or_else(
@@ -15,11 +16,28 @@ fn main() -> ExitCode {
         },
         Into::into,
     );
-    match verify_pinned_libevent_source(&root) {
+    // The pin, the audited file inventory and the retained construct needles
+    // are declared data (W2); an unloadable profile audits nothing.
+    let profile = match load_profile(LIBEVENT_SOURCE_SET) {
+        Ok(profile) => profile,
+        Err(error) => {
+            eprintln!("Libevent source-set profile unavailable: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+    println!("source profile assumptions: {:?}", profile.assumptions());
+    let (Some(library), Some(pin)) = (
+        profile.library(LIBEVENT_SOURCE_SET),
+        profile.pin_for(LIBEVENT_SOURCE_SET),
+    ) else {
+        eprintln!("Libevent source-set profile declares no `libevent` library");
+        return ExitCode::FAILURE;
+    };
+    match verify_pinned_libevent_source(&root, pin, library) {
         Ok(evidence) => {
             println!(
                 "verified Libevent {} at {}",
-                PINNED_LIBEVENT_DESCRIPTION, evidence.commit
+                pin.description, evidence.commit
             );
             for path in evidence.checked_files {
                 println!("checked {}", path.display());

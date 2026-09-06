@@ -1,5 +1,31 @@
 use super::*;
 
+use std::sync::LazyLock;
+
+use qcore_contract::profile_loader::LoadedProfile;
+
+use crate::source_profiles::{LIBEVENT_SOURCE_SET, load_profile};
+
+/// The declared `libevent` source-set profile (W2): the API disposition table
+/// and the accepted-build matrix these tests exercise are the shipped data,
+/// not a permissive test fixture.
+static PROFILE: LazyLock<LoadedProfile> =
+    LazyLock::new(|| load_profile(LIBEVENT_SOURCE_SET).expect("libevent profile loads"));
+
+fn builds() -> &'static [BuildProfileSelector] {
+    &PROFILE
+        .library(LIBEVENT_SOURCE_SET)
+        .expect("the libevent profile declares its library")
+        .accepted_builds
+}
+
+fn dispositions() -> &'static BTreeMap<String, ApiDisposition> {
+    &PROFILE
+        .library(LIBEVENT_SOURCE_SET)
+        .expect("the libevent profile declares its library")
+        .api_dispositions
+}
+
 fn key(id: u32) -> EventKey {
     EventKey::new(id, 1)
 }
@@ -65,7 +91,7 @@ fn has(diagnostics: &[EventDiagnostic], predicate: impl Fn(&EventDiagnostic) -> 
 
 #[test]
 fn one_shot_callback_has_live_authority_and_quiescent_teardown() {
-    let certificate = check_event_program(&one_shot(1, key(1), 9)).unwrap();
+    let certificate = check_event_program(&one_shot(1, key(1), 9), builds()).unwrap();
     assert_eq!(certificate.freed_events, BTreeSet::from([key(1)]));
     assert_eq!(certificate.dropped_arguments, BTreeSet::from([9]));
 }
@@ -103,7 +129,7 @@ fn persistent_recursive_activation_repends_without_fairness_claim() {
             mode: DeleteMode::Blocking,
         },
     );
-    assert!(check_event_program(&program).is_ok());
+    assert!(check_event_program(&program, builds()).is_ok());
 }
 
 #[test]
@@ -119,7 +145,7 @@ fn nonblocking_delete_requires_callback_exit_and_finalization() {
     );
     bad.operations.remove(8); // remove callback exit; subsequent teardown must fail
     assert!(has(
-        &check_event_program(&bad).unwrap_err(),
+        &check_event_program(&bad, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q706NotQuiescent { .. })
     ));
 
@@ -133,7 +159,7 @@ fn nonblocking_delete_requires_callback_exit_and_finalization() {
     );
     good.operations
         .insert(9, EventOperation::Finalize { event });
-    assert!(check_event_program(&good).is_ok());
+    assert!(check_event_program(&good, builds()).is_ok());
 }
 
 #[test]
@@ -149,7 +175,7 @@ fn stale_generation_and_argument_use_after_free_are_rejected() {
         },
     );
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
             EventDiagnostic::Q700InvalidLifecycle { .. } | EventDiagnostic::Q701UseAfterFree { .. }
@@ -196,7 +222,7 @@ fn same_base_cannot_enter_two_callbacks_concurrently() {
         .operations
         .insert(12, EventOperation::FreeEvent { event: second });
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q706NotQuiescent { .. })
     ));
 }
@@ -250,13 +276,13 @@ fn cross_base_conflict_needs_explicit_synchronization() {
         ]);
     }
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q705ConflictingAccess { .. })
     ));
     if let EventOperation::Access { synchronized, .. } = &mut program.operations[17] {
         *synchronized = true;
     }
-    assert!(check_event_program(&program).is_ok());
+    assert!(check_event_program(&program, builds()).is_ok());
 }
 
 #[test]
@@ -269,7 +295,7 @@ fn cross_thread_activation_requires_supported_thread_setup() {
         *cross_thread = true;
     }
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
             EventDiagnostic::Q709UnknownProfile { .. }
@@ -324,7 +350,7 @@ fn bufferevent_modes_watermarks_and_close_custody_are_checked() {
             EventOperation::FreeBase { base: 1 },
         ],
     };
-    let certificate = check_event_program(&program).unwrap();
+    let certificate = check_event_program(&program, builds()).unwrap();
     assert_eq!(certificate.closed_descriptors, BTreeSet::from([3]));
 }
 
@@ -354,7 +380,7 @@ fn unlock_callbacks_without_deferral_and_pending_output_fail() {
         ],
     };
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q710BuffereventContract { .. })
     ));
     if let EventOperation::CreateBufferevent { deferred, .. } = &mut program.operations[1] {
@@ -364,7 +390,7 @@ fn unlock_callbacks_without_deferral_and_pending_output_fail() {
         .operations
         .insert(2, EventOperation::BufferOutput { bev, bytes: 1 });
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q707OwnedObligation { .. })
     ));
 }
@@ -381,11 +407,11 @@ fn priority_exploration_is_nondeterministic_only_within_a_priority() {
 #[test]
 fn unsupported_symbols_and_profiles_fail_closed() {
     assert_eq!(
-        classify_libevent_symbol("evhttp_new"),
+        classify_libevent_symbol(dispositions(), "evhttp_new"),
         ProfileDisposition::Unknown
     );
     assert_eq!(
-        classify_libevent_symbol("private_event_magic"),
+        classify_libevent_symbol(dispositions(), "private_event_magic"),
         ProfileDisposition::Unknown
     );
     let mut program = one_shot(1, key(1), 9);
@@ -393,7 +419,7 @@ fn unsupported_symbols_and_profiles_fail_closed() {
         profile.openssl = true;
     }
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(error, EventDiagnostic::Q709UnknownProfile { .. })
     ));
 }
@@ -406,7 +432,7 @@ fn evutil_socket_contracts_are_profiled_and_conserve_custody() {
         "evutil_socketpair",
     ] {
         assert_eq!(
-            classify_libevent_symbol(symbol),
+            classify_libevent_symbol(dispositions(), symbol),
             ProfileDisposition::Accepted
         );
     }
@@ -427,7 +453,7 @@ fn evutil_socket_contracts_are_profiled_and_conserve_custody() {
             },
         ],
     };
-    let certificate = check_event_program(&program).unwrap();
+    let certificate = check_event_program(&program, builds()).unwrap();
     assert_eq!(certificate.closed_descriptors, BTreeSet::from([3, 4]));
 }
 
@@ -437,7 +463,7 @@ fn failed_socketpair_creates_no_descriptor_obligation() {
         live_arguments: BTreeSet::new(),
         operations: vec![EventOperation::CreateSocketPair { descriptors: None }],
     };
-    assert!(check_event_program(&program).is_ok());
+    assert!(check_event_program(&program, builds()).is_ok());
 }
 
 #[test]
@@ -458,7 +484,7 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
             },
         ],
     };
-    let diagnostics = check_event_program(&failed_close).unwrap_err();
+    let diagnostics = check_event_program(&failed_close, builds()).unwrap_err();
     assert!(
         diagnostics.contains(&EventDiagnostic::Q703DescriptorCustody {
             operation: failed_close.operations.len(),
@@ -487,7 +513,7 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
         ],
     };
     assert!(has(
-        &check_event_program(&duplicate_close).unwrap_err(),
+        &check_event_program(&duplicate_close, builds()).unwrap_err(),
         |error| matches!(
             error,
             EventDiagnostic::Q703DescriptorCustody {
@@ -518,7 +544,7 @@ fn socket_error_query_cannot_use_a_closed_descriptor() {
         ],
     };
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
             EventDiagnostic::Q703DescriptorCustody {
@@ -560,7 +586,7 @@ fn active_event_borrow_prevents_socket_close() {
         ],
     );
     assert!(has(
-        &check_event_program(&program).unwrap_err(),
+        &check_event_program(&program, builds()).unwrap_err(),
         |error| matches!(
             error,
             EventDiagnostic::Q703DescriptorCustody {
@@ -584,7 +610,7 @@ fn priority_readiness_timing_and_trace_order_are_not_synchronization() {
             .operations
             .insert(7, EventOperation::AssumeOrdering { evidence });
         assert!(has(
-            &check_event_program(&program).unwrap_err(),
+            &check_event_program(&program, builds()).unwrap_err(),
             |error| matches!(error, EventDiagnostic::Q708OrderingAssumption { .. })
         ));
     }
@@ -592,7 +618,7 @@ fn priority_readiness_timing_and_trace_order_are_not_synchronization() {
 
 #[test]
 fn adapter_observation_must_refine_the_checked_trace() {
-    let certificate = check_event_program(&one_shot(1, key(1), 9)).unwrap();
+    let certificate = check_event_program(&one_shot(1, key(1), 9), builds()).unwrap();
     let observation = certificate
         .trace
         .iter()
