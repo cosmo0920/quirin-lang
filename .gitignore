@@ -3,3 +3,4 @@
 /docs/cmake-3.20.0-linux-x86_64/
 *.obj
 *.pdb
+*.pyc
