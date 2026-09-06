@@ -2,6 +2,7 @@ import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.FilesystemChunkClose
+import QCore.TeardownTraversal
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
@@ -250,3 +251,10 @@ import QCore.ChunkSource
 #print axioms QCore.FilesystemChunkClose.zero_total_rejects
 #print axioms QCore.FilesystemChunkClose.duplicate_chunk_release_rejects
 #print axioms QCore.FilesystemChunkClose.unresolved_custody_survives_chunk_release
+
+#print axioms QCore.TeardownTraversal.empty_ring_has_no_child_call
+#print axioms QCore.TeardownTraversal.advance_uses_saved_successor
+#print axioms QCore.TeardownTraversal.accepted_step_conserves_order
+#print axioms QCore.TeardownTraversal.accepted_step_decreases_remaining
+#print axioms QCore.TeardownTraversal.completed_traversal_preserves_exact_identities
+#print axioms QCore.TeardownTraversal.completed_distinct_ring_has_no_duplicate_calls

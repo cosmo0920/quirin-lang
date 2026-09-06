@@ -58,6 +58,7 @@ pub mod translation_validation;
 mod typed_c_ast;
 pub mod typed_errors;
 pub mod typed_source;
+pub mod typed_source_match;
 pub mod usage;
 pub mod verifier_plugin;
 pub mod verifier_plugins;

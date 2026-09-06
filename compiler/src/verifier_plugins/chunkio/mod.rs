@@ -11,6 +11,7 @@ pub mod file_outcomes;
 pub mod filesystem_chunk_close;
 pub mod memory_close;
 pub mod teardown_source;
+pub mod traversal;
 pub mod unmap_wrapper;
 pub use chunk_source::*;
 

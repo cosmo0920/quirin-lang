@@ -1,0 +1,10 @@
+{
+  "baseline": "cycle19-filesystem-chunk",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_results_identical": true,
+  "prior_teardown_evidence_identical": true,
+  "new_traversal_witnesses": 2,
+  "workspace_tests": 388,
+  "contract_modules": 40
+}

@@ -683,6 +683,24 @@ fn audit_library(
             teardown_results
                 .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
         }
+        if library == "chunkio" && matches!(file.as_ref(), "cio_chunk.c" | "cio_stream.c") {
+            use qcore_compiler::verifier_plugins::chunkio::traversal::{
+                TraversalKind, check_traversal_source,
+            };
+            let kind = if file == "cio_chunk.c" {
+                TraversalKind::Chunks
+            } else {
+                TraversalKind::Streams
+            };
+            let evidence = check_traversal_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+            println!(
+                "qcore-traversal {}: complete typed reference body checked; ring provenance and child custody remain premises",
+                evidence.source().function()
+            );
+            teardown_results.push(
+                serde_json::json!({"kind":"teardown_traversal", "file":file, "evidence":evidence}),
+            );
+        }
         if library == "chunkio" && file == "cio_memfs.c" {
             let certificate = memory_backend
                 .as_ref()

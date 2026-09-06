@@ -717,3 +717,15 @@ theorems preserve the residual outcomes through enclosing allocation release.
 All 385 workspace tests and 39 contract modules pass with required checks and
 identical prior evidence. This does not establish full sync or caller/OS frames,
 constructor provenance, stream/context traversal or wider event composition.
+
+## Source-bound teardown traversal (2026-09-06)
+
+The [traversal report](../reports/cycle19-teardown-traversal/README.md) checks the
+complete typed bodies of `cio_chunk_close_stream` and `cio_stream_destroy_all`
+against expanded references that input macros cannot rewrite. Saved-next order,
+sentinel exclusion, primary-link container recovery and exact child arguments
+are retained. Native ring/provenance and child destructor frames remain premises;
+source matching discharges no child custody. Six Lean finite-traversal theorems,
+388 workspace tests, 40 contract modules and all required checks pass. Prior
+source/diagnostic/certificate evidence is unchanged. Enclosing allocation release
+and identity/dependency composition remain open with the wider lifecycle/event gates.
