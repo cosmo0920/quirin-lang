@@ -415,7 +415,9 @@ by re-running the intraprocedural analyzer against it, publishes them as
 re-derive them independently. Declared contracts always win; a disagreement is
 a `SummaryConflict` diagnostic. The [2026-09-07 extension](reports/w4-custody-extensions/README.md)
 adds validated direct `Out` slots, `Stored` formals, `Reallocated` results and
-possibly-null owned returns. Remaining: `Removed` inference, general out-slot
+possibly-null owned returns. [Direct Removed wrappers](reports/w4-removed-custody/README.md)
+now validate contained entry and detached/live exits with matching Lean relations.
+Remaining: general removal aliases and nullable removal, general out-slot
 aliases, recursive components (least fixed point is empty by construction),
 and the Juliet stretch corpus. The [gateway relocation](reports/w4-gateway-crate/README.md)
 is executed (2026-09-07): `legacy_c`, `legacy_summary`, Clang discovery and

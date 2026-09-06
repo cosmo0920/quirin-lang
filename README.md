@@ -42,7 +42,7 @@ models do not imply complete source-language support.
 | Path | Contents |
 |---|---|
 | [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C compatibility API, source driver and trusted witness replay |
-| [`crates/qcore-core/`](crates/qcore-core/) | Semantic-kernel seed: usage grades, axis/dimension AST, index environments |
+| [`crates/qcore-core/`](crates/qcore-core/) | Semantic kernel: quantitative types, ownership, errors, cleanup, CFG, concurrency, translation and chunk lifecycle models |
 | [`crates/qcore-frontend/`](crates/qcore-frontend/) | QCore language front end: lexer, parsers, quant-index resolution, elaboration |
 | [`crates/qcore-contract/`](crates/qcore-contract/) | Declarative `.qcore` contract loader and observation interpreter |
 | [`crates/qcore-schemas/`](crates/qcore-schemas/) | Published, versioned schema surface (serde types crossing the core/provider boundary; no analysis logic) |
@@ -386,3 +386,19 @@ mutex/synchronization premises; checked invariant/source authority remains open.
 Observation replay rejects scope/module/bounds substitution. Current requirements
 and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
 `docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.
+
+W5 kernel and contract boundaries advanced (2026-09-07): sequential and
+concurrent model modules now reside in dependency-free `qcore-core`, with
+byte-identical implementations/tests and compiler reexports. Chunk lifecycle
+also moved unchanged. Portable, untrusted chunk-path records live in schemas
+0.2.0; `qcore-contract` evaluates declared paths, while only the opaque typed
+source importer can issue source-checked compatibility certificates. No plugin
+wire version or admission rule changed. See
+`docs/reports/w5-sequential-kernel/README.md`,
+`docs/reports/w5-concurrent-kernel/README.md`, and
+`docs/reports/w5-chunk-summary-boundary/README.md`.
+W4 now validates direct non-null `Removed` wrappers from contained entry to
+live detached exit, with independent certificate rederivation and matching
+Lean relations (`docs/reports/w4-removed-custody/README.md`). All 185 pinned
+resource/source results remain unchanged; recursion, general removal aliases,
+provider model extraction and broader source/CT coverage remain open.

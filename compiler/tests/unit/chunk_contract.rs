@@ -38,7 +38,16 @@ fn native_contract_files_are_checked_against_source_paths() {
     }
     let busy = busy_summary();
     let checked = check_chunk_source_contract(&busy, BUSY).unwrap();
-    assert_eq!(checked.checked_states(), 4);
+    assert_eq!(ChunkContractCertificate::checked_states(&checked), 4);
+    assert_eq!(
+        ChunkContractCertificate::function(&checked),
+        checked.function()
+    );
+    assert_eq!(ChunkContractCertificate::contract_source(&checked), BUSY);
+    assert_eq!(
+        ChunkContractCertificate::dependency_sources(&checked),
+        checked.dependency_sources()
+    );
     assert_eq!(checked.contract_source(), BUSY);
     let lock = summary("int cio_chunk_is_locked(struct cio_chunk *ch) { return ch->lock; }");
     assert_eq!(

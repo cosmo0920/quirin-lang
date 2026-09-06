@@ -21,9 +21,9 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | Path | Contents |
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
-| `crates/qcore-core/` | L1 semantic-kernel seed (W1 relocation): `usage`, `ast`, `index`. No workspace dependencies; the rest of the kernel arrives at W5 consolidation |
+| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models and chunk lifecycle. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
-| `crates/qcore-contract/` | L1 contract machinery (W1 relocation): total-or-reject `contract_loader`, `contract_observation`. Depends on core/frontend/schemas; `chunk_contract` joins after the W5 chunk-summary schema split |
+| `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; source-import certificates remain opaque in the compiler adapter |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery and typed-AST transport; depends only on contract/schemas plus JSON transport |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
@@ -147,7 +147,7 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   boundaries that remain true statements: interprocedural parameter/return
   custody inference is **implemented for parameter/return custody with
   validation** (LC01, W4, extended 2026-09-07 with validated `Out`,
-  `Stored`, `Reallocated` and possibly-null returns; `Removed`, recursive
+  `Stored`, `Reallocated`, possibly-null returns and direct `Removed` wrappers; general removal aliases and recursive
   call-graph components, and cost summaries are still not inferred, and every such body
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
@@ -361,3 +361,19 @@ mutex/synchronization premises; checked invariant/source authority remains open.
 Observation replay rejects scope/module/bounds substitution. Current requirements
 and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
 `docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.
+
+W5 kernel and contract boundaries advanced (2026-09-07): sequential and
+concurrent model modules now reside in dependency-free `qcore-core`, with
+byte-identical implementations/tests and compiler reexports. Chunk lifecycle
+also moved unchanged. Portable, untrusted chunk-path records live in schemas
+0.2.0; `qcore-contract` evaluates declared paths, while only the opaque typed
+source importer can issue source-checked compatibility certificates. No plugin
+wire version or admission rule changed. See
+`docs/reports/w5-sequential-kernel/README.md`,
+`docs/reports/w5-concurrent-kernel/README.md`, and
+`docs/reports/w5-chunk-summary-boundary/README.md`.
+W4 now validates direct non-null `Removed` wrappers from contained entry to
+live detached exit, with independent certificate rederivation and matching
+Lean relations (`docs/reports/w4-removed-custody/README.md`). All 185 pinned
+resource/source results remain unchanged; recursion, general removal aliases,
+provider model extraction and broader source/CT coverage remain open.

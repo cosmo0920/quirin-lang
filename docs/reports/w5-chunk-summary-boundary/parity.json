@@ -1,0 +1,32 @@
+[
+  {
+    "before": "compiler/src/chunk_lifecycle.rs",
+    "after": "crates/qcore-core/src/chunk_lifecycle.rs",
+    "sha256": "f0610e9ae9746fc1a4056802af43ccbf75e3fc2a821445759e555e7cb639593c",
+    "byte_identical": true
+  },
+  {
+    "before": "compiler/tests/unit/chunk_lifecycle.rs",
+    "after": "crates/qcore-core/tests/unit/chunk_lifecycle.rs",
+    "sha256": "64a86fd7907cd3bdeeef64c88250bc46972fc18b779f478342cb85b285574afe",
+    "byte_identical": true
+  },
+  {
+    "before": "build/cycle19/reports/diagnostics.json",
+    "after": "/tmp/qcore-chunk-split-diagnostics.json",
+    "sha256": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+    "byte_identical": true
+  },
+  {
+    "before": "build/cycle19/reports/source.json",
+    "after": "/tmp/qcore-chunk-split-source.json",
+    "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "byte_identical": true
+  },
+  {
+    "before": "build/cycle19/reports/diagnostics.chunk-contracts.json",
+    "after": "/tmp/qcore-chunk-split-diagnostics.chunk-contracts.json",
+    "sha256": "390ec6a7198d0116fc575dcffe011dc75943a7e79ba1f91b31efedebf73c7a2a",
+    "byte_identical": true
+  }
+]

@@ -91,3 +91,5 @@ pub use weak_memory::{
     MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
     check_c11_execution,
 };
+
+pub mod chunk_lifecycle;

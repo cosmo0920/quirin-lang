@@ -3,9 +3,8 @@
 //! total-or-reject resource-contract loader and the contract-observation
 //! interpreter. Contracts are trusted assumptions, never verified facts.
 //!
-//! `chunk_contract` remains in `qcore-compiler` until the ChunkIO summary
-//! types it consumes move to `qcore-schemas` (the W5 task 3 split); moving
-//! it now would invert the layering through the provider modules.
+//! `chunk_contract` evaluates declared schema paths; source import remains a
+//! separately checked boundary in the caller.
 
 pub mod contract_loader;
 pub mod contract_observation;
@@ -13,3 +12,5 @@ pub mod profile_loader;
 
 mod profile_json;
 pub mod typed_profile;
+
+pub mod chunk_contract;

@@ -1,0 +1,11 @@
+{
+  "workspace_tests_passed": 563,
+  "cargo_fmt_all_check": "passed",
+  "cargo_clippy_all_targets_deny_warnings": "passed",
+  "reevaluation_probe": "passed",
+  "reevaluation_followup": "passed",
+  "lake_build": "passed",
+  "lean_audit_modules": 19,
+  "chunk_source_and_lifecycle_parity": "byte-identical",
+  "raw_units_promoted": false
+}

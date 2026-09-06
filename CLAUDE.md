@@ -70,7 +70,7 @@ Claude-specific additions:
   recursive component. The 2026-09-07 extension validates direct `Out` slots,
   `Stored` formals, `Reallocated` results and possibly-null owned returns
   (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
-  `Removed` inference and recursive components remain unsupported; the
+  Direct `Removed` wrappers are inferred and validated; general removal aliases and recursive components remain unsupported; the
   `qcore-c-gateway` relocation is executed with compiler compatibility reexports
   (`docs/reports/w4-gateway-crate/README.md`).
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
@@ -158,3 +158,19 @@ mutex/synchronization premises; checked invariant/source authority remains open.
 Observation replay rejects scope/module/bounds substitution. Current requirements
 and bounded acceptance are in `docs/QCORE_SPEC_r0_3.md` and
 `docs/reviews/r0_3/acceptance.json`; superseded specs live in `docs/obsolete/`.
+
+W5 kernel and contract boundaries advanced (2026-09-07): sequential and
+concurrent model modules now reside in dependency-free `qcore-core`, with
+byte-identical implementations/tests and compiler reexports. Chunk lifecycle
+also moved unchanged. Portable, untrusted chunk-path records live in schemas
+0.2.0; `qcore-contract` evaluates declared paths, while only the opaque typed
+source importer can issue source-checked compatibility certificates. No plugin
+wire version or admission rule changed. See
+`docs/reports/w5-sequential-kernel/README.md`,
+`docs/reports/w5-concurrent-kernel/README.md`, and
+`docs/reports/w5-chunk-summary-boundary/README.md`.
+W4 now validates direct non-null `Removed` wrappers from contained entry to
+live detached exit, with independent certificate rederivation and matching
+Lean relations (`docs/reports/w4-removed-custody/README.md`). All 185 pinned
+resource/source results remain unchanged; recursion, general removal aliases,
+provider model extraction and broader source/CT coverage remain open.

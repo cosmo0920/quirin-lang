@@ -25,7 +25,7 @@ pub use qcore_core::c_emit;
 pub use qcore_core::cfg;
 pub use qcore_frontend::check;
 pub mod chunk_contract;
-pub mod chunk_lifecycle;
+pub use qcore_core::chunk_lifecycle;
 pub use qcore_core::cleanup_lowering;
 pub mod cleanup_outcome;
 pub use qcore_contract::contract_loader;

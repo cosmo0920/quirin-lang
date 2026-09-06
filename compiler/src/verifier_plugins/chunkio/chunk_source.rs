@@ -18,37 +18,26 @@ use super::PINNED_FLUENT_BIT_REVISION;
 use crate::chunk_lifecycle::{ChunkId, ChunkOperation, ChunkState};
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-pub enum ChunkSourceField {
-    Busy,
-    Locked,
-}
+use qcore_schemas::chunk_summary::{ChunkFrameSummaryRecord, ChunkSourceSummaryRecord};
+pub use qcore_schemas::chunk_summary::{ChunkSourceField, ChunkSourcePath};
 
+/// Constructed only by the typed source importer. The schema record alone
+/// cannot be promoted into this source-checked wrapper.
+///
+/// ```compile_fail
+/// use qcore_compiler::chunk_source::ChunkSourceSummary;
+/// use qcore_schemas::chunk_summary::ChunkSourceSummaryRecord;
+/// fn forge(record: ChunkSourceSummaryRecord) -> ChunkSourceSummary { record.into() }
+/// ```
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct ChunkSourcePath {
-    pub initial_value: bool,
-    pub final_value: bool,
-    pub return_value: i32,
-    /// Taken/not-taken decisions in source execution order.
-    pub branches: Vec<bool>,
-    /// Every field assignment, including idempotent writes, in source order.
-    pub writes: Vec<bool>,
-    /// Source-validated helper writes outside the modeled Boolean field.
-    pub frame_writes: Vec<(String, i32)>,
-}
+#[serde(transparent)]
+pub struct ChunkSourceSummary(ChunkSourceSummaryRecord);
 
-/// Only the typed source importer can construct this summary. The complete
-/// finite pre-state domain is exactly {false, true}, under the documented
-/// borrowed-live-chunk and exclusive-field-access preconditions.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct ChunkSourceSummary {
-    function: String,
-    source_revision: String,
-    field: ChunkSourceField,
-    paths: [ChunkSourcePath; 2],
-    dependencies: BTreeMap<String, String>,
-    /// Exact declared profile identities retained with this bounded claim.
-    profile_assumptions: BTreeMap<String, String>,
+impl std::ops::Deref for ChunkSourceSummary {
+    type Target = ChunkSourceSummaryRecord;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl ChunkSourceSummary {
@@ -124,11 +113,14 @@ impl ChunkSourceSummary {
 /// constant writes to ordinary int fields outside lock/busy. Source text is
 /// retained; the audit must establish revision, build and cross-unit ABI identity.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct ChunkFrameSummary {
-    function: String,
-    source: String,
-    layout: Vec<(String, String)>,
-    writes: Vec<(String, i32)>,
+#[serde(transparent)]
+pub struct ChunkFrameSummary(ChunkFrameSummaryRecord);
+
+impl std::ops::Deref for ChunkFrameSummary {
+    type Target = ChunkFrameSummaryRecord;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl ChunkFrameSummary {
@@ -255,12 +247,12 @@ pub fn import_chunk_frame_helper(
     if writes.is_empty() {
         return Err("helper has no checked field writes".into());
     }
-    Ok(ChunkFrameSummary {
+    Ok(ChunkFrameSummary(ChunkFrameSummaryRecord {
         function: function.into(),
         source,
         layout,
         writes,
-    })
+    }))
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -393,7 +385,7 @@ pub fn import_chunk_source_with_profile(
             let mut summary =
                 derive_summary(&ast, &function, source_revision, &checked_helpers, model)?;
             layouts[abi].clone()?;
-            summary.profile_assumptions = profile.assumptions();
+            summary.0.profile_assumptions = profile.assumptions();
             Ok(summary)
         });
         results.push(match result {
@@ -704,14 +696,14 @@ fn derive_summary(
             .ok_or("source path falls through without an explicit return")?;
         Ok::<_, String>(path)
     };
-    Ok(ChunkSourceSummary {
+    Ok(ChunkSourceSummary(ChunkSourceSummaryRecord {
         function: function.to_owned(),
         source_revision: source_revision.to_owned(),
         field,
         paths: [evaluate(false)?, evaluate(true)?],
         dependencies: importer.dependencies,
         profile_assumptions: BTreeMap::new(),
-    })
+    }))
 }
 
 #[cfg(test)]

@@ -48,3 +48,5 @@ pub use witness::{
     ChunkResidencyRecord, ContractObservationRecord, ContractObservationWitness, NativeRunBinding,
     ObservedRun, PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness, SourceSite,
 };
+
+pub mod chunk_summary;
