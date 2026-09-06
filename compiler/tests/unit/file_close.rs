@@ -43,7 +43,7 @@ fn import(c: &str, f: &str) -> SourceSummary {
     };
     s.clone()
 }
-fn dependencies(c: &str) -> (UnmapCertificate, CleanupCertificate) {
+pub(crate) fn dependencies(c: &str) -> (UnmapCertificate, CleanupCertificate) {
     let native = |function: &str| {
         check_cleanup_outcomes(
             &import(c, function),
@@ -205,7 +205,7 @@ fn file_close_native_policy_cannot_hide_failure_custody() {
     }
 }
 
-fn deletion_fixture() -> String {
+pub(crate) fn deletion_fixture() -> String {
     format!(
         "{}{}",
         fixture().replace(

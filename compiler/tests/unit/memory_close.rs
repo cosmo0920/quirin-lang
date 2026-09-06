@@ -5,7 +5,7 @@ use crate::verifier_plugins::chunkio::{
         check_counter_sources, check_list_unlink_source, check_memory_backend_source,
     },
 };
-const FIXTURE:&str="
+pub(crate) const FIXTURE:&str="
 #define CIO_STORE_MEM 1
 #define CIO_STORE_FS 0
 typedef unsigned long size_t;
@@ -35,7 +35,7 @@ mk_list_del(&ch->_head);mk_list_del(&ch->_state_head);
 free(ch->name);free(ch);
 cio_chunk_counter_total_sub(ctx);
 }";
-fn dependencies() -> MemoryCloseDependencies {
+pub(crate) fn dependencies() -> MemoryCloseDependencies {
     let unit = C11TranslationUnit {
         source: FIXTURE,
         ..Default::default()

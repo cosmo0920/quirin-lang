@@ -703,3 +703,17 @@ All 382 workspace tests and 38 contract modules pass with the required checks.
 The complete source evidence and aggregate inventory remain unchanged. Controlled
 hooks do not establish actual filesystem deletion or close the remaining sync,
 OS/caller provenance, enclosing teardown, traversal and event-composition gates.
+
+## Enclosing filesystem chunk close (2026-09-06)
+
+The [filesystem chunk close report](../reports/cycle19-filesystem-chunk/README.md)
+composes the checked file backend with error reset, both embedded list removals,
+name/chunk release and saved-context total decrement. Seventy-five conditional
+cases retain 39 unresolved OS cleanup outcomes; eight establish conditional
+deletion success. Null chunks and null backends remain distinct. The filesystem
+scope checks two source paths; together with memory scope, only the unsupported
+backend-kind path remains uncovered. A 22-clause QCore policy and six new Lean
+theorems preserve the residual outcomes through enclosing allocation release.
+All 385 workspace tests and 39 contract modules pass with required checks and
+identical prior evidence. This does not establish full sync or caller/OS frames,
+constructor provenance, stream/context traversal or wider event composition.

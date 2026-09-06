@@ -38,6 +38,20 @@ pub struct MemoryCloseCertificate {
     uncovered_paths: Vec<usize>,
 }
 impl MemoryCloseCertificate {
+    pub(super) fn source(&self) -> &SourceSummary {
+        &self.source
+    }
+    pub(super) fn memory_kind(&self) -> Result<i32, String> {
+        probe_literal(&self.constant_probe)
+    }
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        check(
+            &self.source,
+            &self.constant_probe,
+            &self.dependencies,
+            CONTRACT,
+        )
+    }
     pub fn checked_paths(&self) -> &[usize] {
         &self.checked_paths
     }
@@ -203,6 +217,8 @@ fn check(
             let mut replay = Replay {
                 nonnull,
                 memory_kind,
+                filesystem: false,
+                delete: false,
                 freed: false,
                 backend: false,
                 primary: false,
@@ -341,6 +357,8 @@ enum Value {
 struct Replay<'a> {
     nonnull: bool,
     memory_kind: i32,
+    filesystem: bool,
+    delete: bool,
     freed: bool,
     backend: bool,
     primary: bool,
@@ -359,6 +377,9 @@ impl Replay<'_> {
             } else {
                 Value::Null
             }),
+            Expr::Parameter { index: 1 } if self.filesystem => {
+                Ok(Value::Integer(i32::from(self.delete)))
+            }
             Expr::Symbol { operation } => self
                 .symbols
                 .get(operation)
@@ -471,11 +492,19 @@ impl Replay<'_> {
                         && !self.freed
                         && self.calls == 1
                     {
-                    } else if function == self.deps.backend.source().function()
-                        && signature == self.deps.backend.source().signature()
-                        && args == [Value::Chunk]
-                        && !self.freed
+                    } else if !self.freed
                         && !self.backend
+                        && if self.filesystem {
+                            function == "cio_file_close"
+                                && signature == "void (struct cio_chunk *, int)"
+                                && result_type == "void"
+                                && args == [Value::Chunk, Value::Integer(i32::from(self.delete))]
+                                && self.calls == 2
+                        } else {
+                            function == self.deps.backend.source().function()
+                                && signature == self.deps.backend.source().signature()
+                                && args == [Value::Chunk]
+                        }
                     {
                         self.backend = true;
                     } else if function == self.deps.unlink.source().function()
@@ -532,6 +561,79 @@ impl Replay<'_> {
     }
 }
 
+pub(super) fn probe_literal(probe: &SourceSummary) -> Result<i32, String> {
+    if probe.signature() != "int (void)" {
+        return Err("backend kind probe requires int(void)".into());
+    }
+    let [path] = probe.paths() else {
+        return Err("backend kind probe requires one path".into());
+    };
+    let [
+        Op::ReturnValue {
+            value:
+                SourceValue {
+                    expression: Expr::Integer { value },
+                    ..
+                },
+        },
+    ] = path.operations.as_slice()
+    else {
+        return Err("backend kind probe must return a literal".into());
+    };
+    value
+        .parse()
+        .map_err(|_| "backend kind outside int profile".into())
+}
+
+/// Reuse the close identity/order interpreter with the filesystem dispatch arm.
+/// The caller must bind and recheck the file dependency before using this trace.
+pub(super) fn filesystem_path(
+    memory: &MemoryCloseCertificate,
+    kind: i32,
+    nonnull: bool,
+    delete: bool,
+) -> Result<usize, String> {
+    let mut selected = Vec::new();
+    for (index, path) in memory.source.paths().iter().enumerate() {
+        let mut replay = Replay {
+            nonnull,
+            memory_kind: kind,
+            filesystem: true,
+            delete,
+            freed: false,
+            backend: false,
+            primary: false,
+            state_link: false,
+            name: false,
+            counter: false,
+            calls: 0,
+            symbols: BTreeMap::new(),
+            deps: &memory.dependencies,
+        };
+        if replay.run(&path.operations)? {
+            if [
+                replay.freed,
+                replay.backend,
+                replay.primary,
+                replay.state_link,
+                replay.name,
+                replay.counter,
+            ]
+            .iter()
+            .any(|v| *v != nonnull)
+                || replay.calls != if nonnull { 7 } else { 0 }
+            {
+                return Err("filesystem chunk close lacks the complete release chain".into());
+            }
+            selected.push(index);
+        }
+    }
+    let [index] = selected.as_slice() else {
+        return Err("filesystem chunk entry must select exactly one complete source path".into());
+    };
+    Ok(*index)
+}
+
 #[cfg(test)]
 #[path = "../../../tests/unit/memory_close.rs"]
-mod tests;
+pub(crate) mod tests;

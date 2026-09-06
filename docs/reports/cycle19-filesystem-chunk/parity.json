@@ -1,0 +1,12 @@
+{
+  "baseline": "cycle19-delete-observations",
+  "generic_inventory_byte_identical": true,
+  "monkey_source_report_byte_identical": true,
+  "scalar_function_results_identical": true,
+  "all_prior_teardown_certificates_identical": true,
+  "filesystem_chunk_close_cases": 75,
+  "unresolved_os_cases": 39,
+  "combined_uncovered_paths": 1,
+  "workspace_tests": 385,
+  "contract_modules": 39
+}

@@ -271,3 +271,10 @@ of the actual pinned native-delete body. It checks eligibility, path forwarding,
 status/diagnostic counts and record/path endpoint preservation. The returning
 unlink hook performs no deletion. See the
 [native delete observation report](../../docs/reports/cycle19-delete-observations/README.md).
+
+`chunkio/filesystem_chunk_close.qcore` carries filesystem backend outcomes through
+the enclosing chunk's two list removals, name/chunk frees and saved-context total
+decrement. Its 75 conditional cases retain 39 unresolved OS cleanup outcomes;
+only eight cases establish conditional backing deletion. Memory plus filesystem
+coverage leaves unsupported backend kinds open. See the
+[filesystem chunk close report](../../docs/reports/cycle19-filesystem-chunk/README.md).

@@ -492,7 +492,7 @@ impl Replay {
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/file_close.rs"]
-mod tests;
+pub(crate) mod tests;
 
 pub const DELETE_CONTRACT: &str =
     include_str!("../../../../contract/qcore/chunkio/file_close_delete.qcore");
@@ -526,6 +526,21 @@ pub struct FileCloseDeletionEvidence {
     uncovered_paths: Vec<usize>,
 }
 impl FileCloseDeletionEvidence {
+    pub fn source(&self) -> &SourceSummary {
+        &self.no_delete.source
+    }
+    pub fn non_deleting_cases(&self) -> &[FileCloseCase] {
+        &self.no_delete.cases
+    }
+    pub(super) fn recheck(&self) -> Result<Self, String> {
+        let no_delete = check(
+            &self.no_delete.source,
+            &self.no_delete.unmap,
+            &self.no_delete.close,
+            CONTRACT,
+        )?;
+        check_deletion(no_delete, &self.native_delete, DELETE_CONTRACT)
+    }
     pub fn deleting_cases(&self) -> &[DeletingCloseCase] {
         &self.deleting_cases
     }

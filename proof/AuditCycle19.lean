@@ -1,6 +1,7 @@
 import QCore.GuardedDelete
 import QCore.ShortCircuit
 import QCore.FileClose
+import QCore.FilesystemChunkClose
 import QCore.UnmapWrapper
 import QCore.CleanupOutcome
 import QCore.CallResultUse
@@ -242,3 +243,10 @@ import QCore.ChunkSource
 #print axioms QCore.FileClose.allocation_release_cannot_hide_failed_deletion
 #print axioms QCore.FileClose.null_backend_is_not_successful_deletion
 #print axioms QCore.FileClose.accepted_deletion_has_no_nested_obligation
+
+#print axioms QCore.FilesystemChunkClose.finish_preserves_backend_and_deletion
+#print axioms QCore.FilesystemChunkClose.finish_discharges_links_and_allocations
+#print axioms QCore.FilesystemChunkClose.finish_decrements_only_total
+#print axioms QCore.FilesystemChunkClose.zero_total_rejects
+#print axioms QCore.FilesystemChunkClose.duplicate_chunk_release_rejects
+#print axioms QCore.FilesystemChunkClose.unresolved_custody_survives_chunk_release

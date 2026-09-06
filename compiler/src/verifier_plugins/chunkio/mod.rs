@@ -8,6 +8,7 @@ pub mod file_attempts;
 pub mod file_close;
 pub mod file_delete;
 pub mod file_outcomes;
+pub mod filesystem_chunk_close;
 pub mod memory_close;
 pub mod teardown_source;
 pub mod unmap_wrapper;

@@ -401,6 +401,7 @@ fn audit_library(
     let mut chunk_helpers = Vec::new();
     let mut memory_backend = None;
     let mut filesystem_deps = None;
+    let mut filesystem_close = None;
     if library == "chunkio" {
         let entry = entries
             .iter()
@@ -500,6 +501,23 @@ fn audit_library(
                 &native_unit,
                 PINNED_FLUENT_BIT_COMMIT,
             )?;
+        let (file_source, file_options) = load("cio_file.c")?;
+        let file_unit = C11TranslationUnit {
+            source: &file_source,
+            include_paths: file_options.include_paths,
+            definitions: file_options.definitions,
+            dialect: file_options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        };
+        let unmap =
+            qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(
+                &file_unit,
+                PINNED_FLUENT_BIT_COMMIT,
+                &native,
+                &counter,
+            )?;
+        filesystem_close = Some(qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_deletion_source(
+            &file_unit, PINNED_FLUENT_BIT_COMMIT, &unmap, &close, &delete)?);
         filesystem_deps = Some((native, counter, close, delete));
     }
     for entry in entries {
@@ -651,6 +669,19 @@ fn audit_library(
                 close.uncovered_paths().len()
             );
             teardown_results.push(serde_json::json!({"kind":"memory_chunk_close", "status":"checked_null_and_memory_paths", "certificate":close}));
+            let file = qcore_compiler::verifier_plugins::chunkio::filesystem_chunk_close::check_filesystem_chunk_close_source(
+                &unit, PINNED_FLUENT_BIT_COMMIT, &dependencies,
+                filesystem_close.as_ref().ok_or("missing filesystem close dependency")?)?;
+            println!(
+                "qcore-custody cio_chunk_close filesystem: {} conditional cases, {} unresolved nested cases, {} combined uncovered paths (unsupported backend kinds)",
+                file.cases().len(),
+                (0..file.cases().len())
+                    .filter(|i| file.require_nested_discharge(*i).is_err())
+                    .count(),
+                file.combined_uncovered_paths().len()
+            );
+            teardown_results
+                .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
         }
         if library == "chunkio" && file == "cio_memfs.c" {
             let certificate = memory_backend
