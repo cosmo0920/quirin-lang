@@ -382,7 +382,7 @@ fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation()
                 MonkeyCallback::WaitTwoTimeout,
             ]
             .into_iter()
-            .map(|callback| (callback, MonkeyCallbackSummary::audited(callback)))
+            .map(|callback| (callback, MonkeyCallbackSummary::audited(callback).unwrap()))
             .collect(),
             event_map_custody: true,
             nullable_base_creation: true,
@@ -419,7 +419,7 @@ fn monkey_composition_requires_callbacks_failure_paths_backend_and_observation()
     let mut invalid = program.clone();
     invalid.profile.callbacks.insert(
         MonkeyCallback::Timeout,
-        MonkeyCallbackSummary::audited(MonkeyCallback::Event),
+        MonkeyCallbackSummary::audited(MonkeyCallback::Event).unwrap(),
     );
     assert!(
         check_monkey_composition(&invalid, builds())

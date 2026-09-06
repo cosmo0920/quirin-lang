@@ -135,7 +135,8 @@ pub use external_integration::{
     MonkeyCompositionCertificate, MonkeyCompositionDiagnostic, MonkeyCompositionProfile,
     MonkeyCompositionProgram, PINNED_FLUENT_BIT_REVISION, SynchronizationEvidenceKind,
     check_imported_chunk_program, check_imported_library_custody, check_library_custody,
-    check_monkey_composition, chunk_operation_kind, required_chunk_summary,
+    check_monkey_composition, check_monkey_composition_with_profile, chunk_operation_kind,
+    required_chunk_summary,
 };
 pub use external_source::{
     ExternalSourceBundle, LibrarySourceCertificate, LibrarySourceDiagnostic,

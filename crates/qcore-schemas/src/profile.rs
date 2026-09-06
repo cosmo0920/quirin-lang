@@ -245,9 +245,11 @@ pub struct TypedImportProfile {
     pub records: BTreeSet<String>,
     /// Types permitted under `sizeof`.
     pub sizeof_types: BTreeSet<String>,
-    /// Per-function exact signature constraints.
+    /// Per-function exact signature constraints. Mandatory for every Callback.
+    /// A Wrapper without a signature retains opaque unrestricted calls.
     pub signature_constraints: BTreeMap<String, SignatureConstraint>,
-    /// Callee allowlist: calls stay opaque, but only these names may appear.
+    /// Callee allowlist for functions with exact signatures: calls stay opaque.
+    /// Wrapper roles without signatures keep the original unrestricted opaque-call bound.
     pub restricted_calls: BTreeSet<String>,
 }
 

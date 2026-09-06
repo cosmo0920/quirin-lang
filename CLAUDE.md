@@ -133,3 +133,13 @@ and source-to-model identity premises remain open.
 - The generic `qcore-audit` driver and retained Cycle19 compatibility adapter
   are documented in `docs/reports/w5-configured-audit/README.md`. No provider
   module is linked by the new driver; production evidence routes remain.
+
+Monkey typed import profiles landed (2026-09-07,
+`docs/reports/w2-monkey-typed-profile/README.md`): function roles, records,
+sizeof bounds, exact callback signatures, callee bounds and callback effects
+load from profile data. Malformed or unavailable declarations reject; wrappers
+retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged;
+18 syntax summaries now retain explicit declared profile assumptions. These are
+syntax projections and trusted declarations, not proofs of source custody or
+whole-program safety. General source/model binding and provider consolidation
+remain open; configured auditing is recorded separately above.

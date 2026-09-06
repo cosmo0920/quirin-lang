@@ -1,0 +1,20 @@
+{
+  "baseline": "gateway relocation parity evidence (cdae145), also byte-identical W4 extension diagnostics",
+  "integrated_base": "6eea8be",
+  "units": 185,
+  "verdicts": {
+    "Safe": 3,
+    "provisional Unsafe": 98,
+    "Unknown": 80,
+    "data_only": 4
+  },
+  "diagnostics_byte_identical": true,
+  "source_equal_after_stripping_only_profile_assumptions": true,
+  "added_assumption_records": 18,
+  "hashes": {
+    "baseline-diagnostics.json": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+    "diagnostics.json": "54c3c5d7d21b1914fe2e5694744f4c34be10f2e22d62c5a403a6cea2316d0c82",
+    "baseline-source.json": "134b16d867cabf6669ce34eb361d063b5af1e6bb9b8fead77069a0a7ec97a315",
+    "source.json": "0e8efa5d26f160e8dd6c53d4e95eed70c9aa8b3ad48cd0dcb80d871d07b4cc92"
+  }
+}

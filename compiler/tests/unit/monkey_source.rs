@@ -798,5 +798,20 @@ fn native_wrapper_specs_cover_the_exact_selected_source_functions() {
         .iter()
         .map(|decl| decl.value.name.as_str())
         .collect();
-    assert_eq!(names, WRAPPERS);
+    let profile =
+        crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+            .unwrap();
+    let declared = profile
+        .library("monkey")
+        .unwrap()
+        .typed_import
+        .as_ref()
+        .unwrap()
+        .functions
+        .iter()
+        .filter_map(|(name, role)| {
+            (*role == qcore_schemas::profile::ImportRole::Wrapper).then_some(name.as_str())
+        })
+        .collect::<BTreeSet<_>>();
+    assert_eq!(names.into_iter().collect::<BTreeSet<_>>(), declared);
 }
