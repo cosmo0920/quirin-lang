@@ -282,3 +282,6 @@ import QCore.ChunkSource
 #print axioms QCore.NativeTeardownObservation.accepted_conserves_release_count
 
 #print axioms QCore.NativeTeardownObservation.changed_release_order_rejected
+
+#print axioms QCore.NativeTeardownObservation.rollback_and_teardown_conserve_count
+#print axioms QCore.NativeTeardownObservation.rollback_and_teardown_are_disjoint

@@ -785,3 +785,21 @@ pinned evidence. Instrumentation and exclusive harness execution remain trusted;
 these observations neither prove arbitrary callers nor promote raw units. Native
 allocation failures, general caller provenance, full sync/OS guarantees, aggregate
 custody, wrapper lifecycle and full Monkey/Cycle 18 composition remain open.
+
+## Native constructor allocation-failure observations (2026-09-06)
+
+The [constructor failure report](../reports/cycle19-constructor-failures/README.md)
+injects one ENOMEM at each of nine allocation attempts on the pinned native
+context/stream/chunk/metadata memory path, plus a successful control. All 55
+acquired generations are accounted for: six rollback releases and 49 releases
+through surviving-tree teardown. ASan, UBSan and leak checking pass, as do the
+five original positive cases. Context construction can succeed with null chmod;
+chunk construction can succeed with a null name; backend allocation failures
+return a null chunk while retaining zero error output. These observed outcomes
+are preserved rather than treated as universal successful construction. Seven
+Python tests include 48 mutation subcases; the new 11-clause QCore runtime policy
+and two Lean rollback/teardown theorems pass with 400 workspace tests, 45 modules,
+all standing checks and identical pinned audit evidence. General callers, other
+failure combinations, full filesystem sync/OS guarantees, unsupported backend
+classification, aggregate custody, wrapper lifecycle and full event composition
+remain open. No raw unit is promoted.

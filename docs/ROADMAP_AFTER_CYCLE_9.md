@@ -124,7 +124,10 @@ these conditional cases do not close the remaining native and event gates.
 Five [native memory teardown executions](reports/cycle19-native-teardown/README.md)
 now bind real constructor allocations and reciprocal ring snapshots to exact
 release order under sanitizers. General caller and failure-path provenance and
-the filesystem/event gates remain open.
+the filesystem/event gates remain open. A
+[controlled constructor failure matrix](reports/cycle19-constructor-failures/README.md)
+adds nine failures and one control with complete observed rollback/teardown
+accounting; returned null fields and error-output conventions remain explicit.
 
 ## Cycle 20: Verifier plugin ecosystem
 

@@ -22,4 +22,21 @@ theorem accepted_conserves_release_count {plan observed : List Nat}
 theorem changed_release_order_rejected {plan observed : List Nat}
     (h : observed ≠ plan) : ¬accepted plan observed := fun a => h a.2
 
+-- Rollback and surviving-tree teardown jointly consume the derived plan.
+def acceptedPartition (plan rollback teardown : List Nat) : Prop :=
+  accepted plan (rollback ++ teardown)
+
+theorem rollback_and_teardown_conserve_count {plan rollback teardown : List Nat}
+    (h : acceptedPartition plan rollback teardown) :
+    rollback.length + teardown.length = plan.length := by
+  have count := accepted_conserves_release_count h
+  simpa using count
+
+theorem rollback_and_teardown_are_disjoint {plan rollback teardown : List Nat}
+    (h : acceptedPartition plan rollback teardown) :
+    ∀ id ∈ rollback, id ∉ teardown := by
+  have distinct := accepted_has_no_duplicate_release h
+  intro id inRollback inTeardown
+  exact (List.nodup_append.mp distinct).2.2 id inRollback id inTeardown rfl
+
 end QCore.NativeTeardownObservation

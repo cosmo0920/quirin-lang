@@ -296,3 +296,11 @@ counters from the pinned observer's allocation generations and event stream.
 The observer/build and exclusive execution are trusted. The contract is runtime
 evaluation only; it cannot establish a static certificate. See the
 [native teardown report](../../docs/reports/cycle19-native-teardown/README.md).
+
+`chunkio/constructor_failure_observation.qcore` evaluates the nine injected
+allocation failures and one control on the same bounded memory path. Exact
+attempt/rollback records and the surviving ownership tree account for every
+observed allocation. Null optional fields, a null chunk name on a successful
+return, and unchanged zero error output on backend failure remain explicit
+observations, not general API guarantees. See the
+[constructor failure report](../../docs/reports/cycle19-constructor-failures/README.md).

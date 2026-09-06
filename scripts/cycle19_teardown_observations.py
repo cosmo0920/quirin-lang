@@ -17,7 +17,7 @@ from cycle19_native_observations import PIN, REPO, profile, run, sha
 from check_teardown_trace import check_trace, load_trace
 
 
-def build(root, output):
+def build(root, output, observer="chunk_teardown_observation"):
     revision = run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True).stdout.strip()
     if revision != PIN or run(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"], capture_output=True).stdout:
         raise RuntimeError("native teardown requires the clean pinned Fluent Bit checkout")
@@ -41,10 +41,15 @@ def build(root, output):
             dependencies[str(path.resolve())] = sha(path)
         if str(Path(entry["file"]).resolve()) not in dependencies:
             raise RuntimeError("compiled dependency list omitted selected source")
-    source = REPO / "compiler/examples/chunk_teardown_observation.c"
-    binary = output / "chunk_teardown_observation"
+    source = REPO / "compiler/examples" / (observer + ".c")
+    binary = output / observer
     command = ["clang", *profile(entries[0]), *sanitizer, str(source), *map(str, objects), "-Wl,--wrap=malloc,--wrap=calloc,--wrap=strdup,--wrap=realloc,--wrap=free", "-lpthread", "-o", str(binary)]
+    dep = output / "observer.d"
+    command[1:1] = ["-MMD", "-MF", str(dep)]
     run(command, capture_output=True); commands.append(command)
+    for name in shlex.split(dep.read_text().replace("\\\n", "").split(":", 1)[1]):
+        path = Path(name).resolve()
+        dependencies[str(path)] = sha(path)
     return binary, {"schema_version": 1, "fluent_bit_revision": revision, "database_sha256": sha(database), "compile_entries": entries, "commands": commands, "dependencies_sha256": dependencies, "harness_sha256": sha(source), "driver_sha256": sha(Path(__file__)), "build_helper_sha256": sha(REPO / "scripts/cycle19_native_observations.py"), "binary_sha256": sha(binary), "clang":run(["clang","--version"],capture_output=True).stdout, "instrumentation":"all 14 selected ChunkIO/CRC units and observer rebuilt with ASan/UBSan; libc allocation wrappers and compiler function hooks; system libraries retain their build", "static_certificate":False, "filesystem_exercised":False}
 
 

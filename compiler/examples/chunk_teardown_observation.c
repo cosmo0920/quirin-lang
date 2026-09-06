@@ -20,6 +20,7 @@ struct allocation { void *ptr; size_t size; unsigned id; int live; };
 static struct allocation allocations[2048];
 static unsigned used, sequence, case_id;
 static int tracking, destroying;
+static int (*allocation_failure_hook)(const char *, size_t);
 static struct cio_ctx *context;
 static struct cio_stream *streams[16];
 static struct cio_chunk *chunks[64];
@@ -44,10 +45,11 @@ static void acquired(void *ptr,size_t size,const char *allocator) {
     allocations[used]=(struct allocation){ptr,size,used+1,1};used++;
     prefix("allocation");printf(",\"id\":%u,\"address\":%llu,\"size\":%zu,\"allocator\":\"%s\"}\n",used,(unsigned long long)(uintptr_t)ptr,size,allocator);
 }
-void *__wrap_malloc(size_t size) { void *p=__real_malloc(size);acquired(p,size,"malloc");return p; }
-void *__wrap_calloc(size_t n,size_t size) { void *p=__real_calloc(n,size);assert(!n || size<=SIZE_MAX/n);acquired(p,n*size,"calloc");return p; }
-char *__wrap_strdup(const char *s) { char *p=__real_strdup(s);acquired(p,strlen(s)+1,"strdup");return p; }
+void *__wrap_malloc(size_t size) { if (allocation_failure_hook && allocation_failure_hook("malloc",size)) return NULL; void *p=__real_malloc(size);acquired(p,size,"malloc");return p; }
+void *__wrap_calloc(size_t n,size_t size) { if (allocation_failure_hook && allocation_failure_hook("calloc",n*size)) return NULL; void *p=__real_calloc(n,size);assert(!n || size<=SIZE_MAX/n);acquired(p,n*size,"calloc");return p; }
+char *__wrap_strdup(const char *s) { if (allocation_failure_hook && allocation_failure_hook("strdup",strlen(s)+1)) return NULL; char *p=__real_strdup(s);acquired(p,strlen(s)+1,"strdup");return p; }
 void *__wrap_realloc(void *old,size_t size) {
+    if (allocation_failure_hook && allocation_failure_hook("realloc",size)) return NULL;
     unsigned id=tracking ? identity(old):0;
     assert(size>0);
     void *p=__real_realloc(old,size);

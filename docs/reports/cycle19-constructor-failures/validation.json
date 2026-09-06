@@ -1,0 +1,19 @@
+{
+  "workspace_tests": 400,
+  "contract_modules": 45,
+  "audit_example_tests": 2,
+  "python_tests": 7,
+  "mutation_subcases": 48,
+  "native_failure_executions": 10,
+  "native_positive_regression_executions": 5,
+  "failure_allocations": 55,
+  "rollback_releases": 6,
+  "fmt": true,
+  "clippy_warnings_denied": true,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "lean_build": true,
+  "cycle19_axiom_audit": true,
+  "native_asan_ubsan_lsan": true,
+  "static_certificate": false
+}

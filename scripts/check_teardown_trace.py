@@ -48,6 +48,12 @@ def check_case(records, case, scenario):
         allocations[ident] = record
         cursor += 1
     require(cursor < len(records) and records[cursor]["kind"] == "snapshot", "missing constructor snapshot")
+    return check_tree_and_teardown(records, cursor, allocations, case, scenario, layout)
+
+
+def check_tree_and_teardown(records, cursor, allocations, case, scenario, layout,
+                            nullable_chmod=False, nullable_chunk_name=False):
+    ns, nc, metadata = scenario
     context = records[cursor]["context"]
     owned = set()
 
@@ -72,7 +78,7 @@ def check_case(records, case, scenario):
             require(node["prev"] == (addresses[index-1] if index else sentinel) and node["next"] == (addresses[index+1] if index+1 < len(addresses) else sentinel), "nonreciprocal ring")
 
     claim(context["id"], "context")
-    require(len(context["fields"]) == 6 and context["fields"][:2] == [0, 0] and context["fields"][2] != 0 and context["fields"][3:] == [0, 0, 0], "unexpected context options")
+    require(len(context["fields"]) == 6 and context["fields"][:2] == [0, 0] and (context["fields"][2] == 0) == nullable_chmod and context["fields"][3:] == [0, 0, 0], "unexpected context options")
     for ident in context["fields"]:
         claim(ident, "field", True)
     streams = context["streams"]
@@ -84,7 +90,8 @@ def check_case(records, case, scenario):
         require(len(stream["chunks"]) == nc, "wrong chunk count")
         for chunk in stream["chunks"]:
             claim(chunk["id"], "chunk")
-            claim(chunk["name"], "name")
+            claim(chunk["name"], "name", nullable_chunk_name)
+            require((chunk["name"] == 0) == nullable_chunk_name, "unexpected null chunk name")
             claim(chunk["backend"], "backend")
             require(chunk["context"] == context["id"] and chunk["stream"] == stream["id"], "wrong chunk parent")
             require(chunk["locked"] == 0 and chunk["transaction"] == 0, "unsupported chunk state")
