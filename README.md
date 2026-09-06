@@ -332,3 +332,8 @@ are removed after field-for-field parity; registry metadata is loaded atomically
 from profile packages with stable plugin-id ordering and no compiled fallback.
 All shipped providers remain v1 built-ins returning Unknown; process extraction
 is still W5 work. Full 185-TU diagnostic/source parity is unchanged.
+
+The [Lean CI hygiene](docs/reports/w7-lean-ci/README.md) adds the pinned Lean
+build and every theorem audit to CI, including a compiled QCore axiom check.
+Both reevaluation probes also run in Linux and Clang-enabled Windows CI.
+Local checks passed; the hosted workflow has not yet run.

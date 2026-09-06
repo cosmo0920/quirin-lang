@@ -110,3 +110,8 @@ concurrency semantics are implemented. CT mapping remains 5/50.
 - W2 H6 provider metadata now loads from profile packages; see
   `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
   into processes or change the v1 Safe refusal.
+
+Lean CI hygiene is implemented (2026-09-07): the pinned proof build, all theorem
+audits and the complete QCore axiom closure are checked, with both reevaluation
+examples in Linux/Windows CI. Local gates pass; hosted CI awaits a push.
+See `docs/reports/w7-lean-ci/README.md`.

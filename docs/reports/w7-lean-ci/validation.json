@@ -1,0 +1,12 @@
+{
+  "workspace_tests": 473,
+  "format": "passed",
+  "clippy": "passed",
+  "reevaluation_probe": "exit 0",
+  "reevaluation_followup": "exit 0",
+  "lean_build": "passed, 52 jobs",
+  "audit_files": 17,
+  "qcore_declarations": 7471,
+  "negative_controls": "project axiom and sorry placeholder both rejected",
+  "hosted_ci_run": "not run; workflow requires push"
+}
