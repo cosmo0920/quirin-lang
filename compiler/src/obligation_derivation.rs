@@ -829,7 +829,8 @@ fn derive_observation_hooks(
                 function: hook.clone(),
                 contract_module: module.clone(),
             },
-            // Filled in at check time from the witness's run identities.
+            // Empty is the v2 deferred-run scope marker; exact checked run
+            // identities remain in the certificate's replayed witness.
             ObligationScope::ObservedRuns {
                 run_ids: BTreeSet::new(),
             },

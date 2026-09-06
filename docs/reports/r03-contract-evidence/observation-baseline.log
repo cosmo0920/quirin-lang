@@ -1,0 +1,22 @@
+   Compiling qcore-compiler v0.1.0 (/tmp/qcore-monkey-profile/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.23s
+     Running tests/w3_evidence_v2.rs (target/debug/deps/w3_evidence_v2-6e2249a7ad7a885a)
+
+running 1 test
+test observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds ... FAILED
+
+failures:
+
+---- observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds stdout ----
+
+thread 'observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds' (409) panicked at compiler/tests/w3_evidence_v2.rs:510:5:
+scope/module/bounds substitutions accepted: [(0, "direct"), (0, "firewall"), (1, "direct"), (1, "firewall"), (2, "direct"), (2, "firewall"), (3, "direct"), (3, "firewall"), (4, "direct"), (4, "firewall"), (5, "direct"), (5, "firewall"), (6, "direct"), (6, "firewall")]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.23s
+
+error: test failed, to rerun pass `-p qcore-compiler --test w3_evidence_v2`

@@ -15,7 +15,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::obligation::{
-    ChunkEntityRef, ObligationProperty, ObligationSubject, VerificationTask,
+    ChunkEntityRef, ObligationProperty, ObligationScope, ObligationSubject, TaskBounds,
+    VerificationTask,
 };
 use qcore_schemas::plugin::VerifierCapability;
 use qcore_schemas::witness::{
@@ -314,16 +315,17 @@ impl WitnessChecker for ContractObservationReplay<'_> {
         // Reject caller-built tasks that omit/refuse that assumption or relabel
         // the resulting obligations as an unbounded source-safety claim.
         if task.assumptions.get("observations_trusted") != Some(&true)
-            || !task.bounds.observed_runs_only
+            || task.bounds != TaskBounds::observed_runs()
             || task
                 .obligations_for(VerifierCapability::ObservationHooks)
                 .iter()
                 .any(|obligation| {
                     obligation.assumptions != task.assumptions
-                        || !obligation.bounds.observed_runs_only
+                        || obligation.bounds != TaskBounds::observed_runs()
+                        || !matches!(&obligation.scope, ObligationScope::ObservedRuns { run_ids } if run_ids.is_empty())
                 })
         {
-            return Err("observation replay requires observations_trusted=true and consistent observed-run bounds and assumptions".into());
+            return Err("observation replay requires observations_trusted=true, consistent declared assumptions, exact observed-run bounds and deferred observed-run scope".into());
         }
         let identities = self
             .inventory
@@ -381,8 +383,17 @@ impl WitnessChecker for ContractObservationReplay<'_> {
             let ok = match (&obligation.property, &obligation.subject) {
                 (
                     ObligationProperty::ObservationChecked,
-                    ObligationSubject::ObservedContract { function, .. },
-                ) => checked.checked_hooks.contains(function),
+                    ObligationSubject::ObservedContract {
+                        function,
+                        contract_module,
+                    },
+                ) => self.inventory.required_hooks.get(function).is_some_and(
+                    |(module, declared_function)| {
+                        module == contract_module
+                            && declared_function == function
+                            && checked.checked_hooks.contains(function)
+                    },
+                ),
                 (ObligationProperty::ObservationCoverageComplete, ObligationSubject::Unit) => {
                     required
                         .keys()

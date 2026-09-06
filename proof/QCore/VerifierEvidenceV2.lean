@@ -6,12 +6,40 @@ This model proves the nonempty denominator and precondition-counting boundary;
 it neither authenticates runtime observations nor models the full Rust scalar
 predicate parser, hashes, process transport or lifecycle source importer. -/
 
+/-- The v2.0 replay checks one structural path and no claimed schedule/trace budget. -/
+structure ReplayBounds where
+  paths : Nat
+  schedules : Option Nat
+  maxOperations : Option Nat
+  deriving DecidableEq, Repr
+
+def observationBounds : ReplayBounds := ⟨1, none, none⟩
+
+inductive ClaimScope where
+  | observedRuns (runIds : List Nat)
+  | functions (symbols : List Nat)
+  deriving DecidableEq, Repr
+
+/-- Natural-number module identities abstract the Rust module-path comparison. -/
+structure ObservationClaim where
+  scope : ClaimScope
+  bounds : ReplayBounds
+  declaredModule : Nat
+  requiredModule : Nat
+  deriving DecidableEq, Repr
+
+def claimMatches (claim : ObservationClaim) : Bool :=
+  decide (claim.scope = .observedRuns [] ∧ claim.bounds = observationBounds ∧
+    claim.declaredModule = claim.requiredModule)
+
 structure Task where
   complete : Bool
   requiredHooks : List Nat
   expectedOutput : Nat
   observationsTrusted : Bool
   observedRunsOnly : Bool
+  bounds : ReplayBounds
+  claims : List ObservationClaim
   deriving DecidableEq, Repr
 
 structure Observation where
@@ -32,7 +60,8 @@ def Accepts (task : Task) (records : List Observation) : Prop :=
   task.requiredHooks.all (fun hook => records.any (counts task hook)) = true ∧
   records.all (fun record =>
     !(meetsPrecondition record) || meetsPostcondition task record) = true ∧
-  task.observationsTrusted = true ∧ task.observedRunsOnly = true
+  (task.observationsTrusted = true ∧ task.observedRunsOnly = true) ∧
+  task.bounds = observationBounds ∧ task.claims.all claimMatches = true
 
 instance (task : Task) (records : List Observation) : Decidable (Accepts task records) := by
   unfold Accepts
@@ -82,7 +111,7 @@ theorem accepted_requires_observation_trust_and_bounds
     (task : Task) (records : List Observation) (accepted : replay task records = true) :
     task.observationsTrusted = true ∧ task.observedRunsOnly = true := by
   have valid : Accepts task records := of_decide_eq_true accepted
-  exact valid.2.2.2.2
+  exact valid.2.2.2.2.1
 
 theorem explicit_refusal_is_preserved (task : Task) :
     (applyObservationTrust (some false) task).observationsTrusted = false := by
@@ -95,5 +124,25 @@ theorem explicit_refusal_derivation_rejects (task : Task) (records : List Observ
 theorem absent_flag_names_conditional_trust (task : Task) :
     (applyObservationTrust none task).observationsTrusted = true := by
   rfl
+
+theorem accepted_claim_preserves_scope_bounds_and_module
+    (task : Task) (records : List Observation) (accepted : replay task records = true)
+    (claim : ObservationClaim) (member : claim ∈ task.claims) :
+    claim.scope = .observedRuns [] ∧ claim.bounds = observationBounds ∧
+      claim.declaredModule = claim.requiredModule := by
+  have valid : Accepts task records := of_decide_eq_true accepted
+  have checked := List.all_eq_true.mp valid.2.2.2.2.2.2 claim member
+  exact of_decide_eq_true checked
+
+theorem substituted_claim_rejects
+    (task : Task) (records : List Observation) (claim : ObservationClaim)
+    (member : claim ∈ task.claims) (mismatch : claimMatches claim = false) :
+    replay task records = false := by
+  cases result : replay task records with
+  | false => rfl
+  | true =>
+    have checked := accepted_claim_preserves_scope_bounds_and_module task records result claim member
+    have yes : claimMatches claim = true := by simpa [claimMatches] using checked
+    simp [mismatch] at yes
 
 end QCore.VerifierEvidenceV2
