@@ -18,14 +18,15 @@ It also ships a conservative checker for *existing* C source (the
 
 | Path | Contents |
 |---|---|
-| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, legacy-C analyzer, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
+| `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway compatibility API, verifier-plugin host, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
 | `crates/qcore-core/` | L1 semantic-kernel seed (W1 relocation): `usage`, `ast`, `index`. No workspace dependencies; the rest of the kernel arrives at W5 consolidation |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery (W1 relocation): total-or-reject `contract_loader`, `contract_observation`. Depends on core/frontend/schemas; `chunk_contract` joins after the W5 chunk-summary schema split |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery and typed-AST transport; depends only on contract/schemas plus JSON transport |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
-| `compiler/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
-| `compiler/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocation into `qcore-c-gateway` is still open |
+| `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
+| `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
 | `compiler/src/verifier_plugin.rs` | Cycle 20 plugin protocol v1, manifests, registry, process providers, certificate firewall |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
@@ -178,7 +179,7 @@ It also ships a conservative checker for *existing* C source (the
   unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
-  `compiler/src/legacy_summary.rs` derives SCC-ordered custody summaries for
+  `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
   internal C functions, publishes only summaries that a re-run of the
   intraprocedural analyzer validates, expresses them as `qcore-schemas`
   `ResourceSummaryRecord`s under `ContractTrust::InferredValidated`, and has
@@ -187,7 +188,9 @@ It also ships a conservative checker for *existing* C source (the
   override. On the 156 pinned Fluent Bit units measurable in that run, one unit
   moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
   class; the 29-unit Monkey/forced-Libevent leg was not re-measured. The bounded extension and remaining restrictions are recorded in
-  `docs/reports/w4-custody-extensions/README.md`. Execution
+  `docs/reports/w4-custody-extensions/README.md`. Gateway relocation is executed
+  (2026-09-07, `docs/reports/w4-gateway-crate/README.md`), with exact
+  185-unit verdict/projection/diagnostic parity. Execution
   is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 
 ## Hard invariants (violating these is a defect, not a style issue)

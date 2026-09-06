@@ -409,7 +409,7 @@ malicious provider make the core's check vacuous?"
 
 **Status.** Executed for parameter/return custody with validation (2026-09-06):
 see the [W4 custody-inference record](reports/w4-custody-inference/README.md).
-`compiler/src/legacy_summary.rs` derives SCC-ordered summaries, validates each
+`crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered summaries, validates each
 by re-running the intraprocedural analyzer against it, publishes them as
 `qcore-schemas` `ResourceSummaryRecord`s, and has the certificate recheck
 re-derive them independently. Declared contracts always win; a disagreement is
@@ -417,9 +417,10 @@ a `SummaryConflict` diagnostic. The [2026-09-07 extension](reports/w4-custody-ex
 adds validated direct `Out` slots, `Stored` formals, `Reallocated` results and
 possibly-null owned returns. Remaining: `Removed` inference, general out-slot
 aliases, recursive components (least fixed point is empty by construction),
-the Juliet stretch corpus, and the relocation into
-`qcore-c-gateway` — the pass landed beside the analyzer in `qcore-compiler`,
-following W1's loader-then-relocation precedent.
+and the Juliet stretch corpus. The [gateway relocation](reports/w4-gateway-crate/README.md)
+is executed (2026-09-07): `legacy_c`, `legacy_summary`, Clang discovery and
+typed-AST transport now live in `qcore-c-gateway`, with compiler compatibility
+reexports and pinned full-corpus parity.
 
 **Goal.** The generic capability whose absence forces per-library hand
 contracts: infer and validate parameter/return custody summaries for internal

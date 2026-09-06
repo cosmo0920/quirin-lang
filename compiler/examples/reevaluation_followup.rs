@@ -184,7 +184,8 @@ fn main() {
     // `.qcore` module through the total-or-reject v1 loader.
     let contracts = contract_loader::load_resource_contract_sources(&BTreeMap::from([(
         "q_base.qcore".to_owned(),
-        include_str!("../tests/fixtures/contracts/q_base.qcore").to_owned(),
+        include_str!("../../crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qcore")
+            .to_owned(),
     )]))
     .unwrap();
     let source = "void *q_alloc(void); void q_free(void *); void *make(void) { void *p = q_alloc(); return p; } int main(void) { void *p = make(); return 0; }";

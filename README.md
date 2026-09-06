@@ -217,6 +217,9 @@ re-derives every summary independently. The [bounded W4 extension](docs/reports/
 adds direct out-parameters, stores of formal resources into formal owners,
 reallocation wrappers and possibly-null owned returns. Recursive functions,
 aggregate removal and unsupported out-slot aliases keep their callers `Unknown`.
+The [gateway relocation](docs/reports/w4-gateway-crate/README.md) extracts this
+analysis, Clang discovery and typed-AST transport into `qcore-c-gateway`, retaining
+the compiler API and exact 185-unit diagnostic/verdict/projection parity.
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

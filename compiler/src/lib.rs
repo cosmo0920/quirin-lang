@@ -26,7 +26,6 @@ pub mod cfg;
 pub use qcore_frontend::check;
 pub mod chunk_contract;
 pub mod chunk_lifecycle;
-mod clang;
 pub mod cleanup_lowering;
 pub mod cleanup_outcome;
 pub mod concurrency;
@@ -43,8 +42,7 @@ pub mod field_destructor;
 pub use qcore_core::index;
 pub use qcore_frontend::frontend;
 pub mod inference;
-pub mod legacy_c;
-mod legacy_summary;
+pub use qcore_c_gateway::legacy_c;
 pub use qcore_frontend::lexer;
 pub mod list_unlink_contract;
 pub mod native_concurrency;
@@ -58,7 +56,7 @@ pub mod source_call_use;
 mod source_contract;
 pub mod source_profiles;
 pub mod translation_validation;
-mod typed_c_ast;
+use qcore_c_gateway::typed_c_ast;
 pub mod typed_errors;
 pub mod typed_source;
 pub mod typed_source_match;
@@ -233,7 +231,8 @@ pub(crate) mod test_support {
     /// Report whether the Clang-backed tests can run, emitting one visible
     /// warning when the executable is absent or unusable.
     pub(crate) fn clang_available() -> bool {
-        let availability = CLANG_AVAILABILITY.get_or_init(|| crate::clang::command().map(|_| ()));
+        let availability =
+            CLANG_AVAILABILITY.get_or_init(|| qcore_c_gateway::clang_command().map(|_| ()));
         match availability {
             Ok(()) => true,
             Err(reason) => {
