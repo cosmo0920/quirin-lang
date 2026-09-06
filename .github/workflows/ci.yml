@@ -33,6 +33,25 @@ jobs:
       - name: Check the six reevaluation regressions and controls
         run: cargo run -p qcore-compiler --example reevaluation_probe
 
+      - name: Check the reevaluation follow-up regressions and controls
+        run: cargo run -p qcore-compiler --example reevaluation_followup
+
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out proof sources
+        uses: actions/checkout@v4
+
+      - name: Build with the pinned Lean toolchain
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: proof
+          auto-config: false
+          build: true
+
+      - name: Check all theorem audits and the complete QCore axiom closure
+        run: python3 scripts/check_lean_audits.py
+
   windows:
     runs-on: windows-2022
     strategy:
@@ -72,7 +91,7 @@ jobs:
           cargo test --test toolchain_compatibility --test module_modes --test quant_index_contracts --test qcore_contract_corpus
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           foreach ($filter in @('clang::tests::', 'frontend::tests::', 'driver::tests::', 'c_emit::tests::', 'native_concurrency::tests::')) {
-            cargo test --lib $filter
+            cargo test --workspace --lib $filter
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
@@ -87,6 +106,8 @@ jobs:
           cargo test --workspace
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo run -p qcore-compiler --example reevaluation_probe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo run -p qcore-compiler --example reevaluation_followup
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Verify Visual Studio discovery without Clang on PATH
@@ -104,6 +125,6 @@ jobs:
           # The runner has Visual Studio's optional Clang component. These
           # exercise preprocessing and JSON AST extraction through vswhere.
           foreach ($filter in @('legacy_c::tests::', 'chunk_source::tests::')) {
-            cargo test --lib $filter
+            cargo test --workspace --lib $filter
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }

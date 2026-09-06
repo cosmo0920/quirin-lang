@@ -93,3 +93,8 @@ observations, not general OS failure or durability guarantees. Evidence:
 - W2's bounded profile migration and full 185-TU parity are recorded in
   `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
   orchestration work is explicit there. Profile data remains declared trust.
+
+Lean CI hygiene is implemented (2026-09-07): the pinned proof build, all theorem
+audits and the complete QCore axiom closure are checked, with both reevaluation
+examples in Linux/Windows CI. Local gates pass; hosted CI awaits a push.
+See `docs/reports/w7-lean-ci/README.md`.

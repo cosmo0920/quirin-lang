@@ -312,3 +312,8 @@ Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
 already W4's measured change). Raw production units stay unpromoted. Monkey
 typed imports, Boolean field routing, first-party registration literals and
 configured orchestration remain W2/W5 work; this does not complete W2.
+
+The [Lean CI hygiene](docs/reports/w7-lean-ci/README.md) adds the pinned Lean
+build and every theorem audit to CI, including a compiled QCore axiom check.
+Both reevaluation probes also run in Linux and Clang-enabled Windows CI.
+Local checks passed; the hosted workflow has not yet run.

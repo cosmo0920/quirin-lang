@@ -219,6 +219,15 @@ It also ships a conservative checker for *existing* C source (the
 6. **Lean parity.** Semantic changes need matching Lean definitions/theorems;
    audits must stay placeholder-free with no project axioms.
 
+## Lean CI hygiene (2026-09-07)
+
+The CI workflow builds `proof/lean-toolchain` with Lean and runs every
+`Audit*.lean` via `scripts/check_lean_audits.py`. `AuditAll.lean` checks the
+compiled QCore axiom closure, allowing only `propext`, `Classical.choice` and
+`Quot.sound`; stale audit names and warnings fail the gate. Both reevaluation
+examples are included in Linux and Clang-enabled Windows CI. Local execution
+is verified; hosted CI awaits a push. See `docs/reports/w7-lean-ci/README.md`.
+
 ## Standing per-change gate
 
 Run before claiming any change complete:

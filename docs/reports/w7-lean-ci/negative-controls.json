@@ -1,0 +1,12 @@
+[
+  {
+    "case": "project_axiom",
+    "exit_code": 1,
+    "output": "/tmp/w7-project_axiom.lean:11:0: error: QCore.auditInjectedAxiom depends on forbidden axiom QCore.auditInjectedAxiom\n"
+  },
+  {
+    "case": "placeholder",
+    "exit_code": 1,
+    "output": "/tmp/w7-placeholder.lean:8:8: error: declaration uses `sorry`\n/tmp/w7-placeholder.lean:11:0: error: QCore.auditInjectedPlaceholder depends on forbidden axiom sorryAx\n"
+  }
+]
