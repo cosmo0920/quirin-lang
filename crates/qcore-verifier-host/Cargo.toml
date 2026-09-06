@@ -1,0 +1,15 @@
+[package]
+name = "qcore-verifier-host"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Generic QCore verifier registry, bounded process transport, evidence firewall and composition"
+
+[dependencies]
+qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "0.1.0" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.189"

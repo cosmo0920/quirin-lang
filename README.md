@@ -36,11 +36,12 @@ execution.
 
 | Path | Contents |
 |---|---|
-| [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C analyzer, verifier-plugin host |
+| [`compiler/`](compiler/) | Rust library `qcore-compiler`: parser, checker, reference semantics, C backend, existing-C compatibility API, source driver and trusted witness replay |
 | [`crates/qcore-core/`](crates/qcore-core/) | Semantic-kernel seed: usage grades, axis/dimension AST, index environments |
 | [`crates/qcore-frontend/`](crates/qcore-frontend/) | QCore language front end: lexer, parsers, quant-index resolution, elaboration |
 | [`crates/qcore-contract/`](crates/qcore-contract/) | Declarative `.qcore` contract loader and observation interpreter |
 | [`crates/qcore-schemas/`](crates/qcore-schemas/) | Published, versioned schema surface (serde types crossing the core/provider boundary; no analysis logic) |
+| [`crates/qcore-verifier-host/`](crates/qcore-verifier-host/) | Generic registry, source scope resolution, bounded process transport, evidence firewall and composition; no provider dependency |
 | [`crates/qcorec/`](crates/qcorec/) | CLI binary `qcorec` over the compiler library |
 | [`proof/`](proof/) | Lean 4 executable core and safety proofs; per-cycle axiom audits |
 | [`contract/qcore/`](contract/qcore/README.md) | Declarative `.qcore` contract corpus for audited C APIs |
@@ -172,7 +173,9 @@ replays observation predicates against pinned contracts and records agreement
 for supplied runs under an explicit observation-trust assumption. A standalone
 provider builds against `qcore-schemas` alone. Source lifecycle effects remain
 unimported, empty inventories remain unverified, and first-party providers
-remain unpromoted; host relocation and production profile import are still open.
+remain unpromoted. The [generic verifier host](docs/reports/w3-verifier-host/README.md)
+is extracted into `qcore-verifier-host`, buildable without provider crates;
+production profile import and remaining kernel consolidation are still open.
 
 **Trust and audits.** An independent
 [reevaluation](docs/REEVALUATION_SPEC.md) (2026-09-05) reproduced six

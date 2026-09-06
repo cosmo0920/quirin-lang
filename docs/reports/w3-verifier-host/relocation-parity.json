@@ -1,0 +1,13 @@
+{
+  "baseline": "11daf01",
+  "source": "compiler/src/verifier_plugin.rs",
+  "destination": "crates/qcore-verifier-host/src/lib.rs",
+  "normalizations": [
+    "remove contiguous first_party_manifests through first_party_registry block retained in compiler facade",
+    "replace crate::frontend import with qcore_frontend::frontend"
+  ],
+  "normalized_byte_identical": true,
+  "normalized_sha256": "4701f29e6c06ea1b6a001b6aa2c3bd1e9d8b5f159c1b2838a518973e5a2892eb",
+  "moved_lines": 1453,
+  "semantic_changes": false
+}

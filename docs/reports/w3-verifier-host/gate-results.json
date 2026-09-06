@@ -1,0 +1,42 @@
+[
+  {
+    "command": "git -c protocol.file.allow=always submodule update --init --recursive",
+    "exit_code": 0,
+    "note": "Pinned local Libevent checkout initialized at d82464a277d0f42703702c4dfd9af6af38595a83."
+  },
+  {
+    "command": "cargo test -p qcore-verifier-host",
+    "exit_code": 0,
+    "log": "standalone-host.log"
+  },
+  {
+    "command": "cargo test --workspace",
+    "exit_code": 0,
+    "log": "workspace-tests.log"
+  },
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0,
+    "log": "format.log"
+  },
+  {
+    "command": "cargo clippy --all-targets -- -D warnings",
+    "exit_code": 0,
+    "log": "clippy.log"
+  },
+  {
+    "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+    "exit_code": 0,
+    "log": "reevaluation-probe.log"
+  },
+  {
+    "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+    "exit_code": 0,
+    "log": "reevaluation-followup.log"
+  },
+  {
+    "command": "cd proof && lake build",
+    "exit_code": 0,
+    "log": "lean-build.log"
+  }
+]

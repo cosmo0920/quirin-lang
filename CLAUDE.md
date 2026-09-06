@@ -104,5 +104,7 @@ concurrency semantics are implemented. CT mapping remains 5/50.
 - W3 bounded evidence-v2 replay/dispatch is recorded in
   `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
   describe recorded runs under `observations_trusted`; lifecycle source
-  derivation stays incomplete until real effect/ABI import exists. The host
-  relocation is a separate remaining step, and v1 Safe refusal is unchanged.
+  derivation stays incomplete until real effect/ABI import exists. The generic
+  host is extracted in `crates/qcore-verifier-host` (record:
+  `docs/reports/w3-verifier-host/README.md`); trusted derivation/replay remain
+  in the compiler adapter pending kernel consolidation. V1 Safe refusal is unchanged.

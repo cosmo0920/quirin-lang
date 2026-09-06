@@ -20,6 +20,10 @@ const ALLOWED: &[(&str, &[&str])] = &[
         &["qcore-contract", "qcore-schemas"],
     ),
     (
+        "crates/qcore-verifier-host",
+        &["qcore-frontend", "qcore-schemas"],
+    ),
+    (
         "compiler",
         &[
             "qcore-c-gateway",
@@ -27,6 +31,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "qcore-core",
             "qcore-frontend",
             "qcore-schemas",
+            "qcore-verifier-host",
         ],
     ),
     ("crates/qcorec", &["qcore-compiler"]),
