@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/w3_evidence_v2.rs (target/debug/deps/w3_evidence_v2-40ae3eca604b59f3)
+
+running 1 test
+test replay_requires_declared_trust_and_observed_run_bounds ... FAILED
+
+failures:
+
+---- replay_requires_declared_trust_and_observed_run_bounds stdout ----
+
+thread 'replay_requires_declared_trust_and_observed_run_bounds' (14) panicked at compiler/tests/w3_evidence_v2.rs:447:9:
+direct replay mutation 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    replay_requires_declared_trust_and_observed_run_bounds
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test w3_evidence_v2`

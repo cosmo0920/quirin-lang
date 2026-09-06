@@ -310,6 +310,21 @@ impl WitnessChecker for ContractObservationReplay<'_> {
                 witness.kind()
             ));
         };
+        // This checker establishes conditional agreement for recorded runs.
+        // Reject caller-built tasks that omit/refuse that assumption or relabel
+        // the resulting obligations as an unbounded source-safety claim.
+        if task.assumptions.get("observations_trusted") != Some(&true)
+            || !task.bounds.observed_runs_only
+            || task
+                .obligations_for(VerifierCapability::ObservationHooks)
+                .iter()
+                .any(|obligation| {
+                    obligation.assumptions != task.assumptions
+                        || !obligation.bounds.observed_runs_only
+                })
+        {
+            return Err("observation replay requires observations_trusted=true and consistent observed-run bounds and assumptions".into());
+        }
         let identities = self
             .inventory
             .contract_sources

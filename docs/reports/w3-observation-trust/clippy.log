@@ -1,0 +1,3 @@
+    Checking qcore-compiler v0.1.0 (/tmp/qcore-host-extraction/compiler)
+    Checking qcorec v0.1.0 (/tmp/qcore-host-extraction/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.19s

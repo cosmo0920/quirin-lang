@@ -281,3 +281,43 @@ fn duplicate_contract_names_are_not_resolved_by_last_write_wins() {
             .is_incomplete_for(VerifierCapability::ObservationHooks)
     );
 }
+
+#[test]
+fn observation_trust_preserves_explicit_caller_refusal() {
+    let program =
+        parse_source_program("extern fn resize() -> unit contract { ensures normal ok == 1; };")
+            .unwrap();
+    for trust in [None, Some(false), Some(true)] {
+        let mut input = inputs(&program);
+        input.required_observation_hooks.insert("resize".into());
+        input.assumptions.insert("other_condition".into(), false);
+        if let Some(trust) = trust {
+            input
+                .assumptions
+                .insert("observations_trusted".into(), trust);
+        }
+        let derived = derive_task(&input, VerifierCapability::ObservationHooks);
+        let expected = trust.unwrap_or(true);
+        assert_eq!(
+            derived.task.assumptions.get("observations_trusted"),
+            Some(&expected)
+        );
+        assert_eq!(
+            derived.task.assumptions.get("other_condition"),
+            Some(&false)
+        );
+        assert!(
+            derived
+                .task
+                .obligations
+                .iter()
+                .all(|o| o.assumptions == derived.task.assumptions)
+        );
+        assert_eq!(
+            derived
+                .task
+                .is_incomplete_for(VerifierCapability::ObservationHooks),
+            !expected
+        );
+    }
+}

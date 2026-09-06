@@ -33,6 +33,10 @@ fn manifest() -> PluginManifest {
 }
 
 fn task() -> DerivedTask {
+    task_with_assumptions(BTreeMap::new())
+}
+
+fn task_with_assumptions(assumptions: BTreeMap<String, bool>) -> DerivedTask {
     let parsed = parse_source_program(SOURCE).unwrap();
     derive_task(
         &DerivationInputs {
@@ -48,7 +52,7 @@ fn task() -> DerivedTask {
             },
             contract_sources: BTreeMap::from([("unit.qc".into(), SOURCE.into())]),
             required_observation_hooks: BTreeSet::from(["resize".into()]),
-            assumptions: BTreeMap::new(),
+            assumptions,
         },
         VerifierCapability::ObservationHooks,
     )
@@ -398,4 +402,58 @@ fn composition_requires_exact_nonempty_inventory() {
         compose_verification_with_inventory(vec![], &required).verdict,
         ProposedVerdict::Unknown
     );
+}
+
+#[test]
+fn explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate() {
+    let derived = task_with_assumptions(BTreeMap::from([("observations_trusted".into(), false)]));
+    assert_eq!(
+        derived.task.assumptions.get("observations_trusted"),
+        Some(&false)
+    );
+    let checker = ContractObservationReplay::new(derived.replay.observation.as_ref().unwrap());
+    let outcome = registry(|_| panic!("explicit distrust must fail before provider dispatch"))
+        .verify_v2(&request(&derived.task), &derived.task, Some(&checker));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+    assert!(outcome.certificate.is_none());
+    assert_eq!(outcome.diagnostics[0].code, "QP016");
+}
+
+#[test]
+fn replay_requires_declared_trust_and_observed_run_bounds() {
+    for mutation in 0..5 {
+        let mut derived = task();
+        match mutation {
+            0 => {
+                derived.task.assumptions.remove("observations_trusted");
+            }
+            1 => {
+                derived
+                    .task
+                    .assumptions
+                    .insert("observations_trusted".into(), false);
+            }
+            2 => derived.task.bounds.observed_runs_only = false,
+            3 => derived.task.obligations[0].bounds.observed_runs_only = false,
+            _ => {
+                derived.task.obligations[0]
+                    .assumptions
+                    .insert("observations_trusted".into(), false);
+            }
+        }
+        let request = request(&derived.task);
+        let checker = ContractObservationReplay::new(derived.replay.observation.as_ref().unwrap());
+        let witness = response(&request).evidence.unwrap().witness;
+        assert!(
+            checker.check(&derived.task, &witness).is_err(),
+            "direct replay mutation {mutation}"
+        );
+        let outcome = registry(|_| {}).verify_v2(&request, &derived.task, Some(&checker));
+        assert_eq!(
+            outcome.verdict,
+            ProposedVerdict::Unknown,
+            "firewall mutation {mutation}"
+        );
+        assert!(outcome.certificate.is_none());
+    }
 }
