@@ -133,7 +133,7 @@ theorem accepted_chunk_import_composes_lifecycle_safety
   have valid := checkChunkImport_valid result
   exact ⟨valid.2.2.2.1, valid.2.2.2.2⟩
 
-structure MonkeyComposition where
+structure EventComposition where
   buildProfileAccepted : Bool
   callbackSummariesExact : Bool
   mapCustodyChecked : Bool
@@ -147,7 +147,7 @@ structure MonkeyComposition where
   sourcePinned : Bool
   deriving DecidableEq, Repr
 
-def MonkeyComposition.Valid (composition : MonkeyComposition) : Prop :=
+def EventComposition.Valid (composition : EventComposition) : Prop :=
   composition.buildProfileAccepted = true ∧
   composition.callbackSummariesExact = true ∧
   composition.mapCustodyChecked = true ∧
@@ -160,69 +160,147 @@ def MonkeyComposition.Valid (composition : MonkeyComposition) : Prop :=
   composition.eventBuildMatches = true ∧
   composition.sourcePinned = true
 
-instance (composition : MonkeyComposition) : Decidable composition.Valid := by
-  unfold MonkeyComposition.Valid
+instance (composition : EventComposition) : Decidable composition.Valid := by
+  unfold EventComposition.Valid
   infer_instance
 
-structure MonkeyCompositionCertificate where
-  checked : MonkeyComposition
+structure EventCompositionCertificate where
+  checked : EventComposition
   deriving DecidableEq, Repr
 
-def checkMonkeyComposition
-    (composition : MonkeyComposition) : Option MonkeyCompositionCertificate :=
+def checkEventComposition
+    (composition : EventComposition) : Option EventCompositionCertificate :=
   if composition.Valid then some { checked := composition } else none
 
-private theorem checkMonkeyComposition_valid
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+private theorem checkEventComposition_valid
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.Valid := by
-  unfold checkMonkeyComposition at result
+  unfold checkEventComposition at result
   split at result
   · assumption
   · contradiction
 
 theorem accepted_monkey_callbacks_cover_failure_and_map_paths
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.callbackSummariesExact = true ∧
       composition.mapCustodyChecked = true ∧
       composition.nullableFailuresChecked = true ∧
       composition.registrationFailureChecked = true := by
-  have valid := checkMonkeyComposition_valid result
+  have valid := checkEventComposition_valid result
   exact ⟨valid.2.1, valid.2.2.1, valid.2.2.2.1, valid.2.2.2.2.1⟩
 
 theorem accepted_monkey_observation_binds_backend_dispatcher_and_trace
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.backendObserved = true ∧
       composition.dispatcherMatches = true ∧
       composition.traceRefines = true := by
-  have valid := checkMonkeyComposition_valid result
+  have valid := checkEventComposition_valid result
   exact ⟨valid.2.2.2.2.2.1, valid.2.2.2.2.2.2.1,
     valid.2.2.2.2.2.2.2.1⟩
 
 theorem accepted_monkey_composition_has_event_teardown
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.eventTeardownAccepted = true :=
-  (checkMonkeyComposition_valid result).2.2.2.2.2.2.2.2.1
+  (checkEventComposition_valid result).2.2.2.2.2.2.2.2.1
 
 theorem accepted_monkey_event_build_matches_profile
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.eventBuildMatches = true :=
-  (checkMonkeyComposition_valid result).2.2.2.2.2.2.2.2.2.1
+  (checkEventComposition_valid result).2.2.2.2.2.2.2.2.2.1
 
 theorem accepted_monkey_source_is_pinned
-    {composition : MonkeyComposition}
-    {certificate : MonkeyCompositionCertificate}
-    (result : checkMonkeyComposition composition = some certificate) :
+    {composition : EventComposition}
+    {certificate : EventCompositionCertificate}
+    (result : checkEventComposition composition = some certificate) :
     composition.sourcePinned = true :=
-  (checkMonkeyComposition_valid result).2.2.2.2.2.2.2.2.2.2
+  (checkEventComposition_valid result).2.2.2.2.2.2.2.2.2.2
+
+/-- Historical names retained as definitional aliases for existing adapters. -/
+abbrev MonkeyComposition := EventComposition
+abbrev MonkeyCompositionCertificate := EventCompositionCertificate
+
+namespace MonkeyComposition
+abbrev buildProfileAccepted (composition : MonkeyComposition) : Bool :=
+  EventComposition.buildProfileAccepted composition
+abbrev callbackSummariesExact (composition : MonkeyComposition) : Bool :=
+  EventComposition.callbackSummariesExact composition
+abbrev mapCustodyChecked (composition : MonkeyComposition) : Bool :=
+  EventComposition.mapCustodyChecked composition
+abbrev nullableFailuresChecked (composition : MonkeyComposition) : Bool :=
+  EventComposition.nullableFailuresChecked composition
+abbrev registrationFailureChecked (composition : MonkeyComposition) : Bool :=
+  EventComposition.registrationFailureChecked composition
+abbrev backendObserved (composition : MonkeyComposition) : Bool :=
+  EventComposition.backendObserved composition
+abbrev dispatcherMatches (composition : MonkeyComposition) : Bool :=
+  EventComposition.dispatcherMatches composition
+abbrev traceRefines (composition : MonkeyComposition) : Bool :=
+  EventComposition.traceRefines composition
+abbrev eventTeardownAccepted (composition : MonkeyComposition) : Bool :=
+  EventComposition.eventTeardownAccepted composition
+abbrev eventBuildMatches (composition : MonkeyComposition) : Bool :=
+  EventComposition.eventBuildMatches composition
+abbrev sourcePinned (composition : MonkeyComposition) : Bool :=
+  EventComposition.sourcePinned composition
+abbrev Valid (composition : MonkeyComposition) : Prop := EventComposition.Valid composition
+export EventComposition (
+  _sizeOf_1
+  _sizeOf_inst
+  casesOn
+  ctorIdx
+  mk
+  mk._flat_ctor
+  mk.inj
+  mk.injEq
+  mk.noConfusion
+  mk.sizeOf_spec
+  noConfusion
+  noConfusionType
+  rec
+  recOn
+)
+end MonkeyComposition
+
+namespace MonkeyCompositionCertificate
+abbrev checked (certificate : MonkeyCompositionCertificate) : MonkeyComposition :=
+  EventCompositionCertificate.checked certificate
+export EventCompositionCertificate (
+  _sizeOf_1
+  _sizeOf_inst
+  casesOn
+  ctorIdx
+  mk
+  mk._flat_ctor
+  mk.inj
+  mk.injEq
+  mk.noConfusion
+  mk.sizeOf_spec
+  noConfusion
+  noConfusionType
+  rec
+  recOn
+)
+end MonkeyCompositionCertificate
+
+abbrev checkMonkeyComposition (composition : MonkeyComposition) :
+    Option MonkeyCompositionCertificate := checkEventComposition composition
+
+abbrev instDecidableEqMonkeyComposition : DecidableEq MonkeyComposition :=
+  instDecidableEqEventComposition
+abbrev instReprMonkeyComposition : Repr MonkeyComposition := instReprEventComposition
+abbrev instDecidableEqMonkeyCompositionCertificate : DecidableEq MonkeyCompositionCertificate :=
+  instDecidableEqEventCompositionCertificate
+abbrev instReprMonkeyCompositionCertificate : Repr MonkeyCompositionCertificate :=
+  instReprEventCompositionCertificate
 
 end QCore.ExternalIntegration

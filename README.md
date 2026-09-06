@@ -317,3 +317,7 @@ The [Lean CI hygiene](docs/reports/w7-lean-ci/README.md) adds the pinned Lean
 build and every theorem audit to CI, including a compiled QCore axiom check.
 Both reevaluation probes also run in Linux and Clang-enabled Windows CI.
 Local checks passed; the hosted workflow has not yet run.
+
+[Generic Lean naming](docs/reports/w7-generic-lean-names/README.md) makes the
+descriptor-custody model, event composition and busy/lock preservation theorem
+available under library-independent names while keeping historical aliases.

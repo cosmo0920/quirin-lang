@@ -1,0 +1,8 @@
+{
+  "descriptor_model": "byte-identical after namespace/theorem-name and introductory-comment substitution, excluding compatibility wrapper",
+  "event_composition": "byte-identical after MonkeyComposition -> EventComposition substitution, excluding compatibility aliases",
+  "busy_lock": "byte-identical after theorem-name substitution, excluding compatibility wrapper",
+  "monkey_event_exported_aliases": 221,
+  "model_behavior_changes": [],
+  "audit_compatibility": "rfl checks for old and generic checkers, predicates and field access"
+}

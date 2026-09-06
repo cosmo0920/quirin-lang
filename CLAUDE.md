@@ -98,3 +98,7 @@ Lean CI hygiene is implemented (2026-09-07): the pinned proof build, all theorem
 audits and the complete QCore axiom closure are checked, with both reevaluation
 examples in Linux/Windows CI. Local gates pass; hosted CI awaits a push.
 See `docs/reports/w7-lean-ci/README.md`.
+
+W7 generic Lean naming is complete for the bounded targets: DescriptorCustody,
+EventComposition and busy_effect_preserves_lock, with historical aliases and
+unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
