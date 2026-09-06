@@ -156,6 +156,14 @@ only ten returning cases complete teardown and leak checking. Next constructor
 work includes other options, OS failures and multiple-failure combinations;
 source-wide caller/custody and wrapper/event gates remain open.
 
+[Eight constructor OS-failure processes](reports/cycle19-file-os-constructors/README.md)
+now bind size-lookup fallback, POSIX resize errors, mapping failures and rollback
+close to original OS identities. All 88 allocation generations are released;
+failed rollback close retains a descriptor after null chunk return and parent
+release. Next bounded paths include constructor ACL/existing-file cases and
+residency/transaction transitions. General caller, OS and aggregate custody
+obligations remain open.
+
 ## Cycle 20: Verifier plugin ecosystem
 
 **Status: active; foundation implemented, semantic dispatch and provider parity

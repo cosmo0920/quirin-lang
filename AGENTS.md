@@ -24,7 +24,7 @@ It also ships a conservative checker for *existing* C source (the
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (50 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (51 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
@@ -82,8 +82,13 @@ It also ships a conservative checker for *existing* C source (the
   null-argument terminations. Ten returning cases complete leak checking; the two
   interrupted cases do not establish teardown. Failed root/chunk-name copies,
   null chmod success and a stream returned without a directory stay distinct.
-  Latest evidence: `docs/reports/cycle19-file-constructor-failures/README.md`
-  (407 workspace tests, 50 contract modules; prior source/verdict parity preserved).
+  Eight further constructor OS-failure/control processes release all 88 allocation
+  generations. Fstat/stat fallback and POSIX resize return/errno stay distinct;
+  suppressed mapping plus rollback-close failures retain the original descriptor/
+  inode after null chunk return and parent release. Harness reclamation is separate.
+  These observations do not prove arbitrary kernel failure post-states.
+  Latest evidence: `docs/reports/cycle19-file-os-constructors/README.md`
+  (407 workspace tests, 51 contract modules; prior source/verdict parity preserved).
 - **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
   Boolean assertions only: built-ins return `Unknown`, the core **refuses all
   v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`

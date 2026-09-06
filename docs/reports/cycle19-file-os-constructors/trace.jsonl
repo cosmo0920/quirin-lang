@@ -1,0 +1,401 @@
+{"case": 200, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 0, "root_length": 27}
+{"case": 200, "sequence": 1, "kind": "allocation", "id": 1, "address": 136115965001792, "size": 136, "allocator": "calloc"}
+{"case": 200, "sequence": 2, "kind": "allocation", "id": 2, "address": 135360050757648, "size": 5, "allocator": "strdup"}
+{"case": 200, "sequence": 3, "kind": "allocation", "id": 3, "address": 135428770234432, "size": 28, "allocator": "strdup"}
+{"case": 200, "sequence": 4, "kind": "allocation", "id": 4, "address": 135497489711120, "size": 38, "allocator": "malloc"}
+{"case": 200, "sequence": 5, "kind": "allocation", "id": 5, "address": 135497489711184, "size": 37, "allocator": "strdup"}
+{"case": 200, "sequence": 6, "kind": "free", "id": 5}
+{"case": 200, "sequence": 7, "kind": "free", "id": 4}
+{"case": 200, "sequence": 8, "kind": "allocation", "id": 6, "address": 135772367618080, "size": 88, "allocator": "malloc"}
+{"case": 200, "sequence": 9, "kind": "allocation", "id": 7, "address": 135360050757680, "size": 9, "allocator": "strdup"}
+{"case": 200, "sequence": 10, "kind": "allocation", "id": 8, "address": 135772367618208, "size": 96, "allocator": "malloc"}
+{"case": 200, "sequence": 11, "kind": "allocation", "id": 9, "address": 135360050757712, "size": 8, "allocator": "strdup"}
+{"case": 200, "sequence": 12, "kind": "allocation", "id": 10, "address": 135634928664608, "size": 50, "allocator": "malloc"}
+{"case": 200, "sequence": 13, "kind": "allocation", "id": 11, "address": 136047245525056, "size": 120, "allocator": "calloc"}
+{"case": 200, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270072}
+{"case": 200, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270072}
+{"case": 200, "sequence": 16, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 200, "sequence": 17, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270072}
+{"case": 200, "sequence": 18, "kind": "constructor_resize", "fd": 3, "offset": 0, "length": 4096, "result": 0, "errno_before": 95, "errno": 95, "injected": 0}
+{"case": 200, "sequence": 19, "kind": "constructor_map", "address": 0, "length": 4096, "prot": 3, "flags": 1, "fd": 3, "offset": 0, "result": 139620674187264, "errno": 0, "injected": 0}
+{"case": 200, "sequence": 20, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 8, "error": 0}
+{"case": 200, "sequence": 21, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 270072, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270072}
+{"case": 200, "sequence": 22, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 136115965001904, "next": 135772367618096, "prev": 135772367618096, "nodes": [{"owner": 6, "address": 135772367618096, "next": 136115965001904, "prev": 136115965001904}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 135772367618112, "next": 135772367618288, "prev": 135772367618288, "nodes": [{"owner": 8, "address": 135772367618288, "next": 135772367618112, "prev": 135772367618112}]}, "up_ring": {"sentinel": 135772367618128, "next": 135772367618272, "prev": 135772367618272, "nodes": [{"owner": 8, "address": 135772367618272, "next": 135772367618128, "prev": 135772367618128}]}, "down_ring": {"sentinel": 135772367618144, "next": 135772367618144, "prev": 135772367618144, "nodes": []}, "chunks": [{"id": 8, "name": 9, "context": 1, "stream": 6, "locked": 0, "transaction": 0, "backend": 11, "path": 10, "backend_context": 1, "fd": 3, "map": 139620674187264, "size": 4096, "synced": 0, "data_size": 0, "device": 47, "inode": 270072, "links": 1, "path_device": 47, "path_inode": 270072}]}]}}
+{"case": 200, "sequence": 23, "kind": "enter", "function": "cio_destroy"}
+{"case": 200, "sequence": 24, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 200, "sequence": 25, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 200, "sequence": 26, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 200, "sequence": 27, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 200, "sequence": 28, "kind": "enter", "function": "cio_file_close"}
+{"case": 200, "sequence": 29, "kind": "enter", "function": "cio_file_sync"}
+{"case": 200, "sequence": 30, "kind": "enter", "function": "cio_file_native_sync"}
+{"case": 200, "sequence": 31, "kind": "os_sync", "map": 139620674187264, "size": 4096, "flags": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 200, "sequence": 32, "kind": "exit", "function": "cio_file_native_sync"}
+{"case": 200, "sequence": 33, "kind": "exit", "function": "cio_file_sync"}
+{"case": 200, "sequence": 34, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 200, "sequence": 35, "kind": "os_unmap", "map": 139620674187264, "size": 4096, "result": 0, "errno": 0, "injected": 0}
+{"case": 200, "sequence": 36, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 200, "sequence": 37, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 200, "sequence": 38, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 200, "sequence": 39, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 200, "sequence": 40, "kind": "os_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 200, "sequence": 41, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 200, "sequence": 42, "kind": "free", "id": 10}
+{"case": 200, "sequence": 43, "kind": "backend_state", "id": 11, "fd": -1, "map": 0, "size": 0, "data_size": 0, "up": 0, "synced": 1}
+{"case": 200, "sequence": 44, "kind": "free", "id": 11}
+{"case": 200, "sequence": 45, "kind": "exit", "function": "cio_file_close"}
+{"case": 200, "sequence": 46, "kind": "free", "id": 9}
+{"case": 200, "sequence": 47, "kind": "chunk_state", "id": 8, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 200, "sequence": 48, "kind": "free", "id": 8}
+{"case": 200, "sequence": 49, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 200, "sequence": 50, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 200, "sequence": 51, "kind": "counter", "total": 0, "up": 0}
+{"case": 200, "sequence": 52, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 200, "sequence": 53, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 200, "sequence": 54, "kind": "free", "id": 7}
+{"case": 200, "sequence": 55, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 200, "sequence": 56, "kind": "free", "id": 6}
+{"case": 200, "sequence": 57, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 200, "sequence": 58, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 200, "sequence": 59, "kind": "free", "id": 2}
+{"case": 200, "sequence": 60, "kind": "free", "id": 3}
+{"case": 200, "sequence": 61, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 200, "sequence": 62, "kind": "free", "id": 1}
+{"case": 200, "sequence": 63, "kind": "exit", "function": "cio_destroy"}
+{"case": 200, "sequence": 64, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270072}
+{"case": 200, "sequence": 65, "kind": "terminal_mapping", "map": 139620674187264, "size": 4096, "result": -1, "errno": 12}
+{"case": 200, "sequence": 66, "kind": "end", "live_allocations": 0}
+{"case": 201, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 1, "root_length": 27}
+{"case": 201, "sequence": 1, "kind": "allocation", "id": 1, "address": 123748759765056, "size": 136, "allocator": "calloc"}
+{"case": 201, "sequence": 2, "kind": "allocation", "id": 2, "address": 122992845520912, "size": 5, "allocator": "strdup"}
+{"case": 201, "sequence": 3, "kind": "allocation", "id": 3, "address": 123061564997696, "size": 28, "allocator": "strdup"}
+{"case": 201, "sequence": 4, "kind": "allocation", "id": 4, "address": 123130284474384, "size": 38, "allocator": "malloc"}
+{"case": 201, "sequence": 5, "kind": "allocation", "id": 5, "address": 123130284474448, "size": 37, "allocator": "strdup"}
+{"case": 201, "sequence": 6, "kind": "free", "id": 5}
+{"case": 201, "sequence": 7, "kind": "free", "id": 4}
+{"case": 201, "sequence": 8, "kind": "allocation", "id": 6, "address": 123405162381344, "size": 88, "allocator": "malloc"}
+{"case": 201, "sequence": 9, "kind": "allocation", "id": 7, "address": 122992845520944, "size": 9, "allocator": "strdup"}
+{"case": 201, "sequence": 10, "kind": "allocation", "id": 8, "address": 123405162381472, "size": 96, "allocator": "malloc"}
+{"case": 201, "sequence": 11, "kind": "allocation", "id": 9, "address": 122992845520976, "size": 8, "allocator": "strdup"}
+{"case": 201, "sequence": 12, "kind": "allocation", "id": 10, "address": 123267723427872, "size": 50, "allocator": "malloc"}
+{"case": 201, "sequence": 13, "kind": "allocation", "id": 11, "address": 123680040288320, "size": 120, "allocator": "calloc"}
+{"case": 201, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": -1, "errno": 13, "injected": 1, "device": 0, "inode": 0}
+{"case": 201, "sequence": 15, "kind": "free", "id": 10}
+{"case": 201, "sequence": 16, "kind": "rollback_backend", "id": 11, "fd": -1, "map": 0, "size": 0, "fs_size": 0, "up": 0}
+{"case": 201, "sequence": 17, "kind": "free", "id": 11}
+{"case": 201, "sequence": 18, "kind": "free", "id": 9}
+{"case": 201, "sequence": 19, "kind": "free", "id": 8}
+{"case": 201, "sequence": 20, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 201, "sequence": 21, "kind": "constructor_probe", "phase": "returned", "fd": -1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": -1, "path_errno": 2, "path_size": -1, "device": 0, "inode": 0}
+{"case": 201, "sequence": 22, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 123748759765168, "next": 123405162381360, "prev": 123405162381360, "nodes": [{"owner": 6, "address": 123405162381360, "next": 123748759765168, "prev": 123748759765168}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 123405162381376, "next": 123405162381376, "prev": 123405162381376, "nodes": []}, "up_ring": {"sentinel": 123405162381392, "next": 123405162381392, "prev": 123405162381392, "nodes": []}, "down_ring": {"sentinel": 123405162381408, "next": 123405162381408, "prev": 123405162381408, "nodes": []}, "chunks": []}]}}
+{"case": 201, "sequence": 23, "kind": "enter", "function": "cio_destroy"}
+{"case": 201, "sequence": 24, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 201, "sequence": 25, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 201, "sequence": 26, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 201, "sequence": 27, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 201, "sequence": 28, "kind": "free", "id": 7}
+{"case": 201, "sequence": 29, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 201, "sequence": 30, "kind": "free", "id": 6}
+{"case": 201, "sequence": 31, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 201, "sequence": 32, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 201, "sequence": 33, "kind": "free", "id": 2}
+{"case": 201, "sequence": 34, "kind": "free", "id": 3}
+{"case": 201, "sequence": 35, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 201, "sequence": 36, "kind": "free", "id": 1}
+{"case": 201, "sequence": 37, "kind": "exit", "function": "cio_destroy"}
+{"case": 201, "sequence": 38, "kind": "constructor_probe", "phase": "parents_released", "fd": -1, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": -1, "path_errno": 2, "path_size": -1, "device": 0, "inode": 0}
+{"case": 201, "sequence": 39, "kind": "end", "live_allocations": 0}
+{"case": 202, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 2, "root_length": 27}
+{"case": 202, "sequence": 1, "kind": "allocation", "id": 1, "address": 122651353677888, "size": 136, "allocator": "calloc"}
+{"case": 202, "sequence": 2, "kind": "allocation", "id": 2, "address": 121895439433744, "size": 5, "allocator": "strdup"}
+{"case": 202, "sequence": 3, "kind": "allocation", "id": 3, "address": 121964158910528, "size": 28, "allocator": "strdup"}
+{"case": 202, "sequence": 4, "kind": "allocation", "id": 4, "address": 122032878387216, "size": 38, "allocator": "malloc"}
+{"case": 202, "sequence": 5, "kind": "allocation", "id": 5, "address": 122032878387280, "size": 37, "allocator": "strdup"}
+{"case": 202, "sequence": 6, "kind": "free", "id": 5}
+{"case": 202, "sequence": 7, "kind": "free", "id": 4}
+{"case": 202, "sequence": 8, "kind": "allocation", "id": 6, "address": 122307756294176, "size": 88, "allocator": "malloc"}
+{"case": 202, "sequence": 9, "kind": "allocation", "id": 7, "address": 121895439433776, "size": 9, "allocator": "strdup"}
+{"case": 202, "sequence": 10, "kind": "allocation", "id": 8, "address": 122307756294304, "size": 96, "allocator": "malloc"}
+{"case": 202, "sequence": 11, "kind": "allocation", "id": 9, "address": 121895439433808, "size": 8, "allocator": "strdup"}
+{"case": 202, "sequence": 12, "kind": "allocation", "id": 10, "address": 122170317340704, "size": 50, "allocator": "malloc"}
+{"case": 202, "sequence": 13, "kind": "allocation", "id": 11, "address": 122582634201152, "size": 120, "allocator": "calloc"}
+{"case": 202, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270077}
+{"case": 202, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": -1, "errno": 5, "injected": 1, "size": -1, "device": 0, "inode": 0}
+{"case": 202, "sequence": 16, "kind": "constructor_stat", "path": 10, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270077}
+{"case": 202, "sequence": 17, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 202, "sequence": 18, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270077}
+{"case": 202, "sequence": 19, "kind": "constructor_resize", "fd": 3, "offset": 0, "length": 4096, "result": 0, "errno_before": 95, "errno": 95, "injected": 0}
+{"case": 202, "sequence": 20, "kind": "constructor_map", "address": 0, "length": 4096, "prot": 3, "flags": 1, "fd": 3, "offset": 0, "result": 126156062449664, "errno": 0, "injected": 0}
+{"case": 202, "sequence": 21, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 8, "error": 0}
+{"case": 202, "sequence": 22, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 270077, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270077}
+{"case": 202, "sequence": 23, "kind": "snapshot", "context": {"id": 1, "total": 1, "up": 1, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 122651353678000, "next": 122307756294192, "prev": 122307756294192, "nodes": [{"owner": 6, "address": 122307756294192, "next": 122651353678000, "prev": 122651353678000}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 122307756294208, "next": 122307756294384, "prev": 122307756294384, "nodes": [{"owner": 8, "address": 122307756294384, "next": 122307756294208, "prev": 122307756294208}]}, "up_ring": {"sentinel": 122307756294224, "next": 122307756294368, "prev": 122307756294368, "nodes": [{"owner": 8, "address": 122307756294368, "next": 122307756294224, "prev": 122307756294224}]}, "down_ring": {"sentinel": 122307756294240, "next": 122307756294240, "prev": 122307756294240, "nodes": []}, "chunks": [{"id": 8, "name": 9, "context": 1, "stream": 6, "locked": 0, "transaction": 0, "backend": 11, "path": 10, "backend_context": 1, "fd": 3, "map": 126156062449664, "size": 4096, "synced": 0, "data_size": 0, "device": 47, "inode": 270077, "links": 1, "path_device": 47, "path_inode": 270077}]}]}}
+{"case": 202, "sequence": 24, "kind": "enter", "function": "cio_destroy"}
+{"case": 202, "sequence": 25, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 202, "sequence": 26, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 202, "sequence": 27, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 202, "sequence": 28, "kind": "enter", "function": "cio_chunk_close"}
+{"case": 202, "sequence": 29, "kind": "enter", "function": "cio_file_close"}
+{"case": 202, "sequence": 30, "kind": "enter", "function": "cio_file_sync"}
+{"case": 202, "sequence": 31, "kind": "enter", "function": "cio_file_native_sync"}
+{"case": 202, "sequence": 32, "kind": "os_sync", "map": 126156062449664, "size": 4096, "flags": 1, "result": 0, "errno": 0, "injected": 0}
+{"case": 202, "sequence": 33, "kind": "exit", "function": "cio_file_native_sync"}
+{"case": 202, "sequence": 34, "kind": "exit", "function": "cio_file_sync"}
+{"case": 202, "sequence": 35, "kind": "enter", "function": "cio_file_native_unmap"}
+{"case": 202, "sequence": 36, "kind": "os_unmap", "map": 126156062449664, "size": 4096, "result": 0, "errno": 0, "injected": 0}
+{"case": 202, "sequence": 37, "kind": "exit", "function": "cio_file_native_unmap"}
+{"case": 202, "sequence": 38, "kind": "enter", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 202, "sequence": 39, "kind": "exit", "function": "cio_chunk_counter_total_up_sub"}
+{"case": 202, "sequence": 40, "kind": "enter", "function": "cio_file_native_close"}
+{"case": 202, "sequence": 41, "kind": "os_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 202, "sequence": 42, "kind": "exit", "function": "cio_file_native_close"}
+{"case": 202, "sequence": 43, "kind": "free", "id": 10}
+{"case": 202, "sequence": 44, "kind": "backend_state", "id": 11, "fd": -1, "map": 0, "size": 0, "data_size": 0, "up": 0, "synced": 1}
+{"case": 202, "sequence": 45, "kind": "free", "id": 11}
+{"case": 202, "sequence": 46, "kind": "exit", "function": "cio_file_close"}
+{"case": 202, "sequence": 47, "kind": "free", "id": 9}
+{"case": 202, "sequence": 48, "kind": "chunk_state", "id": 8, "primary_cleared": 1, "state_cleared": 1, "total": 1}
+{"case": 202, "sequence": 49, "kind": "free", "id": 8}
+{"case": 202, "sequence": 50, "kind": "enter", "function": "cio_chunk_counter_total_sub"}
+{"case": 202, "sequence": 51, "kind": "exit", "function": "cio_chunk_counter_total_sub"}
+{"case": 202, "sequence": 52, "kind": "counter", "total": 0, "up": 0}
+{"case": 202, "sequence": 53, "kind": "exit", "function": "cio_chunk_close"}
+{"case": 202, "sequence": 54, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 202, "sequence": 55, "kind": "free", "id": 7}
+{"case": 202, "sequence": 56, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 202, "sequence": 57, "kind": "free", "id": 6}
+{"case": 202, "sequence": 58, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 202, "sequence": 59, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 202, "sequence": 60, "kind": "free", "id": 2}
+{"case": 202, "sequence": 61, "kind": "free", "id": 3}
+{"case": 202, "sequence": 62, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 202, "sequence": 63, "kind": "free", "id": 1}
+{"case": 202, "sequence": 64, "kind": "exit", "function": "cio_destroy"}
+{"case": 202, "sequence": 65, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270077}
+{"case": 202, "sequence": 66, "kind": "terminal_mapping", "map": 126156062449664, "size": 4096, "result": -1, "errno": 12}
+{"case": 202, "sequence": 67, "kind": "end", "live_allocations": 0}
+{"case": 203, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 3, "root_length": 27}
+{"case": 203, "sequence": 1, "kind": "allocation", "id": 1, "address": 122830781808704, "size": 136, "allocator": "calloc"}
+{"case": 203, "sequence": 2, "kind": "allocation", "id": 2, "address": 122074867564560, "size": 5, "allocator": "strdup"}
+{"case": 203, "sequence": 3, "kind": "allocation", "id": 3, "address": 122143587041344, "size": 28, "allocator": "strdup"}
+{"case": 203, "sequence": 4, "kind": "allocation", "id": 4, "address": 122212306518032, "size": 38, "allocator": "malloc"}
+{"case": 203, "sequence": 5, "kind": "allocation", "id": 5, "address": 122212306518096, "size": 37, "allocator": "strdup"}
+{"case": 203, "sequence": 6, "kind": "free", "id": 5}
+{"case": 203, "sequence": 7, "kind": "free", "id": 4}
+{"case": 203, "sequence": 8, "kind": "allocation", "id": 6, "address": 122487184424992, "size": 88, "allocator": "malloc"}
+{"case": 203, "sequence": 9, "kind": "allocation", "id": 7, "address": 122074867564592, "size": 9, "allocator": "strdup"}
+{"case": 203, "sequence": 10, "kind": "allocation", "id": 8, "address": 122487184425120, "size": 96, "allocator": "malloc"}
+{"case": 203, "sequence": 11, "kind": "allocation", "id": 9, "address": 122074867564624, "size": 8, "allocator": "strdup"}
+{"case": 203, "sequence": 12, "kind": "allocation", "id": 10, "address": 122349745471520, "size": 50, "allocator": "malloc"}
+{"case": 203, "sequence": 13, "kind": "allocation", "id": 11, "address": 122762062331968, "size": 120, "allocator": "calloc"}
+{"case": 203, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270080}
+{"case": 203, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": -1, "errno": 5, "injected": 1, "size": -1, "device": 0, "inode": 0}
+{"case": 203, "sequence": 16, "kind": "constructor_stat", "path": 10, "result": -1, "errno": 5, "injected": 1, "size": -1, "device": 0, "inode": 0}
+{"case": 203, "sequence": 17, "kind": "constructor_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 203, "sequence": 18, "kind": "free", "id": 10}
+{"case": 203, "sequence": 19, "kind": "rollback_backend", "id": 11, "fd": -1, "map": 0, "size": 0, "fs_size": 0, "up": 0}
+{"case": 203, "sequence": 20, "kind": "free", "id": 11}
+{"case": 203, "sequence": 21, "kind": "free", "id": 9}
+{"case": 203, "sequence": 22, "kind": "free", "id": 8}
+{"case": 203, "sequence": 23, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 203, "sequence": 24, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270080}
+{"case": 203, "sequence": 25, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 122830781808816, "next": 122487184425008, "prev": 122487184425008, "nodes": [{"owner": 6, "address": 122487184425008, "next": 122830781808816, "prev": 122830781808816}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 122487184425024, "next": 122487184425024, "prev": 122487184425024, "nodes": []}, "up_ring": {"sentinel": 122487184425040, "next": 122487184425040, "prev": 122487184425040, "nodes": []}, "down_ring": {"sentinel": 122487184425056, "next": 122487184425056, "prev": 122487184425056, "nodes": []}, "chunks": []}]}}
+{"case": 203, "sequence": 26, "kind": "enter", "function": "cio_destroy"}
+{"case": 203, "sequence": 27, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 203, "sequence": 28, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 203, "sequence": 29, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 203, "sequence": 30, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 203, "sequence": 31, "kind": "free", "id": 7}
+{"case": 203, "sequence": 32, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 203, "sequence": 33, "kind": "free", "id": 6}
+{"case": 203, "sequence": 34, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 203, "sequence": 35, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 203, "sequence": 36, "kind": "free", "id": 2}
+{"case": 203, "sequence": 37, "kind": "free", "id": 3}
+{"case": 203, "sequence": 38, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 203, "sequence": 39, "kind": "free", "id": 1}
+{"case": 203, "sequence": 40, "kind": "exit", "function": "cio_destroy"}
+{"case": 203, "sequence": 41, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270080}
+{"case": 203, "sequence": 42, "kind": "end", "live_allocations": 0}
+{"case": 204, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 4, "root_length": 27}
+{"case": 204, "sequence": 1, "kind": "allocation", "id": 1, "address": 134490594607168, "size": 136, "allocator": "calloc"}
+{"case": 204, "sequence": 2, "kind": "allocation", "id": 2, "address": 133734680363024, "size": 5, "allocator": "strdup"}
+{"case": 204, "sequence": 3, "kind": "allocation", "id": 3, "address": 133803399839808, "size": 28, "allocator": "strdup"}
+{"case": 204, "sequence": 4, "kind": "allocation", "id": 4, "address": 133872119316496, "size": 38, "allocator": "malloc"}
+{"case": 204, "sequence": 5, "kind": "allocation", "id": 5, "address": 133872119316560, "size": 37, "allocator": "strdup"}
+{"case": 204, "sequence": 6, "kind": "free", "id": 5}
+{"case": 204, "sequence": 7, "kind": "free", "id": 4}
+{"case": 204, "sequence": 8, "kind": "allocation", "id": 6, "address": 134146997223456, "size": 88, "allocator": "malloc"}
+{"case": 204, "sequence": 9, "kind": "allocation", "id": 7, "address": 133734680363056, "size": 9, "allocator": "strdup"}
+{"case": 204, "sequence": 10, "kind": "allocation", "id": 8, "address": 134146997223584, "size": 96, "allocator": "malloc"}
+{"case": 204, "sequence": 11, "kind": "allocation", "id": 9, "address": 133734680363088, "size": 8, "allocator": "strdup"}
+{"case": 204, "sequence": 12, "kind": "allocation", "id": 10, "address": 134009558269984, "size": 50, "allocator": "malloc"}
+{"case": 204, "sequence": 13, "kind": "allocation", "id": 11, "address": 134421875130432, "size": 120, "allocator": "calloc"}
+{"case": 204, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270083}
+{"case": 204, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270083}
+{"case": 204, "sequence": 16, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 204, "sequence": 17, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270083}
+{"case": 204, "sequence": 18, "kind": "constructor_resize", "fd": 3, "offset": 0, "length": 4096, "result": 28, "errno_before": 95, "errno": 95, "injected": 1}
+{"case": 204, "sequence": 19, "kind": "constructor_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 204, "sequence": 20, "kind": "free", "id": 10}
+{"case": 204, "sequence": 21, "kind": "rollback_backend", "id": 11, "fd": -1, "map": 0, "size": 0, "fs_size": 0, "up": 0}
+{"case": 204, "sequence": 22, "kind": "free", "id": 11}
+{"case": 204, "sequence": 23, "kind": "free", "id": 9}
+{"case": 204, "sequence": 24, "kind": "free", "id": 8}
+{"case": 204, "sequence": 25, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 204, "sequence": 26, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270083}
+{"case": 204, "sequence": 27, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 134490594607280, "next": 134146997223472, "prev": 134146997223472, "nodes": [{"owner": 6, "address": 134146997223472, "next": 134490594607280, "prev": 134490594607280}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 134146997223488, "next": 134146997223488, "prev": 134146997223488, "nodes": []}, "up_ring": {"sentinel": 134146997223504, "next": 134146997223504, "prev": 134146997223504, "nodes": []}, "down_ring": {"sentinel": 134146997223520, "next": 134146997223520, "prev": 134146997223520, "nodes": []}, "chunks": []}]}}
+{"case": 204, "sequence": 28, "kind": "enter", "function": "cio_destroy"}
+{"case": 204, "sequence": 29, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 204, "sequence": 30, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 204, "sequence": 31, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 204, "sequence": 32, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 204, "sequence": 33, "kind": "free", "id": 7}
+{"case": 204, "sequence": 34, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 204, "sequence": 35, "kind": "free", "id": 6}
+{"case": 204, "sequence": 36, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 204, "sequence": 37, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 204, "sequence": 38, "kind": "free", "id": 2}
+{"case": 204, "sequence": 39, "kind": "free", "id": 3}
+{"case": 204, "sequence": 40, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 204, "sequence": 41, "kind": "free", "id": 1}
+{"case": 204, "sequence": 42, "kind": "exit", "function": "cio_destroy"}
+{"case": 204, "sequence": 43, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270083}
+{"case": 204, "sequence": 44, "kind": "end", "live_allocations": 0}
+{"case": 205, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 5, "root_length": 27}
+{"case": 205, "sequence": 1, "kind": "allocation", "id": 1, "address": 127236828954688, "size": 136, "allocator": "calloc"}
+{"case": 205, "sequence": 2, "kind": "allocation", "id": 2, "address": 126480914710544, "size": 5, "allocator": "strdup"}
+{"case": 205, "sequence": 3, "kind": "allocation", "id": 3, "address": 126549634187328, "size": 28, "allocator": "strdup"}
+{"case": 205, "sequence": 4, "kind": "allocation", "id": 4, "address": 126618353664016, "size": 38, "allocator": "malloc"}
+{"case": 205, "sequence": 5, "kind": "allocation", "id": 5, "address": 126618353664080, "size": 37, "allocator": "strdup"}
+{"case": 205, "sequence": 6, "kind": "free", "id": 5}
+{"case": 205, "sequence": 7, "kind": "free", "id": 4}
+{"case": 205, "sequence": 8, "kind": "allocation", "id": 6, "address": 126893231570976, "size": 88, "allocator": "malloc"}
+{"case": 205, "sequence": 9, "kind": "allocation", "id": 7, "address": 126480914710576, "size": 9, "allocator": "strdup"}
+{"case": 205, "sequence": 10, "kind": "allocation", "id": 8, "address": 126893231571104, "size": 96, "allocator": "malloc"}
+{"case": 205, "sequence": 11, "kind": "allocation", "id": 9, "address": 126480914710608, "size": 8, "allocator": "strdup"}
+{"case": 205, "sequence": 12, "kind": "allocation", "id": 10, "address": 126755792617504, "size": 50, "allocator": "malloc"}
+{"case": 205, "sequence": 13, "kind": "allocation", "id": 11, "address": 127168109477952, "size": 120, "allocator": "calloc"}
+{"case": 205, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270086}
+{"case": 205, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270086}
+{"case": 205, "sequence": 16, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 205, "sequence": 17, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270086}
+{"case": 205, "sequence": 18, "kind": "constructor_resize", "fd": 3, "offset": 0, "length": 4096, "result": 0, "errno_before": 95, "errno": 95, "injected": 0}
+{"case": 205, "sequence": 19, "kind": "constructor_map", "address": 0, "length": 4096, "prot": 3, "flags": 1, "fd": 3, "offset": 0, "result": 18446744073709551615, "errno": 12, "injected": 1}
+{"case": 205, "sequence": 20, "kind": "constructor_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 205, "sequence": 21, "kind": "free", "id": 10}
+{"case": 205, "sequence": 22, "kind": "rollback_backend", "id": 11, "fd": -1, "map": 18446744073709551615, "size": 4096, "fs_size": 4096, "up": 0}
+{"case": 205, "sequence": 23, "kind": "free", "id": 11}
+{"case": 205, "sequence": 24, "kind": "free", "id": 9}
+{"case": 205, "sequence": 25, "kind": "free", "id": 8}
+{"case": 205, "sequence": 26, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 205, "sequence": 27, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270086}
+{"case": 205, "sequence": 28, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 127236828954800, "next": 126893231570992, "prev": 126893231570992, "nodes": [{"owner": 6, "address": 126893231570992, "next": 127236828954800, "prev": 127236828954800}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 126893231571008, "next": 126893231571008, "prev": 126893231571008, "nodes": []}, "up_ring": {"sentinel": 126893231571024, "next": 126893231571024, "prev": 126893231571024, "nodes": []}, "down_ring": {"sentinel": 126893231571040, "next": 126893231571040, "prev": 126893231571040, "nodes": []}, "chunks": []}]}}
+{"case": 205, "sequence": 29, "kind": "enter", "function": "cio_destroy"}
+{"case": 205, "sequence": 30, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 205, "sequence": 31, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 205, "sequence": 32, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 205, "sequence": 33, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 205, "sequence": 34, "kind": "free", "id": 7}
+{"case": 205, "sequence": 35, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 205, "sequence": 36, "kind": "free", "id": 6}
+{"case": 205, "sequence": 37, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 205, "sequence": 38, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 205, "sequence": 39, "kind": "free", "id": 2}
+{"case": 205, "sequence": 40, "kind": "free", "id": 3}
+{"case": 205, "sequence": 41, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 205, "sequence": 42, "kind": "free", "id": 1}
+{"case": 205, "sequence": 43, "kind": "exit", "function": "cio_destroy"}
+{"case": 205, "sequence": 44, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270086}
+{"case": 205, "sequence": 45, "kind": "end", "live_allocations": 0}
+{"case": 206, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 6, "root_length": 27}
+{"case": 206, "sequence": 1, "kind": "allocation", "id": 1, "address": 137053016555584, "size": 136, "allocator": "calloc"}
+{"case": 206, "sequence": 2, "kind": "allocation", "id": 2, "address": 136297102311440, "size": 5, "allocator": "strdup"}
+{"case": 206, "sequence": 3, "kind": "allocation", "id": 3, "address": 136365821788224, "size": 28, "allocator": "strdup"}
+{"case": 206, "sequence": 4, "kind": "allocation", "id": 4, "address": 136434541264912, "size": 38, "allocator": "malloc"}
+{"case": 206, "sequence": 5, "kind": "allocation", "id": 5, "address": 136434541264976, "size": 37, "allocator": "strdup"}
+{"case": 206, "sequence": 6, "kind": "free", "id": 5}
+{"case": 206, "sequence": 7, "kind": "free", "id": 4}
+{"case": 206, "sequence": 8, "kind": "allocation", "id": 6, "address": 136709419171872, "size": 88, "allocator": "malloc"}
+{"case": 206, "sequence": 9, "kind": "allocation", "id": 7, "address": 136297102311472, "size": 9, "allocator": "strdup"}
+{"case": 206, "sequence": 10, "kind": "allocation", "id": 8, "address": 136709419172000, "size": 96, "allocator": "malloc"}
+{"case": 206, "sequence": 11, "kind": "allocation", "id": 9, "address": 136297102311504, "size": 8, "allocator": "strdup"}
+{"case": 206, "sequence": 12, "kind": "allocation", "id": 10, "address": 136571980218400, "size": 50, "allocator": "malloc"}
+{"case": 206, "sequence": 13, "kind": "allocation", "id": 11, "address": 136984297078848, "size": 120, "allocator": "calloc"}
+{"case": 206, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270089}
+{"case": 206, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270089}
+{"case": 206, "sequence": 16, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 206, "sequence": 17, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270089}
+{"case": 206, "sequence": 18, "kind": "constructor_resize", "fd": 3, "offset": 0, "length": 4096, "result": 0, "errno_before": 95, "errno": 95, "injected": 0}
+{"case": 206, "sequence": 19, "kind": "constructor_map", "address": 0, "length": 4096, "prot": 3, "flags": 1, "fd": 3, "offset": 0, "result": 18446744073709551615, "errno": 12, "injected": 1}
+{"case": 206, "sequence": 20, "kind": "constructor_close", "fd": 3, "result": -1, "errno": 5, "injected": 1}
+{"case": 206, "sequence": 21, "kind": "free", "id": 10}
+{"case": 206, "sequence": 22, "kind": "rollback_backend", "id": 11, "fd": 3, "map": 18446744073709551615, "size": 4096, "fs_size": 4096, "up": 0}
+{"case": 206, "sequence": 23, "kind": "free", "id": 11}
+{"case": 206, "sequence": 24, "kind": "free", "id": 9}
+{"case": 206, "sequence": 25, "kind": "free", "id": 8}
+{"case": 206, "sequence": 26, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 206, "sequence": 27, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 270089, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270089}
+{"case": 206, "sequence": 28, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 137053016555696, "next": 136709419171888, "prev": 136709419171888, "nodes": [{"owner": 6, "address": 136709419171888, "next": 137053016555696, "prev": 137053016555696}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 136709419171904, "next": 136709419171904, "prev": 136709419171904, "nodes": []}, "up_ring": {"sentinel": 136709419171920, "next": 136709419171920, "prev": 136709419171920, "nodes": []}, "down_ring": {"sentinel": 136709419171936, "next": 136709419171936, "prev": 136709419171936, "nodes": []}, "chunks": []}]}}
+{"case": 206, "sequence": 29, "kind": "enter", "function": "cio_destroy"}
+{"case": 206, "sequence": 30, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 206, "sequence": 31, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 206, "sequence": 32, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 206, "sequence": 33, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 206, "sequence": 34, "kind": "free", "id": 7}
+{"case": 206, "sequence": 35, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 206, "sequence": 36, "kind": "free", "id": 6}
+{"case": 206, "sequence": 37, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 206, "sequence": 38, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 206, "sequence": 39, "kind": "free", "id": 2}
+{"case": 206, "sequence": 40, "kind": "free", "id": 3}
+{"case": 206, "sequence": 41, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 206, "sequence": 42, "kind": "free", "id": 1}
+{"case": 206, "sequence": 43, "kind": "exit", "function": "cio_destroy"}
+{"case": 206, "sequence": 44, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": 0, "fd_errno": 0, "fd_device": 47, "fd_inode": 270089, "path_result": 0, "path_errno": 0, "path_size": 4096, "device": 47, "inode": 270089}
+{"case": 206, "sequence": 45, "kind": "end", "live_allocations": 0}
+{"case": 206, "sequence": 46, "kind": "harness_descriptor_cleanup", "fd": 3, "result": 0, "errno": 0, "fd_result": -1, "fd_errno": 9}
+{"case": 207, "sequence": 0, "kind": "begin_os_constructor", "schema_version": 1, "scenario": 7, "root_length": 27}
+{"case": 207, "sequence": 1, "kind": "allocation", "id": 1, "address": 124361950232640, "size": 136, "allocator": "calloc"}
+{"case": 207, "sequence": 2, "kind": "allocation", "id": 2, "address": 123606035988496, "size": 5, "allocator": "strdup"}
+{"case": 207, "sequence": 3, "kind": "allocation", "id": 3, "address": 123674755465280, "size": 28, "allocator": "strdup"}
+{"case": 207, "sequence": 4, "kind": "allocation", "id": 4, "address": 123743474941968, "size": 38, "allocator": "malloc"}
+{"case": 207, "sequence": 5, "kind": "allocation", "id": 5, "address": 123743474942032, "size": 37, "allocator": "strdup"}
+{"case": 207, "sequence": 6, "kind": "free", "id": 5}
+{"case": 207, "sequence": 7, "kind": "free", "id": 4}
+{"case": 207, "sequence": 8, "kind": "allocation", "id": 6, "address": 124018352848928, "size": 88, "allocator": "malloc"}
+{"case": 207, "sequence": 9, "kind": "allocation", "id": 7, "address": 123606035988528, "size": 9, "allocator": "strdup"}
+{"case": 207, "sequence": 10, "kind": "allocation", "id": 8, "address": 124018352849056, "size": 96, "allocator": "malloc"}
+{"case": 207, "sequence": 11, "kind": "allocation", "id": 9, "address": 123606035988560, "size": 8, "allocator": "strdup"}
+{"case": 207, "sequence": 12, "kind": "allocation", "id": 10, "address": 123880913895456, "size": 50, "allocator": "malloc"}
+{"case": 207, "sequence": 13, "kind": "allocation", "id": 11, "address": 124293230755904, "size": 120, "allocator": "calloc"}
+{"case": 207, "sequence": 14, "kind": "constructor_open", "path": 10, "flags": 66, "mode": 384, "result": 3, "errno": 0, "injected": 0, "device": 47, "inode": 270092}
+{"case": 207, "sequence": 15, "kind": "constructor_fstat", "fd": 3, "ordinal": 1, "result": 0, "errno": 0, "injected": 0, "size": 0, "device": 47, "inode": 270092}
+{"case": 207, "sequence": 16, "kind": "constructor_chmod", "path": 10, "mode": 448, "result": 0, "errno": 0}
+{"case": 207, "sequence": 17, "kind": "constructor_fstat", "fd": 3, "ordinal": 2, "result": -1, "errno": 5, "injected": 1, "size": -1, "device": 0, "inode": 0}
+{"case": 207, "sequence": 18, "kind": "constructor_stat", "path": 10, "result": -1, "errno": 5, "injected": 1, "size": -1, "device": 0, "inode": 0}
+{"case": 207, "sequence": 19, "kind": "constructor_close", "fd": 3, "result": 0, "errno": 0, "injected": 0}
+{"case": 207, "sequence": 20, "kind": "free", "id": 10}
+{"case": 207, "sequence": 21, "kind": "rollback_backend", "id": 11, "fd": -1, "map": 0, "size": 0, "fs_size": 0, "up": 0}
+{"case": 207, "sequence": 22, "kind": "free", "id": 11}
+{"case": 207, "sequence": 23, "kind": "free", "id": 9}
+{"case": 207, "sequence": 24, "kind": "free", "id": 8}
+{"case": 207, "sequence": 25, "kind": "constructor_result", "context": 1, "stream": 6, "chunk": 0, "error": -1}
+{"case": 207, "sequence": 26, "kind": "constructor_probe", "phase": "returned", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270092}
+{"case": 207, "sequence": 27, "kind": "snapshot", "context": {"id": 1, "total": 0, "up": 0, "fields": [0, 0, 2, 0, 0, 3], "ring": {"sentinel": 124361950232752, "next": 124018352848944, "prev": 124018352848944, "nodes": [{"owner": 6, "address": 124018352848944, "next": 124361950232752, "prev": 124361950232752}]}, "streams": [{"id": 6, "name": 7, "context": 1, "memory": 0, "ring": {"sentinel": 124018352848960, "next": 124018352848960, "prev": 124018352848960, "nodes": []}, "up_ring": {"sentinel": 124018352848976, "next": 124018352848976, "prev": 124018352848976, "nodes": []}, "down_ring": {"sentinel": 124018352848992, "next": 124018352848992, "prev": 124018352848992, "nodes": []}, "chunks": []}]}}
+{"case": 207, "sequence": 28, "kind": "enter", "function": "cio_destroy"}
+{"case": 207, "sequence": 29, "kind": "enter", "function": "cio_stream_destroy_all"}
+{"case": 207, "sequence": 30, "kind": "enter", "function": "cio_stream_destroy"}
+{"case": 207, "sequence": 31, "kind": "enter", "function": "cio_chunk_close_stream"}
+{"case": 207, "sequence": 32, "kind": "exit", "function": "cio_chunk_close_stream"}
+{"case": 207, "sequence": 33, "kind": "free", "id": 7}
+{"case": 207, "sequence": 34, "kind": "stream_state", "id": 6, "primary_cleared": 1, "chunks_empty": 1, "up_empty": 1, "down_empty": 1}
+{"case": 207, "sequence": 35, "kind": "free", "id": 6}
+{"case": 207, "sequence": 36, "kind": "exit", "function": "cio_stream_destroy"}
+{"case": 207, "sequence": 37, "kind": "exit", "function": "cio_stream_destroy_all"}
+{"case": 207, "sequence": 38, "kind": "free", "id": 2}
+{"case": 207, "sequence": 39, "kind": "free", "id": 3}
+{"case": 207, "sequence": 40, "kind": "context_state", "id": 1, "total": 0, "up": 0, "streams_empty": 1}
+{"case": 207, "sequence": 41, "kind": "free", "id": 1}
+{"case": 207, "sequence": 42, "kind": "exit", "function": "cio_destroy"}
+{"case": 207, "sequence": 43, "kind": "constructor_probe", "phase": "parents_released", "fd": 3, "fd_result": -1, "fd_errno": 9, "fd_device": 0, "fd_inode": 0, "path_result": 0, "path_errno": 0, "path_size": 0, "device": 47, "inode": 270092}
+{"case": 207, "sequence": 44, "kind": "end", "live_allocations": 0}
