@@ -1,0 +1,11 @@
+    Checking qcore-schemas v0.2.0 (/tmp/qcore-provider-packages/crates/qcore-schemas)
+    Checking qcore-core v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-core)
+    Checking qcore-provider-conformance v0.1.0 (/tmp/qcore-provider-packages/providers/conformance)
+    Checking qcore-frontend v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-frontend)
+    Checking qcore-provider-chunkio v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-chunkio)
+    Checking qcore-provider-ctraces v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-ctraces)
+    Checking qcore-provider-libevent v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-libevent)
+    Checking qcore-provider-librdkafka v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-librdkafka)
+    Checking qcore-provider-cmetrics v0.1.0 (/tmp/qcore-provider-packages/providers/qcore-provider-cmetrics)
+    Checking qcore-verifier-host v0.1.0 (/tmp/qcore-provider-packages/crates/qcore-verifier-host)
+    Finished `dev` profile [unoptimized] target(s) in 3.56s

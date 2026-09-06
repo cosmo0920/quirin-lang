@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-07",
+  "schemas_package_version": "0.2.0",
+  "protocol_version": 1,
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "scope": "Unknown-only executable packaging; specialized semantic routes retained",
+  "tests": {
+    "provider-root-tests": 549,
+    "provider-packages-tests": 2,
+    "provider-zero-host": 4
+  },
+  "gates": {
+    "provider-root-tests": {
+      "exit_code": 0
+    },
+    "provider-root-clippy": {
+      "exit_code": 0
+    },
+    "provider-root-fmt": {
+      "exit_code": 0
+    },
+    "provider-root-probe": {
+      "exit_code": 0
+    },
+    "provider-root-followup": {
+      "exit_code": 0
+    },
+    "provider-root-lean": {
+      "exit_code": 0
+    },
+    "provider-packages-tests": {
+      "exit_code": 0
+    },
+    "provider-packages-clippy": {
+      "exit_code": 0
+    },
+    "provider-packages-fmt": {
+      "exit_code": 0
+    },
+    "provider-zero-host": {
+      "exit_code": 0
+    },
+    "provider-build-a": {
+      "exit_code": 0
+    },
+    "provider-build-b": {
+      "exit_code": 0
+    },
+    "provider-package-verify": {
+      "exit_code": 0
+    }
+  },
+  "reproducibility": {
+    "independent_clean_builds": 2,
+    "all_executable_manifest_archive_hashes_equal": true,
+    "artifacts": [
+      {
+        "plugin_id": "qcore.chunkio",
+        "executable_sha256": "142e1401e79b010573e55c7c6f69ffc69f68837c12c619995003d139085d926e",
+        "manifest_sha256": "66dd2a3b72d8fc906241a23b7400e0246b5aef5063538cd363002f21dc51ae5e",
+        "archive_sha256": "870b083307a41230d944fa4212a7c06a8e410215afbfbf5ecdc80c36ea8e028d"
+      },
+      {
+        "plugin_id": "qcore.cmetrics",
+        "executable_sha256": "38b74a48e3bb52845ef8bb704cf7abaa293acc5820db6fd3e57c512319f4a9db",
+        "manifest_sha256": "1f9b9bea7715c429312f78cc04ae1f395be4c742060c6fd30e64e6d64f5150a4",
+        "archive_sha256": "7cc5c9674a02815469cefe1761f65054433ef1b81b6402697987847d1660dee8"
+      },
+      {
+        "plugin_id": "qcore.ctraces",
+        "executable_sha256": "1575afad1c22cbf281941c0e2f15a462224c42efbc68ae7daa4cae871110503c",
+        "manifest_sha256": "faf7622c7c715ad366909fcbee89ff5dce2e66a7f9e582c43c6c9fe32196b686",
+        "archive_sha256": "c3ce47de7bb99e23e0616876f3e361eaba6291f63ff5bea3db7089b5d0105da0"
+      },
+      {
+        "plugin_id": "qcore.libevent",
+        "executable_sha256": "d6210b484d72412f6b8806ff5ddd7a875a0b8e076e5dc6cad62f9a9d21d6a94e",
+        "manifest_sha256": "5823e1c4659423a8055127624dd7a96b7dd3e7cb4b4806a31ad205fae24a66e5",
+        "archive_sha256": "4082c400425a1f8484ee0d0f9d16870bbf19846908c11e63d3a609dbbb330e9d"
+      },
+      {
+        "plugin_id": "qcore.librdkafka",
+        "executable_sha256": "4645a1b7ec58f62e236391d934531c98e4b7feba4b75e4c53cbbb3ab50e4198a",
+        "manifest_sha256": "6c7b1ac2f63e73aa1e32f170556aeff65b5e16d2d45982e4370873cbd574e88c",
+        "archive_sha256": "f588b01489687d8c680e8f5e622ae8d843b10ad33c4eef2c0ae9bd7d9df9aab9"
+      }
+    ]
+  },
+  "parity": {
+    "providers": 5,
+    "capabilities": 11,
+    "exact_v1_response_cases": 33,
+    "v2_unknown_routes": 11,
+    "certificates": 0,
+    "existing_routes_removed": false,
+    "semantic_provider_extraction_completed": false
+  },
+  "log_sha256": {
+    "provider-build-a.log": "16c4d6cd9a5cebd69a4c33ca9426b3c80fbacd7701a40c6525dd353bad05f72b",
+    "provider-build-b.log": "3247b1e1b27fdf5e1f9dabb3d54b6cc7375cb0058c078d76ec56ff6dcf0bcb8a",
+    "provider-package-verify.log": "5823e1c4659423a8055127624dd7a96b7dd3e7cb4b4806a31ad205fae24a66e5",
+    "provider-packages-clippy.log": "0e6e7a4d2a2877be9aa958be2ac06a18f36ba0c4f8bbc9518cb330c0e8831ed0",
+    "provider-packages-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provider-packages-tests.log": "72d6f8d2acecd8e1fddbcb17800c58975320f3ab4c5f482678e085f659e76311",
+    "provider-root-clippy.log": "e0cb0cc064bc80fc3a4eea79a39b2192a46dff0912ad85c297b4ce980203ce73",
+    "provider-root-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provider-root-followup.log": "a98269383afc05a860a2f30e226dc6b74e4ec61023486db24c3e60d32e8d9483",
+    "provider-root-lean.log": "41ab51ba06c4348865ad89fb42d76cb698121be59f3011da11375e1b1dcfd28b",
+    "provider-root-probe.log": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd",
+    "provider-root-tests.log": "3a33dd47e087d925e5c3399e02dcc484f8a0561f2c23d2a99ea0d3e47be2159f",
+    "provider-zero-host.log": "7338d112d480918b1727d6beeb61d0b4d80ae4b47510fb2af62e797a81af7d81"
+  },
+  "initial_gate_base_commit": "6a66f99",
+  "base_commit": "51bbfc0",
+  "root_gate_scope": "Archived root and provider-free host gates are from6a66f99/schema0.1.0. Combined-main standing gate follows integration; provider suite, Clippy, verification and reproducibility rerun on51bbfc0/schema0.2.0."
+}
