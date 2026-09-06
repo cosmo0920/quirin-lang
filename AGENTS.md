@@ -456,3 +456,13 @@ complete proposed paths and evaluates the pinned contract. Parser/evaluator
 semantics retain parity; source import and helper ABI checks stay trusted.
 Evidence: `docs/reports/w5-provider-statement-execution/README.md`. Full lifecycle
 import, other specialized provider analysis and registry composition remain open.
+
+Contextual recursion (2026-09-07): W4 now infers validated custody for one
+immutable explicit integer control, partitioned into zero/nonzero cases. Base
+contexts have no SCC-call contracts; nonzero contexts call already validated
+zero contexts via exact zero literals. Both contracts must agree, and the
+combined CFG is revalidated and independently rederived by certificate checking.
+Release, owned-return and bounded mutual-recursion source cases pass; mutations,
+nondecreasing calls, zero cycles and broader controls remain outside this route.
+Evidence: `docs/reports/w4-contextual-recursion/README.md`. General recursive
+fixed points, arithmetic rankings, aliases and cost summaries remain open.

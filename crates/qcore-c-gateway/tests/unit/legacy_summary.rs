@@ -285,17 +285,19 @@ fn direct_recursion_stays_unknown() {
 }
 
 #[test]
-fn self_recursive_allocation_wrapper_stays_unknown() {
-    let summary = base(
-        "void *make(int n) { if (n) { void *r = make(0); return r; } void *p = q_alloc(); return p; } \
-         void subject(void) { void *p = make(1); return; }",
-    );
-    assert_eq!(summary.status, AnalysisStatus::Unknown);
-    assert!(
-        summary
-            .functions
-            .values()
-            .all(|function| function.status != AnalysisStatus::Safe)
+fn context_decreasing_allocation_wrapper_preserves_the_callers_leak() {
+    let source = "void *make(int n) { if (n) { void *r = make(0); return r; } void *p = q_alloc(); return p; } \
+         void subject(void) { void *p = make(1); return; }";
+    let summary = base(source);
+    assert_eq!(summary.functions["make"].status, AnalysisStatus::Safe);
+    assert_eq!(summary.status, AnalysisStatus::Unsafe);
+    assert!(has(&summary, "subject", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+    assert_eq!(
+        summary_in(source, &[Q_BASE], "make").result,
+        ResourceReturnMode::Owned { nullable: false }
     );
 }
 
@@ -304,8 +306,8 @@ fn a_self_consistent_recursive_summary_is_never_accepted() {
     // `bad` is consistent with "releases `p`" — but only for executions that
     // never terminate. The ascending iteration starts from the empty summary
     // set, `bad`'s own call is uncontracted on the first round, so nothing
-    // installs and the least fixed point stays empty. Accepting the greatest
-    // fixed point here would certify a non-terminating program as `Safe`.
+    // installs. There is no validated decreasing context edge to justify this
+    // call; an assumed release would erase an obligation without evidence.
     let source = "void bad(void *p) { bad(p); } \
                   void subject(void) { void *p = q_alloc(); bad(p); }";
     let summary = base(source);

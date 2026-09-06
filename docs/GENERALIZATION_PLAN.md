@@ -422,8 +422,11 @@ now validate contained entry and detached/live exits with matching Lean relation
 [Direct Out forwarding](reports/w4-out-forwarding/README.md) now validates
 original slots and invalidates mutation/shadow/alias identity assumptions.
 Remaining: general removal aliases and nullable removal, general out-slot
-aliases, recursive components (least fixed point is empty by construction),
-and the Juliet stretch corpus. The [gateway relocation](reports/w4-gateway-crate/README.md)
+aliases, general recursive components and the Juliet stretch corpus.
+[Context-specific recursion](reports/w4-contextual-recursion/README.md) now
+validates exhaustive zero/nonzero integer controls using strictly lower-rank
+base summaries, including bounded mutual recursion. Arithmetic rankings and
+general recursive fixed-point inference remain open. The [gateway relocation](reports/w4-gateway-crate/README.md)
 is executed (2026-09-07): `legacy_c`, `legacy_summary`, Clang discovery and
 typed-AST transport now live in `qcore-c-gateway`, with compiler compatibility
 reexports and pinned full-corpus parity.

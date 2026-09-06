@@ -78,18 +78,16 @@
 //!
 //! # Recursion
 //!
-//! Summaries are derived bottom-up over the call graph's strongly connected
-//! components, and each component is iterated to a fixed point seeded at
-//! "no summary". A member of a nontrivial component (or a self-recursive
-//! function) has at least one direct callee inside its own component, so its
-//! body always contains an unmodeled call and never validates; the least fixed
-//! point for a recursive component is therefore empty, and its members stay
-//! `Unknown`. The pass deliberately does not accept the *greatest* fixed point
-//! — an assume-guarantee summary that is merely consistent with itself — since
-//! such a summary is only sound for terminating executions and this gateway
-//! must not certify a non-terminating program as `Safe`. This mirrors
-//! `whole_program.rs`, where a recursive QCore function must *declare* its
-//! contract rather than have one inferred.
+//! Ordinary inference runs first and never assumes a recursive summary. A
+//! bounded second route partitions one immutable explicit integer formal into
+//! Zero and NonZero. Zero validates without any SCC contract; NonZero may call
+//! only literal-zero contexts already validated at rank zero. Equal contracts
+//! for both contexts are rechecked over a disjoint combined CFG before they
+//! become caller contracts. Declared SCCs, unsupported control syntax, zero
+//! cycles and general recursion remain outside this contextual route. This is
+//! finite ranked validation, not a coinductive assumed contract or a general
+//! termination proof. Unreachable recursive edges may already validate on the
+//! ordinary route under its explicit resource entry preconditions.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -111,6 +109,7 @@ pub(crate) struct CustodyDerivation {
     /// Contracts in force at call sites: declared contracts take precedence
     /// over inferred ones, always.
     environment: ResourceContracts,
+    contextual: BTreeMap<String, LegacyCfg>,
     /// Validated inferred summaries, including ones an explicit contract
     /// overrode (kept so the disagreement can be reported).
     inferred: BTreeMap<String, ResourceFunctionContract>,
@@ -119,6 +118,10 @@ pub(crate) struct CustodyDerivation {
 }
 
 impl CustodyDerivation {
+    pub(crate) fn contextual_cfg(&self, function: &str) -> Option<&LegacyCfg> {
+        self.contextual.get(function)
+    }
+
     pub(crate) fn environment(&self) -> &ResourceContracts {
         &self.environment
     }
@@ -178,7 +181,7 @@ pub(crate) fn derive_custody_summaries(
         // A member is retried only while some other member of the same
         // component became available, which keeps this linear for the singleton
         // components that make up the acyclic part of the graph.
-        let mut pending = component;
+        let mut pending = component.clone();
         loop {
             let mut installed = false;
             let mut still_pending = Vec::new();
@@ -211,8 +214,83 @@ pub(crate) fn derive_custody_summaries(
                 break;
             }
         }
+        let recursive = component.len() > 1 || graph[&component[0]].contains(&component[0]);
+        if recursive
+            && !pending.is_empty()
+            && component.iter().all(|n| contracts.contract(n).is_none())
+            && let Some(contexts) =
+                infer_contextual_component(tokens, &component, &derivation.environment)
+        {
+            for (name, (contract, cfg)) in contexts {
+                if derivation.inferred.contains_key(&name) {
+                    continue;
+                }
+                derivation
+                    .environment
+                    .insert_contract(name.clone(), contract.clone());
+                derivation.inferred.insert(name.clone(), contract);
+                derivation.contextual.insert(name, cfg);
+            }
+        }
     }
     derivation
+}
+
+/// Rank zero is checked with every SCC contract absent. Rank one admits only
+/// literal-zero calls whose rank-zero summaries have already been validated.
+/// Publication requires equal contracts for both exhaustive integer contexts,
+/// and fresh analysis of their disjoint union. Certificates derive this again.
+fn infer_contextual_component(
+    tokens: &[Token],
+    component: &[String],
+    environment: &ResourceContracts,
+) -> Option<BTreeMap<String, (ResourceFunctionContract, LegacyCfg)>> {
+    use crate::legacy_c::recursion;
+    let descriptors = recursion::prepare(tokens, component)?;
+    let mut lower = ResourceContracts::default();
+    lower.set_source_assumptions(environment.source_assumptions().clone());
+    for (name, contract) in environment.functions() {
+        if !component.contains(name) {
+            lower.insert_contract(name.clone(), contract.clone());
+        }
+    }
+    let mut zeros = BTreeMap::new();
+    for name in component {
+        let descriptor = &descriptors[name];
+        let cfg = recursion::contextual_cfg(tokens, name, &lower, descriptor, true)?;
+        let contract = infer_cfg_summary(&descriptor.parameters, cfg.clone())?;
+        if contract.parameters[descriptor.control_index] != ResourceParameterMode::Borrowed {
+            return None;
+        }
+        zeros.insert(name.clone(), (contract, cfg));
+    }
+    for (name, (contract, _)) in &zeros {
+        lower.insert_contract(name.clone(), contract.clone());
+    }
+    let mut published = BTreeMap::new();
+    for name in component {
+        let descriptor = &descriptors[name];
+        if !descriptor
+            .dependencies
+            .iter()
+            .all(|callee| zeros.contains_key(callee))
+        {
+            return None;
+        }
+        let cfg = recursion::contextual_cfg(tokens, name, &lower, descriptor, false)?;
+        let contract = infer_cfg_summary(&descriptor.parameters, cfg.clone())?;
+        if contract != zeros[name].0 {
+            return None;
+        }
+        let combined = recursion::combine(zeros[name].1.clone(), cfg);
+        let entry = EntryCustody::build(&combined, &descriptor.parameters, &contract)?;
+        let (summary, observations) = analyze_cfg_with_entry(combined.clone(), &entry);
+        if !observations_match_contract(&contract, &entry, &summary, &observations) {
+            return None;
+        }
+        published.insert(name.clone(), (contract, combined));
+    }
+    Some(published)
 }
 
 /// Infer one function's summary and validate it, or return `None`.
@@ -234,10 +312,17 @@ fn infer_live_entry_summary(
 ) -> Option<ResourceFunctionContract> {
     let parameters = function_parameters(tokens, function)?;
     let cfg = build_function_cfg(tokens, function, environment).ok()?;
+    infer_cfg_summary(&parameters, cfg)
+}
+
+fn infer_cfg_summary(
+    parameters: &[Option<String>],
+    cfg: LegacyCfg,
+) -> Option<ResourceFunctionContract> {
     // Which formals the body writes through. Unlike a bound formal, an out
     // slot asserts nothing about the entry state, so it can be marked from the
     // syntax alone without deleting any path.
-    let out = out_parameter_candidates(&cfg, &parameters);
+    let out = out_parameter_candidates(&cfg, parameters);
 
     // Start with no formal bound. Seeding a formal with a live non-null
     // resource is not a neutral act: it also asserts the formal is *not null*,
@@ -255,10 +340,10 @@ fn infer_live_entry_summary(
         if bound.iter().zip(&out).any(|(bound, out)| *bound && *out) {
             return None;
         }
-        let probe = probe_contract(&parameters, &bound, &out);
-        let entry = EntryCustody::build(&cfg, &parameters, &probe)?;
+        let probe = probe_contract(parameters, &bound, &out);
+        let entry = EntryCustody::build(&cfg, parameters, &probe)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
-        if bind_unresolved_formals(&mut bound, &parameters, &summary) {
+        if bind_unresolved_formals(&mut bound, parameters, &summary) {
             continue;
         }
         if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
@@ -267,7 +352,7 @@ fn infer_live_entry_summary(
         // The binding pattern is stable, so read the modes off the settled
         // observations and check the resulting contract against a fresh run.
         let candidate = propose_contract(&entry, &observations)?;
-        let entry = EntryCustody::build(&cfg, &parameters, &candidate)?;
+        let entry = EntryCustody::build(&cfg, parameters, &candidate)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
         return observations_match_contract(&candidate, &entry, &summary, &observations)
             .then_some(candidate);

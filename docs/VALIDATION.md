@@ -87,3 +87,9 @@ provider workspace tests (four conformance and five executor tests). The process
 computes source paths from typed statements; source import and contract replay
 remain trusted. The program-input schema/profile are version 2 and ChunkIO is
 package 0.3.0; this is not full source-language or lifecycle conformance.
+
+[Context-specific custody recursion](reports/w4-contextual-recursion/README.md)
+passes 619 workspace tests, including eight new public-API tests with actual C
+imports and certificate rederivation, plus nine provider tests, 43 Python tests
+and all standing/Lean gates. Zero/nonzero integer contexts cover bounded
+decreasing calls; general recursive inference and source conformance remain open.

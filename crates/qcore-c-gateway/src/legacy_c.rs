@@ -7,6 +7,9 @@
 //! aggregate/indexed accesses and ambiguous expression forms without a model
 //! remain unsupported; symbolic resource place spelling is not access proof.
 
+#[path = "legacy_recursion.rs"]
+pub(crate) mod recursion;
+
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
@@ -637,7 +640,10 @@ fn analyze_defined_function(
     function: &str,
     derivation: &CustodyDerivation,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
-    let cfg = build_function_cfg(tokens, function, derivation.environment())?;
+    let cfg = match derivation.contextual_cfg(function) {
+        Some(cfg) => cfg.clone(),
+        None => build_function_cfg(tokens, function, derivation.environment())?,
+    };
     let mut summary = match derivation.entry_contract(function) {
         Some(contract) => match function_parameters(tokens, function) {
             Some(parameters) => match EntryCustody::build(&cfg, &parameters, contract) {

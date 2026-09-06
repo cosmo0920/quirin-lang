@@ -1,3 +1,4 @@
+import QCore.ContextualCustody
 import QCore.CustodySummary
 
 #print axioms QCore.CustodySummary.unvalidated_analysis_never_validates
@@ -45,3 +46,14 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.unsanctioned_out_pointer_cannot_forward
 #print axioms QCore.CustodySummary.forwarded_nullable_site_does_not_discharge_nonnull_out
 #print axioms QCore.CustodySummary.direct_fresh_forwarding_discharges_out
+
+#print axioms QCore.ContextualCustody.checked_call_uses_validated_lower_context
+#print axioms QCore.ContextualCustody.checked_call_decreases_rank
+#print axioms QCore.ContextualCustody.checked_calls_are_well_founded
+#print axioms QCore.ContextualCustody.checked_context_never_assumes_itself
+#print axioms QCore.ContextualCustody.checked_contexts_cannot_assume_each_other
+#print axioms QCore.ContextualCustody.integer_contexts_are_exhaustive
+#print axioms QCore.ContextualCustody.publication_covers_every_integer_context
+#print axioms QCore.ContextualCustody.publication_agrees_with_every_context_exit
+#print axioms QCore.ContextualCustody.missing_nonzero_context_prevents_publication
+#print axioms QCore.ContextualCustody.rank_zero_context_has_no_recursive_dependencies

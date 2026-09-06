@@ -1,0 +1,10 @@
+{
+  "workspace_tests": 619,
+  "provider_workspace_tests": 9,
+  "contextual_integration_tests": 8,
+  "adversarial_context_fixtures": 19,
+  "python_validator_tests": 43,
+  "lean_axiom_audits": 19,
+  "standing_gate": "passed",
+  "full_language_conformance": false
+}
