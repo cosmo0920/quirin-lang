@@ -84,6 +84,12 @@ struct RecordInfo {
     /// Every member declaration of the single definition was read.
     complete: bool,
     scalar_fields: BTreeSet<String>,
+    /// Members whose declared type is a scalar *or* a pointer of any depth,
+    /// with no array modifier and no rejecting qualifier. Reading one of these
+    /// yields a value, never an aggregate sub-object. Used only by the borrowed
+    /// actual rule in [`crate::borrowed_actual`], never by the scalar no-op
+    /// rule: a pointer member may not be *written* under this classification.
+    borrowable_fields: BTreeSet<String>,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -206,7 +212,7 @@ const DECLARATION_SCAN_LIMIT: usize = 4096;
 /// Typedef resolution depth bound.
 const TYPEDEF_DEPTH_LIMIT: usize = 8;
 
-fn is_name(text: &str) -> bool {
+pub(crate) fn is_name(text: &str) -> bool {
     text.as_bytes()
         .first()
         .is_some_and(|byte| byte.is_ascii_alphabetic() || *byte == b'_')
@@ -303,16 +309,18 @@ impl TypedAccessModel {
                 // The tag is ambiguous in this translation unit; refuse it.
                 entry.complete = false;
                 entry.scalar_fields.clear();
+                entry.borrowable_fields.clear();
                 continue;
             }
             if entry.union_tag {
                 continue;
             }
             let body = texts[index + 3..close].to_vec();
-            if let Some(scalar_fields) = self.read_record_body(&body) {
+            if let Some((scalar_fields, borrowable_fields)) = self.read_record_body(&body) {
                 let entry = self.records.entry(tag.to_owned()).or_default();
                 entry.complete = true;
                 entry.scalar_fields = scalar_fields;
+                entry.borrowable_fields = borrowable_fields;
             }
         }
     }
@@ -324,7 +332,7 @@ impl TypedAccessModel {
     /// this reader cannot resolve yields `None`, and the whole record is then
     /// inadmissible. Reading only the members it understands would risk
     /// attributing a scalar type to a name it had actually misparsed.
-    fn read_record_body(&self, body: &[&str]) -> Option<BTreeSet<String>> {
+    fn read_record_body(&self, body: &[&str]) -> Option<(BTreeSet<String>, BTreeSet<String>)> {
         if body
             .iter()
             .any(|text| matches!(*text, "{" | "}" | "(" | ")" | ":" | "="))
@@ -332,6 +340,7 @@ impl TypedAccessModel {
             return None;
         }
         let mut scalar_fields = BTreeSet::new();
+        let mut borrowable_fields = BTreeSet::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -343,17 +352,29 @@ impl TypedAccessModel {
             for group in groups {
                 declarators.push(read_declarator(group)?);
             }
+            let qualified = specifiers
+                .iter()
+                .any(|text| REJECTING_QUALIFIERS.contains(text));
+            let scalar_specifiers =
+                self.classify_specifiers(&specifiers, 0) == DeclaredType::Scalar;
             for declarator in declarators {
                 let name = declarator.name?;
-                if declarator.stars == 0
-                    && !declarator.array
-                    && self.classify_specifiers(&specifiers, 0) == DeclaredType::Scalar
-                {
-                    scalar_fields.insert(name);
+                if declarator.array {
+                    continue;
+                }
+                if declarator.stars == 0 && scalar_specifiers {
+                    scalar_fields.insert(name.clone());
+                    borrowable_fields.insert(name);
+                    continue;
+                }
+                // A pointer member of any pointee type is readable as a value.
+                // The member's own declaration must not be `volatile`/`_Atomic`.
+                if declarator.stars >= 1 && !qualified {
+                    borrowable_fields.insert(name);
                 }
             }
         }
-        Some(scalar_fields)
+        Some((scalar_fields, borrowable_fields))
     }
 
     fn read_enum_constants(&mut self, texts: &[&str]) {
@@ -445,6 +466,23 @@ impl TypedAccessModel {
                 && !record.union_tag
                 && record.definitions == 1
                 && record.scalar_fields.contains(field)
+        })
+    }
+
+    /// Whether `tag`'s single complete non-union definition declares `field` as
+    /// a scalar or as a pointer with no array modifier and no rejecting
+    /// qualifier. Reading such a member yields a value, never an aggregate.
+    /// Whether `name` is an enumeration constant of this translation unit.
+    pub(crate) fn is_enum_constant(&self, name: &str) -> bool {
+        self.enum_constants.contains(name)
+    }
+
+    pub(crate) fn borrowable_field(&self, tag: &str, field: &str) -> bool {
+        self.records.get(tag).is_some_and(|record| {
+            record.complete
+                && !record.union_tag
+                && record.definitions == 1
+                && record.borrowable_fields.contains(field)
         })
     }
 }
@@ -630,6 +668,18 @@ impl FunctionTypes {
 
     fn declared(&self, name: &str) -> Option<&DeclaredType> {
         self.variables.as_ref()?.get(name)
+    }
+
+    /// The declared type of one name, or `None` when the reader refused this
+    /// function's declarations or does not know the name.
+    pub(crate) fn declared_type(&self, name: &str) -> Option<&DeclaredType> {
+        self.declared(name)
+    }
+
+    /// Whether every declaration of this function was read. When false, no
+    /// typed rule may admit anything in it.
+    pub(crate) fn is_readable(&self) -> bool {
+        self.variables.is_some()
     }
 }
 
@@ -878,14 +928,47 @@ pub(crate) fn is_scalar_field_noop(
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> bool {
-    if types.variables.is_none() {
-        return false;
-    }
+    matches!(scalar_statement_accesses(texts, model, types), Some(count) if count > 0)
+}
+
+/// Whether a statement operates only on declared scalar variables, enumeration
+/// constants and numeric literals, with no member access at all.
+///
+/// This is the zero-access case of the same walker. A statement whose every
+/// identifier is a *declared scalar* of this function (or an enumeration
+/// constant), carrying no call, no `&`, no `*`, no subscript and no aggregate,
+/// can neither create, destroy, alias nor transfer a tracked resource identity:
+/// this projection tracks pointer identities only, and a scalar variable is
+/// never bound to one. Without this rule the importer models `flag = 1;` as an
+/// alias from an unbound place and reports an unresolved alias, which poisons
+/// every path through it. O04 needs it because the selected caller's failure
+/// arms are reached through exactly such scalar bookkeeping.
+///
+/// It is deliberately separate from [`is_scalar_field_noop`], whose contract
+/// (at least one admitted member access) is unchanged.
+pub(crate) fn is_scalar_only_noop(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> bool {
+    // An empty statement is already a no-op for the importer; requiring at
+    // least one token keeps this rule from claiming credit for that path.
+    !texts.is_empty() && scalar_statement_accesses(texts, model, types) == Some(0)
+}
+
+/// The shared walker: `Some(count)` when every token of the statement is
+/// admitted, counting admitted direct member accesses; `None` on any refusal.
+fn scalar_statement_accesses(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<usize> {
+    types.variables.as_ref()?;
     if texts
         .iter()
         .any(|text| matches!(*text, "&" | "*" | "[" | "]" | "{" | "}" | "," | ";"))
     {
-        return false;
+        return None;
     }
     let mut accesses = 0usize;
     let mut cursor = 0usize;
@@ -896,32 +979,29 @@ pub(crate) fn is_scalar_field_noop(
             let dot = texts.get(cursor + 1) == Some(&".");
             if arrow || dot {
                 let field_index = if arrow { cursor + 3 } else { cursor + 2 };
-                let Some(field) = texts
+                let field = texts
                     .get(field_index)
                     .copied()
-                    .filter(|field| is_name(field))
-                else {
-                    return false;
-                };
+                    .filter(|field| is_name(field))?;
                 // Premise 8: a base the projection may bind can hold a
                 // released, escaped or reallocated identity, and a read
                 // through it is not something this rule may neutralize.
                 if types.bound.contains(text) {
-                    return false;
+                    return None;
                 }
                 let tag = match (types.declared(text), arrow) {
                     (Some(DeclaredType::RecordPointer(tag)), true) => tag,
                     (Some(DeclaredType::Record(tag)), false) => tag,
-                    _ => return false,
+                    _ => return None,
                 };
                 if !model.scalar_field(tag, field) {
-                    return false;
+                    return None;
                 }
                 // The access must not continue into another member, a
                 // subscript or a call.
                 match texts.get(field_index + 1) {
-                    Some(&".") | Some(&"[") | Some(&"(") => return false,
-                    Some(&"-") if texts.get(field_index + 2) == Some(&">") => return false,
+                    Some(&".") | Some(&"[") | Some(&"(") => return None,
+                    Some(&"-") if texts.get(field_index + 2) == Some(&">") => return None,
                     _ => {}
                 }
                 accesses += 1;
@@ -936,7 +1016,7 @@ pub(crate) fn is_scalar_field_noop(
                 continue;
             }
             if types.declared(text) != Some(&DeclaredType::Scalar) {
-                return false;
+                return None;
             }
             cursor += 1;
             continue;
@@ -947,14 +1027,14 @@ pub(crate) fn is_scalar_field_noop(
         }
         if text == "-" && texts.get(cursor + 1) == Some(&">") {
             // An arrow whose base this reader did not admit.
-            return false;
+            return None;
         }
         if !ADMITTED_PUNCTUATION.contains(&text) {
-            return false;
+            return None;
         }
         cursor += 1;
     }
-    accesses > 0
+    Some(accesses)
 }
 
 #[cfg(test)]

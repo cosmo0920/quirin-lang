@@ -456,10 +456,19 @@ fn an_assumed_effectful_contract_validates_vacuously_under_divergence() {
 }
 
 /// Where the profile's corpus value is capped today: recursion that walks a
-/// pointer field is refused before any recursion rule is consulted, by the
-/// existing indirect-access gate (C02-P). Both blockers are independent; the
-/// design document records this as the dependency ordering for the follow-up
-/// units.
+/// pointer field is refused before any recursion rule is consulted. Both
+/// blockers are independent; the design document records this as the dependency
+/// ordering for the follow-up units.
+///
+/// **Pin updated by card O04.** When C03 recorded this, the statement-level
+/// indirect-access gate decided the case and the expectation named its
+/// diagnostic. O04 implements C02-P, so the *call* statement `seek(n->next,
+/// key)` is now a modeled borrowed actual — but the branch condition
+/// `if (n->key == key)` still is not, and branch conditions are out of scope
+/// for both C02 (§7) and O04. The load-bearing assertion is unchanged:
+/// `seek` stays `Unknown`, refused before any recursion rule applies. Only the
+/// identity of the gate that refuses it moved, and the expectation was updated
+/// deliberately rather than dropped.
 #[test]
 fn pointer_field_recursion_is_refused_before_the_recursion_rule_applies() {
     if !clang_available() {
@@ -482,8 +491,8 @@ fn pointer_field_recursion_is_refused_before_the_recursion_rule_applies() {
             .unsupported("seek")
             .iter()
             .any(|description| description
-                == "indirect memory access is outside the resource projection"),
-        "the pointer-field read, not the recursion, decides this case"
+                == "unmodeled call, aggregate or indirect access in branch condition"),
+        "an unmodeled branch condition, not the recursion, decides this case"
     );
 }
 

@@ -9,6 +9,7 @@
 //! interpreters. Its output alone is never a safety certificate.
 
 pub mod boolean_source;
+mod borrowed_actual;
 mod clang;
 pub mod counter_source;
 pub mod legacy_c;

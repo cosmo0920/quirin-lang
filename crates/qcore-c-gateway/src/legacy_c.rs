@@ -26,6 +26,7 @@ pub use qcore_schemas::contract::{
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
+use crate::borrowed_actual::UntrackedBases;
 use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
@@ -63,6 +64,18 @@ pub enum LegacyInstruction {
     BranchOnNull {
         source: String,
         true_is_null: bool,
+    },
+    /// Bind `destination` to a value this function does not track: the read of
+    /// an admitted direct member of an untracked aggregate (C02-P, O04).
+    ///
+    /// The resulting abstract pointer is exactly the one an [`Self::Alias`]
+    /// from an unbound place would produce — unknown and possibly null, so
+    /// every downstream use stays fail-closed. The only difference is that no
+    /// unresolved-alias diagnostic is reported, because the typed premises of
+    /// [`crate::borrowed_actual`] establish that the source place is one this
+    /// function never binds. It never creates, releases or transfers custody.
+    OpaqueValue {
+        destination: String,
     },
     NoOp,
     Unknown {
@@ -129,6 +142,52 @@ pub struct LegacyDiagnostic {
     pub kind: LegacyDiagnosticKind,
 }
 
+/// What one reachable exit of a function leaves behind, per resource identity.
+///
+/// The function-wide [`AnalysisStatus`] is a join over every path: one
+/// unmodeled construct anywhere makes the whole function `Unknown` and says
+/// nothing about the paths that *are* modeled. Card O04 needs the finer
+/// statement — "on this failure arm the constructed identity is released
+/// exactly once" — for a caller whose success exit publishes into aggregates
+/// this projection cannot follow. This record supplies it without changing any
+/// verdict: it is an additional observation, never an input to a status.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyExitResidual {
+    pub node: LegacyNodeId,
+    /// Input line of the exit statement.
+    pub line: usize,
+    pub custody: ExitCustody,
+    /// Every resource identity this function acquired that is still accounted
+    /// for at this exit, in acquisition-site order. Identities the caller owns
+    /// (formal parameters under a contract) are excluded: discharging them is
+    /// the caller's obligation, not this exit's.
+    pub sites: Vec<LegacyResidualSite>,
+}
+
+/// One resource identity's disposition at one exit.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct LegacyResidualSite {
+    pub site: usize,
+    /// Input line of the acquisition, or 0 when it is not a modeled call.
+    pub acquisition_line: usize,
+    pub disposition: SiteDisposition,
+}
+
+/// Whether an exit's custody obligations are settled.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ExitCustody {
+    /// Every path reaching this exit is fully modeled, and no identity this
+    /// function acquired is still live here.
+    Discharged,
+    /// Every path reaching this exit is fully modeled, and at least one
+    /// identity is still live — a residual this analysis does claim.
+    Residual,
+    /// Some path reaching this exit carries an unmodeled construct, an
+    /// unresolved effect or a widened alias set. No custody claim is made, in
+    /// either direction.
+    Unknown,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LegacyFunctionSummary {
     pub function: String,
@@ -137,6 +196,8 @@ pub struct LegacyFunctionSummary {
     /// Number of work-list transfers used to reach the CFG fixed point.
     pub fixed_point_steps: usize,
     pub cfg: LegacyCfg,
+    /// Per-exit custody residuals, in CFG node order (O04).
+    pub exits: Vec<LegacyExitResidual>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -967,6 +1028,12 @@ fn analyze_defined_function(
         summary.diagnostics.sort();
         summary.diagnostics.dedup();
         summary.status = classify_diagnostics(&summary.diagnostics);
+        // A summary that contradicts the declared contract invalidates every
+        // per-exit claim derived under it, including the exits the conflicting
+        // interface never reached.
+        for exit in &mut summary.exits {
+            exit.custody = ExitCustody::Unknown;
+        }
     }
     Ok(summary)
 }
@@ -985,8 +1052,8 @@ pub(crate) fn build_function_cfg(
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
-    let (typed_model, typed_types) =
-        typed_access_facts(tokens, function, body_start, &protected_formals);
+    let (typed_model, typed_types, typed_bases) =
+        typed_access_facts(tokens, function, body_start, &protected_formals, contracts);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -996,6 +1063,7 @@ pub(crate) fn build_function_cfg(
         protected_formals,
         typed_model,
         typed_types,
+        typed_bases,
     };
     let statements =
         parser
@@ -1020,25 +1088,41 @@ fn typed_access_facts(
     function: &str,
     body_start: usize,
     protected_formals: &BTreeSet<String>,
-) -> (TypedAccessModel, FunctionTypes) {
+    contracts: &ResourceContracts,
+) -> (TypedAccessModel, FunctionTypes, UntrackedBases) {
     let texts = tokens
         .iter()
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
     let model = TypedAccessModel::read(&texts);
-    let types = match (
+    let body = match (
         function_parameter_range(tokens, function, body_start),
         matching(tokens, body_start, "{", "}"),
     ) {
-        (Some((open, close)), Some(body_end)) => FunctionTypes::read(
-            &model,
-            &texts[open + 1..close],
-            &texts[body_start + 1..body_end],
-            protected_formals,
-        ),
-        _ => FunctionTypes::default(),
+        (Some((open, close)), Some(body_end)) => Some((open, close, body_end)),
+        _ => None,
     };
-    (model, types)
+    let Some((open, close, body_end)) = body else {
+        return (model, FunctionTypes::default(), UntrackedBases::default());
+    };
+    let types = FunctionTypes::read(
+        &model,
+        &texts[open + 1..close],
+        &texts[body_start + 1..body_end],
+        protected_formals,
+    );
+    // O04/C02-P: the admissible access bases of this body, read from the same
+    // token stream, so that W4 derivation, W4 validation and certificate
+    // rederivation all repeat the classification from the certificate's own
+    // content. See [`crate::borrowed_actual`].
+    let bases = crate::borrowed_actual::untracked_bases(
+        &texts[body_start + 1..body_end],
+        protected_formals,
+        contracts,
+        &model,
+        &types,
+    );
+    (model, types, bases)
 }
 
 /// The parenthesis indices of the definition whose body starts at `body_start`.
@@ -1565,6 +1649,11 @@ struct Parser<'a> {
     /// the lexical rejection.
     typed_model: TypedAccessModel,
     typed_types: FunctionTypes,
+    /// Access bases this function never binds to a resource identity, used only
+    /// to admit the borrowed pointer-field actuals of
+    /// [`crate::borrowed_actual`]. Everything outside that whitelist keeps the
+    /// lexical rejection.
+    typed_bases: UntrackedBases,
 }
 
 impl Parser<'_> {
@@ -1913,6 +2002,32 @@ impl Parser<'_> {
         {
             return LegacyInstruction::NoOp;
         }
+        // O04/C02-P: the borrowed pointer-field actuals of a contracted call,
+        // and an assignment whose whole right-hand side is one admitted direct
+        // member read. Both are *reads*; the destination side of the lexical
+        // gate below is untouched, which is what keeps such a place from ever
+        // being bound. See [`crate::borrowed_actual`].
+        let borrowed_actuals = crate::borrowed_actual::borrowed_actual_spans(
+            &texts,
+            self.contracts,
+            &self.typed_model,
+            &self.typed_types,
+            &self.typed_bases,
+        );
+        if let Some(equal) = assignment
+            && !contains_call(tokens)
+            && let Some(destination) = direct_assignment_destination(&texts[..equal])
+            && !destination.contains(['.', '[', '*'])
+            && !destination.contains("->")
+            && crate::borrowed_actual::is_opaque_field_read(
+                &texts[equal + 1..],
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            )
+        {
+            return LegacyInstruction::OpaqueValue { destination };
+        }
         // Explicit Out stores remain a separate modeled instruction. Reading
         // through a pointer, member or subscript has no heap/liveness model and
         // must never disappear into scalar NoOp or borrowed-call argument erasure.
@@ -1920,17 +2035,20 @@ impl Parser<'_> {
             let destination = direct_assignment_destination(&texts[..equal]);
             destination.as_deref().is_some_and(|place| {
                 place.contains('.') || place.contains('[') || place.contains("->")
-            }) || contains_unmodeled_access(&texts[equal + 1..])
+            }) || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
         } else if declaration_like
             && texts
                 .first()
                 .is_some_and(|first| DECLARATION_SPECIFIERS.contains(first))
         {
-            // Declarator stars do not evaluate a pointer. Array bounds and
-            // aggregate declarations still need an importer we do not have.
-            texts.contains(&"[") || texts.contains(&".")
+            // Declarator stars do not evaluate a pointer. A plain object
+            // declaration with constant array bounds and no initializer
+            // acquires nothing and evaluates nothing, so it is custody-neutral;
+            // every other bracketed or dotted declaration still needs an
+            // importer we do not have.
+            (texts.contains(&"[") && !constant_array_declaration(&texts)) || texts.contains(&".")
         } else {
-            contains_unmodeled_access(&texts)
+            contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, 0))
         };
         if unsupported_access {
             return LegacyInstruction::Unknown {
@@ -2045,8 +2163,24 @@ impl Parser<'_> {
             };
         }
 
+        // O04: a statement over declared scalars, enumeration constants and
+        // numeric literals alone is custody-neutral — this projection tracks
+        // pointer identities, and a declared scalar is never bound to one. It
+        // is consulted only where the existing modeling would otherwise report
+        // an unresolved alias or refuse the statement, so every value fact the
+        // importer already derives (`flag = 0` binding a definitely-null place,
+        // and every variable-to-variable alias) is preserved exactly.
+        let scalar_only = !contains_call(tokens)
+            && crate::typed_field_access::is_scalar_only_noop(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+            );
         if let Some(equal) = assignment {
             let Some(destination) = direct_assignment_destination(&texts[..equal]) else {
+                if scalar_only {
+                    return LegacyInstruction::NoOp;
+                }
                 return LegacyInstruction::Unknown {
                     description: "unrecognized assignment destination".to_owned(),
                 };
@@ -2058,10 +2192,18 @@ impl Parser<'_> {
                 };
             }
             if let Some(source) = canonical_place(right) {
+                // An enumeration constant names no place this projection can
+                // ever bind, so aliasing it only reports an unresolved alias.
+                if scalar_only && self.typed_model.is_enum_constant(&source) {
+                    return LegacyInstruction::NoOp;
+                }
                 return LegacyInstruction::Alias {
                     destination: destination.to_owned(),
                     source,
                 };
+            }
+            if scalar_only {
+                return LegacyInstruction::NoOp;
             }
             return LegacyInstruction::Unknown {
                 description: "unsupported assignment expression".to_owned(),
@@ -2090,6 +2232,62 @@ fn contains_call(tokens: &[Token]) -> bool {
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
     find_call(&texts).is_some()
+}
+
+/// The tokens of `texts[from..]` that no admitted borrowed pointer-field
+/// actual covers.
+///
+/// Every admitted span is a *whole* call argument, so deleting it leaves the
+/// surrounding punctuation adjacent (`( ,` or `( )`) and can never manufacture
+/// a unary `*` or a member `.` out of neighbours that did not have one.
+fn outside_spans<'a>(texts: &[&'a str], spans: &[(usize, usize)], from: usize) -> Vec<&'a str> {
+    texts
+        .iter()
+        .enumerate()
+        .skip(from)
+        .filter(|(index, _)| {
+            !spans
+                .iter()
+                .any(|(start, end)| index >= start && index < end)
+        })
+        .map(|(_, text)| *text)
+        .collect()
+}
+
+/// Whether a declaration statement's every bracket group is an integer constant
+/// bound (or an empty `[]`), so that the declaration allocates automatic
+/// storage and evaluates nothing. A variable-length bound, a designator or a
+/// function declarator is refused.
+fn constant_array_declaration(texts: &[&str]) -> bool {
+    if texts
+        .iter()
+        .any(|text| matches!(*text, "(" | ")" | "{" | "}" | "="))
+    {
+        return false;
+    }
+    let mut cursor = 0usize;
+    while cursor < texts.len() {
+        if texts[cursor] != "[" {
+            cursor += 1;
+            continue;
+        }
+        let Some(close) = texts.iter().skip(cursor).position(|text| *text == "]") else {
+            return false;
+        };
+        let bound = &texts[cursor + 1..cursor + close];
+        if !bound
+            .iter()
+            .all(|text| text.bytes().all(|byte| byte.is_ascii_alphanumeric()) && is_numeric(text))
+        {
+            return false;
+        }
+        cursor += close + 1;
+    }
+    true
+}
+
+fn is_numeric(text: &str) -> bool {
+    text.as_bytes().first().is_some_and(u8::is_ascii_digit)
 }
 
 /// This is a lexical exclusion boundary, not a proof of C memory safety.
@@ -2731,6 +2929,12 @@ struct AbstractState {
     /// leak because the unmodeled action may have discharged it.
     unresolved_effect_sites: BTreeSet<usize>,
     widened: bool,
+    /// Whether some instruction on *this* path was refused or reported an
+    /// unresolved effect (O04). It is the per-path counterpart of the
+    /// function-wide `Unknown` status: a path carrying it can support no
+    /// custody claim at the exits it reaches. Joined by disjunction, so it is
+    /// monotone and the work list still terminates.
+    unmodeled: bool,
 }
 
 const MAX_ALIAS_TARGETS: usize = 8;
@@ -2802,6 +3006,7 @@ impl AbstractState {
                 .extend(children.iter().copied());
         }
         self.widened |= incoming.widened;
+        self.unmodeled |= incoming.unmodeled;
         *self != before
     }
 }
@@ -2983,7 +3188,7 @@ pub(crate) struct ExitObservation {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum SiteDisposition {
+pub enum SiteDisposition {
     Live,
     Released,
     Escaped,
@@ -3180,14 +3385,20 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let node = &cfg.nodes[node_id];
-        let output = transfer(
+        let mut local = BTreeSet::new();
+        let mut output = transfer(
             &cfg.function,
             node,
             state,
             &acquisition_lines,
             &context,
-            &mut diagnostics,
+            &mut local,
         );
+        // A path that reached a refusal supports no per-exit custody claim.
+        // Recorded before the local diagnostics are merged, so the flag tracks
+        // *this* node rather than anything reported elsewhere in the function.
+        output.unmodeled |= local.iter().any(is_path_poisoning);
+        diagnostics.append(&mut local);
         if node.is_exit {
             let exempt = entry_custody.exempt_sites(&output);
             report_leaks(
@@ -3214,6 +3425,7 @@ pub(crate) fn analyze_cfg_with_entry(
                 match refine_pointer_null(&mut edge_output, source, assume_null) {
                     PointerRefinement::Infeasible => continue,
                     PointerRefinement::Unknown => {
+                        edge_output.unmodeled = true;
                         diagnostics.insert(LegacyDiagnostic {
                             function: cfg.function.clone(),
                             line: node.line,
@@ -3255,6 +3467,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // than an intermediate iterate. Diagnostics are already recorded above;
     // this pass only observes.
     let mut observations = Vec::new();
+    let mut exits = Vec::new();
     for (node_id, node) in cfg.nodes.iter().enumerate() {
         if !node.is_exit {
             continue;
@@ -3263,7 +3476,7 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
-        let output = transfer(
+        let mut output = transfer(
             &cfg.function,
             node,
             state,
@@ -3271,7 +3484,15 @@ pub(crate) fn analyze_cfg_with_entry(
             &context,
             &mut ignored,
         );
+        output.unmodeled |= ignored.iter().any(is_path_poisoning);
         observations.push(observe_exit(node, &output, entry_custody));
+        exits.push(observe_residual(
+            node_id,
+            node,
+            &output,
+            &acquisition_lines,
+            entry_custody,
+        ));
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
@@ -3283,9 +3504,69 @@ pub(crate) fn analyze_cfg_with_entry(
             diagnostics,
             fixed_point_steps: steps,
             cfg,
+            exits,
         },
         observations,
     )
+}
+
+/// Whether a diagnostic means the path that produced it can support no custody
+/// claim. `Leak` is deliberately absent: it is reported *at* an exit by
+/// [`report_leaks`], and it is exactly the residual this ledger describes
+/// rather than a reason to refuse describing it.
+fn is_path_poisoning(diagnostic: &LegacyDiagnostic) -> bool {
+    matches!(
+        diagnostic.kind,
+        LegacyDiagnosticKind::Unsupported { .. }
+            | LegacyDiagnosticKind::UnknownAlias { .. }
+            | LegacyDiagnosticKind::SummaryConflict { .. }
+            | LegacyDiagnosticKind::DoubleRelease { .. }
+            | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
+            | LegacyDiagnosticKind::CustodyConflict { .. }
+    )
+}
+
+/// Read one exit's custody residual out of its settled state.
+fn observe_residual(
+    node_id: LegacyNodeId,
+    node: &LegacyCfgNode,
+    state: &AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    entry: &EntryCustody,
+) -> LegacyExitResidual {
+    let exempt = entry.exempt_sites(state);
+    let sites = state
+        .resources
+        .keys()
+        .copied()
+        .filter(|site| !exempt.contains(site))
+        .map(|site| LegacyResidualSite {
+            site,
+            acquisition_line: acquisition_line(acquisition_lines, site),
+            disposition: site_disposition(state, site),
+        })
+        .collect::<Vec<_>>();
+    let indeterminate = state.unmodeled
+        || state.widened
+        || sites
+            .iter()
+            .any(|site| site.disposition == SiteDisposition::Mixed);
+    let custody = if indeterminate {
+        ExitCustody::Unknown
+    } else if sites
+        .iter()
+        .any(|site| site.disposition == SiteDisposition::Live)
+    {
+        ExitCustody::Residual
+    } else {
+        ExitCustody::Discharged
+    };
+    LegacyExitResidual {
+        node: node_id,
+        line: node.line,
+        custody,
+        sites,
+    }
 }
 
 /// Report an indirect store the contract in force does not sanction, and
@@ -3326,6 +3607,7 @@ fn transfer(
     let destination = match &node.instruction {
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
+        | LegacyInstruction::OpaqueValue { destination }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. } => destination.as_deref(),
         _ => None,
@@ -3556,6 +3838,16 @@ fn transfer(
                     diagnostics,
                 ),
             }
+        }
+        LegacyInstruction::OpaqueValue { destination } => {
+            state.pointers.insert(
+                destination.clone(),
+                AbstractPointer {
+                    targets: BTreeSet::new(),
+                    unknown: true,
+                    may_be_null: true,
+                },
+            );
         }
         LegacyInstruction::BranchOnNull { .. } => {}
         LegacyInstruction::Unknown { description } => {
