@@ -1,0 +1,16 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.31s
+     Running tests/c03_neutral_frame_recursion_probe.rs (target/debug/deps/c03_neutral_frame_recursion_probe-ba9a7f6803e4040d)
+
+running 8 tests
+test undeclared_neutral_recursion_leaves_the_component_and_its_callers_unknown ... ok
+test declared_emulation_does_not_reproduce_component_withdrawal ... ok
+test pointer_field_recursion_is_refused_before_the_recursion_rule_applies ... ok
+test a_neutral_member_still_fails_closed_on_an_uncontracted_callee ... ok
+test an_assumed_effectful_contract_validates_vacuously_under_divergence ... ok
+test assumed_neutral_refuses_every_body_that_carries_an_effect ... ok
+test assumed_neutral_components_validate_and_unblock_their_callers ... ok
+test a_neutral_contract_states_no_precondition_and_hands_back_no_custody ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.15s
+

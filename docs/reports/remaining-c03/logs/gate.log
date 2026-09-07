@@ -1,0 +1,44 @@
+C03 standing gate, worktree of qcore-c at baseline a4492da, 2026-09-07.
+Clang: Ubuntu clang version 21.1.8, target x86_64-pc-linux-gnu.
+The Libevent submodule was initialised in this worktree before the run
+(`git -c protocol.file.allow=always submodule update --init --recursive`,
+checked out d82464a277d0f42703702c4dfd9af6af38595a83); without it the pinned
+submodule-revision test fails for environment reasons unrelated to this card.
+
+$ cargo test --workspace
+  exit 0 — 74 test binaries, 1005 tests passed, 0 failed
+  (997 recorded before this card, plus the 8 new C03 design-probe tests)
+
+$ cargo fmt --all -- --check
+  exit 0 (after `cargo fmt --all` reformatted the new probe file)
+
+$ cargo clippy --all-targets -- -D warnings
+  exit 0, no warnings
+
+$ cargo run -p qcore-compiler --example reevaluation_probe
+  exit 0
+
+$ cargo run -p qcore-compiler --example reevaluation_followup
+  exit 0
+
+$ cd proof && lake build
+  exit 0 — "Build completed successfully (64 jobs)."
+
+$ python3 -B scripts/check_lean_audits.py
+  exit 0 — "Passed 21 Lean audits"
+
+$ cargo test -p qcore-c-gateway --test c03_neutral_frame_recursion_probe
+  exit 0 — 8 passed (see c03-probe.log)
+
+$ clang -std=c11 -Wall -Wextra -Werror -g -O1 -fsanitize=address,undefined \
+    -fno-omit-frame-pointer docs/reports/remaining-c03/chain-teardown-hazard.c \
+    -o /tmp/qcore-c03-hazard
+  build clean
+$ /tmp/qcore-c03-hazard interior   -> AddressSanitizer: heap-use-after-free (hazard-interior.log)
+$ /tmp/qcore-c03-hazard cyclic     -> AddressSanitizer: stack-overflow      (hazard-cyclic.log)
+  Both non-zero exits are the intended evidence for the rejected family, not
+  gate failures.
+
+No production source file changed, so the pinned 185-unit artifacts, the
+CMetrics audit, the contract corpus (59 modules) and CT coverage (11/50) are
+unchanged by construction and were not re-measured.
