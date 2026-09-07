@@ -12,6 +12,10 @@ inductive Instruction where
   | acquire (resource : ResourceId)
   | release (resource : ResourceId)
   | escape (resource : ResourceId)
+  /-- A statement the importer models as carrying no custody effect. The
+      importer decides which statements qualify; see `QCore.TypedFieldAccess`
+      for the typed direct scalar-field classification that produces one. -/
+  | noop
   | unsupported
   deriving DecidableEq
 
@@ -78,6 +82,7 @@ def transfer (state : AbstractState) : Instruction → AbstractState
           state with
           diagnostics := .unknown :: state.diagnostics
           precise := false }
+  | .noop => state
   | .unsupported => {
       state with
       diagnostics := .unknown :: state.diagnostics
@@ -208,6 +213,61 @@ theorem acquired_then_released_is_safe (resource : ResourceId) :
     not a theorem about arbitrary C reads or lexical parsing. -/
 theorem released_then_unmodeled_access_is_indeterminate (resource : ResourceId) :
     analyze [.acquire resource, .release resource, .unsupported] = .indeterminate := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+/-- A neutral instruction changes nothing: the ledger, the diagnostics and the
+    precision flag all survive it unchanged. This is what makes classifying a
+    statement as `noop` a *precision* decision rather than a custody one. -/
+theorem noop_preserves_state (state : AbstractState) :
+    transfer state .noop = state := by
+  rfl
+
+theorem noop_preserves_precision (state : AbstractState) :
+    (transfer state .noop).precise = state.precise := by
+  rfl
+
+theorem noop_preserves_ledger (state : AbstractState) :
+    (transfer state .noop).ledger = state.ledger := by
+  rfl
+
+theorem noop_preserves_diagnostics (state : AbstractState) :
+    (transfer state .noop).diagnostics = state.diagnostics := by
+  rfl
+
+/-- A neutral instruction does not hide the leak the poisoned analysis could
+    not see. Removing an unsupported effect can *surface* a defect. -/
+theorem noop_does_not_hide_a_leak (resource : ResourceId) :
+    analyze [.acquire resource, .noop] = .defect := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+theorem noop_does_not_hide_a_double_release (resource : ResourceId) :
+    analyze [.acquire resource, .release resource, .noop, .release resource]
+      = .defect := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+theorem noop_does_not_hide_a_release_after_escape (resource : ResourceId) :
+    analyze [.acquire resource, .escape resource, .noop, .release resource]
+      = .defect := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, isSafetyIssue]
+
+/-- A discharged lifetime stays `safe` across a neutral instruction. This is
+    the positive direction: the analysis completes instead of being poisoned. -/
+theorem noop_between_acquire_and_release_is_safe (resource : ResourceId) :
+    analyze [.acquire resource, .noop, .release resource] = .safe := by
+  simp [analyze, run, transfer, initial, lookup, update, close, classify,
+    hasSafetyIssue, leakFree]
+
+/-- Classifying a statement neutral is the *only* difference from leaving it
+    unsupported: the unsupported form of the same discharged program is
+    indeterminate, so the change is a precision gain and not a weakened gate. -/
+theorem unsupported_form_of_the_same_program_is_indeterminate
+    (resource : ResourceId) :
+    analyze [.acquire resource, .unsupported, .release resource]
+      = .indeterminate := by
   simp [analyze, run, transfer, initial, lookup, update, close, classify,
     hasSafetyIssue, isSafetyIssue]
 

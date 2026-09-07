@@ -1,0 +1,1375 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4559311447e1d28e/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4559311447e1d28e/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4559311447e1d28e/crates/qcore-audit)
+   Compiling qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4559311447e1d28e/compiler)
+   Compiling qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4559311447e1d28e/crates/qcorec)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.74s
+     Running unittests src/lib.rs (target/debug/deps/qcore_audit-1aab1dcb39957b9d)
+
+running 2 tests
+test report::tests::inventory_retains_failure_reason_without_a_partial_summary ... ok
+test report::tests::inventory_keeps_unknown_diagnostics_inside_unsafe_units_and_unprojected_names ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/qcore_audit-9f707a9f9c3c51fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile_options.rs (target/debug/deps/compile_options-a82fb5381e8d03f3)
+
+running 9 tests
+test empty_arguments_survive_decoding_and_reject_instead_of_consuming_a_flag ... ok
+test command_structure_and_unmodeled_options_fail_closed ... ok
+test frontend_flags_require_the_actual_clang_executable_and_an_explicit_dialect ... ok
+test quoted_dollars_are_literal_c_macro_bytes_without_shell_or_make_expansion ... ok
+test macro_definition_and_undefinition_order_is_preserved ... ok
+test quote_include_class_and_order_are_preserved ... ok
+test system_headers_remain_after_regular_headers_even_when_listed_first ... ok
+test source_directory_is_quote_only_and_does_not_shadow_angle_headers ... ok
+test build_flags_match_direct_clang_preprocessing_and_typed_ast ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+
+     Running tests/compile_task_identity.rs (target/debug/deps/compile_task_identity-36171424d5abfa19)
+
+running 6 tests
+test duplicate_compile_records_for_one_file_are_kept_distinct_and_never_chosen_between ... ok
+test identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effective_input ... ok
+test a_rejected_preprocessing_run_keeps_an_attributable_identity ... ok
+test a_changed_used_header_invalidates_the_identity_with_an_unchanged_main_source ... ok
+test contract_profile_and_database_dependency_changes_invalidate_the_identity ... ok
+test include_order_and_admitted_macro_options_invalidate_a_byte_identical_analysis ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s
+
+     Running tests/configured_cli.rs (target/debug/deps/configured_cli-d145be80f625ac70)
+
+running 13 tests
+test absent_selections_contracts_and_unsupported_flags_fail_closed ... ok
+test selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths ... ok
+test checkout_head_rejects_dirty_selected_bytes_and_historical_provider_evidence ... ok
+test compilation_database_path_aliases_select_the_canonical_checkout_source ... ok
+test checkout_head_reanalyzes_changed_source_without_reusing_historical_evidence ... ok
+test pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing ... ok
+test repeated_and_conflicting_compile_records_for_one_file_are_distinguished ... ok
+test current_inventory_keeps_distinct_commands_and_unsupported_configurations_unknown ... ok
+test a_used_header_change_invalidates_the_recorded_compile_task_identity ... ok
+test checkout_head_commit_change_retires_identity_even_with_identical_source ... ok
+test header_search_preserves_unresolved_call_instead_of_publishing_safe ... ok
+test a_second_codebase_runs_from_only_profile_contract_and_compile_database_files ... ok
+test current_inventory_reanalyzes_new_commits_and_never_admits_dirty_source ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+     Running tests/source_contract_config.rs (target/debug/deps/source_contract_config-d69a978c8f9aadf6)
+
+running 8 tests
+test policy_only_loading_snapshots_relative_contracts_without_installed_packages ... ok
+test malformed_and_empty_configuration_rejects_instead_of_falling_back ... ok
+test duplicate_provider_id_and_canonical_package_path_reject_atomically ... ok
+test verified_registry_snapshots_policy_and_only_explicit_package_overrides_apply ... ok
+test incompatible_checker_identity_digest_and_targets_fail_at_load ... ok
+test frame_helper_selection_snapshots_policies_and_rejects_ambiguous_sources ... ok
+test helper_policies_share_the_primary_policy_snapshot_budget ... ok
+test repeated_policy_references_share_a_bounded_total_snapshot_budget ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_c_gateway-3d9a9472f18d9477)
+
+running 162 tests
+test clang::tests::absent_clang_reports_installation_and_configuration_help ... ok
+test clang::tests::explicit_path_with_spaces_is_authoritative ... ok
+test clang::tests::empty_override_is_an_error ... ok
+test clang::tests::path_precedes_visual_studio_and_discovery_checks_all_candidates ... ok
+test clang::tests::empty_locator_output_does_not_hide_later_installations ... ok
+test clang::tests::vswhere_supports_2026_and_2022_custom_roots_and_environment_precedence ... ok
+test clang::tests::standard_2026_and_2022_installations_work_without_vswhere ... ok
+test legacy_c::tests::aggregate_resource_places_require_an_access_importer ... ok
+test legacy_c::tests::finds_a_seeded_normal_exit_leak ... ok
+test legacy_c::tests::branch_cleanup_on_both_paths_is_safe ... ok
+test legacy_c::tests::finds_a_seeded_double_free_through_an_alias ... ok
+test legacy_c::tests::finds_a_seeded_error_path_leak ... ok
+test legacy_c::tests::calls_in_conditions_and_returns_cannot_be_silently_accepted ... ok
+test legacy_c::tests::cleanup_goto_and_labels_preserve_resource_paths ... ok
+test legacy_c::tests::for_do_while_break_and_continue_are_imported_as_cfg_edges ... ok
+test legacy_c::tests::container_contract_cascades_child_custody_on_release_or_transfer ... ok
+test legacy_c::tests::braced_control_expressions_do_not_erase_nested_control_flow ... ok
+test legacy_c::tests::lc01_explicit_internal_return_contract_is_preserved ... ok
+test legacy_c::tests::indirect_pointer_expressions_cannot_be_silently_accepted ... ok
+test legacy_c::tests::ownership_transfer_discharges_the_local_obligation ... ok
+test legacy_c::tests::loop_analysis_terminates_at_a_conservative_fixed_point ... ok
+test legacy_c::tests::malformed_and_missing_functions_are_parse_errors ... ok
+test legacy_c::tests::nullable_owned_results_require_nonnull_path_refinement ... ok
+test legacy_c::tests::c_type_operators_remain_unknown_without_being_reported_as_missing_contracts ... ok
+test legacy_c::tests::returned_ownership_discharges_the_local_obligation ... ok
+test legacy_c::tests::source_function_discovery_enters_cxx_linkage_blocks ... ok
+test legacy_c::tests::source_function_discovery_ignores_block_macros ... ok
+test legacy_c::tests::documented_alias_widening_can_only_lose_a_safe_result ... ok
+test legacy_c::tests::internal_definitions_never_receive_an_automatic_neutral_contract ... ok
+test legacy_c::tests::container_removal_restores_direct_child_custody ... ok
+test legacy_c::tests::null_checks_accept_parentheses_and_preprocessed_void_pointer_zero ... ok
+test legacy_c::tests::safe_annotated_program_reaches_a_safe_fixed_point ... ok
+test legacy_c::tests::realloc_preserves_old_custody_on_failure_and_replaces_it_on_success ... ok
+test legacy_c::tests::translation_unit_summary_propagates_callee_defects ... ok
+test legacy_c::tests::standalone_compound_blocks_are_imported ... ok
+test legacy_c::tests::unresolved_release_alias_reports_unknown ... ok
+test legacy_c::tests::uncontracted_calls_report_unknown_instead_of_safe ... ok
+test legacy_c::tests::rich_contracts_distinguish_borrowed_owned_consumed_and_out_parameters ... ok
+test legacy_c::tests::switch_cases_fallthrough_and_break_are_explicit ... ok
+test legacy_c::tests::unrestricted_projection_retains_successful_siblings ... ok
+test legacy_c::tests::braced_declarations_retain_following_cleanup_without_certifying_their_effects ... ok
+test legacy_c::tests::parenthesized_null_assignment_does_not_erase_an_owned_obligation ... ok
+test legacy_c::tests::memory_access_boundary_preserves_identifiable_scalar_expressions ... ok
+test legacy_summary::tests::a_conflicting_summary_is_not_published_as_evidence ... ok
+test legacy_summary::tests::a_leaking_callee_yields_no_summary_and_stays_unsafe ... ok
+test legacy_summary::tests::a_borrowed_parameter_imposes_no_custody_obligation ... ok
+test legacy_summary::tests::a_conditionally_releasing_parameter_yields_no_summary ... ok
+test legacy_summary::tests::a_realloc_wrapper_caller_that_also_frees_the_old_pointer_is_unsafe ... ok
+test legacy_summary::tests::a_formal_written_through_an_out_slot_yields_no_summary ... ok
+test legacy_summary::tests::a_nullable_returning_wrapper_forces_a_null_check ... ok
+test legacy_summary::tests::a_possibly_null_out_store_without_a_callee_side_test_yields_no_summary ... ok
+test legacy_summary::tests::a_declared_middle_wrapper_governs_its_callers_and_publishes_no_record ... ok
+test legacy_summary::tests::a_resource_stored_into_a_caller_aggregate_yields_no_summary ... ok
+test legacy_summary::tests::a_realloc_wrapper_is_inferred_as_reallocated ... ok
+test legacy_summary::tests::a_self_consistent_recursive_summary_is_never_accepted ... ok
+test legacy_summary::tests::a_store_then_remove_keeps_its_live_entry_contract ... ok
+test legacy_summary::tests::a_realloc_wrapper_that_resolves_its_own_null_test_is_reallocated ... ok
+test legacy_summary::tests::a_realloc_wrapper_that_discards_its_argument_is_not_reallocated ... ok
+test legacy_summary::tests::a_removal_wrapper_restores_direct_custody_for_its_caller ... ok
+test legacy_summary::tests::a_returned_out_slot_resource_yields_no_summary ... ok
+test legacy_summary::tests::a_wrapper_with_an_unsupported_body_yields_no_summary ... ok
+test legacy_summary::tests::a_store_through_a_local_pointer_stays_unmodeled ... ok
+test legacy_summary::tests::an_explicit_contract_agreeing_with_inference_is_preserved ... ok
+test legacy_summary::tests::a_stored_parameter_is_inferred_with_its_owner ... ok
+test legacy_summary::tests::an_explicit_contract_disagreeing_with_inference_is_a_diagnostic ... ok
+test legacy_summary::tests::aliased_out_inference_preserves_declared_precedence ... ok
+test legacy_summary::tests::a_wrapper_returning_an_unresolved_acquisition_is_nullable ... ok
+test legacy_summary::tests::a_stored_owner_must_be_the_same_caller_held_formal_at_every_exit ... ok
+test legacy_summary::tests::a_changed_transitive_callee_redirects_every_derived_summary ... ok
+test legacy_summary::tests::caller_discard_of_a_wrapped_acquisition_is_a_leak ... ok
+test legacy_summary::tests::an_out_slot_left_unwritten_on_some_path_yields_no_summary ... ok
+test legacy_summary::tests::an_out_parameter_wrapper_is_inferred_and_validated ... ok
+test legacy_summary::tests::an_overwritten_out_slot_leaks_the_first_resource ... ok
+test legacy_summary::tests::an_observed_parameter_is_owned_not_borrowed ... ok
+test legacy_c::tests::unmodeled_memory_reads_do_not_become_neutral_effects ... ok
+test legacy_summary::tests::components_are_returned_callees_first ... ok
+test legacy_summary::tests::caller_release_through_a_wrapper_still_finds_a_double_release ... ok
+test legacy_summary::tests::conditional_containment_cannot_erase_direct_custody_during_cascade ... ok
+test legacy_summary::tests::direct_recursion_stays_unknown ... ok
+test legacy_summary::tests::caller_release_through_a_wrapper_is_safe ... ok
+test legacy_summary::tests::direct_out_forwarding_initializes_the_callers_original_slot ... ok
+test legacy_summary::tests::an_out_slot_nulled_on_a_failure_path_is_nullable ... ok
+test legacy_summary::tests::consumed_resources_require_live_direct_custody ... ok
+test legacy_summary::tests::context_decreasing_allocation_wrapper_preserves_the_callers_leak ... ok
+test legacy_summary::tests::formal_identity_guards_keep_scalar_updates_but_reject_resource_mutation ... ok
+test legacy_summary::tests::forwarded_out_slots_compose_through_acyclic_wrappers_and_parentheses ... ok
+test legacy_summary::tests::general_alias_removal_discovery_remains_unsupported ... ok
+test legacy_summary::tests::forwarded_outputs_keep_nullability_and_dont_invent_unresolved_handback ... ok
+test legacy_summary::tests::aliased_out_callers_still_discharge_distinct_fresh_outputs ... ok
+test legacy_summary::tests::invalid_null_path_does_not_gain_a_nullable_precondition ... ok
+test legacy_summary::tests::forwarded_output_callers_keep_leak_and_slot_alias_obligations ... ok
+test legacy_summary::tests::lc01_allocation_wrapper_leak_is_unsafe_not_safe ... ok
+test legacy_summary::tests::joined_alternative_containing_owners_cannot_authorize_detachment ... ok
+test legacy_summary::tests::joined_child_alias_cannot_detach_all_possible_targets ... ok
+test legacy_summary::tests::immutable_out_aliases_and_chains_keep_original_caller_slots ... ok
+test legacy_summary::tests::mutual_recursion_stays_unknown_for_every_member ... ok
+test legacy_summary::tests::lc01_allocation_wrapper_with_discharge_is_safe ... ok
+test legacy_summary::tests::nullable_removal_keeps_siblings_and_independent_entry_modes ... ok
+test legacy_summary::tests::nested_wrappers_compose_bottom_up ... ok
+test legacy_summary::tests::nullable_removal_validates_null_and_nonnull_exits_and_forwarding ... ok
+test legacy_summary::tests::one_selected_resource_action_cannot_discharge_both_alias_targets ... ok
+test legacy_summary::tests::parameter_consumption_transfers_custody_at_the_call ... ok
+test legacy_summary::tests::immutable_out_aliases_compose_and_preserve_nullable_exit_checks ... ok
+test legacy_summary::tests::reallocation_requires_live_custody_on_every_incoming_path ... ok
+test legacy_summary::tests::releasing_a_stored_item_after_the_call_is_a_custody_conflict ... ok
+test legacy_summary::tests::forwarding_does_not_accept_reassigned_escaping_or_unwritten_slots ... ok
+test legacy_summary::tests::out_alias_normalization_rejects_mutation_shadow_escape_and_type_changes ... ok
+test legacy_summary::tests::removal_summary_composes_through_reordered_direct_formals ... ok
+test legacy_summary::tests::removal_preserves_other_children_and_rejects_aliased_removal_arguments ... ok
+test legacy_summary::tests::partial_and_repeated_nullable_removal_do_not_publish ... ok
+test legacy_summary::tests::removal_callers_must_supply_the_exact_contained_child_and_keep_its_obligation ... ok
+test legacy_summary::tests::reassigned_out_formals_do_not_describe_the_callers_slot ... ok
+test legacy_summary::tests::returning_a_formal_unchanged_yields_no_owned_summary ... ok
+test legacy_summary::tests::removed_summary_keeps_declared_precedence_and_records_conflicts ... ok
+test legacy_summary::tests::uncertain_selected_release_does_not_hide_an_independent_leak ... ok
+test legacy_summary::tests::resource_aliases_do_not_hide_formal_pointer_mutation ... ok
+test typed_field_access::tests::a_base_the_projection_may_bind_is_refused ... ok
+test legacy_c::tests::unrestricted_projection_gaps_remain_unknown ... ok
+test typed_field_access::tests::a_bitfield_refuses_the_whole_record ... ok
+test legacy_c::tests::unrestricted_gateway_certifies_only_fully_checked_safe_summaries ... ok
+test typed_field_access::tests::a_cast_operand_is_refused ... ok
+test typed_field_access::tests::a_comparison_does_not_bind_the_base ... ok
+test typed_field_access::tests::a_direct_scalar_field_store_is_admitted ... ok
+test typed_field_access::tests::a_for_loop_declaration_is_read_like_any_other ... ok
+test typed_field_access::tests::a_direct_record_value_field_store_is_admitted ... ok
+test typed_field_access::tests::a_compound_assignment_and_a_scalar_destination_are_admitted ... ok
+test typed_field_access::tests::a_function_pointer_member_refuses_the_whole_record ... ok
+test typed_field_access::tests::a_nested_anonymous_aggregate_refuses_the_whole_record ... ok
+test typed_field_access::tests::a_pointer_field_a_chain_and_a_subscript_are_refused ... ok
+test typed_field_access::tests::a_pointer_formal_and_a_scalar_local_are_typed ... ok
+test typed_field_access::tests::a_scalar_member_of_a_complete_struct_is_read ... ok
+test typed_field_access::tests::a_scalar_typedef_resolves_but_a_pointer_typedef_does_not ... ok
+test typed_field_access::tests::a_shadowing_redeclaration_of_a_different_type_makes_the_name_unusable ... ok
+test typed_field_access::tests::a_statement_with_no_access_is_not_this_rule ... ok
+test typed_field_access::tests::a_union_tag_is_never_admitted ... ok
+test typed_field_access::tests::a_volatile_or_atomic_member_is_not_scalar ... ok
+test typed_field_access::tests::an_address_escape_and_a_dereference_are_refused ... ok
+test typed_field_access::tests::an_array_member_is_not_scalar ... ok
+test typed_field_access::tests::an_arrow_on_a_record_value_and_a_dot_on_a_pointer_are_refused ... ok
+test typed_field_access::tests::an_undeclared_base_is_refused ... ok
+test typed_field_access::tests::an_unreadable_local_declaration_refuses_the_whole_function ... ok
+test typed_field_access::tests::enumeration_constants_are_collected ... ok
+test typed_field_access::tests::two_definitions_of_one_tag_refuse_it ... ok
+test legacy_c::tests::unrestricted_gateway_accepts_data_only_translation_units ... ok
+test typed_source::symbol_tests::aggregate_symbol_validation_rejects_nested_forward_reference ... ok
+test typed_source::symbol_tests::induction_value_cannot_escape_its_scan ... ok
+test typed_source::symbol_tests::symbolic_references_require_prior_producers_with_matching_types ... ok
+test legacy_c::tests::clang_gateway_rejects_invalid_c_before_projection ... ok
+test legacy_summary::tests::removed_formal_identity_and_all_exit_dispositions_are_rechecked ... ok
+test legacy_summary::tests::real_c_alias_certificate_rederives_identity_and_rejects_changed_source_or_summary ... ok
+test legacy_summary::tests::removed_certificate_rederives_owner_and_child_effects ... ok
+test legacy_c::tests::unrestricted_gateway_requires_an_explicit_gnu_dialect ... ok
+test legacy_c::tests::source_scope_uses_a_definition_that_survives_preprocessing ... ok
+test legacy_c::tests::main_source_scope_excludes_macro_expanded_header_bodies ... ok
+test source_call_use::tests::structured_loop_dependencies_remain_unknown_to_flat_use_analysis ... ok
+test legacy_summary::tests::extended_summary_certificates_are_rederived_and_reject_tampering ... ok
+test source_call_use::tests::call_use_tracks_alias_return_guard_argument_and_discard ... ok
+test legacy_summary::tests::out_forwarding_respects_declared_contracts_and_certificate_rederivation ... ok
+test legacy_c::tests::c11_memory_read_projection_and_certificate_recheck_fail_closed ... ok
+test typed_source::short_circuit_tests::short_circuit_calls_keep_sequencing_and_skip_rhs ... ok
+test typed_source::short_circuit_tests::short_circuit_null_guard_and_nested_negation_retain_truth_paths ... ok
+test typed_source::short_circuit_tests::short_circuit_values_unsequenced_operands_and_path_explosion_stay_unknown ... ok
+
+test result: ok. 162 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+     Running tests/boolean_frame_helpers.rs (target/debug/deps/boolean_frame_helpers-7eaa789f8e7db3a7)
+
+running 6 tests
+test the_shared_clang_identity_keeps_its_recorded_serialized_shape ... ok
+test unrelated_record_helper_preserves_ordered_writes_and_both_source_prestates ... ok
+test every_modeled_field_is_protected_even_with_permissive_policy ... ok
+test legacy_and_generic_production_shape_serialize_identically_but_legacy_cannot_write_a_new_model ... ok
+test composition_rejects_profile_build_rules_layout_and_declaration_substitution ... ok
+test helper_grammar_never_erases_nonconstant_effects_or_aliases ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
+
+     Running tests/contextual_recursion.rs (target/debug/deps/contextual_recursion-681b9c486ba0d886)
+
+running 14 tests
+test declared_conflict_cannot_be_overridden_by_recursive_inference ... ok
+test bounded_mutual_recursion_validates_both_members_without_self_assumptions ... ok
+test countdown_certificate_rechecks_rank_guards_and_summary_identity ... ok
+test ordinary_proof_of_unreachable_recursion_is_preserved ... ok
+test countdown_native_fixture_has_independently_rechecked_custody ... ok
+test certificate_recheck_rejects_source_and_summary_context_substitution ... ok
+test unsigned_mutual_countdown_handles_changed_control_slots_and_widths ... ok
+test recursive_owned_result_preserves_caller_custody ... ok
+test unsigned_countdown_preserves_owned_returns_and_caller_leaks ... ok
+test nonzero_to_zero_release_has_a_rechecked_summary_for_both_contexts ... ok
+test unsupported_control_types_uses_and_recursive_result_loss_remain_unproved ... ok
+test nondecreasing_or_unsupported_recursive_contexts_never_become_safe ... ok
+test unsupported_countdowns_and_invalid_resource_steps_never_publish ... ok
+test unsigned_countdown_release_checks_every_builtin_width_and_guard ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.97s
+
+     Running tests/custody_summary_regression.rs (target/debug/deps/custody_summary_regression-3b392fc3f810cbf5)
+
+running 7 tests
+test a_changed_transitive_callee_body_invalidates_the_whole_certificate ... ok
+test reallocated_result_identity_and_its_null_alternative_are_rechecked ... ok
+test a_nullable_out_slot_cannot_be_collapsed_to_a_guaranteed_one ... ok
+test fabricated_validated_summaries_are_rejected_at_the_recheck_boundary ... ok
+test stored_owner_identity_survives_certificate_rederivation ... ok
+test a_possibly_null_owned_result_cannot_be_collapsed_to_non_null ... ok
+test a_changed_transitive_callee_redirects_the_analysis_of_every_caller ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/typed_body_comparison.rs (target/debug/deps/typed_body_comparison-bbc79e88ea4aa8d3)
+
+running 5 tests
+test arbitrary_matching_reference_is_not_a_safety_or_revision_claim ... ok
+test input_macro_cannot_rewrite_the_supplied_reference_call ... ok
+test omitted_offsetof_operands_and_attributes_are_not_erased ... ok
+test field_representation_is_checked_even_when_both_bodies_share_declarations ... ok
+test public_comparison_preserves_types_calls_and_local_binding_identity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+
+     Running tests/typed_field_access.rs (target/debug/deps/typed_field_access-7d0ab8cf6da85eb4)
+
+running 11 tests
+test a_leak_that_hid_behind_a_scalar_field_store_is_now_reported ... ok
+test a_shadowing_redeclaration_of_a_different_record_refuses_the_name ... ok
+test an_unreadable_declaration_refuses_every_access_in_the_same_function ... ok
+test a_classified_wrapper_that_stops_releasing_loses_its_caller_certificate ... ok
+test a_release_after_transfer_that_hid_behind_a_scalar_field_read_is_now_reported ... ok
+test a_double_release_that_hid_behind_a_scalar_field_store_is_now_reported ... ok
+test scalar_field_stores_and_reads_no_longer_poison_an_owned_lifetime ... ok
+test a_record_valued_local_and_a_compound_assignment_are_also_admitted ... ok
+test a_custody_summary_derived_through_a_classified_body_is_validated_and_rederived ... ok
+test a_certificate_resting_on_the_classification_is_rederived_from_source ... ok
+test ambiguous_accesses_keep_their_existing_unknown_and_diagnostic ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.63s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_compiler-5eaeb411d06c264e)
+
+running 160 tests
+test driver::tests::a_shadowing_local_does_not_discharge_a_parameter_usage_obligation ... ok
+test driver::tests::compiles_values_and_maps_emitted_source ... ok
+test driver::tests::call_continuations_have_conservative_usage_lower_bounds ... ok
+test driver::tests::combines_module_files_and_checks_calls ... ok
+test driver::tests::attributes_diagnostics_at_a_file_boundary_to_the_offending_file ... ok
+test driver::tests::rejects_observable_calls_that_the_reduced_c_cfg_cannot_encode ... ok
+test driver::tests::reports_unsupported_source_at_the_owning_file ... ok
+test driver::tests::preserves_error_cleanup_and_ownership_transfer_observations ... ok
+test driver::tests::refuses_unchecked_source_contracts_in_every_input_file ... ok
+test driver::tests::review_r04_does_not_emit_unencoded_callee_payloads ... ok
+test driver::tests::resolved_scope_requires_checked_profile_and_guard_still_requires_lowering ... ok
+test driver::tests::synthesized_quantitative_bound_covers_the_resource_trace ... ok
+test external_integration::tests::queue_refcounts_and_synchronized_publication_discharge ... ok
+test external_integration::tests::chunk_import_requires_pinned_source_complete_cfg_and_every_summary ... ok
+test external_source::tests::a_public_bundle_cannot_claim_digest_verification ... ok
+test driver::tests::records_source_demands_and_rejects_unsupported_local_contracts ... ok
+test external_source::tests::derives_cfl_arena_and_chunkio_nested_teardown_profiles ... ok
+test external_source::tests::derives_only_the_audited_librdkafka_mechanisms ... ok
+test external_source::tests::source_profiles_fail_closed_on_revision_file_or_contract_drift ... ok
+test external_source::tests::substring_witnesses_still_reject_the_library_on_drift ... ok
+test external_integration::tests::monkey_composition_requires_callbacks_failure_paths_backend_and_observation ... ok
+test driver::tests::checks_parameter_usage_even_for_uncalled_functions ... ok
+test driver::tests::review_r07_driver_signed_literal_boundaries ... ok
+test driver::tests::review_r04_checks_declared_results_before_lowering ... ok
+test research_extensions::tests::aggregate_certificate_contains_all_six_discharges ... ok
+test research_extensions::tests::aggregate_closure_rejects_loop_evidence_mutated_from_exact_to_maximum ... ok
+test source_contract::tests::every_extracted_rule_accepts_valid_facts_and_rejects_mutations ... ok
+test field_destructor::tests::contract_signature_domains_and_every_postcondition_fail_closed ... ok
+test list_unlink_contract::tests::complete_unlink_retains_alias_cases_and_all_four_writes ... ok
+test chunk_contract::tests::const_contract_rejects_even_an_idempotent_c_write ... ok
+test chunk_contract::tests::missing_assumptions_unknown_predicates_and_wrong_types_fail_closed ... ok
+test driver::tests::emitted_c_matches_reference_for_value_error_trace_and_transfer ... ok
+test chunk_contract::tests::qcore_trivia_does_not_change_predicate_meaning ... ok
+test typed_source::tests::absent_callbacks_and_wrong_revision_do_not_create_summaries ... ok
+test counter_contract::tests::source_counter_binds_direction_field_return_and_word_bounds ... ok
+test typed_source::tests::native_wrapper_specs_cover_the_exact_selected_source_functions ... ok
+test field_destructor::tests::nullable_field_custody_exhausts_realizable_states ... ok
+test chunk_contract::tests::native_contract_files_are_checked_against_source_paths ... ok
+test typed_source::tests::imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order ... ok
+test chunk_contract::tests::changing_qcore_postconditions_changes_the_verdict ... ok
+test typed_source::tests::nested_blocks_end_storage_and_early_returns_keep_only_executed_effects ... ok
+test typed_source::tests::import_limits_bound_branches_and_symbolic_substitution ... ok
+test typed_source::tests::increment_and_compound_assignment_evaluate_nested_lvalue_once ... ok
+test typed_source::tests::does_not_invent_order_for_multiple_calls_or_call_and_memory_read ... ok
+test typed_source::tests::aliases_are_bound_to_parameter_and_prior_reads_not_variable_names ... ok
+test counter_contract::tests::counter_source_changes_and_unreachable_effects_fail_closed ... ok
+test field_destructor::tests::teardown_rejects_missing_duplicate_wrong_order_and_unmodeled_effects ... ok
+test typed_source::tests::opaque_calls_and_indirect_writes_invalidate_escaped_local_values ... ok
+test typed_source::tests::field_qualifiers_bitfields_and_signature_mismatch_remain_unknown ... ok
+test list_unlink_contract::tests::unlink_rejects_wrong_neighbor_shadow_helper_and_partial_effects ... ok
+test typed_source::tests::source_changes_are_retained_and_never_claim_successful_release ... ok
+test verifier_plugins::chunkio::chunk_source::tests::absent_ambiguous_or_unsupported_field_models_never_gain_fallback_routes ... ok
+test typed_source::tests::wrapper_assertions_retain_abort_paths_and_stop_following_calls ... ok
+test counter_contract::tests::counter_contract_domains_and_all_predicates_are_checked ... ok
+test typed_source::tests::wrapper_import_retains_nullable_and_registration_failure_exits ... ok
+test verifier_plugins::chunkio::chunk_source::tests::bitfields_and_volatile_members_cannot_receive_boolean_field_summaries ... ok
+test verifier_plugins::chunkio::chunk_source::tests::derives_both_returns_and_instantiates_the_actual_identity ... ok
+test verifier_plugins::chunkio::chunk_source::tests::exact_ast_definition_selection_does_not_confuse_name_prefixes ... ok
+test typed_source::tests::unsupported_even_unreachable_operations_fail_the_whole_callback ... ok
+test typed_source::tests::stack_socketpair_cells_remain_memory_reads_after_opaque_calls ... ok
+test verifier_plugins::chunkio::chunk_source::tests::checked_helper_build_identity_survives_source_import_and_raw_record_parity ... ok
+test typed_source::tests::stack_typedefs_require_the_actual_int_element_type ... ok
+test verifier_plugins::chunkio::chunk_source::tests::data_selected_field_does_not_weaken_typed_source_validation ... ok
+test verifier_plugins::chunkio::chunk_source::tests::releasing_wrapper_busy_does_not_discharge_chunkio_lock ... ok
+test verifier_plugins::chunkio::chunk_source::tests::profile_models_route_unrelated_records_and_retain_their_assumptions ... ok
+test verifier_plugins::chunkio::chunk_source::tests::native_helper_contract_checks_values_footprint_and_signature ... ok
+test verifier_plugins::chunkio::chunk_source::tests::typed_ast_preserves_else_and_ordered_writes ... ok
+test verifier_plugins::chunkio::file_attempts::tests::native_and_wrapper_guards_and_each_policy_predicate_are_checked ... ok
+test verifier_plugins::chunkio::file_attempts::tests::native_delete_preserves_short_circuit_reads_and_guarded_unlink_result ... ok
+test typed_source::tests::injection_retains_a_structured_scan_and_function_early_return ... ok
+test verifier_plugins::chunkio::chunk_source::tests::helper_dependencies_reject_layout_duplicates_and_wrong_pointer_binding ... ok
+test verifier_plugins::chunkio::chunk_source::tests::helper_import_rejects_hidden_effects_aliasing_and_nonconstant_writes ... ok
+test typed_source::tests::scan_loops_reject_effects_and_induction_values_cannot_escape ... ok
+test verifier_plugins::chunkio::chunk_source::tests::source_configuration_and_parameter_qualifiers_are_not_erased ... ok
+test verifier_plugins::chunkio::file_attempts::tests::file_close_preserves_ignored_results_as_unresolved_cleanup ... ok
+test verifier_plugins::chunkio::file_delete::tests::delete_checks_eligibility_outcomes_and_preserves_allocations ... ok
+test verifier_plugins::chunkio::file_delete::tests::delete_contract_premises_and_outcomes_are_executed ... ok
+test verifier_plugins::chunkio::chunk_source::tests::checked_source_identity_binds_inputs_configuration_profile_and_policy ... ok
+test verifier_plugins::chunkio::file_outcomes::tests::native_cleanup_outcomes_cover_null_absent_failure_and_success ... ok
+test list_unlink_contract::tests::unlink_contract_signatures_premises_and_predicates_are_checked ... ok
+test verifier_plugins::chunkio::file_close::tests::backend_release_does_not_discharge_unknown_os_custody ... ok
+test verifier_plugins::chunkio::file_outcomes::tests::cleanup_profile_uses_symbolic_identity_and_retains_all_native_predicates ... ok
+test verifier_plugins::chunkio::file_close::tests::deleting_close_covers_all_paths_and_keeps_failure_classifications ... ok
+test verifier_plugins::chunkio::file_close::tests::deleting_close_executes_all_native_contract_clauses ... ok
+test verifier_plugins::chunkio::chunk_source::tests::validated_frame_helper_connects_unlock_to_identity_and_native_contract ... ok
+test typed_source::tests::single_iteration_macros_do_not_erase_control_or_terminal_failures ... ok
+test verifier_plugins::chunkio::file_close::tests::file_close_native_policy_cannot_hide_failure_custody ... ok
+test verifier_plugins::chunkio::file_delete::tests::delete_rejects_wrong_guards_path_status_and_record_mutations ... ok
+test typed_source::tests::wrapper_constants_and_stack_initializers_retain_source_values ... ok
+test verifier_plugins::chunkio::chunk_source::tests::rejects_unmodeled_effects_even_on_unexecuted_paths ... ok
+test verifier_plugins::chunkio::memory_close::tests::memory_close_composes_null_and_memory_paths_into_concrete_chunk_identity ... ok
+test verifier_plugins::chunkio::memory_close::tests::close_contract_clauses_and_dependency_role_are_rechecked ... ok
+test verifier_plugins::chunkio::file_close::tests::deleting_close_rejects_wrong_delete_guards_args_logs_and_early_free ... ok
+test verifier_plugins::chunkio::nested_memory::tests::nested_memory_policy_fails_closed ... ok
+test typed_source::tests::wrapper_mutations_cannot_erase_unsupported_paths_or_invent_return_values ... ok
+test verifier_plugins::chunkio::parent_teardown::tests::parent_policy_rejects_false_or_unknown_facts ... ok
+test verifier_plugins::chunkio::parent_teardown::tests::parent_reference_cannot_share_a_corrupted_owned_field_representation ... ok
+test verifier_plugins::chunkio::filesystem_chunk_close::tests::filesystem_chunk_release_preserves_nested_and_delete_outcomes ... ok
+test verifier_plugins::chunkio::parent_teardown::tests::parent_source_binds_null_guard_nested_call_and_final_release ... ok
+test verifier_plugins::chunkio::traversal::tests::offsetof_token_boundaries_cannot_alias_a_different_record ... ok
+test verifier_plugins::chunkio::traversal::tests::traversal_policy_and_revision_fail_closed ... ok
+test verifier_plugins::chunkio::file_close::tests::file_close_rejects_wrong_resource_identity_order_and_result_handling ... ok
+test verifier_plugins::chunkio::nested_memory::tests::nested_memory_binds_ring_order_and_complete_terminal_teardown ... ok
+test verifier_plugins::chunkio::memory_close::tests::close_rejects_missing_reordered_or_unbound_dependency_effects ... ok
+test verifier_plugins::chunkio::nested_memory::tests::nested_memory_keeps_unrelated_context_live_and_checks_dependency_roles ... ok
+test verifier_plugins::chunkio::nested_memory::tests::nested_memory_rejects_missing_duplicate_wrong_and_filesystem_children ... ok
+test verifier_plugins::chunkio::traversal::tests::traversals_bind_complete_typed_bodies_and_local_identities ... ok
+test verifier_plugins::chunkio::unmap_wrapper::tests::unmap_composes_native_outcomes_with_exact_up_counter_bounds ... ok
+test verifier_plugins::chunkio::file_outcomes::tests::native_cleanup_rejects_wrong_outcomes_fields_and_call_identities ... ok
+test verifier_plugins::chunkio::unmap_wrapper::tests::unmap_native_contract_clauses_are_executed ... ok
+test verifier_plugins::libevent::event_driven::tests::active_event_borrow_prevents_socket_close ... ok
+test verifier_plugins::libevent::event_driven::tests::adapter_observation_must_refine_the_checked_trace ... ok
+test verifier_plugins::libevent::event_driven::tests::bufferevent_modes_watermarks_and_close_custody_are_checked ... ok
+test verifier_plugins::libevent::event_driven::tests::cross_base_conflict_needs_explicit_synchronization ... ok
+test verifier_plugins::libevent::event_driven::tests::cross_thread_activation_requires_supported_thread_setup ... ok
+test verifier_plugins::libevent::event_driven::tests::evutil_socket_contracts_are_profiled_and_conserve_custody ... ok
+test verifier_plugins::libevent::event_driven::tests::failed_or_duplicate_socket_close_is_fail_closed ... ok
+test verifier_plugins::libevent::event_driven::tests::failed_socketpair_creates_no_descriptor_obligation ... ok
+test verifier_plugins::libevent::event_driven::tests::generic_profile_bridge_preserves_loaded_build_matrix_and_empty_rejection ... ok
+test verifier_plugins::libevent::event_driven::tests::nonblocking_delete_requires_callback_exit_and_finalization ... ok
+test verifier_plugins::libevent::event_driven::tests::one_shot_callback_has_live_authority_and_quiescent_teardown ... ok
+test verifier_plugins::libevent::event_driven::tests::persistent_recursive_activation_repends_without_fairness_claim ... ok
+test verifier_plugins::libevent::event_driven::tests::priority_exploration_is_nondeterministic_only_within_a_priority ... ok
+test verifier_plugins::libevent::event_driven::tests::priority_readiness_timing_and_trace_order_are_not_synchronization ... ok
+test verifier_plugins::libevent::event_driven::tests::same_base_cannot_enter_two_callbacks_concurrently ... ok
+test verifier_plugins::libevent::event_driven::tests::socket_error_query_cannot_use_a_closed_descriptor ... ok
+test verifier_plugins::libevent::event_driven::tests::stale_generation_and_argument_use_after_free_are_rejected ... ok
+test verifier_plugins::libevent::event_driven::tests::unlock_callbacks_without_deferral_and_pending_output_fail ... ok
+test verifier_plugins::libevent::event_driven::tests::unsupported_symbols_and_profiles_fail_closed ... ok
+test verifier_plugins::chunkio::parent_teardown::tests::parent_source_rejects_early_free_wrong_fields_and_missing_children ... ok
+test verifier_plugins::chunkio::filesystem_chunk_close::tests::filesystem_chunk_policy_and_dependencies_fail_closed ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_cleanup_preserves_every_non_deleting_file_case_through_parent_free ... ok
+test verifier_plugins::libevent::monkey_binding::tests::expanded_native_run_covers_all_paths_and_labels_injected_failure ... ok
+test verifier_plugins::libevent::monkey_binding::tests::changed_memory_guards_and_calls_do_not_check ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_cleanup_retains_multiple_stream_residual_identities_and_policy ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_cleanup_rejects_wrong_cases_identities_and_counter_binding ... ok
+test verifier_plugins::libevent::monkey_binding::tests::native_callbacks_bind_source_paths_and_qcore_predicates ... ok
+test verifier_plugins::libevent::monkey_observation::tests::binds_reused_descriptors_and_failed_pair_without_creating_static_certificate ... ok
+test verifier_plugins::libevent::monkey_observation::tests::native_descriptor_contracts_control_every_extracted_transition ... ok
+test verifier_plugins::libevent::monkey_observation::tests::recorded_native_callbacks_retain_descriptor_generations ... ok
+test verifier_plugins::libevent::monkey_observation::tests::rejects_ambiguous_native_close_and_changed_thread_or_base ... ok
+test verifier_plugins::libevent::monkey_observation::tests::rejects_close_during_io_callback_and_unknown_record_fields ... ok
+test verifier_plugins::libevent::monkey_observation::tests::rejects_duplicate_close_completion_and_unsupported_schema ... ok
+test verifier_plugins::libevent::monkey_observation::tests::rejects_missing_custody_dispatch_and_teardown_records ... ok
+test verifier_plugins::libevent::monkey_observation::tests::rejects_stale_use_close_and_event_binding ... ok
+test verifier_plugins::libevent::monkey_binding::tests::runtime_effects_cannot_be_omitted_rebound_or_reused ... ok
+test verifier_plugins::libevent::monkey_binding::tests::rejects_missing_duplicate_stale_and_cross_event_bindings ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_unsupported_custody_survives_stream_and_context_release ... ok
+test verifier_plugins::libevent::monkey_binding::tests::source_unknown_is_reported_per_callback_without_promotion ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_unsupported_executes_policy_and_preserves_existing_cases ... ok
+test verifier_plugins::chunkio::traversal::tests::traversal_rejects_skips_stale_next_wrong_container_and_hidden_macro_changes ... ok
+test verifier_plugins::chunkio::filesystem_chunk_close::tests::filesystem_dispatch_rejects_wrong_arguments_and_release_order ... ok
+test verifier_plugins::libevent::monkey_binding::tests::native_binding_rules_are_executed_and_mutations_fail_closed ... ok
+test verifier_plugins::chunkio::unsupported_close::tests::unsupported_close_policy_rejects_false_and_unknown_predicates ... ok
+test verifier_plugins::libevent::monkey_binding::tests::source_and_contract_mutations_change_verdicts ... ok
+test verifier_plugins::chunkio::unsupported_close::tests::unsupported_backend_truth_tests_cannot_assume_zero_is_excluded ... ok
+test verifier_plugins::chunkio::unsupported_close::tests::unsupported_close_classifies_the_remaining_path_without_discharge ... ok
+test verifier_plugins::chunkio::unmap_wrapper::tests::unmap_rejects_wrong_context_effect_order_and_outcome_mutations ... ok
+test verifier_plugins::chunkio::nested_cleanup::tests::nested_unsupported_requires_matching_source_unknown_kind_and_unique_identity ... ok
+test verifier_plugins::chunkio::unsupported_close::tests::unsupported_close_rejects_domain_splitting_and_changed_partial_effects ... ok
+
+test result: ok. 160 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.23s
+
+     Running tests/contract_consumers.rs (target/debug/deps/contract_consumers-536bdebc471d7229)
+
+running 1 test
+test structural_acceptance_does_not_bypass_consumer_clause_or_observation_coverage ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contract_loader.rs (target/debug/deps/contract_loader-5130689f44b25dd7)
+
+running 10 tests
+test manifest_selection_rejects_unknown_schema_missing_inputs_and_traversal ... ok
+test duplicate_functions_and_inputs_are_rejected_even_when_identical ... ok
+test unsupported_or_incomplete_contracts_fail_atomically ... ok
+test invalid_parameter_bindings_and_types_are_rejected ... ok
+test all_parameter_modes_are_explicit_and_indexed_by_declared_names ... ok
+test loaded_contract_changes_drive_custody_verdicts ... ok
+test certificates_replay_exact_assumptions_and_reject_table_mutation ... ok
+test production_contracts_preserve_the_previous_resource_modes ... ok
+test every_abi_scalar_is_a_borrowed_only_projection ... ok
+test every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/ct_corpus.rs (target/debug/deps/ct_corpus-82edce542ed8903a)
+
+running 4 tests
+test ct_mapping_progress_is_pinned_and_counted ... ok
+test ct16_retains_sequential_implicit_cleanup_control ... ok
+test ct37_retains_sequential_transferred_payload_control ... ok
+test ct_manifest_and_fixture_set_agree_and_mapped_cases_execute ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+
+     Running tests/cycle19_current_command.rs (target/debug/deps/cycle19_current_command-d1c69f4139b4fa8a)
+
+running 1 test
+test current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecars ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-d5868531a7ef9539)
+
+running 20 tests
+test composition_cannot_promote_an_uncertified_safe_label ... ok
+test protocol_frames_are_length_delimited_json_and_reject_trailing_data ... ok
+test protocol_rejects_unknown_fields_instead_of_guessing_a_schema ... ok
+test forged_safe_evidence_is_downgraded_to_unknown ... ok
+test vp02_empty_in_process_evidence_is_rejected_by_the_core ... ok
+test first_party_builtins_are_registered_as_separate_providers ... ok
+test builtin_assertions_cannot_establish_safety ... ok
+test composition_of_unsupported_assertions_stays_unknown ... ok
+test reproducibility_metadata_does_not_establish_semantic_evidence ... ok
+test package_discovery_loads_a_versioned_manifest ... ok
+test missing_disabled_incompatible_and_negative_results_fail_closed ... ok
+test verifier_scope_rejects_unknown_capabilities_and_plugins ... ok
+test vp06_unverified_unsafe_is_unknown_and_cannot_dominate_composition ... ok
+test vp05_nonempty_source_obligations_cannot_silently_skip_providers ... ok
+test extracted_plugins_preserve_manifests_and_fail_closed_for_every_capability ... ok
+test verifier_scope_syntax_resolves_against_the_same_builtin_registry ... ok
+test vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety ... ok
+test process_provider_timeout_is_unknown_and_cannot_issue_a_certificate ... ok
+test vp01_predicate_source_profile_and_capability_mutations_cannot_mint_safety ... ok
+test vp04_vp07_vp08_process_lifecycle_and_payload_budgets ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.02s
+
+     Running tests/first_party_discovery.rs (target/debug/deps/first_party_discovery-88a857582719d8cc)
+
+running 4 tests
+test duplicate_provider_across_source_sets_is_an_error ... ok
+test provider_packages_keep_their_manifest_directory ... ok
+test provider_metadata_is_discovered_in_plugin_id_order ... ok
+test malformed_or_missing_provider_rejects_the_entire_registry ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/libevent_submodule.rs (target/debug/deps/libevent_submodule-8e545e6e6afdb358)
+
+running 1 test
+test libevent_submodule_matches_the_audited_revision ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/module_modes.rs (target/debug/deps/module_modes-01d662dcb0ce6359)
+
+running 4 tests
+test contract_files_compose_with_libraries_and_explicit_executables ... ok
+test declaration_only_modules_have_no_synthetic_entry_or_execution ... ok
+test non_executable_mode_still_checks_bodies_and_preserves_diagnostic_locations ... ok
+test mode_is_explicit_and_entry_cannot_silently_override_it ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/monkey_profile.rs (target/debug/deps/monkey_profile-705e173e98080ca4)
+
+running 5 tests
+test callback_signature_and_declaration_failures_reject_the_whole_profile ... ok
+test duplicate_json_keys_and_set_entries_cannot_disappear_during_deserialization ... ok
+test declared_callback_effects_are_data_and_missing_entries_are_errors ... ok
+test wrapper_roles_explicitly_preserve_opaque_calls_without_signature_constraints ... ok
+test explicit_profile_controls_names_and_callbacks_keep_their_call_allowlist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running tests/nullable_removed.rs (target/debug/deps/nullable_removed-138b05a6199f8427)
+
+running 19 tests
+test releasing_a_selected_alias_does_not_discharge_both_allocations ... ok
+test declared_removal_precondition_is_never_silently_replaced ... ok
+test merged_containment_cannot_choose_a_convenient_owner ... ok
+test conditional_then_unconditional_detach_never_erases_the_double_removal_path ... ok
+test reallocation_does_not_replace_every_possible_old_allocation ... ok
+test conditional_containment_cannot_discharge_a_directly_live_alternative ... ok
+test reallocation_cannot_erase_a_previously_released_alternative ... ok
+test selected_child_alias_cannot_detach_every_possible_child ... ok
+test nullable_removal_certificates_rederive_modes_and_source ... ok
+test storing_a_selected_alias_does_not_transfer_both_allocations ... ok
+test uncertain_selected_release_keeps_unrelated_leak_evidence ... ok
+test null_child_refinement_preserves_another_contained_child ... ok
+test consumed_custody_cannot_be_reused_after_release_or_prior_escape ... ok
+test singleton_aliases_still_transfer_custody_normally ... ok
+test nullable_removal_handles_null_maybe_null_and_nonnull_callers ... ok
+test nullable_old_reallocation_respects_its_explicit_contract ... ok
+test detached_nullable_child_remains_a_caller_obligation ... ok
+test guarded_nonnull_removal_accepts_nullable_entry_and_reordered_forwarding ... ok
+test nullable_summary_cannot_hide_original_child_or_owner_losses ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+
+     Running tests/owned_source_tasks.rs (target/debug/deps/owned_source_tasks-78e59facbc212a16)
+
+running 13 tests
+test worker_allocation_scripts_reject_root_keys_absent_tasks_and_unused_choices ... ok
+test worker_local_allocation_cannot_escape_without_owned_result_accounting ... ok
+test native_owned_buffer_round_trip_preserves_pointer_and_payload ... ok
+test worker_allocates_fresh_result_and_creator_joins_reads_and_drops_it ... ok
+test source_allocation_failure_is_a_recoverable_outcome_without_free ... ok
+test parallel_worker_allocation_order_does_not_change_generation_identity ... ok
+test native_join_failure_does_not_reclaim_environment_or_returned_buffer ... ok
+test child_reads_and_drops_exact_capture_before_scalar_completion ... ok
+test owned_child_drop_precedes_exact_recoverable_error_collection ... ok
+test distinct_owned_captures_survive_partial_child_release_and_second_allocation_failure ... ok
+test worker_can_return_original_capture_on_failure_or_fresh_local_on_success ... ok
+test failed_environment_allocation_and_create_restore_parent_buffer ... ok
+test worker_allocation_failure_cleans_earlier_local_before_error_collection ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/profile_loader.rs (target/debug/deps/profile_loader-7595a13ee2cc90e0)
+
+running 18 tests
+test f1_absent_profile_is_not_found ... ok
+test f3_unknown_schema_version_rejects_the_whole_profile ... ok
+test f4_unknown_fields_reject_the_whole_profile ... ok
+test declared_boolean_field_models_match_the_retained_rust_pairs ... ok
+test the_libevent_api_table_reproduces_the_pre_w2_dispositions ... ok
+test operation_summaries_merge_without_conflict_and_reject_unknown_libraries ... ok
+test the_build_matrix_matches_every_pre_w2_combination ... ok
+test only_public_header_witnesses_keep_substring_needles ... ok
+test f6_substring_needles_without_a_rationale_reject_the_whole_profile ... ok
+test provider_bindings_agree_with_their_manifests ... ok
+test on_disk_provider_manifests_equal_the_archived_pre_discovery_manifests ... ok
+test unknown_forbidden_build_features_never_admit_a_build ... ok
+test f5_broken_internal_references_reject_the_whole_profile ... ok
+test f7_and_f8_pin_failures_reject_the_checkout ... ok
+test declared_pins_match_the_checkouts_and_the_retained_rust_constant ... ok
+test the_shipped_profiles_load_and_are_internally_consistent ... ok
+test sha256_matches_the_published_test_vectors ... ok
+test f9_and_f10_missing_files_and_digest_drift_reject_the_inventory ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-598f27b219292334)
+
+running 2 tests
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/quant_index_contracts.rs (target/debug/deps/quant_index_contracts-19d47fcc66aed88d)
+
+running 7 tests
+test bindings_are_type_local_and_natural_operators_are_checked ... ok
+test shorthand_is_ambiguous_with_two_axes_and_binders_cannot_cross_dimensions ... ok
+test shared_definition_dependencies_are_evaluated_without_exponential_expansion ... ok
+test where_binders_cannot_shadow_visible_runtime_locals ... ok
+test shorthand_and_vector_where_bindings_elaborate_to_dimensioned_values ... ok
+test rejects_effectful_and_nonlinear_where_syntax ... ok
+test rejects_false_cyclic_runtime_and_overflowing_index_bindings ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/source_tasks.rs (target/debug/deps/source_tasks-70f27e5dbb29cbdd)
+
+running 11 tests
+test resolved_spawn_and_join_require_the_checked_source_profile ... ok
+test dynamic_creation_failure_cannot_strand_a_previous_sibling ... ok
+test failed_creation_handler_cannot_drop_an_existing_sibling ... ok
+test second_start_allocation_failure_preserves_the_prior_native_task ... ok
+test empty_scopes_and_uncalled_workers_emit_complete_warning_clean_c ... ok
+test unexpected_native_join_failure_aborts_before_environment_reclamation ... ok
+test result_handlers_collect_siblings_before_rethrowing_exact_worker_errors ... ok
+test allocation_and_native_creation_failure_follow_the_checked_error_edge ... ok
+test worker_errors_and_sequential_copy_results_preserve_exact_outcomes ... ok
+test actual_native_copy_worker_matches_reference_and_retains_scalar_extrema ... ok
+test explicit_creation_recovery_joins_prior_sibling_on_each_dynamic_outcome ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/toolchain_compatibility.rs (target/debug/deps/toolchain_compatibility-b8579fc53c5e1597)
+
+running 2 tests
+test missing_clang_child ... ok
+test missing_explicit_clang_fails_closed ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/w3_evidence_v2.rs (target/debug/deps/w3_evidence_v2-481aa57c224ad0a9)
+
+running 8 tests
+test explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate ... ok
+test task_envelope_cannot_be_rebound_and_incomplete_derivations_stay_unknown ... ok
+test composition_requires_exact_nonempty_inventory ... ok
+test complete_scope_dispatch_replays_observations_and_retains_claim_bounds ... ok
+test replay_requires_declared_trust_and_observed_run_bounds ... ok
+test malicious_v2_proposals_cannot_change_the_denominator_or_replay ... ok
+test observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds ... ok
+test out_of_process_v2_conformance_replays_and_rejects_a_forged_observation ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.73s
+
+     Running tests/workspace_layering.rs (target/debug/deps/workspace_layering-0c8447296533dfbb)
+
+running 11 tests
+test compiler_uses_audit_only_for_examples ... ok
+test whole_program_qualified_apis_are_frontend_owned ... ok
+test concurrent_kernel_compatibility_paths_are_core_types ... ok
+test loop_and_ledger_certificates_are_core_owned ... ok
+test reactor_models_are_core_owned_and_adapter_api_is_preserved ... ok
+test sequential_kernel_compatibility_paths_are_core_types ... ok
+test trusted_replay_and_derivation_are_verification_owned ... ok
+test reactor_adapter_enum_supports_external_variant_imports ... ok
+test generic_driver_and_custody_facades_share_the_extracted_types ... ok
+test core_workspace_does_not_depend_on_provider_implementations ... ok
+test workspace_dependencies_point_strictly_downward ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_contract-176de86ad5d95075)
+
+running 6 tests
+test contract_observation::tests::unsupported_and_overflowing_predicates_fail_closed ... ok
+test contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries ... ok
+test contract_observation::tests::native_predicates_control_the_verdict ... ok
+test contract_observation::cleanup_observation_tests::review_r07_public_observer_checks_minimum_facts ... ok
+test contract_observation::cleanup_observation_tests::native_delete_observations_check_eligibility_arguments_and_frames ... ok
+test contract_observation::cleanup_observation_tests::native_cleanup_observations_execute_every_policy_predicate ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/boolean_frame_policy.rs (target/debug/deps/boolean_frame_policy-19aa633cf88154f3)
+
+running 3 tests
+test policy_cannot_authorize_empty_or_modeled_field_writes ... ok
+test policy_cannot_hide_unmentioned_writes_behind_a_false_footprint_predicate ... ok
+test generic_nominal_frame_policy_checks_ordered_metadata_results ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/chunk_policy_records.rs (target/debug/deps/chunk_policy_records-ac86cab342a47790)
+
+running 3 tests
+test incomplete_or_inconsistent_paths_cannot_hide_boolean_cases ... ok
+test new_transport_records_reject_unsupported_fields ... ok
+test declared_paths_can_be_evaluated_without_claiming_source_provenance ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_core-827ee9186b99e1af)
+
+running 177 tests
+test advanced_control::tests::cancellation_is_deferred_to_a_safe_point_and_cleans_lifo ... ok
+test advanced_control::tests::fallible_cleanup_on_normal_return_has_a_distinct_outcome ... ok
+test advanced_control::tests::double_error_preserves_the_primary_error ... ok
+test advanced_control::tests::multi_shot_shared_capture_can_be_invoked_repeatedly ... ok
+test advanced_control::tests::owned_capture_is_linear_and_one_shot ... ok
+test advanced_control::tests::multi_shot_and_resumable_handlers_reject_owned_capture ... ok
+test advanced_control::tests::normal_cleanup_destroys_each_resource_exactly_once ... ok
+test chunk_lifecycle::tests::delete_failure_has_an_explicit_partial_state_that_can_still_be_destroyed ... ok
+test chunk_lifecycle::tests::close_records_only_an_auditable_file_delete_request ... ok
+test chunk_lifecycle::tests::context_destroy_runs_the_nested_stream_chunk_backend_chain ... ok
+test chunk_lifecycle::tests::delete_stream_content_is_not_a_stream_destructor ... ok
+test chunk_lifecycle::tests::settled_wrapper_obligations_allow_teardown ... ok
+test chunk_lifecycle::tests::failed_open_does_not_create_list_or_counter_obligations ... ok
+test c_emit::tests::emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels ... ok
+test cleanup_lowering::tests::invalid_normal_leak_is_rejected ... ok
+test chunk_lifecycle::tests::teardown_rejects_lock_busy_task_route_and_transaction_obligations ... ok
+test cleanup_lowering::tests::cleanup_is_lifo_and_releases_each_identity_once ... ok
+test cleanup_lowering::tests::resource_identity_cannot_be_reacquired_after_release ... ok
+test cleanup_lowering::tests::normal_transfer_is_explicit_and_not_cleaned_locally ... ok
+test cleanup_lowering::tests::partial_initialization_uses_edge_specific_cleanup ... ok
+test concurrency::tests::conflicting_unordered_accesses_report_a_race ... ok
+test concurrency::tests::active_child_event_kinds_and_postjoin_parent_events_are_preserved ... ok
+test concurrency::tests::atomic_to_atomic_access_is_not_a_data_race ... ok
+test concurrency::tests::a_guard_held_across_destruction_cannot_revive_the_generation ... ok
+test concurrency::tests::destroyed_generation_rejects_transfer ... ok
+test concurrency::tests::destroyed_generation_rejects_repeat_destruction ... ok
+test concurrency::tests::certificates_name_trusted_model_authority_without_removing_guard_semantics ... ok
+test concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal ... ok
+test concurrency::tests::destruction_without_custody_is_rejected_and_leaves_the_generation_live ... ok
+test concurrency::tests::destruction_requires_ordered_accesses_and_closed_other_guards ... ok
+test concurrency::tests::destroyed_generation_rejects_all_access_kinds ... ok
+test concurrency::tests::different_mutexes_do_not_hide_a_race ... ok
+test concurrency::tests::future_permissions_and_spawned_access_cannot_revive_destroyed_generation ... ok
+test concurrency::tests::join_requires_quiescence_and_all_handles_are_linear ... ok
+test concurrency::tests::joined_child_cannot_execute_any_event ... ok
+test concurrency::tests::join_orders_prejoin_access_and_allows_destruction_then_distinct_generation ... ok
+test concurrency::tests::lock_capabilities_and_rank_order_are_linear ... ok
+test concurrency::tests::nested_join_requires_child_quiescence_and_consumes_handle_once ... ok
+test concurrency::tests::refused_join_preserves_child_authority_and_outstanding_duties ... ok
+test concurrency::tests::outstanding_child_custody_blocks_parent_destruction ... ok
+test concurrency::tests::shared_reads_with_conserved_permissions_are_accepted ... ok
+test concurrency::tests::synchronized_transfer_moves_unique_destruction_custody ... ok
+test concurrency::tests::joined_child_event_kinds_each_reject_with_their_own_terminal_diagnostic ... ok
+test concurrency::tests::terminal_tasks_cannot_receive_custody_or_unlock ... ok
+test concurrency::tests::same_mutex_establishes_happens_before ... ok
+test error_region::tests::discharge_restores_baseline_in_lifo_order ... ok
+test error_region::tests::fallible_cleanup_is_rejected ... ok
+test error_region::tests::cleanup_capability_must_be_consumed_exactly_once ... ok
+test error_region::tests::error_only_credit_abandonment_is_explicit ... ok
+test error_region::tests::explicit_drop_removes_the_cleanup_action ... ok
+test error_region::tests::live_obligations_require_quant_open_and_discharge ... ok
+test error_region::tests::nested_cleanup_order_is_inner_then_outer_and_lifo_within_each ... ok
+test error_region::tests::rethrow_requires_prior_discharge ... ok
+test error_region::tests::payload_transfer_is_excluded_from_cleanup ... ok
+test error_region::tests::partial_initialization_builds_path_specific_packs ... ok
+test error_region::tests::wrong_and_outside_quant_open_are_rejected ... ok
+test event_reactor::tests::descriptor_custody_is_independent_of_any_library_profile ... ok
+test event_reactor::tests::generic_reactor_rejects_stale_generations_and_missing_callback_authority ... ok
+test event_reactor::tests::generic_callback_custody_requires_explicit_profile_selection ... ok
+test executable_model::tests::all_usage_grades_apply_their_interval_bounds ... ok
+test event_reactor::tests::profile_selection_does_not_grant_cross_thread_authority ... ok
+test executable_model::tests::a_typed_error_cleans_partial_initialization_in_lifo_order ... ok
+test executable_model::tests::construction_rejects_duplicate_static_bindings ... ok
+test executable_model::tests::duplicate_acquire_is_typed_and_original_resource_is_cleaned_once ... ok
+test executable_model::tests::exact_usage_obligation_fails_as_a_typed_error ... ok
+test executable_model::tests::every_small_step_preserves_the_identity_partition ... ok
+test executable_model::tests::invalid_drop_enters_cleanup_without_double_release ... ok
+test executable_model::tests::returns_a_natural_index_after_satisfying_usage_and_ownership ... ok
+test index::tests::cross_dimension_addition_is_rejected ... ok
+test index::tests::same_dimension_addition_is_constructible ... ok
+test index::tests::scaling_is_constant_by_construction ... ok
+test inference::tests::normalization_makes_principal_results_permutation_unique ... ok
+test inference::tests::infers_and_independently_checks_the_principal_product ... ok
+test inference::tests::rejects_a_satisfying_but_nonprincipal_certificate ... ok
+test inference::tests::rejects_unsatisfiable_and_ambiguous_inputs ... ok
+test native_concurrency::tests::every_deferred_concurrency_feature_is_classified ... ok
+test library_custody::tests::arena_destructor_cascades_but_queue_and_publication_fail_closed ... ok
+test library_custody::tests::repeated_retains_by_one_holder_are_counted ... ok
+test native_concurrency::tests::platform_gaps_are_failures_not_inferences ... ok
+test ownership::tests::allocate_use_and_drop_reaches_empty_normal_exit ... ok
+test ownership::tests::branch_states_must_agree ... ok
+test ownership::tests::live_vector_is_componentwise_ledger_sum ... ok
+test ownership::tests::move_preserves_identity_and_footprint ... ok
+test ownership::tests::mutable_borrow_is_exclusive_and_permits_write ... ok
+test native_concurrency::tests::native_workers_preserve_transfer_cleanup_and_observation ... ok
+test ownership::tests::rejects_double_drop ... ok
+test ownership::tests::rejects_normal_path_leak ... ok
+test ownership::tests::rejects_move_during_shared_borrow ... ok
+test ownership::tests::rejects_owned_copy ... ok
+test ownership::tests::multiple_shared_borrows_may_overlap ... ok
+test ownership::tests::rejects_use_after_move ... ok
+test ownership::tests::transfer_out_is_not_a_normal_path_leak ... ok
+test native_concurrency::tests::wrong_custody_and_incomplete_cleanup_fail ... ok
+test ownership::tests::shared_borrow_ends_before_drop ... ok
+test research_closure::tests::cycle_17_promotes_every_cycle_16_research_boundary ... ok
+test research_closure::tests::closes_the_combined_language_with_all_ledgers_discharged ... ok
+test research_closure::tests::target_mismatch_prevents_a_closure_certificate ... ok
+test research_closure::tests::undestroyed_concurrent_custody_is_not_closed ... ok
+test research_closure::tests::a_concurrent_race_prevents_a_closure_certificate ... ok
+test resource_accounting::tests::ledger_morphisms_compose_only_at_equal_endpoints ... ok
+test resource_accounting::tests::unbounded_loop_refuses_a_finite_resource_claim ... ok
+test resource_accounting::tests::maximum_counts_cannot_forge_exact_final_custody ... ok
+test resource_accounting::tests::positive_and_negative_net_loops_have_checked_invariants ... ok
+test resource_accounting::tests::loop_ledger_morphisms_separate_exact_and_maximum_deltas ... ok
+test resource_flow::tests::arithmetic_overflow_is_explicit ... ok
+test resource_flow::tests::bounded_loop_alias_is_exact_repetition_not_a_maximum_count ... ok
+test resource_flow::tests::bounds_are_checked_on_every_axis ... ok
+test resource_flow::tests::branch_join_rejects_different_post_live_states ... ok
+test resource_accounting::tests::zero_net_maximum_covers_every_admitted_early_exit ... ok
+test resource_accounting::tests::evidence_mutation_never_retains_an_exact_final_custody_claim ... ok
+test resource_flow::tests::function_summary_composes_at_call_site ... ok
+test resource_flow::tests::mutually_exclusive_branches_join_componentwise ... ok
+test resource_flow::tests::sequential_acquisitions_add_live_and_total ... ok
+test resource_flow::tests::release_then_reacquire_uses_maximum_peak_not_sum ... ok
+test resource_accounting::tests::exact_and_maximum_evidence_are_distinct_across_the_r06_matrix ... ok
+test scoped_tasks::tests::failed_spawn_restores_exact_moves_without_disturbing_prior_sibling ... ok
+test scoped_tasks::tests::creator_and_completion_are_required_for_linear_join ... ok
+test resource_flow::tests::bounded_zero_net_loop_scales_only_total ... ok
+test scoped_tasks::tests::completion_requires_exact_live_resources_without_duplicates_or_foreign_ids ... ok
+test scoped_tasks::tests::completion_retains_resources_until_creator_join_and_collects_error ... ok
+test scoped_tasks::tests::foreign_scope_and_reservation_operations_cannot_steal_custody ... ok
+test scoped_tasks::tests::pending_nested_scopes_and_descendants_block_completion ... ok
+test scoped_tasks::tests::invalid_capture_and_commit_are_atomic_and_generation_ids_never_reuse ... ok
+test scoped_tasks::tests::completed_and_joined_children_reject_every_ledger_operation ... ok
+test scoped_tasks::tests::typed_owned_completion_cannot_substitute_or_omit_its_payload ... ok
+test task_execution::tests::collecting_worker_error_is_distinct_from_propagation ... ok
+test task_execution::tests::task_buffer_namespaces_do_not_wrap_or_reuse_zero_generation ... ok
+test task_execution::tests::absence_and_consumption_of_handle_are_checked_on_every_path ... ok
+test task_execution::tests::checked_creation_outcomes_and_copied_scalar_reference_are_distinct ... ok
+test task_execution::tests::infallible_unit_result_preserves_unit_type_and_reference_value ... ok
+test task_execution::tests::second_creation_failure_cannot_strand_a_sibling ... ok
+test task_execution::tests::infallible_result_extraction_keeps_an_existing_sibling_live_until_explicit_join ... ok
+test translation_validation::tests::certificate_retains_error_trace ... ok
+test task_execution::tests::joined_worker_error_keeps_its_exact_tag ... ok
+test task_execution::tests::declared_rows_permit_unused_operations_and_multiple_error_variants ... ok
+test task_execution::tests::all_definitions_types_rows_and_source_spans_are_required ... ok
+test translation_validation::tests::rejects_a_target_observation_that_drops_cleanup ... ok
+test typed_errors::tests::error_free_boundary_rejects_a_remaining_error_exit ... ok
+test translation_validation::tests::validates_all_three_observations ... ok
+test task_execution::tests::infallible_extraction_rejects_error_rows_consumed_or_wrong_slots_and_type_mismatch ... ok
+test typed_errors::tests::catch_without_cleanup_accepts_only_the_entry_ledger ... ok
+test typed_errors::tests::branch_and_catch_normal_joins_are_checked ... ok
+test typed_errors::tests::error_post_ledgers_remain_path_sensitive ... ok
+test typed_errors::tests::raise_has_no_normal_exit_and_preserves_the_ledger ... ok
+test typed_errors::tests::question_mark_preserves_each_declared_post_ledger ... ok
+test typed_errors::tests::propagated_error_must_be_in_the_callers_effect_row ... ok
+test translation_validation::tests::exhaustive_small_corpus_preserves_source_cfg_semantics ... ok
+test typed_errors::tests::raise_must_be_declared_and_present_in_the_effect_row ... ok
+test typed_errors::tests::qualitative_effects_are_checked_separately_from_resource_bounds ... ok
+test usage::tests::application_checks_arity ... ok
+test usage::tests::affine_allows_loss_but_rejects_duplication ... ok
+test usage::tests::application_substitutes_parameter_usage_pointwise ... ok
+test usage::tests::erased_variable_cannot_occur_at_runtime ... ok
+test usage::tests::branch_join_is_the_least_enclosing_interval ... ok
+test usage::tests::interval_operations_follow_the_usage_semiring ... ok
+test usage::tests::exact_one_rejects_loss_and_duplication ... ok
+test usage::tests::lambda_binders_respect_shadowing_erasure_and_branch_obligations ... ok
+test usage::tests::many_allows_weakening_and_contraction ... ok
+test usage::tests::relevant_forbids_weakening_but_allows_contraction ... ok
+test usage::tests::lambda_replication_scales_captures_after_checking_the_binder ... ok
+test usage::tests::replicated_affine_function_cannot_duplicate_its_parameter ... ok
+test weak_memory::tests::modification_order_must_be_total_per_atomic_object ... ok
+test weak_memory::tests::unordered_non_atomic_conflict_is_rejected ... ok
+test weak_memory::tests::release_acquire_execution_establishes_happens_before ... ok
+test weak_memory::tests::relaxed_store_buffering_weak_outcome_is_permitted ... ok
+test weak_memory::tests::wm03_sc_modification_order_and_mixed_load_sources ... ok
+test weak_memory::tests::wm05_mutex_prefix_can_remain_held_but_cannot_have_two_owners ... ok
+test weak_memory::tests::wm04_overlapping_release_sequences_require_each_head ... ok
+test weak_memory::tests::wm04_release_sequence_continues_and_foreign_store_terminates_it ... ok
+test weak_memory::tests::wm01_plain_load_and_store_order_legality_table ... ok
+test weak_memory::tests::wm02_each_coherence_direction_rejects_reversal_and_accepts_forward_order ... ok
+test weak_memory::tests::wm05_valid_mutex_handoff_checks_ownership_order_and_required_edges ... ok
+test resource_flow::tests::generated_valid_traces_match_composed_summaries ... ok
+test weak_memory::tests::wm03_all_sc_store_buffering_orders_and_outcomes_match_serial_execution ... ok
+test task_execution::tests::finite_outcome_exploration_exhaustion_rejects_instead_of_sampling_success ... ok
+test c_emit::tests::compiled_instrumented_c_matches_source_and_cfg ... ok
+test translation_validation::tests::exhaustive_emitted_c_corpus_passes_available_native_sanitizers ... ok
+
+test result: ok. 177 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.83s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_frontend-c169665342c5b477)
+
+running 37 tests
+test check::tests::rejects_unknown_named_dimension ... ok
+test frontend::tests::rejects_invalid_and_unsupported_usage_annotations ... ok
+test frontend::tests::classifies_parameter_types_for_typed_source_ir ... ok
+test frontend::tests::reports_duplicate_and_unknown_names_at_source_spans ... ok
+test frontend::tests::retains_function_contracts_as_structured_source ... ok
+test frontend::tests::maps_every_existing_semantic_boundary_to_a_source_diagnostic ... ok
+test frontend::tests::rejects_unbalanced_and_unterminated_syntax ... ok
+test frontend::tests::review_r04_retains_result_annotation_and_profile ... ok
+test frontend::tests::review_r04_preserves_quantitative_result_comparison_syntax ... ok
+test check::tests::allows_forward_dimension_references ... ok
+test check::tests::validates_named_and_count_dimensions ... ok
+test frontend::tests::concurrency_header_binders_have_body_local_symbol_identity ... ok
+test frontend::tests::rejects_malformed_function_contract_clauses ... ok
+test frontend::tests::elaborates_names_and_attributes_statements_to_passes ... ok
+test check::tests::locates_the_declaration_that_failed_validation ... ok
+test lexer::tests::distinguishes_lifetimes_from_character_literals ... ok
+test lexer::tests::rejects_unterminated_comment ... ok
+test lexer::tests::tokenizes_literals_comments_and_compound_symbols ... ok
+test frontend::tests::preserves_concrete_parameter_usage_grades_and_spans ... ok
+test parser::tests::rejects_variable_multiplication_as_a_declaration_start ... ok
+test parser::tests::parses_and_pretty_prints_initial_declarations ... ok
+test frontend::tests::parses_complete_golden_surface_and_preserves_exact_text ... ok
+test whole_program::tests::local_ownership_failure_is_reported_at_the_function_span ... ok
+test whole_program::tests::callee_effects_must_fit_the_callers_declared_row ... ok
+test whole_program::tests::recursive_scc_requires_an_explicit_contract ... ok
+test frontend::tests::concurrency_binders_do_not_hide_unresolved_inputs_or_escape_their_body ... ok
+test frontend::tests::unconditional_declaration_checks_report_the_offending_span ... ok
+test whole_program::tests::owned_call_parameters_cannot_alias_one_identity ... ok
+test whole_program::tests::supplied_usage_contract_cannot_override_the_source_annotation ... ok
+test whole_program::tests::recursive_post_fixed_summary_is_accepted ... ok
+test whole_program::tests::checks_an_acyclic_whole_program_and_preserves_cfg_observation ... ok
+test whole_program::tests::recursive_summary_must_cover_one_unfolding ... ok
+test whole_program::tests::consumed_parameter_transfers_the_same_identity_across_a_call ... ok
+test frontend::tests::classifies_all_sequential_statement_families ... ok
+test whole_program::tests::returned_parameter_preserves_identity_for_the_caller ... ok
+test frontend::tests::review_r05_checks_axes_even_without_quantitative_types ... ok
+test whole_program::tests::source_contract_clauses_cannot_be_bypassed_by_supplied_semantics ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/owned_tasks.rs (target/debug/deps/owned_tasks-19d228f196948723)
+
+running 8 tests
+test actual_source_moves_return_the_original_generation_and_failed_create_restores_it ... ok
+test explicit_second_allocation_failure_releases_prior_owner ... ok
+test two_owned_inputs_return_one_original_and_release_the_other_on_every_path ... ok
+test raw_ir_cannot_forge_scalar_access_to_owned_identity_or_skip_its_drop ... ok
+test leaf_allocation_is_checked_while_owned_root_results_and_uncalled_bad_bodies_reject ... ok
+test implicit_copy_wrong_capture_types_and_unquantified_owned_inputs_reject ... ok
+test moved_binding_never_revives_when_join_returns_custody_under_a_new_name ... ok
+test ownership_is_accounted_on_creation_allocation_and_worker_error_exits ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/result_match_syntax.rs (target/debug/deps/result_match_syntax-81f79ec02c00a78e)
+
+running 9 tests
+test existing_result_scrutinee_resolves_before_same_name_arm_binders ... ok
+test canonical_spawn_match_preserves_complete_scrutinee_patterns_and_arms ... ok
+test duplicate_or_missing_arms_remain_visible_for_exhaustiveness_checker ... ok
+test nested_match_and_scope_shadowing_keep_each_binder_identity ... ok
+test direct_join_match_is_resolved_without_implicit_propagation ... ok
+test result_arm_bindings_neither_leak_nor_resolve_their_own_scrutinee ... ok
+test arm_binders_cannot_impersonate_scope_or_worker_roles ... ok
+test unsupported_patterns_and_compound_scrutinees_are_retained_without_classification ... ok
+test nested_match_metadata_indexes_one_canonical_typed_tree ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_tasks.rs (target/debug/deps/source_tasks-99c293f81211f6a8)
+
+running 11 tests
+test detection_covers_uncalled_and_empty_scopes_without_admitting_other_forms ... ok
+test thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block ... ok
+test independent_source_and_symbol_metadata_check_rejects_forgery ... ok
+test same_name_handles_and_empty_scope_binders_keep_exact_identities ... ok
+test direct_join_propagation_and_infallible_unit_discard_are_supported ... ok
+test scalar_copy_source_lowers_to_dynamic_creation_and_explicit_collection ... ok
+test declared_error_family_and_unused_effect_permissions_are_preserved ... ok
+test declared_worker_error_is_preserved_as_a_distinct_outcome ... ok
+test whole_statement_consumption_rejects_ignored_suffixes_and_multiple_tasks ... ok
+test core_rejects_all_path_handle_and_result_obligations_from_actual_source ... ok
+test type_effect_capture_and_all_definition_gates_remain_closed ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_recovery.rs (target/debug/deps/task_recovery-74ff4673148b49fe)
+
+running 6 tests
+test match_error_arm_can_precede_success_and_one_arm_can_continue ... ok
+test both_arms_continue_without_exporting_arm_locals_or_inventing_phi_values ... ok
+test failed_second_create_can_join_prior_sibling_and_recover ... ok
+test malformed_patterns_scrutinees_and_unhandled_custody_fail_closed ... ok
+test direct_join_and_existing_result_matches_preserve_worker_error_tags ... ok
+test nested_handlers_and_same_name_binders_keep_their_lexical_identity ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_syntax.rs (target/debug/deps/task_syntax-a00a8f20fcb20208)
+
+running 8 tests
+test repeated_capture_syntax_is_retained_without_fabricating_custody_validation ... ok
+test malformed_task_and_capture_grammar_is_rejected ... ok
+test shadowed_handle_binders_are_distinct_and_join_resolves_the_live_declaration ... ok
+test ordered_captures_and_share_place_trees_retain_exact_spans ... ok
+test unknown_capture_index_share_and_handle_names_are_not_erased ... ok
+test initializer_references_precede_its_new_binder_and_assignment_does_not_rebind ... ok
+test nested_scopes_resolve_by_identity_and_inner_binding_does_not_escape ... ok
+test scope_and_worker_roles_cannot_be_satisfied_by_other_visible_names ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_schemas-d251a58e9aebf544)
+
+running 4 tests
+test digest::tests::matches_published_vectors ... ok
+test obligation::tests::duplicate_obligation_identifiers_are_rejected ... ok
+test obligation::tests::obligation_identifiers_are_deterministic_and_distinct ... ok
+test obligation::tests::digests_are_deterministic_and_input_sensitive ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/boolean_result_abi.rs (target/debug/deps/boolean_result_abi-5437bd330b422cba)
+
+running 2 tests
+test integer_wire_records_keep_their_previous_shape ... ok
+test unit_inputs_bind_result_kind_version_and_digest_namespace ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/plugin_limit_kinds.rs (target/debug/deps/plugin_limit_kinds-7df7d7975bb70345)
+
+running 4 tests
+test an_unknown_manifest_field_is_still_rejected ... ok
+test declared_kinds_round_trip_and_are_ordered ... ok
+test the_default_limit_declaration_is_empty_and_omitted_from_the_wire ... ok
+test malformed_or_duplicated_limit_kinds_are_rejected ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reactor_records.rs (target/debug/deps/reactor_records-065b27f307c1bf2f)
+
+running 4 tests
+test callback_wire_keeps_unsupported_versions_and_empty_lists_for_consumer_validation ... ok
+test callback_wire_round_trip_preserves_explicit_values_and_duplicate_entries ... ok
+test callback_wire_rejects_unknown_modes_numeric_overflow_and_duplicate_object_keys ... ok
+test callback_wire_requires_every_field_and_rejects_unknown_fields_at_each_level ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/schema_canonicalization.rs (target/debug/deps/schema_canonicalization-6975c8d6176a3c8a)
+
+running 3 tests
+test task_and_witness_modules_use_ordered_containers_only ... ok
+test observation_values_preserve_full_i128_range_in_tagged_witnesses ... ok
+test canonical_serialization_is_byte_stable_across_insertion_orders ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_verification-e948dbe71134be13)
+
+running 13 tests
+test obligation_derivation::tests::observation_derivation_requires_a_declared_contract ... ok
+test obligation_derivation::tests::duplicate_contract_names_are_not_resolved_by_last_write_wins ... ok
+test obligation_derivation::tests::reserved_capabilities_have_no_derivation ... ok
+test obligation_derivation::tests::observation_trust_preserves_explicit_caller_refusal ... ok
+test witness_replay::tests::an_empty_schedule_cannot_stand_in_for_a_nonempty_inventory ... ok
+test obligation_derivation::tests::source_import_never_hides_unknown_effects_or_control_flow ... ok
+test witness_replay::tests::honest_lifecycle_witness_discharges_every_obligation ... ok
+test obligation_derivation::tests::unclassifiable_constructs_make_the_derivation_incomplete ... ok
+test witness_replay::tests::a_schedule_that_leaves_a_resource_live_is_rejected ... ok
+test obligation_derivation::tests::lifecycle_derivation_is_deterministic_but_source_import_is_incomplete ... ok
+test witness_replay::tests::observed_agreement_is_checked_against_core_predicates ... ok
+test witness_replay::tests::every_mutation_is_rejected_with_a_distinct_reason ... ok
+test obligation_derivation::tests::any_identity_change_changes_the_task_digest ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generic_driver.rs (target/debug/deps/generic_driver-a3b0aa0b9f9e5d21)
+
+running 5 tests
+test generic_model_import_retains_declared_mechanism_and_revision_gates ... ok
+test generic_lifecycle_import_requires_a_complete_declared_operation_inventory ... ok
+test explicit_registry_never_skips_requested_verification_or_unchecked_contracts ... ok
+test sequential_source_compiles_with_only_an_explicit_empty_registry ... ok
+test owned_task_source_uses_the_same_checked_kernel_without_compiler_adapters ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/generic_source.rs (target/debug/deps/generic_source-42b3fb61b578477c)
+
+running 4 tests
+test counter_contract_needs_no_compiler_or_provider_adapter ... ok
+test nested_field_release_preserves_root_and_order_without_provider_types ... ok
+test configured_cleanup_retains_failure_state_instead_of_assuming_discharge ... ok
+test list_replay_checks_both_neighbor_alias_cases_and_helper_identity ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running tests/reactor_callback.rs (target/debug/deps/reactor_callback-f43ec9d300d06d2d)
+
+running 7 tests
+test inventory_is_complete_generation_exact_and_duplicate_free ... ok
+test conflicting_duplicate_payload_permissions_are_rejected ... ok
+test empty_inventory_does_not_hide_other_model_obligations ... ok
+test proposal_cannot_change_any_declared_summary_field ... ok
+test every_enum_value_and_multiple_assignments_round_trip ... ok
+test partial_assignment_inventory_is_rejected ... ok
+test exact_declared_records_reproduce_model_certificate_and_diagnostics ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_effect.rs (target/debug/deps/source_effect-42833ba4bdcb35bc)
+
+running 9 tests
+test real_c_prestates_and_contract_are_recomputed ... ok
+test void_contracts_and_proposals_cannot_forge_a_scalar_result_or_record_identity ... ok
+test forged_paths_frames_and_source_assumptions_are_rejected ... ok
+test a_changed_header_expansion_retires_the_prior_task_and_its_witness ... ok
+test integer_profile_bytes_and_missing_return_rejection_are_preserved ... ok
+test void_field_source_has_explicit_unit_abi_and_two_checked_states ... ok
+test actual_source_build_and_contract_snapshots_separate_tasks ... ok
+test target_substitution_and_unsupported_selected_functions_reject ... ok
+test ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.55s
+
+     Running tests/source_effect_helper_target.rs (target/debug/deps/source_effect_helper_target-f493dc1702becc7e)
+
+running 1 test
+test helper_target_mismatch_is_rejected_in_isolated_process ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s
+
+     Running tests/source_effect_mutations.rs (target/debug/deps/source_effect_mutations-388a06280eaee0df)
+
+running 11 tests
+test legacy_v1_evidence_is_preserved_as_non_certifying ... ok
+test checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject ... ok
+test the_capability_derives_exactly_one_obligation_and_refuses_every_other_task ... ok
+test a_forged_witness_with_a_recomputed_binding_is_refused_in_both_directions ... ok
+test mismatched_permuted_and_foreign_obligation_identifiers_reject ... ok
+test a_duplicated_witness_never_covers_a_second_obligation ... ok
+test echoed_labels_and_semantically_wrong_paths_leave_the_obligation_unknown ... ok
+test oversized_and_degenerate_evidence_is_bounded_and_never_panics ... ok
+test substituted_source_projections_and_declared_assumptions_reject ... ok
+test analyzed_scope_and_imported_function_set_retire_the_task_and_its_witness ... ok
+test no_summary_or_evidence_cache_survives_a_semantically_changed_input ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.99s
+
+     Running tests/source_effect_obligations.rs (target/debug/deps/source_effect_obligations-dd3e235fba28209a)
+
+running 6 tests
+test a_provider_cannot_remove_or_substitute_a_requested_obligation ... ok
+test indirect_calls_and_callback_fields_stay_unknown ... ok
+test unreachable_statements_are_imported_and_unmodeled_dead_code_fails_closed ... ok
+test scope_exclusions_leave_definitions_outside_the_derived_inventory ... ok
+test deleting_a_lifecycle_relevant_statement_changes_the_derived_obligation_set ... ok
+test nested_calls_in_returns_arguments_conditions_and_initializers_stay_unknown ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.08s
+
+     Running tests/source_profile_boundary.rs (target/debug/deps/source_profile_boundary-0b38b5c31499a50e)
+
+running 6 tests
+test direct_profiles_reject_vacuous_or_undocumented_witness_checks ... ok
+test direct_profiles_reject_ambiguous_or_malformed_audited_inventories ... ok
+test a_failed_required_witness_or_source_identity_never_returns_partial_evidence ... ok
+test directly_constructed_digest_witness_requires_an_audited_file ... ok
+test valid_declared_digest_and_substring_witnesses_keep_exact_inventory ... ok
+test json_loader_and_direct_derivation_agree_on_witness_structure ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_verifier_host-030b8a21026d460e)
+
+running 1 test
+test tests::conflicting_assumptions_make_composition_unknown ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/diagnostic_attribution.rs (target/debug/deps/diagnostic_attribution-bf32b753ef712774)
+
+running 5 tests
+test maximum_valid_plugin_and_local_component_lengths_are_accepted ... ok
+test a_valid_diagnostic_never_supplies_missing_evidence_authority ... ok
+test invalid_codes_are_rejected_before_v1_verdict_handling ... ok
+test exact_selected_provider_and_ascii_local_codes_are_preserved ... ok
+test invalid_codes_are_rejected_before_v2_verdict_handling ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-9bb5f23d98487093)
+
+running 12 tests
+test the_enforceable_kind_inventory_is_explicit ... ok
+test an_undeclared_cpu_budget_is_derived_and_labeled ... ok
+test the_default_profile_is_the_unenforced_legacy_one ... ok
+test the_profile_is_target_qualified ... ok
+test output_flooding_beyond_the_cap_is_bounded ... ok
+test a_declared_but_unenforceable_limit_kind_is_refused ... ok
+test a_well_behaved_provider_completes_under_the_enforced_profile ... ok
+test memory_growth_beyond_the_declared_limit_is_bounded ... ok
+test a_wall_clock_hang_is_killed_within_tolerance ... ok
+test a_cpu_spin_is_killed_by_the_declared_cpu_limit ... ok
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+test descendants_do_not_outlive_the_execution ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.80s
+
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-b3f41af38a32f0ba)
+
+running 3 tests
+test standalone_host_refuses_v1_assertions_with_empty_and_nonempty_coverage ... ok
+test zero_provider_registry_is_independent_and_fail_closed ... ok
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s
+
+     Running unittests src/main.rs (target/debug/deps/qcorec-6a396225e63143a1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-1423df8803419c7c)
+
+running 6 tests
+test plugin_discovery_errors_are_reported_without_builtin_fallback ... ok
+test cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output ... ok
+test core_cli_works_without_clang ... ok
+test cli_recovery_joins_first_child_after_second_creation_fails ... ok
+test cli_names_owned_profile_and_emits_real_buffer_transfer ... ok
+test cli_checks_emits_and_executes_native_source_tasks ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/plugin_packages.rs (target/debug/deps/plugin_packages-44783fe3704e9e69)
+
+running 6 tests
+test package_symlinks_cannot_escape_the_package_root ... ok
+test package_tampering_never_updates_the_selection_file ... ok
+test invalid_configuration_has_no_default_registry_fallback ... ok
+test configured_source_scope_dispatches_only_the_enabled_process ... ok
+test package_selection_is_explicit_pinned_and_reversible ... ok
+test discovery_order_is_independent_of_selection_order ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_audit
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_c_gateway
+
+running 8 tests
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 231) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 169) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 153) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 17) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 163) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 237) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 159) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 25) - compile fail ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_compiler
+
+running 3 tests
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 14) - compile fail ... ok
+test compiler/src/verifier_plugins/chunkio/chunk_source.rs - verifier_plugins::chunkio::chunk_source::ChunkSourceSummary (line 19) - compile fail ... ok
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 22) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_contract
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_core
+
+running 1 test
+test crates/qcore-core/src/scoped_tasks.rs - scoped_tasks (line 8) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/qcore-core/src/task_execution.rs - task_execution::CheckedTaskModule (line 162) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 0.19s; merged doctests compilation took 0.16s
+   Doc-tests qcore_frontend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_schemas
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_verification
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_verifier_host
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

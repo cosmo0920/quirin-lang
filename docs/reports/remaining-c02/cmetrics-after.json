@@ -1,0 +1,585 @@
+{
+  "diagnostic_counts": {
+    "leak": 2,
+    "unknown_alias": 2,
+    "unsupported": 35
+  },
+  "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
+  "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
+  "schema_version": 1,
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
+  "source_contracts": {
+    "checked_function_contracts": 1,
+    "configuration": {
+      "bindings": [
+        {
+          "contract": "module contract;\n\n// Pinned cmt_counter_allow_reset sets allow_reset and returns no scalar value.\n// The v3 importer binds field/old_field to the declared allow_reset model;\n// no general counter, caller, allocation or synchronization guarantee follows.\nextern fn cmt_counter_allow_reset(\n    counter: borrow<'call, mut, cmt_counter> use one\n) -> unit\ncontract {\n    requires object_is_live;\n    requires exclusive_object_access;\n    requires field_is_boolean;\n    ensures normal field == 1;\n};\n",
+          "frame_helpers": [],
+          "library": "cmetrics",
+          "provider": "qcore.cmetrics"
+        }
+      ],
+      "packages": [
+        {
+          "capabilities": [
+            "resource_contracts"
+          ],
+          "certificate_checker": "qcore.boolean_field_contract.v2",
+          "entrypoint": {
+            "kind": "executable",
+            "path": "provider"
+          },
+          "evidence_versions": [
+            1,
+            2
+          ],
+          "filesystem_inputs": [],
+          "lean_theorem_family": "QCore.ChunkSource",
+          "limits": {
+            "memory_bytes": 268435456,
+            "output_bytes": 4194304,
+            "timeout_ms": 5000
+          },
+          "network_access": false,
+          "package_digest": "0e1628ed17846fb2100f3dc908a5257265188a86b3b46dd8e7d4cd24d3327dc7",
+          "package_version": "0.2.0",
+          "plugin_id": "qcore.cmetrics",
+          "protocol_versions": [
+            1
+          ],
+          "required_foreign_summaries": [],
+          "required_observation_hooks": [],
+          "targets": [
+            {
+              "backends": [
+                "*"
+              ],
+              "dialects": [
+                "c11",
+                "gnu11",
+                "gnu17",
+                "gnu99",
+                "qcore"
+              ],
+              "library": "cmetrics",
+              "platforms": [
+                "*"
+              ],
+              "profiles": [
+                "*"
+              ],
+              "revisions": [
+                "*"
+              ]
+            }
+          ],
+          "trust_class": "first_party"
+        }
+      ]
+    },
+    "frame_helpers": [],
+    "schema_version": 1,
+    "scope": "source-derived Boolean-field function contracts under explicit live/exclusive/domain and source/build/ABI assumptions; no whole-unit promotion",
+    "selection": [
+      {
+        "library": "cmetrics",
+        "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "source_root": "lib/cmetrics/src"
+      }
+    ],
+    "source_rules": "module contract;\n\n// Executable acceptance policies over facts extracted from typed C source.\n// Rust owns AST decoding, expression evaluation, storage and control semantics.\n// These rules do not assert C memory safety, termination or custody discharge.\n\nextern fn source_enum_value() -> unit\ncontract {\n    ensures normal evaluated_constant;\n    ensures normal type_matches;\n};\n\nextern fn source_scan_effects() -> unit\ncontract {\n    ensures normal not header_calls;\n    ensures normal not match_calls;\n    ensures normal not return_calls;\n};\n\nextern fn source_scan_initial() -> unit\ncontract {\n    ensures normal remaining_paths == 0;\n    ensures normal not index_escaped;\n};\n\nextern fn source_type_match() -> unit\ncontract {\n    ensures normal type_matches;\n};\n\nextern fn source_symbol() -> unit\ncontract {\n    ensures normal producer_type_matches;\n};\n\nextern fn source_loop_index() -> unit\ncontract {\n    ensures normal scope_matches;\n};\n\nextern fn source_scan_region() -> unit\ncontract {\n    ensures normal read_only;\n};\n\nextern fn frame_write() -> unit\ncontract {\n    ensures normal not lifecycle_field;\n    ensures normal ordinary_int_field;\n};\n\nextern fn frame_declaration() -> unit\ncontract {\n    ensures normal declaration_count > 0;\n    ensures normal all_external_prototypes;\n};\n\nextern fn frame_dependency() -> unit\ncontract {\n    ensures normal layout_matches;\n    ensures normal not duplicate;\n};\n",
+    "source_rules_sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+    "units": [
+      {
+        "file": "lib/cmetrics/src/cmt_counter.c",
+        "functions": [
+          {
+            "function": "cmt_counter_add",
+            "reason": "outside single borrowed chunk / int-or-void-result source profile",
+            "status": "unknown"
+          },
+          {
+            "bounds": {
+              "resource_contracts:6b7dfceb1139558f526e3bc3": {
+                "max_operations": null,
+                "observed_runs_only": false,
+                "path_exploration": {
+                  "kind": "bounded_paths",
+                  "paths": 2
+                },
+                "schedules_explored": null
+              }
+            },
+            "checked_states": 2,
+            "evidence": {
+              "assumptions_used": {
+                "borrowed_parameter_is_exclusive": true,
+                "borrowed_parameter_is_live": true,
+                "clang_typed_import_is_trusted": true,
+                "declared_source_revision_is_outer_audit_assumption": true,
+                "field_is_boolean": true,
+                "field_mapping_profile_is_declared_trusted": true,
+                "source_projection_policy_is_declared_trusted": true
+              },
+              "capability": "resource_contracts",
+              "claims": [],
+              "coverage": [
+                "resource_contracts:6b7dfceb1139558f526e3bc3"
+              ],
+              "evidence_version": 2,
+              "reproducibility": {
+                "deterministic": true,
+                "package_digest": "0e1628ed17846fb2100f3dc908a5257265188a86b3b46dd8e7d4cd24d3327dc7",
+                "provider_version": "0.2.0"
+              },
+              "unit": {
+                "build_digest": "04c6f77664f3a90213c8ba72b254a07e64eba34bcf6a5c38dc44d38ef84e27cf",
+                "source_digest": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+                "translation_unit": "cmetrics/lib/cmetrics/src/cmt_counter.c"
+              }
+            },
+            "function": "cmt_counter_allow_reset",
+            "import_identity": {
+              "compiler": {
+                "program": "clang",
+                "target": "x86_64-pc-linux-gnu",
+                "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+              },
+              "configuration_digest": "fe87fda96a82ac2219f8dd1342cce9faec170346d110aa7d648a4c8543bc1c15",
+              "dialect": "gnu17",
+              "helpers": {},
+              "model_library": "cmetrics",
+              "preprocessed_source_digest": "d95b3cf4c1f875a073b0526274a7ff087e924c629d2e9063087a84b3849f3f39",
+              "profile_digest": "95a96e8781303bec7d74e543d673e5b920fedfe433b3c5023a6c83279861277f",
+              "raw_source_digest": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+              "source_contract_digest": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+              "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            },
+            "status": "checked_function_contract",
+            "task": {
+              "assumptions": {
+                "borrowed_parameter_is_exclusive": true,
+                "borrowed_parameter_is_live": true,
+                "clang_typed_import_is_trusted": true,
+                "declared_source_revision_is_outer_audit_assumption": true,
+                "field_is_boolean": true,
+                "field_mapping_profile_is_declared_trusted": true,
+                "source_projection_policy_is_declared_trusted": true
+              },
+              "bounds": {
+                "max_operations": null,
+                "observed_runs_only": false,
+                "path_exploration": {
+                  "kind": "bounded_paths",
+                  "paths": 2
+                },
+                "schedules_explored": null
+              },
+              "contract_sources": {
+                "qcore:boolean-field-contract:v1": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+                "qcore:boolean-field-import:v1": "04c6f77664f3a90213c8ba72b254a07e64eba34bcf6a5c38dc44d38ef84e27cf",
+                "qcore:boolean-field-source-input:v3": "126e9eb8e5afd5407521edd46a4867dca71e09b3eecb67a6333d292981c0b634"
+              },
+              "derivation_incomplete": [],
+              "evidence_version": 2,
+              "obligations": [
+                {
+                  "assumptions": {
+                    "borrowed_parameter_is_exclusive": true,
+                    "borrowed_parameter_is_live": true,
+                    "clang_typed_import_is_trusted": true,
+                    "declared_source_revision_is_outer_audit_assumption": true,
+                    "field_is_boolean": true,
+                    "field_mapping_profile_is_declared_trusted": true,
+                    "source_projection_policy_is_declared_trusted": true
+                  },
+                  "bounds": {
+                    "max_operations": null,
+                    "observed_runs_only": false,
+                    "path_exploration": {
+                      "kind": "bounded_paths",
+                      "paths": 2
+                    },
+                    "schedules_explored": null
+                  },
+                  "capability": "resource_contracts",
+                  "evidence_version": 2,
+                  "obligation_id": "resource_contracts:6b7dfceb1139558f526e3bc3",
+                  "property": "boolean_field_contract",
+                  "scope": {
+                    "scope": "functions",
+                    "symbols": [
+                      "cmt_counter_allow_reset"
+                    ]
+                  },
+                  "subject": {
+                    "subject": "function",
+                    "symbol": "cmt_counter_allow_reset",
+                    "translation_unit": "cmetrics/lib/cmetrics/src/cmt_counter.c"
+                  }
+                }
+              ],
+              "semantic_profile": "qcore.c_boolean_field_contract.v3",
+              "target": {
+                "backend": "native",
+                "dialect": "gnu17",
+                "library": "cmetrics",
+                "platform": "linux",
+                "profile": "qcore.c_boolean_field_contract.v3",
+                "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              },
+              "task_version": 1,
+              "unit": {
+                "build_digest": "04c6f77664f3a90213c8ba72b254a07e64eba34bcf6a5c38dc44d38ef84e27cf",
+                "source_digest": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+                "translation_unit": "cmetrics/lib/cmetrics/src/cmt_counter.c"
+              }
+            },
+            "witness": {
+              "summary": {
+                "dependencies": {},
+                "field": "Locked",
+                "function": "cmt_counter_allow_reset",
+                "paths": [
+                  {
+                    "branches": [],
+                    "final_value": true,
+                    "frame_writes": [],
+                    "initial_value": false,
+                    "return_value": 0,
+                    "writes": [
+                      true
+                    ]
+                  },
+                  {
+                    "branches": [],
+                    "final_value": true,
+                    "frame_writes": [],
+                    "initial_value": true,
+                    "return_value": 0,
+                    "writes": [
+                      true
+                    ]
+                  }
+                ],
+                "profile_assumptions": {
+                  "boolean_field_name": "allow_reset",
+                  "boolean_field_record": "cmt_counter",
+                  "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                  "profile_digest": "25574f73e0edf902fc5eeaf478cd65c722b284d179b8633a847add5238dc070c",
+                  "schema_version": "1",
+                  "source_set": "cmetrics-counter",
+                  "trust": "declared source-set assumptions, not verified upstream behavior"
+                },
+                "result_kind": "unit",
+                "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+              },
+              "task_digest": "5fa88f714bc21c4b208888c06ac10c82a104d83e390b0867878f5f1914e88e96",
+              "witness_kind": "boolean_field_contract"
+            }
+          },
+          {
+            "function": "cmt_counter_create",
+            "reason": "outside single borrowed chunk / int-or-void-result source profile",
+            "status": "unknown"
+          },
+          {
+            "function": "cmt_counter_destroy",
+            "reason": "helper signature or parameter binding mismatch",
+            "status": "unknown"
+          },
+          {
+            "function": "cmt_counter_get_val",
+            "reason": "outside single borrowed chunk / int-or-void-result source profile",
+            "status": "unknown"
+          },
+          {
+            "function": "cmt_counter_inc",
+            "reason": "outside single borrowed chunk / int-or-void-result source profile",
+            "status": "unknown"
+          },
+          {
+            "function": "cmt_counter_set",
+            "reason": "outside single borrowed chunk / int-or-void-result source profile",
+            "status": "unknown"
+          }
+        ],
+        "import_failure": null,
+        "library": "cmetrics",
+        "raw_source_functions": [
+          "cmt_counter_add",
+          "cmt_counter_allow_reset",
+          "cmt_counter_create",
+          "cmt_counter_destroy",
+          "cmt_counter_get_val",
+          "cmt_counter_inc",
+          "cmt_counter_set"
+        ],
+        "source_sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0"
+      }
+    ],
+    "unknown_functions": 6
+  },
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "units": [
+    {
+      "diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 2,
+        "unsupported": 35
+      },
+      "file": "lib/cmetrics/src/cmt_counter.c",
+      "functions": [
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5522
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5526
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_add`",
+              "line": 5529
+            }
+          ],
+          "function": "cmt_counter_add",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [],
+          "function": "cmt_counter_allow_reset",
+          "status": "Safe"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5451
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5455
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5458
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5459
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5462
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5463
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5468
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5471
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5472
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5474
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_counter_destroy`",
+              "line": 5475
+            },
+            {
+              "category": "leak",
+              "description": "live obligation acquired at preprocessed line 5466",
+              "line": 5476
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5478
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5480
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5481
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_counter_destroy`",
+              "line": 5482
+            },
+            {
+              "category": "leak",
+              "description": "live obligation acquired at preprocessed line 5466",
+              "line": 5483
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5485
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5486
+            },
+            {
+              "category": "unknown_alias",
+              "description": "unresolved resource identity `counter`",
+              "line": 5487
+            }
+          ],
+          "function": "cmt_counter_create",
+          "status": "Unsafe"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5495
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5496
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5497
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5498
+            },
+            {
+              "category": "unknown_alias",
+              "description": "unresolved resource identity `counter`",
+              "line": 5500
+            }
+          ],
+          "function": "cmt_counter_destroy",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5555
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5559
+            },
+            {
+              "category": "unsupported",
+              "description": "store through `*out_val` without an out-parameter contract",
+              "line": 5562
+            }
+          ],
+          "function": "cmt_counter_get_val",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5508
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5512
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_inc`",
+              "line": 5515
+            }
+          ],
+          "function": "cmt_counter_inc",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5536
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5540
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5543
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5544
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_set`",
+              "line": 5547
+            }
+          ],
+          "function": "cmt_counter_set",
+          "status": "Unknown"
+        }
+      ],
+      "library": "cmetrics",
+      "not_projected": [],
+      "reason": null,
+      "source_functions": [
+        "cmt_counter_add",
+        "cmt_counter_allow_reset",
+        "cmt_counter_create",
+        "cmt_counter_destroy",
+        "cmt_counter_get_val",
+        "cmt_counter_inc",
+        "cmt_counter_set"
+      ],
+      "status": "Unsafe"
+    }
+  ]
+}

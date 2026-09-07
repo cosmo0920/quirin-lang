@@ -1,0 +1,18 @@
+CHANGED /diagnostic_counts/unsupported
+   before: 36
+   after : 35
+CHANGED /units/0/diagnostic_counts/unsupported
+   before: 36
+   after : 35
+CHANGED /units/0/functions/1/diagnostics/0/category
+   before: 'unsupported'
+   after : None
+CHANGED /units/0/functions/1/diagnostics/0/description
+   before: 'indirect memory access is outside the resource projection'
+   after : None
+CHANGED /units/0/functions/1/diagnostics/0/line
+   before: 5491
+   after : None
+CHANGED /units/0/functions/1/status
+   before: 'Unknown'
+   after : 'Safe'
