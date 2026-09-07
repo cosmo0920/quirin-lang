@@ -837,7 +837,8 @@ fn check_function(
                     }
                     if !loans.is_empty() && !state.ledger.outstanding_loans().is_empty() {
                         return Err(
-                            "this profile admits at most one outstanding read loan at a time".into(),
+                            "this profile admits at most one outstanding read loan at a time"
+                                .into(),
                         );
                     }
                     if resources.iter().any(|resource| loans.contains(resource)) {
