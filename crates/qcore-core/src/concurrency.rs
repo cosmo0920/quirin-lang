@@ -210,6 +210,11 @@ pub enum ConcurrencyProfile {
     /// synchronized handoffs are derived there, not declared; still no
     /// source-to-trace claim.
     CheckedMutexInvariantV1,
+    /// The fixed-shape quantitative epoch profile of
+    /// [`crate::epoch_accounting`]. It bounds resource residency over one flat
+    /// epoch of independent tasks; it makes no scheduling, latency or
+    /// source-to-trace claim.
+    FlatEpochBoundV1,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
