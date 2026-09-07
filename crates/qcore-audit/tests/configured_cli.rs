@@ -139,6 +139,109 @@ fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files(
     }
 }
 
+/// Before the compile task carried an identity, the recorded assumptions bound
+/// only the selected `.c` bytes and the database. A used header could flip a
+/// unit's verdict while every recorded input stayed byte-identical, so evidence
+/// filed under those inputs could be reused for a different analysis.
+#[test]
+fn a_used_header_change_invalidates_the_recorded_compile_task_identity() {
+    let fixture = Fixture::new(
+        "#include \"effect.h\"\nextern void opaque(void); void entry(void) { EFFECT; }",
+    );
+    let header = fixture.0.join("checkout/src/effect.h");
+    let mut observed = Vec::new();
+    for (effect, expected) in [("((void)0)", "Safe"), ("opaque()", "Unknown")] {
+        fs::write(&header, format!("#define EFFECT {effect}\n")).unwrap();
+        let output = fixture.run();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let report: Value =
+            serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap())
+                .unwrap();
+        assert_eq!(report["units"][0]["status"], expected);
+        let assumptions: Value = serde_json::from_slice(
+            &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(assumptions["compile_task_identity_version"], 1);
+        let task = assumptions["compile_tasks"][0].clone();
+        assert_eq!(task["file"], "src/unit.c");
+        assert_eq!(task["library"], "sample");
+        observed.push((
+            assumptions["source_sha256"].clone(),
+            assumptions["compile_database_sha256"].clone(),
+            task["identity"]["raw_source_sha256"].clone(),
+            task["identity_sha256"].clone(),
+        ));
+    }
+    let [safe, unknown] = observed.as_slice() else {
+        unreachable!()
+    };
+    assert_eq!(
+        safe.0, unknown.0,
+        "the selected source bytes did not change"
+    );
+    assert_eq!(safe.1, unknown.1, "the compilation database did not change");
+    assert_eq!(safe.2, unknown.2);
+    assert_ne!(
+        safe.3, unknown.3,
+        "a used header changed the analyzed code without changing the task identity"
+    );
+}
+
+/// Real CMake databases emit several commands per source file. Ambiguity must
+/// not resolve itself; identical repeats describe one task and are audited once.
+#[test]
+fn repeated_and_conflicting_compile_records_for_one_file_are_distinguished() {
+    let fixture = Fixture::new("int value(void) { return 7; }");
+    fixture.mutate("compile_commands.json", |database| {
+        let repeat = database[0].clone();
+        database.as_array_mut().unwrap().push(repeat);
+    });
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"].as_array().unwrap().len(), 1);
+    let assumptions: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(assumptions["compile_tasks"].as_array().unwrap().len(), 1);
+
+    // Options the gateway transports in order are enough to make two records
+    // conflict, even when both would preprocess identically.
+    for arguments in [
+        json!(["cc", "-std=c11", "-DA=1", "-DB=1", "-c", "src/unit.c"]),
+        json!(["cc", "-std=c11", "-c", "src/unit.c", "-o", "other.o"]),
+    ] {
+        let fixture = Fixture::new("int value(void) { return 7; }");
+        fixture.mutate("compile_commands.json", |database| {
+            let mut extra = database[0].clone();
+            extra["arguments"] = arguments.clone();
+            database.as_array_mut().unwrap().push(extra);
+        });
+        let output = fixture.run();
+        assert!(
+            !output.status.success(),
+            "{arguments} unexpectedly accepted"
+        );
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains("conflicting compilation commands"),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(!fixture.0.join("output/report.json").exists());
+    }
+}
+
 #[test]
 fn absent_selections_contracts_and_unsupported_flags_fail_closed() {
     for failure in ["selection", "contract", "flags", "conflict", "evidence"] {

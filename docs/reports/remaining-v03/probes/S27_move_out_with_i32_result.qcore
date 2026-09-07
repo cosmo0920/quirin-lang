@@ -1,0 +1,2 @@
+error E { Failed; }
+fn main() -> i32 { let x = qcore_acquire(1, true, E); move x; return 0; }

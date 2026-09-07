@@ -1,0 +1,547 @@
+{
+  "schema_version": 1,
+  "card": "C00 - Classify the six CMetrics Unknown functions",
+  "date": "2026-09-07",
+  "scope": "Blocker inventory for the six source-contract Unknown functions of one pinned translation unit. This record classifies why analysis declines; it promotes no verdict and asserts no upstream defect.",
+  "unit": {
+    "translation_unit": "cmetrics/lib/cmetrics/src/cmt_counter.c",
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "source_sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+    "line_coordinates": "Clang -E -P preprocessed translation unit; original file lines given separately",
+    "raw_unit_verdict": "provisional Unsafe",
+    "raw_unit_verdict_unchanged": true,
+    "promoted": false,
+    "resource_diagnostic_counts": { "leak": 2, "unknown_alias": 2, "unsupported": 36 },
+    "source_contract_split": { "checked_function_contracts": 1, "unknown": 6 }
+  },
+  "checked_function_contract": {
+    "function": "cmt_counter_allow_reset",
+    "status": "checked_function_contract",
+    "layer": "source contract (Boolean-field, evidence v2, provider qcore.cmetrics 0.2.0)",
+    "resource_layer_status": "Unknown",
+    "unchanged_by_this_card": true,
+    "note": "Reported separately and left unchanged. Its source-contract check does not promote its resource-projection status and does not promote the unit."
+  },
+  "verdict_layers": {
+    "resource_projection": "crates/qcore-c-gateway/src/legacy_c.rs token-level abstract interpretation over the preprocessed unit; per-function Safe/Unsafe/Unknown",
+    "source_contract": "crates/qcore-c-gateway/src/boolean_source.rs typed-AST Boolean-field importer; per-function checked_function_contract/unknown",
+    "note": "The six Unknown functions are Unknown at the source-contract layer. Their resource-layer statuses are given per row and differ: cmt_counter_create is Unsafe there, the rest Unknown."
+  },
+  "functions": [
+    {
+      "function": "cmt_counter_create",
+      "signature": "struct cmt_counter *cmt_counter_create(struct cmt *, char *, char *, char *, char *, int, char **)",
+      "source_lines": "26-81",
+      "preprocessed_lines": "5443-5488",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "outside single borrowed chunk / int-or-void-result source profile",
+      "resource_status": "Unsafe",
+      "resource_diagnostics": [
+        { "pp_line": 5451, "src_line": 35, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5455, "src_line": 40, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5458, "src_line": 44, "category": "unsupported", "family": "branch_condition", "detail": "unmodeled call, aggregate or indirect access in branch condition (`!name || strlen(name) == 0`)" },
+        { "pp_line": 5459, "src_line": 45, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5462, "src_line": 49, "category": "unsupported", "family": "branch_condition", "detail": "unmodeled call, aggregate or indirect access in branch condition (`!help || strlen(help) == 0`)" },
+        { "pp_line": 5463, "src_line": 50, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5468, "src_line": 56, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_errno_print((*__errno_location ()), ...)` dereference" },
+        { "pp_line": 5471, "src_line": 59, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cfl_list_add(&counter->_head, &cmt->counters)`" },
+        { "pp_line": 5472, "src_line": 61, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`ret = cmt_opts_init(&counter->opts, ...)`" },
+        { "pp_line": 5474, "src_line": 63, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5475, "src_line": 64, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_counter_destroy`" },
+        { "pp_line": 5476, "src_line": 65, "category": "leak", "family": "leak", "detail": "live obligation acquired at preprocessed line 5466 (`calloc`, source line 54)" },
+        { "pp_line": 5478, "src_line": 69, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`counter->map = cmt_map_create(...)`" },
+        { "pp_line": 5480, "src_line": 71, "category": "unsupported", "family": "branch_condition", "detail": "unmodeled call, aggregate or indirect access in branch condition (`!counter->map`)" },
+        { "pp_line": 5481, "src_line": 72, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_log_print`" },
+        { "pp_line": 5482, "src_line": 73, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_counter_destroy`" },
+        { "pp_line": 5483, "src_line": 74, "category": "leak", "family": "leak", "detail": "live obligation acquired at preprocessed line 5466 (`calloc`, source line 54)" },
+        { "pp_line": 5485, "src_line": 77, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`counter->aggregation_type = 2` (scalar enum field store)" },
+        { "pp_line": 5486, "src_line": 79, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`counter->cmt = cmt` (pointer field store)" },
+        { "pp_line": 5487, "src_line": 80, "category": "unknown_alias", "family": "unknown_alias", "detail": "unresolved resource identity `counter` at `return counter`" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "crates/qcore-c-gateway/src/legacy_c.rs:1636 rejects any statement whose token stream satisfies contains_unmodeled_access (legacy_c.rs:1798): any `->`, `[`, `]`, non-numeric `.`, or unary `*`. The predicate is token-level and carries no declared type, so it cannot separate a scalar field store from a pointer field store or a dereference.",
+          "minimal_reproducer": "struct s { int f; };\nvoid w(struct s *p) { p->f = 1; }",
+          "reproducer_id": "R1",
+          "observed": "status Unknown; unsupported: indirect memory access is outside the resource projection",
+          "missing_premise_or_contract": "A declared-type premise for the accessed field: that the field's type is a non-pointer, non-union, non-volatile arithmetic or enum type, so the write cannot create, destroy, alias or transfer any tracked resource identity. The token stream does not carry this; the Clang typed AST already imported by the gateway does.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification: a generic gateway capability that consults the typed AST (crates/qcore-c-gateway/src/typed_c_ast.rs) to admit a member or subscript access as a resource-projection NoOp only when every access in the statement is a direct field access on a DeclRefExpr base and each accessed field has a non-pointer, non-union, non-volatile, non-atomic arithmetic or enum declared type, with no call and no address-of escape anywhere in the statement. No library-name or symbol-name recognition."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:uncontracted_call",
+          "root": false,
+          "exact_blocker": "crates/qcore-c-gateway/src/legacy_c.rs:1744. `cmt_counter_destroy` is defined in this same translation unit but W4 publishes no inferred summary for it, because legacy_summary.rs requires the callee body to re-analyze `Safe` with no diagnostics (module header condition 1) and that body is entirely indirect-access statements. `cmt_log_print`, `cmt_map_create` and `cmt_opts_init` are cross-translation-unit and have no declared `.qcore` contract.",
+          "minimal_reproducer": "void rel(void *);\nvoid *w(void) { void *p = calloc(1,1); if (!p) { return 0; } rel(p); return 0; }",
+          "reproducer_id": "R8",
+          "observed": "status Unsafe; leak (acquired at the calloc line) + unsupported: call to uncontracted function `rel`",
+          "missing_premise_or_contract": "Either a validated W4 intra-unit summary for `cmt_counter_destroy` (blocked by rank 1), or declared `.qcore` resource contracts for the cross-unit callees. Both leak diagnostics are consequences of this absence and are NOT an upstream defect claim.",
+          "candidate_generic_feature": "None as an analysis feature. Admitting an uncontracted call as custody-neutral would be exactly the optimistic fallback hard invariant 1 forbids. The generic route is the existing one: unblock rank 1 so W4 can validate the intra-unit callee, plus contract-corpus work for cross-unit callees."
+        },
+        {
+          "rank": 3,
+          "family": "unsupported:branch_condition",
+          "root": false,
+          "exact_blocker": "crates/qcore-c-gateway/src/legacy_c.rs:2184. A branch condition that is neither a recognized null test nor a supported neutral expression (supported_neutral_expression, legacy_c.rs:1828, which excludes calls, braces and unmodeled access) becomes Unknown. Here `!name || strlen(name) == 0` contains a call and `!counter->map` contains `->`.",
+          "minimal_reproducer": "int len(char *);\nvoid w(char *n) { if (!n || len(n) == 0) { return; } }",
+          "reproducer_id": "R5",
+          "observed": "status Unknown; unsupported: unmodeled call, aggregate or indirect access in branch condition",
+          "missing_premise_or_contract": "For the `->` case, the same declared-type premise as rank 1, plus the rule that reading a pointer field in a condition is custody-neutral when the read value is not bound to a tracked identity. For the call case, a contract or purity premise for the callee.",
+          "candidate_generic_feature": "Extend the rank-1 typed classification to branch-condition position (custody-neutral conditions). The call-in-condition subcase remains rank-2 contract work."
+        },
+        {
+          "rank": 4,
+          "family": "unknown_alias",
+          "root": false,
+          "exact_blocker": "The `calloc` obligation at preprocessed line 5466 loses its binding to `counter` once the indirect stores at 5485/5486 poison the pointer state, so `return counter` cannot be resolved to the acquired site.",
+          "minimal_reproducer": "struct s { void *m; };\nvoid w(struct s *p) { void *q; q = p->m; free(q); }",
+          "reproducer_id": "R2",
+          "observed": "status Unknown; unknown_alias `q` + unsupported: indirect memory access",
+          "missing_premise_or_contract": "Downstream of rank 1; no independent premise is missing.",
+          "candidate_generic_feature": "Downstream of rank 1; no separate feature."
+        }
+      ]
+    },
+    {
+      "function": "cmt_counter_destroy",
+      "signature": "int cmt_counter_destroy(struct cmt_counter *counter)",
+      "source_lines": "88-98",
+      "preprocessed_lines": "5493-5502",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "helper signature or parameter binding mismatch",
+      "resource_status": "Unknown",
+      "resource_diagnostics": [
+        { "pp_line": 5495, "src_line": 90, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cfl_list_del(&counter->_head)`" },
+        { "pp_line": 5496, "src_line": 91, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_opts_exit(&counter->opts)`" },
+        { "pp_line": 5497, "src_line": 93, "category": "unsupported", "family": "branch_condition", "detail": "unmodeled call, aggregate or indirect access in branch condition (`counter->map`)" },
+        { "pp_line": 5498, "src_line": 94, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_map_destroy(counter->map)`" },
+        { "pp_line": 5500, "src_line": 96, "category": "unknown_alias", "family": "unknown_alias", "detail": "unresolved resource identity `counter` at `free(counter)`" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "source_contract:statement_grammar",
+          "root": true,
+          "exact_blocker": "crates/qcore-c-gateway/src/boolean_source.rs:1001. The ABI `int (struct cmt_counter *)` DOES match the registered Boolean-field model (boolean_source.rs:606 registers both `int (struct R *)` and `void (struct R *)` for each declared record), so this function reaches the statement importer and is rejected there rather than at the ABI gate. The importer's only admitted CallExpr form is a validated frame helper of type `void (struct R *)` applied to a direct LValueToRValue DeclRefExpr of the modeled parameter. The first body statement `cfl_list_del(&counter->_head)` has callee type `void (struct cfl_list *)` and argument `&counter->_head` (address-of a MemberExpr), so neither the callee signature nor the parameter binding matches.",
+          "minimal_reproducer": "struct r { int allow_reset; struct l head; };\nvoid lst_del(struct l *);\nint d(struct r *p) { lst_del(&p->head); return 0; }",
+          "reproducer_id": "source-contract grammar, not exercised by the resource probe",
+          "observed": "source-contract status unknown, reason `helper signature or parameter binding mismatch` (this is the recorded reason for cmt_counter_destroy in the canonical report)",
+          "missing_premise_or_contract": "A declared frame-helper record for a callee that takes a pointer to a DIFFERENT record derived from a sub-object of the modeled record, together with a layout/disjointness premise that the callee writes nothing on the modeled field. The current frame-helper vocabulary only admits helpers over the whole modeled record.",
+          "candidate_generic_feature": "Generic sub-object frame helpers: extend the declared frame-helper vocabulary so a helper may be declared over a nested record reached by a constant field offset from the modeled record, with the existing exact record/prototype/field-vector validation and constant-only, disjoint-write checks applied to the nested record. Declared, validated, and library-name-free; it does not by itself model `cfl_list_del`'s effect."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "Same legacy_c.rs:1636 / contains_unmodeled_access gate as above. All four of `&counter->_head`, `&counter->opts`, `counter->map` (condition) and `counter->map` (argument) are token-level indirect accesses. Because the body is not fully modeled, legacy_summary.rs publishes no W4 custody summary, which is the direct cause of the two `uncontracted_call` diagnostics and both leaks in cmt_counter_create.",
+          "minimal_reproducer": "struct s { void *m; };\nvoid dl(void *); void md(void *);\nint d(struct s *p) { dl(&p->m); if (p->m) { md(p->m); } free(p); return 0; }",
+          "reproducer_id": "R9",
+          "observed": "status Unknown; unknown_alias `p` + unsupported: indirect memory access + unsupported: branch condition",
+          "missing_premise_or_contract": "The rank-1 typed-field premise (see cmt_counter_create), PLUS declared resource contracts for the cross-unit callees `cfl_list_del`, `cmt_opts_exit` and `cmt_map_destroy`. The typed capability alone is NOT sufficient here: the three calls would then surface as uncontracted_call.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification (as for cmt_counter_create), plus a generic address-of-sub-object argument classification that distinguishes a borrowed interior address from a tracked identity. Neither makes this function checked on its own."
+        },
+        {
+          "rank": 3,
+          "family": "unknown_alias",
+          "root": false,
+          "exact_blocker": "`free(counter)` is a modeled ContractCall (contract/qcore/libc/memory.qcore declares `resource_released(ptr, nullable)`), but `counter` is a formal with no entry custody and its state was poisoned by lines 5495-5498, so the released identity is unresolved.",
+          "minimal_reproducer": "See R9; the `unknown_alias p` line is emitted for exactly this reason.",
+          "reproducer_id": "R9",
+          "observed": "unknown_alias `p`",
+          "missing_premise_or_contract": "Downstream of rank 2. Once the body is fully modeled, W4's existing binding search seeds a formal only after it is reported as an unresolved resource identity, so this diagnostic is the intended trigger for inferring a `Released` mode, not an independent gap.",
+          "candidate_generic_feature": "Downstream of rank 2; no separate feature."
+        }
+      ]
+    },
+    {
+      "function": "cmt_counter_inc",
+      "signature": "int cmt_counter_inc(struct cmt_counter *, uint64_t, int, char **)",
+      "source_lines": "100-117",
+      "preprocessed_lines": "5503-5517",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "outside single borrowed chunk / int-or-void-result source profile",
+      "resource_status": "Unknown",
+      "resource_diagnostics": [
+        { "pp_line": 5508, "src_line": 106, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`metric = cmt_map_metric_get(&counter->opts, counter->map, ...)`" },
+        { "pp_line": 5512, "src_line": 110, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_log_print(counter->cmt, ..., counter->opts.ns, ...)`" },
+        { "pp_line": 5515, "src_line": 115, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_metric_inc`" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "source_contract:abi_gate",
+          "root": true,
+          "exact_blocker": "crates/qcore-c-gateway/src/boolean_source.rs:716. The importer keys its models by the exact function type string; boolean_source.rs:606 registers only `int (struct R *)` and `void (struct R *)`. This function's qualType is `int (struct cmt_counter *, uint64_t, int, char **)`, so models.get(abi) misses.",
+          "minimal_reproducer": "struct r { int allow_reset; };\nint w(struct r *p, int extra) { p->allow_reset = 1; return 0; }",
+          "reproducer_id": "source-contract ABI gate; the extra formal alone is sufficient",
+          "observed": "source-contract status unknown, reason `outside single borrowed chunk / int-or-void-result source profile`",
+          "missing_premise_or_contract": "A declared contract vocabulary for additional formals: each extra parameter needs a declared mode (borrowed scalar, borrowed opaque pointer, or modeled) before the Boolean-field summary can bind the modeled parameter unambiguously. The current profile expresses no such vocabulary.",
+          "candidate_generic_feature": "Generic borrowed-scalar formal extension for the Boolean-field profile: admit an ABI with one modeled record pointer plus any number of formals whose declared types are arithmetic, enum, or pointers not to the modeled record, requiring the typed AST to prove no extra formal is read or written on any admitted path. Signature-shape driven, no symbol-name recognition."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "legacy_c.rs:1636 / contains_unmodeled_access. `&counter->opts` and `counter->map` are token-level indirect accesses in the assignment at 5508; `counter->cmt` and `counter->opts.ns` in the log call at 5512.",
+          "minimal_reproducer": "struct s { void *m; };\nvoid ext(int *);\nvoid w(struct s *p) { ext(&p->h); }",
+          "reproducer_id": "R3",
+          "observed": "status Unknown; unsupported: indirect memory access is outside the resource projection",
+          "missing_premise_or_contract": "The rank-1 typed-field premise from cmt_counter_create, extended to address-of-sub-object arguments.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification, plus generic address-of-sub-object argument classification."
+        },
+        {
+          "rank": 3,
+          "family": "unsupported:uncontracted_call",
+          "root": false,
+          "exact_blocker": "legacy_c.rs:1744. `cmt_metric_inc` and `cmt_map_metric_get` are cross-translation-unit with no declared contract. The `cmt_map_metric_get` call is currently masked: line 5508 is rejected by the indirect-access gate first, so removing rank 2 surfaces a second uncontracted_call here.",
+          "minimal_reproducer": "void ext(void *);\nvoid w(void) { void *p = calloc(1,1); ext(p); }",
+          "reproducer_id": "R7",
+          "observed": "status Unsafe; leak + unsupported: call to uncontracted function `ext`",
+          "missing_premise_or_contract": "Declared `.qcore` resource contracts for `cmt_map_metric_get` and `cmt_metric_inc`, or a whole-library (multi-unit) analysis scope.",
+          "candidate_generic_feature": "None admissible as an analysis feature; contract-corpus or multi-unit scope work."
+        }
+      ]
+    },
+    {
+      "function": "cmt_counter_add",
+      "signature": "int cmt_counter_add(struct cmt_counter *, uint64_t, double, int, char **)",
+      "source_lines": "119-135",
+      "preprocessed_lines": "5518-5531",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "outside single borrowed chunk / int-or-void-result source profile",
+      "resource_status": "Unknown",
+      "resource_diagnostics": [
+        { "pp_line": 5522, "src_line": 124, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`metric = cmt_map_metric_get(&counter->opts, counter->map, ...)`" },
+        { "pp_line": 5526, "src_line": 128, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_log_print(counter->cmt, ..., counter->opts.ns, ...)`" },
+        { "pp_line": 5529, "src_line": 133, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_metric_add`" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "source_contract:abi_gate",
+          "root": true,
+          "exact_blocker": "boolean_source.rs:716; qualType `int (struct cmt_counter *, uint64_t, double, int, char **)` is not a registered model ABI.",
+          "minimal_reproducer": "struct r { int allow_reset; };\nint w(struct r *p, double v) { p->allow_reset = 1; return 0; }",
+          "reproducer_id": "source-contract ABI gate",
+          "observed": "source-contract status unknown, reason `outside single borrowed chunk / int-or-void-result source profile`",
+          "missing_premise_or_contract": "Declared modes for the extra formals, as for cmt_counter_inc.",
+          "candidate_generic_feature": "Generic borrowed-scalar formal extension for the Boolean-field profile."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "legacy_c.rs:1636 / contains_unmodeled_access, identical shape to cmt_counter_inc.",
+          "minimal_reproducer": "struct s { int h; };\nvoid ext(int *);\nvoid w(struct s *p) { ext(&p->h); }",
+          "reproducer_id": "R3",
+          "observed": "status Unknown; unsupported: indirect memory access is outside the resource projection",
+          "missing_premise_or_contract": "The rank-1 typed-field premise from cmt_counter_create, extended to address-of-sub-object arguments.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification, plus generic address-of-sub-object argument classification."
+        },
+        {
+          "rank": 3,
+          "family": "unsupported:uncontracted_call",
+          "root": false,
+          "exact_blocker": "legacy_c.rs:1744; `cmt_metric_add` (and, once rank 2 is lifted, `cmt_map_metric_get`) are cross-unit with no declared contract.",
+          "minimal_reproducer": "void ext(void *);\nvoid w(void) { void *p = calloc(1,1); ext(p); }",
+          "reproducer_id": "R7",
+          "observed": "unsupported: call to uncontracted function `ext`",
+          "missing_premise_or_contract": "Declared `.qcore` contracts for the cross-unit callees, or multi-unit scope.",
+          "candidate_generic_feature": "None admissible as an analysis feature."
+        }
+      ]
+    },
+    {
+      "function": "cmt_counter_set",
+      "signature": "int cmt_counter_set(struct cmt_counter *, uint64_t, double, int, char **)",
+      "source_lines": "138-161",
+      "preprocessed_lines": "5532-5549",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "outside single borrowed chunk / int-or-void-result source profile",
+      "resource_status": "Unknown",
+      "resource_diagnostics": [
+        { "pp_line": 5536, "src_line": 143, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`metric = cmt_map_metric_get(&counter->opts, counter->map, ...)`" },
+        { "pp_line": 5540, "src_line": 147, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_log_print(counter->cmt, ..., counter->opts.ns, ...)`" },
+        { "pp_line": 5543, "src_line": 153, "category": "unsupported", "family": "branch_condition", "detail": "unmodeled call, aggregate or indirect access in branch condition (`cmt_metric_get_value(metric) > val && counter->allow_reset == 0`)" },
+        { "pp_line": 5544, "src_line": 154, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_log_print(counter->cmt, ..., counter->opts.ns, ...)`" },
+        { "pp_line": 5547, "src_line": 159, "category": "unsupported", "family": "uncontracted_call", "detail": "call to uncontracted function `cmt_metric_set`" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "source_contract:abi_gate",
+          "root": true,
+          "exact_blocker": "boolean_source.rs:716; the five-parameter qualType is not a registered model ABI. Note this function READS the modeled field (`counter->allow_reset == 0`) in a branch condition, so it is the one non-checked function whose body is in the Boolean-field model's subject matter.",
+          "minimal_reproducer": "struct r { int allow_reset; };\nint w(struct r *p, double v) { if (v > 0 && p->allow_reset == 0) { return -1; } return 0; }",
+          "reproducer_id": "source-contract ABI gate",
+          "observed": "source-contract status unknown, reason `outside single borrowed chunk / int-or-void-result source profile`",
+          "missing_premise_or_contract": "Declared modes for the extra formals, plus a declared contract clause vocabulary for a function that only READS the Boolean field (the existing corpus clause is `ensures normal field == 1`, a write postcondition).",
+          "candidate_generic_feature": "Generic borrowed-scalar formal extension, plus a read-only field-observation clause family in the Boolean-field contract vocabulary."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "legacy_c.rs:1636 / contains_unmodeled_access at 5536, 5540 and 5544.",
+          "minimal_reproducer": "struct s { int h; };\nvoid ext(int *);\nvoid w(struct s *p) { ext(&p->h); }",
+          "reproducer_id": "R3",
+          "observed": "status Unknown; unsupported: indirect memory access is outside the resource projection",
+          "missing_premise_or_contract": "The rank-1 typed-field premise from cmt_counter_create, extended to address-of-sub-object arguments.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification, plus generic address-of-sub-object argument classification."
+        },
+        {
+          "rank": 3,
+          "family": "unsupported:branch_condition",
+          "root": true,
+          "exact_blocker": "legacy_c.rs:2184. The condition contains BOTH an uncontracted call (`cmt_metric_get_value(metric)`) and an indirect read (`counter->allow_reset`), so it fails supported_neutral_expression on two independent counts.",
+          "minimal_reproducer": "int len(char *);\nvoid w(char *n) { if (!n || len(n) == 0) { return; } }",
+          "reproducer_id": "R5",
+          "observed": "status Unknown; unsupported: unmodeled call, aggregate or indirect access in branch condition",
+          "missing_premise_or_contract": "A custody-neutrality premise for the condition: the typed-field premise for the `->` read, and a contract or purity premise for the call.",
+          "candidate_generic_feature": "Extend typed scalar-field classification to branch-condition position. The call subcase remains contract work."
+        },
+        {
+          "rank": 4,
+          "family": "unsupported:uncontracted_call",
+          "root": false,
+          "exact_blocker": "legacy_c.rs:1744; `cmt_metric_set` and (once masked calls surface) `cmt_map_metric_get`, `cmt_metric_get_value` are cross-unit with no declared contract.",
+          "minimal_reproducer": "void ext(void *);\nvoid w(void) { void *p = calloc(1,1); ext(p); }",
+          "reproducer_id": "R7",
+          "observed": "unsupported: call to uncontracted function `ext`",
+          "missing_premise_or_contract": "Declared `.qcore` contracts for the cross-unit callees, or multi-unit scope.",
+          "candidate_generic_feature": "None admissible as an analysis feature."
+        }
+      ]
+    },
+    {
+      "function": "cmt_counter_get_val",
+      "signature": "int cmt_counter_get_val(struct cmt_counter *, int, char **, double *out_val)",
+      "source_lines": "163-180",
+      "preprocessed_lines": "5550-5564",
+      "source_contract_status": "unknown",
+      "source_contract_reason": "outside single borrowed chunk / int-or-void-result source profile",
+      "resource_status": "Unknown",
+      "resource_diagnostics": [
+        { "pp_line": 5555, "src_line": 169, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`ret = cmt_map_metric_get_val(&counter->opts, counter->map, ..., &val)`" },
+        { "pp_line": 5559, "src_line": 173, "category": "unsupported", "family": "indirect_member_or_deref", "detail": "`cmt_log_print(counter->cmt, ..., counter->opts.ns, ...)`" },
+        { "pp_line": 5562, "src_line": 178, "category": "unsupported", "family": "unsanctioned_out_store", "detail": "store through `*out_val` without an out-parameter contract" }
+      ],
+      "blockers": [
+        {
+          "rank": 1,
+          "family": "source_contract:abi_gate",
+          "root": true,
+          "exact_blocker": "boolean_source.rs:716; qualType `int (struct cmt_counter *, int, char **, double *)` is not a registered model ABI.",
+          "minimal_reproducer": "struct r { int allow_reset; };\nint w(struct r *p, double *out) { *out = 0; return 0; }",
+          "reproducer_id": "source-contract ABI gate",
+          "observed": "source-contract status unknown, reason `outside single borrowed chunk / int-or-void-result source profile`",
+          "missing_premise_or_contract": "Declared modes for the extra formals, INCLUDING an out-pointer formal. The Boolean-field profile has no out-slot vocabulary at all.",
+          "candidate_generic_feature": "Generic borrowed-scalar formal extension plus a declared scalar out-slot mode for the Boolean-field profile."
+        },
+        {
+          "rank": 2,
+          "family": "unsupported:unsanctioned_out_store",
+          "root": true,
+          "exact_blocker": "crates/qcore-c-gateway/src/legacy_c.rs:3006 (reject_unsanctioned_store). The importer names the place `*out_val`, but with no out-parameter contract in force it rejects the store and poisons every tracked pointer (sets unknown and may_be_null). This is the deliberate W4 indirect-access repair: the store is not erased from the projection.",
+          "minimal_reproducer": "void w(double *out) { double v = 0; *out = v; }",
+          "reproducer_id": "R6",
+          "observed": "status Unknown; unsupported: store through `*out` without an out-parameter contract",
+          "missing_premise_or_contract": "An out-parameter contract for this formal. W4 already infers and validates `Out` slots, but only when the slot holds a fresh live RESOURCE at every exit; a plain scalar out-slot (`double *`) carrying no custody has no inferable mode in the current vocabulary.",
+          "candidate_generic_feature": "Generic non-custodial scalar out-slot inference: from the typed AST, admit a store through a formal of pointer-to-arithmetic type as custody-neutral (it can neither create nor destroy an obligation), and stop poisoning the pointer state for it. Signature-shape driven, no symbol-name recognition. This is narrower and independently useful from the resource out-slot machinery."
+        },
+        {
+          "rank": 3,
+          "family": "unsupported:indirect_member_or_deref",
+          "root": true,
+          "exact_blocker": "legacy_c.rs:1636 / contains_unmodeled_access at 5555 and 5559.",
+          "minimal_reproducer": "struct s { int h; };\nvoid ext(int *);\nvoid w(struct s *p) { ext(&p->h); }",
+          "reproducer_id": "R3",
+          "observed": "status Unknown; unsupported: indirect memory access is outside the resource projection",
+          "missing_premise_or_contract": "The rank-1 typed-field premise from cmt_counter_create, extended to address-of-sub-object arguments.",
+          "candidate_generic_feature": "Typed direct scalar-field access classification, plus generic address-of-sub-object argument classification."
+        }
+      ]
+    }
+  ],
+  "blocker_family_ranking": {
+    "basis": "Recurrence measured over the archived 185-unit corpus docs/reports/w2-clang-cmake-build/diagnostics.json.gz (hash-verified by card B01), 4,688 projected functions, 185 units. Ranked by recurrence and cheaply estimable precision gain, NOT by whether the ranking would let any unit be marked Safe.",
+    "corpus_totals": { "units": 185, "projected_functions": 4688, "functions_with_zero_diagnostics": 89, "unsupported": 49867, "unknown_alias": 4199, "leak": 271 },
+    "unit_status_totals": { "Safe": 2, "Unsafe": 42, "Unknown": 137, "data_only": 4 },
+    "families": [
+      {
+        "rank": 1,
+        "family": "unsupported:indirect_member_or_deref",
+        "blocks_of_the_six": 6,
+        "corpus_diagnostics": 18671,
+        "corpus_functions": 3233,
+        "corpus_units": 171,
+        "earliest_diagnostic_in_functions": 1590,
+        "sole_blocker_functions": 298,
+        "root_in_this_unit": true,
+        "estimable_precision_gain": "Upper bound 298 functions (6.4% of projected) whose ENTIRE blocker set is this family; the scalar-store-only subclass reaches an unmeasured subset. Modeling these statements removes state poisoning, which can also SURFACE previously masked leak and unknown_alias diagnostics, so the effect is a precision gain in both directions, not a monotone increase in Safe results.",
+        "admissible_fail_closed": true
+      },
+      {
+        "rank": 2,
+        "family": "unsupported:uncontracted_call",
+        "blocks_of_the_six": 4,
+        "corpus_diagnostics": 12118,
+        "corpus_functions": 2493,
+        "corpus_units": 171,
+        "earliest_diagnostic_in_functions": 846,
+        "sole_blocker_functions": 171,
+        "root_in_this_unit": false,
+        "estimable_precision_gain": "Not achievable as an analysis feature. In this unit the intra-unit case (cmt_counter_destroy) is entirely downstream of rank 1; the remaining callees are cross-translation-unit.",
+        "admissible_fail_closed": false,
+        "rejection_reason": "Admitting an uncontracted call as custody-neutral is precisely the optimistic fallback hard invariant 1 forbids. The legitimate routes are declared `.qcore` contracts (corpus work) or multi-unit scope, neither of which is a bounded analysis capability."
+      },
+      {
+        "rank": 3,
+        "family": "unsupported:branch_condition",
+        "blocks_of_the_six": 3,
+        "corpus_diagnostics": 8908,
+        "corpus_functions": 2429,
+        "corpus_units": 166,
+        "earliest_diagnostic_in_functions": 622,
+        "sole_blocker_functions": 42,
+        "root_in_this_unit": true,
+        "estimable_precision_gain": "Only 42 functions have this as a sole blocker; 253 more pair it with indirect + uncontracted_call and 192 with indirect alone, so most of its value is unlocked only jointly with rank 1. Best treated as an extension of rank 1 rather than a separate capability.",
+        "admissible_fail_closed": true
+      },
+      {
+        "rank": 4,
+        "family": "unknown_alias",
+        "blocks_of_the_six": 2,
+        "corpus_diagnostics": 4199,
+        "corpus_functions": 1361,
+        "corpus_units": 162,
+        "earliest_diagnostic_in_functions": 224,
+        "sole_blocker_functions": 0,
+        "root_in_this_unit": false,
+        "estimable_precision_gain": "Zero functions have this as a sole blocker. It is a consequence of state poisoning by other families, and for a formal it is also the intended trigger of W4's binding search. No independent capability.",
+        "admissible_fail_closed": true
+      },
+      {
+        "rank": 5,
+        "family": "source_contract:abi_gate",
+        "blocks_of_the_six": 5,
+        "corpus_diagnostics": null,
+        "corpus_functions": null,
+        "corpus_units": null,
+        "sole_blocker_functions": null,
+        "root_in_this_unit": true,
+        "estimable_precision_gain": "Not cheaply estimable across the corpus: the source-contract layer runs only on the configured CMetrics and ChunkIO routes, not on all 185 units. Within this unit it blocks 5 of 6 functions, but lifting it alone yields nothing, because each of those bodies is then rejected by the statement grammar or by cross-unit calls.",
+        "admissible_fail_closed": true
+      },
+      {
+        "rank": 6,
+        "family": "unsupported:unsanctioned_out_store",
+        "blocks_of_the_six": 1,
+        "corpus_diagnostics": 676,
+        "corpus_functions": 262,
+        "corpus_units": 87,
+        "earliest_diagnostic_in_functions": 14,
+        "sole_blocker_functions": 1,
+        "root_in_this_unit": true,
+        "estimable_precision_gain": "Only 1 function has this as a sole blocker. Narrow, but the non-custodial scalar out-slot rule is cheap and composes with rank 1.",
+        "admissible_fail_closed": true
+      },
+      {
+        "rank": 7,
+        "family": "source_contract:statement_grammar",
+        "blocks_of_the_six": 1,
+        "corpus_diagnostics": null,
+        "corpus_functions": null,
+        "corpus_units": null,
+        "sole_blocker_functions": null,
+        "root_in_this_unit": true,
+        "estimable_precision_gain": "One function in this unit; not cheaply estimable corpus-wide for the same reason as rank 5.",
+        "admissible_fail_closed": true
+      }
+    ],
+    "out_of_scope_corpus_observation": {
+      "family": "unsupported:return_expression",
+      "note": "Not a blocker for any of the six functions (every return in this unit is already modeled), so it is not a C00 inventory row and not the C02 candidate. Recorded because it is the LARGEST sole-blocker family in the corpus and is worth a separate card.",
+      "corpus_diagnostics": 1477,
+      "corpus_functions": 1148,
+      "corpus_units": 124,
+      "sole_blocker_functions": 494
+    }
+  },
+  "c02_selection": {
+    "selected_family": "unsupported:indirect_member_or_deref",
+    "capability_name": "Typed direct scalar-field access classification",
+    "one_line": "Use the Clang typed AST the gateway already imports to admit a bounded, whitelisted class of direct field accesses as resource-projection NoOps, leaving everything else Unknown.",
+    "admission_rule": {
+      "admit_only_if_all_hold": [
+        "The statement contains no call expression anywhere.",
+        "Every member or subscript access in the statement is a direct field access whose base is a DeclRefExpr naming a formal or local (no chained deref, no computed base, no array subscript on a non-constant index).",
+        "Each accessed field's DECLARED type, taken from the typed AST, is a non-pointer arithmetic or enumeration type.",
+        "No accessed field is a member of a union, and no enclosing record on the access path is a union.",
+        "No accessed field is qualified volatile or _Atomic.",
+        "The statement takes no address of any sub-object (no address-of escape).",
+        "The assigned value, where the statement is an assignment, is itself free of calls and of unmodeled access."
+      ],
+      "otherwise": "Unknown, exactly as today. The rule is a whitelist over a typed premise; it never relaxes an existing rejection without that premise."
+    },
+    "soundness_argument": "A write to a field of non-pointer arithmetic or enum type outside any union cannot create, destroy, alias or transfer a tracked resource identity, so it is custody-neutral for the resource projection. Union members are excluded because a scalar write can overwrite an overlapping pointer member. Volatile and _Atomic are excluded because they carry side effects the projection does not model. Classifying the statement as a NoOp asserts no validity of the base object: if the access traps, that path simply does not reach an exit, which can only remove leak witnesses, never add one.",
+    "why_this_family": [
+      "It is rank 1 on every recurrence axis measured: most diagnostics (18,671), most functions (3,233 of 4,688), most units (171 of 185), most often the earliest diagnostic in a function (1,590), and the largest sole-blocker family among the families that actually block these six functions (298).",
+      "It blocks all six Unknown functions, which no other family does.",
+      "It is the ROOT of this unit's causal chain: it is why cmt_counter_destroy's body is not fully modeled, which is why W4 publishes no summary for it, which is why cmt_counter_create's two calls to it are uncontracted, which is why the calloc obligation at preprocessed line 5466 stays live at both early returns and the raw unit is provisional Unsafe.",
+      "It is admissible fail-closed: the typed premise already exists in the gateway (typed_c_ast / boolean_source consume the same Clang AST for the same unit), and the rule is a conjunctive whitelist that cannot flip an Unknown without that premise.",
+      "It is generic: the rule is expressed entirely over declared C types and expression shapes. No library, record or symbol name appears in it.",
+      "The alternatives are worse. Rank 2 (uncontracted_call) is not admissible as an analysis feature at all. Rank 3 (branch_condition) has only 42 sole-blocker functions and is best delivered as an extension of this same typed classification. Rank 4 (unknown_alias) has zero sole-blocker functions and is a consequence, not a cause. Ranks 5-7 are single-unit or narrow."
+    ],
+    "explicitly_not_claimed": [
+      "This capability does NOT make any of the six functions a checked function contract. Each of the six additionally needs either a source-contract ABI/vocabulary extension (five of them) or cross-translation-unit callee contracts (four of them), or both.",
+      "This capability does NOT promote the raw CMetrics unit. cmt_counter_create retains uncontracted cmt_log_print, cmt_map_create and cmt_counter_destroy calls and both leak diagnostics; the unit stays provisional Unsafe.",
+      "Within this unit the capability changes exactly one function's resource projection: cmt_counter_allow_reset's single statement `counter->allow_reset = 1` becomes modeled, leaving that function with no diagnostics. Probes R12 and R13 show an otherwise-empty borrowed-pointer function classifies Safe, so its RESOURCE status would move Unknown to Safe. That is a separate verdict from its already-checked source contract, and neither promotes the unit.",
+      "Removing state poisoning can SURFACE leak and unknown_alias diagnostics that are currently masked, so the corpus effect may include new provisional Unsafe results. That is a precision gain, not a regression, and a provisional Unsafe is never an upstream defect claim.",
+      "Because all four archived 185-unit artifacts would change, hard invariant 3 (parity before deletion) and hard invariant 5 (pinned expectations are intentional) require the new artifacts to be regenerated, diffed and re-pinned deliberately, with the diff archived under docs/reports/."
+    ],
+    "bounded_requirement_if_c02_is_declined": "If the typed-AST bridge into the token-level interpreter is judged too large for one card, the fallback bounded requirement is rank 6 alone: non-custodial scalar out-slot classification (legacy_c.rs:3006). Admit a store through a formal whose declared type is pointer-to-arithmetic as custody-neutral instead of poisoning all pointer state. It needs the same typed premise on a single formal rather than on arbitrary field paths, covers 676 diagnostics across 262 functions and 87 units, and unblocks exactly one of cmt_counter_get_val's three blockers. It promotes nothing."
+  },
+  "reproducers_verified": {
+    "method": "Each minimal reproducer was executed through the real gateway entry point qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit with the pinned contract/qcore/libc/memory.qcore contracts, from a scratchpad-only probe crate. No repository code or test was modified.",
+    "log": "docs/reports/remaining-c00/logs/reproducer_probe.log",
+    "cases": [
+      { "id": "R1", "purpose": "scalar member store is rejected", "status": "Unknown", "diagnostics": ["unsupported: indirect memory access is outside the resource projection"] },
+      { "id": "R2", "purpose": "pointer member read", "status": "Unknown", "diagnostics": ["unknown_alias: q", "unsupported: indirect memory access is outside the resource projection"] },
+      { "id": "R3", "purpose": "address-of member as argument", "status": "Unknown", "diagnostics": ["unsupported: indirect memory access is outside the resource projection"] },
+      { "id": "R4", "purpose": "branch on pointer member", "status": "Unknown", "diagnostics": ["unsupported: indirect memory access is outside the resource projection", "unsupported: unmodeled call, aggregate or indirect access in branch condition"] },
+      { "id": "R5", "purpose": "call in branch condition", "status": "Unknown", "diagnostics": ["unsupported: unmodeled call, aggregate or indirect access in branch condition"] },
+      { "id": "R6", "purpose": "scalar out-slot store", "status": "Unknown", "diagnostics": ["unsupported: store through `*out` without an out-parameter contract"] },
+      { "id": "R7", "purpose": "uncontracted call holding an obligation", "status": "Unsafe", "diagnostics": ["leak: acquired line 1", "unsupported: call to uncontracted function `ext`"] },
+      { "id": "R8", "purpose": "leak caused by an uncontracted releaser (the cmt_counter_create mechanism)", "status": "Unsafe", "diagnostics": ["leak: acquired line 1", "unsupported: call to uncontracted function `rel`"] },
+      { "id": "R9", "purpose": "cmt_counter_destroy body shape", "status": "Unknown", "diagnostics": ["unknown_alias: p", "unsupported: indirect memory access is outside the resource projection", "unsupported: unmodeled call, aggregate or indirect access in branch condition"] },
+      { "id": "R10", "purpose": "control: fully modeled acquire/release", "status": "Safe", "diagnostics": [] },
+      { "id": "R11", "purpose": "scalar member store then return 0 (cmt_counter_allow_reset shape with int result)", "status": "Unknown", "diagnostics": ["unsupported: indirect memory access is outside the resource projection"] },
+      { "id": "R12", "purpose": "control: empty borrowed-pointer void function", "status": "Safe", "diagnostics": [] },
+      { "id": "R13", "purpose": "control: empty borrowed-pointer int function", "status": "Safe", "diagnostics": [] },
+      { "id": "R14", "purpose": "control: plain local scalar assignment is a different family", "status": "Unknown", "diagnostics": ["unsupported: unsupported assignment expression"] },
+      { "id": "R15", "purpose": "control: cmt_counter_create shape with no member access still leaks via the uncontracted callee", "status": "Unsafe", "diagnostics": ["leak: acquired line 1", "unsupported: call to uncontracted function `dst`"] },
+      { "id": "R16", "purpose": "array subscript", "status": "Unknown", "diagnostics": ["unknown_alias: a", "unsupported: indirect memory access is outside the resource projection"] }
+    ]
+  },
+  "reproduction": {
+    "audit_command": "cargo run --quiet -p qcore-audit -- <scratchpad>/c00-audit.config",
+    "audit_config_note": "A scratchpad copy of contract/profiles/cmetrics-counter/audit.json with profile_directory, checkout, compile_database and source_contracts paths made absolute, and report redirected into the scratchpad so the shared prepared build was read but never written.",
+    "prepared_build": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-{source,production} (prepared by scripts/prepare_cmetrics_clang_audit.py; source_sha256 verified against its build-provenance.json)",
+    "provider_package": "build/cycle19/provider-packages-unit/qcore.cmetrics (present in this worktree from card B01)",
+    "observed_output": "1 checked function contract(s) / 6 Unknown; 1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures; resource diagnostics leak=2, unknown_alias=2, unsupported=36",
+    "matches_established_baseline": true,
+    "log": "docs/reports/remaining-c00/logs/cmetrics_audit.log"
+  },
+  "non_claims": [
+    "No raw unit is promoted. The CMetrics raw unit remains provisional Unsafe and unpromoted.",
+    "A provisional Unsafe is not an upstream defect claim. In particular the two leak diagnostics in cmt_counter_create are consequences of a missing callee summary for cmt_counter_destroy, itself downstream of the indirect-access gate; they are withdrawn-support results, not proven upstream leaks.",
+    "The one checked function contract (cmt_counter_allow_reset) is reported separately and is unchanged by this card.",
+    "No analysis, checker, contract, profile or test code was modified. This card writes only under docs/reports/remaining-c00/ and a session scratchpad.",
+    "The corpus recurrence figures come from the archived 185-unit diagnostics artifact, which was hash-verified rather than regenerated. Projection coverage is not safety coverage, and unknowns stay in the denominator.",
+    "No CT mapping changes; coverage remains 11/50 mapped."
+  ]
+}

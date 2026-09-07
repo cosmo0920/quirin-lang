@@ -1,0 +1,2 @@
+error E { Failed; }
+fn main() -> unit { let x = qcore_acquire(1, true, E); move x; return; }

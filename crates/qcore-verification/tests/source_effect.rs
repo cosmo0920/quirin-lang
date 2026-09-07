@@ -107,6 +107,64 @@ fn actual_source_build_and_contract_snapshots_separate_tasks() {
     );
 }
 
+/// A used header or generated configuration header can change the effective
+/// preprocessing input while the selected source bytes and the checked paths
+/// stay identical. The task and its witness must retire anyway, in both
+/// directions: evidence filed under the old input is never reusable.
+#[test]
+fn a_changed_header_expansion_retires_the_prior_task_and_its_witness() {
+    const CONDITIONAL: &str = "struct cio_chunk { int lock; };\n#ifdef QCORE_GENERATED_CONFIG\ntypedef int qcore_generated_spare;\n#endif\nint cio_chunk_is_locked(struct cio_chunk *ch) { return ch->lock; }";
+    let before = checked(CONDITIONAL, vec![]);
+    let after = checked(CONDITIONAL, vec!["QCORE_GENERATED_CONFIG=1".into()]);
+    assert_eq!(before.paths, after.paths, "the checked paths are unchanged");
+    assert_eq!(
+        before.input_identity().raw_source_digest(),
+        after.input_identity().raw_source_digest(),
+        "the selected source bytes are unchanged"
+    );
+    assert_ne!(
+        before.input_identity().preprocessed_source_digest(),
+        after.input_identity().preprocessed_source_digest(),
+        "the effective preprocessing input did change"
+    );
+    let before_task = task(&before, CONTRACT);
+    let after_task = task(&after, CONTRACT);
+    assert_eq!(
+        before_task.task().unit.source_digest,
+        after_task.task().unit.source_digest
+    );
+    assert_ne!(
+        before_task.task().unit.build_digest,
+        after_task.task().unit.build_digest
+    );
+    assert_ne!(
+        before_task.task().task_digest(),
+        after_task.task().task_digest()
+    );
+    assert!(
+        before_task
+            .check(before_task.task(), &witness(&after_task, &after))
+            .is_err(),
+        "a witness for the newer input was admitted against the retired task"
+    );
+    assert!(
+        after_task
+            .check(after_task.task(), &witness(&before_task, &before))
+            .is_err(),
+        "a witness for the retired input was admitted against the newer task"
+    );
+    // Each task still discharges its own witness, so this is separation, not
+    // a blanket refusal.
+    for (replay, summary) in [(&before_task, &before), (&after_task, &after)] {
+        assert_eq!(
+            replay
+                .check(replay.task(), &witness(replay, summary))
+                .unwrap(),
+            replay.task().coverage_for(replay.capability())
+        );
+    }
+}
+
 #[test]
 fn target_substitution_and_unsupported_selected_functions_reject() {
     let summary = checked(SOURCE, vec![]);

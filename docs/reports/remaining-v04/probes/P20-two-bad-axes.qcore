@@ -1,0 +1,1 @@
+quant axis a : credit<M1>; quant axis b : credit<M2>; fn main() -> i32 { return 0; }

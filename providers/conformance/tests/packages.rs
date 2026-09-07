@@ -384,6 +384,57 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
                     .all(|dep| dep["path"].is_null())
             );
         }
+        // The conformance harness may exercise the real host, but only as a test
+        // consumer: its normal dependencies (the ones a schemas-only process
+        // fixture in `src/bin` links) stay on the admitted schema surface.
+        if package["name"] == "qcore-provider-conformance" {
+            let mut host_dev_dependencies = 0;
+            for dependency in package["dependencies"].as_array().unwrap() {
+                let name = dependency["name"].as_str().unwrap();
+                let dev = dependency["kind"].as_str() == Some("dev");
+                if dev {
+                    host_dev_dependencies += 1;
+                    continue;
+                }
+                assert!(
+                    matches!(name, "qcore-schemas" | "serde" | "serde_json"),
+                    "conformance fixtures may not link `{name}` outside dev-dependencies"
+                );
+            }
+            assert!(
+                host_dev_dependencies > 0,
+                "the harness is expected to consume the real host as a dev dependency"
+            );
+        }
     }
     assert_eq!(artifacts, 5);
+}
+
+/// The packaged artifacts are exactly the crates carrying a package template;
+/// the conformance harness (which does link host crates for tests) is never one
+/// of them, so no host crate can reach an installed provider package.
+#[test]
+fn only_template_carrying_crates_are_packaged() {
+    let root = root();
+    let mut templates: Vec<String> = std::fs::read_dir(&root)
+        .unwrap()
+        .filter_map(|entry| {
+            let path = entry.unwrap().path();
+            path.join("provider-template.json")
+                .is_file()
+                .then(|| path.file_name().unwrap().to_string_lossy().into_owned())
+        })
+        .collect();
+    templates.sort();
+    assert_eq!(
+        templates,
+        [
+            "qcore-provider-chunkio",
+            "qcore-provider-cmetrics",
+            "qcore-provider-ctraces",
+            "qcore-provider-libevent",
+            "qcore-provider-librdkafka",
+        ]
+    );
+    assert!(!root.join("conformance/provider-template.json").exists());
 }

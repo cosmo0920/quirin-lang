@@ -101,6 +101,59 @@ fn workspace_dependencies_point_strictly_downward() {
     }
 }
 
+/// W5/W0 provider boundary: the core workspace must build and test without any
+/// provider implementation. `providers/` is a separate workspace, and no core
+/// member may name a provider crate or reach into that directory.
+#[test]
+fn core_workspace_does_not_depend_on_provider_implementations() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
+    let workspace = std::fs::read_to_string(root.join("Cargo.toml")).unwrap();
+    assert!(
+        workspace.contains("exclude = [\"providers\"]"),
+        "the core workspace must exclude `providers`"
+    );
+    let members: Vec<String> = workspace
+        .lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('"') && line.ends_with("\","))
+        .map(|line| line.trim_matches(['"', ',']).to_owned())
+        .collect();
+    assert!(
+        members.iter().all(|member| !member.contains("providers")),
+        "no core workspace member may live under `providers/`: {members:?}"
+    );
+    // Every declared member manifest, plus the CLI and compiler grab-bag, is
+    // checked; ALLOWED above pins their permitted workspace dependencies.
+    assert!(members.len() >= ALLOWED.len(), "{members:?}");
+    for member in &members {
+        let manifest_path = root.join(member).join("Cargo.toml");
+        let manifest = std::fs::read_to_string(&manifest_path)
+            .unwrap_or_else(|error| panic!("{}: {error}", manifest_path.display()));
+        let mut in_dependency_table = false;
+        for line in manifest.lines().map(str::trim) {
+            if line.starts_with('[') {
+                in_dependency_table = line
+                    .trim_matches(['[', ']'])
+                    .split('.')
+                    .next_back()
+                    .is_some_and(|table| table.ends_with("dependencies"));
+                continue;
+            }
+            if !in_dependency_table || line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            assert!(
+                !line.starts_with("qcore-provider"),
+                "{member} must not depend on a provider crate: {line}"
+            );
+            assert!(
+                !line.contains("providers/"),
+                "{member} must not reach into the provider workspace: {line}"
+            );
+        }
+    }
+}
+
 #[test]
 fn compiler_uses_audit_only_for_examples() {
     let manifest = include_str!("../Cargo.toml");

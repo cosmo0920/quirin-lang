@@ -1,0 +1,268 @@
+# V04 R05 probe run log
+# qcorec: qcorec 0.1.0
+# HEAD: f26d7dfebeca2161fb46787560997200c7b5eafc
+
+===== P01-unknown-dim-nouse
+--- source
+quant axis bad : credit<Missing>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qcore:1:1: Q016: unknown dimension `Missing`
+quant axis bad : credit<Missing>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P02-unknown-dim-use
+--- source
+quant axis bad : credit<Missing>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore:1:1: Q016: unknown dimension `Missing`
+quant axis bad : credit<Missing>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+^
+docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore:1:84: Q016: unknown quant axis `slots`
+quant axis bad : credit<Missing>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+                                                                                   ^
+--- exit: 1
+
+===== P03-dup-axis-nouse
+--- source
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore:1:64: Q010: duplicate declaration `x`
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; fn main() -> i32 { return 0; }
+                                                               ^
+docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore:1:1: Q016: duplicate quant axis `x`
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P04-dup-axis-use
+--- source
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore:1:64: Q010: duplicate declaration `x`
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+                                                               ^
+docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore:1:1: Q016: duplicate quant axis `x`
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+^
+docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore:1:143: Q016: unknown quant axis `slots`
+dimension Bytes : Idx + Ordered; quant axis x : credit<Bytes>; quant axis x : credit<Bytes>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+                                                                                                                                              ^
+--- exit: 1
+
+===== P05-nominal-count-nouse
+--- source
+quant axis objects : live<Count<UndeclaredNominal>>; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P06-nominal-count-use
+--- source
+quant axis objects : live<Count<UndeclaredNominal>>; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P07-valid-named-nouse
+--- source
+dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P08-valid-named-use
+--- source
+dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; extern fn f(q: quant<n where n := 5>) -> unit; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P09-forward-dim-ref
+--- source
+quant axis memory : credit<Bytes>; dimension Bytes : Idx + Ordered; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P10-decl-after-use-site
+--- source
+extern fn f(q: quant<n where n := 5>) -> unit; dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P11-dup-dimension-nouse
+--- source
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore:1:34: Q010: duplicate declaration `Bytes`
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; fn main() -> i32 { return 0; }
+                                 ^
+docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore:1:1: Q016: duplicate dimension `Bytes`
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P12-dup-dimension-use
+--- source
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore:1:34: Q010: duplicate declaration `Bytes`
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+                                 ^
+docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore:1:1: Q016: duplicate dimension `Bytes`
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+^
+docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore:1:116: Q016: unknown quant axis `slots`
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }
+                                                                                                                   ^
+--- exit: 1
+
+===== P13-axis-self-reference
+--- source
+quant axis bad : credit<bad>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P13-axis-self-reference.qcore:1:1: Q016: unknown dimension `bad`
+quant axis bad : credit<bad>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P14-axis-refs-other-axis
+--- source
+dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; quant axis other : credit<memory>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qcore:1:1: Q016: unknown dimension `memory`
+dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; quant axis other : credit<memory>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P15-count-of-unknown
+--- source
+quant axis bad : credit<Count<Missing>>; fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P16-unknown-mechanism
+--- source
+quant axis bad : missing<Count<T>>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P16-unknown-mechanism.qcore:1:1: Q016: expected axis mode at bytes 17..24
+quant axis bad : missing<Count<T>>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P17-cost-profile-unknown
+--- source
+quant axis alloc : cost.total<Missing>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qcore:1:1: Q016: unknown dimension `Missing`
+quant axis alloc : cost.total<Missing>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P18-library-mode-unused
+--- source
+module library; quant axis bad : credit<Missing>;
+--- output
+docs/reports/remaining-v04/probes/P18-library-mode-unused.qcore:1:1: Q016: unknown dimension `Missing`
+module library; quant axis bad : credit<Missing>;
+^
+--- exit: 1
+
+===== P19-contract-mode-unused
+--- source
+module contract; quant axis bad : credit<Missing>;
+--- output
+docs/reports/remaining-v04/probes/P19-contract-mode-unused.qcore:1:1: Q016: unknown dimension `Missing`
+module contract; quant axis bad : credit<Missing>;
+^
+--- exit: 1
+
+===== P20-two-bad-axes
+--- source
+quant axis a : credit<M1>; quant axis b : credit<M2>; fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P20-two-bad-axes.qcore:1:1: Q016: unknown dimension `M1`
+quant axis a : credit<M1>; quant axis b : credit<M2>; fn main() -> i32 { return 0; }
+^
+--- exit: 1
+
+===== P21-span-line4
+--- source
+dimension Bytes : Idx + Ordered;
+quant axis good : credit<Bytes>;
+
+quant axis bad : credit<Missing>;
+fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P21-span-line4.qcore:1:1: Q016: unknown dimension `Missing`
+dimension Bytes : Idx + Ordered;
+^
+--- exit: 1
+
+===== P22-span-line4-dupaxis
+--- source
+dimension Bytes : Idx + Ordered;
+quant axis x : credit<Bytes>;
+
+quant axis x : credit<Bytes>;
+fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore:4:1: Q010: duplicate declaration `x`
+quant axis x : credit<Bytes>;
+^
+docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore:1:1: Q016: duplicate quant axis `x`
+dimension Bytes : Idx + Ordered;
+^
+--- exit: 1
+
+===== P23-parse-error-later-line
+--- source
+dimension Bytes : Idx + Ordered;
+quant axis good : credit<Bytes>;
+quant axis bad : missing<Count<T>>;
+fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P23-parse-error-later-line.qcore:1:1: Q016: expected axis mode at bytes 83..90
+dimension Bytes : Idx + Ordered;
+^
+--- exit: 1
+
+===== P24-no-axis-declarations
+--- source
+fn main() -> i32 { return 0; }
+--- output
+checked 1 function(s); entry `main`
+--- exit: 0
+
+===== P28-byte-offset-divergence
+--- source
+dimension Bytes : Idx + Ordered;
+
+fn filler() -> unit { return; }
+
+quant axis bad : missing<Count<T>>;
+fn main() -> i32 { return 0; }
+--- output
+docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qcore:1:1: Q016: expected axis mode at bytes 50..57
+dimension Bytes : Idx + Ordered;
+^
+--- exit: 1
+
+===== P25+P26 (multi-file: dimension in A, bad axis in B)
+docs/reports/remaining-v04/probes/P25-multifile-a.qcore:1:1: Q016: unknown dimension `Missing`
+module library;
+^
+--- exit: 1
+
+===== P26+P25 (same pair, reversed argument order)
+docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qcore:1:1: Q016: unknown dimension `Missing`
+module library;
+^
+--- exit: 1
+
+===== P25+P27 (multi-file: dimension in A, axis referencing it in B)
+checked Library module: 2 declaration(s), 0 function body/bodies; no entry point
+--- exit: 0

@@ -1,0 +1,100 @@
+test source_effect::tests::comparisons_negation_and_nested_blocks_preserve_integer_results ... ok
+test source_effect::tests::branches_use_c_truthiness_and_return_stops_later_effects ... ok
+test source_effect::tests::computes_both_prestates_with_ordered_writes_and_updated_field_reads ... ok
+test source_effect::tests::void_fallthrough_and_early_return_keep_unit_abi ... ok
+test source_effect::tests::wrong_result_forms_reject_even_when_unreachable ... ok
+test source_effect::tests::rejects_failure_on_either_prestate_and_never_emits_partial_paths ... ok
+test source_effect::tests::limits_cover_deep_expressions_and_unreachable_oversized_programs ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/sample_boolean_provider.rs (providers/target/debug/deps/sample_boolean_provider-296b5c31649b4141)
+
+running 7 tests
+test source_effect::tests::branches_use_c_truthiness_and_return_stops_later_effects ... ok
+test source_effect::tests::comparisons_negation_and_nested_blocks_preserve_integer_results ... ok
+test source_effect::tests::computes_both_prestates_with_ordered_writes_and_updated_field_reads ... ok
+test source_effect::tests::rejects_failure_on_either_prestate_and_never_emits_partial_paths ... ok
+test source_effect::tests::wrong_result_forms_reject_even_when_unreachable ... ok
+test source_effect::tests::void_fallthrough_and_early_return_keep_unit_abi ... ok
+test source_effect::tests::limits_cover_deep_expressions_and_unreachable_oversized_programs ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cmetrics_unit.rs (providers/target/debug/deps/cmetrics_unit-bbb527e7d93b8405)
+
+running 1 test
+test cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.92s
+
+     Running tests/configured_audit.rs (providers/target/debug/deps/configured_audit-75755de0f88ba289)
+
+running 7 tests
+test a_failed_selected_process_stays_unknown_without_an_in_process_fallback ... ok
+test configured_helper_is_imported_from_its_real_pinned_compile_entry ... ok
+test missing_or_conflicting_helper_compile_entry_rejects_before_publication ... ok
+test changed_main_or_helper_source_cannot_borrow_a_pinned_revision ... ok
+test failed_contract_evidence_is_unknown_without_resource_verdict_promotion ... ok
+test pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter ... ok
+test missing_bindings_models_packages_and_escaping_roots_do_not_publish_a_report ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.20s
+
+     Running tests/configured_source_contract.rs (providers/target/debug/deps/configured_source_contract-3b691c17f326d771)
+
+running 5 tests
+test process_package_rejects_an_installed_scope_wider_than_its_compiled_manifest ... ok
+test configured_separate_helper_reaches_real_process_frame_execution ... ok
+test configured_selection_and_source_support_fail_closed ... ok
+test configured_helper_policy_source_and_compile_inventory_fail_closed ... ok
+test configured_second_codebase_has_real_process_checked_source_evidence ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.10s
+
+     Running tests/packages.rs (providers/target/debug/deps/packages-7ea9f90c86b5f2d0)
+
+running 2 tests
+test artifact_dependencies_are_only_schemas_and_serialization ... ok
+test real_packages_preserve_unknown_and_reject_mutations ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.56s
+
+     Running tests/reactor_callbacks.rs (providers/target/debug/deps/reactor_callbacks-6b4eccf073bf2de0)
+
+running 1 test
+test schema_only_process_cannot_grant_callback_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/source_effect.rs (providers/target/debug/deps/source_effect-5c585e3afa8be493)
+
+running 1 test
+test real_package_proposes_source_effects_without_admitting_false_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.57s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_ctraces-3beda0cb5f582e8e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_libevent-5dbb0db58115931d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_librdkafka-19c605cda2726382)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_provider_conformance
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

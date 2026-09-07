@@ -580,3 +580,44 @@ raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lea
 audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
+
+R02 terminal task state, adversarial verification (2026-09-07): V02 re-examined
+"a joined child can still emit events" and found no soundness failure; no
+production code changed. Four new `qcore-core` tests pin the full terminal-state
+x event-kind matrix with exact diagnostics (and the absence of authority
+diagnostics), the refused-join direction with exact diagnostic vectors, and the
+`Completed`/`Joined` ledger phases rejecting all ten operations with
+`InactiveTask` while a completed child's captures stay in `Custodian::Capsule`.
+Nineteen new Lean theorems give the `Lifetime` model per-constructor terminal
+rejection, post-join corollaries and refused-join retention, with no new axioms.
+All 823 workspace tests, 45 provider tests, 43 Python tests, 20 Lean audits and
+the standing gates pass; CT coverage remains 11/50 and Cycle19 artifacts are
+untouched. Evidence: `docs/reports/remaining-v02/README.md`. Source-to-trace
+refinement, checked mutex invariants, loans and native correspondence remain open.
+
+Compile-task identity (2026-09-07): the configured audit now records a complete
+identity for every accepted compile task — Clang program/version/target, the
+declared driver, the compile working directory, the main source path, the
+complete ordered argument vector, the dialect, the ordered transported
+preprocessing options and analyzed scope, the raw source bytes, the effective
+preprocessing input, and named contract/profile/database/rule dependency
+digests. A used header, a generated configuration header, include order, an
+unread admitted macro option or a contract/profile change now retires the
+recorded identity even when the selected `.c` file, the compilation database and
+the preprocessed token stream are unchanged. The evidence-v2 task digest already
+bound the same inputs; a stale witness is now shown to be refused in both
+directions. One configuration is one (working directory, complete command) pair:
+repeated identical records are one task, conflicting records reject. A read-only
+census records that the pinned Cycle 19 compatibility adapter still chooses
+silently between two configurations for `src/flb_input_chunk.c` and among four
+for each of 27 Monkey/libevent units; repairing that changes the pinned
+artifacts and remains open. Ten new tests; all 829 workspace tests, 45 provider
+tests, 43 Python tests, 20 Lean audits and the standing gates pass, and the
+configured CMetrics audit still reports one checked function contract, six
+Unknown functions and a provisional Unsafe raw unit with identical verdicts,
+diagnostics and source digests. The four pinned 185-unit artifacts could not be
+re-measured: the upstream Fluent Bit checkout has moved off its pin and the
+audit's own pin gate refuses to run. Evidence:
+`docs/reports/remaining-g01/README.md`. Header enumeration, compiler
+equivalence, build hermeticity and the compatibility adapter's ambiguity remain
+open; no verdict changes and no raw unit is promoted.

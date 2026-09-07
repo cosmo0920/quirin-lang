@@ -1,0 +1,21 @@
+    Checking qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-core)
+    Checking itoa v1.0.18
+    Checking memchr v2.8.3
+    Checking shlex v1.3.0
+    Checking find-msvc-tools v0.1.5
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking libc v0.2.189
+    Checking cc v1.2.50
+    Checking serde v1.0.229
+    Checking serde_json v1.0.151
+    Checking qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-frontend)
+    Checking qcore-schemas v2.0.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-schemas)
+    Checking qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-contract)
+    Checking qcore-verifier-host v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-c-gateway)
+    Checking qcore-verification v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-verification)
+    Checking qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcore-audit)
+    Checking qcore-compiler v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/compiler)
+    Checking qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.99s

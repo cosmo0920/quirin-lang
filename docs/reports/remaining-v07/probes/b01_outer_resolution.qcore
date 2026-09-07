@@ -1,0 +1,7 @@
+error Failure { Failed; }
+fn main() -> i32 {
+  let m = qcore_acquire(7, true, Failure);
+  with lock m as g { }
+  drop m;
+  return 0;
+}

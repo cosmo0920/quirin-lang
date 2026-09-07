@@ -1,0 +1,5 @@
+fn main() -> i32 {
+  thread scope s { }
+  drop s;
+  return 0;
+}

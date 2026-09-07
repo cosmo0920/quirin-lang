@@ -10,13 +10,36 @@ import QCore.Concurrency
 
 #print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_access
 #print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_transfer
+#print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_destruction
+#print axioms QCore.Concurrency.Lifetime.foreign_custody_rejects_destruction
 #print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_access
 #print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_action
 #print axioms QCore.Concurrency.Lifetime.destruction_invalidates_generation
 #print axioms QCore.Concurrency.Lifetime.accepted_destruction_requires_quiescence
 #print axioms QCore.Concurrency.Lifetime.join_terminates_child
 #print axioms QCore.Concurrency.Lifetime.destruction_prevents_later_access
+#print axioms QCore.Concurrency.Lifetime.destruction_prevents_later_transfer
+#print axioms QCore.Concurrency.Lifetime.destruction_prevents_repeat_destruction
 #print axioms QCore.Concurrency.Lifetime.join_prevents_child_action
+
+#print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_lock
+#print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_unlock
+#print axioms QCore.Concurrency.Lifetime.terminal_sender_rejects_transfer
+#print axioms QCore.Concurrency.Lifetime.terminal_recipient_rejects_transfer
+#print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_destroy
+#print axioms QCore.Concurrency.Lifetime.terminal_parent_rejects_spawn
+#print axioms QCore.Concurrency.Lifetime.terminal_parent_rejects_join
+#print axioms QCore.Concurrency.Lifetime.terminal_child_rejects_join
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_lock
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_unlock
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_transfer
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_receiving_custody
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_destruction
+#print axioms QCore.Concurrency.Lifetime.join_prevents_child_spawn
+#print axioms QCore.Concurrency.Lifetime.join_cannot_be_repeated
+#print axioms QCore.Concurrency.Lifetime.nonquiescent_child_rejects_join
+#print axioms QCore.Concurrency.Lifetime.locked_parent_rejects_join
+#print axioms QCore.Concurrency.Lifetime.refused_join_preserves_child_authority
 
 #print axioms QCore.Concurrency.accepted_lifetimes_replay
 #print axioms QCore.Concurrency.accepted_certificate_names_trusted_profile_and_assumptions

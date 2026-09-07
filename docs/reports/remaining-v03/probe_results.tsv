@@ -1,0 +1,71 @@
+S01_bool_result	1	S01_bool_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S02_u32_result	1	S02_u32_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S03_unknown_named_result	1	S03_unknown_named_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S04_own_buffer_result_sequential	1	S04_own_buffer_result_sequential.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S05_own_item_result	1	S05_own_item_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S06_nested_own_result	1	S06_nested_own_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S07_i32_positive	0	checked 1 function(s); entry `main`
+S08_unit_positive	0	checked 1 function(s); entry `main`
+S09_missing_return	1	S09_missing_return.qcore:1:1: Q202: MissingReturn
+S10_call_result_mismatch	1	S10_call_result_mismatch.qcore:2:20: Q500: `let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset
+S11_call_with_argument	1	S11_call_with_argument.qcore:2:20: Q020: executable source calls must have zero arguments
+S12_function_typed_parameter	1	S12_function_typed_parameter.qcore:1:1: Q020: the emitted entry function must not have parameters
+S13_unknown_parameter_type	0	checked 2 function(s); entry `main`
+S14_unit_returns_value	1	S14_unit_returns_value.qcore:1:21: Q020: a unit result requires a bare return
+S15_i32_bare_return	1	S15_i32_bare_return.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return
+S16_missing_result_annotation	1	S16_missing_result_annotation.qcore:1:11: Q000: function requires `->` return type
+S17_unknown_param_used	1	S17_unknown_param_used.qcore:1:31: Q103: unknown resource binding `x`
+S18_owned_param_unconsumed	1	S18_owned_param_unconsumed.qcore:1:1: Q100: variable `x` requires usage [1,1], but has demand [0,0]
+S19_uncalled_bad_result	1	S19_uncalled_bad_result.qcore:1:16: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S20_helper_missing_return	1	S20_helper_missing_return.qcore:1:1: Q202: MissingReturn
+S21_structured_control_flow	1	S21_structured_control_flow.qcore:1:20: Q500: structured control flow is not in the Cycle 12 executable subset
+S22_unknown_let_annotation	0	checked 1 function(s); entry `main`
+S23_acquire_positive	0	checked 1 function(s); entry `main`
+S24_unknown_annotation_leak	1	S24_unknown_annotation_leak.qcore:2:1: Q202: LiveResourcesAtNormalReturn([1])
+S25_i32_annotation_on_resource	0	checked 1 function(s); entry `main`
+S26_library_mode_unknown_types	1	S26_library_mode_unknown_types.qcore:2:25: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S27_move_out_with_i32_result	0	checked 1 function(s); entry `main`
+S28_move_out_with_unit_result	0	checked 1 function(s); entry `main`
+S29_unknown_error_type	1	S29_unknown_error_type.qcore:1:20: Q013: unknown name `Missing`
+S30_call_unknown_function	1	S30_call_unknown_function.qcore:1:20: Q013: unknown name `missing`
+S31_return_after_return	1	S31_return_after_return.qcore:1:30: Q020: an i32 result requires a signed 32-bit integer literal return
+S32_callee_result_in_return	1	S32_callee_result_in_return.qcore:2:20: Q020: an i32 result requires a signed 32-bit integer literal return
+S33_callee_bad_result	1	S33_callee_bad_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S34_result_generic_type	1	S34_result_generic_type.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+S35_callee_payload_escape	1	S35_callee_payload_escape.qcore:3:1: Q200: whole-function summary exceeds its declared resource bounds
+T01_owned_roundtrip_positive	0	checked 2 function(s); entry `main`; scoped owned-buffer tasks (Linux C11)
+T02_scalar_worker_positive	0	checked 2 function(s); entry `main`; scoped owned-buffer tasks (Linux C11)
+T03_worker_returns_scalar	1	T03_worker_returns_scalar.qcore:5:5: Q020: return value does not match the declared task function result
+T04_worker_returns_buffer_for_i32	1	T04_worker_returns_buffer_for_i32.qcore:4:5: Q020: return value does not match the declared task function result
+T05_inconsistent_exits	1	T05_inconsistent_exits.qcore:2:68: Q020: task functions require an explicit return or raise on every path
+T06_capture_type_mismatch	1	T06_capture_type_mismatch.qcore:6:37: Q020: capture type does not match worker parameter
+T07_capture_arity_mismatch	1	T07_capture_arity_mismatch.qcore:9:30: Q013: spawn worker `worker` expects 1 captures, received 0
+T08_worker_own_item_result	1	T08_worker_own_item_result.qcore:2:1: Q020: task functions support i32, unit and own<Buffer> results
+T09_worker_own_item_parameter	1	T09_worker_own_item_parameter.qcore:2:1: Q020: task parameters require i32 or own<Buffer> use one
+T10_nested_own_result	1	T10_nested_own_result.qcore:2:1: Q020: task functions support i32, unit and own<Buffer> results
+T11_join_result_annotation_mismatch	1	T11_join_result_annotation_mismatch.qcore:10:9: Q020: local result does not match its declared scalar type
+T12_worker_bool_result	1	T12_worker_bool_result.qcore:2:1: Q020: task functions support i32, unit and own<Buffer> results
+T13_worker_unknown_parameter_type	1	T13_worker_unknown_parameter_type.qcore:2:1: Q020: task parameters require i32 or own<Buffer> use one
+T14_task_entry_parameters	1	T14_task_entry_parameters.qcore:1:1: Q020: task execution entry must have no parameters
+T15_unit_entry_returns_value	1	T15_unit_entry_returns_value.qcore:6:5: Q020: return value does not match the declared task function result
+T16_unit_entry_positive	0	checked 1 function(s); entry `main`; scoped owned-buffer tasks (Linux C11)
+T17_unknown_local_annotation	1	T17_unknown_local_annotation.qcore:3:5: Q500: unsupported task local type
+T18_scalar_annotation_on_buffer	1	T18_scalar_annotation_on_buffer.qcore:3:5: Q020: local result does not match its declared scalar type
+T19_move_buffer_into_i32_param	1	T19_move_buffer_into_i32_param.qcore:6:30: Q020: capture type does not match worker parameter
+T20_copy_buffer_into_owned_param	1	T20_copy_buffer_into_owned_param.qcore:6:30: Q500: only copy i32 and move own<Buffer> captures are executable
+T21_unknown_worker	1	T21_unknown_worker.qcore:5:9: Q013: unknown name `missing`
+X01_tuple_result	1	X01_tuple_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X02_array_result	1	X02_array_result.qcore:1:18: Q000: function declaration requires a body
+X03_slice_result	1	X03_slice_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X04_pointer_result	1	X04_pointer_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X05_never_result	1	X05_never_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X06_borrow_result	1	X06_borrow_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X07_quant_result	1	X07_quant_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X08_function_result	1	X08_function_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X09_task_result	1	X09_task_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X10_mutex_result	1	X10_mutex_result.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X11_own_empty	1	X11_own_empty.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X12_own_no_args	1	X12_own_no_args.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X13_deep_nested_own	1	X13_deep_nested_own.qcore:1:14: Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI
+X14_function_typed_param_helper	0	checked 2 function(s); entry `main`
+X15_empty_result	1	X15_empty_result.qcore:1:15: Q000: function requires a nonempty balanced result type

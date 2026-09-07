@@ -1,0 +1,1 @@
+fn main() -> own<Item> { return 0; }

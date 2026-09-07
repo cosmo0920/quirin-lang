@@ -1,0 +1,2 @@
+error E { Failed; }
+fn main() -> i32 { let x: Widget = qcore_acquire(1, true, E); drop x; return 0; }

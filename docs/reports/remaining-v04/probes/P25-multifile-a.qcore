@@ -1,0 +1,2 @@
+module library;
+dimension Bytes : Idx + Ordered;

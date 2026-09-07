@@ -1,0 +1,1 @@
+dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; quant axis other : credit<memory>; fn main() -> i32 { return 0; }

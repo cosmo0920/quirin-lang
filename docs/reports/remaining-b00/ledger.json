@@ -1,0 +1,721 @@
+{
+  "generated": {
+    "date": "2026-09-07",
+    "card": "B00",
+    "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f",
+    "scope": "read-only reconciliation; no implementation change"
+  },
+  "checkpoint": {
+    "head": "6c2782fa3b3922ed0b17bd6d626d94b5caf64e36",
+    "head_short": "6c2782f",
+    "branch": "claude/qcore-execution-audit-plan-24520f",
+    "main": "6c2782fa3b3922ed0b17bd6d626d94b5caf64e36",
+    "head_equals_main": true,
+    "implementation_checkpoint_documented": "e3e7c2c",
+    "commits_main_ahead_of_e3e7c2c": 1,
+    "working_tree_clean": true,
+    "6c2782f": {
+      "subject": "Record halted-agent handoff and reconcile remaining v0.3 requirements",
+      "files_changed": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "README.md",
+        "docs/CYCLE19_BUILD_INPUTS.md",
+        "docs/GENERALIZATION_PLAN.md",
+        "docs/HANDOFF_2026-09-07.md",
+        "docs/ROADMAP_AFTER_CYCLE_9.md",
+        "docs/VALIDATION.md",
+        "docs/reviews/r0_3/REVIEW.md",
+        "docs/reviews/r0_3/acceptance.json"
+      ],
+      "classification": "documentation-and-bookkeeping-only",
+      "rationale": "every path is Markdown or docs/reviews JSON bookkeeping; no .rs, .qcore, Cargo.toml, proof/, contract/ or scripts/ path is touched"
+    },
+    "working_tree_note": "Tracked tree is clean: `git status --porcelain` reports only the untracked `docs/reports/remaining-b00/` (this card's own deliverable) and `docs/reports/remaining-b01/` (a concurrently running sibling card's directory, containing only `logs/` at the time of this reading). No tracked file is modified.",
+    "other_dirty_paths": []
+  },
+  "submodule": {
+    "git_submodule_status_raw": "d82464a277d0f42703702c4dfd9af6af38595a83 third_party/libevent (release-2.2.2-alpha-11-gd82464a2)",
+    "status_prefix": " ",
+    "gitlink_sha_in_HEAD": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "checkout_head_sha": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "checkout_describe": "release-2.2.2-alpha-11-gd82464a2",
+    "checkout_dirty": false,
+    "declared_pin_file": "contract/profiles/libevent/profile.json",
+    "declared_pin_sha": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "pin_test": "compiler/tests/libevent_submodule.rs::libevent_submodule_matches_the_audited_revision",
+    "pin_test_reads": "filesystem path third_party/libevent via verify_pinned_libevent_source, compared to the profile pin (not `git submodule status`)",
+    "finding": "gitlink in HEAD, the submodule checkout HEAD, and the declared profile pin all equal d82464a277d0f42703702c4dfd9af6af38595a83 (release-2.2.2-alpha-11-gd82464a2). The checkout is clean. The pin test reads the filesystem path through verify_pinned_libevent_source and compares against contract/profiles/libevent/profile.json, so it does not depend on `git submodule status` output. No discrepancy.",
+    "status_prefix_meaning": "initialized, checked out, and matching the recorded gitlink",
+    "observation_note": "The FIRST `git submodule status` invocation in this session printed the '-' (uninitialized) prefix; every subsequent invocation printed the initialized form with a leading space. The checkout was populated and at the pin throughout (113 entries, .git gitdir pointing at .git/worktrees/<wt>/modules/third_party/libevent, clean `git -C third_party/libevent status`). Recorded as an observed transient of the worktree-local submodule gitdir, not as a missing checkout."
+  },
+  "branches": {
+    "count": 42,
+    "all_merged_into_main": true,
+    "all_zero_ahead": true,
+    "table": [
+      {
+        "branch": "claude/c-type-checker-architecture-1fa3d2",
+        "tip": "e496c156d30d3afefc8f4e898b88a30b0b342183",
+        "tip_short": "e496c15",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "claude/c-type-checker-architecture-992bb8",
+        "tip": "0adee0b9713c74fe618029b38d43046cb855ac78",
+        "tip_short": "0adee0b",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "claude/mitigate-remaining-tasks-863b19",
+        "tip": "6275e2c323538a443795596a964e5d0ac8304630",
+        "tip_short": "6275e2c",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "claude/qcore-execution-audit-plan-24520f",
+        "tip": "6c2782fa3b3922ed0b17bd6d626d94b5caf64e36",
+        "tip_short": "6c2782f",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "claude/qcore-pluggable-architecture-bb8b32",
+        "tip": "589bc6e1268f6e49c6c43c4ea8cef2ce9e37b39e",
+        "tip_short": "589bc6e",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/boolean-field-profiles",
+        "tip": "f7afb1d0abba8c5568ebcd95003eecd5d1cb26b5",
+        "tip_short": "f7afb1d",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/configured-audit",
+        "tip": "0a3411bdca647bb5fe15d7219ffb286d206f93d1",
+        "tip_short": "0a3411b",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-completion",
+        "tip": "a5cfc7f8311f27656d92b6cdca2a0a103dc177e8",
+        "tip_short": "a5cfc7f",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-contract-extraction",
+        "tip": "fcd6d4311237c5708f5c638c0d228d5d723bf9d2",
+        "tip_short": "fcd6d43",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-delete-outcomes",
+        "tip": "a6ca6bc0f8a80fa9889aaf82b55e6557b7f193b6",
+        "tip_short": "a6ca6bc",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-file-constructor-failures",
+        "tip": "c1f87ce23b5a398ca7e609f916ab7683a5598f51",
+        "tip_short": "c1f87ce",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-file-os-constructor-failures",
+        "tip": "1017aefbb3af7d74413077e5e84bc4e7b2f675ee",
+        "tip_short": "1017aef",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-file-profiles-transitions",
+        "tip": "5701ae1acb7b2305e3c33bf402ade7bbf77044b3",
+        "tip_short": "5701ae1",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-filesystem-observations",
+        "tip": "221ad5f6876ffcc9ea6db8b8fbbaa7c85916c753",
+        "tip_short": "221ad5f",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-filesystem-outcomes",
+        "tip": "d21aab245bcb32fb4b03bf58ed9059411413c1a6",
+        "tip_short": "d21aab2",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-native-teardown",
+        "tip": "a569596a5a98616c11a234a6b84419b812787d42",
+        "tip_short": "a569596",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-nested-teardown",
+        "tip": "4a97b87125e5ffd348cafedc020fc799679bfbf5",
+        "tip_short": "4a97b87",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/cycle19-teardown-loop",
+        "tip": "2267f04bd5cac1a91b77f33d1de2077f72267ff8",
+        "tip_short": "2267f04",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/frontend-contract-gates",
+        "tip": "a4cd99d049bb78d1bcb20165939357eda3f2fa10",
+        "tip_short": "a4cd99d",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/gateway-relocation",
+        "tip": "cdae145c80c3eac2d8d58bbc8eb4706d2c7b5a85",
+        "tip_short": "cdae145",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/lean-ci-hygiene",
+        "tip": "6b83e714ef0dcc87e749d892c367c9f5afe86600",
+        "tip_short": "6b83e71",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/monkey-typed-profile",
+        "tip": "c7039ad0f067d474a28e82aed140f5d46b7f683e",
+        "tip_short": "c7039ad",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/r03-contract-evidence",
+        "tip": "77c4374553d8d461faad7e8f5ee167e7a7c232e6",
+        "tip_short": "77c4374",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/review-concurrency-lifetimes",
+        "tip": "123db2a439055221cd7e00957b80dbbd29dc8877",
+        "tip_short": "123db2a",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/review-result-axis-literals",
+        "tip": "d17be158380df3ec20fd3b1201423731c9789f28",
+        "tip_short": "d17be15",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/standalone-provider-packages",
+        "tip": "b0c1d05c7fd7058e80f47f09220337aa4e9ef946",
+        "tip_short": "b0c1d05",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/verifier-host-extraction",
+        "tip": "c481fa71312dd12bc38fa31bed2ad0badb758af7",
+        "tip_short": "c481fa7",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/w4-indirect-access",
+        "tip": "72be62c211db387cf5191b4dab116521c51e64a9",
+        "tip_short": "72be62c",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/w4-out-forwarding",
+        "tip": "7e5c3b2731d7e52e488bfbcf74e8d74cb01c3cd3",
+        "tip_short": "7e5c3b2",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/w4-removed-custody",
+        "tip": "6ffcf6e4e9c790691f822823275b78ef68706569",
+        "tip_short": "6ffcf6e",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/w5-sequential-kernel",
+        "tip": "14aa88ee878615bf52c2fb961ea54abdb904c503",
+        "tip_short": "14aa88e",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "codex/w5-whole-program-frontend",
+        "tip": "8a4a567faf599f8fffd9787086a18076826b4884",
+        "tip_short": "8a4a567",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "main",
+        "tip": "6c2782fa3b3922ed0b17bd6d626d94b5caf64e36",
+        "tip_short": "6c2782f",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a2398f1852a04175d",
+        "tip": "0656049d82b7190e6341f01ad8f1880464956748",
+        "tip_short": "0656049",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a3392d8a6ccdf9de5",
+        "tip": "5450fe57a81bad260c790faaee8fed9eecd5d373",
+        "tip_short": "5450fe5",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a3b1d738cf84884a7",
+        "tip": "0863542b5e2334d526dbcc6fd1aa1605ef557ee9",
+        "tip_short": "0863542",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a416f112d95f2663d",
+        "tip": "c2f999c17b001fa57c284e567a7f966080125f17",
+        "tip_short": "c2f999c",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a48965ee8f2b9b7c7",
+        "tip": "faf6a50b596100b1133b4b1c0f609bbfa6b29a5b",
+        "tip_short": "faf6a50",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-a74fb3a6257917db8",
+        "tip": "79ee80356b3703574dbd0b3a337046ab81c04bf5",
+        "tip_short": "79ee803",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-aad9ef36126bfd454",
+        "tip": "ce0689080ed526060fa7c00cb221b27b176ce5a4",
+        "tip_short": "ce06890",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-ab35fe983170bd0aa",
+        "tip": "12c495e0c2b4cc662b75205e016eba789f4ea759",
+        "tip_short": "12c495e",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      },
+      {
+        "branch": "worktree-agent-ac2463d11f945e970",
+        "tip": "16ab5a471cfd44dfef7ae45de837b02925ef5558",
+        "tip_short": "16ab5a4",
+        "merged_into_main": true,
+        "commits_ahead_of_main": 0
+      }
+    ]
+  },
+  "ct_inventory": {
+    "manifest": "docs/reevaluation/ct_manifest.json",
+    "schema_version": 1,
+    "total_cases": 50,
+    "mapped_count": 11,
+    "unmapped_count": 39,
+    "reported_in_agents_md": "11 mapped / 39 unmapped",
+    "reconciles": true,
+    "mapped_ids": [
+      "CT01",
+      "CT02",
+      "CT12",
+      "CT13",
+      "CT14",
+      "CT15",
+      "CT16",
+      "CT19",
+      "CT20",
+      "CT37",
+      "CT50"
+    ],
+    "unmapped_ids": [
+      "CT03",
+      "CT04",
+      "CT05",
+      "CT06",
+      "CT07",
+      "CT08",
+      "CT09",
+      "CT10",
+      "CT11",
+      "CT17",
+      "CT18",
+      "CT21",
+      "CT22",
+      "CT23",
+      "CT24",
+      "CT25",
+      "CT26",
+      "CT27",
+      "CT28",
+      "CT29",
+      "CT30",
+      "CT31",
+      "CT32",
+      "CT33",
+      "CT34",
+      "CT35",
+      "CT36",
+      "CT38",
+      "CT39",
+      "CT40",
+      "CT41",
+      "CT42",
+      "CT43",
+      "CT44",
+      "CT45",
+      "CT46",
+      "CT47",
+      "CT48",
+      "CT49"
+    ],
+    "mapped_detail": [
+      {
+        "id": "CT01",
+        "expected": "Accept",
+        "source_fixture": "compiler/tests/fixtures/ct/CT01/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT02",
+        "expected": "Reject",
+        "source_fixture": "compiler/tests/fixtures/ct/CT02/case.qcore",
+        "evidence_target": null,
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "unassessed",
+          "cfg": "unassessed",
+          "native_backend": "unassessed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT12",
+        "expected": "Capture state restored; no task obligation",
+        "source_fixture": "compiler/tests/fixtures/ct/CT12/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT13",
+        "expected": "First task must still be joined",
+        "source_fixture": "compiler/tests/fixtures/ct/CT13/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT14",
+        "expected": "No restored parent authority",
+        "source_fixture": "compiler/tests/fixtures/ct/CT14/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT15",
+        "expected": "No quiescence, no environment reclamation",
+        "source_fixture": "compiler/tests/fixtures/ct/CT15/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT16",
+        "expected": "Clean locals, return loans, carry declared payload",
+        "source_fixture": "compiler/tests/fixtures/ct/CT16/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT19",
+        "expected": "Reject",
+        "source_fixture": "compiler/tests/fixtures/ct/CT19/case.qcore",
+        "evidence_target": null,
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "unassessed",
+          "cfg": "unassessed",
+          "native_backend": "unassessed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT20",
+        "expected": "Accept with all result obligations accounted",
+        "source_fixture": "compiler/tests/fixtures/ct/CT20/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT37",
+        "expected": "Allocation remains live in completion capsule",
+        "source_fixture": "compiler/tests/fixtures/ct/CT37/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      },
+      {
+        "id": "CT50",
+        "expected": "Old capability cannot authorize new identity",
+        "source_fixture": "compiler/tests/fixtures/ct/CT50/case.qcore",
+        "evidence_target": "linux",
+        "stages": {
+          "parser": "executed",
+          "type_checker": "executed",
+          "reference_execution": "executed",
+          "cfg": "executed",
+          "native_backend": "executed",
+          "proof": "unassessed"
+        }
+      }
+    ]
+  },
+  "contract_corpus": {
+    "directory": "contract/qcore",
+    "module_count_on_disk": 59,
+    "reported_count": 59,
+    "reconciles": true,
+    "size_assertion": "compiler/tests/qcore_contract_corpus.rs:364 assert_eq!(sources.len(), 59)",
+    "clause_pin_table": {
+      "const": "EXPECTED_CONTRACTS",
+      "extern_function_entries": 100,
+      "files_carrying_extern_contracts": 32,
+      "total_pinned_clauses": 519,
+      "note": "the pin test walks all 59 modules and requires every ExternFunction declaration to carry a contract; the 27 modules absent from the table declare no extern functions, so this is not a coverage gap"
+    },
+    "per_directory": {
+      "cfl": 2,
+      "chunkio": 40,
+      "cmetrics": 1,
+      "fluent_bit": 3,
+      "language": 1,
+      "libc": 1,
+      "library": 2,
+      "librdkafka": 4,
+      "monkey": 5
+    }
+  },
+  "report_presence": {
+    "referenced_from": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "README.md"
+    ],
+    "referenced_count": 73,
+    "present_dir_count": 116,
+    "referenced_but_missing": [],
+    "present_but_unreferenced": [
+      "cycle19-callback-binding",
+      "cycle19-callback-source",
+      "cycle19-chunk-helper",
+      "cycle19-cleanup-frames",
+      "cycle19-cleanup-observations",
+      "cycle19-contract-extraction",
+      "cycle19-contract-loader",
+      "cycle19-counters",
+      "cycle19-delete-observations",
+      "cycle19-delete-outcomes",
+      "cycle19-deleting-close",
+      "cycle19-descriptor-observations",
+      "cycle19-file-close",
+      "cycle19-filesystem-attempts",
+      "cycle19-filesystem-chunk",
+      "cycle19-filesystem-outcomes",
+      "cycle19-list-unlink",
+      "cycle19-memory-backend",
+      "cycle19-memory-close",
+      "cycle19-native-contracts",
+      "cycle19-native-rules",
+      "cycle19-nested-cleanup",
+      "cycle19-nested-memory",
+      "cycle19-parent-teardown",
+      "cycle19-resource-triage",
+      "cycle19-scan-loop",
+      "cycle19-short-circuit",
+      "cycle19-source-contracts",
+      "cycle19-teardown-traversal",
+      "cycle19-unmap-wrapper",
+      "cycle19-wrapper-control",
+      "cycle19-wrapper-storage",
+      "fluent-bit-contracts-2026-09-05",
+      "generalization-integration-20260907",
+      "r0-3-concurrency-lifetimes",
+      "r0-3-source-validation",
+      "r03-contract-evidence",
+      "r03-integration",
+      "r03-loop-counts",
+      "w3-observation-trust",
+      "w3-process-stdin-exit-race"
+    ],
+    "dirs_without_readme": [],
+    "in_progress_this_session": [
+      "remaining-b00",
+      "remaining-b01"
+    ],
+    "unreferenced_note": "All 73 report directories referenced from AGENTS.md/CLAUDE.md/README.md exist and carry a README.md: zero referenced-but-missing. The unreferenced directories are superseded Cycle19 and r0.3 evidence packages that the status ledgers replaced with their latest successor; they are retained history, not defects. No historical report was inspected for rewriting."
+  },
+  "crate_paths": {
+    "checked": {
+      "crates/qcore-core": true,
+      "crates/qcore-frontend": true,
+      "crates/qcore-contract": true,
+      "crates/qcore-schemas": true,
+      "crates/qcore-c-gateway": true,
+      "crates/qcorec": true,
+      "crates/qcore-verifier-host": true,
+      "crates/qcore-verification": true,
+      "crates/qcore-audit": true,
+      "compiler": true,
+      "providers": true,
+      "crates/qcore-c-gateway/src/legacy_c.rs": true,
+      "crates/qcore-c-gateway/src/legacy_summary.rs": true,
+      "crates/qcore-c-gateway/src/typed_source.rs": true,
+      "crates/qcore-verification/src/counter_contract.rs": true,
+      "crates/qcore-verification/src/field_destructor.rs": true,
+      "crates/qcore-verification/src/list_unlink_contract.rs": true,
+      "crates/qcore-verification/src/cleanup_outcome.rs": true,
+      "crates/qcore-core/src/event_reactor.rs": true,
+      "compiler/src/verifier_plugin.rs": true,
+      "compiler/src/verifier_plugins/libevent": true,
+      "compiler/src/verifier_plugins/chunkio": true,
+      "compiler/src/external_integration.rs": true,
+      "compiler/src/external_source.rs": true,
+      "compiler/examples/cycle19_fluent_bit_libraries_audit.rs": true,
+      "contract/qcore": true,
+      "proof": true,
+      "docs/cycles": true,
+      "docs/reports": true,
+      "docs/reevaluation/ct_manifest.json": true,
+      "third_party/libevent": true
+    },
+    "all_present": true,
+    "workspace_members": [
+      "crates/qcore-audit",
+      "compiler",
+      "crates/qcore-c-gateway",
+      "crates/qcore-contract",
+      "crates/qcore-core",
+      "crates/qcore-frontend",
+      "crates/qcore-schemas",
+      "crates/qcore-verifier-host",
+      "crates/qcore-verification",
+      "crates/qcorec"
+    ],
+    "workspace_member_count": 10,
+    "crates_dir_entries": [
+      "qcore-audit",
+      "qcore-c-gateway",
+      "qcore-contract",
+      "qcore-core",
+      "qcore-frontend",
+      "qcore-schemas",
+      "qcore-verification",
+      "qcore-verifier-host",
+      "qcorec"
+    ],
+    "qcore_audit_location": "crates/qcore-audit",
+    "findings": [
+      "AGENTS.md's repository-map table has 25 rows and contains no row for `crates/qcore-audit` or `providers/`; both exist and are described only in the prose ledger below the table.",
+      "AGENTS.md states 'The current workspace has nine crates.' `crates/` holds nine members, but Cargo.toml declares ten workspace members (the nine plus `compiler`). The sentence is true of `crates/` and misleading as a workspace count."
+    ]
+  }
+}

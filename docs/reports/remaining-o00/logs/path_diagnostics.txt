@@ -1,0 +1,333 @@
+# archived 185-unit artifact docs/reports/w2-clang-cmake-build/diagnostics.json.gz
+# line_coordinates: Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic
+
+#### unit cio_chunk.c  status=Unknown  counts={'unknown_alias': 12, 'unsupported': 159}
+
+=== chunk_state_sync  status=Unknown  diagnostics=5
+      2382  unsupported    indirect memory access is outside the resource projection
+      2383  unsupported    indirect memory access is outside the resource projection
+      2384  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2385  unsupported    indirect memory access is outside the resource projection
+      2388  unsupported    indirect memory access is outside the resource projection
+
+=== cio_chunk_close  status=Unknown  diagnostics=10
+      2074  unsupported    call to uncontracted function `cio_error_reset`
+      2075  unsupported    indirect memory access is outside the resource projection
+      2076  unsupported    indirect memory access is outside the resource projection
+      2078  unsupported    call to uncontracted function `cio_memfs_close`
+      2081  unsupported    call to uncontracted function `cio_file_close`
+      2083  unsupported    indirect memory access is outside the resource projection
+      2084  unsupported    indirect memory access is outside the resource projection
+      2085  unsupported    indirect memory access is outside the resource projection
+      2086  unknown_alias  unresolved resource identity `ch`
+      2087  unsupported    call to uncontracted function `cio_chunk_counter_total_sub`
+
+=== cio_chunk_down  status=Unknown  diagnostics=4
+      2395  unsupported    call to uncontracted function `cio_error_reset`
+      2396  unsupported    indirect memory access is outside the resource projection
+      2398  unsupported    call to uncontracted function `cio_file_down`
+      2399  unsupported    call to uncontracted function `chunk_state_sync`
+
+=== cio_chunk_is_up  status=Unknown  diagnostics=3
+      2357  unsupported    indirect memory access is outside the resource projection
+      2362  unsupported    indirect memory access is outside the resource projection
+      2363  unsupported    unmodeled call, aggregate or indirect access in return expression
+
+=== cio_chunk_open  status=Unknown  diagnostics=31
+      2017  unsupported    call to uncontracted function `cio_log_print`
+      2021  unsupported    call to uncontracted function `cio_log_print`
+      2024  unsupported    call to uncontracted function `strlen`
+      2026  unsupported    call to uncontracted function `cio_log_print`
+      2031  unsupported    indirect memory access is outside the resource projection
+      2034  unsupported    indirect memory access is outside the resource projection
+      2035  unsupported    indirect memory access is outside the resource projection
+      2036  unsupported    indirect memory access is outside the resource projection
+      2037  unsupported    indirect memory access is outside the resource projection
+      2038  unsupported    indirect memory access is outside the resource projection
+      2039  unsupported    indirect memory access is outside the resource projection
+      2040  unsupported    indirect memory access is outside the resource projection
+      2041  unsupported    indirect memory access is outside the resource projection
+      2042  unsupported    indirect memory access is outside the resource projection
+      2043  unsupported    call to uncontracted function `cio_error_reset`
+      2044  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2045  unsupported    call to uncontracted function `cio_file_open`
+      2047  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2048  unsupported    store through `*err` without an out-parameter contract
+      2049  unsupported    call to uncontracted function `cio_memfs_open`
+      2051  unknown_alias  unresolved resource identity `backend`
+      2052  unsupported    indirect memory access is outside the resource projection
+      2053  unsupported    indirect memory access is outside the resource projection
+      2054  unknown_alias  unresolved resource identity `ch`
+      2057  unsupported    indirect memory access is outside the resource projection
+      2058  unsupported    call to uncontracted function `cio_chunk_counter_total_add`
+      2059  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2060  unsupported    indirect memory access is outside the resource projection
+      2063  unsupported    indirect memory access is outside the resource projection
+      2065  unknown_alias  unresolved resource identity `ch`
+      2065  unsupported    nullable resource `ch` used by a non-null contract
+
+=== cio_chunk_up_force  status=Unknown  diagnostics=4
+      2421  unsupported    call to uncontracted function `cio_error_reset`
+      2422  unsupported    indirect memory access is outside the resource projection
+      2424  unsupported    call to uncontracted function `cio_file_up_force`
+      2425  unsupported    call to uncontracted function `chunk_state_sync`
+
+#### unit cio_file.c  status=Unsafe  counts={'leak': 1, 'unknown_alias': 22, 'unsupported': 306}
+
+=== _cio_file_up  status=Unknown  diagnostics=12
+      3354  unsupported    indirect memory access is outside the resource projection
+      3355  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3356  unsupported    indirect memory access is outside the resource projection
+      3359  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3360  unsupported    indirect memory access is outside the resource projection
+      3364  unsupported    indirect memory access is outside the resource projection
+      3369  unsupported    call to uncontracted function `cio_file_native_open`
+      3371  unsupported    indirect memory access is outside the resource projection
+      3374  unsupported    call to uncontracted function `cio_file_update_size`
+      3378  unsupported    indirect memory access is outside the resource projection
+      3380  unsupported    indirect memory access is outside the resource projection
+      3383  unsupported    call to uncontracted function `cio_file_native_close`
+
+=== cio_file_close  status=Unknown  diagnostics=7
+      3433  unsupported    indirect memory access is outside the resource projection
+      3437  unsupported    indirect memory access is outside the resource projection
+      3438  unsupported    call to uncontracted function `cio_file_native_close`
+      3440  unsupported    call to uncontracted function `cio_file_native_delete`
+      3442  unsupported    indirect memory access is outside the resource projection
+      3445  unsupported    indirect memory access is outside the resource projection
+      3446  unknown_alias  unresolved resource identity `cf`
+
+=== cio_file_down  status=Unknown  diagnostics=9
+      3408  unsupported    indirect memory access is outside the resource projection
+      3409  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3410  unsupported    indirect memory access is outside the resource projection
+      3413  unsupported    indirect memory access is outside the resource projection
+      3417  unsupported    indirect memory access is outside the resource projection
+      3418  unsupported    call to uncontracted function `cio_file_update_size`
+      3420  unsupported    indirect memory access is outside the resource projection
+      3422  unsupported    call to uncontracted function `cio_file_native_close`
+      3424  unsupported    indirect memory access is outside the resource projection
+
+=== cio_file_open  status=Unknown  diagnostics=50
+      3250  unsupported    indirect memory access is outside the resource projection
+      3255  unsupported    indirect memory access is outside the resource projection
+      3257  unsupported    call to uncontracted function `cio_log_print`
+      3260  unsupported    indirect memory access is outside the resource projection
+      3266  unsupported    indirect memory access is outside the resource projection
+      3267  unknown_alias  unresolved resource identity `path`
+      3270  unsupported    indirect memory access is outside the resource projection
+      3271  unsupported    indirect memory access is outside the resource projection
+      3272  unsupported    indirect memory access is outside the resource projection
+      3273  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3274  unsupported    indirect memory access is outside the resource projection
+      3277  unsupported    indirect memory access is outside the resource projection
+      3279  unsupported    indirect memory access is outside the resource projection
+      3280  unsupported    indirect memory access is outside the resource projection
+      3281  unsupported    indirect memory access is outside the resource projection
+      3282  unsupported    indirect memory access is outside the resource projection
+      3283  unsupported    indirect memory access is outside the resource projection
+      3284  unsupported    indirect memory access is outside the resource projection
+      3285  unsupported    indirect memory access is outside the resource projection
+      3286  unsupported    indirect memory access is outside the resource projection
+      3287  unsupported    indirect memory access is outside the resource projection
+      3288  unsupported    call to uncontracted function `open_and_up`
+      3290  unsupported    call to uncontracted function `cio_file_update_size`
+      3291  unknown_alias  unresolved resource identity `cf`
+      3291  unsupported    nullable resource `cf` used by a non-null contract
+      3293  unsupported    call to uncontracted function `cio_file_native_open`
+      3295  unknown_alias  unresolved resource identity `path`
+      3296  unknown_alias  unresolved resource identity `cf`
+      3297  unsupported    store through `*err` without an out-parameter contract
+      3300  unsupported    call to uncontracted function `cio_file_update_size`
+      3302  unsupported    call to uncontracted function `cio_file_native_close`
+      3303  unknown_alias  unresolved resource identity `path`
+      3304  unknown_alias  unresolved resource identity `cf`
+      3305  unsupported    store through `*err` without an out-parameter contract
+      3308  unsupported    call to uncontracted function `cio_file_native_apply_acl_and_settings`
+      3310  unsupported    store through `*err` without an out-parameter contract
+      3311  unsupported    call to uncontracted function `format_acl_error_message`
+      3313  unsupported    call to uncontracted function `cio_log_print`
+      3316  unsupported    call to uncontracted function `cio_log_print`
+      3318  unsupported    call to uncontracted function `cio_file_native_close`
+      3319  unknown_alias  unresolved resource identity `path`
+      3320  unknown_alias  unresolved resource identity `cf`
+      3323  unsupported    indirect memory access is outside the resource projection
+      3325  unsupported    call to uncontracted function `cio_file_native_close`
+      3326  unknown_alias  unresolved resource identity `path`
+      3327  unknown_alias  unresolved resource identity `cf`
+      3328  unsupported    store through `*err` without an out-parameter contract
+      3331  unsupported    store through `*err` without an out-parameter contract
+      3332  unknown_alias  unresolved resource identity `cf`
+      3332  unsupported    nullable resource `cf` used by a non-null contract
+
+=== mmap_file  status=Unknown  diagnostics=42
+      3060  unsupported    indirect memory access is outside the resource projection
+      3061  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3064  unsupported    indirect memory access is outside the resource projection
+      3067  unknown_alias  unresolved resource identity `size`
+      3070  unsupported    call to uncontracted function `cio_file_native_get_size`
+      3072  unsupported    indirect memory access is outside the resource projection
+      3078  unsupported    indirect memory access is outside the resource projection
+      3080  unknown_alias  unresolved resource identity `fs_size`
+      3081  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3082  unsupported    call to uncontracted function `cio_error_set`
+      3085  unsupported    indirect memory access is outside the resource projection
+      3087  unsupported    unrecognized assignment destination
+      3089  unsupported    indirect memory access is outside the resource projection
+      3090  unsupported    call to uncontracted function `cio_file_resize`
+      3092  unsupported    indirect memory access is outside the resource projection
+      3095  unsupported    indirect memory access is outside the resource projection
+      3097  unsupported    indirect memory access is outside the resource projection
+      3098  unsupported    indirect memory access is outside the resource projection
+      3099  unsupported    indirect memory access is outside the resource projection
+      3101  unsupported    indirect memory access is outside the resource projection
+      3104  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3105  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3106  unsupported    indirect memory access is outside the resource projection
+      3107  unsupported    indirect memory access is outside the resource projection
+      3111  unsupported    indirect memory access is outside the resource projection
+      3114  unsupported    indirect memory access is outside the resource projection
+      3119  unsupported    call to uncontracted function `cio_error_set`
+      3120  unsupported    indirect memory access is outside the resource projection
+      3121  unsupported    call to uncontracted function `cio_file_native_unmap`
+      3122  unsupported    indirect memory access is outside the resource projection
+      3123  unsupported    indirect memory access is outside the resource projection
+      3126  unsupported    indirect memory access is outside the resource projection
+      3127  unsupported    indirect memory access is outside the resource projection
+      3130  unsupported    indirect memory access is outside the resource projection
+      3131  unsupported    indirect memory access is outside the resource projection
+      3133  unsupported    indirect memory access is outside the resource projection
+      3135  unsupported    indirect memory access is outside the resource projection
+      3136  unsupported    call to uncontracted function `cio_file_native_unmap`
+      3137  unsupported    indirect memory access is outside the resource projection
+      3140  unsupported    indirect memory access is outside the resource projection
+      3141  unsupported    indirect memory access is outside the resource projection
+      3142  unsupported    call to uncontracted function `cio_chunk_counter_total_up_add`
+
+=== munmap_file  status=Unknown  diagnostics=9
+      3031  unsupported    indirect memory access is outside the resource projection
+      3035  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3038  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      3039  unsupported    call to uncontracted function `cio_file_sync`
+      3041  unsupported    indirect memory access is outside the resource projection
+      3044  unsupported    call to uncontracted function `cio_file_native_unmap`
+      3048  unsupported    indirect memory access is outside the resource projection
+      3049  unsupported    indirect memory access is outside the resource projection
+      3050  unsupported    call to uncontracted function `cio_chunk_counter_total_up_sub`
+
+#### unit cio_scan.c  status=Unknown  counts={'unknown_alias': 3, 'unsupported': 39}
+
+=== cio_scan_stream_files  status=Unknown  diagnostics=24
+      2260  unsupported    indirect memory access is outside the resource projection
+      2263  unsupported    indirect memory access is outside the resource projection
+      2266  unsupported    indirect memory access is outside the resource projection
+      2268  unsupported    indirect memory access is outside the resource projection
+      2269  unknown_alias  unresolved resource identity `path`
+      2272  unsupported    call to uncontracted function `opendir`
+      2274  unsupported    indirect memory access is outside the resource projection
+      2275  unknown_alias  unresolved resource identity `path`
+      2279  unsupported    call to uncontracted function `strlen`
+      2281  unsupported    indirect memory access is outside the resource projection
+      2282  unsupported    unmodeled call, aggregate or indirect access in loop condition
+      2283  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2286  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2290  unsupported    indirect memory access is outside the resource projection
+      2294  unsupported    unsupported assignment expression
+      2295  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2299  unsupported    indirect memory access is outside the resource projection
+      2300  unsupported    indirect memory access is outside the resource projection
+      2301  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2303  unsupported    unmodeled call, aggregate or indirect access in branch condition
+      2307  unsupported    call to uncontracted function `cio_log_print`
+      2308  unsupported    indirect memory access is outside the resource projection
+      2313  unsupported    call to uncontracted function `closedir`
+      2314  unknown_alias  unresolved resource identity `path`
+
+#### unit flb_input_chunk.c  status=Unsafe  counts={'leak': 10, 'unknown_alias': 109, 'unsupported': 946}
+
+=== flb_input_chunk_create  status=Unknown  diagnostics=44
+     19578  unsupported    indirect memory access is outside the resource projection
+     19582  unsupported    indirect memory access is outside the resource projection
+     19583  unsupported    call to uncontracted function `generate_chunk_name`
+     19584  unsupported    indirect memory access is outside the resource projection
+     19587  unsupported    indirect memory access is outside the resource projection
+     19587  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19590  unsupported    call to uncontracted function `cio_chunk_is_up`
+     19592  unsupported    call to uncontracted function `cio_chunk_up_force`
+     19594  unknown_alias  unresolved resource identity `chunk`
+     19597  unsupported    unsupported assignment expression
+     19599  unsupported    call to uncontracted function `input_chunk_write_header`
+     19601  unknown_alias  unresolved resource identity `chunk`
+     19606  unsupported    indirect memory access is outside the resource projection
+     19607  unknown_alias  unresolved resource identity `chunk`
+     19610  unsupported    indirect memory access is outside the resource projection
+     19611  unsupported    indirect memory access is outside the resource projection
+     19612  unsupported    indirect memory access is outside the resource projection
+     19613  unsupported    indirect memory access is outside the resource projection
+     19614  unsupported    indirect memory access is outside the resource projection
+     19615  unsupported    indirect memory access is outside the resource projection
+     19616  unsupported    indirect memory access is outside the resource projection
+     19617  unsupported    indirect memory access is outside the resource projection
+     19618  unsupported    indirect memory access is outside the resource projection
+     19619  unsupported    indirect memory access is outside the resource projection
+     19620  unsupported    indirect memory access is outside the resource projection
+     19621  unsupported    indirect memory access is outside the resource projection
+     19624  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19625  unsupported    indirect memory access is outside the resource projection
+     19626  unknown_alias  unresolved resource identity `chunk`
+     19627  unknown_alias  unresolved resource identity `ic`
+     19630  unsupported    indirect memory access is outside the resource projection
+     19632  unsupported    call to uncontracted function `flb_log_print`
+     19632  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19634  unsupported    indirect memory access is outside the resource projection
+     19635  unsupported    indirect memory access is outside the resource projection
+     19637  unsupported    call to uncontracted function `cio_chunk_down`
+     19640  unsupported    indirect memory access is outside the resource projection
+     19643  unsupported    indirect memory access is outside the resource projection
+     19644  unsupported    indirect memory access is outside the resource projection
+     19645  unsupported    indirect memory access is outside the resource projection
+     19648  unsupported    indirect memory access is outside the resource projection
+     19651  unsupported    indirect memory access is outside the resource projection
+     19653  unknown_alias  unresolved resource identity `ic`
+     19653  unsupported    nullable resource `ic` used by a non-null contract
+
+=== flb_input_chunk_destroy  status=Unknown  diagnostics=39
+     19721  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19722  unsupported    call to uncontracted function `flb_input_chunk_set_up`
+     19724  unsupported    indirect memory access is outside the resource projection
+     19724  unsupported    unmodeled call, aggregate or indirect access in for-loop condition
+     19725  unsupported    braced initializer, expression, or declaration is not modeled
+     19726  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19729  unsupported    call to uncontracted function `flb_input_chunk_get_real_size`
+     19733  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19736  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19737  unsupported    indirect memory access is outside the resource projection
+     19737  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19738  unsupported    call to uncontracted function `flb_input_chunk_output_size_subtract`
+     19739  unsupported    indirect memory access is outside the resource projection
+     19739  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19743  unsupported    call to uncontracted function `flb_input_chunk_is_up`
+     19745  unsupported    indirect memory access is outside the resource projection
+     19747  unsupported    call to uncontracted function `flb_log_print`
+     19747  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19750  unsupported    call to uncontracted function `flb_input_chunk_get_tag`
+     19752  unsupported    call to uncontracted function `flb_log_print`
+     19752  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19755  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19756  unsupported    indirect memory access is outside the resource projection
+     19759  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19760  unsupported    indirect memory access is outside the resource projection
+     19761  unsupported    indirect memory access is outside the resource projection
+     19763  unsupported    indirect memory access is outside the resource projection
+     19765  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19766  unsupported    indirect memory access is outside the resource projection
+     19769  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19770  unsupported    indirect memory access is outside the resource projection
+     19774  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19775  unsupported    indirect memory access is outside the resource projection
+     19777  unsupported    indirect memory access is outside the resource projection
+     19778  unsupported    indirect memory access is outside the resource projection
+     19779  unsupported    unmodeled call, aggregate or indirect access in branch condition
+     19780  unsupported    indirect memory access is outside the resource projection
+     19781  unsupported    indirect memory access is outside the resource projection
+     19783  unknown_alias  unresolved resource identity `ic`

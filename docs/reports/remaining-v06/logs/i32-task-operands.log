@@ -1,0 +1,27 @@
+ID    EXPECT   ROUTE   EXIT    RESULT   DIAGNOSTIC
+T01   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T02   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T03   reject   bind    1       MATCH    T03.qcore:4:5: Q500: integer literal is outside i32     let x = 2147483648;     ^
+T04   reject   bind    1       MATCH    T04.qcore:4:5: Q500: negative integer literal is outside i32     let x = -2147483649;     ^
+T05   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T06   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T07   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T08   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T09   accept   bind    0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+T10   reject   bind    1       MATCH    T10.qcore:4:5: Q500: integer literal is outside i32     let x = 00000000002147483648;     ^
+T11   reject   bind    1       MATCH    T11.qcore:4:5: Q500: negative integer literal is outside i32     let x = -00000000002147483649;     
+T12   reject   bind    1       MATCH    T12.qcore:4:5: Q500: integer literal is outside i32     let x = 4294967296;     ^
+T13   reject   bind    1       MATCH    T13.qcore:4:5: Q500: negative integer literal is outside i32     let x = -4294967296;     ^
+T14   reject   bind    1       MATCH    T14.qcore:4:5: Q500: integer literal is outside i32     let x = 18446744073709551615;     ^
+T15   reject   bind    1       MATCH    T15.qcore:4:5: Q500: negative integer literal is outside i32     let x = -18446744073709551615;     
+T16   reject   bind    1       MATCH    T16.qcore:4:5: Q500: integer literal is outside i32     let x = 18446744073709551616;     ^
+T17   reject   bind    1       MATCH    T17.qcore:4:5: Q500: negative integer literal is outside i32     let x = -18446744073709551616;     
+T18   reject   bind    1       MATCH    T18.qcore:4:5: Q500: negative integer literal is outside i32     let x = -17014118346046923173168730
+T19   reject   bind    1       MATCH    T19.qcore:4:5: Q500: task scalar expressions require an i32 literal or immutable scalar binding     
+T20   reject   bind    1       MATCH    T20.qcore:4:5: Q500: task scalar expressions require an i32 literal or immutable scalar binding     
+R01   accept   return  0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+R02   accept   return  0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+R03   reject   return  1       MATCH    R03.qcore:2:28: Q500: integer literal is outside i32 fn worker(x: i32) -> i32 { return 2147483648; }
+R04   reject   return  1       MATCH    R04.qcore:2:28: Q500: negative integer literal is outside i32 fn worker(x: i32) -> i32 { return -214
+R05   accept   return  0       MATCH    checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+R06   reject   return  1       MATCH    R06.qcore:2:28: Q500: negative integer literal is outside i32 fn worker(x: i32) -> i32 { return -184

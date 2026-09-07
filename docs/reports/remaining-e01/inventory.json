@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "unit": "E01",
+  "workstream": "W3",
+  "baseline": "6c2782f",
+  "capability": {
+    "name": "ChunkIO Boolean-field source contract",
+    "verifier_capability": "resource_contracts",
+    "obligation_property": "boolean_field_contract",
+    "semantic_profiles": ["qcore.c_boolean_field_contract.v2"],
+    "importer": "crates/qcore-c-gateway/src/boolean_source.rs",
+    "task_derivation": "crates/qcore-verification/src/source_effect.rs",
+    "witness_checker": "BooleanFieldSourceTask (impl WitnessChecker)",
+    "inventory_rule": "one boolean_field_contract obligation per successfully imported source function; every other enumerated source function is a residual Unknown row carrying a reason"
+  },
+  "scope": "Inventory completeness of the source-derived obligation set. This is not a claim about source safety, custody, lifecycle or whole-unit verdicts.",
+  "enumeration": {
+    "function_denominator": "qcore_c_gateway::legacy_c::legacy_c_source_functions(unit.source)",
+    "input": "raw, unpreprocessed main source text",
+    "audit_backstop": "crates/qcore-audit/src/source_audit.rs analyze_unit emits an Unknown row for every raw_functions entry the typed import did not return"
+  },
+  "fixtures": [
+    {
+      "id": "control",
+      "position": "supported: whole-statement call to a source-validated frame helper",
+      "body": "if (!p->lock) { return -1; } cio_chunk_reset(p); p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "contract"},
+      "derived": {"run": {"status": "contract", "obligation_id": "resource_contracts:8b4f668cba00acc2b108c1c8"}}
+    },
+    {
+      "id": "return",
+      "position": "nested call in return expression",
+      "body": "if (!p->lock) { return -1; } return probe(p);",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled expression CallExpr"}}
+    },
+    {
+      "id": "argument",
+      "position": "nested call in the argument of an admitted helper call",
+      "body": "cio_chunk_reset(pick(p)); p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "helper requires direct borrowed parameter"}}
+    },
+    {
+      "id": "condition",
+      "position": "nested call in an if condition",
+      "body": "if (probe(p)) { p->lock = 0; } return p->lock;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled expression CallExpr"}}
+    },
+    {
+      "id": "initializer",
+      "position": "nested call in a local declaration initializer",
+      "body": "int v = probe(p); p->lock = 0; return v;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled statement DeclStmt"}},
+      "note": "the enclosing declaration statement is itself outside the grammar; see fixture initializer_control"
+    },
+    {
+      "id": "initializer_control",
+      "position": "local declaration initializer without any call",
+      "body": "int v = 1; p->lock = 0; return v;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled statement DeclStmt"}}
+    },
+    {
+      "id": "operand",
+      "position": "nested call as a binary operand",
+      "body": "return p->lock == probe(p);",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled expression CallExpr"}}
+    },
+    {
+      "id": "unary",
+      "position": "nested call under a supported unary operator",
+      "body": "return !probe(p);",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled expression CallExpr"}}
+    },
+    {
+      "id": "assign_rhs",
+      "position": "nested call on the right-hand side of a modeled field assignment",
+      "body": "p->lock = probe(p); return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "unmodeled expression CallExpr"}}
+    },
+    {
+      "id": "discarded",
+      "position": "call statement whose result is discarded",
+      "body": "probe(p); p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "helper signature or parameter binding mismatch"}}
+    },
+    {
+      "id": "indirect_pointer",
+      "position": "indirect call through a file-scope function pointer",
+      "body": "hook(p); p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "helper signature or parameter binding mismatch"}}
+    },
+    {
+      "id": "callback_field",
+      "position": "indirect call through a record callback field",
+      "body": "p->cb(p); p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "missing helper identity"}}
+    },
+    {
+      "id": "dead_modeled",
+      "position": "unreachable but modeled statement after return",
+      "body": "return p->lock; p->lock = 0;",
+      "hand_enumerated": {"run": "contract"},
+      "derived": {"run": {"status": "contract", "obligation_id": "resource_contracts:e636ad9722e195035d5e503a"}},
+      "note": "the unreachable assignment is imported into the checked program (Block[Return(Field), Assign(Integer(0))]); neither Boolean prestate executes it"
+    },
+    {
+      "id": "dead_unmodeled",
+      "position": "unreachable unmodeled call after return",
+      "body": "return p->lock; probe(p);",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "helper signature or parameter binding mismatch"}}
+    },
+    {
+      "id": "delete_helper_call",
+      "position": "deletion mutation: the frame-helper call is removed",
+      "body": "if (!p->lock) { return -1; } p->lock = 0; return 0;",
+      "hand_enumerated": {"run": "contract"},
+      "derived": {"run": {"status": "contract", "obligation_id": "resource_contracts:0530096208a34bc98b13c1d3"}},
+      "note": "different obligation identifier and different checked paths than the control; dependencies become empty"
+    },
+    {
+      "id": "delete_field_access",
+      "position": "deletion mutation: every modeled field access is removed",
+      "body": "cio_chunk_reset(p); return 0;",
+      "hand_enumerated": {"run": "unknown"},
+      "derived": {"run": {"status": "unknown", "reason": "function has no modeled chunk field access"}}
+    }
+  ],
+  "provider_coverage_gates": [
+    {
+      "gate": "QP009",
+      "site": "crates/qcore-verifier-host/src/lib.rs check_evidence_v2",
+      "rule": "discharged != task.coverage_for(capability) -> Unknown; evidence.coverage != task.coverage_for(capability) -> Unknown"
+    },
+    {
+      "gate": "QP011",
+      "site": "crates/qcore-verifier-host/src/lib.rs compose_verification_with_inventory",
+      "rule": "certificate coverage must equal the core-derived required set"
+    },
+    {
+      "gate": "QP001",
+      "site": "crates/qcore-verifier-host/src/lib.rs verify_v2",
+      "rule": "request.obligations must equal task.obligations_for(capability) exactly"
+    },
+    {
+      "gate": "QP016",
+      "site": "crates/qcore-verifier-host/src/lib.rs verify_v2 / crates/qcore-verification/src/verify_dispatch.rs enforce_derivation_completeness",
+      "rule": "a capability with any DerivationIncomplete marker can never reach Safe"
+    }
+  ],
+  "residual_boundaries": [
+    {
+      "id": "E01-B1",
+      "statement": "A function definition that exists only after macro expansion, and a K&R-style definition, are absent from legacy_c_source_functions and therefore absent from the derived inventory entirely - no obligation and no residual Unknown row.",
+      "evidence": "crates/qcore-verification/tests/source_effect_obligations.rs::scope_exclusions_leave_definitions_outside_the_derived_inventory",
+      "consequence": "the reported checked/Unknown split is not a complete function denominator for such units; nothing is promoted, and a call into an excluded definition leaves the caller Unknown",
+      "follow_on": "E01-F1"
+    },
+    {
+      "id": "E01-B2",
+      "statement": "Header definitions are outside the audited scope by construction: the enumeration reads the main source text only.",
+      "evidence": "same test, header case",
+      "consequence": "intentional scope statement, recorded in each certificate's scope; not a silent drop within the declared scope"
+    },
+    {
+      "id": "E01-B3",
+      "statement": "Local declaration statements are entirely outside the supported grammar, so a nested call in an initializer is refused by the enclosing declaration rather than by call analysis.",
+      "evidence": "fixtures initializer / initializer_control",
+      "consequence": "fail-closed, but the residual reason names the declaration, not the call"
+    },
+    {
+      "id": "E01-B4",
+      "statement": "The capability's inventory is exactly one obligation per imported function, so the multi-obligation removal case is exercised only through the generic host coverage gate, not through this capability's own inventory.",
+      "evidence": "crates/qcore-verification/tests/source_effect_obligations.rs::a_provider_cannot_remove_or_substitute_a_requested_obligation",
+      "consequence": "coverage omission is tested as the empty set plus substitution and addition"
+    }
+  ],
+  "follow_on_units": [
+    {
+      "id": "E01-F1",
+      "title": "Macro-expanded and K&R main-source definitions in the function denominator",
+      "scope": "qcore_c_gateway::legacy_c::legacy_c_source_functions and every consumer of it, including the resource projection selection and the source-effect sidecar",
+      "note": "changing the enumeration changes pinned 185-unit artifacts and the MainSourceDefinitions selection; it needs its own parity plan"
+    },
+    {
+      "id": "E01-F2",
+      "title": "Same audit for the CMetrics unit-result Boolean-field capability",
+      "capability": "qcore.c_boolean_field_contract.v3",
+      "note": "shares the importer grammar but has a distinct result ABI, two prestates instead of four, and unit-result contract evaluation"
+    },
+    {
+      "id": "E01-F3",
+      "title": "Same audit for the chunk-lifecycle capability",
+      "capability": "qcore.chunk_lifecycle.v1",
+      "checker": "crates/qcore-verification/src/witness_replay.rs ChunkLifecycleReplay",
+      "note": "derives over a QCore SourceProgram; carries an unconditional DerivationIncomplete marker today, so it cannot reach Safe"
+    },
+    {
+      "id": "E01-F4",
+      "title": "Same audit for the observation-hooks capability",
+      "capability": "qcore.observation_hooks.v1",
+      "checker": "crates/qcore-verification/src/witness_replay.rs ContractObservationReplay",
+      "note": "the denominator is the manifest's required hook set against declared extern fn contracts, not a source scan"
+    }
+  ]
+}

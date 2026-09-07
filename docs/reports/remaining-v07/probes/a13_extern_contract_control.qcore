@@ -1,0 +1,2 @@
+extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };
+fn main() -> i32 { return 7; }

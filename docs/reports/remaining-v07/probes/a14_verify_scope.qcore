@@ -1,0 +1,2 @@
+verify scope s { plugin qcore.libevent profile default capabilities { resource_contracts }; }
+fn main() -> i32 contract { requires true; } { return 0; }

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "comparison": "configured CMetrics counter audit, this card versus docs/reports/w2-clang-cmake-build",
+  "baseline_report": "../w2-clang-cmake-build/cmetrics-audit.json.gz",
+  "baseline_assumptions": "../w2-clang-cmake-build/cmetrics-audit.assumptions.json.gz",
+  "run": {
+    "config": "build/cycle19/g01-cmetrics/cmetrics-audit.json.config",
+    "checkout": "build/cycle19/fluent-bit-clang-source of the shared checkout, at pin 66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "compile_database": "build/cycle19/fluent-bit-clang-production/compile_commands.json of the shared checkout",
+    "note": "This worktree is isolated, so the audit reads the persisted pinned Clang CMake build read-only and writes its report inside the worktree. The absolute paths therefore differ from the baseline run."
+  },
+  "unchanged": {
+    "checked_function_contracts": 1,
+    "unknown_functions": 6,
+    "raw_units": "1 unit: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures",
+    "resource_diagnostics": "identical",
+    "verdicts": "identical",
+    "import_identity.raw_source_digest": "identical",
+    "import_identity.preprocessed_source_digest": "identical",
+    "import_identity.source_contract_digest": "identical",
+    "import_identity.profile_digest": "identical",
+    "import_identity.compiler": "identical — evidence that moving the compiler description from the private boolean_source::CompilerIdentity to the public clang::ClangIdentity did not change its serialization"
+  },
+  "report_differences": {
+    "count": 11,
+    "cause": "the audit ran from a different working directory and against separately built provider packages",
+    "paths": [
+      "$.source_contracts.configuration.packages[0].package_digest",
+      "$.source_contracts.units[0].functions[1].bounds.resource_contracts:<obligation id>",
+      "$.source_contracts.units[0].functions[1].evidence.coverage[0]",
+      "$.source_contracts.units[0].functions[1].evidence.reproducibility.package_digest",
+      "$.source_contracts.units[0].functions[1].evidence.unit.build_digest",
+      "$.source_contracts.units[0].functions[1].import_identity.configuration_digest",
+      "$.source_contracts.units[0].functions[1].task.contract_sources.qcore:boolean-field-import:v1",
+      "$.source_contracts.units[0].functions[1].task.obligations[0].obligation_id",
+      "$.source_contracts.units[0].functions[1].task.unit.build_digest",
+      "$.source_contracts.units[0].functions[1].witness.task_digest"
+    ],
+    "explanation": "configuration_digest already binds std::env::current_dir(), so a different working directory retires the task identity and every digest derived from it. package_digest differs because the provider packages were rebuilt in this worktree. No verdict, diagnostic, checked/Unknown count or source digest changed."
+  },
+  "assumptions_differences": {
+    "count": 12,
+    "added_by_this_card": [
+      "$.compile_task_identity_version",
+      "$.compile_tasks"
+    ],
+    "path_only": "the five $.contracts keys are the same contract modules under this worktree's absolute paths"
+  }
+}

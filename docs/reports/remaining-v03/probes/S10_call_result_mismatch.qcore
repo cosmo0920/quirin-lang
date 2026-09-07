@@ -1,0 +1,2 @@
+fn leaf() -> unit { return; }
+fn main() -> i32 { let x: i32 = leaf(); return 0; }

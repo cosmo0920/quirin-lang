@@ -1,0 +1,7 @@
+ID    EXIT   DIAGNOSTIC
+U01   1      U01.qcore:1:1: Q100: variable `x` requires usage [1,1], but has demand [0,0] fn f(x: i32 use one) -> unit { return;
+U02   1      U02.qcore:1:1: Q100: variable `x` declares usage [18446744073709551615,18446744073709551615], but has demand [0,0] 
+U03   1      U03.qcore:1:17: Q000: usage bound exceeds the supported u64 range fn f(x: i32 use 18446744073709551616) -> unit { r
+U04   1      U04.qcore:1:21: Q000: usage bound exceeds the supported u64 range fn f(x: i32 use [0, 18446744073709551616]) -> uni
+U05   1      U05.qcore:1:17: Q000: expected a named grade, natural literal, or literal usage interval fn f(x: i32 use -1) -> uni
+U06   0      checked 2 function(s); entry `main`

@@ -1,0 +1,88 @@
+# pinned Fluent Bit revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+## cio_chunk_open(
+CORPUS         src/flb_input_chunk.c:2525  chunk = cio_chunk_open(storage->cio, storage->stream, name,
+not-in-corpus  src/flb_storage.c:950  dst = cio_chunk_open(ctx->cio, dlq, name, CIO_OPEN, size, &err);
+not-in-corpus  src/flb_fstore.c:176  chunk = cio_chunk_open(fs->cio, fs_stream->stream, name,
+CORPUS         lib/chunkio/src/cio_scan.c:105  cio_chunk_open(ctx, st, ent->d_name, ctx->options.flags, 0, &err);
+CORPUS         lib/chunkio/src/cio_chunk.c:30  struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st,
+not-in-corpus  lib/chunkio/tools/cio.c:283  ch = cio_chunk_open(ctx, st, fname, CIO_OPEN, 1024*32, &err);
+not-in-corpus  lib/chunkio/tools/cio.c:414  carr[i] = cio_chunk_open(ctx, stream, tmp, CIO_OPEN, in_size, &err);
+not-in-corpus  lib/chunkio/tests/metadata_update.c:107  chunk = cio_chunk_open(ctx, stream, "test_chunk", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/metadata_update.c:232  chunk = cio_chunk_open(ctx, stream, "test_chunk2", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs_perf.c:98  chunk = cio_chunk_open(ctx, stream, name, CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs_perf.c:130  chunk = cio_chunk_open(ctx, stream, name, CIO_OPEN_RW, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:91  chunk = cio_chunk_open(ctx, NULL, "invalid", 0, 0, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:130  carr[i] = cio_chunk_open(ctx, stream, tmp, CIO_OPEN, 1000000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:250  chunk = cio_chunk_open(ctx, stream, "test1.out", CIO_OPEN, 10, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:365  chunk = cio_chunk_open(ctx, stream, "test1.out", CIO_OPEN, 10, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:453  cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:477  cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:506  chunk = cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:570  chunk = cio_chunk_open(ctx, stream, name, CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:666  chunk = cio_chunk_open(ctx, stream, "test", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:752  chunk = cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:829  chunk = cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs.c:920  chunk = cio_chunk_open(ctx,
+not-in-corpus  lib/chunkio/tests/fs.c:1029  chunk = cio_chunk_open(ctx, stream, "test_chunk_underflow", CIO_OPEN, 100, &err);
+not-in-corpus  lib/chunkio/tests/fs_fragmentation.c:153  chunks[chunk_id] = cio_chunk_open(ctx,
+not-in-corpus  lib/chunkio/tests/memfs.c:107  chunk = cio_chunk_open(ctx, NULL, "invalid", 0, 0, &err);
+not-in-corpus  lib/chunkio/tests/memfs.c:152  carr[i] = cio_chunk_open(ctx, stream, tmp, CIO_OPEN, 1000000, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:101  chunk = cio_chunk_open(ctx, stream, "test-file-open", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:155  chunk = cio_chunk_open(ctx, stream, "test-file-mapped", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:213  chunk = cio_chunk_open(ctx, stream, "test-file-sync", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:283  chunk = cio_chunk_open(ctx, stream, "test-file-size", CIO_OPEN, 1024, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:306  chunk = cio_chunk_open(ctx, stream, "test-file-size", CIO_OPEN_RD, 0, &err);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:403  chunk = cio_chunk_open(ctx, stream, "test-file-fd", CIO_OPEN, 1000, &err);
+not-in-corpus  lib/chunkio/tests/stream.c:67  chunk = cio_chunk_open(ctx, stream, "c", CIO_OPEN, 1000, &err);
+not-in-corpus  tests/internal/storage_dlq.c:86  ch = cio_chunk_open(ctx->cio, st, chunk_basename, CIO_OPEN, 0, &err);
+not-in-corpus  tests/internal/storage_dlq.c:418  ch = cio_chunk_open(ctx->cio, st, file_name, CIO_OPEN, 0, &err);
+not-in-corpus  tests/internal/input_chunk_routes.c:484  chunk = cio_chunk_open(ctx, stream, "meta", CIO_OPEN, 1024, &err);
+not-in-corpus  tests/internal/input_chunk_routes.c:648  chunk = cio_chunk_open(ctx, stream, "meta", CIO_OPEN, 1024, &err);
+not-in-corpus  tests/internal/input_chunk_routes.c:833  chunk = cio_chunk_open(ctx, stream, "meta", CIO_OPEN, 1024, &err);
+not-in-corpus  tests/internal/input_chunk_routes.c:1001  chunk = cio_chunk_open(ctx, stream, "meta", CIO_OPEN, 1024, &err);
+## cio_chunk_close(
+CORPUS         src/flb_input_chunk.c:1514  cio_chunk_close(chunk, CIO_TRUE);
+CORPUS         src/flb_input_chunk.c:2540  cio_chunk_close(chunk, CIO_TRUE);
+CORPUS         src/flb_input_chunk.c:2549  cio_chunk_close(chunk, CIO_TRUE);
+CORPUS         src/flb_input_chunk.c:2557  cio_chunk_close(chunk, CIO_TRUE);
+CORPUS         src/flb_input_chunk.c:2585  cio_chunk_close(chunk, CIO_TRUE);
+CORPUS         src/flb_input_chunk.c:2690  cio_chunk_close(ic->chunk, del);
+CORPUS         src/flb_input_chunk.c:2797  cio_chunk_close(ic->chunk, del);
+not-in-corpus  src/flb_storage.c:959  cio_chunk_close(dst, CIO_TRUE);
+not-in-corpus  src/flb_storage.c:964  cio_chunk_close(dst, CIO_FALSE);
+not-in-corpus  src/flb_fstore.c:243  cio_chunk_close(fsf->chunk, CIO_FALSE);
+not-in-corpus  src/flb_fstore.c:264  cio_chunk_close(fsf->chunk, CIO_TRUE);
+CORPUS         lib/chunkio/src/cio_chunk.c:111  void cio_chunk_close(struct cio_chunk *ch, int delete)
+CORPUS         lib/chunkio/src/cio_chunk.c:371  cio_chunk_close(ch, CIO_FALSE);
+CORPUS         lib/chunkio/src/cio_stream.c:209  cio_chunk_close(ch, CIO_TRUE);
+not-in-corpus  lib/chunkio/tools/cio.c:326  cio_chunk_close(ch, CIO_FALSE);
+not-in-corpus  lib/chunkio/tools/cio.c:432  cio_chunk_close(carr[i], CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_fragmentation.c:142  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:118  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:176  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:244  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:303  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:367  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  lib/chunkio/tests/fs_windows.c:419  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:94  cio_chunk_close(ch, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:100  cio_chunk_close(ch, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:104  cio_chunk_close(ch, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:254  cio_chunk_close(ch, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:469  cio_chunk_close(src, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:512  cio_chunk_close(src, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:548  cio_chunk_close(src, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:583  cio_chunk_close(src, CIO_FALSE);
+not-in-corpus  tests/internal/storage_dlq.c:615  cio_chunk_close(src, CIO_FALSE);
+not-in-corpus  tests/internal/fstore.c:120  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  tests/internal/input_chunk_routes.c:376  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  tests/internal/input_chunk_routes.c:586  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:423  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:448  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:459  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:469  cio_chunk_close(chunk, CIO_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:472  cio_chunk_close(chunk, CIO_FALSE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:568  cio_chunk_close(underlying_chunk, FLB_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:646  cio_chunk_close(underlying_chunk, FLB_FALSE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:670  cio_chunk_close(underlying_chunk, FLB_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:683  cio_chunk_close(underlying_chunk, FLB_TRUE);
+not-in-corpus  plugins/in_storage_backlog/sb.c:702  cio_chunk_close(underlying_chunk, FLB_TRUE);
