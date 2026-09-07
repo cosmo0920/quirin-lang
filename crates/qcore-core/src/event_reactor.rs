@@ -74,6 +74,13 @@ impl EventFlags {
         self.0 & flag != 0
     }
 
+    /// The exact declared bits, including any this model does not know. A
+    /// projection must round-trip an invalid flag set unchanged rather than
+    /// normalizing it away, so [`Self::valid`] still refuses it downstream.
+    pub const fn bits(self) -> u16 {
+        self.0
+    }
+
     pub const fn valid(self) -> bool {
         self.0 & !Self::KNOWN == 0
             && (!self.contains(Self::EDGE_TRIGGERED)

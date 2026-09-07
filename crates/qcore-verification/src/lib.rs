@@ -10,6 +10,7 @@ pub mod verify_dispatch;
 pub mod witness_replay;
 
 pub mod reactor_callback;
+pub mod reactor_source;
 
 pub mod counter_source;
 pub mod source_effect;

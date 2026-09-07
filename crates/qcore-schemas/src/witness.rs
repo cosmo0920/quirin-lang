@@ -308,6 +308,10 @@ pub enum SemanticWitness {
     /// path projection. Equality binds the proposal to that import; the core
     /// still evaluates the pinned contract itself.
     CounterContract(Box<crate::counter_summary::CounterContractWitness>),
+    /// One callback assignment inventory recomputed from the core's own
+    /// reactor program projection. Equality binds the proposal to that
+    /// program; the core still runs its own reactor model checker.
+    ReactorCallback(Box<crate::reactor_program::ReactorCallbackWitness>),
 }
 
 impl SemanticWitness {
@@ -321,6 +325,7 @@ impl SemanticWitness {
             Self::ContractObservation(witness) => &witness.task_digest,
             Self::BooleanFieldContract(witness) => &witness.task_digest,
             Self::CounterContract(witness) => &witness.task_digest,
+            Self::ReactorCallback(witness) => &witness.task_digest,
         }
     }
 
@@ -331,6 +336,7 @@ impl SemanticWitness {
             Self::ContractObservation(_) => "contract_observation",
             Self::BooleanFieldContract(_) => "boolean_field_contract",
             Self::CounterContract(_) => "counter_contract",
+            Self::ReactorCallback(_) => "reactor_callback",
         }
     }
 }

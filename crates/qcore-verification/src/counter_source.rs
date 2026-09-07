@@ -162,6 +162,7 @@ impl CounterSourceTask {
             obligations: self.task.obligations.clone(),
             source_effect: None,
             counter_effect: Some(self.import.source_input()),
+            reactor_program: None,
         }
     }
 
