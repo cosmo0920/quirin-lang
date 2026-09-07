@@ -1,0 +1,62 @@
+=================================================================
+==25461==ERROR: AddressSanitizer: heap-use-after-free on address 0x7b476cbe0018 at pc 0x59af15d2ed86 bp 0x7ffdefe1bdf0 sp 0x7ffdefe1bde8
+READ of size 4 at 0x7b476cbe0018 thread T0
+    #0 0x59af15d2ed85 in interior_alias /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:63:41
+    #1 0x59af15d2ed85 in main /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:81:16
+    #2 0x7f276da2a600 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #3 0x7f276da2a717 in __libc_start_main csu/../csu/libc-start.c:360:3
+    #4 0x59af15c45364 in _start (/tmp/qcore-c03-hazard+0x2d364) (BuildId: a222328de7491d5abc677f6a81d36342c8cceb86)
+
+0x7b476cbe0018 is located 8 bytes inside of 16-byte region [0x7b476cbe0010,0x7b476cbe0020)
+freed by thread T0 here:
+    #0 0x59af15cea66a in free (/tmp/qcore-c03-hazard+0xd266a) (BuildId: a222328de7491d5abc677f6a81d36342c8cceb86)
+    #1 0x59af15d2ef26 in purge /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:51:5
+    #2 0x59af15d2ebf5 in interior_alias /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:62:5
+    #3 0x59af15d2ebf5 in main /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:81:16
+    #4 0x7f276da2a600 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #5 0x7f276da2a717 in __libc_start_main csu/../csu/libc-start.c:360:3
+    #6 0x59af15c45364 in _start (/tmp/qcore-c03-hazard+0x2d364) (BuildId: a222328de7491d5abc677f6a81d36342c8cceb86)
+
+previously allocated by thread T0 here:
+    #0 0x59af15cea908 in malloc (/tmp/qcore-c03-hazard+0xd2908) (BuildId: a222328de7491d5abc677f6a81d36342c8cceb86)
+    #1 0x59af15d2ee12 in node_new /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:34:22
+    #2 0x59af15d2ebda in interior_alias /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:57:25
+    #3 0x59af15d2ebda in main /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:81:16
+    #4 0x7f276da2a600 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #5 0x7f276da2a717 in __libc_start_main csu/../csu/libc-start.c:360:3
+    #6 0x59af15c45364 in _start (/tmp/qcore-c03-hazard+0x2d364) (BuildId: a222328de7491d5abc677f6a81d36342c8cceb86)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a30ea2c26bcbd9201/docs/reports/remaining-c03/chain-teardown-hazard.c:63:41 in interior_alias
+Shadow bytes around the buggy address:
+  0x7b476cbdfd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7b476cbdfe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7b476cbdfe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7b476cbdff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7b476cbdff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x7b476cbe0000: fa fa fd[fd]fa fa fd fd fa fa fa fa fa fa fa fa
+  0x7b476cbe0080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7b476cbe0100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7b476cbe0180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7b476cbe0200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7b476cbe0280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==25461==ABORTING
+exit status 1
