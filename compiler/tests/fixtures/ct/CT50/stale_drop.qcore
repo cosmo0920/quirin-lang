@@ -1,0 +1,10 @@
+concurrency checked;
+fn main() -> i32 effects { alloc, throws<AllocError> } {
+    let old = qcore_buffer_new(7)?;
+    drop old;
+    let fresh = qcore_buffer_new(42)?;
+    drop old;
+    let answer = qcore_buffer_read(fresh);
+    drop fresh;
+    return answer;
+}

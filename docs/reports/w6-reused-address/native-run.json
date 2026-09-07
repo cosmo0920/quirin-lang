@@ -1,0 +1,66 @@
+{
+  "emit_command": [
+    "cargo",
+    "run",
+    "--quiet",
+    "-p",
+    "qcorec",
+    "--",
+    "emit",
+    "-o",
+    "/tmp/qcore-reused-address.c",
+    "compiler/tests/fixtures/ct/CT50/case.qcore"
+  ],
+  "compile_command": [
+    "clang",
+    "-std=c11",
+    "-pthread",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-g",
+    "-O1",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer",
+    "-include",
+    "compiler/tests/fixtures/ct/CT50/reused_mapping.h",
+    "/tmp/qcore-reused-address.c",
+    "-o",
+    "/tmp/qcore-reused-address-native"
+  ],
+  "run_command": [
+    "/tmp/qcore-reused-address-native"
+  ],
+  "environment": {
+    "ASAN_OPTIONS": "detect_leaks=1"
+  },
+  "exit_code": 0,
+  "execution": "untraced local Linux process",
+  "generations": [
+    1,
+    2
+  ],
+  "same_numeric_address_checked": true,
+  "successful_unmaps": 2,
+  "executable_sha256": "58d3785821bf0018c7edd1a0393b43a7d42acbbad9e9a5bd14190cbda13ec6f3",
+  "stdout": {
+    "artifact": "stdout.gz",
+    "sha256": "a237c22ea5630551eca152b886119017863b0fcec4896cba1f9a2364f24cb312"
+  },
+  "stderr": {
+    "artifact": "stderr.gz",
+    "sha256": "8fcb6799c248bfc084df37a4f70c7f944a36ccc775285d11539a9df3e7f91d68"
+  },
+  "generated.c": {
+    "artifact": "generated.c.gz",
+    "sha256": "bfe6ba55973ab46c1b7322cb755965fac42aab0efa156f48e45c6d11dccbc09a"
+  },
+  "case.qcore": {
+    "artifact": "case.qcore.gz",
+    "sha256": "ed9f55c910e5e9fb500fb1decb7a6af3a49ba5daaee712bd3800a8a46933f368"
+  },
+  "reused_mapping.h": {
+    "artifact": "reused_mapping.h.gz",
+    "sha256": "9f1398ad8a657b208ed601959fde5e9f189dcdbd7a57e840664cea45ac5eb089"
+  }
+}

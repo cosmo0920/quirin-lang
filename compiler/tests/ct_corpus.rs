@@ -31,7 +31,7 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT37",
+    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT37", "CT50",
 ];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
@@ -655,8 +655,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 10 of 50 CT cases are mapped
-/// as executed source-level tests; 40 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
+/// The moving count is the W6 genericity metric: 11 of 50 CT cases are mapped
+/// as executed source-level tests; 39 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {

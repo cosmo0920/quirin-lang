@@ -848,17 +848,18 @@
       "scenario": "New lifetime reuses old numeric address/descriptor",
       "expected": "Old capability cannot authorize new identity",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "semantic_profile": "Linux ScopedOwnedTasksV1 Buffer lifetime identity: two successful root allocations are separated by real munmap/mmap at the same numeric address using MAP_FIXED_NOREPLACE. Native release hooks check generations 1 and 2, exact mapping identity and complete release. Stale read/drop of the first consumed binding after the new allocation reject at Q600. Native stdout agrees with reference generation events. This covers owned Buffer mappings, not arbitrary raw pointers, descriptors, allocator failures or full source/native refinement.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     }
   ]
 }

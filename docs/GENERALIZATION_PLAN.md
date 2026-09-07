@@ -637,7 +637,9 @@ earlier sequential implicit-cleanup control remains tested. Fourteen Lean model
 theorems and six fixed sanitizer runs accompany this increment.
 [Completed-child custody](reports/w6-completed-child-custody/README.md) maps CT14
 and upgrades CT37 to actual native worker completion before join, preserving its
-sequential payload control. Coverage is 10/50 mapped, 40 unmapped. Loans, general usage/SSA rollback, owned
+sequential payload control. [Reused-address conformance](reports/w6-reused-address/README.md)
+now maps CT50 with real unmap/remap at an identical address, distinct Buffer
+generations and stale-binding rejection. Coverage is 11/50 mapped, 39 unmapped. Loans, general usage/SSA rollback, owned
 graphs/errors, shared memory, mutexes, general control and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to

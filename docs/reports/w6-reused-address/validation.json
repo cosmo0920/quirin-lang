@@ -1,0 +1,81 @@
+{
+  "base_commit": "6824aa52195b13dc6957cf82f08c035fd737f807",
+  "status": "passed",
+  "workspace_tests": 791,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 58,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "source_sha256": {
+    "AGENTS.md": "9d92a86b377f307a723fbfdb1217c0579626347777082c56522d46a9a95d635a",
+    "CLAUDE.md": "ae165ef478a7411d250cd1b8a800754f4b7b04dbba9313a58fda441981d15eee",
+    "README.md": "a663bbfab6b4cae3cc0e0edcba7b1e22a744263afc72e2d49a500739e94c59aa",
+    "compiler/tests/ct_corpus.rs": "94ca8e130a41f1459cee34b62818f112eadec08a337839d3d91ea8ece0088326",
+    "compiler/tests/fixtures/ct/CT50/case.qcore": "ed9f55c910e5e9fb500fb1decb7a6af3a49ba5daaee712bd3800a8a46933f368",
+    "compiler/tests/fixtures/ct/CT50/expected.json": "95f9f83d89d471ed51fa4862b86d7c0093bf5397017c4db61546122a3da0695f",
+    "compiler/tests/fixtures/ct/CT50/reused_mapping.h": "9f1398ad8a657b208ed601959fde5e9f189dcdbd7a57e840664cea45ac5eb089",
+    "compiler/tests/fixtures/ct/CT50/stale_drop.qcore": "16b90d9e783e182d6399847458febbbe6b61b533ce35b29229ccbe40e892bcc3",
+    "compiler/tests/fixtures/ct/CT50/stale_read.qcore": "63d7a61e57040fe9356467ad68f4f70390eefa9e2c44573d71ee65116e1b97e3",
+    "docs/GENERALIZATION_PLAN.md": "000eb5a558d6352df6c32c392bef470a76ec7261e3707b164d33ea9767cae095",
+    "docs/QCORE_SPEC_r0_3.md": "758a45a9569d7f21e05a831f754ca2f40566c1cda20bae8b34fc27efccc8bd27",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "56bcf176324c7877997d80ef240ba9d66250a937764e6c30ca4ff101e3392c74",
+    "docs/reevaluation/ct_manifest.json": "05c2d2571d691b84c70f60a8af6a6177b0425105d36b24e21b39a8df76dbc518"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "path": "workspace.log.gz",
+      "uncompressed_sha256": "c43b600b38c06d4b67b68b196a83a74750429b58f93b40f8134538d9ed37d466"
+    },
+    "focused": {
+      "command": "cargo test -p qcore-compiler --test ct_corpus",
+      "exit_code": 0,
+      "path": "focused.log.gz",
+      "uncompressed_sha256": "5aaedd50397fbfa82c94f3deca1bfefab26b1b247ca63ac738f68c594c5ba2f6"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "path": "checks.log.gz",
+      "uncompressed_sha256": "330d706d1aa2b34dc8dae8eadf8728b43f9e67b731f6a519c319a3ff232edec8"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "path": "providers.log.gz",
+      "uncompressed_sha256": "cb3a06cbb1753fa49f4f722d8aa8be07ef8eadca599a7949526cf91678f58055"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "path": "python.log.gz",
+      "uncompressed_sha256": "8fedb3b6b62f55c51cc98462e208076bc3f10f9a8602f363eefeb4625026a92b"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "path": "lean-build.log.gz",
+      "uncompressed_sha256": "c09060a6aa1cdc4e5d89b4df28ae9fb617711bad3a7db7fca6d3cc11af95f7e2"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "path": "lean-audits.log.gz",
+      "uncompressed_sha256": "14c35079056f7e8ce1c0a24924523d4cfa9bdafc946b0347d05b225285df109f"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-reused-address-source.json /tmp/qcore-reused-address-diagnostics.json",
+      "exit_code": 0,
+      "path": "audit.log.gz",
+      "uncompressed_sha256": "5cd96b5bd870f34cbb3188fae1fb06cfd918cb0b3fc31182096663762686ea9a"
+    }
+  },
+  "native_scenarios": 1,
+  "native_allocation_generations": 2,
+  "new_case": "CT50",
+  "negative_source_controls": 2
+}

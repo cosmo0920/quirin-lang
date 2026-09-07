@@ -156,12 +156,13 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **40/50 unmapped**
+  only; CT01–CT50 conformance corpus is **39/50 unmapped**
   (CT01/CT12 execute Linux owned-buffer transfer/creation restoration; CT02
   rejects actual post-move access. CT16 executes worker-local allocation/error cleanup; CT14/CT37 execute completed-but-unjoined native custody;
   CT19 checks real sibling failure source, CT13 has Linux creation-recovery
   evidence, CT15 has Linux native join-failure evidence, and CT20 checks
-  sibling join/owned-result discharge before bound-error rethrow).
+  sibling join/owned-result discharge before bound-error rethrow. CT50 checks real
+  mapping address reuse with distinct Buffer generations and stale-binding rejection).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -199,7 +200,7 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
   W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); subsequent owned-task
-  and completed-child mappings leave 40 cases unmapped, counted by a pinned test. W4 is executed for
+  and reused-address mappings leave 39 cases unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
   `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
@@ -695,3 +696,16 @@ observed allocations under ASan/UBSan/LSan. All 791 workspace tests, standing ga
 31 provider tests, 43 Python tests and 20 Lean audits pass. Broader alias analysis,
 relational branches, general recursion and cost summaries remain open. Evidence:
 `docs/reports/w4-immutable-out-aliases/README.md`.
+
+Reused-address conformance (2026-09-07): CT50 now executes two owned Buffer
+lifetimes backed by real Linux mappings. The first is unmapped; the second uses
+MAP_FIXED_NOREPLACE and must obtain the same numeric address without replacing
+any intervening mapping. Native release hooks check distinct generations 1 and 2,
+exact live pointers and both successful unmaps. Stale source read/drop after the
+fresh allocation reject at Q600. This replaces the old numeric-ID-reuse rejection
+with actual address reuse under distinct lifetime identities. Coverage is now
+11/50 mapped, 39 unmapped. All 791 workspace tests, standing gates, 31 provider
+tests, 43 Python tests, 20 Lean audits and the fixed sanitizer run pass; all four
+Cycle19 artifacts remain byte-identical. No core/backend semantics change. Raw
+pointer or descriptor reuse, arbitrary allocators and source/native refinement
+remain open. Evidence: `docs/reports/w6-reused-address/README.md`.

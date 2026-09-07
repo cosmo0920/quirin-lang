@@ -1,0 +1,56 @@
+{
+  "id": "CT50",
+  "verdict": "native_task_scenarios",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "Linux ScopedOwnedTasksV1 Buffer lifetime identity: two successful root allocations are separated by real munmap/mmap at the same numeric address using MAP_FIXED_NOREPLACE. Native release hooks check generations 1 and 2, exact mapping identity and complete release. Stale read/drop of the first consumed binding after the new allocation reject at Q600. Native stdout agrees with reference generation events. This covers owned Buffer mappings, not arbitrary raw pointers, descriptors, allocator failures or full source/native refinement.",
+  "native_task_scenarios": {
+    "header": "reused_mapping.h",
+    "rejection_controls": [
+      {
+        "source": "stale_read.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "not an initialized owned buffer"
+        }
+      },
+      {
+        "source": "stale_drop.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "not an initialized owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "same_address_new_generation",
+        "failed_allocation": 0,
+        "failed_create": 0,
+        "allocation_outcomes": [
+          true,
+          true
+        ],
+        "spawn_outcomes": [],
+        "outcome": {
+          "ok_value": 42,
+          "error": null,
+          "payload": []
+        },
+        "joined_children": 0,
+        "owned_child_results": [],
+        "native_stderr": "MAP 1\nUNMAP 1\nMAP 2\nREUSED_ADDRESS\nUNMAP 2\nRUN_CLEAN 2\n"
+      }
+    ]
+  }
+}

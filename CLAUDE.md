@@ -483,3 +483,16 @@ observed allocations under ASan/UBSan/LSan. All 791 workspace tests, standing ga
 31 provider tests, 43 Python tests and 20 Lean audits pass. Broader alias analysis,
 relational branches, general recursion and cost summaries remain open. Evidence:
 `docs/reports/w4-immutable-out-aliases/README.md`.
+
+Reused-address conformance (2026-09-07): CT50 now executes two owned Buffer
+lifetimes backed by real Linux mappings. The first is unmapped; the second uses
+MAP_FIXED_NOREPLACE and must obtain the same numeric address without replacing
+any intervening mapping. Native release hooks check distinct generations 1 and 2,
+exact live pointers and both successful unmaps. Stale source read/drop after the
+fresh allocation reject at Q600. This replaces the old numeric-ID-reuse rejection
+with actual address reuse under distinct lifetime identities. Coverage is now
+11/50 mapped, 39 unmapped. All 791 workspace tests, standing gates, 31 provider
+tests, 43 Python tests, 20 Lean audits and the fixed sanitizer run pass; all four
+Cycle19 artifacts remain byte-identical. No core/backend semantics change. Raw
+pointer or descriptor reuse, arbitrary allocators and source/native refinement
+remain open. Evidence: `docs/reports/w6-reused-address/README.md`.

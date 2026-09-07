@@ -223,7 +223,7 @@ records the full triage of all 47 then-unmapped cases. The later
 and upgrades CT19 to actual task source; [explicit recovery](docs/reports/w6-task-recovery/README.md)
 adds CT13. [Owned-task mappings](docs/reports/w6-owned-source-tasks/README.md)
 and [handler rethrow](docs/reports/w6-handler-rethrow/README.md) now leave
-40 of 50 unmapped after the [completed-child mapping](docs/reports/w6-completed-child-custody/README.md). [Worker allocation](docs/reports/w6-worker-allocation/README.md)
+39 of 50 unmapped after the [reused-address mapping](docs/reports/w6-reused-address/README.md). [Worker allocation](docs/reports/w6-worker-allocation/README.md)
 upgrades CT16 to real child allocation/error cleanup and retains its sequential
 implicit-cleanup control. W4 is
 executed for parameter/return custody with validation
@@ -718,3 +718,16 @@ observed allocations under ASan/UBSan/LSan. All 791 workspace tests, standing ga
 31 provider tests, 43 Python tests and 20 Lean audits pass. Broader alias analysis,
 relational branches, general recursion and cost summaries remain open. Evidence:
 `docs/reports/w4-immutable-out-aliases/README.md`.
+
+Reused-address conformance (2026-09-07): CT50 now executes two owned Buffer
+lifetimes backed by real Linux mappings. The first is unmapped; the second uses
+MAP_FIXED_NOREPLACE and must obtain the same numeric address without replacing
+any intervening mapping. Native release hooks check distinct generations 1 and 2,
+exact live pointers and both successful unmaps. Stale source read/drop after the
+fresh allocation reject at Q600. This replaces the old numeric-ID-reuse rejection
+with actual address reuse under distinct lifetime identities. Coverage is now
+11/50 mapped, 39 unmapped. All 791 workspace tests, standing gates, 31 provider
+tests, 43 Python tests, 20 Lean audits and the fixed sanitizer run pass; all four
+Cycle19 artifacts remain byte-identical. No core/backend semantics change. Raw
+pointer or descriptor reuse, arbitrary allocators and source/native refinement
+remain open. Evidence: `docs/reports/w6-reused-address/README.md`.
