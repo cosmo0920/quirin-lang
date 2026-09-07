@@ -37,6 +37,134 @@ use qcore_compiler::{
 /// and that constant agree.
 use qcore_compiler::PINNED_FLUENT_BIT_REVISION as PINNED_FLUENT_BIT_COMMIT;
 
+/// The user-facing command defaults to a current-revision inventory. Historical
+/// source/native evidence remains behind the explicit --pinned-evidence route.
+pub fn run_current(
+    root: &Path,
+    monkey_database: Option<&Path>,
+    monkey_source_report: Option<&Path>,
+    diagnostic_report: Option<&Path>,
+    binding_directory: Option<&Path>,
+    contract_manifest: Option<&Path>,
+) -> Result<bool, String> {
+    use qcore_audit::current::{CurrentAudit, distinct_configurations, select_configurations};
+    let root = root.canonicalize().map_err(|error| error.to_string())?;
+    let profile = load_profile(FLUENT_BIT_SOURCE_SET).map_err(|error| error.to_string())?;
+    let default_manifest = profile.resource_contract_manifest_path();
+    let manifest = contract_manifest
+        .or(default_manifest.as_deref())
+        .ok_or("source-set profile supplies no resource contracts")?;
+    let mut audit = CurrentAudit::new(&root, &profile, manifest)?;
+    let revision = audit.revision().to_owned();
+    println!("Fluent Bit {revision} (current checkout)");
+    println!(
+        "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay"
+    );
+    let entries = compile_entries(
+        &fs::read_to_string(root.join("build/compile_commands.json"))
+            .map_err(|error| error.to_string())?,
+    )?;
+    // Select all groups before auditing; missing groups cannot disappear from
+    // the denominator. Different commands for one file remain separate tasks.
+    let mut groups = Vec::new();
+    for selection in qcore_audit::load_library_selections(&profile.directory().join("audit.json"))?
+    {
+        let library = profile
+            .library(&selection.library)
+            .ok_or("selected library is absent from profile")?;
+        let selected = select_configurations(&entries, &root, library);
+        if selected.is_empty() {
+            return Err(format!(
+                "compile database contains no selected {} sources",
+                selection.library
+            ));
+        }
+        let unresolved = (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection");
+        groups.push((
+            selection.label.unwrap_or(selection.library),
+            selected,
+            unresolved,
+        ));
+    }
+    let monkey = monkey_database
+        .map(|path| {
+            let entries =
+                compile_entries(&fs::read_to_string(path).map_err(|error| error.to_string())?)?;
+            let source_root = monkey_source_root(&entries)?;
+            let selected = distinct_configurations(
+                entries
+                    .into_iter()
+                    .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
+            );
+            if selected.is_empty() {
+                return Err("no compiled Monkey sources selected".into());
+            }
+            // The copy may have been prepared at an older revision. It is usable
+            // only where its actual source and adapter/header bytes still match.
+            let unresolved =
+                verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected).err();
+            Ok::<_, String>((source_root, selected, unresolved))
+        })
+        .transpose()?;
+    for (library, selected, unresolved) in groups {
+        println!(
+            "{library}: {} selected compilation configuration(s)",
+            selected.len()
+        );
+        for entry in selected {
+            audit.audit_entry(&library, &entry.file, &entry, unresolved)?;
+        }
+    }
+    if let Some((source_root, entries, unresolved)) = monkey {
+        println!(
+            "monkey-libevent: {} selected compilation configuration(s)",
+            entries.len()
+        );
+        for entry in entries {
+            let relative = entry
+                .file
+                .strip_prefix(&source_root)
+                .map_err(|_| "Monkey source outside compiled root")?;
+            audit.audit_entry(
+                "monkey-libevent",
+                &root.join("lib/monkey").join(relative),
+                &entry,
+                unresolved.as_deref(),
+            )?;
+        }
+    }
+    let counts = audit.finish(diagnostic_report)?;
+    // Replace old sidecars explicitly: success must not leave old Checked
+    // evidence adjacent to a new-revision resource inventory at the same paths.
+    let unknown = serde_json::json!({
+        "schema_version": 1, "source_revision": revision, "status": "Unknown",
+        "reason": "historical source/native/provider evidence is not admitted by the current-revision resource audit",
+        "historical_reference_revision": PINNED_FLUENT_BIT_COMMIT,
+        "results": [], "callbacks": [], "wrappers": [], "backend_teardown": [],
+    });
+    let write = |path: &Path| -> Result<(), String> {
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+        }
+        fs::write(
+            path,
+            serde_json::to_vec_pretty(&unknown).map_err(|error| error.to_string())?,
+        )
+        .map_err(|error| error.to_string())
+    };
+    if let Some(path) = diagnostic_report {
+        write(&path.with_extension("chunk-contracts.json"))?;
+        write(&path.with_extension("source-effects.json"))?;
+    }
+    if let Some(path) = monkey_source_report {
+        write(path)?;
+    }
+    if let Some(path) = binding_directory {
+        write(&path.join("monkey_binding_result.json"))?;
+    }
+    Ok(counts.gateway_failures != 0)
+}
+
 pub fn run(
     root: &Path,
     monkey_database: Option<&Path>,

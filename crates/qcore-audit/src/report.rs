@@ -29,6 +29,30 @@ impl AuditReport {
         self.source_contracts = Some(evidence);
     }
 
+    /// Retain a selected configuration whose source/build premises could not
+    /// be established. Missing evidence is never a data-only or Safe unit.
+    pub fn record_unknown(
+        &mut self,
+        library: &str,
+        file: &str,
+        functions: &[String],
+        reason: &str,
+    ) {
+        self.units.push(json!({
+            "library": library, "file": file, "status": "Unknown", "reason": reason,
+            "source_functions": functions, "functions": [], "not_projected": functions,
+            "diagnostic_counts": {},
+        }));
+    }
+
+    /// Attach the exact configuration inventory to the immediately preceding
+    /// unit, including rejected commands which cannot mint a compile-task proof.
+    pub fn record_configuration(&mut self, configuration: Value) {
+        if let Some(unit) = self.units.last_mut() {
+            unit["compile_configuration"] = configuration;
+        }
+    }
+
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
         self.units.push(json!({
             "library": library, "file": file,

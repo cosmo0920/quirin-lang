@@ -1,4 +1,4 @@
-//! Compatibility command for the retained bounded Cycle19 provider stages.
+//! Current-revision resource audit, with explicit historical evidence replay.
 use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -7,7 +7,13 @@ use std::process::ExitCode;
 mod compatibility;
 
 fn main() -> ExitCode {
-    let mut arguments = env::args_os().skip(1);
+    let mut arguments = env::args_os().skip(1).peekable();
+    let pinned = arguments
+        .peek()
+        .is_some_and(|argument| argument == "--pinned-evidence");
+    if pinned {
+        arguments.next();
+    }
     let root = arguments
         .next()
         .map(PathBuf::from)
@@ -19,13 +25,18 @@ fn main() -> ExitCode {
     let contract_manifest = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
-            "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
+            "usage: cycle19_fluent_bit_libraries_audit [--pinned-evidence] [fluent-bit-root] \
              [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
              [resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]"
         );
         return ExitCode::FAILURE;
     }
-    match compatibility::run(
+    let run = if pinned {
+        compatibility::run
+    } else {
+        compatibility::run_current
+    };
+    match run(
         &root,
         monkey_database.as_deref(),
         monkey_source_report.as_deref(),

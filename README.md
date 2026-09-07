@@ -830,3 +830,14 @@ current-corpus auditing still rejects unsupported CTraces options and conflictin
 wrapper commands; these are not revision-selection failures. No whole-unit
 promotion or semantic rule change is claimed. See `docs/reports/fluent-bit-moving-revisions/README.md` and
 `crates/qcore-audit/README.md` for commands and validation.
+
+Cycle19 command correction checkpoint (2026-09-07): the existing example now
+uses the current checkout by default; `--pinned-evidence` explicitly selects
+historical replay. Distinct compile configurations remain visible, selected
+bytes bind to the actual commit, and historical sidecars become explicit Unknown
+records. Monkey preparation also accepts the current clean revision. The exact
+user command now completes at `d1ab8abff`, but all 186 configurations across
+185 source files remain Unknown before analysis because of compiler-command
+admission. This is an incomplete audit checkpoint, not a successful production
+verification: faithful dialect/driver/flag and filename-macro ingestion remains
+required. See `docs/reports/cycle19-current-command/README.md`.

@@ -7,6 +7,7 @@
 //! composition remains with the existing compatibility adapter.
 
 pub mod compile_db;
+pub mod current;
 pub mod projection;
 pub mod report;
 mod source_audit;

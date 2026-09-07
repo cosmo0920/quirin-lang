@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare persistent pinned Monkey sources, generated headers and compile commands."""
+"""Prepare current-checkout Monkey sources, generated headers and compile commands."""
 import argparse
 import hashlib
 import json
@@ -30,13 +30,9 @@ def main():
     args = parser.parse_args()
     upstream = args.fluent_bit.resolve(strict=True)
     out = args.output.resolve()
-    profile = json.loads((REPO / 'contract/profiles/fluent-bit/profile.json').read_text())
-    pin = profile['pins']['fluent-bit']['git_commit']
     revision = run('git', '-C', str(upstream), 'rev-parse', 'HEAD')
-    if revision != pin:
-        raise ValueError(f'Fluent Bit revision {revision} does not match profile pin {pin}')
     if run('git', '-C', str(upstream), 'status', '--porcelain', '--', 'lib/monkey'):
-        raise ValueError('Fluent Bit lib/monkey has local changes; source pin would be ambiguous')
+        raise ValueError('Fluent Bit lib/monkey has local changes; source revision would be ambiguous')
     marker = out / 'qcore-monkey-inputs.json'
     if out.exists() and any(out.iterdir()) and not marker.exists():
         raise ValueError(f'{out} is not a managed QCore Monkey input directory; choose a fresh output')
@@ -47,7 +43,7 @@ def main():
                              check=True, capture_output=True, text=True).stdout
     names = [str(Path(name).relative_to('lib/monkey')) for name in tracked.split('\0') if name]
     if not names:
-        raise ValueError('pinned checkout has no tracked Monkey source files')
+        raise ValueError('checkout has no tracked Monkey source files')
     source_hashes = file_hashes(upstream / 'lib/monkey', names)
     metadata = dict(schema_version=1, source_revision=revision, upstream=str(upstream),
                     source=str(source), build=str(build), source_sha256=source_hashes,

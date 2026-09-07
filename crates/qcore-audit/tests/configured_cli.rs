@@ -247,6 +247,108 @@ fn checkout_head_commit_change_retires_identity_even_with_identical_source() {
     );
 }
 
+fn inventory(fixture: &Fixture, arguments: &[&str]) -> Value {
+    use qcore_audit::compile_db::CompileEntry;
+    use qcore_audit::current::{CurrentAudit, distinct_configurations};
+    let checkout = fixture.0.join("checkout");
+    let profile =
+        qcore_contract::profile_loader::load_profile_directory(&fixture.0.join("profiles/sample"))
+            .unwrap();
+    let mut audit =
+        CurrentAudit::new(&checkout, &profile, &fixture.0.join("contracts.json")).unwrap();
+    let entries = distinct_configurations(arguments.iter().map(|argument| CompileEntry {
+        directory: checkout.clone(),
+        file: checkout.join("src/unit.c"),
+        command: format!("cc -std=c11 -c src/unit.c {argument}"),
+    }));
+    for entry in entries {
+        audit
+            .audit_entry("sample", &entry.file, &entry, None)
+            .unwrap();
+    }
+    audit
+        .finish(Some(&fixture.0.join("inventory.json")))
+        .unwrap();
+    serde_json::from_slice(&fs::read(fixture.0.join("inventory.json")).unwrap()).unwrap()
+}
+
+#[test]
+fn current_inventory_keeps_distinct_commands_and_unsupported_configurations_unknown() {
+    let fixture = Fixture::new(
+        "extern void opaque(void);\nvoid entry(void) {\n#ifdef CALL_OPAQUE\nopaque();\n#endif\n}\n",
+    );
+    let report = inventory(&fixture, &["", "-DCALL_OPAQUE", "-unsupported", ""]);
+    let units = report["units"].as_array().unwrap();
+    assert_eq!(units.len(), 3);
+    assert_eq!(
+        units.iter().filter(|unit| unit["status"] == "Safe").count(),
+        1
+    );
+    assert_eq!(
+        units
+            .iter()
+            .filter(|unit| unit["status"] == "Unknown")
+            .count(),
+        2
+    );
+    let rejected = units
+        .iter()
+        .find(|unit| {
+            unit["compile_configuration"]["command"]
+                .as_str()
+                .unwrap()
+                .contains("-unsupported")
+        })
+        .unwrap();
+    assert!(rejected["reason"].as_str().unwrap().contains("unsupported"));
+    assert!(
+        rejected["compile_configuration"]
+            .get("compile_task_identity")
+            .is_none()
+    );
+    assert_eq!(
+        units
+            .iter()
+            .map(|unit| unit["compile_configuration"]["inventory_sha256"]
+                .as_str()
+                .unwrap())
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+        3
+    );
+}
+
+#[test]
+fn current_inventory_reanalyzes_new_commits_and_never_admits_dirty_source() {
+    let fixture = Fixture::new("int entry(void) { return 1; }");
+    let first = inventory(&fixture, &[""]);
+    let revision = commit_source(&fixture, "int entry(void) { return 1; }");
+    let second = inventory(&fixture, &[""]);
+    assert_eq!(second["fluent_bit_revision"], revision);
+    assert_ne!(
+        first["units"][0]["compile_configuration"]["inventory_sha256"],
+        second["units"][0]["compile_configuration"]["inventory_sha256"]
+    );
+    commit_source(
+        &fixture,
+        "extern void opaque(void); void entry(void) { opaque(); }",
+    );
+    assert_eq!(inventory(&fixture, &[""])["units"][0]["status"], "Unknown");
+    fs::write(
+        fixture.0.join("checkout/src/unit.c"),
+        "int entry(void) { return 1; }",
+    )
+    .unwrap();
+    let dirty = inventory(&fixture, &[""]);
+    assert_eq!(dirty["units"][0]["status"], "Unknown");
+    assert!(
+        dirty["units"][0]["reason"]
+            .as_str()
+            .unwrap()
+            .contains("does not match its pinned bytes")
+    );
+}
+
 #[test]
 fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files() {
     for (source, expected) in [

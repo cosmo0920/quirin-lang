@@ -106,7 +106,13 @@ the historical revision retains its configured source-contract evidence route.
 Supply the original commit with `--revision` to reproduce that route even after
 the upstream checkout advances. Existing audit configurations default to
 `"source_revision_policy": "profile_pin"`, preserving historical evidence gates.
-The Cycle19 compatibility command remains the pinned reproduction command.
+The existing Cycle19 command now defaults to the current checkout and inventories
+each distinct build configuration. Unsupported commands appear as Unknown rather
+than terminating that inventory; the strict configured driver still rejects them.
+Pass `--pinned-evidence` before the positional root argument for historical replay.
+The current command is not yet sufficient for a substantive production audit:
+the supplied database leaves all 186 configurations Unknown before analysis.
+See [the checkpoint and remaining work](../../docs/reports/cycle19-current-command/README.md).
 
 ## Configured source-contract processes
 
