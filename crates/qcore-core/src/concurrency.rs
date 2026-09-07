@@ -200,10 +200,16 @@ pub enum ConcurrencyDiagnostic {
     },
 }
 
-/// No source-to-trace or checked mutex-invariant claim is made by this profile.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ConcurrencyProfile {
+    /// No source-to-trace or checked mutex-invariant claim is made by this
+    /// profile. `check_concurrent` issues only this one.
     TrustedExplicitTrace,
+    /// The fixed-shape checked mutex-invariant profile of
+    /// [`crate::mutex_invariant`]. Guard-to-footprint authority and
+    /// synchronized handoffs are derived there, not declared; still no
+    /// source-to-trace claim.
+    CheckedMutexInvariantV1,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -215,6 +221,12 @@ pub enum ConcurrencyAssumption {
     GuardFootprintAuthority,
     /// Each true handoff flag represents a real synchronization edge.
     SynchronizedCustodyEdges,
+    /// The intervals declared at mutex creation correspond to the real C
+    /// layout of the protected object. Only `CheckedMutexInvariantV1`.
+    DeclaredFootprintShape,
+    /// A closing invariant witness names a declared predicate; the predicate
+    /// itself is asserted, not proved. Only `CheckedMutexInvariantV1`.
+    InvariantPredicateDeclared,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

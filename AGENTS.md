@@ -1032,3 +1032,37 @@ function, six Unknown, a provisional Unsafe raw unit, byte-identical diagnostics
 with ten identity-digest fields moved because 12 `__FILE__` expansions became the
 real source path. Evidence: `docs/reports/remaining-g02/README.md`. Compatibility
 route migration, single-invocation frontend transport and raw promotion remain open.
+Checked mutex invariants (2026-09-07): T02 implements `CheckedMutexInvariantV1`
+as a new `crates/qcore-core/src/mutex_invariant.rs`, beside an unedited
+`check_concurrent` whose body, 26 pinned tests and `Lifetime` Lean model are
+byte-identical; `TrustedExplicitTrace` retains `GuardFootprintAuthority` and
+`SynchronizedCustodyEdges`. Mutex generations are liveness-ledgered under V01's
+rules: a refused destroy leaves the generation live and a repeat destroy reports
+a dead generation, not an ownership complaint. `CreateMutex` fixes its declared
+footprints and consumes the creator's `FULL_ACCESS` share over each, so a
+protected footprint has exactly one protector and no fallback authority path;
+pointwise share conservation over exact interval atoms is verified before the
+first event and after every event, refused events included. Each `Lock` mints a
+fresh never-reused guard; reads need that guard, writes need an open invariant,
+and unlock or typed-error exit requires a closed invariant with no live
+guard-derived borrow, dropping every guard-scoped fact. Custody transfer carries
+a checker-verified `SyncWitness` compared against derived happens-before, in the
+`weak_memory` style; no `bool` occupies an authority position. Dynamic shapes,
+condition variables, try/timed locks, rwlocks, nested protecting mutexes, lock
+ranks and recursive acquisition are represented refusals, not omissions.
+Diagnostics occupy the free `Q610`-`Q623` range with `Q600` retained for carried
+-over structural refusals. Certificates name exact generations, admitted
+invariant transitions and derived edges; an independent recheck rederives every
+field and refuses either trusted premise, including through the plain-string
+route. 48 new tests bring the workspace to 898 passing; 46 provider tests,
+43 Python tests, both probes and the standing gates pass, and
+`check_lean_audits.py` passes 21 audits after a new `QCore.Concurrency.MutexInvariant`
+namespace lands all 18 designed theorems plus 13 supporting ones and 29 decidable
+scenarios, with no new axiom. Evidence:
+`docs/reports/remaining-t02/README.md`. This is model-level only: no source
+lowering, no CT case mapped (11/50 unchanged), no raw unit promoted, and the four
+pinned 185-unit artifacts are unchanged by construction rather than re-measured,
+the corpus being absent from the worktree. `DeclaredFootprintShape` and
+`InvariantPredicateDeclared` are new declared premises; source-to-trace
+refinement, C layout, deadlock freedom, source lowering (T03), general recursive
+shape preservation and `research_closure` profile recording remain open.

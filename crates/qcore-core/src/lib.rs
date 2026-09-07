@@ -18,6 +18,7 @@ pub mod executable_model;
 pub mod index;
 pub mod inference;
 pub mod library_custody;
+pub mod mutex_invariant;
 pub mod native_concurrency;
 pub mod ownership;
 pub mod research_closure;
@@ -72,6 +73,12 @@ pub use concurrency::{
     AccessFootprint, AccessKind, AccessPermission, ConcurrencyAssumption, ConcurrencyCertificate,
     ConcurrencyDiagnostic, ConcurrencyProfile, ConcurrentEvent, ConcurrentProgram, FULL_ACCESS,
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
+};
+pub use mutex_invariant::{
+    BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId, IdentityKind, InvariantId,
+    InvariantPhase, InvariantTransition, InvariantWitness, MutexInvariantCertificate,
+    MutexInvariantDiagnostic, MutexInvariantEvent, MutexInvariantProgram, ShareGrant, SyncWitness,
+    UnsupportedSynchronization, check_mutex_invariant_program, recheck_mutex_invariant_certificate,
 };
 pub use native_concurrency::{
     FeatureDisposition, NativeBackendError, NativeCellId, NativeExecutionCertificate,
