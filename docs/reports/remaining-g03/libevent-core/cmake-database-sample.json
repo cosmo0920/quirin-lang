@@ -1,0 +1,11 @@
+{
+  "total_entries": 55,
+  "sample": [
+    {
+      "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/build/cycle19/libevent-clang-build",
+      "command": "/usr/bin/clang -DHAVE_CONFIG_H -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/build/cycle19/libevent-clang-build/include -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/third_party/libevent/include -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/third_party/libevent/compat -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/third_party/libevent  -Wall -Wextra -Wno-unused-parameter -Wstrict-aliasing -Wstrict-prototypes -Wundef -fno-strict-aliasing -Wmissing-prototypes -Winit-self -Wmissing-field-initializers -Wdeclaration-after-statement -Waddress -Woverride-init -Wwrite-strings -Wno-unused-function -Wno-pragmas -Wvla -Wno-void-pointer-to-enum-cast -O3 -DNDEBUG -std=gnu17 -o CMakeFiles/event_core_static.dir/log.c.o -c /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/third_party/libevent/log.c",
+      "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/third_party/libevent/log.c",
+      "output": "CMakeFiles/event_core_static.dir/log.c.o"
+    }
+  ]
+}

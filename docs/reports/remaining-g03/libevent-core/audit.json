@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "profile_directory": ".",
+  "checkout": "../../../third_party/libevent",
+  "compile_database": "../../../build/cycle19/libevent-clang-build/qcore-audit-compile-commands.json",
+  "libraries": [
+    "libevent-core"
+  ],
+  "report": "../../../build/cycle19/libevent-clang-build/libevent-core-audit.json"
+}

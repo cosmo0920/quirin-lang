@@ -1,0 +1,932 @@
+{
+  "schema_version": 1,
+  "routes": {
+    "chunkio-core": {
+      "report_keys": [
+        "diagnostic_counts",
+        "line_coordinates",
+        "not_projected_meaning",
+        "schema_version",
+        "scope",
+        "source_revision",
+        "units"
+      ],
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "has_source_contract_evidence": false,
+      "verdicts": {
+        "Unknown": 11,
+        "Unsafe": 2
+      },
+      "units": {
+        "chunkio/lib/chunkio/src/chunkio.c": {
+          "status": "Unsafe",
+          "reason": null,
+          "source_functions": 13,
+          "projected_functions": 13,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "leak": 3,
+            "unknown_alias": 4,
+            "unsupported": 96
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 159 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 30,
+          "projected_functions": 30,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unknown_alias": 12,
+            "unsupported": 159
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_error.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 6 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 4,
+          "projected_functions": 4,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unsupported": 6
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_file.c": {
+          "status": "Unsafe",
+          "reason": null,
+          "source_functions": 32,
+          "projected_functions": 32,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "leak": 1,
+            "unknown_alias": 22,
+            "unsupported": 306
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 103 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 15,
+          "projected_functions": 15,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unknown_alias": 8,
+            "unsupported": 103
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_log.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 11 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 3,
+          "projected_functions": 2,
+          "not_projected": [
+            "cio_winapi_error_print"
+          ],
+          "diagnostic_counts": {
+            "unknown_alias": 1,
+            "unsupported": 11
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 42 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 5,
+          "projected_functions": 5,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unknown_alias": 3,
+            "unsupported": 42
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_meta.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 40 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 4,
+          "projected_functions": 4,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unsupported": 40
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_os.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 9 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 3,
+          "projected_functions": 2,
+          "not_projected": [
+            "cio_os_win32_make_recursive_path"
+          ],
+          "diagnostic_counts": {
+            "unknown_alias": 1,
+            "unsupported": 9
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_scan.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 39 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 3,
+          "projected_functions": 3,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unknown_alias": 3,
+            "unsupported": 39
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_stats.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 23 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 2,
+          "projected_functions": 2,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unsupported": 23
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 58 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 8,
+          "projected_functions": 8,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unknown_alias": 13,
+            "unsupported": 58
+          }
+        },
+        "chunkio/lib/chunkio/src/cio_utils.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 28 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 4,
+          "projected_functions": 3,
+          "not_projected": [
+            "cio_utils_recursive_delete_handler"
+          ],
+          "diagnostic_counts": {
+            "unknown_alias": 4,
+            "unsupported": 28
+          }
+        }
+      },
+      "function_status": {
+        "Safe": 1,
+        "Unknown": 120,
+        "Unsafe": 2
+      },
+      "functions": {
+        "chunkio/lib/chunkio/src/chunkio.c::check_root_path": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_create": {
+          "status": "Unsafe",
+          "diagnostics": 47
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_destroy": {
+          "status": "Unknown",
+          "diagnostics": 14
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_disable_file_trimming": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_enable_file_trimming": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_load": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_options_init": {
+          "status": "Unknown",
+          "diagnostics": 10
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_qsort": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_set_log_callback": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_set_log_level": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_set_max_chunks_up": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::cio_set_realloc_size_hint": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/chunkio.c::qsort_stream": {
+          "status": "Unknown",
+          "diagnostics": 12
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::chunk_state_sync": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_close": {
+          "status": "Unknown",
+          "diagnostics": 10
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_close_stream": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_counter_total_add": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_counter_total_sub": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_counter_total_up_add": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_counter_total_up_sub": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_delete": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_down": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_get_content": {
+          "status": "Unknown",
+          "diagnostics": 13
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_get_content_copy": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_get_content_end_pos": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_get_content_size": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_get_real_size": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_hash": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_is_file": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_is_locked": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_is_up": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_lock": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_open": {
+          "status": "Unknown",
+          "diagnostics": 31
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_sync": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_tx_begin": {
+          "status": "Unknown",
+          "diagnostics": 11
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_tx_commit": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_tx_rollback": {
+          "status": "Unknown",
+          "diagnostics": 10
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_unlock": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_up": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_up_force": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_write": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_chunk_write_at": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_chunk.c::cio_version": {
+          "status": "Safe",
+          "diagnostics": 0
+        },
+        "chunkio/lib/chunkio/src/cio_error.c::cio_error_get": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_error.c::cio_error_get_str": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_error.c::cio_error_reset": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_error.c::cio_error_set": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::_cio_file_up": {
+          "status": "Unknown",
+          "diagnostics": 12
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::adjust_layout": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_calculate_checksum": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_close": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_content_copy": {
+          "status": "Unsafe",
+          "diagnostics": 16
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_delete": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_down": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_format_check": {
+          "status": "Unknown",
+          "diagnostics": 32
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_hash": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_hash_print": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_is_up": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_lookup_group": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_lookup_user": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_open": {
+          "status": "Unknown",
+          "diagnostics": 50
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_read_prepare": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_real_size": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_resize": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_scan_dump": {
+          "status": "Unknown",
+          "diagnostics": 20
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_sync": {
+          "status": "Unknown",
+          "diagnostics": 21
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_up": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_up_force": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_update_size": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_write": {
+          "status": "Unknown",
+          "diagnostics": 23
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::cio_file_write_metadata": {
+          "status": "Unknown",
+          "diagnostics": 19
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::finalize_checksum": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::format_acl_error_message": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::get_available_size": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::mmap_file": {
+          "status": "Unknown",
+          "diagnostics": 42
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::munmap_file": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::open_and_up": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::update_checksum": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_file.c::write_init_header": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_apply_acl_and_settings": {
+          "status": "Unknown",
+          "diagnostics": 13
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_close": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_compose_path": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_delete": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_delete_by_path": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_filename_check": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_get_size": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_lookup_group": {
+          "status": "Unknown",
+          "diagnostics": 17
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_lookup_user": {
+          "status": "Unknown",
+          "diagnostics": 15
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_map": {
+          "status": "Unknown",
+          "diagnostics": 10
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_open": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_remap": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_resize": {
+          "status": "Unknown",
+          "diagnostics": 13
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_sync": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_file_unix.c::cio_file_native_unmap": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_log.c::cio_errno_print": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "chunkio/lib/chunkio/src/cio_log.c::cio_log_print": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c::cio_memfs_close": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c::cio_memfs_content_copy": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c::cio_memfs_open": {
+          "status": "Unknown",
+          "diagnostics": 14
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c::cio_memfs_scan_dump": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_memfs.c::cio_memfs_write": {
+          "status": "Unknown",
+          "diagnostics": 11
+        },
+        "chunkio/lib/chunkio/src/cio_meta.c::cio_meta_cmp": {
+          "status": "Unknown",
+          "diagnostics": 10
+        },
+        "chunkio/lib/chunkio/src/cio_meta.c::cio_meta_read": {
+          "status": "Unknown",
+          "diagnostics": 12
+        },
+        "chunkio/lib/chunkio/src/cio_meta.c::cio_meta_size": {
+          "status": "Unknown",
+          "diagnostics": 7
+        },
+        "chunkio/lib/chunkio/src/cio_meta.c::cio_meta_write": {
+          "status": "Unknown",
+          "diagnostics": 11
+        },
+        "chunkio/lib/chunkio/src/cio_os.c::cio_os_isdir": {
+          "status": "Unknown",
+          "diagnostics": 2
+        },
+        "chunkio/lib/chunkio/src/cio_os.c::cio_os_mkpath": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_scan.c::cio_scan_dump": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_scan.c::cio_scan_stream_files": {
+          "status": "Unknown",
+          "diagnostics": 24
+        },
+        "chunkio/lib/chunkio/src/cio_scan.c::cio_scan_streams": {
+          "status": "Unknown",
+          "diagnostics": 9
+        },
+        "chunkio/lib/chunkio/src/cio_stats.c::cio_stats_get": {
+          "status": "Unknown",
+          "diagnostics": 15
+        },
+        "chunkio/lib/chunkio/src/cio_stats.c::cio_stats_print_summary": {
+          "status": "Unknown",
+          "diagnostics": 8
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::check_stream_path": {
+          "status": "Unknown",
+          "diagnostics": 13
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_create": {
+          "status": "Unknown",
+          "diagnostics": 21
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_delete": {
+          "status": "Unknown",
+          "diagnostics": 13
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_destroy": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_destroy_all": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_get": {
+          "status": "Unknown",
+          "diagnostics": 4
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::cio_stream_size_chunks_up": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_stream.c::get_stream_path": {
+          "status": "Unknown",
+          "diagnostics": 6
+        },
+        "chunkio/lib/chunkio/src/cio_utils.c::cio_getpagesize": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "chunkio/lib/chunkio/src/cio_utils.c::cio_utils_read_file": {
+          "status": "Unknown",
+          "diagnostics": 16
+        },
+        "chunkio/lib/chunkio/src/cio_utils.c::cio_utils_recursive_delete": {
+          "status": "Unknown",
+          "diagnostics": 15
+        }
+      },
+      "assumption_keys": [
+        "compile_database_sha256",
+        "contract_manifest",
+        "contracts",
+        "profile",
+        "schema_version",
+        "scope",
+        "source_sha256"
+      ],
+      "profile_assumption_keys": [
+        "pin.fluent-bit",
+        "profile_digest",
+        "schema_version",
+        "source_set",
+        "trust"
+      ],
+      "source_set": "chunkio-core",
+      "pins": {
+        "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      },
+      "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+      "contract_source_assumptions": {
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/chunkio-core/./../../qcore/chunkio/resource_open_close.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn cio_chunk_open(ctx: ptr<mut, u8>, stream: ptr<mut, u8>, name: ptr<const, u8>, flags: i32, size: usize, err: ptr<mut, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(ctx);\n    ensures normal resource_borrowed(stream);\n    ensures normal resource_borrowed(name);\n    ensures normal resource_borrowed(flags);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_borrowed(err);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn cio_chunk_close(chunk: ptr<mut, u8>, delete: i32) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(chunk, nonnull);\n    ensures normal resource_borrowed(delete);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/chunkio-core/./../../qcore/fluent_bit/resource_memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn flb_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n\nextern fn flb_sds_create_len(str: ptr<const, u8>, len: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_borrowed(len);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_sds_destroy(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/chunkio-core/./../../qcore/libc/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/chunkio-core/./../../qcore/librdkafka/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn rd_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_strndup(str: ptr<const, u8>, len: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_borrowed(len);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n\nextern fn rd_realloc(ptr: ptr<mut, u8>, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_owned(ptr, nullable);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_reallocated(ptr, nullable);\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/chunkio-core/./../../qcore/monkey/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn mk_mem_alloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
+      },
+      "audited_source_files": [
+        "chunkio/lib/chunkio/src/chunkio.c",
+        "chunkio/lib/chunkio/src/cio_chunk.c",
+        "chunkio/lib/chunkio/src/cio_error.c",
+        "chunkio/lib/chunkio/src/cio_file.c",
+        "chunkio/lib/chunkio/src/cio_file_unix.c",
+        "chunkio/lib/chunkio/src/cio_log.c",
+        "chunkio/lib/chunkio/src/cio_memfs.c",
+        "chunkio/lib/chunkio/src/cio_meta.c",
+        "chunkio/lib/chunkio/src/cio_os.c",
+        "chunkio/lib/chunkio/src/cio_scan.c",
+        "chunkio/lib/chunkio/src/cio_stats.c",
+        "chunkio/lib/chunkio/src/cio_stream.c",
+        "chunkio/lib/chunkio/src/cio_utils.c"
+      ]
+    },
+    "cmetrics-counter": {
+      "report_keys": [
+        "diagnostic_counts",
+        "line_coordinates",
+        "not_projected_meaning",
+        "schema_version",
+        "scope",
+        "source_contracts",
+        "source_revision",
+        "units"
+      ],
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "has_source_contract_evidence": true,
+      "verdicts": {
+        "Unsafe": 1
+      },
+      "units": {
+        "cmetrics/lib/cmetrics/src/cmt_counter.c": {
+          "status": "Unsafe",
+          "reason": null,
+          "source_functions": 7,
+          "projected_functions": 7,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "leak": 2,
+            "unknown_alias": 2,
+            "unsupported": 36
+          }
+        }
+      },
+      "function_status": {
+        "Unknown": 6,
+        "Unsafe": 1
+      },
+      "functions": {
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_add": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_allow_reset": {
+          "status": "Unknown",
+          "diagnostics": 1
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_create": {
+          "status": "Unsafe",
+          "diagnostics": 20
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_destroy": {
+          "status": "Unknown",
+          "diagnostics": 5
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_get_val": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_inc": {
+          "status": "Unknown",
+          "diagnostics": 3
+        },
+        "cmetrics/lib/cmetrics/src/cmt_counter.c::cmt_counter_set": {
+          "status": "Unknown",
+          "diagnostics": 5
+        }
+      },
+      "assumption_keys": [
+        "compile_database_sha256",
+        "contract_manifest",
+        "contracts",
+        "profile",
+        "schema_version",
+        "scope",
+        "source_sha256"
+      ],
+      "profile_assumption_keys": [
+        "pin.fluent-bit",
+        "profile_digest",
+        "schema_version",
+        "source_set",
+        "trust"
+      ],
+      "source_set": "cmetrics-counter",
+      "pins": {
+        "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+      },
+      "scope": "existing-C resource projection of selected compiled units; separate configured source-contract evidence is embedded in the report without whole-unit promotion; Unsafe is provisional",
+      "contract_source_assumptions": {
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/cmetrics-counter/./../../qcore/chunkio/resource_open_close.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn cio_chunk_open(ctx: ptr<mut, u8>, stream: ptr<mut, u8>, name: ptr<const, u8>, flags: i32, size: usize, err: ptr<mut, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(ctx);\n    ensures normal resource_borrowed(stream);\n    ensures normal resource_borrowed(name);\n    ensures normal resource_borrowed(flags);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_borrowed(err);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn cio_chunk_close(chunk: ptr<mut, u8>, delete: i32) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(chunk, nonnull);\n    ensures normal resource_borrowed(delete);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/cmetrics-counter/./../../qcore/fluent_bit/resource_memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn flb_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n\nextern fn flb_sds_create_len(str: ptr<const, u8>, len: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_borrowed(len);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn flb_sds_destroy(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/cmetrics-counter/./../../qcore/libc/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/cmetrics-counter/./../../qcore/librdkafka/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn rd_malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_strndup(str: ptr<const, u8>, len: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_borrowed(len);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn rd_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n\nextern fn rd_realloc(ptr: ptr<mut, u8>, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_owned(ptr, nullable);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_reallocated(ptr, nullable);\n};\n",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2d254d54de781b96/contract/profiles/cmetrics-counter/./../../qcore/monkey/memory.qcore": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn mk_mem_alloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
+      },
+      "audited_source_files": [
+        "cmetrics/lib/cmetrics/src/cmt_counter.c"
+      ]
+    },
+    "w5-synthetic-demo": {
+      "report_keys": [
+        "diagnostic_counts",
+        "line_coordinates",
+        "not_projected_meaning",
+        "schema_version",
+        "scope",
+        "source_revision",
+        "units"
+      ],
+      "source_revision": "78a0ea53f811aa4cbb90f5645aa272bed01d2592",
+      "has_source_contract_evidence": false,
+      "verdicts": {
+        "Safe": 1,
+        "Unknown": 1,
+        "Unsafe": 1
+      },
+      "units": {
+        "sample/src/balanced.c": {
+          "status": "Safe",
+          "reason": null,
+          "source_functions": 1,
+          "projected_functions": 1,
+          "not_projected": [],
+          "diagnostic_counts": {}
+        },
+        "sample/src/leak.c": {
+          "status": "Unsafe",
+          "reason": null,
+          "source_functions": 1,
+          "projected_functions": 1,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "leak": 1
+          }
+        },
+        "sample/src/opaque.c": {
+          "status": "Unknown",
+          "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+          "source_functions": 1,
+          "projected_functions": 1,
+          "not_projected": [],
+          "diagnostic_counts": {
+            "unsupported": 1
+          }
+        }
+      },
+      "function_status": {
+        "Safe": 1,
+        "Unknown": 1,
+        "Unsafe": 1
+      },
+      "functions": {
+        "sample/src/balanced.c::balanced": {
+          "status": "Safe",
+          "diagnostics": 0
+        },
+        "sample/src/leak.c::leak": {
+          "status": "Unsafe",
+          "diagnostics": 1
+        },
+        "sample/src/opaque.c::unknown_effect": {
+          "status": "Unknown",
+          "diagnostics": 1
+        }
+      },
+      "assumption_keys": [
+        "compile_database_sha256",
+        "contract_manifest",
+        "contracts",
+        "profile",
+        "schema_version",
+        "scope",
+        "source_sha256"
+      ],
+      "profile_assumption_keys": [
+        "pin.sample",
+        "profile_digest",
+        "schema_version",
+        "source_set",
+        "trust"
+      ],
+      "source_set": "sample",
+      "pins": {
+        "pin.sample": "78a0ea53f811aa4cbb90f5645aa272bed01d2592"
+      },
+      "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+      "contract_source_assumptions": {
+        "/tmp/qcore-generic-audit-demo/profiles/sample/../../memory.qcore": "module contract;\nextern fn alloc() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nonnull);\n};\nextern fn dispose(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nonnull);\n    ensures normal resource_return_none();\n};\n"
+      },
+      "audited_source_files": [
+        "sample/src/balanced.c",
+        "sample/src/leak.c",
+        "sample/src/opaque.c"
+      ]
+    }
+  },
+  "shared_report_keys": [
+    "diagnostic_counts",
+    "line_coordinates",
+    "not_projected_meaning",
+    "schema_version",
+    "scope",
+    "source_revision",
+    "units"
+  ],
+  "report_key_differences": {
+    "chunkio-core": [],
+    "cmetrics-counter": [
+      "source_contracts"
+    ],
+    "w5-synthetic-demo": []
+  },
+  "shared_assumption_keys": [
+    "compile_database_sha256",
+    "contract_manifest",
+    "contracts",
+    "profile",
+    "schema_version",
+    "scope",
+    "source_sha256"
+  ],
+  "scope": "Bounded resource projection comparison across configured routes. Unknown stays in the denominator; a provisional Unsafe is not an upstream defect and no raw unit is promoted."
+}
