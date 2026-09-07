@@ -281,6 +281,7 @@ fn manifest_for(plugin_id: &str, target: &TargetProfile, evidence: &[u16]) -> Pl
             timeout_ms: 1_000,
             memory_bytes: 1 << 20,
             output_bytes: 1 << 16,
+            ..PluginLimits::default()
         },
         trust_class: PluginTrustClass::ThirdParty,
         certificate_checker: "qcore.boolean_field_contract.v1".into(),
