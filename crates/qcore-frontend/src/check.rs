@@ -30,30 +30,40 @@ impl std::error::Error for CheckError {}
 
 impl StaticEnvironment {
     pub fn check(program: &Program) -> Result<Self, CheckError> {
+        Self::check_located(program).map_err(|(error, _)| error)
+    }
+
+    /// Identical validation to [`StaticEnvironment::check`], additionally
+    /// reporting the index in `program.declarations` of the declaration that
+    /// produced the failure. Callers that reconstructed `program` from source
+    /// slices use that index to attribute the diagnostic to the offending
+    /// declaration's original span instead of a degenerate `0..0` span. The
+    /// accepted/rejected set and the returned environment are unchanged.
+    pub fn check_located(program: &Program) -> Result<Self, (CheckError, usize)> {
         let mut environment = Self::default();
 
         // Name collection is deliberately separate from validation so named
         // dimensions can be referenced before their declaration.
-        for declaration in &program.declarations {
+        for (index, declaration) in program.declarations.iter().enumerate() {
             if let Declaration::Dimension(decl) = declaration
                 && !environment.dimensions.insert(decl.name.clone())
             {
-                return Err(CheckError::DuplicateDimension(decl.name.clone()));
+                return Err((CheckError::DuplicateDimension(decl.name.clone()), index));
             }
         }
-        for declaration in &program.declarations {
+        for (index, declaration) in program.declarations.iter().enumerate() {
             if let Declaration::Axis(decl) = declaration {
                 if let DimensionRef::Named(name) = &decl.dimension
                     && !environment.dimensions.contains(name)
                 {
-                    return Err(CheckError::UnknownDimension(name.clone()));
+                    return Err((CheckError::UnknownDimension(name.clone()), index));
                 }
                 if environment
                     .axes
                     .insert(decl.name.clone(), decl.clone())
                     .is_some()
                 {
-                    return Err(CheckError::DuplicateAxis(decl.name.clone()));
+                    return Err((CheckError::DuplicateAxis(decl.name.clone()), index));
                 }
             }
         }

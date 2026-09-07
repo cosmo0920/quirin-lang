@@ -699,3 +699,26 @@ tests, 20 Lean audits and the standing gates pass. This is limit enforcement,
 not an OS sandbox: filesystem/network confinement, per-tree process quotas and
 default profile wiring remain open (card P03). Evidence:
 `docs/reports/remaining-p02/README.md`.
+
+Diagnostic attribution and ownership (2026-09-07): W7 repairs the two real
+attribution defects recorded by V04 and V07 without changing a single diagnostic
+code. `crates/qcore-verification/src/driver.rs` `locate` tested an inclusive
+bound against an exclusive `FileRange::end`, so a diagnostic at byte 0 of a
+non-first input file was blamed on the previous file; the repair selects the
+containing range and keeps a fallback for the separator newline and
+end-of-input. `crates/qcore-frontend/src/frontend.rs` no longer emits
+`Span { 0, 0 }` for unconditional dimension/axis failures: per-slice provenance
+maps back to the offending declaration's original span, and parse failures
+report the caller's byte offsets instead of offsets into the reconstructed
+buffer. `StaticEnvironment::check_located` is purely additive. When touching
+these sites, keep attribution and rejection separate: fixing where a diagnostic
+points is not a code change, and changing a code is semantic. `Q020` (task
+route) and `Q021` (sequential route) both refuse unenforced source contracts and
+must stay separate until a consumer lands — the task gate also refuses an empty
+`contract { }` and the sequential gate accepts it, so unifying them would change
+rejection coverage. `docs/QCORE_SPEC_r0_3.md` §L21 is now the canonical per-code
+ownership table (a semantic pass owns a range; `source_diagnostic` is the
+authoritative map) and §L21.1 specifies the reason-code vocabulary, which is
+prose only — do not add a category field to `DerivationIncomplete` without
+regenerating every task digest, provider package and witness in the same change.
+Evidence: `docs/reports/remaining-d01/README.md`.

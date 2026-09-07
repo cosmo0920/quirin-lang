@@ -291,6 +291,58 @@ fn refuses_unchecked_source_contracts_in_every_input_file() {
     compile("fn main() -> i32 contract {} { return 0; }");
 }
 
+/// D01: a diagnostic whose span starts at byte 0 of a non-first input file was
+/// attributed to the *previous* file, at a line one past that file's end,
+/// because `locate` tested an inclusive bound against an exclusive
+/// `FileRange::end` and `combine_files` starts the next file at exactly that
+/// offset when the previous one ends with a newline. Rejection, code and exit
+/// status were always correct; only the named artifact was wrong.
+#[test]
+fn attributes_diagnostics_at_a_file_boundary_to_the_offending_file() {
+    for trailing in ["\n", ""] {
+        let errors = compile_files(
+            &[
+                SourceFile::new(
+                    "first.qcore",
+                    format!("fn main() -> i32 {{ return 0; }}{trailing}"),
+                ),
+                SourceFile::new("second.qcore", "fn main() -> i32 { return 1; }"),
+            ],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        let duplicate = errors
+            .iter()
+            .find(|error| error.code == "Q010")
+            .unwrap_or_else(|| panic!("{errors:?}"));
+        assert_eq!(duplicate.location.path, "second.qcore");
+        assert_eq!((duplicate.location.line, duplicate.location.column), (1, 1));
+        assert_eq!(
+            duplicate.location.line_source,
+            "fn main() -> i32 { return 1; }"
+        );
+    }
+
+    // A span strictly inside the first file still resolves to the first file,
+    // and an unconditional declaration failure in the second file is no longer
+    // blamed on whichever file was listed first.
+    let errors = compile_files(
+        &[
+            SourceFile::new("dimensions.qcore", "dimension Bytes : Idx + Ordered;\n"),
+            SourceFile::new("axis.qcore", "quant axis bad : credit<Missing>;\n"),
+            SourceFile::new("main.qcore", "fn main() -> i32 { return 0; }\n"),
+        ],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    let index = errors
+        .iter()
+        .find(|error| error.code == "Q016")
+        .unwrap_or_else(|| panic!("{errors:?}"));
+    assert_eq!(index.location.path, "axis.qcore");
+    assert_eq!((index.location.line, index.location.column), (1, 1));
+}
+
 #[test]
 fn resolved_scope_requires_checked_profile_and_guard_still_requires_lowering() {
     for (body, expected_code) in [

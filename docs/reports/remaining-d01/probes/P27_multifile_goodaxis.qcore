@@ -1,0 +1,2 @@
+module library;
+quant axis ok : credit<Bytes>;

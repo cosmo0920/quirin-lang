@@ -1281,10 +1281,23 @@ fn map_raw_diagnostic(
 }
 
 fn locate(offset: usize, ranges: &[FileRange]) -> SourceLocation {
-    let range = ranges
+    // `FileRange::end` is the *exclusive* end of a file in the combined buffer,
+    // and `combine_files` starts the next file at exactly that offset whenever
+    // the previous file already ended with a newline. Testing `offset <=
+    // range.end` therefore let byte 0 of file n+1 satisfy file n's predicate,
+    // so any diagnostic at the very start of a non-first input file was blamed
+    // on the previous file at a line one past its end. The owning file is now
+    // the one that actually contains the offset. An offset belonging to no
+    // file — the separator newline `combine_files` appends after a file that
+    // did not end with one, or the very end of the combined buffer — falls
+    // back to the last file starting at or before it, so an end-of-input span
+    // still resolves.
+    let index = ranges
         .iter()
-        .find(|range| range.start <= offset && offset <= range.end)
-        .unwrap_or(&ranges[0]);
+        .position(|range| range.start <= offset && offset < range.end)
+        .or_else(|| ranges.iter().rposition(|range| range.start <= offset))
+        .unwrap_or(0);
+    let range = &ranges[index];
     let local = offset.saturating_sub(range.start).min(range.source.len());
     let before = &range.source[..local];
     let line = before.bytes().filter(|byte| *byte == b'\n').count() + 1;

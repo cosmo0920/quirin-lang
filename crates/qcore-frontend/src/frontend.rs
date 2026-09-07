@@ -1616,6 +1616,44 @@ fn visible_local_names(block: &SourceBlock, position: usize, names: &mut BTreeSe
     }
 }
 
+/// Placement of one verbatim declaration slice inside the reconstructed
+/// dimension/axis source, together with that slice's span in the caller's own
+/// source. Used only to attribute unconditional declaration diagnostics.
+struct IndexSlice {
+    start: usize,
+    end: usize,
+    origin: Span,
+}
+
+/// Maps a span in the reconstructed dimension/axis source back to the caller's
+/// source. Offsets inside a slice map byte for byte; a span that starts past
+/// every slice (end of the reconstructed buffer) is attributed to the last
+/// slice, and an empty slice list keeps the previous degenerate span rather
+/// than inventing a location.
+fn map_index_span(span: Span, slices: &[IndexSlice]) -> Span {
+    let Some(slice) = slices
+        .iter()
+        .find(|slice| slice.start <= span.start && span.start < slice.end)
+        .or_else(|| slices.last())
+    else {
+        return Span { start: 0, end: 0 };
+    };
+    let start = slice.origin.start
+        + span
+            .start
+            .saturating_sub(slice.start)
+            .min(slice.end - slice.start);
+    let end = slice.origin.start
+        + span
+            .end
+            .saturating_sub(slice.start)
+            .min(slice.end - slice.start);
+    Span {
+        start,
+        end: end.max(start),
+    }
+}
+
 pub fn elaborate_source(
     program: &SourceProgram,
 ) -> Result<TypedSourceProgram, Vec<SourceDiagnostic>> {
@@ -1646,7 +1684,14 @@ pub fn elaborate_source(
     let mut index_environment = crate::check::StaticEnvironment::default();
     // Declaration validity is independent of whether a quantitative type uses it.
     {
-        let axis_source = program
+        // Every slice is a verbatim copy of the original declaration text, so
+        // each slice's placement in the reconstructed buffer maps back to the
+        // original span byte for byte. Retaining that map is what lets a
+        // failure here name the offending declaration instead of reporting the
+        // degenerate `0..0` span (which rendered as line 1 of the first input
+        // file, and in a multi-file build blamed whichever file was listed
+        // first). The accepted/rejected set is unchanged.
+        let index_declarations = program
             .declarations
             .iter()
             .filter(|declaration| {
@@ -1655,21 +1700,44 @@ pub fn elaborate_source(
                     DeclarationKind::Dimension | DeclarationKind::Axis
                 )
             })
-            .map(|declaration| &program.source[declaration.span.start..declaration.span.end])
-            .collect::<Vec<_>>()
-            .join("\n");
-        match crate::parser::parse_program(&axis_source)
-            .map_err(|error| error.to_string())
-            .and_then(|parsed| {
-                crate::check::StaticEnvironment::check(&parsed).map_err(|error| error.to_string())
-            }) {
-            Ok(environment) => index_environment = environment,
-            Err(message) => diagnostics.push(SourceDiagnostic {
-                code: "Q016",
-                pass: SemanticPass::Index,
-                span: Span { start: 0, end: 0 },
-                message,
-            }),
+            .collect::<Vec<_>>();
+        let mut axis_source = String::new();
+        let mut slices: Vec<IndexSlice> = Vec::new();
+        for declaration in &index_declarations {
+            if !axis_source.is_empty() {
+                axis_source.push('\n');
+            }
+            let start = axis_source.len();
+            axis_source.push_str(&program.source[declaration.span.start..declaration.span.end]);
+            slices.push(IndexSlice {
+                start,
+                end: axis_source.len(),
+                origin: declaration.span,
+            });
+        }
+        match crate::parser::parse_program(&axis_source) {
+            Err(error) => {
+                // The parser's offsets address the reconstructed buffer; report
+                // the caller's own bytes instead.
+                let span = map_index_span(error.span, &slices);
+                diagnostics.push(SourceDiagnostic {
+                    code: "Q016",
+                    pass: SemanticPass::Index,
+                    span,
+                    message: format!("{} at bytes {}..{}", error.message, span.start, span.end),
+                });
+            }
+            Ok(parsed) => match crate::check::StaticEnvironment::check_located(&parsed) {
+                Ok(environment) => index_environment = environment,
+                Err((error, index)) => diagnostics.push(SourceDiagnostic {
+                    code: "Q016",
+                    pass: SemanticPass::Index,
+                    span: slices
+                        .get(index)
+                        .map_or(Span { start: 0, end: 0 }, |slice| slice.origin),
+                    message: error.to_string(),
+                }),
+            },
         }
     }
     for declaration in &program.declarations {

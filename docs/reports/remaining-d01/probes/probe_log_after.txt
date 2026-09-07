@@ -1,0 +1,43 @@
+=== d01 file boundary (expect d01_boundary_second.qcore:1:1)
+docs/reports/remaining-d01/probes/d01_boundary_second.qcore:1:1: Q010: duplicate declaration `main`
+fn main() -> i32 { return 1; }
+^
+exit=1
+
+=== P21 in-file span (expect 4:1)
+docs/reports/remaining-d01/probes/P21_span_line4.qcore:4:1: Q016: unknown dimension `Missing`
+quant axis bad : credit<Missing>;
+^
+exit=1
+
+=== P22 pass agreement (expect Q010 and Q016 both at 4:1)
+docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore:4:1: Q010: duplicate declaration `good`
+quant axis good : credit<Bytes>;
+^
+docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore:4:1: Q016: duplicate quant axis `good`
+quant axis good : credit<Bytes>;
+^
+exit=1
+
+=== P28 parse offsets (expect 3:18, bytes 48..55)
+docs/reports/remaining-d01/probes/P28_byte_offsets.qcore:3:18: Q016: expected axis mode at bytes 48..55
+quant axis bad : missing<Count<T>>;
+                 ^
+exit=1
+
+=== P25+P26 multi-file (expect P26_multifile_badaxis.qcore:2:1)
+docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore:2:1: Q016: unknown dimension `Missing`
+quant axis bad : credit<Missing>;
+^
+exit=1
+
+=== P26+P25 reversed (expect the same file, not argument order)
+docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore:2:1: Q016: unknown dimension `Missing`
+quant axis bad : credit<Missing>;
+^
+exit=1
+
+=== P25+P27 control (expect acceptance)
+checked Library module: 2 declaration(s), 0 function body/bodies; no entry point
+exit=0
+

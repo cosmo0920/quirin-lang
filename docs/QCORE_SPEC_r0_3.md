@@ -412,16 +412,52 @@ A partial report may retain validated local defects alongside an aggregate Unkno
 
 The diagnostic ownership below reflects the merged W3/W7 migration. The prose revision does not itself change wire versions.
 
-| Namespace | Ownership |
-|---|---|
-| Existing `Q0xx`–`Q6xx` source diagnostics | Core source and semantic passes, according to their existing allocations. |
-| `Q7xx` | Core verifier-scope/configuration/dispatch diagnostics; existing `Q700` and `Q701` retain their meanings. |
-| `QP***` | Core provider-host, protocol, and evidence-firewall diagnostics. |
-| `<plugin-id>.<local-code>` | Provider-owned diagnostics; exact selected plugin ID and one 1–128-byte ASCII local component (letters, digits, `_`, `-`). |
+Ownership is allocated by *semantic pass*, not by crate: a pass owns a code range, and any crate that runs that pass emits from it. `qcore_frontend::frontend::source_diagnostic` is the authoritative pass → code map, and a code may not be reused by a second pass. Within a range, each individual code names one specific condition at its emission site.
+
+| Namespace | Owning pass | Emitted by | Meanings in force |
+|---|---|---|---|
+| `Q000` | `NameResolution` (per input file) | `qcore-verification::driver` | An input file does not parse as a QCore declaration. |
+| `Q001`, `Q016` | `Index` | `qcore-frontend` | `Q001` generic index/quant presentation; `Q016` dimension/axis declaration validity (checked unconditionally) and quant-index type resolution. |
+| `Q010`–`Q013` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name. |
+| `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule and the task route's source-contract gate; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
+| `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
+| `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
+| `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |
+| `Q4xx` | Driver invocation | `qcore-verification::driver` | `Q400` no input files, `Q401` missing or ambiguous entry, `Q403` `--entry` against a library/contract module. |
+| `Q5xx` | `CEmission` | `qcore-frontend`, `qcore-verification::driver` | `Q500` a construct the reduced C11 CFG cannot encode. |
+| `Q6xx` | `Concurrency` | `qcore-frontend`, `qcore-verification::driver` | `Q600` concurrency and scoped-task checking. |
+| `Q7xx` | `PluginVerification` | `qcore-verification` | Core verifier-scope configuration and dispatch: `Q700` scope resolution failure, `Q701` obligations undischarged, `Q702` conflicting provider evidence or assumptions, `Q703` a provider allegation the core cannot validate. |
+| `QP***` | Provider host | `qcore-verifier-host`, `qcore-verification` | Core provider-host, protocol, and evidence-firewall diagnostics (`QP001`–`QP016`). |
+| `<plugin-id>.<local-code>` | — | Providers | Provider-owned diagnostics; exact selected plugin ID and one 1–128-byte ASCII local component (letters, digits, `_`, `-`). |
+
+Reserving all four of `Q700`–`Q703` corrects a documentation drift, not a code change: `Q702` and `Q703` have existed in `crates/qcore-verification/src/verify_dispatch.rs` since the W3 dispatch increment, and the code is the authority. An earlier revision of this row named only `Q700` and `Q701`, which was narrower than the implementation; `AGENTS.md` was already accurate.
+
+`Q020` and `Q021` both refuse an unenforced source `contract { … }`, on the task and sequential routes respectively. They are recorded here as **intentionally route-specific and not to be unified** until a source-contract consumer lands: the two gates do not have the same rejection coverage (the task gate also refuses an empty `contract { }`, which the sequential route accepts), so collapsing them to one code would change what is rejected. A code change is semantic; unification is the consumer's work, not a diagnostic-cleanup change.
 
 The Libevent-specific `Q700`–`Q712` table in revision 0.2 is a superseded design allocation, not a second active use of the same numbers. Libevent enum variants now use local L00–L12 codes, emitted under qcore.libevent; the mapping and regression tests are recorded with W3. Both response versions reject nested, empty or malformed local components with QP007 before verdict handling; see the [attribution report](reports/w7-diagnostic-attribution/README.md). Provider messages remain untrusted text. Other diagnostic cleanup remains incremental.
 
 This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUGIN_EVIDENCE_VERSION = 1`, the resource manifest's `schema_version = 1`, the CLI's package version, or any stored observation schema. Future semantic changes require explicit versioning; changing the prose revision number is not wire compatibility work.
+
+### L21.1 Reason categories for uncovered obligations
+
+Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is a **specification, not yet an implemented field**; the implementation constraints are recorded below.
+
+| Category | Means | Representative reasons in force |
+|---|---|---|
+| `unsupported-syntax` | The input is well-formed but contains a construct outside the modeled grammar. The analyser has no model, so the enclosing function stays `Unknown`. | `unmodeled expression CallExpr`, `unmodeled statement DeclStmt`, `unsupported assignment expression`, `unmodeled call, aggregate or indirect access in return expression`, `callback parameter type outside selected Unix profile` |
+| `missing-premise` | A declared assumption or trusted input the analysis requires was refused or not supplied. | `caller refuses the observations_trusted assumption required for recorded observation replay`, `required observation hook … has no extern fn contract in the unit's trusted contract sources` |
+| `incomplete-obligation-coverage` | A capability has no derivation, or only a partial one, in the current increment. The inventory is honest but not complete, so the capability cannot reach `Safe` through it. | `no core derivation for this capability in evidence v2.0`, `per-allocation-site custody derivation runs in the unrestricted-C gateway`, `source lifecycle effect/ABI import is unavailable` |
+| `stale-evidence` | Evidence exists but is bound to a different identity — task digest, raw source digest, or build/profile/policy snapshot — than the subject under check. | witness rejected against a post-deletion task; a changed preprocessing input retiring source-effect witnesses |
+| `provider-failure` | The selected provider was absent, failed to respond, returned a malformed or rejected response, or failed attribution at the firewall. | the `QP***` rejection paths |
+| `residual-custody` | Analysis completed within its model but left an unresolved custody, containment or leak obligation. | ambiguous effects retaining unresolved custody; residual leaks depending on unresolved effects |
+| `environment-unavailable` | The analysis could not run because a required tool, build tree or configuration input was missing or mismatched. | `audit requires the configured Clang executable …; compilation database selects /usr/bin/cc` |
+
+Two rules bind any implementation of this vocabulary:
+
+1. **An `environment-unavailable` row MUST NOT be relabeled as a source defect.** It is a distinct category precisely so that a missing Clang, an absent build tree, a mismatched compile database or an absent submodule can never be folded into `unsupported-syntax` or `residual-custody`, and can never contribute to a provisional `Unsafe`. It says nothing about the analysed source.
+2. **Categories refine, never replace, the verdict contract.** A reason category is added alongside the existing `reason` text; it does not alter the source span, `property`, semantic profile, scope, bounds, assumptions, or obligation ID of any row, and golden data MUST show those unchanged across the migration.
+
+Implementation is deferred, and the reason is structural rather than editorial: `DerivationIncomplete` is a field of `VerificationTask`, whose SHA-256 over canonical JSON travels in every evidence-v2 request and every witness, and the record is `deny_unknown_fields`. Adding a category field there changes every task digest, so every shipped provider package and every recorded witness would have to be regenerated in the same change — the opposite of additive. Adding the key to audit-report units instead would change all four pinned 185-unit artifacts byte for byte. Either belongs to its own increment, which must re-derive the pinned artifacts deliberately and say so.
 
 ## L22. Required conformance and regression evidence
 

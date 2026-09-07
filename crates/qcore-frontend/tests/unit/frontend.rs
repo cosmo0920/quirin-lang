@@ -372,6 +372,74 @@ fn review_r05_checks_axes_even_without_quantitative_types() {
     }
 }
 
+/// D01: the unconditional declaration check must attribute `Q016` to the
+/// declaration that actually failed. It previously emitted `Span { 0, 0 }` for
+/// every failure, which rendered as line 1 of the first input file, and it
+/// forwarded parse-failure byte offsets that addressed the reconstructed
+/// dimension/axis buffer rather than the caller's source. Rejection coverage is
+/// unchanged; only the span and the reported offsets move.
+#[test]
+fn unconditional_declaration_checks_report_the_offending_span() {
+    // Failures found by `StaticEnvironment::check` carry the offending
+    // declaration's own span, even when earlier declarations are valid and the
+    // offender is neither first nor last.
+    let source = "\
+dimension Bytes : Idx + Ordered;
+quant axis good : credit<Bytes>;
+
+quant axis bad : credit<Missing>;
+fn main() -> i32 { return 0; }
+";
+    let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
+    let index = errors
+        .iter()
+        .find(|error| error.code == "Q016")
+        .unwrap_or_else(|| panic!("{errors:?}"));
+    assert_eq!(index.pass, SemanticPass::Index);
+    assert_eq!(index.message, "unknown dimension `Missing`");
+    assert_eq!(
+        &source[index.span.start..index.span.end],
+        "quant axis bad : credit<Missing>;"
+    );
+
+    // The duplicate-declaration pre-pass and the unconditional index pass now
+    // agree on where the same duplicate lives.
+    let source = "\
+dimension Bytes : Idx + Ordered;
+quant axis good : credit<Bytes>;
+
+quant axis good : credit<Bytes>;
+fn main() -> i32 { return 0; }
+";
+    let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
+    let spans = errors
+        .iter()
+        .filter(|error| error.code == "Q010" || error.code == "Q016")
+        .map(|error| error.span.start)
+        .collect::<Vec<_>>();
+    assert_eq!(spans.len(), 2, "{errors:?}");
+    assert_eq!(spans[0], spans[1]);
+    assert_eq!(&source[spans[0]..spans[0] + 5], "quant");
+
+    // Parse failures inside the reconstructed buffer report the caller's own
+    // byte offsets. `missing` sits at byte 48 of this source; the reconstructed
+    // buffer places it at 17.
+    let source = "\
+fn pad() -> i32 { return 0; }
+
+quant axis bad : missing<Count<T>>;
+fn main() -> i32 { return 0; }
+";
+    assert_eq!(source.find("missing"), Some(48));
+    let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
+    let index = errors
+        .iter()
+        .find(|error| error.code == "Q016")
+        .unwrap_or_else(|| panic!("{errors:?}"));
+    assert_eq!(&source[index.span.start..index.span.end], "missing");
+    assert_eq!(index.message, "expected axis mode at bytes 48..55");
+}
+
 #[test]
 fn review_r04_retains_result_annotation_and_profile() {
     let source = "extern fn external() -> result<own<Item>, {Failure}> effects { unsafe }; fn main() -> i32 /* retained */ { return 0; }";

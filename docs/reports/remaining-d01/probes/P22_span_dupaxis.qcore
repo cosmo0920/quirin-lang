@@ -1,0 +1,5 @@
+dimension Bytes : Idx + Ordered;
+quant axis good : credit<Bytes>;
+
+quant axis good : credit<Bytes>;
+fn main() -> i32 { return 0; }

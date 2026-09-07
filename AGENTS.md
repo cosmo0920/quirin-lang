@@ -296,6 +296,14 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 - Diagnostics namespaces: `Q1xx–Q4xx` core, `Q6xx` concurrency, `Q7xx`
   event/scope (`Q700`–`Q703` are core scope diagnostics; Libevent uses
   `qcore.libevent.L00`–`L12`, see `docs/CHANGELOG_r0_2.md`), `QP***` plugin protocol.
+  The canonical per-code ownership table is `docs/QCORE_SPEC_r0_3.md` §L21:
+  a **semantic pass** owns a range, `qcore_frontend::frontend::source_diagnostic`
+  is the authoritative pass → code map, and any crate running that pass emits
+  from its range. Codes are stable; a code change is semantic. Fixing where a
+  diagnostic is *attributed* (file, line, span) is not a code change.
+  `Q020` (task route) and `Q021` (sequential route) both refuse an unenforced
+  source `contract { … }` and stay separate on purpose — their rejection
+  coverage differs — until a source-contract consumer lands.
 
 ## Where to read more
 
@@ -919,3 +927,27 @@ tests, 20 Lean audits and the standing gates pass. This is limit enforcement,
 not an OS sandbox: filesystem/network confinement, per-tree process quotas and
 default profile wiring remain open (card P03). Evidence:
 `docs/reports/remaining-p02/README.md`.
+
+Diagnostic attribution and ownership (2026-09-07): W7 repairs the two real
+attribution defects recorded by V04 and V07. `locate` tested an inclusive bound
+against an exclusive `FileRange::end`, so a diagnostic at byte 0 of a non-first
+input file was blamed on the previous file at a line past its end; all three of
+V07's confirmed occurrences now name the offending file, with its controls
+unchanged. The unconditional dimension/axis check no longer reports
+`Span { 0, 0 }`: slice provenance carries the offending declaration's own span,
+and a parse failure in the reconstructed buffer now reports the caller's byte
+offsets (V04-F2, fixed rather than deferred). `StaticEnvironment::check_located`
+is additive; `check` delegates and the accepted/rejected set is unchanged.
+No diagnostic code changed — attribution is not a code change. `Q700`–`Q703` are
+reconciled in the spec against the code, which is the authority; `Q020` (task)
+and `Q021` (sequential) stay separate by decision because their rejection
+coverage differs. `docs/QCORE_SPEC_r0_3.md` §L21 is the canonical per-code
+ownership table and §L21.1 specifies a closed reason-code vocabulary for
+uncovered obligations, with `environment-unavailable` separated so no
+environment failure can be relabeled a source defect. That vocabulary is
+specified only: carrying it on `DerivationIncomplete` would change every task
+digest, and carrying it on audit-report units would change all four pinned
+185-unit artifacts. Three new tests; 890 workspace tests, standing gates and
+20 Lean audits pass. The 185-unit audit was not re-run — no prepared Clang build
+tree here — and parity is argued by verified disjointness from the C gateway.
+Evidence: `docs/reports/remaining-d01/README.md`.
