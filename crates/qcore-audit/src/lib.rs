@@ -68,7 +68,7 @@ pub fn select_profile_units(
                 continue;
             }
             if let Some(prior) = selected.get(&entry.file)
-                && (prior.command != entry.command || prior.directory != entry.directory)
+                && !compile_db::same_configuration(prior, entry)
             {
                 return Err(format!(
                     "conflicting compilation commands for {}",
@@ -213,9 +213,47 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             )
         })
         .transpose()?;
+    // One capture describes the Clang that performs every unit's analysis.
+    let compiler = qcore_c_gateway::ClangIdentity::capture()?;
+    let contract_manifest_text =
+        fs::read_to_string(&contract_manifest).map_err(|error| error.to_string())?;
+    // Every declared input the audit read before analyzing a unit. A change to
+    // any of them changes each recorded compile-task identity.
+    let mut task_dependencies = BTreeMap::from([
+        (
+            "compile_database".to_owned(),
+            qcore_contract::profile_loader::sha256_hex(database.as_bytes()),
+        ),
+        (
+            "resource_contract_manifest".to_owned(),
+            qcore_contract::profile_loader::sha256_hex(contract_manifest_text.as_bytes()),
+        ),
+        (
+            "source_profile".to_owned(),
+            profile
+                .assumptions()
+                .get("profile_digest")
+                .cloned()
+                .ok_or("source profile reports no digest")?,
+        ),
+    ]);
+    if let Some(selection) = &config.source_contracts {
+        for (name, path) in [
+            ("source_contract_configuration", &selection.configuration),
+            ("source_contract_rules", &selection.source_rules),
+        ] {
+            task_dependencies.insert(
+                name.to_owned(),
+                qcore_contract::profile_loader::sha256_hex(
+                    &fs::read(resolve(base, path)).map_err(|error| error.to_string())?,
+                ),
+            );
+        }
+    }
     let mut report = AuditReport::new(&revision);
     let mut counts = AuditCounts::default();
     let mut source_identities = BTreeMap::new();
+    let mut compile_tasks = Vec::new();
     for (library, entries) in work {
         for entry in entries {
             let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
@@ -241,6 +279,26 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 dialect: options.dialect,
                 function_scope: LegacyFunctionScope::MainSourceDefinitions,
             };
+            // Bind the effective preprocessing input, not just the main source
+            // bytes: a used header, a generated configuration header or an
+            // admitted macro option changes the analyzed code with the selected
+            // `.c` file untouched.
+            let effective = qcore_c_gateway::legacy_c::validate_unrestricted_c11(&unit)
+                .map_err(|error| error.to_string());
+            let identity = compile_db::compile_task_identity(
+                &entry,
+                &unit,
+                match &effective {
+                    Ok(text) => compile_db::EffectiveInput::Accepted(text),
+                    Err(error) => compile_db::EffectiveInput::Rejected(error),
+                },
+                &compiler,
+                task_dependencies.clone(),
+            )?;
+            compile_tasks.push(serde_json::json!({
+                "library": library, "file": file,
+                "identity_sha256": identity.digest()?, "identity": identity,
+            }));
             let source_functions = legacy_c_source_functions(&source);
             project_unit(
                 library,
@@ -267,8 +325,10 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         "schema_version": 1, "profile": profile.assumptions(),
         "contracts": contracts.source_assumptions(),
         "source_sha256": source_identities,
-        "contract_manifest": fs::read_to_string(&contract_manifest).map_err(|error| error.to_string())?,
+        "contract_manifest": contract_manifest_text,
         "compile_database_sha256": qcore_contract::profile_loader::sha256_hex(database.as_bytes()),
+        "compile_task_identity_version": compile_db::COMPILE_TASK_IDENTITY_VERSION,
+        "compile_tasks": compile_tasks,
         "scope": if config.source_contracts.is_some() {
             "existing-C resource projection of selected compiled units; separate configured source-contract evidence is embedded in the report without whole-unit promotion; Unsafe is provisional"
         } else {

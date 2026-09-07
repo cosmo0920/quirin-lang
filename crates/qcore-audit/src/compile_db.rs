@@ -1,5 +1,10 @@
-//! Compilation-database ingestion and the inherited bounded option adapter.
-use qcore_c_gateway::legacy_c::{CCompilerDialect, CFrontendFlag, CPreprocessorOption};
+//! Compilation-database ingestion, the inherited bounded option adapter, and
+//! the compile-task identity that binds one accepted C import configuration.
+use qcore_c_gateway::ClangIdentity;
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption, LegacyFunctionScope,
+};
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Debug)]
@@ -7,6 +12,170 @@ pub struct CompileEntry {
     pub directory: PathBuf,
     pub command: String,
     pub file: PathBuf,
+}
+
+/// Two compilation records describe the same compile task only when their
+/// working directory and complete command agree exactly.
+///
+/// Real CMake databases carry several distinct commands for one source file
+/// (static and shared targets, per-target export macros). Those are different
+/// configurations that can preprocess to different code, so a caller must keep
+/// them apart or reject; silently choosing one would let a convenient build
+/// stand in for the one under audit. Textually different spellings of the same
+/// command are treated as distinct, which over-rejects rather than under-rejects.
+pub fn same_configuration(left: &CompileEntry, right: &CompileEntry) -> bool {
+    left.directory == right.directory && left.command == right.command
+}
+
+/// Require exactly one distinct configuration for a selected source file.
+pub fn select_unique_configuration<'a>(
+    entries: &'a [CompileEntry],
+    file: &Path,
+) -> Result<&'a CompileEntry, String> {
+    let mut distinct = Vec::<&CompileEntry>::new();
+    for entry in entries.iter().filter(|entry| entry.file == file) {
+        if !distinct.iter().any(|kept| same_configuration(kept, entry)) {
+            distinct.push(entry);
+        }
+    }
+    match distinct.as_slice() {
+        [] => Err(format!(
+            "compilation database contains no command for {}",
+            file.display()
+        )),
+        [entry] => Ok(entry),
+        many => Err(format!(
+            "compilation database contains {} distinct configurations for {}; the audit will not choose one",
+            many.len(),
+            file.display()
+        )),
+    }
+}
+
+/// Schema of the recorded compile-task identity.
+pub const COMPILE_TASK_IDENTITY_VERSION: u32 = 1;
+
+/// Complete, ordered description of one accepted compile task.
+///
+/// It binds the Clang that actually performs the analysis (program, version and
+/// default target), the driver the database declared, the compile working
+/// directory, the main source path, the complete ordered argument vector, the
+/// dialect, the ordered transported preprocessing options and legacy include/
+/// definition fields, the analyzed function scope, the raw source bytes, the
+/// effective preprocessing input, and the caller's named dependency digests
+/// (contract manifest, source profile, compilation database, source rules).
+///
+/// Deliberate exclusions, recorded in `docs/reports/remaining-g01/README.md`:
+/// individual header files are not enumerated, only bound by their effect on
+/// the preprocessed token stream, which `-E -P` strips of line markers; a
+/// distinct header file with identical relevant contents is therefore the same
+/// task. The declared driver is recorded but never checked for equivalence with
+/// the Clang that ran, except where `compiler_options` already demands the
+/// configured Clang for explicit frontend build flags.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct CompileTaskIdentity {
+    schema_version: u32,
+    compiler: ClangIdentity,
+    declared_driver: String,
+    directory: PathBuf,
+    file: PathBuf,
+    arguments: Vec<String>,
+    dialect: &'static str,
+    function_scope: &'static str,
+    preprocessor_options: Vec<CPreprocessorOption>,
+    include_paths: Vec<String>,
+    definitions: Vec<String>,
+    raw_source_sha256: String,
+    preprocessed_source_sha256: Option<String>,
+    preprocessing_error: Option<String>,
+    dependencies: BTreeMap<String, String>,
+}
+
+/// The effective preprocessing input, or the rejection that replaced it.
+/// A rejected task keeps an identity so its Unknown result stays attributable.
+#[derive(Clone, Copy, Debug)]
+pub enum EffectiveInput<'a> {
+    Accepted(&'a str),
+    Rejected(&'a str),
+}
+
+fn dialect_name(dialect: CCompilerDialect) -> &'static str {
+    match dialect {
+        CCompilerDialect::C11 => "c11",
+        CCompilerDialect::Gnu99 => "gnu99",
+        CCompilerDialect::Gnu11 => "gnu11",
+        CCompilerDialect::Gnu17 => "gnu17",
+    }
+}
+
+fn scope_name(scope: LegacyFunctionScope) -> &'static str {
+    match scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => "preprocessed_translation_unit",
+        LegacyFunctionScope::MainSourceDefinitions => "main_source_definitions",
+    }
+}
+
+/// Bind one accepted compile task to everything the audit read to analyze it.
+///
+/// The entry must already have passed [`compiler_options`]: every argument is
+/// then either transported into `unit` or structurally accounted for, so the
+/// recorded argument vector is complete rather than a filtered projection.
+pub fn compile_task_identity(
+    entry: &CompileEntry,
+    unit: &C11TranslationUnit<'_>,
+    input: EffectiveInput<'_>,
+    compiler: &ClangIdentity,
+    dependencies: BTreeMap<String, String>,
+) -> Result<CompileTaskIdentity, String> {
+    let arguments = shell_words(&entry.command)?;
+    let declared_driver = arguments
+        .first()
+        .filter(|driver| !driver.is_empty())
+        .ok_or("empty compiler executable")?
+        .clone();
+    let (preprocessed_source_sha256, preprocessing_error) = match input {
+        EffectiveInput::Accepted(text) => (Some(qcore_schemas::sha256_hex(text.as_bytes())), None),
+        EffectiveInput::Rejected(error) => (None, Some(error.to_owned())),
+    };
+    Ok(CompileTaskIdentity {
+        schema_version: COMPILE_TASK_IDENTITY_VERSION,
+        compiler: compiler.clone(),
+        declared_driver,
+        directory: entry.directory.clone(),
+        file: entry.file.clone(),
+        arguments,
+        dialect: dialect_name(unit.dialect),
+        function_scope: scope_name(unit.function_scope),
+        preprocessor_options: unit.preprocessor_options.clone(),
+        include_paths: unit.include_paths.clone(),
+        definitions: unit.definitions.clone(),
+        raw_source_sha256: qcore_schemas::sha256_hex(unit.source.as_bytes()),
+        preprocessed_source_sha256,
+        preprocessing_error,
+        dependencies,
+    })
+}
+
+impl CompileTaskIdentity {
+    /// One digest over every bound component. Evidence recorded under a digest
+    /// belongs to that task alone; any bound input that changes changes it.
+    pub fn digest(&self) -> Result<String, String> {
+        Ok(qcore_schemas::sha256_hex(
+            &serde_json::to_vec(self).map_err(|error| error.to_string())?,
+        ))
+    }
+
+    pub fn raw_source_sha256(&self) -> &str {
+        &self.raw_source_sha256
+    }
+
+    pub fn preprocessed_source_sha256(&self) -> Option<&str> {
+        self.preprocessed_source_sha256.as_deref()
+    }
+
+    pub fn dependencies(&self) -> &BTreeMap<String, String> {
+        &self.dependencies
+    }
 }
 
 pub struct CompilerOptions {
