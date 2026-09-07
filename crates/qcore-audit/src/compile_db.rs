@@ -2,7 +2,8 @@
 //! the compile-task identity that binds one accepted C import configuration.
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption, LegacyFunctionScope,
+    C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption, CSourceInput,
+    LegacyFunctionScope,
 };
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -82,6 +83,13 @@ pub struct CompileTaskIdentity {
     arguments: Vec<String>,
     dialect: &'static str,
     function_scope: &'static str,
+    /// How the primary input actually reached Clang. `directory`, `file` and
+    /// `arguments` above describe the compile record; this describes what the
+    /// gateway did with it. Without it, a unit transported through standard
+    /// input — where file-name macros expand to `<stdin>` and quoted includes
+    /// resolve elsewhere — would record the same identity as one Clang read
+    /// from the declared path.
+    source_input: CSourceInput,
     preprocessor_options: Vec<CPreprocessorOption>,
     include_paths: Vec<String>,
     definitions: Vec<String>,
@@ -146,6 +154,7 @@ pub fn compile_task_identity(
         arguments,
         dialect: dialect_name(unit.dialect),
         function_scope: scope_name(unit.function_scope),
+        source_input: unit.input.clone(),
         preprocessor_options: unit.preprocessor_options.clone(),
         include_paths: unit.include_paths.clone(),
         definitions: unit.definitions.clone(),
@@ -183,6 +192,8 @@ pub struct CompilerOptions {
     pub definitions: Vec<String>,
     pub dialect: CCompilerDialect,
     pub preprocessor_options: Vec<CPreprocessorOption>,
+    /// How the gateway must hand this entry's source to Clang.
+    pub input: CSourceInput,
 }
 
 pub fn compiler_options_compatibility(entry: &CompileEntry) -> Result<CompilerOptions, String> {
@@ -232,6 +243,10 @@ pub fn compiler_options_compatibility(entry: &CompileEntry) -> Result<CompilerOp
         definitions,
         dialect,
         preprocessor_options: Vec::new(),
+        // The pinned Cycle 19 route keeps its archived standard-input
+        // projection, including `<stdin>` file names. It is a declared
+        // assumption of those artifacts, not an equivalence claim.
+        input: CSourceInput::HistoricalStdin,
     })
 }
 
@@ -470,21 +485,21 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
     if words.first().is_none_or(String::is_empty) {
         return Err("empty compiler executable".into());
     }
+    // Clang is given this entry's own input word, run from this entry's own
+    // directory, so `__FILE__` and the includer-directory rule for quoted
+    // includes answer exactly as they do for the recorded compile command. The
+    // gateway no longer approximates the includer directory with `-iquote`:
+    // that synthesized path loses to whatever directory a standard-input run
+    // happens to start in.
     let mut options = CompilerOptions {
         include_paths: Vec::new(),
         definitions: Vec::new(),
         dialect: CCompilerDialect::Gnu17,
-        preprocessor_options: entry
-            .file
-            .parent()
-            .map(|path| {
-                vec![CPreprocessorOption::QuoteInclude(
-                    path.to_string_lossy().into_owned(),
-                )]
-            })
-            .unwrap_or_default(),
+        preprocessor_options: Vec::new(),
+        input: CSourceInput::AnonymousText,
     };
     let mut cursor = 1;
+    let mut spelled_input = None;
     let mut inputs = 0;
     let mut compile = 0;
     let mut outputs = 0;
@@ -561,6 +576,7 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
             && Path::new(&resolve_path(&entry.directory, word)) == entry.file
         {
             inputs += 1;
+            spelled_input = Some(word.clone());
         } else {
             return Err(format!(
                 "compiler option `{word}` cannot be preserved by the bounded gateway"
@@ -573,6 +589,10 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
             "compile command requires one -c, one source input and at most one output".into(),
         );
     }
+    options.input = CSourceInput::DeclaredFile {
+        spelled: spelled_input.ok_or("compile command has no recorded source input")?,
+        directory: entry.directory.clone(),
+    };
     if frontend_flags {
         if !explicit_dialect {
             return Err("frontend build flags require an explicit supported -std= dialect".into());

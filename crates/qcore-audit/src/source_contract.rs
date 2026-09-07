@@ -648,6 +648,7 @@ fn import_frame_helpers(
             preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
         };
         let summary = qcore_c_gateway::boolean_source::import_chunk_frame_helper_with_profile(
             &unit,

@@ -178,6 +178,7 @@ impl CurrentAudit {
                 preprocessor_options: options.preprocessor_options,
                 dialect: options.dialect,
                 function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                input: options.input,
             })
         })();
         match prepared {

@@ -776,3 +776,21 @@ artifacts, contract corpus counts and CT coverage are untouched. Evidence:
 `docs/reports/remaining-e02/README.md`. Other capabilities' matrices,
 out-of-process transport bounds and E01-B1's enumeration gap remain open; no
 verdict changes and no raw unit is promoted.
+Source-filename-sensitive transport (2026-09-07): the configured audit hands
+Clang the compilation database's own input word from its own directory, so
+file-name macros and the includer-directory rule for quoted includes answer as
+the recorded compile command does; the synthesized source-parent quote path is
+removed and declared source bytes must equal the file's. `CSourceInput` makes the
+input identity explicit; anonymous texts reject `<stdin>` file-name expansions and
+`__builtin_FILE`/`__builtin_FILE_NAME` reject in every declared mode. When
+touching this transport, do not normalize the spelled input path (that changes
+`__FILE__`), do not let a declared identity survive onto derived text, and do not
+move the pinned Cycle19 compatibility route off `HistoricalStdin` without
+re-measuring its 185-unit artifacts. A CLI regression pins that a shadowing header
+in the audit's working directory can no longer buy a `Safe` verdict. G01's
+`CompileTaskIdentity` binds this transport as `source_input`: keep it there, or a
+standard-input run and a declared-file run record the same identity for different
+preprocessing. All 894 workspace tests, 47 provider tests, 43 Python tests and 20
+Lean audits pass; the CMetrics audit is unchanged at one checked function/six
+Unknown with byte-identical diagnostics. Evidence:
+`docs/reports/remaining-g02/README.md`.

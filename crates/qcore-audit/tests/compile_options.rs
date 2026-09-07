@@ -1,5 +1,7 @@
 use qcore_audit::compile_db::{CompileEntry, compile_entries, compiler_options, shell_words};
-use qcore_c_gateway::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, CSourceInput, LegacyCError, validate_unrestricted_c11,
+};
 use std::{
     fs,
     path::PathBuf,
@@ -63,17 +65,44 @@ impl Fixture {
         .unwrap()
         .remove(0)
     }
-    fn preprocess(&self, source: &str, flags: &[&str]) -> String {
+    /// Publish the unit's text where the recorded compile command says it is.
+    /// A declared input is analyzed as the file Clang reads, not as loose text.
+    fn write_source(&self, source: &str) {
+        fs::write(self.0.join("src/unit.c"), source).unwrap();
+    }
+    fn unit<'a>(&self, source: &'a str, flags: &[&str]) -> C11TranslationUnit<'a> {
+        self.write_source(source);
         let options = compiler_options(&self.clang_entry(flags)).unwrap();
-        validate_unrestricted_c11(&C11TranslationUnit {
+        C11TranslationUnit {
             source,
             include_paths: options.include_paths,
             definitions: options.definitions,
             preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
+            input: options.input,
             ..Default::default()
-        })
-        .unwrap()
+        }
+    }
+    fn preprocess(&self, source: &str, flags: &[&str]) -> String {
+        validate_unrestricted_c11(&self.unit(source, flags)).unwrap()
+    }
+    /// Preprocess exactly as the recorded compile command does: the same input
+    /// word, from the same directory, with the same options.
+    fn direct(&self, flags: &[&str]) -> String {
+        let output = qcore_c_gateway::clang_command()
+            .unwrap()
+            .current_dir(&self.0)
+            .args(["-x", "c", "-std=c11", "-E", "-P"])
+            .args(flags)
+            .arg("src/unit.c")
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        String::from_utf8(output.stdout).unwrap()
     }
     fn header(&self, directory: &str, value: i32) {
         fs::write(
@@ -304,6 +333,129 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
         literals(&actual_ast, &mut actual);
         literals(&expected_ast, &mut expected);
         assert_eq!(actual, expected, "AST flags: {flags:?}");
+    }
+}
+
+/// Preprocessing is not a function of the text alone. Everything below answers
+/// to the input Clang was given, so the configured transport must give Clang
+/// the recorded input word from the recorded directory.
+const FILENAME_SENSITIVE_UNIT: &str = "#include \"choice.h\"\n\
+     const char *file = __FILE__;\n\
+     const char *name = __FILE_NAME__;\n\
+     const char *base = __BASE_FILE__;\n\
+     int observed = CHOICE;\n";
+
+#[test]
+fn filename_sensitive_preprocessing_matches_the_recorded_compile_command() {
+    if !clang_available() {
+        return;
+    }
+    let f = Fixture::new();
+    // `choice.h` exists both beside the source and on the regular search path.
+    // A direct compile resolves the quoted include against the includer's own
+    // directory; only the recorded input can reproduce that.
+    f.header("src", 5);
+    f.header("regular", 17);
+    let flags = ["-Iregular"];
+    let imported = f.preprocess(FILENAME_SENSITIVE_UNIT, &flags);
+    assert_eq!(imported, f.direct(&flags));
+    assert!(imported.contains("int observed = 5;"));
+    assert!(imported.contains("const char *name = \"unit.c\";"));
+    assert!(!imported.contains("<stdin>"));
+
+    // The historical standard-input projection is the divergence this transport
+    // exists to remove: it answers `<stdin>` for all three file-name macros.
+    let mut historical = f.unit(FILENAME_SENSITIVE_UNIT, &flags);
+    historical.input = CSourceInput::HistoricalStdin;
+    let historical = validate_unrestricted_c11(&historical).unwrap();
+    assert_ne!(historical, imported);
+    assert_eq!(historical.matches("\"<stdin>\"").count(), 3);
+}
+
+#[test]
+fn units_without_a_declared_file_reject_constructs_they_cannot_answer() {
+    if !clang_available() {
+        return;
+    }
+    let f = Fixture::new();
+    f.header("src", 5);
+    // An anonymous text has no includer directory either, so its quoted include
+    // must be reachable through a declared search path before anything else can
+    // be observed about it.
+    let quoted = ["-iquote", "src"];
+    let mut anonymous = f.unit(FILENAME_SENSITIVE_UNIT, &quoted);
+    anonymous.input = CSourceInput::AnonymousText;
+    let error = validate_unrestricted_c11(&anonymous).unwrap_err();
+    assert!(matches!(error, LegacyCError::UnsupportedInputIdentity(_)));
+    let error = error.to_string();
+    assert!(error.contains("__FILE__"), "{error}");
+    assert!(error.contains("<stdin>"), "{error}");
+
+    // `__builtin_FILE` survives preprocessing and is answered by the frontend,
+    // which reads preprocessed text from standard input in every mode. It is
+    // rejected even when the unit does declare its file.
+    let builtin = "const char *where(void) { return __builtin_FILE(); }\n";
+    for input in [
+        CSourceInput::AnonymousText,
+        compiler_options(&f.clang_entry(&[])).unwrap().input,
+    ] {
+        let mut unit = f.unit(builtin, &[]);
+        unit.input = input;
+        let error = validate_unrestricted_c11(&unit).unwrap_err().to_string();
+        assert!(error.contains("__builtin_FILE"), "{error}");
+    }
+
+    // The pinned Cycle 19 compatibility route keeps its archived projection.
+    for (source, flags) in [
+        (FILENAME_SENSITIVE_UNIT, quoted.as_slice()),
+        (builtin, [].as_slice()),
+    ] {
+        let mut historical = f.unit(source, flags);
+        historical.input = CSourceInput::HistoricalStdin;
+        assert!(validate_unrestricted_c11(&historical).is_ok());
+    }
+}
+
+#[test]
+fn a_declared_input_must_be_the_file_that_holds_the_declared_source() {
+    if !clang_available() {
+        return;
+    }
+    let f = Fixture::new();
+    f.header("src", 5);
+    let unit = f.unit(FILENAME_SENSITIVE_UNIT, &[]);
+    // Analyzing text that differs from the file Clang reads would record one
+    // unit's identity for another unit's bytes.
+    f.write_source("int replaced(void) { return 0; }\n");
+    let error = validate_unrestricted_c11(&unit).unwrap_err().to_string();
+    assert!(
+        error.contains("does not hold the declared source bytes"),
+        "{error}"
+    );
+
+    fs::remove_file(f.0.join("src/unit.c")).unwrap();
+    let error = validate_unrestricted_c11(&unit).unwrap_err().to_string();
+    assert!(error.contains("unreadable"), "{error}");
+
+    for input in [
+        CSourceInput::DeclaredFile {
+            spelled: "src/unit.c".into(),
+            directory: PathBuf::from("relative"),
+        },
+        CSourceInput::DeclaredFile {
+            spelled: "-nostdinc".into(),
+            directory: f.0.clone(),
+        },
+    ] {
+        let unit = C11TranslationUnit {
+            source: "int value(void) { return 0; }",
+            input,
+            ..Default::default()
+        };
+        assert!(matches!(
+            validate_unrestricted_c11(&unit),
+            Err(LegacyCError::UnsupportedInputIdentity(_))
+        ));
     }
 }
 

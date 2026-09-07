@@ -1005,3 +1005,30 @@ artifacts, contract corpus counts and CT coverage are untouched. Evidence:
 `docs/reports/remaining-e02/README.md`. Other capabilities' matrices,
 out-of-process transport bounds and E01-B1's enumeration gap remain open; no
 verdict changes and no raw unit is promoted.
+Source-filename-sensitive transport (2026-09-07): the configured audit now hands
+Clang the compilation database's own input word from its own directory, so
+`__FILE__`, `__FILE_NAME__`, `__BASE_FILE__` and the includer-directory rule for
+quoted includes answer as the recorded compile command does; the synthesized
+source-parent quote path is removed. Declared source bytes must equal the file's.
+`CSourceInput` makes the input identity explicit: an anonymous text rejects
+file-name macros that would expand to `<stdin>`, and `__builtin_FILE`/
+`__builtin_FILE_NAME` reject in every declared mode because the syntax and typed
+AST phases always read preprocessed standard input. Detection scans preprocessed
+output, so header-borne constructs are seen too. A CLI regression reproduces a
+`Safe` verdict decided by the audit's working directory, where a shadowing header
+replaced the real one; it now reports Unknown from any directory. Path spelling is
+preserved, not normalized, and no equivalence with a direct one-shot compilation
+is claimed. The pinned Cycle19 compatibility route explicitly retains its archived
+standard-input projection and both exemptions; its 185-unit artifacts were not
+re-measured. Recorded identities bind the declared input under
+`qcore.declared-input.v1:`; standard-input units keep historical identity bytes.
+Merged with G01's compile-task identity: `CompileTaskIdentity` now also binds
+`source_input`, so the transport is not invisible to the recorded identity, and
+G01's synthesized-quote-include pin is replaced by an explicit `-iquote` plus
+`source_input` assertions. A pre-existing `PluginLimits::additional` build break
+on the integration branch is repaired. All 894 workspace tests, 47 provider
+tests, 43 Python tests and 20 Lean audits pass with the standing gates. The CMetrics audit is unchanged: one checked
+function, six Unknown, a provisional Unsafe raw unit, byte-identical diagnostics,
+with ten identity-digest fields moved because 12 `__FILE__` expansions became the
+real source path. Evidence: `docs/reports/remaining-g02/README.md`. Compatibility
+route migration, single-invocation frontend transport and raw promotion remain open.

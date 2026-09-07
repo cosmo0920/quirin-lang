@@ -64,8 +64,11 @@ impl Fixture {
         .remove(0)
     }
 
-    /// Build the identity exactly as the configured driver does.
+    /// Build the identity exactly as the configured driver does, including the
+    /// declared-file transport: the unit's text is published at the path the
+    /// compile record names, because that is the input Clang is handed.
     fn identity(&self, source: &str, options: &[&str], dependencies: &[(&str, &str)]) -> Value {
+        fs::write(self.0.join("src/unit.c"), source).unwrap();
         let entry = self.clang_entry(options);
         let resolved = compiler_options(&entry).unwrap();
         let unit = C11TranslationUnit {
@@ -74,6 +77,7 @@ impl Fixture {
             definitions: resolved.definitions,
             preprocessor_options: resolved.preprocessor_options,
             dialect: resolved.dialect,
+            input: resolved.input,
             ..Default::default()
         };
         let effective = validate_unrestricted_c11(&unit).map_err(|error| error.to_string());
@@ -125,7 +129,11 @@ fn identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effect
     }
     let fixture = Fixture::new();
     fixture.header("one", 17);
-    let identity = fixture.identity(SOURCE, &["-Ione"], &[("source_profile", "abc")]);
+    let identity = fixture.identity(
+        SOURCE,
+        &["-Ione", "-iquote", "two"],
+        &[("source_profile", "abc")],
+    );
     assert_eq!(identity["schema_version"], 1);
     assert!(
         identity["compiler"]["version"]
@@ -170,6 +178,9 @@ fn identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effect
     assert!(identity["preprocessing_error"].is_null());
     assert_eq!(identity["dependencies"]["source_profile"], "abc");
     // The bound quote-include class survives into the recorded configuration.
+    // The command's own `-iquote` is the one that must survive: the includer's
+    // own directory is no longer approximated by a synthesized quote path, it
+    // comes from the declared input recorded below.
     assert!(
         identity["preprocessor_options"]
             .as_array()
@@ -178,6 +189,63 @@ fn identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effect
             .any(|option| option.get("QuoteInclude").is_some()),
         "{:?}",
         identity["preprocessor_options"]
+    );
+    // How the input actually reached Clang is part of the identity. Two runs
+    // that agree on directory, file and arguments but transport the source
+    // differently are different tasks, because `__FILE__` and the
+    // includer-directory rule answer differently.
+    assert_eq!(
+        identity["source_input"]["DeclaredFile"]["spelled"], "src/unit.c",
+        "{:?}",
+        identity["source_input"]
+    );
+    assert_eq!(
+        Path::new(
+            identity["source_input"]["DeclaredFile"]["directory"]
+                .as_str()
+                .unwrap()
+        ),
+        fixture.0
+    );
+}
+
+#[test]
+fn the_input_transport_is_part_of_the_identity() {
+    if !clang_available() {
+        return;
+    }
+    // A unit fed through standard input sees `<stdin>` for its file-name macros
+    // and resolves quoted includes elsewhere. Recording the compile record's
+    // directory and arguments while transporting the source some other way
+    // would make the recorded identity describe a compile that never ran.
+    let fixture = Fixture::new();
+    fixture.header("one", 17);
+    let declared = fixture.identity(SOURCE, &["-Ione"], &[]);
+    fs::write(fixture.0.join("src/unit.c"), SOURCE).unwrap();
+    let entry = fixture.clang_entry(&["-Ione"]);
+    let resolved = compiler_options(&entry).unwrap();
+    let unit = C11TranslationUnit {
+        source: SOURCE,
+        include_paths: resolved.include_paths,
+        definitions: resolved.definitions,
+        preprocessor_options: resolved.preprocessor_options,
+        dialect: resolved.dialect,
+        input: qcore_c_gateway::legacy_c::CSourceInput::HistoricalStdin,
+        ..Default::default()
+    };
+    let effective = validate_unrestricted_c11(&unit).unwrap();
+    let historical = compile_task_identity(
+        &entry,
+        &unit,
+        EffectiveInput::Accepted(&effective),
+        &ClangIdentity::capture().unwrap(),
+        BTreeMap::new(),
+    )
+    .unwrap();
+    assert_ne!(
+        historical.digest().unwrap(),
+        declared["digest"].as_str().unwrap(),
+        "the transport must not be invisible to the identity"
     );
 }
 

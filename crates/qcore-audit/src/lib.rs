@@ -355,6 +355,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 preprocessor_options: options.preprocessor_options,
                 dialect: options.dialect,
                 function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                input: options.input,
             };
             // Bind the effective preprocessing input, not just the main source
             // bytes: a used header, a generated configuration header or an
