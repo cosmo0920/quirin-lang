@@ -1,0 +1,19 @@
+import QCore.ReadLoan
+
+#print axioms QCore.ReadLoan.reserve_demands_exclusive_authority
+#print axioms QCore.ReadLoan.a_borrower_cannot_lend_onward
+#print axioms QCore.ReadLoan.an_outstanding_loan_cannot_be_lent_again
+#print axioms QCore.ReadLoan.failed_creation_restores_the_owner_exactly
+#print axioms QCore.ReadLoan.a_reserved_resource_grants_no_authority_at_all
+#print axioms QCore.ReadLoan.an_outstanding_loan_suspends_exclusive_authority
+#print axioms QCore.ReadLoan.an_outstanding_loan_cannot_be_released
+#print axioms QCore.ReadLoan.a_loan_admits_exactly_its_owner_and_its_borrower
+#print axioms QCore.ReadLoan.commit_lends_only_the_reserved_resource
+#print axioms QCore.ReadLoan.commit_requires_its_own_reservation
+#print axioms QCore.ReadLoan.a_rolled_back_creation_cannot_be_committed
+#print axioms QCore.ReadLoan.closing_a_loan_requires_the_recorded_pair
+#print axioms QCore.ReadLoan.a_retained_loan_refuses_every_reclamation
+#print axioms QCore.ReadLoan.a_successful_join_restores_exclusive_authority_to_the_owner
+#print axioms QCore.ReadLoan.a_successful_join_revokes_the_borrower_read
+#print axioms QCore.ReadLoan.closing_a_loan_preserves_every_other_resource
+#print axioms QCore.ReadLoan.the_admitted_lending_round_trip_is_authority_neutral
