@@ -1,5 +1,11 @@
 # Claude Code project notes
 
+> **Handoff, 2026-09-07:** The user requested that subagents halt and remaining
+> work be documented. All three managed subagents were interrupted; none is
+> running. Do not restart subagents without a new user instruction. Current
+> implementation checkpoint: `e3e7c2c`; see [progress, remaining tasks and specs](docs/HANDOFF_2026-09-07.md).
+> This handoff is not a claim that the overall generalization goal is complete.
+
 @AGENTS.md
 
 Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract

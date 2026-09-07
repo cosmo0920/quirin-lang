@@ -15,8 +15,9 @@ reconstruct them. This ledger and source inventory are new local records.
 repaired until implementation, relevant Rust regressions, Lean parity where
 semantic rules change, and the standing gates have passed. Profile-qualified
 results do not imply complete language conformance. The CT manifest remains
-eight mapped and 42 unmapped, with separate stages and Linux-only native evidence
-for CT01/CT12/CT13/CT15. CT02 now rejects actual moved-buffer access.
+11 mapped and 39 unmapped, with separate executed stages and target-qualified
+native evidence. The exact current inventory is in `../../reevaluation/ct_manifest.json`.
+The [halt handoff](../../HANDOFF_2026-09-07.md) records the remaining work.
 
 | Finding | Current acceptance | Evidence / remaining boundary |
 |---|---|---|
@@ -58,7 +59,12 @@ for CT01/CT12/CT13/CT15. CT02 now rejects actual moved-buffer access.
   validated. Fixed observations do not promote raw Cycle19 source units.
 
 Execution records are indexed in the [workstream roadmap](../../ROADMAP_AFTER_CYCLE_9.md).
-Current validation is recorded in [VALIDATION.md](../../VALIDATION.md): 737 Rust tests, 43 Python evidence-validator tests, both probes, format, Clippy, Lean build and 20 axiom audits passed. Nineteen separate provider tests also pass. The latest full pinned audit comparison is archived in the [configured frame-helper report](../../reports/w5-configured-frame-helpers/README.md). These counts are different suites, not interchangeable conformance cases.
+Current implementation validation is recorded in [VALIDATION.md](../../VALIDATION.md):
+819 workspace tests, 45 excluded provider tests, 43 Python evidence-validator tests,
+both probes, formatting, Clippy, Lean build and 20 axiom audits passed at `e3e7c2c`.
+The latest complete audit and two native CMake builds are archived in the
+[Clang CMake report](../../reports/w2-clang-cmake-build/README.md). These counts
+are distinct suites, not interchangeable conformance cases.
 
 
 Owned source tasks (2026-09-07): `ScopedOwnedTasksV1` adds malloc-backed
@@ -89,3 +95,12 @@ checked/Unknown inventories. The full Cycle19 compatibility reports remain
 byte-identical. General lifecycle import, specialized provider extraction,
 required native evidence and full registry composition remain open. Evidence:
 [configured process audit report](../../reports/w5-configured-process-audit/README.md).
+
+## Handoff reconciliation (2026-09-07)
+
+The acceptance JSON now follows the 11/39 CT manifest and the 819/45/43/20
+validated checkpoint. Subsequent worker allocation, handler rethrow,
+completed-child and address-reuse evidence supersedes those items in the older
+open-boundary paragraphs above. General loans/shares, owned errors/graphs,
+mutex invariants and native refinement remain open. No review status has been
+promoted to full conformance. See the [remaining work and specifications](../../HANDOFF_2026-09-07.md).

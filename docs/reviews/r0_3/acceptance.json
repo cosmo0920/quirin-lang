@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 8,
-  "ct_unmapped": 42,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
   "findings": [
     {
       "id": "R01",
@@ -26,9 +26,13 @@
         "docs/reports/w6-source-task-foundations/README.md",
         "docs/reports/w6-native-source-tasks/README.md",
         "docs/reports/w6-task-recovery/README.md",
-        "docs/reports/w6-owned-source-tasks/README.md"
+        "docs/reports/w6-owned-source-tasks/README.md",
+        "docs/reports/w6-handler-rethrow/README.md",
+        "docs/reports/w6-worker-allocation/README.md",
+        "docs/reports/w6-completed-child-custody/README.md",
+        "docs/reports/w6-reused-address/README.md"
       ],
-      "remaining_boundary": "ScopedOwnedTasksV1 checks original Buffer capture/result identities, creation rollback and complete worker input custody at exits, with Linux native pointer/free controls. Sequential scalar/identity payloads remain separate. Loans, general owned graphs/error payloads, worker allocation, shared memory, mutexes and native refinement remain open."
+      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
     },
     {
       "id": "R03",
@@ -47,9 +51,13 @@
       "status": "partially_repaired",
       "evidence": [
         "docs/reports/r0-3-source-validation/README.md",
-        "docs/reports/w6-owned-source-tasks/README.md"
+        "docs/reports/w6-owned-source-tasks/README.md",
+        "docs/reports/w6-handler-rethrow/README.md",
+        "docs/reports/w6-worker-allocation/README.md",
+        "docs/reports/w6-completed-child-custody/README.md",
+        "docs/reports/w6-reused-address/README.md"
       ],
-      "remaining_boundary": "ScopedOwnedTasksV1 checks original Buffer capture/result identities, creation rollback and complete worker input custody at exits, with Linux native pointer/free controls. Sequential scalar/identity payloads remain separate. Loans, general owned graphs/error payloads, worker allocation, shared memory, mutexes and native refinement remain open."
+      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
     },
     {
       "id": "R05",
@@ -88,7 +96,8 @@
       "status": "validated_bounded_consumers",
       "evidence": [
         "docs/reports/r03-contract-evidence/README.md",
-        "docs/reports/w5-configured-process-audit/README.md"
+        "docs/reports/w5-configured-process-audit/README.md",
+        "docs/reports/w5-cmetrics-unit-provider/README.md"
       ],
       "remaining_boundary": "Resource loading, structural retention and observation replay remain separate; arbitrary contract theorem proving and source caller-precondition discharge remain open."
     },
@@ -109,19 +118,21 @@
       "status": "hardened_bounded_evidence",
       "evidence": [
         "docs/reports/r03-contract-evidence/README.md",
-        "docs/reports/w5-configured-process-audit/README.md"
+        "docs/reports/w5-configured-process-audit/README.md",
+        "docs/reports/w2-preprocessor-transport/README.md",
+        "docs/reports/w2-clang-cmake-build/README.md"
       ],
       "remaining_boundary": "Observation scope/module/bounds substitution rejects. Native provenance is declared trusted evidence; whole-program/source-model refinement remains open."
     }
   ],
   "validation": {
-    "workspace_tests": 737,
+    "workspace_tests": 819,
     "python_evidence_validator_tests": 43,
     "lean_audits": 20,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w5-configured-frame-helpers/README.md",
-    "provider_tests": 19
+    "latest_integration_evidence": "docs/reports/w2-clang-cmake-build/README.md",
+    "provider_tests": 45
   },
   "documentation_revision": "0.3",
   "open_followups": [
@@ -135,5 +146,7 @@
       "status": "ten_false_safe_patterns_repaired_general_relational_alias_analysis_open",
       "evidence": "docs/reports/w4-nullable-removal/README.md"
     }
-  ]
+  ],
+  "latest_verified_implementation_revision": "e3e7c2c",
+  "handoff_document": "docs/HANDOFF_2026-09-07.md"
 }

@@ -59,3 +59,21 @@ QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json"
 Do not set both selectors: ambiguous selection rejects before source auditing.
 Missing or incompatible explicit packages never fall back to direct evaluation.
 The default audit without either selector remains the direct comparison route.
+
+## Persistent CMetrics Clang build
+
+The canonical CMetrics configuration now uses CMake's unmodified compile database:
+
+```sh
+python3 -B scripts/prepare_cmetrics_clang_audit.py
+cargo run --quiet -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json
+```
+
+It creates an independent pinned source clone and a native Clang GNU17 CMake
+build under `build/cycle19/fluent-bit-clang-{source,production}`. On fresh setup,
+build the process packages into `build/cycle19/provider-packages-unit` first
+using `providers/package.py build`; existing package directories must be verified,
+not overwritten. Custom `--clang` must match `QCORE_CLANG` during auditing.
+The original GCC build is not treated as equivalent. Exact commands, two native
+builds and their one include-path difference are recorded in the
+[build report](reports/w2-clang-cmake-build/README.md).

@@ -1,5 +1,11 @@
 # QCore-C agent briefing
 
+> **Handoff, 2026-09-07:** The user requested that subagents halt and remaining
+> work be documented. All three managed subagents were interrupted; none is
+> running. Do not restart subagents without a new user instruction. Current
+> implementation checkpoint: `e3e7c2c`; see [progress, remaining tasks and specs](docs/HANDOFF_2026-09-07.md).
+> This handoff is not a claim that the overall generalization goal is complete.
+
 Consolidated, compressed project state for LLM agents. Humans should read
 [README.md](README.md). Keep this file, `CLAUDE.md`, and `README.md` in sync
 when project status changes; this file is the source of truth for agents.
@@ -37,7 +43,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition; pure custody is in core and generic model/source imports are in verification |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (58 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (59 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
