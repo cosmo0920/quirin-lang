@@ -128,3 +128,6 @@ jobs:
             cargo test --workspace --lib $filter
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+          # Compile-database fixtures must use the discovered executable too.
+          cargo test -p qcore-compiler --test cycle19_current_command
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

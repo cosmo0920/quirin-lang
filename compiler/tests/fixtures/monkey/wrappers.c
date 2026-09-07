@@ -20,9 +20,18 @@
 
 /* Test-only minimal layouts/prototypes. The wrapper bodies below are copied
  * from the pinned adapter; the external audit checks the actual build/layouts. */
-#include <stdint.h>
 #include <stddef.h>
+#ifdef _WIN32
+/* These are POSIX wrapper tests. Supply their minimal declarations without
+ * pulling in Windows time_t/errno or selecting the copied Winsock branches. */
+#undef _WIN32
+typedef unsigned int uint32_t;
+int *__errno_location(void);
+#define errno (*__errno_location())
+#else
+#include <stdint.h>
 #include <errno.h>
+#endif
 typedef int evutil_socket_t;
 #define EV_READ 2
 #define EV_WRITE 4

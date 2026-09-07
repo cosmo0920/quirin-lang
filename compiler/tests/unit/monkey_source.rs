@@ -679,7 +679,10 @@ fn injection_retains_a_structured_scan_and_function_early_return() {
     else {
         unreachable!()
     };
-    assert_eq!(initial.c_type, "unsigned long");
+    assert!(matches!(
+        initial.c_type.as_str(),
+        "unsigned long" | "unsigned long long"
+    ));
     assert!(!header.operations.is_empty());
     assert!(!matches.operations.is_empty());
     assert_eq!(
@@ -714,7 +717,9 @@ fn injection_retains_a_structured_scan_and_function_early_return() {
         ("index++)", "index--)"),
         ("return 0;\n            }", "return 1;\n            }"),
     ] {
-        let results = wrappers(&source.replace(old, replacement));
+        let changed = source.replace("\r\n", "\n").replace(old, replacement);
+        assert_ne!(changed, source.replace("\r\n", "\n"));
+        let results = wrappers(&changed);
         if replacement.contains("--") {
             assert!(matches!(&results[11], MonkeySourceResult::Unknown { .. }));
         } else {

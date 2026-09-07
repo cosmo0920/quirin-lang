@@ -34,7 +34,7 @@ fn check(c: &str) -> Result<Vec<CleanupCertificate>, String> {
 }
 #[test]
 fn native_cleanup_outcomes_cover_null_absent_failure_and_success() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let certificates = check(SOURCE).unwrap();
@@ -68,7 +68,7 @@ fn native_cleanup_outcomes_cover_null_absent_failure_and_success() {
 }
 #[test]
 fn native_cleanup_rejects_wrong_outcomes_fields_and_call_identities() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     for (old, new) in [
@@ -99,7 +99,7 @@ fn native_cleanup_rejects_wrong_outcomes_fields_and_call_identities() {
 }
 #[test]
 fn cleanup_profile_uses_symbolic_identity_and_retains_all_native_predicates() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     // Aliases, inverse guards and alternative equivalent error tests preserve

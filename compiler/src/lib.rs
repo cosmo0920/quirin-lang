@@ -240,6 +240,82 @@ pub(crate) mod test_support {
     static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
     static CLANG_WARNING: Once = Once::new();
 
+    /// Execute syntax-only POSIX LP64 fixtures with their declared target, even
+    /// when the installed Clang defaults to Windows LLP64. Child-only settings
+    /// keep concurrent native-target tests and the user's override untouched.
+    pub(crate) fn posix_clang_test() -> bool {
+        if !clang_available() {
+            assert!(
+                std::env::var_os("QCORE_TEST_POSIX_CHILD").is_none(),
+                "the isolated POSIX child must execute its Clang-backed test"
+            );
+            return false;
+        }
+        #[cfg(windows)]
+        if std::env::var_os("QCORE_TEST_POSIX_CHILD").is_none() {
+            use std::path::PathBuf;
+            use std::process::Command;
+            static LAUNCHER: OnceLock<PathBuf> = OnceLock::new();
+            let clang = qcore_c_gateway::clang_command().expect("POSIX fixtures require Clang");
+            let launcher = LAUNCHER.get_or_init(|| {
+                let directory = std::env::current_exe()
+                    .unwrap()
+                    .parent()
+                    .unwrap()
+                    .join(format!("qcore-posix-clang-{}", std::process::id()));
+                std::fs::create_dir_all(&directory).unwrap();
+                let source = directory.join("launcher.rs");
+                let executable = directory.join("clang-posix-fixture.exe");
+                std::fs::write(
+                    &source,
+                    r#"
+fn main() {
+    let status = std::process::Command::new(std::env::var_os("QCORE_TEST_REAL_CLANG").unwrap())
+        .arg("--target=x86_64-unknown-linux-gnu")
+        .args(std::env::args_os().skip(1))
+        .status().expect("launch discovered Clang");
+    std::process::exit(status.code().unwrap_or(1));
+}
+"#,
+                )
+                .unwrap();
+                let output = Command::new("rustc")
+                    .arg(&source)
+                    .arg("-o")
+                    .arg(&executable)
+                    .output()
+                    .unwrap();
+                assert!(
+                    output.status.success(),
+                    "{}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+                executable
+            });
+            let thread = std::thread::current();
+            let test = thread.name().expect("libtest names its test threads");
+            let output = Command::new(std::env::current_exe().unwrap())
+                .args(["--exact", test, "--nocapture"])
+                .env("QCORE_TEST_POSIX_CHILD", "1")
+                .env("QCORE_TEST_REAL_CLANG", clang.get_program())
+                .env("QCORE_CLANG", launcher)
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "POSIX target test {test}:\n{}\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            assert!(
+                String::from_utf8_lossy(&output.stdout).contains("1 passed; 0 failed"),
+                "child must execute the selected test: {output:?}"
+            );
+            return false;
+        }
+        true
+    }
+
     /// Report whether the Clang-backed tests can run, emitting one visible
     /// warning when the executable is absent or unusable.
     pub(crate) fn clang_available() -> bool {

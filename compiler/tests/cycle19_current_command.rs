@@ -17,6 +17,8 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
         eprintln!("skipping Clang-dependent Cycle 19 command test: {reason}");
         return;
     }
+    let clang = qcore_c_gateway::clang_command().unwrap();
+    let compiler = clang.get_program().to_str().unwrap();
     let root = std::env::temp_dir().join(format!("qcore-cycle19-command-{}", std::process::id()));
     fs::create_dir_all(root.join("build")).unwrap();
     let files = [
@@ -62,7 +64,7 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
             files
                 .iter()
                 .map(|file| json!({
-                    "directory": root, "file": file, "arguments": [std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()), "-std=c11", "-c", file]
+                    "directory": root, "file": file, "arguments": [compiler, "-std=c11", "-c", file]
                 }))
                 .collect::<Vec<_>>()
         )

@@ -203,6 +203,7 @@ fn native_binding_rules_are_executed_and_mutations_fail_closed() {
         return;
     }
     let source = import(SOURCE);
+    let contracts = CALLBACK_BINDING_CONTRACTS.replace("\r\n", "\n");
     for name in [
         "binding_symbol",
         "binding_call_arguments",
@@ -222,11 +223,11 @@ fn native_binding_rules_are_executed_and_mutations_fail_closed() {
     ] {
         let marker = format!("extern fn {name}() -> unit\ncontract {{");
         for predicate in ["false", "unknown_native_predicate"] {
-            let rules = CALLBACK_BINDING_CONTRACTS.replace(
+            let rules = contracts.replace(
                 &marker,
                 &format!("{marker}\n    ensures normal {predicate};"),
             );
-            assert_ne!(rules, CALLBACK_BINDING_CONTRACTS);
+            assert_ne!(rules, contracts);
             match check_monkey_bindings_with_rules(
                 &source,
                 OBSERVATIONS,

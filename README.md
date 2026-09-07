@@ -289,9 +289,24 @@ QCore locates the analysis compiler in this order:
 
 1. `QCORE_CLANG`, when set, names a single executable (no extra arguments).
 2. `clang` on PATH.
-3. On Windows, LLVM under `VSINSTALLDIR` and Visual Studio installations
-   found via `vswhere` (including Build Tools). Both `clang.exe` and
-   `clang-cl.exe` work, using Clang's GCC driver mode for analysis.
+3. On Windows, LLVM under `VSINSTALLDIR`, then Visual Studio installations
+   found via `vswhere`, newest first (including Build Tools and previews).
+4. Standard Visual Studio 2026 (`Microsoft Visual Studio\18`) and 2022
+   (`Microsoft Visual Studio\2022`) edition directories under Program Files,
+   including when `vswhere` is missing or returns no installations.
+
+Both `clang.exe` and `clang-cl.exe` work, using Clang's GCC driver mode for
+analysis. For example, VS 2026 Community installs its x64 compiler at
+`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\Llvm\x64\bin\clang.exe`.
+Discovery tries subsequent installations when an earlier one lacks Clang.
+
+The Windows suite also runs syntax-only POSIX LP64 cleanup fixtures in isolated
+child tests, forwarding to the discovered Clang with an explicit Linux target.
+These exercise the existing POSIX models, not native Windows cleanup behavior;
+ordinary Windows analysis keeps its native target.
+Local VS 2026 validation passed 828 tests, formatting, Clippy and both
+reevaluation probes; Lean was unavailable. See the
+[Windows validation report](docs/reports/windows-vs2026/README.md).
 
 An explicit path works without changing PATH, including paths with spaces:
 

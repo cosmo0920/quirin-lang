@@ -264,6 +264,8 @@ impl VerifierProvider for BuiltInProvider {
 
 pub struct ProcessProvider {
     manifest: PluginManifest,
+    // Process execution currently requires Unix process-group containment.
+    #[cfg_attr(not(unix), expect(dead_code))]
     package_root: String,
 }
 
@@ -560,10 +562,12 @@ impl ProcessProvider {
     }
 }
 
+#[cfg(unix)]
 trait FailureDetail {
     fn with_detail(self, detail: &str) -> Self;
 }
 
+#[cfg(unix)]
 impl FailureDetail for ProviderFailure {
     fn with_detail(self, detail: &str) -> Self {
         if detail.trim().is_empty() {

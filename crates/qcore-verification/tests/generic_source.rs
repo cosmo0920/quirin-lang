@@ -98,7 +98,7 @@ fn nested_field_release_preserves_root_and_order_without_provider_types() {
         ["payload__data", "payload"]
     );
     let changed = import(
-        &SOURCE.replace(
+        &SOURCE.replace("\r\n", "\n").replace(
             "free(payload->data);\n    free(payload);",
             "free(payload);\n    free(payload->data);",
         ),

@@ -661,3 +661,14 @@ and zero compiler-command refusals. Historical source/native evidence remains
 unpromoted. All 857 workspace tests and standing gates pass. Full native Fluent
 Bit build, GCC equivalence and general filename/build semantics remain outside
 this result. Evidence: `docs/reports/cycle19-explicit-clang/README.md`.
+
+Windows Clang discovery and test portability (2026-09-07): discovery orders
+vswhere results newest first and falls back to standard VS 2026 (`18`) and
+VS 2022 (`2022`) edition directories, including missing/empty locator cases.
+The Windows tests use the discovered executable in compile databases, preserve
+CRLF mutation checks, and run POSIX LP64 cleanup fixtures in isolated child
+tests through that Clang with an explicit Linux target. Native Windows analysis
+retains its native target; no checker rule or production cleanup ABI is widened.
+See `docs/reports/windows-vs2026/README.md` for local validation and limits.
+Windows validation: 828 tests, formatting, Clippy and both reevaluation probes
+pass. The Lean gate was not run because `lake` is not installed on this host.

@@ -73,7 +73,7 @@ pub(crate) fn dependencies(c: &str) -> (UnmapCertificate, CleanupCertificate) {
 }
 #[test]
 fn backend_release_does_not_discharge_unknown_os_custody() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = fixture();
@@ -125,7 +125,7 @@ fn backend_release_does_not_discharge_unknown_os_custody() {
 }
 #[test]
 fn file_close_rejects_wrong_resource_identity_order_and_result_handling() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = fixture();
@@ -188,7 +188,7 @@ fn file_close_rejects_wrong_resource_identity_order_and_result_handling() {
 }
 #[test]
 fn file_close_native_policy_cannot_hide_failure_custody() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = fixture();
@@ -220,7 +220,7 @@ int cio_file_native_delete(struct cio_file *cf){if(cf->fd!=-1 || cf->map!=(void*
 }
 #[test]
 fn deleting_close_covers_all_paths_and_keeps_failure_classifications() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = deletion_fixture();
@@ -280,7 +280,7 @@ fn deleting_close_covers_all_paths_and_keeps_failure_classifications() {
 }
 #[test]
 fn deleting_close_rejects_wrong_delete_guards_args_logs_and_early_free() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = deletion_fixture();
@@ -329,7 +329,7 @@ fn deleting_close_rejects_wrong_delete_guards_args_logs_and_early_free() {
 }
 #[test]
 fn deleting_close_executes_all_native_contract_clauses() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let c = deletion_fixture();

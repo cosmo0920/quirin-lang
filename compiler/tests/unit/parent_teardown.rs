@@ -1,7 +1,8 @@
 use super::*;
 
 pub(crate) const RECORDS: &str = r#"
-#include <stdlib.h>
+/* Syntax-only fixture; no target libc headers or linked allocator required. */
+void free(void *);
 struct mk_list { struct mk_list *prev, *next; };
 struct cio_options { char *user, *group, *chmod, *root_path; };
 struct cio_ctx { struct cio_options options; void *processed_user, *processed_group; struct mk_list streams; };
