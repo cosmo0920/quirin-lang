@@ -1,0 +1,52 @@
+{
+  "measured": "read-only census of the persisted Cycle 19 compilation databases",
+  "rule": "one configuration = one (working directory, complete command) pair",
+  "databases": {
+    "fluent-bit-clang-production": {
+      "records": 1415,
+      "files": 1244,
+      "files_with_multiple_configurations": 155,
+      "max_configurations_for_one_file": 17,
+      "audited_source_roots": {
+        "lib/cmetrics/src/": {
+          "selected_c_files": 33,
+          "files_with_multiple_configurations": 0,
+          "max_configurations_for_one_file": 1
+        },
+        "lib/ctraces/src/": {
+          "selected_c_files": 17,
+          "files_with_multiple_configurations": 0,
+          "max_configurations_for_one_file": 1
+        },
+        "lib/librdkafka-2.15.0/src": {
+          "selected_c_files": 94,
+          "files_with_multiple_configurations": 0,
+          "max_configurations_for_one_file": 1
+        },
+        "lib/chunkio/src": {
+          "selected_c_files": 13,
+          "files_with_multiple_configurations": 0,
+          "max_configurations_for_one_file": 1
+        },
+        "src/flb_input_chunk.c": {
+          "selected_c_files": 1,
+          "files_with_multiple_configurations": 1,
+          "max_configurations_for_one_file": 2
+        }
+      }
+    },
+    "monkey-build": {
+      "records": 142,
+      "files": 61,
+      "files_with_multiple_configurations": 27,
+      "max_configurations_for_one_file": 4,
+      "audited_source_roots": {
+        "mk_core/deps/libevent/": {
+          "selected_c_files": 27,
+          "files_with_multiple_configurations": 27,
+          "max_configurations_for_one_file": 4
+        }
+      }
+    }
+  }
+}

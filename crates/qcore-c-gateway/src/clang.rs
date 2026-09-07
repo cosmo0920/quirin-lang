@@ -15,6 +15,70 @@ pub fn command() -> Result<Command, String> {
     Ok(command)
 }
 
+/// Trusted description of the Clang executable that actually performs every
+/// gateway preprocessing, syntax and typed-AST run.
+///
+/// This is provenance, not an attestation: the executable and its environment
+/// are trusted and must stay stable while a captured identity is in use. It
+/// describes the compiler that ran, never the driver a compilation database
+/// declared; compiler equivalence is not established anywhere in this crate.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ClangIdentity {
+    program: String,
+    version: String,
+    target: String,
+}
+
+impl ClangIdentity {
+    /// Ask the discovered Clang for its own version and default target.
+    pub fn capture() -> Result<Self, String> {
+        let mut version_command = command()?;
+        let program = version_command
+            .get_program()
+            .to_str()
+            .ok_or("non-UTF-8 Clang path")?
+            .to_owned();
+        let version = version_command
+            .arg("--version")
+            .output()
+            .map_err(|error| error.to_string())?;
+        let target = command()?
+            .arg("-dumpmachine")
+            .output()
+            .map_err(|error| error.to_string())?;
+        if !version.status.success() || !target.status.success() {
+            return Err("Clang could not report its version and target identity".into());
+        }
+        let version = String::from_utf8(version.stdout)
+            .map_err(|error| error.to_string())?
+            .trim()
+            .to_owned();
+        let target = String::from_utf8(target.stdout)
+            .map_err(|error| error.to_string())?
+            .trim()
+            .to_owned();
+        if !version.contains("clang version") || target.is_empty() {
+            return Err("Clang reported incomplete version or target identity".into());
+        }
+        Ok(Self {
+            program,
+            version,
+            target,
+        })
+    }
+
+    /// The resolved executable name or path, exactly as the gateway invokes it.
+    pub fn program(&self) -> &str {
+        &self.program
+    }
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+    pub fn target(&self) -> &str {
+        &self.target
+    }
+}
+
 fn resolve(
     explicit: Option<OsString>,
     discover: impl FnOnce() -> Vec<PathBuf>,
