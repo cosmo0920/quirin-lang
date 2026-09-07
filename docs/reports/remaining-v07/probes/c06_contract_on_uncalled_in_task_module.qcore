@@ -1,0 +1,11 @@
+concurrency checked;
+fn worker(x: i32) -> i32 { return x; }
+fn unused() -> i32 contract { requires true; } { return 1; }
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let v = 42;
+    thread scope s {
+        let a = spawn s worker(copy v)?;
+        let r = join move a?;
+        return r;
+    }
+}

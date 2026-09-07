@@ -1,0 +1,2 @@
+module library;
+fn helper() -> i32 contract { requires true; } { return 1; }

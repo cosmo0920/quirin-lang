@@ -1,0 +1,275 @@
+
+===== a01_requires
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { requires true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a02_ensures
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a02_ensures.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a02_ensures.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { ensures normal true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a03_quant
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a03_quant.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a03_quant.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { quant normal wall_clock <= 5; } { return 0; }
+                            ^
+EXIT=1
+
+===== a05_referenced_uncalled
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore:1:31: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn helper() -> i32 contract { requires true; } { return 1; }
+                              ^
+EXIT=1
+
+===== a06_never_referenced
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a06_never_referenced.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a06_never_referenced.qcore:1:31: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn orphan() -> i32 contract { ensures normal true; } { return 1; }
+                              ^
+EXIT=1
+
+===== a07_empty_contract_control
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a07_empty_contract_control.qcore
+checked 1 function(s); entry `main`
+EXIT=0
+
+===== a11_library_mode
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a11_library_mode.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a11_library_mode.qcore:2:31: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn helper() -> i32 contract { requires true; } { return 1; }
+                              ^
+EXIT=1
+
+===== a12_contract_mode
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a12_contract_mode.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a12_contract_mode.qcore:2:31: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn helper() -> i32 contract { requires true; } { return 1; }
+                              ^
+EXIT=1
+
+===== a13_extern_contract_control
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a13_extern_contract_control.qcore
+checked 1 function(s); entry `main`
+EXIT=0
+
+===== a14_verify_scope
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a14_verify_scope.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a14_verify_scope.qcore:1:1: Q701: verify scope is unverified: one or more core-derived obligations were not discharged by core-checked evidence [QP011: a required plugin result is unknown; QP016: the core derivation is incomplete for `resource_contracts`: per-allocation-site custody derivation runs in the unrestricted-C gateway; the QCore verify-scope path derives call-effect and parameter-mode obligations only (gateway summaries are not imported here); qcore.libevent.semantic_evidence_unavailable: protocol v1 facts lack core-derived obligations and semantic witnesses]
+verify scope s { plugin qcore.libevent profile default capabilities { resource_contracts }; }
+^
+EXIT=1
+
+===== b01_outer_resolution
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b01_outer_resolution.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b01_outer_resolution.qcore:4:3: Q500: structured control flow is not in the Cycle 12 executable subset
+  with lock m as g { }
+  ^
+EXIT=1
+
+===== b02_binder_equals_outer
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore:4:3: Q500: structured control flow is not in the Cycle 12 executable subset
+  with lock m as m { }
+  ^
+EXIT=1
+
+===== b03_header_unresolved
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b03_header_unresolved.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b03_header_unresolved.qcore:3:3: Q013: unknown name `missing`
+  with lock missing as g { }
+  ^
+EXIT=1
+
+===== b04_binder_escape
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b04_binder_escape.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b04_binder_escape.qcore:5:3: Q013: unknown name `g`
+  drop g;
+  ^
+EXIT=1
+
+===== b05_sibling_leak
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b05_sibling_leak.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b05_sibling_leak.qcore:5:22: Q013: unknown name `g`
+  with lock m as h { drop g; }
+                     ^
+EXIT=1
+
+===== b06_binder_masks_unresolved
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore:3:3: Q013: unknown name `g`
+  with lock g as g { }
+  ^
+EXIT=1
+
+===== b07_thread_scope_escape
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore:3:3: Q013: unknown name `s`
+  drop s;
+  ^
+EXIT=1
+
+===== b08_duplicate_binding
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore:4:22: Q012: duplicate local binding `g`
+  with lock m as g { let g = qcore_acquire(8, true, Failure); drop g; }
+                     ^
+EXIT=1
+
+===== b09_binder_used_in_body
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore:4:3: Q500: structured control flow is not in the Cycle 12 executable subset
+  with lock m as g { drop g; }
+  ^
+EXIT=1
+
+===== c01_scope_without_marker
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore:1:1: Q600: task execution requires exactly one `concurrency checked;` marker
+fn main() -> i32 {
+^
+EXIT=1
+
+===== c02_nested_worker
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c02_nested_worker.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c02_nested_worker.qcore:3:1: Q600: spawned workers must be first-order leaf functions in this task profile
+fn worker(x: i32) -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+^
+EXIT=1
+
+===== c03_spawn_outer_scope
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore:7:13: Q500: spawn requires the innermost active thread scope
+            let a = spawn s worker(copy v)?;
+            ^
+EXIT=1
+
+===== c04_unjoined_scope_exit
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore:7:9: Q600: ScopeBusy(4)
+        return 0;
+        ^
+EXIT=1
+
+===== c05_contract_on_worker
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore:2:1: Q020: source contracts require an implemented consumer for task execution
+fn worker(x: i32) -> i32 contract { quant normal wall_clock <= 5; } { return x; }
+^
+EXIT=1
+
+===== c06_contract_on_uncalled_in_task_module
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore:3:1: Q020: source contracts require an implemented consumer for task execution
+fn unused() -> i32 contract { requires true; } { return 1; }
+^
+EXIT=1
+
+===== c07_empty_contract_in_task_module
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore:3:1: Q020: source contracts require an implemented consumer for task execution
+fn unused() -> i32 contract { } { return 1; }
+^
+EXIT=1
+
+===== c08_nested_scope_control
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c08_nested_scope_control.qcore
+checked 2 function(s); entry `main`; scoped copy tasks (Linux C11)
+EXIT=0
+
+===== c09_guard_in_task_module
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore:5:5: Q500: statement is outside the copy-scalar task execution profile
+    with lock v as g {
+    ^
+EXIT=1
+
+===== a04_second_file
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a04_first_main.qcore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a04_second_bound.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a04_second_bound.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn leaf() -> i32 contract { quant normal wall_clock <= 5; } { return 0; }
+                            ^
+EXIT=1
+
+===== a15_task_second_file
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a15_task_second_file_bound.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore:11:1: Q020: source contracts require an implemented consumer for task execution
+EXIT=1
+
+===== b10_cross_file_binder_leak
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b10_cross_file_first.qcore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b10_cross_file_second.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/b10_cross_file_second.qcore:2:3: Q013: unknown name `leaked`
+  drop leaked;
+  ^
+EXIT=1
+
+===== d01_file_boundary_attribution
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/d01_boundary_first.qcore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/d01_boundary_second.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/d01_boundary_first.qcore:2:1: Q010: duplicate declaration `main`
+EXIT=1
+
+===== d02_file_boundary_parse
+$ qcorec check /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/d02_boundary_record.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore:11:1: Q000: expected a QCore declaration
+EXIT=1
+
+===== a08_emit_route
+$ qcorec emit -o /dev/null /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { requires true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a09_empty_plugin_selection
+$ qcorec check --plugins /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/plugins_empty.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { requires true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a09b_empty_plugin_selection_task
+$ qcorec check --plugins /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/plugins_empty.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore:2:1: Q020: source contracts require an implemented consumer for task execution
+fn worker(x: i32) -> i32 contract { quant normal wall_clock <= 5; } { return x; }
+^
+EXIT=1
+
+===== a10_enabled_provider_sequential
+$ qcorec check --plugins /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/plugins_libevent.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { requires true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a10b_enabled_provider_uncalled
+$ qcorec check --plugins /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/plugins_libevent.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a06_never_referenced.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a06_never_referenced.qcore:1:31: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn orphan() -> i32 contract { ensures normal true; } { return 1; }
+                              ^
+EXIT=1
+
+===== a10c_enabled_provider_task
+$ qcorec check --plugins /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/plugins_libevent.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore:2:1: Q020: source contracts require an implemented consumer for task execution
+fn worker(x: i32) -> i32 contract { quant normal wall_clock <= 5; } { return x; }
+^
+EXIT=1
+
+===== a10d_enabled_provider_emit
+$ qcorec emit --plugins /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/plugins_libevent.json -o /dev/null /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a01_requires.qcore:1:29: Q021: source function contract clauses are not yet enforced; refusing unchecked contract
+fn main() -> i32 contract { requires true; } { return 0; }
+                            ^
+EXIT=1
+
+===== a10e_enabled_provider_verify_scope
+$ qcorec check --plugins /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/plugins_libevent.json /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a14_verify_scope.qcore
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/docs/reports/remaining-v07/probes/a14_verify_scope.qcore:1:1: Q701: verify scope is unverified: one or more core-derived obligations were not discharged by core-checked evidence [QP011: a required plugin result is unknown; QP016: the core derivation is incomplete for `resource_contracts`: per-allocation-site custody derivation runs in the unrestricted-C gateway; the QCore verify-scope path derives call-effect and parameter-mode obligations only (gateway summaries are not imported here); QP016: the core derivation is incomplete for `resource_contracts`; no witness can discharge an unknown obligation inventory]
+verify scope s { plugin qcore.libevent profile default capabilities { resource_contracts }; }
+^
+EXIT=1
