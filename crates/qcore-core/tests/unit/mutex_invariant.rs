@@ -1,0 +1,1636 @@
+use super::*;
+
+const RESOURCE: SharedResourceId = 7;
+const OTHER: SharedResourceId = 8;
+const INVARIANT: InvariantId = 5;
+
+fn fp(start: u32, end: u32) -> AccessFootprint {
+    AccessFootprint::new(RESOURCE, start, end)
+}
+
+fn other_fp(start: u32, end: u32) -> AccessFootprint {
+    AccessFootprint::new(OTHER, start, end)
+}
+
+fn full(task: TaskId, footprint: AccessFootprint) -> ShareGrant {
+    ShareGrant {
+        task,
+        footprint,
+        share: FULL_ACCESS,
+    }
+}
+
+fn create(task: TaskId, mutex: MutexId, protects: Vec<AccessFootprint>) -> MutexInvariantEvent {
+    MutexInvariantEvent::CreateMutex {
+        task,
+        mutex,
+        protects,
+        invariant: INVARIANT,
+    }
+}
+
+fn lock(task: TaskId, mutex: MutexId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::Lock { task, mutex, guard }
+}
+
+fn unlock(task: TaskId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::Unlock { task, guard }
+}
+
+fn open(task: TaskId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::OpenInvariant { task, guard }
+}
+
+fn close(task: TaskId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::CloseInvariant {
+        task,
+        guard,
+        witness: InvariantWitness::Declared {
+            invariant: INVARIANT,
+        },
+    }
+}
+
+fn access(
+    task: TaskId,
+    footprint: AccessFootprint,
+    kind: AccessKind,
+    guard: Option<GuardId>,
+) -> MutexInvariantEvent {
+    MutexInvariantEvent::Access {
+        task,
+        footprint,
+        kind,
+        guard,
+    }
+}
+
+fn destroy_mutex(task: TaskId, mutex: MutexId) -> MutexInvariantEvent {
+    MutexInvariantEvent::DestroyMutex { task, mutex }
+}
+
+/// One task, one mutex generation over the whole of `RESOURCE`, one critical
+/// section that opens, writes and closes. Every acceptance-1/2 rejection below
+/// is a single mutation of this accepted control.
+fn control(section: Vec<MutexInvariantEvent>) -> MutexInvariantProgram {
+    let mut events = vec![create(0, 1, vec![fp(0, 8)])];
+    events.extend(section);
+    events.push(destroy_mutex(0, 1));
+    MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events,
+        ..Default::default()
+    }
+}
+
+fn refusals(program: &MutexInvariantProgram) -> Vec<MutexInvariantDiagnostic> {
+    check_mutex_invariant_program(program).expect_err("program should be refused")
+}
+
+fn codes(diagnostics: &[MutexInvariantDiagnostic]) -> Vec<&'static str> {
+    diagnostics.iter().map(|d| d.code()).collect()
+}
+
+// ---------------------------------------------------------------------------
+// Acceptance 1 — protected access authority, affinity and quiescence.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn same_mutex_protected_access_is_accepted() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        access(0, fp(0, 4), AccessKind::Read, Some(10)),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        close(0, 10),
+        unlock(0, 10),
+        lock(0, 1, 11),
+        access(0, fp(4, 8), AccessKind::Read, Some(11)),
+        unlock(0, 11),
+    ]);
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    assert_eq!(
+        certificate.profile,
+        ConcurrencyProfile::CheckedMutexInvariantV1
+    );
+    assert_eq!(
+        certificate.protected_shape,
+        BTreeMap::from([(1, vec![fp(0, 8)])])
+    );
+    assert_eq!(certificate.destroyed_mutexes, vec![1]);
+}
+
+#[test]
+fn unrelated_lock_grants_no_authority_over_a_protected_footprint() {
+    // Two mutex generations protect disjoint halves. Holding the second one
+    // authorizes nothing in the first one's footprint.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 4)]),
+            create(0, 2, vec![fp(4, 8)]),
+            lock(0, 2, 20),
+            access(0, fp(0, 2), AccessKind::Read, Some(20)),
+            unlock(0, 20),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::UnprotectedFootprint {
+            event: 3,
+            guard: 20
+        }]
+    );
+    // The positive control: the same guard over its own footprint is accepted.
+    let permitted = MutexInvariantProgram {
+        events: vec![
+            create(0, 1, vec![fp(0, 4)]),
+            create(0, 2, vec![fp(4, 8)]),
+            lock(0, 2, 20),
+            access(0, fp(4, 6), AccessKind::Read, Some(20)),
+            unlock(0, 20),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ],
+        initial_shares: vec![full(0, fp(0, 8))],
+        ..Default::default()
+    };
+    assert!(check_mutex_invariant_program(&permitted).is_ok());
+}
+
+#[test]
+fn two_mutexes_cannot_protect_one_footprint() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            create(0, 2, vec![fp(2, 6)]),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::FootprintAlreadyProtected { event: 1, mutex: 2 }]
+    );
+}
+
+#[test]
+fn unguarded_access_to_a_protected_footprint_has_no_fallback_authority() {
+    // The creator held FULL_ACCESS before creation; parking consumed it, so no
+    // static share survives to authorize an unguarded touch.
+    let program = control(vec![access(0, fp(0, 4), AccessKind::Read, None)]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::UnguardedProtectedAccess { event: 1, mutex: 1 }]
+    );
+}
+
+#[test]
+fn wrong_thread_unlock_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            lock(0, 1, 10),
+            unlock(1, 10),
+            unlock(0, 10),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::WrongGuardAffinity {
+            event: 3,
+            guard: 10,
+            task: 1
+        }]
+    );
+}
+
+#[test]
+fn a_guard_is_not_transferable_to_another_task() {
+    // Every guard-keyed operation is refused for a non-holder, and the exact
+    // neighbouring diagnostics are absent.
+    for (position, foreign) in [
+        open(1, 10),
+        close(1, 10),
+        access(1, fp(0, 4), AccessKind::Read, Some(10)),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 1,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 30,
+        },
+        MutexInvariantEvent::AssertFact {
+            task: 1,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 40,
+        },
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let program = MutexInvariantProgram {
+            initial_shares: vec![full(0, fp(0, 8))],
+            events: vec![
+                create(0, 1, vec![fp(0, 8)]),
+                MutexInvariantEvent::Spawn {
+                    parent: 0,
+                    child: 1,
+                },
+                lock(0, 1, 10),
+                foreign,
+                unlock(0, 10),
+                MutexInvariantEvent::Join {
+                    parent: 0,
+                    child: 1,
+                },
+                destroy_mutex(0, 1),
+            ],
+            ..Default::default()
+        };
+        assert_eq!(
+            refusals(&program),
+            vec![MutexInvariantDiagnostic::WrongGuardAffinity {
+                event: 3,
+                guard: 10,
+                task: 1
+            }],
+            "case {position}"
+        );
+    }
+}
+
+#[test]
+fn a_guard_from_an_earlier_critical_section_is_dead() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        unlock(0, 10),
+        lock(0, 1, 11),
+        access(0, fp(0, 4), AccessKind::Read, Some(10)),
+        unlock(0, 11),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::DeadGuard {
+            event: 4,
+            guard: 10
+        }]
+    );
+}
+
+#[test]
+fn mutex_destruction_with_a_holder_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            lock(0, 1, 10),
+            destroy_mutex(0, 1),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 2, mutex: 1 }]
+    );
+}
+
+#[test]
+fn mutex_destruction_with_a_recorded_waiter_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::RegisterWaiter { task: 1, mutex: 1 },
+            destroy_mutex(0, 1),
+            lock(1, 1, 10),
+            unlock(1, 10),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 3, mutex: 1 }]
+    );
+}
+
+#[test]
+fn mutex_destruction_with_a_live_guard_in_another_task_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            lock(1, 1, 10),
+            destroy_mutex(0, 1),
+            unlock(1, 10),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 3, mutex: 1 }]
+    );
+}
+
+#[test]
+fn a_refused_mutex_destruction_leaves_the_generation_live() {
+    // The first destruction is refused; the generation is still lockable and is
+    // destroyed later, so the refusal never manufactured a dead generation.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            lock(0, 1, 10),
+            destroy_mutex(0, 1),
+            unlock(0, 10),
+            lock(0, 1, 11),
+            unlock(0, 11),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    let diagnostics = refusals(&program);
+    assert_eq!(
+        diagnostics,
+        vec![MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 2, mutex: 1 }]
+    );
+    // The neighbouring liveness complaint is absent: nothing became dead.
+    assert!(!diagnostics.iter().any(|diagnostic| matches!(
+        diagnostic,
+        MutexInvariantDiagnostic::DeadMutexGeneration { .. }
+    )));
+}
+
+#[test]
+fn a_repeat_destruction_reports_a_dead_generation_not_an_ownership_complaint() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    let diagnostics = refusals(&program);
+    assert_eq!(
+        diagnostics,
+        vec![MutexInvariantDiagnostic::DeadMutexGeneration { event: 2, mutex: 1 }]
+    );
+    assert!(!diagnostics.iter().any(|diagnostic| matches!(
+        diagnostic,
+        MutexInvariantDiagnostic::MutexAuthorityNotConserved { .. }
+            | MutexInvariantDiagnostic::NonquiescentMutexDestruction { .. }
+    )));
+}
+
+#[test]
+fn every_event_kind_naming_a_destroyed_generation_is_refused() {
+    let cases: Vec<(MutexInvariantEvent, MutexInvariantDiagnostic)> = vec![
+        (
+            lock(0, 1, 10),
+            MutexInvariantDiagnostic::DeadMutexGeneration { event: 2, mutex: 1 },
+        ),
+        (
+            destroy_mutex(0, 1),
+            MutexInvariantDiagnostic::DeadMutexGeneration { event: 2, mutex: 1 },
+        ),
+        (
+            MutexInvariantEvent::RegisterWaiter { task: 0, mutex: 1 },
+            MutexInvariantDiagnostic::DeadMutexGeneration { event: 2, mutex: 1 },
+        ),
+        (
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantDiagnostic::DeadMutexGeneration { event: 2, mutex: 1 },
+        ),
+    ];
+    for (event, expected) in cases {
+        let program = MutexInvariantProgram {
+            initial_shares: vec![full(0, fp(0, 8))],
+            events: vec![create(0, 1, vec![fp(0, 8)]), destroy_mutex(0, 1), event],
+            ..Default::default()
+        };
+        assert_eq!(refusals(&program), vec![expected]);
+    }
+}
+
+#[test]
+fn resource_destruction_is_blocked_by_parked_authority() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        initial_custody: BTreeMap::from([(RESOURCE, 0)]),
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: RESOURCE,
+            },
+            destroy_mutex(0, 1),
+        ],
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::NonquiescentDestruction {
+            event: 1,
+            resource: RESOURCE
+        }]
+    );
+    // Destroying the mutex first returns the parked share and admits the same
+    // destruction.
+    let ordered = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        initial_custody: BTreeMap::from([(RESOURCE, 0)]),
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            destroy_mutex(0, 1),
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: RESOURCE,
+            },
+        ],
+    };
+    let certificate = check_mutex_invariant_program(&ordered).expect("accepted");
+    assert_eq!(certificate.destroyed_resources, vec![RESOURCE]);
+    assert_eq!(certificate.destroyed_mutexes, vec![1]);
+}
+
+// ---------------------------------------------------------------------------
+// Acceptance 2 — invariant phases, borrows and stale refinement facts.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn unlock_with_a_broken_invariant_is_refused() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        unlock(0, 10),
+    ]);
+    // The refused unlock leaves the guard live, so the section never closes and
+    // the mutex generation cannot be destroyed. The exact cascade is pinned.
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::InvariantOpenAtUnlock {
+                event: 4,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 5, mutex: 1 },
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+    // Closing the invariant first admits the same unlock.
+    let restored = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        close(0, 10),
+        unlock(0, 10),
+    ]);
+    assert!(check_mutex_invariant_program(&restored).is_ok());
+}
+
+#[test]
+fn error_exit_with_a_broken_invariant_is_refused() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        MutexInvariantEvent::ErrorExit {
+            task: 0,
+            guard: 10,
+            exit: 3,
+        },
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::InvariantOpenAtErrorExit {
+                event: 4,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 5, mutex: 1 },
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+    // The same error path with the invariant restored is accepted.
+    let restored = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        close(0, 10),
+        MutexInvariantEvent::ErrorExit {
+            task: 0,
+            guard: 10,
+            exit: 3,
+        },
+    ]);
+    assert!(check_mutex_invariant_program(&restored).is_ok());
+}
+
+#[test]
+fn a_write_requires_the_invariant_to_be_declared_broken_first() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::WriteWithClosedInvariant {
+            event: 2,
+            guard: 10
+        }]
+    );
+}
+
+#[test]
+fn a_no_write_witness_cannot_close_over_a_write() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::NoWriteOccurred,
+        },
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::InvariantOpenAtUnlock {
+                event: 5,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 6, mutex: 1 },
+            MutexInvariantDiagnostic::InvalidInvariantWitness {
+                event: 4,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+    // With no write, the checked witness needs no declared predicate at all.
+    let unwritten = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::NoWriteOccurred,
+        },
+        unlock(0, 10),
+    ]);
+    let certificate = check_mutex_invariant_program(&unwritten).expect("accepted");
+    assert!(
+        !certificate
+            .assumptions
+            .contains(&ConcurrencyAssumption::InvariantPredicateDeclared)
+    );
+}
+
+#[test]
+fn a_declared_witness_must_name_this_mutex_invariant() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::Declared { invariant: 999 },
+        },
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::InvariantOpenAtUnlock {
+                event: 4,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 5, mutex: 1 },
+            MutexInvariantDiagnostic::InvalidInvariantWitness {
+                event: 3,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+}
+
+#[test]
+fn opening_an_already_open_invariant_is_refused() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        open(0, 10),
+        close(0, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::DoubleOpenInvariant {
+            event: 3,
+            guard: 10
+        }]
+    );
+}
+
+#[test]
+fn a_guard_derived_borrow_cannot_escape_unlock() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 30,
+        },
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::GuardBorrowEscape {
+                event: 3,
+                guard: 10,
+                borrow: 30
+            },
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 4, mutex: 1 },
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+    // Ending the borrow inside the section admits the same unlock.
+    let contained = control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 30,
+        },
+        MutexInvariantEvent::EndBorrow {
+            task: 0,
+            borrow: 30,
+        },
+        unlock(0, 10),
+    ]);
+    assert!(check_mutex_invariant_program(&contained).is_ok());
+}
+
+#[test]
+fn a_borrow_outside_the_protected_shape_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 4)]),
+            lock(0, 1, 10),
+            MutexInvariantEvent::BorrowUnderGuard {
+                task: 0,
+                guard: 10,
+                footprint: fp(4, 8),
+                borrow: 30,
+            },
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::UnprotectedFootprint {
+            event: 2,
+            guard: 10
+        }]
+    );
+}
+
+#[test]
+fn a_fact_established_under_one_guard_generation_is_unusable_under_the_next() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 40,
+        },
+        MutexInvariantEvent::UseFact { task: 0, fact: 40 },
+        unlock(0, 10),
+        lock(0, 1, 11),
+        MutexInvariantEvent::UseFact { task: 0, fact: 40 },
+        unlock(0, 11),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::StaleProtectedFact { event: 6, fact: 40 }]
+    );
+}
+
+#[test]
+fn a_fact_invalidated_by_a_write_while_open_cannot_be_used() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 40,
+        },
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        close(0, 10),
+        MutexInvariantEvent::UseFact { task: 0, fact: 40 },
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::StaleProtectedFact { event: 6, fact: 40 }]
+    );
+    // A disjoint write leaves the fact standing.
+    let disjoint = control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 40,
+        },
+        open(0, 10),
+        access(0, fp(4, 8), AccessKind::Write, Some(10)),
+        close(0, 10),
+        MutexInvariantEvent::UseFact { task: 0, fact: 40 },
+        unlock(0, 10),
+    ]);
+    assert!(check_mutex_invariant_program(&disjoint).is_ok());
+}
+
+#[test]
+fn guard_identities_are_never_reused() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        unlock(0, 10),
+        lock(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::DeadGuard {
+                event: 4,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::IdentityNotFresh {
+                event: 3,
+                kind: IdentityKind::Guard,
+                id: 10
+            },
+        ]
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Acceptance 3 — certificates, independent recheck, and the pinned negative.
+// ---------------------------------------------------------------------------
+
+fn certified() -> (MutexInvariantProgram, MutexInvariantCertificate) {
+    let program = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        close(0, 10),
+        unlock(0, 10),
+    ]);
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    (program, certificate)
+}
+
+#[test]
+fn certificates_name_exact_generations_and_admitted_invariant_transitions() {
+    let (_, certificate) = certified();
+    assert_eq!(
+        certificate.protected_shape,
+        BTreeMap::from([(1, vec![fp(0, 8)])])
+    );
+    assert_eq!(certificate.destroyed_mutexes, vec![1]);
+    assert_eq!(
+        certificate.destroyed_resources,
+        Vec::<SharedResourceId>::new()
+    );
+    assert_eq!(
+        certificate.admitted_invariant_transitions,
+        vec![
+            InvariantTransition {
+                event: 1,
+                mutex: 1,
+                guard: 10,
+                from: InvariantPhase::Absent,
+                to: InvariantPhase::Closed,
+                witness: None,
+            },
+            InvariantTransition {
+                event: 2,
+                mutex: 1,
+                guard: 10,
+                from: InvariantPhase::Closed,
+                to: InvariantPhase::Open,
+                witness: None,
+            },
+            InvariantTransition {
+                event: 4,
+                mutex: 1,
+                guard: 10,
+                from: InvariantPhase::Open,
+                to: InvariantPhase::Closed,
+                witness: Some(InvariantWitness::Declared {
+                    invariant: INVARIANT
+                }),
+            },
+            InvariantTransition {
+                event: 5,
+                mutex: 1,
+                guard: 10,
+                from: InvariantPhase::Closed,
+                to: InvariantPhase::Absent,
+                witness: None,
+            },
+        ]
+    );
+}
+
+#[test]
+fn independent_recheck_rederives_the_certificate() {
+    let (program, certificate) = certified();
+    assert_eq!(
+        recheck_mutex_invariant_certificate(&program, &certificate),
+        Ok(())
+    );
+}
+
+/// One deliberate corruption of a certificate field.
+type Mutation = Box<dyn Fn(&mut MutexInvariantCertificate)>;
+
+#[test]
+fn recheck_refuses_every_tampered_certificate_field() {
+    let (program, certificate) = certified();
+    let mutations: Vec<(&'static str, Mutation)> = vec![
+        (
+            "profile",
+            Box::new(|c: &mut MutexInvariantCertificate| {
+                c.profile = ConcurrencyProfile::TrustedExplicitTrace;
+            }),
+        ),
+        (
+            "checked_events",
+            Box::new(|c: &mut MutexInvariantCertificate| c.checked_events += 1),
+        ),
+        (
+            "conservation_checkpoints",
+            Box::new(|c: &mut MutexInvariantCertificate| c.conservation_checkpoints += 1),
+        ),
+        (
+            "destroyed_mutexes",
+            Box::new(|c: &mut MutexInvariantCertificate| c.destroyed_mutexes.clear()),
+        ),
+        (
+            "protected_shape",
+            Box::new(|c: &mut MutexInvariantCertificate| {
+                c.protected_shape.insert(2, vec![fp(0, 8)]);
+            }),
+        ),
+        (
+            "admitted_invariant_transitions",
+            Box::new(|c: &mut MutexInvariantCertificate| {
+                c.admitted_invariant_transitions.truncate(1);
+            }),
+        ),
+        (
+            "derived_sync_edges",
+            Box::new(|c: &mut MutexInvariantCertificate| {
+                c.derived_sync_edges.push(DerivedSyncEdge {
+                    event: 0,
+                    from: 0,
+                    to: 1,
+                    resource: RESOURCE,
+                    witness: SyncWitness::SpawnEdge { child: 1 },
+                });
+            }),
+        ),
+        (
+            "assumptions",
+            Box::new(|c: &mut MutexInvariantCertificate| {
+                c.assumptions
+                    .remove(&ConcurrencyAssumption::DeclaredFootprintShape);
+            }),
+        ),
+    ];
+    for (field, mutate) in mutations {
+        let mut tampered = certificate.clone();
+        mutate(&mut tampered);
+        assert_eq!(
+            recheck_mutex_invariant_certificate(&program, &tampered),
+            Err(vec![CertificateRecheckError::FieldMismatch { field }]),
+            "field {field}"
+        );
+    }
+}
+
+/// The discharge claim. A `CheckedMutexInvariantV1` certificate must never name
+/// the two premises `TrustedExplicitTrace` retains, and the plain-string route
+/// must not be able to smuggle one past the typed set.
+#[test]
+fn a_checked_certificate_never_carries_trusted_guard_assumptions() {
+    let (program, certificate) = certified();
+    assert_eq!(
+        certificate.assumptions,
+        BTreeSet::from([
+            ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds,
+            ConcurrencyAssumption::DeclaredFootprintShape,
+            ConcurrencyAssumption::InvariantPredicateDeclared,
+        ])
+    );
+    for forbidden in [
+        ConcurrencyAssumption::GuardFootprintAuthority,
+        ConcurrencyAssumption::SynchronizedCustodyEdges,
+    ] {
+        assert!(!certificate.assumptions.contains(&forbidden));
+        let mut forged = certificate.clone();
+        forged.assumptions.insert(forbidden);
+        let errors = recheck_mutex_invariant_certificate(&program, &forged)
+            .expect_err("forged premise must be refused");
+        assert!(
+            errors.contains(&CertificateRecheckError::ForbiddenAssumption {
+                assumption: forbidden
+            }),
+            "{errors:?}"
+        );
+    }
+    let names = certificate.assumption_names();
+    assert!(!names.contains("GuardFootprintAuthority"));
+    assert!(!names.contains("SynchronizedCustodyEdges"));
+    assert_eq!(
+        names,
+        BTreeSet::from([
+            "DeclaredFootprintShape",
+            "InitialAuthorityAndUniqueLifetimeIds",
+            "InvariantPredicateDeclared",
+        ])
+    );
+}
+
+#[test]
+fn recheck_refuses_a_certificate_whose_program_no_longer_checks() {
+    let (_, certificate) = certified();
+    let broken = control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        access(0, fp(0, 4), AccessKind::Write, Some(10)),
+        unlock(0, 10),
+    ]);
+    let errors = recheck_mutex_invariant_certificate(&broken, &certificate)
+        .expect_err("a refused program cannot carry a certificate");
+    assert!(matches!(
+        errors.as_slice(),
+        [CertificateRecheckError::ProgramRejected(_)]
+    ));
+}
+
+// ---------------------------------------------------------------------------
+// Acceptance 4 — pointwise share conservation.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn conservation_is_verified_before_and_after_every_event() {
+    let (program, certificate) = certified();
+    assert_eq!(
+        certificate.conservation_checkpoints,
+        program.events.len() + 1
+    );
+    assert_eq!(certificate.checked_events, program.events.len());
+}
+
+#[test]
+fn partial_parking_is_refused() {
+    // The creator holds half the share, so creation cannot park FULL_ACCESS.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![
+            ShareGrant {
+                task: 0,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS / 2,
+            },
+            ShareGrant {
+                task: 0,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS / 2,
+            },
+        ],
+        events: vec![create(0, 1, vec![fp(0, 8)]), destroy_mutex(0, 1)],
+        ..Default::default()
+    };
+    // Two grants to the same task do sum to FULL_ACCESS and are accepted.
+    assert!(check_mutex_invariant_program(&program).is_ok());
+
+    let split = MutexInvariantProgram {
+        initial_shares: vec![
+            ShareGrant {
+                task: 0,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS / 2,
+            },
+            ShareGrant {
+                task: 1,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS / 2,
+            },
+        ],
+        events: vec![create(0, 1, vec![fp(0, 8)])],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&split),
+        vec![MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+            event: Some(0),
+            resource: RESOURCE
+        }]
+    );
+}
+
+#[test]
+fn parking_only_part_of_a_declared_interval_is_refused() {
+    // FULL_ACCESS over [0,4) only; the declared interval [0,8) is not fully held.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 4))],
+        events: vec![create(0, 1, vec![fp(0, 8)])],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+            event: Some(0),
+            resource: RESOURCE
+        }]
+    );
+}
+
+#[test]
+fn overcommitted_entry_authority_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(1, fp(0, 8))],
+        events: vec![],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+            event: None,
+            resource: RESOURCE
+        }]
+    );
+}
+
+#[test]
+fn only_the_parking_task_may_receive_the_parked_share_back() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(1, 1),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+            event: Some(2),
+            resource: RESOURCE
+        }]
+    );
+}
+
+#[test]
+fn parked_authority_is_removed_from_and_returned_to_the_creator() {
+    // While parked, the creator has no share left to authorize an unguarded
+    // read; after destruction the same read is authorized again.
+    let parked = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            destroy_mutex(0, 1),
+            access(0, fp(0, 4), AccessKind::Write, None),
+        ],
+        ..Default::default()
+    };
+    assert!(check_mutex_invariant_program(&parked).is_ok());
+}
+
+// ---------------------------------------------------------------------------
+// Derived synchronization witnesses.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn derived_spawn_and_join_edges_are_admitted_and_recorded() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, other_fp(0, 8))],
+        initial_custody: BTreeMap::from([(OTHER, 0)]),
+        events: vec![
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: OTHER,
+                via: SyncWitness::SpawnEdge { child: 1 },
+            },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::TransferCustody {
+                from: 1,
+                to: 0,
+                resource: OTHER,
+                via: SyncWitness::JoinEdge { child: 1 },
+            },
+        ],
+    };
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    assert_eq!(
+        certificate.derived_sync_edges,
+        vec![
+            DerivedSyncEdge {
+                event: 1,
+                from: 0,
+                to: 1,
+                resource: OTHER,
+                witness: SyncWitness::SpawnEdge { child: 1 },
+            },
+            DerivedSyncEdge {
+                event: 3,
+                from: 1,
+                to: 0,
+                resource: OTHER,
+                witness: SyncWitness::JoinEdge { child: 1 },
+            },
+        ]
+    );
+    assert!(
+        !certificate
+            .assumptions
+            .contains(&ConcurrencyAssumption::SynchronizedCustodyEdges)
+    );
+}
+
+#[test]
+fn a_forged_spawn_witness_is_refused() {
+    // Task 2 never spawned task 1, so the named edge is absent from the
+    // checker's own history and the transfer is refused.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, other_fp(0, 8))],
+        initial_custody: BTreeMap::from([(OTHER, 1)]),
+        events: vec![
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 2,
+            },
+            MutexInvariantEvent::TransferCustody {
+                from: 1,
+                to: 2,
+                resource: OTHER,
+                via: SyncWitness::SpawnEdge { child: 2 },
+            },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 2,
+            },
+        ],
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::ForgedSynchronizationWitness {
+            event: 2,
+            resource: OTHER
+        }]
+    );
+}
+
+#[test]
+fn a_mutex_handoff_witness_requires_the_protecting_mutex() {
+    // Mutex 1 protects RESOURCE; mutex 2 protects OTHER. A release/acquire pair
+    // on mutex 1 does not publish OTHER.
+    let events = |witness: SyncWitness| {
+        vec![
+            create(0, 1, vec![fp(0, 8)]),
+            create(0, 2, vec![other_fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            lock(0, 1, 10),
+            unlock(0, 10),
+            lock(1, 1, 11),
+            unlock(1, 11),
+            MutexInvariantEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: OTHER,
+                via: witness,
+            },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ]
+    };
+    let unrelated = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        initial_custody: BTreeMap::from([(OTHER, 0)]),
+        events: events(SyncWitness::MutexHandoff { mutex: 1 }),
+    };
+    assert_eq!(
+        refusals(&unrelated),
+        vec![MutexInvariantDiagnostic::ForgedSynchronizationWitness {
+            event: 7,
+            resource: OTHER
+        }]
+    );
+    // Naming a mutex that protects OTHER but was never released by `from`
+    // is equally underivable.
+    let unreleased = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        initial_custody: BTreeMap::from([(OTHER, 0)]),
+        events: events(SyncWitness::MutexHandoff { mutex: 2 }),
+    };
+    assert_eq!(
+        refusals(&unreleased),
+        vec![MutexInvariantDiagnostic::ForgedSynchronizationWitness {
+            event: 7,
+            resource: OTHER
+        }]
+    );
+}
+
+#[test]
+fn a_derived_mutex_handoff_over_the_protecting_mutex_is_admitted() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        initial_custody: BTreeMap::from([(RESOURCE, 0)]),
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            lock(0, 1, 10),
+            unlock(0, 10),
+            lock(1, 1, 11),
+            unlock(1, 11),
+            MutexInvariantEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: RESOURCE,
+                via: SyncWitness::MutexHandoff { mutex: 1 },
+            },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            destroy_mutex(0, 1),
+        ],
+    };
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    assert_eq!(
+        certificate.derived_sync_edges,
+        vec![DerivedSyncEdge {
+            event: 6,
+            from: 0,
+            to: 1,
+            resource: RESOURCE,
+            witness: SyncWitness::MutexHandoff { mutex: 1 },
+        }]
+    );
+}
+
+#[test]
+fn conflicting_unordered_accesses_to_an_unprotected_footprint_race() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, other_fp(0, 8)), full(1, other_fp(0, 8))],
+        events: vec![
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            access(1, other_fp(0, 4), AccessKind::Write, None),
+            access(0, other_fp(0, 4), AccessKind::Write, None),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+        ],
+        ..Default::default()
+    };
+    let diagnostics = refusals(&program);
+    assert!(
+        diagnostics.iter().any(|d| matches!(
+            d,
+            MutexInvariantDiagnostic::DataRace {
+                first: 1,
+                second: 2
+            }
+        )),
+        "{diagnostics:?}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Explicit refusals: fixed shape and unsupported synchronization.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn the_protected_shape_cannot_be_changed_after_creation() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 4)]),
+            MutexInvariantEvent::ExtendProtection {
+                task: 0,
+                mutex: 1,
+                footprint: fp(4, 8),
+            },
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    let diagnostics = refusals(&program);
+    assert_eq!(
+        diagnostics,
+        vec![MutexInvariantDiagnostic::DynamicProtectedShape { event: 1, mutex: 1 }]
+    );
+    assert_eq!(codes(&diagnostics), vec!["Q618"]);
+}
+
+#[test]
+fn unsupported_synchronization_constructs_are_refused_not_approximated() {
+    for construct in [
+        UnsupportedSynchronization::ConditionVariable,
+        UnsupportedSynchronization::TryLock,
+        UnsupportedSynchronization::TimedLock,
+        UnsupportedSynchronization::ReaderWriterLock,
+        UnsupportedSynchronization::UpgradeableGuard,
+        UnsupportedSynchronization::NestedProtectingMutex,
+        UnsupportedSynchronization::RecursiveAcquisition,
+        UnsupportedSynchronization::LockRankDeclaration,
+        UnsupportedSynchronization::CompletionCapsuleComposition,
+    ] {
+        let program = MutexInvariantProgram {
+            events: vec![MutexInvariantEvent::UnsupportedConstruct { task: 0, construct }],
+            ..Default::default()
+        };
+        assert_eq!(
+            refusals(&program),
+            vec![
+                MutexInvariantDiagnostic::UnsupportedSynchronizationConstruct {
+                    event: 0,
+                    construct
+                }
+            ]
+        );
+    }
+}
+
+#[test]
+fn recursive_acquisition_of_one_generation_is_refused() {
+    let program = control(vec![lock(0, 1, 10), lock(0, 1, 11), unlock(0, 10)]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::DuplicateLockCapability { event: 2, mutex: 1 }]
+    );
+}
+
+#[test]
+fn a_scope_with_an_outstanding_guard_or_mutex_is_refused() {
+    let unfinished = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![create(0, 1, vec![fp(0, 8)]), lock(0, 1, 10)],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&unfinished),
+        vec![
+            MutexInvariantDiagnostic::OutstandingGuard { guard: 10 },
+            MutexInvariantDiagnostic::OutstandingMutex { mutex: 1 },
+        ]
+    );
+}
+
+#[test]
+fn joining_while_holding_a_guard_is_refused() {
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            lock(0, 1, 10),
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 3, task: 0 }]
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Diagnostic vocabulary.
+// ---------------------------------------------------------------------------
+
+/// The fourteen named refusals of this profile occupy exactly `Q610`-`Q623`,
+/// the range that was free when this module was written. `Q600` stays the code
+/// of the structural refusals carried over from the bounded concurrency model.
+#[test]
+fn named_refusals_occupy_the_free_q610_to_q623_range() {
+    let named: Vec<(MutexInvariantDiagnostic, &'static str)> = vec![
+        (
+            MutexInvariantDiagnostic::UnprotectedFootprint { event: 0, guard: 0 },
+            "Q610",
+        ),
+        (
+            MutexInvariantDiagnostic::UnguardedProtectedAccess { event: 0, mutex: 0 },
+            "Q611",
+        ),
+        (
+            MutexInvariantDiagnostic::WrongGuardAffinity {
+                event: 0,
+                guard: 0,
+                task: 0,
+            },
+            "Q612",
+        ),
+        (
+            MutexInvariantDiagnostic::InvariantOpenAtUnlock { event: 0, guard: 0 },
+            "Q613",
+        ),
+        (
+            MutexInvariantDiagnostic::InvariantOpenAtErrorExit { event: 0, guard: 0 },
+            "Q614",
+        ),
+        (
+            MutexInvariantDiagnostic::GuardBorrowEscape {
+                event: 0,
+                guard: 0,
+                borrow: 0,
+            },
+            "Q615",
+        ),
+        (
+            MutexInvariantDiagnostic::StaleProtectedFact { event: 0, fact: 0 },
+            "Q616",
+        ),
+        (
+            MutexInvariantDiagnostic::FootprintAlreadyProtected { event: 0, mutex: 0 },
+            "Q617",
+        ),
+        (
+            MutexInvariantDiagnostic::DynamicProtectedShape { event: 0, mutex: 0 },
+            "Q618",
+        ),
+        (
+            MutexInvariantDiagnostic::NonquiescentMutexDestruction { event: 0, mutex: 0 },
+            "Q619",
+        ),
+        (
+            MutexInvariantDiagnostic::ForgedSynchronizationWitness {
+                event: 0,
+                resource: 0,
+            },
+            "Q620",
+        ),
+        (
+            MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+                event: None,
+                resource: 0,
+            },
+            "Q621",
+        ),
+        (
+            MutexInvariantDiagnostic::UnsupportedSynchronizationConstruct {
+                event: 0,
+                construct: UnsupportedSynchronization::ConditionVariable,
+            },
+            "Q622",
+        ),
+        (
+            MutexInvariantDiagnostic::DeadMutexGeneration { event: 0, mutex: 0 },
+            "Q623",
+        ),
+    ];
+    assert_eq!(named.len(), 14);
+    for (diagnostic, code) in &named {
+        assert_eq!(diagnostic.code(), *code, "{diagnostic:?}");
+    }
+    // The affinity and invariant-phase families share their code.
+    assert_eq!(
+        MutexInvariantDiagnostic::DeadGuard { event: 0, guard: 0 }.code(),
+        "Q612"
+    );
+    for member in [
+        MutexInvariantDiagnostic::DoubleOpenInvariant { event: 0, guard: 0 },
+        MutexInvariantDiagnostic::WriteWithClosedInvariant { event: 0, guard: 0 },
+        MutexInvariantDiagnostic::InvalidInvariantWitness { event: 0, guard: 0 },
+    ] {
+        assert_eq!(member.code(), "Q613");
+    }
+    // Structural refusals keep the existing concurrency pass code.
+    assert_eq!(
+        MutexInvariantDiagnostic::OutstandingMutex { mutex: 0 }.code(),
+        "Q600"
+    );
+    assert_eq!(
+        MutexInvariantDiagnostic::UnauthorizedAccess { event: 0, task: 0 }.code(),
+        "Q600"
+    );
+}
+
+#[test]
+fn an_empty_program_is_accepted_with_no_footprint_premise() {
+    let certificate =
+        check_mutex_invariant_program(&MutexInvariantProgram::default()).expect("accepted");
+    assert_eq!(
+        certificate.assumptions,
+        BTreeSet::from([ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds])
+    );
+    assert_eq!(certificate.conservation_checkpoints, 1);
+    assert!(certificate.protected_shape.is_empty());
+}
