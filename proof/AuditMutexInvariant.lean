@@ -52,3 +52,30 @@ import QCore.MutexInvariant
 
 -- The discharge claim
 #print axioms QCore.Concurrency.MutexInvariant.checked_certificate_omits_trusted_guard_assumptions
+
+/-! T03: the `source.mutex.guard.v1` lowering onto this profile. Source
+extraction remains a premise, and `Event` has no resource-destruction
+constructor, so these cover generation lifetime and critical-section structure
+only. -/
+
+-- The lowering is total and loses nothing
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_length
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_brackets
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_head
+
+-- A lexical guard cannot escape or travel to a child task
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_emits_no_task_event
+#print axioms QCore.Concurrency.MutexInvariant.lowerScope_emits_no_task_event
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_emits_no_refused_construct
+
+-- One authority per critical section, and every generation is destroyed
+#print axioms QCore.Concurrency.MutexInvariant.lowerSection_mints_exactly_its_own_guard
+#print axioms QCore.Concurrency.MutexInvariant.lowerScope_mints_one_guard_per_section
+#print axioms QCore.Concurrency.MutexInvariant.lowerScope_destroys_every_declared_generation
+
+-- What an accepted lowering forces at the section exit
+#print axioms QCore.Concurrency.MutexInvariant.run_append
+#print axioms QCore.Concurrency.MutexInvariant.typed_error_exit_obeys_the_normal_release_rule
+#print axioms QCore.Concurrency.MutexInvariant.lowered_exit_refuses_an_open_invariant
+#print axioms QCore.Concurrency.MutexInvariant.lowered_exit_refuses_a_live_borrow
+#print axioms QCore.Concurrency.MutexInvariant.accepted_section_leaves_no_live_guard

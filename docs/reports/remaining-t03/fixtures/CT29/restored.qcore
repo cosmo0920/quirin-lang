@@ -1,0 +1,14 @@
+error Fault { Broken; }
+
+fn main() -> unit {
+    thread scope s {
+        let buf = protected 4;
+        let m = mutex guards buf;
+        with lock m as g {
+            open g;
+            write buf with g;
+            close g;
+            raise Fault::Broken;
+        }
+    }
+}

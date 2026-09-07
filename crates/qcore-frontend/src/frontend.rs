@@ -1475,6 +1475,15 @@ impl<'a> SourceParser<'a> {
                     | "thread"
                     | "footprint"
                     | "with"
+                    // Statement leaders of the checked mutex-guard profile.
+                    // A structured statement's body ends where the next
+                    // statement begins, so every leader must be listed here or
+                    // `last_top_level_block` would run past an intervening
+                    // statement and claim a later block as the body.
+                    | "open"
+                    | "close"
+                    | "read"
+                    | "write"
             )
         )
     }
@@ -2115,6 +2124,15 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "range"
             | "with"
             | "lock"
+            // Checked mutex-guard profile keywords. Reserving them keeps
+            // `mutex`, `guards`, `protected`, `close` and `borrow` out of name
+            // resolution, exactly as `lock`, `open`, `read` and `write` already
+            // are.
+            | "mutex"
+            | "guards"
+            | "protected"
+            | "close"
+            | "borrow"
             | "spawn"
             | "join"
             | "copy"

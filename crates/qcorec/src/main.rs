@@ -116,6 +116,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::ScopedCopyTasksV1 => {
                     "; scoped copy tasks (Linux C11)"
                 }
+                qcore_compiler::SourceExecutionProfile::CheckedMutexGuardsV1 => {
+                    "; checked mutex guards (Linux C11)"
+                }
                 _ => "",
             };
             println!(

@@ -18,6 +18,7 @@ pub mod executable_model;
 pub mod index;
 pub mod inference;
 pub mod library_custody;
+pub mod mutex_c_emit;
 pub mod mutex_invariant;
 pub mod native_concurrency;
 pub mod ownership;
