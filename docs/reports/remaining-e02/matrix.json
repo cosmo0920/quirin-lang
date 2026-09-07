@@ -1,0 +1,606 @@
+{
+  "schema_version": 1,
+  "card": "E02",
+  "workstream": "W3",
+  "mode": "verify_or_extend",
+  "date": "2026-09-07",
+  "capability": {
+    "name": "ChunkIO Boolean-field source contract",
+    "verifier_capability": "ResourceContracts",
+    "obligation_property": "BooleanFieldContract",
+    "semantic_profile": "qcore.c_boolean_field_contract.v2",
+    "source_importer": "crates/qcore-c-gateway/src/boolean_source.rs",
+    "task_derivation": "crates/qcore-verification/src/source_effect.rs",
+    "witness_checker": "BooleanFieldSourceTask (impl WitnessChecker)",
+    "firewall": "crates/qcore-verifier-host/src/lib.rs (verify_v2, check_evidence_v2)"
+  },
+  "verdict_vocabulary_note": "Every 'reject' below means the proposal is refused and the obligation remains Unknown. No row promotes anything; no raw Cycle 19 unit is promoted by this card.",
+  "totals": {
+    "rows": 52,
+    "passed": 52,
+    "repaired": 0,
+    "accepted_mutations": 0,
+    "rows_new_here": 42,
+    "rows_cited_to_existing_tests": 10,
+    "tests_added": 11
+  },
+  "rows": [
+    {
+      "row": "1.1",
+      "group": "changed inputs",
+      "mutation": "raw source bytes of the translation unit change",
+      "expected": "task digest changes; the prior witness is refused",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::actual_source_build_and_contract_snapshots_separate_tasks"
+    },
+    {
+      "row": "1.2",
+      "group": "changed inputs",
+      "mutation": "request carries the source projection of a different import of the SAME function",
+      "expected": "QP001 (source projection is not bound to the core task)",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::substituted_source_projections_and_declared_assumptions_reject"
+    },
+    {
+      "row": "1.3",
+      "group": "changed inputs",
+      "mutation": "request omits the source projection under a BooleanFieldContract obligation",
+      "expected": "QP001 (request validation)",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::substituted_source_projections_and_declared_assumptions_reject"
+    },
+    {
+      "row": "1.4",
+      "group": "changed inputs",
+      "mutation": "used header changes the effective preprocessing input; source bytes and checked paths unchanged",
+      "expected": "task digest changes; each task refuses the other's witness",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::a_changed_header_expansion_retires_the_prior_task_and_its_witness"
+    },
+    {
+      "row": "1.5",
+      "group": "changed inputs",
+      "mutation": "used header changes in the configured audit route",
+      "expected": "recorded compile-task identity is invalidated; Safe becomes Unknown",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-audit/tests/configured_cli.rs::a_used_header_change_invalidates_the_recorded_compile_task_identity"
+    },
+    {
+      "row": "1.6",
+      "group": "changed inputs",
+      "mutation": "ordered preprocessing options (include classes, -D/-U order, frontend flags) change while the output is identical",
+      "expected": "ten distinct task digests; every cross-witness refused",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical"
+    },
+    {
+      "row": "1.7",
+      "group": "changed inputs",
+      "mutation": "compiler, target, dialect, working directory or ordered argument vector changes",
+      "expected": "compile-task identity changes",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-audit/tests/compile_task_identity.rs::identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effective_input"
+    },
+    {
+      "row": "1.8",
+      "group": "changed inputs",
+      "mutation": "declared assumptions of the core task change",
+      "expected": "the checker refuses the substituted task",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::actual_source_build_and_contract_snapshots_separate_tasks"
+    },
+    {
+      "row": "1.9",
+      "group": "changed inputs",
+      "mutation": "proposal reports an assumption set with one added / one removed / one flipped entry",
+      "expected": "QP009 for each; control with the honest set certifies",
+      "actual": "QP009 x3; control Safe",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::substituted_source_projections_and_declared_assumptions_reject"
+    },
+    {
+      "row": "1.10",
+      "group": "changed inputs",
+      "mutation": "declared profile assumptions inside the witness record are cleared or substituted",
+      "expected": "refused",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::forged_paths_frames_and_source_assumptions_are_rejected"
+    },
+    {
+      "row": "1.11",
+      "group": "import coverage",
+      "mutation": "analyzed function scope changes (PreprocessedTranslationUnit vs MainSourceDefinitions) with a byte-identical schema record",
+      "expected": "configuration digest and task digest change; each task refuses the other's witness and still discharges its own",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::analyzed_scope_and_imported_function_set_retire_the_task_and_its_witness"
+    },
+    {
+      "row": "1.12",
+      "group": "import coverage",
+      "mutation": "the imported function set widens with a definition the grammar refuses; the checked function's paths are unchanged",
+      "expected": "the refused definition stays in the inventory AND the checked function's task retires",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::analyzed_scope_and_imported_function_set_retire_the_task_and_its_witness"
+    },
+    {
+      "row": "1.13",
+      "group": "version fields",
+      "mutation": "task_version incremented",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.14",
+      "group": "version fields",
+      "mutation": "task evidence_version downgraded to 1",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.15",
+      "group": "version fields",
+      "mutation": "obligation evidence_version downgraded to 1",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.16",
+      "group": "version fields",
+      "mutation": "request negotiates evidence_version 3",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.17",
+      "group": "version fields",
+      "mutation": "source projection schema_version changed from 2 to 3",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.18",
+      "group": "version fields",
+      "mutation": "provider manifest does not declare evidence version 2",
+      "expected": "QP004; the firewall is never reached",
+      "actual": "QP004, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "1.19",
+      "group": "obligation identifiers",
+      "mutation": "right count, foreign vector: the obligation of another checked function of the same translation unit",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::mismatched_permuted_and_foreign_obligation_identifiers_reject"
+    },
+    {
+      "row": "1.20",
+      "group": "obligation identifiers",
+      "mutation": "right count, invented identifier on an otherwise honest obligation",
+      "expected": "QP001",
+      "actual": "QP001, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::mismatched_permuted_and_foreign_obligation_identifiers_reject"
+    },
+    {
+      "row": "1.21",
+      "group": "obligation identifiers",
+      "mutation": "widened two-obligation vector (this function's plus another's), request rebuilt to match",
+      "expected": "QP001, and the core checker independently refuses a task it did not derive",
+      "actual": "QP001 and checker Err",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::mismatched_permuted_and_foreign_obligation_identifiers_reject"
+    },
+    {
+      "row": "1.22",
+      "group": "obligation identifiers",
+      "mutation": "permuted obligation vector (same ids, swapped order)",
+      "expected": "QP001, and the core checker refuses",
+      "actual": "QP001 and checker Err",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::mismatched_permuted_and_foreign_obligation_identifiers_reject"
+    },
+    {
+      "row": "1.23",
+      "group": "obligation identifiers",
+      "mutation": "coverage set carries the other function's real obligation identifier with this function's honest witness",
+      "expected": "QP009; the obligation stays in the core inventory",
+      "actual": "QP009, Unknown, obligation unchanged",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::mismatched_permuted_and_foreign_obligation_identifiers_reject"
+    },
+    {
+      "row": "1.24",
+      "group": "obligation identifiers",
+      "mutation": "coverage omitted / one identifier substituted / an invented identifier added",
+      "expected": "QP009 for each; composition stays Unknown",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect_obligations.rs::a_provider_cannot_remove_or_substitute_a_requested_obligation"
+    },
+    {
+      "row": "2.1",
+      "group": "evidence set",
+      "mutation": "empty coverage set for a nonempty obligation inventory",
+      "expected": "QP009",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect_obligations.rs::a_provider_cannot_remove_or_substitute_a_requested_obligation"
+    },
+    {
+      "row": "2.2",
+      "group": "evidence set",
+      "mutation": "Safe verdict with the evidence field omitted entirely",
+      "expected": "QP008",
+      "actual": "QP008, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_duplicated_witness_never_covers_a_second_obligation"
+    },
+    {
+      "row": "2.3",
+      "group": "evidence set",
+      "mutation": "one certificate for a two-obligation inventory (witness omitted for the second obligation)",
+      "expected": "QP011 naming one uncovered obligation",
+      "actual": "QP011, Unknown",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_duplicated_witness_never_covers_a_second_obligation"
+    },
+    {
+      "row": "2.4",
+      "group": "evidence set",
+      "mutation": "one witness whose coverage set claims BOTH obligation identifiers",
+      "expected": "QP009; duplication is not coverage",
+      "actual": "QP009, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_duplicated_witness_never_covers_a_second_obligation"
+    },
+    {
+      "row": "2.5",
+      "group": "evidence set",
+      "mutation": "the same core certificate submitted twice at composition against a two-obligation inventory",
+      "expected": "QP011; the union of coverages is one identifier, not two",
+      "actual": "QP011 with '1 core-derived obligation(s) are not covered'",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_duplicated_witness_never_covers_a_second_obligation"
+    },
+    {
+      "row": "2.6",
+      "group": "evidence set",
+      "mutation": "one function's honest witness reused for the other function's request",
+      "expected": "QP009; composition stays Unknown",
+      "actual": "QP009, then composition Unknown",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_duplicated_witness_never_covers_a_second_obligation"
+    },
+    {
+      "row": "2.7",
+      "group": "forged witness",
+      "mutation": "another function's real, well-formed paths spliced into this function's record, left bound to its own task",
+      "expected": "QP009 against the original task and against the donor task",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_forged_witness_with_a_recomputed_binding_is_refused_in_both_directions"
+    },
+    {
+      "row": "2.8",
+      "group": "forged witness",
+      "mutation": "the same spliced record REBOUND to the donor function's real task digest (the schema's only recomputable binding)",
+      "expected": "QP009 in both directions; the outermost binding catches it",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_forged_witness_with_a_recomputed_binding_is_refused_in_both_directions"
+    },
+    {
+      "row": "2.9",
+      "group": "forged witness",
+      "mutation": "the same spliced record rebound to an invented 64-hex digest",
+      "expected": "QP009",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::a_forged_witness_with_a_recomputed_binding_is_refused_in_both_directions"
+    },
+    {
+      "row": "2.10",
+      "group": "oversized / degenerate",
+      "mutation": "wire witness with a 0-, 1-, 3- or 512-element path vector",
+      "expected": "bounded deserialization failure, never truncation or padding",
+      "actual": "serde error for each; no panic",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::oversized_and_degenerate_evidence_is_bounded_and_never_panics"
+    },
+    {
+      "row": "2.11",
+      "group": "oversized / degenerate",
+      "mutation": "wire witness with an unknown extra field",
+      "expected": "bounded deserialization failure (deny_unknown_fields)",
+      "actual": "serde error",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::oversized_and_degenerate_evidence_is_bounded_and_never_panics"
+    },
+    {
+      "row": "2.12",
+      "group": "oversized / degenerate",
+      "mutation": "200,000-element branch and write vectors plus 50,000 frame writes",
+      "expected": "QP009 by comparison, no panic, no unbounded work",
+      "actual": "QP009, no panic",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::oversized_and_degenerate_evidence_is_bounded_and_never_panics"
+    },
+    {
+      "row": "2.13",
+      "group": "oversized / degenerate",
+      "mutation": "zero-length task digest, function, source revision, a zero-length dependency entry, and cleared profile assumptions",
+      "expected": "QP009 for each",
+      "actual": "QP009 x5; the checker also refuses each directly",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::oversized_and_degenerate_evidence_is_bounded_and_never_panics"
+    },
+    {
+      "row": "2.14",
+      "group": "oversized / degenerate",
+      "mutation": "coverage set flooded with 5,000 invented identifiers around the real one",
+      "expected": "QP009",
+      "actual": "QP009, no panic",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::oversized_and_degenerate_evidence_is_bounded_and_never_panics"
+    },
+    {
+      "row": "2.15",
+      "group": "evidence version",
+      "mutation": "proposal declares evidence_version 1 or 3 against a version-2 request",
+      "expected": "QP009 in both directions",
+      "actual": "QP009 x2",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject"
+    },
+    {
+      "row": "2.16",
+      "group": "evidence envelope",
+      "mutation": "reproducibility.deterministic = false with an otherwise honest proposal",
+      "expected": "QP009",
+      "actual": "QP009",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::substituted_source_projections_and_declared_assumptions_reject"
+    },
+    {
+      "row": "2.17",
+      "group": "legacy v1 preservation",
+      "mutation": "v1 provider answers Unknown with its own diagnostic",
+      "expected": "PRESERVED: Unknown flows through verbatim, no certificate, no injected QP rejection, never an error",
+      "actual": "Unknown; the provider's diagnostic is the only diagnostic; no QP code",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::legacy_v1_evidence_is_preserved_as_non_certifying"
+    },
+    {
+      "row": "2.18",
+      "group": "legacy v1 preservation",
+      "mutation": "v1 provider answers Safe with a complete, envelope-valid v1 evidence record",
+      "expected": "QP009 terminal v1 refusal; Unknown, never promoted",
+      "actual": "QP009, 'protocol v1 lacks core-derived obligations and capability-specific semantic witnesses'",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::legacy_v1_evidence_is_preserved_as_non_certifying"
+    },
+    {
+      "row": "2.19",
+      "group": "legacy v1 preservation",
+      "mutation": "v1 provider alleges Unsafe",
+      "expected": "QP010 downgrade to Unknown, provider diagnostics retained",
+      "actual": "QP010, Unknown, diagnostics retained",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::legacy_v1_evidence_is_preserved_as_non_certifying"
+    },
+    {
+      "row": "3.1",
+      "group": "semantic witness",
+      "mutation": "a well-formed path set belonging to a DIFFERENT function that satisfies the SAME contract",
+      "expected": "QP009; the obligation stays Unknown; composition Unknown; the donor function certifies on its own",
+      "actual": "QP009, obligation retained, composition Unknown, donor Safe",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::echoed_labels_and_semantically_wrong_paths_leave_the_obligation_unknown"
+    },
+    {
+      "row": "3.2",
+      "group": "semantic witness",
+      "mutation": "assertion text, the Lean theorem family and the verdict label 'Safe' placed in the record's declared assumption map instead of computed paths",
+      "expected": "QP009; echoed strings never substitute for recomputed paths",
+      "actual": "QP009, Unknown, no certificate",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::echoed_labels_and_semantically_wrong_paths_leave_the_obligation_unknown"
+    },
+    {
+      "row": "3.3",
+      "group": "semantic witness",
+      "mutation": "exact honest paths under a falsified postcondition",
+      "expected": "refused: the core independently evaluates the contract",
+      "actual": "as expected",
+      "status": "pass",
+      "new": false,
+      "test": "crates/qcore-verification/tests/source_effect.rs::real_c_prestates_and_contract_are_recomputed"
+    },
+    {
+      "row": "3.4",
+      "group": "semantic witness",
+      "mutation": "positive control: honest witness, honest coverage",
+      "expected": "Safe, after the core recomputes all four Boolean prestates itself",
+      "actual": "Safe",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::echoed_labels_and_semantically_wrong_paths_leave_the_obligation_unknown"
+    },
+    {
+      "row": "4.1",
+      "group": "cached summaries",
+      "mutation": "interleaved imports of two semantically distinct sources (X, Y, X, Y) in one process",
+      "expected": "each result follows its argument, not the call order",
+      "actual": "as expected; re-import is deterministic per input",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::no_summary_or_evidence_cache_survives_a_semantically_changed_input"
+    },
+    {
+      "row": "4.2",
+      "group": "cached summaries",
+      "mutation": "task derivation repeated across a changed contract and back again",
+      "expected": "digests are keyed by arguments; the original digest reappears",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::no_summary_or_evidence_cache_survives_a_semantically_changed_input"
+    },
+    {
+      "row": "4.3",
+      "group": "cached summaries",
+      "mutation": "one registry: admit the honest proposal, then present the SAME witness against the retired task, then re-run the original",
+      "expected": "Safe, then QP009, then Safe — the firewall keeps no per-digest memory",
+      "actual": "as expected",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::no_summary_or_evidence_cache_survives_a_semantically_changed_input"
+    },
+    {
+      "row": "4.4",
+      "group": "cached summaries",
+      "mutation": "static survey for any digest-keyed reuse of prior task results on this route",
+      "expected": "either a cache with an invalidation test, or a recorded 'no cache exists'",
+      "actual": "no cache exists; recorded as the current (safe) state in README §4",
+      "status": "pass",
+      "new": true,
+      "test": "docs/reports/remaining-e02/README.md#4-cached-summaries"
+    },
+    {
+      "row": "5.1",
+      "group": "over-discharge guard",
+      "mutation": "a task with two obligations handed to this capability's checker",
+      "expected": "the checker refuses rather than returning the whole coverage set",
+      "actual": "Err; the guard is now pinned",
+      "status": "pass",
+      "new": true,
+      "test": "crates/qcore-verification/tests/source_effect_mutations.rs::the_capability_derives_exactly_one_obligation_and_refuses_every_other_task"
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "E02-B1",
+      "statement": "Admission of a proposal is not evidence that the provider computed anything. The witness is compared to the core's OWN sealed import and acceptance terminates in the core re-evaluating the contract over all Boolean prestates, so a provider that merely echoes the correct record is admitted. This is by design for this capability - the provider is untrusted and contributes no authority - and is not a soundness gap, but it means no Safe result here may be attributed to provider analysis."
+    },
+    {
+      "id": "E02-B2",
+      "statement": "BooleanFieldSourceTask::check returns the whole coverage set of the task it validated. That is sound only because its own derivation emits exactly one obligation and it refuses every task it did not derive. Row 5.1 pins both halves; a future multi-obligation derivation for this capability must change check to attribute per obligation."
+    },
+    {
+      "id": "E02-B3",
+      "statement": "The witness schema carries no import identity of its own (BooleanSourceIdentity is serde(skip)). Two imports whose schema records are byte-identical therefore have interchangeable witness RECORDS; only the outer core-computed task digest separates them. Rows 2.7-2.9 pin that this outer binding is load-bearing."
+    },
+    {
+      "id": "E02-B4",
+      "statement": "Every row is scoped to the ChunkIO Boolean-field capability (qcore.c_boolean_field_contract.v2). The CMetrics unit-result capability (v3), chunk lifecycle and observation replay each need their own matrix; none is claimed here."
+    },
+    {
+      "id": "E02-B5",
+      "statement": "E01-B1 is unchanged and still open: a definition visible only after macro expansion, or a K&R-style definition, is absent from the raw function enumeration and therefore from the derived inventory. No mutation row repairs it; it never promotes anything."
+    }
+  ],
+  "gates": {
+    "cargo_test_workspace": {
+      "exit": 0,
+      "passed": 861,
+      "failed": 0,
+      "ignored": 0,
+      "baseline": 850,
+      "new": 11
+    },
+    "cargo_fmt_all_check": { "exit": 0 },
+    "cargo_clippy_all_targets_deny_warnings": { "exit": 0 },
+    "reevaluation_probe": { "exit": 0 },
+    "reevaluation_followup": { "exit": 0 },
+    "providers_cargo_test_locked_offline": { "exit": 0, "passed": 46, "failed": 0 },
+    "python_unittest": { "exit": 0, "passed": 43 },
+    "lake_build": { "exit": 0 },
+    "check_lean_audits": { "exit": 0, "audits": 20 },
+    "provider_package_build": { "exit": 0, "output": "build/cycle19/provider-packages-unit" },
+    "cmetrics_prepare": { "exit": 0 },
+    "cmetrics_audit": {
+      "exit": 0,
+      "checked_function_contracts": 1,
+      "unknown_functions": 6,
+      "units": "0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures",
+      "changed_from_baseline": false
+    }
+  },
+  "artifact_parity": {
+    "production_code_changed": false,
+    "files_added": [
+      "crates/qcore-verification/tests/source_effect_mutations.rs",
+      "docs/reports/remaining-e02/"
+    ],
+    "note": "No production source file is touched by this card, so the pinned 185-unit Cycle 19 artifacts, the contract corpus counts, the CT manifest and the submodule pin cannot change. The CMetrics audit was re-run and is unchanged (1 checked / 6 Unknown)."
+  }
+}
