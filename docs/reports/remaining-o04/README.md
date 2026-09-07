@@ -408,3 +408,32 @@ New boundaries this card records:
 | `crates/qcore-c-gateway/tests/c03_neutral_frame_recursion_probe.rs` | one pinned expectation updated deliberately (§5.3) |
 | `proof/QCore/ExitResiduals.lean`, `proof/QCore.lean`, `proof/AuditW4.lean` | new module and its axiom audit |
 | `docs/reports/remaining-o04/` | this record, the two CMetrics reports, the exit ledger |
+
+## 10. Gate results
+
+Run in a **clean temporary worktree** at the branch head `44d4528`, with the
+Libevent submodule initialized, because this card shares its worktree with the
+CT26–CT30 harness-integration lane and a gate result must not be mixed with
+another lane's uncommitted edits.
+
+| Gate | Command | Observed | Exit |
+|---|---|---|---|
+| Workspace tests | `cargo test --workspace` | **1,125 passed / 0 failed / 1 ignored** | 0 |
+| Format | `cargo fmt --all -- --check` | clean | 0 |
+| Clippy | `cargo clippy --all-targets -- -D warnings` | clean | 0 |
+| Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | ran | 0 |
+| Follow-up | `cargo run -p qcore-compiler --example reevaluation_followup` | ran | 0 |
+| Python | `python3 -B -m unittest discover -s scripts/tests` | **43 ran, OK** | 0 |
+| Lean build | `cd proof && lake build` | 67 jobs, completed | 0 |
+| Lean audits | `python3 -B scripts/check_lean_audits.py` | **23 audits passed** | 0 |
+| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | **51 passed / 0 failed** | 0 |
+| Provider fmt | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | clean | 0 |
+| Provider clippy | `cargo clippy --locked --offline --manifest-path providers/Cargo.toml --all-targets -- -D warnings` | clean | 0 |
+| CMetrics audit | `qcore-audit <generated cmetrics config>` | byte-identical to the pre-O04 baseline (§5.1) | 0 |
+| Pinned 185-unit corpus | `cycle19_fluent_bit_libraries_audit --pinned-evidence` | **refused: pin gate** (§5.2) | — |
+
+The card contributes 15 tests: 14 assertions plus one `#[ignore]`d reporting
+aid that regenerates [`logs/exit_ledger.txt`](logs/exit_ledger.txt). The 23 Lean
+audits include one contributed by the CT26–CT30 lane already on this branch;
+this card adds `AuditW4`'s 37 new `QCore.ExitResiduals` theorems to an existing
+audit rather than a new audit file.
