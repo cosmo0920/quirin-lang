@@ -1,0 +1,7 @@
+concurrency checked;
+fn main() -> unit effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(42)?;
+    let answer = qcore_buffer_read(buffer);
+    drop buffer;
+    return answer;
+}

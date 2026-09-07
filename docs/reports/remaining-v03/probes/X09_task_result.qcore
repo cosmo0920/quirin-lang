@@ -1,0 +1,1 @@
+fn main() -> task<i32> { return 0; }

@@ -1,0 +1,2 @@
+fn leaf() -> unit { return; }
+fn main() -> i32 { return leaf(); }

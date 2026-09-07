@@ -1,0 +1,2 @@
+fn helper(x: Widget) -> i32 { drop x; return 0; }
+fn main() -> i32 { return 0; }
