@@ -10,6 +10,23 @@ import QCore.VerifierPlugin
 
 #print axioms QCore.VerifierPlugin.rejected_proposal_is_unknown
 
+-- E03: the multi-provider composition relation.
+#print axioms QCore.VerifierPlugin.Composition.disjoint_certificates_merge
+#print axioms QCore.VerifierPlugin.Composition.duplicate_certificate_still_merges
+#print axioms QCore.VerifierPlugin.Composition.composition_is_never_a_violation
+#print axioms QCore.VerifierPlugin.Composition.alleged_component_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.unknown_component_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.no_outcomes_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.empty_inventory_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.safe_covers_every_required_obligation
+#print axioms QCore.VerifierPlugin.Composition.uncovered_obligation_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.duplicate_certificate_adds_no_coverage
+#print axioms QCore.VerifierPlugin.Composition.duplicate_evidence_cannot_cover_a_missing_obligation
+#print axioms QCore.VerifierPlugin.Composition.distinct_unit_identities_are_unknown
+#print axioms QCore.VerifierPlugin.Composition.distinct_premise_sets_are_unknown
+#print axioms QCore.VerifierPlugin.Composition.safe_premises_are_uniform
+#print axioms QCore.VerifierPlugin.Composition.incomparable_bounds_are_unknown
+
 #print axioms QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory
 #print axioms QCore.VerifierEvidenceV2.accepted_hook_has_recomputed_observation
 #print axioms QCore.VerifierEvidenceV2.incomplete_inventory_rejects
