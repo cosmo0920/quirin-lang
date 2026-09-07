@@ -43,6 +43,8 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition; pure custody is in core and generic model/source imports are in verification |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
+| `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Depends on gateway/contract/schemas/verification/host; links no provider module |
+| `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
 | `contract/qcore/` | Declarative `.qcore` contract corpus (59 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
@@ -53,7 +55,9 @@ parser/model support is not full source-language conformance. Work proceeds in n
 ## Status ledger (do not overstate)
 
 Cycle completion labels describe their bounded milestone evidence, not full
-revision-0.3 source-language conformance. The current workspace has nine crates.
+revision-0.3 source-language conformance. `crates/` holds nine crates; the core
+Cargo workspace declares **ten** members (those nine plus `compiler`), and
+`providers/` is a separate six-member workspace excluded from it.
 
 - **Cycles 1–16: complete.** Sequential language (dimensions, quant axes,
   interval usage grades, ownership, resource flow, typed errors, error-region
@@ -1109,3 +1113,40 @@ effective types remain explicit premises. 937 workspace tests (36 new), 47
 provider tests, 43 Python tests, 20 Lean audits and all standing gates pass.
 CT coverage remains 11/50 mapped and the contract corpus 59 modules. Evidence:
 `docs/reports/remaining-c02/README.md`.
+
+Remaining-work wave accounting (2026-09-07, implementation checkpoint `67b1a9a`,
+which supersedes the halt handoff's `e3e7c2c` for implementation only — that
+handoff's standing instruction not to restart subagents is unchanged): the
+twenty-five cards recorded
+under `docs/reports/remaining-*/` are reconciled into one traceable matrix,
+`docs/reviews/r0_3/acceptance_matrix.json`, with a readable companion at
+`docs/reports/remaining-d02/README.md`. This paragraph supersedes nothing above:
+each card's own record keeps its checkpoint, counts and boundaries. Milestone
+criteria met, at their stated boundaries: the documented checkpoint, submodule
+pin, branch integration, CT inventory, contract corpus and report presence all
+reconcile, and the recorded 819/45/43/20 baseline reproduced exactly before any
+change; the R01–R10 soundness gates were verified adversarially with no
+soundness failure found and no production semantics changed by the V cards;
+source-derived obligation completeness and evidence identity were checked
+against 52 replay/cache mutations and a compile-task identity that retires a
+witness when a used header changes, with zero accepted mutations; the six
+CMetrics Unknown functions are classified into a ranked, corpus-measured blocker
+inventory; one generic blocker family — typed direct scalar-field access — is
+implemented as a conjunctive type-only whitelist with 31 Lean theorems and both
+precision directions exercised; a second pinned source set is audited from
+configuration alone with no analysis-code change; the provider execution profile
+now installs the limits a manifest declares on Linux and refuses rather than
+silently downgrading, with an accurate non-sandbox trust boundary; the CT ledger
+is stage-derived, so no mapped case claims a stage its executed evidence does
+not carry. Nothing is promoted: raw Cycle 19 units remain 2 Safe / 42
+provisional Unsafe / 137 Unknown plus four data-only units, CT coverage remains
+11/50 mapped, the contract corpus remains 59 modules and full language
+conformance remains false. `qcore-schemas` is now 3.0.0 (P02's public
+`PluginLimits::additional` field); prose revision 0.3, plugin protocol v1,
+evidence v2 and program schema/profile v2 are unchanged. Current gate: 997
+workspace tests, 47 provider tests, 43 Python tests, 21 Lean audits, both
+reevaluation examples exit 0, fmt and clippy clean. Named follow-ups: 185-unit
+corpus re-measurement and deliberate re-pinning after C02 and G02; E01-F1
+definition enumeration; C02-P; O04; T03; P03; P01-F2; G03-F1/F2; the L21.1
+reason-code implementation increment; and the T00 stage-derived CT manifest
+schema.

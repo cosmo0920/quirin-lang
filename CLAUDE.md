@@ -864,3 +864,16 @@ effective types remain explicit premises. 937 workspace tests (36 new), 47
 provider tests, 43 Python tests, 20 Lean audits and all standing gates pass.
 CT coverage remains 11/50 mapped and the contract corpus 59 modules. Evidence:
 `docs/reports/remaining-c02/README.md`.
+
+Remaining-work wave accounting (2026-09-07): the wave's twenty-five
+`docs/reports/remaining-*/` cards are reconciled into
+`docs/reviews/r0_3/acceptance_matrix.json` (17 requirements x 4 independently
+marked evidence classes, plus stage-derived CT rows) with a readable companion
+at `docs/reports/remaining-d02/README.md`. AGENTS.md carries the single
+consolidated status paragraph; read it there rather than duplicating it. The
+implementation checkpoint is now `67b1a9a`; the halt handoff's standing
+instruction not to restart subagents is unchanged. Nothing is promoted: raw
+Cycle 19 units stay 2 Safe / 42 provisional Unsafe / 137 Unknown plus four
+data-only units, CT coverage stays 11/50 mapped, the contract corpus stays 59
+modules and full language conformance stays false. `qcore-schemas` is 3.0.0;
+prose revision 0.3, protocol v1 and evidence v2 are unchanged.
