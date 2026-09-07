@@ -30,11 +30,7 @@ pub fn declared_build_profile(profile: LibeventBuildProfile) -> BTreeMap<String,
         ("backend".into(), profile.backend.as_str().to_owned()),
         (
             "threads".into(),
-            profile
-                .threads
-                .as_str()
-                .unwrap_or("disabled")
-                .to_owned(),
+            profile.threads.as_str().unwrap_or("disabled").to_owned(),
         ),
         ("openssl".into(), profile.openssl.to_string()),
         ("debug_mode".into(), profile.debug_mode.to_string()),

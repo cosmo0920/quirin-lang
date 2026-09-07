@@ -126,11 +126,18 @@ fn the_real_package_proposes_callback_inventories_without_granting_authority() {
         other => other.clone(),
     };
     two.operations.insert(2, assignment);
-    two.operations.insert(3, EventOperation::Add { event: second });
     two.operations
-        .insert(two.operations.len() - 1, EventOperation::FreeEvent { event: second });
+        .insert(3, EventOperation::Add { event: second });
+    two.operations.insert(
+        two.operations.len() - 1,
+        EventOperation::FreeEvent { event: second },
+    );
     let two_task = task_for(&two);
-    let response = registry.verify_v2(&two_task.request(plugin()), two_task.task(), Some(&two_task));
+    let response = registry.verify_v2(
+        &two_task.request(plugin()),
+        two_task.task(),
+        Some(&two_task),
+    );
     // Whether this program checks is the model's decision, not the process's.
     // What is pinned here is that the process reads two registrations.
     if let Some(SemanticWitness::ReactorCallback(witness)) =

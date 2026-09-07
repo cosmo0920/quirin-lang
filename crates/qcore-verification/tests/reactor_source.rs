@@ -63,7 +63,10 @@ fn task_for(program: &model::EventProgram<TestProfile>) -> ReactorCallbackTask<T
     ReactorCallbackTask::derive(import, "reactor.c", target()).expect("derives")
 }
 
-fn witness(task: &ReactorCallbackTask<TestProfile>, proposal: ReactorCallbackProposal) -> SemanticWitness {
+fn witness(
+    task: &ReactorCallbackTask<TestProfile>,
+    proposal: ReactorCallbackProposal,
+) -> SemanticWitness {
     SemanticWitness::ReactorCallback(Box::new(ReactorCallbackWitness {
         task_digest: task.task().task_digest(),
         proposal,
@@ -125,9 +128,15 @@ fn the_admitted_family_derives_two_obligations_and_accepts_its_own_inventory() {
     );
 }
 
+/// One named edit to the admitted program.
+type Mutation = (
+    &'static str,
+    Box<dyn Fn(&mut model::EventProgram<TestProfile>)>,
+);
+
 #[test]
 fn unsupported_operations_and_backends_never_import() {
-    let unsupported: Vec<(&str, Box<dyn Fn(&mut model::EventProgram<TestProfile>)>)> = vec![
+    let unsupported: Vec<Mutation> = vec![
         (
             "bufferevent creation",
             Box::new(|program| {
@@ -150,11 +159,12 @@ fn unsupported_operations_and_backends_never_import() {
         (
             "socket pair custody",
             Box::new(|program| {
-                program
-                    .operations
-                    .insert(1, EventOperation::CreateSocketPair {
+                program.operations.insert(
+                    1,
+                    EventOperation::CreateSocketPair {
                         descriptors: Some((3, 4)),
-                    })
+                    },
+                )
             }),
         ),
         (
@@ -451,10 +461,12 @@ fn witness_binding_task_identity_and_kind_are_all_checked() {
     assert!(
         task.check(
             task.task(),
-            &SemanticWitness::ContractObservation(qcore_schemas::witness::ContractObservationWitness {
-                task_digest: task.task().task_digest(),
-                runs: Vec::new(),
-            })
+            &SemanticWitness::ContractObservation(
+                qcore_schemas::witness::ContractObservationWitness {
+                    task_digest: task.task().task_digest(),
+                    runs: Vec::new(),
+                }
+            )
         )
         .is_err()
     );
@@ -472,7 +484,10 @@ fn witness_binding_task_identity_and_kind_are_all_checked() {
     // A task the checker did not derive is refused, even with a real witness.
     let mut foreign = task.task().clone();
     foreign.unit.translation_unit = "other.c".into();
-    assert!(task.check(&foreign, &witness(&task, proposal.clone())).is_err());
+    assert!(
+        task.check(&foreign, &witness(&task, proposal.clone()))
+            .is_err()
+    );
 
     // Changed program bytes, a changed build profile and changed declared
     // assumptions each produce a different task, and the cross-task witness
@@ -492,8 +507,15 @@ fn witness_binding_task_identity_and_kind_are_all_checked() {
             import_reactor_program(&admitted(), &accepted(), changed).expect("admitted family");
         let other = ReactorCallbackTask::derive(import, "reactor.c", target()).expect("derives");
         assert_ne!(other.task().task_digest(), task.task().task_digest());
-        assert!(other.check(other.task(), &witness(&task, proposal.clone())).is_err());
-        assert!(task.check(task.task(), &witness(&other, proposal.clone())).is_err());
+        assert!(
+            other
+                .check(other.task(), &witness(&task, proposal.clone()))
+                .is_err()
+        );
+        assert!(
+            task.check(task.task(), &witness(&other, proposal.clone()))
+                .is_err()
+        );
     }
     // A moved revision must also move the target that binds it.
     let import = import_reactor_program(&admitted(), &accepted(), different_revision)
@@ -556,7 +578,11 @@ fn a_reactor_projection_is_admitted_only_with_its_own_obligation_pair() {
     // An unsupported input version, a dropped obligation, a foreign capability
     // and a co-travelling source projection each fail validation.
     let mut wrong_version = base.clone();
-    wrong_version.reactor_program.as_mut().unwrap().schema_version = 0;
+    wrong_version
+        .reactor_program
+        .as_mut()
+        .unwrap()
+        .schema_version = 0;
     assert!(wrong_version.validate().is_err());
 
     let mut one_obligation = base.clone();

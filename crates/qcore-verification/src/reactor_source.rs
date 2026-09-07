@@ -131,7 +131,9 @@ fn access_kind(value: model::PayloadAccessKind) -> proposal_wire::PayloadAccessK
         model::PayloadAccessKind::Read => proposal_wire::PayloadAccessKindRecord::Read,
         model::PayloadAccessKind::Write => proposal_wire::PayloadAccessKindRecord::Write,
         model::PayloadAccessKind::AtomicRead => proposal_wire::PayloadAccessKindRecord::AtomicRead,
-        model::PayloadAccessKind::AtomicWrite => proposal_wire::PayloadAccessKindRecord::AtomicWrite,
+        model::PayloadAccessKind::AtomicWrite => {
+            proposal_wire::PayloadAccessKindRecord::AtomicWrite
+        }
     }
 }
 
@@ -192,12 +194,12 @@ fn operation<P>(
             priority: *priority,
             summary: summary(callback),
         },
-        model::EventOperation::Add { event: key } => ReactorOperationRecord::Add {
-            event: event(*key),
-        },
-        model::EventOperation::Reschedule { event: key } => ReactorOperationRecord::Reschedule {
-            event: event(*key),
-        },
+        model::EventOperation::Add { event: key } => {
+            ReactorOperationRecord::Add { event: event(*key) }
+        }
+        model::EventOperation::Reschedule { event: key } => {
+            ReactorOperationRecord::Reschedule { event: event(*key) }
+        }
         model::EventOperation::Activate {
             event: key,
             reason: value,
@@ -214,9 +216,9 @@ fn operation<P>(
             event: event(*key),
             reason: reason(*value),
         },
-        model::EventOperation::CallbackExit { event: key } => ReactorOperationRecord::CallbackExit {
-            event: event(*key),
-        },
+        model::EventOperation::CallbackExit { event: key } => {
+            ReactorOperationRecord::CallbackExit { event: event(*key) }
+        }
         model::EventOperation::Delete { event: key, mode } => ReactorOperationRecord::Delete {
             event: event(*key),
             mode: match mode {
@@ -225,12 +227,12 @@ fn operation<P>(
                 model::DeleteMode::Nonblocking => DeleteModeRecord::Nonblocking,
             },
         },
-        model::EventOperation::Finalize { event: key } => ReactorOperationRecord::Finalize {
-            event: event(*key),
-        },
-        model::EventOperation::FreeEvent { event: key } => ReactorOperationRecord::FreeEvent {
-            event: event(*key),
-        },
+        model::EventOperation::Finalize { event: key } => {
+            ReactorOperationRecord::Finalize { event: event(*key) }
+        }
+        model::EventOperation::FreeEvent { event: key } => {
+            ReactorOperationRecord::FreeEvent { event: event(*key) }
+        }
         model::EventOperation::Access {
             context,
             payload,
@@ -238,11 +240,15 @@ fn operation<P>(
             synchronized,
         } => ReactorOperationRecord::Access {
             context: match context {
-                model::CallbackContext::Event(key) => CallbackContextRecord::Event {
-                    event: event(*key),
-                },
-                model::CallbackContext::Caller(id) => CallbackContextRecord::Caller { context: *id },
-                model::CallbackContext::Worker(id) => CallbackContextRecord::Worker { context: *id },
+                model::CallbackContext::Event(key) => {
+                    CallbackContextRecord::Event { event: event(*key) }
+                }
+                model::CallbackContext::Caller(id) => {
+                    CallbackContextRecord::Caller { context: *id }
+                }
+                model::CallbackContext::Worker(id) => {
+                    CallbackContextRecord::Worker { context: *id }
+                }
                 model::CallbackContext::Bufferevent(_) => {
                     return Err(ReactorImportError::UnsupportedAccessContext(index));
                 }
@@ -254,7 +260,9 @@ fn operation<P>(
         model::EventOperation::DropArgument { argument } => ReactorOperationRecord::DropArgument {
             argument: *argument,
         },
-        model::EventOperation::FreeBase { base } => ReactorOperationRecord::FreeBase { base: *base },
+        model::EventOperation::FreeBase { base } => {
+            ReactorOperationRecord::FreeBase { base: *base }
+        }
         _ => return Err(ReactorImportError::UnsupportedOperation(index)),
     })
 }

@@ -143,7 +143,9 @@ fn target() -> TargetProfile {
     }
 }
 
-fn imported(program: &EventProgram) -> Result<
+fn imported(
+    program: &EventProgram,
+) -> Result<
     qcore_verification::reactor_source::ReactorProgramImport<LibeventBuildProfile>,
     ReactorImportError,
 > {
@@ -163,7 +165,10 @@ fn both_routes_decide_the_same_programs_identically() {
     // callback arguments and the whole observed trace.
     for (label, program) in [
         ("one-shot read callback", one_shot(1, key(1), 9)),
-        ("persistent callback with blocking delete", persistent_with_delete()),
+        (
+            "persistent callback with blocking delete",
+            persistent_with_delete(),
+        ),
     ] {
         let in_process = check_event_program(&program, builds())
             .unwrap_or_else(|d| panic!("{label} must check in process: {d:?}"));
@@ -174,7 +179,8 @@ fn both_routes_decide_the_same_programs_identically() {
             .unwrap_or_else(|d| panic!("{label} must check on the portable route: {d:?}"));
         assert_eq!(in_process, portable, "certificate parity for {label}");
         assert_eq!(
-            in_process.checked_operations, program.operations.len(),
+            in_process.checked_operations,
+            program.operations.len(),
             "every operation is checked for {label}"
         );
         assert_eq!(
@@ -241,8 +247,14 @@ fn programs_the_in_process_route_refuses_are_refused_on_both_routes() {
     };
     for (label, program) in [
         ("a stale event generation", stale_generation),
-        ("a payload access the summary never authorized", unauthorized_access),
-        ("a callback argument dropped while still pending", argument_use_after_free),
+        (
+            "a payload access the summary never authorized",
+            unauthorized_access,
+        ),
+        (
+            "a callback argument dropped while still pending",
+            argument_use_after_free,
+        ),
         ("teardown without callback quiescence", unquiescent_teardown),
     ] {
         assert!(
@@ -252,8 +264,7 @@ fn programs_the_in_process_route_refuses_are_refused_on_both_routes() {
         match imported(&program) {
             Err(_) => {}
             Ok(import) => {
-                let task =
-                    libevent_callback_task(import, "reactor.c", target()).expect("derives");
+                let task = libevent_callback_task(import, "reactor.c", target()).expect("derives");
                 assert!(task.evaluate().is_err(), "{label} must be refused portably");
                 assert!(
                     task.check(
@@ -293,14 +304,7 @@ fn an_unaccepted_build_stays_unknown_on_both_routes() {
     let admitted = one_shot(1, key(1), 9);
     assert!(check_event_program(&admitted, &[]).is_err());
     assert!(
-        import_libevent_program(
-            &admitted,
-            &[],
-            "libevent",
-            "d82464a2",
-            BTreeMap::new(),
-        )
-        .is_err()
+        import_libevent_program(&admitted, &[], "libevent", "d82464a2", BTreeMap::new(),).is_err()
     );
 }
 
@@ -325,7 +329,9 @@ fn the_declared_build_profile_identifies_the_backend_and_threading_mode() {
     assert_ne!(first.task().task_digest(), second.task().task_digest());
     assert_ne!(sha256_hex(b""), first.task().task_digest());
     assert_eq!(
-        first.request(PluginId::new("qcore.libevent").unwrap()).capability,
+        first
+            .request(PluginId::new("qcore.libevent").unwrap())
+            .capability,
         VerifierCapability::EventTraces
     );
 }

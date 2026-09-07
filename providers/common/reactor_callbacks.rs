@@ -276,8 +276,18 @@ mod tests {
             mutate(&|p| p.operations = vec![p.operations[2].clone(); MAX_OPERATIONS + 1]).is_none()
         );
         // The parent custody boundary: base created first, freed last, once.
-        assert!(mutate(&|p| { p.operations.remove(0) }).is_none());
-        assert!(mutate(&|p| { p.operations.pop(); }).is_none());
+        assert!(
+            mutate(&|p| {
+                p.operations.remove(0);
+            })
+            .is_none()
+        );
+        assert!(
+            mutate(&|p| {
+                p.operations.pop();
+            })
+            .is_none()
+        );
         assert!(
             mutate(&|p| p.operations[0] = ReactorOperationRecord::CreateBase { base: 2 }).is_none()
         );
@@ -313,7 +323,12 @@ mod tests {
             .is_none()
         );
         // No assignment at all, and an assignment that is never deregistered.
-        assert!(mutate(&|p| { p.operations.remove(1) }).is_none());
+        assert!(
+            mutate(&|p| {
+                p.operations.remove(1);
+            })
+            .is_none()
+        );
         assert!(
             mutate(&|p| p
                 .operations
@@ -329,9 +344,7 @@ mod tests {
         let program = one_shot();
         assert!(derive_inventory(&program).is_some());
         let mut wrong = program.clone();
-        wrong.operations[1] = ReactorOperationRecord::Add {
-            event: event(1, 1),
-        };
+        wrong.operations[1] = ReactorOperationRecord::Add { event: event(1, 1) };
         assert!(derive_inventory(&wrong).is_none());
     }
 }
