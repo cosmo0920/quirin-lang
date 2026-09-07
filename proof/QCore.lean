@@ -51,6 +51,7 @@ import QCore.UsageDemand
 import QCore.WholeProgram
 import QCore.Compiler
 import QCore.Concurrency
+import QCore.LifetimeCorrespondence
 import QCore.MutexInvariant
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
