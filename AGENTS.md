@@ -984,3 +984,46 @@ artifacts, contract corpus counts and CT coverage are untouched. Evidence:
 `docs/reports/remaining-e02/README.md`. Other capabilities' matrices,
 out-of-process transport bounds and E01-B1's enumeration gap remain open; no
 verdict changes and no raw unit is promoted.
+
+Typed scalar-field access classification (2026-09-07): W4 replaces the lexical
+indirect-access gate with a typed premise for one conjunctive whitelist. A
+statement is a resource-projection no-op only when it carries no call, no `&`,
+`*`, `[` or `]`, every access is a direct `base -> field` or `base . field` on a
+declared single-star record pointer or record value, the record is a `struct`
+defined exactly once whose every member declaration was read, the field's
+declared type is a non-pointer, non-array arithmetic or enumeration type without
+`volatile` or `_Atomic`, the access does not continue, every other identifier is
+an enumeration constant or a declared scalar variable, and the base is a name
+this function never binds to a resource identity. That last premise was added
+after an implementation of C00's recommendation turned a read through a released
+pointer into `Safe`; the existing fail-closed pin caught it and was not weakened.
+Unions, bitfields, nested anonymous aggregates, function-pointer members,
+pointer and array fields, chains, subscripts, casts, address-of escapes and
+call-bearing statements all keep their existing `Unknown` and diagnostics, and a
+declaration the reader cannot read refuses every access in its function. The
+premise is read from declarations in the same preprocessed token stream rather
+than a separate Clang AST, so W4 derivation, W4 validation and certificate
+rederivation repeat the classification from the certificate's own content; the
+deviation from C00's recommendation and its cost are recorded. Branch, loop and
+return conditions, and C02-P borrowed pointer-field reads, stay out of scope.
+A held-out generic fixture family checks two admitted owned lifetimes, three
+newly surfaced violations (leak, double release, release after escape), a
+caller whose classified callee stops releasing, twelve ambiguous accesses that
+each keep the existing diagnostic, and four declaration substitutions the
+certificate recheck refuses with their measured reason. The canonical CMetrics
+audit changes exactly one function: `cmt_counter_allow_reset` moves Unknown to
+Safe in the resource projection and its unsupported diagnostic disappears
+(36 to 35). `cmt_counter_create` is unchanged because its `calloc`-bound base is
+refused, and the six source-contract Unknown functions remain Unknown on their
+other blockers, as C00 predicted. The raw unit remains provisional Unsafe with
+one checked function contract and six Unknown; no unit is promoted. The pinned
+185-unit corpus cannot be re-audited here — the developer checkout has moved off
+`66910c10` and the pin gate refuses — so the four archived artifacts are left
+untouched and their re-measurement and re-pinning is a named follow-up, where
+any newly surfaced provisional Unsafe unit must be recorded. Thirty-one Lean
+theorems cover the neutral instruction and the whitelist, including its
+non-vacuity and the released-base refusal; the reader's type extraction and C
+effective types remain explicit premises. 937 workspace tests (36 new), 47
+provider tests, 43 Python tests, 20 Lean audits and all standing gates pass.
+CT coverage remains 11/50 mapped and the contract corpus 59 modules. Evidence:
+`docs/reports/remaining-c02/README.md`.

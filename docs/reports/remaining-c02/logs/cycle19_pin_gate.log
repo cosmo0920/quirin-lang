@@ -1,0 +1,2 @@
+Fluent Bit library audit failed: could not resolve ../fluent-bit: No such file or directory (os error 2)
+Fluent Bit library audit failed: Fluent Bit pin check failed: pin `fluent-bit`: expected 66910c10a4d7eafa810b84229cf2dcf7b0f26f97, found 90a010910e5b3328f496cc20fadc937547133439
