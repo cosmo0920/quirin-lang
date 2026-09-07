@@ -1,0 +1,3644 @@
+{
+ "functions": [
+  {
+   "calls": [
+    "__errno_location",
+    "cfl_kvlist_create",
+    "ctr_errno_print",
+    "free",
+    "malloc"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_create",
+   "signature": "struct ctrace_attributes *()",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_destroy",
+   "signature": "void (struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_count"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-i32-shape",
+    "cleanup-outcome-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_count",
+   "signature": "int (struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_string"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_string",
+   "signature": "int (struct ctrace_attributes *, char *, char *)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_bool"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_bool",
+   "signature": "int (struct ctrace_attributes *, char *, int)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_int64"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_int64",
+   "signature": "int (struct ctrace_attributes *, char *, int64_t)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_double"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_double",
+   "signature": "int (struct ctrace_attributes *, char *, double)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_array",
+   "signature": "int (struct ctrace_attributes *, char *, struct cfl_array *)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_insert_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_attributes_set_kvlist",
+   "signature": "int (struct ctrace_attributes *, char *, struct cfl_kvlist *)",
+   "storage": "extern",
+   "unit": "ctr_attributes.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_dropped_attributes_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "unpack_cfl_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_attributes",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_instrumentation_scope_name",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_instrumentation_scope_version",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_instrumentation_scope_dropped_attribute_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "ctr_attributes_create",
+    "ctr_attributes_destroy",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "unpack_cfl_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_instrumentation_scope_attributes",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_instrumentation_scope_create",
+    "ctr_instrumentation_scope_destroy",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "ctr_mpack_unpack_map",
+    "ctr_scope_span_set_instrumentation_scope"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_scope_span_instrumentation_scope",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_event_name",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint64_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_event_time_unix_nano",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "unpack_cfl_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_event_attributes",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_event_dropped_attributes_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map",
+    "ctr_span_event_add"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_event",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_from_base16",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link_trace_id",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_from_base16",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link_span_id",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link_trace_state",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link_dropped_attributes_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "ctr_attributes_create",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "unpack_cfl_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link_attributes",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_link_create",
+    "ctr_mpack_unpack_map"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_link",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_destroy",
+    "ctr_id_from_base16",
+    "ctr_mpack_consume_string_or_nil_tag",
+    "ctr_span_set_trace_id_with_cid"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_trace_id",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_destroy",
+    "ctr_id_from_base16",
+    "ctr_mpack_consume_string_or_nil_tag",
+    "ctr_span_set_span_id_with_cid"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_span_id",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_destroy",
+    "ctr_id_from_base16",
+    "ctr_mpack_consume_string_or_nil_tag",
+    "ctr_span_set_parent_span_id_with_cid"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_parent_span_id",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_trace_state",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_name",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_int32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_kind",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint64_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_start_time_unix_nano",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint64_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_end_time_unix_nano",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_destroy",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type",
+    "unpack_cfl_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_attributes",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_dropped_attributes_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_dropped_events_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_dropped_links_count",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_events",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_links",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_int32_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_status_code",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_status_message",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_status",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span_schema_url",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map",
+    "ctr_span_create",
+    "ctr_span_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_span",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_scope_span_spans",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_scope_span_schema_url",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map",
+    "ctr_scope_span_create",
+    "ctr_scope_span_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_scope_span",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_span_scope_spans",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_span_schema_url",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map",
+    "ctr_resource_span_create"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_span",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_resource_spans",
+   "signature": "int (mpack_reader_t *, size_t, void *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_unpack_map"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "unpack_context",
+   "signature": "int (mpack_reader_t *, struct ctr_msgpack_decode_context *)",
+   "storage": "static",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_create",
+    "ctr_destroy",
+    "memset",
+    "mpack_reader_destroy",
+    "mpack_reader_init_data",
+    "mpack_reader_remaining",
+    "unpack_context"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_decode_msgpack_create",
+   "signature": "int (struct ctrace **, char *, size_t, size_t *)",
+   "storage": "extern",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "ctr_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_decode_msgpack_destroy",
+   "signature": "void (struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctr_decode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_array_append_string",
+    "cfl_kvlist_insert_string",
+    "ctr_attributes_set_string",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_string_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, char *)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_array_append_bool",
+    "cfl_kvlist_insert_bool",
+    "ctr_attributes_set_bool",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_bool_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, protobuf_c_boolean)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_array_append_int64",
+    "cfl_kvlist_insert_int64",
+    "ctr_attributes_set_int64",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_int_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, int64_t)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_array_append_double",
+    "cfl_kvlist_insert_double",
+    "ctr_attributes_set_double",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_double_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, double)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "cfl_array_append_array",
+    "cfl_array_create",
+    "cfl_array_destroy",
+    "cfl_kvlist_insert_array",
+    "convert_any_value",
+    "ctr_attributes_set_array",
+    "ctr_errno_print",
+    "fprintf",
+    "free",
+    "malloc"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_array_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, Opentelemetry__Proto__Common__V1__ArrayValue *)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "cfl_array_append_kvlist",
+    "cfl_kvlist_create",
+    "cfl_kvlist_destroy",
+    "cfl_kvlist_insert_kvlist",
+    "convert_any_value",
+    "ctr_attributes_set_kvlist",
+    "ctr_errno_print",
+    "free",
+    "malloc",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_kvlist_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, Opentelemetry__Proto__Common__V1__KeyValueList *)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_array_append_bytes",
+    "cfl_kvlist_insert_bytes",
+    "printf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_bytes_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, void *, size_t)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "convert_array_value",
+    "convert_bool_value",
+    "convert_bytes_value",
+    "convert_double_value",
+    "convert_int_value",
+    "convert_kvlist_value",
+    "convert_string_value"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_any_value",
+   "signature": "int (struct opentelemetry_decode_value *, opentelemetry_decode_value_type, char *, Opentelemetry__Proto__Common__V1__AnyValue *)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "convert_any_value",
+    "ctr_attributes_create",
+    "ctr_attributes_destroy",
+    "ctr_errno_print",
+    "free",
+    "malloc"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "convert_otel_attrs",
+   "signature": "struct ctrace_attributes *(size_t, Opentelemetry__Proto__Common__V1__KeyValue **)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "convert_otel_attrs",
+    "ctr_attributes_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "span_set_attributes",
+   "signature": "int (struct ctrace_span *, size_t, Opentelemetry__Proto__Common__V1__KeyValue **)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_init",
+    "convert_otel_attrs",
+    "ctr_span_event_add_ts",
+    "ctr_span_event_set_attributes",
+    "ctr_span_event_set_dropped_attributes_count"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "span_set_events",
+   "signature": "int (struct ctrace_span *, size_t, Opentelemetry__Proto__Trace__V1__Span__Event **)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "convert_otel_attrs",
+    "ctr_resource_set_attributes",
+    "ctr_resource_set_dropped_attr_count"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "resource_set_data",
+   "signature": "int (struct ctrace_resource *, Opentelemetry__Proto__Resource__V1__Resource *)",
+   "storage": "static",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "convert_otel_attrs",
+    "ctr_attributes_destroy",
+    "ctr_instrumentation_scope_create",
+    "ctr_scope_span_set_instrumentation_scope"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_scope_span_set_scope",
+   "signature": "void (struct ctrace_scope_span *, Opentelemetry__Proto__Common__V1__InstrumentationScope *)",
+   "storage": "extern",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "convert_otel_attrs",
+    "ctr_link_create",
+    "ctr_link_set_dropped_attr_count"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_links",
+   "signature": "void (struct ctrace_span *, size_t, Opentelemetry__Proto__Trace__V1__Span__Link **)",
+   "storage": "extern",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_create",
+    "ctr_destroy",
+    "ctr_resource_set_dropped_attr_count",
+    "ctr_resource_span_create",
+    "ctr_resource_span_get_resource",
+    "ctr_resource_span_set_schema_url",
+    "ctr_scope_span_create",
+    "ctr_scope_span_set_schema_url",
+    "ctr_scope_span_set_scope",
+    "ctr_span_create",
+    "ctr_span_end_ts",
+    "ctr_span_kind_set",
+    "ctr_span_set_dropped_attributes_count",
+    "ctr_span_set_dropped_events_count",
+    "ctr_span_set_dropped_links_count",
+    "ctr_span_set_links",
+    "ctr_span_set_parent_span_id",
+    "ctr_span_set_span_id",
+    "ctr_span_set_status",
+    "ctr_span_set_trace_id",
+    "ctr_span_set_trace_state",
+    "ctr_span_start_ts",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__unpack",
+    "resource_set_data",
+    "span_set_attributes",
+    "span_set_events",
+    "strlen"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_decode_opentelemetry_create",
+   "signature": "int (struct ctrace **, char *, size_t, size_t *)",
+   "storage": "extern",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_decode_opentelemetry_destroy",
+   "signature": "void (struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctr_decode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "mpack_write_false",
+    "mpack_write_true"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_bool",
+   "signature": "void (mpack_writer_t *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len",
+    "mpack_write_str"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_string",
+   "signature": "void (mpack_writer_t *, cfl_sds_t)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "mpack_write_i64"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_int64",
+   "signature": "void (mpack_writer_t *, int64_t)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "mpack_write_double"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_double",
+   "signature": "void (mpack_writer_t *, double)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "mpack_finish_array",
+    "mpack_start_array",
+    "pack_variant"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_array",
+   "signature": "void (mpack_writer_t *, struct cfl_array *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_len",
+    "mpack_finish_map",
+    "mpack_start_map",
+    "mpack_write_str",
+    "pack_variant"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_kvlist",
+   "signature": "void (mpack_writer_t *, struct cfl_kvlist *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len",
+    "mpack_write_bin"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_bytes",
+   "signature": "void (mpack_writer_t *, cfl_sds_t)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "pack_array",
+    "pack_bool",
+    "pack_bytes",
+    "pack_double",
+    "pack_int64",
+    "pack_kvlist",
+    "pack_string"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_variant",
+   "signature": "void (mpack_writer_t *, struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "pack_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_attributes",
+   "signature": "void (mpack_writer_t *, struct ctrace_attributes *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len",
+    "mpack_finish_map",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "mpack_write_u32",
+    "pack_attributes"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_instrumentation_scope",
+   "signature": "void (mpack_writer_t *, struct ctrace_instrumentation_scope *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_id_to_lower_base16",
+    "mpack_write_cstr",
+    "mpack_write_nil"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_id",
+   "signature": "void (mpack_writer_t *, struct ctrace_id *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_len",
+    "mpack_finish_array",
+    "mpack_finish_map",
+    "mpack_start_array",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "mpack_write_u32",
+    "mpack_write_u64",
+    "pack_attributes"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_events",
+   "signature": "void (mpack_writer_t *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_len",
+    "mpack_finish_array",
+    "mpack_finish_map",
+    "mpack_start_array",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "mpack_write_u32",
+    "pack_attributes",
+    "pack_id"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_links",
+   "signature": "void (mpack_writer_t *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len",
+    "mpack_finish_map",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_i32",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "mpack_write_u32",
+    "mpack_write_u64",
+    "pack_attributes",
+    "pack_events",
+    "pack_id",
+    "pack_links"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_span",
+   "signature": "void (mpack_writer_t *, struct ctrace_span *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "mpack_finish_array",
+    "mpack_start_array",
+    "pack_span"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_spans",
+   "signature": "void (mpack_writer_t *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_len",
+    "mpack_finish_array",
+    "mpack_finish_map",
+    "mpack_start_array",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "pack_instrumentation_scope",
+    "pack_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "pack_scope_spans",
+   "signature": "void (mpack_writer_t *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_len",
+    "fprintf",
+    "mpack_finish_array",
+    "mpack_finish_map",
+    "mpack_start_array",
+    "mpack_start_map",
+    "mpack_write_cstr",
+    "mpack_write_nil",
+    "mpack_write_str",
+    "mpack_write_u32",
+    "mpack_writer_destroy",
+    "mpack_writer_init_growable",
+    "pack_attributes",
+    "pack_scope_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_encode_msgpack_create",
+   "signature": "int (struct ctrace *, char **, size_t *)",
+   "storage": "extern",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_encode_msgpack_destroy",
+   "signature": "void (char *)",
+   "storage": "extern",
+   "unit": "ctr_encode_msgpack.c"
+  },
+  {
+   "calls": [
+    "free",
+    "otlp_any_value_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "otlp_kvpair_destroy",
+   "signature": "void (Opentelemetry__Proto__Common__V1__KeyValue *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "free",
+    "otlp_kvpair_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "otlp_kvlist_destroy",
+   "signature": "void (Opentelemetry__Proto__Common__V1__KeyValueList *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "free",
+    "otlp_any_value_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "otlp_array_destroy",
+   "signature": "void (Opentelemetry__Proto__Common__V1__ArrayValue *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "free",
+    "otlp_array_destroy",
+    "otlp_kvlist_destroy"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "otlp_any_value_destroy",
+   "signature": "void (Opentelemetry__Proto__Common__V1__AnyValue *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_kvpair_list_initialize",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValue **(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "free",
+    "opentelemetry__proto__common__v1__array_value__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_array_value_initialize",
+   "signature": "Opentelemetry__Proto__Common__V1__ArrayValue *(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "opentelemetry__proto__common__v1__key_value__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_kvpair_value_initialize",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValue *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "free",
+    "opentelemetry__proto__common__v1__key_value_list__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_kvlist_value_initialize",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValueList *(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "free",
+    "opentelemetry__proto__common__v1__any_value__init",
+    "otlp_array_value_initialize",
+    "otlp_kvlist_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_any_value_initialize",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(int, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "ctr_errno_print",
+    "ctr_variant_to_otlp_any_value",
+    "free",
+    "otlp_kvpair_value_initialize",
+    "strdup"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_kvpair_to_otlp_kvpair",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValue *(struct cfl_kvpair *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "free",
+    "otlp_kvpair_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otlp_kvpair_list_destroy",
+   "signature": "void (Opentelemetry__Proto__Common__V1__KeyValue **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_count",
+    "ctr_variant_kvpair_to_otlp_kvpair",
+    "otlp_kvpair_list_destroy",
+    "otlp_kvpair_list_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_kvlist_to_otlp_kvpair_list",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValue **(struct cfl_kvlist *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_count",
+    "ctr_variant_kvpair_to_otlp_kvpair",
+    "otlp_any_value_destroy",
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_kvlist_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_array_fetch_by_index",
+    "ctr_variant_to_otlp_any_value",
+    "otlp_any_value_destroy",
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_array_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otlp_any_value_destroy",
+    "otlp_any_value_initialize",
+    "strdup"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_string_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_boolean_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_int64_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_double_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "cfl_sds_len",
+    "memcpy",
+    "otlp_any_value_destroy",
+    "otlp_any_value_initialize"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_binary_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_variant_array_to_otlp_any_value",
+    "ctr_variant_binary_to_otlp_any_value",
+    "ctr_variant_boolean_to_otlp_any_value",
+    "ctr_variant_double_to_otlp_any_value",
+    "ctr_variant_int64_to_otlp_any_value",
+    "ctr_variant_kvlist_to_otlp_any_value",
+    "ctr_variant_string_to_otlp_any_value"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_variant_to_otlp_any_value",
+   "signature": "Opentelemetry__Proto__Common__V1__AnyValue *(struct cfl_variant *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_kvlist_to_otlp_kvpair_list"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_attributes_from_ctr",
+   "signature": "Opentelemetry__Proto__Common__V1__KeyValue **(struct ctrace_attributes *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "opentelemetry__proto__resource__v1__resource__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_resource",
+   "signature": "Opentelemetry__Proto__Resource__V1__Resource *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_kvlist_count"
+   ],
+   "checker_entry_shapes": [
+    "unsigned-counter-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "get_attributes_count",
+   "signature": "size_t (struct ctrace_attributes *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "get_attributes_count",
+    "initialize_resource",
+    "set_attributes_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_set_resource",
+   "signature": "Opentelemetry__Proto__Resource__V1__Resource *(struct ctrace_resource *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_trace_id",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_id *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_span_id",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_id *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_parent_span_id",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_id *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_kind",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_start_time",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, uint64_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_end_time",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, uint64_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "get_attributes_count",
+    "set_attributes_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_attributes",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_attributes *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_dropped_attributes_count",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, uint32_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "ctr_attributes_count",
+    "opentelemetry__proto__trace__v1__span__event__init",
+    "set_attributes_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_event",
+   "signature": "Opentelemetry__Proto__Trace__V1__Span__Event *(struct ctrace_span_event *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "cfl_list_size",
+    "set_event"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_events_from_ctr",
+   "signature": "Opentelemetry__Proto__Trace__V1__Span__Event **(struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "set_events_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_events",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_dropped_events_count",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, uint32_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_name",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, char *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_trace_state",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, char *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "opentelemetry__proto__trace__v1__status__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_status",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_span_status)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "calloc",
+    "cfl_list_size",
+    "ctr_id_get_buf",
+    "ctr_id_get_len",
+    "get_attributes_count",
+    "opentelemetry__proto__trace__v1__span__link__init",
+    "set_attributes_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "otel_span_set_links",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otel_span_set_attributes",
+    "otel_span_set_dropped_attributes_count",
+    "otel_span_set_dropped_events_count",
+    "otel_span_set_end_time",
+    "otel_span_set_events",
+    "otel_span_set_kind",
+    "otel_span_set_links",
+    "otel_span_set_name",
+    "otel_span_set_parent_span_id",
+    "otel_span_set_span_id",
+    "otel_span_set_start_time",
+    "otel_span_set_status",
+    "otel_span_set_trace_id",
+    "otel_span_set_trace_state"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_span",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *, struct ctrace_span *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__Span **(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "opentelemetry__proto__trace__v1__span__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_span",
+   "signature": "Opentelemetry__Proto__Trace__V1__Span *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "destroy_spans",
+    "initialize_span",
+    "initialize_spans",
+    "set_span"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__Span **(struct ctrace_scope_span *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "opentelemetry__proto__common__v1__instrumentation_scope__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_instrumentation_scope",
+   "signature": "Opentelemetry__Proto__Common__V1__InstrumentationScope *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "get_attributes_count",
+    "initialize_instrumentation_scope",
+    "set_attributes_from_ctr"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_instrumentation_scope",
+   "signature": "Opentelemetry__Proto__Common__V1__InstrumentationScope *(struct ctrace_instrumentation_scope *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_scope_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__ScopeSpans **(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "opentelemetry__proto__trace__v1__scope_spans__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_scope_span",
+   "signature": "Opentelemetry__Proto__Trace__V1__ScopeSpans *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "destroy_scope_spans",
+    "initialize_scope_span",
+    "initialize_scope_spans",
+    "set_instrumentation_scope",
+    "set_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_scope_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__ScopeSpans **(struct ctrace_resource_span *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_resource_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__ResourceSpans **(size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "opentelemetry__proto__trace__v1__resource_spans__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_resource_span",
+   "signature": "Opentelemetry__Proto__Trace__V1__ResourceSpans *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "ctr_set_resource",
+    "free",
+    "initialize_resource_span",
+    "initialize_resource_spans",
+    "set_scope_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "set_resource_spans",
+   "signature": "Opentelemetry__Proto__Trace__V1__ResourceSpans **(struct ctrace *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "ctr_errno_print",
+    "malloc",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__init"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "initialize_export_service_request",
+   "signature": "Opentelemetry__Proto__Collector__Trace__V1__ExportTraceServiceRequest *()",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "initialize_export_service_request",
+    "set_resource_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "create_export_service_request",
+   "signature": "Opentelemetry__Proto__Collector__Trace__V1__ExportTraceServiceRequest *(struct ctrace *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "otlp_kvpair_list_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_attributes",
+   "signature": "void (Opentelemetry__Proto__Common__V1__KeyValue **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_attributes",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_resource",
+   "signature": "void (Opentelemetry__Proto__Resource__V1__Resource *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_id",
+   "signature": "void (ProtobufCBinaryData)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_attributes",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_event",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span__Event *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_event",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_events",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span__Event **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_attributes",
+    "destroy_id",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_link",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span__Link *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_link",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_links",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span__Link **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_attributes",
+    "destroy_events",
+    "destroy_id",
+    "destroy_links",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_span",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_span",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_spans",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__Span **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_attributes",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_scope",
+   "signature": "void (Opentelemetry__Proto__Common__V1__InstrumentationScope *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_scope",
+    "destroy_spans",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_scope_span",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__ScopeSpans *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_scope_span",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_scope_spans",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__ScopeSpans **, size_t)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_resource",
+    "destroy_scope_spans",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "destroy_resource_spans",
+   "signature": "void (Opentelemetry__Proto__Trace__V1__ResourceSpans **, int)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "destroy_resource_spans",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "destroy_export_service_request",
+   "signature": "void (Opentelemetry__Proto__Collector__Trace__V1__ExportTraceServiceRequest *)",
+   "storage": "static",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_set_len",
+    "create_export_service_request",
+    "destroy_export_service_request",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size",
+    "opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_encode_opentelemetry_create",
+   "signature": "cfl_sds_t (struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_encode_opentelemetry_destroy",
+   "signature": "void (cfl_sds_t)",
+   "storage": "extern",
+   "unit": "ctr_encode_opentelemetry.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_cat_safe",
+    "strlen"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "sds_cat_safe",
+   "signature": "void (cfl_sds_t *, char *)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_string",
+   "signature": "void (cfl_sds_t *, cfl_sds_t, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_int64",
+   "signature": "void (cfl_sds_t *, int64_t, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_double",
+   "signature": "void (cfl_sds_t *, double, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "sds_cat_safe"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_bool",
+   "signature": "void (cfl_sds_t *, int, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "format_array",
+    "format_bool",
+    "format_double",
+    "format_int64",
+    "format_string",
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_array",
+   "signature": "void (cfl_sds_t *, struct cfl_array *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "format_array",
+    "format_attributes",
+    "format_bool",
+    "format_double",
+    "format_int64",
+    "format_string",
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_attributes",
+   "signature": "void (cfl_sds_t *, struct cfl_kvlist *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_count",
+    "format_attributes",
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_event",
+   "signature": "void (cfl_sds_t *, struct ctrace_span_event *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_list_size",
+    "cfl_sds_create",
+    "cfl_sds_destroy",
+    "ctr_attributes_count",
+    "ctr_id_to_lower_base16",
+    "ctr_span_kind_string",
+    "format_attributes",
+    "format_event",
+    "sds_cat_safe",
+    "snprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_span",
+   "signature": "void (cfl_sds_t *, struct ctrace *, int, struct ctrace_span *, int)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_printf",
+    "format_span"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_spans",
+   "signature": "void (cfl_sds_t *, struct ctrace *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_printf",
+    "format_attributes"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_instrumentation_scope",
+   "signature": "void (cfl_sds_t *, struct ctrace_instrumentation_scope *)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_printf",
+    "format_attributes"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_resource",
+   "signature": "void (cfl_sds_t *, struct ctrace *, struct ctrace_resource *)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_printf",
+    "format_instrumentation_scope",
+    "format_spans"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "format_scope_spans",
+   "signature": "void (cfl_sds_t *, struct ctrace *, struct cfl_list *)",
+   "storage": "static",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_printf",
+    "format_resource",
+    "format_scope_spans",
+    "sds_cat_safe"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_encode_text_create",
+   "signature": "cfl_sds_t (struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_encode_text_destroy",
+   "signature": "void (cfl_sds_t)",
+   "storage": "extern",
+   "unit": "ctr_encode_text.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "ctr_id_create",
+    "ctr_random_get",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_create_random",
+   "signature": "struct ctrace_id *(size_t)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_id_destroy",
+   "signature": "void (struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_errno_print",
+    "ctr_id_set",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_create",
+   "signature": "struct ctrace_id *(void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_len",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_set",
+   "signature": "int (struct ctrace_id *, void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len",
+    "memcmp"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_cmp",
+   "signature": "int (struct ctrace_id *, struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_len"
+   ],
+   "checker_entry_shapes": [
+    "unsigned-counter-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_id_get_len",
+   "signature": "size_t (struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_get_buf",
+   "signature": "void *(struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_len",
+    "cfl_sds_set_len"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_to_lower_base16",
+   "signature": "cfl_sds_t (struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [
+    "boolean-field-i32-shape",
+    "cleanup-outcome-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "decode_hex_digit",
+   "signature": "int (char *)",
+   "storage": "static",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_destroy",
+    "cfl_sds_len",
+    "ctr_id_create",
+    "decode_hex_digit"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_id_from_base16",
+   "signature": "struct ctrace_id *(cfl_sds_t)",
+   "storage": "extern",
+   "unit": "ctr_id.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_add",
+    "ctr_errno_print",
+    "ctr_id_create",
+    "ctr_id_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_create",
+   "signature": "struct ctrace_link *(struct ctrace_span *, void *, size_t, void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len",
+    "ctr_link_create"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_create_with_cid",
+   "signature": "struct ctrace_link *(struct ctrace_span *, struct ctrace_id *, struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_set_trace_state",
+   "signature": "int (struct ctrace_link *, char *)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_set_attributes",
+   "signature": "int (struct ctrace_link *, struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_set_dropped_attr_count",
+   "signature": "void (struct ctrace_link *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_link_set_flags",
+   "signature": "void (struct ctrace_link *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [
+    "cfl_list_del",
+    "cfl_sds_destroy",
+    "ctr_attributes_destroy",
+    "ctr_id_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_link_destroy",
+   "signature": "void (struct ctrace_link *)",
+   "storage": "extern",
+   "unit": "ctr_link.c"
+  },
+  {
+   "calls": [
+    "__builtin_va_end",
+    "__builtin_va_start",
+    "vsnprintf"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 1,
+   "name": "ctr_log_print",
+   "signature": "void (void *, int, const char *, int, const char *, ...)",
+   "storage": "extern",
+   "unit": "ctr_log.c"
+  },
+  {
+   "calls": [
+    "fprintf",
+    "strerror_r"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_errno_print",
+   "signature": "int (int, const char *, int)",
+   "storage": "extern",
+   "unit": "ctr_log.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_consume_string_tag",
+    "ctr_mpack_peek_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_string_or_nil_tag",
+   "signature": "int (mpack_reader_t *, cfl_sds_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_binary_tag",
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_peek_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_binary_or_nil_tag",
+   "signature": "int (mpack_reader_t *, cfl_sds_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-i32-shape",
+    "cleanup-outcome-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_nil_tag",
+   "signature": "int (mpack_reader_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_double_value",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_double_tag",
+   "signature": "int (mpack_reader_t *, double *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_int_value",
+    "mpack_tag_type",
+    "mpack_tag_uint_value"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_uint_tag",
+   "signature": "int (mpack_reader_t *, uint64_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_uint32_tag",
+   "signature": "int (mpack_reader_t *, uint32_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_uint_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_uint64_tag",
+   "signature": "int (mpack_reader_t *, uint64_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_int_value",
+    "mpack_tag_type",
+    "mpack_tag_uint_value"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_int_tag",
+   "signature": "int (mpack_reader_t *, int64_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_int_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_int32_tag",
+   "signature": "int (mpack_reader_t *, int32_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "ctr_mpack_consume_int_tag"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_int64_tag",
+   "signature": "int (mpack_reader_t *, int64_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_destroy",
+    "cfl_sds_set_len",
+    "mpack_done_str",
+    "mpack_read_cstr",
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_str_length",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_string_tag",
+   "signature": "int (mpack_reader_t *, cfl_sds_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_size",
+    "cfl_sds_destroy",
+    "cfl_sds_set_len",
+    "mpack_done_bin",
+    "mpack_read_bytes",
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_bin_length",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_consume_binary_tag",
+   "signature": "int (mpack_reader_t *, cfl_sds_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_mpack_consume_string_tag",
+    "mpack_done_map",
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_map_count",
+    "mpack_tag_type",
+    "strcmp"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 1,
+   "name": "ctr_mpack_unpack_map",
+   "signature": "int (mpack_reader_t *, struct ctr_mpack_map_entry_callback_t *, void *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "entry_processor_callback",
+    "mpack_done_array",
+    "mpack_read_tag",
+    "mpack_reader_error",
+    "mpack_tag_array_count",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_unpack_array",
+   "signature": "int (mpack_reader_t *, ctr_mpack_unpacker_entry_callback_fn_t, void *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_peek_tag",
+    "mpack_reader_error",
+    "mpack_tag_array_count",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-i32-shape",
+    "cleanup-outcome-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_peek_array_length",
+   "signature": "int (mpack_reader_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "mpack_peek_tag",
+    "mpack_reader_error",
+    "mpack_tag_type"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_mpack_peek_type",
+   "signature": "mpack_type_t (mpack_reader_t *)",
+   "storage": "extern",
+   "unit": "ctr_mpack_utils.c"
+  },
+  {
+   "calls": [
+    "close",
+    "open",
+    "rand_r",
+    "read",
+    "time"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_random_get",
+   "signature": "ssize_t (void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_random.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "ctr_attributes_create",
+    "ctr_errno_print",
+    "ctr_resource_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_create",
+   "signature": "struct ctrace_resource *()",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_int64",
+    "ctr_attributes_set_string",
+    "ctr_resource_create"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_create_default",
+   "signature": "struct ctrace_resource *()",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_set_attributes",
+   "signature": "int (struct ctrace_resource *, struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_set_dropped_attr_count",
+   "signature": "void (struct ctrace_resource *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_resource_destroy",
+   "signature": "void (struct ctrace_resource *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_add",
+    "cfl_list_init",
+    "ctr_errno_print",
+    "ctr_resource_create",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_span_create",
+   "signature": "struct ctrace_resource_span *(struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_span_get_resource",
+   "signature": "struct ctrace_resource *(struct ctrace_resource_span *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_resource_span_set_schema_url",
+   "signature": "int (struct ctrace_resource_span *, char *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_resource_destroy",
+    "ctr_scope_span_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_resource_span_destroy",
+   "signature": "void (struct ctrace_resource_span *)",
+   "storage": "extern",
+   "unit": "ctr_resource.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_add",
+    "cfl_list_init",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_scope_span_create",
+   "signature": "struct ctrace_scope_span *(struct ctrace_resource_span *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "cfl_list_del",
+    "cfl_sds_destroy",
+    "ctr_instrumentation_scope_destroy",
+    "ctr_span_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_scope_span_destroy",
+   "signature": "void (struct ctrace_scope_span *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_scope_span_set_schema_url",
+   "signature": "int (struct ctrace_scope_span *, char *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "ctr_instrumentation_scope_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_scope_span_set_instrumentation_scope",
+   "signature": "void (struct ctrace_scope_span *, struct ctrace_instrumentation_scope *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_sds_create",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_instrumentation_scope_create",
+   "signature": "struct ctrace_instrumentation_scope *(char *, char *, uint32_t, struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_destroy",
+    "ctr_attributes_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_instrumentation_scope_destroy",
+   "signature": "void (struct ctrace_instrumentation_scope *)",
+   "storage": "extern",
+   "unit": "ctr_scope.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_add",
+    "cfl_list_init",
+    "cfl_sds_create",
+    "cfl_sds_destroy",
+    "ctr_attributes_create",
+    "ctr_errno_print",
+    "ctr_span_kind_set",
+    "ctr_span_set_parent_span_id_with_cid",
+    "ctr_span_start",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_create",
+   "signature": "struct ctrace_span *(struct ctrace *, struct ctrace_scope_span *, cfl_sds_t, struct ctrace_span *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_create",
+    "ctr_id_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_trace_id",
+   "signature": "int (struct ctrace_span *, void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len",
+    "ctr_span_set_trace_id"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_trace_id_with_cid",
+   "signature": "int (struct ctrace_span *, struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_create",
+    "ctr_id_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_span_id",
+   "signature": "int (struct ctrace_span *, void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len",
+    "ctr_span_set_span_id"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_span_id_with_cid",
+   "signature": "int (struct ctrace_span *, struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_create",
+    "ctr_id_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_parent_span_id",
+   "signature": "int (struct ctrace_span *, void *, size_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_id_get_buf",
+    "ctr_id_get_len",
+    "ctr_span_set_parent_span_id"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_parent_span_id_with_cid",
+   "signature": "int (struct ctrace_span *, struct ctrace_id *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_kind_set",
+   "signature": "int (struct ctrace_span *, int)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_kind_string",
+   "signature": "char *(struct ctrace_span *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attributes",
+   "signature": "int (struct ctrace_span *, struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_string"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_string",
+   "signature": "int (struct ctrace_span *, char *, char *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_bool"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_bool",
+   "signature": "int (struct ctrace_span *, char *, int)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_int64"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_int64",
+   "signature": "int (struct ctrace_span *, char *, int64_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_double"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_double",
+   "signature": "int (struct ctrace_span *, char *, double)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_array",
+   "signature": "int (struct ctrace_span *, char *, struct cfl_array *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_attribute_kvlist",
+   "signature": "int (struct ctrace_span *, char *, struct cfl_kvlist *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_time_now",
+    "ctr_span_start_ts"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_start",
+   "signature": "void (struct ctrace *, struct ctrace_span *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_span_end_ts"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_start_ts",
+   "signature": "void (struct ctrace *, struct ctrace_span *, uint64_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_time_now",
+    "ctr_span_end_ts"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_end",
+   "signature": "void (struct ctrace *, struct ctrace_span *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_end_ts",
+   "signature": "void (struct ctrace *, struct ctrace_span *, uint64_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_status",
+   "signature": "int (struct ctrace_span *, int, char *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create_len",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_trace_state",
+   "signature": "int (struct ctrace_span *, char *, int)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_flags",
+   "signature": "int (struct ctrace_span *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_sds_create",
+    "cfl_sds_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_schema_url",
+   "signature": "void (struct ctrace_span *, char *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_dropped_link_count",
+   "signature": "void (struct ctrace_span *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_dropped_events_count",
+   "signature": "void (struct ctrace_span *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_dropped_links_count",
+   "signature": "void (struct ctrace_span *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_set_dropped_attributes_count",
+   "signature": "void (struct ctrace_span *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_list_del",
+    "cfl_sds_destroy",
+    "ctr_attributes_destroy",
+    "ctr_id_destroy",
+    "ctr_link_destroy",
+    "ctr_span_event_delete",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_span_destroy",
+   "signature": "void (struct ctrace_span *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_add",
+    "cfl_sds_create",
+    "cfl_time_now",
+    "ctr_attributes_create",
+    "ctr_errno_print",
+    "free"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_add_ts",
+   "signature": "struct ctrace_span_event *(struct ctrace_span *, char *, uint64_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_span_event_add_ts"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_add",
+   "signature": "struct ctrace_span_event *(struct ctrace_span *, char *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_string"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_string",
+   "signature": "int (struct ctrace_span_event *, char *, char *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_bool"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_bool",
+   "signature": "int (struct ctrace_span_event *, char *, int)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_int64"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_int64",
+   "signature": "int (struct ctrace_span_event *, char *, int64_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_double"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_double",
+   "signature": "int (struct ctrace_span_event *, char *, double)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_array"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_array",
+   "signature": "int (struct ctrace_span_event *, char *, struct cfl_array *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_set_kvlist"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attribute_kvlist",
+   "signature": "int (struct ctrace_span_event *, char *, struct cfl_kvlist *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "ctr_attributes_destroy"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_attributes",
+   "signature": "int (struct ctrace_span_event *, struct ctrace_attributes *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_set_dropped_attributes_count",
+   "signature": "void (struct ctrace_span_event *, uint32_t)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [
+    "cfl_list_del",
+    "cfl_sds_destroy",
+    "ctr_attributes_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_span_event_delete",
+   "signature": "void (struct ctrace_span_event *)",
+   "storage": "extern",
+   "unit": "ctr_span.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_version",
+   "signature": "char *()",
+   "storage": "extern",
+   "unit": "ctr_version.c"
+  },
+  {
+   "calls": [
+    "memset"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_opts_init",
+   "signature": "void (struct ctrace_opts *)",
+   "storage": "extern",
+   "unit": "ctraces.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_opts_set",
+   "signature": "void (struct ctrace_opts *, int, char *)",
+   "storage": "extern",
+   "unit": "ctraces.c"
+  },
+  {
+   "calls": [],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_opts_exit",
+   "signature": "void (struct ctrace_opts *)",
+   "storage": "extern",
+   "unit": "ctraces.c"
+  },
+  {
+   "calls": [
+    "__errno_location",
+    "calloc",
+    "cfl_list_init",
+    "ctr_errno_print"
+   ],
+   "checker_entry_shapes": [],
+   "indirect_calls": 0,
+   "name": "ctr_create",
+   "signature": "struct ctrace *(struct ctrace_opts *)",
+   "storage": "extern",
+   "unit": "ctraces.c"
+  },
+  {
+   "calls": [
+    "ctr_resource_span_destroy",
+    "free"
+   ],
+   "checker_entry_shapes": [
+    "boolean-field-unit-shape",
+    "field-destructor-shape"
+   ],
+   "indirect_calls": 0,
+   "name": "ctr_destroy",
+   "signature": "void (struct ctrace *)",
+   "storage": "extern",
+   "unit": "ctraces.c"
+  }
+ ],
+ "produced_by": "docs/reports/remaining-p06/ctraces_census.py",
+ "source_revision": "9f0fa5730fba1761ebaf14bcd31220a3a9be9d6e",
+ "units": [
+  "lib/ctraces/src/ctr_attributes.c",
+  "lib/ctraces/src/ctr_decode_msgpack.c",
+  "lib/ctraces/src/ctr_decode_opentelemetry.c",
+  "lib/ctraces/src/ctr_encode_msgpack.c",
+  "lib/ctraces/src/ctr_encode_opentelemetry.c",
+  "lib/ctraces/src/ctr_encode_text.c",
+  "lib/ctraces/src/ctr_id.c",
+  "lib/ctraces/src/ctr_link.c",
+  "lib/ctraces/src/ctr_log.c",
+  "lib/ctraces/src/ctr_mpack_utils.c",
+  "lib/ctraces/src/ctr_random.c",
+  "lib/ctraces/src/ctr_resource.c",
+  "lib/ctraces/src/ctr_scope.c",
+  "lib/ctraces/src/ctr_span.c",
+  "lib/ctraces/src/ctr_utils.c",
+  "lib/ctraces/src/ctr_version.c",
+  "lib/ctraces/src/ctraces.c"
+ ]
+}
