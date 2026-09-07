@@ -126,4 +126,43 @@
         (font-lock-ensure)
         (should-not (nth 8 (syntax-ppss (point-max))))))))
 
+(ert-deftest qcore-mode-intrusive-list-resource-members ()
+  (with-temp-buffer
+    (insert-file-contents
+     (expand-file-name "contract/qcore/cfl/intrusive_list.qcore" qcore-mode-test--root))
+    (qcore-mode)
+    (font-lock-ensure)
+    (dolist (word '("repr" "footprint" "destructor" "copy" "move" "noexcept"))
+      (should (eq (qcore-mode-test--face word) 'font-lock-keyword-face)))
+    (should (eq (qcore-mode-test--face "cfl_list_entry_destroy")
+                'font-lock-function-name-face))
+    (dolist (word '("forbidden" "allowed"))
+      (should (eq (qcore-mode-test--face word) 'font-lock-constant-face)))))
+
+(ert-deftest qcore-mode-resource-context-and-trivia ()
+  (with-temp-buffer
+    (insert "resource /* comment */ type Item[T: Type] {\n"
+            "state: Open; destructor /* field */ :\n"
+            "  release_item /* function */ noexcept;\n"
+            "footprint: { destructor: 1 }; copy: forbidden; move: allowed;\n"
+            "}\nfn f(repr: i32, destructor: i32, state: i32) -> unit {\n"
+            "let allowed = 1; let forbidden = 2; let noexcept = 3;\n"
+            "let text = \"destructor: fake noexcept;\";\n"
+            "// destructor: commented noexcept;\nreturn; }\n")
+    (qcore-mode)
+    (font-lock-ensure)
+    (should (eq (qcore-mode-test--face "Open") 'font-lock-type-face))
+    (should (eq (qcore-mode-test--face "release_item") 'font-lock-function-name-face))
+    (should (eq (qcore-mode-test--face "noexcept;") 'font-lock-keyword-face))
+    (dolist (text '("destructor: 1" "repr: i32" "destructor: i32" "state: i32"
+                    "allowed =" "forbidden =" "noexcept ="))
+      (should (eq (qcore-mode-test--face text) 'font-lock-variable-name-face)))
+    (should (eq (qcore-mode-test--face "fake") 'font-lock-string-face))
+    (should (eq (qcore-mode-test--face "commented") 'font-lock-comment-face))
+    (goto-char (point-min))
+    (search-forward "release_item")
+    (replace-match "dispose_item" t t)
+    (font-lock-ensure)
+    (should (eq (qcore-mode-test--face "dispose_item") 'font-lock-function-name-face))))
+
 ;;; qcore-mode-tests.el ends here

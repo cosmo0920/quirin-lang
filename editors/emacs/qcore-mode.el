@@ -1,6 +1,6 @@
 ;;; qcore-mode.el --- Highlight QCore source and contracts -*- lexical-binding: t; -*-
 
-;; Version: 0.1.0
+;; Version: 0.1.1
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: languages
 
@@ -86,9 +86,78 @@ Leave lifetime apostrophes as punctuation, including incomplete literals."
         (put-text-property (1- finish) finish 'syntax-table (string-to-syntax "\""))
         (put-text-property begin finish 'syntax-multiline t)))))
 
+(defun qcore-mode--previous-word ()
+  "Move backward over trivia and return the preceding identifier, if any."
+  (forward-comment (- (point)))
+  (let ((end (point)))
+    (skip-syntax-backward "w_")
+    (unless (= end (point))
+      (buffer-substring-no-properties (point) end))))
+
+(defun qcore-mode--in-resource-body-p (position)
+  "Return non-nil if POSITION is directly inside a resource type body."
+  (save-excursion
+    (save-match-data
+      (let* ((state (syntax-ppss position))
+             (open (nth 1 state)))
+        (when (and open (not (nth 8 state)) (eq (char-after open) ?{))
+          (goto-char open)
+          (forward-comment (- (point)))
+          ;; Optional structural type parameters use square brackets.
+          (when (eq (char-before) ?\])
+            (backward-sexp))
+          (and (qcore-mode--previous-word)
+               (equal (qcore-mode--previous-word) "type")
+               (equal (qcore-mode--previous-word) "resource")))))))
+
+(defun qcore-mode--match-resource-member (limit)
+  "Match a resource member and its role-specific value before LIMIT.
+Groups are the member name, a classified value and an optional noexcept word."
+  (save-restriction
+    (narrow-to-region (point-min) limit)
+    (let (found)
+      (while (and (not found)
+                  (re-search-forward
+                   "\\_<\\(repr\\|state\\|footprint\\|destructor\\|copy\\|move\\)\\_>"
+                   limit t))
+        (let ((begin (match-beginning 1))
+              (end (match-end 1))
+              (member (match-string-no-properties 1))
+              value-begin value-end modifier-begin modifier-end)
+          (when (qcore-mode--in-resource-body-p begin)
+            (forward-comment (point-max))
+            (when (eq (char-after) ?:)
+              (forward-char)
+              (forward-comment (point-max))
+              (when (and (member member '("state" "destructor" "copy" "move"))
+                         (looking-at "[A-Za-z_][A-Za-z_0-9]*\\_>")
+                         (or (member member '("state" "destructor"))
+                             (equal (match-string-no-properties 0)
+                                    (if (equal member "copy") "forbidden" "allowed"))))
+                (setq value-begin (match-beginning 0) value-end (match-end 0))
+                (goto-char value-end)
+                (when (equal member "destructor")
+                  (forward-comment (point-max))
+                  (when (looking-at "noexcept\\_>")
+                    (setq modifier-begin (match-beginning 0)
+                          modifier-end (match-end 0))
+                    (goto-char modifier-end))))
+              (put-text-property begin (point) 'font-lock-multiline t)
+              (set-match-data (list begin (point) begin end value-begin value-end
+                                    modifier-begin modifier-end))
+              (setq found t)))))
+      found)))
+
 (defconst qcore-mode-font-lock-keywords
   (let ((identifier "[A-Za-z_][A-Za-z_0-9]*"))
     `((,(concat "'" identifier "\\_>") . font-lock-variable-name-face)
+      (qcore-mode--match-resource-member
+       (1 font-lock-keyword-face)
+       (2 (pcase (match-string-no-properties 1)
+            ("destructor" 'font-lock-function-name-face)
+            ("state" 'font-lock-type-face)
+            (_ 'font-lock-constant-face)) nil t)
+       (3 font-lock-keyword-face nil t))
       (,(regexp-opt qcore-mode--keywords 'symbols) . font-lock-keyword-face)
       (,(concat "\\_<fn\\_>[ \t\n]+\\(" identifier "\\)")
        1 font-lock-function-name-face)

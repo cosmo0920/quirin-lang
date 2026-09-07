@@ -13,6 +13,8 @@ Add this to your Emacs initialization file, adjusting the checkout path:
 
 Alternatively, load `qcore-mode.el` with `M-x load-file`, then use
 `M-x qcore-mode` in an already open buffer. No external packages are required.
+Use that same sequence after updating an already loaded version; `require`
+alone does not reload it or refresh existing buffers.
 
 ## Implemented syntax coverage
 
@@ -30,6 +32,13 @@ The mode follows the current
 | Structural source | Control flow, error regions, effects, ownership/borrow and other structural types, lifetime names such as `'scope` |
 | Quantitative syntax | Usage grades, credit/live/cost axes, closed indices, `where`, `min`, `max`, `monus` |
 | Contracts | Clause introducers, exit selectors, Boolean operators, exact resource-loader v1 predicates and nullability modes |
+
+Inside resource type bodies, `repr`, `state`, `footprint`, `destructor`, `copy`
+and `move` are member keywords. Destructor targets use the function-name face,
+state names the type face, `noexcept` the keyword face, and `forbidden`/`allowed`
+the constant face. These additional rules use resource-body context so ordinary
+parameters and locals named `repr`, `destructor` or `allowed` keep their binding
+faces. Comments between member tokens are supported.
 
 The lexer treats an apostrophe as a character delimiter only for one character
 or one escaped character followed by a closing apostrophe. The mode does the
@@ -59,4 +68,6 @@ emacs -Q --batch -L editors/emacs -l qcore-mode-tests.el -f ert-run-tests-batch-
 
 The regressions check face precedence, character/lifetime edits, escaped
 newlines, non-nesting comments, file selection, comment commands, and loading
-the existing contract, example and CT fixture corpus.
+the existing contract, example and CT fixture corpus. The intrusive-list
+resource declaration has explicit face checks, with separate controls for
+resource members, ordinary bindings, nested fields and comments.
