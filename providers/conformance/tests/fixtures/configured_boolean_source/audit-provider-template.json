@@ -1,0 +1,51 @@
+{
+  "plugin_id": "qcore.sample_audit",
+  "package_version": "0.1.0",
+  "protocol_versions": [
+    1
+  ],
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "entrypoint": {
+    "kind": "executable",
+    "path": "provider"
+  },
+  "package_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "targets": [
+    {
+      "library": "sample_widgets",
+      "revisions": [
+        "*"
+      ],
+      "profiles": [
+        "qcore.c_boolean_field_contract.v2"
+      ],
+      "dialects": [
+        "c11"
+      ],
+      "platforms": [
+        "*"
+      ],
+      "backends": [
+        "native"
+      ]
+    }
+  ],
+  "capabilities": [
+    "resource_contracts"
+  ],
+  "required_foreign_summaries": [],
+  "required_observation_hooks": [],
+  "filesystem_inputs": [],
+  "network_access": false,
+  "limits": {
+    "timeout_ms": 5000,
+    "memory_bytes": 268435456,
+    "output_bytes": 4194304
+  },
+  "trust_class": "first_party",
+  "certificate_checker": "qcore.boolean_field_contract.v1",
+  "lean_theorem_family": "QCore.ChunkSource"
+}

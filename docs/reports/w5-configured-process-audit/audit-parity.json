@@ -1,0 +1,41 @@
+{
+  "baseline": "docs/reports/w6-owned-source-tasks",
+  "artifacts": [
+    {
+      "artifact": "source",
+      "bytes": 1663331,
+      "byte_equal": true,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    },
+    {
+      "artifact": "diagnostics",
+      "bytes": 11006128,
+      "byte_equal": true,
+      "sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90"
+    },
+    {
+      "artifact": "chunk-contracts",
+      "bytes": 4140662,
+      "byte_equal": true,
+      "sha256": "d3468c2a88971b276a5e1e482d883e21084c9e62a99f3df02f902e828cae30ab"
+    },
+    {
+      "artifact": "source-effects",
+      "bytes": 113871,
+      "byte_equal": true,
+      "sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7"
+    }
+  ],
+  "units": 185,
+  "raw_verdicts": {
+    "safe": 2,
+    "provisional_unsafe": 42,
+    "unknown": 137,
+    "data_only": 4
+  },
+  "function_contracts": {
+    "checked": 3,
+    "unknown": 93
+  },
+  "promoted_raw_units": 0
+}

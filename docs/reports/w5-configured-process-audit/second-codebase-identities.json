@@ -1,0 +1,21 @@
+{
+  "observed_checkout": "/tmp/qcore-process-audit-29-0/checkout",
+  "git_commit": "7c70e6bd2396c43a10fef92354b7eea1ad9312e1",
+  "tracked_status": "",
+  "bundle_sha256": "d49587a075bc479d541dc0214b020dbf19fcd3d9b8c978b950f3594804f63fba",
+  "source_sha256": {
+    "audit.json": "c879365609d9918948eeb9b70ba3f76ee76a90455ece29ad3bfe586eb013e648",
+    "compile_commands.json": "fb2e11402527b2a22695533af324887d40e43e2af030cb9012c79224064f222b",
+    "source-contracts.json": "f62692aa523afad517305ba7c382ac6b74e5c63e04797a0afa4727019f69a457",
+    "rules.qcore": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23",
+    "policy.qcore": "695fdee3ddd415135d9ba724db8519d518ece17c84d8d438759dc01a65bc1278",
+    "frame.qcore": "a9b481958ce71daaf9874147f1259ba1476437451a39617d3089ee3b36752081",
+    "alloc.qcore": "836637f1ffa592a577819af274b009cdc5d96d4dd7cbb0a2fb698391fdd18d0d",
+    "contracts.json": "a9b29e9f3266d3fd402e57e588edf2ad1bf9ecd4457d27ea53bb1cb1862f6f94",
+    "profile/profile.json": "d09bb5a1fca7eb89c13896d6b55265985543c50f5a8569cc05d4c90d09d6b851",
+    "package/verifier-plugin.json": "560bceb261f4eac770caad8e65b45a0c32e83493c2f61a8107cd71af5b5ba6d9",
+    "checkout/src/sample.c": "ab235858e0bdf2a40a2d11a52aa66b190343286941272bfe7b746dc818819309",
+    "checkout/src/sample_reset.c": "a5804b25e921c80868ef493c4ae8589a0bd77811e3dc47e7ad2ddc9d568a6c3b"
+  },
+  "provider_binary_sha256": "cc67ff53090af8f340db2362671c67b067b2539ab924cc82ccccd9effb57403f"
+}

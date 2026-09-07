@@ -12,6 +12,7 @@ pub struct AuditReport {
     revision: String,
     units: Vec<Value>,
     diagnostic_counts: BTreeMap<String, usize>,
+    source_contracts: Option<Value>,
 }
 
 impl AuditReport {
@@ -20,7 +21,12 @@ impl AuditReport {
             revision: revision.into(),
             units: Vec::new(),
             diagnostic_counts: BTreeMap::new(),
+            source_contracts: None,
         }
+    }
+
+    pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
+        self.source_contracts = Some(evidence);
     }
 
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
@@ -115,13 +121,16 @@ impl AuditReport {
 
     /// Compatibility with an existing report schema; verdict contents are unchanged.
     pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
-        let report = json!({
+        let mut report = json!({
             "schema_version": 1, revision_key: self.revision,
             "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
             "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
             "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
             "diagnostic_counts": self.diagnostic_counts, "units": self.units,
         });
+        if let Some(evidence) = &self.source_contracts {
+            report["source_contracts"] = evidence.clone();
+        }
         let mut bytes = serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?;
         bytes.push(b'\n');
         fs::write(path, bytes)

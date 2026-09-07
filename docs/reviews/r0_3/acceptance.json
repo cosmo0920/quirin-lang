@@ -87,7 +87,8 @@
       "area": "contracts",
       "status": "validated_bounded_consumers",
       "evidence": [
-        "docs/reports/r03-contract-evidence/README.md"
+        "docs/reports/r03-contract-evidence/README.md",
+        "docs/reports/w5-configured-process-audit/README.md"
       ],
       "remaining_boundary": "Resource loading, structural retention and observation replay remain separate; arbitrary contract theorem proving and source caller-precondition discharge remain open."
     },
@@ -107,7 +108,8 @@
       "area": "verification",
       "status": "hardened_bounded_evidence",
       "evidence": [
-        "docs/reports/r03-contract-evidence/README.md"
+        "docs/reports/r03-contract-evidence/README.md",
+        "docs/reports/w5-configured-process-audit/README.md"
       ],
       "remaining_boundary": "Observation scope/module/bounds substitution rejects. Native provenance is declared trusted evidence; whole-program/source-model refinement remains open."
     }

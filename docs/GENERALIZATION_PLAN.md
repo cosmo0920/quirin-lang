@@ -485,6 +485,14 @@ inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
 
+[Configured process auditing](reports/w5-configured-process-audit/README.md)
+now connects `qcore-audit CONFIG.json` to pinned helper/main-source import and
+explicit process dispatch, without an application-specific Rust adapter. The
+second-codebase command records two checked function contracts and two Unknown
+functions while its resource unit remains Unknown. Missing selections reject;
+failed/unadmitted providers remain Unknown without fallback. Library-required
+native evidence, broader lifecycle imports and full provider extraction remain open.
+
 [Configured frame helpers](reports/w5-configured-frame-helpers/README.md) remove
 the remaining helper-source/function/record/policy selection from the bounded
 Boolean process route. Generic imports protect the full declared modeled-field

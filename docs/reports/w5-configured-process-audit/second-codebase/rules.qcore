@@ -1,0 +1,62 @@
+module contract;
+
+// Executable acceptance policies over facts extracted from typed C source.
+// Rust owns AST decoding, expression evaluation, storage and control semantics.
+// These rules do not assert C memory safety, termination or custody discharge.
+
+extern fn source_enum_value() -> unit
+contract {
+    ensures normal evaluated_constant;
+    ensures normal type_matches;
+};
+
+extern fn source_scan_effects() -> unit
+contract {
+    ensures normal not header_calls;
+    ensures normal not match_calls;
+    ensures normal not return_calls;
+};
+
+extern fn source_scan_initial() -> unit
+contract {
+    ensures normal remaining_paths == 0;
+    ensures normal not index_escaped;
+};
+
+extern fn source_type_match() -> unit
+contract {
+    ensures normal type_matches;
+};
+
+extern fn source_symbol() -> unit
+contract {
+    ensures normal producer_type_matches;
+};
+
+extern fn source_loop_index() -> unit
+contract {
+    ensures normal scope_matches;
+};
+
+extern fn source_scan_region() -> unit
+contract {
+    ensures normal read_only;
+};
+
+extern fn frame_write() -> unit
+contract {
+    ensures normal not lifecycle_field;
+    ensures normal ordinary_int_field;
+};
+
+extern fn frame_declaration() -> unit
+contract {
+    ensures normal declaration_count > 0;
+    ensures normal all_external_prototypes;
+};
+
+extern fn frame_dependency() -> unit
+contract {
+    ensures normal layout_matches;
+    ensures normal not duplicate;
+};

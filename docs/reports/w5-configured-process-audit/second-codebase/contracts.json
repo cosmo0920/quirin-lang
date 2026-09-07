@@ -1,0 +1,6 @@
+{
+  "modules": [
+    "alloc.qcore"
+  ],
+  "schema_version": 1
+}

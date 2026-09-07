@@ -1,0 +1,24 @@
+[
+  {
+    "arguments": [
+      "clang",
+      "-std=c11",
+      "-DSAMPLE_BUILD=1",
+      "-c",
+      "src/sample.c"
+    ],
+    "directory": "/tmp/qcore-process-audit-29-0/checkout",
+    "file": "src/sample.c"
+  },
+  {
+    "arguments": [
+      "clang",
+      "-std=c11",
+      "-DSAMPLE_BUILD=1",
+      "-c",
+      "src/sample_reset.c"
+    ],
+    "directory": "/tmp/qcore-process-audit-29-0/checkout",
+    "file": "src/sample_reset.c"
+  }
+]

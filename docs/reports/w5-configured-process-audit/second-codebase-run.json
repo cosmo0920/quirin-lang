@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "run",
+    "--quiet",
+    "-p",
+    "qcore-audit",
+    "--",
+    "/tmp/qcore-process-audit-29-0/audit.json"
+  ],
+  "exit_code": 0,
+  "fixture": "/tmp/qcore-process-audit-29-0",
+  "report_sha256": "89543dbb40f34673f5d5a683b40d17b67e1fea8e05b11d246fde2656bd1067cd",
+  "binary_sha256": "995f601c7e208785b0b7141262363424ab5dada6ca459b7d9563f4a83d5ef98e",
+  "checked_function_contracts": 2,
+  "unknown_functions": 2,
+  "resource_unit_status": "Unknown"
+}

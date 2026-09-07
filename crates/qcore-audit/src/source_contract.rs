@@ -145,7 +145,7 @@ impl fmt::Debug for SourceContractRegistry {
     }
 }
 
-fn read_bounded(path: &Path, maximum: u64) -> Result<Vec<u8>, SourceContractError> {
+pub(crate) fn read_bounded(path: &Path, maximum: u64) -> Result<Vec<u8>, SourceContractError> {
     let failed = |error: std::io::Error| {
         SourceContractError::Configuration(format!("{}: {error}", path.display()))
     };
@@ -346,6 +346,22 @@ impl SourceContractPolicies {
 }
 
 impl SourceContractRegistry {
+    pub fn bound_libraries(&self) -> impl Iterator<Item = &str> {
+        self.bindings.keys().map(String::as_str)
+    }
+
+    /// Immutable loaded selection and package identities; this is provenance,
+    /// not evidence that any configured function has been checked.
+    pub fn audit_inventory(&self) -> serde_json::Value {
+        serde_json::json!({
+            "packages": self.registry.manifests(),
+            "bindings": self.bindings.iter().map(|(library, binding)| serde_json::json!({
+                "library": library, "provider": binding.provider,
+                "contract": binding.contract, "frame_helpers": binding.frame_helpers,
+            })).collect::<Vec<_>>(),
+        })
+    }
+
     /// Selection metadata from the immutable configuration, not execution evidence.
     pub fn frame_helper_policy_inventory(&self) -> BTreeMap<&str, &[FrameHelperPolicy]> {
         self.bindings

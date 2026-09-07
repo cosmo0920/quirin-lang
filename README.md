@@ -594,3 +594,16 @@ runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
 owned errors, worker allocation, shared memory, mutexes, nested workers and
 other native platforms remain open. Evidence:
 `docs/reports/w6-owned-source-tasks/README.md`.
+
+Configured process audit (2026-09-07): `qcore-audit CONFIG.json` now connects
+explicit source-contract package/policy selection to pinned source/compile-db
+imports and independent process-witness replay. Selected helper sources are
+checked against their Git blobs and imported bytes. The second-codebase command
+checks two function contracts while retaining two Unknown functions, including
+a build-excluded definition; its raw resource unit remains Unknown. Provider
+failure or rejected evidence never falls back or promotes the resource verdict.
+Report metadata preserves loaded policies/packages, source identities and exact
+checked/Unknown inventories. The full Cycle19 compatibility reports remain
+byte-identical. General lifecycle import, specialized provider extraction,
+required native evidence and full registry composition remain open. Evidence:
+`docs/reports/w5-configured-process-audit/README.md`.

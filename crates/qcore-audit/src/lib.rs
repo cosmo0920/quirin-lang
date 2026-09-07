@@ -9,7 +9,9 @@
 pub mod compile_db;
 pub mod projection;
 pub mod report;
+mod source_audit;
 pub mod source_contract;
+pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -39,6 +41,8 @@ pub struct AuditConfig {
     pub compile_database: PathBuf,
     pub libraries: Vec<String>,
     pub report: PathBuf,
+    #[serde(default)]
+    pub source_contracts: Option<SourceContractAuditConfig>,
 }
 
 /// An explicit profile determines every selected source path. Conflicting
@@ -113,6 +117,36 @@ fn resolve(base: &Path, path: &Path) -> PathBuf {
     }
 }
 
+fn verify_pinned_bytes(
+    checkout: &Path,
+    revision: &str,
+    path: &Path,
+    source: &[u8],
+) -> Result<(), String> {
+    let canonical = path.canonicalize().map_err(|error| error.to_string())?;
+    if !canonical.starts_with(checkout) {
+        return Err("source outside selected checkout".into());
+    }
+    // Keep the selected path's Git blob, rather than letting an unpinned
+    // symlink borrow the bytes of a different pinned file.
+    let file = path
+        .strip_prefix(checkout)
+        .map_err(|_| "source outside selected checkout")?;
+    let pinned = Command::new("git")
+        .arg("-C")
+        .arg(checkout)
+        .args(["show", &format!("{revision}:{}", file.to_string_lossy())])
+        .output()
+        .map_err(|error| error.to_string())?;
+    if !pinned.status.success() || pinned.stdout != source {
+        return Err(format!(
+            "selected source `{}` does not match its pinned bytes",
+            file.display()
+        ));
+    }
+    Ok(())
+}
+
 pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     let path = path.canonicalize().map_err(|error| error.to_string())?;
     let base = path
@@ -151,7 +185,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         let library = profile.library(name).ok_or("selected library is absent")?;
         if !library.required_evidence.is_empty() {
             return Err(format!(
-                "library `{name}` requires evidence that this resource-only driver cannot supply"
+                "library `{name}` requires evidence that this configured driver cannot supply"
             ));
         }
         let selected = select_profile_units(&entries, &checkout, library)?;
@@ -165,6 +199,20 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         work.push((name, selected));
     }
     let revision = revisions.into_iter().collect::<Vec<_>>().join(",");
+    let mut source_contracts = config
+        .source_contracts
+        .as_ref()
+        .map(|selection| {
+            source_audit::SourceContractAudit::prepare(
+                selection,
+                base,
+                &checkout,
+                &entries,
+                &profile,
+                &config.libraries,
+            )
+        })
+        .transpose()?;
     let mut report = AuditReport::new(&revision);
     let mut counts = AuditCounts::default();
     let mut source_identities = BTreeMap::new();
@@ -179,17 +227,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             let pin = profile
                 .pin_for(library)
                 .ok_or("selected source has no pin")?;
-            let pinned = Command::new("git")
-                .arg("-C")
-                .arg(&checkout)
-                .args(["show", &format!("{}:{}", pin.git_commit, file)])
-                .output()
-                .map_err(|error| error.to_string())?;
-            if !pinned.status.success() || pinned.stdout != source.as_bytes() {
-                return Err(format!(
-                    "selected source `{file}` does not match its pinned bytes"
-                ));
-            }
+            verify_pinned_bytes(&checkout, &pin.git_commit, &entry.file, source.as_bytes())?;
             source_identities.insert(
                 format!("{library}/{file}"),
                 qcore_contract::profile_loader::sha256_hex(source.as_bytes()),
@@ -202,30 +240,41 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 dialect: options.dialect,
                 function_scope: LegacyFunctionScope::MainSourceDefinitions,
             };
+            let source_functions = legacy_c_source_functions(&source);
             project_unit(
                 library,
                 &file,
                 &unit,
-                &legacy_c_source_functions(&source),
+                &source_functions,
                 &contracts,
                 &mut report,
                 &mut counts,
             )?;
+            if let Some(audit) = &mut source_contracts {
+                audit.analyze_unit(library, &file, &unit, &source_functions, &profile);
+            }
         }
+    }
+    if let Some(audit) = source_contracts {
+        report.set_source_contracts(audit.finish());
     }
     let report_path = resolve(base, &config.report);
     if let Some(parent) = report_path.parent() {
         fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
-    report.write(&report_path)?;
     let assumptions = serde_json::json!({
         "schema_version": 1, "profile": profile.assumptions(),
         "contracts": contracts.source_assumptions(),
         "source_sha256": source_identities,
         "contract_manifest": fs::read_to_string(&contract_manifest).map_err(|error| error.to_string())?,
         "compile_database_sha256": qcore_contract::profile_loader::sha256_hex(database.as_bytes()),
-        "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+        "scope": if config.source_contracts.is_some() {
+            "existing-C resource projection of selected compiled units; separate configured source-contract evidence is embedded in the report without whole-unit promotion; Unsafe is provisional"
+        } else {
+            "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional"
+        },
     });
+    report.write(&report_path)?;
     fs::write(
         report_path.with_extension("assumptions.json"),
         serde_json::to_vec_pretty(&assumptions).map_err(|error| error.to_string())?,

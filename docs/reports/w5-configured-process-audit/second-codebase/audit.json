@@ -1,0 +1,20 @@
+{
+  "checkout": "checkout",
+  "compile_database": "compile_commands.json",
+  "libraries": [
+    "sample_widgets"
+  ],
+  "profile_directory": "profile",
+  "report": "output/report.json",
+  "schema_version": 1,
+  "source_contracts": {
+    "configuration": "source-contracts.json",
+    "libraries": [
+      {
+        "library": "sample_widgets",
+        "source_root": "src"
+      }
+    ],
+    "source_rules": "rules.qcore"
+  }
+}

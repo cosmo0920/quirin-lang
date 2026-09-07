@@ -1,0 +1,13 @@
+{
+  "bindings": [
+    {
+      "contract": "policy.qcore",
+      "library": "sample_widgets",
+      "provider": "qcore.sample_audit"
+    }
+  ],
+  "packages": [
+    "package"
+  ],
+  "schema_version": 1
+}

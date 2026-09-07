@@ -1,0 +1,96 @@
+{
+  "base_commit": "59f5c097b867bff3ad9e85e9c226ee5178cf1db7",
+  "status": "passed",
+  "workspace_tests": 754,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 58,
+  "ct_mapped": 8,
+  "ct_unmapped": 42,
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "uncompressed_sha256": "723c1cf87f5944ab5c00fe4db3f530527df2ca3b9ec39bb1b73e386d51c5fedc"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "log": "checks.log.gz",
+      "uncompressed_sha256": "dda73fcb9d80834e03cc08e0125ee0767fc714467985b7c4fc03b7ef7b4dd340"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "log": "providers.log.gz",
+      "uncompressed_sha256": "d7f2f6dc9f1cd35c71ad154aa3c28a5c0dbaeaad47cb513349632ea76a651265"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "log": "lean-build.log.gz",
+      "uncompressed_sha256": "c09060a6aa1cdc4e5d89b4df28ae9fb617711bad3a7db7fca6d3cc11af95f7e2"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "log": "lean-audits.log.gz",
+      "uncompressed_sha256": "2202b219210cd294802d565e67be3a243df82960ccc572b46e048c0630c6ef71"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "log": "python.log.gz",
+      "uncompressed_sha256": "68beb80ddc061fb409774cb72bf078c4820ab94532379279bf55cfc37066e009"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-configured-process-source.json /tmp/qcore-configured-process-diagnostics.json",
+      "exit_code": 0,
+      "log": "audit.log.gz",
+      "uncompressed_sha256": "450044e06b33915b012e5f3e8739ac972fb1fbde269dbd4adf3a6a151cea0cbe"
+    },
+    "demo-setup": {
+      "command": "QCORE_KEEP_PROCESS_AUDIT_FIXTURE=/tmp/qcore-configured-process-fixture-path cargo test --manifest-path providers/Cargo.toml -p qcore-provider-conformance --test configured_audit pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter -- --exact",
+      "exit_code": 0,
+      "log": "demo-setup.log.gz",
+      "uncompressed_sha256": "207247b0b73bc51af931121e3b352cb752c0843e953a3027ccba586f63fc3b02"
+    },
+    "cli": {
+      "command": [
+        "cargo",
+        "run",
+        "--quiet",
+        "-p",
+        "qcore-audit",
+        "--",
+        "/tmp/qcore-process-audit-29-0/audit.json"
+      ],
+      "exit_code": 0,
+      "log": "cli.log.gz",
+      "uncompressed_sha256": "35ba73bc239ed4ca6b5d22e6722f423f090ed7f23a43f0d817fc54e7a77172d1"
+    }
+  },
+  "source_sha256": {
+    "AGENTS.md": "ba7d0ea5b91db771c13aec180c707a30dec33722d9d50c87b1dae0272534c214",
+    "CLAUDE.md": "1e7344cbe34424bf998e0484178f7983224caee39fc26410d57b996e8946f755",
+    "README.md": "db53c2d82f1a9ad20cb1e74a9d8e0cf37a56f73a104efc147d56db050c97c6b6",
+    "crates/qcore-audit/README.md": "96200dab6f5df1e31b4730340a9d9544f3c85eb075657317df8d73f87c8339af",
+    "crates/qcore-audit/src/lib.rs": "72f30d9e310c72826db428753a7a0f14a584bffce281293bd401b13d3d8abd31",
+    "crates/qcore-audit/src/report.rs": "74c68a6dcacf4ed92ec13df85ff86dee83739429a3ecd2d76e8ade64722776ca",
+    "crates/qcore-audit/src/source_audit.rs": "4dc1bd10124c4056aa8103b0ba3643a7c27e2c3bc2efd507675f6e24aca9b04e",
+    "crates/qcore-audit/src/source_contract.rs": "a148560cd6a453fa2a468b9043a106fd2a2d862d05d50c1b3dee41d943a7f472",
+    "docs/GENERALIZATION_PLAN.md": "94a8ef107de0487de40c7e9e2dc90a2bddb3bb86e7a01edf58247350db4a7b4a",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": "3e3a2b035205b105768680815d7d091474618c0c588b7188a1c5cb13e1d81740",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "cd29fb13c4b7122d35099b4d69078c6dff0c9b8b14b26c2d906bd4120a52acb4",
+    "docs/VALIDATION.md": "3bc08f842946394f36135f9ca476db2484ad7ea0b70788cc3fcba2a459e1e929",
+    "docs/reports/w5-configured-process-audit/README.md": "2d6c8826c6f4248201bbf8ef51b1dc34e9d4dbaa59e1b9e50b50e4d1cfd69d06",
+    "docs/reviews/r0_3/REVIEW.md": "9fecb22d9b698521fc8a1acfe4e0ee527be1c29cbbeba36ec5a5cddcc47acb57",
+    "docs/reviews/r0_3/acceptance.json": "4a1ec25d836a39bd63c1881ff931569a9e96acbdc8c0f7fe54cd8ada425c36ca",
+    "providers/conformance/src/bin/configured_audit_provider.rs": "5273e5d2f2048e8cda9876f1adc1b59d272baed18a22ad52885b0db5a5bded6e",
+    "providers/conformance/tests/configured_audit.rs": "2d112d88b5d39ae52ef5ed5e958dc68ef1da0f532d5c4cfd613e996a8bf31538",
+    "providers/conformance/tests/fixtures/configured_boolean_source/audit-provider-template.json": "e631049bd7bdaf47621313d2a672403e6387a7542acb3b8634c996b1aa971af9"
+  }
+}

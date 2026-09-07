@@ -1,0 +1,46 @@
+{
+  "libraries": {
+    "sample_widgets": {
+      "accepted_builds": [],
+      "api_dispositions": {},
+      "audited_files": [],
+      "boolean_field_models": [
+        {
+          "clear_operation": "unlock",
+          "field": "ready",
+          "record": "sample_record",
+          "set_operation": "lock"
+        }
+      ],
+      "callback_summaries": {},
+      "operation_summaries": {},
+      "permitted_mechanisms": [],
+      "pin": "sample",
+      "provider": null,
+      "required_evidence": [],
+      "source_roots": [
+        {
+          "root": "src",
+          "selection": {
+            "exact": {
+              "file": "src/sample.c"
+            }
+          }
+        }
+      ],
+      "source_witnesses": [],
+      "typed_import": null
+    }
+  },
+  "pins": {
+    "sample": {
+      "clean_paths": [],
+      "description": "Actual pinned local test checkout",
+      "git_commit": "7c70e6bd2396c43a10fef92354b7eea1ad9312e1"
+    }
+  },
+  "provider_manifests": [],
+  "resource_contract_manifest": "../contracts.json",
+  "schema_version": 1,
+  "source_set": "profile"
+}

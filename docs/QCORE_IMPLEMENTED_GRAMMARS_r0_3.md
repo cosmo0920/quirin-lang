@@ -369,3 +369,13 @@ at 32 MiB per call; this is not a new bound on transient Clang preprocessing.
 pinned audit's historical option projection; there is no automatic fallback.
 `configured_frame_helper_policies` in the audit sidecar records snapshotted
 selection metadata, not proof that every configured helper was executed.
+
+## Configured C audit composition
+
+`qcore-audit` schema-1 configuration now accepts an optional `source_contracts`
+object with `configuration`, `source_rules` and explicit `libraries` entries
+(`library`, checkout-relative `source_root`). All are required within that object;
+unknown fields reject. The exact configuration and helper-resolution rules are
+in the [audit command documentation](../crates/qcore-audit/README.md#configured-source-contract-processes).
+This input selects existing bounded Boolean source import and evidence-v2 replay;
+it does not extend QCore source grammar or promote the C resource verdict.

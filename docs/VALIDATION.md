@@ -157,3 +157,10 @@ now use real capture syntax and typed Buffer custody. Its 29 new Lean theorems
 cover the model transfer/typing rules; fixed Linux native/sanitizer runs remain
 separate from unproved compiler/runtime refinement. All four full 185-unit
 Cycle19 artifacts retain exact byte parity with the preceding frame-helper report.
+
+The [configured process-audit increment](reports/w5-configured-process-audit/README.md)
+adds a real pinned second-codebase command run and seven end-to-end provider tests.
+Main/helper source pinning, build-excluded Unknowns, failed process transport,
+rejected evidence and explicit package/policy selection are exercised without
+hand-constructed source summaries. Semantic replay and Lean rules are unchanged;
+resource verdicts retain parity.
