@@ -1982,11 +1982,25 @@ pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationO
     if outcomes.is_empty() {
         return VerificationOutcome::unknown("QP010", "composition has no plugin results");
     }
-    if let Some(unsafe_outcome) = outcomes
+    if let Some(alleged) = outcomes
         .iter()
         .find(|outcome| outcome.verdict == ProposedVerdict::Unsafe)
     {
-        return unsafe_outcome.clone();
+        // E03 acceptance 3. No evidence version ships a counterexample checker,
+        // so an `Unsafe` reaching composition is an unchecked allegation about
+        // one supported property. `check_response`/`check_response_v2` already
+        // downgrade it (QP010); composition is the last place a caller-supplied
+        // allegation could become the published composite verdict, and a
+        // provisional source-unit diagnostic must never be republished here as
+        // a verified counterexample. Its diagnostics are retained verbatim.
+        let mut outcome = VerificationOutcome::unknown(
+            "QP010",
+            "unverified provider allegation: composition has no counterexample checker",
+        );
+        outcome
+            .diagnostics
+            .extend(alleged.diagnostics.iter().cloned());
+        return outcome;
     }
     if outcomes
         .iter()
@@ -2041,10 +2055,27 @@ pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationO
             }
         }
     }
-    // Composition itself is represented as a core certificate collection; it
-    // cannot fabricate a new provider certificate. The leading certificate is
-    // returned for API compatibility and all component certificates are
-    // available through `compose_certificates`.
+    // E03 acceptance 2. Composition itself is represented as a core certificate
+    // collection; it cannot fabricate a new provider certificate, so the
+    // leading certificate is returned for API compatibility and all component
+    // certificates are available through `compose_certificates`. That
+    // representative is only honest about the composite's premises when every
+    // component declares the same premise set: a component premise the
+    // representative omits would be silently dropped from the published
+    // result, which the verdict contract forbids. Non-conflicting but unequal
+    // premise sets are therefore refused rather than merged into a certificate
+    // no provider issued. Widening this to a first-class composite premise
+    // union is recorded as open work, not done here.
+    if certificates
+        .iter()
+        .any(|certificate| certificate.evidence.assumptions_used != assumptions)
+    {
+        return VerificationOutcome::unknown(
+            "QP012",
+            "plugins declare different premise sets; the published composite would \
+             understate its assumptions",
+        );
+    }
     VerificationOutcome {
         verdict: ProposedVerdict::Safe,
         diagnostics: Vec::new(),
