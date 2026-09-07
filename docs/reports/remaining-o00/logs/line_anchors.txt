@@ -1,0 +1,146 @@
+# Preprocessed-line anchors reproduced at this checkout (clang -E -P, archived compile_commands.json.gz)
+# Used only to map the archived diagnostics' preprocessed line numbers onto original source lines.
+
+## cio_chunk.c  offset 0 (archived line == locally reproduced line)
+2009:struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st,
+2010:                                 const char *name, int flags, size_t size,
+2011:                                 int *err)
+2012:{
+2013:    int len;
+2014:    void *backend = ((void*)0);
+2015:    struct cio_chunk *ch;
+2016:    if (!st) {
+2017:        cio_log_print(ctx, 1, "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/lib/chunk
+2018:        return ((void*)0);
+2019:    }
+2020:    if (!name) {
+2021:        cio_log_print(ctx, 1, "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/lib/chunk
+2022:        return ((void*)0);
+2023:    }
+2024:    len = strlen(name);
+2025:    if (len == 0) {
+2026:        cio_log_print(ctx, 1, "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/lib/chunk
+2027:        return ((void*)0);
+2028:    }
+2029:    ch = malloc(sizeof(struct cio_chunk));
+2030:    if (!ch) {
+2031:        cio_errno_print((*__errno_location ()), "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clan
+2032:        return ((void*)0);
+2033:    }
+2034:    ch->name = strdup(name);
+2035:    ch->ctx = ctx;
+2036:    ch->st = st;
+2037:    ch->lock = 0;
+2038:    ch->tx_active = 0;
+2039:    ch->tx_crc = 0;
+2040:    ch->tx_content_length = 0;
+2041:    ch->backend = ((void*)0);
+2042:    mk_list_add(&ch->_head, &st->chunks);
+2043:    cio_error_reset(ch);
+2044:    if (st->type == 0) {
+2045:        backend = cio_file_open(ctx, st, ch, flags, size, err);
+2046:    }
+2047:    else if (st->type == 1) {
+2048:        *err = 0;
+2049:        backend = cio_memfs_open(ctx, st, ch, flags, size);
+2050:    }
+2051:    if (!backend) {
+2052:        mk_list_del(&ch->_head);
+2053:        free(ch->name);
+2054:        free(ch);
+2055:        return ((void*)0);
+2056:    }
+2057:    ch->backend = backend;
+2058:    cio_chunk_counter_total_add(ctx);
+2059:    if (cio_chunk_is_up(ch) == !0) {
+2060:        mk_list_add(&ch->_state_head, &st->chunks_up);
+2061:    }
+2062:    else {
+2063:        mk_list_add(&ch->_state_head, &st->chunks_down);
+2064:    }
+2065:    return ch;
+2066:}
+
+## cio_scan.c  offset 0
+2299:        ctx->last_chunk_error = 0;
+2300:        cio_chunk_open(ctx, st, ent->d_name, ctx->options.flags, 0, &err);
+2301:        if (ctx->options.flags & 16) {
+
+## flb_input_chunk.c  archived line == local line + 6
+19572:    char name[64];
+19573:    struct cio_chunk *chunk;
+19574:    struct flb_storage_input *storage;
+19575:    struct flb_input_chunk *ic;
+19576:    storage = in->storage;
+19577:    generate_chunk_name(in, name, sizeof(name) - 1);
+19578:    chunk = cio_chunk_open(storage->cio, storage->stream, name,
+19579:                           1, 262144, &err);
+19580:    if (!chunk) {
+19581:        if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] could not create chunk file: %s:%s", 
+19582:        return ((void*)0);
+19583:    }
+19584:    ret = cio_chunk_is_up(chunk);
+19585:    if (ret == 0) {
+19586:        ret = cio_chunk_up_force(chunk);
+19587:        if (ret == -1) {
+19588:            cio_chunk_close(chunk, !0);
+19589:            return ((void*)0);
+19590:        }
+19591:        set_down = 1;
+19592:    }
+19593:    ret = input_chunk_write_header(chunk, event_type, (char *) tag, tag_len);
+19594:    if (ret == -1) {
+19595:        cio_chunk_close(chunk, !0);
+19596:        return ((void*)0);
+19597:    }
+19598:    ic = flb_calloc(1, sizeof(struct flb_input_chunk));
+19599:    if (!ic) {
+19600:        flb_errno_print((*__errno_location ()), "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-cla
+19601:        cio_chunk_close(chunk, !0);
+19602:        return ((void*)0);
+19603:    }
+19604:    ic->event_type = event_type;
+19605:    ic->busy = 0;
+19606:    ic->fs_counted = 0;
+19607:    ic->chunk = chunk;
+19608:    ic->fs_backlog = 0;
+19609:    ic->in = in;
+19610:    ic->stream_off = 0;
+19611:    ic->task = ((void*)0);
+19612:    ic->create_time = flb_time_now();
+19613:    ic->total_records = 0;
+19614:    mask_size = flb_routes_mask_get_size(in->config->router);
+19615:    ic->routes_mask = (flb_route_mask_element *)
+19616:                            flb_calloc(mask_size,
+19617:                                       sizeof(flb_route_mask_element));
+19618:    if (ic->routes_mask == ((void*)0)) {
+19619:        flb_errno_print((*__errno_location ()), "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-cla
+19620:        cio_chunk_close(chunk, !0);
+19621:        flb_free(ic);
+19622:        return ((void*)0);
+19623:    }
+19624:    has_routes = flb_routes_mask_set_by_tag(ic->routes_mask, tag, tag_len, in);
+19625:    if (has_routes == 0) {
+19626:        if (flb_log_check(5)) flb_log_print(5, "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clan
+19627:    }
+19628:    msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write);
+19629:    mk_list_add(&ic->_head, &in->chunks);
+19630:    if (set_down == 1) {
+19631:        cio_chunk_down(chunk);
+19632:    }
+19633:    if (event_type == 0) {
+19634:        flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, 0);
+19635:    }
+19636:    else if (event_type == 1) {
+19637:        pthread_mutex_lock(&in->metrics_chunk_lock);
+19638:        flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, 0);
+19639:        pthread_mutex_unlock(&in->metrics_chunk_lock);
+19640:    }
+19641:    else if (event_type == 2) {
+19642:        flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, 0);
+19643:    }
+19644:    else if (event_type == 4) {
+19645:        flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, 0);
+19646:    }
+19647:    return ic;
+19648:}

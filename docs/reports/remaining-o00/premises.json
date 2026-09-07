@@ -1,0 +1,952 @@
+{
+ "schema_version": 1,
+ "card": "O00",
+ "date": "2026-09-07",
+ "scope": "Report-only obligation map for one constructor-to-caller provenance path in the pinned 185-unit Cycle 19 corpus. No code, contract, profile, test or verdict changed.",
+ "pinned_source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+ "archived_artifact": "docs/reports/w2-clang-cmake-build/diagnostics.json.gz (hash-verified, not regenerated)",
+ "selected_path": {
+  "constructor": "cio_chunk_open (lib/chunkio/src/cio_chunk.c:30)",
+  "caller": "flb_input_chunk_create (src/flb_input_chunk.c:2506)",
+  "deferred_cleanup": "flb_input_chunk_destroy (src/flb_input_chunk.c:2704)",
+  "counter_example_caller": "cio_scan_stream_files (lib/chunkio/src/cio_scan.c:105)",
+  "why": "The only two production call sites of cio_chunk_open inside the 185-unit corpus; one keeps the result and cleans up on four arms, the other discards it."
+ },
+ "identities": {
+  "ID-P": "chunk object (malloc, cio_chunk.c:61)",
+  "ID-N": "chunk name (strdup, cio_chunk.c:66)",
+  "ID-L": "stream containment (_head, _state_head)",
+  "ID-B": "backend child object (cio_file calloc at cio_file.c:663, or cio_memfs)",
+  "ID-Q": "backend path string (cio_file.c:657)",
+  "ID-D": "OS file descriptor (cf->fd)",
+  "ID-M": "OS mapping (cf->map)",
+  "ID-C": "context chunk counters",
+  "ID-IC": "caller object ic (flb_calloc, flb_input_chunk.c:2554)",
+  "ID-RM": "caller routes_mask (flb_calloc, flb_input_chunk.c:2580)",
+  "ID-PB": "caller publication edges (aggregate field, instance list, callback, hash table)",
+  "ID-E": "*err scalar out slot"
+ },
+ "exits": {
+  "constructor": {
+   "function": "cio_chunk_open",
+   "file": "build/cycle19/fluent-bit-clang-source/lib/chunkio/src/cio_chunk.c",
+   "definition_lines": "30-109",
+   "archived_status": "Unknown",
+   "archived_diagnostics": 33,
+   "exits": [
+    {
+     "id": "E1",
+     "kind": "guard_reject",
+     "line": 40,
+     "pp_line": 2018,
+     "condition": "!st",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [],
+     "returns": "NULL"
+    },
+    {
+     "id": "E2",
+     "kind": "guard_reject",
+     "line": 45,
+     "pp_line": 2022,
+     "condition": "!name",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [],
+     "returns": "NULL"
+    },
+    {
+     "id": "E3",
+     "kind": "guard_reject",
+     "line": 51,
+     "pp_line": 2027,
+     "condition": "strlen(name) == 0",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [],
+     "returns": "NULL"
+    },
+    {
+     "id": "E3b",
+     "kind": "guard_reject_compiled_out",
+     "line": 56,
+     "pp_line": null,
+     "condition": "st->type == CIO_STORE_FS with CIO_HAVE_BACKEND_FILESYSTEM undefined",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [],
+     "returns": "NULL",
+     "note": "Absent from the pinned preprocessed unit; observed natively by docs/reports/cycle19-unsupported-constructors."
+    },
+    {
+     "id": "E4",
+     "kind": "allocation_failure",
+     "line": 64,
+     "pp_line": 2032,
+     "condition": "!ch",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [],
+     "returns": "NULL"
+    },
+    {
+     "id": "E5",
+     "kind": "partial_failure_rollback",
+     "line": 92,
+     "pp_line": 2055,
+     "condition": "!backend",
+     "acquired_live_at_exit": [],
+     "released_at_exit": [
+      "ID-L _head unlink (cio_chunk.c:89)",
+      "ID-N chunk name (90)",
+      "ID-P chunk object (91)"
+     ],
+     "returns": "NULL",
+     "note": "ch->backend may hold a freed cio_file pointer (R16); the parent is freed on the same arm. ID-B/ID-Q/ID-D/ID-M were already released inside cio_file_open's own arms."
+    },
+    {
+     "id": "E6",
+     "kind": "success",
+     "line": 108,
+     "pp_line": 2065,
+     "condition": "backend != NULL",
+     "acquired_live_at_exit": [
+      "ID-P chunk object",
+      "ID-N chunk name (possibly NULL, R10)",
+      "ID-L _head in st->chunks and _state_head in st->chunks_up or chunks_down",
+      "ID-B backend child",
+      "ID-Q backend path",
+      "ID-C total_chunks incremented"
+     ],
+     "released_at_exit": [],
+     "returns": "chunk",
+     "sub_cases": [
+      {
+       "id": "E6a",
+       "name": "filesystem backend, resource-limit arm",
+       "source": "cio_file.c:702-714",
+       "descriptor": "not acquired (fd == -1)",
+       "mapping": "not acquired (map == NULL)",
+       "note": "chunk lands in st->chunks_down; this is the case the caller's up_force/set_down sequence exists for"
+      },
+      {
+       "id": "E6b",
+       "name": "filesystem backend, full open",
+       "source": "cio_file.c:718-781",
+       "descriptor": "acquired",
+       "mapping": "acquired",
+       "note": "total_chunks_up incremented inside mmap_file"
+      },
+      {
+       "id": "E6c",
+       "name": "memory backend",
+       "source": "cio_chunk.c:83-86",
+       "descriptor": "n/a",
+       "mapping": "n/a",
+       "note": "cio_memfs_open; separate child identity"
+      }
+     ]
+    }
+   ],
+   "child_constructor_failure_arms": [
+    {
+     "source": "cio_file.c:654",
+     "released": [],
+     "note": "filename check; nothing acquired"
+    },
+    {
+     "source": "cio_file.c:659",
+     "released": [],
+     "note": "path compose returned NULL"
+    },
+    {
+     "source": "cio_file.c:668",
+     "released": [
+      "ID-Q path"
+     ],
+     "note": "cio_file calloc failed"
+    },
+    {
+     "source": "cio_file.c:726",
+     "released": [
+      "ID-Q path",
+      "ID-B cf"
+     ],
+     "note": "native open failed; *err set; ch->backend left dangling (R16)"
+    },
+    {
+     "source": "cio_file.c:740",
+     "released": [
+      "ID-D descriptor",
+      "ID-Q path",
+      "ID-B cf"
+     ],
+     "note": "update_size failed"
+    },
+    {
+     "source": "cio_file.c:763",
+     "released": [
+      "ID-D descriptor",
+      "ID-Q path",
+      "ID-B cf"
+     ],
+     "note": "acl/settings failed"
+    },
+    {
+     "source": "cio_file.c:776",
+     "released": [
+      "ID-D descriptor",
+      "ID-Q path",
+      "ID-B cf"
+     ],
+     "note": "mmap_file failed"
+    }
+   ]
+  },
+  "caller": {
+   "function": "flb_input_chunk_create",
+   "file": "build/cycle19/fluent-bit-clang-source/src/flb_input_chunk.c",
+   "definition_lines": "2506-2621",
+   "archived_status": "Unknown",
+   "archived_diagnostics": 44,
+   "archived_unit_status": "Unsafe",
+   "exits": [
+    {
+     "id": "C1",
+     "kind": "constructor_returned_null",
+     "line": 2530,
+     "released_at_exit": [],
+     "returns": "NULL",
+     "premise": "the constructor released everything it acquired (R11, E1-E5)"
+    },
+    {
+     "id": "C2",
+     "kind": "caller_cleanup",
+     "line": 2541,
+     "condition": "cio_chunk_up_force(chunk) == -1",
+     "released_at_exit": [
+      "ID-P via cio_chunk_close(chunk, CIO_TRUE) at 2540"
+     ],
+     "returns": "NULL",
+     "note": "the descriptor may still be open on this arm (R20); the close reclaims it (R23)"
+    },
+    {
+     "id": "C3",
+     "kind": "caller_cleanup",
+     "line": 2550,
+     "condition": "input_chunk_write_header(...) == -1",
+     "released_at_exit": [
+      "ID-P via cio_chunk_close(chunk, CIO_TRUE) at 2549"
+     ],
+     "returns": "NULL"
+    },
+    {
+     "id": "C4",
+     "kind": "caller_cleanup",
+     "line": 2558,
+     "condition": "flb_calloc for ic returned NULL",
+     "released_at_exit": [
+      "ID-P via cio_chunk_close(chunk, CIO_TRUE) at 2557"
+     ],
+     "returns": "NULL"
+    },
+    {
+     "id": "C5",
+     "kind": "caller_cleanup",
+     "line": 2587,
+     "condition": "flb_calloc for routes_mask returned NULL",
+     "released_at_exit": [
+      "ID-P via cio_chunk_close(chunk, CIO_TRUE) at 2585",
+      "ID-IC via flb_free(ic) at 2586"
+     ],
+     "returns": "NULL",
+     "note": "ID-RM is NULL on this arm; nothing to free"
+    },
+    {
+     "id": "C6",
+     "kind": "success_with_publication",
+     "line": 2620,
+     "released_at_exit": [
+      "ID-D and ID-M via cio_chunk_down(chunk) at 2602, only when set_down is true"
+     ],
+     "returns": "ic",
+     "transfers": [
+      "ID-P into ic->chunk at 2569 (R30)",
+      "ID-IC into in->chunks at 2599 (R31)",
+      "ID-IC into the msgpack callback at 2598 (R32)",
+      "ID-IC into one hash table at 2606/2610/2614/2617 (R33)"
+     ]
+    },
+    {
+     "id": "C7",
+     "kind": "deferred_caller_cleanup",
+     "line": 2797,
+     "function": "flb_input_chunk_destroy",
+     "released_at_exit": [
+      "ID-P via cio_chunk_close(ic->chunk, del) at 2797",
+      "ID-L via mk_list_del at 2798",
+      "ID-RM via flb_free at 2801",
+      "ID-IC via flb_free at 2805"
+     ],
+     "note": "the declared close contract is inert here: member-read receiver (probe O-E)"
+    },
+    {
+     "id": "C8",
+     "kind": "unenumerated_by_the_caller",
+     "line": 2543,
+     "condition": "cio_chunk_up_force returned CIO_RETRY (-2) or CIO_CORRUPTED (-3)",
+     "note": "falls through to set_down = FLB_TRUE and the success path (R22, blocker B06)"
+    }
+   ]
+  },
+  "discard_caller": {
+   "function": "cio_scan_stream_files",
+   "file": "build/cycle19/fluent-bit-clang-source/lib/chunkio/src/cio_scan.c",
+   "call_site": 105,
+   "pp_line": 2300,
+   "archived_status": "Unknown",
+   "note": "The returned chunk is discarded entirely; custody stays with st->chunks (R03). Under the declared owned-result mode this site would report a discarded owned result (probe O-C); today it is masked by the indirect-access gate (probe O-D)."
+  }
+ },
+ "premise_ledger": [
+  {
+   "id": "R01",
+   "premise": "cio_chunk_open hands the caller owned custody of a nullable chunk pointer",
+   "identity": "ID-P/chunk-object",
+   "site": "contract/qcore/chunkio/resource_open_close.qcore:8-18",
+   "origin": "declared_contract_v1",
+   "status": "assumed_inert",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B01",
+   "note": "Loaded into ResourceContracts but never reached at either corpus call site; probes O-A/O-D."
+  },
+  {
+   "id": "R02",
+   "premise": "ctx, st, name, flags, size and err stay borrowed across cio_chunk_open",
+   "identity": "ID-P/borrowed-inputs",
+   "site": "contract/qcore/chunkio/resource_open_close.qcore:11-16",
+   "origin": "declared_contract_v1",
+   "status": "assumed_inert",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B01"
+  },
+  {
+   "id": "R03",
+   "premise": "the chunk returned on success is ALSO linked into st->chunks, so the returned pointer is not sole custody",
+   "identity": "ID-L/stream-containment",
+   "site": "build/cycle19/fluent-bit-clang-source/lib/chunkio/src/cio_chunk.c:75 (pp 2042)",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "blocker": "B02",
+   "note": "In tension with R01's resource_return_owned; probe O-C shows the contract would report a discarded owned result at cio_scan.c:105."
+  },
+  {
+   "id": "R04",
+   "premise": "cio_chunk_close releases the chunk (nonnull)",
+   "identity": "ID-P/chunk-object",
+   "site": "contract/qcore/chunkio/resource_open_close.qcore:20-25",
+   "origin": "declared_contract_v1",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "note": "Reaches 7 of 9 corpus call sites but always on an unresolved identity; 2 sites are inert (member-read receiver)."
+  },
+  {
+   "id": "R05",
+   "premise": "chunk_is_live at close",
+   "identity": "ID-P/chunk-object",
+   "site": "contract/qcore/chunkio/chunk_destructor.qcore:16",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R06",
+   "premise": "chunk_is_not_busy at close",
+   "identity": "ID-P/chunk-object",
+   "site": "contract/qcore/chunkio/chunk_destructor.qcore:17",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R07",
+   "premise": "chunk_has_no_task_or_route_custody at close (exclusivity)",
+   "identity": "ID-PB/publication",
+   "site": "contract/qcore/chunkio/chunk_destructor.qcore:18",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R08",
+   "premise": "close removes the stream link and the context link, releases name and object, decrements the counter",
+   "identity": "ID-P/ID-N/ID-L/ID-C",
+   "site": "contract/qcore/chunkio/chunk_destructor.qcore:20-27",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": true,
+   "note": "Native leg: docs/reports/cycle19-native-teardown, cycle19-parent-teardown."
+  },
+  {
+   "id": "R09",
+   "premise": "malloc yields a fresh owned nullable resource",
+   "identity": "ID-P/chunk-object",
+   "site": "contract/qcore/libc/memory.qcore:8-13 applied at cio_chunk.c:61 (pp 2029)",
+   "origin": "declared_contract_v1",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "note": "This contract does reach its call site: pp 2029 carries no diagnostic."
+  },
+  {
+   "id": "R10",
+   "premise": "ch->name = strdup(name) is a fresh child allocation whose NULL result is never tested",
+   "identity": "ID-N/chunk-name",
+   "site": "lib/chunkio/src/cio_chunk.c:66 (pp 2034)",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": true,
+   "note": "Native leg: cycle19-constructor-failures row 'Chunk name | Chunk succeeds with null name'."
+  },
+  {
+   "id": "R11",
+   "premise": "the backend-failure arm unlinks _head then frees name then frees the object, exactly once each",
+   "identity": "ID-P/ID-N/ID-L",
+   "site": "lib/chunkio/src/cio_chunk.c:88-93 (pp 2051-2055)",
+   "origin": "native_observation",
+   "status": "checked_bounded",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "note": "Checked only for injected arms at a harness caller: cycle19-constructor-failures (backend/data-buffer arms), cycle19-file-constructor-failures (arms 8-11). Statically: two indirect-access diagnostics plus unknown_alias `ch`."
+  },
+  {
+   "id": "R12",
+   "premise": "free(NULL) is well defined, so a null ch->name does not make the rollback arm ill-formed",
+   "identity": "ID-N/chunk-name",
+   "site": "contract/qcore/libc/memory.qcore:22-27 (resource_released nullable)",
+   "origin": "declared_contract_v1",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R13",
+   "premise": "mk_list_add transfers containment into the stream list and conserves live resources",
+   "identity": "ID-L/stream-containment",
+   "site": "lib/chunkio/src/cio_chunk.c:75, 102, 105; src/flb_input_chunk.c:2599",
+   "origin": "absent",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B03",
+   "note": "contract/qcore declares mk_list_del and __mk_list_del but no mk_list_add anywhere."
+  },
+  {
+   "id": "R14",
+   "premise": "mk_list_del releases no object and requires entry_is_live, exclusive_link_access, live reciprocal neighbours and entry distinct from neighbours",
+   "identity": "ID-L/stream-containment",
+   "site": "contract/qcore/chunkio/list_unlink.qcore:18-31",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R15",
+   "premise": "_state_head is linked only on the success exit, so the rollback arm's single mk_list_del is complete",
+   "identity": "ID-L/stream-containment",
+   "site": "lib/chunkio/src/cio_chunk.c:89 vs 102/105",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R16",
+   "premise": "cio_file_open publishes cf into ch->backend before all of its own failure arms, and those arms free cf without clearing ch->backend",
+   "identity": "ID-B/backend-child",
+   "site": "lib/chunkio/src/cio_file.c:690 with arms at 721-726, 733-741, 758-764, 769-777",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B04",
+   "note": "Only safe because cio_chunk.c:91 frees the parent on the same arm - a cross-function invariant no pass states."
+  },
+  {
+   "id": "R17",
+   "premise": "cf->path custody moves into cf at cio_file.c:685; every failure arm frees path exactly once",
+   "identity": "ID-Q/backend-path",
+   "site": "lib/chunkio/src/cio_file.c:657, 666, 685, 721, 735, 760, 771",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "note": "Archived diagnostics: unknown_alias `path` at pp 3267/3295/3303/3319/3326."
+  },
+  {
+   "id": "R18",
+   "premise": "cio_memfs_open is the alternative child constructor selected by st->type",
+   "identity": "ID-B/backend-child",
+   "site": "lib/chunkio/src/cio_chunk.c:80-86 (pp 2044-2049)",
+   "origin": "profile_trust",
+   "status": "assumed",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "note": "Backend selection branch itself is unmodeled: two branch-condition diagnostics."
+  },
+  {
+   "id": "R19",
+   "premise": "a SUCCESSFUL cio_chunk_open can return a chunk with fd == -1 and map == NULL (the resource-limit arm)",
+   "identity": "ID-D/descriptor + ID-M/mapping",
+   "site": "lib/chunkio/src/cio_file.c:702-714",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "blocker": "B05",
+   "note": "This is why the caller runs cio_chunk_is_up / up_force / set_down at flb_input_chunk.c:2536-2543."
+  },
+  {
+   "id": "R20",
+   "premise": "_cio_file_up returns CIO_ERROR with the descriptor still open when cio_file_update_size fails or when mmap_file returns CIO_ERROR",
+   "identity": "ID-D/descriptor",
+   "site": "lib/chunkio/src/cio_file.c:845-867",
+   "origin": "native_observation",
+   "status": "checked_bounded",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": true,
+   "note": "cycle19-reopen-failures: 'Failed size lookup retains an unmapped descriptor'. Harness caller only."
+  },
+  {
+   "id": "R21",
+   "premise": "on CIO_CORRUPTED or CIO_RETRY, _cio_file_up closes the descriptor it opened",
+   "identity": "ID-D/descriptor",
+   "site": "lib/chunkio/src/cio_file.c:873-880",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R22",
+   "premise": "the caller tests only ret == -1, so CIO_RETRY (-2) and CIO_CORRUPTED (-3) continue into the success path with set_down = FLB_TRUE",
+   "identity": "ID-D/ID-M",
+   "site": "src/flb_input_chunk.c:2539 with lib/chunkio/include/chunkio/chunkio.h:50-53",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "blocker": "B06",
+   "note": "The exit enumeration of flb_input_chunk_create is incomplete without this case."
+  },
+  {
+   "id": "R23",
+   "premise": "cio_file_close unmaps, closes the descriptor, optionally deletes the backing file, then frees cf->path and cf",
+   "identity": "ID-D/ID-M/ID-Q/ID-B",
+   "site": "lib/chunkio/src/cio_file.c:961-991; contract/qcore/chunkio/file_close.qcore, file_close_delete.qcore",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": true,
+   "note": "Native leg: cycle19-file-close, cycle19-file-descriptor-failures. Two observed descriptor residuals after parent release under suppressed close are NOT release evidence."
+  },
+  {
+   "id": "R24",
+   "premise": "cio_file_native_map stores MAP_FAILED (non-NULL) into cf->map when mmap fails",
+   "identity": "ID-M/mapping",
+   "site": "lib/chunkio/src/cio_file_unix.c:100-106",
+   "origin": "native_observation",
+   "status": "checked_bounded",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": true,
+   "note": "cycle19-reopen-failures. Consequence: a later cio_file_down passes its `cf->map == NULL` guard at cio_file.c:927."
+  },
+  {
+   "id": "R25",
+   "premise": "munmap_file releases the mapping and decrements the up counter only when cf->map != NULL and the unmap returns CIO_OK",
+   "identity": "ID-M/mapping",
+   "site": "lib/chunkio/src/cio_file.c:300-339; contract/qcore/chunkio/unmap_wrapper.qcore",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": true,
+   "note": "Native leg: cycle19-file-unmap-failures."
+  },
+  {
+   "id": "R26",
+   "premise": "cio_chunk_down at flb_input_chunk.c:2602 releases exactly the descriptor and mapping the caller's own up_force acquired",
+   "identity": "ID-D/ID-M",
+   "site": "src/flb_input_chunk.c:2601-2603",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "blocker": "B07",
+   "note": "Depends on R19-R22 and R24."
+  },
+  {
+   "id": "R27",
+   "premise": "the chunk counters require counter_is_live, exclusive_counter_access, c_unsigned_matches_usize, counter_in_range and counter_below_maximum",
+   "identity": "ID-C/context-counters",
+   "site": "contract/qcore/chunkio/counters.qcore:9-21",
+   "origin": "declared_contract_v2_unloaded",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R28",
+   "premise": "total_chunks is incremented only after backend success, so the rollback arm need not decrement",
+   "identity": "ID-C/context-counters",
+   "site": "lib/chunkio/src/cio_chunk.c:98 (pp 2058)",
+   "origin": "native_observation",
+   "status": "checked_bounded",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": true,
+   "note": "cycle19-unsupported-constructors: 'the surviving tree has zero total and up chunk counters'."
+  },
+  {
+   "id": "R29",
+   "premise": "flb_calloc yields a fresh owned nullable resource and flb_free releases it (nullable)",
+   "identity": "ID-IC/ID-RM",
+   "site": "contract/qcore/fluent_bit/resource_memory.qcore:15-28 applied at flb_input_chunk.c:2554, 2580, 2586",
+   "origin": "declared_contract_v1",
+   "status": "assumed",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false
+  },
+  {
+   "id": "R30",
+   "premise": "ic->chunk = chunk transfers chunk custody into the caller's own aggregate",
+   "identity": "ID-PB/publication",
+   "site": "src/flb_input_chunk.c:2569 (pp-archived 19613)",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "blocker": "B08",
+   "note": "Pointer-field store: excluded by C02's non-pointer scalar whitelist. Probe O-G is Unknown; the same shape with an explicit resource_stored transfer (O-H) is Safe."
+  },
+  {
+   "id": "R31",
+   "premise": "mk_list_add(&ic->_head, &in->chunks) publishes ic into the input instance's chunk list",
+   "identity": "ID-PB/publication",
+   "site": "src/flb_input_chunk.c:2599",
+   "origin": "absent",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B03"
+  },
+  {
+   "id": "R32",
+   "premise": "msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write) installs a callback that retains ic",
+   "identity": "ID-PB/publication",
+   "site": "src/flb_input_chunk.c:2598",
+   "origin": "absent",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B09",
+   "note": "Named callback blocker: unresolved callback custody edge, no reactor/callback record covers it."
+  },
+  {
+   "id": "R33",
+   "premise": "flb_hash_table_add(..., ic, 0) publishes ic into a table with its own destructor policy",
+   "identity": "ID-PB/publication",
+   "site": "src/flb_input_chunk.c:2606, 2610, 2614, 2617",
+   "origin": "absent",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B10",
+   "note": "Named alias blocker: four alternative container publications on the success exit."
+  },
+  {
+   "id": "R34",
+   "premise": "flb_input_chunk_destroy discharges chunk, routes_mask and ic",
+   "identity": "ID-P/ID-IC/ID-RM",
+   "site": "src/flb_input_chunk.c:2797, 2798, 2801, 2805",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "note": "The declared cio_chunk_close contract is inert at 2797 because the receiver is a member read; probe O-E."
+  },
+  {
+   "id": "R35",
+   "premise": "*err is a scalar out slot carrying no custody",
+   "identity": "ID-E/error-out-slot",
+   "site": "src/flb_input_chunk.c:2526; lib/chunkio/src/cio_chunk.c:84 (pp 2048)",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "derivable_with_named_feature",
+   "also_observed_natively": false,
+   "note": "Archived: 'store through `*err` without an out-parameter contract' at pp 2048 and cio_file.c pp 3297/3305/3310/3328/3331."
+  },
+  {
+   "id": "R36",
+   "premise": "the evidence-v2 chunk-lifecycle obligation inventory applies to this C source",
+   "identity": "cross-cutting",
+   "site": "crates/qcore-verification/src/obligation_derivation.rs:325-339",
+   "origin": "model_only",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "blocker": "B11",
+   "note": "Derivation runs over a QCore frontend SourceProgram, not over the pinned C translation unit."
+  },
+  {
+   "id": "R37",
+   "premise": "the configured source-contract route can express cio_chunk_open or flb_input_chunk_create",
+   "identity": "cross-cutting",
+   "site": "crates/qcore-c-gateway/src/boolean_source.rs:716",
+   "origin": "profile_trust",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "note": "Rejects with 'outside single borrowed chunk / int-or-void-result source profile'; both functions return pointers."
+  },
+  {
+   "id": "R38",
+   "premise": "W4 can publish a validated custody summary for any function on this path",
+   "identity": "cross-cutting",
+   "site": "crates/qcore-c-gateway/src/legacy_summary.rs:21-23",
+   "origin": "derivable_from_source",
+   "status": "not_modeled",
+   "derivability": "not_derivable_without_new_premise",
+   "also_observed_natively": false,
+   "note": "Publication requires the body to re-analyze Safe with zero diagnostics; cio_chunk_open has 33, cio_chunk_close 10, flb_input_chunk_create 44."
+  }
+ ],
+ "ledger_summary": {
+  "total_rows": 38,
+  "by_status": {
+   "assumed_inert": 2,
+   "not_modeled": 19,
+   "assumed": 13,
+   "checked_bounded": 4
+  },
+  "by_derivability": {
+   "not_derivable_without_new_premise": 22,
+   "derivable_with_named_feature": 16
+  },
+  "by_origin": {
+   "declared_contract_v1": 6,
+   "derivable_from_source": 13,
+   "declared_contract_v2_unloaded": 8,
+   "native_observation": 4,
+   "absent": 4,
+   "profile_trust": 2,
+   "model_only": 1
+  },
+  "assumed_total": 15,
+  "checked_bounded_total": 4,
+  "not_modeled_total": 19
+ },
+ "blockers": [
+  {
+   "id": "B01",
+   "title": "The constructor call statement is rejected before the contract is consulted",
+   "site": "crates/qcore-c-gateway/src/legacy_c.rs:1618-1637 (unsupported_access) evaluated before find_call at 1640 and contract lookup at 1650",
+   "affected_call_sites": [
+    "src/flb_input_chunk.c:2525 (pp-archived 19584)",
+    "lib/chunkio/src/cio_scan.c:105 (pp-archived 2300)"
+   ],
+   "kind": "gate",
+   "evidence": "probes O-A vs O-B, O-D vs O-C"
+  },
+  {
+   "id": "B02",
+   "title": "Constructor publication into st->chunks is unmodeled and in tension with the declared owned result",
+   "site": "lib/chunkio/src/cio_chunk.c:75",
+   "kind": "contract_soundness",
+   "evidence": "probe O-C"
+  },
+  {
+   "id": "B03",
+   "title": "mk_list_add has no declaration in contract/qcore",
+   "site": "lib/chunkio/src/cio_chunk.c:75/102/105; src/flb_input_chunk.c:2599",
+   "kind": "missing_contract"
+  },
+  {
+   "id": "B04",
+   "title": "ch->backend is published before cio_file_open's own failure arms and left dangling by them",
+   "site": "lib/chunkio/src/cio_file.c:690",
+   "kind": "cross_function_invariant"
+  },
+  {
+   "id": "B05",
+   "title": "A successful construction may yield no descriptor and no mapping",
+   "site": "lib/chunkio/src/cio_file.c:702-714",
+   "kind": "conditional_acquisition"
+  },
+  {
+   "id": "B06",
+   "title": "Caller tests only ret == -1, so CIO_RETRY and CIO_CORRUPTED reach the success path",
+   "site": "src/flb_input_chunk.c:2539",
+   "kind": "incomplete_exit_enumeration"
+  },
+  {
+   "id": "B07",
+   "title": "cio_chunk_down at the success exit releases descriptor and mapping whose acquisition is unmodeled",
+   "site": "src/flb_input_chunk.c:2602",
+   "kind": "conditional_teardown"
+  },
+  {
+   "id": "B08",
+   "title": "Pointer-field custody transfer ic->chunk = chunk is outside C02's scalar whitelist",
+   "site": "src/flb_input_chunk.c:2569",
+   "kind": "unresolved_alias",
+   "evidence": "probes O-G vs O-H"
+  },
+  {
+   "id": "B09",
+   "title": "Callback publication: msgpack_packer_init retains ic",
+   "site": "src/flb_input_chunk.c:2598",
+   "kind": "unresolved_callback"
+  },
+  {
+   "id": "B10",
+   "title": "Container publication: flb_hash_table_add retains ic under four alternative event types",
+   "site": "src/flb_input_chunk.c:2606, 2610, 2614, 2617",
+   "kind": "unresolved_alias"
+  },
+  {
+   "id": "B11",
+   "title": "The chunk-lifecycle obligation inventory is derived over QCore source, not over the pinned C",
+   "site": "crates/qcore-verification/src/obligation_derivation.rs:325-339",
+   "kind": "architectural"
+  }
+ ],
+ "executed_probes": {
+  "entry_point": "qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit",
+  "log": "docs/reports/remaining-o00/logs/gateway_probe.log",
+  "cases": [
+   {
+    "id": "O-A",
+    "shape": "caller with member-read constructor arguments",
+    "status": "Unknown",
+    "observed": "indirect memory access at the call; unknown_alias `chunk` at the close"
+   },
+   {
+    "id": "O-B",
+    "shape": "same control with plain-local constructor arguments",
+    "status": "Safe"
+   },
+   {
+    "id": "O-C",
+    "shape": "discard with plain-local arguments",
+    "status": "Unknown",
+    "observed": "discarded owned result of resource API `cio_chunk_open`"
+   },
+   {
+    "id": "O-D",
+    "shape": "pinned discard shape with a member-read argument",
+    "status": "Unknown",
+    "observed": "indirect memory access only; the discard is masked"
+   },
+   {
+    "id": "O-E",
+    "shape": "cio_chunk_close(ic->chunk, del)",
+    "status": "Unknown",
+    "observed": "indirect memory access; the destructor contract never applies"
+   },
+   {
+    "id": "O-F",
+    "shape": "four-arm cleanup, plain locals, borrowed contracts for the intervening callees",
+    "status": "Safe"
+   },
+   {
+    "id": "O-G",
+    "shape": "success exit with ic->chunk = chunk",
+    "status": "Unknown",
+    "observed": "indirect memory access; unknown_alias `ic`"
+   },
+   {
+    "id": "O-H",
+    "shape": "same success exit with an explicit resource_stored transfer",
+    "status": "Safe"
+   }
+  ],
+  "note": "O-F and O-H additionally load a scratchpad-only hypothetical .qcore module. No repository contract was added or edited."
+ },
+ "o04_recommendation": {
+  "target": "Per-arm constructor-to-caller cleanup discharge on the four early-return arms of flb_input_chunk_create (exits C2, C3, C4, C5).",
+  "property": "On each of those arms the chunk identity produced at flb_input_chunk.c:2525 is released exactly once, by the cio_chunk_close on that arm, and no other tracked identity is released or left live.",
+  "explicitly_out_of_scope": [
+   "the success exit C6 and its publications",
+   "the unenumerated exit C8",
+   "the descriptor and mapping identities ID-D/ID-M",
+   "cio_scan_stream_files",
+   "any unit promotion",
+   "any claim about the declared cio_chunk_open contract's soundness"
+  ],
+  "prerequisite_premises": [
+   "R01",
+   "R02",
+   "R04",
+   "R05",
+   "R06",
+   "R07",
+   "R09",
+   "R12",
+   "R29"
+  ],
+  "prerequisite_features": [
+   {
+    "id": "P1",
+    "name": "C02-P: direct pointer-field read admitted only as a Borrowed actual of a contracted call",
+    "why": "without it the constructor call statement is rejected and `chunk` never binds (B01; probes O-A vs O-B)",
+    "depends_on": "C02, extended - C02's whitelist excludes pointer-typed fields and any statement containing a call"
+   },
+   {
+    "id": "P2",
+    "name": "array-declarator admission for `char name[64]`",
+    "why": "flb_input_chunk.c:2514 is rejected by the same token gate (archived diagnostic at pp 19578)",
+    "depends_on": "C02"
+   },
+   {
+    "id": "P3",
+    "name": "borrowed declarations or W4 summaries for the intervening callees on the four arms",
+    "callees": [
+     "generate_chunk_name",
+     "cio_chunk_is_up",
+     "cio_chunk_up_force",
+     "input_chunk_write_header",
+     "flb_log_check",
+     "flb_log_print",
+     "flb_errno_print"
+    ],
+    "why": "measured: O-F only reaches Safe once up_force and write_header carry borrowed contracts",
+    "caveat": "cio_chunk_up_force is Borrowed only with respect to ID-P; it mutates ID-D and ID-M, so R19-R22 and R24 must be carried as named assumptions"
+   },
+   {
+    "id": "P4",
+    "name": "per-exit disposition so an unmodeled success exit does not poison the four cleanup arms",
+    "why": "the analyzer's published status is per function today; C6's publications (B08-B10) would otherwise force Unknown"
+   }
+  ],
+  "card_dependencies": {
+   "C02": "necessary but not sufficient - its non-pointer scalar whitelist covers neither the constructor call's pointer-field actuals nor ic->chunk = chunk",
+   "E-series": "R19-R26 are bounded native observations at a harness caller only; O04 must import them as explicitly named assumptions, or wait for E-series to bind them to a production caller",
+   "W4 (legacy_summary.rs)": "cannot contribute - no function on this path can pass its zero-diagnostic publication gate"
+  },
+  "precision_warning": "Lifting the indirect-access gate on the constructor call also unmasks cio_scan_stream_files, which would then report a discarded owned result (probe O-C) and stay Unknown. All four archived 185-unit artifacts would change and must be re-pinned deliberately under hard invariants 3 and 5."
+ },
+ "non_claims": [
+  "No verdict is promoted. flb_input_chunk.c stays provisional Unsafe; cio_chunk.c, cio_scan.c and cio_file.c keep their archived statuses.",
+  "A provisional Unsafe is not an upstream defect claim, and none of the source observations here is one.",
+  "The declared contracts named as assumed are trusted declarations, not validated claims about the C bodies.",
+  "The native Cycle 19 observations cited are fixed injected runs at a harness caller; they do not establish production caller reachability, arbitrary OS failure behaviour or durability.",
+  "Nothing here establishes that any recommended feature is implementable at its stated boundary.",
+  "No CT mapping changes; coverage remains 11/50 mapped."
+ ]
+}

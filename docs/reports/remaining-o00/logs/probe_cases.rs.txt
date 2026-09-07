@@ -1,0 +1,191 @@
+use std::path::PathBuf;
+use qcore_c_gateway::legacy_c::{analyze_legacy_c_translation_unit, LegacyDiagnosticKind};
+use qcore_contract::contract_loader::load_resource_contract_files;
+
+fn main() {
+    let root = PathBuf::from(
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f/contract/qcore",
+    );
+    let paths = vec![
+        root.join("libc/memory.qcore"),
+        root.join("fluent_bit/resource_memory.qcore"),
+        root.join("chunkio/resource_open_close.qcore"),
+        PathBuf::from("/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qcore-execution-audit-plan-24520f/73582972-2836-40ca-bca8-03209bc93942/scratchpad/o00/probe/o00_intervening.qcore"),
+
+    ];
+    let contracts = load_resource_contract_files(&paths).expect("contracts load");
+
+    let cases: Vec<(&str, &str, &str)> = vec![
+        // O-A: the pinned caller shape - constructor arguments read through `->`.
+        ("O-A-caller-member-args", "caller", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+struct storage { struct cio_ctx *cio; struct cio_stream *stream; };
+struct cio_chunk *caller(struct storage *storage, const char *name)
+{
+    int err;
+    struct cio_chunk *chunk;
+    chunk = cio_chunk_open(storage->cio, storage->stream, name, 1, 262144, &err);
+    if (!chunk) {
+        return 0;
+    }
+    cio_chunk_close(chunk, 1);
+    return 0;
+}
+"#),
+        // O-B: identical control, constructor arguments already in plain locals.
+        ("O-B-caller-local-args", "caller", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+struct cio_chunk *caller(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    struct cio_chunk *chunk;
+    chunk = cio_chunk_open(ctx, st, name, 1, 262144, err);
+    if (!chunk) {
+        return 0;
+    }
+    cio_chunk_close(chunk, 1);
+    return 0;
+}
+"#),
+        // O-C: the scan-loop discard shape, arguments already in plain locals.
+        ("O-C-discard-local-args", "scan", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+int scan(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    cio_chunk_open(ctx, st, name, 1, 0, err);
+    return 0;
+}
+"#),
+        // O-D: the pinned scan-loop discard shape, one member-access argument.
+        ("O-D-discard-member-args", "scan", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+struct options { int flags; };
+struct ctx_t { struct options options; };
+int scan(struct ctx_t *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    cio_chunk_open(ctx, st, name, ctx->options.flags, 0, err);
+    return 0;
+}
+"#),
+        // O-E: destructor call whose receiver is read through `->` (destroy shape).
+        ("O-E-close-member-receiver", "destroy", r#"
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+struct ic { struct cio_chunk *chunk; };
+void destroy(struct ic *ic, int del)
+{
+    cio_chunk_close(ic->chunk, del);
+}
+"#),
+        // O-F: four-arm caller cleanup with plain locals (the O04 target shape).
+        ("O-F-four-arm-cleanup", "caller", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+int up_force(struct cio_chunk *ch);
+int write_header(struct cio_chunk *ch);
+void *flb_calloc(unsigned long count, unsigned long size);
+void flb_free(void *ptr);
+void *caller(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    int ret;
+    struct cio_chunk *chunk;
+    void *ic;
+    chunk = cio_chunk_open(ctx, st, name, 1, 262144, err);
+    if (!chunk) {
+        return 0;
+    }
+    ret = up_force(chunk);
+    if (ret == -1) {
+        cio_chunk_close(chunk, 1);
+        return 0;
+    }
+    ret = write_header(chunk);
+    if (ret == -1) {
+        cio_chunk_close(chunk, 1);
+        return 0;
+    }
+    ic = flb_calloc(1, 64);
+    if (!ic) {
+        cio_chunk_close(chunk, 1);
+        return 0;
+    }
+    cio_chunk_close(chunk, 1);
+    flb_free(ic);
+    return 0;
+}
+"#),
+
+        // O-G: the real success shape - pointer-field store then escape.
+        ("O-G-success-member-store", "caller", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+void *flb_calloc(unsigned long count, unsigned long size);
+struct ic { struct cio_chunk *chunk; };
+struct ic *caller(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    struct cio_chunk *chunk;
+    struct ic *ic;
+    chunk = cio_chunk_open(ctx, st, name, 1, 262144, err);
+    if (!chunk) {
+        return 0;
+    }
+    ic = flb_calloc(1, 64);
+    if (!ic) {
+        cio_chunk_close(chunk, 1);
+        return 0;
+    }
+    ic->chunk = chunk;
+    return ic;
+}
+"#),
+        // O-H: identical success shape with the store expressed as a Stored transfer.
+        ("O-H-success-stored-contract", "caller", r#"
+struct cio_chunk *cio_chunk_open(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int flags, unsigned long size, int *err);
+void cio_chunk_close(struct cio_chunk *ch, int delete);
+void *flb_calloc(unsigned long count, unsigned long size);
+void ic_bind_chunk(void *ic, struct cio_chunk *ch);
+void *caller(struct cio_ctx *ctx, struct cio_stream *st, const char *name, int *err)
+{
+    struct cio_chunk *chunk;
+    void *ic;
+    chunk = cio_chunk_open(ctx, st, name, 1, 262144, err);
+    if (!chunk) {
+        return 0;
+    }
+    ic = flb_calloc(1, 64);
+    if (!ic) {
+        cio_chunk_close(chunk, 1);
+        return 0;
+    }
+    ic_bind_chunk(ic, chunk);
+    return ic;
+}
+"#),
+    ];
+
+    for (label, entry, source) in cases {
+        match analyze_legacy_c_translation_unit(source, entry, &contracts) {
+            Ok(summary) => {
+                println!("== {label}: status {:?}", summary.status);
+                for function in summary.functions.values() {
+                    for d in &function.diagnostics {
+                        let text = match &d.kind {
+                            LegacyDiagnosticKind::Leak { acquisition_line } => {
+                                format!("leak: acquired line {acquisition_line}")
+                            }
+                            LegacyDiagnosticKind::UnknownAlias { variable } => {
+                                format!("unknown_alias: {variable}")
+                            }
+                            LegacyDiagnosticKind::Unsupported { description } => {
+                                format!("unsupported: {description}")
+                            }
+                            other => format!("{other:?}"),
+                        };
+                        println!("     {:>3}  {}", d.line, text);
+                    }
+                }
+            }
+            Err(error) => println!("== {label}: ERROR {error:?}"),
+        }
+    }
+}
