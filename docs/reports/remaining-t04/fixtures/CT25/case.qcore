@@ -1,0 +1,24 @@
+concurrency checked;
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(42)?;
+  thread scope s {
+    match spawn s reader(read buffer share FULL) {
+      Result::Ok { value: handle } => {
+        let during = qcore_buffer_read(buffer);
+        let seen = join move handle?;
+        let after = qcore_buffer_read(buffer);
+        drop buffer;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        let restored = qcore_buffer_read(buffer);
+        drop buffer;
+        return restored;
+      }
+    }
+  }
+}

@@ -220,9 +220,87 @@ parent after successful join. The transcript is a normalized collection order,
 not a wall-clock schedule. C11 publication/join, allocator correctness and
 source/core/native correspondence remain explicit refinement boundaries.
 Lean model lemmas and fixed native pointer/sanitizer observations are separate
-evidence. Loans, owned graphs/error payloads, shared memory, mutexes, nested
+evidence. Owned graphs/error payloads, shared memory, mutexes, nested
 workers, general control flow and non-Linux native targets remain unsupported.
+One bounded borrowing form is admitted by G02bb below; every other loan form
+remains unsupported.
 See [the owned task report](reports/w6-owned-source-tasks/README.md).
+
+## G02bb. Scoped read loan
+
+`ScopedReadLoansV1` extends G02b with one bounded borrowing form: a **scoped
+read loan** of one parent-owned Buffer to one child, returned by the creator's
+join. It is selected whenever any checked function has a `borrow<Buffer>`
+parameter; a module that lends nothing keeps its G02a/G02b profile unchanged.
+
+```qcore
+concurrency checked;
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s reader(read buffer share FULL) {
+            Result::Ok { value: handle } => {
+                let during = qcore_buffer_read(buffer);
+                let seen = join move handle?;
+                let after = qcore_buffer_read(buffer);
+                drop buffer;
+                return seen;
+            }
+            Result::Err { error: failure } => {
+                let restored = qcore_buffer_read(buffer);
+                drop buffer;
+                return restored;
+            }
+        }
+    }
+}
+```
+
+A loan parameter is spelled exactly `NAME: borrow<Buffer>`, with **no** usage
+grade: the borrower may read it any number of times and may do nothing else
+with it. Grading loan reads is not part of this profile. The only capture that
+produces one is `read PLACE share FULL`, against a place whose type is
+`own<Buffer>`. `share` expressions other than `FULL` — integers, sums, named
+shares — are refused, because splitting read authority across several borrowers
+is a different profile rather than a larger version of this one.
+
+A read loan is not a value. It is refused as a function result, as an entry
+parameter, as a copy source, as a move source, as a `drop` operand and as a
+re-loan source; `qcore_buffer_read(NAME)` is the only operation that accepts
+one. A worker cannot lend onward for two independent reasons: a loan is not an
+`own<Buffer>` place, and a spawned worker is a first-order leaf.
+
+While a loan is outstanding, the lender **keeps read authority** over its own
+Buffer and loses every exclusive authority over it — mutation, release, move
+and re-loan are all refused, naming the loan rather than a custody transfer.
+The bounds are structural: at most one loan per creation, at most one
+outstanding loan at a time, and one creation may not both move and lend the
+same resource. It may move one Buffer and lend another.
+
+Creation failure restores the lender exactly and opens no loan; the reservation
+window before that outcome is known grants nobody anything, read included.
+Only the creator's successful join closes a loan. A child that completed but
+has not been joined still holds its loan. A path that never joins its borrower
+cannot leave the scope: the scope-busy rule reaches that first, and the exit
+rule's own loan check is a redundant backstop.
+
+Native emission passes the same pointer for a move and for a loan and differs
+only in what the caller keeps: a moved capture is consumed, a lent one is not.
+`QCORE_BUFFER_LOAN borrower generation` is announced only after a creation that
+actually returned a child, and `QCORE_BUFFER_RETURN borrower generation` only
+after a collection that actually returned. Concurrent reads by lender and
+borrower are admitted because nothing may write a loaned resource; that is a
+checker rule, not a dynamic measurement — no race detector covers this backend,
+because ThreadSanitizer does not intercept C11 `thrd_create`.
+
+Fractional and multi-reader shares, write loans, loans of anything but a
+Buffer, loans across nested workers, loans held past a scope and non-Linux
+native targets remain unsupported. See
+[the read-loan report](reports/remaining-t04/README.md).
 
 ## G02c. Guarded fixed-footprint mutex
 
