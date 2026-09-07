@@ -82,6 +82,7 @@ fn request(
         obligations,
         source_effect: None,
         counter_effect: counter,
+        reactor_program: None,
     }
 }
 
@@ -91,6 +92,9 @@ fn a_request_without_a_projection_keeps_its_previous_wire_shape() {
     let value = serde_json::to_value(&plain).unwrap();
     assert!(value.get("counter_effect").is_none());
     assert!(value.get("source_effect").is_none());
+    // The reactor projection added in 5.0.0 serializes away exactly as the
+    // other two do, so an existing request's bytes are unchanged.
+    assert!(value.get("reactor_program").is_none());
     plain.validate().unwrap();
     assert_eq!(
         serde_json::from_value::<VerificationRequestV2>(value).unwrap(),
