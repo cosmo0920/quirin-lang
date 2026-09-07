@@ -96,6 +96,9 @@ struct ParsedEffects {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Scalar {
     OwnedBuffer,
+    /// `borrow<Buffer>`: a scoped read loan. Only a worker parameter can have
+    /// this type, and only a `read … share FULL` capture can produce one.
+    ReadLoan,
     I32,
     Unit,
 }
@@ -109,6 +112,14 @@ fn scalar(tokens: &[Token]) -> Option<Scalar> {
                 && symbol(Some(gt), Symbol::Greater) =>
         {
             Some(Scalar::OwnedBuffer)
+        }
+        [borrow, lt, buffer, gt]
+            if word(Some(borrow), "borrow")
+                && symbol(Some(lt), Symbol::Less)
+                && word(Some(buffer), "Buffer")
+                && symbol(Some(gt), Symbol::Greater) =>
+        {
+            Some(Scalar::ReadLoan)
         }
         [t] if word(Some(t), "i32") => Some(Scalar::I32),
         [t] if word(Some(t), "unit") => Some(Scalar::Unit),
@@ -246,8 +257,18 @@ fn signature(
                 .is_some_and(|usage| usage.value == qcore_core::usage::Usage::ONE)
         {
             Scalar::OwnedBuffer
+        } else if group.len() == 6
+            && scalar(&group[2..6]) == Some(Scalar::ReadLoan)
+            && parameter.usage.is_none()
+        {
+            // A read loan carries no usage grade in this profile: the borrower
+            // may read it any number of times and may do nothing else with it.
+            // Grading loan reads is deliberately left open.
+            Scalar::ReadLoan
         } else {
-            return Err(bad("task parameters require i32 or own<Buffer> use one"));
+            return Err(bad(
+                "task parameters require i32, own<Buffer> use one, or an ungraded borrow<Buffer>",
+            ));
         };
         parameters.push((parameter.symbol, parameter.name.clone(), kind));
     }
@@ -261,6 +282,7 @@ fn signature(
         .find_map(|(i, t)| word(Some(t), "effects").then_some(i))
         .unwrap_or(tokens.len());
     let result = scalar(&tokens[close + 2..result_end])
+        .filter(|kind| *kind != Scalar::ReadLoan)
         .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?;
     let mut cursor = result_end;
     let mut effects = ParsedEffects::default();
@@ -353,6 +375,7 @@ impl Scalar {
     fn core(self) -> ScalarType {
         match self {
             Self::OwnedBuffer => ScalarType::OwnedBuffer,
+            Self::ReadLoan => ScalarType::ReadLoan,
             Self::I32 => ScalarType::I32,
             Self::Unit => ScalarType::Unit,
         }
@@ -840,8 +863,13 @@ impl<'a> Builder<'a> {
             let buffer =
                 name(tokens.get(2)).ok_or_else(|| self.bad(span, "buffer read requires a name"))?;
             let (id, kind) = self.lookup(buffer, span)?;
-            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
-                return Err(self.bad(span, "buffer read requires own<Buffer>"));
+            // A read is the one operation a loan admits, and the one operation
+            // an owner keeps while its buffer is lent out.
+            if !matches!(
+                kind,
+                ValueType::Scalar(Scalar::OwnedBuffer | Scalar::ReadLoan)
+            ) {
+                return Err(self.bad(span, "buffer read requires own<Buffer> or borrow<Buffer>"));
             }
             self.instruction(
                 span,
@@ -907,6 +935,12 @@ impl<'a> Builder<'a> {
                     return Err(self.bad(
                         span,
                         "owned buffers require explicit move or a checked buffer read",
+                    ));
+                }
+                if scalar == Scalar::ReadLoan {
+                    return Err(self.bad(
+                        span,
+                        "a read loan cannot be copied; it admits only a checked buffer read",
                     ));
                 }
                 Ok((ScalarOperand::Slot(symbol.0 as usize), scalar))
@@ -986,9 +1020,18 @@ impl<'a> Builder<'a> {
             return Err(self.bad(span, "worker capture arity mismatch"));
         }
         let mut arguments = Vec::new();
+        let mut loans = 0usize;
         for (capture, (_, _, parameter_type)) in captures.iter().zip(&signature.parameters) {
             let (symbol, kind) = self.lookup_place(&capture.place)?;
-            if kind != ValueType::Scalar(*parameter_type) {
+            // A read loan is the one capture whose place type and parameter
+            // type differ on purpose: the lender keeps `own<Buffer>` and the
+            // borrower receives `borrow<Buffer>`.
+            let place_type = if *parameter_type == Scalar::ReadLoan {
+                Scalar::OwnedBuffer
+            } else {
+                *parameter_type
+            };
+            if kind != ValueType::Scalar(place_type) {
                 return Err(failure(
                     capture.span,
                     SemanticPass::OrdinaryTypes,
@@ -1000,14 +1043,33 @@ impl<'a> Builder<'a> {
                 (SourceCaptureMode::Move, Scalar::OwnedBuffer) => {
                     ScalarOperand::Move(symbol.0 as usize)
                 }
+                (SourceCaptureMode::Read { share }, Scalar::ReadLoan) => {
+                    // Only the whole read authority is admitted. A fractional
+                    // or named share is a multi-reader split, which this
+                    // profile refuses rather than approximates.
+                    if share.value != SourceShareExpression::Full {
+                        return Err(self.bad(
+                            share.span,
+                            "a read loan requires `share FULL`; fractional read shares are outside this profile",
+                        ));
+                    }
+                    loans += 1;
+                    ScalarOperand::Loan(symbol.0 as usize)
+                }
                 _ => {
                     return Err(self.bad(
                         capture.span,
-                        "only copy i32 and move own<Buffer> captures are executable",
+                        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
                     ));
                 }
             };
             arguments.push(operand);
+        }
+        if loans > 1 {
+            return Err(self.bad(
+                span,
+                "this profile admits at most one read loan per task creation",
+            ));
         }
         Ok((scope_id, arguments))
     }

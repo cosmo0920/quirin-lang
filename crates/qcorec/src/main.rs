@@ -110,6 +110,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     if command == "check" {
         if let Some(entry) = &module.entry {
             let profile = match module.execution_profile {
+                qcore_compiler::SourceExecutionProfile::ScopedReadLoansV1 => {
+                    "; scoped owned-buffer tasks with one read loan (Linux C11)"
+                }
                 qcore_compiler::SourceExecutionProfile::ScopedOwnedTasksV1 => {
                     "; scoped owned-buffer tasks (Linux C11)"
                 }

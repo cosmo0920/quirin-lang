@@ -30,12 +30,16 @@ fn scalar(value: &ScalarOperand) -> String {
         ScalarOperand::I32(value) if *value < 0 => format!("(-INT32_C({}))", -value),
         ScalarOperand::I32(value) => format!("INT32_C({value})"),
         ScalarOperand::Slot(slot) => format!("s_{slot}.value.scalar"),
-        ScalarOperand::Move(_) => unreachable!("checked scalar operand is not owned"),
+        ScalarOperand::Move(_) | ScalarOperand::Loan(_) => {
+            unreachable!("checked scalar operand is neither owned nor lent")
+        }
     }
 }
 
+/// A move and a loan both hand the callee the same pointer value. They differ
+/// only in what the *caller* keeps, which `consume` decides.
 fn self_value(operand: &ScalarOperand) -> String {
-    if let ScalarOperand::Move(slot) = operand {
+    if let ScalarOperand::Move(slot) | ScalarOperand::Loan(slot) = operand {
         format!("s_{slot}.value")
     } else {
         format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand))
@@ -161,6 +165,29 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
         for (index, (slot, _)) in function.parameters.iter().enumerate() {
             writeln!(source, "    s_{slot}.value = args[{index}];").unwrap();
         }
+        // Slots are single-assignment, so a handle slot names exactly one
+        // creation and therefore exactly the loans that creation opened.
+        let loans_by_handle = function
+            .blocks
+            .values()
+            .filter_map(|block| match &block.terminator.kind {
+                TerminatorKind::TrySpawn {
+                    arguments,
+                    handle_slot,
+                    ..
+                } => Some((
+                    *handle_slot,
+                    arguments
+                        .iter()
+                        .filter_map(|argument| match argument {
+                            ScalarOperand::Loan(slot) => Some(*slot),
+                            _ => None,
+                        })
+                        .collect::<Vec<_>>(),
+                )),
+                _ => None,
+            })
+            .collect::<BTreeMap<_, _>>();
         writeln!(source, "    goto qcore_block_{};", function.entry).unwrap();
         for (block_id, block) in &function.blocks {
             writeln!(source, "qcore_block_{block_id}: ;").unwrap();
@@ -199,17 +226,42 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         handle,
                         outcome_slot,
                     } => {
+                        // The borrower's identity has to be read before
+                        // collection, which reclaims the start record. The
+                        // return line is emitted only after a successful
+                        // collection: a join that does not return closes no
+                        // loan, here or in the model.
+                        let lent = loans_by_handle.get(handle).cloned().unwrap_or_default();
+                        source.push_str("    {\n");
+                        if !lent.is_empty() {
+                            writeln!(
+                                source,
+                                "        uint64_t borrower = s_{handle}.handle->identity;"
+                            )
+                            .unwrap();
+                        }
                         if let Some(slot) = outcome_slot {
                             writeln!(
                                 source,
-                                "    s_{slot}.result = qcore_task_collect(s_{handle}.handle);"
+                                "        s_{slot}.result = qcore_task_collect(s_{handle}.handle);"
                             )
                             .unwrap();
                         } else {
-                            writeln!(source, "    (void)qcore_task_collect(s_{handle}.handle);")
-                                .unwrap();
+                            writeln!(
+                                source,
+                                "        (void)qcore_task_collect(s_{handle}.handle);"
+                            )
+                            .unwrap();
                         }
-                        writeln!(source, "    s_{handle}.handle = NULL;").unwrap();
+                        writeln!(source, "        s_{handle}.handle = NULL;").unwrap();
+                        for lent_slot in lent {
+                            writeln!(
+                                source,
+                                "        printf(\"QCORE_BUFFER_RETURN %\" PRIu64 \" %\" PRIu64 \"\\n\", borrower, s_{lent_slot}.value.buffer->generation);"
+                            )
+                            .unwrap();
+                        }
+                        source.push_str("    }\n");
                     }
                 }
                 source_map.push(TaskCMapping {
@@ -243,6 +295,17 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     for argument in arguments {
                         consume(&mut source, argument);
                     }
+                    // A creation that failed jumped away above, so no loan is
+                    // ever announced for a child that does not exist.
+                    for argument in arguments {
+                        if let ScalarOperand::Loan(slot) = argument {
+                            writeln!(
+                                source,
+                                "        printf(\"QCORE_BUFFER_LOAN %\" PRIu64 \" %\" PRIu64 \"\\n\", s_{handle_slot}.handle->identity, s_{slot}.value.buffer->generation);"
+                            )
+                            .unwrap();
+                        }
+                    }
                     writeln!(source, "        goto qcore_block_{success};\n    }}").unwrap();
                 }
                 TerminatorKind::TryAllocateBuffer {
@@ -267,6 +330,9 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         ScalarType::Unit => 0,
                         ScalarType::I32 => 1,
                         ScalarType::OwnedBuffer => 2,
+                        ScalarType::ReadLoan => {
+                            unreachable!("a checked result is never a read loan")
+                        }
                     };
                     writeln!(
                         source,

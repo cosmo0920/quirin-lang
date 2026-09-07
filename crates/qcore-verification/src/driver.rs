@@ -149,6 +149,10 @@ pub enum SourceExecutionProfile {
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
+    /// `ScopedReadLoansV1`: the owned-task profile plus one bounded scoped read
+    /// loan — at most one outstanding, never copied, moved, re-lent, returned
+    /// or dropped, and closed only by the creator's successful join.
+    ScopedReadLoansV1,
     /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
     /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
     CheckedMutexGuardsV1,
@@ -1175,6 +1179,14 @@ fn compile_task_source(
     }
     let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
     use qcore_core::task_execution::{ScalarType, TaskTerminatorKind};
+    // A read loan is a strictly stronger claim than owned transfer, so it names
+    // its own profile rather than being reported as an owned-task run.
+    let read_loan_profile = checked.module().functions.values().any(|function| {
+        function
+            .parameters
+            .iter()
+            .any(|(_, kind)| *kind == ScalarType::ReadLoan)
+    });
     let owned_profile = checked.module().functions.values().any(|function| {
         function.result == ScalarType::OwnedBuffer
             || function
@@ -1197,7 +1209,10 @@ fn compile_task_source(
                 let scalar = match function.result {
                     ScalarType::I32 => ExecutableResultType::I32,
                     ScalarType::Unit => ExecutableResultType::Unit,
-                    ScalarType::OwnedBuffer => return None,
+                    // Neither is an ordinary scalar result. `ReadLoan` is
+                    // additionally refused as a result by the checker, so this
+                    // arm is a total match, not a silent reclassification.
+                    ScalarType::OwnedBuffer | ScalarType::ReadLoan => return None,
                 };
                 Some((function.name.clone(), scalar))
             })
@@ -1226,7 +1241,9 @@ fn compile_task_source(
         .collect();
     Ok(CompiledModule {
         checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
-        execution_profile: if owned_profile {
+        execution_profile: if read_loan_profile {
+            SourceExecutionProfile::ScopedReadLoansV1
+        } else if owned_profile {
             SourceExecutionProfile::ScopedOwnedTasksV1
         } else {
             SourceExecutionProfile::ScopedCopyTasksV1
