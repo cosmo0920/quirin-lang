@@ -7,6 +7,9 @@
 //! aggregate/indexed accesses and ambiguous expression forms without a model
 //! remain unsupported; symbolic resource place spelling is not access proof.
 
+#[path = "legacy_out_alias.rs"]
+mod out_alias;
+
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
 
@@ -689,6 +692,8 @@ pub(crate) fn build_function_cfg(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyCfg, LegacyCError> {
+    let normalized = out_alias::normalize(tokens, function, contracts);
+    let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
     let parameters = function_parameters(tokens, function).unwrap_or_default();

@@ -1,0 +1,39 @@
+{
+  "command": [
+    "clang",
+    "-std=c11",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-g",
+    "-O1",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer",
+    "docs/reports/w4-immutable-out-aliases/native_driver.c",
+    "-o",
+    "/tmp/qcore-out-alias-native"
+  ],
+  "run_command": [
+    "/tmp/qcore-out-alias-native"
+  ],
+  "environment": {
+    "ASAN_OPTIONS": "detect_leaks=1"
+  },
+  "execution": "untraced local Linux process",
+  "exit_code": 0,
+  "acquired_generations": 4,
+  "released_generations": 4,
+  "executable_sha256": "a434e9cfd73e60bc67ccafdcf87084a1da3a7b9f7108eeb4e28975d8a410b86f",
+  "stdout": {
+    "artifact": "stdout.gz",
+    "sha256": "3afa6e7c1cfde2d052e46ea68fb70cbccb8e2bf6f92f528875b89a6b35fb993d"
+  },
+  "stderr": {
+    "artifact": "stderr.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "wrappers.c": {
+    "artifact": "wrappers.c.gz",
+    "sha256": "37a9ef513f82fbf93fb0d3ee453b4214bff45ebd0f5c9131311eb1df7832c9e2"
+  }
+}

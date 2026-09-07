@@ -370,7 +370,11 @@ External resource declarations are assumptions. W4 may infer an internal summary
 
 The current W4 implementation supports bounded direct Out, Stored, Removed,
 Reallocated and nullable-return inference with re-analysis and independent
-rederivation. Removed wrappers may admit null only after validating every newly
+rederivation. Immutable entry-prefix output aliases of the same explicit flat
+pointer type may forward modeled Out calls or direct stores; casts, mutation,
+shadowing, escapes and branch-local alias definitions remain unsupported. The
+original sanctioned slot and every exit are independently validated, and source
+certificates retain the original C text. Removed wrappers may admit null only after validating every newly
 admitted path: the null child has no custody; the nonnull child starts contained
 and ends detached/live with its original owner retained. Context-specific
 zero/nonzero recursion requires strictly lower-rank validated calls. General

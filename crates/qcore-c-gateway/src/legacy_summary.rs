@@ -62,6 +62,10 @@
 //!
 //! # What is deliberately not inferred
 //!
+//! Same-type immutable entry-prefix output aliases are normalized only after
+//! complete use classification. The original Out slot still requires all-exit
+//! validation; mutable, escaping and branch-local aliases remain unsupported.
+//!
 //! The inferred vocabulary includes bounded direct `Removed` wrappers: the
 //! child starts contained in the distinct non-null owner formal named by a
 //! modeled `Removed` call, and validation requires it detached/live on every

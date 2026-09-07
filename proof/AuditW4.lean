@@ -117,3 +117,10 @@ import QCore.CustodySummary
 #print axioms QCore.UnsignedCountdown.same_rank_cannot_supply_recursive_hypothesis
 #print axioms QCore.UnsignedCountdown.publish_by_mutual_rank_induction
 #print axioms QCore.UnsignedCountdown.published_countdown_agrees_with_every_exit
+
+#print axioms QCore.CustodySummary.alias_copy_retains_exact_source_slot
+#print axioms QCore.CustodySummary.alias_copy_preserves_every_other_binding
+#print axioms QCore.CustodySummary.alias_copy_cannot_overwrite_existing_binding
+#print axioms QCore.CustodySummary.two_alias_copies_preserve_original_slot
+#print axioms QCore.CustodySummary.alias_forward_retains_original_sanction_and_unwritten_slot
+#print axioms QCore.CustodySummary.unsanctioned_alias_cannot_create_output_authority

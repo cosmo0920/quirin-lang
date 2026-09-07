@@ -724,3 +724,84 @@ theorem direct_fresh_forwarding_discharges_out :
       (forwardOutSlot 0 0 [0] [] (.site false .live false)) = true := by decide
 
 end QCore.CustodySummary
+
+namespace QCore.CustodySummary
+
+/-- A reduced immutable output-pointer environment. Values identify original
+caller slots, not resource allocations. Source type equality, dominating prefix
+initialization, no shadowing and complete use classification are premises of the
+Rust token normalizer; these theorems do not prove C parsing or alias extraction. -/
+abbrev OutAliasBindings := Nat → Option Nat
+
+def copyOutAlias (bindings : OutAliasBindings) (source alias : Nat) : Option OutAliasBindings :=
+  if bindings alias = none then
+    match bindings source with
+    | none => none
+    | some slot => some (fun name => if name = alias then some slot else bindings name)
+  else none
+
+theorem alias_copy_retains_exact_source_slot
+    {before after : OutAliasBindings} {source alias slot : Nat}
+    (sourceSlot : before source = some slot)
+    (copied : copyOutAlias before source alias = some after) : after alias = some slot := by
+  unfold copyOutAlias at copied
+  split at copied
+  next fresh =>
+    simp only [sourceSlot] at copied
+    cases copied
+    simp
+  next => contradiction
+
+theorem alias_copy_preserves_every_other_binding
+    {before after : OutAliasBindings} {source alias name : Nat}
+    (copied : copyOutAlias before source alias = some after) (different : name ≠ alias) :
+    after name = before name := by
+  unfold copyOutAlias at copied
+  split at copied
+  next fresh =>
+    cases value : before source with
+    | none => simp [value] at copied
+    | some slot =>
+      simp only [value] at copied
+      cases copied
+      simp [different]
+  next => contradiction
+
+theorem alias_copy_cannot_overwrite_existing_binding
+    (before : OutAliasBindings) (source alias slot : Nat) (bound : before alias = some slot) :
+    copyOutAlias before source alias = none := by simp [copyOutAlias, bound]
+
+theorem two_alias_copies_preserve_original_slot
+    {before middle after : OutAliasBindings} {source first last slot : Nat}
+    (sourceSlot : before source = some slot)
+    (firstCopy : copyOutAlias before source first = some middle)
+    (lastCopy : copyOutAlias middle first last = some after) : after last = some slot := by
+  exact alias_copy_retains_exact_source_slot
+    (alias_copy_retains_exact_source_slot sourceSlot firstCopy) lastCopy
+
+def forwardAliasedOut (original : Nat) (bindings : OutAliasBindings) (alias : Nat)
+    (sanctioned written : List Nat) (produced : OutSlot) : Option OutSlot := do
+  let current ← bindings alias
+  forwardOutSlot original current sanctioned written produced
+
+theorem alias_forward_retains_original_sanction_and_unwritten_slot
+    {original alias : Nat} {bindings : OutAliasBindings} {sanctioned written : List Nat}
+    {produced delivered : OutSlot}
+    (forwarded : forwardAliasedOut original bindings alias sanctioned written produced = some delivered) :
+    bindings alias = some original ∧ original ∈ sanctioned ∧ original ∉ written ∧ delivered = produced := by
+  unfold forwardAliasedOut at forwarded
+  cases value : bindings alias with
+  | none => simp [value] at forwarded
+  | some current =>
+    simp only [value] at forwarded
+    have facts := forwarded_out_keeps_original_slot original current sanctioned written produced delivered forwarded
+    exact ⟨by rw [facts.1], facts.2.1, facts.2.2.1, facts.2.2.2⟩
+
+theorem unsanctioned_alias_cannot_create_output_authority
+    (original alias : Nat) (bindings : OutAliasBindings) (sanctioned written : List Nat)
+    (produced : OutSlot) (absent : original ∉ sanctioned) :
+    forwardAliasedOut original bindings alias sanctioned written produced = none := by
+  unfold forwardAliasedOut
+  cases value : bindings alias <;> simp [forwardOutSlot, absent]
+
+end QCore.CustodySummary

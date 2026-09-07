@@ -424,6 +424,9 @@ possibly-null owned returns. [Direct Removed wrappers](reports/w4-removed-custod
 now validate contained entry and detached/live exits with matching Lean relations.
 [Direct Out forwarding](reports/w4-out-forwarding/README.md) now validates
 original slots and invalidates mutation/shadow/alias identity assumptions.
+[Immutable output aliases](reports/w4-immutable-out-aliases/README.md) now admit
+exact-type entry-prefix alias chains used only for Out calls/direct stores, while
+retaining independent original-slot validation and certificate rederivation.
 [Nullable removal](reports/w4-nullable-removal/README.md) now validates null
 and nonnull alternatives with exact owner/child preservation. Adjacent generic
 transfers reject ambiguous strong updates and terminal custody reuse; unresolved

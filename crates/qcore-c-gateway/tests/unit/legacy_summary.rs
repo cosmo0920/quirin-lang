@@ -1368,7 +1368,7 @@ fn forwarded_out_slots_compose_through_acyclic_wrappers_and_parentheses() {
 }
 
 #[test]
-fn forwarding_does_not_accept_reassigned_aliased_or_unwritten_slots() {
+fn forwarding_does_not_accept_reassigned_escaping_or_unwritten_slots() {
     for body in [
         "{ void **out; q_make(out); }",
         "{ void *local, **out; q_make(out); }",
@@ -1387,7 +1387,7 @@ fn forwarding_does_not_accept_reassigned_aliased_or_unwritten_slots() {
         "out = 0; q_make(out);",
         "q_make(&out); q_make(out);",
         "q_make(out); out = other;",
-        "void **alias = out; q_make(alias);",
+        "void **alias = out; alias = other; q_make(alias);",
         "void **alias = out; q_make(out); q_observe(alias);",
         "if (flag) { q_make(out); }",
         "q_make(out); q_make(out);",
@@ -1569,4 +1569,172 @@ fn resource_aliases_do_not_hide_formal_pointer_mutation() {
             "accepted {body}"
         );
     }
+}
+
+#[test]
+fn immutable_out_aliases_and_chains_keep_original_caller_slots() {
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    for body in [
+        "void **alias=out; q_make(alias);",
+        "void **first=out; void **last=first; q_make((last));",
+        "void **alias=out; *alias=q_alloc();",
+    ] {
+        let source = format!(
+            "void fill(void **out) {{ {body} }} void subject(void) {{ void *p; fill(&p); q_free(p); }}"
+        );
+        assert_eq!(
+            analyze(&source, modules).status,
+            AnalysisStatus::Safe,
+            "{body}"
+        );
+        assert_eq!(
+            summary_in(&source, modules, "fill").parameters,
+            [ResourceParameterMode::Out { nullable: false }]
+        );
+    }
+    let source = "void fill(void **a,void **b) {void **x=a;void **y=b;q_make(x);q_make(y);} void subject(void){void *p;void *q;fill(&p,&q);q_free(p);q_free(q);}";
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "fill").parameters,
+        vec![ResourceParameterMode::Out { nullable: false }; 2]
+    );
+}
+
+#[test]
+fn immutable_out_aliases_compose_and_preserve_nullable_exit_checks() {
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    let chained = "void fill(void **out){void **alias=out;q_make(alias);} void relay(void **out){void **alias=out;fill(alias);} void subject(void){void *p;relay(&p);q_free(p);}";
+    assert_eq!(analyze(chained, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(chained, modules, "relay").parameters,
+        [ResourceParameterMode::Out { nullable: false }]
+    );
+    let source = "void fill(void **out,int flag) {void **alias=out;if(flag){q_make(alias);return;}*alias=0;} void subject(void){void *p;fill(&p,1);if(p){q_free(p);}}";
+    assert_eq!(analyze(source, modules).status, AnalysisStatus::Safe);
+    assert_eq!(
+        summary_in(source, modules, "fill").parameters[0],
+        ResourceParameterMode::Out { nullable: true }
+    );
+    assert_ne!(
+        analyze(&source.replace("if(p){q_free(p);}", "q_free(p);"), modules).status,
+        AnalysisStatus::Safe
+    );
+    assert!(no_summary(
+        &source.replace("*alias=0;", ""),
+        modules,
+        "fill"
+    ));
+    assert!(no_summary(
+        "void fill(void **out,int flag){void **alias=out;if(flag){q_make(alias);return;}*alias=0;} void relay(void **out){void **alias=out;fill(alias,1);}",
+        modules,
+        "relay"
+    ));
+}
+
+#[test]
+fn out_alias_normalization_rejects_mutation_shadow_escape_and_type_changes() {
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    for body in [
+        "void **alias=out;alias=other;q_make(alias);",
+        "void **alias=out;alias++;q_make(alias);",
+        "void **alias=out;out=other;q_make(alias);",
+        "void **alias=out;out++;q_make(alias);",
+        "void **alias=out;q_make(alias);q_observe(alias);",
+        "void **alias=out;q_observe(&alias);q_make(alias);",
+        "void **alias=out;q_make(&alias);q_make(alias);",
+        "void **alias=out;{void **alias=other;q_make(alias);}",
+        "void **alias=out;{void *first,**alias;q_make(alias);}",
+        "void **alias=out;{void **out=other;q_make(alias);}",
+        "void **alias=out;void **alias=other;q_make(alias);",
+        "int **alias=out;q_make(alias);",
+        "void **volatile alias=out;q_make(alias);",
+        "static void **alias=out;q_make(alias);",
+        "void **alias=(void **)out;q_make(alias);",
+        "if(flag){void **alias=out;q_make(alias);}",
+        "void **alias;alias=out;q_make(alias);",
+        "void **alias=out;void *p=*alias;q_free(p);q_make(alias);",
+        "void **alias=out;if(alias){q_make(alias);}",
+        "void **alias=out;flag && (q_make(alias),1);",
+        "void **alias=out;q_make(alias),q_observe(out);",
+    ] {
+        let source = format!("void fill(void **out,void **other,int flag){{{body}}}");
+        assert!(no_summary(&source, modules, "fill"), "accepted {body}");
+    }
+}
+
+#[test]
+fn aliased_out_callers_still_discharge_distinct_fresh_outputs() {
+    let modules = &[Q_BASE, Q_RICH_MODES];
+    let prefix = "void fill(void **a,void **b){void **x=a;void **y=b;q_make(x);q_make(y);}";
+    for body in [
+        "void *p;void *q;fill(&p,&q);q_free(p);",
+        "void *p;fill(&p,&p);q_free(p);",
+        "void *p=q_alloc();void *q;fill(&p,&q);q_free(p);q_free(q);",
+    ] {
+        let result = analyze(&format!("{prefix}void subject(void){{{body}}}"), modules);
+        assert!(
+            has(&result, "subject", |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
+            "{body}"
+        );
+    }
+    assert!(no_summary(
+        "void fill(void **out){void **x=out;void **y=out;q_make(x);q_make(y);}",
+        modules,
+        "fill"
+    ));
+}
+
+#[test]
+fn aliased_out_inference_preserves_declared_precedence() {
+    let source = "void fill(void **out){void **alias=out;q_make(alias);}void subject(void){void *p;fill(&p);q_free(p);}";
+    let declared = "module contract; extern fn fill(out: ptr<mut, ptr<mut, u8>>) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(out); ensures normal resource_return_none(); };";
+    let result = analyze(source, &[Q_BASE, Q_RICH_MODES, ("fill.qcore", declared)]);
+    assert!(has(&result, "fill", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::SummaryConflict { .. }
+    )));
+    assert_ne!(result.status, AnalysisStatus::Safe);
+}
+
+#[test]
+fn real_c_alias_certificate_rederives_identity_and_rejects_changed_source_or_summary() {
+    use crate::legacy_c::{
+        C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+        check_legacy_safety_certificate,
+    };
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = include_str!("../fixtures/out_alias_wrappers.c");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &fixture_contracts(&[Q_BASE, Q_RICH_MODES]),
+    )
+    .unwrap();
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("{result:?}")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let mut changed = certificate.clone();
+    changed.preprocessed_source = changed
+        .preprocessed_source
+        .replace("q_make(alias)", "alias++;q_make(alias)");
+    assert_ne!(changed.preprocessed_source, certificate.preprocessed_source);
+    assert!(check_legacy_safety_certificate(&changed).is_err());
+    let mut changed = certificate.clone();
+    changed
+        .summaries
+        .iter_mut()
+        .find(|s| s.function == "fill")
+        .unwrap()
+        .contract
+        .parameters[0] = ResourceParameterMode::Borrowed;
+    assert!(check_legacy_safety_certificate(&changed).is_err());
 }

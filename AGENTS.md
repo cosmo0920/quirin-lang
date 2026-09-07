@@ -679,3 +679,19 @@ No source/core/backend semantics change; existing completion-custody model
 proofs remain separate from source/native refinement. Loans, shared authority,
 general heap-peak accounting and arbitrary native schedules remain open.
 Evidence: `docs/reports/w6-completed-child-custody/README.md`.
+
+Immutable output aliases (2026-09-07): W4 now infers wrappers whose first local
+declarations copy an output formal through an immutable alias chain of the same
+explicit flat pointer type. Only exact modeled Out arguments and direct indirect
+stores may use those aliases. The private normalizer retains original source in
+certificates and preserves the original sanctioned slot for ordinary all-exit
+custody validation. Mutation, shadowing, escapes, casts, branch-local aliases,
+indirect reads and unresolved nullable handbacks remain Unknown. Six new gateway
+tests cover chains, multiple outputs, null branches, adversarial uses, caller leaks,
+declared precedence and independent certificate rederivation. Six Lean lemmas
+cover immutable binding copies and unchanged output authority; source extraction
+remains a premise. A native run executes the same C wrappers and releases all four
+observed allocations under ASan/UBSan/LSan. All 791 workspace tests, standing gates,
+31 provider tests, 43 Python tests and 20 Lean audits pass. Broader alias analysis,
+relational branches, general recursion and cost summaries remain open. Evidence:
+`docs/reports/w4-immutable-out-aliases/README.md`.
