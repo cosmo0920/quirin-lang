@@ -1,0 +1,1 @@
+extern fn f(q: quant<n where n := 5>) -> unit; dimension Bytes : Idx + Ordered; quant axis memory : credit<Bytes>; fn main() -> i32 { return 0; }
