@@ -79,6 +79,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
     (
         VerificationRequestV2 {
             source_effect: None,
+            counter_effect: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),
@@ -175,7 +176,10 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             // Explicit additive source-contract package revision. Existing v1
             // capabilities keep their Unknown behavior below; no built-in route
             // or source-set profile is silently updated by package installation.
-            expected.package_version = "0.4.0".into();
+            // Deliberate pin update: package 0.5.0 adds the counter-contract
+            // capability route. The certificate checker, Lean family and every
+            // existing target/profile entry are unchanged.
+            expected.package_version = "0.5.0".into();
             expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]
@@ -188,6 +192,7 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
                 profiles: [
                     "qcore.c_boolean_field_contract.v2".into(),
                     "qcore.c_boolean_field_contract.v3".into(),
+                    "qcore.c_counter_contract.v1".into(),
                 ]
                 .into(),
                 dialects: ["c11", "gnu99", "gnu11", "gnu17"]

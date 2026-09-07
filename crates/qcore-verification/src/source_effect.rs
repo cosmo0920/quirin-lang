@@ -183,6 +183,7 @@ impl BooleanFieldSourceTask {
             task_digest: self.task.task_digest(),
             obligations: self.task.obligations.clone(),
             source_effect: Some(self.summary.source_input()),
+            counter_effect: None,
         }
     }
 

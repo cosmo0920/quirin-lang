@@ -453,6 +453,11 @@ pub struct VerificationRequestV2 {
     /// field contract profile. Omitted for existing v2 exchanges and every v1.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source_effect: Option<crate::chunk_summary::BooleanFieldSourceInput>,
+    /// Optional, separately digest-bound source projection for the explicit
+    /// unsigned counter contract profile. Omitted for every other exchange,
+    /// and never present together with `source_effect`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub counter_effect: Option<crate::counter_summary::CounterSourceInput>,
 }
 
 impl VerificationRequestV2 {
@@ -513,6 +518,29 @@ impl VerificationRequestV2 {
                     if symbol == &input.function && translation_unit == &self.unit.translation_unit) =>
                 {}
             None if field_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
+        }
+        let counter_obligations = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property == crate::obligation::ObligationProperty::CounterUpdateContract
+            })
+            .count();
+        match &self.counter_effect {
+            // One projection carries exactly one counter obligation for the
+            // function it names, and never travels with a Boolean projection.
+            Some(input)
+                if input.version_matches()
+                    && self.source_effect.is_none()
+                    && self.capability == VerifierCapability::ResourceContracts
+                    && counter_obligations == 1
+                    && self.obligations.len() == 1
+                    && matches!(&self.obligations[0].subject,
+                    crate::obligation::ObligationSubject::Function { symbol, translation_unit }
+                    if symbol == &input.function && translation_unit == &self.unit.translation_unit) =>
+                {}
+            None if counter_obligations == 0 => {}
             _ => return Err(RequestError::InvalidObligations),
         }
         Ok(())

@@ -28,6 +28,21 @@ impl CounterCertificate {
     pub fn delta(&self) -> i8 {
         self.delta
     }
+    pub fn root_c_type(&self) -> &str {
+        &self.root_c_type
+    }
+    pub fn root_qcore_type(&self) -> &str {
+        &self.root_qcore_type
+    }
+    /// The checked unsigned storage type. `check_counter_contract` accepted
+    /// this certificate only after requiring the imported signature to be
+    /// exactly `"{counter type} ({root C type})"`, so the split is total.
+    pub fn counter_c_type(&self) -> &str {
+        self.source
+            .signature()
+            .strip_suffix(&format!(" ({})", self.root_c_type))
+            .expect("checked counter signature")
+    }
     /// `maximum` must be the unsigned C type's actual maximum in the selected
     /// ABI. Failure leaves the supplied value untouched. No shared state changes.
     pub fn instantiate(&self, value: u128, maximum: u128) -> Result<u128, String> {
