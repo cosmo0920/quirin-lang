@@ -106,13 +106,38 @@ the historical revision retains its configured source-contract evidence route.
 Supply the original commit with `--revision` to reproduce that route even after
 the upstream checkout advances. Existing audit configurations default to
 `"source_revision_policy": "profile_pin"`, preserving historical evidence gates.
-The existing Cycle19 command now defaults to the current checkout and inventories
-each distinct build configuration. Unsupported commands appear as Unknown rather
-than terminating that inventory; the strict configured driver still rejects them.
-Pass `--pinned-evidence` before the positional root argument for historical replay.
-The current command is not yet sufficient for a substantive production audit:
-the supplied database leaves all 186 configurations Unknown before analysis.
-See [the checkpoint and remaining work](../../docs/reports/cycle19-current-command/README.md).
+The existing Cycle19 command defaults to the current checkout and now requires
+both selected compilation databases to use the configured Clang C driver. A GCC
+database is rejected once with preparation instructions, before per-unit work.
+It is never silently rewritten to name Clang. Prepare explicit Clang CMake inputs
+and run the complete current resource audit with:
+
+```sh
+python3 -B scripts/prepare_cycle19_clang_audit.py --clang clang --clangxx clang++ --run
+```
+
+This orchestrates the independent Fluent Bit clone/build and the forced-Libevent
+Monkey input preparation. CMake receives explicit C/C++ compilers, a C standard,
+and `CMAKE_C_FLAGS=-std=gnu17` so repeat configuration cannot omit the dialect;
+the analysis uses the final dialect in each generated command. The helper records
+`audit-command.json`, sets `QCORE_CLANG` to the selected compiler, and writes
+reports under `build/cycle19/clang/<commit>/reports`. Without `--run`, it prints
+the exact audit command to execute. `--fluent-bit`, `--revision`, and `--output`
+select another source or build location. The developer's existing GCC build is
+left intact. The native build step builds `cmetrics-static`; this is not a full
+native Fluent Bit executable build or a GCC/Clang equivalence claim.
+
+The example accepts `--compile-database PATH` before positional arguments, so it
+can consume that independently generated main database. Pass `--pinned-evidence`
+instead for historical replay. Distinct compile configurations stay visible.
+
+`-Wextra` is transported to Clang preprocessing, syntax checking, and AST import.
+Dollar signs in a quoted C string macro are preserved literally; the adapter does
+not evaluate make/shell expressions or remove the filename definition. Active
+shell expansions and unquoted unresolved macro expressions still reject. Results
+refer to the generated compilation database's literal arguments; equivalence to
+additional Make expansion steps or general filename-builtin semantics is not
+established.
 
 ## Configured source-contract processes
 

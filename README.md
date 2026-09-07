@@ -841,3 +841,17 @@ user command now completes at `d1ab8abff`, but all 186 configurations across
 admission. This is an incomplete audit checkpoint, not a successful production
 verification: faithful dialect/driver/flag and filename-macro ingestion remains
 required. See `docs/reports/cycle19-current-command/README.md`.
+
+Cycle19 explicit Clang audit (2026-09-07):
+`python3 -B scripts/prepare_cycle19_clang_audit.py --run` prepares Fluent Bit and
+forced-Libevent Monkey with explicit Clang compilers and dialect flags, including
+repeat configuration. The example accepts `--compile-database PATH`; a GCC
+database rejects once with preparation instructions, without compiler substitution.
+`-Wextra` reaches preprocessing/syntax/AST; quoted C macro dollar bytes are
+preserved literally without evaluating Make/shell expressions. The verified
+Clang rerun at `9f0fa573` analyzes all 186 configurations across 185 source files:
+2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only, zero gateway failures
+and zero compiler-command refusals. Historical source/native evidence remains
+unpromoted. All 857 workspace tests and standing gates pass. Full native Fluent
+Bit build, GCC equivalence and general filename/build semantics remain outside
+this result. Evidence: `docs/reports/cycle19-explicit-clang/README.md`.

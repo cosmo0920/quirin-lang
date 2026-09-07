@@ -198,6 +198,7 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
     let source = "#if defined(__PIE__)\n#define MODE 4\n#elif defined(__PIC__)\n#define MODE 2\n#else\n#define MODE 0\n#endif\nint observed(void) { return MODE; }";
     for flags in [
         vec!["-Wall"],
+        vec!["-Wextra"],
         vec!["-g"],
         vec!["-fPIC"],
         vec!["-Wa,--noexecstack"],
@@ -257,6 +258,25 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
         literals(&actual_ast, &mut actual);
         literals(&expected_ast, &mut expected);
         assert_eq!(actual, expected, "AST flags: {flags:?}");
+    }
+}
+
+#[test]
+fn quoted_dollars_are_literal_c_macro_bytes_without_shell_or_make_expansion() {
+    let f = Fixture::new();
+    let definition = r#"-D__FILENAME__="$$(subst /source/,,$$(abspath $$<))""#;
+    let source = "const char *name = __FILENAME__;";
+    let imported = f.preprocess(source, &[definition, "-Wextra"]);
+    assert!(imported.contains(r#""$$(subst /source/,,$$(abspath $$<))""#));
+    for rejected in [
+        "-DVALUE=$(unresolved)",
+        r#"-DVALUE="literal" + $(unresolved)"#,
+        r#"-I$unresolved/include"#,
+    ] {
+        assert!(
+            compiler_options(&f.entry(&[rejected])).is_err(),
+            "{rejected}"
+        );
     }
 }
 

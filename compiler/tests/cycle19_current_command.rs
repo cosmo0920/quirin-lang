@@ -54,7 +54,7 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
             files
                 .iter()
                 .map(|file| json!({
-                    "directory": root, "file": file, "arguments": ["cc", "-std=c11", "-c", file]
+                    "directory": root, "file": file, "arguments": [std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()), "-std=c11", "-c", file]
                 }))
                 .collect::<Vec<_>>()
         )
@@ -81,6 +81,7 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
             Some(&monkey),
             Some(&report),
             Some(&bindings),
+            None,
             None
         )
         .unwrap()
@@ -98,6 +99,14 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
             .iter()
             .all(|unit| unit["status"] == "Safe")
     );
+    // A separately prepared Clang database must work without changing the
+    // developer's default build directory or copying its generated database.
+    let alternate = root.join("clang-compile-commands.json");
+    fs::rename(root.join("build/compile_commands.json"), &alternate).unwrap();
+    assert!(
+        !compatibility::run_current(&root, None, None, None, None, None, Some(&alternate)).unwrap()
+    );
+    fs::rename(&alternate, root.join("build/compile_commands.json")).unwrap();
     for path in [
         report.with_extension("chunk-contracts.json"),
         report.with_extension("source-effects.json"),

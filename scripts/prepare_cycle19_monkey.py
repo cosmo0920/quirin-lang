@@ -27,9 +27,23 @@ def main():
     parser.add_argument('--fluent-bit', type=Path, required=True)
     parser.add_argument('--output', type=Path, default=REPO / 'build/cycle19')
     parser.add_argument('--cmake', default='cmake')
+    parser.add_argument('--clang', default='clang')
+    parser.add_argument('--clangxx', default='clang++')
     args = parser.parse_args()
     upstream = args.fluent_bit.resolve(strict=True)
     out = args.output.resolve()
+    clang = shutil.which(args.clang)
+    clangxx = shutil.which(args.clangxx)
+    if not clang or not clangxx or 'clang version' not in run(clang, '--version'):
+        raise ValueError('explicit Clang C and C++ compilers are required for audit preparation')
+    cache = out / 'monkey-build/CMakeCache.txt'
+    if cache.exists():
+        values = dict(line.split('=', 1) for line in cache.read_text().splitlines()
+                      if '=' in line and not line.startswith(('#', '//')))
+        for key, expected in [('CMAKE_C_COMPILER', clang), ('CMAKE_CXX_COMPILER', clangxx)]:
+            cached = next((v for k, v in values.items() if k.split(':')[0] == key), None)
+            if not cached or Path(cached).resolve() != Path(expected).resolve():
+                raise ValueError('existing Monkey build uses another compiler; choose a fresh --output directory')
     revision = run('git', '-C', str(upstream), 'rev-parse', 'HEAD')
     if run('git', '-C', str(upstream), 'status', '--porcelain', '--', 'lib/monkey'):
         raise ValueError('Fluent Bit lib/monkey has local changes; source revision would be ambiguous')
@@ -66,6 +80,8 @@ def main():
         raise ValueError('persistent source copy has unexpected extra files')
     marker.write_text(json.dumps(metadata, indent=2) + '\n')
     command = [args.cmake, '-S', str(source), '-B', str(build),
+               f'-DCMAKE_C_COMPILER={clang}', f'-DCMAKE_CXX_COMPILER={clangxx}',
+               '-DCMAKE_C_STANDARD=17', '-DCMAKE_C_FLAGS:STRING=-std=gnu17',
                '-DCMAKE_BUILD_TYPE=Debug', '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
                '-DMK_EVENT_LOOP_LIBEVENT=ON', '-DMK_EVENT_LOOP_EPOLL=OFF',
                '-DMK_EVENT_LOOP_KQUEUE=OFF', '-DMK_EVENT_LOOP_POLL=OFF',
@@ -85,6 +101,7 @@ def main():
     if any(not Path(e['file']).is_file() or not Path(e['directory']).is_dir() for e in entries):
         raise ValueError('generated compile database has missing source or working directories')
     metadata.update(status='configured', cmake_command=command, compile_entries=len(entries),
+                    compiler=str(Path(clang).resolve()), compiler_version=run(clang, '--version'),
                     generated_source_sha256=file_hashes(source, sorted(
                         name for name in GENERATED_SOURCE_FILES if (source / name).is_file())),
                     compile_database=str(database),

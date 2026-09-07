@@ -78,12 +78,13 @@ def main():
                       if '=' in line and not line.startswith(('#', '//')))
         if values.get('CMAKE_HOME_DIRECTORY:INTERNAL') != str(source):
             raise ValueError('build cache belongs to another source; choose a fresh output')
-        cached_compiler = values.get('CMAKE_C_COMPILER:FILEPATH', values.get('CMAKE_C_COMPILER:STRING'))
+        cached_compiler = next((v for k, v in values.items() if k.split(':')[0] == 'CMAKE_C_COMPILER'), None)
         if not cached_compiler or Path(cached_compiler).resolve() != Path(clang).resolve():
             raise ValueError('build cache uses another compiler; choose a fresh output')
     configure = [args.cmake, '-S', str(source), '-B', str(build),
                  f'-DCMAKE_C_COMPILER={clang}', f'-DCMAKE_CXX_COMPILER={clangxx}',
-                 '-DCMAKE_C_STANDARD=17', '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
+                 '-DCMAKE_C_STANDARD=17', '-DCMAKE_C_FLAGS:STRING=-std=gnu17',
+                 '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
                  '-DFLB_DEV=ON', '-DFLB_EXAMPLES=ON']
     logged(configure, build / 'configure.log')
     native = [args.cmake, '--build', str(build), '--target', 'cmetrics-static', '-j2']

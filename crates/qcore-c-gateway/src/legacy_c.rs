@@ -179,6 +179,7 @@ pub enum CPreprocessorOption {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
 pub enum CFrontendFlag {
     AllWarnings,
+    ExtraWarnings,
     DebugInformation,
     PositionIndependentCode,
     AssemblerNoExecStack,
@@ -188,6 +189,7 @@ impl CFrontendFlag {
     pub(crate) fn clang_argument(self) -> &'static str {
         match self {
             Self::AllWarnings => "-Wall",
+            Self::ExtraWarnings => "-Wextra",
             Self::DebugInformation => "-g",
             Self::PositionIndependentCode => "-fPIC",
             Self::AssemblerNoExecStack => "-Wa,--noexecstack",

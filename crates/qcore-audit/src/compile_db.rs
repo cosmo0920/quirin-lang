@@ -399,6 +399,66 @@ fn executable_path(program: &str, directory: &Path) -> Result<PathBuf, String> {
     selected.canonicalize().map_err(|error| error.to_string())
 }
 
+/// Check driver identity without executing the program named by the database.
+pub fn require_clang_driver(entry: &CompileEntry) -> Result<(), String> {
+    let words = shell_words(&entry.command)?;
+    let driver = words
+        .first()
+        .filter(|word| !word.is_empty())
+        .ok_or("empty compiler executable")?;
+    let name = Path::new(driver)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("");
+    if name.contains("++") || name.starts_with("clang-cl") {
+        return Err(
+            "frontend build flags require the Clang C driver, not a C++ or CL driver".into(),
+        );
+    }
+    let command = qcore_c_gateway::clang_command()?;
+    let actual = command
+        .get_program()
+        .to_str()
+        .ok_or("non-UTF-8 Clang executable")?;
+    let actual = executable_path(actual, &std::env::current_dir().map_err(|e| e.to_string())?)?;
+    if executable_path(driver, &entry.directory)? != actual {
+        return Err(format!(
+            "audit requires the configured Clang executable ({}); compilation database selects {driver}. Generate an explicit Clang build with scripts/prepare_cycle19_clang_audit.py --run; GCC compiler equivalence is unproven",
+            actual.display()
+        ));
+    }
+    Ok(())
+}
+
+// The shell parser has already rejected active shell expansion. Dollars inside
+// one quoted C string are literal macro bytes, not a request to evaluate make
+// or shell expressions. Retain the complete string, including doubled dollars.
+fn literal_string_definition(value: &str) -> bool {
+    let Some((_, replacement)) = value.split_once('=') else {
+        return false;
+    };
+    let Some(interior) = replacement
+        .strip_prefix('"')
+        .and_then(|text| text.strip_suffix('"'))
+    else {
+        return false;
+    };
+    let mut escaped = false;
+    for character in interior.chars() {
+        if matches!(character, '\n' | '\r') {
+            return false;
+        }
+        if escaped {
+            escaped = false;
+        } else if character == '\\' {
+            escaped = true;
+        } else if character == '"' {
+            return false;
+        }
+    }
+    !escaped
+}
+
 /// The configurable driver accepts only options whose preprocessing effects
 /// this gateway can preserve. Existing pinned adapters retain their explicitly
 /// bounded historical projection via `compiler_options_compatibility`.
@@ -445,7 +505,10 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
             } else {
                 suffix
             };
-            if value.is_empty() || value.contains('$') || (flag == "-I" && value == "-") {
+            if value.is_empty()
+                || (value.contains('$') && !(flag == "-D" && literal_string_definition(value)))
+                || (flag == "-I" && value == "-")
+            {
                 return Err("empty or unexpanded compiler option is unsupported".into());
             }
             if matches!(flag, "-I" | "-isystem" | "-iquote") && value.starts_with('=') {
@@ -466,6 +529,7 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
             options.preprocessor_options.push(option);
         } else if let Some(flag) = match word.as_str() {
             "-Wall" => Some(CFrontendFlag::AllWarnings),
+            "-Wextra" => Some(CFrontendFlag::ExtraWarnings),
             "-g" => Some(CFrontendFlag::DebugInformation),
             "-fPIC" => Some(CFrontendFlag::PositionIndependentCode),
             "-Wa,--noexecstack" => Some(CFrontendFlag::AssemblerNoExecStack),
@@ -510,27 +574,10 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
         );
     }
     if frontend_flags {
-        let driver_name = Path::new(&words[0])
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or("");
-        if driver_name.contains("++") || driver_name.starts_with("clang-cl") {
-            return Err(
-                "frontend build flags require the Clang C driver, not a C++ or CL driver".into(),
-            );
-        }
         if !explicit_dialect {
             return Err("frontend build flags require an explicit supported -std= dialect".into());
         }
-        let command = qcore_c_gateway::clang_command()?;
-        let actual = command
-            .get_program()
-            .to_str()
-            .ok_or("non-UTF-8 Clang executable")?;
-        let actual = executable_path(actual, &std::env::current_dir().map_err(|e| e.to_string())?)?;
-        if executable_path(&words[0], &entry.directory)? != actual {
-            return Err("frontend build flags require the configured Clang executable; compiler equivalence is unproven".into());
-        }
+        require_clang_driver(entry)?;
     }
     Ok(options)
 }

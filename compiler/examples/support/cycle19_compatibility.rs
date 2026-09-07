@@ -46,6 +46,7 @@ pub fn run_current(
     diagnostic_report: Option<&Path>,
     binding_directory: Option<&Path>,
     contract_manifest: Option<&Path>,
+    compile_database: Option<&Path>,
 ) -> Result<bool, String> {
     use qcore_audit::current::{CurrentAudit, distinct_configurations, select_configurations};
     let root = root.canonicalize().map_err(|error| error.to_string())?;
@@ -60,8 +61,9 @@ pub fn run_current(
     println!(
         "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay"
     );
+    let default_database = root.join("build/compile_commands.json");
     let entries = compile_entries(
-        &fs::read_to_string(root.join("build/compile_commands.json"))
+        &fs::read_to_string(compile_database.unwrap_or(&default_database))
             .map_err(|error| error.to_string())?,
     )?;
     // Select all groups before auditing; missing groups cannot disappear from
@@ -78,6 +80,9 @@ pub fn run_current(
                 "compile database contains no selected {} sources",
                 selection.library
             ));
+        }
+        for entry in &selected {
+            qcore_audit::compile_db::require_clang_driver(entry)?;
         }
         let unresolved = (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection");
         groups.push((
@@ -98,6 +103,9 @@ pub fn run_current(
             );
             if selected.is_empty() {
                 return Err("no compiled Monkey sources selected".into());
+            }
+            for entry in &selected {
+                qcore_audit::compile_db::require_clang_driver(entry)?;
             }
             // The copy may have been prepared at an older revision. It is usable
             // only where its actual source and adapter/header bytes still match.
