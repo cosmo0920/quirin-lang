@@ -80,6 +80,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
         VerificationRequestV2 {
             source_effect: None,
             counter_effect: None,
+            reactor_program: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),
@@ -171,6 +172,16 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
                 .into_iter()
                 .map(str::to_owned)
                 .collect();
+        }
+        if id == "qcore.libevent" {
+            // Deliberate pin update: package 0.2.0 adds the reactor callback
+            // capability route, so the executable no longer only proposes
+            // unsupported assertions and names the checker that actually
+            // admits its witness. Targets, capabilities, limits, trust class
+            // and the Lean family are unchanged, and the built-in v1 adapter
+            // below still answers Unknown for every capability.
+            expected.package_version = "0.2.0".into();
+            expected.certificate_checker = "qcore.reactor_callback_program.v1".into();
         }
         if id == "qcore.chunkio" {
             // Explicit additive source-contract package revision. Existing v1

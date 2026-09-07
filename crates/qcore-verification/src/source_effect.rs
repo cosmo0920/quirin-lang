@@ -184,6 +184,7 @@ impl BooleanFieldSourceTask {
             obligations: self.task.obligations.clone(),
             source_effect: Some(self.summary.source_input()),
             counter_effect: None,
+            reactor_program: None,
         }
     }
 

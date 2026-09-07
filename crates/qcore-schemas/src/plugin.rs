@@ -458,6 +458,11 @@ pub struct VerificationRequestV2 {
     /// and never present together with `source_effect`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub counter_effect: Option<crate::counter_summary::CounterSourceInput>,
+    /// Optional, separately digest-bound program projection for one admitted
+    /// reactor callback family. Omitted for every other exchange, and never
+    /// present together with another source projection.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reactor_program: Option<crate::reactor_program::ReactorProgramInput>,
 }
 
 impl VerificationRequestV2 {
@@ -541,6 +546,45 @@ impl VerificationRequestV2 {
                     if symbol == &input.function && translation_unit == &self.unit.translation_unit) =>
                 {}
             None if counter_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
+        }
+        // The quiescence obligation is the reactor projection's marker: it is
+        // derived only on this route, so its presence without a projection —
+        // and a projection without it — are both refused. The generation
+        // obligation is *not* the marker, because the reserved event-trace
+        // property predates this route and other exchanges still name it.
+        let quiescence = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property
+                    == crate::obligation::ObligationProperty::CallbackQuiescentAtTeardown
+            })
+            .count();
+        let generations = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property
+                    == crate::obligation::ObligationProperty::EventGenerationDischarged
+            })
+            .count();
+        match &self.reactor_program {
+            // One projection carries exactly the two model obligations its
+            // single indivisible replay decides, over the whole unit, and
+            // never travels with a source projection.
+            Some(input)
+                if input.version_matches()
+                    && self.source_effect.is_none()
+                    && self.counter_effect.is_none()
+                    && self.capability == VerifierCapability::EventTraces
+                    && quiescence == 1
+                    && generations == 1
+                    && self.obligations.len() == 2
+                    && self.obligations.iter().all(|obligation| {
+                        obligation.subject == crate::obligation::ObligationSubject::Unit
+                    }) => {}
+            None if quiescence == 0 => {}
             _ => return Err(RequestError::InvalidObligations),
         }
         Ok(())

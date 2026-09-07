@@ -379,6 +379,7 @@ fn dispatch_capability(
         let request = VerificationRequestV2 {
             source_effect: None,
             counter_effect: None,
+            reactor_program: None,
             protocol_version: PLUGIN_PROTOCOL_VERSION,
             evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
             request_id,

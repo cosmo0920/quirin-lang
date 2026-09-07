@@ -1,4 +1,4 @@
-# qcore-schemas 4.0.0
+# qcore-schemas 5.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -130,6 +130,60 @@ subject function and translation unit match it.
 The projection carries no expected reading, and a proposal that matches the
 core's own reading still discharges nothing on its own: the core evaluates the
 pinned counter contract itself before any obligation is covered.
+
+## Reactor program projection (5.0.0)
+
+`reactor_program` adds the portable projection and proposal records for one
+admitted reactor callback family: `ReactorProgramInput` (a bounded operation
+vocabulary, with no derived result), the `ReactorOperationRecord` /
+`CallbackContextRecord` / `DeleteModeRecord` vocabulary it is built from, and
+`ReactorCallbackWitness`. The proposal it carries is the *existing*
+`reactor::ReactorCallbackProposal` at its unchanged version 1; those records and
+their bytes did not move.
+
+Two source-incompatible additions accompany the new module — a
+`SemanticWitness::ReactorCallback` variant and the required
+`VerificationRequestV2::reactor_program` field — so this is a major crate
+version, consistent with the exhaustive-variant precedent in 2.0.0 and 4.0.0.
+
+**Why the additions are forced.** The witness enum is the only carrier of a
+replayed proposal, and no existing variant can hold a callback assignment
+inventory: `ContractObservation` is a recorded-run record set with decimal
+observation values, and reusing it would misdescribe what the witness is and
+what its acceptance means. The program projection could technically have
+travelled as JSON inside a `NormalizedFact::subject`, the way `LifecycleSiteFact`
+does, but that encoding has no `deny_unknown_fields`, no schema-version field
+and no `validate()` rule — it would be a strictly weaker boundary than the
+typed field the counter and Boolean routes already established. No
+`ObligationProperty` variant was added: the route reuses the reserved
+`event_generation_discharged` and `callback_quiescent_at_teardown` properties,
+which now have a derivation and a witness kind.
+
+Existing wire bytes are unchanged: `reactor_program` is `Option`, defaults to
+absent and is skipped when serializing, exactly as `source_effect` and
+`counter_effect` are. `tests/reactor_request_wire.rs` pins that a request
+without a projection serializes with none of the three keys and round-trips.
+A request carrying a reactor projection together with either source projection
+is rejected, and a reactor projection is admitted only with exactly one
+`event_generation_discharged` and one `callback_quiescent_at_teardown`
+obligation, both over the whole unit. The quiescence property is the marker
+that requires a projection; the generation property alone does not, because it
+predates this route and other exchanges still name it.
+
+| Boundary | Current value | Meaning |
+|---|---|---|
+| Rust schema crate | 5.0.0 | Public API and serde compatibility |
+| Plugin protocol | 1 | Unchanged envelope |
+| Evidence | 1 and 2 | Unchanged negotiation and admission rules |
+| Reactor callback proposal | 1 | Unchanged proposal records |
+| Reactor program input | 1 | Required program-projection schema |
+| Reactor semantic profile | `qcore.reactor_callback_program.v1` | Projection verification task |
+| Reactor input digest key | `qcore:reactor-program-input:v1` | Complete projection identity in the task |
+| Libevent provider package | 0.2.0 | Adds the reactor callback capability route |
+
+The projection carries no proposal, and a proposal that matches the core's own
+exported inventory still discharges nothing on its own: the core runs its own
+reactor model checker over its own program before any obligation is covered.
 
 The unit semantic profile is `qcore.c_boolean_field_contract.v3`: two initial
 Boolean states, no scalar result, a nominal record from the opaque import, and

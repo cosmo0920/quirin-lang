@@ -192,6 +192,7 @@ fn outcome(id: &str, code: &str, version: u16, verdict: ProposedVerdict) -> Veri
             obligations: task.obligations.clone(),
             source_effect: None,
             counter_effect: None,
+            reactor_program: None,
         },
         &task,
         None,
