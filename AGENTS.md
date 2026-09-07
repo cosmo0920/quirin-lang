@@ -1217,3 +1217,106 @@ both reevaluation examples exit 0, fmt and clippy clean. A pre-existing P02
 `RLIMIT_NPROC` conformance test is load-flaky (it counts every process of the
 real UID); recorded in `docs/reports/remaining-p03/README.md` §9.1 with the
 assertion deliberately not weakened.
+
+Second delegated increment (2026-09-08): seven bounded cards landed through a
+second delegated wave (five isolated worktrees plus two lanes coordinated in
+the integration worktree under explicit per-lane file ownership); this
+paragraph supersedes nothing above and each card's record keeps its own
+boundaries.
+- Scoped read loans (T04): `ScopedReadLoansV1` extends the checked finite task
+  profile with one parent-owned Buffer lent to at most one scoped child as a
+  read-only loan closed by creator join. The ledger adds a `Loaned` owner
+  state with shared-read versus exclusive-use gates; a loan is not a value
+  (refused as result, entry parameter, copy/move/re-loan source and drop
+  operand). Failed creation restores captures; failed join reclaims nothing.
+  `borrow<Buffer>` parameters and `read PLACE share FULL` captures lower with
+  no parser change; native and reference runs pass the same pointer and
+  differ only in what the caller keeps, under fixed ASan/UBSan/LSan runs.
+  Seventeen public Lean theorems in a new `QCore.ReadLoan` namespace; 18 new
+  tests. ThreadSanitizer does not intercept C11 `thrd_create` (measured
+  SEGV), so data-race freedom rests on the checker's no-write-while-loaned
+  rule, not on measurement. CT24/CT25 mappings are proposed in the report
+  only; Buffer writes, fractional shares (T05), write loans and nested
+  workers remain refused. Evidence: `docs/reports/remaining-t04/README.md`.
+- Reactor callback capability through the process boundary (P05): the reactor
+  callback assignment inventory (registration index, event identity and
+  generation, declared callback authority) now runs as package
+  `qcore.libevent` 0.2.0, computing its proposal from a transported program
+  input that carries no derived result; the sealed core import rebinds the
+  proposal to its own program and re-runs `check_event_program` itself, so
+  agreement alone discharges nothing. Bufferevent operations, raw socket
+  custody, ordering assumptions and loop control have no wire record and stay
+  Unknown; an empty accepted-build list is `UnsupportedBackend`, never
+  acceptance. `qcore-schemas` is 5.0.0 (two forced source-incompatible
+  additions; existing wire bytes pinned byte-identical). The moved capability
+  has no production caller yet — it is exercised by the Cycle 18 unit tests,
+  not the Cycle 19 audit — and the in-process route is retained (P09).
+  Evidence: `docs/reports/remaining-p05/README.md`.
+- CTraces capability definition (P06): design only, by measurement — a census
+  of all 273 function definitions in the 17 pinned CTraces units finds zero
+  functions any implemented checker accepts, and the `ctraces` profile entry
+  imports and asserts nothing. `ctraces.span.dropped_counts.v1` is specified
+  over the four dropped-count setters with a 19-row malicious-witness matrix
+  and six negative controls; four refusal tests drive the real importer over
+  real upstream bodies and panic if any CTraces function ever yields a
+  summary. Two dangling manifest identities (an unimplemented
+  `certificate_checker` name and an `evidence_versions` mismatch) are
+  recorded as follow-on P06-I4, not repaired. The contract text stays outside
+  `contract/qcore/`, so the corpus count is untouched. Evidence:
+  `docs/reports/remaining-p06/README.md`.
+- librdkafka capability definition (P07): design only, by measurement — the
+  adapter imports nothing, and its six declared-but-unloaded mechanism
+  operations are mostly unfaithful to the real source (a function-like macro,
+  an absent symbol, a wrong arity, a void return taking the entry as input,
+  and one unsound postcondition); these are defects in declared unloaded
+  contract text, not upstream defect claims, and nothing derived from them.
+  A 96-function census finds zero admissible functions with one single-reason
+  near miss sizing follow-on P07-U1.
+  `qcore.librdkafka.queue_final_destroy.v1` is specified with two disjoint
+  outcomes and seven premises; reclamation, callbacks and concurrency are
+  excluded, not assumed. Evidence: `docs/reports/remaining-p07/README.md`.
+- Constructor-to-caller custody (O04): on byte-verbatim Fluent Bit `90a0109`
+  bodies, the three modeled failure arms of `flb_input_chunk_create` release
+  the chunk produced at `cio_chunk_open` exactly once, all naming the same
+  acquisition site; the constructor's four guard/allocation-failure exits are
+  discharged while its rollback and success exits stay Unknown, so its
+  declared contract remains a named premise, not a fact its body discharges.
+  The C02-P borrowed-actual admission module records per-exit residuals;
+  37 Lean theorems in `QCore.ExitResiduals` include both fail-closed
+  directions. The canonical CMetrics audit is byte-identical before and
+  after; both functions stay Unknown, and one C03 pin was deliberately
+  updated (its named blocker moved to the branch condition, recorded in the
+  test and report). Evidence: `docs/reports/remaining-o04/README.md`.
+- Checker/model correspondence (F01): `check_concurrent` and
+  `QCore.Concurrency.Lifetime.step`/`run` are tied by a seven-conjunct
+  representation relation checked without instrumenting the checker, with
+  domain and transcription agreement pinned as digests both sides compute
+  independently; the whole depth-3 domain is decided in Lean and depths 3-4
+  run differentially in Rust, with no divergence found in the claimed
+  direction. Eight new theorems depend only on `propext` and `Quot.sound`.
+  The claim is bounded at trace length 4 and not inductive; the transcription
+  is digest-checked, not mechanically extracted; data races, unauthorized
+  access and permission overflow are outside every stated correspondence; the
+  `CheckedMutexInvariantV1` pair remains open. Evidence:
+  `docs/reports/remaining-f01/README.md`.
+- T03 CT integration: CT26, CT27, CT29 and CT30 are mapped with stage-derived
+  evidence and exact ordered diagnostic cascades; CT coverage moves from
+  11/50 to 15/50 mapped. CT26 is the first harness-gated sanitized-native CT
+  case. CT28 and CT31 stay unmapped with recorded reasons; `build_matrix.py`
+  is recorded out of date via a `generator_status` field rather than silently
+  regenerated, and a stale T00 blocker label is corrected in both acceptance
+  records. No semantic or diagnostic-code change. Evidence:
+  `docs/reports/remaining-t03-ct-integration/README.md`.
+
+Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
+42 provisional Unsafe / 137 Unknown plus four data-only units, the contract
+corpus stays 59 modules and full language conformance stays false. CT
+coverage advances to 15/50 mapped, by executed-stage evidence only. The four
+pinned 185-unit artifacts were not re-measured (CORPUS-REPIN remains open and
+now names C02, G02 and O04). `qcore-schemas` is 5.0.0. Merged gate at this
+checkpoint: 1141 workspace tests, 56 provider tests, 43 Python tests, 23 Lean
+audits, both reevaluation examples exit 0, fmt and clippy clean in both
+workspaces. Process note: the shared git stash stack caused one
+cross-worktree stash consumption during the wave; the affected work was fully
+recovered from dangling commits and nothing was lost. Prefer temporary WIP
+commits over `git stash` in this repository.
