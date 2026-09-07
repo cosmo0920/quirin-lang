@@ -1,0 +1,583 @@
+{
+  "probe": {
+    "artifact": "real unsuppressed close(2)/open(2)/dup(2) calls",
+    "claims": [
+      "these are real syscalls, not suppressed wrappers",
+      "they witness the success and EBADF arms only",
+      "no durability, no general OS failure rule and no verdict follows"
+    ],
+    "host": {
+      "machine": "x86_64",
+      "python": "3.14.4",
+      "release": "7.0.0-30-generic",
+      "system": "Linux"
+    },
+    "not_observed": [
+      "EINTR: not reproducible without an interrupting signal on a filesystem whose close is interruptible",
+      "EIO/ENOSPC/EDQUOT: not reproducible without a failing device, a full filesystem or an exhausted quota"
+    ],
+    "observations": [
+      {
+        "descriptor_absent_after": true,
+        "number": 3,
+        "outcome": "returned_zero",
+        "probe": "P1_success_releases_the_slot",
+        "relation_descriptor": "Released"
+      },
+      {
+        "errno": "EBADF",
+        "outcome": "returned_minus_one",
+        "probe": "P2_second_close_reports_EBADF",
+        "relation_descriptor": "Indeterminate"
+      },
+      {
+        "epochs_distinct": true,
+        "first_identity": [
+          47,
+          1700424
+        ],
+        "identities_distinct": true,
+        "number_reused": true,
+        "probe": "P3_number_is_reused_by_a_fresh_epoch",
+        "second_identity": [
+          47,
+          1700425
+        ]
+      },
+      {
+        "closed_number_absent_after": true,
+        "duplicate_still_usable": true,
+        "probe": "P4_description_outlives_the_descriptor",
+        "relation_description_without_last_reference": "DescriptionRetained"
+      }
+    ],
+    "primary_source": "Linux man-pages 6.17, close(2), dated 2026-02-08",
+    "target": "x86_64-unknown-linux-gnu"
+  },
+  "relation": [
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "NotAttempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_release_epoch"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "no call was issued on this path; the epoch is untouched",
+      "outcome": "not_attempted",
+      "permitted_recovery": [
+        "close"
+      ],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "A4 denied: the result was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "result_unobserved",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionReleased",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": true,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": false,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EBADF",
+      "last_reference": true,
+      "note": "EBADF refutes the tracked epoch; this call ended no epoch",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [
+        "A2_epoch_live"
+      ],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Released",
+      "duties": [
+        "must_report_possible_data_loss"
+      ],
+      "errno": "EINTR",
+      "last_reference": true,
+      "note": "Linux releases the descriptor early; retry is forbidden",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionReleased",
+      "descriptor": "Released",
+      "duties": [
+        "must_report_possible_data_loss"
+      ],
+      "errno": "EIO",
+      "last_reference": true,
+      "note": "Linux released the descriptor before the failing flush step",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionReleased",
+      "descriptor": "Released",
+      "duties": [
+        "must_report_possible_data_loss"
+      ],
+      "errno": "ENOSPC",
+      "last_reference": true,
+      "note": "Linux released the descriptor before the failing flush step",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": "ENOTSUP",
+      "last_reference": true,
+      "note": "Linux always releases except on EBADF",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "<unobserved>",
+      "last_reference": true,
+      "note": "A5 denied: errno was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "linux",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "NotAttempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_release_epoch"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "no call was issued on this path; the epoch is untouched",
+      "outcome": "not_attempted",
+      "permitted_recovery": [
+        "close"
+      ],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "A4 denied: the result was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "result_unobserved",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionReleased",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": true,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": false,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EBADF",
+      "last_reference": true,
+      "note": "EBADF refutes the tracked epoch; this call ended no epoch",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [
+        "A2_epoch_live"
+      ],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "Retained",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_release_epoch",
+        "must_report_possible_data_loss"
+      ],
+      "errno": "EINTR",
+      "last_reference": true,
+      "note": "POSIX.1-2024 keeps the descriptor open; close must be called again",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [
+        "close"
+      ],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_possible_data_loss",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EIO",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_possible_data_loss",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "ENOSPC",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "ENOTSUP",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "<unobserved>",
+      "last_reference": true,
+      "note": "A5 denied: errno was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "posix2024",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "NotAttempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_release_epoch"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "no call was issued on this path; the epoch is untouched",
+      "outcome": "not_attempted",
+      "permitted_recovery": [
+        "close"
+      ],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": null,
+      "last_reference": true,
+      "note": "A4 denied: the result was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "result_unobserved",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionReleased",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": true,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionRetained",
+      "descriptor": "Released",
+      "duties": [],
+      "errno": null,
+      "last_reference": false,
+      "note": "epoch ended; the number may be reused by a fresh generation",
+      "outcome": "returned_zero",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EBADF",
+      "last_reference": true,
+      "note": "EBADF refutes the tracked epoch; this call ended no epoch",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [
+        "A2_epoch_live"
+      ],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_possible_data_loss",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EINTR",
+      "last_reference": true,
+      "note": "documentation-level divergence: Linux forbids the retry that POSIX.1-2024 requires; the target must be pinned",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_possible_data_loss",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "EIO",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_possible_data_loss",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "ENOSPC",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackFailed"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Indeterminate",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "ENOTSUP",
+      "last_reference": true,
+      "note": "the standard states no general release rule for this error",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    },
+    {
+      "description": "DescriptionUnknown",
+      "descriptor": "Attempted",
+      "duties": [
+        "epoch_stays_in_live_denominator",
+        "must_not_retry_close",
+        "must_not_treat_number_as_free",
+        "must_not_use_number",
+        "must_report_unresolved_endpoint"
+      ],
+      "errno": "<unobserved>",
+      "last_reference": true,
+      "note": "A5 denied: errno was not observed, so the EBADF arm is not excluded and no release can be concluded",
+      "outcome": "returned_minus_one",
+      "permitted_recovery": [],
+      "premise_violations": [],
+      "target": "unpinned",
+      "writeback": "WriteBackUnknown"
+    }
+  ]
+}
