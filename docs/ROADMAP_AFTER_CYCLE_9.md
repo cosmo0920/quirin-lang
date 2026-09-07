@@ -325,3 +325,5 @@ required native evidence and full registry composition remain open. Evidence:
 [configured process audit report](reports/w5-configured-process-audit/README.md).
 
 W2 transport follow-up: [ordered preprocessing and header selection repair](reports/w2-preprocessor-transport/README.md) binds include classes and macro order across configured main/helper imports; arbitrary CMake flag support remains open.
+
+W2 build transport: [persistent Clang CMake audit](reports/w2-clang-cmake-build/README.md) carries explicit warning/debug/PIC/assembler flags and verifies a fresh native CMetrics build without rewriting CMake's compile command.

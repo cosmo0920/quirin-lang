@@ -235,3 +235,32 @@ fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
         );
     }
 }
+
+#[cfg(not(windows))]
+#[test]
+fn pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing() {
+    let fixture = Fixture::new(
+        "#ifdef __PIE__\n#define EFFECT ((void)0)\n#else\n#define EFFECT opaque()\n#endif\nextern void opaque(void); void entry(void) { EFFECT; }",
+    );
+    fixture.mutate("compile_commands.json", |database| {
+        database[0]["arguments"] = json!([
+            "clang",
+            "-std=c11",
+            "-Wall",
+            "-g",
+            "-fPIC",
+            "-Wa,--noexecstack",
+            "-c",
+            "src/unit.c"
+        ]);
+    });
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"][0]["status"], "Unknown");
+}

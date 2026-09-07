@@ -171,6 +171,38 @@ pub enum CPreprocessorOption {
     QuoteInclude(String),
     Define(String),
     Undefine(String),
+    FrontendFlag(CFrontendFlag),
+}
+
+/// Explicit build flags admitted to Clang preprocessing, syntax and typed AST.
+/// Assembler requests are retained but no object/stack property is certified.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum CFrontendFlag {
+    AllWarnings,
+    DebugInformation,
+    PositionIndependentCode,
+    AssemblerNoExecStack,
+}
+
+impl CFrontendFlag {
+    pub(crate) fn clang_argument(self) -> &'static str {
+        match self {
+            Self::AllWarnings => "-Wall",
+            Self::DebugInformation => "-g",
+            Self::PositionIndependentCode => "-fPIC",
+            Self::AssemblerNoExecStack => "-Wa,--noexecstack",
+        }
+    }
+}
+
+impl C11TranslationUnit<'_> {
+    pub(crate) fn append_frontend_flags(&self, command: &mut std::process::Command) {
+        for option in &self.preprocessor_options {
+            if let CPreprocessorOption::FrontendFlag(flag) = option {
+                command.arg(flag.clang_argument());
+            }
+        }
+    }
 }
 
 impl CPreprocessorOption {
@@ -181,6 +213,10 @@ impl CPreprocessorOption {
             Self::QuoteInclude(value) => ("-iquote", value),
             Self::Define(value) => ("-D", value),
             Self::Undefine(value) => ("-U", value),
+            Self::FrontendFlag(flag) => {
+                command.arg(flag.clang_argument());
+                return;
+            }
         };
         command.args([flag, value]);
     }
@@ -454,8 +490,10 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
         ));
     }
     let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
-    let mut syntax = crate::clang::command()
-        .map_err(LegacyCError::ProductionParserUnavailable)?
+    let mut syntax_command =
+        crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
+    unit.append_frontend_flags(&mut syntax_command);
+    let mut syntax = syntax_command
         .args([
             "-x",
             "c",

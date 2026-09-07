@@ -1,0 +1,49 @@
+{
+  "normalized_compile_entry_exact": false,
+  "source_bytes_exact": true,
+  "raw_audit_units_exact": true,
+  "normal_build_extra_arguments": [
+    "-I$SOURCE/lib/yyjson-0.12.0/src"
+  ],
+  "normalized_entry_changes": [
+    {
+      "path": "/command",
+      "before": "/usr/bin/clang -DCMT_HAVE_CFL -DCMT_HAVE_FLUENT_OTEL_PROTO -DCMT_HAVE_PROMETHEUS_TEXT_DECODER -DCMT_HAVE_TIMESPEC_GET -DFLB_HAVE_CHUNK_TRACE -DFLB_HAVE_DEV -DFLB_HAVE_HTTP_CLIENT_DEBUG -DFLB_HAVE_IN_STORAGE_BACKLOG -DFLB_HAVE_PARSER -DFLB_HAVE_RECORD_ACCESSOR -DFLB_HAVE_SIMD -DFLB_HAVE_STREAM_PROCESSOR -DFLB_HAVE_SYS_WAIT_H -DFLB_HAVE_UNICODE_ENCODER -DFLB_HAVE_YYJSON -DFLB_SYSTEM_LINUX -DFLB_TRACE=1 -DMPACK_EXTENSIONS=1 -DMSGPACK_EMBED_STACK_SIZE=64 -I$BUILD/generated/include -I$SOURCE/include -I$SOURCE/lib -I$SOURCE/lib/fluent-otel-proto/include -I$SOURCE/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cfl/include -I$SOURCE/lib/cfl/lib/xxhash -I$SOURCE/lib/flb_libco -I$SOURCE/lib/rbtree -I$SOURCE/lib/chunkio/include -I$BUILD/lib/chunkio/include -I$SOURCE/lib/monkey/include -I$SOURCE/lib/monkey/include/monkey -I$SOURCE/lib/mpack-amalgamation-1.1.1/src -I$SOURCE/lib/miniz -I$SOURCE/lib/snappy-fef67ac -I$SOURCE/lib/cmetrics/include -I$SOURCE/lib/ctraces/include -I$SOURCE/lib/cprofiles/include -I$SOURCE/lib/lwrb/lwrb/src/include -I$BUILD/lib/jansson-e23f558/include -I$BUILD/lib/cmetrics -I$BUILD/lib/cprofiles/include -I$BUILD/include -I$BUILD/lib/monkey/include -I$BUILD/lib/monkey/include/monkey -I$SOURCE/lib/yyjson-0.12.0/src -I$SOURCE/lib/tutf8e/include -I$SOURCE/lib/msgpack-c/include -I$SOURCE/lib/zstd-1.5.7/lib -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/include -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cmetrics/lib/cfl/include -I$SOURCE/lib/cmetrics/src -I$SOURCE/lib/cfl/lib/xxhash/cmake_unofficial/..  -Wall -D__FLB_FILENAME__=__FILE__ -Wall -D__CMT_FILENAME__=__FILE__ -g -std=gnu17 -fPIC -Wa,--noexecstack -o CMakeFiles/cmetrics-static.dir/cmt_counter.c.o -c $SOURCE/lib/cmetrics/src/cmt_counter.c",
+      "after": "/usr/bin/clang -DCMT_HAVE_CFL -DCMT_HAVE_FLUENT_OTEL_PROTO -DCMT_HAVE_PROMETHEUS_TEXT_DECODER -DCMT_HAVE_TIMESPEC_GET -DFLB_HAVE_CHUNK_TRACE -DFLB_HAVE_DEV -DFLB_HAVE_HTTP_CLIENT_DEBUG -DFLB_HAVE_IN_STORAGE_BACKLOG -DFLB_HAVE_PARSER -DFLB_HAVE_RECORD_ACCESSOR -DFLB_HAVE_SIMD -DFLB_HAVE_STREAM_PROCESSOR -DFLB_HAVE_SYS_WAIT_H -DFLB_HAVE_UNICODE_ENCODER -DFLB_HAVE_YYJSON -DFLB_SYSTEM_LINUX -DFLB_TRACE=1 -DMPACK_EXTENSIONS=1 -DMSGPACK_EMBED_STACK_SIZE=64 -I$BUILD/generated/include -I$SOURCE/include -I$SOURCE/lib -I$SOURCE/lib/fluent-otel-proto/include -I$SOURCE/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cfl/include -I$SOURCE/lib/cfl/lib/xxhash -I$SOURCE/lib/flb_libco -I$SOURCE/lib/rbtree -I$SOURCE/lib/chunkio/include -I$BUILD/lib/chunkio/include -I$SOURCE/lib/monkey/include -I$SOURCE/lib/monkey/include/monkey -I$SOURCE/lib/mpack-amalgamation-1.1.1/src -I$SOURCE/lib/miniz -I$SOURCE/lib/snappy-fef67ac -I$SOURCE/lib/cmetrics/include -I$SOURCE/lib/ctraces/include -I$SOURCE/lib/cprofiles/include -I$SOURCE/lib/lwrb/lwrb/src/include -I$BUILD/lib/jansson-e23f558/include -I$BUILD/lib/cmetrics -I$BUILD/lib/cprofiles/include -I$BUILD/include -I$BUILD/lib/monkey/include -I$BUILD/lib/monkey/include/monkey -I$SOURCE/lib/tutf8e/include -I$SOURCE/lib/msgpack-c/include -I$SOURCE/lib/zstd-1.5.7/lib -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/include -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cmetrics/lib/cfl/include -I$SOURCE/lib/cmetrics/src -I$SOURCE/lib/cfl/lib/xxhash/cmake_unofficial/..  -Wall -D__FLB_FILENAME__=__FILE__ -Wall -D__CMT_FILENAME__=__FILE__ -g -std=gnu17 -fPIC -Wa,--noexecstack -o CMakeFiles/cmetrics-static.dir/cmt_counter.c.o -c $SOURCE/lib/cmetrics/src/cmt_counter.c"
+    }
+  ],
+  "builds": [
+    {
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "source_sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+      "compile_entries": 1415,
+      "normalized_entry": {
+        "directory": "$BUILD/lib/cmetrics/src",
+        "command": "/usr/bin/clang -DCMT_HAVE_CFL -DCMT_HAVE_FLUENT_OTEL_PROTO -DCMT_HAVE_PROMETHEUS_TEXT_DECODER -DCMT_HAVE_TIMESPEC_GET -DFLB_HAVE_CHUNK_TRACE -DFLB_HAVE_DEV -DFLB_HAVE_HTTP_CLIENT_DEBUG -DFLB_HAVE_IN_STORAGE_BACKLOG -DFLB_HAVE_PARSER -DFLB_HAVE_RECORD_ACCESSOR -DFLB_HAVE_SIMD -DFLB_HAVE_STREAM_PROCESSOR -DFLB_HAVE_SYS_WAIT_H -DFLB_HAVE_UNICODE_ENCODER -DFLB_HAVE_YYJSON -DFLB_SYSTEM_LINUX -DFLB_TRACE=1 -DMPACK_EXTENSIONS=1 -DMSGPACK_EMBED_STACK_SIZE=64 -I$BUILD/generated/include -I$SOURCE/include -I$SOURCE/lib -I$SOURCE/lib/fluent-otel-proto/include -I$SOURCE/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cfl/include -I$SOURCE/lib/cfl/lib/xxhash -I$SOURCE/lib/flb_libco -I$SOURCE/lib/rbtree -I$SOURCE/lib/chunkio/include -I$BUILD/lib/chunkio/include -I$SOURCE/lib/monkey/include -I$SOURCE/lib/monkey/include/monkey -I$SOURCE/lib/mpack-amalgamation-1.1.1/src -I$SOURCE/lib/miniz -I$SOURCE/lib/snappy-fef67ac -I$SOURCE/lib/cmetrics/include -I$SOURCE/lib/ctraces/include -I$SOURCE/lib/cprofiles/include -I$SOURCE/lib/lwrb/lwrb/src/include -I$BUILD/lib/jansson-e23f558/include -I$BUILD/lib/cmetrics -I$BUILD/lib/cprofiles/include -I$BUILD/include -I$BUILD/lib/monkey/include -I$BUILD/lib/monkey/include/monkey -I$SOURCE/lib/yyjson-0.12.0/src -I$SOURCE/lib/tutf8e/include -I$SOURCE/lib/msgpack-c/include -I$SOURCE/lib/zstd-1.5.7/lib -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/include -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cmetrics/lib/cfl/include -I$SOURCE/lib/cmetrics/src -I$SOURCE/lib/cfl/lib/xxhash/cmake_unofficial/..  -Wall -D__FLB_FILENAME__=__FILE__ -Wall -D__CMT_FILENAME__=__FILE__ -g -std=gnu17 -fPIC -Wa,--noexecstack -o CMakeFiles/cmetrics-static.dir/cmt_counter.c.o -c $SOURCE/lib/cmetrics/src/cmt_counter.c",
+        "file": "$SOURCE/lib/cmetrics/src/cmt_counter.c",
+        "output": "lib/cmetrics/src/CMakeFiles/cmetrics-static.dir/cmt_counter.c.o"
+      },
+      "object_sha256": "f3f758f56676d30ca1b2b8090f171ba9acd400469926d9b54f5454a70028ca68",
+      "object_bytes": 19392,
+      "object_in_library_exact": true,
+      "library_sha256": "1a2fa1ba5a5af394c52b102443e6d8916199e32679a216598ce663f78bb24efd",
+      "independent_git_objects": true
+    },
+    {
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "source_sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+      "compile_entries": 1415,
+      "normalized_entry": {
+        "directory": "$BUILD/lib/cmetrics/src",
+        "command": "/usr/bin/clang -DCMT_HAVE_CFL -DCMT_HAVE_FLUENT_OTEL_PROTO -DCMT_HAVE_PROMETHEUS_TEXT_DECODER -DCMT_HAVE_TIMESPEC_GET -DFLB_HAVE_CHUNK_TRACE -DFLB_HAVE_DEV -DFLB_HAVE_HTTP_CLIENT_DEBUG -DFLB_HAVE_IN_STORAGE_BACKLOG -DFLB_HAVE_PARSER -DFLB_HAVE_RECORD_ACCESSOR -DFLB_HAVE_SIMD -DFLB_HAVE_STREAM_PROCESSOR -DFLB_HAVE_SYS_WAIT_H -DFLB_HAVE_UNICODE_ENCODER -DFLB_HAVE_YYJSON -DFLB_SYSTEM_LINUX -DFLB_TRACE=1 -DMPACK_EXTENSIONS=1 -DMSGPACK_EMBED_STACK_SIZE=64 -I$BUILD/generated/include -I$SOURCE/include -I$SOURCE/lib -I$SOURCE/lib/fluent-otel-proto/include -I$SOURCE/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cfl/include -I$SOURCE/lib/cfl/lib/xxhash -I$SOURCE/lib/flb_libco -I$SOURCE/lib/rbtree -I$SOURCE/lib/chunkio/include -I$BUILD/lib/chunkio/include -I$SOURCE/lib/monkey/include -I$SOURCE/lib/monkey/include/monkey -I$SOURCE/lib/mpack-amalgamation-1.1.1/src -I$SOURCE/lib/miniz -I$SOURCE/lib/snappy-fef67ac -I$SOURCE/lib/cmetrics/include -I$SOURCE/lib/ctraces/include -I$SOURCE/lib/cprofiles/include -I$SOURCE/lib/lwrb/lwrb/src/include -I$BUILD/lib/jansson-e23f558/include -I$BUILD/lib/cmetrics -I$BUILD/lib/cprofiles/include -I$BUILD/include -I$BUILD/lib/monkey/include -I$BUILD/lib/monkey/include/monkey -I$SOURCE/lib/tutf8e/include -I$SOURCE/lib/msgpack-c/include -I$SOURCE/lib/zstd-1.5.7/lib -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/include -I$SOURCE/lib/cmetrics/lib/fluent-otel-proto/proto_c -I$SOURCE/lib/cmetrics/lib/cfl/include -I$SOURCE/lib/cmetrics/src -I$SOURCE/lib/cfl/lib/xxhash/cmake_unofficial/..  -Wall -D__FLB_FILENAME__=__FILE__ -Wall -D__CMT_FILENAME__=__FILE__ -g -std=gnu17 -fPIC -Wa,--noexecstack -o CMakeFiles/cmetrics-static.dir/cmt_counter.c.o -c $SOURCE/lib/cmetrics/src/cmt_counter.c",
+        "file": "$SOURCE/lib/cmetrics/src/cmt_counter.c",
+        "output": "lib/cmetrics/src/CMakeFiles/cmetrics-static.dir/cmt_counter.c.o"
+      },
+      "object_sha256": "2f42a5ed6f1fc79faedeafcdd985bfda47e885941da82c0303dd5511b6baa69e",
+      "object_bytes": 19552,
+      "object_in_library_exact": true,
+      "library_sha256": "b32f9896bbdb30be929a799b4d04e5b8292869979067fc83de7df59e6d3c94c1",
+      "independent_git_objects": true
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "profile_directory": ".",
-  "checkout": "../../../../fluent-bit",
-  "compile_database": "../../../build/cycle19/cmetrics-counter/compile_commands.json",
+  "checkout": "../../../build/cycle19/fluent-bit-clang-source",
+  "compile_database": "../../../build/cycle19/fluent-bit-clang-production/compile_commands.json",
   "libraries": [
     "cmetrics"
   ],
-  "report": "../../../build/cycle19/cmetrics-counter-audit.json",
+  "report": "../../../build/cycle19/fluent-bit-clang-production/cmetrics-audit.json",
   "source_contracts": {
     "configuration": "source-contracts.json",
     "source_rules": "../../qcore/library/source_projection.qcore",

@@ -1,5 +1,5 @@
 //! Compilation-database ingestion and the inherited bounded option adapter.
-use qcore_c_gateway::legacy_c::{CCompilerDialect, CPreprocessorOption};
+use qcore_c_gateway::legacy_c::{CCompilerDialect, CFrontendFlag, CPreprocessorOption};
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Debug)]
@@ -191,6 +191,45 @@ pub fn compile_entries(database: &str) -> Result<Vec<CompileEntry>, String> {
     Ok(entries)
 }
 
+// Resolve names without executing the compile-database executable. Only the
+// gateway's validated Clang command is probed, by its existing discovery API.
+fn executable_path(program: &str, directory: &Path) -> Result<PathBuf, String> {
+    let path = Path::new(program);
+    let selected = if path.is_absolute() {
+        path.to_owned()
+    } else if path.components().count() > 1 {
+        directory.join(path)
+    } else {
+        let search = std::env::var_os("PATH").ok_or("PATH is unavailable")?;
+        std::env::split_paths(&search)
+            .flat_map(|search_directory| {
+                let search_directory = if search_directory.is_absolute() {
+                    search_directory
+                } else {
+                    directory.join(search_directory)
+                };
+                let mut candidates = vec![search_directory.join(path)];
+                if cfg!(windows) && path.extension().is_none() {
+                    candidates.push(search_directory.join(format!("{program}.exe")));
+                }
+                candidates
+            })
+            .find(|path| {
+                #[cfg(unix)]
+                let executable = {
+                    use std::os::unix::fs::PermissionsExt;
+                    path.metadata()
+                        .is_ok_and(|metadata| metadata.permissions().mode() & 0o111 != 0)
+                };
+                #[cfg(not(unix))]
+                let executable = true;
+                path.is_file() && executable
+            })
+            .ok_or_else(|| format!("compiler executable `{program}` cannot be resolved"))?
+    };
+    selected.canonicalize().map_err(|error| error.to_string())
+}
+
 /// The configurable driver accepts only options whose preprocessing effects
 /// this gateway can preserve. Existing pinned adapters retain their explicitly
 /// bounded historical projection via `compiler_options_compatibility`.
@@ -220,6 +259,8 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
     let mut inputs = 0;
     let mut compile = 0;
     let mut outputs = 0;
+    let mut explicit_dialect = false;
+    let mut frontend_flags = false;
     while cursor < words.len() {
         let word = &words[cursor];
         let split = ["-isystem", "-iquote", "-I", "-D", "-U"]
@@ -254,7 +295,19 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
                 _ => unreachable!(),
             };
             options.preprocessor_options.push(option);
+        } else if let Some(flag) = match word.as_str() {
+            "-Wall" => Some(CFrontendFlag::AllWarnings),
+            "-g" => Some(CFrontendFlag::DebugInformation),
+            "-fPIC" => Some(CFrontendFlag::PositionIndependentCode),
+            "-Wa,--noexecstack" => Some(CFrontendFlag::AssemblerNoExecStack),
+            _ => None,
+        } {
+            frontend_flags = true;
+            options
+                .preprocessor_options
+                .push(CPreprocessorOption::FrontendFlag(flag));
         } else if let Some(standard) = word.strip_prefix("-std=") {
+            explicit_dialect = true;
             options.dialect = match standard {
                 "c11" => CCompilerDialect::C11,
                 "gnu99" => CCompilerDialect::Gnu99,
@@ -286,6 +339,29 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
         return Err(
             "compile command requires one -c, one source input and at most one output".into(),
         );
+    }
+    if frontend_flags {
+        let driver_name = Path::new(&words[0])
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("");
+        if driver_name.contains("++") || driver_name.starts_with("clang-cl") {
+            return Err(
+                "frontend build flags require the Clang C driver, not a C++ or CL driver".into(),
+            );
+        }
+        if !explicit_dialect {
+            return Err("frontend build flags require an explicit supported -std= dialect".into());
+        }
+        let command = qcore_c_gateway::clang_command()?;
+        let actual = command
+            .get_program()
+            .to_str()
+            .ok_or("non-UTF-8 Clang executable")?;
+        let actual = executable_path(actual, &std::env::current_dir().map_err(|e| e.to_string())?)?;
+        if executable_path(&words[0], &entry.directory)? != actual {
+            return Err("frontend build flags require the configured Clang executable; compiler equivalence is unproven".into());
+        }
     }
     Ok(options)
 }

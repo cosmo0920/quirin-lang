@@ -416,7 +416,7 @@ fn configured_helper_policy_source_and_compile_inventory_fail_closed() {
             .is_err()
     );
 
-    for option in ["-include injected.h", "-fPIC", "@compiler.rsp"] {
+    for option in ["-include injected.h", "-fshort-enums", "@compiler.rsp"] {
         let mut unsupported = entry.clone();
         unsupported.command.push(' ');
         unsupported.command.push_str(option);

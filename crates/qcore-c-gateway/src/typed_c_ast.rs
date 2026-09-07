@@ -16,7 +16,9 @@ pub fn ast_declarations(
     unit: &C11TranslationUnit<'_>,
     function: &str,
 ) -> Result<Vec<Value>, String> {
-    let mut child = crate::clang::command()?
+    let mut command = crate::clang::command()?;
+    unit.append_frontend_flags(&mut command);
+    let mut child = command
         .args([
             "-x",
             "c",

@@ -1,0 +1,26 @@
+{
+  "source": {
+    "exact_bytes": true,
+    "bytes": 1663331,
+    "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "baseline": "../w2-preprocessor-transport/source.json.gz"
+  },
+  "diagnostics": {
+    "exact_bytes": true,
+    "bytes": 11006128,
+    "sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+    "baseline": "../w2-preprocessor-transport/diagnostics.json.gz"
+  },
+  "chunk-contracts": {
+    "exact_bytes": true,
+    "bytes": 4141225,
+    "sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da",
+    "baseline": "../w2-preprocessor-transport/chunk-contracts.json.gz"
+  },
+  "source-effects": {
+    "exact_bytes": true,
+    "bytes": 114434,
+    "sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8",
+    "baseline": "../w2-preprocessor-transport/source-effects.json.gz"
+  }
+}

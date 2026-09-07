@@ -1,0 +1,190 @@
+[
+  {
+    "command": [
+      "clang",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "201710L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "clang",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-Wall",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "201710L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "clang",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-g",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "201710L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "clang",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-fPIC",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "201710L",
+      "__PIC__": "2",
+      "__PIE__": null,
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "clang",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-Wa,--noexecstack",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "201710L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/cc",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "202311L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/cc",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-Wall",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "202311L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/cc",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-g",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "202311L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/cc",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-fPIC",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "202311L",
+      "__PIC__": "2",
+      "__PIE__": null,
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/cc",
+      "-dM",
+      "-E",
+      "-x",
+      "c",
+      "-Wa,--noexecstack",
+      "-"
+    ],
+    "exit_code": 0,
+    "macros": {
+      "__STDC_VERSION__": "202311L",
+      "__PIC__": "2",
+      "__PIE__": "2",
+      "__GCC_HAVE_DWARF2_CFI_ASM": "1"
+    },
+    "stderr": ""
+  }
+]

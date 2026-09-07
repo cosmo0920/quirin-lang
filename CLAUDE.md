@@ -560,3 +560,17 @@ configuration/task/coverage identities. Eight new workspace tests cover the
 boundary. Evidence: `docs/reports/w2-preprocessor-transport/README.md`. The historical pinned
 Cycle19 option projection remains bounded; unsupported CMake flags, compiler
 equivalence, broader provider semantics and raw promotion remain open.
+
+Persistent Clang CMake audit (2026-09-07): W2's canonical CMetrics audit now
+consumes an unmodified CMake compile database, including warning/debug/PIC and
+assembler flags. The gateway transports four explicit flags through preprocessing,
+syntax and typed AST; they require a matching Clang C executable and explicit
+dialect. The original GCC command rejects rather than inheriting Clang defaults.
+An independent pinned source clone absorbs upstream configure-time writes, and
+`prepare_cmetrics_clang_audit.py` persists the build, database and provenance.
+The native CMetrics static library builds in the normal and fresh output trees;
+both audits retain one checked function/six Unknown and a provisional Unsafe
+raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lean
+audits pass, with all standing gates and exact four-artifact 185-unit parity.
+Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
+code-generation/stack equivalence, broader providers and raw promotion remain open.

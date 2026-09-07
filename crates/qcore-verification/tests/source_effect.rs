@@ -298,6 +298,15 @@ fn ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical
     let replay = task(&original, CONTRACT);
     let mut digests = std::collections::BTreeSet::from([replay.task().task_digest()]);
     for options in [
+        vec![CPreprocessorOption::FrontendFlag(
+            qcore_c_gateway::legacy_c::CFrontendFlag::AllWarnings,
+        )],
+        vec![CPreprocessorOption::FrontendFlag(
+            qcore_c_gateway::legacy_c::CFrontendFlag::DebugInformation,
+        )],
+        vec![CPreprocessorOption::FrontendFlag(
+            qcore_c_gateway::legacy_c::CFrontendFlag::AssemblerNoExecStack,
+        )],
         vec![CPreprocessorOption::Define("UNUSED=1".into())],
         vec![CPreprocessorOption::Define("UNUSED=2".into())],
         vec![

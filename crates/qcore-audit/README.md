@@ -35,11 +35,16 @@ audited-file list.
 The configured command accepts only compile options that its gateway can
 preserve: exactly one source input and `-c`, at most one output, distinct `-I`,
 `-isystem` and `-iquote` directories, ordered `-D`/`-U`, and a supported `-std=`
-dialect. Joined and separate preprocessing arguments are accepted. The source
+dialect. The explicit `-Wall`, `-g`, `-fPIC` and `-Wa,--noexecstack` flags are also
+transported to Clang preprocessing, syntax validation and typed AST import.
+These flags require an explicit dialect and an executable matching the configured
+Clang C driver; C++/CL driver aliases and unproven compiler substitutions reject.
+Assembler requests are recorded but do not certify generated code or stack policy.
+Joined and separate preprocessing arguments are accepted. The source
 parent participates only in quoted include lookup. Empty arguments retain their
 positions and invalid commands reject before any partial report is published.
-The selected Clang configuration still defaults to GNU17 when no standard is
-specified; this is an analysis assumption, not discovery of another compiler's
+Commands without these frontend flags still default to GNU17 when no standard
+is specified; this is an analysis assumption, not discovery of another compiler's
 default. Source filename builtins still see stdin; compiler equivalence and
 arbitrary build flags are not established. Other options, unresolved shell
 expansions, absent contracts, empty selections and unsupplied required evidence
@@ -136,3 +141,20 @@ ordered options keep their existing identity bytes. The Cycle19 compatibility
 adapter retains its historical projection (including flattened include classes)
 for pinned parity; it does not establish arbitrary build equivalence. Evidence:
 [W2 preprocessing transport](../../docs/reports/w2-preprocessor-transport/README.md).
+
+The pinned CMetrics example now consumes an unmodified Clang GNU17 CMake database:
+
+```sh
+python3 -B scripts/prepare_cmetrics_clang_audit.py
+cargo run --quiet -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json
+```
+
+The script creates an independent pinned source clone and persistent build under
+`build/cycle19`, configures CMake and builds `cmetrics-static`. Upstream
+configure-time writes stay in that isolated clone. It records the original
+compile entry, full database hash, source/cache identities and library hash.
+A fresh setup also needs the CMetrics process package at
+`build/cycle19/provider-packages-unit` (build with `providers/package.py`). A custom
+`--clang` must match `QCORE_CLANG` when running the audit. This is an explicit
+Clang build; the original GCC command is not silently reinterpreted.
+See [CMake build evidence](../../docs/reports/w2-clang-cmake-build/README.md).

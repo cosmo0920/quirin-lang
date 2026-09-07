@@ -1,0 +1,76 @@
+{
+  "raw_units_exact": true,
+  "changes": [
+    {
+      "path": "/source_contracts/units/0/functions/1/bounds/resource_contracts:128f75b7b9e2df1a1ba04f7b",
+      "before": null,
+      "after": {
+        "max_operations": null,
+        "observed_runs_only": false,
+        "path_exploration": {
+          "kind": "bounded_paths",
+          "paths": 2
+        },
+        "schedules_explored": null
+      }
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/bounds/resource_contracts:6d60715fac7f85ce1ada5aec",
+      "before": {
+        "max_operations": null,
+        "observed_runs_only": false,
+        "path_exploration": {
+          "kind": "bounded_paths",
+          "paths": 2
+        },
+        "schedules_explored": null
+      },
+      "after": null
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/evidence/coverage/0",
+      "before": "resource_contracts:6d60715fac7f85ce1ada5aec",
+      "after": "resource_contracts:128f75b7b9e2df1a1ba04f7b"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/evidence/unit/build_digest",
+      "before": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd",
+      "after": "7cadec6e8889d5be60f9d537f04535ba55d519162c0200d38eafece97abd3b80"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/import_identity/configuration_digest",
+      "before": "871aba4f1de504167d3af95a8814ecd7cec6e04449e844ccfcac03182bf39a46",
+      "after": "4ed1e67b9cf7ca1ec88a66fb72fa17368486a0a01f552441bec3acdb725bd23a"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/import_identity/dialect",
+      "before": "gnu11",
+      "after": "gnu17"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/contract_sources/qcore:boolean-field-import:v1",
+      "before": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd",
+      "after": "7cadec6e8889d5be60f9d537f04535ba55d519162c0200d38eafece97abd3b80"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/obligations/0/obligation_id",
+      "before": "resource_contracts:6d60715fac7f85ce1ada5aec",
+      "after": "resource_contracts:128f75b7b9e2df1a1ba04f7b"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/target/dialect",
+      "before": "gnu11",
+      "after": "gnu17"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/unit/build_digest",
+      "before": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd",
+      "after": "7cadec6e8889d5be60f9d537f04535ba55d519162c0200d38eafece97abd3b80"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/witness/task_digest",
+      "before": "c03ec8591e0e628b8c436cda3a32dd63e19a248767ada927fb90d33357c7abfc",
+      "after": "6e46253c37848cc2df499f27db73c841f71bdf34f77b2f648e6044d1fc8e9f9c"
+    }
+  ]
+}

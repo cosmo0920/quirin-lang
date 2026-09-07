@@ -21,7 +21,8 @@ impl Fixture {
         Self(path)
     }
     fn entry(&self, options: &[&str]) -> CompileEntry {
-        let mut arguments = vec!["clang", "-std=c11"];
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into());
+        let mut arguments = vec![compiler.as_str(), "-std=c11"];
         arguments.extend_from_slice(options);
         arguments.extend(["-c", "src/unit.c"]);
         compile_entries(
@@ -178,12 +179,116 @@ fn command_structure_and_unmodeled_options_fail_closed() {
         "clang -c src/unit.c -isystem=hidden",
         "clang -c src/unit.c -iquote=hidden",
         "clang -c src/unit.c -I-",
-        "clang -c src/unit.c -Wall",
-        "clang -c src/unit.c -fPIC",
+        "clang -c src/unit.c -Werror",
+        "clang -c src/unit.c -fshort-enums",
         "clang -c src/unit.c -include hidden.h",
     ] {
         let mut entry = f.entry(&[]);
         entry.command = command.into();
         assert!(compiler_options(&entry).is_err(), "{command}");
     }
+}
+
+#[test]
+fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
+    use qcore_c_gateway::{clang_command, typed_c_ast::function_ast};
+    use std::io::Write;
+    use std::process::Stdio;
+    let f = Fixture::new();
+    let source = "#if defined(__PIE__)\n#define MODE 4\n#elif defined(__PIC__)\n#define MODE 2\n#else\n#define MODE 0\n#endif\nint observed(void) { return MODE; }";
+    for flags in [
+        vec!["-Wall"],
+        vec!["-g"],
+        vec!["-fPIC"],
+        vec!["-Wa,--noexecstack"],
+        vec!["-Wall", "-g", "-fPIC", "-Wa,--noexecstack", "-Wall"],
+    ] {
+        let mut child = clang_command()
+            .unwrap()
+            .args(["-x", "c", "-std=c11", "-E", "-P"])
+            .args(&flags)
+            .arg("-")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(source.as_bytes())
+            .unwrap();
+        let reference = child.wait_with_output().unwrap();
+        let options = compiler_options(&f.entry(&flags)).unwrap();
+        let unit = C11TranslationUnit {
+            source,
+            dialect: options.dialect,
+            preprocessor_options: options.preprocessor_options,
+            ..Default::default()
+        };
+        let imported = validate_unrestricted_c11(&unit);
+        if !reference.status.success() {
+            // For example, PIC is unsupported for some native Windows targets.
+            assert!(
+                imported.is_err(),
+                "unsupported target flags must fail closed"
+            );
+            continue;
+        }
+        let expected = String::from_utf8(reference.stdout).unwrap();
+        assert_eq!(imported.unwrap(), expected, "{flags:?}");
+        // Exercise the AST transport's own preprocessing, so forgetting flags
+        // in that phase is visible even though normal inputs are preprocessed.
+        let actual_ast = function_ast(source, &unit, "observed").unwrap();
+        let expected_ast =
+            function_ast(&expected, &C11TranslationUnit::default(), "observed").unwrap();
+        fn literals(value: &serde_json::Value, result: &mut Vec<String>) {
+            if value["kind"] == "IntegerLiteral" {
+                result.push(value["value"].as_str().unwrap().into());
+            }
+            if let Some(children) = value["inner"].as_array() {
+                for child in children {
+                    literals(child, result);
+                }
+            }
+        }
+        let (mut actual, mut expected) = (vec![], vec![]);
+        literals(&actual_ast, &mut actual);
+        literals(&expected_ast, &mut expected);
+        assert_eq!(actual, expected, "AST flags: {flags:?}");
+    }
+}
+
+#[test]
+fn frontend_flags_require_the_actual_clang_executable_and_an_explicit_dialect() {
+    let f = Fixture::new();
+    let entry = f.entry(&["-Wall"]);
+    assert!(compiler_options(&entry).is_ok());
+    let mut absent_dialect = entry.clone();
+    absent_dialect.command = absent_dialect.command.replace("'-std=c11'", "");
+    assert!(
+        compiler_options(&absent_dialect)
+            .err()
+            .unwrap()
+            .contains("explicit supported -std=")
+    );
+    let other = f.0.join("untrusted-compiler");
+    fs::write(&other, "this is never executed").unwrap();
+    let mut cxx = entry.clone();
+    cxx.command = "clang++ -std=c11 -Wall -c src/unit.c".into();
+    assert!(
+        compiler_options(&cxx)
+            .err()
+            .unwrap()
+            .contains("Clang C driver")
+    );
+    let mut different = entry;
+    different.command = format!("'{}' -std=c11 -Wall -c src/unit.c", other.display());
+    assert!(
+        compiler_options(&different)
+            .err()
+            .unwrap()
+            .contains("compiler equivalence is unproven")
+    );
 }

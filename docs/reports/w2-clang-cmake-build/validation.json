@@ -1,0 +1,283 @@
+{
+  "base_commit": "64e3c8ee1c8830ea15848677f0e7cfa332398e6b",
+  "status": "passed",
+  "workspace_tests": 819,
+  "provider_tests": 45,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_workspace_tests": 3,
+  "new_lean_theorems": 0,
+  "contract_modules": 59,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "cmetrics_checked_functions": 1,
+  "cmetrics_unknown_functions": 6,
+  "native_cmake_builds": 2,
+  "commands": [
+    {
+      "command": "cargo test --workspace",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0
+    },
+    {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH lake build (cwd proof)",
+      "exit_code": 0
+    },
+    {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B scripts/prepare_cmetrics_clang_audit.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B scripts/prepare_cmetrics_clang_audit.py --output build/cycle19/cmetrics-clang-reproduction",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run --quiet -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run --quiet -p qcore-audit -- build/cycle19/cmetrics-clang-reproduction/fluent-bit-clang-production/cmetrics-audit.json.config",
+      "exit_code": 0
+    },
+    {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-buildflags-source.json /tmp/qcore-buildflags-diagnostics.json",
+      "exit_code": 0
+    }
+  ],
+  "gcc_database_rejection": {
+    "exit_code": 1,
+    "partial_report": false,
+    "reason": "Explicit supported dialect required; compiler equivalence is separately fail-closed.",
+    "command": "cargo run --quiet -p qcore-audit -- build/cycle19/fluent-bit-clang-production/rejected-gcc-audit.json.config"
+  },
+  "source_sha256": {
+    "AGENTS.md": "d8bc811874218abaf0580af4f7d3da259f1b2630cddd79efeec7e3d3a2bf2e5e",
+    "CLAUDE.md": "63df3f6e81e336113d7ca811ca779e83994c1f3a1e365954fe9208a2885c79e0",
+    "README.md": "0415ae503873fd21680511fe421f73ed999cd1295489c053d862c149fdf93508",
+    "contract/profiles/cmetrics-counter/audit.json": "d958ccdef973596c8ad5aa80d1aa2ed546f82591f73d50aab2656afc98c1eca0",
+    "crates/qcore-audit/README.md": "68df4f8e34f0cf82597ad63d23474cd9b5cf767e68cc34c5e13092bd5238326a",
+    "crates/qcore-audit/src/compile_db.rs": "4267359ccf5818a2229aa01b2b370e85b57ea8f6cfb2e87c1b9aec6ae7515efc",
+    "crates/qcore-audit/tests/compile_options.rs": "778bb6560a82a52d07005f05f1841d75b1c0e96cfca9cc86d442b0ac6e75e7a2",
+    "crates/qcore-audit/tests/configured_cli.rs": "3928e393bc67c0fd11aa57a114d5e9711ce6f3946559c2bd659c019403f00f0e",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "8609ccf87450f30082a8ed0ad7388eeb822f520a02e2e0fffc94fa11c83c3338",
+    "crates/qcore-c-gateway/src/typed_c_ast.rs": "fca29e857beaa242d64f96f803c81c5238ee2937973481f40df0264d838fa16a",
+    "crates/qcore-verification/tests/source_effect.rs": "f35464e7f49ff15b93b05c6b4a27ba2071730c55e099a2e43ed49ac324bbc9f1",
+    "docs/GENERALIZATION_PLAN.md": "4f4460c09b025d0bae9b1119b9285ec8afda87b83523134dbd1a8cb6b809261b",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "e613970ef61becde9c4906d0762857c09b6dd58e05663d148a784fc2cf28b67e",
+    "providers/conformance/tests/configured_source_contract.rs": "e10cd9d299af5d58d091692e06f2e171bb0be6aeecb79b0773c7c4f48a0f13d1",
+    "scripts/prepare_cmetrics_clang_audit.py": "0d01d6e440dc6a3f1bec4673731fb4d204874c63f8ad0988333e05590dd714c5"
+  },
+  "artifacts": {
+    "source.json": {
+      "bytes": 1663331,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef"
+    },
+    "diagnostics.json": {
+      "bytes": 11006128,
+      "sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90"
+    },
+    "chunk-contracts.json": {
+      "bytes": 4141225,
+      "sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da"
+    },
+    "source-effects.json": {
+      "bytes": 114434,
+      "sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8"
+    },
+    "build-provenance.json": {
+      "bytes": 6211,
+      "sha256": "4e6a5fe3df2b6079603ea1c2eace396d7658076d1e19cfcd66291d4a3b82d864"
+    },
+    "compile_commands.json": {
+      "bytes": 8960936,
+      "sha256": "728776efa61ea7fa1e2c7b3d0606d001d90ee0cb4e851406073d1122a01dd7dc"
+    },
+    "CMakeCache.txt": {
+      "bytes": 109283,
+      "sha256": "bc872bc355c42bd4476debe45ffce86c128cd445af80bd963f945849707b4110"
+    },
+    "cmetrics-audit.json": {
+      "bytes": 23591,
+      "sha256": "7c745589674c75bf9b8f662e5f3ca68eee711cdfa12e5aabe58734a2a149b6d4"
+    },
+    "cmetrics-audit.assumptions.json": {
+      "bytes": 7937,
+      "sha256": "19b5287178723a4606225e437bfc7215ea93e997a4c13316a69431cf2f6a468d"
+    },
+    "cmetrics-audit.json.config": {
+      "bytes": 861,
+      "sha256": "f88434520094f97ea1b663d07ba4bc3740281d608608b38cd8cf215a8bc05a1e"
+    },
+    "configure.log": {
+      "bytes": 9056,
+      "sha256": "72bfdc0e79765d74948cda9a8dca640ea1c5e0309e0e32eb6dc05bb953b208e1"
+    },
+    "native-build.log": {
+      "bytes": 9306,
+      "sha256": "1d8622c07204a672a1144d6f2556bf9368fb7f6461bb2788140118ff1b901df2"
+    },
+    "cmt_counter.c.o": {
+      "bytes": 19392,
+      "sha256": "f3f758f56676d30ca1b2b8090f171ba9acd400469926d9b54f5454a70028ca68"
+    },
+    "fresh-build-provenance.json": {
+      "bytes": 7288,
+      "sha256": "e2b7d26ff05b6fe3c0db966b339a36deceaed3cb0615177d8f0ccad50de62dec"
+    },
+    "fresh-compile_commands.json": {
+      "bytes": 10776893,
+      "sha256": "6e0503455a851dc8c4d1046dd88983ab082525fe32d3dee76599af7de1167ef3"
+    },
+    "fresh-CMakeCache.txt": {
+      "bytes": 110812,
+      "sha256": "9982cba04128d0a5ab167074c690e9746850dc125e5c355550136a2bed485396"
+    },
+    "fresh-cmetrics-audit.json": {
+      "bytes": 23591,
+      "sha256": "622d321b99f1664acd01d4350db1acbeed07fb77d273cf6b43c38519cc343215"
+    },
+    "fresh-cmetrics-audit.assumptions.json": {
+      "bytes": 7927,
+      "sha256": "2d43b965200859229a2d7f3441b62695a92a55ee99b9af59d2792a883a5af026"
+    },
+    "fresh-cmetrics-audit.json.config": {
+      "bytes": 945,
+      "sha256": "816da65bb41dc6fbf8b56c6813077176bf45210576c49c627de390f6e78e1053"
+    },
+    "fresh-configure.log": {
+      "bytes": 33561,
+      "sha256": "9146b68f0f13313cf8504940fac0af539eda8413d6c5537d85e6315a25022750"
+    },
+    "fresh-native-build.log": {
+      "bytes": 9558,
+      "sha256": "f84fa2a100bdcb83adadc14141b51e8a2247d1609ea856d5209a34b8cb0b9bfe"
+    },
+    "fresh-cmt_counter.c.o": {
+      "bytes": 19552,
+      "sha256": "2f42a5ed6f1fc79faedeafcdd985bfda47e885941da82c0303dd5511b6baa69e"
+    },
+    "workspace.log": {
+      "bytes": 83958,
+      "sha256": "045a5f6bc6b50cb35812a8b5be52d6dda6da280fd174ffb020f38836e50dc567"
+    },
+    "providers.log": {
+      "bytes": 7706,
+      "sha256": "5624bddfa42901b1fea467b24e0bf06097abddf0f825467329e4808f4321bba8"
+    },
+    "fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy.log": {
+      "bytes": 527,
+      "sha256": "b88cf22a182aab8156e7d7f2b7abc5a535b8dc51f59fc665c82971db1649f413"
+    },
+    "probe.log": {
+      "bytes": 2774,
+      "sha256": "c8d726eae7ed1f12e0cb56c6b7db28e1864cfcf9e2b3d03c2782aacba7d8c5cd"
+    },
+    "followup.log": {
+      "bytes": 9899,
+      "sha256": "43a0dc9a07b88604d0085117a2bde391067f78a47fac5281a55ef1210553ed0b"
+    },
+    "provider-fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "provider-clippy.log": {
+      "bytes": 472,
+      "sha256": "44734fd9ce8528099327086b969dccdfb0716ff9a6951f4fe177e3fe9bcef07e"
+    },
+    "python.log": {
+      "bytes": 4948,
+      "sha256": "50e652c9db499ada572824e66403a43ae935fd9c0968fe91fa1d01c2efba976f"
+    },
+    "lean.log": {
+      "bytes": 40,
+      "sha256": "ffeee4a7d64a075e496b94d545b1ed9a98b265fb8db886bc0b8b810511978c34"
+    },
+    "lean-audits.log": {
+      "bytes": 66944,
+      "sha256": "bc7118b642a06da5cfc400e57d0c5f3c96eb7e63ce0a0a1704a3732d35fda2b1"
+    },
+    "audit.log": {
+      "bytes": 133121,
+      "sha256": "c305a6f91ffcd1d8e1d993106ffe2d9580cd459ef9b46733be4eeded14274fb7"
+    },
+    "canonical-audit.log": {
+      "bytes": 701,
+      "sha256": "d70c6dcf97413366bdc1132fe3016e5178f7c252f7dffa0dd53783b824a22670"
+    },
+    "fresh-audit.log": {
+      "bytes": 701,
+      "sha256": "d70c6dcf97413366bdc1132fe3016e5178f7c252f7dffa0dd53783b824a22670"
+    },
+    "gcc-rejection.log": {
+      "bytes": 81,
+      "sha256": "b1698f08d10d4817b5e02696da034220f36595838a3967eda2aaa7150ccec6ee"
+    },
+    "focused.log": {
+      "bytes": 950,
+      "sha256": "723121ac1ceeeb7834b6e8c216a13a7585cd3b890d4d4104f66e3267b21aff06"
+    },
+    "identity.log": {
+      "bytes": 466,
+      "sha256": "e7f8acf1c17f60677cf07b4d462a48e90003d0c4f060dd6bed81a7454ca52977"
+    },
+    "cli.log": {
+      "bytes": 447,
+      "sha256": "9515fcf67c87b68c7299e09b36177f4ccf05aefdb159f2f93f6ff522672505ff"
+    },
+    "prepare.log": {
+      "bytes": 106,
+      "sha256": "b431c5efa3f5dc936f35bcdf69c16114b9e7660120b19b1b9495547fcbd3a079"
+    },
+    "fresh.log": {
+      "bytes": 134,
+      "sha256": "511aa55bc71ce1f281b9651a64464458ba2fc00566ccdb3427c1371b59b757f3"
+    },
+    "cmake-production.log": {
+      "bytes": 33505,
+      "sha256": "77adb69304ae8273ea6a0f21ef3743a1e9833857aadb3edbecdc5e7cb6e8dac7"
+    },
+    "rejected-gcc-audit.json.config": {
+      "bytes": 797,
+      "sha256": "212c73335bf45589927509c3ff7657e21ff4862cac37aaa8d85b34cb19706dce"
+    }
+  }
+}
