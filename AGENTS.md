@@ -841,3 +841,37 @@ audit's own pin gate refuses to run. Evidence:
 `docs/reports/remaining-g01/README.md`. Header enumeration, compiler
 equivalence, build hermeticity and the compatibility adapter's ambiguity remain
 open; no verdict changes and no raw unit is promoted.
+
+Replay mutation matrix (2026-09-07): the ChunkIO Boolean-field capability now
+has a systematic 52-row mutation matrix over source-bound witness replay and
+cached summaries. All 52 rows reject; no mutation was admitted, so no gate was
+changed and no repair was required. Newly pinned: analyzed function scope and a
+widened imported function set retire the task and refuse its witness; task,
+obligation, request and source-projection version fields are each bound, and an
+unsupported evidence version rejects in both directions; mismatched obligation
+identifiers reject with the right count, as a foreign vector, as a permutation
+and as another function's real identifier, with the core checker independently
+refusing a task it did not derive; one witness never covers two obligations,
+whether its coverage set claims both or the same certificate is submitted twice
+at composition; a forged record rebound to a real donor task digest is caught by
+the outermost binding; a well-formed path set that belongs to another function
+and satisfies the same contract is refused while the obligation stays Unknown,
+as is a proposal that echoes assertion text, the Lean theorem family and the
+verdict label instead of computed paths; oversized and degenerate proposals fail
+bounded without panicking. Legacy protocol v1 is preserved as non-certifying:
+Unknown flows verbatim with no injected rejection, a complete v1 Safe envelope
+still refuses terminally and an Unsafe allegation still downgrades. No summary
+or evidence cache exists on this route; that is recorded as the current safe
+state and pinned behaviorally. Boundaries recorded, not repaired: witness
+admission conveys no provider authority, because acceptance terminates in the
+core re-evaluating its own sealed import; and this capability's checker returns
+its whole task coverage set, sound only because it derives exactly one
+obligation and refuses every other task, now guarded by a test. Eleven new
+tests; all 861 workspace tests, 46 provider tests, 43 Python tests, 20 Lean
+audits and the standing gates pass, and the configured CMetrics audit still
+reports one checked function contract, six Unknown functions and a provisional
+Unsafe raw unit. No production source file changed, so the pinned 185-unit
+artifacts, contract corpus counts and CT coverage are untouched. Evidence:
+`docs/reports/remaining-e02/README.md`. Other capabilities' matrices,
+out-of-process transport bounds and E01-B1's enumeration gap remain open; no
+verdict changes and no raw unit is promoted.
