@@ -20,6 +20,7 @@ impl ScalarValue {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct TaskExecutionScript {
     pub spawn_outcomes: Vec<bool>,
+    /// Root-task Buffer allocation decisions; worker decisions are separate.
     pub allocation_outcomes: Vec<bool>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -79,12 +80,21 @@ enum Value {
     Handle { task: u64, handle: u64 },
     Consumed,
 }
+// Each finite leaf invocation owns its allocation counter. The task namespace
+// avoids a shared native counter and makes traces independent of worker order.
+pub(super) fn buffer_identity(task: u64, ordinal: u64) -> Result<ResourceId, String> {
+    if task > u64::from(u32::MAX) || ordinal == 0 || ordinal > u64::from(u32::MAX) {
+        return Err("task Buffer identity range exhausted".into());
+    }
+    Ok(task * 4_294_967_296 + ordinal)
+}
+
 struct Runtime<'a> {
     module: &'a TaskModule,
     script: &'a TaskExecutionScript,
     decision: usize,
-    allocation_decision: usize,
-    next_buffer: u64,
+    worker_allocations: &'a BTreeMap<u64, Vec<bool>>,
+    allocation_decisions: BTreeMap<u64, usize>,
     buffers: BTreeMap<ResourceId, i32>,
     buffer_events: BTreeMap<u64, Vec<TaskEvent>>,
     next_task: u64,
@@ -144,6 +154,7 @@ impl Runtime<'_> {
             .collect::<BTreeMap<_, _>>();
         let mut scopes = BTreeMap::<ScopeId, u64>::new();
         let mut block_id = function.entry;
+        let mut next_buffer = 1u64;
         loop {
             let block = &function.blocks[&block_id];
             for instruction in &block.instructions {
@@ -281,22 +292,20 @@ impl Runtime<'_> {
                         let ScalarValue::I32(initial) = scalar(&slots, initial)? else {
                             return Err("reference allocation requires i32".into());
                         };
-                        if task != 0 {
-                            return Err("reference allocation requires root".into());
-                        }
-                        let succeeds = self
-                            .script
-                            .allocation_outcomes
-                            .get(self.allocation_decision)
-                            .copied()
-                            .unwrap_or(true);
-                        self.allocation_decision += 1;
+                        let choices = if task == 0 {
+                            self.script.allocation_outcomes.as_slice()
+                        } else {
+                            self.worker_allocations
+                                .get(&task)
+                                .map(Vec::as_slice)
+                                .unwrap_or(&[])
+                        };
+                        let decision = self.allocation_decisions.entry(task).or_default();
+                        let succeeds = choices.get(*decision).copied().unwrap_or(true);
+                        *decision += 1;
                         if succeeds {
-                            let resource = self.next_buffer;
-                            self.next_buffer = self
-                                .next_buffer
-                                .checked_add(1)
-                                .ok_or("reference resource identity exhausted")?;
+                            let resource = buffer_identity(task, next_buffer)?;
+                            next_buffer += 1;
                             self.ledger
                                 .acquire(task, resource)
                                 .map_err(|e| format!("{e:?}"))?;
@@ -480,12 +489,32 @@ pub fn execute_task_module(
     checked: &CheckedTaskModule,
     script: &TaskExecutionScript,
 ) -> Result<TaskExecutionObservation, TaskDiagnostic> {
+    execute_task_module_with_worker_allocations(checked, script, &BTreeMap::new())
+}
+
+/// Worker Buffer allocation decisions keyed by successful runtime task identity.
+/// Missing decisions select success. Root decisions stay in the original script;
+/// zero keys, absent workers and unused supplied worker decisions reject. This
+/// prevents native scheduling from deciding which worker receives an injected
+/// allocation failure. It is an execution script, not checked program evidence.
+pub fn execute_task_module_with_worker_allocations(
+    checked: &CheckedTaskModule,
+    script: &TaskExecutionScript,
+    worker_allocations: &BTreeMap<u64, Vec<bool>>,
+) -> Result<TaskExecutionObservation, TaskDiagnostic> {
+    if worker_allocations.contains_key(&0) {
+        return Err(problem(
+            checked.module().entry,
+            TaskSpan::default(),
+            "root allocation decisions belong in TaskExecutionScript",
+        ));
+    }
     let mut runtime = Runtime {
         module: checked.module(),
         script,
         decision: 0,
-        allocation_decision: 0,
-        next_buffer: 1,
+        worker_allocations,
+        allocation_decisions: BTreeMap::new(),
         buffers: BTreeMap::new(),
         buffer_events: BTreeMap::new(),
         next_task: 1,
@@ -503,12 +532,32 @@ pub fn execute_task_module(
             "reference script contains unused creation outcomes",
         ));
     }
-    if runtime.allocation_decision < script.allocation_outcomes.len() {
+    if runtime.allocation_decisions.get(&0).copied().unwrap_or(0) < script.allocation_outcomes.len()
+    {
         return Err(problem(
             runtime.module.entry,
             TaskSpan::default(),
             "unused allocation outcomes",
         ));
+    }
+    for (&task, outcomes) in worker_allocations {
+        if !runtime
+            .observations
+            .iter()
+            .any(|observation| observation.task == task)
+            || runtime
+                .allocation_decisions
+                .get(&task)
+                .copied()
+                .unwrap_or(0)
+                < outcomes.len()
+        {
+            return Err(problem(
+                runtime.module.entry,
+                TaskSpan::default(),
+                "absent worker or unused worker allocation outcomes",
+            ));
+        }
     }
     if !runtime.buffers.is_empty() || !runtime.buffer_events.is_empty() {
         return Err(problem(

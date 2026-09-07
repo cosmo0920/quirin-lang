@@ -180,7 +180,7 @@ returns custody through a fresh Result/value binding; it never revives the
 original moved binding. Reading does not consume ownership; `drop name;` and
 `return move name;` consume it. Repeated reads require the same live owner.
 
-`qcore_buffer_new(I32_OPERAND)` requires `alloc` and is root-only. It must either
+`qcore_buffer_new(I32_OPERAND)` requires `alloc` in the root or a leaf worker. It must either
 be propagated with `?` under `throws<AllocError>`, or directly matched using the
 same canonical Result arms as G02a. A failed allocation produces no Buffer or
 new generation. Earlier owners must be released on that failure path. Local
@@ -189,15 +189,24 @@ local quantitative annotations remain unsupported. `qcore_buffer_read(NAME)`
 requires one live owned binding and returns i32. The builtin function names and
 AllocError cannot be shadowed by source declarations.
 
-Workers may read/drop owned inputs, return exactly one remaining original input,
-or drop all inputs before returning scalar/unit or raising a payload-free error.
-The core derives this relation from checked exits and applies exact caller
-capture identities; return annotations alone cannot create custody. Multiple
-owned inputs are supported. Allocation in workers and owned root-entry results
-reject, including in uncalled definitions. Every scope/return/error exit must
+Workers may read/drop owned inputs and locally allocated Buffers, return exactly
+one remaining input or fresh local, or drop all of them before returning
+scalar/unit or raising a payload-free error. The core derives this relation from
+checked exits and applies exact caller capture identities or a checked fresh
+result; return annotations alone cannot create custody. Multiple owned inputs
+are supported. Owned root-entry results reject, including in uncalled definitions.
+Workers remain nonrecursive task-free leaves. Every scope/return/error exit must
 account for owned bindings, Results and handles; there is no implicit cleanup
 or join in this profile. Local move aliases and general assignment are not
 part of the current source grammar.
+
+The native and reference allocation identity is `task * 2^32 + ordinal`, with
+task in `0..2^32-1` and a per-task successful-allocation ordinal in `1..2^32-1`.
+Root task identity is zero. Failed allocation consumes no generation; native
+worker scheduling cannot change another task's counter. Native execution aborts
+if these bounds are exhausted. Task-local fault scripts select allocation
+attempts by successful runtime task identity. See the
+[worker-allocation record](reports/w6-worker-allocation/README.md).
 
 The finite task checker rejects unreachable blocks. Owned Result analysis uses
 actual checked worker exits rather than inventing resource-bearing alternatives:

@@ -216,14 +216,16 @@ target-interface work. The
 W6 CT conformance harness is stood up
 ([record](docs/reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
 executes the manifest-mapped spec §55 cases through the real source pipeline;
-CT02/CT12/CT16 are mapped as sequential-core fixtures. Batch 2
+CT02/CT12/CT16 initially mapped sequential-core fixtures. Batch 2
 ([record](docs/reports/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
 records the full triage of all 47 then-unmapped cases. The later
 [native task increment](docs/reports/w6-native-source-tasks/README.md) maps CT15
 and upgrades CT19 to actual task source; [explicit recovery](docs/reports/w6-task-recovery/README.md)
 adds CT13. [Owned-task mappings](docs/reports/w6-owned-source-tasks/README.md)
 and [handler rethrow](docs/reports/w6-handler-rethrow/README.md) now leave
-41 of 50 unmapped. W4 is
+41 of 50 unmapped. [Worker allocation](docs/reports/w6-worker-allocation/README.md)
+upgrades CT16 to real child allocation/error cleanup and retains its sequential
+implicit-cleanup control. W4 is
 executed for parameter/return custody with validation
 ([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
 infers each internal function's parameter and return custody summary bottom-up
@@ -594,7 +596,7 @@ maps the real round trip, CT02 rejects actual parent post-move access, and CT12
 executes failed creation/restoration with a successful control. Coverage is
 8/50 mapped, 42 unmapped at that checkpoint. Lean transfer/typing lemmas and fixed native sanitizer
 runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
-owned errors, worker allocation, shared memory, mutexes, nested workers and
+owned errors, shared memory, mutexes, nested workers and
 other native platforms remain open. Evidence:
 `docs/reports/w6-owned-source-tasks/README.md`.
 
@@ -653,3 +655,21 @@ and four fixed sanitizer runs pass. No language/checker/backend semantics change
 proof remains unassessed for this source fixture. Loans, owned errors, arbitrary
 handlers and native refinement remain open. Evidence:
 `docs/reports/w6-handler-rethrow/README.md`.
+
+Worker-local Buffer allocation (2026-09-07): nonrecursive task-free leaf workers
+now allocate, release and return fresh Buffers. Checked worker exits distinguish
+returned captures from fresh locals and require every other capture/allocation
+to be dropped, including allocation-error exits. Native and reference identities
+use a task namespace plus a private successful-allocation ordinal; reversed
+worker allocation order preserves both identities without a shared counter.
+CT16 now executes a real worker's typed-error cleanup and either allocation
+failure; its earlier sequential implicit-cleanup control remains tested.
+Six fixed ASan/UBSan/LSan runs cover these four CT16 paths, a fresh returned
+buffer and forced reverse allocation order. Fourteen Lean model theorems cover
+local-resource accounting and bounded identity separation; source/native
+refinement remains a premise. All 775 workspace tests, 31 provider tests,
+43 Python tests, standing gates and 20 Lean audits pass. CT coverage remains
+9/50 mapped, 41 unmapped; all four full Cycle19 artifacts are byte-identical.
+Loans, owned error payloads, general owned graphs, nested workers, shared memory
+and other-platform execution remain open. Evidence:
+`docs/reports/w6-worker-allocation/README.md`.

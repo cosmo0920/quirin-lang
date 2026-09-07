@@ -670,3 +670,24 @@ fn infallible_unit_result_preserves_unit_type_and_reference_value() {
     assert_eq!(observed.root_outcome, TaskOutcome::Unit);
     assert_eq!(observed.tasks[1].outcome, TaskOutcome::Unit);
 }
+
+#[test]
+fn task_buffer_namespaces_do_not_wrap_or_reuse_zero_generation() {
+    let max = u64::from(u32::MAX);
+    assert_eq!(reference::buffer_identity(0, 1).unwrap(), 1);
+    assert_eq!(reference::buffer_identity(0, max).unwrap(), max);
+    assert_eq!(reference::buffer_identity(max, max).unwrap(), u64::MAX);
+    for (task, ordinal) in [
+        (0, 0),
+        (1, 0),
+        (max + 1, 1),
+        (0, max + 1),
+        (u64::MAX, u64::MAX),
+    ] {
+        assert!(reference::buffer_identity(task, ordinal).is_err());
+    }
+    assert_ne!(
+        reference::buffer_identity(1, 1).unwrap(),
+        reference::buffer_identity(2, 1).unwrap()
+    );
+}

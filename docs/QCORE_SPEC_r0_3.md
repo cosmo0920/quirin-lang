@@ -309,14 +309,20 @@ and the [recovery evidence](reports/w6-task-recovery/README.md).
 
 The additional `ScopedOwnedTasksV1` profile accepts affine `own<Buffer>` worker
 parameters/results. A Buffer is an actual heap allocation containing one immutable
-i32. Root allocation may fail with AllocError. Successful move consumes its old
+i32. Root and leaf-worker allocation may fail with AllocError. Successful move consumes its old
 binding; failed creation restores the original bindings and prior sibling state.
-A checked worker exit returns one original input or drops every input before a
-scalar/unit/payload-free error exit. The parent must join and consume the Result
+A checked worker exit returns one original input or one fresh local, dropping
+every other owned input and local allocation; scalar/unit/payload-free error
+exits drop all of them. The parent must join and consume the Result
 before using returned custody. An owned entry result has no external custodian
 and rejects. These rules do not admit arbitrary resource types or owned errors.
 See [G02b](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02b-owned-buffer-task-execution)
-and [the bounded evidence](reports/w6-owned-source-tasks/README.md).
+and [the bounded evidence](reports/w6-owned-source-tasks/README.md). Worker-local
+generations use checked 32-bit task identities and nonzero 32-bit per-task
+successful-allocation ordinals, preserving identity across native scheduling
+orders. Explicit cleanup is required on every supported task error path; general
+implicit worker cleanup and nested workers remain open. See the
+[worker-allocation evidence](reports/w6-worker-allocation/README.md).
 
 ## L15. Lowering, observations, and translation certificates
 

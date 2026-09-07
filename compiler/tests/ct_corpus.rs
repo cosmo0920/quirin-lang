@@ -113,6 +113,10 @@ struct TaskRejectionControl {
 struct TaskScenario {
     name: String,
     failed_allocation: usize,
+    #[serde(default)]
+    allocation_task: u64,
+    #[serde(default)]
+    worker_allocation_outcomes: BTreeMap<u64, Vec<bool>>,
     failed_create: usize,
     allocation_outcomes: Vec<bool>,
     spawn_outcomes: Vec<bool>,
@@ -1032,7 +1036,7 @@ fn run_native_task_scenarios(
 ) {
     use qcore_core::scoped_tasks::TaskOutcome;
     use qcore_core::task_execution::{
-        TaskExecutionScript, execute_task_module, render_task_observation,
+        TaskExecutionScript, execute_task_module_with_worker_allocations, render_task_observation,
     };
     let native = expected.native_task_scenarios.as_ref().unwrap();
     for control in &native.rejection_controls {
@@ -1064,8 +1068,16 @@ fn run_native_task_scenarios(
     let module = result.expect("task scenario source must pass all-path checks");
     let checked = module.checked.as_scoped_tasks().unwrap();
     for scenario in &native.scenarios {
+        let selected_allocations = if scenario.allocation_task == 0 {
+            &scenario.allocation_outcomes
+        } else {
+            scenario
+                .worker_allocation_outcomes
+                .get(&scenario.allocation_task)
+                .expect("selected allocation task needs explicit decisions")
+        };
         for (failed, outcomes) in [
-            (scenario.failed_allocation, &scenario.allocation_outcomes),
+            (scenario.failed_allocation, selected_allocations),
             (scenario.failed_create, &scenario.spawn_outcomes),
         ] {
             assert!(
@@ -1082,12 +1094,13 @@ fn run_native_task_scenarios(
                 scenario.name
             );
         }
-        let reference = execute_task_module(
+        let reference = execute_task_module_with_worker_allocations(
             checked,
             &TaskExecutionScript {
                 spawn_outcomes: scenario.spawn_outcomes.clone(),
                 allocation_outcomes: scenario.allocation_outcomes.clone(),
             },
+            &scenario.worker_allocation_outcomes,
         )
         .unwrap();
         let outcome = match (&scenario.outcome.error, scenario.outcome.ok_value) {
@@ -1118,6 +1131,7 @@ fn run_native_task_scenarios(
             module.c_source.as_deref().unwrap(),
             &directory.join(&native.header),
             &[
+                format!("-DQCORE_CT_ALLOC_TASK={}", scenario.allocation_task),
                 format!("-DQCORE_CT_FAIL_ALLOC={}", scenario.failed_allocation),
                 format!("-DQCORE_CT_FAIL_CREATE={}", scenario.failed_create),
             ],
@@ -1136,4 +1150,30 @@ fn run_native_task_scenarios(
             scenario.name
         );
     }
+}
+
+#[test]
+fn ct16_retains_sequential_implicit_cleanup_control() {
+    let module = compile_files(
+        &[SourceFile::new(
+            "sequential-worker-error.qcore",
+            include_str!("fixtures/task_worker_allocations/sequential_worker_error.qcore"),
+        )],
+        &CompileOptions {
+            entry: Some("worker".into()),
+        },
+    )
+    .unwrap();
+    let observation = module.reference_observation.unwrap();
+    assert!(
+        matches!(&observation.outcome, ExecutionOutcome::Error {name, ..} if name == "WorkerError")
+    );
+    assert_eq!(
+        observation
+            .trace
+            .iter()
+            .map(trace_token)
+            .collect::<Vec<_>>(),
+        ["acquire:3", "release:3"]
+    );
 }

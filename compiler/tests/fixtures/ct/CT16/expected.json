@@ -1,10 +1,128 @@
 {
   "id": "CT16",
-  "verdict": "accept",
-  "entry": "worker",
+  "verdict": "native_task_scenarios",
+  "entry": "main",
   "diagnostics": [],
-  "outcome": { "error": "WorkerError" },
-  "trace": ["acquire:3", "release:3"],
-  "stages_executed": ["parser", "type_checker", "reference_execution", "cfg"],
-  "notes": "Clean locals and the declared payload are witnessed by the CFG reference execution: the local acquisition is released on the error path and the outcome carries the declared error type (the interpreter rejects any error exit with live resources). Borrowed-loan return, worker/parent composition and the concurrency backend are not exercised."
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "Linux ScopedOwnedTasksV1 worker-local allocation: a real child acquires up to two Buffers, explicitly drops all acquired locals before raising WorkerError::Failed or a bound AllocError, and the creator joins before receiving the error. Four native/reference scenarios cover success, either allocation failure and creation failure with exact pointer/thread checks. Missing cleanup in either worker error arm rejects at Q600. The earlier sequential implicit-cleanup control remains separately executed. Loans, owned error payloads, arbitrary handlers and native refinement proofs remain open.",
+  "native_task_scenarios": {
+    "header": "worker_allocation.h",
+    "rejection_controls": [
+      {
+        "source": "unclean_worker.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "owned buffer"
+        }
+      },
+      {
+        "source": "unclean_allocation_failure.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "worker_typed_error",
+        "failed_allocation": 0,
+        "allocation_task": 1,
+        "worker_allocation_outcomes": {
+          "1": [
+            true,
+            true
+          ]
+        },
+        "failed_create": 0,
+        "allocation_outcomes": [],
+        "spawn_outcomes": [
+          true
+        ],
+        "outcome": {
+          "error": "WorkerError::Failed",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 1,
+        "owned_child_results": [],
+        "native_stderr": "ENV_ALLOC\nCREATE_OK\nBUFFER_ALLOC:1\nBUFFER_ALLOC:2\nBUFFER_FREE:2\nBUFFER_FREE:1\nJOIN_OK\nENV_FREE\nRUN_CLEAN\n"
+      },
+      {
+        "name": "worker_first_allocation_failure",
+        "failed_allocation": 1,
+        "allocation_task": 1,
+        "worker_allocation_outcomes": {
+          "1": [
+            false
+          ]
+        },
+        "failed_create": 0,
+        "allocation_outcomes": [],
+        "spawn_outcomes": [
+          true
+        ],
+        "outcome": {
+          "error": "AllocError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 1,
+        "owned_child_results": [],
+        "native_stderr": "ENV_ALLOC\nCREATE_OK\nBUFFER_FAILED:1\nJOIN_OK\nENV_FREE\nRUN_CLEAN\n"
+      },
+      {
+        "name": "worker_second_allocation_failure",
+        "failed_allocation": 2,
+        "allocation_task": 1,
+        "worker_allocation_outcomes": {
+          "1": [
+            true,
+            false
+          ]
+        },
+        "failed_create": 0,
+        "allocation_outcomes": [],
+        "spawn_outcomes": [
+          true
+        ],
+        "outcome": {
+          "error": "AllocError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 1,
+        "owned_child_results": [],
+        "native_stderr": "ENV_ALLOC\nCREATE_OK\nBUFFER_ALLOC:1\nBUFFER_FAILED:2\nBUFFER_FREE:1\nJOIN_OK\nENV_FREE\nRUN_CLEAN\n"
+      },
+      {
+        "name": "creation_failure",
+        "failed_allocation": 0,
+        "allocation_task": 0,
+        "worker_allocation_outcomes": {},
+        "failed_create": 1,
+        "allocation_outcomes": [],
+        "spawn_outcomes": [
+          false
+        ],
+        "outcome": {
+          "error": "SpawnError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 0,
+        "owned_child_results": [],
+        "native_stderr": "ENV_ALLOC\nCREATE_FAILED\nENV_FREE\nRUN_CLEAN\n"
+      }
+    ]
+  }
 }

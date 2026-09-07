@@ -196,10 +196,11 @@ fn raw_ir_cannot_forge_scalar_access_to_owned_identity_or_skip_its_drop() {
 }
 
 #[test]
-fn allocation_in_leaf_workers_owned_root_results_and_uncalled_bad_bodies_reject() {
+fn leaf_allocation_is_checked_while_owned_root_results_and_uncalled_bad_bodies_reject() {
+    assert!(checked("concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;drop b;return 1;} fn main()->i32 {return 0;}").is_ok());
     for source in [
         "concurrency checked; fn main()->own<Buffer> effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return move b;}",
-        "concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;drop b;return 1;} fn main()->i32 {return 0;}",
+        "concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return 1;} fn main()->i32 {return 0;}",
         "concurrency checked; fn worker(b:own<Buffer> use one)->i32 {return 1;} fn main()->i32 {let b=qcore_buffer_new(1)?;drop b;return 0;}",
     ] {
         assert!(checked(source).is_err(), "{source}");

@@ -247,3 +247,297 @@ static void *second_fails(size_t size) { return ++calls == 2 ? NULL : malloc(siz
     assert!(output.status.success());
     assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 8\n"));
 }
+
+const FRESH_WORKER: &str = r#"
+concurrency checked;
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        return answer;
+    }
+}
+"#;
+
+fn matches_worker_reference(
+    module: &qcore_compiler::CompiledModule,
+    output: &Output,
+    allocations: std::collections::BTreeMap<u64, Vec<bool>>,
+) -> qcore_core::task_execution::TaskExecutionObservation {
+    let reference = qcore_core::task_execution::execute_task_module_with_worker_allocations(
+        module.checked.as_scoped_tasks().unwrap(),
+        &TaskExecutionScript::default(),
+        &allocations,
+    )
+    .unwrap();
+    assert!(output.status.success(), "{output:?}");
+    assert_eq!(
+        output.stdout,
+        render_task_observation(&reference).as_bytes()
+    );
+    reference
+}
+
+#[test]
+fn worker_allocates_fresh_result_and_creator_joins_reads_and_drops_it() {
+    let (module, output) = native(FRESH_WORKER, Some(TRACK_BUFFER));
+    let reference = matches_worker_reference(&module, &output, [(1, vec![true])].into());
+    assert_eq!(
+        reference.tasks[1].outcome,
+        qcore_core::scoped_tasks::TaskOutcome::OwnedBuffer((1 << 32) | 1)
+    );
+    one_buffer_released(&output);
+}
+
+const WORKER_SECOND_ALLOCATION: &str = r#"
+concurrency checked;
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let first = qcore_buffer_new(7)?;
+    match qcore_buffer_new(value) {
+        Result::Ok { value: second } => { drop first; return move second; }
+        Result::Err { error: failure } => { drop first; raise failure; }
+    }
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        return answer;
+    }
+}
+"#;
+
+#[test]
+fn worker_allocation_failure_cleans_earlier_local_before_error_collection() {
+    for failed in [0, 1, 2] {
+        let header = format!(
+            r#"
+#include <stdint.h>
+#include <stdlib.h>
+static void *worker_allocate(size_t size, uint64_t task, uint64_t attempt) {{
+    if (task != 1) abort();
+    if (attempt == {failed}) return NULL;
+    return malloc(size);
+}}
+#define QCORE_BUFFER_MALLOC_FOR_TASK worker_allocate
+"#
+        );
+        let (module, output) = native(WORKER_SECOND_ALLOCATION, Some(&header));
+        let decisions = match failed {
+            0 => vec![true, true],
+            1 => vec![false],
+            _ => vec![true, false],
+        };
+        let reference = matches_worker_reference(&module, &output, [(1, decisions)].into());
+        assert_eq!(
+            reference.root_outcome,
+            if failed == 0 {
+                qcore_core::scoped_tasks::TaskOutcome::I32(42)
+            } else {
+                qcore_core::scoped_tasks::TaskOutcome::Error("AllocError".into())
+            }
+        );
+    }
+    let omitted_cleanup =
+        WORKER_SECOND_ALLOCATION.replace("{ drop first; raise failure; }", "{ raise failure; }");
+    let errors = compile_files(
+        &[SourceFile::new("leaking-worker.qcore", omitted_cleanup)],
+        &CompileOptions::default(),
+    )
+    .unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.code == "Q600" && error.message.contains("owned buffer")),
+        "{errors:?}"
+    );
+}
+
+#[test]
+fn worker_local_allocation_cannot_escape_without_owned_result_accounting() {
+    for source in [
+        FRESH_WORKER.replace("return move buffer;", "return move buffer; drop buffer;"),
+        FRESH_WORKER.replace("drop returned;", ""),
+        FRESH_WORKER.replace(
+            "effects { alloc, throws<AllocError> }",
+            "effects { throws<AllocError> }",
+        ),
+        WORKER_SECOND_ALLOCATION.replace(
+            "{ drop first; return move second; }",
+            "{ return move second; }",
+        ),
+    ] {
+        assert!(
+            compile_files(
+                &[SourceFile::new("bad-worker.qcore", source)],
+                &CompileOptions::default()
+            )
+            .is_err()
+        );
+    }
+}
+
+#[test]
+fn worker_allocation_scripts_reject_root_keys_absent_tasks_and_unused_choices() {
+    let module = compile_files(
+        &[SourceFile::new("fresh-worker.qcore", FRESH_WORKER)],
+        &CompileOptions::default(),
+    )
+    .unwrap();
+    for choices in [
+        [(0, vec![])].into(),
+        [(2, vec![])].into(),
+        [(1, vec![true, true])].into(),
+    ] {
+        assert!(
+            qcore_core::task_execution::execute_task_module_with_worker_allocations(
+                module.checked.as_scoped_tasks().unwrap(),
+                &TaskExecutionScript::default(),
+                &choices,
+            )
+            .is_err()
+        );
+    }
+}
+
+#[test]
+fn worker_can_return_original_capture_on_failure_or_fresh_local_on_success() {
+    let source = ROUND_TRIP.replace(
+        "fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }",
+        "fn worker(buffer: own<Buffer> use one) -> own<Buffer> effects { alloc } { match qcore_buffer_new(7) { Result::Ok {value:fresh} => {drop buffer;return move fresh;} Result::Err {error:failure} => {return move buffer;} } }",
+    );
+    for fails in [false, true] {
+        let header = format!(
+            r#"
+#include <stdint.h>
+#include <stdlib.h>
+static void *allocate_for_task(size_t size, uint64_t task, uint64_t attempt) {{
+    (void)attempt;
+    if (task == 1 && {}) return NULL;
+    return malloc(size);
+}}
+#define QCORE_BUFFER_MALLOC_FOR_TASK allocate_for_task
+"#,
+            i32::from(fails)
+        );
+        let (module, output) = native(&source, Some(&header));
+        let reference = qcore_core::task_execution::execute_task_module_with_worker_allocations(
+            module.checked.as_scoped_tasks().unwrap(),
+            &TaskExecutionScript {
+                spawn_outcomes: vec![true],
+                allocation_outcomes: vec![true],
+            },
+            &[(1, vec![!fails])].into(),
+        )
+        .unwrap();
+        assert!(output.status.success(), "{output:?}");
+        assert_eq!(
+            output.stdout,
+            render_task_observation(&reference).as_bytes()
+        );
+        assert_eq!(
+            reference.tasks[1].outcome,
+            qcore_core::scoped_tasks::TaskOutcome::OwnedBuffer(if fails {
+                1
+            } else {
+                (1 << 32) | 1
+            })
+        );
+        assert_eq!(
+            reference.root_outcome,
+            qcore_core::scoped_tasks::TaskOutcome::I32(if fails { 42 } else { 7 })
+        );
+    }
+}
+
+const PARALLEL_FRESH_WORKERS: &str = r#"
+concurrency checked;
+fn worker(value: i32) -> own<Buffer> effects {alloc, throws<AllocError>} {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects {throws<AllocError>,throws<SpawnError>,spawn,join,may_block} {
+    let value = 42;
+    thread scope s {
+        let first = spawn s worker(copy value)?;
+        match spawn s worker(copy value) {
+            Result::Ok {value:second} => {
+                match join move second {
+                    Result::Ok {value:second_buffer} => {
+                        match join move first {
+                            Result::Ok {value:first_buffer} => {drop first_buffer; let answer=qcore_buffer_read(second_buffer);drop second_buffer;return answer;}
+                            Result::Err {error:first_error} => {drop second_buffer;raise first_error;}
+                        }
+                    }
+                    Result::Err {error:second_error} => {
+                        match join move first {
+                            Result::Ok {value:first_buffer} => {drop first_buffer;raise second_error;}
+                            Result::Err {error:first_error} => {raise second_error;}
+                        }
+                    }
+                }
+            }
+            Result::Err {error:creation_error} => {
+                match join move first {
+                    Result::Ok {value:first_buffer} => {drop first_buffer;raise creation_error;}
+                    Result::Err {error:first_error} => {raise creation_error;}
+                }
+            }
+        }
+    }
+}
+"#;
+
+#[test]
+fn parallel_worker_allocation_order_does_not_change_generation_identity() {
+    let header = r#"
+#include <stdint.h>
+#include <stdatomic.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <threads.h>
+#include <unistd.h>
+static atomic_int second_allocated;
+static void *ordered_allocate(size_t size, uint64_t task, uint64_t attempt) {
+    if (attempt != 1 || (task != 1 && task != 2)) abort();
+    if (task == 1) {
+        alarm(5);
+        while (!atomic_load_explicit(&second_allocated, memory_order_acquire)) thrd_yield();
+    }
+    void *pointer = malloc(size);
+    if (!pointer) abort();
+    fprintf(stderr, "ALLOC_TASK %llu\n", (unsigned long long)task);
+    if (task == 2) atomic_store_explicit(&second_allocated, 1, memory_order_release);
+    return pointer;
+}
+static int checked_create(thrd_t *thread, thrd_start_t worker, void *argument) {
+    int status=thrd_create(thread,worker,argument);
+    if(status!=thrd_success) abort();
+    return status;
+}
+#define QCORE_BUFFER_MALLOC_FOR_TASK ordered_allocate
+#define QCORE_TASK_CREATE checked_create
+"#;
+    let (module, output) = native(PARALLEL_FRESH_WORKERS, Some(header));
+    let reference =
+        matches_worker_reference(&module, &output, [(1, vec![true]), (2, vec![true])].into());
+    assert_eq!(output.stderr, b"ALLOC_TASK 2\nALLOC_TASK 1\n");
+    assert_eq!(
+        reference.tasks[1].outcome,
+        qcore_core::scoped_tasks::TaskOutcome::OwnedBuffer((1 << 32) | 1)
+    );
+    assert_eq!(
+        reference.tasks[2].outcome,
+        qcore_core::scoped_tasks::TaskOutcome::OwnedBuffer((2 << 32) | 1)
+    );
+}

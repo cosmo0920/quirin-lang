@@ -246,10 +246,15 @@ enum AbstractSlot {
     Consumed,
 }
 /// Each alternative is derived from a checked worker exit, using original
-/// parameter positions rather than fresh or caller-provided identities.
+/// parameter positions or a proved fresh local result, never caller assertions.
+#[derive(Clone, Debug)]
+enum WorkerReturn {
+    Input(usize),
+    Fresh,
+}
 #[derive(Clone, Debug)]
 struct WorkerExit {
-    returned: Option<usize>,
+    returned: Option<WorkerReturn>,
     dropped: Vec<usize>,
     error: Option<String>,
 }
@@ -354,12 +359,10 @@ fn check_function(
             "task entry must have no parameters".into(),
         ));
     }
-    if id != module.entry
-        && (function.errors.contains(SPAWN_ERROR) || function.errors.contains(ALLOC_ERROR))
-    {
+    if id != module.entry && function.errors.contains(SPAWN_ERROR) {
         return Err(fail(
             function.span,
-            "SpawnError/AllocError are reserved for creation/allocation, not worker errors".into(),
+            "SpawnError is reserved for task creation, not leaf worker errors".into(),
         ));
     }
     // Iterative DAG validation covers even blocks not reached by a particular
@@ -452,10 +455,10 @@ fn check_function(
             "declared task effects do not permit body effects".into(),
         ));
     }
-    if id != module.entry && (effects.spawn || effects.join || effects.alloc) {
+    if id != module.entry && (effects.spawn || effects.join) {
         return Err(fail(
             function.span,
-            "workers must be nonrecursive task-free leaves without allocation".into(),
+            "workers must be nonrecursive task-free leaves".into(),
         ));
     }
     let mut ready = incoming
@@ -743,15 +746,28 @@ fn check_function(
                                 .drop_resource(reservation, resource)
                                 .map_err(|e| format!("{e:?}"))?;
                         }
-                        let returned = exit
-                            .returned
-                            .map(|input| {
-                                captured
-                                    .get(&input)
-                                    .copied()
-                                    .ok_or("worker return does not refer to an owned capture")
-                            })
-                            .transpose()?;
+                        let returned = match &exit.returned {
+                            Some(WorkerReturn::Input(input)) => Some(
+                                *captured
+                                    .get(input)
+                                    .ok_or("worker return does not refer to an owned capture")?,
+                            ),
+                            Some(WorkerReturn::Fresh) => {
+                                // The worker exit checked every local allocation:
+                                // exactly this fresh result remains, all others
+                                // are dropped. Materialize its caller-side identity
+                                // under child custody before completion/join.
+                                let resource = success_state.next_id;
+                                success_state.next_id += 1;
+                                success_state
+                                    .ledger
+                                    .acquire(reservation, resource)
+                                    .map_err(|e| format!("{e:?}"))?;
+                                success_state.resources.insert(resource);
+                                Some(resource)
+                            }
+                            None => None,
+                        };
                         let outcome = if let Some(tag) = &exit.error {
                             TaskOutcome::Error(tag.clone())
                         } else {
@@ -823,7 +839,13 @@ fn check_function(
                     let returned = value.resource();
                     state.exit(returned)?;
                     exits.push(WorkerExit {
-                        returned: returned.and_then(|r| inputs.get(&r).copied()),
+                        returned: returned.map(|r| {
+                            inputs
+                                .get(&r)
+                                .copied()
+                                .map(WorkerReturn::Input)
+                                .unwrap_or(WorkerReturn::Fresh)
+                        }),
                         dropped: inputs
                             .iter()
                             .filter_map(|(&resource, &index)| {

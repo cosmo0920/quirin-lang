@@ -620,6 +620,11 @@ creation rollback. CT01 maps the round trip; CT02/CT12 use real moved buffers.
 actual source/native execution: second-create failure joins the earlier owned
 child, drops its result and raises the bound error. A declarative scenario runner
 checks success and both creation/allocation failures with negative join/drop controls.
+[Worker allocation](reports/w6-worker-allocation/README.md) adds checked fresh
+Buffer results and worker-local failure cleanup with scheduling-independent
+identities. CT16 now executes native worker errors and allocation failures; the
+earlier sequential implicit-cleanup control remains tested. Fourteen Lean model
+theorems and six fixed sanitizer runs accompany this increment.
 Coverage is 9/50 mapped, 41 unmapped. Loans, general usage/SSA rollback, owned
 graphs/errors, shared memory, mutexes, general control and other platforms remain open.
 

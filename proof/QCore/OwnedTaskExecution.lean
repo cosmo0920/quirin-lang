@@ -488,3 +488,139 @@ theorem checked_unit_exit_has_no_owned_slot_or_resource
       remainingOwned history custody task = [] := checked
 
 end QCore.OwnedTaskExecution
+
+/-! Worker-local allocation extends the capture-only exit relation with the
+complete successful local-allocation inventory. Allocation source recognition,
+all-path CFG checking and the link to C execution remain explicit premises. -/
+namespace QCore.OwnedTaskExecution
+
+def workerAllocationExitChecked (inputs allocated dropped : List Nat) (outcome : Outcome) : Prop :=
+  workerExitChecked (inputs ++ allocated) dropped outcome
+
+theorem allocated_worker_return_is_an_input_or_local
+    {inputs allocated dropped : List Nat} {resource : Nat}
+    (checked : workerAllocationExitChecked inputs allocated dropped (.ownedBuffer resource)) :
+    (resource ∈ inputs ∨ resource ∈ allocated) ∧ resource ∉ dropped := by
+  have original := owned_worker_return_is_an_original_undropped_input checked
+  exact ⟨List.mem_append.mp original.1, original.2⟩
+
+theorem worker_error_drops_all_inputs_and_locals
+    {inputs allocated dropped : List Nat} {tag : String}
+    (checked : workerAllocationExitChecked inputs allocated dropped (.error tag)) :
+    (∀ resource ∈ inputs, resource ∈ dropped) ∧ (∀ resource ∈ allocated, resource ∈ dropped) := by
+  have all := tag_only_worker_error_requires_every_owned_input_dropped checked
+  exact ⟨fun resource member => all resource (List.mem_append.mpr (Or.inl member)),
+    fun resource member => all resource (List.mem_append.mpr (Or.inr member))⟩
+
+theorem worker_exit_accounts_for_every_local
+    {inputs allocated dropped : List Nat} {outcome : Outcome}
+    (checked : workerAllocationExitChecked inputs allocated dropped outcome) :
+    ∀ resource ∈ allocated, resource ∈ dropped ∨ resource ∈ payload outcome := by
+  intro resource member
+  exact checked.2.2.2.2.1 resource (List.mem_append.mpr (Or.inr member))
+
+theorem fresh_worker_return_requires_all_inputs_dropped
+    {inputs allocated dropped : List Nat} {resource : Nat}
+    (checked : workerAllocationExitChecked inputs allocated dropped (.ownedBuffer resource))
+    (fresh : resource ∉ inputs) : ∀ input ∈ inputs, input ∈ dropped := by
+  intro input member
+  have accounted := checked.2.2.2.2.1 input (List.mem_append.mpr (Or.inl member))
+  rcases accounted with dropped | returned
+  · exact dropped
+  · have same : input = resource := by simpa [payload] using returned
+    exact False.elim (fresh (same ▸ member))
+
+theorem unreturned_local_must_be_dropped
+    {inputs allocated dropped : List Nat} {resource localResource : Nat}
+    (checked : workerAllocationExitChecked inputs allocated dropped (.ownedBuffer resource))
+    (member : localResource ∈ allocated) (different : localResource ≠ resource) : localResource ∈ dropped := by
+  rcases worker_exit_accounts_for_every_local checked localResource member with dropped | returned
+  · exact dropped
+  · exact False.elim (different (by simpa [payload] using returned))
+
+theorem worker_local_cannot_alias_an_input
+    {inputs allocated dropped : List Nat} {outcome : Outcome}
+    (checked : workerAllocationExitChecked inputs allocated dropped outcome)
+    {resource : Nat} (input : resource ∈ inputs) : resource ∉ allocated := by
+  have separate := (List.nodup_append.mp checked.1).2.2
+  exact fun member => separate resource input resource member rfl
+
+/-- Low 32 bits are a nonzero task-local success ordinal. The high 32 bits are
+its successful task identity. Root identifiers retain the old ordinal encoding.
+No shared allocation counter or native worker scheduling order is needed. -/
+def bufferIdentity (task ordinal : Nat) : Nat := task * 4294967296 + ordinal
+
+def checkedBufferIdentity (task ordinal : Nat) : Option Nat :=
+  if task < 4294967296 ∧ 0 < ordinal ∧ ordinal < 4294967296 then
+    some (bufferIdentity task ordinal)
+  else none
+
+theorem root_buffer_identity_is_unchanged (ordinal : Nat) :
+    bufferIdentity 0 ordinal = ordinal := by simp [bufferIdentity]
+
+theorem buffer_identity_is_injective
+    {firstTask secondTask firstOrdinal secondOrdinal : Nat}
+    (firstBound : firstOrdinal < 4294967296) (secondBound : secondOrdinal < 4294967296)
+    (same : bufferIdentity firstTask firstOrdinal = bufferIdentity secondTask secondOrdinal) :
+    firstTask = secondTask ∧ firstOrdinal = secondOrdinal := by
+  unfold bufferIdentity at same
+  omega
+
+theorem distinct_workers_have_disjoint_generations
+    {firstTask secondTask firstOrdinal secondOrdinal : Nat}
+    (firstBound : firstOrdinal < 4294967296) (secondBound : secondOrdinal < 4294967296)
+    (different : firstTask ≠ secondTask) :
+    bufferIdentity firstTask firstOrdinal ≠ bufferIdentity secondTask secondOrdinal := by
+  intro same
+  exact different (buffer_identity_is_injective firstBound secondBound same).1
+
+theorem checked_buffer_identity_is_nonzero_and_fits_u64
+    {task ordinal identity : Nat} (checked : checkedBufferIdentity task ordinal = some identity) :
+    0 < identity ∧ identity < 18446744073709551616 := by
+  unfold checkedBufferIdentity at checked
+  split at checked
+  next bounds =>
+    cases checked
+    unfold bufferIdentity
+    omega
+  next => contradiction
+
+theorem checked_buffer_identity_requires_bounded_components
+    {task ordinal identity : Nat} (checked : checkedBufferIdentity task ordinal = some identity) :
+    task < 4294967296 ∧ 0 < ordinal ∧ ordinal < 4294967296 ∧ identity = bufferIdentity task ordinal := by
+  unfold checkedBufferIdentity at checked
+  split at checked
+  next bounds => cases checked; exact ⟨bounds.1, bounds.2.1, bounds.2.2, rfl⟩
+  next => contradiction
+
+def allocateInNamespace (task ordinal : Nat) (succeeds : Bool) : Option (Option Nat × Nat) := do
+  let identity ← checkedBufferIdentity task ordinal
+  if succeeds then some (some identity, ordinal + 1) else some (none, ordinal)
+
+theorem failed_worker_allocation_preserves_success_ordinal
+    {task ordinal next : Nat} {result : Option Nat}
+    (checked : allocateInNamespace task ordinal false = some (result, next)) :
+    result = none ∧ next = ordinal := by
+  unfold allocateInNamespace at checked
+  cases valid : checkedBufferIdentity task ordinal <;> simp [valid] at checked
+  exact ⟨checked.1.symm, checked.2.symm⟩
+
+theorem successful_worker_allocation_advances_only_local_ordinal
+    {task ordinal next identity : Nat}
+    (checked : allocateInNamespace task ordinal true = some (some identity, next)) :
+    identity = bufferIdentity task ordinal ∧ next = ordinal + 1 := by
+  unfold allocateInNamespace at checked
+  cases valid : checkedBufferIdentity task ordinal with
+  | none => simp [valid] at checked
+  | some value =>
+    simp [valid] at checked
+    have shape := checked_buffer_identity_requires_bounded_components valid
+    exact ⟨checked.1.symm.trans shape.2.2.2, checked.2.symm⟩
+
+theorem exhausted_namespace_cannot_allocate (task ordinal : Nat) (succeeds : Bool)
+    (exhausted : task ≥ 4294967296 ∨ ordinal = 0 ∨ ordinal ≥ 4294967296) :
+    allocateInNamespace task ordinal succeeds = none := by
+  have invalid : ¬ (task < 4294967296 ∧ 0 < ordinal ∧ ordinal < 4294967296) := by omega
+  simp [allocateInNamespace, checkedBufferIdentity, invalid]
+
+end QCore.OwnedTaskExecution

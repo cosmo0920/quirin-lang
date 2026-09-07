@@ -333,6 +333,9 @@ const RUNTIME: &str = r#"#include <inttypes.h>
 #ifndef QCORE_BUFFER_MALLOC
 #define QCORE_BUFFER_MALLOC malloc
 #endif
+#ifndef QCORE_BUFFER_MALLOC_FOR_TASK
+#define QCORE_BUFFER_MALLOC_FOR_TASK(size, task, attempt) QCORE_BUFFER_MALLOC(size)
+#endif
 #ifndef QCORE_BUFFER_FREE
 #define QCORE_BUFFER_FREE free
 #endif
@@ -346,6 +349,7 @@ struct qcore_task_context {
     uint64_t identity;
     uint64_t next_task;
     uint64_t next_buffer;
+    uint64_t allocation_attempt;
     size_t event_count;
     struct qcore_buffer_event events[QCORE_BUFFER_EVENT_CAPACITY];
 };
@@ -385,14 +389,18 @@ static void qcore_buffer_event(struct qcore_task_context *context, int kind, uin
     }
 }
 static struct qcore_buffer *qcore_buffer_new(int32_t payload, struct qcore_task_context *context) {
-    /* The checked initial profile allocates only in the root task. */
-    if (context->identity != 0 || context->next_buffer == UINT64_MAX) abort();
-    struct qcore_buffer *buffer = QCORE_BUFFER_MALLOC(sizeof(*buffer));
+    /* Finite leaf tasks have disjoint identity ranges and private counters.
+     * Failed allocations consume an attempt, not a resource generation. */
+    if (context->identity > UINT32_MAX || context->next_buffer == 0 ||
+        context->next_buffer > UINT32_MAX || context->allocation_attempt == UINT64_MAX) abort();
+    ++context->allocation_attempt;
+    struct qcore_buffer *buffer = QCORE_BUFFER_MALLOC_FOR_TASK(
+        sizeof(*buffer), context->identity, context->allocation_attempt);
     if (buffer == NULL) {
         qcore_buffer_event(context, 1, 0, 0);
         return NULL;
     }
-    buffer->generation = context->next_buffer++;
+    buffer->generation = context->identity * UINT64_C(4294967296) + context->next_buffer++;
     buffer->payload = payload;
     qcore_buffer_event(context, 0, buffer->generation, payload);
     return buffer;
@@ -427,6 +435,7 @@ static int qcore_task_trampoline(void *pointer) {
 }
 static struct qcore_task_start_record *qcore_task_start(qcore_task_worker worker,
         const struct qcore_task_value *arguments, size_t count, struct qcore_task_context *context, size_t worker_id) {
+    if (context->next_task == 0 || context->next_task > UINT32_MAX) abort();
     struct qcore_task_start_record *record = QCORE_TASK_CALLOC(1, sizeof(*record));
     if (record == NULL) {
         printf("QCORE_TASK_CREATE_FAILED %zu\n", worker_id);
@@ -435,6 +444,7 @@ static struct qcore_task_start_record *qcore_task_start(qcore_task_worker worker
     record->worker = worker;
     record->identity = context->next_task;
     record->context.identity = record->identity;
+    record->context.next_buffer = 1;
     for (size_t i = 0; i < count; ++i) record->arguments[i] = arguments[i];
     if (QCORE_TASK_CREATE(&record->thread, qcore_task_trampoline, record) != thrd_success) {
         /* Creation failure never transfers the buffer; discard only the

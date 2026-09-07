@@ -1,0 +1,23 @@
+concurrency checked;
+error WorkerError { Failed; }
+fn worker(value: i32) -> i32 effects {alloc, throws<AllocError>, throws<WorkerError>} {
+    let first = qcore_buffer_new(value)?;
+    match qcore_buffer_new(9) {
+        Result::Ok {value:second} => {
+            drop second;
+            raise WorkerError::Failed;
+        }
+        Result::Err {error:allocation_error} => {
+            drop first;
+            raise allocation_error;
+        }
+    }
+}
+fn main() -> i32 effects {throws<AllocError>, throws<WorkerError>, throws<SpawnError>, spawn, join, may_block} {
+    let value = 7;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let result = join move handle?;
+        return result;
+    }
+}
