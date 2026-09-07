@@ -263,10 +263,13 @@ field saying exactly this. The work itself belongs to the existing
 
 ## 7. Gate results
 
-The working tree is shared with another in-flight agent (§7.1), so the standing
-gate was **not** run there. It was run in a temporary detached worktree created
-at this card's commit, containing this card's committed change and nothing else.
-Linux, submodule initialised at the pinned `d82464a`.
+The working tree is shared with other in-flight lanes (§7.1), so the standing
+gate was **not** run there. It was run twice in temporary detached worktrees,
+each containing committed state only. Linux, submodule initialised at the pinned
+`d82464a`.
+
+**Run A — this card's own commit** (`d814724`, this card's change on top of the
+merged `9478b94` baseline, nothing else):
 
 | Gate | Result |
 |---|---|
@@ -287,6 +290,21 @@ execute *inside* the existing
 `ct_manifest_and_fixture_set_agree_and_mapped_cases_execute`, which is also why
 the count alone would not have revealed whether they ran — the fail-closed
 probes in §5 are what establish that.
+
+**Run B — the branch head** (`68ac4d8`), after the O04, P06, P07 and F01 lanes
+merged around this card, confirming the CT integration still holds against their
+committed work:
+
+| Gate | Result |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **1093 passed, 0 failed** (exit 0) |
+| `cargo fmt --all -- --check` / `cargo clippy --all-targets -- -D warnings` | exit 0 / exit 0 |
+| both reevaluation examples | **exit 0** |
+| `python3 -B -m unittest discover -s scripts/tests` | **43 tests, OK** |
+| `cd proof && lake build` | exit 0 |
+| `python3 -B scripts/check_lean_audits.py` | **Passed 22 Lean audits** (the F01 lane added one) |
+| providers workspace | **51 passed, 0 failed** |
+| `cargo test -p qcore-compiler --test ct_corpus` | **4 passed, 0 failed** |
 
 ### 7.1 The working tree is shared with another in-flight agent
 
