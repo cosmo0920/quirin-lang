@@ -12,9 +12,10 @@
       "area": "concurrency",
       "status": "repaired_model",
       "evidence": [
-        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+        "docs/reports/r0-3-concurrency-lifetimes/README.md",
+        "docs/reports/remaining-v01/README.md"
       ],
-      "remaining_boundary": "Live IDs are unique lifetimes in TrustedExplicitTrace. No arbitrary-source extraction or general callback lifetime proof."
+      "remaining_boundary": "Live IDs are unique lifetimes in TrustedExplicitTrace. V01 found no soundness failure and closed four coverage gaps. No arbitrary-source extraction, no source-to-trace refinement and no general callback lifetime proof."
     },
     {
       "id": "R02",
@@ -31,19 +32,23 @@
         "docs/reports/w6-worker-allocation/README.md",
         "docs/reports/w6-completed-child-custody/README.md",
         "docs/reports/w6-reused-address/README.md",
-        "docs/reports/remaining-v02/README.md"
+        "docs/reports/remaining-v02/README.md",
+        "docs/reports/remaining-t00/README.md"
       ],
-      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Adversarial V02 verification pins the full terminal-state x event-kind matrix, refused-join authority retention and completed-capsule custody in both Rust and Lean, without production changes. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
+      "remaining_boundary": "ScopedOwnedTasksV1 covers original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. These are model-level regressions over trusted explicit traces and a checked finite task IR: they establish no source-to-trace refinement. Checked mutex invariants now exist as a separate model profile (R03) but are not composed with the task ledger. Per T00, the mapped CT cases' manifest stage labels exceed their executed evidence and no mapped case carries proof or gated sanitized evidence. Loans, fractional shares, general owned graphs and error payloads, nested workers, general control flow, arbitrary native schedules and Rust/Lean/native refinement remain open."
     },
     {
       "id": "R03",
       "requirement": "Explicit mutex and synchronization trust boundary",
       "area": "concurrency",
-      "status": "explicit_trust_boundary",
+      "status": "checked_profile_added_model_only",
       "evidence": [
-        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+        "docs/reports/r0-3-concurrency-lifetimes/README.md",
+        "docs/reports/remaining-t01/README.md",
+        "docs/reports/remaining-t02/README.md",
+        "docs/reports/remaining-b02/README.md"
       ],
-      "remaining_boundary": "Checked mutex-footprint invariants and reconstructed synchronization witnesses remain open; the model names the assumptions it consumes."
+      "remaining_boundary": "The checked profile discharges GuardFootprintAuthority and SynchronizedCustodyEdges only inside CheckedMutexInvariantV1, over supplied traces. TrustedExplicitTrace still issues both premises and is unchanged. The new profile introduces two narrower premises of its own (DeclaredFootprintShape, InvariantPredicateDeclared), and the pointwise-atom refinement of the abstract authority total is a premise, not a theorem. No source lowering (T03), no deadlock freedom, no lock-order analysis, no condition variables/rwlocks/try-locks, no composition with the scoped-task ledger, no CT mapping, no promotion."
     },
     {
       "id": "R04",
@@ -56,9 +61,11 @@
         "docs/reports/w6-handler-rethrow/README.md",
         "docs/reports/w6-worker-allocation/README.md",
         "docs/reports/w6-completed-child-custody/README.md",
-        "docs/reports/w6-reused-address/README.md"
+        "docs/reports/w6-reused-address/README.md",
+        "docs/reports/remaining-v03/README.md",
+        "docs/reports/remaining-b02/README.md"
       ],
-      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
+      "remaining_boundary": "Only i32 and unit are typed in the sequential executable subset; own<Buffer> is added by the task profile and every other result type rejects at Q020. B02's residual flag is superseded: inconsistent exits are guarded by Q202/Q020 and call/result mismatch by Q020/Q013, not only by Q500. Four Q500-only rows remain named (V03 Q500-1..Q500-4). Two acceptance boundaries are recorded rather than repaired: sequential-subset parameter type names are structurally classified and not resolved (V03 B-1) and local type annotations are accepted and not interpreted (V03 B-2); both are inert in that subset and both reject in the task profile."
     },
     {
       "id": "R05",
@@ -66,9 +73,11 @@
       "area": "frontend",
       "status": "repaired_source",
       "evidence": [
-        "docs/reports/r0-3-source-validation/README.md"
+        "docs/reports/r0-3-source-validation/README.md",
+        "docs/reports/remaining-v04/README.md",
+        "docs/reports/remaining-d01/README.md"
       ],
-      "remaining_boundary": "Axis environment validation is unconditional; closed index/profile limits remain."
+      "remaining_boundary": "Axis environment validation is unconditional and the closed index/profile limits remain. V04's F1 (degenerate 0..0 span, cross-file misattribution) and F2 (byte offsets into the reconstructed source) are repaired by D01; V04's F3 (StaticEnvironment::check returns on the first CheckError, so a second bad axis is not named) is retained by decision as fail-closed."
     },
     {
       "id": "R06",
@@ -76,9 +85,10 @@
       "area": "resource_flow",
       "status": "repaired_model",
       "evidence": [
-        "docs/reports/r03-loop-counts/README.md"
+        "docs/reports/r03-loop-counts/README.md",
+        "docs/reports/remaining-v05/README.md"
       ],
-      "remaining_boundary": "Nonzero-net positive maximum counts reject. Exact counts remain supplied premises; identity alternatives and general source loops remain unsupported."
+      "remaining_boundary": "Nonzero-net positive maximum counts reject. Exact counts remain supplied premises; the summary API carries no allocation-identity discharge, and scalar ledger balance is not an identity discharge. No source loop is admitted, so no source program reaches this vocabulary. Identity alternatives and arbitrary nonzero-net upper-bound inference remain unimplemented."
     },
     {
       "id": "R07",
@@ -86,9 +96,10 @@
       "area": "frontend/observation",
       "status": "repaired_consumers",
       "evidence": [
-        "docs/reports/r0-3-source-validation/README.md"
+        "docs/reports/r0-3-source-validation/README.md",
+        "docs/reports/remaining-v06/README.md"
       ],
-      "remaining_boundary": "Full i32/i128 literal extrema are checked; arbitrary expression and result semantics are not added."
+      "remaining_boundary": "Full i32/i128 literal extrema are checked in every reachable signed route; arbitrary expression and result semantics are not added. Constant arithmetic exists only in the observation route and stays range-checked there. Route (a3) has probe-only coverage and its accepted range was value-checked only at the minimum and zero. No parser/Rust/C refinement proof is claimed."
     },
     {
       "id": "R08",
@@ -98,9 +109,12 @@
       "evidence": [
         "docs/reports/r03-contract-evidence/README.md",
         "docs/reports/w5-configured-process-audit/README.md",
-        "docs/reports/w5-cmetrics-unit-provider/README.md"
+        "docs/reports/w5-cmetrics-unit-provider/README.md",
+        "docs/reports/remaining-e01/README.md",
+        "docs/reports/remaining-e02/README.md",
+        "docs/reports/remaining-g03/README.md"
       ],
-      "remaining_boundary": "Resource loading, structural retention and observation replay remain separate; arbitrary contract theorem proving and source caller-precondition discharge remain open."
+      "remaining_boundary": "Resource loading, structural retention and observation replay remain separate. Bounded to the audited capability. E01-B1 is open and pinned: a definition visible only after macro expansion, and a K&R-style definition, are absent from the raw function enumeration and therefore from the derived inventory - no obligation and no residual Unknown row; the follow-up is E01-F1. E01-B2 (header definitions are outside the audited scope by construction) is a scope statement carried by the certificate. E02-B1: admission is not evidence that a provider computed anything, so no Safe result on this route may be attributed to provider analysis. E02-B2/B3/B4 and E01-F2/F3/F4 name the capabilities that still need their own audit. G03's F1 (a source set rooted at the checkout root is unrepresentable) and F2 (a second real CMake project's unmodified database is not consumable) bound the configuration-only claim. Arbitrary contract theorem proving and source caller-precondition discharge remain open."
     },
     {
       "id": "R09",
@@ -108,9 +122,13 @@
       "area": "documentation",
       "status": "reconciled",
       "evidence": [
-        "docs/reports/r03-integration/README.md"
+        "docs/reports/r03-integration/README.md",
+        "docs/reports/remaining-d01/README.md",
+        "docs/reports/remaining-b00/README.md",
+        "docs/reports/remaining-b02/README.md",
+        "docs/reports/remaining-v07/README.md"
       ],
-      "remaining_boundary": "Current specs, commands, diagnostics, validation and obsolete navigation updated; historical reports retain their original provenance."
+      "remaining_boundary": "The spec's Q7xx row was stale and is corrected to the four codes the code emits; AGENTS.md was already accurate. The Q020 (task route) / Q021 (sequential route) split for an unenforced source contract is retained deliberately until a source-contract consumer lands, because the two gates do not have the same rejection coverage (the task gate also refuses an empty `contract { }`). The seven-category reason-code vocabulary is specified prose with a mapping onto today's strings; no field carries it, so no consumer can filter on it. Code-level diagnostic golden tests remain future work, and historical reports retain their original provenance."
     },
     {
       "id": "R10",
@@ -121,19 +139,24 @@
         "docs/reports/r03-contract-evidence/README.md",
         "docs/reports/w5-configured-process-audit/README.md",
         "docs/reports/w2-preprocessor-transport/README.md",
-        "docs/reports/w2-clang-cmake-build/README.md"
+        "docs/reports/w2-clang-cmake-build/README.md",
+        "docs/reports/remaining-g01/README.md",
+        "docs/reports/remaining-g02/README.md",
+        "docs/reports/remaining-e02/README.md",
+        "docs/reports/remaining-p01/README.md",
+        "docs/reports/remaining-p02/README.md"
       ],
-      "remaining_boundary": "Observation scope/module/bounds substitution rejects. Native provenance is declared trusted evidence; whole-program/source-model refinement remains open."
+      "remaining_boundary": "Observation scope/module/bounds substitution rejects; native provenance is declared trusted evidence and whole-program/source-model refinement remains open. Identity is provenance, not attestation: the compiler executable, its environment and the filesystem are trusted. Individual headers are not enumerated - the dependency closure is bound by effect through preprocessed_source_sha256 under -E -P, so a header edit that leaves the token stream unchanged does not change the identity. The declared driver is recorded, never checked for equivalence. The pinned Cycle19 compatibility adapter keeps CSourceInput::HistoricalStdin and its silent choice among 28 units with two or four compile configurations (G01 SS5); its four archived artifacts were not re-measured. Syntax and typed-AST phases still read preprocessed text from standard input, which is why __builtin_FILE/__builtin_FILE_NAME reject rather than being answered. P01-F2 is open: qcorec plugins verify/enable accept schema-valid, digest-intact edits to non-digest manifest declarations. P02 is not an OS sandbox: no namespace, cgroup, seccomp or capability-drop mechanism; no filesystem or network confinement (P03); RLIMIT_NPROC is per-UID and must not be presented as a per-execution child quota; non-Linux refuses rather than partially enforcing; the enforced profile is never selected by default."
     }
   ],
   "validation": {
-    "workspace_tests": 819,
+    "workspace_tests": 997,
     "python_evidence_validator_tests": 43,
-    "lean_audits": 20,
+    "lean_audits": 21,
     "standing_gate": "passed",
     "full_language_conformance": false,
-    "latest_integration_evidence": "docs/reports/w2-clang-cmake-build/README.md",
-    "provider_tests": 45
+    "latest_integration_evidence": "docs/reports/remaining-d02/README.md",
+    "provider_tests": 47
   },
   "documentation_revision": "0.3",
   "open_followups": [
@@ -146,8 +169,201 @@
       "area": "unrestricted_c_custody_transfers",
       "status": "ten_false_safe_patterns_repaired_general_relational_alias_analysis_open",
       "evidence": "docs/reports/w4-nullable-removal/README.md"
+    },
+    {
+      "area": "CORPUS-REPIN",
+      "status": "Re-measure and re-pin the 185-unit corpus after C02 and G02",
+      "evidence": "docs/reports/remaining-c02/README.md SS6, docs/reports/remaining-g02/README.md SS8"
+    },
+    {
+      "area": "E01-F1",
+      "status": "Complete the source function enumeration (macro-expanded and K&R definitions)",
+      "evidence": "docs/reports/remaining-e01/README.md"
+    },
+    {
+      "area": "C02-P",
+      "status": "Borrowed pointer-field reads as contracted-call actuals",
+      "evidence": "docs/reports/remaining-c02/README.md SS7, docs/reports/remaining-o00/README.md SS8"
+    },
+    {
+      "area": "O04",
+      "status": "Per-arm constructor-to-caller cleanup discharge on the four early-return arms of flb_input_chunk_create",
+      "evidence": "docs/reports/remaining-o00/README.md SS8"
+    },
+    {
+      "area": "T03",
+      "status": "Source lowering for CheckedMutexInvariantV1",
+      "evidence": "docs/reports/remaining-t01/README.md, docs/reports/remaining-t02/README.md"
+    },
+    {
+      "area": "P03",
+      "status": "Filesystem and network confinement for process providers",
+      "evidence": "docs/reports/remaining-p02/README.md SS7"
+    },
+    {
+      "area": "P01-F2",
+      "status": "Bind non-digest manifest declarations to the executable's embedded template at enable time",
+      "evidence": "docs/reports/remaining-p01/README.md SS6"
+    },
+    {
+      "area": "G03-F1",
+      "status": "Represent a source set whose C sources live at the checkout root",
+      "evidence": "docs/reports/remaining-g03/README.md"
+    },
+    {
+      "area": "G03-F2",
+      "status": "Consume a second real CMake C project's unmodified compile database",
+      "evidence": "docs/reports/remaining-g03/README.md"
+    },
+    {
+      "area": "REASON-CODES",
+      "status": "Implement the L21.1 reason-code vocabulary for uncovered obligations",
+      "evidence": "docs/reports/remaining-d01/README.md SS3"
+    },
+    {
+      "area": "T00-CT-SCHEMA",
+      "status": "Make the CT manifest and its summarizer stage-derived (T00.1-T00.9)",
+      "evidence": "docs/reports/remaining-t00/README.md SS4, SS6"
     }
   ],
-  "latest_verified_implementation_revision": "e3e7c2c",
-  "handoff_document": "docs/HANDOFF_2026-09-07.md"
+  "latest_verified_implementation_revision": "67b1a9a0c538bc3410315516ce50015393dd38d4",
+  "handoff_document": "docs/HANDOFF_2026-09-07.md",
+  "acceptance_matrix": "docs/reviews/r0_3/acceptance_matrix.json",
+  "counts_are_run_metadata": "Every count in this record is run metadata about executed gates and manifests. It is not proof of specification coverage: projection coverage is not safety coverage, unknowns stay in the denominator, and a provisional Unsafe is never an upstream defect claim.",
+  "schema_versions": {
+    "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
+    "prose_specification_revision": "0.3",
+    "documentation_revision": "0.3",
+    "qcore_schemas_rust_api": "3.0.0",
+    "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field, which the documented policy makes a major change (docs/reports/schema-1-compatibility). Serde output for a manifest declaring no additional kinds is byte-identical.",
+    "plugin_protocol": "v1 (unchanged)",
+    "semantic_evidence": "v2 (unchanged)",
+    "program_schema_and_profile": "v2 (unchanged)",
+    "source_set_profile_manifest": "v1 (unchanged)",
+    "compile_task_identity": "1 (new in G01)",
+    "provider_packages": {
+      "qcore.chunkio": "0.4.0",
+      "qcore.cmetrics": "0.2.0",
+      "qcore.ctraces": "0.1.0",
+      "qcore.libevent": "0.1.0",
+      "qcore.librdkafka": "0.1.0"
+    }
+  },
+  "ct_evidence": {
+    "note": "ct_mapped/ct_unmapped above are inventory scalars, not coverage. T00 finding O7: the scalar treats a source-rejection case with zero native runs and a case with four reference executions plus four native runs as one identical unit of coverage, and hides that 0 of 11 mapped cases carry proof or gated sanitized evidence. The stage-derived rows live in the acceptance matrix.",
+    "derived_from": [
+      "docs/reports/remaining-t00/coverage.json",
+      "docs/reevaluation/ct_manifest.json"
+    ],
+    "reporting_host": "linux",
+    "stage_histogram": {
+      "parse": {
+        "executed": 11
+      },
+      "elaborate": {
+        "executed": 11
+      },
+      "task_lowering": {
+        "executed": 11
+      },
+      "task_ledger_check": {
+        "executed": 11
+      },
+      "sequential_whole_program": {
+        "not_applicable": 11
+      },
+      "sequential_reference_execution": {
+        "not_applicable": 11
+      },
+      "task_reference_execution": {
+        "executed": 9,
+        "not_applicable": 2
+      },
+      "c_emission": {
+        "executed": 9,
+        "not_applicable": 2
+      },
+      "native_execution": {
+        "executed": 9,
+        "not_applicable": 2
+      },
+      "native_sanitized": {
+        "unassessed": 6,
+        "recorded_not_gated": 5
+      },
+      "legacy_c_twin": {
+        "not_applicable": 11
+      },
+      "proof": {
+        "unassessed": 11
+      }
+    },
+    "depth_profile": {
+      "native_execution": 9,
+      "task_ledger_check": 2
+    },
+    "observation_counts": {
+      "parse": 11,
+      "elaborate": 11,
+      "task_lowering": 11,
+      "task_ledger_check": 11,
+      "task_reference_execution": 18,
+      "c_emission": 19,
+      "native_execution": 19
+    },
+    "unmapped_bucket_counts": {
+      "blocked-on-task-lowering (share captures)": 4,
+      "ambiguous + unimplemented-syntax": 1,
+      "blocked-on-unimplemented-syntax": 7,
+      "blocked-on-typed-error-payloads": 1,
+      "blocked-on-typed-error-payloads + no borrow captures": 1,
+      "blocked-on-W3/W4": 3,
+      "DECIDABLE-NOW (with a distinguishing fixture)": 1,
+      "ambiguous (partially unblocked)": 1,
+      "blocked-on-unimplemented-syntax (no mutex value)": 11,
+      "blocked-on-W3/W4 (conditional half resolved)": 1,
+      "DECIDABLE-NOW (coarser reason)": 2,
+      "blocked-on-harness-schema (C-twin stage)": 5,
+      "ambiguous": 1
+    },
+    "newly_decidable_not_mapped": [
+      "CT24",
+      "CT39",
+      "CT47"
+    ],
+    "cause": "docs/reports/remaining-t00/README.md"
+  },
+  "unverified_specs_disposition": {
+    "authority_note": "These are the supplied revision-0.3 inputs. They are DECLARED INPUTS, not implementation authority: an item's disposition records what this repository adopted, not what it implements. Implementation status is carried by the requirement rows above and by docs/reviews/r0_3/acceptance.json.",
+    "source": "docs/reports/remaining-b02/README.md (section `unverified_specs/ disposition`)",
+    "location_note": "unverified_specs/ is untracked in the primary checkout and therefore absent from every worktree; all five files are byte-identical (sha256 verified by B02) to their archived copies under docs/reviews/r0_3/supplied/.",
+    "items": {
+      "REVIEW.md": "adopted",
+      "QCORE_SPEC_r0_3.md": "adopted-and-amended",
+      "QCORE_CONTRACT_SPEC_r0_3.md": "adopted-and-amended",
+      "QCORE_IMPLEMENTED_GRAMMARS_r0_3.md": "adopted-and-amended",
+      "QCORE_DESIGN_GRAMMAR_r0_3.bnf": "adopted-as-target-only",
+      "docs/reviews/r0_3/probe/ (advertised Rust probe package)": "superseded",
+      "the reviewer's archive, acceptance.json, source_inventory.json and validation.json": "superseded"
+    },
+    "detail": "docs/reviews/r0_3/acceptance_matrix.json -> unverified_specs"
+  },
+  "wave_2026_09_07": {
+    "report": "docs/reports/remaining-d02/README.md",
+    "matrix": "docs/reviews/r0_3/acceptance_matrix.json",
+    "rows_changed": {
+      "R01": "V01's adversarial pass over the generation-liveness gate: the event-kind x liveness-state matrix, four closed coverage gaps and four new Lean destroy-arm theorems. No soundness failure was found and no production code changed.",
+      "R02": "T00 established that the mapped CT cases' stage claims exceed their executed evidence (the sequential CFG and its reference execution are not run on any mapped case's own fixture), and T02 turned 'checked mutex invariants' from absent into a separate model profile that is not composed with the task ledger. The boundary is restated accordingly; the status is unchanged.",
+      "R03": "B02 classified R03 unsupported-by-profile because no checked-invariant profile existed. T01 specified one and T02 implemented CheckedMutexInvariantV1 in crates/qcore-core/src/mutex_invariant.rs with 48 tests and 31 registered Lean theorems, leaving TrustedExplicitTrace and its named premises unchanged.",
+      "R04": "B02 found that this row's remaining_boundary was a verbatim copy of R02's task-lifetime text, which says nothing about result typing. V03's 71-probe matrix then superseded B02's own residual flag and named the four Q500-only rows and the two acceptance boundaries B-1/B-2. The status is unchanged; the boundary is replaced with the one measured for this requirement.",
+      "R05": "V04's 28-row matrix confirmed the unconditional rule and found three diagnostic-attribution defects on the rejecting path; D01 repaired F1 and F2 and retained F3 by decision, and added the direct DuplicateDimension/DuplicateAxis cases V04 named as missing.",
+      "R06": "V05 pinned the full body x count x evidence matrix and the Exact->AtMost mutation in both replay paths, and measured that no source loop is admitted at all, so the distinction is unreachable from the source route.",
+      "R07": "V06 located a third signed literal route - the checked-task scalar operand, with its own range rule - that neither cited test covers, and exercised the i128 route through its public API from outside the workspace. 128 probe rows, 0 mismatches.",
+      "R08": "E01 audited the obligation inventory of one admitted capability and found the enumeration boundary E01-B1; E02 completed the replay/cache mutation matrix (52 rows, 0 accepted mutations) and recorded that no result cache exists on the route; G03 audited a second pinned source set from configuration alone and named the two generalization gaps that blocked the stronger candidate.",
+      "R09": "D01 made the diagnostic ownership table canonical in docs/QCORE_SPEC_r0_3.md L21, resolved the Q700-Q703 drift B02 recorded in favour of the code, recorded the Q020/Q021 route split V07 found as intentional, and specified the L21.1 reason-code vocabulary without implementing it. B00's two repository-map documentation findings are repaired in AGENTS.md by card D02.",
+      "R10": "G01 bound a compile-task identity the resource projection did not record; G02 repaired a Safe verdict decided by the audit process's working directory and made the declared input part of the identity; E02 pinned the mutation matrix; P01 audited provider layering and packaging and found F2; P02 replaced a pure limit declaration with an enforced Linux execution profile carrying an explicit achieved/unenforced record."
+    },
+    "rows_unchanged": [],
+    "not_re_measured": "the four archived 185-unit Cycle 19 artifacts. C02 touched shared analysis code and G02 changed the declared input transport, so they would change in both directions; the pin gate correctly refused to run the audit in this environment and nothing was adjusted to fit. Raw units remain 2 Safe / 42 provisional Unsafe / 137 Unknown plus four data-only units, unpromoted, and re-measurement plus deliberate re-pinning is the named CORPUS-REPIN follow-up."
+  }
 }
