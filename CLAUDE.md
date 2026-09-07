@@ -496,3 +496,20 @@ tests, 43 Python tests, 20 Lean audits and the fixed sanitizer run pass; all fou
 Cycle19 artifacts remain byte-identical. No core/backend semantics change. Raw
 pointer or descriptor reuse, arbitrary allocators and source/native refinement
 remain open. Evidence: `docs/reports/w6-reused-address/README.md`.
+
+Generic driver and custody consolidation (2026-09-07): W5 moves the pure
+reference-count/container/publication custody model into dependency-free
+`qcore-core`. Generic library/chunk import gates, source-bundle checks, the
+Cycle17 aggregate checker and source compilation with an explicit verifier
+registry now live in `qcore-verification`, without provider dependencies.
+Compiler facades preserve public type identity and default first-party discovery;
+Monkey-specific composition stays in its adapter. Seven production components
+retain exact token parity after documented module/import rewrites. Two existing
+pure tests move with the model; six new integration/compatibility tests bring the
+workspace to 797 passing tests. Standing gates, 31 provider tests, 43 Python tests
+and 20 Lean audits pass. The full 185-TU audit and all four serialized artifacts
+remain identical to the prior report; no verdict or CT mapping changes. Declared
+model profiles and synchronization evidence remain premises, not native proofs.
+Specialized provider semantics, broader lifecycle/source binding and compatibility
+route removal remain open. Evidence:
+`docs/reports/w5-generic-driver-consolidation/README.md`.

@@ -274,3 +274,28 @@ fn reactor_adapter_enum_supports_external_variant_imports() {
         ]
     );
 }
+
+#[test]
+fn generic_driver_and_custody_facades_share_the_extracted_types() {
+    use std::any::TypeId;
+    assert_eq!(
+        TypeId::of::<qcore_compiler::external_integration::LibraryCustodyProgram>(),
+        TypeId::of::<qcore_core::library_custody::LibraryCustodyProgram>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::external_integration::LibraryImportCertificate>(),
+        TypeId::of::<qcore_verification::library_import::LibraryImportCertificate>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::driver::CompiledModule>(),
+        TypeId::of::<qcore_verification::driver::CompiledModule>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::external_source::LibrarySourceCertificate>(),
+        TypeId::of::<qcore_verification::external_source::LibrarySourceCertificate>()
+    );
+    assert_eq!(
+        TypeId::of::<qcore_compiler::research_extensions::Cycle17Certificate>(),
+        TypeId::of::<qcore_verification::research_extensions::Cycle17Certificate>()
+    );
+}

@@ -132,7 +132,8 @@ crates/qcore-schemas          # L0: the published, versioned surface
   source/build identity records.  serde types only, no analysis logic.
 crates/qcore-core             # L1: trusted semantic kernel
   usage, ownership, quant indices, typed errors, error regions, CFG,
-  weak memory, concurrency, custody algebra and pure model checkers.
+  weak memory, concurrency, custody algebra, library/container/reference-count custody
+  and pure model checkers.
 crates/qcore-frontend         # L1: front end, elaboration + whole-program checking
 crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
@@ -142,6 +143,7 @@ crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
   composition and certificate admission orchestration (W3).
 crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier host:
+  explicit-registry source driver, declared model/source-bundle gates, research aggregate,
   obligation derivation, witness replay, scope dispatch, typed source-contract replay.
   No provider dependency.
   Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
@@ -493,6 +495,15 @@ interaction with `MAX_ALIAS_TARGETS`). Insist on the "validated, not just
 inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
+
+[Generic driver and custody consolidation](reports/w5-generic-driver-consolidation/README.md)
+moves the remaining pure library-custody model into the kernel and explicit-registry
+source compilation, generic imports and research aggregation into verification.
+Default registry discovery and Monkey-specific composition remain compiler adapters.
+No dependency edge or semantic rule changes; seven production components and all
+four full-corpus outputs retain parity. Five tests exercise the provider-free
+entry points and a compatibility test pins type identity. Full provider semantic
+extraction and compatibility route deletion remain open.
 
 [Generic source consolidation](reports/w5-generic-source-consolidation/README.md)
 extracts typed path import/def-use into the C gateway and counter, field-release,

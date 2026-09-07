@@ -1,0 +1,170 @@
+{
+  "base_commit": "7cb45a0",
+  "components": [
+    {
+      "component": "pure custody model",
+      "old_path": "compiler/src/external_integration.rs",
+      "new_path": "crates/qcore-core/src/library_custody.rs",
+      "old_sha256": "72f7ac78e0cdbbe5d85c763db20bddf5000f85e054d42b143b7f08b7eff00621",
+      "new_sha256": "eb486d99719152a614eacb2bb3a0e0bd79e7d62cab53ff55012a644765512eb9",
+      "normalized_token_count": 2232,
+      "normalized_tokens_sha256": "c385e178da3973003c1b249a0dd151b63504663c701e142d16cdeaea724fda23",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": []
+    },
+    {
+      "component": "declared library and lifecycle imports",
+      "old_path": "compiler/src/external_integration.rs",
+      "new_path": "crates/qcore-verification/src/library_import.rs",
+      "old_sha256": "72f7ac78e0cdbbe5d85c763db20bddf5000f85e054d42b143b7f08b7eff00621",
+      "new_sha256": "12a0b047e6b66d7d7720b290d478675a030b6f024c57749fc4037c6d06c378d5",
+      "normalized_token_count": 1547,
+      "normalized_tokens_sha256": "27e5cbf0b5aaea04d0192b3e00ff622de6299d7fcc0b67865cea45e173e8f0a3",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": [
+        [
+          "qcore_core::chunk_lifecycle::ChunkResidency",
+          "crate::chunk_lifecycle::ChunkResidency"
+        ]
+      ]
+    },
+    {
+      "component": "retained Monkey specialization",
+      "old_path": "compiler/src/external_integration.rs",
+      "new_path": "compiler/src/external_integration.rs",
+      "old_sha256": "72f7ac78e0cdbbe5d85c763db20bddf5000f85e054d42b143b7f08b7eff00621",
+      "new_sha256": "6e4aa286df80df07e08bb4fa20a2c8c1319ca2696bb2db95e4085d19e2094aa4",
+      "normalized_token_count": 1412,
+      "normalized_tokens_sha256": "2f5e9331720f2ac2b676140033d247c80bfa6be1584f228a7e5b77d86c56e927",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": []
+    },
+    {
+      "component": "source bundle gates",
+      "old_path": "compiler/src/external_source.rs",
+      "new_path": "crates/qcore-verification/src/external_source.rs",
+      "old_sha256": "7191089c7d76258f088988877022128b7d89b7de514a26c819a5b589fe0daef5",
+      "new_sha256": "cf520e68bf8ba7c58d08d5b10488459690dcf891b13572b2bb41f6dd43e0bbd8",
+      "normalized_token_count": 584,
+      "normalized_tokens_sha256": "78c697ad7025ea058c96d08bede02cd073dbae152161b651312871b97757056a",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": [
+        [
+          "crate::library_import::",
+          "crate::external_integration::"
+        ]
+      ]
+    },
+    {
+      "component": "research aggregate",
+      "old_path": "compiler/src/research_extensions.rs",
+      "new_path": "crates/qcore-verification/src/research_extensions.rs",
+      "old_sha256": "2aae8e48a17ccb3893f8f6af37ea591bc0066b5604e52ca6124bba7ca73b1edb",
+      "new_sha256": "de32e5a493ede8fa56616867b34703eef4c5762242394b29291209a53a9a15b2",
+      "normalized_token_count": 691,
+      "normalized_tokens_sha256": "cbbd4464739e5fb108b1cacc96123a4a84f4ad6c86490c3a056137bfc50f03fb",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": [
+        [
+          "qcore_c_gateway::legacy_c::",
+          "crate::legacy_c::"
+        ],
+        [
+          "qcore_core::inference::",
+          "crate::inference::"
+        ],
+        [
+          "qcore_core::native_concurrency::",
+          "crate::native_concurrency::"
+        ],
+        [
+          "qcore_core::weak_memory::",
+          "crate::weak_memory::"
+        ]
+      ]
+    },
+    {
+      "component": "explicit-registry source driver",
+      "old_path": "compiler/src/driver.rs",
+      "new_path": "crates/qcore-verification/src/driver.rs",
+      "old_sha256": "f5d7170cc194da38b867c08da6574711d4bb1fc0b25a26d8c16f0a3826c01439",
+      "new_sha256": "6039cdf7dcd0a600eac61672d65b625d551ead4460a4a7b091e44bb2c0353b94",
+      "normalized_token_count": 8126,
+      "normalized_tokens_sha256": "2ca04fba25c346a9bb8660103ec37bb38215ec73611c7c20cb64fdbe15b7081a",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": [
+        [
+          "qcore_core::cleanup_lowering::",
+          "crate::cleanup_lowering::"
+        ],
+        [
+          "qcore_core::ownership::",
+          "crate::ownership::"
+        ],
+        [
+          "qcore_core::resource_flow::",
+          "crate::resource_flow::"
+        ],
+        [
+          "qcore_core::typed_errors::",
+          "crate::typed_errors::"
+        ],
+        [
+          "qcore_core::usage::",
+          "crate::usage::"
+        ],
+        [
+          "qcore_frontend::frontend::",
+          "crate::frontend::"
+        ],
+        [
+          "qcore_frontend::lexer::",
+          "crate::lexer::"
+        ],
+        [
+          "qcore_frontend::whole_program::",
+          "crate::whole_program::"
+        ],
+        [
+          "qcore_core::interpret_cfg",
+          "crate::interpret_cfg"
+        ],
+        [
+          "qcore_core::ExecutionOutcome",
+          "crate::ExecutionOutcome"
+        ],
+        [
+          "crate::frontend::SourceTypeKind",
+          "crate::SourceTypeKind"
+        ],
+        [
+          "crate::frontend::SymbolId",
+          "crate::SourceSymbolId"
+        ],
+        [
+          "crate::frontend::source_diagnostic",
+          "crate::source_diagnostic"
+        ],
+        [
+          "use qcore_core::{ExecutionObservation, emit_c11};",
+          "use crate::{ExecutionObservation, VerifierRegistry, emit_c11, first_party_registry};"
+        ],
+        [
+          "use qcore_verifier_host::VerifierRegistry;",
+          ""
+        ]
+      ]
+    },
+    {
+      "component": "retained default registry wrapper",
+      "old_path": "compiler/src/driver.rs",
+      "new_path": "compiler/src/driver.rs",
+      "old_sha256": "f5d7170cc194da38b867c08da6574711d4bb1fc0b25a26d8c16f0a3826c01439",
+      "new_sha256": "aa77244b8cae84cb9b2381537a36423294b71b94142fd8080a3f2456742e0607",
+      "normalized_token_count": 46,
+      "normalized_tokens_sha256": "adb7969b0bd36ee8359eb1ad4737e17242893928674e64cb7bf97db102255f88",
+      "equal_after_documented_rewrites": true,
+      "reverse_module_rewrites": []
+    }
+  ]
+}

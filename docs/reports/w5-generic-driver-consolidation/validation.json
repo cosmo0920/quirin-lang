@@ -1,0 +1,84 @@
+{
+  "base_commit": "7cb45a0a0a67c171de4305e35a87a5c307e9bfb7",
+  "status": "passed",
+  "workspace_tests": 797,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 58,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "new_integration_tests": 6,
+  "relocated_existing_tests": 2,
+  "source_sha256": {
+    "AGENTS.md": "c271b332cb777196f0ffedd3317d2b2f7ddb954d3cce3b5a4c76587dae332849",
+    "CLAUDE.md": "79eac71d55bce1e3e21bb0a44360fa256b5eae8f04531cf856448ad0b83d2dd9",
+    "README.md": "a1563f99ed48444da0d930fe230e42060c0583f6c5009f36388531b25e5872f0",
+    "compiler/src/driver.rs": "aa77244b8cae84cb9b2381537a36423294b71b94142fd8080a3f2456742e0607",
+    "compiler/src/external_integration.rs": "6e4aa286df80df07e08bb4fa20a2c8c1319ca2696bb2db95e4085d19e2094aa4",
+    "compiler/src/external_source.rs": "919ee2ca8f83ea1343e723dc27d642868d7c38fb4a523cfb4ee02e8b77eab2d8",
+    "compiler/src/research_extensions.rs": "586d825f1e0b4e33eef993f503094b5f3404e5902766abc636ac8d36c0040fae",
+    "compiler/tests/unit/driver.rs": "e544ecb03fa2e3a067e7fd3e308230237e5ad3ab8de8ebac10fff7c776349f71",
+    "compiler/tests/unit/external_integration.rs": "20802ee03991234b5999b9bbabe922c1e70d50944d92f1dbe5f69eed89c92e24",
+    "compiler/tests/unit/external_source.rs": "aa9cdd380de8b61eb110d2dc4c8af19affc0adb599917c39ede5823d09fdbcee",
+    "compiler/tests/unit/research_extensions.rs": "13230cf207b0c30e3100a46b47e319069b33a7808dbbd5484f64258c286eb791",
+    "compiler/tests/workspace_layering.rs": "8ff364400050c72cd8dfc6d0463eb95def45b5fd45006b9f26931976c4f81d08",
+    "crates/qcore-core/src/lib.rs": "6ea57068aab03d36843eeafff1372e8a4d5df2357ed7dea85f9a3381c1cb7795",
+    "crates/qcore-core/src/library_custody.rs": "eb486d99719152a614eacb2bb3a0e0bd79e7d62cab53ff55012a644765512eb9",
+    "crates/qcore-verification/src/driver.rs": "6039cdf7dcd0a600eac61672d65b625d551ead4460a4a7b091e44bb2c0353b94",
+    "crates/qcore-verification/src/external_source.rs": "cf520e68bf8ba7c58d08d5b10488459690dcf891b13572b2bb41f6dd43e0bbd8",
+    "crates/qcore-verification/src/lib.rs": "6d62a8c7ae299894cfc5fd3fcd2cd6748c17b32caef486ef87729ca91806ab38",
+    "crates/qcore-verification/src/library_import.rs": "12a0b047e6b66d7d7720b290d478675a030b6f024c57749fc4037c6d06c378d5",
+    "crates/qcore-verification/src/research_extensions.rs": "de32e5a493ede8fa56616867b34703eef4c5762242394b29291209a53a9a15b2",
+    "crates/qcore-verification/tests/generic_driver.rs": "9cbf6ca65e69522b88329e228f6f83f63f3645792b7d76b42af96e677f9a5664",
+    "docs/GENERALIZATION_PLAN.md": "65225fe061dae84b86df52bc06ef460cf5cd8055490cb3387036337c35b78957",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "11f8d75ed5f3289ca1e5a74dcb3e1e0b0b1fb819a211569941bf9064e45b2637",
+    "docs/reports/w5-generic-driver-consolidation/README.md": "797956365bf6c9da421d7808e41d1dbbc2a93dcb0d42cc9794cbcbb93c2277d3",
+    "docs/reports/w5-generic-driver-consolidation/check-relocation.py": "7ae90ff516f16d08425121bbebdead018ae3fba4e6f08658153c37cc59c59518"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "path": "workspace.log.gz",
+      "uncompressed_sha256": "38b6f77360f46a1cde5ddcfdb0705061de6fe319fc4eed9414b49b5e5430087c"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "path": "checks.log.gz",
+      "uncompressed_sha256": "3a0456db756457e3acfbab4ba2ad944f66bcb279ebfee933bafbec617d97ed49"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "path": "providers.log.gz",
+      "uncompressed_sha256": "25bb69c6826cad3b518af8c9fec4ef6112d89eaf772415cf8b10dfacd29e21d0"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "path": "python.log.gz",
+      "uncompressed_sha256": "7b1617d34242debb2c2abbe77276b86e6c1c538ac3b138aefc325a8d7a2f7a7e"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "path": "lean-build.log.gz",
+      "uncompressed_sha256": "c09060a6aa1cdc4e5d89b4df28ae9fb617711bad3a7db7fca6d3cc11af95f7e2"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "path": "lean-audits.log.gz",
+      "uncompressed_sha256": "14c35079056f7e8ce1c0a24924523d4cfa9bdafc946b0347d05b225285df109f"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-generic-driver-source.json /tmp/qcore-generic-driver-diagnostics.json",
+      "exit_code": 0,
+      "path": "audit.log.gz",
+      "uncompressed_sha256": "842491cc89707ecd097d266a8b0d75c6a35360fae968fb525fbd2e9b9805a7e5"
+    }
+  }
+}

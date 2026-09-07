@@ -17,3 +17,8 @@ pub mod cleanup_outcome;
 pub mod counter_contract;
 pub mod field_destructor;
 pub mod list_unlink_contract;
+
+pub mod driver;
+pub mod external_source;
+pub mod library_import;
+pub mod research_extensions;

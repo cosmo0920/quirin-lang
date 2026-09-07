@@ -7,7 +7,9 @@ use crate::native_concurrency::{NativeOperation, NativeScheduleStep, RequiredPla
 use crate::resource_flow::Flow;
 use crate::resource_flow::Quantity;
 use crate::weak_memory::{C11Execution, MemoryEvent, MemoryEventKind};
+use qcore_core::native_concurrency::{NativeProgram, PlatformRun};
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 fn q(amount: u64) -> Quantity {
     Quantity::single("memory", amount)

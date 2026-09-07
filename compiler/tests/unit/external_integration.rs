@@ -1,4 +1,6 @@
 use super::*;
+use qcore_core::chunk_lifecycle::ChunkOperation;
+use qcore_schemas::profile::OperationKind;
 
 use std::sync::LazyLock;
 
@@ -160,93 +162,6 @@ fn queue_refcounts_and_synchronized_publication_discharge() {
             .contains(&LibraryImportDiagnostic::UnsupportedSummary(
                 LibraryMechanismSummary::TypedQueue
             ))
-    );
-}
-
-#[test]
-fn repeated_retains_by_one_holder_are_counted() {
-    let program = LibraryCustodyProgram {
-        operations: vec![
-            LibraryCustodyOperation::Acquire {
-                resource: 1,
-                holder: ExternalHolder::Local(1),
-            },
-            LibraryCustodyOperation::Retain {
-                resource: 1,
-                from: ExternalHolder::Local(1),
-                retained: ExternalHolder::Local(1),
-            },
-            LibraryCustodyOperation::Release {
-                resource: 1,
-                holder: ExternalHolder::Local(1),
-            },
-            LibraryCustodyOperation::Release {
-                resource: 1,
-                holder: ExternalHolder::Local(1),
-            },
-        ],
-        ..LibraryCustodyProgram::default()
-    };
-    assert!(check_library_custody(&program).is_ok());
-
-    let mut leaked = program;
-    leaked.operations.pop();
-    assert_eq!(
-        check_library_custody(&leaked).unwrap_err(),
-        vec![LibraryCustodyDiagnostic::LiveResource(1)]
-    );
-}
-
-#[test]
-fn arena_destructor_cascades_but_queue_and_publication_fail_closed() {
-    let arena = LibraryCustodyProgram {
-        operations: vec![
-            LibraryCustodyOperation::CreateContainer {
-                container: 1,
-                kind: ExternalContainerKind::Arena,
-            },
-            LibraryCustodyOperation::Acquire {
-                resource: 2,
-                holder: ExternalHolder::Local(0),
-            },
-            LibraryCustodyOperation::Retain {
-                resource: 2,
-                from: ExternalHolder::Local(0),
-                retained: ExternalHolder::Local(0),
-            },
-            LibraryCustodyOperation::Store {
-                container: 1,
-                resource: 2,
-                from: ExternalHolder::Local(0),
-            },
-            LibraryCustodyOperation::Store {
-                container: 1,
-                resource: 2,
-                from: ExternalHolder::Local(0),
-            },
-            LibraryCustodyOperation::DestroyContainer {
-                container: 1,
-                destroy_members: true,
-            },
-        ],
-        ..LibraryCustodyProgram::default()
-    };
-    assert!(check_library_custody(&arena).is_ok());
-
-    let mut missing_evidence = arena;
-    missing_evidence.operations.insert(
-        2,
-        LibraryCustodyOperation::Publish {
-            resource: 2,
-            from: ExternalHolder::Local(0),
-            publication: 1,
-            evidence: 99,
-        },
-    );
-    assert!(
-        check_library_custody(&missing_evidence)
-            .unwrap_err()
-            .contains(&LibraryCustodyDiagnostic::MissingSynchronization(99))
     );
 }
 

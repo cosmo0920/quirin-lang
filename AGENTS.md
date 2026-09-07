@@ -21,7 +21,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | Path | Contents |
 |---|---|
 | `compiler/` | Rust library crate `qcore-compiler` (lib `qcore_compiler`): parser, checker, reference semantics, C backend, gateway/host compatibility APIs, first-party providers. Still the L1/L2 grab-bag; decomposition target in `docs/GENERALIZATION_PLAN.md` §3 |
-| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
+| `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic library/container/reference-count and reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped copy/owned-buffer source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
 | `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
@@ -32,10 +32,10 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `crates/qcore-c-gateway/src/typed_source.rs` | Opaque typed C path import and source def/use; generic tests run here, library fixtures remain in compiler compatibility adapters |
 | `crates/qcore-verification/src/{counter_contract,field_destructor,list_unlink_contract,cleanup_outcome}.rs` | Trusted provider-free replay over opaque C imports and explicit contract premises |
 | `crates/qcore-verifier-host/` | L2 generic registry, source-scope resolution, bounded process transport, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
-| `crates/qcore-verification/` | Trusted adapter: core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
+| `crates/qcore-verification/` | Trusted adapter: explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation/dispatch live in `qcore-verification` |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
-| `compiler/src/external_{integration,source}.rs` | Cycle 19 library custody mechanisms + pinned source-set tables (over-fitted; see plan) |
+| `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition; pure custody is in core and generic model/source imports are in verification |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `contract/qcore/` | Declarative `.qcore` contract corpus (58 files); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
@@ -709,3 +709,20 @@ tests, 43 Python tests, 20 Lean audits and the fixed sanitizer run pass; all fou
 Cycle19 artifacts remain byte-identical. No core/backend semantics change. Raw
 pointer or descriptor reuse, arbitrary allocators and source/native refinement
 remain open. Evidence: `docs/reports/w6-reused-address/README.md`.
+
+Generic driver and custody consolidation (2026-09-07): W5 moves the pure
+reference-count/container/publication custody model into dependency-free
+`qcore-core`. Generic library/chunk import gates, source-bundle checks, the
+Cycle17 aggregate checker and source compilation with an explicit verifier
+registry now live in `qcore-verification`, without provider dependencies.
+Compiler facades preserve public type identity and default first-party discovery;
+Monkey-specific composition stays in its adapter. Seven production components
+retain exact token parity after documented module/import rewrites. Two existing
+pure tests move with the model; six new integration/compatibility tests bring the
+workspace to 797 passing tests. Standing gates, 31 provider tests, 43 Python tests
+and 20 Lean audits pass. The full 185-TU audit and all four serialized artifacts
+remain identical to the prior report; no verdict or CT mapping changes. Declared
+model profiles and synchronization evidence remain premises, not native proofs.
+Specialized provider semantics, broader lifecycle/source binding and compatibility
+route removal remain open. Evidence:
+`docs/reports/w5-generic-driver-consolidation/README.md`.

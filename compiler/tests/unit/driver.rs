@@ -1,5 +1,7 @@
 use super::*;
 use crate::{ExecutionOutcome, TraceEvent, parse_c_observation};
+use qcore_core::usage::Usage;
+use qcore_frontend::frontend::ExecutableResultType;
 use std::fs;
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};

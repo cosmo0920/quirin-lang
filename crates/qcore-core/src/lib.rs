@@ -17,6 +17,7 @@ pub mod error_region;
 pub mod executable_model;
 pub mod index;
 pub mod inference;
+pub mod library_custody;
 pub mod native_concurrency;
 pub mod ownership;
 pub mod research_closure;
