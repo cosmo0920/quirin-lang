@@ -194,8 +194,9 @@ OS durability theorem, no implicit resource-v1 extension.
 
 ## 9. Gate results
 
-Run in this worktree at branch `claude/cycle-19-task-delegation-f20028`, with
-the Libevent submodule initialized.
+Run in this card's isolated worktree, on branch
+`worktree-agent-a7beea0ea8b1db9ae` based at `c60fd91` (the second delegated
+increment's consolidation commit), with the Libevent submodule initialized.
 
 | Gate | Command | Observed | Exit |
 |---|---|---|---|
