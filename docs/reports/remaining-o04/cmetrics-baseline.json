@@ -1,0 +1,273 @@
+{
+  "diagnostic_counts": {
+    "leak": 2,
+    "unknown_alias": 2,
+    "unsupported": 35
+  },
+  "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
+  "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
+  "schema_version": 1,
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
+  "source_revision": "90a010910e5b3328f496cc20fadc937547133439",
+  "units": [
+    {
+      "diagnostic_counts": {
+        "leak": 2,
+        "unknown_alias": 2,
+        "unsupported": 35
+      },
+      "file": "lib/cmetrics/src/cmt_counter.c",
+      "functions": [
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5522
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5526
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_add`",
+              "line": 5529
+            }
+          ],
+          "function": "cmt_counter_add",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [],
+          "function": "cmt_counter_allow_reset",
+          "status": "Safe"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5451
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5455
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5458
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5459
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5462
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5463
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5468
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5471
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5472
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5474
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_counter_destroy`",
+              "line": 5475
+            },
+            {
+              "category": "leak",
+              "description": "live obligation acquired at preprocessed line 5466",
+              "line": 5476
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5478
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5480
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_log_print`",
+              "line": 5481
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_counter_destroy`",
+              "line": 5482
+            },
+            {
+              "category": "leak",
+              "description": "live obligation acquired at preprocessed line 5466",
+              "line": 5483
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5485
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5486
+            },
+            {
+              "category": "unknown_alias",
+              "description": "unresolved resource identity `counter`",
+              "line": 5487
+            }
+          ],
+          "function": "cmt_counter_create",
+          "status": "Unsafe"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5495
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5496
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5497
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5498
+            },
+            {
+              "category": "unknown_alias",
+              "description": "unresolved resource identity `counter`",
+              "line": 5500
+            }
+          ],
+          "function": "cmt_counter_destroy",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5555
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5559
+            },
+            {
+              "category": "unsupported",
+              "description": "store through `*out_val` without an out-parameter contract",
+              "line": 5562
+            }
+          ],
+          "function": "cmt_counter_get_val",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5508
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5512
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_inc`",
+              "line": 5515
+            }
+          ],
+          "function": "cmt_counter_inc",
+          "status": "Unknown"
+        },
+        {
+          "diagnostics": [
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5536
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5540
+            },
+            {
+              "category": "unsupported",
+              "description": "unmodeled call, aggregate or indirect access in branch condition",
+              "line": 5543
+            },
+            {
+              "category": "unsupported",
+              "description": "indirect memory access is outside the resource projection",
+              "line": 5544
+            },
+            {
+              "category": "unsupported",
+              "description": "call to uncontracted function `cmt_metric_set`",
+              "line": 5547
+            }
+          ],
+          "function": "cmt_counter_set",
+          "status": "Unknown"
+        }
+      ],
+      "library": "cmetrics",
+      "not_projected": [],
+      "reason": null,
+      "source_functions": [
+        "cmt_counter_add",
+        "cmt_counter_allow_reset",
+        "cmt_counter_create",
+        "cmt_counter_destroy",
+        "cmt_counter_get_val",
+        "cmt_counter_inc",
+        "cmt_counter_set"
+      ],
+      "status": "Unsafe"
+    }
+  ]
+}

@@ -810,3 +810,43 @@ fn a_certificate_resting_on_the_admission_is_rederived_from_source() {
     // were caused by the substitutions and not by an unrelated failure.
     check_legacy_safety_certificate(&certificate).expect("the baseline still rechecks");
 }
+
+/// Not an assertion: prints the measured per-exit ledger of the real path so
+/// the archived report can be regenerated. Run with
+/// `cargo test -p qcore-c-gateway --test o04_constructor_caller -- --ignored
+///  --nocapture print_the_measured_exit_ledger`.
+#[test]
+#[ignore = "reporting aid, not an assertion"]
+fn print_the_measured_exit_ledger() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_real(&real_unit());
+    let preprocessed = match &result {
+        UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            ..
+        } => preprocessed_source.clone(),
+        _ => String::new(),
+    };
+    let lines = preprocessed.split('\n').collect::<Vec<_>>();
+    let summary = program(&result);
+    for name in ["cio_chunk_open", "flb_input_chunk_create"] {
+        let measured = function(summary, name);
+        println!("{name}: {:?}", measured.status);
+        for exit in &measured.exits {
+            println!(
+                "  {:<11?} {:<48} sites={:?}",
+                exit.custody,
+                lines
+                    .get(exit.line.saturating_sub(1))
+                    .unwrap_or(&"?")
+                    .trim(),
+                exit.sites
+                    .iter()
+                    .map(|site| (site.acquisition_line, site.disposition))
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
+}

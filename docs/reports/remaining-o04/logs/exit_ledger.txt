@@ -1,0 +1,17 @@
+cio_chunk_open: Unknown
+  Unknown return ch;                                       sites=[(154, Mixed)]
+  Unknown return ((void *) 0);                             sites=[(154, Mixed)]
+  Discharged return ((void *) 0);                             sites=[]
+  Discharged return ((void *) 0);                             sites=[]
+  Discharged return ((void *) 0);                             sites=[]
+  Discharged return ((void *) 0);                             sites=[]
+flb_input_chunk_create: Unknown
+  Unknown return ic;                                       sites=[(206, Mixed), (227, Mixed)]
+  Unknown return ((void *) 0);                             sites=[(206, Mixed), (227, Mixed)]
+  Discharged return ((void *) 0);                             sites=[(206, Released)]
+  Discharged return ((void *) 0);                             sites=[(206, Released)]
+  Discharged return ((void *) 0);                             sites=[(206, Released)]
+  Unknown return ((void *) 0);                             sites=[]
+test print_the_measured_exit_ledger ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.07s
