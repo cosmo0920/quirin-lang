@@ -109,6 +109,22 @@ theorem destroyed_resource_rejects_transfer (state : State) (sender to : TaskId)
     step state (.transfer sender to resource synchronized) = none := by
   simp [step, State.Live, dead]
 
+/-- Destruction is not idempotent: the dead generation rejects a repeat
+destruction before any custody or quiescence question is asked. -/
+theorem destroyed_resource_rejects_destruction (state : State) (task : TaskId)
+    (resource : ResourceId) (ordered : Bool)
+    (dead : resource ∈ state.destroyedResources) :
+    step state (.destroy task resource ordered) = none := by
+  simp [step, State.Live, dead]
+
+/-- Only the current custodian ends a generation; an outstanding capture in
+another task leaves the parent without destruction authority. -/
+theorem foreign_custody_rejects_destruction (state : State) (task : TaskId)
+    (resource : ResourceId) (ordered : Bool)
+    (foreign : (resource, task) ∉ state.custody) :
+    step state (.destroy task resource ordered) = none := by
+  simp [step, foreign]
+
 theorem terminal_task_rejects_access (state : State) (task : TaskId)
     (resource : ResourceId) (terminal : task ∈ state.terminalTasks) :
     step state (.access task resource) = none := by
@@ -153,6 +169,20 @@ theorem destruction_prevents_later_access {state next : State} {task reader : Ta
     (accepted : step state (.destroy task resource ordered) = some next) :
     step next (.access reader resource) = none :=
   destroyed_resource_rejects_access next reader resource
+    (destruction_invalidates_generation accepted)
+
+theorem destruction_prevents_later_transfer {state next : State} {task sender to : TaskId}
+    {resource : ResourceId} {ordered synchronized : Bool}
+    (accepted : step state (.destroy task resource ordered) = some next) :
+    step next (.transfer sender to resource synchronized) = none :=
+  destroyed_resource_rejects_transfer next sender to resource synchronized
+    (destruction_invalidates_generation accepted)
+
+theorem destruction_prevents_repeat_destruction {state next : State} {task second : TaskId}
+    {resource : ResourceId} {ordered again : Bool}
+    (accepted : step state (.destroy task resource ordered) = some next) :
+    step next (.destroy second resource again) = none :=
+  destroyed_resource_rejects_destruction next second resource again
     (destruction_invalidates_generation accepted)
 
 theorem join_prevents_child_action {state next : State} {parent child : TaskId}
@@ -217,6 +247,20 @@ example : run { custody := [(7, 0)] }
     [.spawn 0 1, .lock 1, .destroy 0 7 true] = none := by decide
 example : run {} [.spawn 0 1, .lock 1, .join 0 1] = none := by decide
 example : (run {} [.spawn 0 1, .taskAction 1, .join 0 1, .taskAction 0]).isSome = true := by decide
+example : run { custody := [(7, 0)] }
+    [.destroy 0 7 true, .destroy 0 7 true] = none := by decide
+example : run { custody := [(7, 0)] }
+    [.destroy 0 7 true, .transfer 0 0 7 true] = none := by decide
+example : run { custody := [(7, 0)], permissionHolders := [(7, 1)] }
+    [.destroy 0 7 true] = none := by decide
+example : (run { custody := [(7, 0)], permissionHolders := [(7, 1)], terminalTasks := [1] }
+    [.destroy 0 7 true]).isSome = true := by decide
+example : run { custody := [(7, 1)] } [.destroy 0 7 true] = none := by decide
+example : run { custody := [(7, 0)] } [.destroy 0 7 false] = none := by decide
+/-- Distinct generations are independent: destroying one never touches the
+other, whatever numeric address the model input reuses. -/
+example : (run { custody := [(7, 0), (8, 0)] }
+    [.destroy 0 7 true, .destroy 0 8 true]).isSome = true := by decide
 
 end Lifetime
 

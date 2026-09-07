@@ -10,12 +10,16 @@ import QCore.Concurrency
 
 #print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_access
 #print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_transfer
+#print axioms QCore.Concurrency.Lifetime.destroyed_resource_rejects_destruction
+#print axioms QCore.Concurrency.Lifetime.foreign_custody_rejects_destruction
 #print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_access
 #print axioms QCore.Concurrency.Lifetime.terminal_task_rejects_action
 #print axioms QCore.Concurrency.Lifetime.destruction_invalidates_generation
 #print axioms QCore.Concurrency.Lifetime.accepted_destruction_requires_quiescence
 #print axioms QCore.Concurrency.Lifetime.join_terminates_child
 #print axioms QCore.Concurrency.Lifetime.destruction_prevents_later_access
+#print axioms QCore.Concurrency.Lifetime.destruction_prevents_later_transfer
+#print axioms QCore.Concurrency.Lifetime.destruction_prevents_repeat_destruction
 #print axioms QCore.Concurrency.Lifetime.join_prevents_child_action
 
 #print axioms QCore.Concurrency.accepted_lifetimes_replay

@@ -325,11 +325,169 @@ fn destroyed_generation_rejects_all_access_kinds() {
                 events,
             };
             assert!(
-                check_concurrent(&program).is_err(),
+                has(&check_concurrent(&program).unwrap_err(), |error| matches!(
+                    error,
+                    ConcurrencyDiagnostic::DeadResource { resource: 7, .. }
+                )),
                 "destroyed {kind:?}, guard={guard:?}"
             );
         }
     }
+}
+
+/// Guard authority is a trusted footprint premise, never a liveness override:
+/// a mutex already held across the destruction cannot revive the generation.
+#[test]
+fn a_guard_held_across_destruction_cannot_revive_the_generation() {
+    for kind in [
+        AccessKind::Read,
+        AccessKind::Write,
+        AccessKind::AtomicRead,
+        AccessKind::AtomicWrite,
+    ] {
+        let program = ConcurrentProgram {
+            initial_custody: BTreeMap::from([(7, 0)]),
+            events: vec![
+                ConcurrentEvent::Lock {
+                    task: 0,
+                    mutex: 3,
+                    rank: 1,
+                },
+                ConcurrentEvent::Destroy {
+                    task: 0,
+                    resource: 7,
+                },
+                event(0, kind, Some(3)),
+                ConcurrentEvent::Unlock { task: 0, mutex: 3 },
+            ],
+            ..ConcurrentProgram::default()
+        };
+        let diagnostics = check_concurrent(&program).unwrap_err();
+        assert!(
+            has(&diagnostics, |error| matches!(
+                error,
+                ConcurrencyDiagnostic::DeadResource { resource: 7, .. }
+            )),
+            "held guard, {kind:?}: {diagnostics:?}"
+        );
+    }
+}
+
+/// Destruction is not idempotent: the dead generation rejects a repeat
+/// destruction before any custody question is asked, and stays dead.
+#[test]
+fn destroyed_generation_rejects_repeat_destruction() {
+    let program = ConcurrentProgram {
+        initial_custody: BTreeMap::from([(7, 0)]),
+        events: vec![
+            ConcurrentEvent::Destroy {
+                task: 0,
+                resource: 7,
+            },
+            ConcurrentEvent::Destroy {
+                task: 0,
+                resource: 7,
+            },
+        ],
+        ..ConcurrentProgram::default()
+    };
+    let diagnostics = check_concurrent(&program).unwrap_err();
+    assert!(has(&diagnostics, |error| matches!(
+        error,
+        ConcurrencyDiagnostic::DeadResource {
+            event: 1,
+            resource: 7
+        }
+    )));
+    assert!(!has(&diagnostics, |error| matches!(
+        error,
+        ConcurrencyDiagnostic::WrongCustodian { .. }
+    )));
+}
+
+/// A live generation with no recorded custodian is still not destructible,
+/// so the dead-generation rule is never reachable through an unowned resource.
+#[test]
+fn destruction_without_custody_is_rejected_and_leaves_the_generation_live() {
+    let program = ConcurrentProgram {
+        permissions: vec![AccessPermission {
+            task: 0,
+            footprint: fp(0, 8),
+            share: FULL_ACCESS,
+        }],
+        initial_custody: BTreeMap::new(),
+        events: vec![
+            ConcurrentEvent::Destroy {
+                task: 0,
+                resource: 7,
+            },
+            event(0, AccessKind::Write, None),
+        ],
+    };
+    let diagnostics = check_concurrent(&program).unwrap_err();
+    assert!(has(&diagnostics, |error| matches!(
+        error,
+        ConcurrencyDiagnostic::WrongCustodian {
+            event: 0,
+            resource: 7
+        }
+    )));
+    assert!(!has(&diagnostics, |error| matches!(
+        error,
+        ConcurrencyDiagnostic::DeadResource { .. }
+    )));
+}
+
+/// An outstanding task capture — custody moved into a live child — leaves the
+/// parent without destruction authority; only the current custodian may end
+/// the generation.
+#[test]
+fn outstanding_child_custody_blocks_parent_destruction() {
+    let mut program = ConcurrentProgram {
+        initial_custody: BTreeMap::from([(7, 0)]),
+        events: vec![
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: 7,
+                synchronized: true,
+            },
+            ConcurrentEvent::Destroy {
+                task: 1,
+                resource: 7,
+            },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+        ],
+        ..ConcurrentProgram::default()
+    };
+    assert_eq!(
+        check_concurrent(&program).unwrap().destroyed_resources,
+        vec![7]
+    );
+    program.events.insert(
+        2,
+        ConcurrentEvent::Destroy {
+            task: 0,
+            resource: 7,
+        },
+    );
+    assert!(has(
+        &check_concurrent(&program).unwrap_err(),
+        |error| matches!(
+            error,
+            ConcurrencyDiagnostic::WrongCustodian {
+                event: 2,
+                resource: 7
+            }
+        )
+    ));
 }
 
 #[test]
@@ -358,7 +516,16 @@ fn destroyed_generation_rejects_transfer() {
         ],
         ..ConcurrentProgram::default()
     };
-    assert!(check_concurrent(&program).is_err());
+    assert!(has(
+        &check_concurrent(&program).unwrap_err(),
+        |error| matches!(
+            error,
+            ConcurrencyDiagnostic::DeadResource {
+                event: 2,
+                resource: 7
+            }
+        )
+    ));
 }
 
 #[test]
@@ -385,7 +552,16 @@ fn destruction_requires_other_permission_holders_to_be_terminal() {
             },
         ],
     };
-    assert!(check_concurrent(&program).is_err());
+    assert!(has(
+        &check_concurrent(&program).unwrap_err(),
+        |error| matches!(
+            error,
+            ConcurrencyDiagnostic::NonquiescentDestruction {
+                event: 1,
+                resource: 7
+            }
+        )
+    ));
 }
 
 #[test]
