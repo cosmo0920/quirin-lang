@@ -50,6 +50,7 @@ import QCore.UsageDemand
 import QCore.WholeProgram
 import QCore.Compiler
 import QCore.Concurrency
+import QCore.MutexInvariant
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
 import QCore.NativeOsObservation
