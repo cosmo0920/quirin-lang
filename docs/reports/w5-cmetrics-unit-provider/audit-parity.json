@@ -1,0 +1,801 @@
+{
+  "baseline_commit": "cc11895",
+  "baseline_report": "docs/reports/w2-source-profile-boundary",
+  "artifacts": [
+    {
+      "artifact": "source",
+      "bytes": 1663331,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "byte_identical": true,
+      "changes": []
+    },
+    {
+      "artifact": "diagnostics",
+      "bytes": 11006128,
+      "sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "baseline_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "byte_identical": true,
+      "changes": []
+    },
+    {
+      "artifact": "chunk-contracts",
+      "bytes": 4141225,
+      "sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da",
+      "baseline_sha256": "d3468c2a88971b276a5e1e482d883e21084c9e62a99f3df02f902e828cae30ab",
+      "byte_identical": false,
+      "changes": [
+        {
+          "path": "/results/0/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "unmodeled statement DeclStmt"
+        },
+        {
+          "path": "/results/1/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/2/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/3/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/4/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/5/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/6/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/7/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/9/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/10/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/11/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/12/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/13/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/14/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/19/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/27/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/28/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/29/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/30/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/31/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/32/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/33/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/34/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/35/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/36/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/37/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/38/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/40/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/41/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/42/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/43/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/45/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/46/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/47/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/48/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/49/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/51/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/52/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/53/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/54/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/55/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/57/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/58/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/59/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/60/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/61/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/62/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/64/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/65/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/66/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/67/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/68/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/69/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/70/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/71/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/72/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/75/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/76/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/77/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/78/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/79/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/80/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/81/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/82/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/83/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/84/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/85/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/86/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/87/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/88/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/89/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/90/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/91/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/94/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/95/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        }
+      ]
+    },
+    {
+      "artifact": "source-effects",
+      "bytes": 114434,
+      "sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8",
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "byte_identical": false,
+      "changes": [
+        {
+          "path": "/results/0/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "unmodeled statement DeclStmt"
+        },
+        {
+          "path": "/results/1/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/2/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/3/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/4/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/5/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/6/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/7/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/9/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/10/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/11/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/12/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/13/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/14/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/19/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/27/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/28/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/29/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/30/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/31/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/32/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/33/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/34/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/35/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/36/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/37/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/38/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/40/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/41/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/42/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/43/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/45/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/46/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/47/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/48/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/49/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/51/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/52/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/53/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/54/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/55/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/57/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/58/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/59/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/60/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/61/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/62/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/64/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/65/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/66/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/67/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/68/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/69/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/70/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/71/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/72/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/75/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/76/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/77/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/78/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/79/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/80/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/81/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/82/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/83/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/84/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/85/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/86/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/87/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/88/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/89/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/90/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/91/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/94/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        },
+        {
+          "path": "/results/95/reason",
+          "before": "outside single borrowed chunk / int-result source profile",
+          "after": "outside single borrowed chunk / int-or-void-result source profile"
+        }
+      ]
+    }
+  ],
+  "raw_counts": {
+    "Safe": 2,
+    "provisional_Unsafe": 42,
+    "Unknown": 137,
+    "data_only": 4
+  },
+  "source_effects": {
+    "checked": 3,
+    "Unknown": 93
+  },
+  "reason_change_detail": "74 Unknown ABI descriptions plus chunkio/cio_chunk.c/chunk_state_sync now rejects DeclStmt; every status, coverage item, task and witness is unchanged."
+}

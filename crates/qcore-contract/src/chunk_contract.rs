@@ -14,7 +14,7 @@ use qcore_frontend::frontend::{
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use qcore_schemas::chunk_summary::{
-    ChunkFrameSummaryRecord, ChunkSourceField, ChunkSourceSummaryRecord,
+    BooleanFieldResult, ChunkFrameSummaryRecord, ChunkSourceField, ChunkSourceSummaryRecord,
 };
 
 /// Evaluate a metadata contract against declared helper paths. Live storage,
@@ -289,9 +289,17 @@ pub fn evaluate_chunk_source_contract(
     else {
         return Err("unsupported borrowed chunk parameter type".into());
     };
-    let expected_resource = match summary.field {
-        ChunkSourceField::Busy => "InputChunk",
-        ChunkSourceField::Locked => "Chunk",
+    let expected_resource = if summary.result_kind == BooleanFieldResult::Unit {
+        summary
+            .profile_assumptions
+            .get("boolean_field_record")
+            .ok_or("unit source lacks record identity")?
+            .as_str()
+    } else {
+        match summary.field {
+            ChunkSourceField::Busy => "InputChunk",
+            ChunkSourceField::Locked => "Chunk",
+        }
     };
     if borrow != "borrow"
         || resource != expected_resource
@@ -313,7 +321,11 @@ pub fn evaluate_chunk_source_contract(
         .iter()
         .position(|token| *token == TokenKind::Symbol(Symbol::Arrow))
         .ok_or("missing QCore result type")?;
-    if declaration.tokens.get(arrow + 1) != Some(&TokenKind::Word("i32".into()))
+    let result_type = match summary.result_kind {
+        BooleanFieldResult::I32 => "i32",
+        BooleanFieldResult::Unit => "unit",
+    };
+    if declaration.tokens.get(arrow + 1) != Some(&TokenKind::Word(result_type.into()))
         || declaration.tokens.get(arrow + 2) != Some(&TokenKind::Word("contract".into()))
     {
         return Err(
@@ -361,14 +373,22 @@ pub fn evaluate_chunk_source_contract(
             }
         }
     }
-    let required = [
-        "chunk_is_live",
-        "exclusive_chunk_access",
-        "busy_is_boolean",
-        "lock_is_boolean",
-    ]
-    .map(str::to_owned)
+    let required = if summary.result_kind == BooleanFieldResult::Unit {
+        vec![
+            "object_is_live",
+            "exclusive_object_access",
+            "field_is_boolean",
+        ]
+    } else {
+        vec![
+            "chunk_is_live",
+            "exclusive_chunk_access",
+            "busy_is_boolean",
+            "lock_is_boolean",
+        ]
+    }
     .into_iter()
+    .map(str::to_owned)
     .collect();
     if requirements != required {
         return Err(
@@ -376,10 +396,27 @@ pub fn evaluate_chunk_source_contract(
                 .into(),
         );
     }
-    if !["result", "busy", "lock"]
-        .iter()
-        .all(|name| variables.contains(*name))
+    if summary.result_kind == BooleanFieldResult::I32
+        && (variables.contains("field") || variables.contains("old_field"))
     {
+        return Err("generic field predicates require the unit-result profile".into());
+    }
+    if summary.result_kind == BooleanFieldResult::Unit
+        && (variables.iter().any(|name| {
+            matches!(
+                name.as_str(),
+                "result" | "busy" | "lock" | "old_busy" | "old_lock"
+            )
+        }) || summary.paths.iter().any(|path| path.return_value != 0))
+    {
+        return Err("void source contracts cannot observe a scalar result".into());
+    }
+    let constrained = if summary.result_kind == BooleanFieldResult::Unit {
+        vec!["field"]
+    } else {
+        vec!["result", "busy", "lock"]
+    };
+    if !constrained.iter().all(|name| variables.contains(*name)) {
         return Err("contract must constrain result and both exit fields".into());
     }
     for path in summary.paths.as_slice() {
@@ -393,7 +430,12 @@ pub fn evaluate_chunk_source_contract(
             }
             frame_values.insert(name, i64::from(*number));
         }
-        for other in [false, true] {
+        let companions: &[bool] = if summary.result_kind == BooleanFieldResult::Unit {
+            &[false]
+        } else {
+            &[false, true]
+        };
+        for &other in companions {
             let (old_busy, old_lock, busy, lock) = match summary.field {
                 ChunkSourceField::Busy => (path.initial_value, other, path.final_value, other),
                 ChunkSourceField::Locked => (other, path.initial_value, other, path.final_value),
@@ -404,6 +446,8 @@ pub fn evaluate_chunk_source_contract(
                 ("busy", i64::from(busy)),
                 ("lock", i64::from(lock)),
                 ("result", i64::from(path.return_value)),
+                ("old_field", i64::from(path.initial_value)),
+                ("field", i64::from(path.final_value)),
             ]);
             values.extend(
                 frame_values
@@ -428,7 +472,11 @@ pub fn evaluate_chunk_source_contract(
     Ok(ChunkContractEvaluation {
         function: summary.function.as_str().to_owned(),
         contract_source: contract_source.to_owned(),
-        checked_states: 4,
+        checked_states: if summary.result_kind == BooleanFieldResult::Unit {
+            2
+        } else {
+            4
+        },
         dependency_sources: summary.dependencies.clone(),
     })
 }
@@ -552,7 +600,7 @@ impl PredicateParser<'_> {
             TokenKind::Word(name)
                 if matches!(
                     name.as_str(),
-                    "old_busy" | "old_lock" | "busy" | "lock" | "result"
+                    "old_busy" | "old_lock" | "busy" | "lock" | "result" | "old_field" | "field"
                 ) || name.starts_with("field_") =>
             {
                 self.variables.insert(name.clone());

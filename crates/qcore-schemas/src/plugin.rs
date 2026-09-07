@@ -475,8 +475,7 @@ impl VerificationRequestV2 {
             .count();
         match &self.source_effect {
             Some(input)
-                if input.schema_version
-                    == crate::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_VERSION
+                if input.version_matches_result()
                     && self.capability == VerifierCapability::ResourceContracts
                     && field_obligations == 1
                     && self.obligations.len() == 1

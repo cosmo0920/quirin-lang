@@ -17,6 +17,7 @@ contract {
 
 fn declared_record() -> ChunkSourceSummaryRecord {
     ChunkSourceSummaryRecord {
+        result_kind: qcore_schemas::chunk_summary::BooleanFieldResult::I32,
         function: "clear_busy".into(),
         source_revision: "declared-test-premise".into(),
         field: ChunkSourceField::Busy,

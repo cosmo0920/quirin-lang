@@ -925,10 +925,7 @@ impl VerifierRegistry {
             );
         }
         if let Some(input) = &request.source_effect
-            && task
-                .contract_sources
-                .get(qcore_schemas::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_KEY)
-                != Some(&input.digest())
+            && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
         {
             return VerificationOutcome::unknown(
                 "QP001",

@@ -183,6 +183,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "native_unsupported_constructor",
         11,
     ),
+    ("cmetrics/counter_reset.qcore", "cmt_counter_allow_reset", 4),
     (
         "fluent_bit/busy_state.qcore",
         "flb_input_chunk_release_lock",
@@ -360,7 +361,7 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 58, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 59, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

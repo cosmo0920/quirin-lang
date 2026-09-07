@@ -162,12 +162,21 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
         normalized.package_digest = baseline.package_digest.clone();
         normalized.evidence_versions = baseline.evidence_versions.clone();
         let mut expected = baseline.clone();
+        if id == "qcore.cmetrics" {
+            expected.package_version = "0.2.0".into();
+            expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
+            expected.lean_theorem_family = "QCore.ChunkSource".into();
+            expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]
+                .into_iter()
+                .map(str::to_owned)
+                .collect();
+        }
         if id == "qcore.chunkio" {
             // Explicit additive source-contract package revision. Existing v1
             // capabilities keep their Unknown behavior below; no built-in route
             // or source-set profile is silently updated by package installation.
-            expected.package_version = "0.3.0".into();
-            expected.certificate_checker = "qcore.boolean_field_contract.v1".into();
+            expected.package_version = "0.4.0".into();
+            expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]
                 .into_iter()
@@ -176,7 +185,11 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             expected.targets.push(SupportedTarget {
                 library: "fluent_bit".into(),
                 revisions: ["*".into()].into(),
-                profiles: ["qcore.c_boolean_field_contract.v2".into()].into(),
+                profiles: [
+                    "qcore.c_boolean_field_contract.v2".into(),
+                    "qcore.c_boolean_field_contract.v3".into(),
+                ]
+                .into(),
                 dialects: ["c11", "gnu99", "gnu11", "gnu17"]
                     .into_iter()
                     .map(str::to_owned)

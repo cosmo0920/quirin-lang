@@ -3,7 +3,7 @@
 //! against its own pinned contract before admitting a result.
 use qcore_schemas::SemanticWitness;
 use qcore_schemas::chunk_summary::{
-    BOOLEAN_FIELD_SOURCE_INPUT_VERSION, BooleanFieldContractWitness, BooleanFieldExpression,
+    BooleanFieldContractWitness, BooleanFieldExpression, BooleanFieldResult,
     BooleanFieldSourceInput, BooleanFieldStatement, ChunkSourcePath, ChunkSourceSummaryRecord,
 };
 use qcore_schemas::plugin::*;
@@ -44,6 +44,7 @@ fn validate_expression(
 
 fn validate_statement(
     statement: &BooleanFieldStatement,
+    result_kind: BooleanFieldResult,
     depth: usize,
     remaining: &mut usize,
 ) -> Option<()> {
@@ -58,17 +59,28 @@ fn validate_statement(
                 return None;
             }
             for statement in statements {
-                validate_statement(statement, depth + 1, remaining)?;
+                validate_statement(statement, result_kind, depth + 1, remaining)?;
             }
         }
         BooleanFieldStatement::If(condition, yes, no) => {
             validate_expression(condition, depth + 1, remaining)?;
-            validate_statement(yes, depth + 1, remaining)?;
+            validate_statement(yes, result_kind, depth + 1, remaining)?;
             if let Some(no) = no {
-                validate_statement(no, depth + 1, remaining)?;
+                validate_statement(no, result_kind, depth + 1, remaining)?;
             }
         }
-        BooleanFieldStatement::Assign(value) | BooleanFieldStatement::Return(value) => {
+        BooleanFieldStatement::Return(value) => {
+            if result_kind != BooleanFieldResult::I32 {
+                return None;
+            }
+            validate_expression(value, depth + 1, remaining)?;
+        }
+        BooleanFieldStatement::ReturnUnit => {
+            if result_kind != BooleanFieldResult::Unit {
+                return None;
+            }
+        }
+        BooleanFieldStatement::Assign(value) => {
             validate_expression(value, depth + 1, remaining)?;
         }
         BooleanFieldStatement::FrameWrites(writes) => {
@@ -143,6 +155,7 @@ fn execute(
         BooleanFieldStatement::Return(value) => {
             Some(Some(evaluate(value, path.final_value, remaining)?))
         }
+        BooleanFieldStatement::ReturnUnit => Some(Some(0)),
         BooleanFieldStatement::FrameWrites(writes) => {
             charge(remaining, writes.len())?;
             path.frame_writes.extend(writes.iter().cloned());
@@ -152,14 +165,19 @@ fn execute(
 }
 
 fn derive_summary(source: &BooleanFieldSourceInput) -> Option<ChunkSourceSummaryRecord> {
-    if source.schema_version != BOOLEAN_FIELD_SOURCE_INPUT_VERSION
+    if !source.version_matches_result()
         || source.function.is_empty()
         || source.source_revision.is_empty()
     {
         return None;
     }
     let mut program_remaining = MAX_PROGRAM_OPERATIONS;
-    validate_statement(&source.program, 0, &mut program_remaining)?;
+    validate_statement(
+        &source.program,
+        source.result_kind,
+        0,
+        &mut program_remaining,
+    )?;
     let mut remaining = MAX_EXECUTION_OPERATIONS;
     let mut run = |initial_value| {
         let mut path = ChunkSourcePath {
@@ -170,10 +188,15 @@ fn derive_summary(source: &BooleanFieldSourceInput) -> Option<ChunkSourceSummary
             writes: Vec::new(),
             frame_writes: Vec::new(),
         };
-        path.return_value = execute(&source.program, &mut path, &mut remaining)??;
+        let result = execute(&source.program, &mut path, &mut remaining)?;
+        path.return_value = match source.result_kind {
+            BooleanFieldResult::I32 => result?,
+            BooleanFieldResult::Unit => result.unwrap_or(0),
+        };
         Some(path)
     };
     Some(ChunkSourceSummaryRecord {
+        result_kind: source.result_kind,
         function: source.function.clone(),
         source_revision: source.source_revision.clone(),
         field: source.field,
@@ -188,7 +211,11 @@ pub fn propose(
     manifest: &PluginManifest,
 ) -> Option<VerificationResponseV2> {
     if request.capability != VerifierCapability::ResourceContracts
-        || request.target.profile != "qcore.c_boolean_field_contract.v2"
+        || request.target.profile
+            != match request.source_effect.as_ref()?.result_kind {
+                BooleanFieldResult::I32 => "qcore.c_boolean_field_contract.v2",
+                BooleanFieldResult::Unit => "qcore.c_boolean_field_contract.v3",
+            }
         || !matches!(
             request.target.dialect.as_str(),
             "c11" | "gnu99" | "gnu11" | "gnu17"
@@ -227,10 +254,11 @@ mod tests {
     use super::*;
     use BooleanFieldExpression as E;
     use BooleanFieldStatement as S;
-    use qcore_schemas::chunk_summary::ChunkSourceField;
+    use qcore_schemas::chunk_summary::{BOOLEAN_FIELD_SOURCE_INPUT_VERSION, ChunkSourceField};
 
     fn input(program: S) -> BooleanFieldSourceInput {
         BooleanFieldSourceInput {
+            result_kind: qcore_schemas::chunk_summary::BooleanFieldResult::I32,
             schema_version: BOOLEAN_FIELD_SOURCE_INPUT_VERSION,
             function: "toggle".into(),
             source_revision: "pinned-source".into(),
@@ -384,5 +412,46 @@ mod tests {
             frame_writes: vec![],
         };
         assert!(execute(&source.program, &mut path, &mut budget).is_none());
+    }
+    #[test]
+    fn void_fallthrough_and_early_return_keep_unit_abi() {
+        use qcore_schemas::chunk_summary::{
+            BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION, BooleanFieldResult,
+        };
+        let mut source = input(S::Block(vec![S::Assign(E::Integer(1))]));
+        source.result_kind = BooleanFieldResult::Unit;
+        source.schema_version = BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION;
+        let summary = derive_summary(&source).unwrap();
+        assert_eq!(summary.result_kind, BooleanFieldResult::Unit);
+        assert!(
+            summary
+                .paths
+                .iter()
+                .all(|path| path.final_value && path.return_value == 0)
+        );
+        source.program = S::Block(vec![S::ReturnUnit, S::Assign(E::Integer(1))]);
+        let summary = derive_summary(&source).unwrap();
+        assert!(
+            summary
+                .paths
+                .iter()
+                .all(|path| path.initial_value == path.final_value && path.writes.is_empty())
+        );
+    }
+
+    #[test]
+    fn wrong_result_forms_reject_even_when_unreachable() {
+        use qcore_schemas::chunk_summary::{
+            BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION, BooleanFieldResult,
+        };
+        let mut source = input(S::Block(vec![S::Return(E::Integer(0)), S::ReturnUnit]));
+        assert!(derive_summary(&source).is_none());
+        source.result_kind = BooleanFieldResult::Unit;
+        source.schema_version = BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION;
+        source.program = S::Block(vec![S::ReturnUnit, S::Return(E::Integer(0))]);
+        assert!(derive_summary(&source).is_none());
+        source.program = S::ReturnUnit;
+        source.schema_version = BOOLEAN_FIELD_SOURCE_INPUT_VERSION;
+        assert!(derive_summary(&source).is_none());
     }
 }

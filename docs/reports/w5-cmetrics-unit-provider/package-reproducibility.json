@@ -1,0 +1,140 @@
+{
+  "executed_packages": {
+    "schema_version": 1,
+    "protocol_version": 1,
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "semantic_profile": "per_package_declared_profiles",
+    "artifacts": [
+      {
+        "plugin_id": "qcore.chunkio",
+        "executable_sha256": "cde13eb8554aa0b3b1f0a2285c69515cecf1bcde1635208f1ebe68a3ce89a258",
+        "manifest_sha256": "ab4faf0eeb948b69b183cc85aa8fce77cbbdece1234f5b48dc19a8e234ed77e4",
+        "archive_sha256": "07da1c75476e5a1a07ad6269ac1db06b8b96f94f0421dd10e24c9c3ad637f880"
+      },
+      {
+        "plugin_id": "qcore.cmetrics",
+        "executable_sha256": "2230bfa38c3607c8f9bbbac0c460e04201a5d0a64cf68745e99bbb2479d1127f",
+        "manifest_sha256": "d582ac65e782b8692486e4c9a3933eeb04360c46f16ef188ed2f2c284e39d59e",
+        "archive_sha256": "53797e8c2056c01d23e65465a503c3c1e90f3d0793e7fb2d9d74266032a6a92c"
+      },
+      {
+        "plugin_id": "qcore.ctraces",
+        "executable_sha256": "d274ab2f334408d1b22e41cbbb7137f567a467ecab95c51def4732c61f46fd01",
+        "manifest_sha256": "6298a0b61a9108c5ef124416c61d82b2c918c5eeb2a18aaa24cff1c419fe490d",
+        "archive_sha256": "0a6f2330257ecc36d68c54b4fc24481c21af47a021b2e5125fb28ede8ac8f04c"
+      },
+      {
+        "plugin_id": "qcore.libevent",
+        "executable_sha256": "0f167ba10291f9cecdd51166fcf9dce4b62b810575020c4f0ab0d7e728041bd3",
+        "manifest_sha256": "532d057b26984bbf1c363da63f5f75093623c62b26e3bad93b8cdc9e9319a912",
+        "archive_sha256": "ebc2b5693e3d6d5d13af1315caecc8b5fb332e689275de56b7a7505afe873a81"
+      },
+      {
+        "plugin_id": "qcore.librdkafka",
+        "executable_sha256": "a30f6d251360a88a138502700116f598d35bb66600aa7d333bd61b447890f589",
+        "manifest_sha256": "9154f7a1176b2e45ea9233d55e55b108860f6b007a2921adb926f67057683af0",
+        "archive_sha256": "d06556326ddc7d632d973b69b018f9e9141779f294dd6e16ef93502d8cad0619"
+      }
+    ],
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+    "lock_sha256": "c58432bff1f5eac60f5222243c549b88a84c8cbab25aef8309a1ce7c91542d74"
+  },
+  "clean_builds": [
+    {
+      "target_directory": "/tmp/qcore-unit-provider-repro-target",
+      "packages": {
+        "schema_version": 1,
+        "protocol_version": 1,
+        "evidence_versions": [
+          1,
+          2
+        ],
+        "semantic_profile": "per_package_declared_profiles",
+        "artifacts": [
+          {
+            "plugin_id": "qcore.chunkio",
+            "executable_sha256": "cde13eb8554aa0b3b1f0a2285c69515cecf1bcde1635208f1ebe68a3ce89a258",
+            "manifest_sha256": "ab4faf0eeb948b69b183cc85aa8fce77cbbdece1234f5b48dc19a8e234ed77e4",
+            "archive_sha256": "07da1c75476e5a1a07ad6269ac1db06b8b96f94f0421dd10e24c9c3ad637f880"
+          },
+          {
+            "plugin_id": "qcore.cmetrics",
+            "executable_sha256": "2230bfa38c3607c8f9bbbac0c460e04201a5d0a64cf68745e99bbb2479d1127f",
+            "manifest_sha256": "d582ac65e782b8692486e4c9a3933eeb04360c46f16ef188ed2f2c284e39d59e",
+            "archive_sha256": "53797e8c2056c01d23e65465a503c3c1e90f3d0793e7fb2d9d74266032a6a92c"
+          },
+          {
+            "plugin_id": "qcore.ctraces",
+            "executable_sha256": "d274ab2f334408d1b22e41cbbb7137f567a467ecab95c51def4732c61f46fd01",
+            "manifest_sha256": "6298a0b61a9108c5ef124416c61d82b2c918c5eeb2a18aaa24cff1c419fe490d",
+            "archive_sha256": "0a6f2330257ecc36d68c54b4fc24481c21af47a021b2e5125fb28ede8ac8f04c"
+          },
+          {
+            "plugin_id": "qcore.libevent",
+            "executable_sha256": "0f167ba10291f9cecdd51166fcf9dce4b62b810575020c4f0ab0d7e728041bd3",
+            "manifest_sha256": "532d057b26984bbf1c363da63f5f75093623c62b26e3bad93b8cdc9e9319a912",
+            "archive_sha256": "ebc2b5693e3d6d5d13af1315caecc8b5fb332e689275de56b7a7505afe873a81"
+          },
+          {
+            "plugin_id": "qcore.librdkafka",
+            "executable_sha256": "a30f6d251360a88a138502700116f598d35bb66600aa7d333bd61b447890f589",
+            "manifest_sha256": "9154f7a1176b2e45ea9233d55e55b108860f6b007a2921adb926f67057683af0",
+            "archive_sha256": "d06556326ddc7d632d973b69b018f9e9141779f294dd6e16ef93502d8cad0619"
+          }
+        ],
+        "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+        "lock_sha256": "c58432bff1f5eac60f5222243c549b88a84c8cbab25aef8309a1ce7c91542d74"
+      }
+    },
+    {
+      "target_directory": "/tmp/qcore-unit-provider-repro2-target",
+      "packages": {
+        "schema_version": 1,
+        "protocol_version": 1,
+        "evidence_versions": [
+          1,
+          2
+        ],
+        "semantic_profile": "per_package_declared_profiles",
+        "artifacts": [
+          {
+            "plugin_id": "qcore.chunkio",
+            "executable_sha256": "cde13eb8554aa0b3b1f0a2285c69515cecf1bcde1635208f1ebe68a3ce89a258",
+            "manifest_sha256": "ab4faf0eeb948b69b183cc85aa8fce77cbbdece1234f5b48dc19a8e234ed77e4",
+            "archive_sha256": "07da1c75476e5a1a07ad6269ac1db06b8b96f94f0421dd10e24c9c3ad637f880"
+          },
+          {
+            "plugin_id": "qcore.cmetrics",
+            "executable_sha256": "2230bfa38c3607c8f9bbbac0c460e04201a5d0a64cf68745e99bbb2479d1127f",
+            "manifest_sha256": "d582ac65e782b8692486e4c9a3933eeb04360c46f16ef188ed2f2c284e39d59e",
+            "archive_sha256": "53797e8c2056c01d23e65465a503c3c1e90f3d0793e7fb2d9d74266032a6a92c"
+          },
+          {
+            "plugin_id": "qcore.ctraces",
+            "executable_sha256": "d274ab2f334408d1b22e41cbbb7137f567a467ecab95c51def4732c61f46fd01",
+            "manifest_sha256": "6298a0b61a9108c5ef124416c61d82b2c918c5eeb2a18aaa24cff1c419fe490d",
+            "archive_sha256": "0a6f2330257ecc36d68c54b4fc24481c21af47a021b2e5125fb28ede8ac8f04c"
+          },
+          {
+            "plugin_id": "qcore.libevent",
+            "executable_sha256": "0f167ba10291f9cecdd51166fcf9dce4b62b810575020c4f0ab0d7e728041bd3",
+            "manifest_sha256": "532d057b26984bbf1c363da63f5f75093623c62b26e3bad93b8cdc9e9319a912",
+            "archive_sha256": "ebc2b5693e3d6d5d13af1315caecc8b5fb332e689275de56b7a7505afe873a81"
+          },
+          {
+            "plugin_id": "qcore.librdkafka",
+            "executable_sha256": "a30f6d251360a88a138502700116f598d35bb66600aa7d333bd61b447890f589",
+            "manifest_sha256": "9154f7a1176b2e45ea9233d55e55b108860f6b007a2921adb926f67057683af0",
+            "archive_sha256": "d06556326ddc7d632d973b69b018f9e9141779f294dd6e16ef93502d8cad0619"
+          }
+        ],
+        "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+        "lock_sha256": "c58432bff1f5eac60f5222243c549b88a84c8cbab25aef8309a1ce7c91542d74"
+      }
+    }
+  ],
+  "all_executable_manifest_archive_hashes_equal": true
+}

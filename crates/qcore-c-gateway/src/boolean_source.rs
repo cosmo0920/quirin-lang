@@ -17,8 +17,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
 
 use qcore_schemas::chunk_summary::{
-    BOOLEAN_FIELD_SOURCE_INPUT_VERSION, BooleanFieldExpression, BooleanFieldSourceInput,
-    BooleanFieldStatement, ChunkFrameSummaryRecord, ChunkSourceSummaryRecord,
+    BOOLEAN_FIELD_SOURCE_INPUT_VERSION, BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION,
+    BooleanFieldExpression, BooleanFieldResult, BooleanFieldSourceInput, BooleanFieldStatement,
+    ChunkFrameSummaryRecord, ChunkSourceSummaryRecord,
 };
 pub use qcore_schemas::chunk_summary::{ChunkSourceField, ChunkSourcePath};
 
@@ -211,7 +212,11 @@ impl ChunkSourceSummary {
     /// Captured typed statement program; no expected execution paths are sent.
     pub fn source_input(&self) -> BooleanFieldSourceInput {
         BooleanFieldSourceInput {
-            schema_version: BOOLEAN_FIELD_SOURCE_INPUT_VERSION,
+            result_kind: self.result_kind,
+            schema_version: match self.result_kind {
+                BooleanFieldResult::I32 => BOOLEAN_FIELD_SOURCE_INPUT_VERSION,
+                BooleanFieldResult::Unit => BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION,
+            },
             function: self.function.clone(),
             source_revision: self.source_revision.clone(),
             field: self.field,
@@ -492,6 +497,7 @@ fn import_frame_helper(
             ],
         )?;
         let mut importer = Importer {
+            result_kind: BooleanFieldResult::Unit,
             parameter_id: id,
             record_name: record,
             field_name: field,
@@ -588,16 +594,13 @@ pub fn import_chunk_source_with_profile(
             field_kind(model)?;
             // The supported function ABI has one record pointer. Multiple field
             // routes for that record are ambiguous until a richer importer exists.
-            if models
-                .insert(format!("int (struct {} *)", model.record), model)
-                .is_some()
-            {
-                return Err("ambiguous Boolean field models for one record ABI".into());
+            for result in ["int", "void"] {
+                let abi = format!("{result} (struct {} *)", model.record);
+                if models.insert(abi.clone(), model).is_some() {
+                    return Err("ambiguous Boolean field models for one record ABI".into());
+                }
+                model_libraries.insert(abi, (*name).to_owned());
             }
-            model_libraries.insert(
-                format!("int (struct {} *)", model.record),
-                (*name).to_owned(),
-            );
         }
     }
     let compiler = CompilerIdentity::capture()?;
@@ -702,7 +705,7 @@ pub fn import_chunk_source_with_profile(
             let abi = ast["type"]["qualType"].as_str().unwrap_or("");
             let model = models
                 .get(abi)
-                .ok_or("outside single borrowed chunk / int-result source profile")?;
+                .ok_or("outside single borrowed chunk / int-or-void-result source profile")?;
             let mut identity = identity.clone();
             identity.model_library = Some(model_libraries[abi].clone());
             let mut summary = derive_summary(
@@ -715,6 +718,16 @@ pub fn import_chunk_source_with_profile(
             )?;
             layouts[abi].clone()?;
             summary.0.profile_assumptions = profile.assumptions();
+            if summary.result_kind == BooleanFieldResult::Unit {
+                summary
+                    .0
+                    .profile_assumptions
+                    .insert("boolean_field_record".into(), model.record.clone());
+                summary
+                    .0
+                    .profile_assumptions
+                    .insert("boolean_field_name".into(), model.field.clone());
+            }
             Ok(summary)
         });
         results.push(match result {
@@ -816,6 +829,7 @@ enum Statement {
     If(Expression, Box<Self>, Option<Box<Self>>),
     Assign(Expression),
     Return(Expression),
+    ReturnUnit,
     FrameWrites(Vec<(String, i32)>),
 }
 
@@ -831,6 +845,7 @@ impl Statement {
             ),
             Self::Assign(value) => R::Assign(value.record()),
             Self::Return(value) => R::Return(value.record()),
+            Self::ReturnUnit => R::ReturnUnit,
             Self::FrameWrites(writes) => R::FrameWrites(writes.clone()),
         }
     }
@@ -867,6 +882,7 @@ impl Statement {
                 Ok(None)
             }
             Self::Return(value) => value.evaluate(path.final_value).map(Some),
+            Self::ReturnUnit => Ok(Some(0)),
             Self::FrameWrites(writes) => {
                 path.frame_writes.extend(writes.clone());
                 Ok(None)
@@ -876,6 +892,7 @@ impl Statement {
 }
 
 struct Importer<'a> {
+    result_kind: BooleanFieldResult,
     parameter_id: &'a str,
     record_name: &'a str,
     field_name: &'a str,
@@ -1003,7 +1020,12 @@ impl Importer<'_> {
             ("BinaryOperator", [place, value]) if node["opcode"] == "=" && self.field(place) => {
                 Ok(Statement::Assign(self.expression(value, depth + 1)?))
             }
-            ("ReturnStmt", [value]) => Ok(Statement::Return(self.expression(value, depth + 1)?)),
+            ("ReturnStmt", [value]) if self.result_kind == BooleanFieldResult::I32 => {
+                Ok(Statement::Return(self.expression(value, depth + 1)?))
+            }
+            ("ReturnStmt", []) if self.result_kind == BooleanFieldResult::Unit => {
+                Ok(Statement::ReturnUnit)
+            }
             _ => Err(format!("unmodeled statement {}", kind(node))),
         }
     }
@@ -1035,7 +1057,15 @@ fn derive_summary(
     if kind(parameter) != "ParmVarDecl" || kind(body) != "CompoundStmt" {
         return Err("unmodeled function definition".into());
     }
+    let result_kind = if ast["type"]["qualType"] == format!("void (struct {} *)", model.record) {
+        BooleanFieldResult::Unit
+    } else if ast["type"]["qualType"] == format!("int (struct {} *)", model.record) {
+        BooleanFieldResult::I32
+    } else {
+        return Err("unsupported Boolean field result ABI".into());
+    };
     let mut importer = Importer {
+        result_kind,
         parameter_id: parameter["id"]
             .as_str()
             .ok_or("missing parameter identity")?,
@@ -1058,13 +1088,18 @@ fn derive_summary(
             writes: Vec::new(),
             frame_writes: Vec::new(),
         };
-        path.return_value = statement
-            .execute(&mut path)?
-            .ok_or("source path falls through without an explicit return")?;
+        path.return_value = match (result_kind, statement.execute(&mut path)?) {
+            (BooleanFieldResult::Unit, value) => value.unwrap_or(0),
+            (BooleanFieldResult::I32, Some(value)) => value,
+            (BooleanFieldResult::I32, None) => {
+                return Err("source path falls through without an explicit return".into());
+            }
+        };
         Ok::<_, String>(path)
     };
     Ok(ChunkSourceSummary(
         ChunkSourceSummaryRecord {
+            result_kind,
             function: function.to_owned(),
             source_revision: source_revision.to_owned(),
             field,

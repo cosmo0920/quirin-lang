@@ -1,6 +1,7 @@
 #[path = "../../common/runtime.rs"]
 mod runtime;
 
+#[path = "../../common/source_effect.rs"]
 mod source_effect;
 
 fn main() {

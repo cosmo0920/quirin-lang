@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "profile_directory": ".",
+  "checkout": "../../../../fluent-bit",
+  "compile_database": "../../../build/cycle19/cmetrics-counter/compile_commands.json",
+  "libraries": [
+    "cmetrics"
+  ],
+  "report": "../../../build/cycle19/cmetrics-counter-audit.json",
+  "source_contracts": {
+    "configuration": "source-contracts.json",
+    "source_rules": "../../qcore/library/source_projection.qcore",
+    "libraries": [
+      {
+        "library": "cmetrics",
+        "source_root": "lib/cmetrics/src"
+      }
+    ]
+  }
+}

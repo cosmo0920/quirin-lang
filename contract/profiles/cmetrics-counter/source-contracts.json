@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "packages": [
+    "../../../build/cycle19/provider-packages-unit/qcore.cmetrics"
+  ],
+  "bindings": [
+    {
+      "library": "cmetrics",
+      "provider": "qcore.cmetrics",
+      "contract": "../../qcore/cmetrics/counter_reset.qcore"
+    }
+  ]
+}

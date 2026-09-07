@@ -4,7 +4,7 @@ use qcore_c_gateway::boolean_source::{
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_contract::profile_loader::load_profile_directory;
 use qcore_schemas::TargetProfile;
-use qcore_verification::source_effect::{BOOLEAN_FIELD_SEMANTIC_PROFILE, BooleanFieldSourceTask};
+use qcore_verification::source_effect::{BooleanFieldSourceTask, semantic_profile_for};
 use std::path::PathBuf;
 
 pub const SOURCE: &str = "struct cio_chunk { int lock; }; int cio_chunk_is_locked(struct cio_chunk *ch) { return ch->lock; }";
@@ -43,7 +43,7 @@ pub fn target(summary: &ChunkSourceSummary) -> TargetProfile {
     TargetProfile {
         library: "chunkio".into(),
         revision: summary.source_revision().into(),
-        profile: BOOLEAN_FIELD_SEMANTIC_PROFILE.into(),
+        profile: semantic_profile_for(summary).into(),
         dialect: "c11".into(),
         platform: std::env::consts::OS.into(),
         backend: "native".into(),

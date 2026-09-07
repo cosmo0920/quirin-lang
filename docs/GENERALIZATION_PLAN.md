@@ -503,6 +503,15 @@ inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
 
+[CMetrics unit-result provider](reports/w5-cmetrics-unit-provider/README.md)
+adds a second real first-party semantic producer over the shared schemas-only
+statement engine. Explicit void-result imports use two Boolean prestates and
+unit contracts; actual `cmt_counter_allow_reset` source is checked through the
+configured driver. Its separately declared analysis build and native fixture do
+not claim equivalence to the original CMake build or complete counter safety.
+The Rust schema API is 2.0.0; existing integer wire records and v2 behavior remain
+compatible. Broader per-provider semantics and default-corpus composition remain.
+
 [Generic driver and custody consolidation](reports/w5-generic-driver-consolidation/README.md)
 moves the remaining pure library-custody model into the kernel and explicit-registry
 source compilation, generic imports and research aggregation into verification.

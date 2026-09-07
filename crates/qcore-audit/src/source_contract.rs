@@ -17,7 +17,7 @@ use qcore_contract::chunk_contract::ChunkContractEvaluation;
 use qcore_schemas::{
     PluginDiagnostic, PluginId, ProposedVerdict, TargetProfile, VerifierCapability,
 };
-use qcore_verification::source_effect::{BOOLEAN_FIELD_SEMANTIC_PROFILE, BooleanFieldSourceTask};
+use qcore_verification::source_effect::{BooleanFieldSourceTask, semantic_profile_for};
 use qcore_verifier_host::{VerifierProvider, VerifierRegistry, verify_executable_package};
 use serde::Deserialize;
 
@@ -430,8 +430,10 @@ impl SourceContractRegistry {
             let provider = verify_executable_package(package)
                 .map_err(|e| SourceContractError::Package(e.to_string()))?;
             let manifest = provider.manifest();
-            if manifest.certificate_checker != "qcore.boolean_field_contract.v1"
-                || !manifest.protocol_versions.contains(&1)
+            if !matches!(
+                manifest.certificate_checker.as_str(),
+                "qcore.boolean_field_contract.v1" | "qcore.boolean_field_contract.v2"
+            ) || !manifest.protocol_versions.contains(&1)
                 || !manifest.evidence_versions.contains(&2)
                 || !manifest
                     .capabilities
@@ -486,7 +488,7 @@ impl SourceContractRegistry {
         let target = TargetProfile {
             library: library.into(),
             revision: summary.source_revision().into(),
-            profile: BOOLEAN_FIELD_SEMANTIC_PROFILE.into(),
+            profile: semantic_profile_for(summary).into(),
             dialect: identity.dialect().into(),
             platform: std::env::consts::OS.into(),
             backend: "native".into(),
@@ -498,6 +500,13 @@ impl SourceContractRegistry {
             return Err(SourceContractError::IncompatibleTarget {
                 provider: binding.provider.as_str().into(),
             });
+        }
+        if summary.result_kind == qcore_schemas::chunk_summary::BooleanFieldResult::Unit
+            && manifest.certificate_checker != "qcore.boolean_field_contract.v2"
+        {
+            return Err(SourceContractError::Configuration(
+                "unit-result source requires Boolean witness checker v2".into(),
+            ));
         }
         let replay =
             BooleanFieldSourceTask::derive(summary, translation_unit, &binding.contract, target)

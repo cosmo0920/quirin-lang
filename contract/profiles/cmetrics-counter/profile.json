@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "source_set": "cmetrics-counter",
+  "pins": {
+    "fluent-bit": {
+      "git_commit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "clean_paths": [
+        "lib/cmetrics"
+      ],
+      "description": "fluent-bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    }
+  },
+  "libraries": {
+    "cmetrics": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/cmetrics/src",
+          "selection": {
+            "exact": {
+              "file": "lib/cmetrics/src/cmt_counter.c"
+            }
+          }
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "lib/cmetrics/src/cmt_counter.c",
+          "sha256": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0"
+        }
+      ],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [
+        {
+          "record": "cmt_counter",
+          "field": "allow_reset",
+          "set_operation": "lock",
+          "clear_operation": "unlock"
+        }
+      ],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "../../cycle19-resource-contracts.json",
+  "provider_manifests": []
+}

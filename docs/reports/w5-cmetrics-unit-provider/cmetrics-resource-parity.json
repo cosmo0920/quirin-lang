@@ -1,0 +1,10 @@
+{
+  "same_resource_report_without_source_contract_field": true,
+  "raw_counts": {
+    "provisional_Unsafe": 1
+  },
+  "source_contracts": {
+    "checked": 1,
+    "Unknown": 6
+  }
+}

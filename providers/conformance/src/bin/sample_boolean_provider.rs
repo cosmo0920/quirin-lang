@@ -2,7 +2,7 @@
 //! The reused evaluator consumes imported statements, never expected paths.
 #[path = "../../../common/runtime.rs"]
 mod runtime;
-#[path = "../../../qcore-provider-chunkio/src/source_effect.rs"]
+#[path = "../../../common/source_effect.rs"]
 mod source_effect;
 
 fn main() {

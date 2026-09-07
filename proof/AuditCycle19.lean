@@ -1,3 +1,4 @@
+import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness
 import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
@@ -394,3 +395,12 @@ import QCore.ChunkSource
 #print axioms QCore.SourceProfileWitness.failed_witness_rejects_all_grants
 #print axioms QCore.SourceProfileWitness.duplicate_witness_names_reject
 #print axioms QCore.SourceProfileWitness.empty_profile_grants_nothing
+
+#print axioms QCore.ChunkSource.UnitResult.accepted_summary_covers_both_prestates
+#print axioms QCore.ChunkSource.UnitResult.accepted_contract_holds_on_every_prestate
+#print axioms QCore.ChunkSource.UnitResult.void_fallthrough_preserves_state
+#print axioms QCore.ChunkSource.UnitResult.return_stops_all_later_effects
+#print axioms QCore.ChunkSource.UnitResult.setting_true_has_no_scalar_result
+#print axioms QCore.ChunkSource.UnitResult.invalid_boolean_store_rejects
+#print axioms QCore.ChunkSource.UnitResult.metadata_write_preserves_selected_field
+#print axioms QCore.ChunkSource.UnitResult.integer_fallthrough_is_still_rejected

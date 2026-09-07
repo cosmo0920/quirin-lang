@@ -243,6 +243,21 @@ An observation claim MUST identify the fact producer, the observed artifact, the
 
 ## C08. Source-bound and lifecycle adapters
 
+The bounded native Boolean-field importer additionally supports a one-record
+pointer function returning C `void`. Its contract MUST declare `unit` and name
+the selected C record as its borrowed nominal parameter type. The explicit
+`qcore.c_boolean_field_contract.v3` profile checks both initial field values,
+requires `object_is_live`, `exclusive_object_access` and `field_is_boolean`, and
+uses `field` / `old_field` in postconditions. It MUST NOT admit a scalar `result`
+predicate. A bare return ends the path; fallthrough is valid for void only.
+Integer-returning functions retain the v2 profile and mandatory explicit return.
+Unit input version 3, the result-kind field and the input-digest namespace are
+bound to the task. Unknown statements, mismatched ABIs and incomplete source
+imports remain Unknown. The schema's numeric return slot is zero bookkeeping for
+unit paths and is never a claimed native return value. Source/ABI import and live,
+exclusive Boolean caller conditions remain explicit premises. See
+[CMetrics provider evidence](reports/w5-cmetrics-unit-provider/README.md).
+
 The repository contains specialized importers and wrappers rather than one complete lifecycle theorem prover. These adapters inspect restricted source or execute restricted models, bind a fact environment, and use selected `.qcore` acceptance rules. Sharing the predicate evaluator does not make the adapters interchangeable.
 
 The ChunkIO frame/source adapters in `compiler/src/chunk_contract.rs` check particular imported summaries against exact parameter shapes, return shapes, field facts and live/exclusive premises. The generic C importer and source-policy machinery cover only their supported syntax and compilation scope. A caller-supplied live/exclusive premise is an assumption until caller analysis establishes it.

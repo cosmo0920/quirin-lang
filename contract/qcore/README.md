@@ -417,3 +417,9 @@ and belong to their explicit interpreters. `chunkio/error_frame.qcore` is the
 configured generic helper policy over `cio_chunk`; `chunkio/error_state.qcore`
 remains the policy of retained specialized lifecycle adapters. Their records
 must not be conflated. See the [helper report](../../docs/reports/w5-configured-frame-helpers/README.md).
+
+The CMetrics unit-result provider increment adds `cmetrics/counter_reset.qcore`
+for `cmt_counter_allow_reset`: 59 modules and 163 declarations, with the same 19
+resource-v1 declarations and 144 rejected by that loader. Its interpreter is the
+bounded unit Boolean-field contract evaluator in `qcore-contract`, consumed via
+opaque C import and source-effect replay. It is not a new resource-v1 summary.

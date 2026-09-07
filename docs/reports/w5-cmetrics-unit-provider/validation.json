@@ -1,0 +1,157 @@
+{
+  "base_commit": "cc11895039e53150b68bc79cc68152ed85cd948e",
+  "status": "passed",
+  "schema_rust_api_version": "2.0.0",
+  "workspace_tests": 808,
+  "provider_tests": 45,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 8,
+  "contract_modules": 59,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "new_workspace_tests": 5,
+  "cmetrics_checked_functions": 1,
+  "cmetrics_unknown_functions": 6,
+  "native_calls": 2,
+  "source_sha256": {
+    "AGENTS.md": "40354b77bef493057caed93131268073258bcb74d24e23bb243b9c9126fbc874",
+    "CLAUDE.md": "734d9e2f11a048159e49a5d7f483bace640fffc12df7d77246db3b286da1bcd5",
+    "Cargo.lock": "e5aec823b3f897ccd9b54edabd5083661ccf03ba9ed97e98721cafcfa6a407de",
+    "README.md": "c6039fc8e433a2595690b176b2cc9b96cd3947ef564b64618f456f8271204c44",
+    "compiler/Cargo.toml": "1564852b1ab3840bc5f513032e6b294455911b5bfe1c92d56a77089ff03b5ad0",
+    "compiler/tests/contract_loader.rs": "98dc1559df0a9e6d170b0c68e4935bcfbc9f55db8c537aa9d2fb995c9a9d9b25",
+    "compiler/tests/fixtures/w3/provider/Cargo.lock": "6f37f3eaf794325195c8c8607f28238abf2382c2939f8660e90497b0a2a26150",
+    "compiler/tests/fixtures/w3/provider/Cargo.toml": "5cc028c9e96dd0a2a36bed6f608ad80a8c16a8bd7b7cfec906b3975e25ba3b1f",
+    "compiler/tests/qcore_contract_corpus.rs": "78705cb4fc2bed38e89aede151e0181f8d64cc6d15ab793aa9adc9cf227df7f3",
+    "contract/profiles/cmetrics-counter/audit.json": "a6e35cb99e935081cbd8d2865a35e8948a3535e9a9d592d8fe8f931f31fd7a9a",
+    "contract/profiles/cmetrics-counter/profile.json": "25574f73e0edf902fc5eeaf478cd65c722b284d179b8633a847add5238dc070c",
+    "contract/profiles/cmetrics-counter/source-contracts.json": "9b0b63ff32c40332dc47c2900c26614a36262fcd7ef3eae9f301c39161be4c35",
+    "contract/qcore/README.md": "b9c6fccf389c998f9fc3490852e58db9c86b1cfcba39b312263df896f0d6b72b",
+    "contract/qcore/cmetrics/counter_reset.qcore": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+    "crates/qcore-audit/Cargo.toml": "3724be435dc9c6d43a4b2396968573abdbf8c6d29d14dd3ff543fa1689914ddd",
+    "crates/qcore-audit/src/source_contract.rs": "63adafc99e0941c40888343522d0e37d0e5c24333c5ab30cff773c0cb4f6babb",
+    "crates/qcore-c-gateway/Cargo.toml": "d8b6627c4797668da0362fa287c611d37d579b39534dee8a5be3017c20f32198",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "2dbc3a236f695dfa433c5b1f284eec3da40047d050730cf830bd2d0da81ab01c",
+    "crates/qcore-contract/Cargo.toml": "8c7f9355e5ab572eb9f594db892f36397e9f9a45b545e80532b85560227aa95f",
+    "crates/qcore-contract/src/chunk_contract.rs": "65ea1ecada41670da32d3637a2ff48ba3fd9105b1db761408bf2747b3c10ec48",
+    "crates/qcore-contract/tests/chunk_policy_records.rs": "969045e7736bf79a1382eebc5e377183478d33c37fd2b78b9d74930b9b9bb279",
+    "crates/qcore-schemas/Cargo.toml": "4992f1ba51a5ceafb261f39cd57a4ed5442e4d089dc45a92d7977c0deba4a075",
+    "crates/qcore-schemas/README.md": "7eba88be30457603fcbcc02e6670cd040094e7b2a202977767eab8678a53a5fa",
+    "crates/qcore-schemas/src/chunk_summary.rs": "a2a50803604bbe5669e7c533e583ecc3c55036b5e6f1f87b41f54fb15ee7cf25",
+    "crates/qcore-schemas/src/plugin.rs": "9ae297be50fc6b8989f9b1de27bee55a2f5b839f776b9bf675d45e65c8958c4b",
+    "crates/qcore-schemas/tests/boolean_result_abi.rs": "0f615b4416bc39028c3d4f2768e50cd083f76bef7b82370094a42a954d72dd41",
+    "crates/qcore-verification/Cargo.toml": "aa8cd998666069238b32d83f6d3ae215f36ea3a9628973dcb9059dfbca376d67",
+    "crates/qcore-verification/src/source_effect.rs": "c0b0ded655f90b85f0a0f15d24a2141c87aa5716a99b0cf6ab98c2c600981eb2",
+    "crates/qcore-verification/tests/fixtures/boolean_source.rs": "0a511fe476cb12bd6b59f78f60a4aba391614171dfb23a85f51ff60726a41f32",
+    "crates/qcore-verification/tests/source_effect.rs": "3e34091e3bc760282989dce938ea28efba43b276fdbf9a92a6aa207d715e4a2a",
+    "crates/qcore-verifier-host/Cargo.toml": "9c41132a746d307f43cba878e0c934dea3f5ee197e0e07c0b1a5557f7096d8d4",
+    "crates/qcore-verifier-host/src/lib.rs": "95d64fab070e22137adce04d2926a9b7017d22974f3f13937d7d0febf7f71fc0",
+    "docs/GENERALIZATION_PLAN.md": "eeb86ca2d49d2fd7425308b3411bd9b86f213c19735bcd8ed41dcf256f1b299a",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md": "d42f69f222c4ec82ad1833949b7ab316cf27eb9292ef1f56afe59ce680554e93",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "5ccdd3e0d4d72aa92caf83f31c68a9c201d1db16e88d58685e9c7e35df9d821c",
+    "docs/reports/w5-cmetrics-unit-provider/README.md": "d9738a9d61c3a8847f01314a879c8802cb49527525fef4ee2ace2eaa467d0f1d",
+    "docs/reports/w5-cmetrics-unit-provider/native_counter.c": "1ffae648c4b74b03ef0a3283b5418c8b509f9bfc9ac5a6ae56683695edefdd7f",
+    "docs/reports/w5-cmetrics-unit-provider/prepare.py": "94e9068ca5a52ecc30bf1e6d21f4547b4cda5b0d063f42e1a77f5a9e00246be6",
+    "proof/AuditCycle19.lean": "63758cf7a11f5438b38cd562b3a6031ff1e44d5f0871fdbee12dfc5f9f635354",
+    "proof/QCore.lean": "647cef155bae6239599a3976b44f72d111af59a60e3b3d5cfe6e638a8fdab17b",
+    "proof/QCore/BooleanFieldUnit.lean": "4680ce3c95ee44cc49b275255a501212dfdd228d5f28126b8d9b28878f0e0d61",
+    "providers/Cargo.lock": "c58432bff1f5eac60f5222243c549b88a84c8cbab25aef8309a1ce7c91542d74",
+    "providers/Cargo.toml": "7c5e4f78d806f902d1e50256f4e141681183a0c69e5523be7433ad9770f8f939",
+    "providers/README.md": "ed00bd4a9f6aec2404fcc44dd0d3ed19c335c420cb229bcb9f9632fa500bd840",
+    "providers/common/source_effect.rs": "3ff1d947dbcc4b05bf14f3b8faac35edc450a11f5d0331dce58fce3314effff0",
+    "providers/conformance/src/bin/configured_audit_provider.rs": "543bc76426bd682c8ac64bfb6cd79b263d777ad25fe78a6f7e1bd748813e44f2",
+    "providers/conformance/src/bin/sample_boolean_provider.rs": "9434f685000eb30c036e1ce75959e00f4bc6df600c4f8b82263afdd134bff075",
+    "providers/conformance/tests/cmetrics_unit.rs": "a30b024323f2e16cc1d84a7a5ae9aaa6506bb8f8eb0d9ff08581d756f81f619a",
+    "providers/conformance/tests/packages.rs": "4a7a41aa5509ce7130bf3d8e8ae55a1f35a9571ac386fc2b344830db57aadea2",
+    "providers/qcore-provider-chunkio/Cargo.toml": "acca94c7c0bde79b5ec5beedf7f6a9cd8be16e64651f685700890ac92bab6119",
+    "providers/qcore-provider-chunkio/provider-template.json": "3a3eacbd2026ab703b8dc42c8fa24c70a0ea1b442cf678d513eb89eca48ab851",
+    "providers/qcore-provider-chunkio/src/main.rs": "7db82c3d666a52a21353ddbcc62107d2b86cf0b6b4314eaaff3d2a7507ed07c8",
+    "providers/qcore-provider-cmetrics/Cargo.toml": "cfe7b5a03a039876deaaf9936acb66f70808955864449e3933796438f8c2d046",
+    "providers/qcore-provider-cmetrics/provider-template.json": "b871a8e9ab5aa214e39741f8749b5bca4aec2ff105c371bb3810b412f803a2e6",
+    "providers/qcore-provider-cmetrics/src/main.rs": "7db82c3d666a52a21353ddbcc62107d2b86cf0b6b4314eaaff3d2a7507ed07c8"
+  },
+  "removed_source_sha256": {
+    "providers/qcore-provider-chunkio/src/source_effect.rs": "7a79655c7f902ada540a53e8aa7d192e8b7f24134ed326f4d47086c80c2e2c4e"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "path": "workspace.log.gz",
+      "uncompressed_sha256": "2c0a5c859411842f0ec5978c8920857781e3235f418f30932a75454aff8a433f"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "path": "checks.log.gz",
+      "uncompressed_sha256": "c48c02d48365208c86fcbd2fd1c02c010fc950322a3c0ac0a3dcdeff063ea5a1"
+    },
+    "provider-checks": {
+      "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "path": "provider-checks.log.gz",
+      "uncompressed_sha256": "8fe1afb8413e6a803f50a21f2f96a604b471e193a6d7c9258be412940f1b3c4d"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "path": "python.log.gz",
+      "uncompressed_sha256": "5a5e6ea8e31f37e2e615b4c0579949d77fb7dd90e23b659edc6ada24bce8e89d"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "path": "lean-audits.log.gz",
+      "uncompressed_sha256": "bc7118b642a06da5cfc400e57d0c5f3c96eb7e63ce0a0a1704a3732d35fda2b1"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-void-source-source.json /tmp/qcore-void-source-diagnostics.json",
+      "exit_code": 0,
+      "path": "audit.log.gz",
+      "uncompressed_sha256": "a21236c6ae55cbcbdcc3f5d9303224b017f44acb1e074a0482a69ec9aab3641a"
+    },
+    "provider-tests": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline",
+      "exit_code": 0,
+      "path": "provider-tests.log.gz",
+      "uncompressed_sha256": "f56080dd4d2ab556b1cd532a6dc17d0d5aa0bcaca3999a780588fb0d4e660f27"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "path": "lean-build.log.gz",
+      "uncompressed_sha256": "42cba28c2230c486d074ad68c49ae6485e304794da31d58fe90579d2f8411cbb"
+    },
+    "cmetrics-audit": {
+      "command": "cargo run --quiet -p qcore-audit -- build/cycle19/cmetrics-counter/audit.json.config",
+      "exit_code": 0,
+      "path": "cmetrics-audit.log.gz",
+      "uncompressed_sha256": "d70c6dcf97413366bdc1132fe3016e5178f7c252f7dffa0dd53783b824a22670"
+    },
+    "cmetrics-resource-only": {
+      "command": "cargo run --quiet -p qcore-audit -- build/cycle19/cmetrics-counter/resource-only.json.config",
+      "exit_code": 0,
+      "path": "cmetrics-resource-only.log.gz",
+      "uncompressed_sha256": "1805264130ee447485036642e4a22f5abc0119efc1c317b999c0d3631d78aba8"
+    },
+    "packages": {
+      "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages-unit --target-dir providers/target/conformance-artifacts",
+      "exit_code": 0,
+      "path": "packages.log.gz",
+      "uncompressed_sha256": "0d307f7138d5d4580b94c94e6c73e002fb9a3ffe0878d93cf8571af3f2ade4d1"
+    },
+    "packages-repro": {
+      "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages-unit-repro --target-dir /tmp/qcore-unit-provider-repro-target",
+      "exit_code": 0,
+      "path": "packages-repro.log.gz",
+      "uncompressed_sha256": "f141fc1f928f4fe59092a332a1cadb5969419a59a809ceabf28aa4a794919b34"
+    },
+    "packages-repro2": {
+      "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages-unit-repro2 --target-dir /tmp/qcore-unit-provider-repro2-target",
+      "exit_code": 0,
+      "path": "packages-repro2.log.gz",
+      "uncompressed_sha256": "31e3ebcb1dd87adc579b2935d1923532925e155fbf3f6e9585125b91894e063c"
+    }
+  }
+}

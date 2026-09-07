@@ -10,6 +10,22 @@ use std::collections::BTreeMap;
 /// Additive record vocabulary version, not a newly admitted protocol witness.
 pub const CHUNK_SUMMARY_RECORD_VERSION: u16 = 1;
 
+/// C result ABI of the imported function. Unit paths carry zero only as an
+/// internal path-record placeholder; contracts may not refer to `result`.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BooleanFieldResult {
+    #[default]
+    I32,
+    Unit,
+}
+
+impl BooleanFieldResult {
+    pub fn is_i32(&self) -> bool {
+        *self == Self::I32
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ChunkSourceField {
     Busy,
@@ -33,6 +49,8 @@ pub struct ChunkSourcePath {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChunkSourceSummaryRecord {
+    #[serde(default, skip_serializing_if = "BooleanFieldResult::is_i32")]
+    pub result_kind: BooleanFieldResult,
     pub function: String,
     pub source_revision: String,
     pub field: ChunkSourceField,
@@ -68,6 +86,7 @@ pub enum BooleanFieldStatement {
     If(BooleanFieldExpression, Box<Self>, Option<Box<Self>>),
     Assign(BooleanFieldExpression),
     Return(BooleanFieldExpression),
+    ReturnUnit,
     FrameWrites(Vec<(String, i32)>),
 }
 
@@ -77,6 +96,8 @@ pub enum BooleanFieldStatement {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BooleanFieldSourceInput {
+    #[serde(default, skip_serializing_if = "BooleanFieldResult::is_i32")]
+    pub result_kind: BooleanFieldResult,
     pub schema_version: u16,
     pub function: String,
     pub source_revision: String,
@@ -87,9 +108,25 @@ pub struct BooleanFieldSourceInput {
 }
 
 pub const BOOLEAN_FIELD_SOURCE_INPUT_VERSION: u16 = 2;
+pub const BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION: u16 = 3;
+pub const BOOLEAN_FIELD_UNIT_SOURCE_INPUT_KEY: &str = "qcore:boolean-field-source-input:v3";
 pub const BOOLEAN_FIELD_SOURCE_INPUT_KEY: &str = "qcore:boolean-field-source-input:v2";
 
 impl BooleanFieldSourceInput {
+    pub fn version_matches_result(&self) -> bool {
+        self.schema_version
+            == match self.result_kind {
+                BooleanFieldResult::I32 => BOOLEAN_FIELD_SOURCE_INPUT_VERSION,
+                BooleanFieldResult::Unit => BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION,
+            }
+    }
+    pub fn digest_key(&self) -> &'static str {
+        match self.result_kind {
+            BooleanFieldResult::I32 => BOOLEAN_FIELD_SOURCE_INPUT_KEY,
+            BooleanFieldResult::Unit => BOOLEAN_FIELD_UNIT_SOURCE_INPUT_KEY,
+        }
+    }
+
     pub fn digest(&self) -> String {
         crate::digest::sha256_hex(
             &serde_json::to_vec(self).expect("serializable source projection"),

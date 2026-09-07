@@ -1,7 +1,7 @@
 //! Schemas-only fixture accepting concrete revisions pinned by the audit host.
 #[path = "../../../common/runtime.rs"]
 mod runtime;
-#[path = "../../../qcore-provider-chunkio/src/source_effect.rs"]
+#[path = "../../../common/source_effect.rs"]
 mod source_effect;
 
 fn main() {

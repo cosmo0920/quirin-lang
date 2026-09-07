@@ -24,7 +24,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic library/container/reference-count and reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped copy/owned-buffer source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
-| `crates/qcore-schemas/` | L0 published schema surface (W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-schemas/` | L0 published schema surface (Rust API 2.0.0; W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
@@ -740,3 +740,22 @@ tests, 43 Python tests and 20 Lean audits pass. The four full 185-TU audit
 artifacts retain exact parity; declared source constructs remain assumptions,
 with no raw verdict promotion or CT mapping change. Evidence:
 `docs/reports/w2-source-profile-boundary/README.md`.
+
+CMetrics unit-result provider (2026-09-07): W5 adds explicit void-result Boolean
+field import and process replay. `cmt_counter_allow_reset` now has a checked
+function contract in a separately configured CMetrics analysis build; six other
+functions remain Unknown and its raw unit stays provisional Unsafe. Native
+ASan/UBSan/LSan execution covers both initial field values and unchanged remaining
+object bytes. Unit inputs use semantic profile v3, a distinct result ABI, two
+prestates and generic field predicates; scalar-result assertions reject. Existing
+i32 profile v2 behavior and wire bytes remain unchanged. The schema Rust API is
+version 2.0.0; CMetrics 0.2.0 and ChunkIO 0.4.0 share a schemas-only producer.
+The 185-unit audit retains exact source/resource diagnostic bytes and all verdicts;
+two source-contract reports change only 75 Unknown explanations. The existing
+three checked/93 Unknown source-effect split is unchanged. Five new workspace
+tests, expanded provider tests and eight Lean unit-result theorems cover the
+boundary. All 808 workspace tests, 45 provider tests, 43 Python tests and 20 Lean
+audits pass, together with the standing gates and two clean package builds.
+Evidence: `docs/reports/w5-cmetrics-unit-provider/README.md`. Broader provider semantics,
+original CMake-build equivalence, lifecycle composition and raw promotion remain
+open. The contract corpus now has 59 modules; CT coverage remains 11/50 mapped.

@@ -76,7 +76,7 @@ dependencies = [
 
 [[package]]
 name = "qcore-provider-chunkio"
-version = "0.1.0"
+version = "0.4.0"
 dependencies = [
  "qcore-schemas",
  "serde",
@@ -85,7 +85,7 @@ dependencies = [
 
 [[package]]
 name = "qcore-provider-cmetrics"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "qcore-schemas",
  "serde",
@@ -136,7 +136,7 @@ dependencies = [
 
 [[package]]
 name = "qcore-schemas"
-version = "1.0.0"
+version = "2.0.0"
 dependencies = [
  "serde",
  "serde_json",

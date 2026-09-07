@@ -1,4 +1,4 @@
-# qcore-schemas 1.0.0
+# qcore-schemas 2.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -82,3 +82,21 @@ This crate bump does not renumber protocol or evidence versions, change
 existing data-profile versions, or grant new witness authority. Provider
 package versions remain independent; rebuilding records exact artifact
 identity through the package manifest and digest.
+
+## Explicit result ABI (2.0.0)
+
+`BooleanFieldResult` distinguishes I32 from Unit in source input and proposed
+summary records. New Rust fields and an exhaustive statement-enum variant are
+source-incompatible, so this is a major crate-version change. Existing I32 wire
+records omit the default field and retain their bytes and version-2 semantics.
+Unit records explicitly serialize `result_kind: "unit"`, use source input version
+3 and `ReturnUnit`, and bind `qcore:boolean-field-source-input:v3`. A mismatched
+input version/result kind rejects. Unknown enum variants remain rejected.
+
+The unit semantic profile is `qcore.c_boolean_field_contract.v3`: two initial
+Boolean states, no scalar result, a nominal record from the opaque import, and
+`field`/`old_field` predicates. A path's numeric return slot is a zero placeholder
+only; no unit contract can inspect it. The admitted checker is
+`qcore.boolean_field_contract.v2`. Version-1 checkers remain usable for old I32
+contexts. No protocol-v1 or ordinary evidence-v2 envelope changes, no new claim of
+source authenticity, and no change to unrelated witness admission follows.

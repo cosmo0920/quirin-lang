@@ -138,3 +138,130 @@ fn target_substitution_and_unsupported_selected_functions_reject() {
     assert_eq!(results.len(), 2, "unsupported functions stay in inventory");
     assert!(results.iter().any(|r| matches!(r, qcore_c_gateway::boolean_source::ChunkSourceResult::Unknown { function, .. } if function == "extra")));
 }
+
+const UNIT_CONTRACT: &str = "module contract; extern fn reset(ch: borrow<'call, mut, cio_chunk> use one)->unit contract { requires object_is_live; requires exclusive_object_access; requires field_is_boolean; ensures normal field == 1; };";
+
+#[test]
+fn void_field_source_has_explicit_unit_abi_and_two_checked_states() {
+    use qcore_schemas::chunk_summary::BooleanFieldResult;
+    for body in [
+        "ch->lock=1;",
+        "ch->lock=1; return;",
+        "if (ch->lock) { return; } ch->lock=1;",
+    ] {
+        let summary = checked(
+            &format!("struct cio_chunk {{int lock;}}; void reset(struct cio_chunk *ch) {{{body}}}"),
+            vec![],
+        );
+        assert_eq!(summary.result_kind, BooleanFieldResult::Unit);
+        assert_eq!(summary.source_input().schema_version, 3);
+        assert!(
+            summary
+                .paths
+                .iter()
+                .all(|path| path.return_value == 0 && path.final_value)
+        );
+        let replay = task(&summary, UNIT_CONTRACT);
+        assert_eq!(
+            replay.task().semantic_profile,
+            "qcore.c_boolean_field_contract.v3"
+        );
+        assert_eq!(replay.evaluate().unwrap().checked_states(), 2);
+        assert!(
+            replay
+                .request(qcore_schemas::PluginId::new("qcore.chunkio").unwrap())
+                .validate()
+                .is_ok()
+        );
+        assert_eq!(
+            replay
+                .check(replay.task(), &witness(&replay, &summary))
+                .unwrap()
+                .len(),
+            1
+        );
+    }
+}
+
+#[test]
+fn void_contracts_and_proposals_cannot_forge_a_scalar_result_or_record_identity() {
+    use qcore_schemas::chunk_summary::BooleanFieldResult;
+    let summary = checked(
+        "struct cio_chunk {int lock;}; void reset(struct cio_chunk *ch) { ch->lock=1; }",
+        vec![],
+    );
+    for bad in [
+        UNIT_CONTRACT.replace("->unit", "->i32"),
+        UNIT_CONTRACT.replace("field == 1", "result == 0"),
+        UNIT_CONTRACT.replace("cio_chunk>", "Unrelated>"),
+        UNIT_CONTRACT.replace("field == 1", "field == 0"),
+    ] {
+        assert!(task(&summary, &bad).evaluate().is_err());
+    }
+    let replay = task(&summary, UNIT_CONTRACT);
+    for mutation in 0..4 {
+        let mut proposal = witness(&replay, &summary);
+        let SemanticWitness::BooleanFieldContract(value) = &mut proposal else {
+            unreachable!()
+        };
+        match mutation {
+            0 => value.summary.result_kind = BooleanFieldResult::I32,
+            1 => value.summary.paths[0].return_value = 1,
+            2 => {
+                value
+                    .summary
+                    .profile_assumptions
+                    .insert("boolean_field_record".into(), "Other".into());
+            }
+            3 => {
+                value
+                    .summary
+                    .profile_assumptions
+                    .insert("boolean_field_name".into(), "other".into());
+            }
+            _ => unreachable!(),
+        }
+        assert!(replay.check(replay.task(), &proposal).is_err());
+    }
+    let mut request = replay.request(qcore_schemas::PluginId::new("qcore.chunkio").unwrap());
+    request.source_effect.as_mut().unwrap().schema_version = 2;
+    assert!(request.validate().is_err());
+    let mut mismatched = target(&summary);
+    mismatched.profile = "qcore.c_boolean_field_contract.v2".into();
+    assert!(
+        BooleanFieldSourceTask::derive(&summary, "fixture.c", UNIT_CONTRACT, mismatched).is_err()
+    );
+}
+
+#[test]
+fn integer_profile_bytes_and_missing_return_rejection_are_preserved() {
+    let summary = checked(SOURCE, vec![]);
+    let input = summary.source_input();
+    assert_eq!(input.schema_version, 2);
+    assert!(
+        !serde_json::to_string(&input)
+            .unwrap()
+            .contains("result_kind")
+    );
+    assert!(
+        !serde_json::to_string(&*summary)
+            .unwrap()
+            .contains("result_kind")
+    );
+    assert_eq!(
+        task(&summary, CONTRACT)
+            .evaluate()
+            .unwrap()
+            .checked_states(),
+        4
+    );
+    for source in [
+        "struct cio_chunk {int lock;}; int reset(struct cio_chunk *ch) {ch->lock=1;}",
+        "struct cio_chunk {int lock;}; void reset(struct cio_chunk *ch) {ch->lock=2;}",
+    ] {
+        assert!(matches!(
+            imports(source, vec![]).as_slice(),
+            [qcore_c_gateway::boolean_source::ChunkSourceResult::Unknown { .. }]
+        ));
+    }
+}

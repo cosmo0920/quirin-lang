@@ -7,7 +7,7 @@
 
 use qcore_c_gateway::boolean_source::ChunkSourceSummary;
 use qcore_contract::chunk_contract::{ChunkContractEvaluation, evaluate_chunk_source_contract};
-use qcore_schemas::chunk_summary::BOOLEAN_FIELD_SOURCE_INPUT_KEY;
+use qcore_schemas::chunk_summary::BooleanFieldResult;
 use qcore_schemas::obligation::*;
 use qcore_schemas::plugin::*;
 use qcore_schemas::{SemanticWitness, sha256_hex};
@@ -15,6 +15,15 @@ use qcore_verifier_host::WitnessChecker;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const BOOLEAN_FIELD_SEMANTIC_PROFILE: &str = "qcore.c_boolean_field_contract.v2";
+
+pub const BOOLEAN_FIELD_UNIT_SEMANTIC_PROFILE: &str = "qcore.c_boolean_field_contract.v3";
+
+pub fn semantic_profile_for(summary: &ChunkSourceSummary) -> &'static str {
+    match summary.result_kind {
+        BooleanFieldResult::I32 => BOOLEAN_FIELD_SEMANTIC_PROFILE,
+        BooleanFieldResult::Unit => BOOLEAN_FIELD_UNIT_SEMANTIC_PROFILE,
+    }
+}
 
 /// Sealed replay context. A raw wire summary cannot construct one.
 pub struct BooleanFieldSourceTask {
@@ -32,7 +41,7 @@ impl BooleanFieldSourceTask {
     ) -> Result<Self, String> {
         if translation_unit.is_empty()
             || contract_source.is_empty()
-            || target.profile != BOOLEAN_FIELD_SEMANTIC_PROFILE
+            || target.profile != semantic_profile_for(summary)
             || !matches!(target.dialect.as_str(), "c11" | "gnu99" | "gnu11" | "gnu17")
             || target.revision != summary.source_revision()
             || summary.input_identity().model_library() != Some(target.library.as_str())
@@ -74,7 +83,7 @@ impl BooleanFieldSourceTask {
         let identity = summary.input_identity();
         let serialized_identity = serde_json::to_vec(identity).map_err(|e| e.to_string())?;
         let contract_sources = BTreeMap::from([
-            (BOOLEAN_FIELD_SOURCE_INPUT_KEY.into(), input.digest()),
+            (input.digest_key().into(), input.digest()),
             (
                 "qcore:boolean-field-import:v1".into(),
                 sha256_hex(&serialized_identity),
@@ -84,7 +93,7 @@ impl BooleanFieldSourceTask {
                 sha256_hex(contract_source.as_bytes()),
             ),
         ]);
-        let assumptions = BTreeMap::from([
+        let mut assumptions = BTreeMap::from([
             ("borrowed_parameter_is_live".into(), true),
             ("borrowed_parameter_is_exclusive".into(), true),
             ("busy_is_boolean".into(), true),
@@ -97,8 +106,19 @@ impl BooleanFieldSourceTask {
             ("source_projection_policy_is_declared_trusted".into(), true),
             ("field_mapping_profile_is_declared_trusted".into(), true),
         ]);
+        if summary.result_kind == BooleanFieldResult::Unit {
+            assumptions.remove("busy_is_boolean");
+            assumptions.remove("lock_is_boolean");
+            assumptions.insert("field_is_boolean".into(), true);
+        }
         let bounds = TaskBounds {
-            path_exploration: PathBounds::BoundedPaths { paths: 4 },
+            path_exploration: PathBounds::BoundedPaths {
+                paths: if summary.result_kind == BooleanFieldResult::Unit {
+                    2
+                } else {
+                    4
+                },
+            },
             schedules_explored: None,
             observed_runs_only: false,
             max_operations: None,
@@ -111,7 +131,7 @@ impl BooleanFieldSourceTask {
                 build_digest: sha256_hex(&serialized_identity),
             },
             target,
-            semantic_profile: BOOLEAN_FIELD_SEMANTIC_PROFILE.into(),
+            semantic_profile: semantic_profile_for(summary).into(),
             contract_sources,
             bounds: bounds.clone(),
             assumptions: assumptions.clone(),
@@ -196,7 +216,14 @@ impl WitnessChecker for BooleanFieldSourceTask {
         // Equality only binds the proposal to the import. Acceptance terminates
         // in independently evaluating the actual contract over all source states.
         let evaluation = self.evaluate()?;
-        if evaluation.checked_states() != 4 || evaluation.function() != self.summary.function() {
+        if evaluation.checked_states()
+            != if self.summary.result_kind == BooleanFieldResult::Unit {
+                2
+            } else {
+                4
+            }
+            || evaluation.function() != self.summary.function()
+        {
             return Err("source-effect replay lacks complete Boolean prestate coverage".into());
         }
         Ok(task.coverage_for(VerifierCapability::ResourceContracts))
