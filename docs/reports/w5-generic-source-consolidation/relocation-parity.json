@@ -1,0 +1,63 @@
+{
+  "base_commit": "128d355",
+  "modules": [
+    {
+      "old_path": "compiler/src/typed_source.rs",
+      "new_path": "crates/qcore-c-gateway/src/typed_source.rs",
+      "old_sha256": "0cf5557d66ecff24b9fb359c2b2dd5887effe34488290a22c61178a45f71e63a",
+      "new_sha256": "61672984fc734d50bcedb9a29f4d8907614e79ba5bd4d7f8fb9e93ed0a94430b",
+      "normalized_token_count": 11881,
+      "normalized_tokens_sha256": "a8fddb2c279c0228525ef9dd2d28834712496790b8ae8cfb2cb60035f57f930a",
+      "production_tokens_equal_after_module_rewrites": true
+    },
+    {
+      "old_path": "compiler/src/source_call_use.rs",
+      "new_path": "crates/qcore-c-gateway/src/source_call_use.rs",
+      "old_sha256": "3053ab403ceb64d0800a5883df014e37b93ae9ccf041d77c25a92fc600493ad3",
+      "new_sha256": "3053ab403ceb64d0800a5883df014e37b93ae9ccf041d77c25a92fc600493ad3",
+      "normalized_token_count": 718,
+      "normalized_tokens_sha256": "36685cc00a2f792f39615ddb9691e0cd74f2b4ea6e39a8d365e6a348dbca425f",
+      "production_tokens_equal_after_module_rewrites": true
+    },
+    {
+      "old_path": "compiler/src/cleanup_outcome.rs",
+      "new_path": "crates/qcore-verification/src/cleanup_outcome.rs",
+      "old_sha256": "ccc0b9ebd67e9a5349a66303e3addfbad6f0e5881795b84b829c24b551f55851",
+      "new_sha256": "2f3704a71a917ff1f795a3830966e8620e52a1587b81c84f1ef4b0e66ff5c871",
+      "normalized_token_count": 4570,
+      "normalized_tokens_sha256": "8b4b674a5e2f21dc7831d1566e1529a9292ac072afeaaf01c9b04e125a238c3e",
+      "production_tokens_equal_after_module_rewrites": true
+    },
+    {
+      "old_path": "compiler/src/counter_contract.rs",
+      "new_path": "crates/qcore-verification/src/counter_contract.rs",
+      "old_sha256": "ff37e4e925d750cef08e717fec9b9484649cea9ddeaae865321805a5abcfc935",
+      "new_sha256": "749bc2e9a0628b98ce0d17705e4fa4a366095b66462d4b308b7a20de815d6828",
+      "normalized_token_count": 1492,
+      "normalized_tokens_sha256": "c70b5acc599c9d336e8ef047e24d3efcb7485f7e719c7b3e8ce7f4a920f38341",
+      "production_tokens_equal_after_module_rewrites": true
+    },
+    {
+      "old_path": "compiler/src/field_destructor.rs",
+      "new_path": "crates/qcore-verification/src/field_destructor.rs",
+      "old_sha256": "ecfd56cb3de712c480f36b74a2868574e908b8c5f599a437408c132051292b1c",
+      "new_sha256": "6b18f31242262525dd620e1fe540c82eb7b1a653055a3a2011b1e864c61bbe1e",
+      "normalized_token_count": 3087,
+      "normalized_tokens_sha256": "6291ac63de21b5b927041b2a39680eb5f0a76ec2d6ebc488d6dd1c9d348dd532",
+      "production_tokens_equal_after_module_rewrites": true
+    },
+    {
+      "old_path": "compiler/src/list_unlink_contract.rs",
+      "new_path": "crates/qcore-verification/src/list_unlink_contract.rs",
+      "old_sha256": "e111df1088d3b80dad27973d8c828167511e0bca31dfee3bda84aedd4f859d0f",
+      "new_sha256": "bd75834e776eee1d2f36d02b678b7f3065705b2609e1520e115709cddc2b1c11",
+      "normalized_token_count": 3054,
+      "normalized_tokens_sha256": "7ef313eb680e81156a4030fa691f7199a8d5baa733438d8d2f9d8ed66f2bae56",
+      "production_tokens_equal_after_module_rewrites": true
+    }
+  ],
+  "unchanged_default_policy": {
+    "path": "contract/qcore/library/source_projection.qcore",
+    "sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
+  }
+}

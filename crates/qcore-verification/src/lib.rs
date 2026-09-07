@@ -12,3 +12,8 @@ pub mod witness_replay;
 pub mod reactor_callback;
 
 pub mod source_effect;
+
+pub mod cleanup_outcome;
+pub mod counter_contract;
+pub mod field_destructor;
+pub mod list_unlink_contract;

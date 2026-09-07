@@ -392,3 +392,17 @@ is not proved. Six new public tests and a fixed six-allocation native sanitizer
 fixture pass. All 760 workspace tests and the standing gates pass; the 185-unit
 Cycle19 reports are byte-identical. General recursive inference, aliases and
 cost summaries remain open. Evidence: `docs/reports/w4-unsigned-countdown/README.md`.
+
+Generic source consolidation (2026-09-07): W5 moves typed C path import and
+call-result def/use into `qcore-c-gateway`; counter, nullable-field destructor,
+list unlink and cleanup-outcome replay now live in `qcore-verification`.
+Both crates expose provider-free APIs while preserving opaque source summary
+construction. Four unrelated-source integration tests exercise these APIs;
+compile-fail checks protect the constructor/serialization boundary. Generic
+symbol, short-circuit and call-use tests now run in the gateway; provider fixtures
+remain with their compatibility adapters. All six production bodies have token
+parity after module-reference/import-order rewrites; default policy bytes and
+all four full Cycle19 artifacts are unchanged. The 767 workspace tests and
+standing gates pass. Specialized reference matching, provider extraction,
+registry composition and final compatibility removal remain open. Evidence:
+`docs/reports/w5-generic-source-consolidation/README.md`.

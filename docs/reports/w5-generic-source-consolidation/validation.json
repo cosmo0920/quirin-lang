@@ -1,0 +1,111 @@
+{
+  "base_commit": "128d3556352c159bcf484dd9d82d03745e1d15f4",
+  "status": "passed",
+  "workspace_tests": 767,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 58,
+  "ct_mapped": 8,
+  "ct_unmapped": 42,
+  "new_public_integration_tests": 4,
+  "new_compile_fail_tests": 2,
+  "split_existing_unit_assertions_into_tests": 1,
+  "source_sha256": {
+    "crates/qcore-c-gateway/src/typed_source.rs": "61672984fc734d50bcedb9a29f4d8907614e79ba5bd4d7f8fb9e93ed0a94430b",
+    "crates/qcore-c-gateway/src/source_call_use.rs": "3053ab403ceb64d0800a5883df014e37b93ae9ccf041d77c25a92fc600493ad3",
+    "crates/qcore-verification/src/counter_contract.rs": "749bc2e9a0628b98ce0d17705e4fa4a366095b66462d4b308b7a20de815d6828",
+    "crates/qcore-verification/src/field_destructor.rs": "6b18f31242262525dd620e1fe540c82eb7b1a653055a3a2011b1e864c61bbe1e",
+    "crates/qcore-verification/src/list_unlink_contract.rs": "bd75834e776eee1d2f36d02b678b7f3065705b2609e1520e115709cddc2b1c11",
+    "crates/qcore-verification/src/cleanup_outcome.rs": "2f3704a71a917ff1f795a3830966e8620e52a1587b81c84f1ef4b0e66ff5c871",
+    "crates/qcore-c-gateway/src/lib.rs": "3084564c4dea3e43f9795b7dc3db9e276e3596373622cc89dcd2b3f7c4a9f76d",
+    "crates/qcore-verification/src/lib.rs": "19e4403524e04c0a4b844b5fb3b3f279e9378a721abee226f358340583823421",
+    "crates/qcore-verification/Cargo.toml": "0b4abed51653009808acfb305fd646cfc9596e782683d567f1a7004d2dffe147",
+    "Cargo.lock": "53a678394bb4f7e688d8e0bf3e17273fa07e96e04b0dcf573dd488f95b63b7f1",
+    "providers/Cargo.lock": "d7a6b1becfb655cc28826d42cb35020d68c9de77f8f9bc1d02a9b333682b0ad9",
+    "crates/qcore-verification/tests/generic_source.rs": "f2431550f8a9ec4cba5e98842d63121bb5789d7c9eb775c4e1eb09464bacd183",
+    "crates/qcore-verification/tests/fixtures/generic_source/cleanup.qcore": "5de30e28ba675bfa6b38c4a024043dc5ae5a23189361b7450d280aad595aab94",
+    "crates/qcore-verification/tests/fixtures/generic_source/counter.qcore": "607f81ac635a1cf701ed600a1b182e5baf88ac7c7dd3155a8245ab5f2834cbf3",
+    "crates/qcore-verification/tests/fixtures/generic_source/destructor.qcore": "a571fdef2247dbe3333cec23b2524e1fd5099e28a1ef5bb2d4f117f98acf66f3",
+    "crates/qcore-verification/tests/fixtures/generic_source/sample.c": "d7db07f5863ce83dd408927926b5646b9fa62116e205b22ac549a28ca9d56d6f",
+    "crates/qcore-verification/tests/fixtures/generic_source/unlink.qcore": "9897909a1fd6dc8ee2ce6305cccbc4fa833ea825f335ed878b333a4249ca26ab",
+    "crates/qcore-c-gateway/tests/unit/short_circuit_source.rs": "5f98e1b7beae0f37ae9ca83ba49a74e2995d6f3c28acbb1cfc50580ed207e280",
+    "crates/qcore-c-gateway/tests/unit/source_call_use.rs": "93b85eb073bd8a7c49e50dd5673841eaea34774b7773a1dcfd46387398389e87",
+    "crates/qcore-c-gateway/tests/unit/source_symbols.rs": "409d99add0ac8dee7c4350197b7cf057c66ab529fa5fb1c7fc936d900f38b126"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "log": "workspace.log.gz",
+      "uncompressed_sha256": "fba8650ca4110acd9ac2f4e93129435f7f91963872635c5bb284c0c28ff25420"
+    },
+    "focused": {
+      "command": "cargo test -p qcore-verification --test generic_source",
+      "exit_code": 0,
+      "log": "focused.log.gz",
+      "uncompressed_sha256": "0da6f05775c8d42d5951bca5996bb420a8886f3c583684541e49f926e7ff3a6d"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "log": "checks.log.gz",
+      "uncompressed_sha256": "751d88c7c6f605852cd6a390d32432142876e3a54656549742d393916ef655b9"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline",
+      "exit_code": 0,
+      "log": "providers.log.gz",
+      "uncompressed_sha256": "28142a73c9958295460cf2be1b943a5b48b175eab84144c50da6c2e349d79ff8"
+    },
+    "provider-checks": {
+      "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "log": "provider-checks.log.gz",
+      "uncompressed_sha256": "de077507478604744d9a3973e5d164a98cf2ce04d4012635d1e6b384a34eac7c"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "log": "lean-build.log.gz",
+      "uncompressed_sha256": "c09060a6aa1cdc4e5d89b4df28ae9fb617711bad3a7db7fca6d3cc11af95f7e2"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "log": "lean-audits.log.gz",
+      "uncompressed_sha256": "7da1c6d149a3d8aec99cc0d02848d06d7243cc9a99b1f342fe79071c7db9eff6"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "log": "python.log.gz",
+      "uncompressed_sha256": "456dfdc9d1ab018c8d6c6ffb3f4f3e7a007e7e711c035c4336cf371ef66a7843"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-source-consolidation-source.json /tmp/qcore-source-consolidation-diagnostics.json",
+      "exit_code": 0,
+      "log": "audit.log.gz",
+      "uncompressed_sha256": "4f6f3bb0bae3cd957edf84a475f6abd9c4c317e46c24f93aaa9c9f240f164f8a"
+    },
+    "gateway-tree": {
+      "command": "cargo tree -p qcore-c-gateway --edges normal",
+      "exit_code": 0,
+      "log": "gateway-tree.log.gz",
+      "uncompressed_sha256": "a99bd60754df6548f799139345159daab2b92a60cec6d6ad612b0a9952df9b51"
+    },
+    "verification-tree": {
+      "command": "cargo tree -p qcore-verification --edges normal",
+      "exit_code": 0,
+      "log": "verification-tree.log.gz",
+      "uncompressed_sha256": "4b9839e8229f2de5bb8d93bd09360d59c794260999262cb13e48a3e287cdd85f"
+    },
+    "provider-lock": {
+      "command": "cargo update --manifest-path providers/Cargo.toml -p qcore-verification --offline",
+      "exit_code": 0,
+      "log": "provider-lock.log.gz",
+      "uncompressed_sha256": "3319e07fc045c9575cf91141a6a20b5322654dfc5cbde0bf55d461d04b33db86"
+    }
+  }
+}

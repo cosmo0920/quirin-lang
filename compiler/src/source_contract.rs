@@ -1,8 +1,9 @@
 //! Native policy inputs for the bounded source importers. Structural decoding
 //! and operational semantics stay in Rust; QCore owns these acceptance rules.
-pub(crate) const RULES: &str = include_str!("../../contract/qcore/library/source_projection.qcore");
+pub(crate) use qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES as RULES;
 
-pub(crate) fn check(name: &str, facts: &[(&str, i128)]) -> Result<(), String> {
+#[cfg(test)]
+fn check(name: &str, facts: &[(&str, i128)]) -> Result<(), String> {
     crate::contract_observation::check_contract_facts(RULES, name, facts)
 }
 

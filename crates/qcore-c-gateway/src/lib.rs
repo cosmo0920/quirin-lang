@@ -12,7 +12,9 @@ pub mod boolean_source;
 mod clang;
 pub mod legacy_c;
 mod legacy_summary;
+pub mod source_call_use;
 pub mod typed_c_ast;
+pub mod typed_source;
 
 use qcore_contract::contract_loader;
 

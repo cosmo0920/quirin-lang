@@ -137,11 +137,13 @@ crates/qcore-frontend         # L1: front end, elaboration + whole-program check
 crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
 crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
-  interprocedural summary inference (W4), opaque typed Boolean-field source import.
+  interprocedural summary inference (W4), opaque typed Boolean-field source import,
+  generic typed path projection and call-result def/use.
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
   composition and certificate admission orchestration (W3).
 crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier host:
-  obligation derivation, witness replay, scope dispatch. No provider dependency.
+  obligation derivation, witness replay, scope dispatch, typed source-contract replay.
+  No provider dependency.
   Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
 crates/qcore-audit            # L3: orchestration-as-configuration (W5):
   compile-db ingest, pin verification, per-unit iteration, report emission,
@@ -488,6 +490,14 @@ interaction with `MAX_ALIAS_TARGETS`). Insist on the "validated, not just
 inferred" discipline the follow-up demands.
 
 ### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
+
+[Generic source consolidation](reports/w5-generic-source-consolidation/README.md)
+extracts typed path import/def-use into the C gateway and counter, field-release,
+list-unlink and cleanup-outcome checking into verification. Provider-free public
+integration tests and sealed-summary compile-fail tests run in the owning crates.
+Production bodies and full pinned outputs retain parity; compiler compatibility
+facades and specialized reference-body matching remain. This advances task5's
+consolidation without claiming task2's complete provider extraction.
 
 [Configured process auditing](reports/w5-configured-process-audit/README.md)
 now connects `qcore-audit CONFIG.json` to pinned helper/main-source import and

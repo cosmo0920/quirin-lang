@@ -1,0 +1,18 @@
+module contract;
+extern fn sample_dispose(root: borrow<'call, mut, SampleOwner> use one) -> unit
+contract {
+    requires root_is_live;
+    requires exclusive_access;
+    requires disjoint_owned_fields;
+    requires owned_fields_are_disjoint_from_root;
+    requires free_resolves_to_libc;
+    requires owned_or_null__payload;
+    requires owned_or_null__payload__data;
+    ensures normal root_preserved;
+    ensures normal fields_unchanged;
+    ensures normal released__payload == old_live__payload;
+    ensures normal released__payload__data == old_live__payload__data;
+    ensures normal live__payload == 0;
+    ensures normal live__payload__data == 0;
+    ensures normal not old_live__payload__data or release_rank__payload__data < release_rank__payload;
+};

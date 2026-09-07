@@ -1,0 +1,15 @@
+module contract;
+
+extern fn sample_decrement(ctx: borrow<'call, mut, SampleState> use one) -> usize
+contract {
+    requires counter_is_live;
+    requires exclusive_counter_access;
+    requires c_unsigned_matches_usize;
+    requires counter_in_range;
+    requires counter_field__remaining;
+    requires counter_positive;
+    ensures normal delta == -1;
+    ensures normal result_is_updated_counter;
+    ensures normal only_selected_field_written;
+    ensures normal no_unsigned_wrap;
+};

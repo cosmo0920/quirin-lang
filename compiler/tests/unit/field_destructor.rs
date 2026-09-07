@@ -1,6 +1,8 @@
 use super::*;
 use crate::legacy_c::C11TranslationUnit;
-use crate::typed_source::{SourceImportProfile, SourceResult, import_source_functions};
+use crate::typed_source::{
+    SourceImportProfile, SourceResult, SourceSummary, import_source_functions,
+};
 use crate::verifier_plugins::chunkio::PINNED_FLUENT_BIT_REVISION;
 use crate::verifier_plugins::chunkio::teardown_source::{
     MEMORY_BACKEND_CONTRACT, check_memory_backend_source,
@@ -71,7 +73,10 @@ fn nullable_field_custody_exhausts_realizable_states() {
             "backend"
         ]
     );
-    assert_eq!(certificate.postconditions_per_case, 13);
+    assert_eq!(
+        serde_json::to_value(&certificate).unwrap()["postconditions_per_case"],
+        13
+    );
     assert_eq!(certificate.source().paths().len(), 2);
     assert!(
         check_memory_backend_source(

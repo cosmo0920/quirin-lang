@@ -1,0 +1,27 @@
+module contract;
+
+extern fn sample_link(prev: ptr<mut, SampleLink>, next: ptr<mut, SampleLink>) -> unit
+contract {
+    requires neighbor_link_cells_are_live;
+    requires exclusive_link_access;
+    ensures normal previous_next_is_next;
+    ensures normal next_prev_is_previous;
+    ensures normal only_neighbor_link_cells_written;
+    ensures normal write_count == 2;
+};
+
+extern fn sample_unlink(entry: borrow<'call, mut, SampleLink> use one) -> unit
+contract {
+    requires entry_is_live;
+    requires exclusive_link_access;
+    requires entry_has_live_reciprocal_neighbors;
+    requires entry_is_distinct_from_neighbors;
+    ensures normal entry_prev_is_null;
+    ensures normal entry_next_is_null;
+    ensures normal previous_next_is_next;
+    ensures normal next_prev_is_previous;
+    ensures normal only_unlink_cells_written;
+    ensures normal helper_calls == 1;
+    ensures normal write_count == 4;
+    ensures normal no_object_release;
+};

@@ -29,6 +29,8 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference for internal C functions: SCC-ordered derivation, validation by re-analysis, declared-contract precedence. Relocated with Clang and typed-AST transport (2026-09-07); compiler compatibility reexports retained |
+| `crates/qcore-c-gateway/src/typed_source.rs` | Opaque typed C path import and source def/use; generic tests run here, library fixtures remain in compiler compatibility adapters |
+| `crates/qcore-verification/src/{counter_contract,field_destructor,list_unlink_contract,cleanup_outcome}.rs` | Trusted provider-free replay over opaque C imports and explicit contract premises |
 | `crates/qcore-verifier-host/` | L2 generic registry, source-scope resolution, bounded process transport, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter: core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters; trusted replay/derivation/dispatch live in `qcore-verification` |
@@ -600,3 +602,17 @@ is not proved. Six new public tests and a fixed six-allocation native sanitizer
 fixture pass. All 760 workspace tests and the standing gates pass; the 185-unit
 Cycle19 reports are byte-identical. General recursive inference, aliases and
 cost summaries remain open. Evidence: `docs/reports/w4-unsigned-countdown/README.md`.
+
+Generic source consolidation (2026-09-07): W5 moves typed C path import and
+call-result def/use into `qcore-c-gateway`; counter, nullable-field destructor,
+list unlink and cleanup-outcome replay now live in `qcore-verification`.
+Both crates expose provider-free APIs while preserving opaque source summary
+construction. Four unrelated-source integration tests exercise these APIs;
+compile-fail checks protect the constructor/serialization boundary. Generic
+symbol, short-circuit and call-use tests now run in the gateway; provider fixtures
+remain with their compatibility adapters. All six production bodies have token
+parity after module-reference/import-order rewrites; default policy bytes and
+all four full Cycle19 artifacts are unchanged. The 767 workspace tests and
+standing gates pass. Specialized reference matching, provider extraction,
+registry composition and final compatibility removal remain open. Evidence:
+`docs/reports/w5-generic-source-consolidation/README.md`.

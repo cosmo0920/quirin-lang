@@ -1,6 +1,7 @@
 use super::*;
 use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 use crate::verifier_plugins::libevent::monkey_source::*;
+use std::collections::BTreeSet;
 
 const FIXTURE: &str = include_str!("../fixtures/monkey/callbacks.c");
 
@@ -315,38 +316,6 @@ fn absent_callbacks_and_wrong_revision_do_not_create_summaries() {
 }
 
 #[test]
-fn symbolic_references_require_prior_producers_with_matching_types() {
-    let read = SourceOperation::Read {
-        place: value("int".into(), SourceExpression::Parameter { index: 0 }),
-    };
-    for (operation, c_type) in [(0, "int"), (1, "int"), (0, "short")] {
-        let path = MonkeySourcePath {
-            operations: vec![
-                read.clone(),
-                SourceOperation::Guard {
-                    condition: value(c_type.into(), SourceExpression::Symbol { operation }),
-                    taken: true,
-                },
-            ],
-        };
-        assert_eq!(
-            check_path_symbols(&path).is_ok(),
-            operation == 0 && c_type == "int"
-        );
-    }
-    let path = MonkeySourcePath {
-        operations: vec![
-            SourceOperation::Return,
-            SourceOperation::Guard {
-                condition: value("int".into(), SourceExpression::Symbol { operation: 0 }),
-                taken: true,
-            },
-        ],
-    };
-    assert!(check_path_symbols(&path).is_err());
-}
-
-#[test]
 fn nested_blocks_end_storage_and_early_returns_keep_only_executed_effects() {
     if !crate::test_support::clang_available() {
         return;
@@ -374,7 +343,6 @@ fn nested_blocks_end_storage_and_early_returns_keep_only_executed_effects() {
             1
         );
         assert_eq!(path.operations.last(), Some(&SourceOperation::Return));
-        check_path_symbols(path).unwrap();
     }
 }
 
@@ -483,7 +451,6 @@ fn wrapper_import_retains_nullable_and_registration_failure_exits() {
             1
         );
         endings.insert(functions.last().copied().unwrap());
-        check_path_symbols(path).unwrap();
     }
     assert_eq!(endings, BTreeSet::from(["event_new", "event_add"]));
     assert_eq!(
@@ -540,7 +507,6 @@ fn wrapper_constants_and_stack_initializers_retain_source_values() {
     for path in wait.paths() {
         assert!(path.operations.iter().any(|op| matches!(op, SourceOperation::LocalStart { c_type, .. } if c_type == "struct timeval")));
         assert!(path.operations.iter().any(|op| matches!(op, SourceOperation::LocalWrite { value: SourceValue { expression: SourceExpression::Aggregate { elements }, .. }, .. } if elements.len() == 2)));
-        check_path_symbols(path).unwrap();
     }
     for replacement in [
         "struct timeval timev = {timeout / 1000};",
@@ -592,25 +558,6 @@ fn stack_socketpair_cells_remain_memory_reads_after_opaque_calls() {
 }
 
 #[test]
-fn aggregate_symbol_validation_rejects_nested_forward_reference() {
-    let path = MonkeySourcePath {
-        operations: vec![SourceOperation::LocalWrite {
-            local: 0,
-            value: value(
-                "struct timeval".into(),
-                SourceExpression::Aggregate {
-                    elements: vec![value(
-                        "long".into(),
-                        SourceExpression::Symbol { operation: 0 },
-                    )],
-                },
-            ),
-        }],
-    };
-    assert!(check_path_symbols(&path).is_err());
-}
-
-#[test]
 fn wrapper_assertions_retain_abort_paths_and_stop_following_calls() {
     if !crate::test_support::clang_available() {
         return;
@@ -633,7 +580,6 @@ fn wrapper_assertions_retain_abort_paths_and_stop_following_calls() {
                 assert_eq!(calls(path).last(), Some(&"abort"));
                 assert_eq!(path.operations.last(), Some(&SourceOperation::Terminate));
             }
-            check_path_symbols(path).unwrap();
         }
     }
 }
@@ -733,22 +679,29 @@ fn injection_retains_a_structured_scan_and_function_early_return() {
         SourceExpression::Integer { value: "0".into() }
     );
     assert!(early_return.operations.is_empty());
-    let mut found_index = false;
-    visit_value(increment, |value| {
-        found_index |= value.expression == SourceExpression::LoopIndex { local: *local };
-        Ok(())
-    })
-    .unwrap();
-    assert!(found_index);
+    let SourceExpression::Binary {
+        operator,
+        left,
+        right,
+    } = &increment.expression
+    else {
+        panic!("expected the imported induction increment");
+    };
+    assert_eq!(operator, "+");
+    assert_eq!(
+        left.expression,
+        SourceExpression::LoopIndex { local: *local }
+    );
+    assert_eq!(
+        right.expression,
+        SourceExpression::Integer { value: "1".into() }
+    );
     assert!(
         !inject.paths()[1]
             .operations
             .iter()
             .any(|op| matches!(op, SourceOperation::ScanLoop { .. }))
     );
-    for path in inject.paths() {
-        check_path_symbols(path).unwrap();
-    }
     for (old, replacement) in [
         ("index++)", "index--)"),
         ("return 0;\n            }", "return 1;\n            }"),
@@ -781,12 +734,6 @@ fn scan_loops_reject_effects_and_induction_values_cannot_escape() {
         &wrappers(&changed)[11],
         MonkeySourceResult::Unknown { .. }
     ));
-    let invalid = MonkeySourcePath {
-        operations: vec![SourceOperation::ReturnValue {
-            value: value("int".into(), SourceExpression::LoopIndex { local: 3 }),
-        }],
-    };
-    assert!(check_path_symbols(&invalid).is_err());
 }
 
 #[test]

@@ -152,6 +152,7 @@ dependencies = [
  "qcore-frontend",
  "qcore-schemas",
  "qcore-verifier-host",
+ "serde",
  "serde_json",
 ]
 
