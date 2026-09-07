@@ -1,0 +1,8 @@
+fn main() -> unit {
+    thread scope s {
+        let buf = protected 4;
+        let m = mutex guards buf;
+        with lock m as g { open g; write buf with g; close g; }
+        with lock m as h { let b = borrow buf with h; read buf with h; drop b; }
+    }
+}

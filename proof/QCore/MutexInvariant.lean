@@ -915,4 +915,361 @@ example : (run { custody := [(7, 0)],
     [.createMutex 0 1 [buf] 5, .spawn 0 1, .lock 0 1 10, .unlock 0 10, .lock 1 1 11,
      .unlock 1 11, .transferCustody 0 1 7 (.mutexHandoff 1)]).isSome = true := by decide
 
+
+/-! ## 11. Source lowering (`source.mutex.guard.v1`, card T03)
+
+The model of `crates/qcore-frontend/src/source_mutex.rs`. A source critical
+section is a lexical block; this section says what the lowering of such a block
+is allowed to be, and what an accepted lowering forces.
+
+Two boundaries, stated before the definitions. Source extraction — that the Rust
+lowering really produces `lowerSection` for the source it reads — is a premise,
+as it is for every other source route here. And `Event` above has no
+resource-destruction constructor, so `lowerScope` models generation lifetime
+only; the Rust lowering additionally emits `Destroy` for each declared resource
+and the Rust checker applies its quiescence rule to it. That part of scope exit
+is covered by the Rust tests, not by the theorems below. -/
+
+inductive Inner where
+  | openInv
+  | closeInv
+  | read (f : Footprint)
+  | write (f : Footprint)
+  | borrow (b : BorrowId) (f : Footprint)
+  | release (b : BorrowId)
+  deriving DecidableEq, Repr
+
+/-- One `with lock M as G { … }` block. `raises` marks the block whose last
+statement is a typed-error exit. -/
+structure CriticalSection where
+  mutex : MutexId
+  guard : GuardId
+  invariant : InvariantId
+  body : List Inner
+  raises : Bool
+  deriving DecidableEq, Repr
+
+/-- The block's exit. A typed-error exit and a normal exit differ only in which
+event names the path; `typed_error_exit_obeys_the_normal_release_rule` below
+shows they are subject to the same rule. -/
+def exitEvent (task : TaskId) (s : CriticalSection) : Event :=
+  match s.raises with
+  | true => .errorExit task s.guard
+  | false => .unlock task s.guard
+
+def lowerInner (task : TaskId) (guard : GuardId) (inv : InvariantId) : Inner → Event
+  | .openInv => .openInvariant task guard
+  | .closeInv => .closeInvariant task guard inv
+  | .read f => .access task f .read (some guard)
+  | .write f => .access task f .write (some guard)
+  | .borrow b f => .borrowUnderGuard task guard f b
+  | .release b => .endBorrow task b
+
+def lowerSection (task : TaskId) (s : CriticalSection) : List Event :=
+  Event.lock task s.mutex s.guard ::
+    (s.body.map (lowerInner task s.guard s.invariant) ++ [exitEvent task s])
+
+/-- One `thread scope` body: the declared generations and the critical sections
+over them. Scope exit destroys every generation in reverse declaration order. -/
+structure Scope where
+  generations : List (MutexId × InvariantId × Footprint)
+  sections : List CriticalSection
+  deriving DecidableEq, Repr
+
+def lowerScope (task : TaskId) (sc : Scope) : List Event :=
+  sc.generations.map (fun g => Event.createMutex task g.1 [g.2.2] g.2.1) ++
+    ((sc.sections.map (lowerSection task)).flatten ++
+      sc.generations.reverse.map (fun g => Event.destroyMutex task g.1))
+
+/-- Task structure: spawning, joining, and custody transfer between tasks. -/
+def isTaskEvent : Event → Bool
+  | .spawn _ _ => true
+  | .join _ _ => true
+  | .transferCustody _ _ _ _ => true
+  | _ => false
+
+/-- The two events this profile always refuses. -/
+def isRefusedConstruct : Event → Bool
+  | .extendProtection _ _ _ => true
+  | .unsupportedConstruct _ => true
+  | _ => false
+
+def lockedGuard : Event → Option GuardId
+  | .lock _ _ g => some g
+  | _ => none
+
+/-- Nothing is dropped and nothing is invented: a block of `n` statements lowers
+to exactly `n + 2` events, the acquisition and the exit being the two. -/
+theorem lowerSection_length (task : TaskId) (s : CriticalSection) :
+    (lowerSection task s).length = s.body.length + 2 := by
+  simp [lowerSection]
+
+/-- Every lowered block is bracketed: it begins with the acquisition that mints
+its guard and ends with that guard's exit. -/
+theorem lowerSection_brackets (task : TaskId) (s : CriticalSection) :
+    lowerSection task s =
+      (Event.lock task s.mutex s.guard :: s.body.map (lowerInner task s.guard s.invariant))
+        ++ [exitEvent task s] := by
+  simp [lowerSection]
+
+theorem lowerSection_head (task : TaskId) (s : CriticalSection) :
+    (lowerSection task s).head? = some (Event.lock task s.mutex s.guard) := by
+  simp [lowerSection]
+
+private theorem body_has_no_task_event (task guard : TaskId) (inv : InvariantId)
+    (body : List Inner) (e : Event) (mem : e ∈ body.map (lowerInner task guard inv)) :
+    isTaskEvent e = false := by
+  obtain ⟨i, _, eq⟩ := List.mem_map.mp mem
+  subst eq
+  cases i <;> rfl
+
+private theorem body_has_no_refused_construct (task guard : TaskId) (inv : InvariantId)
+    (body : List Inner) (e : Event) (mem : e ∈ body.map (lowerInner task guard inv)) :
+    isRefusedConstruct e = false := by
+  obtain ⟨i, _, eq⟩ := List.mem_map.mp mem
+  subst eq
+  cases i <;> rfl
+
+/-- A guard cannot be moved to a child task by this lowering, because the
+lowering emits no task event at all. The source route refuses task creation; the
+model records that the refusal leaves nothing behind for a guard to travel on. -/
+theorem lowerSection_emits_no_task_event (task : TaskId) (s : CriticalSection) (e : Event)
+    (mem : e ∈ lowerSection task s) : isTaskEvent e = false := by
+  rw [lowerSection, List.mem_cons, List.mem_append, List.mem_singleton] at mem
+  rcases mem with eq | inner | eq
+  · subst eq; rfl
+  · exact body_has_no_task_event task s.guard s.invariant s.body e inner
+  · subst eq; cases hr : s.raises <;> simp [exitEvent, hr, isTaskEvent]
+
+/-- The protected shape is fixed at the declaration, so no lowered statement can
+propose to change it, and no lowered statement is an unsupported construct the
+checker would have to refuse after the fact. -/
+theorem lowerSection_emits_no_refused_construct (task : TaskId) (s : CriticalSection) (e : Event)
+    (mem : e ∈ lowerSection task s) : isRefusedConstruct e = false := by
+  rw [lowerSection, List.mem_cons, List.mem_append, List.mem_singleton] at mem
+  rcases mem with eq | inner | eq
+  · subst eq; rfl
+  · exact body_has_no_refused_construct task s.guard s.invariant s.body e inner
+  · subst eq; cases hr : s.raises <;> simp [exitEvent, hr, isRefusedConstruct]
+
+private theorem sections_have_no_task_event (task : TaskId) (sections : List CriticalSection)
+    (e : Event) (mem : e ∈ (sections.map (lowerSection task)).flatten) :
+    isTaskEvent e = false := by
+  obtain ⟨l, hl, inner⟩ := List.mem_flatten.mp mem
+  obtain ⟨s, _, eq⟩ := List.mem_map.mp hl
+  subst eq
+  exact lowerSection_emits_no_task_event task s e inner
+
+/-- The whole scope emits no task event either: no `spawn`, no `join`, and no
+custody transfer to another task appears anywhere in a lowered scope. -/
+theorem lowerScope_emits_no_task_event (task : TaskId) (sc : Scope) (e : Event)
+    (mem : e ∈ lowerScope task sc) : isTaskEvent e = false := by
+  rw [lowerScope, List.mem_append, List.mem_append] at mem
+  rcases mem with create | inner | destroy
+  · obtain ⟨g, _, eq⟩ := List.mem_map.mp create
+    subst eq
+    rfl
+  · exact sections_have_no_task_event task sc.sections e inner
+  · obtain ⟨g, _, eq⟩ := List.mem_map.mp destroy
+    subst eq
+    rfl
+
+private theorem lockedGuard_of_body (task guard : TaskId) (inv : InvariantId)
+    (body : List Inner) :
+    (body.map (lowerInner task guard inv)).filterMap lockedGuard = [] := by
+  induction body with
+  | nil => rfl
+  | cons i t ih => cases i <;> simp [List.filterMap_cons, lowerInner, lockedGuard, ih]
+
+/-- Authority is keyed to the critical section: one block mints exactly one
+guard identity, so two blocks over one generation are two authorities. -/
+theorem lowerSection_mints_exactly_its_own_guard (task : TaskId) (s : CriticalSection) :
+    (lowerSection task s).filterMap lockedGuard = [s.guard] := by
+  have exit : ([exitEvent task s]).filterMap lockedGuard = [] := by
+    cases hr : s.raises <;> simp [exitEvent, hr, lockedGuard]
+  rw [lowerSection, List.filterMap_cons, List.filterMap_append,
+    lockedGuard_of_body task s.guard s.invariant s.body, exit]
+  rfl
+
+private theorem lockedGuard_of_sections (task : TaskId) (sections : List CriticalSection) :
+    ((sections.map (lowerSection task)).flatten).filterMap lockedGuard
+      = sections.map (fun s => s.guard) := by
+  induction sections with
+  | nil => rfl
+  | cons s t ih =>
+      rw [List.map_cons, List.flatten_cons, List.filterMap_append,
+        lowerSection_mints_exactly_its_own_guard, ih, List.map_cons]
+      rfl
+
+private theorem lockedGuard_of_creates (task : TaskId)
+    (generations : List (MutexId × InvariantId × Footprint)) :
+    (generations.map (fun g => Event.createMutex task g.1 [g.2.2] g.2.1)).filterMap lockedGuard
+      = [] := by
+  induction generations with
+  | nil => rfl
+  | cons g t ih => rw [List.map_cons, List.filterMap_cons, ih]; rfl
+
+private theorem lockedGuard_of_destroys (task : TaskId)
+    (generations : List (MutexId × InvariantId × Footprint)) :
+    (generations.map (fun g => Event.destroyMutex task g.1)).filterMap lockedGuard = [] := by
+  induction generations with
+  | nil => rfl
+  | cons g t ih => rw [List.map_cons, List.filterMap_cons, ih]; rfl
+
+/-- A scope mints exactly one guard per critical section, in source order: the
+lowering neither shares an authority between two blocks nor manufactures one. -/
+theorem lowerScope_mints_one_guard_per_section (task : TaskId) (sc : Scope) :
+    (lowerScope task sc).filterMap lockedGuard = sc.sections.map (fun s => s.guard) := by
+  rw [lowerScope, List.filterMap_append, List.filterMap_append,
+    lockedGuard_of_creates, lockedGuard_of_sections,
+    lockedGuard_of_destroys task sc.generations.reverse]
+  simp
+
+/-- Scope exit destroys every generation the scope declared. Whether that
+destruction is *admitted* is the checker's quiescence rule; that it is
+*attempted* is the lowering's obligation. -/
+theorem lowerScope_destroys_every_declared_generation (task : TaskId) (sc : Scope)
+    (g : MutexId × InvariantId × Footprint) (mem : g ∈ sc.generations) :
+    Event.destroyMutex task g.1 ∈ lowerScope task sc := by
+  have base : Event.destroyMutex task g.1 ∈
+      sc.generations.reverse.map (fun g => Event.destroyMutex task g.1) :=
+    List.mem_map_of_mem (List.mem_reverse.mpr mem)
+  rw [lowerScope, List.mem_append, List.mem_append]
+  exact Or.inr (Or.inr base)
+
+/-! ### What an accepted lowering forces -/
+
+theorem run_append (s : State) (l r : List Event) :
+    run s (l ++ r) = (run s l).bind (fun u => run u r) := by
+  induction l generalizing s with
+  | nil => simp [run]
+  | cons e t ih =>
+      cases h : step s e with
+      | none => simp [run, h]
+      | some next => simp [run, h, ih]
+
+/-- A typed-error exit is not a weaker exit: the two release events have the
+same transition, so `close` before `raise` is required exactly as it is before a
+normal block end. -/
+theorem typed_error_exit_obeys_the_normal_release_rule (s : State) (task : TaskId)
+    (guard : GuardId) : step s (.errorExit task guard) = step s (.unlock task guard) := rfl
+
+/-- Neither exit of a lowered block admits a broken invariant. -/
+theorem lowered_exit_refuses_an_open_invariant {s : State} {task : TaskId}
+    {sec : CriticalSection} {record : GuardRecord}
+    (live : s.guardOf sec.guard = some record) (broken : record.phase = .opened) :
+    step s (exitEvent task sec) = none := by
+  have refused : canRelease s task sec.guard = false := by
+    simp [canRelease, State.guardSat, live, broken]
+  cases hr : sec.raises <;> simp [exitEvent, hr, step, refused]
+
+/-- Neither exit of a lowered block admits a live guard-derived borrow. -/
+theorem lowered_exit_refuses_a_live_borrow {s : State} {task : TaskId}
+    {sec : CriticalSection} {record : GuardRecord} {borrow : BorrowId}
+    (live : s.guardOf sec.guard = some record) (held : borrow ∈ record.borrows) :
+    step s (exitEvent task sec) = none := by
+  have nonempty : record.borrows.isEmpty = false := by
+    cases hb : record.borrows with
+    | nil => rw [hb] at held; simp at held
+    | cons _ _ => rfl
+  have refused : canRelease s task sec.guard = false := by
+    simp [canRelease, State.guardSat, live, nonempty]
+  cases hr : sec.raises <;> simp [exitEvent, hr, step, refused]
+
+private theorem find_after_filter_ne (l : List GuardRecord) (g : GuardId) :
+    (l.filter (fun r => r.id != g)).find? (fun r => r.id == g) = none := by
+  induction l with
+  | nil => rfl
+  | cons r t ih =>
+      by_cases h : r.id = g
+      · simp [h, ih]
+      · simp [h, ih]
+
+private theorem release_kills_the_guard {u t : State} {task : TaskId} {guard : GuardId}
+    (stepped : step u (.unlock task guard) = some t) : t.guardOf guard = none := by
+  cases h : canRelease u task guard with
+  | false => simp [step, h] at stepped
+  | true =>
+      simp only [step, h, if_true, Option.some.injEq] at stepped
+      subst stepped
+      simp [State.guardOf, releaseEffect, find_after_filter_ne u.guards guard]
+
+/-- A lowered block the checker accepts leaves no live guard behind: the
+authority the block minted does not outlive the block. -/
+theorem accepted_section_leaves_no_live_guard {s t : State} {task : TaskId}
+    {sec : CriticalSection} (accepted : run s (lowerSection task sec) = some t) :
+    t.guardOf sec.guard = none := by
+  rw [lowerSection_brackets, run_append] at accepted
+  cases hu : run s (Event.lock task sec.mutex sec.guard ::
+      sec.body.map (lowerInner task sec.guard sec.invariant)) with
+  | none => rw [hu] at accepted; simp at accepted
+  | some u =>
+      rw [hu] at accepted
+      simp only [Option.bind_some] at accepted
+      have stepped : step u (exitEvent task sec) = some t := by
+        simpa [run] using accepted
+      cases hr : sec.raises with
+      | false =>
+          simp only [exitEvent, hr] at stepped
+          exact release_kills_the_guard stepped
+      | true =>
+          simp only [exitEvent, hr, typed_error_exit_obeys_the_normal_release_rule] at stepped
+          exact release_kills_the_guard stepped
+
+/-! ### Decidable lowered scenarios
+
+Each mirrors a source fixture in
+`crates/qcore-frontend/tests/source_mutex.rs`. -/
+
+private def cell : Footprint := { resource := 1, start := 0, stop := 4 }
+
+private def held : State :=
+  { holdings := [{ custodian := .task 0, footprint := cell, share := fullAccess }] }
+
+private def scopeOf (sections : List CriticalSection) : Scope :=
+  { generations := [(1, 1, cell)], sections := sections }
+
+-- `with lock m as g { open g; write buf with g; close g; }` checks.
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeInv], raises := false }]))).isSome = true := by
+  decide
+
+-- The same block without `close` does not: the normal exit refuses it.
+example : run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell], raises := false }])) = none := by decide
+
+-- Nor does the typed-error exit of the same unrestored block.
+example : run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell], raises := true }])) = none := by decide
+
+-- Restoring it first admits the typed-error exit.
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeInv], raises := true }]))).isSome = true := by
+  decide
+
+-- A guard-derived borrow must be released inside its own block.
+example : run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.borrow 1 cell], raises := false }])) = none := by decide
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.borrow 1 cell, .read cell, .release 1], raises := false }]))).isSome = true := by
+  decide
+
+-- Two blocks over one generation are two authorities, and both check.
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeInv], raises := false },
+     { mutex := 1, guard := 2, invariant := 1, body := [.read cell], raises := false }]))).isSome
+      = true := by decide
+
+-- A write with the invariant closed is refused inside the lowering too.
+example : run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.write cell], raises := false }])) = none := by decide
+
 end QCore.Concurrency.MutexInvariant

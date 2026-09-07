@@ -97,20 +97,39 @@ pub enum CustodyPayloadProfile {
 pub enum CheckedSourceModule {
     Sequential(Box<CheckedProgram>),
     ScopedTasks(Box<qcore_core::task_execution::CheckedTaskModule>),
+    /// One entry function checked under `CheckedMutexInvariantV1`. The
+    /// certificate is the evidence; the lowered program is retained beside it so
+    /// a consumer can re-derive rather than believe it.
+    CheckedMutexGuards(Box<CheckedMutexGuardModule>),
+}
+
+/// A checked `source.mutex.guard.v1` module: the lowered trace and the
+/// certificate a caller can independently recheck.
+#[derive(Clone, Debug)]
+pub struct CheckedMutexGuardModule {
+    pub lowered: qcore_frontend::source_mutex::LoweredMutexModule,
+    pub certificate: qcore_core::mutex_invariant::MutexInvariantCertificate,
 }
 
 impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
             Self::Sequential(program) => Some(program),
-            Self::ScopedTasks(_) => None,
+            Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) => None,
         }
     }
 
     pub fn as_scoped_tasks(&self) -> Option<&qcore_core::task_execution::CheckedTaskModule> {
         match self {
-            Self::Sequential(_) => None,
+            Self::Sequential(_) | Self::CheckedMutexGuards(_) => None,
             Self::ScopedTasks(program) => Some(program),
+        }
+    }
+
+    pub fn as_checked_mutex_guards(&self) -> Option<&CheckedMutexGuardModule> {
+        match self {
+            Self::Sequential(_) | Self::ScopedTasks(_) => None,
+            Self::CheckedMutexGuards(module) => Some(module),
         }
     }
 
@@ -118,6 +137,9 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(program) => program.functions.len(),
             Self::ScopedTasks(program) => program.module().functions.len(),
+            // One entry function is checked on this route; the profile admits
+            // no calls, so the count is not a coverage claim about a module.
+            Self::CheckedMutexGuards(_) => 1,
         }
     }
 }
@@ -127,6 +149,9 @@ pub enum SourceExecutionProfile {
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
+    /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
+    /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
+    CheckedMutexGuardsV1,
 }
 
 #[derive(Clone, Debug)]
@@ -289,6 +314,12 @@ pub fn compile_files_with_registry(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    if qcore_frontend::source_mutex::has_source_mutex(&parsed) {
+        // Selected before the task route: a `thread scope` alone also selects
+        // scoped tasks, and a module declaring a mutex generation must not be
+        // handed to a route that models no mutex at all.
+        return compile_mutex_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
         return compile_task_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -1208,6 +1239,87 @@ fn compile_task_source(
         source_map,
         // Creation is dynamic. A single chosen reference execution is not the
         // evidence that all creation and completion alternatives are checked.
+        reference_observation: None,
+    })
+}
+
+fn compile_mutex_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free checked mutex modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_mutex::lower_source_mutex(parsed, typed, &entry).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    let certificate = qcore_core::mutex_invariant::check_mutex_invariant_program(&lowered.program)
+        .map_err(|errors| {
+            errors
+                .iter()
+                .map(|error| map_diagnostic(lowered.locate(error), ranges))
+                .collect::<Vec<_>>()
+        })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    qcore_core::mutex_invariant::recheck_mutex_invariant_certificate(
+        &lowered.program,
+        &certificate,
+    )
+    .map_err(|errors| {
+        vec![plain_diagnostic(
+            "Q600",
+            format!("checked mutex certificate failed independent recheck: {errors:?}"),
+        )]
+    })?;
+    let result_profile = SourceResultProfile {
+        scalar_results: std::collections::BTreeMap::from([(
+            entry.clone(),
+            ExecutableResultType::Unit,
+        )]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    let checked = CheckedSourceModule::CheckedMutexGuards(Box::new(CheckedMutexGuardModule {
+        lowered: lowered.clone(),
+        certificate: certificate.clone(),
+    }));
+    if !cfg!(target_os = "linux") {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "native checked mutex emission currently requires a Linux C11 threads target",
+        )]);
+    }
+    let emission = qcore_core::mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate)
+        .map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q600",
+                format!("the checked mutex backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+    Ok(CompiledModule {
+        checked,
+        execution_profile: SourceExecutionProfile::CheckedMutexGuardsV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // A reference observation for this route is the mutex trace, not the
+        // sequential cleanup observation this field carries.
         reference_observation: None,
     })
 }

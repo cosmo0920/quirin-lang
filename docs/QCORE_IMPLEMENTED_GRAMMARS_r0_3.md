@@ -224,6 +224,75 @@ evidence. Loans, owned graphs/error payloads, shared memory, mutexes, nested
 workers, general control flow and non-Linux native targets remain unsupported.
 See [the owned task report](reports/w6-owned-source-tasks/README.md).
 
+## G02c. Guarded fixed-footprint mutex
+
+`CheckedMutexGuardsV1`, profile id `source.mutex.guard.v1`, lowers a lexical
+guard onto the `CheckedMutexInvariantV1` model checker
+(`crates/qcore-core/src/mutex_invariant.rs`). It is selected by the presence of
+a `mutex guards` declaration, ahead of the scoped-task routes, and it composes
+with none of them: a module that also creates a task is refused.
+
+```qcore
+error Fault { Broken; }
+fn main() -> unit {
+    thread scope s {
+        let buf = protected 4;          // one shared resource, 4 bytes
+        let m = mutex guards buf;       // protected footprint fixed here
+        with lock m as g {
+            open g;                     // the invariant may now be broken
+            write buf with g;
+            close g;                    // restored, by a declared predicate
+            let b = borrow buf with g;
+            read buf with g;
+            drop b;                     // the borrow dies inside its section
+        }
+        with lock m as g2 { read buf with g2; }
+    }                                   // scope exit destroys m, then buf
+}
+```
+
+```ebnf
+module      = { error_declaration } , entry ;
+entry       = "fn" , NAME , "(" , ")" , "->" , "unit" , "{" , scope , "}" ;
+scope       = "thread" , "scope" , NAME , "{" , { outer } , "}" ;
+outer       = "let" , NAME , "=" , "protected" , NAT , ";"
+            | "let" , NAME , "=" , "mutex" , "guards" , NAME , ";"
+            | ( "read" | "write" ) , NAME , ";"
+            | "with" , "lock" , NAME , "as" , NAME , "{" , { inner } , "}" ;
+inner       = ( "open" | "close" ) , NAME , ";"
+            | ( "read" | "write" ) , NAME , "with" , NAME , ";"
+            | "let" , NAME , "=" , "borrow" , NAME , "with" , NAME , ";"
+            | "drop" , NAME , ";"
+            | "raise" , NAME , "::" , NAME , ";" ;
+```
+
+`mutex guards R;` fixes the protected footprint syntactically at the
+declaration, so a dynamic protected shape is not expressible rather than being
+detected later. Creation consumes the declaring task's `FULL_ACCESS` share over
+`R`, so a second `mutex guards R;` cannot obtain it (`Q617`) and an unguarded
+access to `R` has no fallback authority (`Q611`). A guard obtained over one
+generation authorizes only that generation's footprint (`Q610`).
+
+Guard names bind only inside their own `with lock` body, so a guard-derived
+name mentioned after the block is `Q013`, not a concurrency diagnostic. A write
+requires the invariant to be declared broken first, and both the normal block
+end and a `raise` require it restored and every guard-derived borrow released
+(`Q613`, `Q614`, `Q615`). `close g;` supplies a *declared* witness: every
+certificate from this route carries `InvariantPredicateDeclared` and
+`DeclaredFootprintShape`, and never `GuardFootprintAuthority` or
+`SynchronizedCustodyEdges`. A nested `with lock` lowers to an explicit
+unsupported-construct event and is refused at `Q622`; `defer` inside a critical
+section, and every other statement outside the grammar above, is refused at
+`Q600`. Scope exit destroys each generation and then each resource, under the
+model's quiescence rules.
+
+Native emission is one Linux thread using C11 `mtx_t` and real heap footprints;
+the reference execution of the checked event list must reproduce the same
+observation. There is no contention, no second thread, no condition variable,
+no try/timed lock, no reader/writer lock and no lock ranking in this profile,
+and the invariant predicate itself is declared, never proved. See
+[the T03 record](reports/remaining-t03/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf

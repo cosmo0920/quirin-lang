@@ -100,9 +100,10 @@ pub use concurrency::{
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
 };
 pub use driver::{
-    CheckedSourceModule, CompileOptions, CompiledModule, CustodyPayloadProfile, EmittedSourceMap,
-    FileDiagnostic, SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile,
-    compile_files, compile_files_with_registry, format_diagnostic,
+    CheckedMutexGuardModule, CheckedSourceModule, CompileOptions, CompiledModule,
+    CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic, SourceExecutionProfile, SourceFile,
+    SourceLocation, SourceResultProfile, compile_files, compile_files_with_registry,
+    format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
