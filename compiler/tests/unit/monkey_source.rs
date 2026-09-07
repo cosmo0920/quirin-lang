@@ -33,6 +33,14 @@ fn calls(path: &MonkeySourcePath) -> Vec<&str> {
         .collect()
 }
 
+fn errno_location_function() -> &'static str {
+    if cfg!(target_vendor = "apple") {
+        "__error"
+    } else {
+        "__errno_location"
+    }
+}
+
 #[test]
 fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
     if !crate::test_support::clang_available() {
@@ -92,7 +100,7 @@ fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
         calls(&timeout.paths()[0]),
         [
             "send",
-            "__errno_location",
+            errno_location_function(),
             "perror",
             "evutil_closesocket",
             "event_del",
@@ -104,7 +112,7 @@ fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
         calls(&timeout.paths()[1]),
         [
             "send",
-            "__errno_location",
+            errno_location_function(),
             "evutil_closesocket",
             "event_del",
             "event_free",

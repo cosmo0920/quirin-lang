@@ -82,14 +82,20 @@ pub fn select_profile_units(
 ) -> Result<Vec<CompileEntry>, String> {
     let mut selected = BTreeMap::<PathBuf, CompileEntry>::new();
     for root in &library.source_roots {
-        let source_root = checkout.join(&root.root);
+        let source_root = checkout
+            .join(&root.root)
+            .canonicalize()
+            .unwrap_or_else(|_| checkout.join(&root.root));
         for entry in entries {
-            let matches = match &root.selection {
-                UnitSelection::TopLevel => entry.file.parent() == Some(source_root.as_path()),
-                UnitSelection::Recursive => entry.file.starts_with(&source_root),
-                UnitSelection::Exact { file } => entry.file == checkout.join(file),
-            } && entry
+            let entry_file = entry
                 .file
+                .canonicalize()
+                .unwrap_or_else(|_| entry.file.clone());
+            let matches = match &root.selection {
+                UnitSelection::TopLevel => entry_file.parent() == Some(source_root.as_path()),
+                UnitSelection::Recursive => entry_file.starts_with(&source_root),
+                UnitSelection::Exact { file } => entry_file == checkout.join(file),
+            } && entry_file
                 .extension()
                 .is_some_and(|extension| extension == "c");
             if !matches {
@@ -157,7 +163,7 @@ fn verify_pinned_bytes(
     }
     // Keep the selected path's Git blob, rather than letting an unpinned
     // symlink borrow the bytes of a different pinned file.
-    let file = path
+    let file = canonical
         .strip_prefix(checkout)
         .map_err(|_| "source outside selected checkout")?;
     let pinned = Command::new("git")
@@ -312,8 +318,11 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     for (library, entries) in work {
         for entry in entries {
             let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
-            let file = entry
+            let canonical_file = entry
                 .file
+                .canonicalize()
+                .map_err(|error| error.to_string())?;
+            let file = canonical_file
                 .strip_prefix(&checkout)
                 .map_err(|_| "source outside selected checkout")?
                 .to_string_lossy();

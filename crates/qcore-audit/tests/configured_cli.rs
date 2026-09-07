@@ -391,6 +391,29 @@ fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files(
     }
 }
 
+#[cfg(unix)]
+#[test]
+fn compilation_database_path_aliases_select_the_canonical_checkout_source() {
+    use std::os::unix::fs::symlink;
+
+    let fixture = Fixture::new("int value(void) { return 7; }");
+    let alias = fixture.0.join("checkout-alias");
+    symlink(fixture.0.join("checkout"), &alias).unwrap();
+    fixture.mutate("compile_commands.json", |database| {
+        database[0]["directory"] = json!(alias);
+    });
+
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"][0]["status"], "Safe");
+}
+
 /// Before the compile task carried an identity, the recorded assumptions bound
 /// only the selected `.c` bytes and the database. A used header could flip a
 /// unit's verdict while every recorded input stayed byte-identical, so evidence

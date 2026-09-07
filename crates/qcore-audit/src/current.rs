@@ -49,15 +49,22 @@ pub fn select_configurations(
         entries
             .iter()
             .filter(|entry| {
-                entry.file.extension().is_some_and(|ext| ext == "c")
+                let entry_file = entry
+                    .file
+                    .canonicalize()
+                    .unwrap_or_else(|_| entry.file.clone());
+                entry_file.extension().is_some_and(|ext| ext == "c")
                     && library.source_roots.iter().any(|root| {
-                        let source_root = checkout.join(&root.root);
+                        let source_root = checkout
+                            .join(&root.root)
+                            .canonicalize()
+                            .unwrap_or_else(|_| checkout.join(&root.root));
                         match &root.selection {
                             UnitSelection::TopLevel => {
-                                entry.file.parent() == Some(source_root.as_path())
+                                entry_file.parent() == Some(source_root.as_path())
                             }
-                            UnitSelection::Recursive => entry.file.starts_with(source_root),
-                            UnitSelection::Exact { file } => entry.file == checkout.join(file),
+                            UnitSelection::Recursive => entry_file.starts_with(source_root),
+                            UnitSelection::Exact { file } => entry_file == checkout.join(file),
                         }
                     })
             })
@@ -136,7 +143,10 @@ impl CurrentAudit {
         entry: &CompileEntry,
         unresolved: Option<&str>,
     ) -> Result<(), String> {
-        self.sources.insert(expected_source.to_path_buf());
+        let expected_source = expected_source
+            .canonicalize()
+            .map_err(|error| error.to_string())?;
+        self.sources.insert(expected_source.clone());
         let relative = expected_source
             .strip_prefix(&self.checkout)
             .map_err(|_| "source outside current checkout")?;
@@ -155,7 +165,7 @@ impl CurrentAudit {
         let functions = source.map(legacy_c_source_functions).unwrap_or_default();
         let prepared = (|| {
             let bytes = bytes.as_ref().map_err(Clone::clone)?;
-            crate::verify_pinned_bytes(&self.checkout, &self.revision, expected_source, bytes)?;
+            crate::verify_pinned_bytes(&self.checkout, &self.revision, &expected_source, bytes)?;
             let source = source.ok_or("source is not UTF-8")?;
             if let Some(reason) = unresolved {
                 return Err(reason.to_owned());
