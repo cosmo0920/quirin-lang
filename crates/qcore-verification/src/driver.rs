@@ -1199,10 +1199,7 @@ fn compile_task_source(
     let read_share_profile = checked.module().functions.values().any(|function| {
         function.blocks.values().any(|block| {
             block.instructions.iter().any(|instruction| {
-                matches!(
-                    instruction.kind,
-                    TaskInstructionKind::WriteBuffer { .. }
-                )
+                matches!(instruction.kind, TaskInstructionKind::WriteBuffer { .. })
             }) || match &block.terminator.kind {
                 TaskTerminatorKind::TrySpawn { arguments, .. } => {
                     arguments.iter().any(|argument| {

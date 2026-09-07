@@ -214,7 +214,12 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         writeln!(source, "    s_{value_slot}.value.scalar = qcore_buffer_read(s_{buffer}.value.buffer, context);").unwrap();
                     }
                     InstructionKind::WriteBuffer { buffer, value } => {
-                        writeln!(source, "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);", scalar(value)).unwrap();
+                        writeln!(
+                            source,
+                            "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);",
+                            scalar(value)
+                        )
+                        .unwrap();
                     }
                     InstructionKind::DropBuffer { buffer } => {
                         writeln!(source, "    qcore_buffer_drop(s_{buffer}.value.buffer, context); s_{buffer}.value.buffer = NULL;").unwrap();

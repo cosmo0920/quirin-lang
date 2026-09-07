@@ -260,14 +260,25 @@ fn a_read_loan_is_not_a_result_type_and_not_an_entry_parameter() {
 #[test]
 fn a_read_share_must_be_a_positive_fraction_of_the_full_authority() {
     // Admitted: a single unit, a sum, and the whole authority spelled out.
-    for share in ["share 1", "share (1 + 1)", "share 1024", "share (512 + 512)"] {
+    for share in [
+        "share 1",
+        "share (1 + 1)",
+        "share 1024",
+        "share (512 + 512)",
+    ] {
         checked(&READ_LOAN.replace("share FULL", share))
             .unwrap_or_else(|error| panic!("`{share}` must be admitted, got:\n{error}"));
     }
     for (share, expected) in [
-        ("share FULL + FULL", "at most FULL (1024); this capture requests 2048"),
+        (
+            "share FULL + FULL",
+            "at most FULL (1024); this capture requests 2048",
+        ),
         ("share 0", "at most FULL (1024); this capture requests 0"),
-        ("share 1025", "at most FULL (1024); this capture requests 1025"),
+        (
+            "share 1025",
+            "at most FULL (1024); this capture requests 1025",
+        ),
         // A name that resolves is still not a share: this profile has no
         // declared share constants, so it is refused rather than evaluated.
         (
@@ -279,7 +290,10 @@ fn a_read_share_must_be_a_positive_fraction_of_the_full_authority() {
     }
     // A name that does not resolve is refused earlier still, by ordinary name
     // resolution, so no share expression can smuggle in an unbound identifier.
-    rejects(&READ_LOAN.replace("share FULL", "share HALF"), "unknown name `HALF`");
+    rejects(
+        &READ_LOAN.replace("share FULL", "share HALF"),
+        "unknown name `HALF`",
+    );
 }
 
 /// Capture mode and parameter type must agree in both directions, and a loan

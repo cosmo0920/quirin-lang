@@ -264,9 +264,9 @@ A loan parameter is spelled exactly `NAME: borrow<Buffer>`, with **no** usage
 grade: the borrower may read it any number of times and may do nothing else
 with it. Grading loan reads is not part of this profile. The only capture that
 produces one is `read PLACE share FULL`, against a place whose type is
-`own<Buffer>`. `share` expressions other than `FULL` — integers, sums, named
-shares — are refused, because splitting read authority across several borrowers
-is a different profile rather than a larger version of this one.
+`own<Buffer>`. A `share` expression names how much read authority the borrower
+receives; `share FULL` is the whole of it. Fractions are card T05's grammar,
+G02bc below.
 
 A read loan is not a value. It is refused as a function result, as an entry
 parameter, as a copy source, as a move source, as a `drop` operand and as a
@@ -278,7 +278,7 @@ While a loan is outstanding, the lender **keeps read authority** over its own
 Buffer and loses every exclusive authority over it — mutation, release, move
 and re-loan are all refused, naming the loan rather than a custody transfer.
 The bounds are structural: at most one loan per creation, at most one
-outstanding loan at a time, and one creation may not both move and lend the
+lent *resource* at a time, and one creation may not both move and lend the
 same resource. It may move one Buffer and lend another.
 
 Creation failure restores the lender exactly and opens no loan; the reservation
@@ -297,10 +297,85 @@ borrower are admitted because nothing may write a loaned resource; that is a
 checker rule, not a dynamic measurement — no race detector covers this backend,
 because ThreadSanitizer does not intercept C11 `thrd_create`.
 
-Fractional and multi-reader shares, write loans, loans of anything but a
-Buffer, loans across nested workers, loans held past a scope and non-Linux
-native targets remain unsupported. See
-[the read-loan report](reports/remaining-t04/README.md).
+Write loans, loans of anything but a Buffer, loans across nested workers,
+loans held past a scope and non-Linux native targets remain unsupported. See
+[the read-loan report](reports/remaining-t04/README.md). Fractional and
+multi-reader shares are G02bc.
+
+## G02bc. Counted read shares and the checked Buffer write
+
+`ScopedReadSharesV1` extends G02bb by *counting* the lent authority. Each
+`read PLACE share S` capture transfers `S` out of a per-resource budget of
+`FULL` (1024, the same unit as the concurrency model's `FULL_ACCESS`), so one
+allocation may be lent to at most two borrowers whose shares sum to no more
+than `FULL`. It is selected when some capture lends a share other than `FULL`,
+or when the module writes a Buffer; a module that does neither keeps its
+G02a/G02b/G02bb profile unchanged.
+
+```qcore
+concurrency checked;
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(1)?;
+    let prepared = qcore_buffer_write(buffer, 42);   // exclusive authority
+    thread scope s {
+        match spawn s reader(read buffer share 512) {
+            Result::Ok { value: first } => {
+                match spawn s reader(read buffer share 512) {
+                    Result::Ok { value: second } => {
+                        let during = qcore_buffer_read(buffer);
+                        let a = join move first?;
+                        let b = join move second?;
+                        let restored = qcore_buffer_write(buffer, 7);
+                        let after = qcore_buffer_read(buffer);
+                        drop buffer;
+                        return after;
+                    }
+                    /* … creation-failure arms elided … */
+                }
+            }
+        }
+    }
+}
+```
+
+A share expression is `FULL`, a decimal literal, a parenthesised share, or a
+sum of shares. It must evaluate to a positive value at most `FULL`; zero, an
+over-full value and a named share are represented refusals, and a name that
+does not resolve is refused earlier still by name resolution. This profile has
+no declared share constants.
+
+The budget is over the authority handed **out**. Lending transfers `S` from the
+resource's unlent authority to the borrower; the outstanding total may never
+exceed `FULL`, and an over-allocation is refused as a whole — no partial share
+is ever granted. At most two holders exist at once; a third is refused by the
+declared bound even when authority remains. The owner's own read is *not*
+budgeted: it is retained across committed lending exactly as G02bb retains it,
+and is sound only because a write demands the reconstructed exclusive
+authority. The separation-logic reading, in which the owner's read is itself a
+consumed fraction, is not this profile.
+
+`qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`, takes one exact
+`own<Buffer>` name and one i32, and demands exclusive authority. It is
+therefore refused for the whole window in which any share is outstanding —
+including after only one of two borrowers has been joined — and a borrower
+cannot reach it at all, because a read loan is not an `own<Buffer>` binding.
+Exclusive authority, and with it the write, the release and the move, return
+only when the *last* share comes back: one join out of two reconstructs
+nothing.
+
+Two borrowers of one allocation are two holders of one identity. The backend
+hands both the same pointer, so the allocation's live bytes are counted once,
+and lending never consumes the lender's binding — only its release does.
+`QCORE_BUFFER_WRITE task generation value` is announced by an admitted write;
+the loan and return trace lines are unchanged from G02bb.
+
+Disjoint slicing, write shares, more than two simultaneous readers, several
+lent resources at once, nested workers and non-Linux native targets remain
+unsupported. See [the read-share report](reports/remaining-t05/README.md).
 
 ## G02c. Guarded fixed-footprint mutex
 

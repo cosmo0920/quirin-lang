@@ -681,12 +681,7 @@ impl ScopedTaskLedger {
         self.transaction(|ledger| {
             let record = ledger.pending(creator, reservation)?.clone();
             for &(resource, share) in &record.loans {
-                ledger.reclaim(
-                    creator,
-                    resource,
-                    ShareHolder::Pending(reservation),
-                    share,
-                )?;
+                ledger.reclaim(creator, resource, ShareHolder::Pending(reservation), share)?;
             }
             for resource in &record.resources {
                 ledger
@@ -733,12 +728,7 @@ impl ScopedTaskLedger {
             // A pending share becomes the child's share. Nothing is minted:
             // exactly the reserved amount changes holder.
             for (resource, share) in reservation_record.loans {
-                ledger.reclaim(
-                    creator,
-                    resource,
-                    ShareHolder::Pending(reservation),
-                    share,
-                )?;
+                ledger.reclaim(creator, resource, ShareHolder::Pending(reservation), share)?;
                 ledger.lend(creator, resource, ShareHolder::Borrower(child), share)?;
             }
             ledger.reservations.get_mut(&reservation).unwrap().state =
@@ -1174,7 +1164,9 @@ mod tests {
     fn an_outstanding_read_loan_suspends_exclusive_authority_and_admits_two_readers() {
         let mut ledger = opened();
         ledger.acquire(0, 7).unwrap();
-        ledger.reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
+        ledger
+            .reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)])
+            .unwrap();
         // The reservation window grants nobody anything, read included.
         assert_eq!(
             ledger.read_resource(0, 7).unwrap_err(),
@@ -1255,7 +1247,9 @@ mod tests {
         }
         spawn(&mut ledger, 20, 1, 30, &[8]);
         let before = ledger.clone();
-        ledger.reserve_with_loans(0, 10, 21, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
+        ledger
+            .reserve_with_loans(0, 10, 21, &[], &[(7, FULL_READ_AUTHORITY)])
+            .unwrap();
         ledger.rollback(0, 21).unwrap();
         assert_eq!(
             ledger.resource_state(7),
@@ -1280,7 +1274,9 @@ mod tests {
     fn only_a_successful_creator_join_closes_a_read_loan() {
         let mut ledger = opened();
         ledger.acquire(0, 7).unwrap();
-        ledger.reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
+        ledger
+            .reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)])
+            .unwrap();
         ledger.commit(0, 20, 1, 30).unwrap();
         ledger.complete(1, TaskOutcome::I32(5), &[]).unwrap();
 
@@ -1293,10 +1289,10 @@ mod tests {
         rejected(
             &mut ledger,
             &TaskLedgerError::LoanOutstanding {
-            resource: 7,
-            outstanding: FULL_READ_AUTHORITY,
-            borrowers: vec![1],
-        },
+                resource: 7,
+                outstanding: FULL_READ_AUTHORITY,
+                borrowers: vec![1],
+            },
             |l| l.drop_resource(0, 7),
         );
 
@@ -1321,10 +1317,10 @@ mod tests {
         rejected(
             &mut failed,
             &TaskLedgerError::LoanOutstanding {
-            resource: 7,
-            outstanding: FULL_READ_AUTHORITY,
-            borrowers: vec![1],
-        },
+                resource: 7,
+                outstanding: FULL_READ_AUTHORITY,
+                borrowers: vec![1],
+            },
             |l| l.drop_resource(0, 7),
         );
         // Nobody else may collect it either.
@@ -1356,7 +1352,9 @@ mod tests {
         rejected(&mut ledger, &TaskLedgerError::DuplicateCapture(7), |l| {
             l.reserve_with_loans(0, 10, 20, &[7], &[(7, FULL_READ_AUTHORITY)])
         });
-        ledger.reserve_with_loans(0, 10, 21, &[8], &[(7, FULL_READ_AUTHORITY)]).unwrap();
+        ledger
+            .reserve_with_loans(0, 10, 21, &[8], &[(7, FULL_READ_AUTHORITY)])
+            .unwrap();
         ledger.commit(0, 21, 1, 30).unwrap();
         assert_eq!(
             ledger.resource_state(8),

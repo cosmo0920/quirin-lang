@@ -264,17 +264,16 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// case, even when the remaining authority would allow it.
 #[test]
 fn a_third_simultaneous_reader_is_refused_by_the_declared_bound() {
-    let source = shares("1", "1")
-        .replace(
-            "let during = qcore_buffer_read(buffer);",
-            "match spawn s reader(read buffer share 1) {
+    let source = shares("1", "1").replace(
+        "let during = qcore_buffer_read(buffer);",
+        "match spawn s reader(read buffer share 1) {
               Result::Ok { value: third } => {
                 let c = join move third?;
               }
               Result::Err { error: denied } => {
               }
             }",
-        );
+    );
     rejects(&source, "TooManyReaders { resource: 1, limit: 2 }");
 }
 
@@ -317,10 +316,7 @@ fn the_write_form_is_exact() {
             "qcore_buffer_write(buffer, 1, 2)",
             "task scalar expressions require an i32 literal or immutable scalar binding",
         ),
-        (
-            "qcore_buffer_write(missing, 1)",
-            "unknown name `missing`",
-        ),
+        ("qcore_buffer_write(missing, 1)", "unknown name `missing`"),
     ] {
         rejects(
             &shares("512", "512").replace("qcore_buffer_write(buffer, 42)", form),
