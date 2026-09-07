@@ -158,6 +158,16 @@ fn input_identity(
             serde_json::to_vec(&unit.preprocessor_options).map_err(|error| error.to_string())?,
         );
     }
+    // The directory above is the gateway process's, which is what the syntax
+    // and typed-AST phases read preprocessed text from. A declared file makes
+    // preprocessing run somewhere else, on a named input, so bind that too:
+    // the recorded identity must name every path the tools actually saw. Units
+    // transported through standard input keep their historical identity bytes.
+    if let crate::legacy_c::CSourceInput::DeclaredFile { spelled, directory } = &unit.input {
+        configuration.extend_from_slice(b"\nqcore.declared-input.v1:");
+        configuration
+            .extend(serde_json::to_vec(&(spelled, directory)).map_err(|error| error.to_string())?);
+    }
     let mut dependencies = BTreeMap::new();
     for helper in helpers {
         if dependencies

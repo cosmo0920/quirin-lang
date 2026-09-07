@@ -16,6 +16,7 @@ pub(crate) mod recursion;
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
+use std::path::PathBuf;
 use std::process::Stdio;
 
 pub type LegacyNodeId = usize;
@@ -147,9 +148,15 @@ pub struct LegacyProgramSummary {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyCError {
     FunctionNotFound(String),
-    MalformedFunction { function: String, line: usize },
+    MalformedFunction {
+        function: String,
+        line: usize,
+    },
     ProductionParserUnavailable(String),
     ProductionParserRejected(String),
+    /// The unit uses a construct whose meaning depends on the input identity
+    /// its declared [`CSourceInput`] cannot supply. Rejected, never guessed.
+    UnsupportedInputIdentity(String),
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -161,6 +168,79 @@ pub struct C11TranslationUnit<'a> {
     pub preprocessor_options: Vec<CPreprocessorOption>,
     pub dialect: CCompilerDialect,
     pub function_scope: LegacyFunctionScope,
+    /// How Clang is told to read this unit's primary input. See [`CSourceInput`].
+    pub input: CSourceInput,
+}
+
+/// The declared identity of a translation unit's primary input.
+///
+/// Preprocessing is not a function of the source text alone: `__FILE__`,
+/// `__FILE_NAME__`, `__BASE_FILE__` and quoted includes resolved against the
+/// includer's directory all answer to the *input Clang was given*. Feeding text
+/// through standard input answers `<stdin>` for the first three and resolves
+/// quoted includes against the gateway process's working directory. This type
+/// makes that choice explicit so a unit either sees the input identity it
+/// declares, or is rejected for a construct the transport cannot answer.
+///
+/// This records how the input is transported. It is not a claim that the
+/// gateway's staged preprocess/syntax/AST pipeline is equivalent to a direct
+/// one-shot compilation.
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize)]
+pub enum CSourceInput {
+    /// A unit with no declared file: the text is piped to Clang as `-`.
+    ///
+    /// The unit's identity is the text plus its declared options; quoted
+    /// includes resolve against the gateway process's recorded working
+    /// directory, because an anonymous text has no includer directory of its
+    /// own. Constructs that would have to invent a file name are rejected.
+    #[default]
+    AnonymousText,
+    /// A declared file: Clang is run from `directory` and given `spelled`
+    /// exactly as a compilation database records the input argument, so
+    /// `__FILE__` and quoted includes answer as a direct compile does.
+    ///
+    /// The declared source bytes must equal the file's bytes; otherwise the
+    /// unit is rejected rather than analyzed under a different text.
+    DeclaredFile {
+        /// The input argument exactly as the recorded compile command spells it.
+        spelled: String,
+        /// The absolute working directory the recorded compile command declares.
+        directory: PathBuf,
+    },
+    /// The historical Cycle 19 compatibility projection: standard input with
+    /// `<stdin>` accepted as the unit's file name.
+    ///
+    /// Retained only for the pinned compatibility adapter whose archived
+    /// artifacts were produced under it. Selecting this is a declared
+    /// assumption that the unit's filename-sensitive constructs do not matter
+    /// to its projection; it is never an equivalence claim.
+    HistoricalStdin,
+}
+
+impl CSourceInput {
+    /// The input identity for a unit whose text is *derived* from this one, for
+    /// example by appending a probe. Derived text is not the declared file, so
+    /// a declared identity is dropped rather than reused for different bytes.
+    pub fn for_derived_text(&self) -> Self {
+        match self {
+            Self::HistoricalStdin => Self::HistoricalStdin,
+            Self::AnonymousText | Self::DeclaredFile { .. } => Self::AnonymousText,
+        }
+    }
+
+    /// Whether the transport must reject `<stdin>` file-name expansions.
+    fn rejects_stdin_file_names(&self) -> bool {
+        matches!(self, Self::AnonymousText)
+    }
+
+    /// Whether the transport must reject deferred source-location builtins.
+    ///
+    /// These survive preprocessing and are resolved by the frontend, which the
+    /// gateway always feeds preprocessed text through standard input. Only the
+    /// pinned historical route keeps its previous silent behavior.
+    fn rejects_source_location_builtins(&self) -> bool {
+        !matches!(self, Self::HistoricalStdin)
+    }
 }
 
 /// Bounded preprocessing transport. These are arguments, never shell commands.
@@ -203,6 +283,132 @@ impl C11TranslationUnit<'_> {
             }
         }
     }
+
+    /// Append the primary input for the phase that reads the original source,
+    /// and report whether the source text must also be piped to standard input.
+    ///
+    /// A declared file is checked against its own bytes first: analyzing text
+    /// that differs from the file Clang reads would make the recorded input
+    /// identity a different unit from the effective one.
+    pub(crate) fn append_primary_input(
+        &self,
+        command: &mut std::process::Command,
+    ) -> Result<bool, LegacyCError> {
+        match &self.input {
+            CSourceInput::AnonymousText | CSourceInput::HistoricalStdin => {
+                command.arg("-");
+                Ok(true)
+            }
+            CSourceInput::DeclaredFile { spelled, directory } => {
+                if !directory.is_absolute() {
+                    return Err(LegacyCError::UnsupportedInputIdentity(
+                        "declared input directory must be absolute".into(),
+                    ));
+                }
+                if spelled.is_empty() || spelled.starts_with('-') {
+                    return Err(LegacyCError::UnsupportedInputIdentity(format!(
+                        "declared input `{spelled}` is not a source path argument"
+                    )));
+                }
+                let path = directory.join(spelled);
+                let bytes = std::fs::read(&path).map_err(|error| {
+                    LegacyCError::UnsupportedInputIdentity(format!(
+                        "declared input `{}` is unreadable: {error}",
+                        path.display()
+                    ))
+                })?;
+                if bytes != self.source.as_bytes() {
+                    return Err(LegacyCError::UnsupportedInputIdentity(format!(
+                        "declared input `{}` does not hold the declared source bytes",
+                        path.display()
+                    )));
+                }
+                command.current_dir(directory).arg(spelled);
+                Ok(false)
+            }
+        }
+    }
+}
+
+/// Constructs whose expansion is decided by the input Clang was given.
+///
+/// The scan runs over preprocessed output, so a construct reaching the unit
+/// through an included header is seen exactly like one spelled in the source.
+fn reject_filename_sensitive_constructs(
+    preprocessed: &str,
+    input: &CSourceInput,
+) -> Result<(), LegacyCError> {
+    let bytes = preprocessed.as_bytes();
+    let mut cursor = 0;
+    let mut line = 1usize;
+    while cursor < bytes.len() {
+        let byte = bytes[cursor];
+        if byte == b'\n' {
+            line += 1;
+            cursor += 1;
+        } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'/') {
+            while cursor < bytes.len() && bytes[cursor] != b'\n' {
+                cursor += 1;
+            }
+        } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'*') {
+            cursor += 2;
+            while cursor + 1 < bytes.len() && !(bytes[cursor] == b'*' && bytes[cursor + 1] == b'/')
+            {
+                line += usize::from(bytes[cursor] == b'\n');
+                cursor += 1;
+            }
+            cursor = (cursor + 2).min(bytes.len());
+        } else if byte == b'"' || byte == b'\'' {
+            let quote = byte;
+            let start = cursor + 1;
+            cursor += 1;
+            while cursor < bytes.len() {
+                if bytes[cursor] == b'\\' {
+                    cursor = (cursor + 2).min(bytes.len());
+                } else if bytes[cursor] == quote {
+                    break;
+                } else {
+                    line += usize::from(bytes[cursor] == b'\n');
+                    cursor += 1;
+                }
+            }
+            // `__FILE__`, `__FILE_NAME__` and `__BASE_FILE__` all expand to the
+            // input's name. Standard input names it `<stdin>`, which is not the
+            // unit's file, so the expansion is a construct without an answer.
+            if input.rejects_stdin_file_names()
+                && &preprocessed[start..cursor.min(bytes.len())] == "<stdin>"
+            {
+                return Err(LegacyCError::UnsupportedInputIdentity(format!(
+                    "preprocessed line {line}: a source file name macro \
+                     (`__FILE__`, `__FILE_NAME__` or `__BASE_FILE__`) expanded to \
+                     `<stdin>` because this unit declares no input file"
+                )));
+            }
+            cursor = (cursor + 1).min(bytes.len());
+        } else if byte.is_ascii_alphabetic() || byte == b'_' {
+            let start = cursor;
+            cursor += 1;
+            while cursor < bytes.len()
+                && (bytes[cursor].is_ascii_alphanumeric() || bytes[cursor] == b'_')
+            {
+                cursor += 1;
+            }
+            let name = &preprocessed[start..cursor];
+            // These survive preprocessing and are answered by the frontend,
+            // which always reads preprocessed text from standard input here.
+            if input.rejects_source_location_builtins()
+                && matches!(name, "__builtin_FILE" | "__builtin_FILE_NAME")
+            {
+                return Err(LegacyCError::UnsupportedInputIdentity(format!(
+                    "preprocessed line {line}: `{name}` is answered after \
+                     preprocessing, where this gateway reads standard input"
+                )));
+            }
+        } else {
+            cursor += 1;
+        }
+    }
+    Ok(())
 }
 
 impl CPreprocessorOption {
@@ -298,6 +504,13 @@ impl fmt::Display for LegacyCError {
                 write!(
                     f,
                     "production C parser rejected the translation unit: {message}"
+                )
+            }
+            Self::UnsupportedInputIdentity(message) => {
+                write!(
+                    f,
+                    "translation unit input identity cannot answer a \
+                     filename-sensitive construct: {message}"
                 )
             }
         }
@@ -468,19 +681,21 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
     for option in &unit.preprocessor_options {
         option.append_to(&mut command);
     }
-    command.arg("-");
+    let piped = unit.append_primary_input(&mut command)?;
     let mut child = command
-        .stdin(Stdio::piped())
+        .stdin(if piped { Stdio::piped() } else { Stdio::null() })
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    child
-        .stdin
-        .take()
-        .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
-        .write_all(unit.source.as_bytes())
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    if piped {
+        child
+            .stdin
+            .take()
+            .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
+            .write_all(unit.source.as_bytes())
+            .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+    }
     let output = child
         .wait_with_output()
         .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
@@ -490,6 +705,7 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
         ));
     }
     let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
+    reject_filename_sensitive_constructs(&preprocessed_source, &unit.input)?;
     let mut syntax_command =
         crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
     unit.append_frontend_flags(&mut syntax_command);

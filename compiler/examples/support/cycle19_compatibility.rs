@@ -363,6 +363,7 @@ fn audit_library(
             preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
         };
         memory_backend = Some(qcore_compiler::verifier_plugins::chunkio::teardown_source::check_memory_backend_source(&unit, PINNED_FLUENT_BIT_COMMIT)?);
     }
@@ -385,6 +386,7 @@ fn audit_library(
             preprocessor_options: native_options.preprocessor_options,
             dialect: native_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: native_options.input,
         };
         let native =
             qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(
@@ -410,6 +412,7 @@ fn audit_library(
             preprocessor_options: counter_options.preprocessor_options,
             dialect: counter_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: counter_options.input,
         };
         let counter =
             qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
@@ -432,6 +435,7 @@ fn audit_library(
             preprocessor_options: file_options.preprocessor_options,
             dialect: file_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: file_options.input,
         };
         let unmap =
             qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(
@@ -461,6 +465,7 @@ fn audit_library(
             preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
         };
         if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
             let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
@@ -952,6 +957,7 @@ fn audit_monkey_callback_source(
         preprocessor_options: options.preprocessor_options,
         dialect: options.dialect,
         function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        input: options.input,
     };
     let results = import_monkey_callbacks(&unit, PINNED_FLUENT_BIT_COMMIT)?;
     for result in &results {

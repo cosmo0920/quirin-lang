@@ -333,6 +333,7 @@ fn helper_main_imports(
             preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
         },
         &profile.pin_for(LIBRARY).unwrap().git_commit,
         &profile,

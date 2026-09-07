@@ -114,6 +114,8 @@ pub fn check_filesystem_chunk_close_source(
         preprocessor_options: unit.preprocessor_options.clone(),
         dialect: unit.dialect,
         function_scope: unit.function_scope,
+        // The probe text is not the declared file, so it keeps no file identity.
+        input: unit.input.for_derived_text(),
     };
     let probes = import_source_functions(
         &probe_unit,

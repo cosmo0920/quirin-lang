@@ -79,7 +79,13 @@ impl Fixture {
         Self(root)
     }
     fn run(&self) -> Output {
+        self.run_in(&self.0.clone())
+    }
+    /// Run the audit from an explicit working directory. A unit's meaning must
+    /// not depend on where the audit happens to be started.
+    fn run_in(&self, directory: &std::path::Path) -> Output {
         Command::new(env!("CARGO_BIN_EXE_qcore-audit"))
+            .current_dir(directory)
             .arg(self.0.join("audit.json"))
             .output()
             .unwrap()
@@ -263,4 +269,82 @@ fn pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing() {
     let report: Value =
         serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
     assert_eq!(report["units"][0]["status"], "Unknown");
+}
+
+#[test]
+fn quoted_includes_resolve_against_the_source_not_the_audit_working_directory() {
+    // A quoted include is resolved against the *including file's* directory.
+    // Feeding the text through standard input instead makes the gateway's own
+    // working directory play that role, so an unrelated header sitting next to
+    // wherever the audit was started could silently replace the real one and
+    // publish a verdict for a translation unit nobody compiled.
+    let fixture = Fixture::new(
+        "#include \"effect.h\"\nextern void opaque(void); void entry(void) { EFFECT; }",
+    );
+    fs::write(
+        fixture.0.join("checkout/src/effect.h"),
+        "#define EFFECT opaque()\n",
+    )
+    .unwrap();
+    let shadow = fixture.0.join("shadow");
+    fs::create_dir_all(&shadow).unwrap();
+    fs::write(shadow.join("effect.h"), "#define EFFECT ((void)0)\n").unwrap();
+    fixture.mutate("compile_commands.json", |database| {
+        database[0]["arguments"] = json!(["clang", "-std=c11", "-c", "src/unit.c"]);
+    });
+    // The shadowing directory is the one that used to win. Both runs must now
+    // report the unresolved call the recorded compile command actually sees.
+    for directory in [shadow.clone(), fixture.0.clone()] {
+        let output = fixture.run_in(&directory);
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let report: Value =
+            serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap())
+                .unwrap();
+        assert_eq!(
+            report["units"][0]["status"],
+            "Unknown",
+            "started in {}",
+            directory.display()
+        );
+    }
+}
+
+#[test]
+fn source_file_name_macros_answer_with_the_recorded_input() {
+    // `__FILE__` under the standard-input transport expanded to `<stdin>`,
+    // which is not any file the recorded build compiles. The configured audit
+    // now hands Clang the recorded input word. This is the end-to-end smoke:
+    // the byte-exact comparison against a direct compile is in the
+    // `filename_sensitive_preprocessing_matches_the_recorded_compile_command`
+    // differential, which reads the preprocessed text itself.
+    let fixture =
+        Fixture::new("const char *where(void) { return __FILE__; }\nint value(void) { return 7; }");
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"][0]["status"], "Safe");
+}
+
+#[test]
+fn deferred_source_location_builtins_reject_instead_of_answering_for_the_wrong_file() {
+    // These are answered after preprocessing, where the gateway always reads
+    // standard input. No transport here makes them true, so the unit fails
+    // closed rather than being projected under a guessed file name.
+    let fixture = Fixture::new("const char *where(void) { return __builtin_FILE(); }");
+    let output = fixture.run();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stderr.contains("__builtin_FILE") || stdout.contains("__builtin_FILE"),
+        "{stderr}{stdout}"
+    );
 }

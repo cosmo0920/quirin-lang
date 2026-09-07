@@ -240,6 +240,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 preprocessor_options: options.preprocessor_options,
                 dialect: options.dialect,
                 function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                input: options.input,
             };
             let source_functions = legacy_c_source_functions(&source);
             project_unit(
