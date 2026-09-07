@@ -97,6 +97,156 @@ impl Drop for Fixture {
     }
 }
 
+fn commit_source(fixture: &Fixture, source: &str) -> String {
+    fs::write(fixture.0.join("checkout/src/unit.c"), source).unwrap();
+    let output = Command::new("git")
+        .current_dir(fixture.0.join("checkout"))
+        .args([
+            "-c",
+            "user.name=Audit Fixture",
+            "-c",
+            "user.email=audit@example.invalid",
+            "commit",
+            "-am",
+            "Changed upstream source",
+            "--quiet",
+            "--allow-empty",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let output = Command::new("git")
+        .current_dir(fixture.0.join("checkout"))
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    String::from_utf8(output.stdout).unwrap().trim().to_owned()
+}
+
+#[test]
+fn checkout_head_reanalyzes_changed_source_without_reusing_historical_evidence() {
+    let fixture = Fixture::new("int entry(void) { return 7; }");
+    let changed = "extern void opaque(void); void entry(void) { opaque(); }";
+    let revision = commit_source(&fixture, changed);
+    // The historical default still rejects a different revision.
+    assert!(!fixture.run().status.success());
+    assert!(!fixture.0.join("output/report.json").exists());
+    fixture.mutate("audit.json", |value| {
+        value["source_revision_policy"] = json!("checkout_head")
+    });
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["source_revision"], revision);
+    assert_eq!(report["units"][0]["status"], "Unknown");
+    assert!(report.get("source_contracts").is_none());
+    let assumptions: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        assumptions["source_revision_selection"]["resolved_commit"],
+        revision
+    );
+    assert_eq!(
+        assumptions["source_sha256"]["sample/src/unit.c"],
+        sha256_hex(changed.as_bytes())
+    );
+    assert!(
+        assumptions["source_revision_selection"]["source_specific_evidence"]
+            .as_str()
+            .unwrap()
+            .starts_with("Unknown")
+    );
+}
+
+#[test]
+fn checkout_head_rejects_dirty_selected_bytes_and_historical_provider_evidence() {
+    for cause in ["dirty", "provider", "required", "unknown_policy"] {
+        let fixture = Fixture::new("int entry(void) { return 7; }");
+        fixture.mutate("audit.json", |value| {
+            value["source_revision_policy"] = json!("checkout_head")
+        });
+        match cause {
+            "dirty" => {
+                // Even a selected file outside clean_paths must match the resolved commit.
+                fixture.mutate("profiles/sample/profile.json", |value| {
+                    value["pins"]["sample"]["clean_paths"] = json!(["other"])
+                });
+                fs::write(
+                    fixture.0.join("checkout/src/unit.c"),
+                    "int entry(void) { return 8; }",
+                )
+                .unwrap();
+            }
+            "provider" => fixture.mutate("audit.json", |value| {
+                value["source_contracts"] = json!({
+                    "configuration":"missing.json", "source_rules":"missing.qcore", "libraries":[]
+                })
+            }),
+            "required" => fixture.mutate("profiles/sample/profile.json", |value| {
+                value["libraries"]["sample"]["required_evidence"] =
+                    json!(["native_allocation_ledger"])
+            }),
+            _ => fixture.mutate("audit.json", |value| {
+                value["source_revision_policy"] = json!("anything")
+            }),
+        }
+        let output = fixture.run();
+        assert!(!output.status.success(), "{cause}");
+        let error = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            error.contains(match cause {
+                "dirty" => "does not match its pinned bytes",
+                "provider" => "supports resource projection only",
+                "required" => "requires evidence",
+                _ => "unknown variant",
+            }),
+            "{cause}: {error}"
+        );
+        assert!(!fixture.0.join("output/report.json").exists());
+    }
+}
+
+#[test]
+fn checkout_head_commit_change_retires_identity_even_with_identical_source() {
+    let source = "int entry(void) { return 7; }";
+    let fixture = Fixture::new(source);
+    fixture.mutate("audit.json", |value| {
+        value["source_revision_policy"] = json!("checkout_head")
+    });
+    assert!(fixture.run().status.success());
+    let before: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    let revision = commit_source(&fixture, source);
+    assert!(fixture.run().status.success());
+    let after: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        after["source_revision_selection"]["resolved_commit"],
+        revision
+    );
+    assert_eq!(before["source_sha256"], after["source_sha256"]);
+    assert_ne!(
+        before["compile_tasks"][0]["identity_sha256"],
+        after["compile_tasks"][0]["identity_sha256"]
+    );
+}
+
 #[test]
 fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files() {
     for (source, expected) in [

@@ -815,3 +815,18 @@ raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lea
 audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
+
+Moving Fluent Bit revisions (2026-09-07): configured resource audits now accept
+`source_revision_policy: checkout_head`. They resolve the actual commit once,
+verify selected source bytes, and bind that commit into compile-task identities.
+Historical profile digests/witnesses and provider/native evidence are not reused;
+source-specific evidence remains Unknown. Source-contract selections and missing
+required evidence reject in this mode. Existing configurations and the Cycle19
+compatibility command retain pinned reproduction behavior. CMetrics preparation
+now defaults to local HEAD, accepts `--revision`, and isolates builds by resolved
+commit. At `d1ab8abff`, separate CMetrics/librdkafka/ChunkIO scopes complete:
+138 units, 0 Safe / 28 provisional Unsafe / 107 Unknown / 3 data-only. Full
+current-corpus auditing still rejects unsupported CTraces options and conflicting
+wrapper commands; these are not revision-selection failures. No whole-unit
+promotion or semantic rule change is claimed. See `docs/reports/fluent-bit-moving-revisions/README.md` and
+`crates/qcore-audit/README.md` for commands and validation.

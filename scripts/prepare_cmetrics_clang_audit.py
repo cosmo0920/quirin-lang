@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare a persistent pinned Clang CMake build for the configured CMetrics audit.
+"""Prepare a revision-selected Clang CMake build for the configured CMetrics audit.
 
 The compile database is CMake's unmodified output. The isolated source checkout
 absorbs upstream configure-time writes. This does not assert GCC equivalence.
@@ -32,22 +32,25 @@ def digest(path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--fluent-bit', type=Path, default=ROOT.parent / 'fluent-bit')
-    parser.add_argument('--output', type=Path, default=ROOT / 'build/cycle19')
+    parser.add_argument('--revision', default='HEAD',
+                        help='local Git revision to audit (default: HEAD); use the profile commit to reproduce historical evidence')
+    parser.add_argument('--output', type=Path,
+                        help='build directory (default: build/cycle19/revisions/<resolved commit>)')
     parser.add_argument('--clang', default='clang')
     parser.add_argument('--clangxx', default='clang++')
     parser.add_argument('--cmake', default='cmake')
     args = parser.parse_args()
     upstream = args.fluent_bit.resolve(strict=True)
-    output = args.output.resolve()
+    profile_dir = ROOT / 'contract/profiles/cmetrics-counter'
+    profile = json.loads((profile_dir / 'profile.json').read_text())
+    pin = capture('git', '-C', str(upstream), 'rev-parse', '--verify',
+                  '--end-of-options', f'{args.revision}^{{commit}}')
+    historical = pin == profile['pins']['fluent-bit']['git_commit']
+    output = (args.output or ROOT / 'build/cycle19/revisions' / pin).resolve()
     source = output / 'fluent-bit-clang-source'
     build = output / 'fluent-bit-clang-production'
     if output.is_relative_to(upstream) or source == upstream:
         raise ValueError('use an output outside the upstream checkout')
-    profile_dir = ROOT / 'contract/profiles/cmetrics-counter'
-    profile = json.loads((profile_dir / 'profile.json').read_text())
-    pin = profile['pins']['fluent-bit']['git_commit']
-    if capture('git', '-C', str(upstream), 'rev-parse', 'HEAD') != pin:
-        raise ValueError('upstream HEAD does not match the configured source pin')
     clang = shutil.which(args.clang)
     clangxx = shutil.which(args.clangxx)
     if not clang or not clangxx:
@@ -96,11 +99,16 @@ def main():
     config = json.loads((profile_dir / 'audit.json').read_text())
     config.update(profile_directory=str(profile_dir), checkout=str(source),
                   compile_database=str(database), report=str(build / 'cmetrics-audit.json'))
-    config['source_contracts']['configuration'] = str(profile_dir / 'source-contracts.json')
-    config['source_contracts']['source_rules'] = str(ROOT / 'contract/qcore/library/source_projection.qcore')
+    if historical:
+        config['source_contracts']['configuration'] = str(profile_dir / 'source-contracts.json')
+        config['source_contracts']['source_rules'] = str(ROOT / 'contract/qcore/library/source_projection.qcore')
+    else:
+        config['source_revision_policy'] = 'checkout_head'
+        del config['source_contracts']
     config_path = build / 'cmetrics-audit.json.config'
     config_path.write_text(json.dumps(config, indent=2) + '\n')
-    provenance = dict(schema_version=1, source_revision=pin, upstream=str(upstream),
+    provenance = dict(schema_version=1, source_revision=pin, requested_revision=args.revision,
+                      source_revision_policy='profile_pin' if historical else 'checkout_head', upstream=str(upstream),
                       source=str(source), build=str(build), compiler_version=compiler_version,
                       configure_command=configure, native_build_command=native,
                       compile_database_sha256=digest(database), compile_entry=selected[0],

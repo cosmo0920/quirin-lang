@@ -26,7 +26,7 @@ use qcore_contract::profile_loader::{
     LoadedProfile, load_audited_bundle, load_profile_directory, verify_pin,
 };
 use qcore_schemas::profile::{LibraryProfile, UnitSelection, WitnessCheck};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use compile_db::{CompileEntry, compile_entries, compiler_options};
 use projection::{AuditCounts, project_unit};
@@ -42,7 +42,34 @@ pub struct AuditConfig {
     pub libraries: Vec<String>,
     pub report: PathBuf,
     #[serde(default)]
+    pub source_revision_policy: SourceRevisionPolicy,
+    #[serde(default)]
     pub source_contracts: Option<SourceContractAuditConfig>,
+}
+
+/// Historical source evidence requires its original profile pin. A moving
+/// checkout can instead supply fresh, explicitly scoped resource projections.
+#[derive(Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceRevisionPolicy {
+    #[default]
+    ProfilePin,
+    CheckoutHead,
+}
+
+fn checkout_head(checkout: &Path) -> Result<String, String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(checkout)
+        .args(["rev-parse", "--verify", "HEAD^{commit}"])
+        .output()
+        .map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err("could not resolve checkout HEAD to a commit".into());
+    }
+    String::from_utf8(output.stdout)
+        .map(|head| head.trim().to_owned())
+        .map_err(|error| error.to_string())
 }
 
 /// An explicit profile determines every selected source path. Conflicting
@@ -161,6 +188,11 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             config.schema_version
         ));
     }
+    if config.source_revision_policy == SourceRevisionPolicy::CheckoutHead
+        && config.source_contracts.is_some()
+    {
+        return Err("checkout_head supports resource projection only; source-contract evidence requires a matching profile pin".into());
+    }
     if config.libraries.is_empty()
         || config.libraries.iter().collect::<BTreeSet<_>>().len() != config.libraries.len()
     {
@@ -180,9 +212,24 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     let contracts = load_resource_contract_manifest(&contract_manifest)?;
     let mut work = Vec::new();
     let mut revisions = BTreeSet::new();
+    // Resolve a moving name once. Every unit is checked against this immutable
+    // commit, and moving HEAD during the run prevents report publication.
+    let selected_head = (config.source_revision_policy == SourceRevisionPolicy::CheckoutHead)
+        .then(|| checkout_head(&checkout))
+        .transpose()?;
     for name in &config.libraries {
-        revisions.insert(verify_library_sources(&profile, name, &checkout)?);
         let library = profile.library(name).ok_or("selected library is absent")?;
+        if let Some(head) = &selected_head {
+            let mut pin = profile
+                .pin_for(name)
+                .ok_or("selected library has no pin")?
+                .clone();
+            pin.git_commit.clone_from(head);
+            verify_pin(&library.pin, &pin, &checkout).map_err(|error| error.to_string())?;
+            revisions.insert(head.clone());
+        } else {
+            revisions.insert(verify_library_sources(&profile, name, &checkout)?);
+        }
         if !library.required_evidence.is_empty() {
             return Err(format!(
                 "library `{name}` requires evidence that this configured driver cannot supply"
@@ -194,7 +241,8 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         }
         // Validate every command before publishing even a partial run.
         for entry in &selected {
-            compiler_options(entry)?;
+            compiler_options(entry)
+                .map_err(|error| format!("{name}: {}: {error}", entry.file.display()))?;
         }
         work.push((name, selected));
     }
@@ -237,6 +285,12 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 .ok_or("source profile reports no digest")?,
         ),
     ]);
+    if let Some(head) = &selected_head {
+        task_dependencies.insert(
+            "source_revision_selection".into(),
+            qcore_contract::profile_loader::sha256_hex(format!("checkout_head:{head}").as_bytes()),
+        );
+    }
     if let Some(selection) = &config.source_contracts {
         for (name, path) in [
             ("source_contract_configuration", &selection.configuration),
@@ -265,7 +319,12 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             let pin = profile
                 .pin_for(library)
                 .ok_or("selected source has no pin")?;
-            verify_pinned_bytes(&checkout, &pin.git_commit, &entry.file, source.as_bytes())?;
+            verify_pinned_bytes(
+                &checkout,
+                selected_head.as_deref().unwrap_or(&pin.git_commit),
+                &entry.file,
+                source.as_bytes(),
+            )?;
             source_identities.insert(
                 format!("{library}/{file}"),
                 qcore_contract::profile_loader::sha256_hex(source.as_bytes()),
@@ -321,7 +380,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     if let Some(parent) = report_path.parent() {
         fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
-    let assumptions = serde_json::json!({
+    let mut assumptions = serde_json::json!({
         "schema_version": 1, "profile": profile.assumptions(),
         "contracts": contracts.source_assumptions(),
         "source_sha256": source_identities,
@@ -335,6 +394,18 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional"
         },
     });
+    if let Some(head) = &selected_head {
+        if checkout_head(&checkout)? != *head {
+            return Err("checkout HEAD changed during audit; rerun with stable inputs".into());
+        }
+        assumptions["source_revision_selection"] = serde_json::json!({
+            "policy": config.source_revision_policy,
+            "resolved_commit": head,
+            "profile_pin_role": "historical reference only; source digests and witnesses from that revision are not admitted",
+            "source_specific_evidence": "Unknown: historical source summaries, provider and native observations were not replayed",
+            "contract_scope": "declared resource contracts are assumptions at the selected revision, not verified upstream behavior",
+        });
+    }
     report.write(&report_path)?;
     fs::write(
         report_path.with_extension("assumptions.json"),

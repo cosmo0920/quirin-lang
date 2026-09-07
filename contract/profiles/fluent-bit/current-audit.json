@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "profile_directory": ".",
+  "checkout": "../../../../fluent-bit",
+  "compile_database": "../../../../fluent-bit/build/compile_commands.json",
+  "libraries": ["cmetrics", "ctraces", "librdkafka", "chunkio", "fluent_bit"],
+  "report": "../../../build/cycle19/current-resource-audit.json",
+  "source_revision_policy": "checkout_head"
+}
