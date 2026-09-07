@@ -1,0 +1,44 @@
+    Finished `release` profile [optimized] target(s) in 0.02s
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "semantic_profile": "per_package_declared_profiles",
+  "artifacts": [
+    {
+      "plugin_id": "qcore.chunkio",
+      "executable_sha256": "d413e04f46ad6b691ba3b18ea3ebe51cc00900685d7082f37fb3d87186f01080",
+      "manifest_sha256": "037f40469f18273f18ec65cce4384e959a0e71ec9e7d2c2ba8623046e1489769",
+      "archive_sha256": "d32a22fd025a0f326c94ce881cc68bf92f9080bf69dcc9de9e49f8edd05bf8de"
+    },
+    {
+      "plugin_id": "qcore.cmetrics",
+      "executable_sha256": "64bcb0da113b7aad8e5684b495c32c08bbce90cc3f2849b42dfa7071d7a2842e",
+      "manifest_sha256": "f67caefdceeb074d9c8bca247251941a5abb48b359c1910e6d32741bf6b7ffc4",
+      "archive_sha256": "dfb86911cc3fd4be6d52c1e2fff94c0d137bf6a1f671e95462a36fb28d3c29ad"
+    },
+    {
+      "plugin_id": "qcore.ctraces",
+      "executable_sha256": "915b61442fa6b00e4c98a027b9bf9b33151e669b11aeddb71656ac4c110abff6",
+      "manifest_sha256": "4aa995ea6c268f19ca49a6dd48463bd7efda2b24bb9dbaebc695fc304c5d7450",
+      "archive_sha256": "6ec9e5501e99524b74807adc90db5fa653cfb4865c7eddb7a6e69e9c95851d1a"
+    },
+    {
+      "plugin_id": "qcore.libevent",
+      "executable_sha256": "0d88499311e380579de15b86f2de592e8b4de6a25599a7c52c73beb7d3e054f3",
+      "manifest_sha256": "9a4fb954014dcb80e66951ed2c23f31c0e1bfce27b3fed480eb138a70d96a1f1",
+      "archive_sha256": "171e53ae98f53d09fb9a1306343c905480b64604b66f32c0e4c58cabf2d2fd43"
+    },
+    {
+      "plugin_id": "qcore.librdkafka",
+      "executable_sha256": "96ee05ca3c2199d57130f2451a825d7b8543dbdb06993c3d7902ad120b4072ea",
+      "manifest_sha256": "734f63fea83899d8a30dcb6714d54da31bd6b2a0910db987d926ed39e25dfdaa",
+      "archive_sha256": "5934302b60e7f41ebf6e93010f9ec20f23f3f68ef237e31dfdbb7ba137a146c3"
+    }
+  ],
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+  "lock_sha256": "c58432bff1f5eac60f5222243c549b88a84c8cbab25aef8309a1ce7c91542d74"
+}
