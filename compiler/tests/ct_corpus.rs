@@ -31,7 +31,7 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT12", "CT13", "CT15", "CT16", "CT19", "CT20", "CT37",
+    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT37",
 ];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
@@ -655,8 +655,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 9 of 50 CT cases are mapped
-/// as executed source-level tests; 41 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
+/// The moving count is the W6 genericity metric: 10 of 50 CT cases are mapped
+/// as executed source-level tests; 40 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
@@ -1175,5 +1175,31 @@ fn ct16_retains_sequential_implicit_cleanup_control() {
             .map(trace_token)
             .collect::<Vec<_>>(),
         ["acquire:3", "release:3"]
+    );
+}
+
+#[test]
+fn ct37_retains_sequential_transferred_payload_control() {
+    let module = compile_files(
+        &[SourceFile::new(
+            "sequential-completion-payload.qcore",
+            include_str!("fixtures/task_worker_allocations/sequential_completion_payload.qcore"),
+        )],
+        &CompileOptions {
+            entry: Some("worker".into()),
+        },
+    )
+    .unwrap();
+    let observation = module.reference_observation.unwrap();
+    assert!(
+        matches!(&observation.outcome, ExecutionOutcome::Ok { value, payload } if *value == 5 && payload == &[6])
+    );
+    assert_eq!(
+        observation
+            .trace
+            .iter()
+            .map(trace_token)
+            .collect::<Vec<_>>(),
+        ["acquire:5", "acquire:6", "transfer:6", "release:5"]
     );
 }

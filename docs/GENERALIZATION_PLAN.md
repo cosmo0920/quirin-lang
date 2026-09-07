@@ -632,7 +632,9 @@ Buffer results and worker-local failure cleanup with scheduling-independent
 identities. CT16 now executes native worker errors and allocation failures; the
 earlier sequential implicit-cleanup control remains tested. Fourteen Lean model
 theorems and six fixed sanitizer runs accompany this increment.
-Coverage is 9/50 mapped, 41 unmapped. Loans, general usage/SSA rollback, owned
+[Completed-child custody](reports/w6-completed-child-custody/README.md) maps CT14
+and upgrades CT37 to actual native worker completion before join, preserving its
+sequential payload control. Coverage is 10/50 mapped, 40 unmapped. Loans, general usage/SSA rollback, owned
 graphs/errors, shared memory, mutexes, general control and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to

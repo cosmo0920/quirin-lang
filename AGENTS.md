@@ -156,9 +156,9 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **41/50 unmapped**
+  only; CT01–CT50 conformance corpus is **40/50 unmapped**
   (CT01/CT12 execute Linux owned-buffer transfer/creation restoration; CT02
-  rejects actual post-move access. CT16 executes worker-local allocation/error cleanup; CT37 retains a sequential-core fixture;
+  rejects actual post-move access. CT16 executes worker-local allocation/error cleanup; CT14/CT37 execute completed-but-unjoined native custody;
   CT19 checks real sibling failure source, CT13 has Linux creation-recovery
   evidence, CT15 has Linux native join-failure evidence, and CT20 checks
   sibling join/owned-result discharge before bound-error rethrow).
@@ -192,14 +192,14 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   pipeline and fails closed on manifest/fixture disagreement. CT02/CT12 now
   check real Buffer moves/restoration; CT16 executes worker-local allocation
   and error cleanup while retaining its earlier sequential implicit-cleanup
-  control. CT37 retains a Cycle 12 sequential fixture. CT19 now checks actual sibling-failure source; CT15 executes
+  control. CT14/CT37 execute completed-child native custody; CT37 retains its earlier sequential control. CT19 now checks actual sibling-failure source; CT15 executes
   Linux native join-failure and successful reclamation controls. CT13 checks
   explicit creation recovery and retained sibling storage. Shares and
   mutex source paths remain unexercised. Batch 2 (2026-09-06,
   `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
   W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); subsequent owned-task
-  and handler-rethrow mappings leave 41 cases unmapped, counted by a pinned test. W4 is executed for
+  and completed-child mappings leave 40 cases unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
   `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
@@ -664,3 +664,18 @@ All 784 workspace tests, standing gates, 31 provider tests, 43 Python tests and
 20 Lean audits pass; all four full Cycle19 artifacts are byte-identical. Provider
 semantic extraction, source-bound lifecycle composition and compatibility-route
 removal remain open. Evidence: `docs/reports/w5-typed-body-boundary/README.md`.
+
+Completed-child custody conformance (2026-09-07): CT14 is newly mapped and CT37
+now executes real Linux worker allocation/completion/join. A shared native adapter
+forces the actual worker body and completion-record write to finish before
+creation returns, then checks that the original Buffer and environment remain
+live until join. CT14 rejects parent read/drop of its moved Buffer before join;
+CT37 rejects discarded or undropped owned Results. Both accepted controls join
+and release the exact returned generation. The earlier CT37 sequential payload
+fixture remains tested. Coverage is now 10/50 mapped, 40 unmapped. All 785 workspace
+tests, standing gates, 31 provider tests, 43 Python tests, 20 Lean audits and two
+fixed ASan/UBSan/LSan runs pass; all four full Cycle19 artifacts remain identical.
+No source/core/backend semantics change; existing completion-custody model
+proofs remain separate from source/native refinement. Loans, shared authority,
+general heap-peak accounting and arbitrary native schedules remain open.
+Evidence: `docs/reports/w6-completed-child-custody/README.md`.

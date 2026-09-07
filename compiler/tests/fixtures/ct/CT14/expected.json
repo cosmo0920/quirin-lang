@@ -1,0 +1,61 @@
+{
+  "id": "CT14",
+  "verdict": "native_task_scenarios",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "Linux ScopedOwnedTasksV1: the native adapter waits for the actual worker body and completion-record write before creation returns to the parent. Parent read/drop of the moved Buffer before join reject at Q600 despite worker completion. The accepted control joins, consumes the owned Result and drops the original generation. Exact pointers and join-before-reclamation checks retain the allocation and environment while completed but unjoined. This is one owned Buffer, not loan/share restoration or a general scheduler proof.",
+  "native_task_scenarios": {
+    "header": "completion_before_join.h",
+    "rejection_controls": [
+      {
+        "source": "read_before_join.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "not an initialized owned buffer"
+        }
+      },
+      {
+        "source": "drop_before_join.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "not an initialized owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "completed_unjoined_buffer",
+        "failed_allocation": 0,
+        "failed_create": 0,
+        "allocation_task": 0,
+        "allocation_outcomes": [
+          true
+        ],
+        "worker_allocation_outcomes": {},
+        "spawn_outcomes": [
+          true
+        ],
+        "outcome": {
+          "ok_value": 42,
+          "error": null,
+          "payload": []
+        },
+        "joined_children": 1,
+        "owned_child_results": [
+          1
+        ],
+        "native_stderr": "BUFFER_ALLOC\nENV_ALLOC\nWORKER_BODY_DONE\nCREATE_RETURNS_AFTER_BODY\nUNJOINED_BUFFER_LIVE\nJOIN_OK\nENV_FREE\nBUFFER_FREE\nRUN_CLEAN\n"
+      }
+    ]
+  }
+}

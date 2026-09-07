@@ -1,0 +1,17 @@
+// CT37 (spec §55; rule in §43.5): a worker returns an allocation and finishes
+// early; the allocation remains live in the completion capsule.
+// Sequential completion-record core: the worker holds one frame-local scratch
+// resource and one allocation that it hands to its result. Frame-local cleanup
+// reclaims the scratch, but the returned allocation is transferred rather than
+// released and is still present in the completion record at exit — "resource
+// identities in a capsule remain globally live, even after worker execution
+// stops".
+module executable;
+error WorkerError { Failed; }
+fn worker() -> i32 {
+    let scratch = qcore_acquire(5, true, WorkerError);
+    let allocation = qcore_acquire(6, true, WorkerError);
+    move allocation;
+    drop scratch;
+    return 5;
+}

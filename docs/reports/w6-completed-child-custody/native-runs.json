@@ -1,0 +1,138 @@
+[
+  {
+    "id": "CT14",
+    "emit_command": [
+      "cargo",
+      "run",
+      "--quiet",
+      "-p",
+      "qcorec",
+      "--",
+      "emit",
+      "-o",
+      "/tmp/qcore-completion-custody-native/CT14.c",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT14/case.qcore"
+    ],
+    "compile_command": [
+      "clang",
+      "-std=c11",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-O1",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-include",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT14/completion_before_join.h",
+      "/tmp/qcore-completion-custody-native/CT14.c",
+      "-o",
+      "/tmp/qcore-completion-custody-native/CT14"
+    ],
+    "executable": "/tmp/qcore-completion-custody-native/CT14",
+    "generated_c": "/tmp/qcore-completion-custody-native/CT14.c",
+    "expected_stderr": "BUFFER_ALLOC\nENV_ALLOC\nWORKER_BODY_DONE\nCREATE_RETURNS_AFTER_BODY\nUNJOINED_BUFFER_LIVE\nJOIN_OK\nENV_FREE\nBUFFER_FREE\nRUN_CLEAN\n",
+    "expected_outcome": "QCORE_TASK_RESULT 0 I32 42",
+    "exit_code": 0,
+    "executable_sha256": "78c4a5442e5cb6f6a1af2dd7dbad38c6d8889cc8b883634c25486e4deb903d6d",
+    "sanitizers": [
+      "address",
+      "undefined",
+      "leak"
+    ],
+    "asan_options": "detect_leaks=1",
+    "execution": "untraced local Linux process",
+    "shared_header_path": "compiler/tests/fixtures/task_worker_allocations/completion_before_join.h",
+    "shared_header_artifact": "completion_before_join.h.gz",
+    "shared_header_sha256": "35cffd3bb04d2a05237ffb12a803af34ba1da3f3ed0be05b00e1c7c32a5376e0",
+    "generated.c": {
+      "artifact": "CT14.generated.c.gz",
+      "sha256": "0870c30e1ed41c551afed1dfcb2c8c169e1dceec15b880a32439bc3ecf9a1612"
+    },
+    "stdout": {
+      "artifact": "CT14.stdout.gz",
+      "sha256": "76486e2f7dc030c8a9888753cda5d75f7064740b74d53e7cbce862a843e16cfa"
+    },
+    "stderr": {
+      "artifact": "CT14.stderr.gz",
+      "sha256": "9b7c36c2106a8538e99fc6ba1951c066d3cd4d616f497386386a92e6cd1994a2"
+    },
+    "case.qcore": {
+      "artifact": "CT14.case.qcore.gz",
+      "sha256": "d84c3ddd99735eda114b8c798620e565a1857cca785d574bd2e69fc2697e450d"
+    },
+    "completion_before_join.h": {
+      "artifact": "CT14.completion_before_join.h.gz",
+      "sha256": "bf65bbc702778effa5c82d363e08eac35b948d2abb05bcae0ec2c64c3b3d3926"
+    }
+  },
+  {
+    "id": "CT37",
+    "emit_command": [
+      "cargo",
+      "run",
+      "--quiet",
+      "-p",
+      "qcorec",
+      "--",
+      "emit",
+      "-o",
+      "/tmp/qcore-completion-custody-native/CT37.c",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT37/case.qcore"
+    ],
+    "compile_command": [
+      "clang",
+      "-std=c11",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-O1",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-include",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT37/completion_before_join.h",
+      "/tmp/qcore-completion-custody-native/CT37.c",
+      "-o",
+      "/tmp/qcore-completion-custody-native/CT37"
+    ],
+    "executable": "/tmp/qcore-completion-custody-native/CT37",
+    "generated_c": "/tmp/qcore-completion-custody-native/CT37.c",
+    "expected_stderr": "ENV_ALLOC\nBUFFER_ALLOC\nWORKER_BODY_DONE\nCREATE_RETURNS_AFTER_BODY\nUNJOINED_BUFFER_LIVE\nJOIN_OK\nENV_FREE\nBUFFER_FREE\nRUN_CLEAN\n",
+    "expected_outcome": "QCORE_TASK_RESULT 0 I32 42",
+    "exit_code": 0,
+    "executable_sha256": "3a9b1f020cac9aee42413ab27c7b8908a4d979cb1063523a317fd47affd489bb",
+    "sanitizers": [
+      "address",
+      "undefined",
+      "leak"
+    ],
+    "asan_options": "detect_leaks=1",
+    "execution": "untraced local Linux process",
+    "shared_header_path": "compiler/tests/fixtures/task_worker_allocations/completion_before_join.h",
+    "shared_header_artifact": "completion_before_join.h.gz",
+    "shared_header_sha256": "35cffd3bb04d2a05237ffb12a803af34ba1da3f3ed0be05b00e1c7c32a5376e0",
+    "generated.c": {
+      "artifact": "CT37.generated.c.gz",
+      "sha256": "9bd5ba4c1a0d444b3c34086e401f48922e658afd942857c835271bf5dbad26ab"
+    },
+    "stdout": {
+      "artifact": "CT37.stdout.gz",
+      "sha256": "5009a69a6c63f21d6b0c9f91a1066c1f299989e5ff5755d9aaaab315f9fef0c0"
+    },
+    "stderr": {
+      "artifact": "CT37.stderr.gz",
+      "sha256": "8f2672d5e78e921d4744017fbc79a39b29b2b8f43fa45ea5cc48e345a1eace45"
+    },
+    "case.qcore": {
+      "artifact": "CT37.case.qcore.gz",
+      "sha256": "8772ae406ae13071d6f2d9fea0605d60d697c22c7ea25fde817a7514ced930a9"
+    },
+    "completion_before_join.h": {
+      "artifact": "CT37.completion_before_join.h.gz",
+      "sha256": "bf65bbc702778effa5c82d363e08eac35b948d2abb05bcae0ec2c64c3b3d3926"
+    }
+  }
+]

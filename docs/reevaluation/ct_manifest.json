@@ -231,17 +231,18 @@
       "scenario": "Child finishes but parent has not joined",
       "expected": "No restored parent authority",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "semantic_profile": "Linux ScopedOwnedTasksV1: the native adapter waits for the actual worker body and completion-record write before creation returns to the parent. Parent read/drop of the moved Buffer before join reject at Q600 despite worker completion. The accepted control joins, consumes the owned Result and drops the original generation. Exact pointers and join-before-reclamation checks retain the allocation and environment while completed but unjoined. This is one owned Buffer, not loan/share restoration or a general scheduler proof.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT15",
@@ -627,15 +628,16 @@
       "spec_section": "55",
       "mapping_status": "mapped",
       "source_fixture": "compiler/tests/fixtures/ct/CT37/case.qcore",
-      "semantic_profile": "Cycle 12 executable subset, sequential completion-record core: the returning frame holds one local scratch identity and one allocation handed to its result, then exits early. The CFG reference execution shows the allocation leaving as a transfer rather than a release and still carried by the completion record at exit, while the scratch identity is reclaimed by ordinary frame cleanup \u2014 the \u00a743.5 rule that capsule identities remain globally live. `spawn`/`join`, the parent's consumption of the capsule, loan-return evidence and the concurrency backend are not exercised.",
+      "semantic_profile": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open.",
       "stages": {
         "parser": "executed",
         "type_checker": "executed",
         "reference_execution": "executed",
         "cfg": "executed",
-        "native_backend": "unassessed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT38",

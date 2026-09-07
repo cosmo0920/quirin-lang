@@ -1,10 +1,63 @@
 {
   "id": "CT37",
-  "verdict": "accept",
-  "entry": "worker",
+  "verdict": "native_task_scenarios",
+  "entry": "main",
   "diagnostics": [],
-  "outcome": { "ok_value": 5, "payload": [6] },
-  "trace": ["acquire:5", "acquire:6", "transfer:6", "release:5"],
-  "stages_executed": ["parser", "type_checker", "reference_execution", "cfg"],
-  "notes": "The CFG reference execution witnesses the case's property directly: identity 6 leaves the frame as a transfer (not a release) and is still carried by the completion record at exit, while the frame's own scratch identity 5 is reclaimed by ordinary cleanup. `spawn`/`join`, the parent's later consumption of the capsule, loan-return evidence and the concurrency backend are not exercised; the early finish is modeled as an early normal return of the returning frame."
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open.",
+  "native_task_scenarios": {
+    "header": "completion_before_join.h",
+    "rejection_controls": [
+      {
+        "source": "unconsumed_result.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "unconsumed Result"
+        }
+      },
+      {
+        "source": "undropped_result.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "completed_unjoined_buffer",
+        "failed_allocation": 0,
+        "failed_create": 0,
+        "allocation_task": 1,
+        "allocation_outcomes": [],
+        "worker_allocation_outcomes": {
+          "1": [
+            true
+          ]
+        },
+        "spawn_outcomes": [
+          true
+        ],
+        "outcome": {
+          "ok_value": 42,
+          "error": null,
+          "payload": []
+        },
+        "joined_children": 1,
+        "owned_child_results": [
+          4294967297
+        ],
+        "native_stderr": "ENV_ALLOC\nBUFFER_ALLOC\nWORKER_BODY_DONE\nCREATE_RETURNS_AFTER_BODY\nUNJOINED_BUFFER_LIVE\nJOIN_OK\nENV_FREE\nBUFFER_FREE\nRUN_CLEAN\n"
+      }
+    ]
+  }
 }

@@ -452,3 +452,18 @@ All 784 workspace tests, standing gates, 31 provider tests, 43 Python tests and
 20 Lean audits pass; all four full Cycle19 artifacts are byte-identical. Provider
 semantic extraction, source-bound lifecycle composition and compatibility-route
 removal remain open. Evidence: `docs/reports/w5-typed-body-boundary/README.md`.
+
+Completed-child custody conformance (2026-09-07): CT14 is newly mapped and CT37
+now executes real Linux worker allocation/completion/join. A shared native adapter
+forces the actual worker body and completion-record write to finish before
+creation returns, then checks that the original Buffer and environment remain
+live until join. CT14 rejects parent read/drop of its moved Buffer before join;
+CT37 rejects discarded or undropped owned Results. Both accepted controls join
+and release the exact returned generation. The earlier CT37 sequential payload
+fixture remains tested. Coverage is now 10/50 mapped, 40 unmapped. All 785 workspace
+tests, standing gates, 31 provider tests, 43 Python tests, 20 Lean audits and two
+fixed ASan/UBSan/LSan runs pass; all four full Cycle19 artifacts remain identical.
+No source/core/backend semantics change; existing completion-custody model
+proofs remain separate from source/native refinement. Loans, shared authority,
+general heap-peak accounting and arbitrary native schedules remain open.
+Evidence: `docs/reports/w6-completed-child-custody/README.md`.
