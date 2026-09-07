@@ -691,6 +691,84 @@ mod tests {
         unchanged(&mut ledger, |l| l.enter_scope(0, 10));
         unchanged(&mut ledger, |l| l.complete(0, TaskOutcome::Unit, &[]));
     }
+    fn rejected<T: std::fmt::Debug>(
+        ledger: &mut ScopedTaskLedger,
+        expected: &TaskLedgerError,
+        operation: impl FnOnce(&mut ScopedTaskLedger) -> Result<T, TaskLedgerError>,
+    ) {
+        let original = ledger.clone();
+        assert_eq!(operation(ledger).unwrap_err(), *expected);
+        assert_eq!(*ledger, original);
+    }
+
+    /// R02 matrix for the ledger's terminal phases. Completion is not custody
+    /// return and neither phase retains execution authority: every operation
+    /// funnels through the same active-task gate before any custody, scope,
+    /// reservation, handle or creator check can admit it.
+    #[test]
+    fn completed_and_joined_children_reject_every_ledger_operation() {
+        let mut ledger = opened();
+        for resource in [7, 8] {
+            ledger.acquire(0, resource).unwrap();
+        }
+        spawn(&mut ledger, 20, 1, 30, &[7]);
+        spawn(&mut ledger, 21, 2, 31, &[]);
+        ledger
+            .complete(1, TaskOutcome::OwnedBuffer(7), &[7])
+            .unwrap();
+        ledger.complete(2, TaskOutcome::Unit, &[]).unwrap();
+        ledger.join(0, 31).unwrap();
+        assert_eq!(ledger.task_state(1), Some(TaskState::Completed));
+        assert_eq!(ledger.task_state(2), Some(TaskState::Joined));
+
+        // Completion is not custody return: the capsule belongs to no task.
+        assert_eq!(
+            ledger.resource_state(7),
+            Some(ResourceState::Live(Custodian::Capsule(1)))
+        );
+        let not_custodian = TaskLedgerError::NotCustodian {
+            task: 0,
+            resource: 7,
+        };
+        rejected(&mut ledger, &not_custodian, |l| l.drop_resource(0, 7));
+        assert_eq!(ledger.use_resource(0, 7).unwrap_err(), not_custodian);
+        rejected(&mut ledger, &TaskLedgerError::ScopeBusy(10), |l| {
+            l.exit_scope(0, 10)
+        });
+
+        ledger.reserve(0, 10, 22, &[8]).unwrap();
+        for terminal in [1, 2] {
+            let expected = TaskLedgerError::InactiveTask(terminal);
+            assert_eq!(ledger.use_resource(terminal, 7).unwrap_err(), expected);
+            rejected(&mut ledger, &expected, |l| l.acquire(terminal, 90));
+            rejected(&mut ledger, &expected, |l| l.drop_resource(terminal, 7));
+            rejected(&mut ledger, &expected, |l| l.enter_scope(terminal, 90));
+            rejected(&mut ledger, &expected, |l| l.exit_scope(terminal, 10));
+            rejected(&mut ledger, &expected, |l| l.reserve(terminal, 10, 91, &[]));
+            rejected(&mut ledger, &expected, |l| l.rollback(terminal, 22));
+            rejected(&mut ledger, &expected, |l| l.commit(terminal, 22, 92, 93));
+            rejected(&mut ledger, &expected, |l| {
+                l.complete(terminal, TaskOutcome::Unit, &[])
+            });
+            rejected(&mut ledger, &expected, |l| l.join(terminal, 30));
+        }
+
+        // The creator, and only the creator, still collects the capsule; a
+        // repeated join is refused by the consumed handle, not by the phase.
+        ledger.rollback(0, 22).unwrap();
+        let capsule = ledger.join(0, 30).unwrap();
+        assert_eq!(capsule.outcome, TaskOutcome::OwnedBuffer(7));
+        assert_eq!(ledger.task_state(1), Some(TaskState::Joined));
+        ledger.use_resource(0, 7).unwrap();
+        rejected(&mut ledger, &TaskLedgerError::HandleConsumed(30), |l| {
+            l.join(0, 30)
+        });
+        for resource in [7, 8] {
+            ledger.drop_resource(0, resource).unwrap();
+        }
+        ledger.exit_scope(0, 10).unwrap();
+    }
+
     #[test]
     fn foreign_scope_and_reservation_operations_cannot_steal_custody() {
         let mut ledger = opened();
