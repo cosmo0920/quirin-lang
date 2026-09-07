@@ -302,8 +302,10 @@ fn an_absent_provider_package_rejects_the_configured_source_contract_route() {
     assert!(!fixture.0.join("output/report.json").exists());
 }
 
-/// The four transported build flags are accepted; a warning option the
+/// The transported build flags are accepted; an optimization option the
 /// gateway cannot preserve rejects rather than being silently discarded.
+/// (`-Wextra` was the original probe until ba0e017 admitted it as a
+/// transported frontend flag; `-O2` remains unrepresentable.)
 #[test]
 fn a_compiler_option_the_gateway_cannot_preserve_rejects_the_database() {
     let fixture = Fixture::new();
@@ -312,13 +314,13 @@ fn a_compiler_option_the_gateway_cannot_preserve_rejects_the_database() {
             entry["arguments"]
                 .as_array_mut()
                 .unwrap()
-                .insert(2, json!("-Wextra"));
+                .insert(2, json!("-O2"));
         }
     });
     let output = fixture.run();
     assert!(!output.status.success());
     assert!(
-        String::from_utf8_lossy(&output.stderr).contains("-Wextra"),
+        String::from_utf8_lossy(&output.stderr).contains("-O2"),
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );

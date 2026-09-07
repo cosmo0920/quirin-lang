@@ -281,6 +281,9 @@ fn manifest_for(plugin_id: &str, target: &TargetProfile, evidence: &[u16]) -> Pl
             timeout_ms: 1_000,
             memory_bytes: 1 << 20,
             output_bytes: 1 << 16,
+            // This fixture declares no additional limit kinds, which is what it
+            // meant before `PluginLimits::additional` existed.
+            additional: BTreeMap::new(),
         },
         trust_class: PluginTrustClass::ThirdParty,
         certificate_checker: "qcore.boolean_field_contract.v1".into(),
