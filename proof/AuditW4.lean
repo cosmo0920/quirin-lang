@@ -1,6 +1,7 @@
 import QCore.NullableRemoval
 import QCore.ContextualCustody
 import QCore.CustodySummary
+import QCore.TypedFieldAccess
 
 #print axioms QCore.CustodySummary.unvalidated_analysis_never_validates
 #print axioms QCore.CustodySummary.no_reachable_exit_never_validates
@@ -124,3 +125,37 @@ import QCore.CustodySummary
 #print axioms QCore.CustodySummary.two_alias_copies_preserve_original_slot
 #print axioms QCore.CustodySummary.alias_forward_retains_original_sanction_and_unwritten_slot
 #print axioms QCore.CustodySummary.unsanctioned_alias_cannot_create_output_authority
+
+-- C02: typed direct scalar-field access classification.
+#print axioms QCore.LegacyCAnalyzer.noop_preserves_state
+#print axioms QCore.LegacyCAnalyzer.noop_preserves_precision
+#print axioms QCore.LegacyCAnalyzer.noop_preserves_ledger
+#print axioms QCore.LegacyCAnalyzer.noop_preserves_diagnostics
+#print axioms QCore.LegacyCAnalyzer.noop_does_not_hide_a_leak
+#print axioms QCore.LegacyCAnalyzer.noop_does_not_hide_a_double_release
+#print axioms QCore.LegacyCAnalyzer.noop_does_not_hide_a_release_after_escape
+#print axioms QCore.LegacyCAnalyzer.noop_between_acquire_and_release_is_safe
+#print axioms QCore.LegacyCAnalyzer.unsupported_form_of_the_same_program_is_indeterminate
+
+#print axioms QCore.TypedFieldAccess.admitted_access_is_neutral
+#print axioms QCore.TypedFieldAccess.refused_access_keeps_the_unsupported_effect
+#print axioms QCore.TypedFieldAccess.admitted_effect_preserves_custody
+#print axioms QCore.TypedFieldAccess.refused_effect_is_never_safe
+#print axioms QCore.TypedFieldAccess.a_union_never_admits
+#print axioms QCore.TypedFieldAccess.an_incomplete_record_never_admits
+#print axioms QCore.TypedFieldAccess.an_ambiguous_tag_never_admits
+#print axioms QCore.TypedFieldAccess.a_pointer_member_never_admits
+#print axioms QCore.TypedFieldAccess.an_aggregate_member_never_admits
+#print axioms QCore.TypedFieldAccess.a_qualified_member_never_admits
+#print axioms QCore.TypedFieldAccess.a_mismatched_base_never_admits
+#print axioms QCore.TypedFieldAccess.a_bound_base_never_admits
+#print axioms QCore.TypedFieldAccess.a_chained_access_never_admits
+#print axioms QCore.TypedFieldAccess.an_escaping_statement_never_admits
+#print axioms QCore.TypedFieldAccess.a_call_bearing_statement_never_admits
+#print axioms QCore.TypedFieldAccess.a_nonscalar_operand_never_admits
+#print axioms QCore.TypedFieldAccess.unread_declarations_never_admit
+#print axioms QCore.TypedFieldAccess.an_admitted_access_reads_no_tracked_identity
+#print axioms QCore.TypedFieldAccess.an_access_through_a_released_base_stays_indeterminate
+#print axioms QCore.TypedFieldAccess.an_admitted_access_does_not_hide_a_leak
+#print axioms QCore.TypedFieldAccess.an_admitted_access_preserves_a_discharged_lifetime
+#print axioms QCore.TypedFieldAccess.the_whitelist_is_not_empty
