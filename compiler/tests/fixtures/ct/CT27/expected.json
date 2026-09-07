@@ -1,0 +1,37 @@
+{
+  "id": "CT27",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q617",
+      "message_contains": "FootprintAlreadyProtected"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "UnknownMutex"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1: a second `mutex guards` over an already protected footprint is refused at Q617 FootprintAlreadyProtected, so no composite protocol is admitted; the refused generation is then unknown to the scope-exit destruction (Q600 UnknownMutex). The refusal is about the shared payload, not about the number of mutexes: the disjoint_payloads control declares two generations over two disjoint payloads and is accepted, so this rejection is not the vacuous rule `at most one mutex`. That control compiles through the Linux emission path, which is why this case records evidence_target=linux even though the rejection itself is host-independent. Not established: any composite/nested protection protocol, lock ordering, or protection that grows after creation.",
+  "checked_mutex_reject": {
+    "diagnostic_sequence": [
+      "Q617",
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "disjoint_payloads.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "note": "two generations over two disjoint declared footprints check, so Q617 is keyed to the shared footprint rather than to declaring a second mutex."
+      }
+    ]
+  }
+}

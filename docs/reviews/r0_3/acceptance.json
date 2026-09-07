@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 11,
-  "ct_unmapped": 39,
+  "ct_mapped": 15,
+  "ct_unmapped": 35,
   "findings": [
     {
       "id": "R01",
@@ -250,66 +250,88 @@
     }
   },
   "ct_evidence": {
-    "note": "ct_mapped/ct_unmapped above are inventory scalars, not coverage. T00 finding O7: the scalar treats a source-rejection case with zero native runs and a case with four reference executions plus four native runs as one identical unit of coverage, and hides that 0 of 11 mapped cases carry proof or gated sanitized evidence. The stage-derived rows live in the acceptance matrix.",
+    "note": "ct_mapped/ct_unmapped above are inventory scalars, not coverage. T00 finding O7: the scalar treats a source-rejection case with zero native runs and a case with four reference executions plus four native runs as one identical unit of coverage. It is still binary. What changed at T03-CT: 1 of 15 mapped cases (CT26) now carries GATED sanitized-native evidence rather than a transcript, and 0 of 15 carry proof evidence. The stage-derived rows live in the acceptance matrix.",
     "derived_from": [
       "docs/reports/remaining-t00/coverage.json",
+      "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
       "docs/reevaluation/ct_manifest.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 11
+        "executed": 15
       },
       "elaborate": {
-        "executed": 11
+        "executed": 15
       },
       "task_lowering": {
-        "executed": 11
+        "executed": 11,
+        "not_applicable": 4
       },
       "task_ledger_check": {
-        "executed": 11
+        "executed": 11,
+        "not_applicable": 4
+      },
+      "mutex_lowering": {
+        "executed": 4,
+        "not_applicable": 11
+      },
+      "mutex_invariant_check": {
+        "executed": 4,
+        "not_applicable": 11
       },
       "sequential_whole_program": {
-        "not_applicable": 11
+        "not_applicable": 15
       },
       "sequential_reference_execution": {
-        "not_applicable": 11
+        "not_applicable": 15
       },
       "task_reference_execution": {
         "executed": 9,
-        "not_applicable": 2
+        "not_applicable": 6
+      },
+      "mutex_reference_execution": {
+        "executed": 1,
+        "not_applicable": 14
       },
       "c_emission": {
-        "executed": 9,
-        "not_applicable": 2
+        "executed": 10,
+        "not_applicable": 5
       },
       "native_execution": {
-        "executed": 9,
-        "not_applicable": 2
+        "executed": 10,
+        "not_applicable": 5
       },
       "native_sanitized": {
-        "unassessed": 6,
-        "recorded_not_gated": 5
+        "executed": 1,
+        "recorded_not_gated": 5,
+        "unassessed": 9
       },
       "legacy_c_twin": {
-        "not_applicable": 11
+        "not_applicable": 15
       },
       "proof": {
-        "unassessed": 11
+        "unassessed": 15
       }
     },
     "depth_profile": {
       "native_execution": 9,
-      "task_ledger_check": 2
+      "native_sanitized": 1,
+      "task_ledger_check": 2,
+      "mutex_invariant_check": 3
     },
     "observation_counts": {
-      "parse": 11,
-      "elaborate": 11,
+      "parse": 15,
+      "elaborate": 15,
       "task_lowering": 11,
       "task_ledger_check": 11,
+      "mutex_lowering": 4,
+      "mutex_invariant_check": 4,
       "task_reference_execution": 18,
-      "c_emission": 19,
-      "native_execution": 19
+      "mutex_reference_execution": 1,
+      "c_emission": 20,
+      "native_execution": 20,
+      "native_sanitized": 1
     },
     "unmapped_bucket_counts": {
       "blocked-on-task-lowering (share captures)": 4,
@@ -320,7 +342,7 @@
       "blocked-on-W3/W4": 3,
       "DECIDABLE-NOW (with a distinguishing fixture)": 1,
       "ambiguous (partially unblocked)": 1,
-      "blocked-on-unimplemented-syntax (no mutex value)": 11,
+      "blocked-on-guard-profile-composition-or-unrepresented-form": 7,
       "blocked-on-W3/W4 (conditional half resolved)": 1,
       "DECIDABLE-NOW (coarser reason)": 2,
       "blocked-on-harness-schema (C-twin stage)": 5,
@@ -331,7 +353,7 @@
       "CT39",
       "CT47"
     ],
-    "cause": "docs/reports/remaining-t00/README.md"
+    "cause": "docs/reports/remaining-t00/README.md, docs/reports/remaining-t03-ct-integration/README.md"
   },
   "unverified_specs_disposition": {
     "authority_note": "These are the supplied revision-0.3 inputs. They are DECLARED INPUTS, not implementation authority: an item's disposition records what this repository adopted, not what it implements. Implementation status is carried by the requirement rows above and by docs/reviews/r0_3/acceptance.json.",

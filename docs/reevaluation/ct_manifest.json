@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Mapping is not full language conformance.",
+  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Two source routes are represented and they do not share a stage vocabulary: task-route cases (ScopedCopyTasksV1/ScopedOwnedTasksV1) read `cfg` as the task IR, while source.mutex.guard.v1 cases (CT26/CT27/CT29/CT30) emit directly from a checked event list and have no CFG stage, so `cfg` stays unassessed for them. Mapping is not full language conformance.",
   "cases": [
     {
       "id": "CT01",
@@ -439,34 +439,36 @@
       "scenario": "Two critical sections use the same mutex for the same payload",
       "expected": "Accept",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1 lowered onto the unedited CheckedMutexInvariantV1 checker: two lexical critical sections over one mutex generation and one declared footprint, on one Linux thread. Executed from the fixture: parse, elaborate, lower, check, independent certificate recheck, C11 emission, and a run of the emitted C under ASan/UBSan/LSan whose stdout agrees line for line with interpret_mutex_program over the checked event list. `cfg` is unassessed because this route has no CFG stage at all. One thread, one target, one compiler invocation: not evidence about contention, scheduling, publication or the C memory model. DeclaredFootprintShape and InvariantPredicateDeclared are carried premises, and source-to-trace refinement is unproved in both Rust and Lean.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
         "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT27",
       "scenario": "Two different mutex identities allegedly guard the same payload",
       "expected": "Reject without a valid composite protocol",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1: a second `mutex guards` over an already protected footprint is refused at Q617 FootprintAlreadyProtected, so no composite protocol is admitted; the exact ordered cascade [Q617, Q600 UnknownMutex] is pinned. The disjoint_payloads control declares two generations over two disjoint payloads and is accepted, so the refusal is keyed to the shared payload rather than to the number of mutexes. Only parser and type_checker execute on the case artifact; the accepted control compiles through the Linux-only emission path, which is what evidence_target records. No composite or nested protection protocol, lock ordering, or post-creation protection growth is established.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT28",
@@ -490,34 +492,36 @@
       "scenario": "Typed error leaves a temporarily broken mutex invariant",
       "expected": "Reject unless restored before unlock",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1: a typed-error exit taken with the invariant open is refused at Q614 InvariantOpenAtErrorExit, with the exact ordered cascade [Q614, Q619, Q600, Q600, Q600] pinned so the refusal is shown not to have released the guard. The restored.qcore control closes the invariant before raising the same error and is accepted, which is the scenario's `unless restored` half. Q613 and Q614 stay distinct codes: the error path is attributed separately from the normal path, and the Lean theorem typed_error_exit_obeys_the_normal_release_rule proves both exits obey the same release rule. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. The invariant predicate has no runtime representation and stays the InvariantPredicateDeclared premise.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT30",
       "scenario": "Guard-derived borrow escapes critical section",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1: a guard-derived borrow still live at its critical section's end is refused at Q615 GuardBorrowEscape, with the exact ordered cascade [Q615, Q619, Q600, Q600, Q600] pinned. Two escape mechanisms execute: this one, and the escaped_borrow control, where naming the borrow binder after its block fails at Q013 unknown name because the binder is body-local; Q013 is recorded as name resolution and deliberately not relabelled as a concurrency verdict. The released.qcore control takes the same borrow, reads through the guard and drops it inside the section, and is accepted. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. This profile refuses task creation outright, so a borrow cannot travel to a child here at all: no claim is made that a guard is unmovable in a future profile that admits tasks.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT31",

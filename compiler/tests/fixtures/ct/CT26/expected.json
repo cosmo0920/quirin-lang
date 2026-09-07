@@ -1,0 +1,59 @@
+{
+  "id": "CT26",
+  "verdict": "checked_mutex_sanitized",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1: two lexical critical sections over the same CheckedMutexInvariantV1 generation and the same declared footprint. The route lowers the source to a checked event list, the driver independently rechecks the certificate before publishing it, and the C11 backend emits real mtx_t operations. `cfg` is deliberately NOT claimed: this route emits directly from the checked event list and has no CFG stage, so a `cfg: executed` status would be false. The reference observation is computed by interpret_mutex_program against the checked event list, does not read the emitted C, and is compared line-for-line with the sanitized native run. One thread, one Linux target, one compiler invocation: this is not evidence about contention, scheduling, publication or the C memory model, and source-to-trace refinement remains a premise. Every certificate from this route carries DeclaredFootprintShape and InvariantPredicateDeclared.",
+  "checked_mutex_sanitized": {
+    "sections": 2,
+    "guards": [
+      1,
+      2
+    ],
+    "sanitizer_flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-g",
+      "-O0",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "asan_options": "detect_leaks=1:halt_on_error=1",
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "emitted_c_contains": [
+      "mtx_init",
+      "mtx_lock",
+      "mtx_unlock",
+      "mtx_destroy",
+      "free(r1)"
+    ],
+    "reference_observation": [
+      "resource 1 4",
+      "create 1",
+      "lock 1 1",
+      "open 1",
+      "write 1 0 4",
+      "close 1",
+      "unlock 1",
+      "lock 1 2",
+      "borrow 1",
+      "read 1 0 4 16",
+      "end-borrow 1",
+      "unlock 2",
+      "destroy-mutex 1",
+      "destroy 1"
+    ]
+  }
+}

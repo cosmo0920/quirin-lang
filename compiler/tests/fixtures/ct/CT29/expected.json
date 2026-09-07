@@ -1,0 +1,44 @@
+{
+  "id": "CT29",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q614",
+      "message_contains": "InvariantOpenAtErrorExit"
+    },
+    {
+      "code": "Q619",
+      "message_contains": "NonquiescentMutexDestruction"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "OutstandingGuard"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1: a typed-error exit taken while the invariant is open is refused at Q614 InvariantOpenAtErrorExit. The whole cascade is pinned, not only its head: the refused release leaves the guard live, which blocks the scope-exit destruction of the generation (Q619) and of the resource it parks (Q600 NonquiescentDestruction), and both survive into the end-of-trace sweep (Q600 OutstandingGuard, Q600 OutstandingMutex). Pinning all five entries is what shows the refusal did not silently release the guard. The `unless restored` half of the scenario is the restored.qcore control, which closes the invariant before raising and is accepted. Q614 and Q613 stay distinct codes by design: the error path is attributed separately from the normal path, and the Lean theorem typed_error_exit_obeys_the_normal_release_rule proves both exits are subject to the same release rule. The control compiles through the Linux emission path, hence evidence_target=linux. Not established: the invariant predicate itself, which has no runtime representation and is carried as the InvariantPredicateDeclared premise.",
+  "checked_mutex_reject": {
+    "diagnostic_sequence": [
+      "Q614",
+      "Q619",
+      "Q600",
+      "Q600",
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "restored.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "note": "the same typed error raised after `close g;` checks, so Q614 is keyed to the open invariant and not to raising inside a critical section."
+      }
+    ]
+  }
+}

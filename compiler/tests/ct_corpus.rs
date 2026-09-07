@@ -18,6 +18,16 @@
 //!
 //! Namespace discipline (§W6 task 3): CT is the language corpus only. WM/VP/LC
 //! probe regressions and per-library provider cases must not be added here.
+//!
+//! Two source routes are represented. The task route (`ScopedCopyTasksV1` /
+//! `ScopedOwnedTasksV1`) is the original eleven cases. The mutex route
+//! (`source.mutex.guard.v1` lowering onto the unedited `CheckedMutexInvariantV1`
+//! checker, card T03) is CT26/CT27/CT29/CT30. The two routes do not share a
+//! stage vocabulary: the mutex route emits directly from its checked event list
+//! and has **no CFG stage**, so a mutex case must never claim `cfg: executed`.
+//! Its rejection cases pin the whole ordered diagnostic cascade rather than its
+//! head, because a refused release that silently dropped the guard would still
+//! satisfy a head-only assertion.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -31,8 +41,17 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT37", "CT50",
+    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT26", "CT27", "CT29",
+    "CT30", "CT37", "CT50",
 ];
+/// The `source.mutex.guard.v1` rejection cases (T03 lowering onto the unedited
+/// `CheckedMutexInvariantV1` checker). Each pins its exact ordered diagnostic
+/// code vector, not merely its head, and carries at least one control that
+/// distinguishes the refused construct from the admitted one.
+const MUTEX_REJECT_CASES: &[&str] = &["CT27", "CT29", "CT30"];
+/// The one accepted mutex-guard case, executed end to end and re-run under
+/// ASan/UBSan/LSan.
+const MUTEX_SANITIZED_CASE: &str = "CT26";
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parser",
@@ -93,6 +112,47 @@ struct ExpectedCase {
     positive_control: Option<PositiveControl>,
     #[serde(default)]
     native_task_scenarios: Option<NativeTaskScenarios>,
+    #[serde(default)]
+    checked_mutex_sanitized: Option<CheckedMutexSanitized>,
+    #[serde(default)]
+    checked_mutex_reject: Option<CheckedMutexReject>,
+}
+
+/// Accepted `source.mutex.guard.v1` evidence. The reference observation is
+/// computed by `interpret_mutex_program` from the checked event list — it never
+/// reads the emitted C — and the sanitized native run must reproduce it line
+/// for line. This is the CT corpus's first gated sanitized-native case (T00's
+/// finding O4 recorded that the earlier sanitizer evidence was transcript-only).
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CheckedMutexSanitized {
+    sections: usize,
+    guards: Vec<u64>,
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    emitted_c_contains: Vec<String>,
+    reference_observation: Vec<String>,
+}
+
+/// A refused `source.mutex.guard.v1` fixture: the exact ordered diagnostic code
+/// vector plus the controls that keep the refusal from being vacuous.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CheckedMutexReject {
+    diagnostic_sequence: Vec<String>,
+    controls: Vec<MutexControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct MutexControl {
+    source: String,
+    /// `accept` or `reject`; any other spelling fails the harness.
+    expectation: String,
+    diagnostic_sequence: Vec<String>,
+    #[allow(dead_code)]
+    note: String,
 }
 
 #[derive(Deserialize)]
@@ -248,13 +308,42 @@ fn run_mapped_case(case: &ManifestCase) {
         expected.verdict == "native_owned_transfer"
     );
     assert_eq!(
+        expected.checked_mutex_sanitized.is_some(),
+        expected.verdict == "checked_mutex_sanitized"
+    );
+    assert_eq!(
+        expected.checked_mutex_sanitized.is_some(),
+        case.id == MUTEX_SANITIZED_CASE,
+        "{}: exactly one CT case carries gated sanitized mutex evidence",
+        case.id
+    );
+    assert_eq!(
+        expected.checked_mutex_reject.is_some(),
+        MUTEX_REJECT_CASES.contains(&case.id.as_str()),
+        "{}: mutex rejection metadata is pinned to its own case set",
+        case.id
+    );
+    // Target-scoped evidence: the native fault modes, the sanitized mutex run,
+    // and any mutex rejection whose control compiles through the Linux-only
+    // emission path. Recording the last of these repairs T00's finding O6 for
+    // this card's cases rather than repeating it.
+    assert_eq!(
         expected.evidence_target.as_deref(),
         (expected.native_join_failure.is_some()
             || expected.native_create_recovery.is_some()
             || expected.native_owned_transfer.is_some()
-            || expected.native_task_scenarios.is_some())
+            || expected.native_task_scenarios.is_some()
+            || expected.checked_mutex_sanitized.is_some()
+            || expected
+                .checked_mutex_reject
+                .as_ref()
+                .is_some_and(|reject| reject
+                    .controls
+                    .iter()
+                    .any(|control| control.expectation == "accept")))
         .then_some("linux"),
-        "{}: only the native fault mode carries target-scoped evidence",
+        "{}: a case carries target-scoped evidence exactly when a host-gated \
+         runner or control executes for it",
         case.id
     );
     assert_eq!(
@@ -298,6 +387,53 @@ fn run_mapped_case(case: &ManifestCase) {
         assert_eq!(native.recovery_i32, 42);
         required_files.insert(native.header.clone());
         required_files.insert(native.unjoined_source.clone());
+    }
+    if let Some(mutex) = &expected.checked_mutex_sanitized {
+        assert!(mutex.sections >= 2, "CT26 needs two critical sections");
+        assert_eq!(mutex.guards.len(), mutex.sections);
+        assert!(
+            mutex
+                .sanitizer_flags
+                .iter()
+                .any(|flag| flag == "-fsanitize=address,undefined"),
+            "the sanitized mutex run must actually request ASan/UBSan"
+        );
+        assert!(
+            mutex.asan_options.contains("detect_leaks=1"),
+            "LeakSanitizer stays enabled: reclaiming every emitted allocation \
+             is what this run must witness"
+        );
+        assert!(!mutex.reference_observation.is_empty());
+        assert!(!mutex.emitted_c_contains.is_empty());
+    }
+    if let Some(reject) = &expected.checked_mutex_reject {
+        assert!(
+            !reject.diagnostic_sequence.is_empty(),
+            "{}: a mutex rejection pins its exact ordered code vector",
+            case.id
+        );
+        assert!(
+            !reject.controls.is_empty(),
+            "{}: a mutex rejection needs at least one control so the refusal \
+             is not vacuous",
+            case.id
+        );
+        for control in &reject.controls {
+            match control.expectation.as_str() {
+                "accept" => assert!(
+                    control.diagnostic_sequence.is_empty(),
+                    "{}: an accepted control has no diagnostics",
+                    case.id
+                ),
+                "reject" => assert!(
+                    !control.diagnostic_sequence.is_empty(),
+                    "{}: a refused control pins its codes",
+                    case.id
+                ),
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
     }
     if let Some(control) = &expected.positive_control {
         assert_eq!(control.source, "joined_sibling.qcore");
@@ -377,6 +513,18 @@ fn run_mapped_case(case: &ManifestCase) {
         ]
         .into_iter()
         .collect(),
+        // `cfg` is absent on purpose: `source.mutex.guard.v1` emits directly
+        // from the checked event list and has no CFG stage at all, so claiming
+        // it would be false (T00's rule: a stage is executed only where a named
+        // test runs it on the case's own artifact).
+        "checked_mutex_sanitized" => [
+            "parser",
+            "type_checker",
+            "reference_execution",
+            "native_backend",
+        ]
+        .into_iter()
+        .collect(),
         "accept" if expected.outcome.is_some() => {
             ["parser", "type_checker", "reference_execution", "cfg"]
                 .into_iter()
@@ -423,7 +571,18 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(control) = &expected.positive_control {
         run_positive_control(&directory, control);
     }
+    if let Some(reject) = &expected.checked_mutex_reject {
+        run_mutex_controls(&directory, &case.id, reject);
+    }
     match expected.verdict.as_str() {
+        "checked_mutex_sanitized" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none()
+            );
+            run_checked_mutex_sanitized(&expected, result);
+        }
         "native_task_scenarios" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -566,6 +725,22 @@ fn run_mapped_case(case: &ManifestCase) {
                 .map(format_diagnostic)
                 .collect::<Vec<_>>()
                 .join("\n");
+            if let Some(reject) = &expected.checked_mutex_reject {
+                // The whole cascade, in order, not merely its head: a refused
+                // release leaves the guard live, which blocks scope-exit
+                // destruction and surfaces in the end-of-trace sweep. Pinning
+                // every entry is what shows the refusal did not silently
+                // release the guard.
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    reject.diagnostic_sequence,
+                    "{}: exact diagnostic cascade mismatch; actual:\n{rendered}",
+                    case.id
+                );
+            }
             for want in &expected.diagnostics {
                 assert!(
                     diagnostics
@@ -655,9 +830,11 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 11 of 50 CT cases are mapped
-/// as executed source-level tests; 39 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
-/// counts are visible and any drift is a deliberate edit, not an accident.
+/// The moving count is the W6 genericity metric: 15 of 50 CT cases are mapped
+/// as executed source-level tests; 35 remain unmapped. CT13/CT15/CT26 native
+/// evidence is Linux-scoped, and so are the accepted controls CT27/CT29/CT30
+/// carry. Mapping is not conformance. This test exists so the counts are
+/// visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
     let manifest = load_manifest();
@@ -693,6 +870,214 @@ fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
             .contains("requires a Linux C11 threads target"),
         "{diagnostics:?}"
     );
+}
+
+/// The controls a mutex rejection carries. An `accept` control compiles through
+/// the Linux-only emission path, so on any other host it must arrive as the
+/// same `Q500` refusal every other route uses — never as a silent skip.
+fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
+    for control in &reject.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let result = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            "accept" => {
+                if !cfg!(target_os = "linux") {
+                    unsupported_target(&result.unwrap_err());
+                    eprintln!(
+                        "{id} control {}: source/core checked; Linux emission unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                let module = result.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {} must check, so the case's refusal is not vacuous:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                assert!(
+                    module.checked.as_checked_mutex_guards().is_some(),
+                    "{id} control {} must take the checked mutex route",
+                    control.source
+                );
+            }
+            "reject" => {
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!("{id} control {} must be refused", control.source),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{id} control {}: exact diagnostic vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            other => panic!("{id}: unknown control expectation `{other}`"),
+        }
+    }
+}
+
+/// CT26: the whole `source.mutex.guard.v1` stage stack on the case's own
+/// fixture — parse, elaborate, lower, check, independently recheck, emit, then
+/// compile the emitted C under ASan/UBSan/LSan and run it. The native stdout is
+/// compared line for line with `interpret_mutex_program`, which is written
+/// against the checked event list and never reads the emitted C.
+fn run_checked_mutex_sanitized(
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
+    let mutex = expected.checked_mutex_sanitized.as_ref().unwrap();
+    if !cfg!(target_os = "linux") {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "{}: source/core checked; Linux mutex reference/native execution unexecuted on this host \
+             (manifest evidence_target=linux)",
+            expected.id
+        );
+        return;
+    }
+    let module = result.expect("the accepted mutex fixture must check on this route");
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::CheckedMutexGuardsV1,
+        "{}: the case must select the checked mutex route, not another one",
+        expected.id
+    );
+    assert!(
+        module.reference_observation.is_none(),
+        "{}: do not substitute the sequential execution profile",
+        expected.id
+    );
+    assert!(module.checked.as_scoped_tasks().is_none());
+    assert!(module.checked.as_sequential().is_none());
+    let checked = module
+        .checked
+        .as_checked_mutex_guards()
+        .expect("the checked artifact variant is explicit for this route");
+    assert_eq!(
+        checked.certificate.profile,
+        ConcurrencyProfile::CheckedMutexInvariantV1,
+        "{}: a trusted-trace certificate can never satisfy this case",
+        expected.id
+    );
+    for forbidden in [
+        ConcurrencyAssumption::GuardFootprintAuthority,
+        ConcurrencyAssumption::SynchronizedCustodyEdges,
+    ] {
+        assert!(
+            !checked.certificate.assumptions.contains(&forbidden),
+            "{}: a checked-profile certificate never carries a trusted-model \
+             guard premise",
+            expected.id
+        );
+    }
+    let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
+        &checked.lowered.program,
+        &checked.certificate,
+    )
+    .expect("the lowered trace is inside the emitted subset");
+    assert_eq!(
+        reference, mutex.reference_observation,
+        "{}: reference observation drifted from the pinned expectation",
+        expected.id
+    );
+    for guard in &mutex.guards {
+        assert!(
+            reference
+                .iter()
+                .any(|line| line == &format!("lock 1 {guard}")),
+            "{}: guard {guard} is not minted by its own critical section",
+            expected.id
+        );
+    }
+    assert_eq!(
+        reference
+            .iter()
+            .filter(|line| line.starts_with("unlock "))
+            .count(),
+        mutex.sections,
+        "{}: every critical section must release",
+        expected.id
+    );
+    let c = module.c_source.as_deref().expect("Linux emission");
+    for wanted in &mutex.emitted_c_contains {
+        assert!(
+            c.contains(wanted.as_str()),
+            "{}: emitted C is missing `{wanted}`",
+            expected.id
+        );
+    }
+    assert_eq!(
+        mutex_sanitized_run(c, mutex),
+        reference,
+        "{}: native and reference observations must agree line for line",
+        expected.id
+    );
+}
+
+fn mutex_sanitized_run(source: &str, mutex: &CheckedMutexSanitized) -> Vec<String> {
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-ct-mutex-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&directory).unwrap();
+    let path = directory.join("module.c");
+    let binary = directory.join("module");
+    fs::write(&path, source).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let compiled = Command::new(&compiler)
+        .args(&mutex.sanitizer_flags)
+        .arg(&path)
+        .arg("-o")
+        .arg(&binary)
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "C compiler rejected the emitted program:\n{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    let run = Command::new(&binary)
+        .env("ASAN_OPTIONS", &mutex.asan_options)
+        .env("UBSAN_OPTIONS", &mutex.ubsan_options)
+        .output()
+        .unwrap();
+    assert!(
+        run.status.success(),
+        "emitted program failed under ASan/UBSan/LSan:\n{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let observation = String::from_utf8(run.stdout)
+        .unwrap()
+        .lines()
+        .map(ToOwned::to_owned)
+        .collect();
+    fs::remove_dir_all(directory).unwrap();
+    observation
 }
 
 fn run_positive_control(directory: &Path, expected: &PositiveControl) {

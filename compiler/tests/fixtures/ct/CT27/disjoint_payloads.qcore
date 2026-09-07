@@ -1,0 +1,10 @@
+fn main() -> unit {
+    thread scope s {
+        let left = protected 4;
+        let right = protected 4;
+        let m = mutex guards left;
+        let n = mutex guards right;
+        with lock m as g { open g; write left with g; close g; }
+        with lock n as h { open h; write right with h; close h; }
+    }
+}
