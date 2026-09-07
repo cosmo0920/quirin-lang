@@ -1,0 +1,10 @@
+[workspace]
+
+[package]
+name = "v06-probe-i128"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+qcore-contract = { path = "QCORE_CONTRACT_PATH" }
