@@ -127,6 +127,9 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     InstructionKind::UnwrapInfallible { value_slot, .. } => {
                         slots.insert(*value_slot);
                     }
+                    InstructionKind::TakeErrorPayload { buffer_slot, .. } => {
+                        slots.insert(*buffer_slot);
+                    }
                     InstructionKind::Join {
                         outcome_slot: Some(slot),
                         ..
@@ -205,6 +208,19 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         writeln!(
                             source,
                             "    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;"
+                        )
+                        .unwrap();
+                    }
+                    InstructionKind::TakeErrorPayload {
+                        error_slot,
+                        buffer_slot,
+                    } => {
+                        // The payload leaves the error value in the same
+                        // statement it enters the buffer binding, so no live C
+                        // state ever names it twice.
+                        writeln!(
+                            source,
+                            "    s_{buffer_slot}.value = s_{error_slot}.value; s_{error_slot}.value.buffer = NULL;"
                         )
                         .unwrap();
                     }
@@ -323,7 +339,10 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     success,
                     error,
                 } => {
-                    writeln!(source, "    if (s_{result_slot}.result.error != 0) {{\n        s_{error_slot}.error = s_{result_slot}.result.error;\n        goto qcore_block_{error};\n    }}\n    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n    goto qcore_block_{success};").unwrap();
+                    // A failing Result hands its payload, when it has one, to
+                    // the error binding and clears the Result's own copy, so
+                    // both edges move the pointer exactly once.
+                    writeln!(source, "    if (s_{result_slot}.result.error != 0) {{\n        s_{error_slot}.error = s_{result_slot}.result.error;\n        s_{error_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n        goto qcore_block_{error};\n    }}\n    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n    goto qcore_block_{success};").unwrap();
                 }
                 TerminatorKind::Return { value } => {
                     let kind = match function.result {
@@ -343,16 +362,28 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     consume(&mut source, value);
                     source.push_str("    return returned; }\n");
                 }
-                TerminatorKind::Raise { error } => {
+                TerminatorKind::Raise { error, payload } => {
                     let tag = match error {
                         ErrorOperand::Tag(name) => errors[name].to_string(),
                         ErrorOperand::Slot(slot) => format!("s_{slot}.error"),
                     };
-                    writeln!(
-                        source,
-                        "    return (struct qcore_task_result){{0, {{0, NULL}}, {tag}}};"
-                    )
-                    .unwrap();
+                    match payload {
+                        None => writeln!(
+                            source,
+                            "    return (struct qcore_task_result){{0, {{0, NULL}}, {tag}}};"
+                        )
+                        .unwrap(),
+                        Some(operand) => {
+                            writeln!(
+                                source,
+                                "    {{ struct qcore_task_result raised = {{0, {}, {tag}}};",
+                                self_value(operand)
+                            )
+                            .unwrap();
+                            consume(&mut source, operand);
+                            source.push_str("    return raised; }\n");
+                        }
+                    }
                 }
             }
             source_map.push(TaskCMapping {
@@ -483,7 +514,10 @@ static void qcore_buffer_drop(struct qcore_buffer *buffer, struct qcore_task_con
     QCORE_BUFFER_FREE(buffer);
 }
 static void qcore_task_print_result(uint64_t identity, struct qcore_task_result result) {
-    if (result.error != 0)
+    if (result.error != 0 && result.value.buffer != NULL)
+        printf("QCORE_TASK_RESULT %" PRIu64 " ERROR_BUFFER %s %" PRIu64 "\n", identity,
+               qcore_task_error_name(result.error), result.value.buffer->generation);
+    else if (result.error != 0)
         printf("QCORE_TASK_RESULT %" PRIu64 " ERROR %s\n", identity, qcore_task_error_name(result.error));
     else if (result.kind == 0)
         printf("QCORE_TASK_RESULT %" PRIu64 " UNIT\n", identity);

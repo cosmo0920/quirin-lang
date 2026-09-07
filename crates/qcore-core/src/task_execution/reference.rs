@@ -90,8 +90,14 @@ pub struct TaskExecutionObservation {
 enum Value {
     Scalar(ScalarValue),
     Result(TaskOutcome),
-    Error(String),
-    Handle { task: u64, handle: u64 },
+    Error {
+        tag: String,
+        payload: Option<ResourceId>,
+    },
+    Handle {
+        task: u64,
+        handle: u64,
+    },
     Consumed,
 }
 // Each finite leaf invocation owns its allocation counter. The task namespace
@@ -247,7 +253,7 @@ impl Runtime<'_> {
                                 TaskOutcome::Unit => ScalarValue::Unit,
                                 TaskOutcome::I32(value) => ScalarValue::I32(value),
                                 TaskOutcome::OwnedBuffer(id) => ScalarValue::OwnedBuffer(id),
-                                TaskOutcome::Error(_) => {
+                                TaskOutcome::Error(_) | TaskOutcome::ErrorWithBuffer { .. } => {
                                     return Err(
                                         "reference error contradicts checked infallible Result"
                                             .into(),
@@ -256,6 +262,31 @@ impl Runtime<'_> {
                             };
                             slots.insert(*result_slot, Value::Consumed);
                             slots.insert(*value_slot, Value::Scalar(value));
+                        }
+                        TaskInstructionKind::TakeErrorPayload {
+                            error_slot,
+                            buffer_slot,
+                        } => {
+                            let Some(Value::Error {
+                                tag,
+                                payload: Some(resource),
+                            }) = slots.get(error_slot).cloned()
+                            else {
+                                return Err(
+                                    "reference typed error carries no payload to take".into()
+                                );
+                            };
+                            // The reference run checks the ledger itself rather
+                            // than trusting the checked module: only the task
+                            // that actually holds the identity may take it.
+                            self.ledger
+                                .use_resource(task, resource)
+                                .map_err(|e| format!("{e:?}"))?;
+                            slots.insert(*error_slot, Value::Error { tag, payload: None });
+                            slots.insert(
+                                *buffer_slot,
+                                Value::Scalar(ScalarValue::OwnedBuffer(resource)),
+                            );
                         }
                         TaskInstructionKind::EnterScope { scope } => {
                             let actual = self.next_scope;
@@ -460,10 +491,12 @@ impl Runtime<'_> {
                             let outcome = self
                                 .execute(*worker, child, arguments.clone())
                                 .map_err(|e| e.to_string())?;
-                            let returned = if let TaskOutcome::OwnedBuffer(resource) = outcome {
-                                vec![resource]
-                            } else {
-                                vec![]
+                            let returned = match outcome {
+                                TaskOutcome::OwnedBuffer(resource)
+                                | TaskOutcome::ErrorWithBuffer {
+                                    buffer: resource, ..
+                                } => vec![resource],
+                                _ => vec![],
                             };
                             self.ledger
                                 .complete(child, outcome.clone(), &returned)
@@ -521,7 +554,17 @@ impl Runtime<'_> {
                                 block_id = *success;
                             }
                             TaskOutcome::Error(tag) => {
-                                slots.insert(*error_slot, Value::Error(tag));
+                                slots.insert(*error_slot, Value::Error { tag, payload: None });
+                                block_id = *error;
+                            }
+                            TaskOutcome::ErrorWithBuffer { tag, buffer } => {
+                                slots.insert(
+                                    *error_slot,
+                                    Value::Error {
+                                        tag,
+                                        payload: Some(buffer),
+                                    },
+                                );
                                 block_id = *error;
                             }
                         }
@@ -529,15 +572,34 @@ impl Runtime<'_> {
                     TaskTerminatorKind::Return { value } => {
                         return Ok(Some(take(&mut slots, value)?.outcome()?));
                     }
-                    TaskTerminatorKind::Raise { error } => {
+                    TaskTerminatorKind::Raise { error, payload } => {
                         let tag = match error {
                             ErrorOperand::Tag(tag) => tag.clone(),
                             ErrorOperand::Slot(slot) => match slots.get(slot) {
-                                Some(Value::Error(tag)) => tag.clone(),
+                                Some(Value::Error { tag, payload: None }) => tag.clone(),
+                                Some(Value::Error {
+                                    payload: Some(_), ..
+                                }) => {
+                                    return Err(
+                                        "reference rethrow of an undelivered payload is refused"
+                                            .into(),
+                                    );
+                                }
                                 _ => return Err("reference error slot unavailable".into()),
                             },
                         };
-                        return Ok(Some(TaskOutcome::Error(tag)));
+                        return Ok(Some(match payload {
+                            None => TaskOutcome::Error(tag),
+                            Some(operand) => {
+                                let ScalarValue::OwnedBuffer(buffer) = take(&mut slots, operand)?
+                                else {
+                                    return Err(
+                                        "reference error payload requires an owned Buffer".into()
+                                    );
+                                };
+                                TaskOutcome::ErrorWithBuffer { tag, buffer }
+                            }
+                        }));
                     }
                 }
                 Ok(None)
@@ -696,6 +758,11 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
                 TaskOutcome::Error(tag) => {
                     writeln!(output, "QCORE_TASK_RESULT {task} ERROR {tag}").unwrap()
                 }
+                TaskOutcome::ErrorWithBuffer { tag, buffer } => writeln!(
+                    output,
+                    "QCORE_TASK_RESULT {task} ERROR_BUFFER {tag} {buffer}"
+                )
+                .unwrap(),
             },
         }
     }

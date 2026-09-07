@@ -4,6 +4,7 @@ import QCore.OwnedTaskExecution
 import QCore.TaskExecution
 import QCore.ScopedTasks
 import QCore.ReadLoan
+import QCore.ErrorPayload
 import QCore.ContextualCustody
 import QCore.SourceValidation
 import QCore.VerifierEvidenceV2
