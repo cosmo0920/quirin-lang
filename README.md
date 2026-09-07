@@ -221,7 +221,9 @@ CT02/CT12/CT16 are mapped as sequential-core fixtures. Batch 2
 records the full triage of all 47 then-unmapped cases. The later
 [native task increment](docs/reports/w6-native-source-tasks/README.md) maps CT15
 and upgrades CT19 to actual task source; [explicit recovery](docs/reports/w6-task-recovery/README.md)
-adds CT13, leaving 43 of 50 unmapped. W4 is
+adds CT13. [Owned-task mappings](docs/reports/w6-owned-source-tasks/README.md)
+and [handler rethrow](docs/reports/w6-handler-rethrow/README.md) now leave
+41 of 50 unmapped. W4 is
 executed for parameter/return custody with validation
 ([record](docs/reports/w4-custody-inference/README.md)): the C gateway now
 infers each internal function's parameter and return custody summary bottom-up
@@ -590,7 +592,7 @@ Native creator join returns the same buffer pointer before parent read/drop;
 failed native join aborts before reclaiming environment or payload. CT01 now
 maps the real round trip, CT02 rejects actual parent post-move access, and CT12
 executes failed creation/restoration with a successful control. Coverage is
-8/50 mapped, 42 unmapped. Lean transfer/typing lemmas and fixed native sanitizer
+8/50 mapped, 42 unmapped at that checkpoint. Lean transfer/typing lemmas and fixed native sanitizer
 runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
 owned errors, worker allocation, shared memory, mutexes, nested workers and
 other native platforms remain open. Evidence:
@@ -637,3 +639,17 @@ all four full Cycle19 artifacts are unchanged. The 767 workspace tests and
 standing gates pass. Specialized reference matching, provider extraction,
 registry composition and final compatibility removal remain open. Evidence:
 `docs/reports/w5-generic-source-consolidation/README.md`.
+
+Handler rethrow conformance (2026-09-07): CT20 now executes an in-scope
+second-creation failure handler that joins its existing sibling, drops that
+child's returned Buffer, then raises the bound payload-free SpawnError. Four
+native/reference scenarios cover success, buffer allocation failure and either
+creation failure. Exact allocation/thread identities, returned buffer generation
+and join-before-reclamation are checked; omitting the join or returned-buffer
+drop rejects at Q600. The generic CT runner now supports declarative task
+scenario matrices with explicit failures/outcomes and negative source controls.
+Coverage is 9/50 mapped, 41 unmapped. All 767 workspace tests, standing gates
+and four fixed sanitizer runs pass. No language/checker/backend semantics change;
+proof remains unassessed for this source fixture. Loans, owned errors, arbitrary
+handlers and native refinement remain open. Evidence:
+`docs/reports/w6-handler-rethrow/README.md`.

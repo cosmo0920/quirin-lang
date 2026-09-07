@@ -616,7 +616,11 @@ explicit spawn/join handlers and CT13 sibling recovery with native storage
 checks. [Owned source tasks](reports/w6-owned-source-tasks/README.md) now add
 actual affine Buffer moves/results, checked worker custody effects and native
 creation rollback. CT01 maps the round trip; CT02/CT12 use real moved buffers.
-Coverage is 8/50 mapped, 42 unmapped. Loans, general usage/SSA rollback, owned
+[Handler rethrow](reports/w6-handler-rethrow/README.md) now maps CT20 through
+actual source/native execution: second-create failure joins the earlier owned
+child, drops its result and raises the bound error. A declarative scenario runner
+checks success and both creation/allocation failures with negative join/drop controls.
+Coverage is 9/50 mapped, 41 unmapped. Loans, general usage/SSA rollback, owned
 graphs/errors, shared memory, mutexes, general control and other platforms remain open.
 
 **Goal.** Shift the test center of gravity from pinned-corpus regression to

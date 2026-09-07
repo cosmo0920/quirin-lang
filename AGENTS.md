@@ -156,11 +156,12 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
   replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
   OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
-  only; CT01–CT50 conformance corpus is **42/50 unmapped**
+  only; CT01–CT50 conformance corpus is **41/50 unmapped**
   (CT01/CT12 execute Linux owned-buffer transfer/creation restoration; CT02
   rejects actual post-move access. CT16/CT37 retain sequential-core fixtures;
   CT19 checks real sibling failure source, CT13 has Linux creation-recovery
-  evidence and CT15 has Linux native join-failure evidence).
+  evidence, CT15 has Linux native join-failure evidence, and CT20 checks
+  sibling join/owned-result discharge before bound-error rethrow).
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
@@ -196,8 +197,8 @@ revision-0.3 source-language conformance. The current workspace has nine crates.
   mutex source paths remain unexercised. Batch 2 (2026-09-06,
   `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
-  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); the later task recovery increment leaves 43 cases
-  unmapped, counted by a pinned test. W4 is executed for
+  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); subsequent owned-task
+  and handler-rethrow mappings leave 41 cases unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
   validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
   `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
@@ -569,7 +570,7 @@ Native creator join returns the same buffer pointer before parent read/drop;
 failed native join aborts before reclaiming environment or payload. CT01 now
 maps the real round trip, CT02 rejects actual parent post-move access, and CT12
 executes failed creation/restoration with a successful control. Coverage is
-8/50 mapped, 42 unmapped. Lean transfer/typing lemmas and fixed native sanitizer
+8/50 mapped, 42 unmapped at that checkpoint. Lean transfer/typing lemmas and fixed native sanitizer
 runs are separate evidence; Rust/Lean/C refinement, loans, general owned graphs,
 owned errors, worker allocation, shared memory, mutexes, nested workers and
 other native platforms remain open. Evidence:
@@ -616,3 +617,17 @@ all four full Cycle19 artifacts are unchanged. The 767 workspace tests and
 standing gates pass. Specialized reference matching, provider extraction,
 registry composition and final compatibility removal remain open. Evidence:
 `docs/reports/w5-generic-source-consolidation/README.md`.
+
+Handler rethrow conformance (2026-09-07): CT20 now executes an in-scope
+second-creation failure handler that joins its existing sibling, drops that
+child's returned Buffer, then raises the bound payload-free SpawnError. Four
+native/reference scenarios cover success, buffer allocation failure and either
+creation failure. Exact allocation/thread identities, returned buffer generation
+and join-before-reclamation are checked; omitting the join or returned-buffer
+drop rejects at Q600. The generic CT runner now supports declarative task
+scenario matrices with explicit failures/outcomes and negative source controls.
+Coverage is 9/50 mapped, 41 unmapped. All 767 workspace tests, standing gates
+and four fixed sanitizer runs pass. No language/checker/backend semantics change;
+proof remains unassessed for this source fixture. Loans, owned errors, arbitrary
+handlers and native refinement remain open. Evidence:
+`docs/reports/w6-handler-rethrow/README.md`.

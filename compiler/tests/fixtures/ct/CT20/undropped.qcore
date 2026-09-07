@@ -1,0 +1,30 @@
+concurrency checked;
+fn owner(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
+fn worker(value: i32) -> i32 { return value; }
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    let second_value = 7;
+    thread scope s {
+        match spawn s owner(move buffer) {
+            Result::Ok { value: first } => {
+                match spawn s worker(copy second_value) {
+                    Result::Ok { value: second } => {
+                        let second_result = join move second?;
+                        let returned = join move first?;
+                        let value = qcore_buffer_read(returned);
+                        drop returned;
+                        return value;
+                    }
+                    Result::Err { error: failure } => {
+                        let returned = join move first?;
+                        raise failure;
+                    }
+                }
+            }
+            Result::Err { error: initial_failure } => {
+                drop buffer;
+                raise initial_failure;
+            }
+        }
+    }
+}

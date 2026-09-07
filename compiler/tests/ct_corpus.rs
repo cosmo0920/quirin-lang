@@ -31,7 +31,7 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT12", "CT13", "CT15", "CT16", "CT19", "CT37",
+    "CT01", "CT02", "CT12", "CT13", "CT15", "CT16", "CT19", "CT20", "CT37",
 ];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
@@ -91,6 +91,35 @@ struct ExpectedCase {
     native_owned_transfer: Option<NativeOwnedTransfer>,
     #[serde(default)]
     positive_control: Option<PositiveControl>,
+    #[serde(default)]
+    native_task_scenarios: Option<NativeTaskScenarios>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeTaskScenarios {
+    header: String,
+    rejection_controls: Vec<TaskRejectionControl>,
+    scenarios: Vec<TaskScenario>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TaskRejectionControl {
+    source: String,
+    diagnostic: ExpectedDiagnostic,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TaskScenario {
+    name: String,
+    failed_allocation: usize,
+    failed_create: usize,
+    allocation_outcomes: Vec<bool>,
+    spawn_outcomes: Vec<bool>,
+    outcome: ExpectedOutcome,
+    joined_children: usize,
+    owned_child_results: Vec<u64>,
+    native_stderr: String,
 }
 
 #[derive(Deserialize)]
@@ -197,6 +226,10 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert_eq!(
+        expected.native_task_scenarios.is_some(),
+        expected.verdict == "native_task_scenarios"
+    );
+    assert_eq!(
         expected.native_join_failure.is_some(),
         expected.verdict == "native_join_failure",
         "{}: native fault mode and fixture metadata must agree",
@@ -214,7 +247,8 @@ fn run_mapped_case(case: &ManifestCase) {
         expected.evidence_target.as_deref(),
         (expected.native_join_failure.is_some()
             || expected.native_create_recovery.is_some()
-            || expected.native_owned_transfer.is_some())
+            || expected.native_owned_transfer.is_some()
+            || expected.native_task_scenarios.is_some())
         .then_some("linux"),
         "{}: only the native fault mode carries target-scoped evidence",
         case.id
@@ -225,6 +259,20 @@ fn run_mapped_case(case: &ManifestCase) {
         "CT19 must retain its explicitly named joined-sibling positive control"
     );
     let mut required_files = BTreeSet::from(["case.qcore".to_owned(), "expected.json".to_owned()]);
+    if let Some(native) = &expected.native_task_scenarios {
+        assert!(!native.scenarios.is_empty());
+        assert!(required_files.insert(native.header.clone()));
+        for control in &native.rejection_controls {
+            assert!(required_files.insert(control.source.clone()));
+        }
+        let names = native
+            .scenarios
+            .iter()
+            .map(|scenario| &scenario.name)
+            .collect::<BTreeSet<_>>();
+        assert_eq!(names.len(), native.scenarios.len());
+        assert!(names.iter().all(|name| !name.is_empty()));
+    }
     if let Some(native) = &expected.native_owned_transfer {
         assert!(["CT01", "CT12"].contains(&case.id.as_str()));
         assert_eq!(native.header, "owned_transfer.h");
@@ -313,7 +361,10 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     let allowed_stages: BTreeSet<&str> = match expected.verdict.as_str() {
-        "native_join_failure" | "native_create_recovery" | "native_owned_transfer" => [
+        "native_join_failure"
+        | "native_create_recovery"
+        | "native_owned_transfer"
+        | "native_task_scenarios" => [
             "parser",
             "type_checker",
             "reference_execution",
@@ -369,6 +420,14 @@ fn run_mapped_case(case: &ManifestCase) {
         run_positive_control(&directory, control);
     }
     match expected.verdict.as_str() {
+        "native_task_scenarios" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none()
+            );
+            run_native_task_scenarios(&directory, &expected, result);
+        }
         "native_owned_transfer" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -592,8 +651,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 8 of 50 CT cases are mapped
-/// as executed source-level tests; 42 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
+/// The moving count is the W6 genericity metric: 9 of 50 CT cases are mapped
+/// as executed source-level tests; 41 remain unmapped. CT13/CT15 native evidence is Linux-scoped. This test exists so the
 /// counts are visible and any drift is a deliberate edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
@@ -762,6 +821,14 @@ fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process
 }
 
 fn native_fault_run(source: &str, header: &Path, define: &str) -> std::process::Output {
+    native_fault_run_defines(source, header, &[define.to_owned()])
+}
+
+fn native_fault_run_defines(
+    source: &str,
+    header: &Path,
+    defines: &[String],
+) -> std::process::Output {
     use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
@@ -777,7 +844,7 @@ fn native_fault_run(source: &str, header: &Path, define: &str) -> std::process::
     let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
     let compiled = Command::new(compiler)
         .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
-        .arg(define)
+        .args(defines)
         .arg("-include")
         .arg(header)
         .arg(&c_path)
@@ -954,6 +1021,119 @@ fn run_native_owned_transfer(
             } else {
                 b"BUFFER_ALLOC\nCREATE_FAILED\nENV_FREE\nBUFFER_FREE\n".as_slice()
             }
+        );
+    }
+}
+
+fn run_native_task_scenarios(
+    directory: &Path,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    use qcore_core::scoped_tasks::TaskOutcome;
+    use qcore_core::task_execution::{
+        TaskExecutionScript, execute_task_module, render_task_observation,
+    };
+    let native = expected.native_task_scenarios.as_ref().unwrap();
+    for control in &native.rejection_controls {
+        let path = directory.join(&control.source);
+        let errors = compile_files(
+            &[SourceFile::new(
+                path.to_string_lossy(),
+                fs::read_to_string(&path).unwrap(),
+            )],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        assert!(
+            errors
+                .iter()
+                .any(|error| error.code == control.diagnostic.code
+                    && error.message.contains(&control.diagnostic.message_contains)),
+            "{errors:?}"
+        );
+    }
+    if !cfg!(target_os = "linux") {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "{}: Linux task scenarios unexecuted on this host",
+            expected.id
+        );
+        return;
+    }
+    let module = result.expect("task scenario source must pass all-path checks");
+    let checked = module.checked.as_scoped_tasks().unwrap();
+    for scenario in &native.scenarios {
+        for (failed, outcomes) in [
+            (scenario.failed_allocation, &scenario.allocation_outcomes),
+            (scenario.failed_create, &scenario.spawn_outcomes),
+        ] {
+            assert!(
+                outcomes
+                    .iter()
+                    .enumerate()
+                    .all(|(index, succeeds)| *succeeds == (index + 1 != failed)),
+                "{}: inconsistent failure script",
+                scenario.name
+            );
+            assert!(
+                failed == 0 || failed <= outcomes.len(),
+                "{}: failure must execute",
+                scenario.name
+            );
+        }
+        let reference = execute_task_module(
+            checked,
+            &TaskExecutionScript {
+                spawn_outcomes: scenario.spawn_outcomes.clone(),
+                allocation_outcomes: scenario.allocation_outcomes.clone(),
+            },
+        )
+        .unwrap();
+        let outcome = match (&scenario.outcome.error, scenario.outcome.ok_value) {
+            (Some(error), None) => {
+                assert!(scenario.outcome.payload.is_none());
+                TaskOutcome::Error(error.clone())
+            }
+            (None, Some(value)) => {
+                assert_eq!(scenario.outcome.payload.as_deref(), Some([].as_slice()));
+                TaskOutcome::I32(value)
+            }
+            _ => panic!("scenario requires exactly one result"),
+        };
+        assert_eq!(reference.root_outcome, outcome, "{}", scenario.name);
+        assert_eq!(reference.tasks.len(), scenario.joined_children + 1);
+        assert!(reference.tasks.iter().skip(1).all(|task| task.joined));
+        let owned = reference
+            .tasks
+            .iter()
+            .skip(1)
+            .filter_map(|task| match task.outcome {
+                TaskOutcome::OwnedBuffer(id) => Some(id),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(owned, scenario.owned_child_results);
+        let output = native_fault_run_defines(
+            module.c_source.as_deref().unwrap(),
+            &directory.join(&native.header),
+            &[
+                format!("-DQCORE_CT_FAIL_ALLOC={}", scenario.failed_allocation),
+                format!("-DQCORE_CT_FAIL_CREATE={}", scenario.failed_create),
+            ],
+        );
+        assert!(output.status.success(), "{}: {output:?}", scenario.name);
+        assert_eq!(
+            output.stdout,
+            render_task_observation(&reference).as_bytes(),
+            "{}",
+            scenario.name
+        );
+        assert_eq!(
+            output.stderr,
+            scenario.native_stderr.as_bytes(),
+            "{}",
+            scenario.name
         );
     }
 }

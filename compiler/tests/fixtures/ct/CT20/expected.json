@@ -1,0 +1,118 @@
+{
+  "id": "CT20",
+  "verdict": "native_task_scenarios",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "Linux ScopedOwnedTasksV1: an in-scope second-creation error handler joins the first child, drops its returned Buffer and rethrows the bound payload-free SpawnError. Four native/reference scenarios cover success, allocation failure and each creation failure with exact buffer/environment identities and join-before-reclamation checks. Omitting the sibling join or returned-buffer drop rejects at Q600. Owned error payloads, loans, arbitrary handlers, worker allocation and native refinement proofs remain open.",
+  "native_task_scenarios": {
+    "header": "task_scenarios.h",
+    "rejection_controls": [
+      {
+        "source": "unjoined.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "ScopeBusy"
+        }
+      },
+      {
+        "source": "undropped.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "return/error discards a handle, unconsumed Result or owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "success",
+        "failed_allocation": 0,
+        "failed_create": 0,
+        "allocation_outcomes": [
+          true
+        ],
+        "spawn_outcomes": [
+          true,
+          true
+        ],
+        "outcome": {
+          "error": null,
+          "ok_value": 42,
+          "payload": []
+        },
+        "joined_children": 2,
+        "owned_child_results": [
+          1
+        ],
+        "native_stderr": "BUFFER_ALLOC\nENV_ALLOC:1\nCREATE_OK:1\nENV_ALLOC:2\nCREATE_OK:2\nJOIN_OK:2\nENV_FREE:2\nJOIN_OK:1\nENV_FREE:1\nBUFFER_FREE\nRUN_CLEAN\n"
+      },
+      {
+        "name": "allocation_failure",
+        "failed_allocation": 1,
+        "failed_create": 0,
+        "allocation_outcomes": [
+          false
+        ],
+        "spawn_outcomes": [],
+        "outcome": {
+          "error": "AllocError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 0,
+        "owned_child_results": [],
+        "native_stderr": "BUFFER_FAILED\nRUN_CLEAN\n"
+      },
+      {
+        "name": "first_creation_failure",
+        "failed_allocation": 0,
+        "failed_create": 1,
+        "allocation_outcomes": [
+          true
+        ],
+        "spawn_outcomes": [
+          false
+        ],
+        "outcome": {
+          "error": "SpawnError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 0,
+        "owned_child_results": [],
+        "native_stderr": "BUFFER_ALLOC\nENV_ALLOC:1\nCREATE_FAILED:1\nENV_FREE:1\nBUFFER_FREE\nRUN_CLEAN\n"
+      },
+      {
+        "name": "second_creation_failure_rethrow",
+        "failed_allocation": 0,
+        "failed_create": 2,
+        "allocation_outcomes": [
+          true
+        ],
+        "spawn_outcomes": [
+          true,
+          false
+        ],
+        "outcome": {
+          "error": "SpawnError",
+          "ok_value": null,
+          "payload": null
+        },
+        "joined_children": 1,
+        "owned_child_results": [
+          1
+        ],
+        "native_stderr": "BUFFER_ALLOC\nENV_ALLOC:1\nCREATE_OK:1\nENV_ALLOC:2\nCREATE_FAILED:2\nENV_FREE:2\nJOIN_OK:1\nENV_FREE:1\nBUFFER_FREE\nRUN_CLEAN\n"
+      }
+    ]
+  }
+}

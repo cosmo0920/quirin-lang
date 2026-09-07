@@ -1,0 +1,154 @@
+{
+  "source": {
+    "path": "generated.c.gz",
+    "uncompressed_sha256": "a489f28504ec86b6bd23605c593495856baddefaad45fcd15fd19ab83f6c5446"
+  },
+  "source_emit_command": "cargo run --quiet -p qcorec -- emit -o /tmp/qcore-ct20.c compiler/tests/fixtures/ct/CT20/case.qcore",
+  "header_sha256": "f73874ac30ec2c917c6812d9a1817b74652251a22fd3c1f4f542a3fb81b2e275",
+  "runs": [
+    {
+      "scenario": "success",
+      "compile_command": [
+        "clang",
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-DQCORE_CT_FAIL_ALLOC=0",
+        "-DQCORE_CT_FAIL_CREATE=0",
+        "-include",
+        "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT20/task_scenarios.h",
+        "/tmp/qcore-ct20.c",
+        "-o",
+        "/tmp/qcore-ct20-success"
+      ],
+      "executable_sha256": "3cc032d857c4b6f6d984a5ed09e3bc8673c1db5966100199d7e23c63bebc34d4",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1"
+      },
+      "execution": "untraced",
+      "exit_code": 0,
+      "stdout": {
+        "path": "success.stdout.gz",
+        "uncompressed_sha256": "8e25e17e29b42207027b8e6fb30a798b1ea9de32af8aaa6965eb847b1223a8d4"
+      },
+      "stderr": {
+        "path": "success.stderr.gz",
+        "uncompressed_sha256": "fb1603916172ff46a28c78e93166a3ede0a6b61da0e744a82f40646959ad5e03"
+      }
+    },
+    {
+      "scenario": "allocation_failure",
+      "compile_command": [
+        "clang",
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-DQCORE_CT_FAIL_ALLOC=1",
+        "-DQCORE_CT_FAIL_CREATE=0",
+        "-include",
+        "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT20/task_scenarios.h",
+        "/tmp/qcore-ct20.c",
+        "-o",
+        "/tmp/qcore-ct20-allocation_failure"
+      ],
+      "executable_sha256": "4de96d371cb18a401671b0f4f1d35a6600cb365cb47342bf945e204ff75b0680",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1"
+      },
+      "execution": "untraced",
+      "exit_code": 0,
+      "stdout": {
+        "path": "allocation_failure.stdout.gz",
+        "uncompressed_sha256": "d9c06dc47084069bcb09b6694db7fed6dbcfb83b6a1c9065bd756161dd8a4d5d"
+      },
+      "stderr": {
+        "path": "allocation_failure.stderr.gz",
+        "uncompressed_sha256": "45ca3c509d258fd15a40445a9028cb6ca2194b49845294ad4e02c16c7774079a"
+      }
+    },
+    {
+      "scenario": "first_creation_failure",
+      "compile_command": [
+        "clang",
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-DQCORE_CT_FAIL_ALLOC=0",
+        "-DQCORE_CT_FAIL_CREATE=1",
+        "-include",
+        "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT20/task_scenarios.h",
+        "/tmp/qcore-ct20.c",
+        "-o",
+        "/tmp/qcore-ct20-first_creation_failure"
+      ],
+      "executable_sha256": "2dd009d4339198e79c5b08b7ef34870b22b5d83930acb7afd7b2f415148da9d5",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1"
+      },
+      "execution": "untraced",
+      "exit_code": 0,
+      "stdout": {
+        "path": "first_creation_failure.stdout.gz",
+        "uncompressed_sha256": "ed7e76c1aed160fe7859d7baa4751b60605aad953e6fb3b6424df52d32406932"
+      },
+      "stderr": {
+        "path": "first_creation_failure.stderr.gz",
+        "uncompressed_sha256": "d550d6bd54b39f8c81478070a48a2306fd398c371ea1699ba0c5f319bfbd36df"
+      }
+    },
+    {
+      "scenario": "second_creation_failure_rethrow",
+      "compile_command": [
+        "clang",
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-DQCORE_CT_FAIL_ALLOC=0",
+        "-DQCORE_CT_FAIL_CREATE=2",
+        "-include",
+        "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/ct/CT20/task_scenarios.h",
+        "/tmp/qcore-ct20.c",
+        "-o",
+        "/tmp/qcore-ct20-second_creation_failure_rethrow"
+      ],
+      "executable_sha256": "20c9d07fcbcc4498bdeb1493fc45d4f0bbd9b837d343e3ea29d102b9914a9e25",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1"
+      },
+      "execution": "untraced",
+      "exit_code": 0,
+      "stdout": {
+        "path": "second_creation_failure_rethrow.stdout.gz",
+        "uncompressed_sha256": "0601a4158c26aabe934b9e5979f644cb5318a6f16387518331e1358c3edd49a0"
+      },
+      "stderr": {
+        "path": "second_creation_failure_rethrow.stderr.gz",
+        "uncompressed_sha256": "8ce4e0eba631941cd1c837b197fb7af68caeb963c6d9748a45d0b18026827a4d"
+      }
+    }
+  ]
+}

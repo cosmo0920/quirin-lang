@@ -334,17 +334,18 @@
       "scenario": "In-scope handler joins siblings before rethrow",
       "expected": "Accept with all result obligations accounted",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "semantic_profile": "Linux ScopedOwnedTasksV1: an in-scope second-creation error handler joins the first child, drops its returned Buffer and rethrows the bound payload-free SpawnError. Four native/reference scenarios cover success, allocation failure and each creation failure with exact buffer/environment identities and join-before-reclamation checks. Omitting the sibling join or returned-buffer drop rejects at Q600. Owned error payloads, loans, arbitrary handlers, worker allocation and native refinement proofs remain open.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT21",
