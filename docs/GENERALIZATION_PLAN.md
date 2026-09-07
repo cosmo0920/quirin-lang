@@ -319,6 +319,13 @@ it down in the module header and keep it total-or-reject.
 
 ### W2 — Source-set profiles as data: replace closed enums and fragment tables
 
+[Public source-profile validation](reports/w2-source-profile-boundary/README.md)
+closes the direct-schema bypass of audited-file and witness validation. Manifest
+loading and generic source-summary derivation share the same structural rules;
+invalid direct inputs reject before granting mechanisms. Pinned outputs remain
+identical. This validates declared input structure, not the truth of an asserted
+library construct or provenance of a supplied checkout.
+
 **Goal.** A source-set *profile manifest* format so that adding a library
 means adding files, not editing Rust.
 

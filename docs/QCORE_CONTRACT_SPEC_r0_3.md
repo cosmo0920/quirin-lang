@@ -331,6 +331,17 @@ Source-level verifier scopes now enter bounded obligations/evidence dispatch. Th
 
 ## C12. Obligations/evidence integration and remaining requirements
 
+A source-summary importer that accepts public profile records MUST enforce its
+audited-file and required-witness rules even when the records did not pass through
+the manifest loader. Every witness must name an audited file; duplicate file or
+witness identities, malformed digests, empty construct descriptions and unusable
+substring checks reject. Source bytes must match the declared digests and every
+required witness must pass before a library certificate is returned. Missing
+witnesses cannot be skipped to produce a partial certificate. The current generic
+importer and manifest loader share these rules; this does not authenticate the
+profile's declared semantics or the caller's source/revision provenance. See
+[boundary evidence](reports/w2-source-profile-boundary/README.md).
+
 The reviewed archive contained W2/W3 designs. The current repository has versioned profile loading, a v2 witness schema, bounded replay/dispatch, and a provider-independent host crate, documented in their execution reports. The following requirements govern those implementations and their remaining extensions; a design document alone never establishes completion.
 
 The core MUST derive an obligation set from the requested source/property and record stable subject identities. A provider MUST NOT choose a smaller obligation set and then certify that smaller set as the whole request. Evidence MUST bind the exact source/build inputs, importer version/coverage, semantic profile, contract assumptions, obligation identities, relevant dependency summaries and checker/evidence version. Current observation replay also checks exact contract-module/function identity, task/obligation observed-run bounds, and the deferred ObservedRuns scope marker. Replay does not authenticate the supplied native run provenance; `observations_trusted` remains an explicit condition.

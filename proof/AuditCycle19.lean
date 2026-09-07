@@ -1,3 +1,4 @@
+import QCore.SourceProfileWitness
 import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.UnsupportedClose
@@ -383,3 +384,13 @@ import QCore.ChunkSource
 #print axioms QCore.ChunkSource.frame_program_preserves_boolean_and_control_state
 
 #print axioms QCore.ChunkSource.another_modeled_field_cannot_be_hidden_as_metadata
+
+#print axioms QCore.SourceProfileWitness.accepted_profile_is_valid
+#print axioms QCore.SourceProfileWitness.accepted_witness_has_checked_file
+#print axioms QCore.SourceProfileWitness.accepted_grant_has_checked_witness
+#print axioms QCore.SourceProfileWitness.unaudited_witness_rejects
+#print axioms QCore.SourceProfileWitness.missing_audited_file_rejects
+#print axioms QCore.SourceProfileWitness.malformed_witness_rejects
+#print axioms QCore.SourceProfileWitness.failed_witness_rejects_all_grants
+#print axioms QCore.SourceProfileWitness.duplicate_witness_names_reject
+#print axioms QCore.SourceProfileWitness.empty_profile_grants_nothing

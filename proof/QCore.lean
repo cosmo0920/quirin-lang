@@ -1,3 +1,4 @@
+import QCore.SourceProfileWitness
 import QCore.OwnedTaskExecution
 import QCore.TaskExecution
 import QCore.ScopedTasks

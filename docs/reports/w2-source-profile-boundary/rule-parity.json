@@ -1,0 +1,10 @@
+{
+  "base_commit": "ad92245",
+  "path": "crates/qcore-contract/src/profile_loader.rs",
+  "old_sha256": "c8e9e6cc7e6d8ccd614b0af7244dcbc318e6443e077ab0f854fcc9dc2d7e3d83",
+  "new_sha256": "4464fd3be9685ff1360f63bd32bfc68d47f737042d0db589e329832c8349f5a6",
+  "unchanged_rule_tokens": 319,
+  "rule_tokens_sha256": "fe85ae93b79bd647629e5a54f124d80e31551d7b06b74649ef011969c51bf771",
+  "rules_equal": true,
+  "intentional_behavior_change": "Direct source-summary derivation now invokes these rules before checking source bytes. Invalid JSON manifests remain rejected; if both witness and source-root rules fail, witness validation now reports first."
+}

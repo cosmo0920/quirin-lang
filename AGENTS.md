@@ -726,3 +726,17 @@ model profiles and synchronization evidence remain premises, not native proofs.
 Specialized provider semantics, broader lifecycle/source binding and compatibility
 route removal remain open. Evidence:
 `docs/reports/w5-generic-driver-consolidation/README.md`.
+
+Public source-profile validation (2026-09-07): W2's audited-file and construct
+witness rules now run at direct source-summary derivation as well as JSON load.
+A manually constructed profile can no longer grant digest-based mechanisms from
+an unaudited file, silently skip a missing witness, use vacuous checks or collapse
+duplicate inventory entries. One shared validator owns the unchanged load rules;
+invalid direct inputs return `InvalidProfile`, with no partial certificate.
+Six generic regression tests reproduce and repair the bypasses; nine Lean gate
+theorems cover inventory binding and whole-profile rejection under explicit
+hash/predicate premises. All 803 workspace tests, standing gates, 31 provider
+tests, 43 Python tests and 20 Lean audits pass. The four full 185-TU audit
+artifacts retain exact parity; declared source constructs remain assumptions,
+with no raw verdict promotion or CT mapping change. Evidence:
+`docs/reports/w2-source-profile-boundary/README.md`.

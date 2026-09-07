@@ -376,6 +376,76 @@ fn declared_schema_version(text: &str, path: &Path) -> Result<u32, ProfileDiagno
         })
 }
 
+/// Validate the audited-file inventory and required construct witnesses of a
+/// library, including profiles constructed directly through the public schema.
+/// Both manifest loading and source-summary derivation use these exact rules.
+/// This checks source-witness structure only: pin lookup, provider bindings and
+/// other whole-manifest requirements still belong to the manifest loader. It
+/// does not verify source bytes or turn declared mechanisms into semantic proof.
+pub fn validate_library_source_profile(
+    name: &str,
+    library: &LibraryProfile,
+) -> Result<(), ProfileDiagnostic> {
+    let inconsistent = |detail: String| ProfileDiagnostic::ProfileInconsistent { detail };
+    let mut audited = BTreeSet::new();
+    for file in &library.audited_files {
+        if !is_relative_without_traversal(&file.path) {
+            return Err(inconsistent(format!(
+                "library `{name}` audits non-relative path `{}`",
+                file.path
+            )));
+        }
+        if !is_lower_hex(&file.sha256, 64) {
+            return Err(inconsistent(format!(
+                "library `{name}` file `{}` has a malformed sha256",
+                file.path
+            )));
+        }
+        if !audited.insert(file.path.clone()) {
+            return Err(inconsistent(format!(
+                "library `{name}` audits `{}` twice",
+                file.path
+            )));
+        }
+    }
+    let mut witnesses = BTreeSet::new();
+    for witness in &library.source_witnesses {
+        if !witnesses.insert(witness.name.clone()) {
+            return Err(inconsistent(format!(
+                "library `{name}` declares witness `{}` twice",
+                witness.name
+            )));
+        }
+        if !audited.contains(&witness.file) {
+            return Err(inconsistent(format!(
+                "library `{name}` witness `{}` names unaudited file `{}`",
+                witness.name, witness.file
+            )));
+        }
+        match &witness.check {
+            WitnessCheck::Digest { construct } => {
+                if construct.trim().is_empty() {
+                    return Err(inconsistent(format!(
+                        "library `{name}` witness `{}` names no construct",
+                        witness.name
+                    )));
+                }
+            }
+            WitnessCheck::Substrings { needles, rationale } => {
+                if needles.is_empty()
+                    || needles.iter().any(|needle| needle.is_empty())
+                    || rationale.trim().is_empty()
+                {
+                    return Err(ProfileDiagnostic::NeedleWithoutRationale {
+                        witness: format!("{name}/{}", witness.name),
+                    });
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic> {
     let inconsistent = |detail: String| ProfileDiagnostic::ProfileInconsistent { detail };
     if manifest.libraries.is_empty() {
@@ -425,27 +495,7 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
                 library.pin
             )));
         }
-        let mut audited = BTreeSet::new();
-        for file in &library.audited_files {
-            if !is_relative_without_traversal(&file.path) {
-                return Err(inconsistent(format!(
-                    "library `{name}` audits non-relative path `{}`",
-                    file.path
-                )));
-            }
-            if !is_lower_hex(&file.sha256, 64) {
-                return Err(inconsistent(format!(
-                    "library `{name}` file `{}` has a malformed sha256",
-                    file.path
-                )));
-            }
-            if !audited.insert(file.path.clone()) {
-                return Err(inconsistent(format!(
-                    "library `{name}` audits `{}` twice",
-                    file.path
-                )));
-            }
-        }
+        validate_library_source_profile(name, library)?;
         for root in &library.source_roots {
             if !is_relative_without_traversal(&root.root) {
                 return Err(inconsistent(format!(
@@ -459,41 +509,6 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
                 return Err(inconsistent(format!(
                     "library `{name}` selects non-relative unit `{file}`"
                 )));
-            }
-        }
-        let mut witnesses = BTreeSet::new();
-        for witness in &library.source_witnesses {
-            if !witnesses.insert(witness.name.clone()) {
-                return Err(inconsistent(format!(
-                    "library `{name}` declares witness `{}` twice",
-                    witness.name
-                )));
-            }
-            if !audited.contains(&witness.file) {
-                return Err(inconsistent(format!(
-                    "library `{name}` witness `{}` names unaudited file `{}`",
-                    witness.name, witness.file
-                )));
-            }
-            match &witness.check {
-                WitnessCheck::Digest { construct } => {
-                    if construct.trim().is_empty() {
-                        return Err(inconsistent(format!(
-                            "library `{name}` witness `{}` names no construct",
-                            witness.name
-                        )));
-                    }
-                }
-                WitnessCheck::Substrings { needles, rationale } => {
-                    if needles.is_empty()
-                        || needles.iter().any(|needle| needle.is_empty())
-                        || rationale.trim().is_empty()
-                    {
-                        return Err(ProfileDiagnostic::NeedleWithoutRationale {
-                            witness: format!("{name}/{}", witness.name),
-                        });
-                    }
-                }
             }
         }
         for (kind, summary) in &library.operation_summaries {

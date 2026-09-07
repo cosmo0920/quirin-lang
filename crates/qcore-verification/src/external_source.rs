@@ -9,10 +9,13 @@
 //! pass before any mechanism summary is granted. A failed witness rejects the
 //! whole library certificate, exactly as the hardcoded contract tables did.
 //!
-//! Digests are checked again at this public boundary: callers may construct
+//! Source-witness structure and digests are checked again at this public
+//! boundary: callers may construct both `LibraryProfile` and
 //! `ExternalSourceBundle` directly, so loader provenance cannot be assumed.
 
 use std::collections::BTreeSet;
+
+use qcore_contract::profile_loader::{ProfileDiagnostic, validate_library_source_profile};
 
 use qcore_schemas::profile::{LibraryProfile, WitnessCheck};
 
@@ -29,6 +32,7 @@ pub struct LibrarySourceCertificate {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LibrarySourceDiagnostic {
+    InvalidProfile(ProfileDiagnostic),
     SourceRevisionMismatch,
     MissingFile(String),
     DigestMismatch {
@@ -51,6 +55,8 @@ pub fn derive_library_summary_profile(
     expected_revision: &str,
     source: &ExternalSourceBundle,
 ) -> Result<LibrarySourceCertificate, Vec<LibrarySourceDiagnostic>> {
+    validate_library_source_profile(library, profile)
+        .map_err(|error| vec![LibrarySourceDiagnostic::InvalidProfile(error)])?;
     let mut diagnostics = BTreeSet::new();
     if source.source_revision != expected_revision {
         diagnostics.insert(LibrarySourceDiagnostic::SourceRevisionMismatch);
@@ -77,6 +83,7 @@ pub fn derive_library_summary_profile(
     let mut checked_contracts = BTreeSet::new();
     for witness in &profile.source_witnesses {
         let Some(contents) = source.files.get(&witness.file) else {
+            diagnostics.insert(LibrarySourceDiagnostic::MissingFile(witness.file.clone()));
             continue;
         };
         let established = match &witness.check {

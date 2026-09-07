@@ -1,0 +1,88 @@
+{
+  "base_commit": "ad92245e8647e903a8567165dd93ceeee2db4d91",
+  "status": "passed",
+  "workspace_tests": 803,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 9,
+  "contract_modules": 58,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "new_integration_tests": 6,
+  "source_sha256": {
+    "AGENTS.md": "59aa6c6e587b38cc7e83eab96f4692fdc17d604c1b432f4039dcadb742b398f9",
+    "CLAUDE.md": "e3e5be1fad326489661fdd8fc321db2fed4e91cfef7189022ce0cbf0608209d7",
+    "README.md": "514b697703559ff953dbb1323fc531a0ee6ef2513bce32c3b87c6853446abfa8",
+    "crates/qcore-contract/src/profile_loader.rs": "4464fd3be9685ff1360f63bd32bfc68d47f737042d0db589e329832c8349f5a6",
+    "crates/qcore-verification/src/external_source.rs": "975d21bfe87de33ece0f5c5133be211567fa09932cc562c543c22a1d814d1dd0",
+    "crates/qcore-verification/tests/source_profile_boundary.rs": "1f8fcbf1b26859c670782e790ea4dd2f98812e36c05497fc62015b20167fd350",
+    "docs/GENERALIZATION_PLAN.md": "b7e45bf80e3a351d74673cc66f5930d4a677bc96f8de2c058c2aa1cc542cd164",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md": "8aa162fe96ef3d476b553b6e90679ef223cb56d39db3b978bd88e6851458363d",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "16cd3f47fcc4ba30691fb3b30da6bd530192716885a4cebfcf6327616a139735",
+    "docs/reports/w2-source-profile-boundary/README.md": "e081f2d6b375b081d5d70709a2e16f671e277923d38c8383fea8fd093ef91d05",
+    "docs/reports/w2-source-profile-boundary/check-rules.py": "f63ee75b22cffec21a811c9f03e9236ab452e4b989db62297c629cb3c5441cb6",
+    "proof/AuditCycle19.lean": "3e8bbd49f63bca15dda7650e3efbd93bab58fdee9ea3a96d80c3af14b41767bc",
+    "proof/QCore.lean": "28f371a5d96213bb5b6ae4bba38f533c87b6b5310af50f44d84630daff00044c",
+    "proof/QCore/SourceProfileWitness.lean": "26f2f17b4741d4b88244178c79f163dd12456c2c514b31b29aa2977070f86603"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "path": "workspace.log.gz",
+      "uncompressed_sha256": "83a154b209d2bad416ac071c7641b158ba7203bcf40525c40cf29846b7ef7700"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "path": "checks.log.gz",
+      "uncompressed_sha256": "c679e2e159d5a389894e75346f3ad9c7beb0ae7bbba1946a63266529e1674e1d"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "path": "providers.log.gz",
+      "uncompressed_sha256": "df7e8cbe4ea912650cd0b90c8b825699f86136144879e6aee81e88f40c2f3a0f"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "path": "python.log.gz",
+      "uncompressed_sha256": "c55ee799aa84ab669f0dbbd517c331f408fdbad9c35cf15347bf0d99f8c42267"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "path": "lean-audits.log.gz",
+      "uncompressed_sha256": "e1976364c8b525fdac0babd88894a65ed1ed03d8527c7c7c21704df84f3bbafc"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-source-profile-source.json /tmp/qcore-source-profile-diagnostics.json",
+      "exit_code": 0,
+      "path": "audit.log.gz",
+      "uncompressed_sha256": "2b144c41d4fc03d3217e6a1cc968c7dd5f04a1ccd70779e260610c3d2e06dd14"
+    },
+    "focused": {
+      "command": "cargo test -p qcore-verification --test source_profile_boundary",
+      "exit_code": 0,
+      "path": "focused.log.gz",
+      "uncompressed_sha256": "7b7697fdd6709accc82360c6ba0faee8c0e243fd9c483c8cf5d6bc633cd16263"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "path": "lean-build.log.gz",
+      "uncompressed_sha256": "d3a0bdfee9440a41915c2bf6187fc9b617b454262ebbfef0aa811ecc65bc130b"
+    }
+  },
+  "baseline_regression": {
+    "command": "cargo test -p qcore-verification --test source_profile_boundary",
+    "exit_code": 101,
+    "expected_failure": true,
+    "passed": 2,
+    "failed": 4,
+    "path": "red.log.gz",
+    "uncompressed_sha256": "ecd2ed14a57d3925a329debe43fb6e06d0baabf38759a7a00c17d4647181eb10"
+  }
+}
