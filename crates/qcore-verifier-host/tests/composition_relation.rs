@@ -298,6 +298,7 @@ fn registry(providers: &[(&str, Answer)]) -> VerifierRegistry {
 fn request(plugin: &str, task: &VerificationTask) -> VerificationRequestV2 {
     VerificationRequestV2 {
         source_effect: None,
+        counter_effect: None,
         protocol_version: PLUGIN_PROTOCOL_VERSION,
         evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
         request_id: format!("{plugin}:{}", &task.task_digest()[..16]),
