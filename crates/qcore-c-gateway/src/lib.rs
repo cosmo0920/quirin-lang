@@ -19,6 +19,7 @@ pub mod typed_source_match;
 
 use qcore_contract::contract_loader;
 
+pub use clang::ClangIdentity;
 /// Construct a validated Clang command using the configured discovery policy.
 /// An invalid or empty `QCORE_CLANG` override returns an error without fallback.
 /// Callers select arguments and remain responsible for subprocess execution.

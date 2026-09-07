@@ -294,3 +294,25 @@ fn legacy_and_generic_production_shape_serialize_identically_but_legacy_cannot_w
     let source = "struct cio_chunk { int lock; int error_n; }; void reset(struct cio_chunk *); int run(struct cio_chunk *p) { reset(p); return p->error_n; }";
     assert!(caller(&changed, source, &[legacy], RULES).is_err());
 }
+
+/// The compiler description is now shared with the configured audit's
+/// compile-task identity. Its serialized shape is embedded in every published
+/// `import_identity`, so its field set and order are a pinned expectation.
+#[test]
+fn the_shared_clang_identity_keeps_its_recorded_serialized_shape() {
+    let Ok(identity) = qcore_c_gateway::ClangIdentity::capture() else {
+        return;
+    };
+    let quoted = |value: &str| serde_json::to_string(value).unwrap();
+    assert_eq!(
+        serde_json::to_string(&identity).unwrap(),
+        format!(
+            "{{\"program\":{},\"version\":{},\"target\":{}}}",
+            quoted(identity.program()),
+            quoted(identity.version()),
+            quoted(identity.target())
+        )
+    );
+    assert!(identity.version().contains("clang version"));
+    assert!(!identity.target().is_empty());
+}
