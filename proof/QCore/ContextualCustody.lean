@@ -152,3 +152,122 @@ theorem missing_nonzero_context_prevents_publication
   contradiction
 
 end QCore.ContextualCustody
+
+/-!
+Unsigned countdown extension. The finite zero/nonzero table above is NOT a
+proof of countdown calls: two nonzero calls can depend on one another at
+*different concrete ranks*. Here the natural counter is the rank, and all
+functions in a component are proved together by strong induction.
+
+The C importer supplies explicit unsigned types, immutable controls, complete
+call inventories, zero/nonzero guard extraction and a resource-scalar erasure
+lemma. `step` below is the body-checking premise under lower-rank contracts;
+this model does not prove the C parser, machine stack capacity or all C behavior.
+-/
+namespace QCore.UnsignedCountdown
+open QCore.CustodySummary
+
+inductive Argument where
+  | zero
+  | predecessor
+  deriving DecidableEq, Repr
+
+/-- Conversion to an unsigned callee uses its positive modulus. On nonzero
+input the subtraction itself is representable after integer promotion. -/
+def target (argument : Argument) (counter modulus : Nat) : Nat :=
+  match argument with
+  | .zero => 0
+  | .predecessor => (counter - 1) % modulus
+
+theorem predecessor_before_conversion_decreases {counter : Nat} (positive : 0 < counter) :
+    counter - 1 < counter := by omega
+
+theorem unsigned_conversion_cannot_increase (value modulus : Nat) :
+    value % modulus ≤ value := Nat.mod_le _ _
+
+theorem admitted_argument_decreases (argument : Argument) {counter : Nat}
+    (positive : 0 < counter) (modulus : Nat) :
+    target argument counter modulus < counter := by
+  cases argument with
+  | zero => exact positive
+  | predecessor =>
+    exact Nat.lt_of_le_of_lt (unsigned_conversion_cannot_increase _ _)
+      (predecessor_before_conversion_decreases positive)
+
+structure Invocation where
+  function : Nat
+  counter : Nat
+  deriving DecidableEq, Repr
+
+/-- Edges are admitted only from the nonzero branch. The zero body must check
+with every recursive component summary absent. Function identities may differ. -/
+def Calls (callee caller : Invocation) : Prop :=
+  0 < caller.counter ∧ ∃ argument modulus, 0 < modulus ∧
+    callee.counter = target argument caller.counter modulus
+
+theorem countdown_call_decreases {callee caller : Invocation} (call : Calls callee caller) :
+    callee.counter < caller.counter := by
+  obtain ⟨positive, argument, modulus, _, same⟩ := call
+  rw [same]
+  exact admitted_argument_decreases argument positive modulus
+
+theorem countdown_calls_are_well_founded : WellFounded Calls := by
+  apply Subrelation.wf (r := (measure Invocation.counter).rel)
+  · intro callee caller call
+    exact countdown_call_decreases call
+  · exact (measure Invocation.counter).wf
+
+theorem zero_body_has_no_admitted_call (callee caller : Invocation)
+    (zero : caller.counter = 0) : ¬ Calls callee caller := by
+  intro call
+  have lower := countdown_call_decreases call
+  rw [zero] at lower
+  exact Nat.not_lt_zero _ lower
+
+theorem same_rank_cannot_supply_recursive_hypothesis (callee caller : Invocation)
+    (same : callee.counter = caller.counter) : ¬ Calls callee caller := by
+  intro call
+  have lower := countdown_call_decreases call
+  rw [same] at lower
+  exact Nat.lt_irrefl _ lower
+
+/-- Both body contexts must establish the SAME candidate contract. The step
+premise may use the contract at lower counter values for any component member;
+it may not assume validity at the current value, even for another function. -/
+theorem publish_by_mutual_rank_induction
+    (valid : Nat → Nat → Prop)
+    (base : ∀ function, valid function 0)
+    (step : ∀ counter, 0 < counter →
+      (∀ smaller, smaller < counter → ∀ function, valid function smaller) →
+      ∀ function, valid function counter) :
+    ∀ counter function, valid function counter := by
+  intro counter
+  induction counter using Nat.strongRecOn with
+  | ind counter lower =>
+    cases counter with
+    | zero => exact base
+    | succ predecessor =>
+      exact step (predecessor + 1) (Nat.zero_lt_succ _) lower
+
+/-- Connect the induction rule to the existing nonempty exit/custody validator.
+The supplied base and step are body-validation evidence, not assumed recursive
+summary truth. Unsupported or missing base/step evidence cannot invoke this rule. -/
+theorem published_countdown_agrees_with_every_exit
+    (summary : Nat → Summary) (safe : Nat → Nat → Bool)
+    (exits : Nat → Nat → List ExitObservation)
+    (base : ∀ function, validate (summary function) (safe function 0) (exits function 0) = true)
+    (step : ∀ counter, 0 < counter →
+      (∀ smaller, smaller < counter → ∀ function,
+        validate (summary function) (safe function smaller) (exits function smaller) = true) →
+      ∀ function, validate (summary function) (safe function counter) (exits function counter) = true)
+    (counter function : Nat) :
+    safe function counter = true ∧ (exits function counter).isEmpty = false ∧
+      ∀ observation ∈ exits function counter, exitMatches (summary function) observation = true := by
+  have checked := publish_by_mutual_rank_induction
+    (fun function counter => validate (summary function) (safe function counter) (exits function counter) = true)
+    base step counter function
+  exact ⟨validated_summary_is_analyzed_safely _ _ _ checked,
+    validated_summary_has_a_reachable_exit _ _ _ checked,
+    validated_summary_matches_every_exit _ _ _ checked⟩
+
+end QCore.UnsignedCountdown

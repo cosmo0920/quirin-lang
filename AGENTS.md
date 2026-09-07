@@ -469,7 +469,8 @@ combined CFG is revalidated and independently rederived by certificate checking.
 Release, owned-return and bounded mutual-recursion source cases pass; mutations,
 nondecreasing calls, zero cycles and broader controls remain outside this route.
 Evidence: `docs/reports/w4-contextual-recursion/README.md`. General recursive
-fixed points, arithmetic rankings, aliases and cost summaries remain open.
+fixed points, broader arithmetic rankings, aliases and cost summaries remain open;
+the unsigned countdown extension below covers exact `n - 1` calls.
 
 Source task foundations (2026-09-07): structured spawn/join records now retain
 ordered captures, resolved scope/worker/place symbols and initializer-before-binder
@@ -584,3 +585,18 @@ checked/Unknown inventories. The full Cycle19 compatibility reports remain
 byte-identical. General lifecycle import, specialized provider extraction,
 required native evidence and full registry composition remain open. Evidence:
 `docs/reports/w5-configured-process-audit/README.md`.
+
+Unsigned countdown custody (2026-09-07): W4 now validates exact `n - 1`
+recursive calls for immutable, explicit unsigned controls, including mutual
+calls with different control slots/unsigned widths. Zero bodies check with all
+component contracts absent; nonzero bodies check at strictly smaller natural
+ranks and must reproduce the complete base contract. Only the checked scalar
+actual is abstracted for resource analysis; certificates retain original source
+and independently repeat rank extraction and custody validation. Signed or
+nondecreasing arithmetic, zero-context recursion and unsupported control uses
+remain Unknown. Nine Lean theorems establish the rank/induction relation;
+source extraction and scalar erasure are premises, and automatic stack capacity
+is not proved. Six new public tests and a fixed six-allocation native sanitizer
+fixture pass. All 760 workspace tests and the standing gates pass; the 185-unit
+Cycle19 reports are byte-identical. General recursive inference, aliases and
+cost summaries remain open. Evidence: `docs/reports/w4-unsigned-countdown/README.md`.

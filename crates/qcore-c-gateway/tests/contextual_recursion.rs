@@ -329,3 +329,193 @@ fn certificate_recheck_rejects_source_and_summary_context_substitution() {
         .parameters[0] = ResourceParameterMode::Borrowed;
     assert!(check_legacy_safety_certificate(&forged).is_err());
 }
+
+#[test]
+fn unsigned_countdown_release_checks_every_builtin_width_and_guard() {
+    if !clang_available() {
+        return;
+    }
+    for control_type in [
+        "unsigned",
+        "unsigned int",
+        "unsigned char",
+        "unsigned short",
+        "unsigned short int",
+        "unsigned long",
+        "unsigned long int",
+        "unsigned long long",
+        "unsigned long long int",
+    ] {
+        for body in [
+            "if (n) { release(p, n - 1); return; } q_free(p);",
+            "if (!n) { q_free(p); return; } release(p, n - 1);",
+            "if (n == 0) { q_free(p); return; } release(p, n - 1);",
+            "if (n != 0) { release(p, n - 1); return; } q_free(p);",
+        ] {
+            let certificate = certified(&format!(
+                "void release(void *p, {control_type} n) {{ {body} }} void subject(void) {{ void *p = q_alloc(); release(p, 7); }}"
+            ));
+            assert_contract(
+                &certificate,
+                "release",
+                ResourceFunctionContract::new(
+                    [
+                        ResourceParameterMode::Released { nullable: false },
+                        ResourceParameterMode::Borrowed,
+                    ],
+                    ResourceReturnMode::None,
+                ),
+            );
+        }
+    }
+}
+
+#[test]
+fn unsigned_mutual_countdown_handles_changed_control_slots_and_widths() {
+    if !clang_available() {
+        return;
+    }
+    let body = "void right(unsigned char n, void *p); \
+        void left(void *p, unsigned long n) { if (n) { right(n - 1, p); return; } q_free(p); } \
+        void right(unsigned char n, void *p) { if (n) { left(p, n - 1); return; } q_free(p); } \
+        void subject(void) { void *p = q_alloc(); left(p, 513); void *q = q_alloc(); right(7, q); }";
+    let certificate = certified(body);
+    assert_contract(
+        &certificate,
+        "right",
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Borrowed,
+                ResourceParameterMode::Released { nullable: false },
+            ],
+            ResourceReturnMode::None,
+        ),
+    );
+    let mixed_edges = body.replace("left(p, n - 1)", "left(p, 0)");
+    certified(&mixed_edges);
+}
+
+#[test]
+fn unsigned_countdown_preserves_owned_returns_and_caller_leaks() {
+    if !clang_available() {
+        return;
+    }
+    let make = "void *make(unsigned n) { if (n) { void *r = make(n - 1); return r; } void *p = q_alloc(); return p; }";
+    let certificate = certified(&format!(
+        "{make} void subject(void) {{ void *p = make(7); q_free(p); }}"
+    ));
+    assert_contract(
+        &certificate,
+        "make",
+        ResourceFunctionContract::new(
+            [ResourceParameterMode::Borrowed],
+            ResourceReturnMode::Owned { nullable: false },
+        ),
+    );
+    for caller in [
+        "void subject(void) { void *p = make(7); }",
+        "void subject(void) { make(7); }",
+    ] {
+        assert!(!matches!(
+            analyze(&format!("{make} {caller}"), None),
+            UnrestrictedLegacyResult::Safe(_)
+        ));
+    }
+}
+
+#[test]
+fn unsupported_countdowns_and_invalid_resource_steps_never_publish() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "if (n) { release(p, n); return; } q_free(p);",
+        "if (n) { release(p, n + 1); return; } q_free(p);",
+        "if (n) { release(p, n - 2); return; } q_free(p);",
+        "if (n) { release(p, 1 - n); return; } q_free(p);",
+        "if (n) { release(p, n--); return; } q_free(p);",
+        "if (n) { release(p, --n); return; } q_free(p);",
+        "if (n) { release(p, n - 1); return; } release(p, n - 1);",
+        "if (!n) { release(p, n - 1); return; } q_free(p);",
+        "if (n) { release(p, n - 1); return; } release(p, 0);",
+        "n = 7; if (n) { release(p, n - 1); return; } q_free(p);",
+        "unsigned *alias = &n; if (n) { release(p, n - 1); return; } q_free(p);",
+        "if (n) { unsigned n = 7; release(p, n - 1); return; } q_free(p);",
+        "if (n) { release(p, n - 1); q_free(p); return; } q_free(p);",
+        "if (n) { q_free(p); release(p, n - 1); return; } q_free(p);",
+        "if (n) { release(p, n - 1); q_transfer(p); return; } q_free(p);",
+        "if (n) { release(p, n - 1); return; } return;",
+        "if (n) { release(p, n - 1); release(p, n - 1); return; } q_free(p);",
+    ] {
+        let source = format!("void release(void *p, unsigned n) {{ {body} }} {CALL_RELEASE}");
+        let result = analyze(&source, None);
+        assert!(
+            !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+            "{source}: {result:?}"
+        );
+    }
+    for control_type in ["int", "signed char", "short", "long", "_Bool"] {
+        let source = format!(
+            "void release(void *p, {control_type} n) {{ if (n) {{ release(p, n - 1); return; }} q_free(p); }} {CALL_RELEASE}"
+        );
+        assert!(
+            !matches!(analyze(&source, None), UnrestrictedLegacyResult::Safe(_)),
+            "{control_type}"
+        );
+    }
+    let mixed_signed = "void right(void *p, int n); void left(void *p, unsigned n) { if (n) { right(p, n - 1); return; } q_free(p); } void right(void *p, int n) { if (n) { left(p, 0); return; } q_free(p); } void subject(void) { void *p = q_alloc(); left(p, 7); }";
+    assert!(!matches!(
+        analyze(mixed_signed, None),
+        UnrestrictedLegacyResult::Safe(_)
+    ));
+}
+
+#[test]
+fn countdown_certificate_rechecks_rank_guards_and_summary_identity() {
+    if !clang_available() {
+        return;
+    }
+    let body =
+        "void release(void *p, unsigned n) { if (n) { release(p, n - 1); return; } q_free(p); }";
+    let certificate = certified(&format!("{body} {CALL_RELEASE}"));
+    for (old, new) in [
+        ("n - 1", "n + 1"),
+        ("n - 1", "n - 2"),
+        ("n - 1", "n"),
+        ("unsigned n", "int n"),
+        ("if (n)", "if (!n)"),
+    ] {
+        let mut stale = certificate.clone();
+        stale.preprocessed_source = stale.preprocessed_source.replace(old, new);
+        assert_ne!(stale.preprocessed_source, certificate.preprocessed_source);
+        assert!(
+            check_legacy_safety_certificate(&stale).is_err(),
+            "{old} -> {new}"
+        );
+    }
+    let mut forged = certificate.clone();
+    forged
+        .summaries
+        .iter_mut()
+        .find(|summary| summary.function == "release")
+        .unwrap()
+        .contract
+        .parameters[1] = ResourceParameterMode::Owned { nullable: false };
+    assert!(check_legacy_safety_certificate(&forged).is_err());
+}
+
+#[test]
+fn countdown_native_fixture_has_independently_rechecked_custody() {
+    if !clang_available() {
+        return;
+    }
+    let certificate = certified(include_str!("fixtures/unsigned_countdown.c"));
+    for function in ["countdown_release", "countdown_make", "wide", "narrow"] {
+        assert!(
+            certificate
+                .summaries
+                .iter()
+                .any(|summary| summary.function == function)
+        );
+    }
+}

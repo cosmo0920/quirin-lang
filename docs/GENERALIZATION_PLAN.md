@@ -430,8 +430,12 @@ removal/out-slot aliases, relational branch analysis, general recursive
 components and the Juliet stretch corpus.
 [Context-specific recursion](reports/w4-contextual-recursion/README.md) now
 validates exhaustive zero/nonzero integer controls using strictly lower-rank
-base summaries, including bounded mutual recursion. Arithmetic rankings and
-general recursive fixed-point inference remain open. The [gateway relocation](reports/w4-gateway-crate/README.md)
+base summaries, including bounded mutual recursion. The [unsigned countdown
+extension](reports/w4-unsigned-countdown/README.md) adds exact `n - 1` calls
+with mutual strong induction over natural counter values, including unsigned
+width conversion. The zero body has no recursive assumptions; the nonzero body
+must validate the same complete custody contract. General arithmetic rankings,
+signed countdowns and general recursive fixed-point inference remain open. The [gateway relocation](reports/w4-gateway-crate/README.md)
 is executed (2026-09-07): `legacy_c`, `legacy_summary`, Clang discovery and
 typed-AST transport now live in `qcore-c-gateway`, with compiler compatibility
 reexports and pinned full-corpus parity.

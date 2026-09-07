@@ -82,11 +82,14 @@
 //! Ordinary inference runs first and never assumes a recursive summary. A
 //! bounded second route partitions one immutable explicit integer formal into
 //! Zero and NonZero. Zero validates without any SCC contract; NonZero may call
-//! only literal-zero contexts already validated at rank zero. Equal contracts
+//! literal-zero contexts already validated at rank zero. Explicit unsigned
+//! components also admit exact `control - 1` actuals by mutual strong induction
+//! over concrete natural counter values (including unsigned width conversion).
+//! Only those proved scalar actuals are abstracted in the resource CFG. Equal contracts
 //! for both contexts are rechecked over a disjoint combined CFG before they
 //! become caller contracts. Declared SCCs, unsupported control syntax, zero
 //! cycles and general recursion remain outside this contextual route. This is
-//! finite ranked validation, not a coinductive assumed contract or a general
+//! well-founded ranked validation, not a coinductive assumed contract or a general
 //! termination proof. Unreachable recursive edges may already validate on the
 //! ordinary route under its explicit resource entry preconditions.
 
@@ -237,8 +240,10 @@ pub(crate) fn derive_custody_summaries(
     derivation
 }
 
-/// Rank zero is checked with every SCC contract absent. Rank one admits only
-/// literal-zero calls whose rank-zero summaries have already been validated.
+/// Zero is checked with every SCC contract absent. Nonzero admits literal-zero
+/// calls to validated bases, or exact unsigned countdowns to strictly smaller
+/// natural ranks. The latter uses mutual strong induction, not a finite
+/// zero/nonzero dependency cycle or an unguarded recursive self-assumption.
 /// Publication requires equal contracts for both exhaustive integer contexts,
 /// and fresh analysis of their disjoint union. Certificates derive this again.
 fn infer_contextual_component(

@@ -1,10 +1,14 @@
-//! Private, finite context extraction. No source tokens or effects are rewritten.
+//! Private context/rank extraction. Only proved scalar countdown arguments are
+//! abstracted; source certificates and all resource effects remain unchanged.
 use super::*;
 
 pub(crate) struct ContextFunction {
     pub(crate) parameters: Vec<Option<String>>,
     pub(crate) control_index: usize,
     control: String,
+    unsigned: bool,
+    allowed_control: BTreeSet<usize>,
+    countdowns: BTreeSet<usize>,
     pub(crate) dependencies: BTreeSet<String>,
 }
 
@@ -206,22 +210,26 @@ pub(crate) fn prepare(
                 }
             }
         }
-        if (body + 1..end).any(|i| tokens[i].text == control && !allowed.contains(&i)) {
-            return None;
-        }
         result.insert(
             function.clone(),
             ContextFunction {
                 parameters,
                 control_index,
                 control,
+                unsigned: types[control_index].iter().any(|word| word == "unsigned"),
+                allowed_control: allowed,
+                countdowns: BTreeSet::new(),
                 dependencies: BTreeSet::new(),
             },
         );
     }
+    let unsigned_component = result.values().all(|descriptor| descriptor.unsigned);
     for function in component {
+        let descriptor = &result[function];
         let (body, _) = find_function_body(tokens, function)?;
         let end = matching(tokens, body, "{", "}")?;
+        let mut countdowns = BTreeSet::new();
+        let mut allowed = descriptor.allowed_control.clone();
         let mut dependencies = BTreeSet::new();
         for i in body + 1..end {
             let Some(callee) = result.get(&tokens[i].text) else {
@@ -237,16 +245,36 @@ pub(crate) fn prepare(
             let actuals = tokens[i + 2..last]
                 .split(|t| t.text == ",")
                 .collect::<Vec<_>>();
-            if actuals.len() != callee.parameters.len()
-                || actuals[callee.control_index].len() != 1
-                || actuals[callee.control_index][0].text != "0"
-            {
+            if actuals.len() != callee.parameters.len() {
                 return None;
             }
-            if actuals
-                .iter()
-                .any(|a| a.len() != 1 || !(is_identifier(&a[0].text) || a[0].text == "0"))
+            let counter = actuals[callee.control_index];
+            if counter.len() == 3
+                && counter[0].text == descriptor.control
+                && counter[1].text == "-"
+                && counter[2].text == "1"
+                && unsigned_component
             {
+                // On a nonzero unsigned input, integer promotion/subtraction
+                // cannot underflow. Conversion to the callee's unsigned type
+                // can only reduce the natural value further. The zero CFG is
+                // separately checked with ALL component contracts unavailable,
+                // so an underflowing zero-context call cannot establish a base.
+                let start = i
+                    + 2
+                    + actuals[..callee.control_index]
+                        .iter()
+                        .map(|a| a.len() + 1)
+                        .sum::<usize>();
+                countdowns.insert(start);
+                allowed.insert(start);
+            } else if counter.len() != 1 || counter[0].text != "0" {
+                return None;
+            }
+            if actuals.iter().enumerate().any(|(index, a)| {
+                index != callee.control_index
+                    && (a.len() != 1 || !(is_identifier(&a[0].text) || a[0].text == "0"))
+            }) {
                 return None;
             }
             // Only standalone calls or the exact RHS of an assignment. Nested
@@ -259,7 +287,12 @@ pub(crate) fn prepare(
             }
             dependencies.insert(tokens[i].text.clone());
         }
-        result.get_mut(function)?.dependencies = dependencies;
+        if (body + 1..end).any(|i| tokens[i].text == descriptor.control && !allowed.contains(&i)) {
+            return None;
+        }
+        let descriptor = result.get_mut(function)?;
+        descriptor.dependencies = dependencies;
+        descriptor.countdowns = countdowns;
     }
     Some(result)
 }
@@ -271,7 +304,26 @@ pub(crate) fn contextual_cfg(
     descriptor: &ContextFunction,
     zero: bool,
 ) -> Option<LegacyCfg> {
-    let mut cfg = build_function_cfg(tokens, function, environment).ok()?;
+    // A checked summary borrows the scalar control and is identical at every
+    // rank. Erase only its proved `control - 1` actual to a scalar placeholder
+    // for the resource CFG; this is NOT a claim that its runtime value is zero.
+    // The nonzero proof uses strong induction over unsigned values. Original
+    // source remains in the certificate and this exact extraction is re-run.
+    let mut abstracted = Vec::with_capacity(tokens.len());
+    let mut index = 0;
+    while index < tokens.len() {
+        if descriptor.countdowns.contains(&index) {
+            abstracted.push(Token {
+                text: "0".to_owned(),
+                line: tokens[index].line,
+            });
+            index += 3;
+        } else {
+            abstracted.push(tokens[index].clone());
+            index += 1;
+        }
+    }
+    let mut cfg = build_function_cfg(&abstracted, function, environment).ok()?;
     for node in &mut cfg.nodes {
         if let LegacyInstruction::BranchOnNull {
             source,

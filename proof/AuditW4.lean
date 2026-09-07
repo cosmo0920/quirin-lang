@@ -107,3 +107,13 @@ import QCore.CustodySummary
 #print axioms QCore.NullableRemoval.unresolved_site_cannot_authorize_direct_live_effect
 #print axioms QCore.NullableRemoval.nullable_old_argument_can_select_no_existing_identity
 #print axioms QCore.NullableRemoval.nonnullable_old_argument_cannot_select_null
+
+#print axioms QCore.UnsignedCountdown.predecessor_before_conversion_decreases
+#print axioms QCore.UnsignedCountdown.unsigned_conversion_cannot_increase
+#print axioms QCore.UnsignedCountdown.admitted_argument_decreases
+#print axioms QCore.UnsignedCountdown.countdown_call_decreases
+#print axioms QCore.UnsignedCountdown.countdown_calls_are_well_founded
+#print axioms QCore.UnsignedCountdown.zero_body_has_no_admitted_call
+#print axioms QCore.UnsignedCountdown.same_rank_cannot_supply_recursive_hypothesis
+#print axioms QCore.UnsignedCountdown.publish_by_mutual_rank_induction
+#print axioms QCore.UnsignedCountdown.published_countdown_agrees_with_every_exit
