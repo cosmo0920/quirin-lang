@@ -30,7 +30,7 @@ pub use qcore_schemas::chunk_summary::{ChunkSourceField, ChunkSourcePath};
 /// caller must bind the declared revision to its repository separately. The
 /// compiler executable/environment are trusted and must stay stable during use.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct BooleanSourceIdentity {
+pub struct SourceInputIdentity {
     raw_source_digest: String,
     preprocessed_source_digest: String,
     configuration_digest: String,
@@ -40,10 +40,15 @@ pub struct BooleanSourceIdentity {
     model_library: Option<String>,
     source_revision: String,
     compiler: CompilerIdentity,
-    helpers: BTreeMap<String, BooleanSourceIdentity>,
+    helpers: BTreeMap<String, SourceInputIdentity>,
 }
 
-impl BooleanSourceIdentity {
+/// Historical name of the record above, retained for existing callers. The
+/// record was never Boolean-specific; the counter importer captures the same
+/// provenance for its own typed path projection.
+pub type BooleanSourceIdentity = SourceInputIdentity;
+
+impl SourceInputIdentity {
     pub fn raw_source_digest(&self) -> &str {
         &self.raw_source_digest
     }
@@ -76,7 +81,7 @@ impl BooleanSourceIdentity {
     pub fn compiler_target(&self) -> &str {
         self.compiler.target()
     }
-    pub fn helpers(&self) -> &BTreeMap<String, BooleanSourceIdentity> {
+    pub fn helpers(&self) -> &BTreeMap<String, SourceInputIdentity> {
         &self.helpers
     }
 }
@@ -85,7 +90,7 @@ impl BooleanSourceIdentity {
 // identity. Field names, order and serialization are unchanged by that reuse.
 use crate::clang::ClangIdentity as CompilerIdentity;
 
-fn input_identity(
+pub(crate) fn input_identity(
     unit: &C11TranslationUnit<'_>,
     preprocessed: &str,
     revision: &str,
@@ -93,7 +98,7 @@ fn input_identity(
     profile_digest: Option<String>,
     helpers: &[ChunkFrameSummary],
     compiler: CompilerIdentity,
-) -> Result<BooleanSourceIdentity, String> {
+) -> Result<SourceInputIdentity, String> {
     let scope = match unit.function_scope {
         crate::legacy_c::LegacyFunctionScope::PreprocessedTranslationUnit => {
             "preprocessed_translation_unit"
@@ -139,7 +144,7 @@ fn input_identity(
             return Err("duplicate helper identity".into());
         }
     }
-    Ok(BooleanSourceIdentity {
+    Ok(SourceInputIdentity {
         raw_source_digest: qcore_schemas::sha256_hex(unit.source.as_bytes()),
         preprocessed_source_digest: qcore_schemas::sha256_hex(preprocessed.as_bytes()),
         configuration_digest: qcore_schemas::sha256_hex(&configuration),
@@ -174,7 +179,7 @@ fn input_identity(
 #[serde(transparent)]
 pub struct ChunkSourceSummary(
     ChunkSourceSummaryRecord,
-    #[serde(skip)] BooleanSourceIdentity,
+    #[serde(skip)] SourceInputIdentity,
     #[serde(skip)] BooleanFieldStatement,
 );
 
@@ -204,7 +209,7 @@ impl ChunkSourceSummary {
     }
 
     /// Identity captured by the importer, never supplied by a schema record.
-    pub fn input_identity(&self) -> &BooleanSourceIdentity {
+    pub fn input_identity(&self) -> &SourceInputIdentity {
         &self.1
     }
 
@@ -252,7 +257,7 @@ impl ChunkSourceSummary {
 #[serde(transparent)]
 pub struct ChunkFrameSummary(
     ChunkFrameSummaryRecord,
-    #[serde(skip)] BooleanSourceIdentity,
+    #[serde(skip)] SourceInputIdentity,
     #[serde(skip)] FrameBinding,
 );
 
@@ -282,7 +287,7 @@ impl ChunkFrameSummary {
     }
 
     /// Identity captured by the importer, never supplied by a schema record.
-    pub fn input_identity(&self) -> &BooleanSourceIdentity {
+    pub fn input_identity(&self) -> &SourceInputIdentity {
         &self.1
     }
 
@@ -1022,7 +1027,7 @@ fn derive_summary(
     source_revision: &str,
     helpers: &BTreeMap<String, &ChunkFrameSummary>,
     model: &BooleanFieldModel,
-    identity: &BooleanSourceIdentity,
+    identity: &SourceInputIdentity,
 ) -> Result<ChunkSourceSummary, String> {
     let field = field_kind(model)?;
     let field_name = model.field.as_str();

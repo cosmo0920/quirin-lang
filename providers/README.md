@@ -7,13 +7,23 @@ This separate Cargo workspace builds five executable packages:
 source introduces no Rust crate dependency. The conformance harness depends
 on the real verifier host and is never linked into an artifact.
 
-All protocol-v1 responses remain Unknown. ChunkIO 0.4.0 and CMetrics 0.2.0
+All protocol-v1 responses remain Unknown. ChunkIO 0.5.0 and CMetrics 0.2.0
 compute Boolean-field contract witnesses using a shared schemas-only statement
 interpreter. Integer-result source uses `qcore.c_boolean_field_contract.v2`;
 void-result source uses `.v3`, an explicit unit ABI and two field prestates. The
 trusted receiver binds source/build/profile/policy identities, compares the
 computed paths and independently evaluates the contract. Unit contracts cannot
 mention a scalar `result`. Unsupported requests remain Unknown.
+
+ChunkIO 0.5.0 additionally reads bounded unsigned unit counters under
+`qcore.c_counter_contract.v1`. The request transports one typed path
+projection with no derived result; the process reports which field the path
+updates, in which direction and over which unsigned storage type. The trusted
+receiver recomputes the same reading from its own import and evaluates the
+pinned counter contract itself, so an agreeing proposal discharges nothing on
+its own. Caller storage, exclusive access, the entry range and the unsigned
+C/`usize` ABI binding remain the contract's declared premises. See the
+[capability transport evidence](../docs/reports/remaining-p04/README.md).
 
 Libevent, CTraces and librdkafka remain Unknown-only. Clang import and helper
 validation stay in the trusted gateway. The CMetrics configured audit checks

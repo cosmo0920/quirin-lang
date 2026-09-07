@@ -304,6 +304,10 @@ pub enum SemanticWitness {
     ChunkLifecycle(ChunkLifecycleWitness),
     ContractObservation(ContractObservationWitness),
     BooleanFieldContract(Box<crate::chunk_summary::BooleanFieldContractWitness>),
+    /// One unsigned unit-counter update recomputed from the core's own typed
+    /// path projection. Equality binds the proposal to that import; the core
+    /// still evaluates the pinned contract itself.
+    CounterContract(Box<crate::counter_summary::CounterContractWitness>),
 }
 
 impl SemanticWitness {
@@ -316,6 +320,7 @@ impl SemanticWitness {
             Self::ChunkLifecycle(witness) => &witness.task_digest,
             Self::ContractObservation(witness) => &witness.task_digest,
             Self::BooleanFieldContract(witness) => &witness.task_digest,
+            Self::CounterContract(witness) => &witness.task_digest,
         }
     }
 
@@ -325,6 +330,7 @@ impl SemanticWitness {
             Self::ChunkLifecycle(_) => "chunk_lifecycle",
             Self::ContractObservation(_) => "contract_observation",
             Self::BooleanFieldContract(_) => "boolean_field_contract",
+            Self::CounterContract(_) => "counter_contract",
         }
     }
 }

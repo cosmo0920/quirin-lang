@@ -10,6 +10,7 @@
 
 pub mod boolean_source;
 mod clang;
+pub mod counter_source;
 pub mod legacy_c;
 mod legacy_summary;
 pub mod source_call_use;

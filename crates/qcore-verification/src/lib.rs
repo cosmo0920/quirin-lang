@@ -11,6 +11,7 @@ pub mod witness_replay;
 
 pub mod reactor_callback;
 
+pub mod counter_source;
 pub mod source_effect;
 
 pub mod cleanup_outcome;

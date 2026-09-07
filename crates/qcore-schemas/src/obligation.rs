@@ -82,6 +82,10 @@ pub enum ObligationProperty {
     NoUnknownCallEffect,
     /// Both Boolean prestates satisfy a source-derived borrowed-field contract.
     BooleanFieldContract,
+    /// One source-derived unsigned unit counter update satisfies its pinned
+    /// contract. Caller storage, exclusivity and the unsigned/usize ABI
+    /// binding remain the contract's own declared premises.
+    CounterUpdateContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -109,6 +113,7 @@ impl ObligationProperty {
             Self::ParameterModeRespected => "parameter_mode_respected",
             Self::NoUnknownCallEffect => "no_unknown_call_effect",
             Self::BooleanFieldContract => "boolean_field_contract",
+            Self::CounterUpdateContract => "counter_update_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

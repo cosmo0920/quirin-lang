@@ -51,3 +51,4 @@ pub use witness::{
 };
 
 pub mod chunk_summary;
+pub mod counter_summary;

@@ -1,4 +1,4 @@
-# qcore-schemas 2.0.0
+# qcore-schemas 4.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -92,6 +92,44 @@ records omit the default field and retain their bytes and version-2 semantics.
 Unit records explicitly serialize `result_kind: "unit"`, use source input version
 3 and `ReturnUnit`, and bind `qcore:boolean-field-source-input:v3`. A mismatched
 input version/result kind rejects. Unknown enum variants remain rejected.
+
+## Declared process limits (3.0.0)
+
+`PluginLimits` gained the public `additional` map of declared limit kinds, so
+existing exhaustive struct construction no longer compiles: a major crate
+version under the policy above. A manifest that declares no kind serializes
+byte-identically, and no protocol, evidence or data-profile version moved.
+
+## Counter source projection (4.0.0)
+
+`counter_summary` adds the portable projection and proposal records for the
+unsigned unit-counter capability: `CounterSourceInput` (a typed path, with no
+derived result), `CounterUpdateRecord` (a proposed structural reading) and
+`CounterContractWitness`. Three source-incompatible additions accompany them —
+a `SemanticWitness::CounterContract` variant, an
+`ObligationProperty::CounterUpdateContract` variant, and the required
+`VerificationRequestV2::counter_effect` field — so this is a major crate
+version, consistent with the exhaustive-variant precedent in 2.0.0.
+
+Existing wire bytes are unchanged: `counter_effect` is `Option`, defaults to
+absent and is skipped when serializing, exactly as `source_effect` is. A
+request carrying both projections is rejected, and a counter projection is
+admitted only with exactly one `counter_update_contract` obligation whose
+subject function and translation unit match it.
+
+| Boundary | Current value | Meaning |
+|---|---|---|
+| Rust schema crate | 4.0.0 | Public API and serde compatibility |
+| Plugin protocol | 1 | Unchanged envelope |
+| Evidence | 1 and 2 | Unchanged negotiation and admission rules |
+| Counter source input | 1 | Required path-projection schema |
+| Counter semantic profile | `qcore.c_counter_contract.v1` | Projection verification task |
+| Counter input digest key | `qcore:counter-source-input:v1` | Complete projection identity in the task |
+| ChunkIO provider package | 0.5.0 | Adds the counter capability route |
+
+The projection carries no expected reading, and a proposal that matches the
+core's own reading still discharges nothing on its own: the core evaluates the
+pinned counter contract itself before any obligation is covered.
 
 The unit semantic profile is `qcore.c_boolean_field_contract.v3`: two initial
 Boolean states, no scalar result, a nominal record from the opaque import, and

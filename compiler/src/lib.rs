@@ -33,6 +33,7 @@ pub use qcore_contract::contract_observation;
 pub use qcore_contract::profile_loader;
 pub use qcore_core::concurrency;
 pub mod counter_contract;
+pub mod counter_source;
 pub mod driver;
 pub use qcore_core::error_region;
 pub use qcore_core::executable_model;
