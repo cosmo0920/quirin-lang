@@ -263,45 +263,59 @@ field saying exactly this. The work itself belongs to the existing
 
 ## 7. Gate results
 
-Run at this card's tip, on Linux. See §7.1 for a material caveat about the
-worktree.
+The working tree is shared with another in-flight agent (§7.1), so the standing
+gate was **not** run there. It was run in a temporary detached worktree created
+at this card's commit, containing this card's committed change and nothing else.
+Linux, submodule initialised at the pinned `d82464a`.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | see §7.1 |
-| `cargo fmt --all -- --check` | see §7.1 |
-| `cargo clippy --all-targets -- -D warnings` | see §7.1 |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | see §7.1 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | see §7.1 |
-| `python3 -B -m unittest discover -s scripts/tests` | see §7.1 |
-| `cd proof && lake build` | see §7.1 |
-| `python3 -B scripts/check_lean_audits.py` | see §7.1 |
-| `cargo test -p qcore-compiler --test ct_corpus` | **4 passed, 0 failed** (11.26 s with a cold sanitized compile) |
+| `cargo test --workspace --no-fail-fast` | **1080 passed, 0 failed, 0 ignored** (exit 0) |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
+| `python3 -B -m unittest discover -s scripts/tests` | **43 tests, OK** (exit 0) |
+| `cd proof && lake build` | **Build completed successfully (64 jobs)** |
+| `python3 -B scripts/check_lean_audits.py` | **Passed 21 Lean audits** (exit 0) |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | **51 passed, 0 failed** |
+| `cargo test -p qcore-compiler --test ct_corpus` | **4 passed, 0 failed** |
 
-### 7.1 The worktree was shared with another in-flight agent
+The workspace total is **1080, unchanged from the merged baseline**, and that is
+the expected result: this card adds no `#[test]` function. The four new cases
+execute *inside* the existing
+`ct_manifest_and_fixture_set_agree_and_mapped_cases_execute`, which is also why
+the count alone would not have revealed whether they ran — the fail-closed
+probes in §5 are what establish that.
 
-This card's worktree (`.claude/worktrees/cycle-19-task-delegation-68c24d`,
-branch `claude/cycle-19-task-delegation-68c24d`) was observed carrying another
-agent's uncommitted, in-progress work during this session:
+### 7.1 The working tree is shared with another in-flight agent
+
+This card's branch (`claude/cycle-19-task-delegation-68c24d`) is worked
+concurrently by the O04 constructor-to-caller custody lane, whose uncommitted
+work was present throughout this session:
 `crates/qcore-c-gateway/src/{legacy_c.rs,lib.rs,typed_field_access.rs}`, a new
-untracked `crates/qcore-c-gateway/src/borrowed_actual.rs`, an untracked
-`docs/reports/remaining-p07/` and `docs/design/W5_LIBRDKAFKA_CAPABILITY.md`. At
-one point that work did not compile
-(`error[E0433]: use of undeclared type UntrackedBases` and two related errors in
-`legacy_c.rs`), which blocked the workspace gate for reasons unrelated to this
-card. Those files are **not** part of this card's commit — only the paths listed
-in §8 were staged. The full-gate numbers recorded above were taken with that
-foreign work present in the working tree, and are therefore *not* a measurement
-of this card's change in isolation; the CT harness result is, since
-`ct_corpus.rs` and the CT fixtures are disjoint from the C gateway. This is
-recorded as an environment condition, not repaired here.
+`crates/qcore-c-gateway/src/borrowed_actual.rs` and
+`crates/qcore-c-gateway/tests/c03_neutral_frame_recursion_probe.rs`. At one
+point that work did not compile
+(`error[E0433]: use of undeclared type UntrackedBases`), and later it left two
+gateway tests failing
+(`pointer_field_recursion_is_refused_before_the_recursion_rule_applies`,
+`ordinary_proof_of_unreachable_recursion_is_preserved`). Neither is this card's:
+this card modifies no file under `crates/`, and both failing tests belong to the
+other lane's own edited files. A third lane (P07) committed `1e2c024`
+(documentation only) on the same branch; it is part of history here.
 
-A second, unrelated pre-existing flake stands: `qcore-verifier-host`'s
+None of those files were touched, staged, reverted or reformatted. Only the
+paths in §8 were staged, and the gate above was measured in a separate clean
+worktree precisely so that no number in it is a mixture.
+
+A separate pre-existing flake stands: `qcore-verifier-host`'s
 `a_declared_process_limit_stops_the_fixture_from_forking` (P02) is
 load-dependent because it installs `RLIMIT_NPROC = 1`, which counts every
-process of the real UID. It is recorded in
+process of the real UID. It failed once in the shared tree during this session
+and passed on re-run, and passed in the clean gate worktree. It is recorded in
 [`remaining-p03` §9.1](../remaining-p03/README.md) with the assertion
-deliberately not weakened, and nothing here touches it.
+deliberately not weakened; nothing here touches it.
 
 ---
 
