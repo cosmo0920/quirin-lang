@@ -26,6 +26,7 @@ pub use qcore_schemas::contract::{
 };
 
 use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
+use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
@@ -768,6 +769,8 @@ pub(crate) fn build_function_cfg(
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
+    let (typed_model, typed_types) =
+        typed_access_facts(tokens, function, body_start, &protected_formals);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -775,6 +778,8 @@ pub(crate) fn build_function_cfg(
         next_site: 0,
         formal_parameters,
         protected_formals,
+        typed_model,
+        typed_types,
     };
     let statements =
         parser
@@ -784,6 +789,60 @@ pub(crate) fn build_function_cfg(
                 line: failure_line.max(line),
             })?;
     Ok(CfgBuilder::build(function, &statements))
+}
+
+/// Read the declaration facts the typed direct scalar-field whitelist needs.
+///
+/// Both the record inventory and the function's variable types come from the
+/// same preprocessed token stream the importer is already projecting, so the
+/// classification is reproduced exactly by W4 summary derivation and by
+/// [`check_legacy_safety_certificate`], which hold only that stream. When the
+/// function's declarator list cannot be read, [`FunctionTypes::default`]
+/// refuses every access in it and the lexical gate governs unchanged.
+fn typed_access_facts(
+    tokens: &[Token],
+    function: &str,
+    body_start: usize,
+    protected_formals: &BTreeSet<String>,
+) -> (TypedAccessModel, FunctionTypes) {
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    let model = TypedAccessModel::read(&texts);
+    let types = match (
+        function_parameter_range(tokens, function, body_start),
+        matching(tokens, body_start, "{", "}"),
+    ) {
+        (Some((open, close)), Some(body_end)) => FunctionTypes::read(
+            &model,
+            &texts[open + 1..close],
+            &texts[body_start + 1..body_end],
+            protected_formals,
+        ),
+        _ => FunctionTypes::default(),
+    };
+    (model, types)
+}
+
+/// The parenthesis indices of the definition whose body starts at `body_start`.
+fn function_parameter_range(
+    tokens: &[Token],
+    function: &str,
+    body_start: usize,
+) -> Option<(usize, usize)> {
+    for (index, token) in tokens.iter().enumerate() {
+        if token.text != function || tokens.get(index + 1).map(|t| t.text.as_str()) != Some("(") {
+            continue;
+        }
+        let Some(close) = matching(tokens, index + 1, "(", ")") else {
+            continue;
+        };
+        if close + 1 == body_start {
+            return Some((index + 1, close));
+        }
+    }
+    None
 }
 
 // Discover identities requiring stable bindings before parsing expressions.
@@ -1284,6 +1343,12 @@ struct Parser<'a> {
     next_site: usize,
     formal_parameters: BTreeSet<String>,
     protected_formals: BTreeSet<String>,
+    /// Declaration facts of the enclosing translation unit and function, used
+    /// only to admit the typed direct scalar-field whitelist of
+    /// [`crate::typed_field_access`]. Everything outside that whitelist keeps
+    /// the lexical rejection.
+    typed_model: TypedAccessModel,
+    typed_types: FunctionTypes,
 }
 
 impl Parser<'_> {
@@ -1614,6 +1679,23 @@ impl Parser<'_> {
             return LegacyInstruction::Unknown {
                 description: "local declaration may shadow a formal resource identity".into(),
             };
+        }
+        // One typed exception to the lexical indirect-access gate below: a
+        // direct scalar-field access whose declared types make it
+        // custody-neutral is a no-op for this projection. The whitelist is
+        // conjunctive and every one of its premises is checked against
+        // declarations read from this same translation unit; see
+        // [`crate::typed_field_access`]. It runs after the formal-mutation and
+        // shadowing gates, which still govern, and never for a statement
+        // carrying a call, whose own rules continue to apply.
+        if !contains_call(tokens)
+            && crate::typed_field_access::is_scalar_field_noop(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+            )
+        {
+            return LegacyInstruction::NoOp;
         }
         // Explicit Out stores remain a separate modeled instruction. Reading
         // through a pointer, member or subscript has no heap/liveness model and
