@@ -74,6 +74,30 @@ fn bounded_zero_net_loop_scales_only_total() {
 }
 
 #[test]
+fn bounded_loop_alias_is_exact_repetition_not_a_maximum_count() {
+    // `bounded_loop` is a historical spelling for exact repetition. Reading it
+    // as a maximum count would admit a nonzero-net body that the maximum-count
+    // summary refuses, so the two must stay distinguishable here.
+    let growing = acquire(1);
+    for iterations in 0..=3 {
+        assert_eq!(
+            growing.bounded_loop(iterations).unwrap(),
+            growing.repeat_exact(iterations).unwrap()
+        );
+    }
+    assert_eq!(growing.bounded_loop(2).unwrap().net().get("memory"), 2);
+    assert_eq!(
+        growing.bounded_zero_net_loop(2),
+        Err(FlowError::NonZeroLoopNet)
+    );
+    let balanced = acquire(3).then(&release(3)).unwrap();
+    assert_eq!(
+        balanced.bounded_loop(4).unwrap(),
+        balanced.bounded_zero_net_loop(4).unwrap()
+    );
+}
+
+#[test]
 fn function_summary_composes_at_call_site() {
     let callee = FunctionSummary::new(acquire(6).then(&release(6)).unwrap());
     let caller = acquire(2)

@@ -88,3 +88,52 @@ fn aggregate_certificate_contains_all_six_discharges() {
     assert!(certificate.remaining_research.is_empty());
     assert_eq!(certificate.categorical.resource_morphisms.len(), 2);
 }
+
+#[test]
+fn aggregate_closure_rejects_loop_evidence_mutated_from_exact_to_maximum() {
+    use crate::legacy_c::{AnalysisStatus, LegacyProgramSummary, LegacySafetyCertificate};
+
+    let constraints = vec![InferenceConstraint::Owns { identity: 1 }];
+    let inference = infer_principal(&constraints).unwrap();
+    let body = Flow::acquire(q(1), q(1));
+    let loop_summary = summarize_general_loop(&body, LoopBoundEvidence::Exact(2)).unwrap();
+    // The aggregate closure checks the loop certificate before it reaches any
+    // other evidence, so this placeholder is never inspected.
+    let legacy = LegacySafetyCertificate {
+        preprocessed_source: String::new(),
+        entry: "subject".to_owned(),
+        contracts: crate::legacy_c::ResourceContracts::default(),
+        dialect: crate::legacy_c::CCompilerDialect::default(),
+        function_scope: crate::legacy_c::LegacyFunctionScope::default(),
+        summary: LegacyProgramSummary {
+            entry: "subject".to_owned(),
+            status: AnalysisStatus::Safe,
+            functions: BTreeMap::new(),
+        },
+        checked_functions: Vec::new(),
+        summaries: Vec::new(),
+    };
+    let mut forged = loop_summary.clone();
+    forged.evidence = LoopBoundEvidence::AtMost(2);
+    let c11 = C11Execution::default();
+    let native = NativeProgram::default();
+    let input = |summary| Cycle17Input {
+        constraints: &constraints,
+        inference: &inference,
+        loop_summary: summary,
+        legacy: &legacy,
+        c11: &c11,
+        native: &native,
+        platform_runs: &[],
+    };
+    assert_eq!(
+        close_cycle17(&input(&forged)),
+        Err(Cycle17Error::Loop(LoopSummaryError::NonExactCustody))
+    );
+    // The unmutated certificate passes the same replay step and only then
+    // stops on the placeholder evidence that follows it.
+    assert!(!matches!(
+        close_cycle17(&input(&loop_summary)),
+        Err(Cycle17Error::Loop(_))
+    ));
+}
