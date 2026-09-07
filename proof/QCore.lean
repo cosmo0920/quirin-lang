@@ -46,6 +46,7 @@ import QCore.Resource
 import QCore.ResearchExtensions
 import QCore.TypedErrors
 import QCore.TypedFieldAccess
+import QCore.ExitResiduals
 import QCore.Usage
 import QCore.UsageDemand
 import QCore.WholeProgram

@@ -2,6 +2,7 @@ import QCore.NullableRemoval
 import QCore.ContextualCustody
 import QCore.CustodySummary
 import QCore.TypedFieldAccess
+import QCore.ExitResiduals
 
 #print axioms QCore.CustodySummary.unvalidated_analysis_never_validates
 #print axioms QCore.CustodySummary.no_reachable_exit_never_validates
@@ -159,3 +160,41 @@ import QCore.TypedFieldAccess
 #print axioms QCore.TypedFieldAccess.an_admitted_access_does_not_hide_a_leak
 #print axioms QCore.TypedFieldAccess.an_admitted_access_preserves_a_discharged_lifetime
 #print axioms QCore.TypedFieldAccess.the_whitelist_is_not_empty
+
+#print axioms QCore.ExitResiduals.a_refused_statement_is_unsupported
+#print axioms QCore.ExitResiduals.a_refused_statement_is_never_safe
+#print axioms QCore.ExitResiduals.a_remaining_indirect_access_still_refuses
+#print axioms QCore.ExitResiduals.an_unadmitted_actual_refuses_the_statement
+#print axioms QCore.ExitResiduals.a_partial_argument_never_admits
+#print axioms QCore.ExitResiduals.a_non_borrowed_position_never_admits
+#print axioms QCore.ExitResiduals.an_actual_beyond_the_declared_vector_never_admits
+#print axioms QCore.ExitResiduals.an_uncontracted_callee_never_admits
+#print axioms QCore.ExitResiduals.unread_declarations_never_admit_an_actual
+#print axioms QCore.ExitResiduals.a_union_never_admits_an_actual
+#print axioms QCore.ExitResiduals.an_incomplete_record_never_admits_an_actual
+#print axioms QCore.ExitResiduals.an_ambiguous_tag_never_admits_an_actual
+#print axioms QCore.ExitResiduals.an_aggregate_member_never_admits_an_actual
+#print axioms QCore.ExitResiduals.a_qualified_member_never_admits_an_actual
+#print axioms QCore.ExitResiduals.a_mismatched_base_never_admits_an_actual
+#print axioms QCore.ExitResiduals.a_bound_base_never_admits_an_actual
+#print axioms QCore.ExitResiduals.a_chained_access_never_admits_an_actual
+#print axioms QCore.ExitResiduals.the_actual_whitelist_is_not_empty
+#print axioms QCore.ExitResiduals.a_scalar_member_is_admitted_at_a_borrowed_position
+#print axioms QCore.ExitResiduals.an_admitted_field_read_changes_no_custody
+#print axioms QCore.ExitResiduals.an_admitted_field_read_does_not_discharge_a_live_identity
+#print axioms QCore.ExitResiduals.an_admitted_field_read_preserves_a_discharged_lifetime
+#print axioms QCore.ExitResiduals.anyLive_append
+#print axioms QCore.ExitResiduals.discharged_implies_every_identity_settled
+#print axioms QCore.ExitResiduals.discharged_implies_a_fully_modeled_path
+#print axioms QCore.ExitResiduals.discharged_implies_no_joined_disposition
+#print axioms QCore.ExitResiduals.discharged_exit_is_sound
+#print axioms QCore.ExitResiduals.residual_implies_a_live_identity
+#print axioms QCore.ExitResiduals.residual_implies_a_fully_modeled_path
+#print axioms QCore.ExitResiduals.an_unmodeled_path_is_never_discharged
+#print axioms QCore.ExitResiduals.an_unmodeled_path_alleges_no_residual
+#print axioms QCore.ExitResiduals.a_joined_disposition_is_never_discharged
+#print axioms QCore.ExitResiduals.a_poisoned_path_is_unknown_at_every_exit
+#print axioms QCore.ExitResiduals.a_joined_exit_is_discharged_only_if_both_paths_are
+#print axioms QCore.ExitResiduals.close_preserves_precision
+#print axioms QCore.ExitResiduals.a_discharged_exit_does_not_promote_an_imprecise_program
+#print axioms QCore.ExitResiduals.every_exit_answer_is_reachable
