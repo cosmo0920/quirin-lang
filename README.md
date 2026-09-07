@@ -815,3 +815,27 @@ raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lea
 audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
+
+Enforced process limits (2026-09-07): the verifier host gains a target-qualified
+`linux-rlimit-v1` execution profile that installs a package's declared limits
+with `setrlimit` before `exec` — `RLIMIT_AS`, `RLIMIT_CPU`, `RLIMIT_CORE`,
+`RLIMIT_FSIZE`, `RLIMIT_NOFILE`, `RLIMIT_NPROC` — on top of the existing wall
+deadline, output caps and process-group kill. A declared limit kind the profile
+cannot enforce, and every non-Linux target, are refused before spawning; there
+is no downgrade path. The default stays the explicitly labeled
+`unenforced-legacy` profile, which now names the kinds it did not enforce.
+Executions record the achieved limits, their source and the outcome; every
+non-completed outcome remains a scoped `Unknown` under QP006 with no
+certificate, never a program `Unsafe`. Adversarial fixtures bound memory growth
+(exit 2 at 4.7 ms under an 8 MiB `RLIMIT_AS`, while the same fixture completes
+under the legacy profile), output flooding, a wall hang (300 ms), a CPU spin
+(SIGKILL at 1.004 s against a 60 s wall clock), a surviving descendant and a
+`max_processes` fork rejection, plus a pre-spawn refusal in 51 us. All five
+shipped packages answer identically under both profiles across their 11
+capabilities. `PluginLimits` gains an optional declared-kind map, making
+`qcore-schemas` 3.0.0 under its documented policy; manifests declaring no kind
+serialize byte-identically. All 837 workspace tests, 47 provider tests, 43 Python
+tests, 20 Lean audits and the standing gates pass. This is limit enforcement,
+not an OS sandbox: filesystem/network confinement, per-tree process quotas and
+default profile wiring remain open (card P03). Evidence:
+`docs/reports/remaining-p02/README.md`.

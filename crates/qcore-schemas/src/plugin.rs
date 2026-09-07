@@ -124,6 +124,16 @@ pub struct PluginLimits {
     /// Maximum JSON payload bytes for both requests and responses; the
     /// four-byte frame header is additional. Stderr has a separate 64 KiB cap.
     pub output_bytes: usize,
+    /// Additional declared limit *kinds*, keyed by kind name.
+    ///
+    /// This field is a declaration, not an enforcement mechanism: whether any
+    /// kind here (or `memory_bytes` above) is actually applied depends on the
+    /// host's process execution profile. A profile that cannot enforce a
+    /// declared kind must refuse the package rather than run it unenforced.
+    /// Empty by default and omitted from the serialized manifest when empty,
+    /// so existing manifests round-trip byte-identically.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub additional: BTreeMap<String, u64>,
 }
 
 impl Default for PluginLimits {
@@ -132,8 +142,22 @@ impl Default for PluginLimits {
             timeout_ms: 5_000,
             memory_bytes: 256 * 1024 * 1024,
             output_bytes: DEFAULT_MAX_FRAME_BYTES,
+            additional: BTreeMap::new(),
         }
     }
+}
+
+/// Limit-kind names that name a mandatory [`PluginLimits`] field. Repeating one
+/// in `additional` would leave two declarations of the same kind, so it is
+/// rejected rather than silently resolved in favor of either.
+const RESERVED_LIMIT_KINDS: [&str; 3] = ["timeout_ms", "memory_bytes", "output_bytes"];
+
+fn valid_limit_kind(kind: &str) -> bool {
+    (1..=64).contains(&kind.len())
+        && kind
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+        && !RESERVED_LIMIT_KINDS.contains(&kind)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -203,6 +227,11 @@ impl PluginManifest {
             || self.limits.memory_bytes == 0
             || self.limits.output_bytes == 0
             || self.limits.output_bytes > 64 * 1024 * 1024
+            || self
+                .limits
+                .additional
+                .keys()
+                .any(|kind| !valid_limit_kind(kind))
         {
             return Err(ManifestError::InvalidLimits);
         }

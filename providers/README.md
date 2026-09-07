@@ -112,10 +112,16 @@ guarantee is added. `qcorec` default provider selection is unchanged. The standa
 binary's `--verify-package` mode check an installed package; no new protocol
 message or implicit network lookup is involved.
 
-The process-host containment remains its existing Unix process-group,
-deadline/output behavior; package creation does not add an OS sandbox or a
-new memory-limit enforcement mechanism. Core/host build and tests remain
-independent of this workspace and of installed provider packages.
+The process-host containment under the default `unenforced-legacy` execution
+profile remains its existing Unix process-group, deadline/output behavior;
+package creation adds no OS sandbox. A host may instead select the
+target-qualified `linux-rlimit-v1` profile, which installs the manifest's
+declared `limits` with `setrlimit` before `exec` and refuses any package
+declaring a limit kind it cannot enforce; see
+[enforced process limits](../docs/reports/remaining-p02/README.md). Neither
+profile confines the filesystem or the network, and neither uses namespaces,
+cgroups or seccomp. Core/host build and tests remain independent of this
+workspace and of installed provider packages.
 
 The conformance workspace also contains `callback_proposal_writer`, a schema-only
 record-exchange fixture. Its paired test uses the trusted declared-reactor
