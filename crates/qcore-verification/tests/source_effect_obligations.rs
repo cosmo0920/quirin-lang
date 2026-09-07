@@ -37,6 +37,20 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use std::sync::Arc;
 
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent source-obligation test: {reason}");
+            false
+        }
+    }
+}
+
 const RULES: &str = include_str!("../../../contract/qcore/library/source_projection.qcore");
 /// Declared ChunkIO Boolean model in `contract/profiles/fluent-bit`: record
 /// `cio_chunk`, field `lock`. `error_n` is the ordinary metadata field a frame
@@ -196,6 +210,9 @@ fn assert_inventory(
 
 #[test]
 fn nested_calls_in_returns_arguments_conditions_and_initializers_stay_unknown() {
+    if !clang_available() {
+        return;
+    }
     let helper = frame_helper();
     let helpers = std::slice::from_ref(&helper);
 
@@ -312,6 +329,9 @@ fn nested_calls_in_returns_arguments_conditions_and_initializers_stay_unknown() 
 
 #[test]
 fn indirect_calls_and_callback_fields_stay_unknown() {
+    if !clang_available() {
+        return;
+    }
     // Call through a file-scope function pointer: the callee is an
     // `LValueToRValue` load, not a `FunctionToPointerDecay` of a `FunctionDecl`.
     let indirect = source_of(
@@ -339,6 +359,9 @@ fn indirect_calls_and_callback_fields_stay_unknown() {
 
 #[test]
 fn unreachable_statements_are_imported_and_unmodeled_dead_code_fails_closed() {
+    if !clang_available() {
+        return;
+    }
     // A statement after `return` is imported into the checked program — it is
     // visited, not erased — while neither Boolean prestate executes it.
     let source = source_of("", "return p->lock; p->lock = 0;");
@@ -383,6 +406,9 @@ fn unreachable_statements_are_imported_and_unmodeled_dead_code_fails_closed() {
 
 #[test]
 fn scope_exclusions_leave_definitions_outside_the_derived_inventory() {
+    if !clang_available() {
+        return;
+    }
     // (a) Header definitions are outside the inventory by construction: the
     // enumeration reads the main source text only.
     let directory = std::env::temp_dir().join(format!("qcore-e01-{}", std::process::id()));
@@ -526,6 +552,9 @@ fn test_manifest(plugin_id: &str, target: &TargetProfile) -> PluginManifest {
 
 #[test]
 fn a_provider_cannot_remove_or_substitute_a_requested_obligation() {
+    if !clang_available() {
+        return;
+    }
     let summary = checked(SOURCE, vec![]);
     let replay = task(&summary, CONTRACT);
     let required = replay
@@ -630,6 +659,9 @@ fn a_provider_cannot_remove_or_substitute_a_requested_obligation() {
 
 #[test]
 fn deleting_a_lifecycle_relevant_statement_changes_the_derived_obligation_set() {
+    if !clang_available() {
+        return;
+    }
     let helper = frame_helper();
     let helpers = std::slice::from_ref(&helper);
     let control = source_of(

@@ -9,6 +9,14 @@ use std::process::Command;
 
 #[test]
 fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecars() {
+    if let Err(reason) = qcore_c_gateway::clang_command() {
+        assert!(
+            std::env::var_os("QCORE_CLANG").is_none(),
+            "explicit QCORE_CLANG is invalid: {reason}"
+        );
+        eprintln!("skipping Clang-dependent Cycle 19 command test: {reason}");
+        return;
+    }
     let root = std::env::temp_dir().join(format!("qcore-cycle19-command-{}", std::process::id()));
     fs::create_dir_all(root.join("build")).unwrap();
     let files = [

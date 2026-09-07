@@ -3,9 +3,33 @@ use serde_json::{Value, json};
 use std::fs;
 use std::path::PathBuf;
 use std::process::{Command, Output};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{
+    Once, OnceLock,
+    atomic::{AtomicUsize, Ordering},
+};
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
+static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
+static CLANG_WARNING: Once = Once::new();
+
+fn clang_available() -> bool {
+    let availability =
+        CLANG_AVAILABILITY.get_or_init(|| qcore_c_gateway::clang_command().map(|_| ()));
+    match availability {
+        Ok(()) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            CLANG_WARNING.call_once(|| {
+                eprintln!("skipping Clang-dependent configured-audit tests: {reason}");
+            });
+            false
+        }
+    }
+}
+
 struct Fixture(PathBuf);
 impl Fixture {
     fn new(source: &str) -> Self {
@@ -130,6 +154,9 @@ fn commit_source(fixture: &Fixture, source: &str) -> String {
 
 #[test]
 fn checkout_head_reanalyzes_changed_source_without_reusing_historical_evidence() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int entry(void) { return 7; }");
     let changed = "extern void opaque(void); void entry(void) { opaque(); }";
     let revision = commit_source(&fixture, changed);
@@ -172,6 +199,9 @@ fn checkout_head_reanalyzes_changed_source_without_reusing_historical_evidence()
 
 #[test]
 fn checkout_head_rejects_dirty_selected_bytes_and_historical_provider_evidence() {
+    if !clang_available() {
+        return;
+    }
     for cause in ["dirty", "provider", "required", "unknown_policy"] {
         let fixture = Fixture::new("int entry(void) { return 7; }");
         fixture.mutate("audit.json", |value| {
@@ -220,6 +250,9 @@ fn checkout_head_rejects_dirty_selected_bytes_and_historical_provider_evidence()
 
 #[test]
 fn checkout_head_commit_change_retires_identity_even_with_identical_source() {
+    if !clang_available() {
+        return;
+    }
     let source = "int entry(void) { return 7; }";
     let fixture = Fixture::new(source);
     fixture.mutate("audit.json", |value| {
@@ -274,6 +307,9 @@ fn inventory(fixture: &Fixture, arguments: &[&str]) -> Value {
 
 #[test]
 fn current_inventory_keeps_distinct_commands_and_unsupported_configurations_unknown() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new(
         "extern void opaque(void);\nvoid entry(void) {\n#ifdef CALL_OPAQUE\nopaque();\n#endif\n}\n",
     );
@@ -320,6 +356,9 @@ fn current_inventory_keeps_distinct_commands_and_unsupported_configurations_unkn
 
 #[test]
 fn current_inventory_reanalyzes_new_commits_and_never_admits_dirty_source() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int entry(void) { return 1; }");
     let first = inventory(&fixture, &[""]);
     let revision = commit_source(&fixture, "int entry(void) { return 1; }");
@@ -351,6 +390,9 @@ fn current_inventory_reanalyzes_new_commits_and_never_admits_dirty_source() {
 
 #[test]
 fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files() {
+    if !clang_available() {
+        return;
+    }
     for (source, expected) in [
         ("int value(void) { return 7; }", "Safe"),
         (
@@ -396,6 +438,9 @@ fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files(
 fn compilation_database_path_aliases_select_the_canonical_checkout_source() {
     use std::os::unix::fs::symlink;
 
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int value(void) { return 7; }");
     let alias = fixture.0.join("checkout-alias");
     symlink(fixture.0.join("checkout"), &alias).unwrap();
@@ -420,6 +465,9 @@ fn compilation_database_path_aliases_select_the_canonical_checkout_source() {
 /// filed under those inputs could be reused for a different analysis.
 #[test]
 fn a_used_header_change_invalidates_the_recorded_compile_task_identity() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new(
         "#include \"effect.h\"\nextern void opaque(void); void entry(void) { EFFECT; }",
     );
@@ -471,6 +519,9 @@ fn a_used_header_change_invalidates_the_recorded_compile_task_identity() {
 /// not resolve itself; identical repeats describe one task and are audited once.
 #[test]
 fn repeated_and_conflicting_compile_records_for_one_file_are_distinguished() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int value(void) { return 7; }");
     fixture.mutate("compile_commands.json", |database| {
         let repeat = database[0].clone();
@@ -553,6 +604,9 @@ fn absent_selections_contracts_and_unsupported_flags_fail_closed() {
 
 #[test]
 fn selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int value(void) { return 7; }");
     fixture.mutate("profiles/sample/profile.json", |profile| {
         profile["pins"]["sample"]["clean_paths"] = json!(["irrelevant"]);
@@ -570,6 +624,9 @@ fn selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths() 
 
 #[test]
 fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
+    if !clang_available() {
+        return;
+    }
     for local_shadow in [false, true] {
         let fixture = Fixture::new(
             "#include <effect.h>\nextern void opaque(void); void entry(void) { EFFECT; }",
@@ -617,6 +674,9 @@ fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
 #[cfg(not(windows))]
 #[test]
 fn pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new(
         "#ifdef __PIE__\n#define EFFECT ((void)0)\n#else\n#define EFFECT opaque()\n#endif\nextern void opaque(void); void entry(void) { EFFECT; }",
     );

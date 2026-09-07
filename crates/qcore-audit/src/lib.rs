@@ -151,6 +151,13 @@ fn resolve(base: &Path, path: &Path) -> PathBuf {
     }
 }
 
+fn repository_path(path: &Path) -> String {
+    path.iter()
+        .map(|component| component.to_string_lossy())
+        .collect::<Vec<_>>()
+        .join("/")
+}
+
 fn verify_pinned_bytes(
     checkout: &Path,
     revision: &str,
@@ -166,10 +173,11 @@ fn verify_pinned_bytes(
     let file = canonical
         .strip_prefix(checkout)
         .map_err(|_| "source outside selected checkout")?;
+    let git_file = repository_path(file);
     let pinned = Command::new("git")
         .arg("-C")
         .arg(checkout)
-        .args(["show", &format!("{revision}:{}", file.to_string_lossy())])
+        .args(["show", &format!("{revision}:{git_file}")])
         .output()
         .map_err(|error| error.to_string())?;
     if !pinned.status.success() || pinned.stdout != source {
@@ -324,8 +332,8 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 .map_err(|error| error.to_string())?;
             let file = canonical_file
                 .strip_prefix(&checkout)
-                .map_err(|_| "source outside selected checkout")?
-                .to_string_lossy();
+                .map_err(|_| "source outside selected checkout")?;
+            let file = repository_path(file);
             let pin = profile
                 .pin_for(library)
                 .ok_or("selected source has no pin")?;

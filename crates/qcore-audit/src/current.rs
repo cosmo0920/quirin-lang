@@ -150,7 +150,7 @@ impl CurrentAudit {
         let relative = expected_source
             .strip_prefix(&self.checkout)
             .map_err(|_| "source outside current checkout")?;
-        let file = relative.to_string_lossy();
+        let file = crate::repository_path(relative);
         let bytes = fs::read(&entry.file).map_err(|error| error.to_string());
         let mut configuration = json!({
             "source_revision": self.revision, "file": entry.file, "expected_source": expected_source,

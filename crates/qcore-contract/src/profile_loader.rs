@@ -697,14 +697,20 @@ pub fn load_audited_bundle(
             continue;
         };
         let actual = sha256_hex(&bytes);
-        if actual != audited.sha256 {
+        let verified_bytes = if actual == audited.sha256 {
+            Some(bytes)
+        } else {
+            pinned_lf_bytes_for_crlf_checkout(checkout, revision, &audited.path, &bytes)
+                .filter(|canonical| sha256_hex(canonical) == audited.sha256)
+        };
+        let Some(bytes) = verified_bytes else {
             diagnostics.push(FileAuditDiagnostic::DigestMismatch {
                 path: audited.path.clone(),
                 expected: audited.sha256.clone(),
                 actual,
             });
             continue;
-        }
+        };
         files.insert(
             audited.path.clone(),
             String::from_utf8_lossy(&bytes).into_owned(),
@@ -718,6 +724,42 @@ pub fn load_audited_bundle(
     } else {
         Err(diagnostics)
     }
+}
+
+/// Git may materialize a pinned LF blob as CRLF in a clean Windows worktree.
+/// Accept that one reversible checkout transform only when the canonical blob
+/// at the declared revision has exactly the expected contents. Any other byte
+/// difference remains a digest mismatch.
+fn pinned_lf_bytes_for_crlf_checkout(
+    checkout: &Path,
+    revision: &str,
+    path: &str,
+    worktree: &[u8],
+) -> Option<Vec<u8>> {
+    if !worktree.windows(2).any(|pair| pair == b"\r\n") {
+        return None;
+    }
+    let blob = Command::new("git")
+        .arg("-C")
+        .arg(checkout)
+        .args(["show", &format!("{revision}:{path}")])
+        .output()
+        .ok()?;
+    if !blob.status.success() {
+        return None;
+    }
+    let mut normalized = Vec::with_capacity(worktree.len());
+    let mut index = 0;
+    while index < worktree.len() {
+        if worktree.get(index..index + 2) == Some(b"\r\n") {
+            normalized.push(b'\n');
+            index += 2;
+        } else {
+            normalized.push(worktree[index]);
+            index += 1;
+        }
+    }
+    (normalized == blob.stdout).then_some(blob.stdout)
 }
 
 fn is_safe_name(name: &str) -> bool {

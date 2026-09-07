@@ -43,8 +43,17 @@ impl Fixture {
     }
 
     fn entry(&self, options: &[&str]) -> CompileEntry {
-        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into());
-        let mut arguments = vec![compiler.as_str(), "-std=c11"];
+        self.entry_with_compiler("clang", options)
+    }
+
+    fn clang_entry(&self, options: &[&str]) -> CompileEntry {
+        let command = qcore_c_gateway::clang_command().unwrap();
+        let compiler = command.get_program().to_str().unwrap();
+        self.entry_with_compiler(compiler, options)
+    }
+
+    fn entry_with_compiler(&self, compiler: &str, options: &[&str]) -> CompileEntry {
+        let mut arguments = vec![compiler, "-std=c11"];
         arguments.extend_from_slice(options);
         arguments.extend(["-c", "src/unit.c"]);
         compile_entries(
@@ -57,7 +66,7 @@ impl Fixture {
 
     /// Build the identity exactly as the configured driver does.
     fn identity(&self, source: &str, options: &[&str], dependencies: &[(&str, &str)]) -> Value {
-        let entry = self.entry(options);
+        let entry = self.clang_entry(options);
         let resolved = compiler_options(&entry).unwrap();
         let unit = C11TranslationUnit {
             source,
@@ -95,7 +104,16 @@ impl Drop for Fixture {
 }
 
 fn clang_available() -> bool {
-    qcore_c_gateway::clang_command().is_ok()
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            false
+        }
+    }
 }
 
 const SOURCE: &str = "#include <choice.h>\nint observed(void) { return CHOICE; }";
