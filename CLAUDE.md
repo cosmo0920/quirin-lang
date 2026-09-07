@@ -877,3 +877,70 @@ Cycle 19 units stay 2 Safe / 42 provisional Unsafe / 137 Unknown plus four
 data-only units, CT coverage stays 11/50 mapped, the contract corpus stays 59
 modules and full language conformance stays false. `qcore-schemas` is 3.0.0;
 prose revision 0.3, protocol v1 and evidence v2 are unchanged.
+
+Delegated increment (2026-09-08): five bounded cards landed through isolated
+worktrees with per-card reports; this paragraph supersedes nothing above and
+each card's record keeps its own boundaries.
+- Multi-provider composition (E03): seventeen composition properties verified
+  against unchanged code and pinned; two fail-closed repairs in
+  `compose_verification` — an unchecked `Unsafe` component outcome now
+  downgrades to Unknown under QP010 instead of being republished verbatim, and
+  unequal component premise sets refuse under QP012 instead of publishing one
+  component's assumptions. Fifteen audited Lean theorems in a new
+  `Composition` namespace, no new axiom. Four completeness boundaries stay
+  recorded open (E03-B in the acceptance matrix). Evidence:
+  `docs/reports/remaining-e03/README.md`.
+- Enforced confinement (P03): the verifier host gains a target-qualified
+  `linux-confined-v1` profile composing P02's setrlimit plan with Landlock
+  filesystem confinement and a `CLONE_NEWUSER|CLONE_NEWNET` network namespace
+  installed before exec. No default policy; five fail-closed pre-spawn refusal
+  grounds, each a scoped Unknown under QP006 with no downgrade. Twelve
+  adversarial fixtures with legacy controls measure a blocked localhost
+  connect (0 vs 1 accepted connections), blocked out-of-path read/write and
+  working admitted paths. This is confinement of two named resource classes,
+  not an OS sandbox: no seccomp, no cgroup, no other namespace, and admitted
+  paths stay fully reachable. The default remains `unenforced-legacy`.
+  Evidence: `docs/reports/remaining-p03/README.md`.
+- ChunkIO counter through the process boundary (P04): the unsigned
+  unit-counter contract now runs as package `qcore.chunkio` 0.5.0, computing
+  its own typed path projection with no derived result in the request; the
+  core evaluates the pinned contract on its sealed import and only then
+  requires agreement, so agreement alone discharges nothing. Byte-identical
+  certificate parity with the retained in-process route on all four helpers;
+  missing-evidence, tampered and 25 mutation/refusal cases fail closed.
+  `qcore-schemas` is 4.0.0 (three source-incompatible additions; existing wire
+  bytes unchanged and pinned). Thirteen other in-process ChunkIO capabilities
+  keep named blockers. Evidence: `docs/reports/remaining-p04/README.md`.
+- Source mutex/guard lowering (T03): `source.mutex.guard.v1` lowers a lexical
+  `with lock m as g` guard onto the unedited `CheckedMutexInvariantV1`
+  checker, with C11 emission and independent reference execution compared
+  line-for-line under four fixed ASan/UBSan/LSan runs. Twenty-nine tests pin
+  exact diagnostic vectors across Q610–Q622 with Q600/Q013 refusals; guard
+  binders stay body-local and no diagnostic code was added or changed. Fourteen
+  new public Lean theorems; the Lean event model still lacks a
+  resource-destruction constructor, so that half stays Rust-tested. CT26,
+  CT27, CT29 and CT30 mappings are proposed with measured stages, but the
+  manifest is unchanged pending harness fixture integration: CT stays 11/50.
+  Evidence: `docs/reports/remaining-t03/README.md`.
+- Recursive-summary design (C03): neutral-frame recursion is specified as the
+  next W4 family — a two-point per-function lattice with monotone descent to
+  the greatest post-fixed point, an empty alias obligation and a ten-item
+  post-fixed-point validation contract — motivated by a 309-file census
+  (25 of 45 self-recursive functions in scope are effect-neutral; the
+  implemented routes reach at most 3). A demonstrated counterexample shows
+  validation-by-reanalysis alone cannot refuse a circular effectful candidate,
+  so any effectful route keeps a rank. Design only: no production file
+  changed, and heap-link chain teardown is rejected with recorded ASan
+  hazards. Evidence: `docs/reports/remaining-c03/README.md` and
+  `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md`.
+
+Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
+42 provisional Unsafe / 137 Unknown plus four data-only units, CT coverage
+stays 11/50 mapped, the contract corpus stays 59 modules and full language
+conformance stays false. The four pinned 185-unit artifacts were not
+re-measured (CORPUS-REPIN remains open). Merged gate at this checkpoint:
+1080 workspace tests, 51 provider tests, 43 Python tests, 21 Lean audits,
+both reevaluation examples exit 0, fmt and clippy clean. A pre-existing P02
+`RLIMIT_NPROC` conformance test is load-flaky (it counts every process of the
+real UID); recorded in `docs/reports/remaining-p03/README.md` §9.1 with the
+assertion deliberately not weakened.

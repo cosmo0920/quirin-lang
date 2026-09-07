@@ -28,15 +28,15 @@
     "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
     "prose_specification_revision": "0.3",
     "documentation_revision": "0.3",
-    "qcore_schemas_rust_api": "3.0.0",
-    "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field, which the documented policy makes a major change (docs/reports/schema-1-compatibility). Serde output for a manifest declaring no additional kinds is byte-identical.",
+    "qcore_schemas_rust_api": "4.0.0",
+    "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Existing wire bytes are unchanged and pinned by crates/qcore-schemas/tests/counter_request_wire.rs.",
     "plugin_protocol": "v1 (unchanged)",
     "semantic_evidence": "v2 (unchanged)",
     "program_schema_and_profile": "v2 (unchanged)",
     "source_set_profile_manifest": "v1 (unchanged)",
     "compile_task_identity": "1 (new in G01)",
     "provider_packages": {
-      "qcore.chunkio": "0.4.0",
+      "qcore.chunkio": "0.5.0",
       "qcore.cmetrics": "0.2.0",
       "qcore.ctraces": "0.1.0",
       "qcore.libevent": "0.1.0",
@@ -1057,9 +1057,9 @@
     "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
   },
   "validation": {
-    "note": "run metadata for the standing per-change gate at this checkpoint, not a statement of specification coverage.",
-    "workspace_tests": 997,
-    "provider_tests": 47,
+    "note": "run metadata for the standing per-change gate executed 2026-09-08 on the merged E03/P03/P04/T03/C03 tree, not a statement of specification coverage.",
+    "workspace_tests": 1080,
+    "provider_tests": 51,
     "python_evidence_validator_tests": 43,
     "lean_audits": 21,
     "lean_audit_files": [
@@ -1119,18 +1119,6 @@
       "source": "docs/reports/remaining-o00/README.md SS8"
     },
     {
-      "id": "T03",
-      "title": "Source lowering for CheckedMutexInvariantV1",
-      "why": "T02 is model-only. `with lock ... as ...` still routes to Q600 and no mutex creation form exists, so CT26-CT34/CT46/CT48 stay unmapped and R03's source class stays absent.",
-      "source": "docs/reports/remaining-t01/README.md, docs/reports/remaining-t02/README.md"
-    },
-    {
-      "id": "P03",
-      "title": "Filesystem and network confinement for process providers",
-      "why": "P02 enforces rlimits only. filesystem_inputs and network_access remain declarations, there is no namespace/cgroup/seccomp mechanism, and a per-execution child-process quota needs a cgroup.",
-      "source": "docs/reports/remaining-p02/README.md SS7"
-    },
-    {
       "id": "P01-F2",
       "title": "Bind non-digest manifest declarations to the executable's embedded template at enable time",
       "why": "schema-valid, digest-intact edits to limits and targets pass qcorec plugins verify/enable; only package.py verify, which executes the package's self-check, detects them. It cannot admit a Safe verdict, but it changes what the enforced profile installs.",
@@ -1159,6 +1147,49 @@
       "title": "Make the CT manifest and its summarizer stage-derived (T00.1-T00.9)",
       "why": "manifest stage statuses are host-unconditional strings, `cfg` and `type_checker` conflate four real passes, sanitizer evidence is recorded rather than gated, and acceptance.json's two scalars treat a source-rejection case and a four-scenario native case as one identical unit of coverage.",
       "source": "docs/reports/remaining-t00/README.md SS4, SS6"
+    },
+    {
+      "id": "E03-B",
+      "title": "Composite premise union, per-capability build digests, distinct observation obligation ids, absent-provider dispatch verdict",
+      "why": "four recorded completeness boundaries: the published representative carries one component's coverage/bounds/provenance (conservative), derive_task binds build_digest to the capability's semantic profile (two capabilities of one program always QP015), ObservationCoverageComplete yields one obligation id for two providers (sound only because every component must be Safe, now pinned), and dispatch_scope continues past an unregistered provider so composed.verdict alone can read Safe while verified() is false (masked by Q700).",
+      "source": "docs/reports/remaining-e03/README.md"
+    },
+    {
+      "id": "T03-CT",
+      "title": "Integrate the proposed CT26/CT27/CT29/CT30 mappings through the CT harness",
+      "why": "T03 measured parser/type_checker (and for CT26 reference_execution and native_backend) stages with archived fixtures, but the harness fails closed on a fixture directory whose manifest row reads unmapped, so acceptance needs fixture relocation plus a manifest edit plus a harness run in one deliberate change. CT stays 11/50 until then.",
+      "source": "docs/reports/remaining-t03/README.md SS8"
+    },
+    {
+      "id": "T03-F",
+      "title": "NoWriteOccurred from source, task composition for the guard profile, guard-scoped facts, Lean resource-destruction event",
+      "why": "every T03 certificate carries InvariantPredicateDeclared because no source form reaches NoWriteOccurred; task creation inside the guard profile is refused (blocks CT28/CT31/CT32); CT48 has no source form; the Lean Event model covers generation lifetime only, leaving the Destroy half Rust-tested.",
+      "source": "docs/reports/remaining-t03/README.md"
+    },
+    {
+      "id": "C03-NFR",
+      "title": "Implement the neutral-frame recursion route (C03 units U1-U4, U6-U7)",
+      "why": "the reviewed design admits ~9 corpus functions alone and ~25 with C02-P; the emulation probe is measurably more permissive than the designed route at component withdrawal (pinned), and W4 can publish an InferredValidated record derived using a declaration for the same function (U7, observation not defect).",
+      "source": "docs/reports/remaining-c03/README.md, docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md"
+    },
+    {
+      "id": "P03-F",
+      "title": "Remaining confinement bounds: per-execution child quota, default profile wiring, unexecuted refusal grounds in CI",
+      "why": "linux-confined-v1 confines filesystem and network only; no seccomp/cgroup/other namespace, admitted paths stay fully reachable, and refusal grounds 1 (non-Linux) and 4 (kernel without Landlock/userns) are implemented but were not executed on this host - a CI-matrix item.",
+      "source": "docs/reports/remaining-p03/README.md"
+    },
+    {
+      "id": "P04-NEXT",
+      "title": "Remaining in-process ChunkIO capabilities with named blockers",
+      "why": "thirteen in-process modules stay: list-unlink relates two summaries, the memory-backend destructor carries a call in its path, the cleanup-outcome family carries descriptor/mapping residual custody, traversal/parent_teardown are behind the sealed SourceMatch boundary, and the rest are compositions.",
+      "source": "docs/reports/remaining-p04/README.md"
+    },
+    {
+      "id": "P02-FLAKE",
+      "title": "RLIMIT_NPROC conformance test is load-dependent",
+      "why": "a_declared_process_limit_stops_the_fixture_from_forking installs RLIMIT_NPROC=1, which counts every process of the real UID, so under load the host observes Io(Broken pipe) instead of Terminated. Two independent runs reproduced it; it passes in isolation and passed both merged full-gate runs. The assertion is deliberately not weakened.",
+      "source": "docs/reports/remaining-p03/README.md SS9.1, docs/reports/remaining-t03/README.md"
     }
-  ]
+  ],
+  "updated": "2026-09-08 (delegated increment: E03, P03, P04, T03, C03 merged; counts re-derived from the executed gate)"
 }
