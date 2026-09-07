@@ -1,0 +1,44 @@
+{
+  "baseline_commit": "1ff50b7",
+  "baseline_report": "docs/reports/w6-worker-allocation",
+  "artifacts": [
+    {
+      "artifact": "source",
+      "bytes": 1663331,
+      "sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+      "byte_identical": true
+    },
+    {
+      "artifact": "diagnostics",
+      "bytes": 11006128,
+      "sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "baseline_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+      "byte_identical": true
+    },
+    {
+      "artifact": "chunk-contracts",
+      "bytes": 4140662,
+      "sha256": "d3468c2a88971b276a5e1e482d883e21084c9e62a99f3df02f902e828cae30ab",
+      "baseline_sha256": "d3468c2a88971b276a5e1e482d883e21084c9e62a99f3df02f902e828cae30ab",
+      "byte_identical": true
+    },
+    {
+      "artifact": "source-effects",
+      "bytes": 113871,
+      "sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "baseline_sha256": "862cf4edc433e35f6675fdbc51f0caccbe00d2ebdc161309a46427db03d6abb7",
+      "byte_identical": true
+    }
+  ],
+  "raw_counts": {
+    "Safe": 2,
+    "provisional_Unsafe": 42,
+    "Unknown": 137,
+    "data_only": 4
+  },
+  "source_effects": {
+    "checked": 3,
+    "Unknown": 93
+  }
+}

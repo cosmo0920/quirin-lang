@@ -650,3 +650,17 @@ refinement remains a premise. All 775 workspace tests, 31 provider tests,
 Loans, owned error payloads, general owned graphs, nested workers, shared memory
 and other-platform execution remain open. Evidence:
 `docs/reports/w6-worker-allocation/README.md`.
+
+Typed body comparison boundary (2026-09-07): W5 moves the remaining generic
+Clang body-normalization/comparison algorithm into `qcore-c-gateway`. Its public
+opaque comparison accepts caller-supplied references and unverified revision
+labels; it establishes only conservative typed-body equality. The compiler's
+reviewed-library `SourceMatch` remains a sealed wrapper with no public constructor,
+conversion or deserialization. Existing traversal/parent reference selection,
+pin checks, policy premises and serialized report shape are unchanged. Five
+unrelated-C gateway tests and four compile-fail checks exercise this boundary;
+all 1,447 production comparison tokens match after documented API renames.
+All 784 workspace tests, standing gates, 31 provider tests, 43 Python tests and
+20 Lean audits pass; all four full Cycle19 artifacts are byte-identical. Provider
+semantic extraction, source-bound lifecycle composition and compatibility-route
+removal remain open. Evidence: `docs/reports/w5-typed-body-boundary/README.md`.

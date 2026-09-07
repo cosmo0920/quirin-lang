@@ -138,7 +138,7 @@ crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
 crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
   interprocedural summary inference (W4), opaque typed Boolean-field source import,
-  generic typed path projection and call-result def/use.
+  generic typed path projection, call-result def/use and opaque typed-body comparison.
 crates/qcore-verifier-host    # L2: registry, discovery, process provider,
   composition and certificate admission orchestration (W3).
 crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier host:
@@ -602,6 +602,13 @@ monolithic routing is gone; the workspace matches §3.1.
 **Agent guidance.** Sonnet-class for extraction mechanics with the parity
 harness from task 1 built first; Opus-class review at each deletion step and
 at every schema-surface addition requested by a provider.
+
+[Typed body comparison](reports/w5-typed-body-boundary/README.md) now lives in
+the gateway. The public comparison accepts an arbitrary reference and makes no
+safety or revision claim. Reviewed-library witness construction remains sealed
+in the integration adapter, so extraction does not admit untrusted references
+as library evidence. Exact algorithm and full serialized audit parity are archived.
+Library reference selection and lifecycle semantics still require provider work.
 
 ### W6 — Generic acceptance corpus: make CT01–CT50 the yardstick
 

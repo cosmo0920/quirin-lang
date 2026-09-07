@@ -1,0 +1,76 @@
+{
+  "base_commit": "1ff50b771735209dbff1298e887af6264e4b7233",
+  "status": "passed",
+  "workspace_tests": 784,
+  "provider_tests": 31,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 58,
+  "ct_mapped": 9,
+  "ct_unmapped": 41,
+  "source_sha256": {
+    "AGENTS.md": "3b1b9176247e394918f771be394843019ca6a778aa0d3da3d25ecd5cc4414cee",
+    "CLAUDE.md": "a82212208ffa1cc003891c791810d8f6c5674054b6aecb9aef86560a4ca4449e",
+    "README.md": "07116e5573e04e72ce127ef5a909db1b8166e308cba85cd5478f99ba38a466cd",
+    "compiler/src/lib.rs": "6c33d62c7f1294dd7827636917284c49328be53ece74d9e3eae5a2fe203915f3",
+    "compiler/src/typed_source_match.rs": "351f6fea783be3d2deb1d6082a4bd37a6607fb47fe4a40f4aad04586c5804e11",
+    "crates/qcore-c-gateway/src/lib.rs": "e690814f33ed846f0849c0d4933da01ba9933a22908977e46a76370f7a6a15ef",
+    "crates/qcore-c-gateway/src/typed_source_match.rs": "ef2c877f34c2fcf496a991fac1de26f9919c66712f6a92f8bbacf030a4bc87b7",
+    "crates/qcore-c-gateway/tests/typed_body_comparison.rs": "5ed01e8c1f68f8980015f6bb1a7edf05eeaeee42f76e72415d2f205cffb0c809",
+    "docs/GENERALIZATION_PLAN.md": "e70a4f9654b0b3893dc8ef37ee7b5a17f398f2b964de2e6a9f8115bb7c14aafa",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "88b3c64aa84560428cde66f453ee1461fcaf720fbd075bed71e622adfab567bf"
+  },
+  "commands": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "path": "workspace.log.gz",
+      "uncompressed_sha256": "f9d2313653a8d62514f4b75729cb9e40af5a47c4ad36a358c96962b5b130b614"
+    },
+    "focused": {
+      "command": "cargo test -p qcore-c-gateway --test typed_body_comparison",
+      "exit_code": 0,
+      "path": "focused.log.gz",
+      "uncompressed_sha256": "b66805a76c2d8f657c94a76b91d2a7b334eda8faa07f11e2624a3eff97916eac"
+    },
+    "checks": {
+      "command": "cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings && cargo run -p qcore-compiler --example reevaluation_probe && cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0,
+      "path": "checks.log.gz",
+      "uncompressed_sha256": "ed13ceed42c9000693da4ce3a5242bff37025503cb89a75da8adf9c494c18fd1"
+    },
+    "providers": {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline && cargo fmt --manifest-path providers/Cargo.toml --all -- --check && cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0,
+      "path": "providers.log.gz",
+      "uncompressed_sha256": "fbeda5c3d3c2dc08e5608eee1bf0b2c6c5324b1a0af98eabcb97a595e23b9191"
+    },
+    "python": {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "path": "python.log.gz",
+      "uncompressed_sha256": "cc0a72e0241603c8d42c4396aefdf127eff644c436796d39d56aeb9b3d3cbd1c"
+    },
+    "lean-build": {
+      "command": "cd proof && PATH=/home/cosmo/.elan/bin:$PATH lake build",
+      "exit_code": 0,
+      "path": "lean-build.log.gz",
+      "uncompressed_sha256": "c09060a6aa1cdc4e5d89b4df28ae9fb617711bad3a7db7fca6d3cc11af95f7e2"
+    },
+    "lean-audits": {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "path": "lean-audits.log.gz",
+      "uncompressed_sha256": "db928e3cf2702fcbc800e72e938fc5a43540bfd986be3eccb09b1270de8c5bad"
+    },
+    "audit": {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-body-comparison-source.json /tmp/qcore-body-comparison-diagnostics.json",
+      "exit_code": 0,
+      "path": "audit.log.gz",
+      "uncompressed_sha256": "53ad549ff197b2a820550f4155cf5f23c47ba717b1b11b72453b67fc5540b304"
+    }
+  },
+  "new_gateway_tests": 5,
+  "new_compile_fail_tests": 4
+}

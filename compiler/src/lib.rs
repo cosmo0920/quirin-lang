@@ -57,7 +57,6 @@ pub use qcore_core::resource_flow;
 pub mod source_call_use;
 mod source_contract;
 pub mod source_profiles;
-use qcore_c_gateway::typed_c_ast;
 pub use qcore_core::translation_validation;
 pub use qcore_core::typed_errors;
 pub mod typed_source;

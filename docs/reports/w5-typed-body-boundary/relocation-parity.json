@@ -1,0 +1,15 @@
+{
+  "baseline_commit": "1ff50b7",
+  "old_path": "compiler/src/typed_source_match.rs",
+  "new_path": "crates/qcore-c-gateway/src/typed_source_match.rs",
+  "old_sha256": "77885f0c4bc8e343e5c6823e7eed8c276736d7d72f3960bd636477a6eec13c46",
+  "new_sha256": "ef2c877f34c2fcf496a991fac1de26f9919c66712f6a92f8bbacf030a4bc87b7",
+  "production_tokens_equal_after_api_renames": true,
+  "normalized_token_count": 1447,
+  "normalized_tokens_sha256": "7a4515976cf27d07ec33bb51381f3d93cff2f5af3397d25013e8b7c7f8a36c6f",
+  "rewrites": [
+    "SourceMatch \u2192 TypedBodyComparison",
+    "check_source_match \u2192 compare_typed_body",
+    "comparison function and field-profile type visibility: crate-private \u2192 public"
+  ]
+}

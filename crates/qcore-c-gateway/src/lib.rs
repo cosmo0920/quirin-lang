@@ -15,6 +15,7 @@ mod legacy_summary;
 pub mod source_call_use;
 pub mod typed_c_ast;
 pub mod typed_source;
+pub mod typed_source_match;
 
 use qcore_contract::contract_loader;
 
