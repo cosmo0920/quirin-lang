@@ -1,8 +1,14 @@
-//! Finite source-task execution: immutable i32/unit copies, affine owned buffers
-//! and leaf workers. Model checking covers allocation/creation branches and
-//! checked worker custody effects. A reference run chooses concrete outcomes;
-//! it is not the all-path certificate. Source/native refinement, arbitrary owned
-//! graphs, loans and synchronization remain separate boundaries.
+//! Finite source-task execution: immutable i32/unit copies, affine owned buffers,
+//! one bounded scoped read loan and leaf workers. Model checking covers
+//! allocation/creation branches and checked worker custody effects. A reference
+//! run chooses concrete outcomes; it is not the all-path certificate.
+//! Source/native refinement, arbitrary owned graphs, fractional or multi-reader
+//! shares and synchronization remain separate boundaries.
+//!
+//! The read loan (card T04) is deliberately minimal: at most one loan is
+//! outstanding at a time, at most one loan argument per creation, a loan is
+//! never copied, re-lent, moved, returned or dropped, and only the creator's
+//! join closes it. Every other borrowing form stays outside this profile.
 pub use crate::scoped_tasks::ScopeId;
 use crate::scoped_tasks::{ResourceId, ResourceState, ScopedTaskLedger, TaskOutcome};
 use std::collections::{BTreeMap, BTreeSet};
@@ -25,6 +31,10 @@ pub enum ScalarType {
     Unit,
     I32,
     OwnedBuffer,
+    /// A scoped read loan of a Buffer the creator keeps owning. It is not a
+    /// value type: it cannot be a function result, an entry parameter, a copy
+    /// source, a move source or a re-loan source.
+    ReadLoan,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ScalarOperand {
@@ -32,6 +42,9 @@ pub enum ScalarOperand {
     I32(i32),
     Slot(SlotId),
     Move(SlotId),
+    /// Lend an owned Buffer to one child for the outstanding creation. The
+    /// slot keeps its binding; only the authority is suspended.
+    Loan(SlotId),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ErrorOperand {
@@ -211,18 +224,32 @@ fn targets(term: &TaskTerminatorKind) -> Vec<BlockId> {
 enum AbstractValue {
     Scalar(ScalarType),
     Owned(ResourceId),
+    /// Read authority over a resource this frame does not own. In a worker
+    /// frame the lender is outside the frame entirely, so the identity is not
+    /// registered in this frame's ledger and carries no discharge duty.
+    Loan(ResourceId),
 }
 impl AbstractValue {
     fn ty(&self) -> ScalarType {
         match self {
             Self::Scalar(ty) => *ty,
             Self::Owned(_) => ScalarType::OwnedBuffer,
+            Self::Loan(_) => ScalarType::ReadLoan,
         }
     }
+    /// Owned identity only. A loan is never an owned identity, so it can never
+    /// be returned, dropped or accounted for as one.
     fn resource(&self) -> Option<ResourceId> {
         match self {
             Self::Owned(id) => Some(*id),
             _ => None,
+        }
+    }
+    /// The identity a read is performed against, owned or borrowed.
+    fn readable(&self) -> Option<ResourceId> {
+        match self {
+            Self::Owned(id) | Self::Loan(id) => Some(*id),
+            Self::Scalar(_) => None,
         }
     }
 }
@@ -284,6 +311,21 @@ impl State {
                 }
                 _ => Err(format!("slot {id} is not an initialized owned buffer")),
             },
+            // Lending demands exclusive authority at the moment of lending, so
+            // a resource that is already loaned, moved away, reserved or
+            // dropped cannot be lent again. A loan itself is never lendable:
+            // this profile has no transitive or nested borrowing.
+            ScalarOperand::Loan(id) => match self.slots.get(id) {
+                Some(AbstractSlot::Value(AbstractValue::Owned(resource))) => {
+                    self.ledger
+                        .use_resource(0, *resource)
+                        .map_err(|e| format!("{e:?}"))?;
+                    Ok(AbstractValue::Loan(*resource))
+                }
+                _ => Err(format!(
+                    "slot {id} is not an owned buffer this task may lend"
+                )),
+            },
         }
     }
     fn take(&mut self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
@@ -298,6 +340,25 @@ impl State {
             AbstractValue::Owned(id) => Ok(id),
             _ => unreachable!(),
         }
+    }
+    /// Read authority over a slot: an owned Buffer this frame still has read
+    /// authority over — including one it has lent out — or a read loan it
+    /// holds. Exclusive authority is deliberately *not* demanded here.
+    fn readable(&self, slot: SlotId) -> Result<ResourceId, String> {
+        // A slot that is neither an owned buffer nor a loan keeps the original
+        // owned-buffer refusal verbatim: adding a borrowing form must not
+        // change what a stale, moved-away or scalar slot reports.
+        let unavailable = || format!("slot {slot} is not an initialized owned buffer");
+        let Some(AbstractSlot::Value(value)) = self.slots.get(&slot) else {
+            return Err(unavailable());
+        };
+        let resource = value.readable().ok_or_else(unavailable)?;
+        if matches!(value, AbstractValue::Owned(_)) {
+            self.ledger
+                .read_resource(0, resource)
+                .map_err(|e| format!("{e:?}"))?;
+        }
+        Ok(resource)
     }
     fn bind(&mut self, id: SlotId, value: AbstractSlot) -> Result<(), String> {
         if self.slots.contains_key(&id) {
@@ -319,6 +380,18 @@ impl State {
             )
         }) {
             return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
+        }
+        // An outstanding loan is an unfinished lifetime duty, not a leak: name
+        // it separately so the refusal says what the exit actually failed to
+        // do, which is close the loan by joining its borrower.
+        if let Some(&resource) = self
+            .resources
+            .iter()
+            .find(|&&resource| self.ledger.loan_borrower(resource).is_some())
+        {
+            return Err(format!(
+                "return/error leaves resource {resource} lent to an unjoined child"
+            ));
         }
         for &resource in &self.resources {
             if Some(resource) != returned
@@ -485,6 +558,26 @@ fn check_function(
             "owned task entry results have no external custodian in this profile".into(),
         ));
     }
+    // A read loan is bound to the creation that opened it. Returning one would
+    // outlive that creation's join, so it is refused at the type, before any
+    // path is explored.
+    if function.result == ScalarType::ReadLoan {
+        return Err(fail(
+            function.span,
+            "a read loan cannot be a task function result".into(),
+        ));
+    }
+    if id == module.entry
+        && function
+            .parameters
+            .iter()
+            .any(|(_, kind)| *kind == ScalarType::ReadLoan)
+    {
+        return Err(fail(
+            function.span,
+            "the task entry has no lender, so it cannot take a read loan".into(),
+        ));
+    }
     let mut state = State {
         slots: BTreeMap::new(),
         ledger: ScopedTaskLedger::default(),
@@ -494,18 +587,27 @@ fn check_function(
     };
     let mut inputs = BTreeMap::new();
     for (index, &(slot, ty)) in function.parameters.iter().enumerate() {
-        let value = if ty == ScalarType::OwnedBuffer {
-            let resource = state.next_id;
-            state.next_id += 1;
-            state
-                .ledger
-                .acquire(0, resource)
-                .map_err(|e| fail(function.span, format!("{e:?}")))?;
-            state.resources.insert(resource);
-            inputs.insert(resource, index);
-            AbstractValue::Owned(resource)
-        } else {
-            AbstractValue::Scalar(ty)
+        let value = match ty {
+            ScalarType::OwnedBuffer => {
+                let resource = state.next_id;
+                state.next_id += 1;
+                state
+                    .ledger
+                    .acquire(0, resource)
+                    .map_err(|e| fail(function.span, format!("{e:?}")))?;
+                state.resources.insert(resource);
+                inputs.insert(resource, index);
+                AbstractValue::Owned(resource)
+            }
+            // A loan is not registered in this frame's ledger and is not an
+            // `input`: the borrower owes nothing at exit, and no worker exit
+            // can report it as returned or dropped.
+            ScalarType::ReadLoan => {
+                let resource = state.next_id;
+                state.next_id += 1;
+                AbstractValue::Loan(resource)
+            }
+            ScalarType::I32 | ScalarType::Unit => AbstractValue::Scalar(ty),
         };
         state.slots.insert(slot, AbstractSlot::Value(value));
     }
@@ -542,7 +644,7 @@ fn check_function(
                         state.bind(*slot, AbstractSlot::Value(value))?;
                     }
                     TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
-                        state.buffer(*buffer)?;
+                        state.readable(*buffer)?;
                         state.bind(
                             *value_slot,
                             AbstractSlot::Value(AbstractValue::Scalar(ScalarType::I32)),
@@ -693,14 +795,16 @@ fn check_function(
                         return Err("worker capture arity mismatch".into());
                     }
                     let mut resources = vec![];
+                    let mut loans = vec![];
                     let mut captured = BTreeMap::new();
                     let mut consumed_slots = BTreeSet::new();
+                    let mut lent_slots = BTreeSet::new();
                     for (index, (argument, (_, expected))) in
                         arguments.iter().zip(&callee.parameters).enumerate()
                     {
                         let value = state.value(argument)?;
                         if value.ty() != *expected {
-                            return Err("worker copy/move capture type mismatch".into());
+                            return Err("worker copy/move/loan capture type mismatch".into());
                         }
                         if let Some(resource) = value.resource() {
                             let ScalarOperand::Move(slot) = argument else {
@@ -712,12 +816,38 @@ fn check_function(
                             resources.push(resource);
                             captured.insert(index, resource);
                         }
+                        if let AbstractValue::Loan(resource) = value {
+                            let ScalarOperand::Loan(slot) = argument else {
+                                unreachable!()
+                            };
+                            if !lent_slots.insert(*slot) {
+                                return Err("duplicate read loan of one slot".into());
+                            }
+                            loans.push(resource);
+                        }
+                    }
+                    // The card's bound, enforced structurally rather than
+                    // assumed: one loan per creation, one outstanding at a
+                    // time. Splitting read authority across several borrowers
+                    // is a different profile, not a larger version of this one.
+                    if loans.len() > 1 {
+                        return Err(
+                            "this profile admits at most one read loan per task creation".into(),
+                        );
+                    }
+                    if !loans.is_empty() && !state.ledger.outstanding_loans().is_empty() {
+                        return Err(
+                            "this profile admits at most one outstanding read loan at a time".into(),
+                        );
+                    }
+                    if resources.iter().any(|resource| loans.contains(resource)) {
+                        return Err("one creation cannot both move and lend a resource".into());
                     }
                     let reservation = state.next_id;
                     state.next_id += 1;
                     state
                         .ledger
-                        .reserve(0, *scope, reservation, &resources)
+                        .reserve_with_loans(0, *scope, reservation, &resources, &loans)
                         .map_err(|e| format!("{e:?}"))?;
                     let mut failed = state.clone();
                     failed
@@ -778,6 +908,9 @@ fn check_function(
                                     returned
                                         .ok_or("owned worker outcome has no checked identity")?,
                                 ),
+                                ScalarType::ReadLoan => {
+                                    return Err("a read loan is not a worker outcome".into());
+                                }
                             }
                         };
                         success_state

@@ -5,13 +5,17 @@ pub enum ScalarValue {
     Unit,
     I32(i32),
     OwnedBuffer(ResourceId),
+    /// A borrowed identity. The reference run refuses to treat it as an
+    /// outcome, independently of the checker's type rule.
+    ReadLoan(ResourceId),
 }
 impl ScalarValue {
-    fn outcome(self) -> TaskOutcome {
+    fn outcome(self) -> Result<TaskOutcome, String> {
         match self {
-            Self::Unit => TaskOutcome::Unit,
-            Self::I32(value) => TaskOutcome::I32(value),
-            Self::OwnedBuffer(id) => TaskOutcome::OwnedBuffer(id),
+            Self::Unit => Ok(TaskOutcome::Unit),
+            Self::I32(value) => Ok(TaskOutcome::I32(value)),
+            Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
+            Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
         }
     }
 }
@@ -54,6 +58,16 @@ pub enum TaskEvent {
     Spawn {
         task: u64,
         worker: FunctionId,
+    },
+    /// A read loan opened to a child that was actually created.
+    BufferLoaned {
+        borrower: u64,
+        buffer: ResourceId,
+    },
+    /// A read loan closed by a successful creator join.
+    BufferReturned {
+        borrower: u64,
+        buffer: ResourceId,
     },
     CreateFailed {
         worker: FunctionId,
@@ -118,6 +132,24 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
             }
             _ => Err("reference scalar slot is unavailable".into()),
         },
+        // Lending neither consumes nor copies the binding; it produces a
+        // borrowed identity for exactly one creation.
+        ScalarOperand::Loan(id) => match slots.get(id) {
+            Some(Value::Scalar(ScalarValue::OwnedBuffer(resource))) => {
+                Ok(ScalarValue::ReadLoan(*resource))
+            }
+            _ => Err("reference lender slot is unavailable".into()),
+        },
+    }
+}
+
+/// The identity a reference read is performed against, owned or borrowed.
+fn readable(slots: &BTreeMap<SlotId, Value>, slot: SlotId) -> Result<ResourceId, String> {
+    match slots.get(&slot) {
+        Some(Value::Scalar(
+            ScalarValue::OwnedBuffer(resource) | ScalarValue::ReadLoan(resource),
+        )) => Ok(*resource),
+        _ => Err("reference buffer read requires an owner or borrower".into()),
     }
 }
 fn take(
@@ -161,13 +193,9 @@ impl Runtime<'_> {
                 let result: Result<(), String> = (|| {
                     match &instruction.kind {
                         TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
-                            let ScalarValue::OwnedBuffer(resource) =
-                                scalar(&slots, &ScalarOperand::Move(*buffer))?
-                            else {
-                                return Err("reference buffer read requires owner".into());
-                            };
+                            let resource = readable(&slots, *buffer)?;
                             self.ledger
-                                .use_resource(task, resource)
+                                .read_resource(task, resource)
                                 .map_err(|e| format!("{e:?}"))?;
                             let value = *self
                                 .buffers
@@ -255,6 +283,15 @@ impl Runtime<'_> {
                             else {
                                 return Err("reference handle unavailable".into());
                             };
+                            // Read the loans this borrower holds before the
+                            // join closes them, so the returned identities are
+                            // the ledger's, not the caller's claim.
+                            let returned_loans = self
+                                .ledger
+                                .outstanding_loans()
+                                .into_iter()
+                                .filter(|&buffer| self.ledger.loan_borrower(buffer) == Some(child))
+                                .collect::<Vec<_>>();
                             let completion = self
                                 .ledger
                                 .join(task, actual)
@@ -267,6 +304,12 @@ impl Runtime<'_> {
                                 outcome: completion.outcome.clone(),
                             });
                             self.events.push(TaskEvent::Join { task: child });
+                            for buffer in returned_loans {
+                                self.events.push(TaskEvent::BufferReturned {
+                                    borrower: child,
+                                    buffer,
+                                });
+                            }
                             self.observations
                                 .iter_mut()
                                 .find(|o| o.task == child)
@@ -361,13 +404,29 @@ impl Runtime<'_> {
                                 }
                             })
                             .collect::<Vec<_>>();
+                        let lent_resources = arguments
+                            .iter()
+                            .filter_map(|value| {
+                                if let ScalarValue::ReadLoan(id) = value {
+                                    Some(*id)
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect::<Vec<_>>();
                         let reservation = self.next_reservation;
                         self.next_reservation += 1;
                         let actual_scope = *scopes
                             .get(scope)
                             .ok_or("reference spawn scope unavailable")?;
                         self.ledger
-                            .reserve(task, actual_scope, reservation, &moved_resources)
+                            .reserve_with_loans(
+                                task,
+                                actual_scope,
+                                reservation,
+                                &moved_resources,
+                                &lent_resources,
+                            )
                             .map_err(|e| format!("{e:?}"))?;
                         let succeeds = self
                             .script
@@ -389,6 +448,12 @@ impl Runtime<'_> {
                                 task: child,
                                 worker: *worker,
                             });
+                            for &buffer in &lent_resources {
+                                self.events.push(TaskEvent::BufferLoaned {
+                                    borrower: child,
+                                    buffer,
+                                });
+                            }
                             // Leaf workers have no shared state. Eager reference
                             // evaluation selects a legal schedule, not a claim
                             // that the native worker completed before spawn returned.
@@ -462,7 +527,7 @@ impl Runtime<'_> {
                         }
                     }
                     TaskTerminatorKind::Return { value } => {
-                        return Ok(Some(take(&mut slots, value)?.outcome()));
+                        return Ok(Some(take(&mut slots, value)?.outcome()?));
                     }
                     TaskTerminatorKind::Raise { error } => {
                         let tag = match error {
@@ -612,6 +677,12 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
             }
             TaskEvent::CreateFailed { worker } => {
                 writeln!(output, "QCORE_TASK_CREATE_FAILED {worker}").unwrap()
+            }
+            TaskEvent::BufferLoaned { borrower, buffer } => {
+                writeln!(output, "QCORE_BUFFER_LOAN {borrower} {buffer}").unwrap()
+            }
+            TaskEvent::BufferReturned { borrower, buffer } => {
+                writeln!(output, "QCORE_BUFFER_RETURN {borrower} {buffer}").unwrap()
             }
             TaskEvent::Join { task } => writeln!(output, "QCORE_TASK_JOIN {task}").unwrap(),
             TaskEvent::Result { task, outcome } => match outcome {
