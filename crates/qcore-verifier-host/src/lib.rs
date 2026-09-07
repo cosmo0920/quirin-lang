@@ -42,6 +42,9 @@ pub use qcore_schemas::witness::{
     ObservedRun, PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness, SourceSite,
 };
 
+pub mod confinement;
+pub use confinement::{AdmittedPath, Confinement, ConfinementPolicy, PathAccess, PathState};
+
 /// The evidence-v2 firewall's capability-specific replay hook.
 ///
 /// The *trait* belongs to the verifier host, which orchestrates but never
@@ -274,8 +277,12 @@ pub const PROVIDER_STDERR_BYTES: usize = 64 * 1024;
 /// silently changing what an existing package runs under would change what
 /// existing evidence means.
 ///
-/// Neither profile is an OS sandbox. Neither confines the filesystem or the
-/// network, and neither uses namespaces, cgroups or seccomp.
+/// No profile is a general OS sandbox.
+/// [`ProcessExecutionProfile::LinuxConfinedV1`] confines two named resource
+/// classes — the filesystem, with Landlock, and the network, with a network
+/// namespace — and its [`Confinement::unconfined`] inventory states what it
+/// leaves reachable. The other two profiles confine neither, and no profile
+/// installs a seccomp filter or a cgroup.
 #[derive(
     Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
 )]
@@ -293,6 +300,13 @@ pub enum ProcessExecutionProfile {
     /// deadline, output caps and process-group kill. A declared kind this
     /// profile cannot enforce is refused before spawning, never downgraded.
     LinuxRlimitV1,
+    /// Linux only. Everything [`Self::LinuxRlimitV1`] installs, *plus*
+    /// kernel-enforced filesystem and network confinement: a Landlock ruleset
+    /// admitting only the paths an explicit [`ConfinementPolicy`] names, and a
+    /// fresh network namespace. It composes with the limit profile rather than
+    /// replacing it, and requires a policy — a caller that supplies none is
+    /// refused before spawning, because this profile admits nothing by default.
+    LinuxConfinedV1,
 }
 
 impl ProcessExecutionProfile {
@@ -300,7 +314,20 @@ impl ProcessExecutionProfile {
         match self {
             Self::UnenforcedLegacy => "unenforced-legacy",
             Self::LinuxRlimitV1 => "linux-rlimit-v1",
+            Self::LinuxConfinedV1 => "linux-confined-v1",
         }
+    }
+
+    /// Whether this profile installs `setrlimit` bounds. Both Linux profiles
+    /// do; the confined profile composes with the limit profile instead of
+    /// replacing it.
+    pub const fn installs_rlimits(self) -> bool {
+        matches!(self, Self::LinuxRlimitV1 | Self::LinuxConfinedV1)
+    }
+
+    /// Whether this profile installs filesystem and network confinement.
+    pub const fn confines(self) -> bool {
+        matches!(self, Self::LinuxConfinedV1)
     }
 }
 
@@ -359,6 +386,13 @@ pub struct EnforcedLimits {
     /// enforce. Non-empty only under [`ProcessExecutionProfile::UnenforcedLegacy`];
     /// [`ProcessExecutionProfile::LinuxRlimitV1`] refuses instead of running.
     pub unenforced_kinds: Vec<String>,
+    /// The filesystem and network confinement this execution achieved, and the
+    /// kernel facts it was derived from. `None` for every profile that confines
+    /// neither, which is what those profiles' records must say rather than
+    /// leaving the question open. Absent from the serialized form when `None`,
+    /// so records written before this field existed are byte-identical.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub confinement: Option<Confinement>,
 }
 
 impl EnforcedLimits {
@@ -370,9 +404,13 @@ impl EnforcedLimits {
             .map(|limit| format!("{}={}({})", limit.kind, limit.soft, limit.resource))
             .collect::<Vec<_>>()
             .join(", ");
+        let confinement = self.confinement.as_ref().map_or_else(
+            || "; confinement=none".to_owned(),
+            |confinement| format!("; confinement={}", confinement.summary()),
+        );
         format!(
             "profile={}; wall_clock_ms={}; stdout_bytes={}; stderr_bytes={}; \
-             process_group_kill={}; rlimits=[{applied}]; unenforced=[{}]",
+             process_group_kill={}; rlimits=[{applied}]; unenforced=[{}]{confinement}",
             self.profile,
             self.wall_clock_ms,
             self.stdout_bytes,
@@ -463,18 +501,15 @@ const LINUX_RLIMIT_V1_KINDS: [(&str, &str); 6] = [
 /// The limit kinds a profile can enforce, sorted. Empty for the legacy
 /// profile, which enforces no `setrlimit` kind at all.
 pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static str> {
-    match profile {
-        ProcessExecutionProfile::UnenforcedLegacy => Vec::new(),
-        ProcessExecutionProfile::LinuxRlimitV1 if cfg!(target_os = "linux") => {
-            let mut kinds = LINUX_RLIMIT_V1_KINDS
-                .iter()
-                .map(|(kind, _)| *kind)
-                .collect::<Vec<_>>();
-            kinds.sort_unstable();
-            kinds
-        }
-        ProcessExecutionProfile::LinuxRlimitV1 => Vec::new(),
+    if !profile.installs_rlimits() || !cfg!(target_os = "linux") {
+        return Vec::new();
     }
+    let mut kinds = LINUX_RLIMIT_V1_KINDS
+        .iter()
+        .map(|(kind, _)| *kind)
+        .collect::<Vec<_>>();
+    kinds.sort_unstable();
+    kinds
 }
 
 pub struct ProcessProvider {
@@ -483,6 +518,10 @@ pub struct ProcessProvider {
     #[cfg_attr(not(unix), expect(dead_code))]
     package_root: String,
     profile: ProcessExecutionProfile,
+    /// The explicit filesystem reach a confining profile grants. `None` is a
+    /// refusal under [`ProcessExecutionProfile::LinuxConfinedV1`], not an
+    /// unconfined execution.
+    confinement_policy: Option<ConfinementPolicy>,
     /// The most recent execution's evidence record. Interior mutability keeps
     /// [`VerifierProvider`]'s `&self` dispatch, which providers share behind an
     /// `Arc`, unchanged.
@@ -502,6 +541,7 @@ impl ProcessProvider {
             manifest,
             package_root: package_root.as_ref().to_string_lossy().into_owned(),
             profile: ProcessExecutionProfile::default(),
+            confinement_policy: None,
             last_execution: std::sync::Mutex::new(None),
         })
     }
@@ -516,6 +556,23 @@ impl ProcessProvider {
 
     pub const fn execution_profile(&self) -> ProcessExecutionProfile {
         self.profile
+    }
+
+    /// Supplies the explicit filesystem reach a confining profile grants.
+    ///
+    /// Additive and fail-closed in both directions: a confining profile with no
+    /// policy is refused, and a policy handed to a profile that enforces none is
+    /// also refused, so a caller can never believe a package was confined when
+    /// it was not.
+    #[must_use]
+    pub fn with_confinement_policy(mut self, policy: ConfinementPolicy) -> Self {
+        self.confinement_policy = Some(policy);
+        self
+    }
+
+    /// The policy this provider would enforce, if any.
+    pub const fn confinement_policy(&self) -> Option<&ConfinementPolicy> {
+        self.confinement_policy.as_ref()
     }
 
     /// The evidence record of the most recent execution, if any.
@@ -534,6 +591,14 @@ impl ProcessProvider {
     /// profile.
     pub fn enforced_limits(&self) -> Result<EnforcedLimits, ProviderFailure> {
         let limits = &self.manifest.limits;
+        if self.confinement_policy.is_some() && !self.profile.confines() {
+            return Err(ProviderFailure::Protocol(format!(
+                "execution profile `{}` enforces no confinement policy, so the supplied one \
+                 would be a declaration nothing installs; select `{}` instead",
+                self.profile,
+                ProcessExecutionProfile::LinuxConfinedV1
+            )));
+        }
         match self.profile {
             ProcessExecutionProfile::UnenforcedLegacy => {
                 let mut unenforced_kinds = vec!["memory_bytes".to_owned()];
@@ -547,14 +612,59 @@ impl ProcessProvider {
                     process_group_kill: cfg!(unix),
                     rlimits: Vec::new(),
                     unenforced_kinds,
+                    confinement: None,
                 })
             }
-            ProcessExecutionProfile::LinuxRlimitV1 => self.linux_rlimit_v1_limits(),
+            ProcessExecutionProfile::LinuxRlimitV1 => self.linux_rlimit_v1_limits(self.profile),
+            ProcessExecutionProfile::LinuxConfinedV1 => {
+                // The confinement is checked first so an unavailable mechanism
+                // names the mechanism, not the composed limit profile.
+                let confinement = self.linux_confinement()?;
+                let mut enforced = self.linux_rlimit_v1_limits(self.profile)?;
+                enforced.confinement = Some(confinement);
+                Ok(enforced)
+            }
         }
     }
 
-    fn linux_rlimit_v1_limits(&self) -> Result<EnforcedLimits, ProviderFailure> {
-        let profile = ProcessExecutionProfile::LinuxRlimitV1;
+    /// The confinement the selected policy achieves on this kernel, or the
+    /// pre-spawn refusal that keeps the package from running.
+    ///
+    /// Fail-closed on three separate grounds — a non-Linux target, a missing
+    /// policy and a kernel that cannot install one of the two mechanisms — and
+    /// none of them has a weaker fallback.
+    fn linux_confinement(&self) -> Result<Confinement, ProviderFailure> {
+        let profile = ProcessExecutionProfile::LinuxConfinedV1;
+        let Some(policy) = self.confinement_policy.as_ref() else {
+            return Err(ProviderFailure::Protocol(format!(
+                "execution profile `{profile}` requires an explicit confinement policy; it \
+                 admits no filesystem path beyond the package root and has no default"
+            )));
+        };
+        #[cfg(target_os = "linux")]
+        {
+            confinement::linux::describe(policy, &self.package_root, self.manifest.network_access)
+                .map_err(|error| {
+                    ProviderFailure::Protocol(format!(
+                        "execution profile `{profile}` cannot confine this execution: {error}"
+                    ))
+                })
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            let _ = policy;
+            Err(ProviderFailure::Protocol(format!(
+                "execution profile `{profile}` is unavailable on this target; its Landlock and \
+                 network-namespace mechanisms are Linux-only and it makes no isolation claim \
+                 elsewhere"
+            )))
+        }
+    }
+
+    fn linux_rlimit_v1_limits(
+        &self,
+        profile: ProcessExecutionProfile,
+    ) -> Result<EnforcedLimits, ProviderFailure> {
         if !cfg!(target_os = "linux") {
             return Err(ProviderFailure::Protocol(format!(
                 "execution profile `{profile}` is unavailable on this target; it installs Linux \
@@ -633,6 +743,7 @@ impl ProcessProvider {
             process_group_kill: true,
             rlimits,
             unenforced_kinds: Vec::new(),
+            confinement: None,
         })
     }
 
@@ -818,6 +929,14 @@ fn linux_rlimit_resource(kind: &str) -> Option<u32> {
     })
 }
 
+/// The kernel object a confining profile installs in the child, carried from
+/// the pre-spawn build to the `pre_exec` closure. `None` is a profile that
+/// confines nothing.
+#[cfg(target_os = "linux")]
+type ConfinementHandle = Option<std::os::fd::OwnedFd>;
+#[cfg(all(unix, not(target_os = "linux")))]
+type ConfinementHandle = Option<()>;
+
 #[cfg(unix)]
 impl ProcessProvider {
     /// Runs the package under the selected execution profile and records what
@@ -846,12 +965,33 @@ impl ProcessProvider {
                 return Err(error);
             }
         };
+        // Building the Landlock ruleset opens every admitted path, so it can
+        // fail; it happens here, before anything is spawned, so a failure is a
+        // refusal rather than an unconfined execution.
+        let confinement = match self.prepare_confinement(&enforced) {
+            Ok(confinement) => confinement,
+            Err(error) => {
+                self.record_execution(ProcessExecutionRecord {
+                    profile: self.profile,
+                    enforced: None,
+                    outcome: ProcessOutcome::RefusedByProfile,
+                    wall_time_ms: 0,
+                    stdout_bytes: 0,
+                    stderr_bytes: 0,
+                    exit_code: None,
+                    signal: None,
+                    detail: error.to_string(),
+                });
+                return Err(error);
+            }
+        };
         let mut output = Vec::new();
         let mut error_output = Vec::new();
         let mut status = None;
         let result = self.run_process(
             frame,
             &enforced,
+            confinement,
             &mut output,
             &mut error_output,
             &mut status,
@@ -891,10 +1031,45 @@ impl ProcessProvider {
         result
     }
 
+    /// Creates the kernel objects a confining profile installs in the child.
+    ///
+    /// `None` means this profile confines nothing, which its record states
+    /// explicitly through `EnforcedLimits::confinement`.
+    #[cfg(target_os = "linux")]
+    fn prepare_confinement(
+        &self,
+        enforced: &EnforcedLimits,
+    ) -> Result<ConfinementHandle, ProviderFailure> {
+        let Some(confinement) = enforced.confinement.as_ref() else {
+            return Ok(None);
+        };
+        confinement::linux::build_ruleset(confinement)
+            .map(Some)
+            .map_err(|error| {
+                ProviderFailure::Protocol(format!(
+                    "execution profile `{}` cannot confine this execution: {error}",
+                    enforced.profile
+                ))
+            })
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    fn prepare_confinement(
+        &self,
+        enforced: &EnforcedLimits,
+    ) -> Result<ConfinementHandle, ProviderFailure> {
+        // Off Linux no profile reaches here with a confinement: `enforced_limits`
+        // refuses the confining profile before this point.
+        debug_assert!(enforced.confinement.is_none());
+        let _ = enforced;
+        Ok(None)
+    }
+
     fn run_process<T: for<'de> Deserialize<'de>>(
         &self,
         frame: Vec<u8>,
         enforced: &EnforcedLimits,
+        confinement: ConfinementHandle,
         output: &mut Vec<u8>,
         error_output: &mut Vec<u8>,
         status: &mut Option<std::process::ExitStatus>,
@@ -903,6 +1078,8 @@ impl ProcessProvider {
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
         };
+        #[cfg(not(target_os = "linux"))]
+        let _ = confinement;
         let deadline = Instant::now()
             .checked_add(Duration::from_millis(enforced.wall_clock_ms))
             .ok_or_else(|| {
@@ -919,6 +1096,19 @@ impl ProcessProvider {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+        // The ruleset descriptor is close-on-exec, so the child restricts itself
+        // with it and the `exec`ed package never sees it. The closure keeps the
+        // `OwnedFd` alive until the spawn returns.
+        #[cfg(target_os = "linux")]
+        if let Some(ruleset) = confinement {
+            use std::os::fd::AsRawFd;
+            // SAFETY: this runs in the forked child before `exec`. It allocates
+            // nothing, acquires no lock and makes only syscalls; `ruleset` is
+            // owned by the closure and stays open until the spawn completes.
+            unsafe {
+                command.pre_exec(move || confinement::linux::apply(ruleset.as_raw_fd()));
+            }
+        }
         #[cfg(target_os = "linux")]
         if !enforced.rlimits.is_empty() {
             let mut plan = Vec::with_capacity(enforced.rlimits.len());

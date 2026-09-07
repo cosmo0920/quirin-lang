@@ -546,3 +546,117 @@ fn real_packages_answer_identically_under_the_enforced_profile() {
     assert_eq!(checked, 11);
     std::fs::remove_dir_all(&output).unwrap();
 }
+
+/// Every shipped package answers identically under the target-qualified
+/// **confined** execution profile, with the same kernel-enforced filesystem
+/// and network confinement the adversarial fixtures exercise.
+///
+/// This is card P03's positive control against real binaries: the packages are
+/// dynamically linked executables, so the admitted runtime roots are exactly
+/// what they need, and nothing beyond them is reachable. The profile is
+/// selected explicitly; the default profile is untouched.
+#[test]
+#[cfg(target_os = "linux")]
+fn real_packages_answer_identically_under_the_confined_profile() {
+    use qcore_verifier_host::{
+        ConfinementPolicy, PathAccess, PathState, ProcessExecutionProfile, ProcessOutcome,
+    };
+    let root = root();
+    let output = std::env::temp_dir().join(format!(
+        "qcore-provider-confined-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let built = Command::new("python3")
+        .arg(root.join("package.py"))
+        .args(["build", "--output"])
+        .arg(&output)
+        .arg("--target-dir")
+        .arg(root.join("target/conformance-artifacts"))
+        .output()
+        .unwrap();
+    assert!(
+        built.status.success(),
+        "{}",
+        String::from_utf8_lossy(&built.stderr)
+    );
+    let index: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(output.join("packages.json")).unwrap()).unwrap();
+    let mut checked = 0;
+    for artifact in index["artifacts"].as_array().unwrap() {
+        let package = output.join(artifact["plugin_id"].as_str().unwrap());
+        let legacy = ProcessProvider::from_package(&package).unwrap();
+        let build_confined = || {
+            ProcessProvider::from_package(&package)
+                .unwrap()
+                .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+                .with_confinement_policy(ConfinementPolicy::linux_runtime_defaults())
+        };
+        let strict = build_confined();
+        let manifest = strict.manifest().clone();
+        let enforced = strict.enforced_limits().unwrap();
+        // The confined profile composes with the limit profile rather than
+        // replacing it: the same `setrlimit` plan is installed.
+        assert_eq!(
+            enforced.rlimits,
+            ProcessProvider::from_package(&package)
+                .unwrap()
+                .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1)
+                .enforced_limits()
+                .unwrap()
+                .rlimits
+        );
+        assert!(enforced.unenforced_kinds.is_empty());
+        let confinement = enforced.confinement.as_ref().unwrap();
+        assert_eq!(confinement.filesystem_mechanism, "landlock");
+        assert!(confinement.landlock_abi >= confinement.landlock_min_abi);
+        // The package root is admitted read-and-execute and nothing else in the
+        // policy is writable except `/dev/null`.
+        let package_root = confinement.paths.first().unwrap();
+        assert_eq!(package_root.path, package.to_string_lossy());
+        assert_eq!(package_root.access, PathAccess::ReadExecute);
+        assert_eq!(package_root.state, PathState::Admitted);
+        assert!(
+            confinement
+                .paths
+                .iter()
+                .filter(|path| path.access == PathAccess::ReadWrite)
+                .all(|path| path.path == "/dev/null")
+        );
+        // No shipped manifest declares network access, and the confined profile
+        // is what actually enforces that declaration.
+        assert!(!confinement.network_access_declared);
+        assert!(!manifest.network_access);
+        for capability in &manifest.capabilities {
+            let request = request(&manifest, *capability);
+            assert_eq!(
+                strict.verify(&request).unwrap(),
+                legacy.verify(&request).unwrap()
+            );
+            let record = strict.last_execution().unwrap();
+            assert_eq!(record.outcome, ProcessOutcome::Completed);
+            assert_eq!(record.exit_code, Some(0));
+            assert_eq!(record.profile, ProcessExecutionProfile::LinuxConfinedV1);
+            assert!(record.summary().contains("linux-confined-v1"));
+            assert!(record.summary().contains("landlock"));
+            let (v2_request, task) = v2(&request);
+            assert_eq!(
+                strict.verify_v2(&v2_request).unwrap(),
+                legacy.verify_v2(&v2_request).unwrap()
+            );
+            let mut registry = VerifierRegistry::default();
+            registry.register(Arc::new(build_confined())).unwrap();
+            let outcome = registry.verify_v2(&v2_request, &task, None);
+            assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+            assert!(outcome.certificate.is_none());
+            checked += 1;
+        }
+    }
+    // Five packages, eleven declared capabilities between them.
+    assert_eq!(index["artifacts"].as_array().unwrap().len(), 5);
+    assert_eq!(checked, 11);
+    std::fs::remove_dir_all(&output).unwrap();
+}

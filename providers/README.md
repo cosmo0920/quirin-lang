@@ -118,10 +118,23 @@ package creation adds no OS sandbox. A host may instead select the
 target-qualified `linux-rlimit-v1` profile, which installs the manifest's
 declared `limits` with `setrlimit` before `exec` and refuses any package
 declaring a limit kind it cannot enforce; see
-[enforced process limits](../docs/reports/remaining-p02/README.md). Neither
-profile confines the filesystem or the network, and neither uses namespaces,
-cgroups or seccomp. Core/host build and tests remain independent of this
-workspace and of installed provider packages.
+[enforced process limits](../docs/reports/remaining-p02/README.md). Neither of
+those two profiles confines the filesystem or the network.
+
+A host may instead select the target-qualified `linux-confined-v1` profile,
+which installs everything `linux-rlimit-v1` installs **and** two kernel
+confinement mechanisms in the child before `exec`: a Landlock ruleset admitting
+only the package root and the paths an explicit `ConfinementPolicy` names, and
+`unshare(CLONE_NEWUSER | CLONE_NEWNET)` for a fresh network namespace. It has no
+default policy — a caller that supplies none is refused before spawning — and a
+policy handed to a non-confining profile is refused in the other direction. All
+five shipped packages answer identically under it; see
+[filesystem and network confinement](../docs/reports/remaining-p03/README.md)
+for the mechanisms, the measured fixtures and the exact trust boundary. This is
+confinement of two named resource classes, not a general OS sandbox: no seccomp
+filter and no cgroup is installed, and every non-completed provider outcome
+remains a scoped `Unknown` under `QP006`. Core/host build and tests remain
+independent of this workspace and of installed provider packages.
 
 The conformance workspace also contains `callback_proposal_writer`, a schema-only
 record-exchange fixture. Its paired test uses the trusted declared-reactor
