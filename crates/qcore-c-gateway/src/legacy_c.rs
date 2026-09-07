@@ -157,8 +157,33 @@ pub struct C11TranslationUnit<'a> {
     pub source: &'a str,
     pub include_paths: Vec<String>,
     pub definitions: Vec<String>,
+    /// Ordered, typed preprocessing options, applied after the legacy fields.
+    pub preprocessor_options: Vec<CPreprocessorOption>,
     pub dialect: CCompilerDialect,
     pub function_scope: LegacyFunctionScope,
+}
+
+/// Bounded preprocessing transport. These are arguments, never shell commands.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum CPreprocessorOption {
+    Include(String),
+    SystemInclude(String),
+    QuoteInclude(String),
+    Define(String),
+    Undefine(String),
+}
+
+impl CPreprocessorOption {
+    fn append_to(&self, command: &mut std::process::Command) {
+        let (flag, value) = match self {
+            Self::Include(value) => ("-I", value),
+            Self::SystemInclude(value) => ("-isystem", value),
+            Self::QuoteInclude(value) => ("-iquote", value),
+            Self::Define(value) => ("-D", value),
+            Self::Undefine(value) => ("-U", value),
+        };
+        command.args([flag, value]);
+    }
 }
 
 /// Explicitly gated C dialects accepted by the production-parser gateway.
@@ -403,6 +428,9 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
     }
     for definition in &unit.definitions {
         command.arg(format!("-D{definition}"));
+    }
+    for option in &unit.preprocessor_options {
+        option.append_to(&mut command);
     }
     command.arg("-");
     let mut child = command

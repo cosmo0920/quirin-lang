@@ -759,3 +759,17 @@ audits pass, together with the standing gates and two clean package builds.
 Evidence: `docs/reports/w5-cmetrics-unit-provider/README.md`. Broader provider semantics,
 original CMake-build equivalence, lifecycle composition and raw promotion remain
 open. The contract corpus now has 59 modules; CT coverage remains 11/50 mapped.
+
+Ordered preprocessing transport (2026-09-07): W2's configured audit preserves
+regular/system/quote include classes and ordered macro definitions/undefinitions.
+A CLI regression reproduces the old adapter selecting a header that hid an
+unresolved call and returned Safe; the corrected import returns Unknown. Source
+parents now affect quoted includes only, and typed options bind source-task
+identity, including configured helpers. Empty arguments and command structure
+fail closed. All 816 workspace tests, 45 provider tests, 43 Python tests and
+20 Lean audits pass, together with the standing gates. All four 185-unit audit
+artifacts retain exact byte parity; the separate CMetrics audit changes only
+configuration/task/coverage identities. Eight new workspace tests cover the
+boundary. Evidence: `docs/reports/w2-preprocessor-transport/README.md`. The historical pinned
+Cycle19 option projection remains bounded; unsupported CMake flags, compiler
+equivalence, broader provider semantics and raw promotion remain open.

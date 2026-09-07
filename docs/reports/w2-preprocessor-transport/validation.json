@@ -1,0 +1,179 @@
+{
+  "base_commit": "fa9bcf06e6338d4820768b0f644f71dabfb39feb",
+  "status": "passed",
+  "workspace_tests": 816,
+  "provider_tests": 45,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_workspace_tests": 8,
+  "new_lean_theorems": 0,
+  "contract_modules": 59,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "commands": [
+    {
+      "command": "cargo test --workspace",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": 0
+    },
+    {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH lake build (cwd proof)",
+      "exit_code": 0
+    },
+    {
+      "command": "PATH=/home/cosmo/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "QCORE_SOURCE_CONTRACTS=\"$PWD/contract/profiles/fluent-bit/source-contracts.json\" cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- /home/cosmo/Documents/GitHub/fluent-bit build/cycle19/monkey-build/compile_commands.json /tmp/qcore-preprocessor-source.json /tmp/qcore-preprocessor-diagnostics.json",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo run --quiet -p qcore-audit -- build/cycle19/cmetrics-counter/audit.json.config",
+      "exit_code": 0
+    }
+  ],
+  "historical_adapter_regression": {
+    "command": "cargo test -p qcore-audit --test configured_cli header_search (temporary historical adapter substitution, restored immediately)",
+    "exit_code": 101,
+    "expected": "Unknown",
+    "actual": "Safe"
+  },
+  "source_sha256": {
+    "AGENTS.md": "319b801266d4fd98e44eed3d695c94761ec6bb9f8613f428112044d8f07fdc9b",
+    "CLAUDE.md": "a5df435c8a44191862b4f499a5c60c2bb8da7ebd0d9d2af2ca84e4ceb5616656",
+    "README.md": "3d2c31379e9ec4a2f3dc49e334035028c48bbee217ee568f9356be5ae7b6b002",
+    "compiler/examples/support/cycle19_compatibility.rs": "92a4825d9005579f722a6b8120cd853c150c2dd03894f1ae75c608dd072e3200",
+    "compiler/src/verifier_plugins/chunkio/filesystem_chunk_close.rs": "cfc68f4e79ba5239f70ade91a7190ec4ca0196fb5bfb10cb0f8234914c29180e",
+    "compiler/src/verifier_plugins/chunkio/memory_close.rs": "468f323280e80348c5f8659191eb8fc11ecca2441b320e5e9356184d83f49510",
+    "crates/qcore-audit/README.md": "81c2afc7ebdbea4d2b27c5d25b403058f554318c1c636e76c34894c8814c7a0e",
+    "crates/qcore-audit/src/compile_db.rs": "0bb192a4e3043d83c62d63c29405a784a7b7038f3304d244e582b0e240e75d8c",
+    "crates/qcore-audit/src/lib.rs": "b31aa0535b6eabe2b41d96418f7ca71a522e9e1c1d2a116112888082b54802a6",
+    "crates/qcore-audit/src/source_contract.rs": "a25e0cef1e3ebc3115eef53876cda6fbdb2fcd70813e19ba94873e8982016001",
+    "crates/qcore-audit/tests/configured_cli.rs": "8a583d134559da8bbb6f0a55207970e326739ce15987c75a2cbde7405b1d60b2",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "02824d27be0d22fb93a44d81bb305741cdf8ea960dc89f175ad419f8a3af0742",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "97fea539cb4da9622b27e901f952b7377019f70d5f622c7df9d868877c2d7b5a",
+    "crates/qcore-verification/tests/source_effect.rs": "02a82cde91c0bb632bba66e71e3a780d92714ee847a3007efdbb8d42f6e81d6d",
+    "docs/GENERALIZATION_PLAN.md": "c6898399d1cbb25b5e97d668a4b8a8b7e43240176d83850eac6c1e4f4b104d44",
+    "docs/ROADMAP_AFTER_CYCLE_9.md": "a99664b23cf76bd34dbdd01ee54d45c565d090cdbacc4c5fd2cac9567a5bde8c",
+    "providers/conformance/tests/configured_source_contract.rs": "9c15246e436f0cea7575378a1a2a1206fbd84ec87f191e51bbb77a6f1b3bd6c0",
+    "crates/qcore-audit/tests/compile_options.rs": "eed6578bd7b049cd98649e15fa474af3516691d35a2673bb97c8e19679fce584"
+  },
+  "artifacts": {
+    "workspace.log": {
+      "bytes": 83717,
+      "sha256": "a30e87662fc9654914579da5c4ea34d3063769cb0a972a61bc7372a9e7f17d9f"
+    },
+    "providers.log": {
+      "bytes": 7706,
+      "sha256": "f5ce1efcb073e4cf5052cde349a1b5236ec45491f54e4fa2c3eb9faace946c8f"
+    },
+    "fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy.log": {
+      "bytes": 245,
+      "sha256": "8a9770e7af8590b512be59b53d47c7bffd4c242f1c29eb6024a649b51ab6aff2"
+    },
+    "probe.log": {
+      "bytes": 2601,
+      "sha256": "b2c3b92b160b26767412ec9b536d7be9f198ee442d649bfe6fc888b204950ed5"
+    },
+    "followup.log": {
+      "bytes": 9816,
+      "sha256": "8457bf60836863224a7f9f4773f9c3b1cef799db5a0dc4ef8dc999762f9deb36"
+    },
+    "provider-fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "provider-clippy.log": {
+      "bytes": 270,
+      "sha256": "0377a7cf33523e008bccca2d36504c1c8f1e54adfdb3ab469442a9d9283b898b"
+    },
+    "python.log": {
+      "bytes": 4948,
+      "sha256": "534e9d69ae2cd4ceaca34cafaf80c6f0a9c4219e45e967aaa8cc75b4510f5397"
+    },
+    "lean.log": {
+      "bytes": 40,
+      "sha256": "ffeee4a7d64a075e496b94d545b1ed9a98b265fb8db886bc0b8b810511978c34"
+    },
+    "lean-audits.log": {
+      "bytes": 66944,
+      "sha256": "bc7118b642a06da5cfc400e57d0c5f3c96eb7e63ce0a0a1704a3732d35fda2b1"
+    },
+    "audit.log": {
+      "bytes": 133123,
+      "sha256": "7f96836a317be0bf74e693fb13c55d99ea0bc669cc1b73e82685235311dcdc0b"
+    },
+    "cmetrics.log": {
+      "bytes": 701,
+      "sha256": "d70c6dcf97413366bdc1132fe3016e5178f7c252f7dffa0dd53783b824a22670"
+    },
+    "red.log": {
+      "bytes": 1021,
+      "sha256": "ebd10572d6cea4cff510ff9191bb636d9b985cb95ac787adfa4893d4c7d86a94"
+    },
+    "focused.log": {
+      "bytes": 792,
+      "sha256": "74d69afde4807ad894a0213a314db271cb2f374bc63fbfbe4166b47f16fa2820"
+    },
+    "identity.log": {
+      "bytes": 466,
+      "sha256": "3be0d33292c2b80f47f7975969610c81d34daa12f49a7ec3e9d6f778b110d469"
+    },
+    "cli.log": {
+      "bytes": 443,
+      "sha256": "a78e40ceea06d3ff30a4aa04507d62e653943a64349c9ae76291561c66590800"
+    },
+    "cmetrics-audit.json": {
+      "bytes": 23591,
+      "sha256": "ab71c3709a777f04a5026ea6f94c885485aa36e45299208eb49706db23c6bef3"
+    },
+    "cmetrics-audit.assumptions.json": {
+      "bytes": 7927,
+      "sha256": "56d6fc15d55e8221a6f45ab1b9ceb8824954552a57f8bea6895cc43543e2dbab"
+    },
+    "cmetrics-audit.json.config": {
+      "bytes": 795,
+      "sha256": "0f1d3975ce96172a48375ecb936746a74256cdf66128f59e84418e0dd2331490"
+    },
+    "cmetrics-compile_commands.json": {
+      "bytes": 3502,
+      "sha256": "bc9a1089a2a2a3e01bd0d494a739c2d85677be29fcf2a909ebecc4899a304ee2"
+    }
+  }
+}

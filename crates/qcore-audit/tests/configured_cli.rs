@@ -189,3 +189,49 @@ fn selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths() 
     assert!(!output.status.success());
     assert!(String::from_utf8_lossy(&output.stderr).contains("does not match its pinned bytes"));
 }
+
+#[test]
+fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
+    for local_shadow in [false, true] {
+        let fixture = Fixture::new(
+            "#include <effect.h>\nextern void opaque(void); void entry(void) { EFFECT; }",
+        );
+        fs::create_dir_all(fixture.0.join("checkout/regular")).unwrap();
+        fs::create_dir_all(fixture.0.join("checkout/system")).unwrap();
+        fs::write(
+            fixture.0.join("checkout/regular/effect.h"),
+            "#define EFFECT opaque()\n",
+        )
+        .unwrap();
+        let shadow = if local_shadow { "src" } else { "system" };
+        fs::write(
+            fixture.0.join(format!("checkout/{shadow}/effect.h")),
+            "#define EFFECT ((void)0)\n",
+        )
+        .unwrap();
+        fixture.mutate("compile_commands.json", |database| {
+            database[0]["arguments"] = json!([
+                "clang",
+                "-std=c11",
+                "-isystem",
+                "system",
+                "-Iregular",
+                "-c",
+                "src/unit.c"
+            ]);
+        });
+        let output = fixture.run();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let report: Value =
+            serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap())
+                .unwrap();
+        assert_eq!(
+            report["units"][0]["status"], "Unknown",
+            "local shadow: {local_shadow}"
+        );
+    }
+}

@@ -33,8 +33,15 @@ compared with their pinned Git blob, including files omitted from a profile's
 audited-file list.
 
 The configured command accepts only compile options that its gateway can
-preserve: source/output names, `-c`, include directories, macro definitions
-and an explicitly supported `-std=` dialect. Other options, unresolved shell
+preserve: exactly one source input and `-c`, at most one output, distinct `-I`,
+`-isystem` and `-iquote` directories, ordered `-D`/`-U`, and a supported `-std=`
+dialect. Joined and separate preprocessing arguments are accepted. The source
+parent participates only in quoted include lookup. Empty arguments retain their
+positions and invalid commands reject before any partial report is published.
+The selected Clang configuration still defaults to GNU17 when no standard is
+specified; this is an analysis assumption, not discovery of another compiler's
+default. Source filename builtins still see stdin; compiler equivalence and
+arbitrary build flags are not established. Other options, unresolved shell
 expansions, absent contracts, empty selections and unsupplied required evidence
 reject. This conservative bound can be widened only alongside gateway support.
 
@@ -121,3 +128,11 @@ equality. Libraries declaring additional required evidence still reject until a
 separate route supplies it. Package/compiler/input stability during execution
 remains a caller premise; package verification is a snapshot, not an OS sandbox.
 See [the end-to-end command evidence](../../docs/reports/w5-configured-process-audit/README.md).
+
+Ordered preprocessing is transported through `CPreprocessorOption`, including
+configured frame helpers. Source-contract identity binds the complete typed
+sequence even if its preprocessed output is unchanged. Legacy callers with no
+ordered options keep their existing identity bytes. The Cycle19 compatibility
+adapter retains its historical projection (including flattened include classes)
+for pinned parity; it does not establish arbitrary build equivalence. Evidence:
+[W2 preprocessing transport](../../docs/reports/w2-preprocessor-transport/README.md).

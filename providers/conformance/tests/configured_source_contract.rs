@@ -330,6 +330,7 @@ fn helper_main_imports(
             source: &source,
             include_paths: options.include_paths,
             definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         },
@@ -415,7 +416,7 @@ fn configured_helper_policy_source_and_compile_inventory_fail_closed() {
             .is_err()
     );
 
-    for option in ["-include injected.h", "-USAMPLE_BUILD", "@compiler.rsp"] {
+    for option in ["-include injected.h", "-fPIC", "@compiler.rsp"] {
         let mut unsupported = entry.clone();
         unsupported.command.push(' ');
         unsupported.command.push_str(option);
@@ -424,6 +425,21 @@ fn configured_helper_policy_source_and_compile_inventory_fail_closed() {
             "unsupported preprocessing option was ignored: {option}"
         );
     }
+
+    // Ordered -D/-U transport applies equally to configured helper imports.
+    std::fs::write(
+        fixture.0.join("sample_reset.c"),
+        format!("#ifndef SAMPLE_BUILD\n#error missing build macro\n#endif\n{HELPER_SOURCE}"),
+    )
+    .unwrap();
+    let mut ordered = entry.clone();
+    ordered.command.push_str(" -DSAMPLE_BUILD=1");
+    assert!(fixture.helpers(&registry, &[ordered.clone()]).is_ok());
+    ordered.command.push_str(" -USAMPLE_BUILD");
+    assert!(fixture.helpers(&registry, &[ordered.clone()]).is_err());
+    ordered.command.push_str(" -DSAMPLE_BUILD=1");
+    assert!(fixture.helpers(&registry, &[ordered]).is_ok());
+    std::fs::write(fixture.0.join("sample_reset.c"), HELPER_SOURCE).unwrap();
 
     // A relative compile entry still resolves quoted headers beside the
     // selected source, rather than beside the process working directory.

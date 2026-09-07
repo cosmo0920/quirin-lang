@@ -360,6 +360,7 @@ fn audit_library(
             source: &source,
             include_paths: options.include_paths,
             definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
@@ -381,6 +382,7 @@ fn audit_library(
             source: &native_source,
             include_paths: native_options.include_paths,
             definitions: native_options.definitions,
+            preprocessor_options: native_options.preprocessor_options,
             dialect: native_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
@@ -405,6 +407,7 @@ fn audit_library(
             source: &counter_source,
             include_paths: counter_options.include_paths,
             definitions: counter_options.definitions,
+            preprocessor_options: counter_options.preprocessor_options,
             dialect: counter_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
@@ -426,6 +429,7 @@ fn audit_library(
             source: &file_source,
             include_paths: file_options.include_paths,
             definitions: file_options.definitions,
+            preprocessor_options: file_options.preprocessor_options,
             dialect: file_options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
@@ -454,6 +458,7 @@ fn audit_library(
             source: &source,
             include_paths: options.include_paths,
             definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };
@@ -944,6 +949,7 @@ fn audit_monkey_callback_source(
         source: &source,
         include_paths: options.include_paths,
         definitions: options.definitions,
+        preprocessor_options: options.preprocessor_options,
         dialect: options.dialect,
         function_scope: LegacyFunctionScope::MainSourceDefinitions,
     };

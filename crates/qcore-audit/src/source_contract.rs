@@ -645,6 +645,7 @@ fn import_frame_helpers(
             source: &source,
             include_paths: options.include_paths,
             definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
             dialect: options.dialect,
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
         };

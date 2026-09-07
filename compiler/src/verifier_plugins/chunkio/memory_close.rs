@@ -126,6 +126,7 @@ pub fn check_memory_close_source(
         source: &combined,
         include_paths: unit.include_paths.clone(),
         definitions: unit.definitions.clone(),
+        preprocessor_options: unit.preprocessor_options.clone(),
         dialect: unit.dialect,
         function_scope: unit.function_scope,
     };

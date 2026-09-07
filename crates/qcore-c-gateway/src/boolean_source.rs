@@ -141,7 +141,7 @@ fn input_identity(
         }
         crate::legacy_c::LegacyFunctionScope::MainSourceDefinitions => "main_source_definitions",
     };
-    let configuration = serde_json::to_vec(&(
+    let mut configuration = serde_json::to_vec(&(
         unit.dialect.clang_argument(),
         &unit.include_paths,
         &unit.definitions,
@@ -150,6 +150,14 @@ fn input_identity(
         &compiler,
     ))
     .map_err(|error| error.to_string())?;
+    // Keep historical identities byte-for-byte when no ordered options exist.
+    // New configurations bind the typed sequence, including include classes.
+    if !unit.preprocessor_options.is_empty() {
+        configuration.extend_from_slice(b"\nqcore.ordered-preprocessor.v1:");
+        configuration.extend(
+            serde_json::to_vec(&unit.preprocessor_options).map_err(|error| error.to_string())?,
+        );
+    }
     let mut dependencies = BTreeMap::new();
     for helper in helpers {
         if dependencies

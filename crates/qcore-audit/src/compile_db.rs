@@ -1,5 +1,5 @@
 //! Compilation-database ingestion and the inherited bounded option adapter.
-use qcore_c_gateway::legacy_c::CCompilerDialect;
+use qcore_c_gateway::legacy_c::{CCompilerDialect, CPreprocessorOption};
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Debug)]
@@ -13,6 +13,7 @@ pub struct CompilerOptions {
     pub include_paths: Vec<String>,
     pub definitions: Vec<String>,
     pub dialect: CCompilerDialect,
+    pub preprocessor_options: Vec<CPreprocessorOption>,
 }
 
 pub fn compiler_options_compatibility(entry: &CompileEntry) -> Result<CompilerOptions, String> {
@@ -61,6 +62,7 @@ pub fn compiler_options_compatibility(entry: &CompileEntry) -> Result<CompilerOp
         include_paths,
         definitions,
         dialect,
+        preprocessor_options: Vec::new(),
     })
 }
 
@@ -77,33 +79,67 @@ pub fn shell_words(command: &str) -> Result<Vec<String>, String> {
     let mut words = Vec::new();
     let mut word = String::new();
     let mut quote = None;
-    let mut escaped = false;
-    for character in command.chars() {
-        if escaped {
-            word.push(character);
-            escaped = false;
-        } else if character == '\\' && quote != Some('\'') {
-            escaped = true;
-        } else if let Some(active) = quote {
-            if character == active {
-                quote = None;
-            } else {
-                word.push(character);
+    let mut started = false;
+    let mut characters = command.chars().peekable();
+    while let Some(character) = characters.next() {
+        match quote {
+            Some('\'') => {
+                if character == '\'' {
+                    quote = None;
+                } else {
+                    word.push(character);
+                }
             }
-        } else if character == '\'' || character == '"' {
-            quote = Some(character);
-        } else if character.is_whitespace() {
-            if !word.is_empty() {
-                words.push(std::mem::take(&mut word));
-            }
-        } else {
-            word.push(character);
+            Some('"') => match character {
+                '"' => quote = None,
+                '\\' => match characters.peek().copied() {
+                    Some(next @ ('$' | '`' | '"' | '\\' | '\n')) => {
+                        characters.next();
+                        if next != '\n' {
+                            word.push(next);
+                        }
+                    }
+                    Some(_) => word.push('\\'),
+                    None => return Err("unterminated quoting in compile command".into()),
+                },
+                '$' | '`' => return Err("shell expansion in compile command is unsupported".into()),
+                _ => word.push(character),
+            },
+            None => match character {
+                '\'' | '"' => {
+                    quote = Some(character);
+                    started = true;
+                }
+                '\\' => {
+                    let next = characters
+                        .next()
+                        .ok_or("unterminated quoting in compile command")?;
+                    if next != '\n' {
+                        word.push(next);
+                        started = true;
+                    }
+                }
+                '$' | '`' | ';' | '|' | '&' | '<' | '>' | '(' | ')' | '*' | '?' | '[' => {
+                    return Err("shell expression in compile command is unsupported".into());
+                }
+                value if value.is_whitespace() => {
+                    if started {
+                        words.push(std::mem::take(&mut word));
+                        started = false;
+                    }
+                }
+                _ => {
+                    word.push(character);
+                    started = true;
+                }
+            },
+            _ => unreachable!(),
         }
     }
-    if escaped || quote.is_some() {
+    if quote.is_some() {
         return Err("unterminated quoting in compile command".into());
     }
-    if !word.is_empty() {
+    if started {
         words.push(word);
     }
     Ok(words)
@@ -159,26 +195,97 @@ pub fn compile_entries(database: &str) -> Result<Vec<CompileEntry>, String> {
 /// this gateway can preserve. Existing pinned adapters retain their explicitly
 /// bounded historical projection via `compiler_options_compatibility`.
 pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String> {
+    if !entry.directory.is_absolute() || !entry.file.is_absolute() {
+        return Err("compile directory and source must be absolute".into());
+    }
     let words = shell_words(&entry.command)?;
+    if words.first().is_none_or(String::is_empty) {
+        return Err("empty compiler executable".into());
+    }
+    let mut options = CompilerOptions {
+        include_paths: Vec::new(),
+        definitions: Vec::new(),
+        dialect: CCompilerDialect::Gnu17,
+        preprocessor_options: entry
+            .file
+            .parent()
+            .map(|path| {
+                vec![CPreprocessorOption::QuoteInclude(
+                    path.to_string_lossy().into_owned(),
+                )]
+            })
+            .unwrap_or_default(),
+    };
     let mut cursor = 1;
+    let mut inputs = 0;
+    let mut compile = 0;
+    let mut outputs = 0;
     while cursor < words.len() {
         let word = &words[cursor];
-        if matches!(word.as_str(), "-I" | "-isystem" | "-D" | "-o") {
+        let split = ["-isystem", "-iquote", "-I", "-D", "-U"]
+            .into_iter()
+            .find_map(|flag| word.strip_prefix(flag).map(|suffix| (flag, suffix)));
+        if let Some((flag, suffix)) = split {
+            let value = if suffix.is_empty() {
+                cursor += 1;
+                words
+                    .get(cursor)
+                    .ok_or("missing compile option argument")?
+                    .as_str()
+            } else {
+                suffix
+            };
+            if value.is_empty() || value.contains('$') || (flag == "-I" && value == "-") {
+                return Err("empty or unexpanded compiler option is unsupported".into());
+            }
+            if matches!(flag, "-I" | "-isystem" | "-iquote") && value.starts_with('=') {
+                return Err("sysroot-relative include paths are unsupported".into());
+            }
+            let option = match flag {
+                "-I" => CPreprocessorOption::Include(resolve_path(&entry.directory, value)),
+                "-isystem" => {
+                    CPreprocessorOption::SystemInclude(resolve_path(&entry.directory, value))
+                }
+                "-iquote" => {
+                    CPreprocessorOption::QuoteInclude(resolve_path(&entry.directory, value))
+                }
+                "-D" => CPreprocessorOption::Define(value.into()),
+                "-U" => CPreprocessorOption::Undefine(value.into()),
+                _ => unreachable!(),
+            };
+            options.preprocessor_options.push(option);
+        } else if let Some(standard) = word.strip_prefix("-std=") {
+            options.dialect = match standard {
+                "c11" => CCompilerDialect::C11,
+                "gnu99" => CCompilerDialect::Gnu99,
+                "gnu11" => CCompilerDialect::Gnu11,
+                "gnu17" => CCompilerDialect::Gnu17,
+                other => return Err(format!("unsupported compilation dialect `{other}`")),
+            };
+        } else if word == "-o" {
             cursor += 1;
-            let value = words.get(cursor).ok_or("missing compile option argument")?;
-            if value.contains('$') {
-                return Err("unexpanded compiler option is unsupported".into());
+            let value = words.get(cursor).ok_or("missing compile output argument")?;
+            if value.is_empty() || value.starts_with('-') || value.contains('$') {
+                return Err("invalid compile output argument".into());
             }
-        } else if word.starts_with("-I") || word.starts_with("-D") || word.starts_with("-std=") {
-            if word.contains('$') {
-                return Err("unexpanded compiler option is unsupported".into());
-            }
-        } else if word != "-c" && Path::new(&resolve_path(&entry.directory, word)) != entry.file {
+            outputs += 1;
+        } else if word == "-c" {
+            compile += 1;
+        } else if !word.starts_with('-')
+            && Path::new(&resolve_path(&entry.directory, word)) == entry.file
+        {
+            inputs += 1;
+        } else {
             return Err(format!(
                 "compiler option `{word}` cannot be preserved by the bounded gateway"
             ));
         }
         cursor += 1;
     }
-    compiler_options_compatibility(entry)
+    if inputs != 1 || compile != 1 || outputs > 1 {
+        return Err(
+            "compile command requires one -c, one source input and at most one output".into(),
+        );
+    }
+    Ok(options)
 }

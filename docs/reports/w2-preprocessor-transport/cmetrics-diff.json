@@ -1,0 +1,66 @@
+{
+  "raw_units_exact": true,
+  "changes": [
+    {
+      "path": "/source_contracts/units/0/functions/1/bounds/resource_contracts:61abe9f60f38e0645382a7e4",
+      "before": {
+        "max_operations": null,
+        "observed_runs_only": false,
+        "path_exploration": {
+          "kind": "bounded_paths",
+          "paths": 2
+        },
+        "schedules_explored": null
+      },
+      "after": null
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/bounds/resource_contracts:6d60715fac7f85ce1ada5aec",
+      "before": null,
+      "after": {
+        "max_operations": null,
+        "observed_runs_only": false,
+        "path_exploration": {
+          "kind": "bounded_paths",
+          "paths": 2
+        },
+        "schedules_explored": null
+      }
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/evidence/coverage/0",
+      "before": "resource_contracts:61abe9f60f38e0645382a7e4",
+      "after": "resource_contracts:6d60715fac7f85ce1ada5aec"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/evidence/unit/build_digest",
+      "before": "31197a3a8077f2dd56a1a39074c68597fb2404ffc32f3fc06f3130e56c70605c",
+      "after": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/import_identity/configuration_digest",
+      "before": "bded4942d220645ac873541cbacdfd11da8cdfce6880c9206fe1796a0c875be7",
+      "after": "871aba4f1de504167d3af95a8814ecd7cec6e04449e844ccfcac03182bf39a46"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/contract_sources/qcore:boolean-field-import:v1",
+      "before": "31197a3a8077f2dd56a1a39074c68597fb2404ffc32f3fc06f3130e56c70605c",
+      "after": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/obligations/0/obligation_id",
+      "before": "resource_contracts:61abe9f60f38e0645382a7e4",
+      "after": "resource_contracts:6d60715fac7f85ce1ada5aec"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/task/unit/build_digest",
+      "before": "31197a3a8077f2dd56a1a39074c68597fb2404ffc32f3fc06f3130e56c70605c",
+      "after": "b14ebdbd75ce6e6ffa6c1d5e3f26040a787d2c50e73bf7f18ec94d0755807ecd"
+    },
+    {
+      "path": "/source_contracts/units/0/functions/1/witness/task_digest",
+      "before": "c077762b1f3de19c120577d2c1a3b82da5759739b2899dca801c7f36585887c7",
+      "after": "c03ec8591e0e628b8c436cda3a32dd63e19a248767ada927fb90d33357c7abfc"
+    }
+  ]
+}

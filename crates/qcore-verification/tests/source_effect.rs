@@ -265,3 +265,67 @@ fn integer_profile_bytes_and_missing_return_rejection_are_preserved() {
         ));
     }
 }
+
+#[test]
+fn ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical() {
+    use qcore_c_gateway::boolean_source::{ChunkSourceResult, import_chunk_source_with_profile};
+    use qcore_c_gateway::legacy_c::{C11TranslationUnit, CPreprocessorOption};
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let profile = qcore_contract::profile_loader::load_profile_directory(
+        &root.join("contract/profiles/fluent-bit"),
+    )
+    .unwrap();
+    let derive = |preprocessor_options| {
+        let results = import_chunk_source_with_profile(
+            &C11TranslationUnit {
+                source: SOURCE,
+                preprocessor_options,
+                ..Default::default()
+            },
+            &profile.pin_for("chunkio").unwrap().git_commit,
+            &profile,
+            &["chunkio"],
+            &[],
+            include_str!("../../../contract/qcore/library/source_projection.qcore"),
+        )
+        .unwrap();
+        let ChunkSourceResult::Summary(summary) = results.into_iter().next().unwrap() else {
+            panic!("expected imported source");
+        };
+        *summary
+    };
+    let original = derive(vec![]);
+    let replay = task(&original, CONTRACT);
+    let mut digests = std::collections::BTreeSet::from([replay.task().task_digest()]);
+    for options in [
+        vec![CPreprocessorOption::Define("UNUSED=1".into())],
+        vec![CPreprocessorOption::Define("UNUSED=2".into())],
+        vec![
+            CPreprocessorOption::Define("UNUSED=1".into()),
+            CPreprocessorOption::Undefine("UNUSED".into()),
+        ],
+        vec![
+            CPreprocessorOption::Undefine("UNUSED".into()),
+            CPreprocessorOption::Define("UNUSED=1".into()),
+        ],
+        vec![CPreprocessorOption::Include(
+            root.to_string_lossy().into_owned(),
+        )],
+        vec![CPreprocessorOption::SystemInclude(
+            root.to_string_lossy().into_owned(),
+        )],
+        vec![CPreprocessorOption::QuoteInclude(
+            root.to_string_lossy().into_owned(),
+        )],
+    ] {
+        let changed = derive(options);
+        assert_eq!(original.paths, changed.paths);
+        let other = task(&changed, CONTRACT);
+        assert!(digests.insert(other.task().task_digest()));
+        assert!(
+            replay
+                .check(other.task(), &witness(&other, &changed))
+                .is_err()
+        );
+    }
+}

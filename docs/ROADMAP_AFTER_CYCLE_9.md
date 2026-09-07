@@ -323,3 +323,5 @@ checked/Unknown inventories. The full Cycle19 compatibility reports remain
 byte-identical. General lifecycle import, specialized provider extraction,
 required native evidence and full registry composition remain open. Evidence:
 [configured process audit report](reports/w5-configured-process-audit/README.md).
+
+W2 transport follow-up: [ordered preprocessing and header selection repair](reports/w2-preprocessor-transport/README.md) binds include classes and macro order across configured main/helper imports; arbitrary CMake flag support remains open.
