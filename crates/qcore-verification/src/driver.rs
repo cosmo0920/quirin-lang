@@ -150,9 +150,15 @@ pub enum SourceExecutionProfile {
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
     /// `ScopedReadLoansV1`: the owned-task profile plus one bounded scoped read
-    /// loan — at most one outstanding, never copied, moved, re-lent, returned
-    /// or dropped, and closed only by the creator's successful join.
+    /// loan of the whole read authority — never copied, moved, re-lent,
+    /// returned or dropped, and closed only by the creator's successful join.
     ScopedReadLoansV1,
+    /// `ScopedReadSharesV1`: the read-loan profile with counted shares, so one
+    /// allocation may be lent to two borrowers with positive complementary
+    /// shares, plus the Buffer write that requires reconstructed exclusive
+    /// authority. Selected when a capture lends other than the whole authority,
+    /// or when the module writes a Buffer.
+    ScopedReadSharesV1,
     /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
     /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
     CheckedMutexGuardsV1,
@@ -1178,14 +1184,35 @@ fn compile_task_source(
         )]);
     }
     let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
-    use qcore_core::task_execution::{ScalarType, TaskTerminatorKind};
+    use qcore_core::task_execution::{
+        FULL_READ_AUTHORITY, ScalarOperand, ScalarType, TaskInstructionKind, TaskTerminatorKind,
+    };
     // A read loan is a strictly stronger claim than owned transfer, so it names
-    // its own profile rather than being reported as an owned-task run.
+    // its own profile rather than being reported as an owned-task run; counted
+    // shares and Buffer writes are stronger again and name a third.
     let read_loan_profile = checked.module().functions.values().any(|function| {
         function
             .parameters
             .iter()
             .any(|(_, kind)| *kind == ScalarType::ReadLoan)
+    });
+    let read_share_profile = checked.module().functions.values().any(|function| {
+        function.blocks.values().any(|block| {
+            block.instructions.iter().any(|instruction| {
+                matches!(
+                    instruction.kind,
+                    TaskInstructionKind::WriteBuffer { .. }
+                )
+            }) || match &block.terminator.kind {
+                TaskTerminatorKind::TrySpawn { arguments, .. } => {
+                    arguments.iter().any(|argument| {
+                        matches!(argument, ScalarOperand::Loan { share, .. }
+                            if *share != FULL_READ_AUTHORITY)
+                    })
+                }
+                _ => false,
+            }
+        })
     });
     let owned_profile = checked.module().functions.values().any(|function| {
         function.result == ScalarType::OwnedBuffer
@@ -1241,7 +1268,9 @@ fn compile_task_source(
         .collect();
     Ok(CompiledModule {
         checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
-        execution_profile: if read_loan_profile {
+        execution_profile: if read_share_profile {
+            SourceExecutionProfile::ScopedReadSharesV1
+        } else if read_loan_profile {
             SourceExecutionProfile::ScopedReadLoansV1
         } else if owned_profile {
             SourceExecutionProfile::ScopedOwnedTasksV1

@@ -180,13 +180,19 @@ fn the_lender_cannot_release_or_relend_while_the_loan_is_outstanding() {
         "let during = qcore_buffer_read(buffer);",
         "let during = qcore_buffer_read(buffer); drop buffer;",
     );
-    rejects(&released, "LoanOutstanding { resource: 1, borrower: 2 }");
+    rejects(
+        &released,
+        "LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] }",
+    );
 
-    // The same resource twice: the ledger refuses the exclusive authority that
-    // lending demands, naming the loan rather than a custody transfer.
+    // The same resource twice, each time for the whole authority. Card T05
+    // re-pinned this expectation deliberately: with counted shares, a second
+    // whole loan is an over-allocation of authority rather than a demand for
+    // exclusive authority, and the refusal now reports the exact amounts. The
+    // direction is unchanged — the program is still refused.
     rejects(
         &TWO_LENDERS.replace("SECOND_LENDER", "first"),
-        "LoanOutstanding { resource: 1, borrower: 3 }",
+        "ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }",
     );
     // A different resource: the structural bound refuses it instead.
     rejects(
@@ -246,16 +252,34 @@ fn a_read_loan_is_not_a_result_type_and_not_an_entry_parameter() {
     );
 }
 
-/// A read loan is one whole read authority or nothing: a fractional or summed
-/// share belongs to the multi-reader profile, which this one refuses.
+/// Card T04 admitted `share FULL` alone and refused every fraction. Card T05
+/// counts shares instead, so this expectation was **re-pinned deliberately**:
+/// a positive fraction of the full authority is now admitted, and only a share
+/// that is not a fraction of it — zero, over-full, or a name with no declared
+/// constant — is refused. The refusals below are the ones actually measured.
 #[test]
-fn only_a_full_read_share_is_admitted() {
-    for share in ["share 1", "share (1 + 1)", "share FULL + FULL"] {
-        rejects(
-            &READ_LOAN.replace("share FULL", share),
-            "fractional read shares are outside this profile",
-        );
+fn a_read_share_must_be_a_positive_fraction_of_the_full_authority() {
+    // Admitted: a single unit, a sum, and the whole authority spelled out.
+    for share in ["share 1", "share (1 + 1)", "share 1024", "share (512 + 512)"] {
+        checked(&READ_LOAN.replace("share FULL", share))
+            .unwrap_or_else(|error| panic!("`{share}` must be admitted, got:\n{error}"));
     }
+    for (share, expected) in [
+        ("share FULL + FULL", "at most FULL (1024); this capture requests 2048"),
+        ("share 0", "at most FULL (1024); this capture requests 0"),
+        ("share 1025", "at most FULL (1024); this capture requests 1025"),
+        // A name that resolves is still not a share: this profile has no
+        // declared share constants, so it is refused rather than evaluated.
+        (
+            "share buffer",
+            "named read shares require a declared share constant",
+        ),
+    ] {
+        rejects(&READ_LOAN.replace("share FULL", share), expected);
+    }
+    // A name that does not resolve is refused earlier still, by ordinary name
+    // resolution, so no share expression can smuggle in an unbound identifier.
+    rejects(&READ_LOAN.replace("share FULL", "share HALF"), "unknown name `HALF`");
 }
 
 /// Capture mode and parameter type must agree in both directions, and a loan

@@ -6,12 +6,22 @@
 //! Every failed operation leaves the complete ledger unchanged.
 //!
 //! Card T04 adds one bounded borrowing form: a **scoped read loan**. A loaned
-//! resource keeps its owner and gains one borrower; both may read it and
-//! neither may use it exclusively, so mutation, release, re-loan and move are
-//! refused for the whole outstanding window. The creator's successful join is
-//! the only operation that closes a loan. This is not a share algebra: loans
-//! are not split, counted or transferred, and a second loan of the same
-//! resource is refused rather than merged.
+//! resource keeps its owner and gains a borrower; both may read it and neither
+//! may use it exclusively, so mutation, release, re-loan and move are refused
+//! for the whole outstanding window. The creator's successful join is the only
+//! operation that closes a loan.
+//!
+//! Card T05 makes the lent authority a **counted share** out of
+//! [`FULL_READ_AUTHORITY`], so one resource can be lent to two borrowers with
+//! positive complementary shares. What is budgeted is the authority handed
+//! *out*: each lend transfers a positive share, the outstanding total may never
+//! exceed the full authority, and exclusive authority — mutation, release, move
+//! and further lending beyond the budget — returns only when the outstanding
+//! total is back to zero. The owner's own read is deliberately **not** budgeted:
+//! it is retained across lending exactly as T04 retained it, and it is sound
+//! only because nothing may write while any share is outstanding. This is a
+//! lending budget, not a separation-logic split of the owner's own permission;
+//! see `docs/reports/remaining-t05/README.md` for that named boundary.
 //!
 //! ```
 //! use qcore_core::scoped_tasks::{ScopedTaskLedger, TaskOutcome};
@@ -36,6 +46,16 @@ pub type ReservationId = u64;
 pub type HandleId = u64;
 pub const ROOT_TASK: TaskId = 0;
 
+/// The whole read authority of one resource generation, expressed in the same
+/// unit as the concurrency model's [`crate::concurrency::FULL_ACCESS`] so that
+/// a share here and a share there are the same quantity.
+pub const FULL_READ_AUTHORITY: u32 = crate::concurrency::FULL_ACCESS as u32;
+
+/// The number of simultaneous borrowers this profile admits for one resource.
+/// Card T05's deliverable is two readers; a third is a represented refusal, not
+/// an unmodelled case.
+pub const MAX_READERS: usize = 2;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TaskState {
     Active,
@@ -50,17 +70,39 @@ pub enum Custodian {
     Capsule(TaskId),
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// Who currently holds a lent read share. A share is `Pending` from the moment
+/// its creation is reserved until that creation is known to have happened or
+/// failed; it is never readable by anyone in that window.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ShareHolder {
+    Borrower(TaskId),
+    Pending(ReservationId),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ResourceState {
     Live(Custodian),
     Dropped,
-    /// A scoped read loan. `owner` never stops owning the resource and never
-    /// regains exclusive authority before the creator's join closes the loan;
-    /// `borrower` holds read authority only. Both may read.
+    /// A resource with outstanding read shares. `owner` never stops owning it
+    /// and never regains exclusive authority before every share is returned.
+    /// `shares` is ordered, has no repeated holder, and every share is
+    /// positive; its total never exceeds [`FULL_READ_AUTHORITY`].
     Loaned {
         owner: TaskId,
-        borrower: TaskId,
+        shares: Vec<(ShareHolder, u32)>,
     },
+}
+
+impl ResourceState {
+    /// A whole-authority loan to exactly one borrower — the only shape card
+    /// T04 could express, retained as a constructor so its tests and fixtures
+    /// keep saying what they meant.
+    pub fn whole_loan(owner: TaskId, borrower: TaskId) -> Self {
+        Self::Loaned {
+            owner,
+            shares: vec![(ShareHolder::Borrower(borrower), FULL_READ_AUTHORITY)],
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -108,11 +150,32 @@ pub enum TaskLedgerError {
     TaskBusy(TaskId),
     CompletionResourceMismatch,
     EmptyErrorLabel,
-    /// Exclusive use was attempted while a read loan is outstanding. This is
-    /// not a custody complaint: the owner still owns the resource.
+    /// Exclusive use was attempted while read shares are outstanding. This is
+    /// not a custody complaint: the owner still owns the resource. `outstanding`
+    /// is the share total that has not come back, and `borrowers` names the
+    /// committed holders, so reconstruction to full authority is refused with
+    /// the exact amount that is still lent.
     LoanOutstanding {
         resource: ResourceId,
-        borrower: TaskId,
+        outstanding: u32,
+        borrowers: Vec<TaskId>,
+    },
+    /// Lending would hand out more authority than the resource has. The
+    /// complete request is refused; no partial share is granted.
+    ShareExceedsAuthority {
+        resource: ResourceId,
+        outstanding: u32,
+        requested: u32,
+    },
+    /// A share of zero, or above the full authority, is not a share.
+    InvalidShare {
+        resource: ResourceId,
+        requested: u32,
+    },
+    /// More simultaneous borrowers than [`MAX_READERS`].
+    TooManyReaders {
+        resource: ResourceId,
+        limit: usize,
     },
     /// Read authority was attempted by a task that is neither the owner nor the
     /// borrower of a live resource.
@@ -165,10 +228,10 @@ struct Reservation {
     creator: TaskId,
     scope: ScopeId,
     resources: Vec<ResourceId>,
-    /// Resources parked for a read loan rather than a move. Rollback restores
-    /// them to the creator exactly as it restores moves; commit places them
-    /// under a loan instead of transferring custody.
-    loans: Vec<ResourceId>,
+    /// Read shares parked for this creation rather than moved. Rollback returns
+    /// each share to the owner exactly as it restores moves; commit rebinds the
+    /// pending holder to the child without transferring custody.
+    loans: Vec<(ResourceId, u32)>,
     state: ReservationState,
 }
 
@@ -178,8 +241,8 @@ struct Handle {
     scope: ScopeId,
     child: TaskId,
     consumed: bool,
-    /// Loans this creation opened. Only a successful join closes them.
-    loans: Vec<ResourceId>,
+    /// Read shares this creation opened. Only a successful join returns them.
+    loans: Vec<(ResourceId, u32)>,
     /// A join that did not observe the child finish. The handle stays
     /// outstanding and unconsumed, so its scope can never exit.
     failed: bool,
@@ -214,7 +277,43 @@ impl ScopedTaskLedger {
     }
 
     pub fn resource_state(&self, resource: ResourceId) -> Option<ResourceState> {
-        self.resources.get(&resource).copied()
+        self.resources.get(&resource).cloned()
+    }
+
+    /// Outstanding lent share total for one resource: zero when nothing is
+    /// lent, and the exact amount that must come back before exclusive
+    /// authority is reconstructed.
+    pub fn lent_share(&self, resource: ResourceId) -> u32 {
+        match self.resources.get(&resource) {
+            Some(ResourceState::Loaned { shares, .. }) => shares.iter().map(|(_, s)| *s).sum(),
+            _ => 0,
+        }
+    }
+
+    /// The share this task currently holds of this resource, whether it is the
+    /// owner's retained authority or a borrower's lent share. The owner's own
+    /// read is not budgeted, so this reports only *lent* shares.
+    pub fn held_share(&self, task: TaskId, resource: ResourceId) -> u32 {
+        match self.resources.get(&resource) {
+            Some(ResourceState::Loaned { shares, .. }) => shares
+                .iter()
+                .find(|(holder, _)| *holder == ShareHolder::Borrower(task))
+                .map(|(_, share)| *share)
+                .unwrap_or(0),
+            _ => 0,
+        }
+    }
+
+    fn outstanding(&self, resource: ResourceId) -> Result<(), TaskLedgerError> {
+        let lent = self.lent_share(resource);
+        if lent == 0 {
+            return Ok(());
+        }
+        Err(TaskLedgerError::LoanOutstanding {
+            resource,
+            outstanding: lent,
+            borrowers: self.loan_borrowers(resource),
+        })
     }
 
     fn transaction<T>(
@@ -283,44 +382,64 @@ impl ScopedTaskLedger {
         })
     }
 
-    /// Exclusive authority: mutation, release, move and re-loan. An outstanding
-    /// read loan suspends it for the owner as well as for everyone else.
+    /// Exclusive authority: mutation, release, move and re-loan. Any
+    /// outstanding read share suspends it for the owner as well as for everyone
+    /// else, so full authority is reconstructed only when every share is back.
     pub fn use_resource(&self, task: TaskId, resource: ResourceId) -> Result<(), TaskLedgerError> {
         self.active(task)?;
-        if let Some(ResourceState::Loaned { borrower, .. }) = self.resource_state(resource) {
-            return Err(TaskLedgerError::LoanOutstanding { resource, borrower });
-        }
+        self.outstanding(resource)?;
         if self.resource_state(resource) != Some(ResourceState::Live(Custodian::Task(task))) {
             return Err(TaskLedgerError::NotCustodian { task, resource });
         }
         Ok(())
     }
 
-    /// Shared read authority. The owner keeps it while the resource is loaned,
-    /// and the borrower holds exactly it — never more. A dropped resource, a
-    /// reserved one and a completion capsule are readable by nobody.
+    /// Shared read authority. A borrower reads exactly while it holds a
+    /// positive share. The owner keeps its own read across lending, but not
+    /// while one of its creations is in flight: a pending share has left the
+    /// owner and has not yet reached anyone. A dropped resource, a moved-away
+    /// one and a completion capsule are readable by nobody.
     pub fn read_resource(&self, task: TaskId, resource: ResourceId) -> Result<(), TaskLedgerError> {
         self.active(task)?;
-        match self.resource_state(resource) {
-            Some(ResourceState::Live(Custodian::Task(custodian))) if custodian == task => Ok(()),
-            Some(ResourceState::Loaned { owner, borrower })
-                if owner == task || borrower == task =>
-            {
-                Ok(())
+        let refused = Err(TaskLedgerError::NotReadable { task, resource });
+        match self.resources.get(&resource) {
+            Some(ResourceState::Live(Custodian::Task(custodian))) if *custodian == task => Ok(()),
+            Some(ResourceState::Loaned { owner, shares }) => {
+                if shares
+                    .iter()
+                    .any(|(holder, share)| *holder == ShareHolder::Borrower(task) && *share > 0)
+                {
+                    return Ok(());
+                }
+                if *owner == task
+                    && !shares
+                        .iter()
+                        .any(|(holder, _)| matches!(holder, ShareHolder::Pending(_)))
+                {
+                    return Ok(());
+                }
+                refused
             }
-            _ => Err(TaskLedgerError::NotReadable { task, resource }),
+            _ => refused,
         }
     }
 
-    /// The borrower of an outstanding loan, if this resource has one.
-    pub fn loan_borrower(&self, resource: ResourceId) -> Option<TaskId> {
-        match self.resource_state(resource) {
-            Some(ResourceState::Loaned { borrower, .. }) => Some(borrower),
-            _ => None,
+    /// The committed borrowers of this resource, in identity order. A pending
+    /// creation is deliberately not a borrower: it may never become one.
+    pub fn loan_borrowers(&self, resource: ResourceId) -> Vec<TaskId> {
+        match self.resources.get(&resource) {
+            Some(ResourceState::Loaned { shares, .. }) => shares
+                .iter()
+                .filter_map(|(holder, _)| match holder {
+                    ShareHolder::Borrower(task) => Some(*task),
+                    ShareHolder::Pending(_) => None,
+                })
+                .collect(),
+            _ => Vec::new(),
         }
     }
 
-    /// Every resource with an outstanding read loan, in identity order.
+    /// Every resource with an outstanding read share, in identity order.
     pub fn outstanding_loans(&self) -> Vec<ResourceId> {
         self.resources
             .iter()
@@ -397,17 +516,24 @@ impl ScopedTaskLedger {
         self.reserve_with_loans(creator, scope, reservation, resources, &[])
     }
 
-    /// Reserve ordered move and read-loan lists before attempting the external
-    /// spawn. Both lists are parked in the reservation, so the creator has no
-    /// authority at all — not even read — over either while creation is in
-    /// flight, and a failed creation restores both exactly.
+    /// Reserve an ordered move list and an ordered list of read shares before
+    /// attempting the external spawn. Moved resources are parked in the
+    /// reservation, so the creator has no authority at all over them while
+    /// creation is in flight. Each lent share leaves the owner as a *pending*
+    /// share, which nobody may read; a failed creation returns both exactly.
+    ///
+    /// Lending is admitted while a resource already has outstanding shares, so
+    /// long as the creator is its owner, the share is positive, the outstanding
+    /// total stays within [`FULL_READ_AUTHORITY`], and the resource does not
+    /// exceed [`MAX_READERS`] simultaneous holders. Excess authority is refused
+    /// as a whole: no partial share is ever granted.
     pub fn reserve_with_loans(
         &mut self,
         creator: TaskId,
         scope: ScopeId,
         reservation: ReservationId,
         resources: &[ResourceId],
-        loans: &[ResourceId],
+        loans: &[(ResourceId, u32)],
     ) -> Result<(), TaskLedgerError> {
         self.transaction(|ledger| {
             ledger.owned_scope(creator, scope)?;
@@ -419,14 +545,17 @@ impl ScopedTaskLedger {
             }
             let parked = resources
                 .iter()
-                .chain(loans)
                 .copied()
+                .chain(loans.iter().map(|(resource, _)| *resource))
                 .collect::<Vec<ResourceId>>();
             unique(&parked)?;
-            for &resource in &parked {
+            for &resource in resources {
                 ledger.use_resource(creator, resource)?;
             }
-            for &resource in &parked {
+            for &(resource, share) in loans {
+                ledger.lend(creator, resource, ShareHolder::Pending(reservation), share)?;
+            }
+            for &resource in resources {
                 ledger.resources.insert(
                     resource,
                     ResourceState::Live(Custodian::Reservation(reservation)),
@@ -446,9 +575,104 @@ impl ScopedTaskLedger {
         })
     }
 
-    /// Failed spawn restores only this reservation; earlier siblings persist.
-    /// Moves and loans are restored identically: a creation that did not happen
-    /// opened no loan.
+    /// Record one positive share against a live resource this task owns. Every
+    /// admission rule is checked before anything is written, so a refused lend
+    /// leaves the share ledger exactly as it was.
+    fn lend(
+        &mut self,
+        creator: TaskId,
+        resource: ResourceId,
+        holder: ShareHolder,
+        share: u32,
+    ) -> Result<(), TaskLedgerError> {
+        if share == 0 || share > FULL_READ_AUTHORITY {
+            return Err(TaskLedgerError::InvalidShare {
+                resource,
+                requested: share,
+            });
+        }
+        let mut shares = match self.resources.get(&resource) {
+            Some(ResourceState::Live(Custodian::Task(custodian))) if *custodian == creator => {
+                Vec::new()
+            }
+            Some(ResourceState::Loaned { owner, shares }) if *owner == creator => shares.clone(),
+            _ => {
+                return Err(TaskLedgerError::NotCustodian {
+                    task: creator,
+                    resource,
+                });
+            }
+        };
+        if shares.len() >= MAX_READERS {
+            return Err(TaskLedgerError::TooManyReaders {
+                resource,
+                limit: MAX_READERS,
+            });
+        }
+        let outstanding = shares.iter().map(|(_, s)| *s).sum::<u32>();
+        if outstanding + share > FULL_READ_AUTHORITY {
+            return Err(TaskLedgerError::ShareExceedsAuthority {
+                resource,
+                outstanding,
+                requested: share,
+            });
+        }
+        if shares.iter().any(|(existing, _)| *existing == holder) {
+            return Err(TaskLedgerError::DuplicateCapture(resource));
+        }
+        shares.push((holder, share));
+        shares.sort();
+        self.resources.insert(
+            resource,
+            ResourceState::Loaned {
+                owner: creator,
+                shares,
+            },
+        );
+        Ok(())
+    }
+
+    /// Return one recorded share. The resource becomes exclusively the owner's
+    /// again exactly when the last share comes back.
+    fn reclaim(
+        &mut self,
+        owner: TaskId,
+        resource: ResourceId,
+        holder: ShareHolder,
+        share: u32,
+    ) -> Result<(), TaskLedgerError> {
+        let Some(ResourceState::Loaned {
+            owner: recorded,
+            shares,
+        }) = self.resources.get(&resource)
+        else {
+            return Err(TaskLedgerError::LoanNotOutstanding(resource));
+        };
+        if *recorded != owner || !shares.contains(&(holder, share)) {
+            return Err(TaskLedgerError::LoanNotOutstanding(resource));
+        }
+        let remaining = shares
+            .iter()
+            .filter(|entry| **entry != (holder, share))
+            .cloned()
+            .collect::<Vec<_>>();
+        self.resources.insert(
+            resource,
+            if remaining.is_empty() {
+                ResourceState::Live(Custodian::Task(owner))
+            } else {
+                ResourceState::Loaned {
+                    owner,
+                    shares: remaining,
+                }
+            },
+        );
+        Ok(())
+    }
+
+    /// Failed spawn restores only this reservation; earlier siblings persist,
+    /// including a share another creation still holds. A creation that did not
+    /// happen lent nothing, so its pending share returns to the owner exactly.
     pub fn rollback(
         &mut self,
         creator: TaskId,
@@ -456,7 +680,15 @@ impl ScopedTaskLedger {
     ) -> Result<(), TaskLedgerError> {
         self.transaction(|ledger| {
             let record = ledger.pending(creator, reservation)?.clone();
-            for resource in record.resources.iter().chain(&record.loans) {
+            for &(resource, share) in &record.loans {
+                ledger.reclaim(
+                    creator,
+                    resource,
+                    ShareHolder::Pending(reservation),
+                    share,
+                )?;
+            }
+            for resource in &record.resources {
                 ledger
                     .resources
                     .insert(*resource, ResourceState::Live(Custodian::Task(creator)));
@@ -498,14 +730,16 @@ impl ScopedTaskLedger {
                     .resources
                     .insert(resource, ResourceState::Live(Custodian::Task(child)));
             }
-            for resource in reservation_record.loans {
-                ledger.resources.insert(
+            // A pending share becomes the child's share. Nothing is minted:
+            // exactly the reserved amount changes holder.
+            for (resource, share) in reservation_record.loans {
+                ledger.reclaim(
+                    creator,
                     resource,
-                    ResourceState::Loaned {
-                        owner: creator,
-                        borrower: child,
-                    },
-                );
+                    ShareHolder::Pending(reservation),
+                    share,
+                )?;
+                ledger.lend(creator, resource, ShareHolder::Borrower(child), share)?;
             }
             ledger.reservations.get_mut(&reservation).unwrap().state =
                 ReservationState::Committed { child, handle };
@@ -597,23 +831,23 @@ impl ScopedTaskLedger {
             if ledger.task_state(record.child) != Some(TaskState::Completed) {
                 return Err(TaskLedgerError::ChildNotCompleted(record.child));
             }
-            // Closing the loans is part of the same transaction as collecting
-            // the capsule: a loan the ledger cannot account for aborts the join
-            // instead of silently returning exclusive authority.
-            for &resource in &record.loans {
-                if ledger.resource_state(resource)
-                    != Some(ResourceState::Loaned {
-                        owner: creator,
-                        borrower: record.child,
-                    })
-                {
-                    return Err(TaskLedgerError::LoanNotOutstanding(resource));
-                }
+            // Returning the shares is part of the same transaction as
+            // collecting the capsule: a share the ledger cannot account for
+            // aborts the join instead of silently reconstructing authority.
+            // A share held by a *sibling* is untouched, so a join reconstructs
+            // full authority only when it was the last outstanding share.
+            for &(resource, share) in &record.loans {
+                ledger.reclaim(
+                    creator,
+                    resource,
+                    ShareHolder::Borrower(record.child),
+                    share,
+                )?;
             }
             let task = ledger.tasks.get_mut(&record.child).unwrap();
             let capsule = task.capsule.take().unwrap();
             task.state = TaskState::Joined;
-            for &resource in capsule.resources.iter().chain(&record.loans) {
+            for &resource in &capsule.resources {
                 ledger
                     .resources
                     .insert(resource, ResourceState::Live(Custodian::Task(creator)));
@@ -940,7 +1174,7 @@ mod tests {
     fn an_outstanding_read_loan_suspends_exclusive_authority_and_admits_two_readers() {
         let mut ledger = opened();
         ledger.acquire(0, 7).unwrap();
-        ledger.reserve_with_loans(0, 10, 20, &[], &[7]).unwrap();
+        ledger.reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
         // The reservation window grants nobody anything, read included.
         assert_eq!(
             ledger.read_resource(0, 7).unwrap_err(),
@@ -952,27 +1186,45 @@ mod tests {
         ledger.commit(0, 20, 1, 30).unwrap();
         assert_eq!(
             ledger.resource_state(7),
-            Some(ResourceState::Loaned {
-                owner: 0,
-                borrower: 1
-            })
+            Some(ResourceState::whole_loan(0, 1))
         );
-        assert_eq!(ledger.loan_borrower(7), Some(1));
+        assert_eq!(ledger.loan_borrowers(7), [1]);
         assert_eq!(ledger.outstanding_loans(), [7]);
 
         let suspended = TaskLedgerError::LoanOutstanding {
             resource: 7,
-            borrower: 1,
+            outstanding: FULL_READ_AUTHORITY,
+            borrowers: vec![1],
         };
         for task in [0, 1] {
             assert_eq!(ledger.use_resource(task, 7).unwrap_err(), suspended);
             rejected(&mut ledger, &suspended, |l| l.drop_resource(task, 7));
         }
-        // Re-loaning and moving the same resource are exclusive uses too.
-        rejected(&mut ledger, &suspended, |l| {
-            l.reserve_with_loans(0, 10, 21, &[], &[7])
-        });
+        // Moving the same resource is an exclusive use. Lending it again is
+        // *not*, under T05: it is an over-allocation of authority, and the
+        // refusal now says so with the exact amounts. This expectation was
+        // re-pinned deliberately when the whole-loan bound became a budget;
+        // the direction is unchanged — the operation is still refused.
         rejected(&mut ledger, &suspended, |l| l.reserve(0, 10, 22, &[7]));
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::ShareExceedsAuthority {
+                resource: 7,
+                outstanding: FULL_READ_AUTHORITY,
+                requested: FULL_READ_AUTHORITY,
+            },
+            |l| l.reserve_with_loans(0, 10, 21, &[], &[(7, FULL_READ_AUTHORITY)]),
+        );
+        // Even one unit more than the budget allows is refused as a whole.
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::ShareExceedsAuthority {
+                resource: 7,
+                outstanding: FULL_READ_AUTHORITY,
+                requested: 1,
+            },
+            |l| l.reserve_with_loans(0, 10, 21, &[], &[(7, 1)]),
+        );
         // Both parties read; a third task does not.
         ledger.read_resource(0, 7).unwrap();
         ledger.read_resource(1, 7).unwrap();
@@ -1003,7 +1255,7 @@ mod tests {
         }
         spawn(&mut ledger, 20, 1, 30, &[8]);
         let before = ledger.clone();
-        ledger.reserve_with_loans(0, 10, 21, &[], &[7]).unwrap();
+        ledger.reserve_with_loans(0, 10, 21, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
         ledger.rollback(0, 21).unwrap();
         assert_eq!(
             ledger.resource_state(7),
@@ -1028,25 +1280,23 @@ mod tests {
     fn only_a_successful_creator_join_closes_a_read_loan() {
         let mut ledger = opened();
         ledger.acquire(0, 7).unwrap();
-        ledger.reserve_with_loans(0, 10, 20, &[], &[7]).unwrap();
+        ledger.reserve_with_loans(0, 10, 20, &[], &[(7, FULL_READ_AUTHORITY)]).unwrap();
         ledger.commit(0, 20, 1, 30).unwrap();
         ledger.complete(1, TaskOutcome::I32(5), &[]).unwrap();
 
         // A completed-but-unjoined child still holds the loan.
         assert_eq!(
             ledger.resource_state(7),
-            Some(ResourceState::Loaned {
-                owner: 0,
-                borrower: 1
-            })
+            Some(ResourceState::whole_loan(0, 1))
         );
         ledger.read_resource(0, 7).unwrap();
         rejected(
             &mut ledger,
             &TaskLedgerError::LoanOutstanding {
-                resource: 7,
-                borrower: 1,
-            },
+            resource: 7,
+            outstanding: FULL_READ_AUTHORITY,
+            borrowers: vec![1],
+        },
             |l| l.drop_resource(0, 7),
         );
 
@@ -1056,10 +1306,7 @@ mod tests {
         failed.fail_join(0, 30).unwrap();
         assert_eq!(
             failed.resource_state(7),
-            Some(ResourceState::Loaned {
-                owner: 0,
-                borrower: 1
-            })
+            Some(ResourceState::whole_loan(0, 1))
         );
         assert_eq!(failed.outstanding_loans(), [7]);
         rejected(&mut failed, &TaskLedgerError::JoinFailed(30), |l| {
@@ -1074,9 +1321,10 @@ mod tests {
         rejected(
             &mut failed,
             &TaskLedgerError::LoanOutstanding {
-                resource: 7,
-                borrower: 1,
-            },
+            resource: 7,
+            outstanding: FULL_READ_AUTHORITY,
+            borrowers: vec![1],
+        },
             |l| l.drop_resource(0, 7),
         );
         // Nobody else may collect it either.
@@ -1106,9 +1354,9 @@ mod tests {
             ledger.acquire(0, resource).unwrap();
         }
         rejected(&mut ledger, &TaskLedgerError::DuplicateCapture(7), |l| {
-            l.reserve_with_loans(0, 10, 20, &[7], &[7])
+            l.reserve_with_loans(0, 10, 20, &[7], &[(7, FULL_READ_AUTHORITY)])
         });
-        ledger.reserve_with_loans(0, 10, 21, &[8], &[7]).unwrap();
+        ledger.reserve_with_loans(0, 10, 21, &[8], &[(7, FULL_READ_AUTHORITY)]).unwrap();
         ledger.commit(0, 21, 1, 30).unwrap();
         assert_eq!(
             ledger.resource_state(8),
@@ -1116,10 +1364,7 @@ mod tests {
         );
         assert_eq!(
             ledger.resource_state(7),
-            Some(ResourceState::Loaned {
-                owner: 0,
-                borrower: 1
-            })
+            Some(ResourceState::whole_loan(0, 1))
         );
         // The child owns its move and only borrows the loan.
         ledger.use_resource(1, 8).unwrap();
@@ -1150,5 +1395,238 @@ mod tests {
         unchanged(&mut ledger, |l| l.enter_scope(2, 11));
         ledger.join(0, 31).unwrap();
         ledger.use_resource(0, 7).unwrap();
+    }
+
+    const HALF: u32 = FULL_READ_AUTHORITY / 2;
+
+    /// Lend `share` of resource 7 to a fresh child, in one step.
+    fn lend_to(
+        ledger: &mut ScopedTaskLedger,
+        reservation: u64,
+        child: u64,
+        handle: u64,
+        share: u32,
+    ) {
+        ledger
+            .reserve_with_loans(0, 10, reservation, &[], &[(7, share)])
+            .unwrap();
+        ledger.commit(0, reservation, child, handle).unwrap();
+    }
+
+    /// T05 acceptance 1 and 3. Two positive complementary shares of one
+    /// generation are admitted, both borrowers read the *same* identity, and
+    /// nothing about the resource is duplicated: there is one entry in the
+    /// ledger, one owner, and one outstanding total.
+    #[test]
+    fn two_positive_complementary_shares_of_one_resource_admit_two_readers() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF);
+        assert_eq!(ledger.lent_share(7), HALF);
+        // The owner keeps its own read across lending; a committed share is not
+        // a pending one, so the read window reopens as soon as the child exists.
+        ledger.read_resource(0, 7).unwrap();
+        lend_to(&mut ledger, 21, 2, 31, HALF);
+
+        assert_eq!(
+            ledger.resource_state(7),
+            Some(ResourceState::Loaned {
+                owner: 0,
+                shares: vec![
+                    (ShareHolder::Borrower(1), HALF),
+                    (ShareHolder::Borrower(2), HALF)
+                ],
+            })
+        );
+        assert_eq!(ledger.lent_share(7), FULL_READ_AUTHORITY);
+        assert_eq!(ledger.loan_borrowers(7), [1, 2]);
+        assert_eq!(ledger.held_share(1, 7), HALF);
+        assert_eq!(ledger.held_share(2, 7), HALF);
+        // One allocation, counted once: the two readers are two holders of one
+        // identity, not two resources.
+        assert_eq!(ledger.outstanding_loans(), [7]);
+        assert_eq!(ledger.held_share(0, 7), 0);
+
+        for reader in [0, 1, 2] {
+            ledger.read_resource(reader, 7).unwrap();
+        }
+        // A third task holds no share and reads nothing.
+        ledger.acquire(0, 8).unwrap();
+        ledger.reserve(0, 10, 22, &[8]).unwrap();
+        ledger.commit(0, 22, 3, 32).unwrap();
+        assert_eq!(
+            ledger.read_resource(3, 7).unwrap_err(),
+            TaskLedgerError::NotReadable {
+                task: 3,
+                resource: 7
+            }
+        );
+    }
+
+    /// T05 acceptance 1. Excess allocation of authority is refused as a whole:
+    /// the shares that are already out are never partially topped up, and the
+    /// refusal names the outstanding total and the request.
+    #[test]
+    fn excess_allocation_of_read_authority_is_refused_without_partial_grant() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF + 1);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::ShareExceedsAuthority {
+                resource: 7,
+                outstanding: HALF + 1,
+                requested: HALF,
+            },
+            |l| l.reserve_with_loans(0, 10, 21, &[], &[(7, HALF)]),
+        );
+        // Nothing was granted, so the remaining authority is unchanged.
+        assert_eq!(ledger.lent_share(7), HALF + 1);
+        assert_eq!(ledger.loan_borrowers(7), [1]);
+        // A share that exactly fills the remainder is admitted.
+        lend_to(&mut ledger, 22, 2, 31, HALF - 1);
+        assert_eq!(ledger.lent_share(7), FULL_READ_AUTHORITY);
+
+        // A zero share and an over-full share are not shares.
+        for requested in [0, FULL_READ_AUTHORITY + 1] {
+            let mut fresh = opened();
+            fresh.acquire(0, 9).unwrap();
+            rejected(
+                &mut fresh,
+                &TaskLedgerError::InvalidShare {
+                    resource: 9,
+                    requested,
+                },
+                |l| l.reserve_with_loans(0, 10, 20, &[], &[(9, requested)]),
+            );
+        }
+    }
+
+    /// T05 acceptance 1 and 2. Reconstruction to full authority is refused
+    /// while *any* holder retains a share: one join is not enough, and the
+    /// refusal reports exactly what is still out.
+    #[test]
+    fn reconstruction_to_full_authority_waits_for_every_share() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF);
+        lend_to(&mut ledger, 21, 2, 31, HALF);
+        for task in [0, 1, 2] {
+            assert_eq!(
+                ledger.use_resource(task, 7).unwrap_err(),
+                TaskLedgerError::LoanOutstanding {
+                    resource: 7,
+                    outstanding: FULL_READ_AUTHORITY,
+                    borrowers: vec![1, 2],
+                }
+            );
+        }
+        ledger.complete(1, TaskOutcome::Unit, &[]).unwrap();
+        ledger.complete(2, TaskOutcome::Unit, &[]).unwrap();
+        // Completion is not the return of a share.
+        assert_eq!(ledger.lent_share(7), FULL_READ_AUTHORITY);
+        ledger.join(0, 30).unwrap();
+        // Exactly one share came back, and the other borrower is untouched.
+        assert_eq!(ledger.lent_share(7), HALF);
+        assert_eq!(ledger.loan_borrowers(7), [2]);
+        assert_eq!(ledger.held_share(2, 7), HALF);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::LoanOutstanding {
+                resource: 7,
+                outstanding: HALF,
+                borrowers: vec![2],
+            },
+            |l| l.drop_resource(0, 7),
+        );
+        // The joined child is gone, but its share is not somebody else's.
+        assert_eq!(ledger.held_share(1, 7), 0);
+        ledger.join(0, 31).unwrap();
+        assert_eq!(ledger.lent_share(7), 0);
+        assert_eq!(
+            ledger.resource_state(7),
+            Some(ResourceState::Live(Custodian::Task(0)))
+        );
+        ledger.use_resource(0, 7).unwrap();
+        ledger.drop_resource(0, 7).unwrap();
+        ledger.exit_scope(0, 10).unwrap();
+    }
+
+    /// A failed creation returns exactly its own pending share and leaves a
+    /// sibling's committed share alone. A pending share is readable by nobody,
+    /// including the owner: it has left and has not arrived.
+    #[test]
+    fn a_failed_second_creation_returns_only_its_own_pending_share() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF);
+        let before = ledger.clone();
+        ledger
+            .reserve_with_loans(0, 10, 21, &[], &[(7, HALF)])
+            .unwrap();
+        assert_eq!(ledger.lent_share(7), FULL_READ_AUTHORITY);
+        assert_eq!(
+            ledger.read_resource(0, 7).unwrap_err(),
+            TaskLedgerError::NotReadable {
+                task: 0,
+                resource: 7
+            }
+        );
+        // The committed sibling reads throughout the window.
+        ledger.read_resource(1, 7).unwrap();
+        ledger.rollback(0, 21).unwrap();
+        assert_eq!(ledger.resource_state(7), before.resource_state(7));
+        assert_eq!(ledger.lent_share(7), HALF);
+        ledger.read_resource(0, 7).unwrap();
+        ledger.read_resource(1, 7).unwrap();
+    }
+
+    /// A third simultaneous reader is a represented refusal, not an
+    /// unmodelled case, even when the remaining authority would allow it.
+    #[test]
+    fn a_third_simultaneous_reader_is_refused_by_the_declared_bound() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, 1);
+        lend_to(&mut ledger, 21, 2, 31, 1);
+        assert_eq!(ledger.lent_share(7), 2);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::TooManyReaders {
+                resource: 7,
+                limit: MAX_READERS,
+            },
+            |l| l.reserve_with_loans(0, 10, 22, &[], &[(7, 1)]),
+        );
+        // Returning one share makes room again, without minting any.
+        ledger.complete(1, TaskOutcome::Unit, &[]).unwrap();
+        ledger.join(0, 30).unwrap();
+        lend_to(&mut ledger, 23, 3, 33, 1);
+        assert_eq!(ledger.loan_borrowers(7), [2, 3]);
+        assert_eq!(ledger.lent_share(7), 2);
+    }
+
+    /// Only the owner lends, and a share is never taken from someone who does
+    /// not have it: a borrower cannot lend onward and a stranger cannot lend
+    /// at all.
+    #[test]
+    fn only_the_owner_may_lend_a_share_of_its_own_resource() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF);
+        ledger.enter_scope(1, 11).unwrap();
+        for stranger in [1u64, 2] {
+            let expected = if stranger == 1 {
+                TaskLedgerError::NotCustodian {
+                    task: 1,
+                    resource: 7,
+                }
+            } else {
+                TaskLedgerError::UnknownTask(2)
+            };
+            rejected(&mut ledger, &expected, |l| {
+                l.reserve_with_loans(stranger, 11, 21 + stranger, &[], &[(7, 1)])
+            });
+        }
     }
 }

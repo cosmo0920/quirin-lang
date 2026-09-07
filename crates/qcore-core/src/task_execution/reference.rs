@@ -51,6 +51,11 @@ pub enum TaskEvent {
         buffer: ResourceId,
         value: i32,
     },
+    BufferWritten {
+        task: u64,
+        buffer: ResourceId,
+        value: i32,
+    },
     BufferDropped {
         task: u64,
         buffer: ResourceId,
@@ -133,8 +138,10 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
             _ => Err("reference scalar slot is unavailable".into()),
         },
         // Lending neither consumes nor copies the binding; it produces a
-        // borrowed identity for exactly one creation.
-        ScalarOperand::Loan(id) => match slots.get(id) {
+        // borrowed identity for exactly one creation. The share travels with
+        // the reservation, not with the value: a borrower cannot read its own
+        // share out of the value it was handed.
+        ScalarOperand::Loan { slot, .. } => match slots.get(slot) {
             Some(Value::Scalar(ScalarValue::OwnedBuffer(resource))) => {
                 Ok(ScalarValue::ReadLoan(*resource))
             }
@@ -211,6 +218,34 @@ impl Runtime<'_> {
                             );
                             slots.insert(*value_slot, Value::Scalar(ScalarValue::I32(value)));
                         }
+                        TaskInstructionKind::WriteBuffer { buffer, value } => {
+                            let ScalarValue::I32(written) = scalar(&slots, value)? else {
+                                return Err("reference buffer write requires i32".into());
+                            };
+                            // Independently of the checker: a write demands
+                            // exclusive authority, which the ledger refuses
+                            // while any read share is outstanding.
+                            let ScalarValue::OwnedBuffer(resource) =
+                                scalar(&slots, &ScalarOperand::Move(*buffer))?
+                            else {
+                                return Err("reference buffer write requires owner".into());
+                            };
+                            self.ledger
+                                .use_resource(task, resource)
+                                .map_err(|e| format!("{e:?}"))?;
+                            *self
+                                .buffers
+                                .get_mut(&resource)
+                                .ok_or("reference buffer payload missing")? = written;
+                            self.buffer_event(
+                                task,
+                                TaskEvent::BufferWritten {
+                                    task,
+                                    buffer: resource,
+                                    value: written,
+                                },
+                            );
+                        }
                         TaskInstructionKind::DropBuffer { buffer } => {
                             let ScalarValue::OwnedBuffer(resource) =
                                 take(&mut slots, &ScalarOperand::Move(*buffer))?
@@ -283,14 +318,16 @@ impl Runtime<'_> {
                             else {
                                 return Err("reference handle unavailable".into());
                             };
-                            // Read the loans this borrower holds before the
-                            // join closes them, so the returned identities are
+                            // Read the shares this borrower holds before the
+                            // join returns them, so the returned identities are
                             // the ledger's, not the caller's claim.
                             let returned_loans = self
                                 .ledger
                                 .outstanding_loans()
                                 .into_iter()
-                                .filter(|&buffer| self.ledger.loan_borrower(buffer) == Some(child))
+                                .filter(|&buffer| {
+                                    self.ledger.loan_borrowers(buffer).contains(&child)
+                                })
                                 .collect::<Vec<_>>();
                             let completion = self
                                 .ledger
@@ -382,7 +419,7 @@ impl Runtime<'_> {
                     } => {
                         let moved_slots = arguments
                             .iter()
-                            .filter_map(|arg| {
+                            .filter_map(|arg: &ScalarOperand| {
                                 if let ScalarOperand::Move(slot) = arg {
                                     Some(*slot)
                                 } else {
@@ -390,7 +427,8 @@ impl Runtime<'_> {
                                 }
                             })
                             .collect::<Vec<_>>();
-                        let arguments = arguments
+                        let arguments_syntax = arguments;
+                        let arguments = arguments_syntax
                             .iter()
                             .map(|value| scalar(&slots, value))
                             .collect::<Result<Vec<_>, _>>()?;
@@ -404,6 +442,13 @@ impl Runtime<'_> {
                                 }
                             })
                             .collect::<Vec<_>>();
+                        let shares = arguments_syntax
+                            .iter()
+                            .filter_map(|argument| match argument {
+                                ScalarOperand::Loan { share, .. } => Some(*share),
+                                _ => None,
+                            })
+                            .collect::<Vec<_>>();
                         let lent_resources = arguments
                             .iter()
                             .filter_map(|value| {
@@ -413,6 +458,7 @@ impl Runtime<'_> {
                                     None
                                 }
                             })
+                            .zip(shares)
                             .collect::<Vec<_>>();
                         let reservation = self.next_reservation;
                         self.next_reservation += 1;
@@ -448,7 +494,7 @@ impl Runtime<'_> {
                                 task: child,
                                 worker: *worker,
                             });
-                            for &buffer in &lent_resources {
+                            for &(buffer, _) in &lent_resources {
                                 self.events.push(TaskEvent::BufferLoaned {
                                     borrower: child,
                                     buffer,
@@ -669,6 +715,11 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
                 buffer,
                 value,
             } => writeln!(output, "QCORE_BUFFER_READ {task} {buffer} {value}").unwrap(),
+            TaskEvent::BufferWritten {
+                task,
+                buffer,
+                value,
+            } => writeln!(output, "QCORE_BUFFER_WRITE {task} {buffer} {value}").unwrap(),
             TaskEvent::BufferDropped { task, buffer } => {
                 writeln!(output, "QCORE_BUFFER_DROP {task} {buffer}").unwrap()
             }
