@@ -20,6 +20,8 @@ corpus.
   Full language conformance is not claimed; revision 0.2 remains historical.
 - [Persistent Cycle 19 build inputs](docs/CYCLE19_BUILD_INPUTS.md) replaces
   ephemeral `/tmp` build paths for new audits.
+- [Emacs syntax highlighting](editors/emacs/README.md) covers current QCore
+  source and contract syntax with the standalone `qcore-mode`.
 - Working with the repo as an AI agent? Start at [`AGENTS.md`](AGENTS.md) —
   the compressed status ledger, invariants, and per-change gate live there.
 

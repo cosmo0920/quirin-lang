@@ -12,6 +12,9 @@ Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract
 companion. Follow `docs/reviews/r0_3/acceptance.json` for current repair status;
 the supplied archive review is older than merged W2–W5 implementations.
 Persistent audit setup: `docs/CYCLE19_BUILD_INPUTS.md`.
+Emacs source/contract highlighting: `editors/emacs/qcore-mode.el`; installation
+and ERT checks are documented in `editors/emacs/README.md`. This is lexical
+editor support, not a change to language conformance or verification.
 
 Claude-specific additions:
 

@@ -285,6 +285,9 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 
 ## Key entry points
 
+- Editor: `editors/emacs/qcore-mode.el` provides lexical source/contract
+  highlighting for `.qcore`/`.qc`; see `editors/emacs/README.md` for setup and
+  ERT checks. Highlighting does not imply executable or verified support.
 - Library: `parse_source_program`, `elaborate_source`, `check_whole_program`,
   `compile_files` / `compile_files_with_registry`,
   `analyze_unrestricted_c11` / `validate_unrestricted_c11`.
