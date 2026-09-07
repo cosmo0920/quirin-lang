@@ -1,0 +1,62 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/examples/reevaluation_probe`
+{
+  "failed_expectations": 0,
+  "probes": [
+    {
+      "detail": "Err([InvalidMemoryOrder(1), InvalidMemoryOrder(2)])",
+      "expected_accept": false,
+      "id": "WM01_acq_rel_plain_operations",
+      "observed_accept": false,
+      "pass": true
+    },
+    {
+      "detail": "Ok(C11ExecutionCertificate { event_count: 3, happens_before: [RelationEdge { from: 0, to: 1 }, RelationEdge { from: 0, to: 2 }, RelationEdge { from: 1, to: 2 }], source_observation: [] })",
+      "expected_accept": true,
+      "id": "CONTROL_relaxed_plain_operations",
+      "observed_accept": true,
+      "pass": true
+    },
+    {
+      "detail": "Err([CoherenceViolation(2)])",
+      "expected_accept": false,
+      "id": "WM02_reversed_write_coherence",
+      "observed_accept": false,
+      "pass": true
+    },
+    {
+      "detail": "Err([InvalidSequentiallyConsistentOrder])",
+      "expected_accept": false,
+      "id": "WM03_sc_store_buffering_zero_zero",
+      "observed_accept": false,
+      "pass": true
+    },
+    {
+      "detail": "Ok(C11ExecutionCertificate { event_count: 8, happens_before: [RelationEdge { from: 0, to: 1 }, RelationEdge { from: 0, to: 2 }, RelationEdge { from: 0, to: 3 }, RelationEdge { from: 0, to: 4 }, RelationEdge { from: 0, to: 5 }, RelationEdge { from: 0, to: 6 }, RelationEdge { from: 0, to: 7 }, RelationEdge { from: 1, to: 2 }, RelationEdge { from: 1, to: 3 }, RelationEdge { from: 1, to: 4 }, RelationEdge { from: 1, to: 5 }, RelationEdge { from: 1, to: 6 }, RelationEdge { from: 1, to: 7 }, RelationEdge { from: 2, to: 6 }, RelationEdge { from: 2, to: 7 }, RelationEdge { from: 3, to: 4 }, RelationEdge { from: 3, to: 5 }, RelationEdge { from: 3, to: 6 }, RelationEdge { from: 3, to: 7 }, RelationEdge { from: 4, to: 5 }, RelationEdge { from: 4, to: 6 }, RelationEdge { from: 4, to: 7 }, RelationEdge { from: 6, to: 7 }], source_observation: [] })",
+      "expected_accept": true,
+      "id": "WM04_c11_release_sequence",
+      "observed_accept": true,
+      "pass": true
+    },
+    {
+      "certificate": false,
+      "expected": "Unknown",
+      "id": "VP01_recognition_is_not_resource_proof",
+      "observed": "Unknown",
+      "pass": true
+    },
+    {
+      "id": "CONTROL_builtin_empty_is_unknown",
+      "observed": "Unknown",
+      "pass": true
+    },
+    {
+      "certificate": false,
+      "expected": "Unknown",
+      "id": "VP02_empty_evidence_firewall",
+      "observed": "Unknown",
+      "pass": true
+    }
+  ],
+  "schema_version": 1
+}

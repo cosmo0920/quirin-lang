@@ -262,9 +262,231 @@ impl VerifierProvider for BuiltInProvider {
     }
 }
 
+/// Captured stderr is bounded separately from the response payload; it is
+/// diagnostic text, never decoded evidence.
+pub const PROVIDER_STDERR_BYTES: usize = 64 * 1024;
+
+/// The execution profile a [`ProcessProvider`] runs its package under.
+///
+/// Profiles are *target-qualified*: [`ProcessExecutionProfile::LinuxRlimitV1`]
+/// enforces limits with `setrlimit`, which this crate applies only on Linux.
+/// Selection is additive — the default is the historical behavior — because
+/// silently changing what an existing package runs under would change what
+/// existing evidence means.
+///
+/// Neither profile is an OS sandbox. Neither confines the filesystem or the
+/// network, and neither uses namespaces, cgroups or seccomp.
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
+#[serde(rename_all = "kebab-case")]
+pub enum ProcessExecutionProfile {
+    /// The historical path. The host applies a wall-clock deadline, bounded
+    /// stdout/stderr reads and a process-group kill on every exit; it installs
+    /// **no** `setrlimit`. `limits.memory_bytes` and every entry in
+    /// `limits.additional` are therefore declarations the OS does not apply.
+    /// [`EnforcedLimits::unenforced_kinds`] names them explicitly.
+    #[default]
+    UnenforcedLegacy,
+    /// Linux only. Every limit kind the manifest declares is installed with
+    /// `setrlimit` in the child before `exec`, on top of the wall-clock
+    /// deadline, output caps and process-group kill. A declared kind this
+    /// profile cannot enforce is refused before spawning, never downgraded.
+    LinuxRlimitV1,
+}
+
+impl ProcessExecutionProfile {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::UnenforcedLegacy => "unenforced-legacy",
+            Self::LinuxRlimitV1 => "linux-rlimit-v1",
+        }
+    }
+}
+
+impl fmt::Display for ProcessExecutionProfile {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(self.name())
+    }
+}
+
+/// Where an enforced value came from. A derived or defaulted value is not a
+/// declaration, so reports must not present it as one.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum LimitSource {
+    /// The manifest declares this kind and this value.
+    Declared,
+    /// The profile derived the value from the manifest's wall-clock timeout
+    /// because the manifest declares no value for this kind.
+    DerivedFromWallClock,
+    /// A fixed value this profile always installs.
+    ProfileDefault,
+}
+
+/// One `setrlimit` call the profile installs in the child before `exec`.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EnforcedRlimit {
+    /// The manifest limit-kind name.
+    pub kind: String,
+    /// The POSIX/Linux resource the kind maps to.
+    pub resource: String,
+    pub soft: u64,
+    pub hard: u64,
+    pub source: LimitSource,
+}
+
+/// What a profile actually enforces for one execution, with values.
+///
+/// This is the execution evidence a report quotes: it separates limits the OS
+/// applied (`rlimits`) from limits the host applies in its own read loop
+/// (`wall_clock_ms`, `stdout_bytes`, `stderr_bytes`, `process_group_kill`) from
+/// declarations nothing applied (`unenforced_kinds`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EnforcedLimits {
+    pub profile: ProcessExecutionProfile,
+    /// Host-side deadline; expiry kills the child's process group.
+    pub wall_clock_ms: u64,
+    /// Maximum response payload bytes read from stdout.
+    pub stdout_bytes: usize,
+    /// Maximum diagnostic bytes read from stderr.
+    pub stderr_bytes: usize,
+    /// Whether the host kills the child's process group on every exit path.
+    pub process_group_kill: bool,
+    /// `setrlimit` calls installed before `exec`, sorted by kind.
+    pub rlimits: Vec<EnforcedRlimit>,
+    /// Limit kinds the manifest declares that this execution did **not**
+    /// enforce. Non-empty only under [`ProcessExecutionProfile::UnenforcedLegacy`];
+    /// [`ProcessExecutionProfile::LinuxRlimitV1`] refuses instead of running.
+    pub unenforced_kinds: Vec<String>,
+}
+
+impl EnforcedLimits {
+    /// A single-line summary suitable for a diagnostic or a report row.
+    pub fn summary(&self) -> String {
+        let applied = self
+            .rlimits
+            .iter()
+            .map(|limit| format!("{}={}({})", limit.kind, limit.soft, limit.resource))
+            .collect::<Vec<_>>()
+            .join(", ");
+        format!(
+            "profile={}; wall_clock_ms={}; stdout_bytes={}; stderr_bytes={}; \
+             process_group_kill={}; rlimits=[{applied}]; unenforced=[{}]",
+            self.profile,
+            self.wall_clock_ms,
+            self.stdout_bytes,
+            self.stderr_bytes,
+            self.process_group_kill,
+            self.unenforced_kinds.join(", "),
+        )
+    }
+}
+
+/// How one process execution ended. Every non-`Completed` outcome is an
+/// environment fact about the provider run; none of them is a statement about
+/// the program under analysis, so the registry reports them as `Unknown`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ProcessOutcome {
+    /// The child exited successfully and its response frame decoded.
+    Completed,
+    /// The profile refused the package before spawning anything.
+    RefusedByProfile,
+    /// The child could not be spawned.
+    SpawnFailed,
+    /// The wall-clock deadline expired; the process group was killed.
+    WallClockTimeout,
+    /// The child wrote past an output cap; the process group was killed.
+    OutputLimit,
+    /// The child exited unsuccessfully or died from a signal. A `setrlimit`
+    /// kill (`RLIMIT_CPU`, or an allocation failure under `RLIMIT_AS`) lands
+    /// here, with `signal` set when the kernel terminated it.
+    Terminated,
+    /// A pipe or wait error on the host side.
+    Io,
+    /// The response was not a well-formed protocol frame.
+    Protocol,
+}
+
+/// The evidence record of one process execution.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProcessExecutionRecord {
+    pub profile: ProcessExecutionProfile,
+    /// `None` exactly when the profile refused before spawning.
+    pub enforced: Option<EnforcedLimits>,
+    pub outcome: ProcessOutcome,
+    pub wall_time_ms: u64,
+    pub stdout_bytes: usize,
+    pub stderr_bytes: usize,
+    pub exit_code: Option<i32>,
+    pub signal: Option<i32>,
+    /// The host-side failure text, empty for [`ProcessOutcome::Completed`].
+    pub detail: String,
+}
+
+impl ProcessExecutionRecord {
+    /// A single-line summary suitable for a report row.
+    pub fn summary(&self) -> String {
+        let enforced = self.enforced.as_ref().map_or_else(
+            || format!("profile={}; refused", self.profile),
+            |e| e.summary(),
+        );
+        format!(
+            "{enforced}; outcome={}; wall_time_ms={}; stdout_bytes={}; stderr_bytes={}; \
+             exit_code={:?}; signal={:?}",
+            serde_json::to_value(self.outcome)
+                .ok()
+                .and_then(|value| value.as_str().map(str::to_owned))
+                .unwrap_or_default(),
+            self.wall_time_ms,
+            self.stdout_bytes,
+            self.stderr_bytes,
+            self.exit_code,
+            self.signal,
+        )
+    }
+}
+
+/// The declarable limit kinds [`ProcessExecutionProfile::LinuxRlimitV1`]
+/// enforces, each with the resource it installs. `memory_bytes` is the
+/// mandatory manifest field; the rest are `limits.additional` keys.
+const LINUX_RLIMIT_V1_KINDS: [(&str, &str); 6] = [
+    ("memory_bytes", "RLIMIT_AS"),
+    ("cpu_seconds", "RLIMIT_CPU"),
+    ("core_bytes", "RLIMIT_CORE"),
+    ("max_file_bytes", "RLIMIT_FSIZE"),
+    ("max_open_files", "RLIMIT_NOFILE"),
+    ("max_processes", "RLIMIT_NPROC"),
+];
+
+/// The limit kinds a profile can enforce, sorted. Empty for the legacy
+/// profile, which enforces no `setrlimit` kind at all.
+pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static str> {
+    match profile {
+        ProcessExecutionProfile::UnenforcedLegacy => Vec::new(),
+        ProcessExecutionProfile::LinuxRlimitV1 if cfg!(target_os = "linux") => {
+            let mut kinds = LINUX_RLIMIT_V1_KINDS
+                .iter()
+                .map(|(kind, _)| *kind)
+                .collect::<Vec<_>>();
+            kinds.sort_unstable();
+            kinds
+        }
+        ProcessExecutionProfile::LinuxRlimitV1 => Vec::new(),
+    }
+}
+
 pub struct ProcessProvider {
     manifest: PluginManifest,
+    // Process execution currently requires Unix process-group containment.
+    #[cfg_attr(not(unix), expect(dead_code))]
     package_root: String,
+    profile: ProcessExecutionProfile,
+    /// The most recent execution's evidence record. Interior mutability keeps
+    /// [`VerifierProvider`]'s `&self` dispatch, which providers share behind an
+    /// `Arc`, unchanged.
+    last_execution: std::sync::Mutex<Option<ProcessExecutionRecord>>,
 }
 
 impl ProcessProvider {
@@ -279,7 +501,146 @@ impl ProcessProvider {
         Ok(Self {
             manifest,
             package_root: package_root.as_ref().to_string_lossy().into_owned(),
+            profile: ProcessExecutionProfile::default(),
+            last_execution: std::sync::Mutex::new(None),
         })
+    }
+
+    /// Selects the execution profile. Additive: the default is unchanged, and
+    /// no existing caller's behavior moves without this call.
+    #[must_use]
+    pub fn with_execution_profile(mut self, profile: ProcessExecutionProfile) -> Self {
+        self.profile = profile;
+        self
+    }
+
+    pub const fn execution_profile(&self) -> ProcessExecutionProfile {
+        self.profile
+    }
+
+    /// The evidence record of the most recent execution, if any.
+    pub fn last_execution(&self) -> Option<ProcessExecutionRecord> {
+        self.last_execution
+            .lock()
+            .map_or(None, |record| record.clone())
+    }
+
+    /// What this provider's profile would enforce for this manifest, or the
+    /// refusal that keeps it from running.
+    ///
+    /// Fails closed: an unavailable target profile or a declared limit kind the
+    /// profile cannot enforce is an error here and a pre-spawn refusal in
+    /// [`VerifierProvider::verify`], never a silent downgrade to a weaker
+    /// profile.
+    pub fn enforced_limits(&self) -> Result<EnforcedLimits, ProviderFailure> {
+        let limits = &self.manifest.limits;
+        match self.profile {
+            ProcessExecutionProfile::UnenforcedLegacy => {
+                let mut unenforced_kinds = vec!["memory_bytes".to_owned()];
+                unenforced_kinds.extend(limits.additional.keys().cloned());
+                unenforced_kinds.sort();
+                Ok(EnforcedLimits {
+                    profile: self.profile,
+                    wall_clock_ms: limits.timeout_ms,
+                    stdout_bytes: limits.output_bytes,
+                    stderr_bytes: PROVIDER_STDERR_BYTES,
+                    process_group_kill: cfg!(unix),
+                    rlimits: Vec::new(),
+                    unenforced_kinds,
+                })
+            }
+            ProcessExecutionProfile::LinuxRlimitV1 => self.linux_rlimit_v1_limits(),
+        }
+    }
+
+    fn linux_rlimit_v1_limits(&self) -> Result<EnforcedLimits, ProviderFailure> {
+        let profile = ProcessExecutionProfile::LinuxRlimitV1;
+        if !cfg!(target_os = "linux") {
+            return Err(ProviderFailure::Protocol(format!(
+                "execution profile `{profile}` is unavailable on this target; it installs Linux \
+                 `setrlimit` resources and makes no isolation claim elsewhere"
+            )));
+        }
+        let limits = &self.manifest.limits;
+        let resource_of = |kind: &str| {
+            LINUX_RLIMIT_V1_KINDS
+                .iter()
+                .find(|(name, _)| *name == kind)
+                .map(|(_, resource)| (*resource).to_owned())
+        };
+        for kind in limits.additional.keys() {
+            if resource_of(kind).is_none() {
+                return Err(ProviderFailure::Protocol(format!(
+                    "execution profile `{profile}` cannot enforce declared limit kind `{kind}`; \
+                     it enforces [{}]",
+                    enforceable_limit_kinds(profile).join(", ")
+                )));
+            }
+        }
+        let mut rlimits = vec![EnforcedRlimit {
+            kind: "memory_bytes".to_owned(),
+            resource: "RLIMIT_AS".to_owned(),
+            soft: limits.memory_bytes,
+            hard: limits.memory_bytes,
+            source: LimitSource::Declared,
+        }];
+        // A wall-clock deadline alone cannot bound CPU consumed by a child that
+        // outlives one scheduling quantum of the reader loop, so an undeclared
+        // CPU limit is derived rather than omitted. The derivation is recorded
+        // as derived, not as a declaration.
+        let (cpu_seconds, cpu_source) = match limits.additional.get("cpu_seconds") {
+            Some(declared) => (*declared, LimitSource::Declared),
+            None => (
+                limits.timeout_ms.div_ceil(1_000).saturating_add(1),
+                LimitSource::DerivedFromWallClock,
+            ),
+        };
+        rlimits.push(EnforcedRlimit {
+            kind: "cpu_seconds".to_owned(),
+            resource: "RLIMIT_CPU".to_owned(),
+            soft: cpu_seconds,
+            hard: cpu_seconds,
+            source: cpu_source,
+        });
+        let (core_bytes, core_source) = match limits.additional.get("core_bytes") {
+            Some(declared) => (*declared, LimitSource::Declared),
+            None => (0, LimitSource::ProfileDefault),
+        };
+        rlimits.push(EnforcedRlimit {
+            kind: "core_bytes".to_owned(),
+            resource: "RLIMIT_CORE".to_owned(),
+            soft: core_bytes,
+            hard: core_bytes,
+            source: core_source,
+        });
+        for kind in ["max_file_bytes", "max_open_files", "max_processes"] {
+            if let Some(value) = limits.additional.get(kind) {
+                rlimits.push(EnforcedRlimit {
+                    kind: kind.to_owned(),
+                    resource: resource_of(kind).expect("kind is in the enforced table"),
+                    soft: *value,
+                    hard: *value,
+                    source: LimitSource::Declared,
+                });
+            }
+        }
+        rlimits.sort_by(|left, right| left.kind.cmp(&right.kind));
+        Ok(EnforcedLimits {
+            profile,
+            wall_clock_ms: limits.timeout_ms,
+            stdout_bytes: limits.output_bytes,
+            stderr_bytes: PROVIDER_STDERR_BYTES,
+            process_group_kill: true,
+            rlimits,
+            unenforced_kinds: Vec::new(),
+        })
+    }
+
+    #[cfg(unix)]
+    fn record_execution(&self, record: ProcessExecutionRecord) {
+        if let Ok(mut slot) = self.last_execution.lock() {
+            *slot = Some(record);
+        }
     }
 
     pub fn from_package(package_root: impl AsRef<Path>) -> Result<Self, PackageLoadError> {
@@ -438,32 +799,159 @@ fn read_available(
     }
 }
 
+/// The Linux resource a limit kind installs. `None` is a refusal, never a
+/// skipped limit.
+///
+/// The `RLIMIT_*` constants are `c_uint` on glibc and `c_int` on musl, so the
+/// casts are redundant on exactly one of the two C libraries.
+#[cfg(target_os = "linux")]
+#[allow(clippy::unnecessary_cast)]
+fn linux_rlimit_resource(kind: &str) -> Option<u32> {
+    Some(match kind {
+        "memory_bytes" => libc::RLIMIT_AS as u32,
+        "cpu_seconds" => libc::RLIMIT_CPU as u32,
+        "core_bytes" => libc::RLIMIT_CORE as u32,
+        "max_file_bytes" => libc::RLIMIT_FSIZE as u32,
+        "max_open_files" => libc::RLIMIT_NOFILE as u32,
+        "max_processes" => libc::RLIMIT_NPROC as u32,
+        _ => return None,
+    })
+}
+
 #[cfg(unix)]
 impl ProcessProvider {
+    /// Runs the package under the selected execution profile and records what
+    /// that execution actually enforced.
     fn verify_process<T: for<'de> Deserialize<'de>>(
         &self,
         frame: Vec<u8>,
+    ) -> Result<T, ProviderFailure> {
+        let started = Instant::now();
+        let enforced = match self.enforced_limits() {
+            Ok(enforced) => enforced,
+            Err(error) => {
+                // Refused before anything was spawned: no process ran, so the
+                // record carries no enforced limits at all.
+                self.record_execution(ProcessExecutionRecord {
+                    profile: self.profile,
+                    enforced: None,
+                    outcome: ProcessOutcome::RefusedByProfile,
+                    wall_time_ms: 0,
+                    stdout_bytes: 0,
+                    stderr_bytes: 0,
+                    exit_code: None,
+                    signal: None,
+                    detail: error.to_string(),
+                });
+                return Err(error);
+            }
+        };
+        let mut output = Vec::new();
+        let mut error_output = Vec::new();
+        let mut status = None;
+        let result = self.run_process(
+            frame,
+            &enforced,
+            &mut output,
+            &mut error_output,
+            &mut status,
+        );
+        let outcome = match &result {
+            Ok(_) => ProcessOutcome::Completed,
+            Err(ProviderFailure::Spawn(_)) => ProcessOutcome::SpawnFailed,
+            Err(ProviderFailure::Timeout) => ProcessOutcome::WallClockTimeout,
+            Err(ProviderFailure::OutputLimit) => ProcessOutcome::OutputLimit,
+            Err(ProviderFailure::Crashed(_)) => ProcessOutcome::Terminated,
+            Err(ProviderFailure::Io(_)) => ProcessOutcome::Io,
+            // `Crashed` gains stderr detail through `with_detail`, which
+            // rewrites it as `Protocol`; a terminating status still classifies
+            // the execution as terminated.
+            Err(ProviderFailure::Protocol(_)) => status
+                .filter(|status| !status.success())
+                .map_or(ProcessOutcome::Protocol, |_| ProcessOutcome::Terminated),
+        };
+        self.record_execution(ProcessExecutionRecord {
+            profile: self.profile,
+            enforced: Some(enforced),
+            outcome,
+            wall_time_ms: started.elapsed().as_millis().min(u128::from(u64::MAX)) as u64,
+            stdout_bytes: output.len(),
+            stderr_bytes: error_output.len(),
+            exit_code: status.and_then(|status| status.code()),
+            signal: status.and_then(|status| {
+                use std::os::unix::process::ExitStatusExt;
+                status.signal()
+            }),
+            detail: result
+                .as_ref()
+                .err()
+                .map(ToString::to_string)
+                .unwrap_or_default(),
+        });
+        result
+    }
+
+    fn run_process<T: for<'de> Deserialize<'de>>(
+        &self,
+        frame: Vec<u8>,
+        enforced: &EnforcedLimits,
+        output: &mut Vec<u8>,
+        error_output: &mut Vec<u8>,
+        status: &mut Option<std::process::ExitStatus>,
     ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
         };
         let deadline = Instant::now()
-            .checked_add(Duration::from_millis(self.manifest.limits.timeout_ms))
+            .checked_add(Duration::from_millis(enforced.wall_clock_ms))
             .ok_or_else(|| {
                 ProviderFailure::Protocol("provider timeout exceeds clock range".into())
             })?;
-        let limit = self.manifest.limits.output_bytes;
+        let limit = enforced.stdout_bytes;
         let wire_limit = limit.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
         let executable = Path::new(&self.package_root).join(path);
+        let mut command = Command::new(&executable);
+        command
+            .current_dir(&self.package_root)
+            .env_clear()
+            .process_group(0)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        #[cfg(target_os = "linux")]
+        if !enforced.rlimits.is_empty() {
+            let mut plan = Vec::with_capacity(enforced.rlimits.len());
+            for enforced_limit in &enforced.rlimits {
+                let resource = linux_rlimit_resource(&enforced_limit.kind).ok_or_else(|| {
+                    ProviderFailure::Protocol(format!(
+                        "execution profile `{}` cannot enforce declared limit kind `{}`",
+                        enforced.profile, enforced_limit.kind
+                    ))
+                })?;
+                plan.push((resource, enforced_limit.soft, enforced_limit.hard));
+            }
+            // SAFETY: this runs in the forked child before `exec`. It allocates
+            // nothing, acquires no lock, and calls only `setrlimit`, a plain
+            // syscall. A failed call fails the spawn rather than running the
+            // package with a limit missing.
+            unsafe {
+                command.pre_exec(move || {
+                    for (resource, soft, hard) in &plan {
+                        let value = libc::rlimit {
+                            rlim_cur: *soft as libc::rlim_t,
+                            rlim_max: *hard as libc::rlim_t,
+                        };
+                        if libc::setrlimit(*resource as _, &value) != 0 {
+                            return Err(std::io::Error::last_os_error());
+                        }
+                    }
+                    Ok(())
+                });
+            }
+        }
         let mut child = ProviderChild(
-            Command::new(&executable)
-                .current_dir(&self.package_root)
-                .env_clear()
-                .process_group(0)
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
+            command
                 .spawn()
                 .map_err(|error| ProviderFailure::Spawn(error.to_string()))?,
         );
@@ -486,17 +974,14 @@ impl ProcessProvider {
         nonblocking(&stdout)?;
         nonblocking(&stderr)?;
         let mut sent = 0;
-        let mut output = Vec::new();
-        let mut error_output = Vec::new();
         let (mut output_done, mut error_done) = (false, false);
-        let mut status = None;
         let mut input_failure = None;
         loop {
             // Observe direct-child exit before deciding which bound failed.
             // An exited provider can leave descendant-held output pipes even
             // when its input reader vanished before our first write.
             if status.is_none() {
-                status = child
+                *status = child
                     .0
                     .try_wait()
                     .map_err(|error| ProviderFailure::Io(error.to_string()))?;
@@ -536,12 +1021,12 @@ impl ProcessProvider {
                 }
             }
             if !output_done {
-                output_done = read_available(&mut stdout, &mut output, wire_limit)?;
+                output_done = read_available(&mut stdout, output, wire_limit)?;
             }
             if !error_done {
-                error_done = read_available(&mut stderr, &mut error_output, 64 * 1024)?;
+                error_done = read_available(&mut stderr, error_output, enforced.stderr_bytes)?;
             }
-            if let Some(status) = status
+            if let Some(exit) = *status
                 && output_done
                 && error_done
                 && stdin.is_none()
@@ -549,21 +1034,23 @@ impl ProcessProvider {
                 if let Some(error) = input_failure {
                     return Err(error);
                 }
-                if !status.success() {
-                    return Err(ProviderFailure::Crashed(status.code())
-                        .with_detail(&String::from_utf8_lossy(&error_output)));
+                if !exit.success() {
+                    return Err(ProviderFailure::Crashed(exit.code())
+                        .with_detail(&String::from_utf8_lossy(error_output)));
                 }
-                return decode_protocol_frame(&output, limit);
+                return decode_protocol_frame(output, limit);
             }
             thread::sleep(Duration::from_millis(1));
         }
     }
 }
 
+#[cfg(unix)]
 trait FailureDetail {
     fn with_detail(self, detail: &str) -> Self;
 }
 
+#[cfg(unix)]
 impl FailureDetail for ProviderFailure {
     fn with_detail(self, detail: &str) -> Self {
         if detail.trim().is_empty() {

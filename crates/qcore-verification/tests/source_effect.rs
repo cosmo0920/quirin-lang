@@ -6,6 +6,20 @@ use qcore_schemas::chunk_summary::BooleanFieldContractWitness;
 use qcore_verification::source_effect::BooleanFieldSourceTask;
 use qcore_verifier_host::WitnessChecker;
 
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent source-effect test: {reason}");
+            false
+        }
+    }
+}
+
 fn witness(
     task: &BooleanFieldSourceTask,
     summary: &qcore_c_gateway::boolean_source::ChunkSourceSummary,
@@ -18,6 +32,9 @@ fn witness(
 
 #[test]
 fn real_c_prestates_and_contract_are_recomputed() {
+    if !clang_available() {
+        return;
+    }
     let summary = checked(SOURCE, vec![]);
     let replay = task(&summary, CONTRACT);
     assert_eq!(replay.evaluate().unwrap().checked_states(), 4);
@@ -39,6 +56,9 @@ fn real_c_prestates_and_contract_are_recomputed() {
 
 #[test]
 fn forged_paths_frames_and_source_assumptions_are_rejected() {
+    if !clang_available() {
+        return;
+    }
     let summary = checked(SOURCE, vec![]);
     let replay = task(&summary, CONTRACT);
     for mutation in 0..11 {
@@ -78,6 +98,9 @@ fn forged_paths_frames_and_source_assumptions_are_rejected() {
 
 #[test]
 fn actual_source_build_and_contract_snapshots_separate_tasks() {
+    if !clang_available() {
+        return;
+    }
     let original = checked(SOURCE, vec![]);
     let source_changed = checked(&format!("/* actual bytes changed */{SOURCE}"), vec![]);
     let build_changed = checked(SOURCE, vec!["QCORE_UNUSED=1".into()]);
@@ -107,8 +130,72 @@ fn actual_source_build_and_contract_snapshots_separate_tasks() {
     );
 }
 
+/// A used header or generated configuration header can change the effective
+/// preprocessing input while the selected source bytes and the checked paths
+/// stay identical. The task and its witness must retire anyway, in both
+/// directions: evidence filed under the old input is never reusable.
+#[test]
+fn a_changed_header_expansion_retires_the_prior_task_and_its_witness() {
+    if !clang_available() {
+        return;
+    }
+    const CONDITIONAL: &str = "struct cio_chunk { int lock; };\n#ifdef QCORE_GENERATED_CONFIG\ntypedef int qcore_generated_spare;\n#endif\nint cio_chunk_is_locked(struct cio_chunk *ch) { return ch->lock; }";
+    let before = checked(CONDITIONAL, vec![]);
+    let after = checked(CONDITIONAL, vec!["QCORE_GENERATED_CONFIG=1".into()]);
+    assert_eq!(before.paths, after.paths, "the checked paths are unchanged");
+    assert_eq!(
+        before.input_identity().raw_source_digest(),
+        after.input_identity().raw_source_digest(),
+        "the selected source bytes are unchanged"
+    );
+    assert_ne!(
+        before.input_identity().preprocessed_source_digest(),
+        after.input_identity().preprocessed_source_digest(),
+        "the effective preprocessing input did change"
+    );
+    let before_task = task(&before, CONTRACT);
+    let after_task = task(&after, CONTRACT);
+    assert_eq!(
+        before_task.task().unit.source_digest,
+        after_task.task().unit.source_digest
+    );
+    assert_ne!(
+        before_task.task().unit.build_digest,
+        after_task.task().unit.build_digest
+    );
+    assert_ne!(
+        before_task.task().task_digest(),
+        after_task.task().task_digest()
+    );
+    assert!(
+        before_task
+            .check(before_task.task(), &witness(&after_task, &after))
+            .is_err(),
+        "a witness for the newer input was admitted against the retired task"
+    );
+    assert!(
+        after_task
+            .check(after_task.task(), &witness(&before_task, &before))
+            .is_err(),
+        "a witness for the retired input was admitted against the newer task"
+    );
+    // Each task still discharges its own witness, so this is separation, not
+    // a blanket refusal.
+    for (replay, summary) in [(&before_task, &before), (&after_task, &after)] {
+        assert_eq!(
+            replay
+                .check(replay.task(), &witness(replay, summary))
+                .unwrap(),
+            replay.task().coverage_for(replay.capability())
+        );
+    }
+}
+
 #[test]
 fn target_substitution_and_unsupported_selected_functions_reject() {
+    if !clang_available() {
+        return;
+    }
     let summary = checked(SOURCE, vec![]);
     for mutation in 0..5 {
         let mut profile = target(&summary);
@@ -143,6 +230,9 @@ const UNIT_CONTRACT: &str = "module contract; extern fn reset(ch: borrow<'call, 
 
 #[test]
 fn void_field_source_has_explicit_unit_abi_and_two_checked_states() {
+    if !clang_available() {
+        return;
+    }
     use qcore_schemas::chunk_summary::BooleanFieldResult;
     for body in [
         "ch->lock=1;",
@@ -185,6 +275,9 @@ fn void_field_source_has_explicit_unit_abi_and_two_checked_states() {
 
 #[test]
 fn void_contracts_and_proposals_cannot_forge_a_scalar_result_or_record_identity() {
+    if !clang_available() {
+        return;
+    }
     use qcore_schemas::chunk_summary::BooleanFieldResult;
     let summary = checked(
         "struct cio_chunk {int lock;}; void reset(struct cio_chunk *ch) { ch->lock=1; }",
@@ -235,6 +328,9 @@ fn void_contracts_and_proposals_cannot_forge_a_scalar_result_or_record_identity(
 
 #[test]
 fn integer_profile_bytes_and_missing_return_rejection_are_preserved() {
+    if !clang_available() {
+        return;
+    }
     let summary = checked(SOURCE, vec![]);
     let input = summary.source_input();
     assert_eq!(input.schema_version, 2);
@@ -268,6 +364,9 @@ fn integer_profile_bytes_and_missing_return_rejection_are_preserved() {
 
 #[test]
 fn ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical() {
+    if !clang_available() {
+        return;
+    }
     use qcore_c_gateway::boolean_source::{ChunkSourceResult, import_chunk_source_with_profile};
     use qcore_c_gateway::legacy_c::{C11TranslationUnit, CPreprocessorOption};
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");

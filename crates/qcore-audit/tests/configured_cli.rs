@@ -3,9 +3,33 @@ use serde_json::{Value, json};
 use std::fs;
 use std::path::PathBuf;
 use std::process::{Command, Output};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{
+    Once, OnceLock,
+    atomic::{AtomicUsize, Ordering},
+};
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
+static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
+static CLANG_WARNING: Once = Once::new();
+
+fn clang_available() -> bool {
+    let availability =
+        CLANG_AVAILABILITY.get_or_init(|| qcore_c_gateway::clang_command().map(|_| ()));
+    match availability {
+        Ok(()) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            CLANG_WARNING.call_once(|| {
+                eprintln!("skipping Clang-dependent configured-audit tests: {reason}");
+            });
+            false
+        }
+    }
+}
+
 struct Fixture(PathBuf);
 impl Fixture {
     fn new(source: &str) -> Self {
@@ -103,8 +127,278 @@ impl Drop for Fixture {
     }
 }
 
+fn commit_source(fixture: &Fixture, source: &str) -> String {
+    fs::write(fixture.0.join("checkout/src/unit.c"), source).unwrap();
+    let output = Command::new("git")
+        .current_dir(fixture.0.join("checkout"))
+        .args([
+            "-c",
+            "user.name=Audit Fixture",
+            "-c",
+            "user.email=audit@example.invalid",
+            "commit",
+            "-am",
+            "Changed upstream source",
+            "--quiet",
+            "--allow-empty",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let output = Command::new("git")
+        .current_dir(fixture.0.join("checkout"))
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    String::from_utf8(output.stdout).unwrap().trim().to_owned()
+}
+
+#[test]
+fn checkout_head_reanalyzes_changed_source_without_reusing_historical_evidence() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("int entry(void) { return 7; }");
+    let changed = "extern void opaque(void); void entry(void) { opaque(); }";
+    let revision = commit_source(&fixture, changed);
+    // The historical default still rejects a different revision.
+    assert!(!fixture.run().status.success());
+    assert!(!fixture.0.join("output/report.json").exists());
+    fixture.mutate("audit.json", |value| {
+        value["source_revision_policy"] = json!("checkout_head")
+    });
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["source_revision"], revision);
+    assert_eq!(report["units"][0]["status"], "Unknown");
+    assert!(report.get("source_contracts").is_none());
+    let assumptions: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        assumptions["source_revision_selection"]["resolved_commit"],
+        revision
+    );
+    assert_eq!(
+        assumptions["source_sha256"]["sample/src/unit.c"],
+        sha256_hex(changed.as_bytes())
+    );
+    assert!(
+        assumptions["source_revision_selection"]["source_specific_evidence"]
+            .as_str()
+            .unwrap()
+            .starts_with("Unknown")
+    );
+}
+
+#[test]
+fn checkout_head_rejects_dirty_selected_bytes_and_historical_provider_evidence() {
+    if !clang_available() {
+        return;
+    }
+    for cause in ["dirty", "provider", "required", "unknown_policy"] {
+        let fixture = Fixture::new("int entry(void) { return 7; }");
+        fixture.mutate("audit.json", |value| {
+            value["source_revision_policy"] = json!("checkout_head")
+        });
+        match cause {
+            "dirty" => {
+                // Even a selected file outside clean_paths must match the resolved commit.
+                fixture.mutate("profiles/sample/profile.json", |value| {
+                    value["pins"]["sample"]["clean_paths"] = json!(["other"])
+                });
+                fs::write(
+                    fixture.0.join("checkout/src/unit.c"),
+                    "int entry(void) { return 8; }",
+                )
+                .unwrap();
+            }
+            "provider" => fixture.mutate("audit.json", |value| {
+                value["source_contracts"] = json!({
+                    "configuration":"missing.json", "source_rules":"missing.qcore", "libraries":[]
+                })
+            }),
+            "required" => fixture.mutate("profiles/sample/profile.json", |value| {
+                value["libraries"]["sample"]["required_evidence"] =
+                    json!(["native_allocation_ledger"])
+            }),
+            _ => fixture.mutate("audit.json", |value| {
+                value["source_revision_policy"] = json!("anything")
+            }),
+        }
+        let output = fixture.run();
+        assert!(!output.status.success(), "{cause}");
+        let error = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            error.contains(match cause {
+                "dirty" => "does not match its pinned bytes",
+                "provider" => "supports resource projection only",
+                "required" => "requires evidence",
+                _ => "unknown variant",
+            }),
+            "{cause}: {error}"
+        );
+        assert!(!fixture.0.join("output/report.json").exists());
+    }
+}
+
+#[test]
+fn checkout_head_commit_change_retires_identity_even_with_identical_source() {
+    if !clang_available() {
+        return;
+    }
+    let source = "int entry(void) { return 7; }";
+    let fixture = Fixture::new(source);
+    fixture.mutate("audit.json", |value| {
+        value["source_revision_policy"] = json!("checkout_head")
+    });
+    assert!(fixture.run().status.success());
+    let before: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    let revision = commit_source(&fixture, source);
+    assert!(fixture.run().status.success());
+    let after: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        after["source_revision_selection"]["resolved_commit"],
+        revision
+    );
+    assert_eq!(before["source_sha256"], after["source_sha256"]);
+    assert_ne!(
+        before["compile_tasks"][0]["identity_sha256"],
+        after["compile_tasks"][0]["identity_sha256"]
+    );
+}
+
+fn inventory(fixture: &Fixture, arguments: &[&str]) -> Value {
+    use qcore_audit::compile_db::CompileEntry;
+    use qcore_audit::current::{CurrentAudit, distinct_configurations};
+    let checkout = fixture.0.join("checkout");
+    let profile =
+        qcore_contract::profile_loader::load_profile_directory(&fixture.0.join("profiles/sample"))
+            .unwrap();
+    let mut audit =
+        CurrentAudit::new(&checkout, &profile, &fixture.0.join("contracts.json")).unwrap();
+    let entries = distinct_configurations(arguments.iter().map(|argument| CompileEntry {
+        directory: checkout.clone(),
+        file: checkout.join("src/unit.c"),
+        command: format!("cc -std=c11 -c src/unit.c {argument}"),
+    }));
+    for entry in entries {
+        audit
+            .audit_entry("sample", &entry.file, &entry, None)
+            .unwrap();
+    }
+    audit
+        .finish(Some(&fixture.0.join("inventory.json")))
+        .unwrap();
+    serde_json::from_slice(&fs::read(fixture.0.join("inventory.json")).unwrap()).unwrap()
+}
+
+#[test]
+fn current_inventory_keeps_distinct_commands_and_unsupported_configurations_unknown() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new(
+        "extern void opaque(void);\nvoid entry(void) {\n#ifdef CALL_OPAQUE\nopaque();\n#endif\n}\n",
+    );
+    let report = inventory(&fixture, &["", "-DCALL_OPAQUE", "-unsupported", ""]);
+    let units = report["units"].as_array().unwrap();
+    assert_eq!(units.len(), 3);
+    assert_eq!(
+        units.iter().filter(|unit| unit["status"] == "Safe").count(),
+        1
+    );
+    assert_eq!(
+        units
+            .iter()
+            .filter(|unit| unit["status"] == "Unknown")
+            .count(),
+        2
+    );
+    let rejected = units
+        .iter()
+        .find(|unit| {
+            unit["compile_configuration"]["command"]
+                .as_str()
+                .unwrap()
+                .contains("-unsupported")
+        })
+        .unwrap();
+    assert!(rejected["reason"].as_str().unwrap().contains("unsupported"));
+    assert!(
+        rejected["compile_configuration"]
+            .get("compile_task_identity")
+            .is_none()
+    );
+    assert_eq!(
+        units
+            .iter()
+            .map(|unit| unit["compile_configuration"]["inventory_sha256"]
+                .as_str()
+                .unwrap())
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+        3
+    );
+}
+
+#[test]
+fn current_inventory_reanalyzes_new_commits_and_never_admits_dirty_source() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("int entry(void) { return 1; }");
+    let first = inventory(&fixture, &[""]);
+    let revision = commit_source(&fixture, "int entry(void) { return 1; }");
+    let second = inventory(&fixture, &[""]);
+    assert_eq!(second["fluent_bit_revision"], revision);
+    assert_ne!(
+        first["units"][0]["compile_configuration"]["inventory_sha256"],
+        second["units"][0]["compile_configuration"]["inventory_sha256"]
+    );
+    commit_source(
+        &fixture,
+        "extern void opaque(void); void entry(void) { opaque(); }",
+    );
+    assert_eq!(inventory(&fixture, &[""])["units"][0]["status"], "Unknown");
+    fs::write(
+        fixture.0.join("checkout/src/unit.c"),
+        "int entry(void) { return 1; }",
+    )
+    .unwrap();
+    let dirty = inventory(&fixture, &[""]);
+    assert_eq!(dirty["units"][0]["status"], "Unknown");
+    assert!(
+        dirty["units"][0]["reason"]
+            .as_str()
+            .unwrap()
+            .contains("does not match its pinned bytes")
+    );
+}
+
 #[test]
 fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files() {
+    if !clang_available() {
+        return;
+    }
     for (source, expected) in [
         ("int value(void) { return 7; }", "Safe"),
         (
@@ -145,6 +439,141 @@ fn a_second_codebase_runs_from_only_profile_contract_and_compile_database_files(
     }
 }
 
+#[cfg(unix)]
+#[test]
+fn compilation_database_path_aliases_select_the_canonical_checkout_source() {
+    use std::os::unix::fs::symlink;
+
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("int value(void) { return 7; }");
+    let alias = fixture.0.join("checkout-alias");
+    symlink(fixture.0.join("checkout"), &alias).unwrap();
+    fixture.mutate("compile_commands.json", |database| {
+        database[0]["directory"] = json!(alias);
+    });
+
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"][0]["status"], "Safe");
+}
+
+/// Before the compile task carried an identity, the recorded assumptions bound
+/// only the selected `.c` bytes and the database. A used header could flip a
+/// unit's verdict while every recorded input stayed byte-identical, so evidence
+/// filed under those inputs could be reused for a different analysis.
+#[test]
+fn a_used_header_change_invalidates_the_recorded_compile_task_identity() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new(
+        "#include \"effect.h\"\nextern void opaque(void); void entry(void) { EFFECT; }",
+    );
+    let header = fixture.0.join("checkout/src/effect.h");
+    let mut observed = Vec::new();
+    for (effect, expected) in [("((void)0)", "Safe"), ("opaque()", "Unknown")] {
+        fs::write(&header, format!("#define EFFECT {effect}\n")).unwrap();
+        let output = fixture.run();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let report: Value =
+            serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap())
+                .unwrap();
+        assert_eq!(report["units"][0]["status"], expected);
+        let assumptions: Value = serde_json::from_slice(
+            &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(assumptions["compile_task_identity_version"], 1);
+        let task = assumptions["compile_tasks"][0].clone();
+        assert_eq!(task["file"], "src/unit.c");
+        assert_eq!(task["library"], "sample");
+        observed.push((
+            assumptions["source_sha256"].clone(),
+            assumptions["compile_database_sha256"].clone(),
+            task["identity"]["raw_source_sha256"].clone(),
+            task["identity_sha256"].clone(),
+        ));
+    }
+    let [safe, unknown] = observed.as_slice() else {
+        unreachable!()
+    };
+    assert_eq!(
+        safe.0, unknown.0,
+        "the selected source bytes did not change"
+    );
+    assert_eq!(safe.1, unknown.1, "the compilation database did not change");
+    assert_eq!(safe.2, unknown.2);
+    assert_ne!(
+        safe.3, unknown.3,
+        "a used header changed the analyzed code without changing the task identity"
+    );
+}
+
+/// Real CMake databases emit several commands per source file. Ambiguity must
+/// not resolve itself; identical repeats describe one task and are audited once.
+#[test]
+fn repeated_and_conflicting_compile_records_for_one_file_are_distinguished() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("int value(void) { return 7; }");
+    fixture.mutate("compile_commands.json", |database| {
+        let repeat = database[0].clone();
+        database.as_array_mut().unwrap().push(repeat);
+    });
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Value =
+        serde_json::from_slice(&fs::read(fixture.0.join("output/report.json")).unwrap()).unwrap();
+    assert_eq!(report["units"].as_array().unwrap().len(), 1);
+    let assumptions: Value = serde_json::from_slice(
+        &fs::read(fixture.0.join("output/report.assumptions.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(assumptions["compile_tasks"].as_array().unwrap().len(), 1);
+
+    // Options the gateway transports in order are enough to make two records
+    // conflict, even when both would preprocess identically.
+    for arguments in [
+        json!(["cc", "-std=c11", "-DA=1", "-DB=1", "-c", "src/unit.c"]),
+        json!(["cc", "-std=c11", "-c", "src/unit.c", "-o", "other.o"]),
+    ] {
+        let fixture = Fixture::new("int value(void) { return 7; }");
+        fixture.mutate("compile_commands.json", |database| {
+            let mut extra = database[0].clone();
+            extra["arguments"] = arguments.clone();
+            database.as_array_mut().unwrap().push(extra);
+        });
+        let output = fixture.run();
+        assert!(
+            !output.status.success(),
+            "{arguments} unexpectedly accepted"
+        );
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains("conflicting compilation commands"),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(!fixture.0.join("output/report.json").exists());
+    }
+}
+
 #[test]
 fn absent_selections_contracts_and_unsupported_flags_fail_closed() {
     for failure in ["selection", "contract", "flags", "conflict", "evidence"] {
@@ -181,6 +610,9 @@ fn absent_selections_contracts_and_unsupported_flags_fail_closed() {
 
 #[test]
 fn selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new("int value(void) { return 7; }");
     fixture.mutate("profiles/sample/profile.json", |profile| {
         profile["pins"]["sample"]["clean_paths"] = json!(["irrelevant"]);
@@ -198,6 +630,9 @@ fn selected_source_bytes_must_match_the_pin_even_outside_declared_clean_paths() 
 
 #[test]
 fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
+    if !clang_available() {
+        return;
+    }
     for local_shadow in [false, true] {
         let fixture = Fixture::new(
             "#include <effect.h>\nextern void opaque(void); void entry(void) { EFFECT; }",
@@ -245,6 +680,9 @@ fn header_search_preserves_unresolved_call_instead_of_publishing_safe() {
 #[cfg(not(windows))]
 #[test]
 fn pic_build_flag_preserves_the_unresolved_call_selected_by_preprocessing() {
+    if !clang_available() {
+        return;
+    }
     let fixture = Fixture::new(
         "#ifdef __PIE__\n#define EFFECT ((void)0)\n#else\n#define EFFECT opaque()\n#endif\nextern void opaque(void); void entry(void) { EFFECT; }",
     );

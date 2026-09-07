@@ -1,0 +1,2 @@
+fn orphan() -> i32 contract { ensures normal true; } { return 1; }
+fn main() -> i32 { return 0; }

@@ -15,6 +15,70 @@ pub fn command() -> Result<Command, String> {
     Ok(command)
 }
 
+/// Trusted description of the Clang executable that actually performs every
+/// gateway preprocessing, syntax and typed-AST run.
+///
+/// This is provenance, not an attestation: the executable and its environment
+/// are trusted and must stay stable while a captured identity is in use. It
+/// describes the compiler that ran, never the driver a compilation database
+/// declared; compiler equivalence is not established anywhere in this crate.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ClangIdentity {
+    program: String,
+    version: String,
+    target: String,
+}
+
+impl ClangIdentity {
+    /// Ask the discovered Clang for its own version and default target.
+    pub fn capture() -> Result<Self, String> {
+        let mut version_command = command()?;
+        let program = version_command
+            .get_program()
+            .to_str()
+            .ok_or("non-UTF-8 Clang path")?
+            .to_owned();
+        let version = version_command
+            .arg("--version")
+            .output()
+            .map_err(|error| error.to_string())?;
+        let target = command()?
+            .arg("-dumpmachine")
+            .output()
+            .map_err(|error| error.to_string())?;
+        if !version.status.success() || !target.status.success() {
+            return Err("Clang could not report its version and target identity".into());
+        }
+        let version = String::from_utf8(version.stdout)
+            .map_err(|error| error.to_string())?
+            .trim()
+            .to_owned();
+        let target = String::from_utf8(target.stdout)
+            .map_err(|error| error.to_string())?
+            .trim()
+            .to_owned();
+        if !version.contains("clang version") || target.is_empty() {
+            return Err("Clang reported incomplete version or target identity".into());
+        }
+        Ok(Self {
+            program,
+            version,
+            target,
+        })
+    }
+
+    /// The resolved executable name or path, exactly as the gateway invokes it.
+    pub fn program(&self) -> &str {
+        &self.program
+    }
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+    pub fn target(&self) -> &str {
+        &self.target
+    }
+}
+
 fn resolve(
     explicit: Option<OsString>,
     discover: impl FnOnce() -> Vec<PathBuf>,
@@ -72,40 +136,77 @@ fn discovery_candidates() -> Vec<PathBuf> {
 
 #[cfg(windows)]
 fn discovery_candidates() -> Vec<PathBuf> {
-    let mut roots = Vec::new();
-    if let Some(root) = std::env::var_os("VSINSTALLDIR") {
-        roots.push(PathBuf::from(root));
-    }
-    let mut locators = Vec::new();
-    for variable in ["ProgramFiles(x86)", "ProgramFiles"] {
-        if let Some(root) = std::env::var_os(variable) {
-            locators
-                .push(PathBuf::from(root).join("Microsoft Visual Studio/Installer/vswhere.exe"));
+    let program_files = ["ProgramFiles", "ProgramFiles(x86)"]
+        .into_iter()
+        .filter_map(std::env::var_os)
+        .map(PathBuf::from)
+        .collect::<Vec<_>>();
+    windows_candidates(
+        std::env::var_os("VSINSTALLDIR").map(PathBuf::from),
+        &program_files,
+        |locator| {
+            let output = Command::new(locator)
+                .args([
+                    "-all",
+                    "-products",
+                    "*",
+                    "-prerelease",
+                    "-sort",
+                    "-utf8",
+                    "-property",
+                    "installationPath",
+                ])
+                .output()
+                .ok()?;
+            output
+                .status
+                .success()
+                .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
+        },
+    )
+}
+
+#[cfg(any(windows, test))]
+fn windows_candidates(
+    vs_install_dir: Option<PathBuf>,
+    program_files: &[PathBuf],
+    mut query: impl FnMut(&Path) -> Option<String>,
+) -> Vec<PathBuf> {
+    let mut roots = vs_install_dir.into_iter().collect::<Vec<_>>();
+    let locators = program_files
+        .iter()
+        .map(|root| root.join("Microsoft Visual Studio/Installer/vswhere.exe"))
+        .chain([PathBuf::from("vswhere.exe")]);
+    for locator in locators {
+        if let Some(output) = query(&locator) {
+            let installations = output
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty())
+                .map(PathBuf::from)
+                .collect::<Vec<_>>();
+            if !installations.is_empty() {
+                roots.extend(installations);
+                break;
+            }
         }
     }
-    locators.push(PathBuf::from("vswhere.exe"));
-    for locator in locators {
-        if let Ok(output) = Command::new(locator)
-            .args([
-                "-all",
-                "-products",
-                "*",
-                "-prerelease",
-                "-utf8",
-                "-property",
-                "installationPath",
-            ])
-            .output()
-            && output.status.success()
-        {
-            roots.extend(
-                String::from_utf8_lossy(&output.stdout)
-                    .lines()
-                    .map(str::trim)
-                    .filter(|line| !line.is_empty())
-                    .map(PathBuf::from),
-            );
-            break;
+    // A missing/stale locator must not hide a standard installation. VS 2026
+    // uses the major-version directory `18`; VS 2022 uses the year `2022`.
+    // Enumerate editions so Community, Professional, Enterprise and Build Tools
+    // are all supported, without requiring a developer-shell environment.
+    for version in ["18", "2022"] {
+        for root in program_files {
+            let directory = root.join("Microsoft Visual Studio").join(version);
+            if let Ok(entries) = std::fs::read_dir(directory) {
+                let mut editions = entries
+                    .filter_map(Result::ok)
+                    .map(|entry| entry.path())
+                    .filter(|path| path.is_dir())
+                    .collect::<Vec<_>>();
+                editions.sort();
+                roots.extend(editions);
+            }
         }
     }
     let mut paths = Vec::new();
@@ -122,6 +223,9 @@ fn discovery_candidates() -> Vec<PathBuf> {
 #[cfg(any(windows, test))]
 fn visual_studio_candidates(root: &Path) -> Vec<PathBuf> {
     [
+        // Prefer a native ARM64 host tool when present on Windows on Arm.
+        #[cfg(target_arch = "aarch64")]
+        "VC/Tools/Llvm/ARM64/bin",
         "VC/Tools/Llvm/x64/bin",
         "VC/Tools/Llvm/bin",
         "Common7/IDE/CommonExtensions/Microsoft/Llvm/bin",
@@ -201,5 +305,103 @@ mod tests {
         let error = resolve(None, Vec::new, |_| Err("not found".into())).unwrap_err();
         assert!(error.contains("QCORE_CLANG"));
         assert!(error.contains("MSVC cl.exe cannot provide the required AST"));
+    }
+
+    #[test]
+    fn vswhere_supports_2026_and_2022_custom_roots_and_environment_precedence() {
+        let root_2026 = PathBuf::from("custom VS/18/Community");
+        let root_2022 = PathBuf::from("custom VS/2022/BuildTools");
+        let candidates = windows_candidates(Some(root_2022.clone()), &[], |_| {
+            Some(format!(
+                "\r\n {}\r\n{}\r\n",
+                root_2026.display(),
+                root_2022.display()
+            ))
+        });
+        assert_eq!(
+            candidates,
+            [
+                visual_studio_candidates(&root_2022),
+                visual_studio_candidates(&root_2026)
+            ]
+            .concat()
+        );
+        // The active/older installation may not have the optional Clang component.
+        let expected = root_2026.join("VC/Tools/Llvm/x64/bin/clang.exe");
+        assert_eq!(
+            resolve(
+                None,
+                || candidates,
+                |path| {
+                    if path == expected {
+                        Ok(())
+                    } else {
+                        Err("missing".into())
+                    }
+                }
+            )
+            .unwrap(),
+            expected
+        );
+    }
+
+    #[test]
+    fn standard_2026_and_2022_installations_work_without_vswhere() {
+        let fixture =
+            std::env::temp_dir().join(format!("qcore-vs-discovery-{}", std::process::id()));
+        let program_files = fixture.join("Program Files");
+        let root_2026 = program_files.join("Microsoft Visual Studio/18/Community");
+        let root_2022 = program_files.join("Microsoft Visual Studio/2022/BuildTools");
+        std::fs::create_dir_all(&root_2026).unwrap();
+        std::fs::create_dir_all(&root_2022).unwrap();
+        for response in [None, Some("\r\n  \r\n".to_owned())] {
+            let candidates = windows_candidates(None, std::slice::from_ref(&program_files), |_| {
+                response.clone()
+            });
+            for root in [&root_2026, &root_2022] {
+                let expected = root.join("VC/Tools/Llvm/x64/bin/clang.exe");
+                assert_eq!(
+                    resolve(
+                        None,
+                        || candidates.clone(),
+                        |path| {
+                            if path == expected {
+                                Ok(())
+                            } else {
+                                Err("missing".into())
+                            }
+                        }
+                    )
+                    .unwrap(),
+                    expected
+                );
+            }
+            assert_eq!(
+                candidates,
+                [
+                    visual_studio_candidates(&root_2026),
+                    visual_studio_candidates(&root_2022)
+                ]
+                .concat()
+            );
+        }
+        std::fs::remove_dir_all(fixture).unwrap();
+    }
+
+    #[test]
+    fn empty_locator_output_does_not_hide_later_installations() {
+        let root = PathBuf::from("custom VS/18/Enterprise");
+        let mut queries = 0;
+        let candidates =
+            windows_candidates(None, &[PathBuf::from("missing Program Files")], |_| {
+                queries += 1;
+                Some(if queries == 1 {
+                    String::new()
+                } else {
+                    root.display().to_string()
+                })
+            });
+        assert_eq!(queries, 2);
+        assert_eq!(candidates, visual_studio_candidates(&root));
     }
 }

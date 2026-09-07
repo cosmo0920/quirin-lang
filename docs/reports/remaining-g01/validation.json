@@ -1,0 +1,78 @@
+{
+  "card": "G01 — complete semantic compile-task identity",
+  "base_commit": "6c2782f",
+  "status": "passed",
+  "workspace_tests": 829,
+  "new_workspace_tests": 10,
+  "provider_tests": 45,
+  "python_tests": 43,
+  "lean_audit_modules": 20,
+  "new_lean_theorems": 0,
+  "contract_modules": 59,
+  "ct_mapped": 11,
+  "ct_unmapped": 39,
+  "cmetrics_checked_functions": 1,
+  "cmetrics_unknown_functions": 6,
+  "commands": [
+    { "command": "git -c protocol.file.allow=always submodule update --init --recursive", "exit_code": 0 },
+    { "command": "cargo test --workspace", "exit_code": 0, "log": "logs/workspace.log.gz" },
+    { "command": "cargo fmt --all -- --check", "exit_code": 0, "log": "logs/fmt.log.gz" },
+    { "command": "cargo clippy --all-targets -- -D warnings", "exit_code": 0, "log": "logs/clippy.log.gz" },
+    { "command": "cargo run -p qcore-compiler --example reevaluation_probe", "exit_code": 0, "log": "logs/probe.log.gz" },
+    { "command": "cargo run -p qcore-compiler --example reevaluation_followup", "exit_code": 0, "log": "logs/followup.log.gz" },
+    { "command": "PATH=$HOME/.elan/bin:$PATH lake build (cwd proof)", "exit_code": 0, "log": "logs/lean.log.gz" },
+    { "command": "PATH=$HOME/.elan/bin:$PATH python3 -B scripts/check_lean_audits.py", "exit_code": 0, "log": "logs/lean-audits.log.gz" },
+    { "command": "python3 -B -m unittest discover -s scripts/tests -v", "exit_code": 0, "log": "logs/python.log.gz" },
+    { "command": "cargo test --manifest-path providers/Cargo.toml --workspace", "exit_code": 0, "log": "logs/providers.log.gz" },
+    { "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check", "exit_code": 0, "log": "logs/provider-fmt.log.gz" },
+    { "command": "cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings", "exit_code": 0, "log": "logs/provider-clippy.log.gz" },
+    { "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages-unit", "exit_code": 0, "log": "logs/package-build.log.gz" },
+    { "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages", "exit_code": 0, "log": "logs/package-build-main.log.gz" },
+    { "command": "cargo run --quiet -p qcore-audit -- build/cycle19/g01-cmetrics/cmetrics-audit.json.config", "exit_code": 0, "log": "logs/cmetrics-audit.log.gz" }
+  ],
+  "not_measured": {
+    "pinned_185_unit_artifacts": {
+      "reason": "the upstream Fluent Bit checkout has moved off the audited pin; the audit's own pin gate refuses to run",
+      "expected_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "found_head": "d411765eaa40a6ca590ffbcef07a61ce0094650d",
+      "log": "logs/cycle19-audit.log.gz",
+      "compensating_evidence": [
+        "the compatibility adapter, project_unit, AuditReport, compiler_options_compatibility, compile_entries and shell_words are unmodified",
+        "select_profile_units and run_config are used only by the configured qcore-audit driver",
+        "the only shared code touched is the compiler description, and its serialized shape is now pinned by crates/qcore-c-gateway/tests/boolean_frame_helpers.rs::the_shared_clang_identity_keeps_its_recorded_serialized_shape",
+        "the configured CMetrics audit against the persisted pinned Clang CMake build reproduces 1 checked / 6 Unknown with identical verdicts, diagnostics and source digests (cmetrics-diff.json)"
+      ]
+    },
+    "prepare_cmetrics_clang_audit.py": "not re-run for the same pin reason; the existing persisted build was consumed read-only"
+  },
+  "cmetrics_audit": {
+    "checked_function_contracts": 1,
+    "unknown_functions": 6,
+    "units": "1 unit: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures",
+    "diff": "cmetrics-diff.json"
+  },
+  "added_tests": [
+    "crates/qcore-audit/tests/compile_task_identity.rs::identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effective_input",
+    "crates/qcore-audit/tests/compile_task_identity.rs::a_changed_used_header_invalidates_the_identity_with_an_unchanged_main_source",
+    "crates/qcore-audit/tests/compile_task_identity.rs::include_order_and_admitted_macro_options_invalidate_a_byte_identical_analysis",
+    "crates/qcore-audit/tests/compile_task_identity.rs::contract_profile_and_database_dependency_changes_invalidate_the_identity",
+    "crates/qcore-audit/tests/compile_task_identity.rs::a_rejected_preprocessing_run_keeps_an_attributable_identity",
+    "crates/qcore-audit/tests/compile_task_identity.rs::duplicate_compile_records_for_one_file_are_kept_distinct_and_never_chosen_between",
+    "crates/qcore-audit/tests/configured_cli.rs::a_used_header_change_invalidates_the_recorded_compile_task_identity",
+    "crates/qcore-audit/tests/configured_cli.rs::repeated_and_conflicting_compile_records_for_one_file_are_distinguished",
+    "crates/qcore-verification/tests/source_effect.rs::a_changed_header_expansion_retires_the_prior_task_and_its_witness",
+    "crates/qcore-c-gateway/tests/boolean_frame_helpers.rs::the_shared_clang_identity_keeps_its_recorded_serialized_shape"
+  ],
+  "source_sha256": {
+    "crates/qcore-audit/src/compile_db.rs": "d0aaae7449212a8f5f8fcae015c9ce2f049ed6fcb0d0abcdfc74af54a4b1e675",
+    "crates/qcore-audit/src/lib.rs": "91f7cb7c73fbd64316b0ad560d0f7385106bdc545913b917b6cfce76427e14e1",
+    "crates/qcore-audit/tests/compile_task_identity.rs": "791a29d87797a719f49edb471b562ea488516f5487da44cab39be634a93519d0",
+    "crates/qcore-audit/tests/configured_cli.rs": "cd0c081abb9a3d9223daf308b5f376990fe4138616d4b9c54010cac2dbbbf6a6",
+    "crates/qcore-c-gateway/src/clang.rs": "9e6fe625cf50e077b4a28a5abb23f7d5ea6aeba71e28411dbc32908530d1a282",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "1ce5b07b29c8b198cb0be89fa36ebc82e87d3c98c1a40aefeddfb1e400dfd9bb",
+    "crates/qcore-c-gateway/src/lib.rs": "5d4387fbc2f7ab686af3f9408e78953539075f2d13b0bba990f60deccc76592e",
+    "crates/qcore-c-gateway/tests/boolean_frame_helpers.rs": "9a549678e92e41e0dafd69d9db36c9c805179b6d4ac9c9356593c5b9e8b26b3a",
+    "crates/qcore-verification/tests/source_effect.rs": "177b9dd60c6dbedf9f54c4111b8583e19af2b99187df0af724c8eaaa8bc0efdb"
+  },
+  "scope": "Identity and dependency binding for the supported configured C import route, plus a fail-closed compilation-database ambiguity rule. No verdict changes, no raw Cycle 19 unit promoted, no CT mapping change, no Lean semantics change."
+}

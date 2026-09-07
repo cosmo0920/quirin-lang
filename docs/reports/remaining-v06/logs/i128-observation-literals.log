@@ -1,0 +1,55 @@
+ID    EXPECT     ACTUAL     RESULT    PREDICATE / MESSAGE
+B01   Checked    Checked    MATCH     maximum == 170141183460469231731687303715884105727
+B02   Checked    Checked    MATCH     minimum == -170141183460469231731687303715884105728
+B03   Rejected   Rejected   MATCH     0 == 170141183460469231731687303715884105728  <= invalid predicate integer
+B04   Rejected   Rejected   MATCH     0 == -170141183460469231731687303715884105729  <= invalid predicate integer
+B05   Checked    Checked    MATCH     0 == 0
+B06   Checked    Checked    MATCH     -0 == 0
+B07   Checked    Checked    MATCH     -0 == -0
+B08   Checked    Checked    MATCH     - 170141183460469231731687303715884105728 == minimum
+B09   Rejected   Rejected   MATCH     --170141183460469231731687303715884105728 == 0  <= predicate overflow
+B10   Checked    Checked    MATCH     -(-170141183460469231731687303715884105727) == maximum
+B11   Rejected   Rejected   MATCH     -(-170141183460469231731687303715884105728) == 0  <= predicate overflow
+B12   Rejected   Rejected   MATCH     +170141183460469231731687303715884105727 == maximum  <= unsupported predicate term
+B13   Checked    Checked    MATCH     000170141183460469231731687303715884105727 == maximum
+B14   Rejected   Rejected   MATCH     000170141183460469231731687303715884105728 == 0  <= invalid predicate integer
+B15   Checked    Checked    MATCH     -000170141183460469231731687303715884105728 == minimum
+B16   Rejected   Rejected   MATCH     -000170141183460469231731687303715884105729 == 0  <= invalid predicate integer
+B17   Checked    Checked    MATCH     0000 == 0
+B18   Rejected   Rejected   MATCH     -minimum == maximum  <= predicate overflow
+B19   Rejected   Rejected   MATCH     minimum - 1 == 0  <= predicate overflow
+B20   Rejected   Rejected   MATCH     0 - minimum == 0  <= predicate overflow
+B21   Rejected   Rejected   MATCH     minimum * -1 == 0  <= predicate overflow
+B22   Rejected   Rejected   MATCH     minimum + minimum == 0  <= predicate overflow
+B23   Checked    Checked    MATCH     minimum + 1 == -170141183460469231731687303715884105727
+B24   Checked    Checked    MATCH     minimum - minimum == 0
+B25   Checked    Checked    MATCH     -(minimum + 1) == maximum
+B26   Rejected   Rejected   MATCH     maximum + 1 == 0  <= predicate overflow
+B27   Rejected   Rejected   MATCH     maximum * 2 == 0  <= predicate overflow
+B28   Rejected   Rejected   MATCH     maximum + maximum == 0  <= predicate overflow
+B29   Checked    Checked    MATCH     maximum - maximum == 0
+B30   Checked    Checked    MATCH     -maximum == minimum + 1
+B31   Rejected   Rejected   MATCH     170141183460469231731687303715884105727 * 170141183460469231731687303715884105727 == 0  <= predicate overflow
+B32   Rejected   Rejected   MATCH     -170141183460469231731687303715884105728 - 1 == 0  <= predicate overflow
+B33   Rejected   Rejected   MATCH     170141183460469231731687303715884105727 + 1 == 0  <= predicate overflow
+B34   Rejected   Rejected   MATCH     minimum / -1 == 0  <= unsupported predicate syntax: minimum / -1 == 0
+B35   Rejected   Rejected   MATCH     minimum % -1 == 0  <= unsupported predicate syntax: minimum % -1 == 0
+B36   Checked    Checked    MATCH     minimum < minimum + 1
+B37   Checked    Checked    MATCH     minimum <= -170141183460469231731687303715884105728
+B38   Checked    Checked    MATCH     maximum >= 170141183460469231731687303715884105727
+B39   Checked    Checked    MATCH     minimum != 0
+B40   Checked    Checked    MATCH     minimum < maximum
+B41   Checked    Checked    MATCH     9223372036854775808 == 9223372036854775808
+B42   Checked    Checked    MATCH     -9223372036854775809 < 0
+B43   Violation  Violation  MATCH     minimum == 170141183460469231731687303715884105727  <= observed: observed contract violation: minimum == 170141183460469231731687303715884105727
+B44   Violation  Violation  MATCH     maximum == 0  <= observed: observed contract violation: maximum == 0
+B45   Rejected   Rejected   MATCH     0x7fffffff == 0  <= unsupported predicate syntax: 0x7fffffff == 0
+B46   Rejected   Rejected   MATCH     170_141 == 0  <= unsupported predicate syntax: 170_141 == 0
+B47   Rejected   Rejected   MATCH     1e3 == 0  <= unsupported predicate syntax: 1e3 == 0
+F01   Checked    Checked    MATCH     supplied minimum = -170141183460469231731687303715884105728  
+F02   Violation  Violation  MATCH     supplied minimum = -170141183460469231731687303715884105727  observed: observed contract violation: minimum == -170141183460469231731687303715884105728
+F03   Violation  Violation  MATCH     supplied minimum = 170141183460469231731687303715884105727  observed: observed contract violation: minimum == -170141183460469231731687303715884105728
+F04   Violation  Violation  MATCH     supplied minimum = 0  observed: observed contract violation: minimum == -170141183460469231731687303715884105728
+F05   Rejected   Rejected   MATCH     no facts supplied  missing observation: minimum
+
+rows = 52, mismatches = 0

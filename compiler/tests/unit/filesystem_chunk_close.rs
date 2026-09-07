@@ -38,7 +38,7 @@ fn checked(
 
 #[test]
 fn filesystem_chunk_release_preserves_nested_and_delete_outcomes() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let backend = backend();
@@ -89,7 +89,7 @@ fn filesystem_chunk_release_preserves_nested_and_delete_outcomes() {
 
 #[test]
 fn filesystem_dispatch_rejects_wrong_arguments_and_release_order() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let backend = backend();
@@ -139,7 +139,7 @@ fn filesystem_dispatch_rejects_wrong_arguments_and_release_order() {
 
 #[test]
 fn filesystem_chunk_policy_and_dependencies_fail_closed() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let backend = backend();

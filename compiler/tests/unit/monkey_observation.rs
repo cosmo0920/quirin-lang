@@ -191,6 +191,7 @@ fn rejects_close_during_io_callback_and_unknown_record_fields() {
 #[test]
 fn native_descriptor_contracts_control_every_extracted_transition() {
     let observations = jsonl(fixture());
+    let baseline_contracts = DESCRIPTOR_OBSERVATION_CONTRACTS.replace("\r\n", "\n");
     for name in [
         "observation_socketpair",
         "observation_acquire",
@@ -200,11 +201,11 @@ fn native_descriptor_contracts_control_every_extracted_transition() {
     ] {
         let marker = format!("extern fn {name}() -> unit\ncontract {{");
         for predicate in ["false", "unknown_native_predicate"] {
-            let contracts = DESCRIPTOR_OBSERVATION_CONTRACTS.replace(
+            let contracts = baseline_contracts.replace(
                 &marker,
                 &format!("{marker}\n    ensures normal {predicate};"),
             );
-            assert_ne!(contracts, DESCRIPTOR_OBSERVATION_CONTRACTS);
+            assert_ne!(contracts, baseline_contracts);
             let error =
                 check_monkey_observations_with_contracts(&observations, &contracts).unwrap_err();
             assert!(error.contains(predicate), "{name}: {error}");

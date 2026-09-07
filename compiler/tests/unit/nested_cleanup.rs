@@ -21,7 +21,7 @@ fn source() -> NestedCleanupSource {
 
 #[test]
 fn nested_unsupported_custody_survives_stream_and_context_release() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let base = source();
@@ -103,7 +103,7 @@ fn nested_unsupported_custody_survives_stream_and_context_release() {
 
 #[test]
 fn nested_unsupported_requires_matching_source_unknown_kind_and_unique_identity() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let base = source();
@@ -181,7 +181,7 @@ fn nested_unsupported_requires_matching_source_unknown_kind_and_unique_identity(
 
 #[test]
 fn nested_unsupported_executes_policy_and_preserves_existing_cases() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let base = source();
@@ -227,7 +227,7 @@ fn nested_unsupported_executes_policy_and_preserves_existing_cases() {
 }
 #[test]
 fn nested_cleanup_preserves_every_non_deleting_file_case_through_parent_free() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let source = source();
@@ -281,7 +281,7 @@ fn nested_cleanup_preserves_every_non_deleting_file_case_through_parent_free() {
 }
 #[test]
 fn nested_cleanup_rejects_wrong_cases_identities_and_counter_binding() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let source = source();
@@ -381,7 +381,7 @@ fn nested_cleanup_rejects_wrong_cases_identities_and_counter_binding() {
 }
 #[test]
 fn nested_cleanup_retains_multiple_stream_residual_identities_and_policy() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let source = source();

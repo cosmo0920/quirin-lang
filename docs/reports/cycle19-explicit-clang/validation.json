@@ -1,0 +1,13 @@
+{
+  "source_revision": "9f0fa5730fba1761ebaf14bcd31220a3a9be9d6e",
+  "source_files": 185,
+  "configurations": 186,
+  "statuses": {
+    "Unknown": 137,
+    "Unsafe": 43,
+    "data_only": 4,
+    "Safe": 2
+  },
+  "compiler_command_refusals": 0,
+  "accepted_compile_identities": 186
+}

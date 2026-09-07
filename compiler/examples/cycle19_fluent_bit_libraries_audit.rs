@@ -1,4 +1,4 @@
-//! Compatibility command for the retained bounded Cycle19 provider stages.
+//! Current-revision resource audit, with explicit historical evidence replay.
 use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -7,7 +7,28 @@ use std::process::ExitCode;
 mod compatibility;
 
 fn main() -> ExitCode {
-    let mut arguments = env::args_os().skip(1);
+    let mut arguments = env::args_os().skip(1).peekable();
+    let mut pinned = false;
+    let mut compile_database = None;
+    while let Some(argument) = arguments.peek() {
+        if argument == "--pinned-evidence" {
+            pinned = true;
+            arguments.next();
+        } else if argument == "--compile-database" {
+            arguments.next();
+            let Some(path) = arguments.next() else {
+                eprintln!("--compile-database requires a path");
+                return ExitCode::FAILURE;
+            };
+            compile_database = Some(PathBuf::from(path));
+        } else {
+            break;
+        }
+    }
+    if pinned && compile_database.is_some() {
+        eprintln!("--compile-database selects a current Clang build; omit --pinned-evidence");
+        return ExitCode::FAILURE;
+    }
     let root = arguments
         .next()
         .map(PathBuf::from)
@@ -19,20 +40,33 @@ fn main() -> ExitCode {
     let contract_manifest = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
-            "usage: cycle19_fluent_bit_libraries_audit [fluent-bit-root] \
+            "usage: cycle19_fluent_bit_libraries_audit [--pinned-evidence] [--compile-database PATH] [fluent-bit-root] \
              [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
              [resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]"
         );
         return ExitCode::FAILURE;
     }
-    match compatibility::run(
-        &root,
-        monkey_database.as_deref(),
-        monkey_source_report.as_deref(),
-        diagnostic_report.as_deref(),
-        binding_directory.as_deref(),
-        contract_manifest.as_deref(),
-    ) {
+    let result = if pinned {
+        compatibility::run(
+            &root,
+            monkey_database.as_deref(),
+            monkey_source_report.as_deref(),
+            diagnostic_report.as_deref(),
+            binding_directory.as_deref(),
+            contract_manifest.as_deref(),
+        )
+    } else {
+        compatibility::run_current(
+            &root,
+            monkey_database.as_deref(),
+            monkey_source_report.as_deref(),
+            diagnostic_report.as_deref(),
+            binding_directory.as_deref(),
+            contract_manifest.as_deref(),
+            compile_database.as_deref(),
+        )
+    };
+    match result {
         Ok(false) => ExitCode::SUCCESS,
         Ok(true) => ExitCode::FAILURE,
         Err(error) => {

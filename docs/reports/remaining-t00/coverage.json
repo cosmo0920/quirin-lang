@@ -1,0 +1,1732 @@
+{
+ "schema_version": 1,
+ "report": "docs/reports/remaining-t00/README.md",
+ "card": "T00 - Make CT coverage stage- and target-derived (verify_or_extend, report-first)",
+ "date": "2026-09-07",
+ "audit_revision": "ea2af0f33665bec17e01eea3ec45974c22370a65",
+ "implementation_checkpoint": "e3e7c2c",
+ "scope": "Read-only audit. No tracked file is modified, no CT case is mapped, no manifest stage status is changed, no verdict is promoted. Every proposal below is a proposal.",
+ "method": {
+  "counted_as_executed": "a stage is called executed only when a named workspace test runs it on the case's own artifact. Fixture existence, a manifest string, a hand-written Rust event test and a report transcript do not count.",
+  "observations_made": [
+   "cargo test -p qcore-compiler --test ct_corpus -- --nocapture: 4 passed, 0 failed (1.99s) at ea2af0f",
+   "QCORE_CLANG=/nonexistent cargo test -p qcore-compiler --test ct_corpus: 1 FAILED at ct_corpus.rs:858 - the native stage is load-bearing and fails closed rather than skipping",
+   "source probes with target/debug/qcorec, verified current (no .rs file newer than the binary)"
+  ],
+  "code_read": [
+   "compiler/tests/ct_corpus.rs (1205 lines, the sole CT executor)",
+   "crates/qcore-verification/src/driver.rs:1100-1212 (compile_task_source)",
+   "crates/qcore-frontend/src/frontend_tasks.rs:200-250,347-380 (capture and share grammar)",
+   "crates/qcorec/tests/cli.rs, crates/qcore-frontend/tests/owned_tasks.rs (additional CT fixture executors)"
+  ],
+  "key_structural_finding": "all 11 mapped cases are `concurrency checked;` task modules and take compile_task_source, which never calls synthesize_semantics or check_whole_program and returns reference_observation: None. The sequential resource CFG and its reference execution are not run on any mapped CT case's own fixture."
+ },
+ "inventory": {
+  "total": 50,
+  "mapped": 11,
+  "unmapped": 39,
+  "mapped_ids": [
+   "CT01",
+   "CT02",
+   "CT12",
+   "CT13",
+   "CT14",
+   "CT15",
+   "CT16",
+   "CT19",
+   "CT20",
+   "CT37",
+   "CT50"
+  ]
+ },
+ "executed_totals": {
+  "task_reference_executions": 18,
+  "native_compile_and_run": 19,
+  "in_case_source_rejection_controls": 11,
+  "cases_with_gated_sanitized_native": 0,
+  "cases_with_proof_evidence": 0,
+  "cases_stopping_at_source_rejection": 2
+ },
+ "mapped_case_stage_matrix": {
+  "CT01": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_owned_transfer",
+   "source_reject_controls_executed": 0,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    },
+    "aux:cli_end_to_end": {
+     "status": "executed",
+     "executor": "crates/qcorec/tests/cli.rs::cli_names_owned_profile_and_emits_real_buffer_transfer",
+     "host_gate": [
+      "linux"
+     ],
+     "note": "qcorec check + emit + clang + run on CT01/case.qcore (Linux-gated)"
+    },
+    "aux:frontend_mutation_matrix": {
+     "status": "executed",
+     "executor": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qcore)",
+     "note": "~25 mutation/adversarial variants checked at the task ledger"
+    }
+   }
+  },
+  "CT02": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "unassessed",
+    "cfg": "unassessed",
+    "native_backend": "unassessed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": null,
+   "harness_verdict_mode": "reject",
+   "source_reject_controls_executed": 0,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "not_applicable",
+     "note": "a rejected program has no execution post-state; the harness forbids outcome/trace on a reject case"
+    },
+    "c_emission": {
+     "status": "not_applicable",
+     "note": "emit_task_c11 is unreachable for a rejected module"
+    },
+    "native_execution": {
+     "status": "not_applicable",
+     "note": "no binary exists for a rejected module"
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  },
+  "CT12": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_owned_transfer",
+   "source_reject_controls_executed": 0,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 2,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 2,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 2,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  },
+  "CT13": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_create_recovery",
+   "source_reject_controls_executed": 1,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 3,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 3,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+     "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 3,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    },
+    "aux:cli_end_to_end": {
+     "status": "executed",
+     "executor": "crates/qcorec/tests/cli.rs::cli_recovery_joins_first_child_after_second_creation_fails",
+     "host_gate": [
+      "linux"
+     ],
+     "note": "qcorec check + emit + clang -DQCORE_CT_FAIL_CREATE=2 + run (Linux-gated)"
+    }
+   }
+  },
+  "CT14": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_task_scenarios",
+   "source_reject_controls_executed": 2,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-completed-child-custody/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  },
+  "CT15": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_join_failure",
+   "source_reject_controls_executed": 0,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 2,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+     "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 2,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  },
+  "CT16": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_task_scenarios",
+   "source_reject_controls_executed": 2,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-worker-allocation/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    },
+    "aux:sequential_control": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct16_retains_sequential_implicit_cleanup_control",
+     "note": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qcore; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qcore"
+    }
+   }
+  },
+  "CT19": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "unassessed",
+    "cfg": "unassessed",
+    "native_backend": "unassessed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": null,
+   "harness_verdict_mode": "reject",
+   "source_reject_controls_executed": 0,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "not_applicable",
+     "note": "a rejected program has no execution post-state; the harness forbids outcome/trace on a reject case"
+    },
+    "c_emission": {
+     "status": "not_applicable",
+     "note": "emit_task_c11 is unreachable for a rejected module"
+    },
+    "native_execution": {
+     "status": "not_applicable",
+     "note": "no binary exists for a rejected module"
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    },
+    "aux:reference_control": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_positive_control",
+     "host_gate": [
+      "linux"
+     ],
+     "note": "joined_sibling.qcore: Linux-gated task reference execution only; never compiled or run natively"
+    }
+   }
+  },
+  "CT20": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_task_scenarios",
+   "source_reject_controls_executed": 2,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 4,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-handler-rethrow/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  },
+  "CT37": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_task_scenarios",
+   "source_reject_controls_executed": 2,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-completed-child-custody/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    },
+    "aux:sequential_control": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct37_retains_sequential_transferred_payload_control",
+     "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
+    }
+   }
+  },
+  "CT50": {
+   "manifest_stages": {
+    "parser": "executed",
+    "type_checker": "executed",
+    "reference_execution": "executed",
+    "cfg": "executed",
+    "native_backend": "executed",
+    "proof": "unassessed"
+   },
+   "manifest_evidence_target": "linux",
+   "harness_verdict_mode": "native_task_scenarios",
+   "source_reject_controls_executed": 2,
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-reused-address/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "unassessed",
+     "note": "no Lean theorem is bound to this fixture. proof/QCore/TaskExecution.lean:539 mentions CT13 in a comment only; the task theorems constrain the model, not this source artifact."
+    }
+   }
+  }
+ },
+ "claims_exceeding_executed_evidence": [
+  {
+   "id": "O1",
+   "subject": "all 9 native-mode cases (CT01,CT12,CT13,CT14,CT15,CT16,CT20,CT37,CT50)",
+   "manifest_claim": "stages.cfg = \"executed\"",
+   "finding": "No assertion targets a CFG artifact. The sequential resource CFG is provably NOT run: compile_task_source (crates/qcore-verification/src/driver.rs:1100-1212) never calls synthesize_semantics or check_whole_program, and returns reference_observation: None. The claim is defensible only under the unstated reading 'cfg' = the task IR's blocks/terminators, which is exercised transitively by check_task_module/emit_task_c11 but never independently checked.",
+   "severity": "stage name is ambiguous and unevidenced",
+   "proposed_repair": "retire the single `cfg` stage; replace with `task_lowering`, `task_ledger_check` and `sequential_whole_program` (the last `not_applicable` for every current mapped case)"
+  },
+  {
+   "id": "O2",
+   "subject": "CT02, CT19",
+   "manifest_claim": "stages.type_checker = \"executed\", everything deeper \"unassessed\"",
+   "finding": "Both reject at Q600 in qcore_core::task_execution::check_task_module -- the task ledger, which runs AFTER elaboration and after lower_source_tasks. The two-stage label makes a deep ledger rejection indistinguishable from a shallow Q013 name-resolution rejection. Verified: CT02 expects Q600 'not an initialized owned buffer', CT19 expects Q600 'ScopeBusy'.",
+   "severity": "under-records executed depth; hides reject-reason provenance",
+   "proposed_repair": "record task_lowering and task_ledger_check as separately executed stages and pin the rejecting pass"
+  },
+  {
+   "id": "O3",
+   "subject": "all 9 native-mode cases",
+   "manifest_claim": "stage statuses are unconditional strings (\"executed\")",
+   "finding": "The runners are Linux-gated: on a non-Linux host every run_native_* helper returns after unsupported_target() and prints 'unexecuted on this host'. reference_execution, cfg and native_backend then do not execute, yet the manifest field still reads 'executed'. The manifest `note` acknowledges the scoping in prose; the machine-readable field a summarizer consumes does not.",
+   "severity": "machine-readable field overstates on non-Linux hosts",
+   "proposed_repair": "make host_gate a first-class per-stage field and have the summarizer report executed_on(host)"
+  },
+  {
+   "id": "O4",
+   "subject": "CT14, CT16, CT20, CT37, CT50",
+   "manifest_claim": "(implicit, via w6-* reports) sanitized ASan/UBSan/LSan native evidence",
+   "finding": "No workspace test compiles any CT fixture with -fsanitize. native_fault_run uses '-std=c11 -pthread -Wall -Wextra -Werror' only. The sanitizer evidence is a transcript pasted into the report (docs/reports/w6-*/README.md), re-run by no gate. The only sanitized C in the workspace (crates/qcore-core/tests/unit/c_emit.rs) runs a different, sequential corpus.",
+   "severity": "recorded evidence presented alongside gated evidence; regressions would not be caught",
+   "proposed_repair": "add a `native_sanitized` stage whose only legal values are \"executed\" (a real gate) or \"recorded_not_gated\" (transcript pointer)"
+  },
+  {
+   "id": "O5",
+   "subject": "CT02",
+   "manifest_claim": "semantic_profile: \"CT01 supplies the accepted native control\"",
+   "finding": "The link is narrative only. ct_corpus.rs:260-264 asserts expected.positive_control.is_some() == (case.id == \"CT19\"), so CT02 is structurally forbidden from carrying a control. Nothing in the harness ties CT02's rejection to CT01's acceptance; if CT01 were retired, CT02's claim would silently become false.",
+   "severity": "unenforced cross-case dependency",
+   "proposed_repair": "add a machine-checked `control_for`/`controlled_by` edge between cases and assert it in the harness"
+  },
+  {
+   "id": "O6",
+   "subject": "CT19",
+   "manifest_claim": "evidence_target: null; reference_execution: \"unassessed\"",
+   "finding": "run_positive_control DOES execute a Linux-gated task reference execution on joined_sibling.qcore (root outcome 42, 2 children, both joined). That executed evidence is recorded nowhere in the manifest, and the case carries no evidence_target even though its control is Linux-gated. The control is never compiled or run natively.",
+   "severity": "under-records executed control evidence; target metadata missing",
+   "proposed_repair": "record control evidence as its own stage entry with its own artifact and host_gate"
+  },
+  {
+   "id": "O7",
+   "subject": "docs/reviews/r0_3/acceptance.json",
+   "manifest_claim": "\"ct_mapped\": 11, \"ct_unmapped\": 39",
+   "finding": "acceptance.json carries NO per-CT rows at all -- only these two scalars. The scalar treats CT02 (source rejection, zero native runs) and CT16 (4 reference executions + 4 native runs) as one unit of coverage, and hides that 0 of 11 cases have proof evidence and 0 of 11 have gated sanitized-native evidence. R02 and R04 cite the w6-* reports and state their boundaries accurately in prose; the defect is that the consumable numbers are binary.",
+   "severity": "dashboard scalar exceeds executed stage evidence in depth, not in count",
+   "proposed_repair": "derive per-CT rows and a stage histogram from coverage.json instead of hand-maintaining two scalars"
+  },
+  {
+   "id": "O8",
+   "subject": "all 11 mapped cases",
+   "manifest_claim": "stages.proof = \"unassessed\"",
+   "finding": "Correct and not an overclaim -- recorded here because it is the largest uniform gap. No Lean theorem is bound to any CT fixture; the only CT string in proof/ is a comment at proof/QCore/TaskExecution.lean:539 naming CT13. The task theorems constrain the Lean model, and source/native refinement is an explicit premise in every w6 report.",
+   "severity": "none (honest); uniform missing stage",
+   "proposed_repair": "either bind theorems to fixtures via a checked mapping, or keep `unassessed` and stop citing Lean counts adjacent to CT counts"
+  },
+  {
+   "id": "O9",
+   "subject": "CT14, CT37",
+   "manifest_claim": "fixture inventory equals executed inputs (asserted at ct_corpus.rs:319)",
+   "finding": "Both fixtures' completion_before_join.h is a 66-byte one-line #include of compiler/tests/fixtures/task_worker_allocations/completion_before_join.h. The inventory assertion covers the stub, not the adapter that actually forces worker completion before creation returns. The shared adapter is outside the CT fixture tree and outside the inventory check.",
+   "severity": "provenance gap in an otherwise closed inventory check",
+   "proposed_repair": "record transitively included adapters as declared fixture inputs"
+  }
+ ],
+ "missing_stage_tasks": [
+  {
+   "id": "T00.1",
+   "case": "CT02",
+   "title": "CT02: native negative-control stage",
+   "missing": [
+    "native_execution (not_applicable today)",
+    "machine-checked control link"
+   ],
+   "detail": "CT02 executes parse -> elaborate -> task_lowering -> task_ledger_check and stops at Q600. Its claimed accepted native control (CT01) is narrative. Add a harness-checked control edge so CT02's rejection is paired with an executed accepting run of the same shape, and so retiring CT01 breaks CT02 loudly.",
+   "blocks": "none - harness-only change",
+   "size": "small"
+  },
+  {
+   "id": "T00.2",
+   "case": "CT19",
+   "title": "CT19: native control stage and target metadata",
+   "missing": [
+    "native_execution for joined_sibling.qcore",
+    "evidence_target",
+    "recorded control-stage entry"
+   ],
+   "detail": "run_positive_control stops at task reference execution. Compile and run joined_sibling.qcore natively (as every other Linux case does) and record the control as its own stage entry with host_gate=[linux].",
+   "blocks": "none - harness-only change",
+   "size": "small"
+  },
+  {
+   "id": "T00.3",
+   "case": "CT14,CT16,CT20,CT37,CT50",
+   "title": "Sanitized-native stage as a real gate",
+   "missing": [
+    "native_sanitized (currently recorded_not_gated)"
+   ],
+   "detail": "Promote the five w6 report transcripts into executing runs: compile the same emitted C with -fsanitize=address,undefined -fno-omit-frame-pointer and LSan, as an opt-in gate (env-selected so the default suite stays fast) that fails rather than skips when selected. Until then the manifest must say recorded_not_gated.",
+   "blocks": "none",
+   "size": "medium"
+  },
+  {
+   "id": "T00.4",
+   "case": "all 11",
+   "title": "Split the `cfg` and `type_checker` stage names",
+   "missing": [
+    "task_lowering",
+    "task_ledger_check",
+    "sequential_whole_program disambiguation"
+   ],
+   "detail": "Replace `cfg` (unevidenced, ambiguous) and the overloaded `type_checker` with the four stages the pipeline actually has. Mark sequential_whole_program not_applicable for every current mapped case and say so, rather than letting `cfg: executed` imply the sequential resource CFG ran.",
+   "blocks": "manifest schema change (all 50 rows)",
+   "size": "medium"
+  },
+  {
+   "id": "T00.5",
+   "case": "all 9 native",
+   "title": "Host-gated stage status",
+   "missing": [
+    "host_gate as a first-class field"
+   ],
+   "detail": "Make the Linux scoping machine-readable so a non-Linux CI run reports unexecuted instead of inheriting `executed`.",
+   "blocks": "manifest schema change",
+   "size": "small"
+  },
+  {
+   "id": "T00.6",
+   "case": "CT01,CT13",
+   "title": "Record the executed CLI end-to-end stage",
+   "missing": [
+    "cli_end_to_end stage entry"
+   ],
+   "detail": "crates/qcorec/tests/cli.rs runs qcorec check + emit + clang + execute on CT01/case.qcore and CT13's fixture, and crates/qcore-frontend/tests/owned_tasks.rs runs ~25 adversarial mutations of CT01/case.qcore. This is executed evidence the manifest does not know about -- the only two cases with process-level end-to-end evidence.",
+   "blocks": "none",
+   "size": "small"
+  },
+  {
+   "id": "T00.7",
+   "case": "all 11",
+   "title": "Proof stage: bind or stop implying",
+   "missing": [
+    "proof"
+   ],
+   "detail": "0 of 11 cases have proof evidence and nothing links a Lean theorem to a fixture. Either add a checked fixture->theorem mapping, or keep `unassessed` and keep Lean audit counts out of CT coverage statements.",
+   "blocks": "Lean/source refinement (open per every w6 report)",
+   "size": "large"
+  },
+  {
+   "id": "T00.8",
+   "case": "CT14,CT37",
+   "title": "Declare transitively included native adapters",
+   "missing": [
+    "fixture inventory transitivity"
+   ],
+   "detail": "The inventory assertion covers a 66-byte #include stub, not the shared adapter it pulls in from outside the CT tree.",
+   "blocks": "none",
+   "size": "small"
+  },
+  {
+   "id": "T00.9",
+   "case": "acceptance.json",
+   "title": "Derive CT rows from stage evidence",
+   "missing": [
+    "per-CT rows"
+   ],
+   "detail": "Replace the hand-maintained ct_mapped/ct_unmapped scalars with rows generated from coverage.json, plus a stage histogram and a deepest-stage profile. Keep a mapped count only with an adjacent note that it is not conformance.",
+   "blocks": "T00.4, T00.5",
+   "size": "medium"
+  }
+ ],
+ "unmapped_triage": {
+  "baseline": "docs/reports/w6-ct-batch-2/README.md (written at 5/50 mapped; 6 of its rows have since been mapped)",
+  "buckets_changed_since_batch2": 20,
+  "newly_decidable": [
+   "CT24",
+   "CT39",
+   "CT47"
+  ],
+  "cases": [
+   {
+    "id": "CT03",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "blocker": "read/share captures parse and resolve but are not lowerable to the task IR",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": true,
+    "note": "batch 2 said 'no executable source form'; the form now exists and stops one layer deeper"
+   },
+   {
+    "id": "CT04",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "blocker": "as CT03, plus a parent/child interference model",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": true
+   },
+   {
+    "id": "CT05",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "blocker": "as CT03; two FULL requests need share arithmetic at lowering",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": true
+   },
+   {
+    "id": "CT06",
+    "batch2_bucket": "ambiguous",
+    "current_bucket": "ambiguous + unimplemented-syntax",
+    "blocker": "expected result is not an accept/reject verdict, and aliasing is refused outright",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `let alias = buffer;` -> Q500 'owned buffers require explicit move or a checked buffer read'.",
+    "bucket_changed_since_batch2": false,
+    "note": "the refusal is now explicit and fail-closed rather than unwritable, but still decides nothing about identity preservation"
+   },
+   {
+    "id": "CT07",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no array types, indexing or disjointness in source",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT08",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "as CT07; also wants an `unknown` verdict the harness lacks",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT09",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no struct/field access in source",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT10",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no bit-fields; no C-twin stage",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT11",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "blocker": "needs share reconstruction with surviving aliases",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": true
+   },
+   {
+    "id": "CT17",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-typed-error-payloads",
+    "blocker": "errors are payload-free in ScopedOwnedTasksV1; an error type must be declared and carries no owned result",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `raise WorkerError { buffer: move buffer }` -> Q013 unknown name `WorkerError`; every w6 report states 'payload-free errors'.",
+    "bucket_changed_since_batch2": true,
+    "note": "reclassified: the blocker is the task error model, not W3/W4 obligation vocabulary"
+   },
+   {
+    "id": "CT18",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-typed-error-payloads + no borrow captures",
+    "blocker": "as CT17, plus scoped-capture borrows",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380. Borrow captures: `borrow buffer` -> Q000 'capture requires copy, move, read ... share, or write'.",
+    "bucket_changed_since_batch2": true
+   },
+   {
+    "id": "CT21",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "no source path emits RegionOp::QuantOpen",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT22",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "as CT21; also needs credits",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT23",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "quantitative credits are not in any executable subset",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT24",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
+    "blocker": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): an Ok arm that returns without joining a live handle -> Q600 ScopeBusy(4), i.e. scope-exit cleanup refuses to destroy an owner while a child is unjoined. The explicit-drop variant is already executed as CT14/drop_before_join.qcore.",
+    "bucket_changed_since_batch2": true,
+    "note": "batch 2's reason ('no borrow/join to be outstanding') is obsolete. Must NOT be mapped to the explicit drop -- that duplicates CT14's executed control. A distinct fixture uses implicit scope-exit cleanup."
+   },
+   {
+    "id": "CT25",
+    "batch2_bucket": "ambiguous",
+    "current_bucket": "ambiguous (partially unblocked)",
+    "blocker": "joins now exist; loan expiry does not",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": true,
+    "note": "half of batch 2's 'after joins and loan expiry' objection is resolved; the loan half is not"
+   },
+   {
+    "id": "CT26",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT27",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT28",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT29",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT30",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT31",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT32",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT33",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT34",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration. Guard binding repair: docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "blocker renamed, bucket unchanged: batch 2 blamed Q013 on the guard `g`; the residual blocker is the mutex `m` itself"
+   },
+   {
+    "id": "CT35",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "no byte-valued quantities; no share/read form for one identity",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `read <place> share FULL|1` parses and name-resolves; refused at Q500 'only copy i32 and move own<Buffer> captures are executable' (crates/qcore-frontend/src/source_tasks.rs:1006). Share grammar: crates/qcore-frontend/src/frontend_tasks.rs:206-226,347-380.",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT36",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "blocked-on-W3/W4 (conditional half resolved)",
+    "blocker": "no byte quantities and no expected.json form for a bound; conditionals now exist via Result match arms",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): two simultaneously live allocations -> Q600 'return/error discards a handle, unconsumed Result or owned buffer' on the second `?` edge, so a peak-2 shape needs an explicit handler.",
+    "bucket_changed_since_batch2": true,
+    "note": "batch 2's 'the subset has no conditional' is obsolete; byte quantities and the accounting oracle remain"
+   },
+   {
+    "id": "CT38",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "credit partitions absent; an over-release fixture reduces to CT02",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT39",
+    "batch2_bucket": "blocked-on-W3/W4",
+    "current_bucket": "DECIDABLE-NOW (coarser reason)",
+    "blocker": "resolved: the silent-acceptance path batch 2 named as the direct blocker is repaired",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `fn main() -> i32 contract { quant normal wall_clock <= 5; } { return 0; }` -> Q021 'source function contract clauses are not yet enforced; refusing unchecked contract'. Repair recorded in docs/reports/w6-frontend-gates/README.md.",
+    "bucket_changed_since_batch2": true,
+    "note": "Q021 is a blanket refusal of every contract clause, so a fixture records 'unenforced claim refused', not 'concurrent-work bound conflated with wall-clock'. Map only with a semantic_profile that states the coarser reason, or hold until contracts are enforced."
+   },
+   {
+    "id": "CT40",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
+    "evidence": "compiler/tests/ct_corpus.rs:37-44 STAGE_NAMES has no C stage; changing it touches all 50 rows.",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT41",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT42",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT43",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT44",
+    "batch2_bucket": "ambiguous",
+    "current_bucket": "ambiguous",
+    "blocker": "the available rejection is about the handle, not about a capture whose environment expires",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): a scope exit with an unjoined handle rejects Q600 ScopeBusy; captures are copied into a checked environment, so 'environment moves before join' has no source form.",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT45",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "evidence": "docs/reports/w6-ct-batch-2/README.md",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT46",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "needs Send/Sync conditions and a verified mutex protocol",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration.",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT47",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "DECIDABLE-NOW (coarser reason)",
+    "blocker": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `fn worker(p: ptr<Buffer>) -> i32` captured across `spawn s` -> Q020 'task parameters require i32 or own<Buffer> use one'.",
+    "bucket_changed_since_batch2": true,
+    "note": "batch 2's reason ('there is no cross-thread boundary to reject') is obsolete. Caveat: Q020 refuses every unsupported task parameter type, not specifically a pointer lacking a transfer/share contract."
+   },
+   {
+    "id": "CT48",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "needs mutex release/reacquire and heap refinements",
+    "evidence": "T00 probe with the checkpoint-current target/debug/qcorec (no source newer than the binary): `with lock m as g` -> Q013 unknown name `m`; `let m = qcore_mutex_new()` -> Q013 unknown name `qcore_mutex_new`; `mutex m;` -> Q000 expected a QCore declaration.",
+    "bucket_changed_since_batch2": false
+   },
+   {
+    "id": "CT49",
+    "batch2_bucket": "unimplemented-syntax",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "the harness pins an exact total transcript (stdout == render_task_observation), which is the opposite of a partial-order check",
+    "evidence": "compiler/tests/ct_corpus.rs:1140-1145 compares native stdout byte-for-byte with the reference transcript.",
+    "bucket_changed_since_batch2": false,
+    "note": "the native task runners strengthened the exact-total-order assumption batch 2 flagged"
+   }
+  ]
+ },
+ "proposed_manifest_schema": {
+  "manifest_schema_version": 2,
+  "rationale": "schema_version 1 records one flat status string per stage, derived in ct_corpus.rs from the fixture's verdict MODE rather than from observed execution. Two cases that stop at very different depths (a Q013 name error and a Q600 ledger rejection) are indistinguishable, and a Linux-gated stage reads 'executed' on every host.",
+  "stage_vocabulary": [
+   {
+    "name": "parse",
+    "executor_kind": "source",
+    "note": "parse_source_program"
+   },
+   {
+    "name": "elaborate",
+    "executor_kind": "source",
+    "note": "elaborate_source"
+   },
+   {
+    "name": "task_lowering",
+    "executor_kind": "source",
+    "note": "lower_source_tasks; replaces part of the overloaded type_checker"
+   },
+   {
+    "name": "task_ledger_check",
+    "executor_kind": "source",
+    "note": "check_task_module (Q600); where CT02/CT19 actually reject"
+   },
+   {
+    "name": "sequential_whole_program",
+    "executor_kind": "source",
+    "note": "check_whole_program; not_applicable for every current mapped case"
+   },
+   {
+    "name": "sequential_reference_execution",
+    "executor_kind": "reference",
+    "note": "module.reference_observation; not_applicable for task modules"
+   },
+   {
+    "name": "task_reference_execution",
+    "executor_kind": "reference",
+    "note": "execute_task_module[_with_worker_allocations]"
+   },
+   {
+    "name": "c_emission",
+    "executor_kind": "backend",
+    "note": "emit_task_c11"
+   },
+   {
+    "name": "native_execution",
+    "executor_kind": "native",
+    "note": "clang compile + run + pinned stdout/stderr"
+   },
+   {
+    "name": "native_sanitized",
+    "executor_kind": "native",
+    "note": "ASan/UBSan/LSan; today only recorded_not_gated"
+   },
+   {
+    "name": "cli_end_to_end",
+    "executor_kind": "process",
+    "note": "qcorec check/emit as a process"
+   },
+   {
+    "name": "legacy_c_twin",
+    "executor_kind": "gateway",
+    "note": "reserved for CT40-CT43/CT45; does not exist yet"
+   },
+   {
+    "name": "proof",
+    "executor_kind": "lean",
+    "note": "a checked fixture->theorem binding; none exists"
+   }
+  ],
+  "status_vocabulary": {
+   "executed": "a named executor ran this stage on this case's artifact AND fails if the stage's work is removed",
+   "unexecuted": "the stage applies to this case but no executor runs it",
+   "recorded_not_gated": "evidence exists as a transcript in a report; no gate re-runs it. Requires `record`",
+   "not_applicable": "this case's mode cannot reach the stage (e.g. native_execution for a Reject case)",
+   "unassessed": "not evaluated"
+  },
+  "per_stage_fields": {
+   "status": "required, from status_vocabulary",
+   "executor": "required when status==executed; `path::test_name`",
+   "artifact": "required when status==executed; the exact file executed",
+   "host_gate": "optional list; when present the stage is executed only on those hosts",
+   "observations": "optional count of distinct executed runs (scenarios, scripts, fault modes)",
+   "record": "required when status==recorded_not_gated; path to the transcript",
+   "note": "free text"
+  },
+  "case_fields": {
+   "controlled_by": "optional list of case ids whose accepted execution is this reject case's control; harness-asserted (repairs O5)",
+   "controls_recorded_separately": "optional list of in-case rejection controls with their diagnostics"
+  },
+  "fail_closed_rules": [
+   "status==executed without an executor or artifact is a harness failure",
+   "status==recorded_not_gated without a record is a harness failure",
+   "a mapped case with zero executed stages beyond parse is a harness failure",
+   "the executor set named across all cases must equal the harness's own registry of runners (extends the existing MAPPED_CASES pin)",
+   "an unknown stage name or status is a harness failure (preserves current deny_unknown_fields behavior)"
+  ],
+  "summarizer_derivation": {
+   "principle": "counts are derived from executed stage evidence, never from mapping_status alone",
+   "outputs": [
+    {
+     "name": "ct_stage_histogram",
+     "how": "for each stage name, count cases by status, evaluated for the reporting host",
+     "example_today": "native_execution: executed 9 (linux) / not_applicable 2 / unexecuted 0; proof: unassessed 11"
+    },
+    {
+     "name": "ct_depth_profile",
+     "how": "bucket each mapped case by its deepest executed stage",
+     "example_today": "source_reject 2 (CT02, CT19); native 9; native_sanitized 0 (5 recorded_not_gated); proved 0"
+    },
+    {
+     "name": "ct_observation_counts",
+     "how": "sum `observations` per stage",
+     "example_today": "task_reference_execution 18; native_execution 19; in-case source rejection controls 11"
+    },
+    {
+     "name": "ct_mapped",
+     "how": "retained as count(mapping_status==mapped) but emitted ONLY alongside the histogram and an explicit note that mapping is not conformance"
+    },
+    {
+     "name": "ct_host_scope",
+     "how": "the set of host_gate values any executed stage depends on, so a non-Linux report reads unexecuted rather than inheriting executed"
+    }
+   ],
+   "acceptance_json_change": "replace the hand-maintained ct_mapped/ct_unmapped scalars with generated per-CT rows plus the histogram and depth profile; a row may not claim depth its stage evidence does not carry (repairs O7)",
+   "refusal": "the summarizer emits no counts at all if any fail_closed_rule is violated"
+  }
+ }
+}

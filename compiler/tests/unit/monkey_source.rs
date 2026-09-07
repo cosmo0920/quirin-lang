@@ -33,6 +33,14 @@ fn calls(path: &MonkeySourcePath) -> Vec<&str> {
         .collect()
 }
 
+fn errno_location_function() -> &'static str {
+    if cfg!(target_vendor = "apple") {
+        "__error"
+    } else {
+        "__errno_location"
+    }
+}
+
 #[test]
 fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
     if !crate::test_support::clang_available() {
@@ -92,7 +100,7 @@ fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
         calls(&timeout.paths()[0]),
         [
             "send",
-            "__errno_location",
+            errno_location_function(),
             "perror",
             "evutil_closesocket",
             "event_del",
@@ -104,7 +112,7 @@ fn imports_all_callbacks_and_preserves_mask_paths_and_cleanup_order() {
         calls(&timeout.paths()[1]),
         [
             "send",
-            "__errno_location",
+            errno_location_function(),
             "evutil_closesocket",
             "event_del",
             "event_free",
@@ -671,7 +679,10 @@ fn injection_retains_a_structured_scan_and_function_early_return() {
     else {
         unreachable!()
     };
-    assert_eq!(initial.c_type, "unsigned long");
+    assert!(matches!(
+        initial.c_type.as_str(),
+        "unsigned long" | "unsigned long long"
+    ));
     assert!(!header.operations.is_empty());
     assert!(!matches.operations.is_empty());
     assert_eq!(
@@ -706,7 +717,9 @@ fn injection_retains_a_structured_scan_and_function_early_return() {
         ("index++)", "index--)"),
         ("return 0;\n            }", "return 1;\n            }"),
     ] {
-        let results = wrappers(&source.replace(old, replacement));
+        let changed = source.replace("\r\n", "\n").replace(old, replacement);
+        assert_ne!(changed, source.replace("\r\n", "\n"));
+        let results = wrappers(&changed);
         if replacement.contains("--") {
             assert!(matches!(&results[11], MonkeySourceResult::Unknown { .. }));
         } else {

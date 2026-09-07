@@ -30,7 +30,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic library/container/reference-count and reactor/descriptor custody, checked task IR/reference execution and C11 task emission. No runtime or workspace dependencies; W5 consolidation remains bounded |
 | `crates/qcore-frontend/` | L1 front end (W1 relocation): `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and exact scoped copy/owned-buffer source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas; Boolean source imports are opaque in the C gateway; compiler compatibility adapters remain |
-| `crates/qcore-schemas/` | L0 published schema surface (Rust API 2.0.0; W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-schemas/` | L0 published schema surface (Rust API 3.0.0; W0 executed 2026-09-06): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
 | `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
@@ -285,6 +285,9 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 
 ## Key entry points
 
+- Editor: `editors/emacs/qcore-mode.el` provides lexical source/contract
+  highlighting for `.qcore`/`.qc`; see `editors/emacs/README.md` for setup and
+  ERT checks. Highlighting does not imply executable or verified support.
 - Library: `parse_source_program`, `elaborate_source`, `check_whole_program`,
   `compile_files` / `compile_files_with_registry`,
   `analyze_unrestricted_c11` / `validate_unrestricted_c11`.
@@ -794,6 +797,129 @@ audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
 
+R02 terminal task state, adversarial verification (2026-09-07): V02 re-examined
+"a joined child can still emit events" and found no soundness failure; no
+production code changed. Evidence was the gap. Four new tests pin the full
+terminal-state x event-kind matrix in `crates/qcore-core`: each joined-child
+event kind now asserts its exact `TerminalTask`/`UnknownJoin`/`DuplicateTask`
+diagnostic and the absence of any authority diagnostic, proving the terminal
+decision precedes every custody, guard and permission check. A refused join is
+not an implicit completion: exact diagnostic vectors show the child keeps its
+authority and duties and stays outstanding, matching CT15 and the native
+abort-before-reclamation path. A completed-but-unjoined child's captures stay
+in `Custodian::Capsule` and all ten ledger operations reject with
+`InactiveTask` in both `Completed` and `Joined` phases, leaving the ledger
+unchanged. Nineteen new Lean theorems give the `Lifetime` model per-constructor
+terminal rejection, post-join corollaries and refused-join retention, with no
+new axioms or placeholders. All 823 workspace tests, 45 provider tests, 43
+Python tests, 20 Lean audits and the standing gates pass; CT coverage remains
+11/50 and all Cycle19 artifacts are untouched. Evidence:
+`docs/reports/remaining-v02/README.md`. Source-to-trace refinement, checked
+mutex invariants, loans, general owned graphs and Rust/Lean/native
+correspondence remain open.
+
+Compile-task identity (2026-09-07): the configured audit now records a complete
+identity for every accepted compile task — Clang program/version/target, the
+declared driver, the compile working directory, the main source path, the
+complete ordered argument vector, the dialect, the ordered transported
+preprocessing options and analyzed scope, the raw source bytes, the effective
+preprocessing input, and named contract/profile/database/rule dependency
+digests. A used header, a generated configuration header, include order, an
+unread admitted macro option or a contract/profile change now retires the
+recorded identity even when the selected `.c` file, the compilation database and
+the preprocessed token stream are unchanged. The evidence-v2 task digest already
+bound the same inputs; a stale witness is now shown to be refused in both
+directions. One configuration is one (working directory, complete command) pair:
+repeated identical records are one task, conflicting records reject. A read-only
+census records that the pinned Cycle 19 compatibility adapter still chooses
+silently between two configurations for `src/flb_input_chunk.c` and among four
+for each of 27 Monkey/libevent units; repairing that changes the pinned
+artifacts and remains open. Ten new tests; all 829 workspace tests, 45 provider
+tests, 43 Python tests, 20 Lean audits and the standing gates pass, and the
+configured CMetrics audit still reports one checked function contract, six
+Unknown functions and a provisional Unsafe raw unit with identical verdicts,
+diagnostics and source digests. The four pinned 185-unit artifacts could not be
+re-measured: the upstream Fluent Bit checkout has moved off its pin and the
+audit's own pin gate refuses to run. Evidence:
+`docs/reports/remaining-g01/README.md`. Header enumeration, compiler
+equivalence, build hermeticity and the compatibility adapter's ambiguity remain
+open; no verdict changes and no raw unit is promoted.
+
+Moving Fluent Bit revisions (2026-09-07): configured resource audits now accept
+`source_revision_policy: checkout_head`. They resolve the actual commit once,
+verify selected source bytes, and bind that commit into compile-task identities.
+Historical profile digests/witnesses and provider/native evidence are not reused;
+source-specific evidence remains Unknown. Source-contract selections and missing
+required evidence reject in this mode. Existing configurations and the Cycle19
+compatibility command retain pinned reproduction behavior. CMetrics preparation
+now defaults to local HEAD, accepts `--revision`, and isolates builds by resolved
+commit. At `d1ab8abff`, separate CMetrics/librdkafka/ChunkIO scopes complete:
+138 units, 0 Safe / 28 provisional Unsafe / 107 Unknown / 3 data-only. Full
+current-corpus auditing still rejects unsupported CTraces options and conflicting
+wrapper commands; these are not revision-selection failures. No whole-unit
+promotion or semantic rule change is claimed. See `docs/reports/fluent-bit-moving-revisions/README.md` and
+`crates/qcore-audit/README.md` for commands and validation.
+
+Cycle19 command correction checkpoint (2026-09-07): the existing example now
+uses the current checkout by default; `--pinned-evidence` explicitly selects
+historical replay. Distinct compile configurations remain visible, selected
+bytes bind to the actual commit, and historical sidecars become explicit Unknown
+records. Monkey preparation also accepts the current clean revision. The exact
+user command now completes at `d1ab8abff`, but all 186 configurations across
+185 source files remain Unknown before analysis because of compiler-command
+admission. This is an incomplete audit checkpoint, not a successful production
+verification: faithful dialect/driver/flag and filename-macro ingestion remains
+required. See `docs/reports/cycle19-current-command/README.md`.
+
+Cycle19 explicit Clang audit (2026-09-07):
+`python3 -B scripts/prepare_cycle19_clang_audit.py --run` prepares Fluent Bit and
+forced-Libevent Monkey with explicit Clang compilers and dialect flags, including
+repeat configuration. The example accepts `--compile-database PATH`; a GCC
+database rejects once with preparation instructions, without compiler substitution.
+`-Wextra` reaches preprocessing/syntax/AST; quoted C macro dollar bytes are
+preserved literally without evaluating Make/shell expressions. The verified
+Clang rerun at `9f0fa573` analyzes all 186 configurations across 185 source files:
+2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only, zero gateway failures
+and zero compiler-command refusals. Historical source/native evidence remains
+unpromoted. All 857 workspace tests and standing gates pass. Full native Fluent
+Bit build, GCC equivalence and general filename/build semantics remain outside
+this result. Evidence: `docs/reports/cycle19-explicit-clang/README.md`.
+
+Windows Clang discovery and test portability (2026-09-07): discovery orders
+vswhere results newest first and falls back to standard VS 2026 (`18`) and
+VS 2022 (`2022`) edition directories, including missing/empty locator cases.
+The Windows tests use the discovered executable in compile databases, preserve
+CRLF mutation checks, and run POSIX LP64 cleanup fixtures in isolated child
+tests through that Clang with an explicit Linux target. Native Windows analysis
+retains its native target; no checker rule or production cleanup ABI is widened.
+See `docs/reports/windows-vs2026/README.md` for local validation and limits.
+Windows validation: 828 tests, formatting, Clippy and both reevaluation probes
+pass. The Lean gate was not run because `lake` is not installed on this host.
+
+Enforced process limits (2026-09-07): the verifier host gains a target-qualified
+`linux-rlimit-v1` execution profile that installs a package's declared limits
+with `setrlimit` before `exec` — `RLIMIT_AS`, `RLIMIT_CPU`, `RLIMIT_CORE`,
+`RLIMIT_FSIZE`, `RLIMIT_NOFILE`, `RLIMIT_NPROC` — on top of the existing wall
+deadline, output caps and process-group kill. A declared limit kind the profile
+cannot enforce, and every non-Linux target, are refused before spawning; there
+is no downgrade path. The default stays the explicitly labeled
+`unenforced-legacy` profile, which now names the kinds it did not enforce.
+Executions record the achieved limits, their source and the outcome; every
+non-completed outcome remains a scoped `Unknown` under QP006 with no
+certificate, never a program `Unsafe`. Adversarial fixtures bound memory growth
+(exit 2 at 4.7 ms under an 8 MiB `RLIMIT_AS`, while the same fixture completes
+under the legacy profile), output flooding, a wall hang (300 ms), a CPU spin
+(SIGKILL at 1.004 s against a 60 s wall clock), a surviving descendant and a
+`max_processes` fork rejection, plus a pre-spawn refusal in 51 us. All five
+shipped packages answer identically under both profiles across their 11
+capabilities. `PluginLimits` gains an optional declared-kind map, making
+`qcore-schemas` 3.0.0 under its documented policy; manifests declaring no kind
+serialize byte-identically. All 837 workspace tests, 47 provider tests, 43 Python
+tests, 20 Lean audits and the standing gates pass. This is limit enforcement,
+not an OS sandbox: filesystem/network confinement, per-tree process quotas and
+default profile wiring remain open (card P03). Evidence:
+`docs/reports/remaining-p02/README.md`.
+
 Source-filename-sensitive transport (2026-09-07): the configured audit now hands
 Clang the compilation database's own input word from its own directory, so
 `__FILE__`, `__FILE_NAME__`, `__BASE_FILE__` and the includer-directory rule for
@@ -811,8 +937,12 @@ is claimed. The pinned Cycle19 compatibility route explicitly retains its archiv
 standard-input projection and both exemptions; its 185-unit artifacts were not
 re-measured. Recorded identities bind the declared input under
 `qcore.declared-input.v1:`; standard-input units keep historical identity bytes.
-All 825 workspace tests, 45 provider tests, 43 Python tests and 20 Lean audits
-pass with the standing gates. The CMetrics audit is unchanged: one checked
+Merged with G01's compile-task identity: `CompileTaskIdentity` now also binds
+`source_input`, so the transport is not invisible to the recorded identity, and
+G01's synthesized-quote-include pin is replaced by an explicit `-iquote` plus
+`source_input` assertions. A pre-existing `PluginLimits::additional` build break
+on the integration branch is repaired. All 894 workspace tests, 47 provider
+tests, 43 Python tests and 20 Lean audits pass with the standing gates. The CMetrics audit is unchanged: one checked
 function, six Unknown, a provisional Unsafe raw unit, byte-identical diagnostics,
 with ten identity-digest fields moved because 12 `__FILE__` expansions became the
 real source path. Evidence: `docs/reports/remaining-g02/README.md`. Compatibility

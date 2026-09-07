@@ -1,11 +1,13 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
+#[cfg(unix)]
+use qcore_compiler::ProcessProvider;
 use qcore_compiler::{
     BuiltInProvider, CompileOptions, EvidenceClaim, FactPredicate, NormalizedFact,
-    PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION, PluginEntrypoint, PluginId, ProcessProvider,
-    ProposedEvidence, ProposedVerdict, ProviderFailure, Reproducibility, SourceFile, TargetProfile,
-    UnitIdentity, VerificationRequest, VerificationResponse, VerifierCapability, VerifierProvider,
+    PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION, PluginEntrypoint, PluginId, ProposedEvidence,
+    ProposedVerdict, ProviderFailure, Reproducibility, SourceFile, TargetProfile, UnitIdentity,
+    VerificationRequest, VerificationResponse, VerifierCapability, VerifierProvider,
     VerifierRegistry, compile_files, compose_verification, decode_protocol_frame,
     encode_protocol_frame, first_party_manifests, first_party_registry, parse_source_program,
 };

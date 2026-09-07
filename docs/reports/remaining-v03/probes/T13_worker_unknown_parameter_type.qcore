@@ -1,0 +1,9 @@
+concurrency checked;
+fn worker(value: Widget) -> i32 { return 0; }
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        drop buffer;
+        return 0;
+    }
+}

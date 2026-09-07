@@ -411,13 +411,17 @@ fn f9_and_f10_missing_files_and_digest_drift_reject_the_inventory() {
     let library = profile
         .library(LIBEVENT_SOURCE_SET)
         .expect("libevent library");
+    let revision = &profile
+        .pin_for(LIBEVENT_SOURCE_SET)
+        .expect("libevent pin")
+        .git_commit;
     let checkout = repository_root().join(LIBEVENT_SUBMODULE_PATH);
-    let bundle = load_audited_bundle(library, &checkout, "pinned").expect("the checkout audits");
+    let bundle = load_audited_bundle(library, &checkout, revision).expect("the checkout audits");
     assert_eq!(bundle.files.len(), library.audited_files.len());
 
     let mut drifted = library.clone();
     drifted.audited_files[0].sha256 = "0".repeat(64);
-    let diagnostics = load_audited_bundle(&drifted, &checkout, "pinned").unwrap_err();
+    let diagnostics = load_audited_bundle(&drifted, &checkout, revision).unwrap_err();
     assert!(matches!(
         diagnostics.as_slice(),
         [FileAuditDiagnostic::DigestMismatch { .. }]
@@ -425,7 +429,7 @@ fn f9_and_f10_missing_files_and_digest_drift_reject_the_inventory() {
 
     let mut absent = library.clone();
     absent.audited_files[0].path = "not/present.c".to_owned();
-    let diagnostics = load_audited_bundle(&absent, &checkout, "pinned").unwrap_err();
+    let diagnostics = load_audited_bundle(&absent, &checkout, revision).unwrap_err();
     assert!(matches!(
         diagnostics.as_slice(),
         [FileAuditDiagnostic::MissingFile { .. }]

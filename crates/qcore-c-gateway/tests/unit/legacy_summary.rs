@@ -1738,3 +1738,134 @@ fn real_c_alias_certificate_rederives_identity_and_rejects_changed_source_or_sum
         .parameters[0] = ResourceParameterMode::Borrowed;
     assert!(check_legacy_safety_certificate(&changed).is_err());
 }
+
+// --- C01: owner identity and transitive re-derivation ----------------------
+
+#[test]
+fn a_stored_owner_must_be_the_same_caller_held_formal_at_every_exit() {
+    // `Stored` names *which* caller-held formal took the item. Reading it off
+    // the exit containment means the position follows the body, not the
+    // argument order of the modeled call; and an owner that differs between
+    // exits — or is the child itself — describes a transfer no single mode
+    // expresses, so nothing is published.
+    let modules = &[Q_BASE, Q_CONTAINER_STORE];
+    assert_eq!(
+        summary_in(
+            "void add(void *item, void *owner) { q_store(owner, item); }",
+            modules,
+            "add",
+        ),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Stored {
+                    owner_parameter: 1,
+                    nullable: false,
+                },
+                ResourceParameterMode::Owned { nullable: false },
+            ],
+            ResourceReturnMode::None,
+        )
+    );
+    for body in [
+        "if (flag) { q_store(first, item); } else { q_store(second, item); }",
+        "if (flag) { q_store(first, item); }",
+        "q_store(first, item); q_store(second, item);",
+        "q_store(item, item);",
+        "q_store(first, second); q_store(second, item);",
+    ] {
+        let source =
+            format!("void add(void *first, void *second, void *item, int flag) {{ {body} }}");
+        assert!(no_summary(&source, modules, "add"), "accepted {body}");
+    }
+}
+
+#[test]
+fn a_changed_transitive_callee_redirects_every_derived_summary() {
+    // A calls B calls C, and only C changes. Each derivation is bottom-up over
+    // a fresh analysis, so B's published summary and A's verdict both follow C
+    // rather than reusing evidence from the previous shape.
+    let modules = &[Q_BASE, Q_NULLABLE];
+    let chain = |acquire: &str| {
+        format!(
+            "void *inner(void) {{ void *p = {acquire}(); return p; }} \
+             void *middle(void) {{ void *p = inner(); return p; }} \
+             void subject(void) {{ void *p = middle(); if (p) {{ q_free(p); }} }}"
+        )
+    };
+
+    let nonnull = chain("q_alloc");
+    assert_eq!(analyze(&nonnull, modules).status, AnalysisStatus::Safe);
+    for function in ["inner", "middle"] {
+        assert_eq!(
+            summary_in(&nonnull, modules, function),
+            ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: false }),
+            "{function}"
+        );
+    }
+
+    // C's acquisition becomes possibly-null: the alternative propagates out
+    // through B instead of being collapsed at the first summary application.
+    let nullable = chain("q_maybe_alloc");
+    assert_eq!(analyze(&nullable, modules).status, AnalysisStatus::Safe);
+    for function in ["inner", "middle"] {
+        assert_eq!(
+            summary_in(&nullable, modules, function),
+            ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: true }),
+            "{function}"
+        );
+    }
+    assert_ne!(
+        analyze(
+            &nullable.replace("if (p) { q_free(p); }", "q_free(p);"),
+            modules,
+        )
+        .status,
+        AnalysisStatus::Safe
+    );
+
+    // C stops being summarizable at all: B loses its summary too, and A's
+    // obligation resurfaces rather than resting on the earlier derivation.
+    let leaking = "void *inner(void) { void *p = q_alloc(); void *q = q_alloc(); return p; } \
+                   void *middle(void) { void *p = inner(); return p; } \
+                   void subject(void) { void *p = middle(); q_free(p); }";
+    for function in ["inner", "middle"] {
+        assert!(no_summary(leaking, &[Q_BASE], function), "{function}");
+    }
+    assert_ne!(analyze(leaking, &[Q_BASE]).status, AnalysisStatus::Safe);
+}
+
+#[test]
+fn a_declared_middle_wrapper_governs_its_callers_and_publishes_no_record() {
+    // Precedence is not only a leaf property. A declaration on the *middle* of
+    // a chain wins at its call sites, the disagreement with inference is
+    // reported, and the conflicting inferred summary is withheld — while the
+    // inner wrapper's own validated summary is untouched.
+    let declared = "module contract; extern fn middle() -> ptr<mut, u8> contract { \
+                    requires resource_contract_v1; ensures normal resource_return_none(); };";
+    let source = "void *inner(void) { void *p = q_alloc(); return p; } \
+                  void *middle(void) { void *p = inner(); return p; } \
+                  void subject(void) { void *p = middle(); q_free(p); }";
+    let modules = &[Q_BASE, ("middle.qcore", declared)];
+    let result = analyze(source, modules);
+    assert!(has(&result, "middle", |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::SummaryConflict { .. }
+    )));
+    assert_eq!(result.status, AnalysisStatus::Unknown);
+    assert!(no_summary(source, modules, "middle"));
+    assert_eq!(
+        summary_in(source, modules, "inner"),
+        ResourceFunctionContract::new([], ResourceReturnMode::Owned { nullable: false })
+    );
+
+    // The declaration, not the inference, is what the environment carries into
+    // every call site.
+    let tokens = tokenize(source);
+    let names = legacy_c_source_functions(source);
+    let contracts = fixture_contracts(modules);
+    let derived = derive_custody_summaries(&tokens, &names, &contracts);
+    assert_eq!(
+        derived.environment().contract("middle"),
+        contracts.contract("middle")
+    );
+}

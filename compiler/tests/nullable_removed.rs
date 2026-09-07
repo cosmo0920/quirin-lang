@@ -7,6 +7,20 @@ use qcore_compiler::legacy_c::{
     UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent nullable-removal test: {reason}");
+            false
+        }
+    }
+}
+
 const DECLARATIONS: &str = "void *alloc(void); void *maybe_alloc(void); void release(void *); \
     void store(void *, void *); void detach(void *, void *); void strict_detach(void *, void *); \
     void opaque(void *); void transfer(void *); void *resize(void *, unsigned long); void *resize_nonnull(void *, unsigned long); void *resize_nullable_old(void *, unsigned long);";
@@ -103,6 +117,9 @@ fn assert_summary(certificate: &LegacySafetyCertificate, function: &str, owner: 
 
 #[test]
 fn conditional_then_unconditional_detach_never_erases_the_double_removal_path() {
+    if !clang_available() {
+        return;
+    }
     let body = "void take(void *o, void *p, int flag) { if(flag) { strict_detach(o,p); } strict_detach(o,p); } \
         void subject(void) { void *o=alloc(); void *p=alloc(); store(o,p); take(o,p,1); release(p); release(o); }";
     let result = analyze(body, None);
@@ -114,6 +131,9 @@ fn conditional_then_unconditional_detach_never_erases_the_double_removal_path() 
 
 #[test]
 fn nullable_removal_handles_null_maybe_null_and_nonnull_callers() {
+    if !clang_available() {
+        return;
+    }
     let wrapper = "void take(void *o, void *p) { detach(o,p); }";
     for allocation in ["0", "maybe_alloc()", "alloc()"] {
         let certificate = certified(&format!(
@@ -125,6 +145,9 @@ fn nullable_removal_handles_null_maybe_null_and_nonnull_callers() {
 
 #[test]
 fn guarded_nonnull_removal_accepts_nullable_entry_and_reordered_forwarding() {
+    if !clang_available() {
+        return;
+    }
     for body in [
         "if(p) { strict_detach(o,p); }",
         "if(!p) { return; } strict_detach(o,p);",
@@ -144,6 +167,9 @@ fn guarded_nonnull_removal_accepts_nullable_entry_and_reordered_forwarding() {
 
 #[test]
 fn null_child_refinement_preserves_another_contained_child() {
+    if !clang_available() {
+        return;
+    }
     let source = "void take(void *o, void *p, void *q) { \
         if(p) { strict_detach(o,p); } strict_detach(o,q); } \
         void subject(void) { void *o=alloc(); void *p=maybe_alloc(); void *q=alloc(); \
@@ -181,6 +207,9 @@ fn null_child_refinement_preserves_another_contained_child() {
 
 #[test]
 fn nullable_summary_cannot_hide_original_child_or_owner_losses() {
+    if !clang_available() {
+        return;
+    }
     for (case, body) in [
         ("overwrite child", "p=0; detach(o,p);"),
         ("overwrite owner", "o=alloc(); detach(o,p);"),
@@ -210,6 +239,9 @@ fn nullable_summary_cannot_hide_original_child_or_owner_losses() {
 
 #[test]
 fn detached_nullable_child_remains_a_caller_obligation() {
+    if !clang_available() {
+        return;
+    }
     for caller in [
         "store(o,p); take(o,p); release(o);",
         "take(o,p); release(p); release(o);",
@@ -232,6 +264,9 @@ fn detached_nullable_child_remains_a_caller_obligation() {
 
 #[test]
 fn nullable_removal_certificates_rederive_modes_and_source() {
+    if !clang_available() {
+        return;
+    }
     let source = "void take(void *o, void *p) { if(p) { strict_detach(o,p); } } \
         void subject(void) { void *o=alloc(); void *p=maybe_alloc(); store(o,p); take(o,p); release(p); release(o); }";
     let certificate = certified(source);
@@ -255,6 +290,9 @@ fn nullable_removal_certificates_rederive_modes_and_source() {
 
 #[test]
 fn merged_containment_cannot_choose_a_convenient_owner() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *a=alloc(); void *b=alloc(); void *p=alloc(); \
         if(flag) { store(a,p); } else { store(b,p); } strict_detach(a,p); \
@@ -269,6 +307,9 @@ fn merged_containment_cannot_choose_a_convenient_owner() {
 
 #[test]
 fn selected_child_alias_cannot_detach_every_possible_child() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *o=alloc(); void *p=alloc(); void *q=alloc(); \
         store(o,p); store(o,q); void *selected; if(flag) { selected=p; } else { selected=q; } \
@@ -283,6 +324,9 @@ fn selected_child_alias_cannot_detach_every_possible_child() {
 
 #[test]
 fn releasing_a_selected_alias_does_not_discharge_both_allocations() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *p=alloc(); void *q=alloc(); void *selected; \
         if(flag) { selected=p; } else { selected=q; } release(selected); }",
@@ -296,6 +340,9 @@ fn releasing_a_selected_alias_does_not_discharge_both_allocations() {
 
 #[test]
 fn storing_a_selected_alias_does_not_transfer_both_allocations() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *o=alloc(); void *p=alloc(); void *q=alloc(); void *selected; \
         if(flag) { selected=p; } else { selected=q; } store(o,selected); release(o); }",
@@ -309,6 +356,9 @@ fn storing_a_selected_alias_does_not_transfer_both_allocations() {
 
 #[test]
 fn reallocation_does_not_replace_every_possible_old_allocation() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *p=alloc(); void *q=alloc(); void *selected; \
         if(flag) { selected=p; } else { selected=q; } void *r=resize(selected,8); \
@@ -323,6 +373,9 @@ fn reallocation_does_not_replace_every_possible_old_allocation() {
 
 #[test]
 fn conditional_containment_cannot_discharge_a_directly_live_alternative() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *o=alloc(); void *p=alloc(); \
         if(flag) { store(o,p); } release(o); }",
@@ -336,6 +389,9 @@ fn conditional_containment_cannot_discharge_a_directly_live_alternative() {
 
 #[test]
 fn consumed_custody_cannot_be_reused_after_release_or_prior_escape() {
+    if !clang_available() {
+        return;
+    }
     for first in ["release(p)", "transfer(p)"] {
         let result = analyze(
             &format!("void subject(void) {{ void *p=alloc(); {first}; transfer(p); }}"),
@@ -350,6 +406,9 @@ fn consumed_custody_cannot_be_reused_after_release_or_prior_escape() {
 
 #[test]
 fn uncertain_selected_release_keeps_unrelated_leak_evidence() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *unrelated=alloc(); void *p=alloc(); void *q=alloc(); \
         void *selected; if(flag) { selected=p; } else { selected=q; } release(selected); }",
@@ -371,6 +430,9 @@ fn uncertain_selected_release_keeps_unrelated_leak_evidence() {
 
 #[test]
 fn reallocation_cannot_erase_a_previously_released_alternative() {
+    if !clang_available() {
+        return;
+    }
     let result = analyze(
         "void subject(int flag) { void *p=alloc(); if(flag) { release(p); } \
         void *r=resize_nonnull(p,8); release(r); }",
@@ -384,6 +446,9 @@ fn reallocation_cannot_erase_a_previously_released_alternative() {
 
 #[test]
 fn singleton_aliases_still_transfer_custody_normally() {
+    if !clang_available() {
+        return;
+    }
     certified(
         "void subject(void) { void *o=alloc(); void *p=alloc(); void *alias=p; \
         store(o,alias); strict_detach(o,p); release(alias); release(o); }",
@@ -393,6 +458,9 @@ fn singleton_aliases_still_transfer_custody_normally() {
 
 #[test]
 fn declared_removal_precondition_is_never_silently_replaced() {
+    if !clang_available() {
+        return;
+    }
     let declaration = r#"module contract;
         extern fn take(o: ptr<mut, u8>, p: ptr<mut, u8>) -> unit contract {
             requires resource_contract_v1; ensures normal resource_owned(o, nonnull);
@@ -424,6 +492,9 @@ fn declared_removal_precondition_is_never_silently_replaced() {
 
 #[test]
 fn nullable_old_reallocation_respects_its_explicit_contract() {
+    if !clang_available() {
+        return;
+    }
     for old in ["0", "maybe_alloc()", "alloc()"] {
         certified(&format!(
             "void subject(void) {{ void *p={old}; void *q=resize_nullable_old(p,8); \

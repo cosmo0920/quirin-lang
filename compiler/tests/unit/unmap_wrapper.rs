@@ -40,7 +40,7 @@ fn dependencies() -> (CleanupCertificate, CounterCertificate) {
 }
 #[test]
 fn unmap_composes_native_outcomes_with_exact_up_counter_bounds() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let (native, counter) = dependencies();
@@ -86,7 +86,7 @@ fn unmap_composes_native_outcomes_with_exact_up_counter_bounds() {
 }
 #[test]
 fn unmap_rejects_wrong_context_effect_order_and_outcome_mutations() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let (native, counter) = dependencies();
@@ -160,7 +160,7 @@ fn unmap_rejects_wrong_context_effect_order_and_outcome_mutations() {
 }
 #[test]
 fn unmap_native_contract_clauses_are_executed() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let (native, counter) = dependencies();

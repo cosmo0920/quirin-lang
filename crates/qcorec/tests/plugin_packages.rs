@@ -122,6 +122,73 @@ fn package_selection_is_explicit_pinned_and_reversible() {
     );
 }
 
+/// Provider discovery from an explicit selection must be deterministic: the
+/// order packages happen to be enabled in may not change what `list` reports or
+/// what the selection file records.
+#[test]
+fn discovery_order_is_independent_of_selection_order() {
+    let f = Fixture::new("ordering");
+    let ids = ["example.gamma", "example.alpha", "example.beta"];
+    let mut packages = Vec::new();
+    for (index, id) in ids.iter().enumerate() {
+        let package = f.root.join(format!("package-{id}"));
+        std::fs::create_dir_all(&package).unwrap();
+        let mut manifest = qcore_compiler::first_party_manifests().remove(0);
+        manifest.plugin_id = PluginId::new(*id).unwrap();
+        manifest.entrypoint = PluginEntrypoint::Executable {
+            path: "provider".into(),
+        };
+        manifest.package_digest =
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855".into();
+        // Distinct declared libraries keep registration free of route conflicts.
+        for target in &mut manifest.targets {
+            target.library = format!("library{index}");
+        }
+        std::fs::write(package.join("provider"), "").unwrap();
+        std::fs::write(
+            package.join("verifier-plugin.json"),
+            serde_json::to_vec(&manifest).unwrap(),
+        )
+        .unwrap();
+        packages.push(package);
+    }
+    let listing = |config: &Path, order: &[usize]| {
+        for index in order {
+            succeeds(f.cli(&[
+                "plugins",
+                "enable",
+                packages[*index].to_str().unwrap(),
+                "--config",
+                config.to_str().unwrap(),
+            ]));
+        }
+        (
+            succeeds(f.cli(&["plugins", "list", "--config", config.to_str().unwrap()])),
+            std::fs::read(config).unwrap(),
+        )
+    };
+    let forward = listing(&f.root.join("forward.json"), &[0, 1, 2]);
+    let reverse = listing(&f.root.join("reverse.json"), &[2, 1, 0]);
+    assert_eq!(forward.0, reverse.0);
+    assert_eq!(forward.1, reverse.1);
+    assert_eq!(
+        forward
+            .0
+            .lines()
+            .map(|line| line.split('\t').next().unwrap())
+            .collect::<Vec<_>>(),
+        ["example.alpha", "example.beta", "example.gamma"]
+    );
+    // Repeating the same query is stable too.
+    let repeated = succeeds(f.cli(&[
+        "plugins",
+        "list",
+        "--config",
+        f.root.join("forward.json").to_str().unwrap(),
+    ]));
+    assert_eq!(repeated, forward.0);
+}
+
 #[test]
 fn package_tampering_never_updates_the_selection_file() {
     let f = Fixture::new("tampering");

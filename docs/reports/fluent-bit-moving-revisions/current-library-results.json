@@ -1,0 +1,38 @@
+[
+  {
+    "library": "cmetrics",
+    "units": 31,
+    "counts": {
+      "Unknown": 15,
+      "Unsafe": 16
+    },
+    "revision": "d1ab8abff6cbaee89cee5efeeeb2667d1910ac52"
+  },
+  {
+    "library": "ctraces",
+    "rejected": "audit rejected: ctraces: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/current-revision/fluent-bit-clang-source/lib/ctraces/src/ctr_attributes.c: empty or unexpanded compiler option is unsupported"
+  },
+  {
+    "library": "librdkafka",
+    "units": 94,
+    "counts": {
+      "Unknown": 81,
+      "data_only": 3,
+      "Unsafe": 10
+    },
+    "revision": "d1ab8abff6cbaee89cee5efeeeb2667d1910ac52"
+  },
+  {
+    "library": "chunkio",
+    "units": 13,
+    "counts": {
+      "Unsafe": 2,
+      "Unknown": 11
+    },
+    "revision": "d1ab8abff6cbaee89cee5efeeeb2667d1910ac52"
+  },
+  {
+    "library": "fluent_bit",
+    "rejected": "audit rejected: conflicting compilation commands for /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/current-revision/fluent-bit-clang-source/src/flb_input_chunk.c"
+  }
+]

@@ -1,0 +1,48 @@
+# O00 gateway probe — executed against qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit
+# contracts: contract/qcore/{libc/memory,fluent_bit/resource_memory,chunkio/resource_open_close}.qcore
+#            plus a SCRATCHPAD-ONLY hypothetical module for the intervening callees (O-F/O-H only).
+
+== O-A-caller-member-args: status Unknown
+       9  unsupported: indirect memory access is outside the resource projection
+      13  unknown_alias: chunk
+== O-B-caller-local-args: status Safe
+== O-C-discard-local-args: status Unknown
+       5  unsupported: discarded owned result of resource API `cio_chunk_open`
+== O-D-discard-member-args: status Unknown
+       7  unsupported: indirect memory access is outside the resource projection
+== O-E-close-member-receiver: status Unknown
+       6  unsupported: indirect memory access is outside the resource projection
+== O-F-four-arm-cleanup: status Safe
+== O-G-success-member-store: status Unknown
+      19  unsupported: indirect memory access is outside the resource projection
+      20  unknown_alias: ic
+== O-H-success-stored-contract: status Safe
+
+# scratchpad-only hypothetical contract module used by O-F/O-H:
+module contract;
+
+// SCRATCHPAD-ONLY probe input for card O00. Not a repository contract.
+// Hypothetical borrowed-chunk declarations for the intervening callees of
+// flb_input_chunk_create, used to measure what the cleanup arms would need.
+
+extern fn up_force(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn write_header(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn ic_bind_chunk(ic: ptr<mut, u8>, ch: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(ic, nonnull);
+    ensures normal resource_stored(ch, ic, nonnull);
+    ensures normal resource_return_none();
+};

@@ -1,0 +1,1 @@
+fn main() -> result<i32, Failure> { return 0; }

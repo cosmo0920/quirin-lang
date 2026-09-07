@@ -1,0 +1,6 @@
+dimension Bytes : Idx + Ordered;
+
+fn filler() -> unit { return; }
+
+quant axis bad : missing<Count<T>>;
+fn main() -> i32 { return 0; }

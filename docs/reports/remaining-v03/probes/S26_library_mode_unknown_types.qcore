@@ -1,0 +1,2 @@
+module library;
+fn helper(x: Widget) -> Widget { return 0; }

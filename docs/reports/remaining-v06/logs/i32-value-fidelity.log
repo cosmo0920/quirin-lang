@@ -1,0 +1,10 @@
+ID    EXPECT         EMITTED RETURN CONSTANT
+V01   2147483647     76:    q_result.value = INT32_C(2147483647);
+V02   -2147483648    76:    q_result.value = INT32_MIN;
+V03   0              76:    q_result.value = INT32_C(0);
+V04   0              76:    q_result.value = INT32_C(0);
+V05   -2147483648    76:    q_result.value = INT32_MIN;
+V06   2147483647     76:    q_result.value = INT32_C(2147483647);
+V07   -2147483648    76:    q_result.value = INT32_MIN;
+V08   -1             76:    q_result.value = (-INT32_C(1));
+V09   1              76:    q_result.value = INT32_C(1);

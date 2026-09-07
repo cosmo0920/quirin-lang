@@ -1,0 +1,19 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests src/lib.rs (target/debug/deps/qcore_contract-2cf307e6ce552c5b)
+
+running 2 tests
+test contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries ... ok
+test contract_observation::cleanup_observation_tests::review_r07_public_observer_checks_minimum_facts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/qcore_compiler-2964a220f601e1a2)
+
+running 3 tests
+test driver::tests::review_r04_does_not_emit_unencoded_callee_payloads ... ok
+test driver::tests::review_r07_driver_signed_literal_boundaries ... ok
+test driver::tests::review_r04_checks_declared_results_before_lowering ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 155 filtered out; finished in 0.05s
+

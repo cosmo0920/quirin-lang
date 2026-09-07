@@ -1,0 +1,2 @@
+fn leaf() -> bool { return 1; }
+fn main() -> i32 { leaf(); return 0; }

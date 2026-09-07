@@ -61,6 +61,84 @@ The retained Cycle19 command uses a compatibility adapter for its pinned
 compiler-option projection and specialized source/native evidence stages. Its
 shared projection/report code lives here; its provider-specific checks do not.
 
+## Auditing a moving Fluent Bit checkout
+
+Set `"source_revision_policy": "checkout_head"` in an audit configuration to
+analyze the checkout's current commit without editing historical profile pins.
+The command resolves HEAD once, verifies selected source bytes against that
+commit, and records the commit, source hashes and complete compile-task identities.
+Moving HEAD during the run rejects report publication. The existing clean-path,
+source selection, compiler-option and conflicting-command checks still apply.
+Local edits to selected source are rejected; commit the intended source first or
+use the isolated build preparation below, which clones committed bytes only.
+
+This mode consumes profile paths and declared resource contracts. Historical
+file digests and construct witnesses are not admitted, and source-specific
+provider/native evidence is explicitly Unknown. `source_contracts` cannot be
+combined with this mode, and libraries requiring unsupplied evidence still reject.
+Raw Safe/Unknown/provisional Unsafe classifications remain scoped to resource
+projection under the recorded contract assumptions. They are not whole-library
+safety claims. A changed library layout requires an updated source selection;
+missing selected libraries never silently disappear from the audit.
+
+The checked-in `contract/profiles/fluent-bit/current-audit.json` selects the
+five normal Fluent Bit library groups from the sibling checkout:
+
+```sh
+cargo run -p qcore-audit -- contract/profiles/fluent-bit/current-audit.json
+```
+
+It requires a supported, unambiguous compilation database. The existing GCC
+build and the fresh full Clang CMake database currently contain unsupported
+arguments; the revision policy does not erase those arguments to obtain a result.
+For an executable current-revision CMetrics counter audit:
+
+```sh
+python3 -B scripts/prepare_cmetrics_clang_audit.py
+# Run qcore-audit with the absolute cmetrics-audit.json.config path printed above.
+```
+
+Preparation defaults to local `HEAD`, accepts `--revision COMMIT_OR_TAG`, and
+uses an independent build under `build/cycle19/revisions/<resolved commit>`.
+`--output DIRECTORY` overrides that location. It does not fetch upstream or
+modify the developer's checkout. Newer revisions get fresh resource projections;
+the historical revision retains its configured source-contract evidence route.
+Supply the original commit with `--revision` to reproduce that route even after
+the upstream checkout advances. Existing audit configurations default to
+`"source_revision_policy": "profile_pin"`, preserving historical evidence gates.
+The existing Cycle19 command defaults to the current checkout and now requires
+both selected compilation databases to use the configured Clang C driver. A GCC
+database is rejected once with preparation instructions, before per-unit work.
+It is never silently rewritten to name Clang. Prepare explicit Clang CMake inputs
+and run the complete current resource audit with:
+
+```sh
+python3 -B scripts/prepare_cycle19_clang_audit.py --clang clang --clangxx clang++ --run
+```
+
+This orchestrates the independent Fluent Bit clone/build and the forced-Libevent
+Monkey input preparation. CMake receives explicit C/C++ compilers, a C standard,
+and `CMAKE_C_FLAGS=-std=gnu17` so repeat configuration cannot omit the dialect;
+the analysis uses the final dialect in each generated command. The helper records
+`audit-command.json`, sets `QCORE_CLANG` to the selected compiler, and writes
+reports under `build/cycle19/clang/<commit>/reports`. Without `--run`, it prints
+the exact audit command to execute. `--fluent-bit`, `--revision`, and `--output`
+select another source or build location. The developer's existing GCC build is
+left intact. The native build step builds `cmetrics-static`; this is not a full
+native Fluent Bit executable build or a GCC/Clang equivalence claim.
+
+The example accepts `--compile-database PATH` before positional arguments, so it
+can consume that independently generated main database. Pass `--pinned-evidence`
+instead for historical replay. Distinct compile configurations stay visible.
+
+`-Wextra` is transported to Clang preprocessing, syntax checking, and AST import.
+Dollar signs in a quoted C string macro are preserved literally; the adapter does
+not evaluate make/shell expressions or remove the filename definition. Active
+shell expansions and unquoted unresolved macro expressions still reject. Results
+refer to the generated compilation database's literal arguments; equivalence to
+additional Make expansion steps or general filename-builtin semantics is not
+established.
+
 ## Configured source-contract processes
 
 Add an explicit `source_contracts` object to the audit configuration:
@@ -142,18 +220,18 @@ adapter retains its historical projection (including flattened include classes)
 for pinned parity; it does not establish arbitrary build equivalence. Evidence:
 [W2 preprocessing transport](../../docs/reports/w2-preprocessor-transport/README.md).
 
-The pinned CMetrics example now consumes an unmodified Clang GNU17 CMake database:
+The CMetrics example consumes an unmodified Clang GNU17 CMake database:
 
 ```sh
 python3 -B scripts/prepare_cmetrics_clang_audit.py
-cargo run --quiet -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json
+# Run qcore-audit with the generated configuration path printed by preparation.
 ```
 
-The script creates an independent pinned source clone and persistent build under
-`build/cycle19`, configures CMake and builds `cmetrics-static`. Upstream
+The script creates an independent source clone and a persistent build under
+`build/cycle19/revisions/<resolved commit>`, configures CMake and builds `cmetrics-static`. Upstream
 configure-time writes stay in that isolated clone. It records the original
 compile entry, full database hash, source/cache identities and library hash.
-A fresh setup also needs the CMetrics process package at
+Reproducing the historical source-contract route also needs the CMetrics process package at
 `build/cycle19/provider-packages-unit` (build with `providers/package.py`). A custom
 `--clang` must match `QCORE_CLANG` when running the audit. This is an explicit
 Clang build; the original GCC command is not silently reinterpreted.

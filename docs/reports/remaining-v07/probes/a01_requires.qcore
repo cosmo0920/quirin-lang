@@ -1,0 +1,1 @@
+fn main() -> i32 contract { requires true; } { return 0; }

@@ -109,6 +109,22 @@ theorem destroyed_resource_rejects_transfer (state : State) (sender to : TaskId)
     step state (.transfer sender to resource synchronized) = none := by
   simp [step, State.Live, dead]
 
+/-- Destruction is not idempotent: the dead generation rejects a repeat
+destruction before any custody or quiescence question is asked. -/
+theorem destroyed_resource_rejects_destruction (state : State) (task : TaskId)
+    (resource : ResourceId) (ordered : Bool)
+    (dead : resource ∈ state.destroyedResources) :
+    step state (.destroy task resource ordered) = none := by
+  simp [step, State.Live, dead]
+
+/-- Only the current custodian ends a generation; an outstanding capture in
+another task leaves the parent without destruction authority. -/
+theorem foreign_custody_rejects_destruction (state : State) (task : TaskId)
+    (resource : ResourceId) (ordered : Bool)
+    (foreign : (resource, task) ∉ state.custody) :
+    step state (.destroy task resource ordered) = none := by
+  simp [step, foreign]
+
 theorem terminal_task_rejects_access (state : State) (task : TaskId)
     (resource : ResourceId) (terminal : task ∈ state.terminalTasks) :
     step state (.access task resource) = none := by
@@ -155,10 +171,131 @@ theorem destruction_prevents_later_access {state next : State} {task reader : Ta
   destroyed_resource_rejects_access next reader resource
     (destruction_invalidates_generation accepted)
 
+theorem destruction_prevents_later_transfer {state next : State} {task sender to : TaskId}
+    {resource : ResourceId} {ordered synchronized : Bool}
+    (accepted : step state (.destroy task resource ordered) = some next) :
+    step next (.transfer sender to resource synchronized) = none :=
+  destroyed_resource_rejects_transfer next sender to resource synchronized
+    (destruction_invalidates_generation accepted)
+
+theorem destruction_prevents_repeat_destruction {state next : State} {task second : TaskId}
+    {resource : ResourceId} {ordered again : Bool}
+    (accepted : step state (.destroy task resource ordered) = some next) :
+    step next (.destroy second resource again) = none :=
+  destroyed_resource_rejects_destruction next second resource again
+    (destruction_invalidates_generation accepted)
+
 theorem join_prevents_child_action {state next : State} {parent child : TaskId}
     (accepted : step state (.join parent child) = some next) :
     step next (.taskAction child) = none :=
   terminal_task_rejects_action next child (join_terminates_child accepted)
+
+/-! Terminal state is decided per event kind before any custody, guard,
+permission or parentage check, so retained identity history never restores
+execution authority. -/
+
+theorem terminal_task_rejects_lock (state : State) (task : TaskId)
+    (terminal : task ∈ state.terminalTasks) :
+    step state (.lock task) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_task_rejects_unlock (state : State) (task : TaskId)
+    (terminal : task ∈ state.terminalTasks) :
+    step state (.unlock task) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_sender_rejects_transfer (state : State) (sender to : TaskId)
+    (resource : ResourceId) (synchronized : Bool)
+    (terminal : sender ∈ state.terminalTasks) :
+    step state (.transfer sender to resource synchronized) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_recipient_rejects_transfer (state : State) (sender to : TaskId)
+    (resource : ResourceId) (synchronized : Bool)
+    (terminal : to ∈ state.terminalTasks) :
+    step state (.transfer sender to resource synchronized) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_task_rejects_destroy (state : State) (task : TaskId)
+    (resource : ResourceId) (ordered : Bool)
+    (terminal : task ∈ state.terminalTasks) :
+    step state (.destroy task resource ordered) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_parent_rejects_spawn (state : State) (parent child : TaskId)
+    (terminal : parent ∈ state.terminalTasks) :
+    step state (.spawn parent child) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_parent_rejects_join (state : State) (parent child : TaskId)
+    (terminal : parent ∈ state.terminalTasks) :
+    step state (.join parent child) = none := by
+  simp [step, State.Active, terminal]
+
+theorem terminal_child_rejects_join (state : State) (parent child : TaskId)
+    (terminal : child ∈ state.terminalTasks) :
+    step state (.join parent child) = none := by
+  simp [step, State.Active, terminal]
+
+theorem join_prevents_child_lock {state next : State} {parent child : TaskId}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.lock child) = none :=
+  terminal_task_rejects_lock next child (join_terminates_child accepted)
+
+theorem join_prevents_child_unlock {state next : State} {parent child : TaskId}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.unlock child) = none :=
+  terminal_task_rejects_unlock next child (join_terminates_child accepted)
+
+theorem join_prevents_child_transfer {state next : State} {parent child to : TaskId}
+    {resource : ResourceId} {synchronized : Bool}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.transfer child to resource synchronized) = none :=
+  terminal_sender_rejects_transfer next child to resource synchronized
+    (join_terminates_child accepted)
+
+theorem join_prevents_child_receiving_custody {state next : State} {parent child sender : TaskId}
+    {resource : ResourceId} {synchronized : Bool}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.transfer sender child resource synchronized) = none :=
+  terminal_recipient_rejects_transfer next sender child resource synchronized
+    (join_terminates_child accepted)
+
+theorem join_prevents_child_destruction {state next : State} {parent child : TaskId}
+    {resource : ResourceId} {ordered : Bool}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.destroy child resource ordered) = none :=
+  terminal_task_rejects_destroy next child resource ordered (join_terminates_child accepted)
+
+theorem join_prevents_child_spawn {state next : State} {parent child grandchild : TaskId}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.spawn child grandchild) = none :=
+  terminal_parent_rejects_spawn next child grandchild (join_terminates_child accepted)
+
+theorem join_cannot_be_repeated {state next : State} {parent child : TaskId}
+    (accepted : step state (.join parent child) = some next) :
+    step next (.join parent child) = none :=
+  terminal_child_rejects_join next parent child (join_terminates_child accepted)
+
+/-! A refused join is not an implicit completion. -/
+
+theorem nonquiescent_child_rejects_join (state : State) (parent child : TaskId)
+    (busy : ¬ state.ChildQuiescent child) :
+    step state (.join parent child) = none := by
+  simp [step, busy]
+
+theorem locked_parent_rejects_join (state : State) (parent child : TaskId)
+    (locked : parent ∈ state.guardHolders) :
+    step state (.join parent child) = none := by
+  simp [step, locked]
+
+/-- Refusing a join leaves the child exactly as authorized as before: its own
+actions stay enabled and no terminal state is recorded. -/
+theorem refused_join_preserves_child_authority (state : State) (parent child : TaskId)
+    (busy : ¬ state.ChildQuiescent child) (active : state.Active child) :
+    step state (.join parent child) = none ∧
+      step state (.taskAction child) = some state ∧ child ∉ state.terminalTasks :=
+  ⟨nonquiescent_child_rejects_join state parent child busy, by simp [step, active], active.2⟩
 
 def run (state : State) : List Event → Option State
   | [] => some state
@@ -217,6 +354,20 @@ example : run { custody := [(7, 0)] }
     [.spawn 0 1, .lock 1, .destroy 0 7 true] = none := by decide
 example : run {} [.spawn 0 1, .lock 1, .join 0 1] = none := by decide
 example : (run {} [.spawn 0 1, .taskAction 1, .join 0 1, .taskAction 0]).isSome = true := by decide
+example : run { custody := [(7, 0)] }
+    [.destroy 0 7 true, .destroy 0 7 true] = none := by decide
+example : run { custody := [(7, 0)] }
+    [.destroy 0 7 true, .transfer 0 0 7 true] = none := by decide
+example : run { custody := [(7, 0)], permissionHolders := [(7, 1)] }
+    [.destroy 0 7 true] = none := by decide
+example : (run { custody := [(7, 0)], permissionHolders := [(7, 1)], terminalTasks := [1] }
+    [.destroy 0 7 true]).isSome = true := by decide
+example : run { custody := [(7, 1)] } [.destroy 0 7 true] = none := by decide
+example : run { custody := [(7, 0)] } [.destroy 0 7 false] = none := by decide
+/-- Distinct generations are independent: destroying one never touches the
+other, whatever numeric address the model input reuses. -/
+example : (run { custody := [(7, 0), (8, 0)] }
+    [.destroy 0 7 true, .destroy 0 8 true]).isSome = true := by decide
 
 end Lifetime
 

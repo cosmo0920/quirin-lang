@@ -14,6 +14,20 @@ use qcore_compiler::{MonkeyCallback, MonkeyCallbackSummary};
 use qcore_schemas::profile::ImportRole;
 use serde_json::{Value, json};
 
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent Monkey profile test: {reason}");
+            false
+        }
+    }
+}
+
 struct Scratch(PathBuf);
 impl Scratch {
     fn new(edit: impl FnOnce(&mut Value)) -> Self {
@@ -133,6 +147,9 @@ fn custom(role: &str, exact: bool) -> Scratch {
 
 #[test]
 fn explicit_profile_controls_names_and_callbacks_keep_their_call_allowlist() {
+    if !clang_available() {
+        return;
+    }
     let source = "void outside(void); static void callback_in_another_library(int fd, short flags, void *data) { outside(); }";
     let scratch = custom("callback", true);
     let profile = scratch.load().unwrap();
@@ -195,6 +212,9 @@ fn explicit_profile_controls_names_and_callbacks_keep_their_call_allowlist() {
 
 #[test]
 fn wrapper_roles_explicitly_preserve_opaque_calls_without_signature_constraints() {
+    if !clang_available() {
+        return;
+    }
     let scratch = custom("wrapper", false);
     let profile = scratch.load().unwrap();
     let unit = C11TranslationUnit {

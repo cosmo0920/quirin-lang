@@ -92,6 +92,14 @@ struct Call {
     memory_value: i64,
 }
 
+fn is_errno_location(function: &str) -> bool {
+    matches!(function, "__errno_location" | "__error")
+}
+
+fn same_source_call(imported: &str, observed: &str) -> bool {
+    imported == observed || (is_errno_location(imported) && is_errno_location(observed))
+}
+
 #[derive(Debug, Serialize)]
 pub struct CallbackBindingReport {
     pub function: String,
@@ -138,15 +146,17 @@ fn memory(cells: &[Cell]) -> Result<Memory, String> {
     Ok(result)
 }
 
-// LP64 Linux profile. Narrowing outside the representable range remains Unknown;
-// implementation-defined conversions and modular arithmetic are not guessed.
+// LP64 profile. Linux and macOS use different underlying unsigned types for
+// `uint64_t`; both spellings remain subject to the same nonnegative i64 bound.
+// Narrowing outside the representable range remains Unknown; implementation-
+// defined conversions and modular arithmetic are not guessed.
 fn scalar(value: i64, ty: &str) -> Result<i64, String> {
     let valid = match ty {
         "int" => i32::try_from(value).is_ok(),
         "short" => i16::try_from(value).is_ok(),
         "unsigned int" => u32::try_from(value).is_ok(),
         "long" => true,
-        "unsigned long" => value >= 0,
+        "unsigned long" | "unsigned long long" => value >= 0,
         _ if ty.ends_with('*') => value >= 0,
         _ => false,
     };
@@ -216,7 +226,7 @@ impl Replay<'_> {
                 Value::Local(*local)
             }
             E::SizeOf { argument_type } => Value::Scalar(match argument_type.as_str() {
-                "unsigned long" | "long" => 8,
+                "unsigned long" | "unsigned long long" | "long" => 8,
                 "int" | "unsigned int" => 4,
                 "short" => 2,
                 _ => return Err("sizeof outside LP64 scalar profile".into()),
@@ -355,7 +365,7 @@ impl Replay<'_> {
             Value::Text(value) => Argument::String(value.trim_matches('"').to_owned()),
             Value::Local(local) => {
                 let (ty, value) = self.locals.get(&local).ok_or("dead call buffer")?;
-                if ty != "unsigned long" {
+                if !matches!(ty.as_str(), "unsigned long" | "unsigned long long") {
                     return Err("unmodeled call buffer type".into());
                 }
                 Argument::Buffer(Buffer {
@@ -427,12 +437,15 @@ impl Replay<'_> {
                         self.rules,
                         "binding_call_arguments",
                         &[
-                            ("function_matches", i128::from(function == &call.function)),
+                            (
+                                "function_matches",
+                                i128::from(same_source_call(function, &call.function)),
+                            ),
                             ("arguments_match", i128::from(arguments == call.arguments)),
                         ],
                     )?;
                     match function.as_str() {
-                        "__errno_location" => {
+                        "__errno_location" | "__error" => {
                             let address =
                                 u64::try_from(call.result).map_err(|_| "invalid errno pointer")?;
                             rule(
@@ -597,7 +610,7 @@ fn effects(
                 };
                 matches!(&observed.action, ObservationAction::Event { operation, event, result, .. } if *operation == expected && *event == binding.event && i64::from(*result) == call.result)
             }
-            "__errno_location" | "perror" | "mk_mem_free" => continue,
+            "__errno_location" | "__error" | "perror" | "mk_mem_free" => continue,
             _ => return Err("unknown effect call".into()),
         };
         rule(

@@ -20,6 +20,8 @@ corpus.
   Full language conformance is not claimed; revision 0.2 remains historical.
 - [Persistent Cycle 19 build inputs](docs/CYCLE19_BUILD_INPUTS.md) replaces
   ephemeral `/tmp` build paths for new audits.
+- [Emacs syntax highlighting](editors/emacs/README.md) covers current QCore
+  source and contract syntax with the standalone `qcore-mode`.
 - Working with the repo as an AI agent? Start at [`AGENTS.md`](AGENTS.md) —
   the compressed status ledger, invariants, and per-change gate live there.
 
@@ -289,9 +291,24 @@ QCore locates the analysis compiler in this order:
 
 1. `QCORE_CLANG`, when set, names a single executable (no extra arguments).
 2. `clang` on PATH.
-3. On Windows, LLVM under `VSINSTALLDIR` and Visual Studio installations
-   found via `vswhere` (including Build Tools). Both `clang.exe` and
-   `clang-cl.exe` work, using Clang's GCC driver mode for analysis.
+3. On Windows, LLVM under `VSINSTALLDIR`, then Visual Studio installations
+   found via `vswhere`, newest first (including Build Tools and previews).
+4. Standard Visual Studio 2026 (`Microsoft Visual Studio\18`) and 2022
+   (`Microsoft Visual Studio\2022`) edition directories under Program Files,
+   including when `vswhere` is missing or returns no installations.
+
+Both `clang.exe` and `clang-cl.exe` work, using Clang's GCC driver mode for
+analysis. For example, VS 2026 Community installs its x64 compiler at
+`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\Llvm\x64\bin\clang.exe`.
+Discovery tries subsequent installations when an earlier one lacks Clang.
+
+The Windows suite also runs syntax-only POSIX LP64 cleanup fixtures in isolated
+child tests, forwarding to the discovered Clang with an explicit Linux target.
+These exercise the existing POSIX models, not native Windows cleanup behavior;
+ordinary Windows analysis keeps its native target.
+Local VS 2026 validation passed 828 tests, formatting, Clippy and both
+reevaluation probes; Lean was unavailable. See the
+[Windows validation report](docs/reports/windows-vs2026/README.md).
 
 An explicit path works without changing PATH, including paths with spaces:
 
@@ -815,3 +832,67 @@ raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lea
 audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
+
+Moving Fluent Bit revisions (2026-09-07): configured resource audits now accept
+`source_revision_policy: checkout_head`. They resolve the actual commit once,
+verify selected source bytes, and bind that commit into compile-task identities.
+Historical profile digests/witnesses and provider/native evidence are not reused;
+source-specific evidence remains Unknown. Source-contract selections and missing
+required evidence reject in this mode. Existing configurations and the Cycle19
+compatibility command retain pinned reproduction behavior. CMetrics preparation
+now defaults to local HEAD, accepts `--revision`, and isolates builds by resolved
+commit. At `d1ab8abff`, separate CMetrics/librdkafka/ChunkIO scopes complete:
+138 units, 0 Safe / 28 provisional Unsafe / 107 Unknown / 3 data-only. Full
+current-corpus auditing still rejects unsupported CTraces options and conflicting
+wrapper commands; these are not revision-selection failures. No whole-unit
+promotion or semantic rule change is claimed. See `docs/reports/fluent-bit-moving-revisions/README.md` and
+`crates/qcore-audit/README.md` for commands and validation.
+
+Cycle19 command correction checkpoint (2026-09-07): the existing example now
+uses the current checkout by default; `--pinned-evidence` explicitly selects
+historical replay. Distinct compile configurations remain visible, selected
+bytes bind to the actual commit, and historical sidecars become explicit Unknown
+records. Monkey preparation also accepts the current clean revision. The exact
+user command now completes at `d1ab8abff`, but all 186 configurations across
+185 source files remain Unknown before analysis because of compiler-command
+admission. This is an incomplete audit checkpoint, not a successful production
+verification: faithful dialect/driver/flag and filename-macro ingestion remains
+required. See `docs/reports/cycle19-current-command/README.md`.
+
+Cycle19 explicit Clang audit (2026-09-07):
+`python3 -B scripts/prepare_cycle19_clang_audit.py --run` prepares Fluent Bit and
+forced-Libevent Monkey with explicit Clang compilers and dialect flags, including
+repeat configuration. The example accepts `--compile-database PATH`; a GCC
+database rejects once with preparation instructions, without compiler substitution.
+`-Wextra` reaches preprocessing/syntax/AST; quoted C macro dollar bytes are
+preserved literally without evaluating Make/shell expressions. The verified
+Clang rerun at `9f0fa573` analyzes all 186 configurations across 185 source files:
+2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only, zero gateway failures
+and zero compiler-command refusals. Historical source/native evidence remains
+unpromoted. All 857 workspace tests and standing gates pass. Full native Fluent
+Bit build, GCC equivalence and general filename/build semantics remain outside
+this result. Evidence: `docs/reports/cycle19-explicit-clang/README.md`.
+
+Enforced process limits (2026-09-07): the verifier host gains a target-qualified
+`linux-rlimit-v1` execution profile that installs a package's declared limits
+with `setrlimit` before `exec` — `RLIMIT_AS`, `RLIMIT_CPU`, `RLIMIT_CORE`,
+`RLIMIT_FSIZE`, `RLIMIT_NOFILE`, `RLIMIT_NPROC` — on top of the existing wall
+deadline, output caps and process-group kill. A declared limit kind the profile
+cannot enforce, and every non-Linux target, are refused before spawning; there
+is no downgrade path. The default stays the explicitly labeled
+`unenforced-legacy` profile, which now names the kinds it did not enforce.
+Executions record the achieved limits, their source and the outcome; every
+non-completed outcome remains a scoped `Unknown` under QP006 with no
+certificate, never a program `Unsafe`. Adversarial fixtures bound memory growth
+(exit 2 at 4.7 ms under an 8 MiB `RLIMIT_AS`, while the same fixture completes
+under the legacy profile), output flooding, a wall hang (300 ms), a CPU spin
+(SIGKILL at 1.004 s against a 60 s wall clock), a surviving descendant and a
+`max_processes` fork rejection, plus a pre-spawn refusal in 51 us. All five
+shipped packages answer identically under both profiles across their 11
+capabilities. `PluginLimits` gains an optional declared-kind map, making
+`qcore-schemas` 3.0.0 under its documented policy; manifests declaring no kind
+serialize byte-identically. All 837 workspace tests, 47 provider tests, 43 Python
+tests, 20 Lean audits and the standing gates pass. This is limit enforcement,
+not an OS sandbox: filesystem/network confinement, per-tree process quotas and
+default profile wiring remain open (card P03). Evidence:
+`docs/reports/remaining-p02/README.md`.

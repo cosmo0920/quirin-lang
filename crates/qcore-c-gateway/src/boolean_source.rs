@@ -71,60 +71,19 @@ impl BooleanSourceIdentity {
         &self.source_revision
     }
     pub fn compiler_version(&self) -> &str {
-        &self.compiler.version
+        self.compiler.version()
     }
     pub fn compiler_target(&self) -> &str {
-        &self.compiler.target
+        self.compiler.target()
     }
     pub fn helpers(&self) -> &BTreeMap<String, BooleanSourceIdentity> {
         &self.helpers
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-struct CompilerIdentity {
-    program: String,
-    version: String,
-    target: String,
-}
-
-impl CompilerIdentity {
-    fn capture() -> Result<Self, String> {
-        let mut command = crate::clang_command()?;
-        let program = command
-            .get_program()
-            .to_str()
-            .ok_or("non-UTF-8 Clang path")?
-            .to_owned();
-        let version = command
-            .arg("--version")
-            .output()
-            .map_err(|error| error.to_string())?;
-        let target = crate::clang_command()?
-            .arg("-dumpmachine")
-            .output()
-            .map_err(|error| error.to_string())?;
-        if !version.status.success() || !target.status.success() {
-            return Err("Clang could not report its version and target identity".into());
-        }
-        let version = String::from_utf8(version.stdout)
-            .map_err(|error| error.to_string())?
-            .trim()
-            .to_owned();
-        let target = String::from_utf8(target.stdout)
-            .map_err(|error| error.to_string())?
-            .trim()
-            .to_owned();
-        if !version.contains("clang version") || target.is_empty() {
-            return Err("Clang reported incomplete version or target identity".into());
-        }
-        Ok(Self {
-            program,
-            version,
-            target,
-        })
-    }
-}
+// The compiler description is shared with the configured audit's compile-task
+// identity. Field names, order and serialization are unchanged by that reuse.
+use crate::clang::ClangIdentity as CompilerIdentity;
 
 fn input_identity(
     unit: &C11TranslationUnit<'_>,

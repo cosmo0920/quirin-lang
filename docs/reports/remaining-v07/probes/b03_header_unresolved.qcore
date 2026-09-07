@@ -1,0 +1,5 @@
+error Failure { Failed; }
+fn main() -> i32 {
+  with lock missing as g { }
+  return 0;
+}

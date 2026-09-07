@@ -427,6 +427,7 @@
         "restricted_calls": [
           "send",
           "__errno_location",
+          "__error",
           "evutil_socket_geterror",
           "perror",
           "evutil_closesocket",

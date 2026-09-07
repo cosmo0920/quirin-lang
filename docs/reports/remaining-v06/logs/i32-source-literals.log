@@ -1,0 +1,36 @@
+ID    EXPECT   EXIT    RESULT   DIAGNOSTIC
+A01   accept   0       MATCH    checked 1 function(s); entry `main`
+A02   accept   0       MATCH    checked 1 function(s); entry `main`
+A03   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A03.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A04   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A04.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A05   accept   0       MATCH    checked 1 function(s); entry `main`
+A06   accept   0       MATCH    checked 1 function(s); entry `main`
+A07   accept   0       MATCH    checked 1 function(s); entry `main`
+A08   accept   0       MATCH    checked 1 function(s); entry `main`
+A09   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A09.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A10   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A10.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A11   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A11.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A12   accept   0       MATCH    checked 1 function(s); entry `main`
+A13   accept   0       MATCH    checked 1 function(s); entry `main`
+A14   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A14.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A15   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A15.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A16   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A16.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A17   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A17.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A18   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A18.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A19   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A19.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A20   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A20.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A21   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A21.qcore:1:20: Q013: unknown name `_147_483_647` fn main() -> i32 { return 2_147_483_647; }        
+A22   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A22.qcore:1:20: Q013: unknown name `x7fffffff` fn main() -> i32 { return 0x7fffffff; }              
+A23   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A23.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A24   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A24.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A25   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A25.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A26   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A26.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A27   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A27.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A28   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A28.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A29   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A29.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A30   accept   0       MATCH    checked 1 function(s); entry `main`
+A31   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A31.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A32   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A32.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A33   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A33.qcore:1:20: Q020: an i32 result requires a signed 32-bit integer literal return fn main() -> i32
+A34   reject   1       MATCH    /tmp/tmp.fJeJgsqPrT/A34.qcore:1:21: Q020: a unit result requires a bare return fn main() -> unit { return 0; }          
+A35   accept   0       MATCH    checked 1 function(s); entry `main`

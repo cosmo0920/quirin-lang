@@ -1,0 +1,22 @@
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking itoa v1.0.18
+    Checking memchr v2.8.3
+    Checking qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-core)
+    Checking libc v0.2.189
+    Checking serde_json v1.0.151
+    Checking serde v1.0.229
+    Checking qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-frontend)
+    Checking qcore-schemas v2.0.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-schemas)
+    Checking qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-contract)
+    Checking qcore-provider-conformance v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/conformance)
+    Checking qcore-verifier-host v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-verifier-host)
+    Checking qcore-provider-librdkafka v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/qcore-provider-librdkafka)
+    Checking qcore-provider-libevent v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/qcore-provider-libevent)
+    Checking qcore-provider-ctraces v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/qcore-provider-ctraces)
+    Checking qcore-provider-chunkio v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/qcore-provider-chunkio)
+    Checking qcore-provider-cmetrics v0.2.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/providers/qcore-provider-cmetrics)
+    Checking qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-c-gateway)
+    Checking qcore-verification v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-verification)
+    Checking qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a548b1d530a7b0b04/crates/qcore-audit)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.87s

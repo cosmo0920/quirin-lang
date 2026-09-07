@@ -1,0 +1,100 @@
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-72091012e09e085c)
+
+running 6 tests
+test plugin_discovery_errors_are_reported_without_builtin_fallback ... ok
+test cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output ... ok
+test core_cli_works_without_clang ... ok
+test cli_recovery_joins_first_child_after_second_creation_fails ... ok
+test cli_names_owned_profile_and_emits_real_buffer_transfer ... ok
+test cli_checks_emits_and_executes_native_source_tasks ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/plugin_packages.rs (target/debug/deps/plugin_packages-892a07dfedc3d762)
+
+running 5 tests
+test package_symlinks_cannot_escape_the_package_root ... ok
+test package_tampering_never_updates_the_selection_file ... ok
+test configured_source_scope_dispatches_only_the_enabled_process ... ok
+test package_selection_is_explicit_pinned_and_reversible ... ok
+test invalid_configuration_has_no_default_registry_fallback ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests qcore_audit
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_c_gateway
+
+running 8 tests
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 17) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 169) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 278) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 194) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 272) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 200) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 25) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 163) - compile fail ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_compiler
+
+running 3 tests
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 14) - compile fail ... ok
+test compiler/src/verifier_plugins/chunkio/chunk_source.rs - verifier_plugins::chunkio::chunk_source::ChunkSourceSummary (line 19) - compile fail ... ok
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 22) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_contract
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_core
+
+running 1 test
+test crates/qcore-core/src/scoped_tasks.rs - scoped_tasks (line 8) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/qcore-core/src/task_execution.rs - task_execution::CheckedTaskModule (line 162) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 0.18s; merged doctests compilation took 0.16s
+   Doc-tests qcore_frontend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_schemas
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_verification
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_verifier_host
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

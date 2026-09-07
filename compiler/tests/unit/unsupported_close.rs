@@ -7,7 +7,7 @@ use crate::verifier_plugins::chunkio::{
 
 #[test]
 fn unsupported_close_classifies_the_remaining_path_without_discharge() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let deps = dependencies();
@@ -56,7 +56,7 @@ fn unsupported_close_classifies_the_remaining_path_without_discharge() {
 
 #[test]
 fn unsupported_close_rejects_domain_splitting_and_changed_partial_effects() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let deps = dependencies();
@@ -97,7 +97,7 @@ fn unsupported_close_rejects_domain_splitting_and_changed_partial_effects() {
 
 #[test]
 fn unsupported_close_policy_rejects_false_and_unknown_predicates() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let file = check_filesystem_chunk_close_source(
@@ -125,7 +125,7 @@ fn unsupported_close_policy_rejects_false_and_unknown_predicates() {
 
 #[test]
 fn unsupported_backend_truth_tests_cannot_assume_zero_is_excluded() {
-    if !crate::test_support::clang_available() {
+    if !crate::test_support::posix_clang_test() {
         return;
     }
     let deps = dependencies();

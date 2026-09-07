@@ -5,10 +5,34 @@ use qcore_c_gateway::legacy_c::{
 use std::{
     fs,
     path::PathBuf,
-    sync::atomic::{AtomicUsize, Ordering},
+    sync::{
+        Once, OnceLock,
+        atomic::{AtomicUsize, Ordering},
+    },
 };
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
+static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
+static CLANG_WARNING: Once = Once::new();
+
+fn clang_available() -> bool {
+    let availability =
+        CLANG_AVAILABILITY.get_or_init(|| qcore_c_gateway::clang_command().map(|_| ()));
+    match availability {
+        Ok(()) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            CLANG_WARNING.call_once(|| {
+                eprintln!("skipping Clang-dependent compile-option tests: {reason}");
+            });
+            false
+        }
+    }
+}
+
 struct Fixture(PathBuf);
 impl Fixture {
     fn new() -> Self {
@@ -23,8 +47,15 @@ impl Fixture {
         Self(path)
     }
     fn entry(&self, options: &[&str]) -> CompileEntry {
-        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into());
-        let mut arguments = vec![compiler.as_str(), "-std=c11"];
+        self.entry_with_compiler("clang", options)
+    }
+    fn clang_entry(&self, options: &[&str]) -> CompileEntry {
+        let command = qcore_c_gateway::clang_command().unwrap();
+        let compiler = command.get_program().to_str().unwrap();
+        self.entry_with_compiler(compiler, options)
+    }
+    fn entry_with_compiler(&self, compiler: &str, options: &[&str]) -> CompileEntry {
+        let mut arguments = vec![compiler, "-std=c11"];
         arguments.extend_from_slice(options);
         arguments.extend(["-c", "src/unit.c"]);
         compile_entries(
@@ -41,7 +72,7 @@ impl Fixture {
     }
     fn unit<'a>(&self, source: &'a str, flags: &[&str]) -> C11TranslationUnit<'a> {
         self.write_source(source);
-        let options = compiler_options(&self.entry(flags)).unwrap();
+        let options = compiler_options(&self.clang_entry(flags)).unwrap();
         C11TranslationUnit {
             source,
             include_paths: options.include_paths,
@@ -89,6 +120,9 @@ impl Drop for Fixture {
 
 #[test]
 fn system_headers_remain_after_regular_headers_even_when_listed_first() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     f.header("regular", 17);
     f.header("system", 29);
@@ -103,6 +137,9 @@ fn system_headers_remain_after_regular_headers_even_when_listed_first() {
 
 #[test]
 fn source_directory_is_quote_only_and_does_not_shadow_angle_headers() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     f.header("src", 5);
     f.header("regular", 17);
@@ -124,6 +161,9 @@ fn source_directory_is_quote_only_and_does_not_shadow_angle_headers() {
 
 #[test]
 fn quote_include_class_and_order_are_preserved() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     f.header("regular", 17);
     f.header("quoted", 31);
@@ -145,6 +185,9 @@ fn quote_include_class_and_order_are_preserved() {
 
 #[test]
 fn macro_definition_and_undefinition_order_is_preserved() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     let source = "#ifndef VALUE\n#define VALUE 3\n#endif\nint observed = VALUE;";
     assert!(
@@ -220,6 +263,9 @@ fn command_structure_and_unmodeled_options_fail_closed() {
 
 #[test]
 fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
+    if !clang_available() {
+        return;
+    }
     use qcore_c_gateway::{clang_command, typed_c_ast::function_ast};
     use std::io::Write;
     use std::process::Stdio;
@@ -227,6 +273,7 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
     let source = "#if defined(__PIE__)\n#define MODE 4\n#elif defined(__PIC__)\n#define MODE 2\n#else\n#define MODE 0\n#endif\nint observed(void) { return MODE; }";
     for flags in [
         vec!["-Wall"],
+        vec!["-Wextra"],
         vec!["-g"],
         vec!["-fPIC"],
         vec!["-Wa,--noexecstack"],
@@ -249,7 +296,7 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
             .write_all(source.as_bytes())
             .unwrap();
         let reference = child.wait_with_output().unwrap();
-        let options = compiler_options(&f.entry(&flags)).unwrap();
+        let options = compiler_options(&f.clang_entry(&flags)).unwrap();
         let unit = C11TranslationUnit {
             source,
             dialect: options.dialect,
@@ -300,6 +347,9 @@ const FILENAME_SENSITIVE_UNIT: &str = "#include \"choice.h\"\n\
 
 #[test]
 fn filename_sensitive_preprocessing_matches_the_recorded_compile_command() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     // `choice.h` exists both beside the source and on the regular search path.
     // A direct compile resolves the quoted include against the includer's own
@@ -324,6 +374,9 @@ fn filename_sensitive_preprocessing_matches_the_recorded_compile_command() {
 
 #[test]
 fn units_without_a_declared_file_reject_constructs_they_cannot_answer() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     f.header("src", 5);
     // An anonymous text has no includer directory either, so its quoted include
@@ -344,7 +397,7 @@ fn units_without_a_declared_file_reject_constructs_they_cannot_answer() {
     let builtin = "const char *where(void) { return __builtin_FILE(); }\n";
     for input in [
         CSourceInput::AnonymousText,
-        compiler_options(&f.entry(&[])).unwrap().input,
+        compiler_options(&f.clang_entry(&[])).unwrap().input,
     ] {
         let mut unit = f.unit(builtin, &[]);
         unit.input = input;
@@ -365,6 +418,9 @@ fn units_without_a_declared_file_reject_constructs_they_cannot_answer() {
 
 #[test]
 fn a_declared_input_must_be_the_file_that_holds_the_declared_source() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
     f.header("src", 5);
     let unit = f.unit(FILENAME_SENSITIVE_UNIT, &[]);
@@ -404,9 +460,34 @@ fn a_declared_input_must_be_the_file_that_holds_the_declared_source() {
 }
 
 #[test]
-fn frontend_flags_require_the_actual_clang_executable_and_an_explicit_dialect() {
+fn quoted_dollars_are_literal_c_macro_bytes_without_shell_or_make_expansion() {
+    if !clang_available() {
+        return;
+    }
     let f = Fixture::new();
-    let entry = f.entry(&["-Wall"]);
+    let definition = r#"-D__FILENAME__="$$(subst /source/,,$$(abspath $$<))""#;
+    let source = "const char *name = __FILENAME__;";
+    let imported = f.preprocess(source, &[definition, "-Wextra"]);
+    assert!(imported.contains(r#""$$(subst /source/,,$$(abspath $$<))""#));
+    for rejected in [
+        "-DVALUE=$(unresolved)",
+        r#"-DVALUE="literal" + $(unresolved)"#,
+        r#"-I$unresolved/include"#,
+    ] {
+        assert!(
+            compiler_options(&f.clang_entry(&[rejected])).is_err(),
+            "{rejected}"
+        );
+    }
+}
+
+#[test]
+fn frontend_flags_require_the_actual_clang_executable_and_an_explicit_dialect() {
+    if !clang_available() {
+        return;
+    }
+    let f = Fixture::new();
+    let entry = f.clang_entry(&["-Wall"]);
     assert!(compiler_options(&entry).is_ok());
     let mut absent_dialect = entry.clone();
     absent_dialect.command = absent_dialect.command.replace("'-std=c11'", "");

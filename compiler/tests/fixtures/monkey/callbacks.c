@@ -23,6 +23,17 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <errno.h>
+/* Model the recorded POSIX errno accessor when importing on Windows. This
+ * fixture does not claim to exercise the Windows socket implementation. */
+#ifdef _WIN32
+#undef errno
+int *__errno_location(void);
+#define errno (*__errno_location())
+#endif
+/* The checked-in native binding fixtures were recorded on Linux. Keep their
+ * errno branch portable when this source fixture is imported on another host. */
+#undef ECONNABORTED
+#define ECONNABORTED 103
 typedef int evutil_socket_t;
 #define EV_READ 2
 #define EV_WRITE 4

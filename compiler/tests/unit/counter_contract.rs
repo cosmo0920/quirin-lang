@@ -4,7 +4,8 @@ use crate::typed_source::{SourceImportProfile, SourceResult, import_source_funct
 use crate::verifier_plugins::chunkio::{
     PINNED_FLUENT_BIT_REVISION, teardown_source::COUNTER_CONTRACT,
 };
-const FIXTURE: &str = "typedef unsigned long size_t; struct cio_ctx { size_t total_chunks; size_t other; }; size_t cio_chunk_counter_total_sub(struct cio_ctx *ctx) { ctx->total_chunks--; return ctx->total_chunks; }";
+// Model an unsigned-long counter without redefining the host's size_t.
+const FIXTURE: &str = "typedef unsigned long qcore_test_size_t; struct cio_ctx { qcore_test_size_t total_chunks; qcore_test_size_t other; }; qcore_test_size_t cio_chunk_counter_total_sub(struct cio_ctx *ctx) { ctx->total_chunks--; return ctx->total_chunks; }";
 fn check(c: &str, contract: &str) -> Result<CounterCertificate, String> {
     let results = import_source_functions(
         &C11TranslationUnit {
@@ -80,9 +81,15 @@ fn counter_source_changes_and_unreachable_effects_fail_closed() {
             "if (0) { ctx->other--; } ctx->total_chunks--;",
         ),
         ("ctx->total_chunks--;", "while (0) {} ctx->total_chunks--;"),
-        ("size_t total_chunks;", "volatile size_t total_chunks;"),
-        ("size_t total_chunks;", "size_t total_chunks : 5;"),
-        ("unsigned long", "long"),
+        (
+            "qcore_test_size_t total_chunks;",
+            "volatile qcore_test_size_t total_chunks;",
+        ),
+        (
+            "qcore_test_size_t total_chunks;",
+            "qcore_test_size_t total_chunks : 5;",
+        ),
+        ("qcore_test_size_t total_chunks;", "long total_chunks;"),
     ] {
         assert!(
             check(&FIXTURE.replace(old, new), COUNTER_CONTRACT).is_err(),

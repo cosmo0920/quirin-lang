@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "card": "B01 - Reproduce a revision-bound baseline",
+  "date": "2026-09-07",
+  "revision": "6c2782fa3b3922ed0b17bd6d626d94b5caf64e36",
+  "revision_subject": "Record halted-agent handoff and reconcile remaining v0.3 requirements",
+  "branch": "claude/qcore-execution-audit-plan-24520f",
+  "matches_target_revision_6c2782f": true,
+  "dirty": false,
+  "dirty_detail": "Tracked tree clean at start and at end. The only working-tree entry is the untracked deliverable docs/reports/remaining-b01/; build/cycle19/ is gitignored.",
+  "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/qcore-execution-audit-plan-24520f",
+  "toolchain": {
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+    "cargo": "cargo 1.98.0 (797e8a9bc 2026-08-05)",
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "cmake": "cmake version 4.2.3",
+    "python": "Python 3.14.4",
+    "lean": "Lean (version 4.33.1, x86_64-unknown-linux-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)",
+    "lean_toolchain_pin": "leanprover/lean4:v4.33.1",
+    "lean_note": "elan/lean/lake are NOT on the default PATH; runs required PATH=$HOME/.elan/bin:$PATH"
+  },
+  "submodule": {
+    "path": "third_party/libevent",
+    "revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "describe": "release-2.2.2-alpha-11-gd82464a2",
+    "note": "plain `git submodule update --init --recursive` FAILED: the effective submodule URL is a local path and git blocks the file transport by default. Re-run with `-c protocol.file.allow=always` succeeded. Environment/config issue, not a source defect."
+  },
+  "suites": [
+    {
+      "suite": "submodule_update",
+      "command": "git -c protocol.file.allow=always submodule update --init --recursive",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {
+        "pinned_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+      },
+      "duration_sec": null,
+      "log": "docs/reports/remaining-b01/logs/submodule_update.log"
+    },
+    {
+      "suite": "cargo_test_workspace",
+      "command": "cargo test --workspace",
+      "exit_code": 0,
+      "expected_count": 819,
+      "actual_count": 819,
+      "counts": {
+        "passed": 819,
+        "failed": 0,
+        "ignored": 0,
+        "result_lines": 64
+      },
+      "duration_sec": 69.28,
+      "log": "docs/reports/remaining-b01/logs/cargo_test_workspace.log"
+    },
+    {
+      "suite": "cargo_fmt",
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": 0.55,
+      "log": "docs/reports/remaining-b01/logs/cargo_fmt.log"
+    },
+    {
+      "suite": "cargo_clippy",
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": 8.09,
+      "log": "docs/reports/remaining-b01/logs/cargo_clippy.log"
+    },
+    {
+      "suite": "reevaluation_probe",
+      "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+      "exit_code": null,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": null,
+      "log": "docs/reports/remaining-b01/logs/probe.log"
+    },
+    {
+      "suite": "reevaluation_followup",
+      "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit_code": null,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": null,
+      "log": "docs/reports/remaining-b01/logs/followup.log"
+    },
+    {
+      "suite": "providers_test",
+      "command": "cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace",
+      "exit_code": 0,
+      "expected_count": 45,
+      "actual_count": 45,
+      "counts": {
+        "passed": 45,
+        "failed": 0,
+        "locked": true,
+        "offline": true
+      },
+      "duration_sec": 18.43,
+      "log": "docs/reports/remaining-b01/logs/providers_test.log"
+    },
+    {
+      "suite": "providers_fmt",
+      "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": 0.65,
+      "log": "docs/reports/remaining-b01/logs/providers_fmt.log"
+    },
+    {
+      "suite": "providers_clippy",
+      "command": "cargo clippy --locked --offline --manifest-path providers/Cargo.toml --all-targets -- -D warnings",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": 4.57,
+      "log": "docs/reports/remaining-b01/logs/providers_clippy.log"
+    },
+    {
+      "suite": "python_unittest",
+      "command": "python3 -B -m unittest discover -s scripts/tests -v",
+      "exit_code": 0,
+      "expected_count": 43,
+      "actual_count": 43,
+      "counts": {
+        "ran": 43,
+        "failures": 0,
+        "errors": 0
+      },
+      "duration_sec": 0.81,
+      "log": "docs/reports/remaining-b01/logs/python_unittest.log"
+    },
+    {
+      "suite": "lake_build",
+      "command": "bash -c '(cd proof && lake build)'",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {
+        "jobs": 62
+      },
+      "duration_sec": 5.4,
+      "log": "docs/reports/remaining-b01/logs/lake_build.log"
+    },
+    {
+      "suite": "lean_audits",
+      "command": "python3 -B scripts/check_lean_audits.py",
+      "exit_code": 0,
+      "expected_count": 20,
+      "actual_count": 20,
+      "counts": {
+        "audits_passed": 20
+      },
+      "duration_sec": 4.13,
+      "log": "docs/reports/remaining-b01/logs/lean_audits.log"
+    },
+    {
+      "suite": "provider_package_build",
+      "command": "python3 -B providers/package.py build --output build/cycle19/provider-packages-unit",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {
+        "packages": 5
+      },
+      "duration_sec": 20.71,
+      "log": "docs/reports/remaining-b01/logs/provider_package_build.log"
+    },
+    {
+      "suite": "cmetrics_prepare",
+      "command": "python3 -B scripts/prepare_cmetrics_clang_audit.py --fluent-bit <pinned-clone> --output <scratchpad>/cycle19",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {},
+      "duration_sec": 30.18,
+      "log": "docs/reports/remaining-b01/logs/cmetrics_prepare.log"
+    },
+    {
+      "suite": "cmetrics_audit",
+      "command": "cargo run --quiet -p qcore-audit -- <scratchpad>/cycle19/fluent-bit-clang-production/cmetrics-audit.json.config",
+      "exit_code": 0,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {
+        "checked_function_contracts": 1,
+        "unknown_functions": 6,
+        "units": 1,
+        "safe": 0,
+        "provisional_unsafe": 1,
+        "unknown_units": 0,
+        "data_only": 0,
+        "gateway_failures": 0,
+        "resource_diagnostics": {
+          "leak": 2,
+          "unknown_alias": 2,
+          "unsupported": 36
+        }
+      },
+      "duration_sec": 1.78,
+      "log": "docs/reports/remaining-b01/logs/cmetrics_audit.log"
+    },
+    {
+      "suite": "cycle19_185_unit_audit",
+      "command": "cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- <upstream-fluent-bit> <monkey-db>",
+      "exit_code": 1,
+      "expected_count": null,
+      "actual_count": null,
+      "counts": {
+        "outcome": "rejected by pinned-source gate (fail-closed, correct)",
+        "expected_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "found": "d411765eaa40a6ca590ffbcef07a61ce0094650d",
+        "classification": "environment precondition failure, not a source verdict"
+      },
+      "duration_sec": null,
+      "log": "docs/reports/remaining-b01/logs/cycle19_185.log"
+    }
+  ],
+  "baseline_comparison": {
+    "workspace_tests": {
+      "reported": 819,
+      "observed": 819,
+      "match": true
+    },
+    "provider_tests": {
+      "reported": 45,
+      "observed": 45,
+      "match": true
+    },
+    "python_tests": {
+      "reported": 43,
+      "observed": 43,
+      "match": true
+    },
+    "lean_audits": {
+      "reported": 20,
+      "observed": 20,
+      "match": true
+    },
+    "cmetrics_audit": {
+      "reported": "1 checked / 6 Unknown, provisional Unsafe raw unit",
+      "observed": "1 checked / 6 Unknown, provisional Unsafe raw unit",
+      "match": true
+    }
+  },
+  "pinned_185_unit_artifacts": {
+    "rerun": false,
+    "reason": "Not rerun. The audit rejects at its pinned-source gate: the upstream checkout /home/cosmo/Documents/GitHub/fluent-bit is at d411765eaa40a6ca590ffbcef07a61ce0094650d with a dirty working tree, while the profile pin is 66910c10a4d7eafa810b84229cf2dcf7b0f26f97. Auditing from the pinned clone instead would require a full Fluent Bit CMake build for all 185 translation units plus a forced-Libevent Monkey build, which exceeds the time budget. This is an environment precondition, not a source verdict.",
+    "verified_instead": "sha256/byte verification of the four archived artifacts against docs/reports/w2-clang-cmake-build/audit-parity.json",
+    "all_four_match_recorded_parity": true,
+    "artifacts": {
+      "source": {
+        "archive": "docs/reports/w2-clang-cmake-build/source.json.gz",
+        "archive_sha256": "dd7cff770cf102619e425095464f51442bb03ae5c008873f6285104202ad3415",
+        "uncompressed_bytes": 1663331,
+        "uncompressed_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+        "recorded_bytes": 1663331,
+        "recorded_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+        "matches_recorded_parity": true
+      },
+      "diagnostics": {
+        "archive": "docs/reports/w2-clang-cmake-build/diagnostics.json.gz",
+        "archive_sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa",
+        "uncompressed_bytes": 11006128,
+        "uncompressed_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+        "recorded_bytes": 11006128,
+        "recorded_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+        "matches_recorded_parity": true
+      },
+      "chunk-contracts": {
+        "archive": "docs/reports/w2-clang-cmake-build/chunk-contracts.json.gz",
+        "archive_sha256": "1491151435de0baed8b2125d50b1ae86cb6cb3eb7c043d6984a702769387053f",
+        "uncompressed_bytes": 4141225,
+        "uncompressed_sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da",
+        "recorded_bytes": 4141225,
+        "recorded_sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da",
+        "matches_recorded_parity": true
+      },
+      "source-effects": {
+        "archive": "docs/reports/w2-clang-cmake-build/source-effects.json.gz",
+        "archive_sha256": "0049ee25f672218fc1a4b9a703eb84c03ed0a2464963433e70e8e1e53f95709b",
+        "uncompressed_bytes": 114434,
+        "uncompressed_sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8",
+        "recorded_bytes": 114434,
+        "recorded_sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8",
+        "matches_recorded_parity": true
+      }
+    }
+  },
+  "revision_note": "HEAD was 6c2782f with a clean tree when this run started. A docs-only commit 6072947685b2563ceb687e64349f52b068fa9f5c (\"Record B00 checkpoint reconciliation ledger\", 14:15:11 +0900) landed on this branch from a concurrent sibling card DURING the run and was not created by B01. It adds only docs/reports/remaining-b00/README.md and ledger.json and touches no code, test, contract or profile path, so every suite result here still reflects the 6c2782f source tree.",
+  "head_at_end_of_run": "6072947685b2563ceb687e64349f52b068fa9f5c",
+  "concurrent_commit": {
+    "sha": "6072947685b2563ceb687e64349f52b068fa9f5c",
+    "subject": "Record B00 checkpoint reconciliation ledger",
+    "files": [
+      "docs/reports/remaining-b00/README.md",
+      "docs/reports/remaining-b00/ledger.json"
+    ],
+    "paths_outside_docs": [],
+    "created_by_b01": false,
+    "affects_b01_results": false
+  }
+}

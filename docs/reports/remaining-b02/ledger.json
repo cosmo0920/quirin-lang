@@ -1,0 +1,369 @@
+{
+  "schema_version": 1,
+  "card": "B02",
+  "title": "Stale-review delta ledger for r0.3 requirements R01-R10",
+  "date": "2026-09-07",
+  "worktree_head": "96ffd5e",
+  "implementation_checkpoint_claimed_by_acceptance_json": "e3e7c2c",
+  "head_delta": "96ffd5e = 6c2782f + 6072947 (B00) + 96ffd5e (B01); both are documentation-only report commits. No implementation commit landed after e3e7c2c.",
+  "classification_vocabulary": [
+    "verified-fixed",
+    "still-failing",
+    "unsupported-by-profile",
+    "unresolved"
+  ],
+  "still_failing_count": 0,
+  "note": "No requirement is classified still-failing. No verdict is promoted; full language conformance remains false and raw Cycle19 units remain unpromoted.",
+  "review_reproduction_commands": {
+    "advertised": [
+      "cargo run --manifest-path docs/reviews/r0_3/probe/Cargo.toml",
+      "cargo run --manifest-path docs/reviews/r0_3/probe/Cargo.toml -- --require-conformance"
+    ],
+    "status": "inapplicable",
+    "reason": "docs/reviews/r0_3/probe/ does not exist. docs/reviews/r0_3/REVIEW.md lines 8-10 already record that the advertised archive, Rust probes and validation logs were never supplied; the probe package was never built or run even in the review environment. Substituted equivalent live probes through the current qcorec CLI, recorded per requirement below."
+  },
+  "requirements": [
+    {
+      "id": "R01",
+      "claim": "Access is not checked against destruction state. Destroy(0,7) followed by Access(0,7,Write) is accepted; destruction does not revoke permissions or require quiescence.",
+      "recorded_status": "repaired_model",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-core --lib concurrency::"
+      ],
+      "result": "22 passed; 0 failed (18 concurrency + 4 native_concurrency selected by the filter). Exit 0.",
+      "covering_tests": [
+        "concurrency::tests::destroyed_generation_rejects_all_access_kinds",
+        "concurrency::tests::destroyed_generation_rejects_transfer",
+        "concurrency::tests::destruction_requires_other_permission_holders_to_be_terminal",
+        "concurrency::tests::destruction_requires_ordered_accesses_and_closed_other_guards",
+        "concurrency::tests::future_permissions_and_spawned_access_cannot_revive_destroyed_generation",
+        "concurrency::tests::join_orders_prejoin_access_and_allows_destruction_then_distinct_generation"
+      ],
+      "evidence": [
+        "crates/qcore-core/tests/unit/concurrency.rs:295,336,365,453,521,576",
+        "crates/qcore-core/src/concurrency.rs",
+        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+      ],
+      "remaining_boundary": "Model-level only. Live IDs are unique lifetimes inside ConcurrencyProfile::TrustedExplicitTrace; there is no arbitrary-source extraction into these traces and no general callback lifetime proof. A new distinct generation after release is accepted, which is the reviewed acceptance row, not a source-level guarantee."
+    },
+    {
+      "id": "R02",
+      "claim": "A joined child can still emit events. Join leaves the child clock in the map, so Spawn(0,1); Join(0,1); Access(1,..) has no terminal-task check.",
+      "recorded_status": "repaired_model",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-core --lib concurrency::",
+        "cargo test -p qcore-compiler --test ct_corpus"
+      ],
+      "result": "concurrency: 22 passed; 0 failed. ct_corpus: 4 passed; 0 failed. Exit 0 for both.",
+      "covering_tests": [
+        "concurrency::tests::joined_child_cannot_execute_any_event",
+        "concurrency::tests::nested_join_requires_child_quiescence_and_consumes_handle_once",
+        "concurrency::tests::terminal_tasks_cannot_receive_custody_or_unlock",
+        "concurrency::tests::join_requires_quiescence_and_all_handles_are_linear",
+        "ct_mapping_progress_is_pinned_and_counted",
+        "ct_manifest_and_fixture_set_agree_and_mapped_cases_execute"
+      ],
+      "evidence": [
+        "crates/qcore-core/tests/unit/concurrency.rs:207,392,618,688",
+        "docs/reevaluation/ct_manifest.json (11 mapped / 39 unmapped, verified by direct parse)",
+        "docs/reports/r0-3-concurrency-lifetimes/README.md",
+        "docs/reports/w6-completed-child-custody/README.md"
+      ],
+      "remaining_boundary": "Terminal task state is checked in the model. The separate source-side task track is ScopedOwnedTasksV1 with 11/50 CT cases mapped (CT01, CT02, CT12-CT16, CT19, CT20, CT37, CT50) and 39 unmapped. Loans, fractional shares, general owned graphs/error payloads, nested workers, general control flow and Rust/Lean/C refinement remain open (HANDOFF H05/H07)."
+    },
+    {
+      "id": "R03",
+      "claim": "Guard and synchronization fields are trusted model assertions. A held unrelated lock bypasses the static permission check; TransferCustody{synchronized:true} merges clocks on a supplied Boolean.",
+      "recorded_status": "explicit_trust_boundary",
+      "classification": "unsupported-by-profile",
+      "tests_run": [
+        "cargo test -p qcore-core --lib concurrency::"
+      ],
+      "result": "22 passed; 0 failed. Exit 0.",
+      "covering_tests": [
+        "concurrency::tests::certificates_name_trusted_model_authority_without_removing_guard_semantics",
+        "concurrency::tests::same_mutex_establishes_happens_before",
+        "concurrency::tests::different_mutexes_do_not_hide_a_race",
+        "concurrency::tests::synchronized_transfer_moves_unique_destruction_custody"
+      ],
+      "rejection_mechanism": "Not a diagnostic. crates/qcore-core/src/concurrency.rs:205 declares exactly one ConcurrencyProfile variant, TrustedExplicitTrace, stamped on every certificate at concurrency.rs:547. The reviewed acceptance row 'deny unrelated-lock access in a checked-invariant profile' names a checked-invariant profile that does not exist, so it is outside the admitted profile rather than a failing check. The boundary is carried as named certificate assumptions, not as a rejection: ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds, ::GuardFootprintAuthority and ::SynchronizedCustodyEdges, asserted exactly in the test above.",
+      "verified_sub_property": "The review's required qualification ('the certificate must not be advertised as having established that premise') is verified-fixed: the empty program carries only InitialAuthorityAndUniqueLifetimeIds; a guarded access adds GuardFootprintAuthority; a synchronized transfer adds SynchronizedCustodyEdges; flipping synchronized to false makes check_concurrent reject. Existing same-mutex positive traces still pass, so the model was not 'repaired' by deleting mutex authorization.",
+      "evidence": [
+        "crates/qcore-core/tests/unit/concurrency.rs:721-775",
+        "crates/qcore-core/src/concurrency.rs:9,205-206,222,511,547",
+        "docs/reports/r0-3-concurrency-lifetimes/README.md"
+      ],
+      "remaining_boundary": "Checked mutex-footprint invariants, guard-derived borrows, guard affinity and reconstructed synchronization witnesses remain open. Queued as HANDOFF H06 (W6/R03), targeting CT26-CT34/CT48 source execution; assumptions may be replaced only when independently proved."
+    },
+    {
+      "id": "R04",
+      "claim": "The source driver does not enforce ordinary return-type compatibility. 'fn main() -> bool { return 2; }' is accepted despite the mismatch.",
+      "recorded_status": "partially_repaired",
+      "classification": "verified-fixed",
+      "secondary_classification": "unsupported-by-profile (general owned/error result typing)",
+      "tests_run": [
+        "cargo test -p qcore-frontend --lib review_",
+        "cargo test -p qcore-compiler --lib review_",
+        "./target/debug/qcorec check <live probes>"
+      ],
+      "result": "frontend: 3 passed; 0 failed. compiler driver: 3 passed; 0 failed. Live probe 'fn main() -> bool { return 2; }' now REJECTS with Q020, exit 1; 'fn main() -> i32 { return 2; }' accepts, exit 0.",
+      "covering_tests": [
+        "driver::tests::review_r04_checks_declared_results_before_lowering",
+        "driver::tests::review_r04_does_not_emit_unencoded_callee_payloads",
+        "frontend::tests::review_r04_retains_result_annotation_and_profile",
+        "frontend::tests::review_r04_preserves_quantitative_result_comparison_syntax"
+      ],
+      "live_probe_matrix": [
+        {"source": "fn main() -> bool { return 2; }", "exit": 1, "diagnostic": "Q020: the executable result profile supports only i32 and unit; other result types require an implemented typed ABI"},
+        {"source": "fn main() -> i32 { return 2; }", "exit": 0, "diagnostic": "accepted (checked 1 function(s); entry `main`)"},
+        {"source": "fn main() -> Unknown { return 0; }", "exit": 1, "diagnostic": "Q020 (unknown result type)"},
+        {"source": "fn main() -> own<Item> { return 0; }", "exit": 1, "diagnostic": "Q020 (invalid owned-result shape)"},
+        {"source": "fn main() -> unit { return 0; }", "exit": 1, "diagnostic": "Q020: a unit result requires a bare return"},
+        {"source": "fn main() -> i32 { return; }", "exit": 1, "diagnostic": "Q020: an i32 result requires a signed 32-bit integer literal return"},
+        {"source": "fn main() -> i32 { if (true) { return 1; } }", "exit": 1, "diagnostic": "Q500: structured control flow is not in the Cycle 12 executable subset (inconsistent exits reject by subset gate, not by a result-type check)"},
+        {"source": "fn leaf() -> unit { return; } fn main() -> i32 { let x: i32 = leaf(); return 0; }", "exit": 1, "diagnostic": "Q500: `let` must use qcore_acquire(...) in the executable subset (call/result signature mismatch rejects by subset gate, not by a result-type check)"}
+      ],
+      "evidence": [
+        "compiler/tests/unit/driver.rs:318,375",
+        "crates/qcore-frontend/tests/unit/frontend.rs:376,415",
+        "docs/reports/r0-3-source-validation/README.md"
+      ],
+      "remaining_boundary": "The i32/unit result profile is checked, and the review's own alternative ('Either reject unsupported result semantics or label the result structural/limited-profile') is satisfied by Q020. Every other result type, including owned and error-payload results, is rejected as unsupported-by-profile rather than typed. Two reviewed acceptance rows (inconsistent function exits, call/result signature mismatch) are currently unreachable behind the Cycle 12 executable-subset gate Q500, so they are gated fail-closed but not independently exercised as result-type checks.",
+      "ledger_defect_noted": "acceptance.json R04.remaining_boundary and docs/HANDOFF_2026-09-07.md's R04 row both carry a verbatim copy of R02's ScopedOwnedTasksV1 task-lifetime text, which does not describe result typing at all. This is a ledger-quality drift, not a semantic regression; no test depends on that prose. Recorded for a documentation card, not repaired here (B02 writes no tracked files)."
+    },
+    {
+      "id": "R05",
+      "claim": "Axis declarations can bypass dimension checking when unused. 'quant axis bad : credit<Missing>;' with no quantitative-index type avoids the checker.",
+      "recorded_status": "repaired_source",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-frontend --lib review_",
+        "./target/debug/qcorec check <live probe>"
+      ],
+      "result": "3 passed; 0 failed. Live probe 'quant axis bad : credit<Missing>; fn main() -> i32 { return 0; }' REJECTS with Q016, exit 1.",
+      "covering_tests": [
+        "frontend::tests::review_r05_checks_axes_even_without_quantitative_types"
+      ],
+      "live_probe_matrix": [
+        {"source": "quant axis bad : credit<Missing>;\\nfn main() -> i32 { return 0; }", "exit": 1, "diagnostic": "Q016: unknown dimension `Missing`"}
+      ],
+      "evidence": [
+        "crates/qcore-frontend/tests/unit/frontend.rs:335",
+        "crates/qcore-frontend/src/frontend.rs",
+        "docs/reports/r0-3-source-validation/README.md"
+      ],
+      "remaining_boundary": "Axis environment construction and validation are unconditional; declaration well-formedness no longer depends on later type usage. Closed index and profile limits remain: this validates the declaration environment, not a general quantitative-index type system."
+    },
+    {
+      "id": "R06",
+      "claim": "Maximum iteration evidence becomes exact final custody. summarize_general_loop forwards Terminating/Widened maxima to the exact n-fold bounded_loop; a maximum-count-two acquire body gets exact net two and does not cover the zero-iteration flow.",
+      "recorded_status": "repaired_model",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-core --lib resource_accounting::"
+      ],
+      "result": "5 passed; 0 failed. Exit 0.",
+      "covering_tests": [
+        "resource_accounting::tests::maximum_counts_cannot_forge_exact_final_custody",
+        "resource_accounting::tests::zero_net_maximum_covers_every_admitted_early_exit",
+        "resource_accounting::tests::positive_and_negative_net_loops_have_checked_invariants",
+        "resource_accounting::tests::unbounded_loop_refuses_a_finite_resource_claim"
+      ],
+      "observed_semantics": "LoopBoundEvidence now separates Exact / AtMost / Terminating / Widened / Unbounded (crates/qcore-core/src/resource_accounting.rs:15). For a nonzero-net body, AtMost/Terminating/Widened with bound >= 1 return Err(LoopSummaryError::NonExactCustody) across bounds 0..=2 and both net signs; bound 0 yields Flow::zero(). Mutating a valid Exact certificate to AtMost is rejected by check_loop_summary (NonExactCustody) and by loop_ledger_morphism (CategoryError::InvalidLoopSummary). Zero-net bodies keep AtMost and are proved to cover every actual iteration count 0..=bound; a forged summary is rejected with InvalidCertificate.",
+      "evidence": [
+        "crates/qcore-core/tests/unit/resource_accounting.rs:58-130",
+        "crates/qcore-core/src/resource_accounting.rs:15,39-48,68",
+        "docs/reports/r03-loop-counts/README.md"
+      ],
+      "remaining_boundary": "Exact counts remain supplied premises, not derived from source. The summary API carries no allocation-identity discharge claim (stated in-test at resource_accounting.rs:128-129). Identity alternatives and general source loops remain unsupported; the source driver still rejects source loops, so this stays a model/certificate contract."
+    },
+    {
+      "id": "R07",
+      "claim": "Signed minimum literal is rejected by magnitude parsing. 'return -2147483648;' is rejected; the observation evaluator has the same i128 textual-minimum issue.",
+      "recorded_status": "repaired_consumers",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-compiler --lib review_",
+        "cargo test -p qcore-contract --lib review_r07",
+        "./target/debug/qcorec check <live probes>"
+      ],
+      "result": "driver: 3 passed; 0 failed. contract observation: 2 passed; 0 failed. Live: -2147483648 accepts (exit 0); 2147483648 and -2147483649 reject with Q020 (exit 1); -0 accepts (exit 0).",
+      "covering_tests": [
+        "driver::tests::review_r07_driver_signed_literal_boundaries",
+        "contract_observation::cleanup_observation_tests::review_r07_observation_signed_literal_boundaries",
+        "contract_observation::cleanup_observation_tests::review_r07_public_observer_checks_minimum_facts"
+      ],
+      "live_probe_matrix": [
+        {"source": "fn main() -> i32 { return -2147483648; }", "exit": 0, "diagnostic": "accepted"},
+        {"source": "fn main() -> i32 { return -0; }", "exit": 0, "diagnostic": "accepted"},
+        {"source": "fn main() -> i32 { return 2147483648; }", "exit": 1, "diagnostic": "Q020: an i32 result requires a signed 32-bit integer literal return"},
+        {"source": "fn main() -> i32 { return -2147483649; }", "exit": 1, "diagnostic": "Q020: an i32 result requires a signed 32-bit integer literal return"}
+      ],
+      "evidence": [
+        "compiler/tests/unit/driver.rs:345-360",
+        "crates/qcore-contract/tests/unit/contract_observation.rs:116-170",
+        "crates/qcore-contract/src/contract_observation.rs:231 (range-checks the signed spelling including i128::MIN)",
+        "crates/qcore-core/src/c_emit.rs:296 and crates/qcore-core/src/task_c_emit.rs:29 (i32::MIN emitted as (-INT32_C(2147483647) - INT32_C(1)), no unchecked negation)"
+      ],
+      "remaining_boundary": "Both extrema and one-outside-each-bound are checked for i32 literals and i128 observation facts, including arithmetic on supplied minimum facts (i128::MIN + 1). No arbitrary expression or result semantics were added; literal completeness does not widen R04's result profile."
+    },
+    {
+      "id": "R08",
+      "claim": "'Contract checked' is ambiguous without consumer coverage. Parsing, strict resource loading, observation evaluation and specialized adapters are distinct meanings of acceptance that must not be relabelled full-contract discharge.",
+      "recorded_status": "validated_bounded_consumers",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-compiler --test contract_consumers",
+        "cargo test -p qcore-compiler --test contract_loader --test qcore_contract_corpus"
+      ],
+      "result": "contract_consumers: 1 passed; 0 failed. contract_loader: 10 passed; 0 failed. qcore_contract_corpus: 2 passed; 0 failed. Exit 0 for all.",
+      "covering_tests": [
+        "structural_acceptance_does_not_bypass_consumer_clause_or_observation_coverage",
+        "every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped",
+        "certificates_replay_exact_assumptions_and_reject_table_mutation",
+        "production_contracts_preserve_the_previous_resource_modes",
+        "contract_surface_is_pinned_as_structured_clauses",
+        "every_qcore_contract_source_parses_round_trips_and_compiles"
+      ],
+      "observed_semantics": "compiler/tests/contract_consumers.rs demonstrates the split directly: one contract parses successfully, is rejected by load_resource_contract_sources, and is Checked{postconditions:1} by the observation evaluator. Four mutations (false postcondition, unobserved variable, 'ensures any', deleted postcondition) all still parse and all fail observation. A false precondition yields the distinct OutsidePreconditions verdict, which check_contract_facts rejects as a transition and which cannot conceal an unsupported post-state.",
+      "evidence": [
+        "compiler/tests/contract_consumers.rs:1-45",
+        "contract/qcore/ (59 modules; per-file counts pinned by qcore_contract_corpus.rs)",
+        "docs/reports/r03-contract-evidence/README.md"
+      ],
+      "remaining_boundary": "The reviewed requirement was reporting/consumer separation, and that is checked. Arbitrary contract theorem proving and source caller-precondition discharge were never in R08's acceptance list and remain open (HANDOFF H10). A syntactically legal resource declaration can still be false of the external function; the loader builds trusted assumptions, not proofs."
+    },
+    {
+      "id": "R09",
+      "claim": "Entry-point, validation and diagnostic documentation drift: commands reference a qcorec binary in qcore-compiler; the old validation document describes a path not present; revision 0.2 allocates Q700-Q712 to Libevent while source-scope diagnostics use Q700/Q701.",
+      "recorded_status": "reconciled",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-compiler --test module_modes",
+        "grep audit of command spellings, Q7xx ownership and obsolete navigation"
+      ],
+      "result": "module_modes: 4 passed; 0 failed. Exit 0. Doc audit: current entry points and diagnostic ownership are single-direction; see sub-findings.",
+      "covering_tests": [
+        "mode_is_explicit_and_entry_cannot_silently_override_it",
+        "contract_files_compose_with_libraries_and_explicit_executables",
+        "declaration_only_modules_have_no_synthetic_entry_or_execution",
+        "non_executable_mode_still_checks_bodies_and_preserves_diagnostic_locations"
+      ],
+      "evidence": [
+        "docs/QCORE_MODULE_MODES.md:46,48 uses `cargo run -p qcorec -- check`",
+        "contract/qcore/README.md:18 uses `cargo run -p qcorec -- check`",
+        "docs/QCORE_SPEC_r0_3.md:109 records `cargo run -p qcore-compiler --bin qcorec` as obsolete after the CLI split",
+        "docs/QCORE_SPEC_r0_3.md:418,422 assign Q7xx to core verifier-scope/dispatch and move Libevent to local L00-L12 under qcore.libevent, naming the r0.2 Q700-Q712 table as superseded rather than a second active use",
+        "docs/obsolete/ contains VALIDATION_r0_2.md, QCORE_SPEC_r0_2.md, CHANGELOG_r0_2.md and a README index",
+        "docs/reports/r03-integration/README.md"
+      ],
+      "residual_documentation_notes": [
+        "docs/reports/cycle19-native-contracts/README.md:133,135 still spells `cargo run --quiet -p qcore-compiler --bin qcorec`. This is explicitly permitted by R09's own boundary ('historical reports retain their original provenance') and is not counted as drift.",
+        "AGENTS.md:294 says Q700-Q703 are core scope diagnostics; docs/QCORE_SPEC_r0_3.md:418 names only Q700 and Q701 as retaining their meanings. The code is broader than the spec row: Q700 (resolution failure), Q701 (obligations undischarged), Q702 (conflicting evidence) and Q703 (unvalidated provider allegation) all exist in crates/qcore-verification/src/driver.rs:165-169 and src/verify_dispatch.rs:40-41,222,230-233. AGENTS.md is the accurate statement; the spec row is narrower than the implementation. Documentation-completeness note, no diagnostic is missing or duplicated.",
+        "docs/HANDOFF_2026-09-07.md's R01-R10 table is missing its markdown header separator row, so it does not render as a table. Cosmetic; content is correct."
+      ],
+      "remaining_boundary": "Documentation and diagnostic ownership are reconciled. Code-level diagnostic migration and golden tests remain future work, as the review itself stated. The three residual notes above are documentation-quality items for a separate card; B02 writes no tracked files."
+    },
+    {
+      "id": "R10",
+      "claim": "Source/proof/observation composition is narrower than cycle labels. A C11 execution candidate, a native trace, a Lean model theorem and a source-bound C projection have different subjects and their conjunction is not a refinement theorem or a whole-program certificate.",
+      "recorded_status": "hardened_bounded_evidence",
+      "classification": "verified-fixed",
+      "tests_run": [
+        "cargo test -p qcore-verification --lib",
+        "cargo test -p qcore-compiler --test w3_evidence_v2 --test cycle20_verifier_plugins",
+        "cargo test -p qcore-verifier-host --test diagnostic_attribution",
+        "cargo test -p qcore-compiler --test ct_corpus",
+        "cargo run -p qcore-compiler --example reevaluation_probe",
+        "cargo run -p qcore-compiler --example reevaluation_followup"
+      ],
+      "result": "qcore-verification lib: 13 passed; 0 failed. cycle20_verifier_plugins: 20 passed; 0 failed. w3_evidence_v2: 8 passed; 0 failed. diagnostic_attribution: 5 passed; 0 failed. ct_corpus: 4 passed; 0 failed. reevaluation_probe exit 0; reevaluation_followup exit 0.",
+      "covering_tests": [
+        "observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds",
+        "malicious_v2_proposals_cannot_change_the_denominator_or_replay",
+        "replay_requires_declared_trust_and_observed_run_bounds",
+        "composition_requires_exact_nonempty_inventory",
+        "task_envelope_cannot_be_rebound_and_incomplete_derivations_stay_unknown",
+        "out_of_process_v2_conformance_replays_and_rejects_a_forged_observation",
+        "explicit_observation_distrust_cannot_dispatch_or_mint_a_certificate",
+        "forged_safe_evidence_is_downgraded_to_unknown",
+        "vp06_unverified_unsafe_is_unknown_and_cannot_dominate_composition",
+        "vp02_empty_in_process_evidence_is_rejected_by_the_core",
+        "vp01_predicate_source_profile_and_capability_mutations_cannot_mint_safety",
+        "vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety",
+        "process_provider_timeout_is_unknown_and_cannot_issue_a_certificate",
+        "reproducibility_metadata_does_not_establish_semantic_evidence",
+        "witness_replay::tests::every_mutation_is_rejected_with_a_distinct_reason",
+        "witness_replay::tests::an_empty_schedule_cannot_stand_in_for_a_nonempty_inventory",
+        "obligation_derivation::tests::any_identity_change_changes_the_task_digest",
+        "obligation_derivation::tests::lifecycle_derivation_is_deterministic_but_source_import_is_incomplete",
+        "obligation_derivation::tests::source_import_never_hides_unknown_effects_or_control_flow",
+        "invalid_codes_are_rejected_before_v1_verdict_handling",
+        "invalid_codes_are_rejected_before_v2_verdict_handling",
+        "ct_mapping_progress_is_pinned_and_counted"
+      ],
+      "evidence": [
+        "crates/qcore-verification/tests/unit/witness_replay.rs, tests/unit/obligation_derivation.rs",
+        "compiler/tests/w3_evidence_v2.rs, compiler/tests/cycle20_verifier_plugins.rs",
+        "crates/qcore-verifier-host/tests/diagnostic_attribution.rs",
+        "docs/reevaluation/ct_manifest.json (11 mapped / 39 unmapped, pinned by ct_corpus.rs)",
+        "docs/reports/r03-contract-evidence/README.md",
+        "docs/reports/w2-clang-cmake-build/README.md"
+      ],
+      "remaining_boundary": "Evidence mutations, scope/module/bounds substitution, missing obligations, unsupported counterexamples, empty evidence and provider timeouts all fail closed; the v1 Safe refusal and the QP010 Unsafe->Unknown downgrade are preserved. Native and CMake-build provenance are declared trusted evidence. Whole-program and source-model refinement remain open; CT stages are counted separately (11/50) and raw Cycle19 units remain unpromoted at 2 Safe / 42 provisional Unsafe / 137 Unknown plus 4 data-only."
+    }
+  ],
+  "unverified_specs": {
+    "present_in_worktree": false,
+    "present_in_main_checkout": true,
+    "path": "/home/cosmo/Documents/GitHub/qcore-c/unverified_specs",
+    "tracked": false,
+    "note": "Untracked in git and not covered by .gitignore, so it exists only in the primary checkout and not in this or any other worktree. All five files are byte-identical (sha256 verified) to their archived copies in docs/reviews/r0_3/supplied/.",
+    "items": [
+      {
+        "file": "REVIEW.md",
+        "sha256": "11120c8a297eacf661dc3fcb37a1dbd84589eb93939a9a6525002192dc3440ff",
+        "disposition": "adopted",
+        "rationale": "Adopted as the basis of revision 0.3. Archived byte-identically at docs/reviews/r0_3/supplied/REVIEW.md; the local ledger is docs/reviews/r0_3/REVIEW.md with docs/reviews/r0_3/acceptance.json as the machine-readable record. Its R01-R10 findings are the subject of this card."
+      },
+      {
+        "file": "QCORE_SPEC_r0_3.md",
+        "sha256": "ad857b40b3f6c2fa042b3b44d7e3b1eb978017d5707db96c7396e2afddb74d1b",
+        "disposition": "adopted-and-amended",
+        "rationale": "Adopted as the current normative language specification at docs/QCORE_SPEC_r0_3.md, which differs from the supplied original (99 changed lines) because integration recorded implemented boundaries such as the obsolete CLI spelling at line 109 and the Q7xx ownership rows at lines 418 and 422. The pristine original is retained at docs/reviews/r0_3/supplied/QCORE_SPEC_r0_3.md."
+      },
+      {
+        "file": "QCORE_CONTRACT_SPEC_r0_3.md",
+        "sha256": "e6a1123ba732c17c09c959e6c3cd5e430860286bed1ecf0d35b68d96f0425c69",
+        "disposition": "adopted-and-amended",
+        "rationale": "Adopted as the current contract specification at docs/QCORE_CONTRACT_SPEC_r0_3.md, amended to include the bounded scalar/unit Boolean-field interpretation. Pristine original retained in supplied/."
+      },
+      {
+        "file": "QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+        "sha256": "03229340138d676483d368a437ab7d26a6149f579d11d5d6c4af00100ba62d07",
+        "disposition": "adopted-and-amended",
+        "rationale": "Adopted as the consumer grammar inventory at docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md; amended as accepted source-language increments landed. Pristine original retained in supplied/."
+      },
+      {
+        "file": "QCORE_DESIGN_GRAMMAR_r0_3.bnf",
+        "sha256": "c5b95d0ae1c7dcd5169e3d4dcd5bd7b2beef3bc9ded6be9825c1b895e1148186",
+        "disposition": "adopted-as-target-only",
+        "rationale": "Adopted at docs/QCORE_DESIGN_GRAMMAR_r0_3.bnf as the target grammar. HANDOFF_2026-09-07.md explicitly records it is 'not proof that all constructs execute', so it carries no implementation claim. Pristine original retained in supplied/."
+      }
+    ],
+    "not_supplied": [
+      {
+        "item": "docs/reviews/r0_3/probe/ (Rust probe package for R01-R07, illustrating R08)",
+        "disposition": "superseded",
+        "rationale": "Never supplied and never built or run even in the review environment. Superseded for R01/R02/R03/R06 by in-tree regression tests and for R04/R05/R07 by the live qcorec CLI probes recorded above, which reproduce the review's own minimal sources against the current implementation."
+      },
+      {
+        "item": "The advertised original archive (sha256 fd3e844e...), acceptance.json, source_inventory.json and validation.json from the reviewer",
+        "disposition": "superseded",
+        "rationale": "docs/reviews/r0_3/REVIEW.md lines 8-10 record that these were not supplied and that the local acceptance.json and source_inventory.json are new local records. The current Python evidence-validator suite (43 tests) and the standing gate replace the reviewer's validation.json."
+      }
+    ]
+  }
+}

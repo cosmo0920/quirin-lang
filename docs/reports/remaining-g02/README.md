@@ -286,3 +286,90 @@ digests belonging to the single checked function `cmt_counter_allow_reset`:
 * Filename sensitivity beyond the constructs inventoried above (for example
   `__has_include` search behavior under exotic search-path configurations) is
   not surveyed.
+
+---
+
+## 9. Merge with G01's compile-task identity (integration branch `bfbad21`)
+
+G02 was written on `6c2782f`, before G01's `CompileTaskIdentity` reached the
+integration branch. The merge conflicted in `crates/qcore-audit/src/compile_db.rs`,
+`crates/qcore-audit/tests/compile_options.rs`, `AGENTS.md` and `CLAUDE.md`.
+
+### How the two changes compose
+
+G01's `CompileTaskIdentity` binds the compile record's `directory`, `file` and
+complete ordered `arguments`, plus the effective preprocessing input. Under the
+old transport those first three were a **claim about a compile that never ran**:
+Clang was fed standard input from the gateway process's own directory. G02 makes
+that record true for the preprocessing phase — the two changes are complementary,
+and G02's acceptance item 3 is what closes the gap between them.
+
+One component was still invisible: *how* the input reached Clang. Two runs
+agreeing on directory, file and arguments but transporting the source differently
+produce different `__FILE__` expansions and different quoted-include resolution.
+`CompileTaskIdentity` therefore gains a `source_input` field carrying the
+`CSourceInput`, and a new test
+`compile_task_identity.rs::the_input_transport_is_part_of_the_identity` pins that
+a `HistoricalStdin` transport yields a different digest from `DeclaredFile` for
+an otherwise identical record.
+
+Verified in the real CMetrics assumptions sidecar:
+
+```json
+"source_input": {"DeclaredFile": {
+  "directory": ".../fluent-bit-clang-production/lib/cmetrics/src",
+  "spelled":   ".../fluent-bit-clang-source/lib/cmetrics/src/cmt_counter.c"}}
+```
+
+matching G01's recorded `directory` and `file`, with no synthesized quote include
+left in `preprocessor_options`.
+
+### Pins adjusted deliberately
+
+`compile_task_identity.rs::identity_binds_compiler_target_dialect_directory_ordered_arguments_and_effective_input`
+asserted that `preprocessor_options` contains a `QuoteInclude`. That assertion
+was satisfied by the **synthesized source-parent quote path**, which G02 removes
+because the declared transport supplies the includer directory natively. The pin
+is not deleted or weakened: the fixture now passes an explicit `-iquote` so the
+quote-include *class* is still pinned as G01 intended, and two new assertions pin
+that the includer directory is bound through `source_input` instead.
+
+G01's fixture helper `identity()` documented itself as building the identity
+"exactly as the configured driver does" but dropped `resolved.input` via
+`..Default::default()`, so it recorded `AnonymousText` while the driver used
+`DeclaredFile` — a recorded/effective divergence inside the test helper. It now
+carries `resolved.input` and publishes the unit's text at the recorded path.
+
+G02's three `compile_options.rs` tests adopted G01's `clang_available()` guard
+and its `clang_entry` helper (which uses the resolved Clang executable).
+
+### Pre-existing break on the integration branch, repaired
+
+`cargo test --workspace` **does not build at `bfbad21`**:
+`crates/qcore-verification/tests/source_effect_obligations.rs` (added by one
+card) constructs `PluginLimits` without the `additional` field that P02's
+`qcore-schemas` 3.0.0 requires. Two independently merged cards collided. It is
+repaired here with `..PluginLimits::default()`; the ledger's "837 workspace
+tests" figure could not have been measured at that head.
+
+### Gate after the merge
+
+| Gate | Result |
+|---|---|
+| `cargo test --workspace` | **894 passed**, 0 failed (70 binaries) |
+| `cargo fmt --all -- --check` | clean |
+| `cargo clippy --all-targets -- -D warnings` | clean |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+| providers workspace `--locked --offline` | **47 passed**, 0 failed |
+| `python3 -B -m unittest discover -s scripts/tests` | **43 passed** |
+| `cd proof && lake build` | success (62 jobs) |
+| `python3 scripts/check_lean_audits.py` | **20 Lean audits passed** |
+
+### CMetrics after the merge — still unchanged
+
+Console output diffs **clean** against the pre-G02 baseline: `1 checked / 6
+Unknown`, one provisional Unsafe raw unit, byte-identical diagnostics. The
+serialized report has the **same 10 identity-digest paths** with the **same
+values** as the pre-merge G02 run — G01's `CompileTaskIdentity` lives in
+`report.assumptions.json` and does not feed the `BooleanSourceIdentity` digests,
+so the merge introduced no further digest movement. Causes are unchanged from §7.

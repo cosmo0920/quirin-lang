@@ -1,0 +1,17 @@
+concurrency checked;
+fn inner_worker(x: i32) -> i32 { return x; }
+fn worker(x: i32) -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    thread scope t {
+        let a = spawn t inner_worker(copy x)?;
+        let r = join move a?;
+        return r;
+    }
+}
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let v = 42;
+    thread scope s {
+        let a = spawn s worker(copy v)?;
+        let r = join move a?;
+        return r;
+    }
+}

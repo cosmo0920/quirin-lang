@@ -1,0 +1,1 @@
+dimension Bytes : Idx + Ordered; dimension Bytes : Idx + Ordered; quant axis slots : credit<Count<Slot>>; type T = quant<credit, { slots = n } where n := 1>; fn main() -> i32 { return 0; }

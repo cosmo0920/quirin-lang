@@ -384,6 +384,165 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
                     .all(|dep| dep["path"].is_null())
             );
         }
+        // The conformance harness may exercise the real host, but only as a test
+        // consumer: its normal dependencies (the ones a schemas-only process
+        // fixture in `src/bin` links) stay on the admitted schema surface.
+        if package["name"] == "qcore-provider-conformance" {
+            let mut host_dev_dependencies = 0;
+            for dependency in package["dependencies"].as_array().unwrap() {
+                let name = dependency["name"].as_str().unwrap();
+                let dev = dependency["kind"].as_str() == Some("dev");
+                if dev {
+                    host_dev_dependencies += 1;
+                    continue;
+                }
+                assert!(
+                    matches!(name, "qcore-schemas" | "serde" | "serde_json"),
+                    "conformance fixtures may not link `{name}` outside dev-dependencies"
+                );
+            }
+            assert!(
+                host_dev_dependencies > 0,
+                "the harness is expected to consume the real host as a dev dependency"
+            );
+        }
     }
     assert_eq!(artifacts, 5);
+}
+
+/// The packaged artifacts are exactly the crates carrying a package template;
+/// the conformance harness (which does link host crates for tests) is never one
+/// of them, so no host crate can reach an installed provider package.
+#[test]
+fn only_template_carrying_crates_are_packaged() {
+    let root = root();
+    let mut templates: Vec<String> = std::fs::read_dir(&root)
+        .unwrap()
+        .filter_map(|entry| {
+            let path = entry.unwrap().path();
+            path.join("provider-template.json")
+                .is_file()
+                .then(|| path.file_name().unwrap().to_string_lossy().into_owned())
+        })
+        .collect();
+    templates.sort();
+    assert_eq!(
+        templates,
+        [
+            "qcore-provider-chunkio",
+            "qcore-provider-cmetrics",
+            "qcore-provider-ctraces",
+            "qcore-provider-libevent",
+            "qcore-provider-librdkafka",
+        ]
+    );
+    assert!(!root.join("conformance/provider-template.json").exists());
+}
+
+/// Every shipped package answers identically under the target-qualified
+/// enforced execution profile, and the run records what was enforced.
+///
+/// This is card P02's "well-behaved provider under generous limits still
+/// works" case, run against real binaries rather than a shell fixture. The
+/// profile is selected explicitly; nothing here changes the default profile the
+/// other tests exercise.
+#[test]
+#[cfg(target_os = "linux")]
+fn real_packages_answer_identically_under_the_enforced_profile() {
+    use qcore_verifier_host::{
+        LimitSource, ProcessExecutionProfile, ProcessOutcome, enforceable_limit_kinds,
+    };
+    let root = root();
+    let output = std::env::temp_dir().join(format!(
+        "qcore-provider-enforced-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let built = Command::new("python3")
+        .arg(root.join("package.py"))
+        .args(["build", "--output"])
+        .arg(&output)
+        .arg("--target-dir")
+        .arg(root.join("target/conformance-artifacts"))
+        .output()
+        .unwrap();
+    assert!(
+        built.status.success(),
+        "{}",
+        String::from_utf8_lossy(&built.stderr)
+    );
+    let index: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(output.join("packages.json")).unwrap()).unwrap();
+    let mut checked = 0;
+    for artifact in index["artifacts"].as_array().unwrap() {
+        let package = output.join(artifact["plugin_id"].as_str().unwrap());
+        let legacy = ProcessProvider::from_package(&package).unwrap();
+        let strict = ProcessProvider::from_package(&package)
+            .unwrap()
+            .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1);
+        let manifest = strict.manifest().clone();
+        // No shipped manifest declares a kind this profile cannot enforce, so
+        // none of them is refused.
+        let enforced = strict.enforced_limits().unwrap();
+        assert!(enforced.unenforced_kinds.is_empty());
+        assert!(enforced.process_group_kill);
+        assert_eq!(
+            enforced
+                .rlimits
+                .iter()
+                .map(|limit| limit.kind.as_str())
+                .collect::<Vec<_>>(),
+            ["core_bytes", "cpu_seconds", "memory_bytes"]
+        );
+        for limit in &enforced.rlimits {
+            assert!(
+                enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1)
+                    .contains(&limit.kind.as_str())
+            );
+        }
+        assert_eq!(
+            enforced
+                .rlimits
+                .iter()
+                .find(|limit| limit.kind == "memory_bytes")
+                .map(|limit| (limit.soft, limit.source)),
+            Some((manifest.limits.memory_bytes, LimitSource::Declared))
+        );
+        for capability in &manifest.capabilities {
+            let request = request(&manifest, *capability);
+            assert_eq!(
+                strict.verify(&request).unwrap(),
+                legacy.verify(&request).unwrap()
+            );
+            let record = strict.last_execution().unwrap();
+            assert_eq!(record.outcome, ProcessOutcome::Completed);
+            assert_eq!(record.exit_code, Some(0));
+            assert_eq!(record.profile, ProcessExecutionProfile::LinuxRlimitV1);
+            assert!(record.summary().contains("linux-rlimit-v1"));
+            let (v2_request, task) = v2(&request);
+            assert_eq!(
+                strict.verify_v2(&v2_request).unwrap(),
+                legacy.verify_v2(&v2_request).unwrap()
+            );
+            let mut registry = VerifierRegistry::default();
+            registry
+                .register(Arc::new(
+                    ProcessProvider::from_package(&package)
+                        .unwrap()
+                        .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1),
+                ))
+                .unwrap();
+            let outcome = registry.verify_v2(&v2_request, &task, None);
+            assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+            assert!(outcome.certificate.is_none());
+            checked += 1;
+        }
+    }
+    // Five packages, eleven declared capabilities between them.
+    assert_eq!(index["artifacts"].as_array().unwrap().len(), 5);
+    assert_eq!(checked, 11);
+    std::fs::remove_dir_all(&output).unwrap();
 }
