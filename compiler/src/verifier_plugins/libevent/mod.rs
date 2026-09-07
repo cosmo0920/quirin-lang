@@ -26,6 +26,7 @@
 //! | `Q711` | `qcore.libevent.L11` | loop exit leaves unaccounted event or callback custody |
 //! | `Q712` | `qcore.libevent.L12` | observed Libevent trace does not refine the checked event model |
 
+pub mod callback_task;
 pub mod event_driven;
 pub mod monkey_binding;
 pub mod monkey_observation;
