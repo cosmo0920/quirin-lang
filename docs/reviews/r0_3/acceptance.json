@@ -30,9 +30,10 @@
         "docs/reports/w6-handler-rethrow/README.md",
         "docs/reports/w6-worker-allocation/README.md",
         "docs/reports/w6-completed-child-custody/README.md",
-        "docs/reports/w6-reused-address/README.md"
+        "docs/reports/w6-reused-address/README.md",
+        "docs/reports/remaining-v02/README.md"
       ],
-      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
+      "remaining_boundary": "ScopedOwnedTasksV1 now includes original and worker-fresh Buffer results, worker failure cleanup, handler rethrow, completed-child custody and distinct generations on address reuse, with bounded Linux native evidence. Adversarial V02 verification pins the full terminal-state x event-kind matrix, refused-join authority retention and completed-capsule custody in both Rust and Lean, without production changes. Loans, fractional shares, general owned graphs/error payloads, checked mutex invariants, nested workers/general control and Rust/Lean/native refinement remain open."
     },
     {
       "id": "R03",

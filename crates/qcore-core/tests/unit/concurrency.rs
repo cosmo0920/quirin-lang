@@ -776,3 +776,296 @@ fn certificates_name_trusted_model_authority_without_removing_guard_semantics() 
         BTreeSet::from([ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds])
     );
 }
+
+/// R02 matrix: retained clock history keeps a joined child *known*, never
+/// *authorized*. Every event kind is probed separately at index 2 and must
+/// carry the terminal/identity diagnostic that named the child, not an
+/// incidental downstream rejection.
+#[test]
+fn joined_child_event_kinds_each_reject_with_their_own_terminal_diagnostic() {
+    let terminal = ConcurrencyDiagnostic::TerminalTask { event: 2, task: 1 };
+    let probes = [
+        (event(1, AccessKind::Read, None), terminal.clone()),
+        (event(1, AccessKind::Write, None), terminal.clone()),
+        (event(1, AccessKind::AtomicWrite, None), terminal.clone()),
+        // A guard cannot re-authorize a terminal task: the active-task check
+        // runs first, so no WrongMutexInvariant is even reached.
+        (event(1, AccessKind::Write, Some(3)), terminal.clone()),
+        (
+            ConcurrentEvent::Lock {
+                task: 1,
+                mutex: 3,
+                rank: 1,
+            },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::Unlock { task: 1, mutex: 3 },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::TransferCustody {
+                from: 1,
+                to: 0,
+                resource: 7,
+                synchronized: true,
+            },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: 7,
+                synchronized: true,
+            },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::Destroy {
+                task: 1,
+                resource: 7,
+            },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::Spawn {
+                parent: 1,
+                child: 2,
+            },
+            terminal.clone(),
+        ),
+        (
+            ConcurrentEvent::Join {
+                parent: 1,
+                child: 2,
+            },
+            terminal,
+        ),
+        // Repeated join of the same child.
+        (
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrencyDiagnostic::UnknownJoin { event: 2, child: 1 },
+        ),
+        // Reusing the terminal child's identity for a fresh task.
+        (
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrencyDiagnostic::DuplicateTask { event: 2, child: 1 },
+        ),
+    ];
+    for (probe, expected) in probes {
+        let program = ConcurrentProgram {
+            // Static authority that would admit the probe if the terminal
+            // check were skipped.
+            permissions: vec![AccessPermission {
+                task: 1,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS,
+            }],
+            initial_custody: BTreeMap::from([(7, 1)]),
+            events: vec![
+                ConcurrentEvent::Spawn {
+                    parent: 0,
+                    child: 1,
+                },
+                ConcurrentEvent::Join {
+                    parent: 0,
+                    child: 1,
+                },
+                probe.clone(),
+            ],
+        };
+        let diagnostics = check_concurrent(&program)
+            .expect_err(&format!("terminal child must not execute {probe:?}"));
+        assert!(
+            has(&diagnostics, |error| *error == expected),
+            "expected {expected:?} for {probe:?}, got {diagnostics:?}"
+        );
+        assert!(
+            !has(&diagnostics, |error| matches!(
+                error,
+                ConcurrencyDiagnostic::WrongMutexInvariant { .. }
+                    | ConcurrencyDiagnostic::UnauthorizedAccess { .. }
+                    | ConcurrencyDiagnostic::WrongCustodian { .. }
+            )),
+            "terminal state must be decided before authority for {probe:?}: {diagnostics:?}"
+        );
+    }
+}
+
+/// Positive control for the same matrix: an active child legitimately performs
+/// every event kind, and the parent still acts on its own generation after the
+/// successful join that consumed the child.
+#[test]
+fn active_child_event_kinds_and_postjoin_parent_events_are_preserved() {
+    let program = ConcurrentProgram {
+        permissions: vec![
+            AccessPermission {
+                task: 1,
+                footprint: fp(0, 8),
+                share: FULL_ACCESS,
+            },
+            AccessPermission {
+                task: 0,
+                footprint: AccessFootprint::new(8, 0, 8),
+                share: FULL_ACCESS,
+            },
+        ],
+        initial_custody: BTreeMap::from([(7, 0), (8, 0)]),
+        events: vec![
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: 7,
+                synchronized: true,
+            },
+            ConcurrentEvent::Lock {
+                task: 1,
+                mutex: 3,
+                rank: 1,
+            },
+            event(1, AccessKind::Write, Some(3)),
+            ConcurrentEvent::Unlock { task: 1, mutex: 3 },
+            event(1, AccessKind::Read, None),
+            ConcurrentEvent::Spawn {
+                parent: 1,
+                child: 2,
+            },
+            ConcurrentEvent::Join {
+                parent: 1,
+                child: 2,
+            },
+            ConcurrentEvent::Destroy {
+                task: 1,
+                resource: 7,
+            },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::Access {
+                task: 0,
+                footprint: AccessFootprint::new(8, 0, 8),
+                kind: AccessKind::Write,
+                guarded_by: None,
+            },
+            ConcurrentEvent::Destroy {
+                task: 0,
+                resource: 8,
+            },
+        ],
+    };
+    let certificate = check_concurrent(&program).expect("valid child and parent trace");
+    assert_eq!(certificate.completed_tasks, vec![1, 2]);
+    assert_eq!(certificate.destroyed_resources, vec![7, 8]);
+    assert_eq!(certificate.checked_events, 12);
+}
+
+/// A refused join is not an implicit completion: the child keeps its execution
+/// authority and its outstanding duties, and the trace stays fail-closed.
+#[test]
+fn refused_join_preserves_child_authority_and_outstanding_duties() {
+    let descendant = ConcurrentProgram {
+        permissions: vec![AccessPermission {
+            task: 1,
+            footprint: fp(0, 8),
+            share: FULL_ACCESS,
+        }],
+        events: vec![
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::Spawn {
+                parent: 1,
+                child: 2,
+            },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            event(1, AccessKind::Write, None),
+            ConcurrentEvent::Join {
+                parent: 1,
+                child: 2,
+            },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        check_concurrent(&descendant).unwrap_err(),
+        vec![ConcurrencyDiagnostic::NonquiescentJoin { event: 2, child: 1 }],
+        "only the refused join may be reported: the child stays authorized"
+    );
+
+    let guarded = ConcurrentProgram {
+        events: vec![
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::Lock {
+                task: 1,
+                mutex: 3,
+                rank: 1,
+            },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::Unlock { task: 1, mutex: 3 },
+            ConcurrentEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        check_concurrent(&guarded).unwrap_err(),
+        vec![ConcurrencyDiagnostic::NonquiescentJoin { event: 2, child: 1 }],
+        "the child must still be able to discharge the guard it holds"
+    );
+
+    let unknown_parent = ConcurrentProgram {
+        permissions: vec![AccessPermission {
+            task: 1,
+            footprint: fp(0, 8),
+            share: FULL_ACCESS,
+        }],
+        events: vec![
+            ConcurrentEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            ConcurrentEvent::Join {
+                parent: 9,
+                child: 1,
+            },
+            event(1, AccessKind::Write, None),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        check_concurrent(&unknown_parent).unwrap_err(),
+        vec![
+            ConcurrencyDiagnostic::UnknownTask { event: 1, task: 9 },
+            ConcurrencyDiagnostic::OutstandingTask { child: 1 },
+        ],
+        "a join that never happened leaves the child outstanding, not terminal"
+    );
+}

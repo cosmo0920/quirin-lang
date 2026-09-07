@@ -793,3 +793,24 @@ raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lea
 audits pass, with all standing gates and exact four-artifact 185-unit parity.
 Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
 code-generation/stack equivalence, broader providers and raw promotion remain open.
+
+R02 terminal task state, adversarial verification (2026-09-07): V02 re-examined
+"a joined child can still emit events" and found no soundness failure; no
+production code changed. Evidence was the gap. Four new tests pin the full
+terminal-state x event-kind matrix in `crates/qcore-core`: each joined-child
+event kind now asserts its exact `TerminalTask`/`UnknownJoin`/`DuplicateTask`
+diagnostic and the absence of any authority diagnostic, proving the terminal
+decision precedes every custody, guard and permission check. A refused join is
+not an implicit completion: exact diagnostic vectors show the child keeps its
+authority and duties and stays outstanding, matching CT15 and the native
+abort-before-reclamation path. A completed-but-unjoined child's captures stay
+in `Custodian::Capsule` and all ten ledger operations reject with
+`InactiveTask` in both `Completed` and `Joined` phases, leaving the ledger
+unchanged. Nineteen new Lean theorems give the `Lifetime` model per-constructor
+terminal rejection, post-join corollaries and refused-join retention, with no
+new axioms or placeholders. All 823 workspace tests, 45 provider tests, 43
+Python tests, 20 Lean audits and the standing gates pass; CT coverage remains
+11/50 and all Cycle19 artifacts are untouched. Evidence:
+`docs/reports/remaining-v02/README.md`. Source-to-trace refinement, checked
+mutex invariants, loans, general owned graphs and Rust/Lean/native
+correspondence remain open.
