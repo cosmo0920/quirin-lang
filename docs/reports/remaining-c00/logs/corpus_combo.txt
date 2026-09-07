@@ -1,0 +1,35 @@
+projected functions 4688 with zero diagnostics 89
+
+--- functions whose ENTIRE blocker set is one family (sole blocker) ---
+  return_expr              494
+  indirect                 298
+  uncontracted_call        171
+  branch_cond               42
+  braced_init                6
+  assign_expr                3
+  other                      3
+  loop_cond                  2
+  switch_expr                2
+  assign_dest                2
+  out_store                  1
+  sizeof_op                  1
+
+--- most common blocker-set combinations ---
+    494  return_expr
+    298  indirect
+    253  branch_cond+indirect+uncontracted_call
+    192  branch_cond+indirect
+    189  indirect+uncontracted_call
+    171  uncontracted_call
+    101  braced_init+branch_cond+indirect+uncontracted_call
+     92  branch_cond+indirect+unknown_alias
+     73  branch_cond+indirect+uncontracted_call+unknown_alias
+     70  indirect+unknown_alias
+     69  indirect+return_expr
+     64  branch_cond+uncontracted_call
+     57  branch_cond+return_expr
+     53  indirect+uncontracted_call+unknown_alias
+     52  uncontracted_call+unknown_alias
+     51  assign_expr+braced_init+branch_cond+indirect+uncontracted_call
+     49  branch_cond+indirect+loop_cond+uncontracted_call
+     43  branch_cond+indirect+loop_cond+uncontracted_call+unknown_alias

@@ -1,0 +1,27 @@
+units 185 unit status {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+projected functions 4688 function status {'Unknown': 4515, 'Safe': 89, 'Unsafe': 84}
+category totals {'unsupported': 49867, 'unknown_alias': 4199, 'leak': 271}
+
+family                                                           diags  funcs  units  first
+unsupported:indirect_member_or_deref                             18671   3233    171   1590
+unsupported:uncontracted_call                                    12118   2493    171    846
+unsupported:branch_condition                                      8908   2429    166    622
+unknown_alias                                                     4199   1361    162    224
+unsupported:other<unsupported assignment expression>              2467    861    127    364
+unsupported:other<braced initializer, expression, or declaration is not modeled>    2256    999    123    277
+unsupported:other<unmodeled call, aggregate or indirect access in return expression>    1477   1148    124    507
+unsupported:other<unrecognized assignment destination>            1307    543    116     13
+unsupported:other<unmodeled call, aggregate or indirect access in for-loop condition>     838    551    104     62
+unsupported:unsanctioned_out_store                                 676    262     87     14
+unsupported:sizeof_operator                                        462    120     28     14
+unsupported:other<unmodeled call, aggregate or indirect access in loop condition>     296    185     68     20
+leak                                                               271     84     42      8
+unsupported:other<unmodeled expression may mutate a formal resource identity>     120     69     35      3
+unsupported:other<unmodeled call, aggregate or indirect access in switch expression>      96     90     39     23
+unsupported:other<nullable resource `X` used by a non-null contract>      77     73     39      0
+unsupported:formal_shadowing                                        35     23     16      2
+unsupported:other<unmodeled call, aggregate or indirect access in do-while condition>      30     28     18      3
+unsupported:other<arguments do not match resource contract for `X`>      15      9      7      4
+unsupported:other<discarded owned result of resource API `X`>       15      9      6      1
+unsupported:other<call has an unmodeled formal address or borrowed expression>       2      2      2      1
+unsupported:other<resource call with a formal embedded in an unmodeled expression>       1      1      1      1

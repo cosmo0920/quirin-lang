@@ -1,0 +1,37 @@
+== R1-scalar-member-store: status Unknown
+     line  1  unsupported: indirect memory access is outside the resource projection
+== R2-pointer-member-read: status Unknown
+     line  1  unknown_alias: q
+     line  1  unsupported: indirect memory access is outside the resource projection
+== R3-addr-of-member-arg: status Unknown
+     line  1  unsupported: indirect memory access is outside the resource projection
+== R4-branch-on-member: status Unknown
+     line  1  unsupported: indirect memory access is outside the resource projection
+     line  1  unsupported: unmodeled call, aggregate or indirect access in branch condition
+== R5-branch-call-cond: status Unknown
+     line  1  unsupported: unmodeled call, aggregate or indirect access in branch condition
+== R6-out-store: status Unknown
+     line  1  unsupported: store through `*out` without an out-parameter contract
+== R7-uncontracted-call: status Unsafe
+     line  0  leak: acquired line 1
+     line  1  unsupported: call to uncontracted function `ext`
+== R8-leak-via-uncontracted-releaser: status Unsafe
+     line  1  leak: acquired line 1
+     line  1  unsupported: call to uncontracted function `rel`
+== R9-destroy-shape: status Unknown
+     line  1  unknown_alias: p
+     line  1  unsupported: indirect memory access is outside the resource projection
+     line  1  unsupported: unmodeled call, aggregate or indirect access in branch condition
+== R10-baseline-modeled: status Safe
+== R11-scalar-store-then-return: status Unknown
+     line  1  unsupported: indirect memory access is outside the resource projection
+== R12-empty-borrowed-void: status Safe
+== R13-empty-borrowed-int: status Safe
+== R14-local-scalar-store: status Unknown
+     line  1  unsupported: unsupported assignment expression
+== R15-create-shape-no-members: status Unsafe
+     line  1  leak: acquired line 1
+     line  1  unsupported: call to uncontracted function `dst`
+== R16-array-subscript: status Unknown
+     line  1  unknown_alias: a
+     line  1  unsupported: indirect memory access is outside the resource projection
