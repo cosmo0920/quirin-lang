@@ -621,3 +621,31 @@ audit's own pin gate refuses to run. Evidence:
 `docs/reports/remaining-g01/README.md`. Header enumeration, compiler
 equivalence, build hermeticity and the compatibility adapter's ambiguity remain
 open; no verdict changes and no raw unit is promoted.
+
+Checked mutex invariants (2026-09-07): T02 implements `CheckedMutexInvariantV1`
+in a new `crates/qcore-core/src/mutex_invariant.rs` with its own entry point,
+`check_mutex_invariant_program`. `check_concurrent`'s body, its 26 pinned tests
+and `proof/QCore/Concurrency.lean`'s `Lifetime` namespace are byte-identical;
+`TrustedExplicitTrace` still issues `GuardFootprintAuthority` and
+`SynchronizedCustodyEdges`, and the two premises are discharged only inside the
+new profile, over supplied traces. Generation-indexed mutexes follow V01's
+destruction rules; `CreateMutex` fixes its declared footprints and parks the
+creator's `FULL_ACCESS` share, so protected footprints have one protector and no
+fallback authority. Pointwise conservation over exact interval atoms is checked
+at every step. Fresh guards key all protected access, writes require an open
+invariant, and unlock/error exit require a closed one with no live borrow,
+dropping every guard-scoped fact. `SyncWitness` edges are derived and compared,
+never believed. New diagnostics occupy `Q610`-`Q623`; carried-over structural
+refusals keep `Q600`. Certificates name exact generations and admitted invariant
+transitions, and an independent recheck rederives them and refuses either
+trusted premise through both the typed set and the plain-string route. 48 new
+tests (898 workspace total), 46 provider tests, 43 Python tests, both probes and
+all standing gates pass; a new `QCore.Concurrency.MutexInvariant` Lean namespace
+and `AuditMutexInvariant.lean` bring `check_lean_audits.py` to 21 audits with all
+18 designed theorems proved, no new axiom and no placeholder. Two obligations are
+narrowed and named open: general `step_preserves_declared_shape` and the
+pointwise-atom refinement of the abstract conservation total. Evidence:
+`docs/reports/remaining-t02/README.md`. Source lowering (T03), CT mapping
+(11/50 unchanged), lock-order analysis, condition variables, rwlocks, try/timed
+locks and any raw promotion remain out of scope and open; the four pinned
+185-unit artifacts are unchanged by construction, not re-measured.
