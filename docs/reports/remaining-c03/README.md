@@ -63,9 +63,10 @@ excluded (V1), existing routes first and never weakened (V2), only the neutral
 candidate ever seeded for a member of its own component (V3), component-level
 iteration and publication (V4), body re-analysis with an **empty** entry state
 reporting `Safe` with zero diagnostics (V5), the unchanged
-`observations_match_contract` gate (V6), refusal when ordinary derivation reads
-a different contract off the same body (V7), abstract — explicitly not
-concrete — exit reachability (V8), unchanged schema/trust surface (V9), and a
+`observations_match_contract` gate (V6), the requirement that the neutral
+contract be what validation *reads off* the body with no fallback to a stronger
+mode (V7), abstract — explicitly not concrete — exit reachability (V8),
+unchanged schema/trust surface (V9), and a
 certificate recheck that repeats the entire component computation (V10).
 
 ## 4. Prototype and counterexample
