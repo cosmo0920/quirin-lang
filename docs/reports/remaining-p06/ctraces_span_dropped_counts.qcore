@@ -1,0 +1,75 @@
+module contract;
+
+// P06 designed capability `ctraces.span.dropped_counts.v1`.
+//
+// NOT LOADED BY ANY PRODUCTION ROUTE TODAY. This file is the normative text of
+// the designed contract, archived beside its design record so the design is
+// parseable rather than prose. No implemented checker consumes it; landing it in
+// `contract/qcore/ctraces/` is step 3 of follow-on unit P06-I1 and moves the
+// pinned contract-corpus count from 59 to 60 modules.
+//
+// Upstream subject: lib/ctraces/src/ctr_span.c at fluent-bit
+// 9f0fa5730fba1761ebaf14bcd31220a3a9be9d6e. Each function is a leaf: no call, no
+// branch, no allocation, no list operation, no synchronization.
+//
+// `assigned_count` is the second formal's value after the declared
+// uint32_t-to-uint32_t binding; the assignment is a plain C store, so no
+// conversion or wrap case exists in this family. Live and exclusive access to
+// the span, and the C `uint32_t` = QCore `u32` ABI binding, remain caller
+// premises the checker does not discharge. Writing a count discharges nothing
+// about the events, links or attributes those counts describe.
+
+extern fn ctr_span_set_dropped_attributes_count(
+    span: borrow<'call, mut, CtraceSpan> use one
+) -> unit
+contract {
+    requires object_is_live;
+    requires exclusive_object_access;
+    requires c_uint32_matches_u32;
+    requires scalar_field__dropped_attr_count;
+    ensures normal field == assigned_count;
+    ensures normal only_selected_field_written;
+    ensures normal no_object_release;
+};
+
+extern fn ctr_span_set_dropped_events_count(
+    span: borrow<'call, mut, CtraceSpan> use one
+) -> unit
+contract {
+    requires object_is_live;
+    requires exclusive_object_access;
+    requires c_uint32_matches_u32;
+    requires scalar_field__dropped_events_count;
+    ensures normal field == assigned_count;
+    ensures normal only_selected_field_written;
+    ensures normal no_object_release;
+};
+
+extern fn ctr_span_set_dropped_links_count(
+    span: borrow<'call, mut, CtraceSpan> use one
+) -> unit
+contract {
+    requires object_is_live;
+    requires exclusive_object_access;
+    requires c_uint32_matches_u32;
+    requires scalar_field__dropped_links_count;
+    ensures normal field == assigned_count;
+    ensures normal only_selected_field_written;
+    ensures normal no_object_release;
+};
+
+// Upstream defines this fourth setter with no prototype in ctr_span.h, and it
+// writes the SAME field as ctr_span_set_dropped_links_count. The declared field
+// is what the checker must reproduce from source; the name is not evidence.
+extern fn ctr_span_set_dropped_link_count(
+    span: borrow<'call, mut, CtraceSpan> use one
+) -> unit
+contract {
+    requires object_is_live;
+    requires exclusive_object_access;
+    requires c_uint32_matches_u32;
+    requires scalar_field__dropped_links_count;
+    ensures normal field == assigned_count;
+    ensures normal only_selected_field_written;
+    ensures normal no_object_release;
+};
