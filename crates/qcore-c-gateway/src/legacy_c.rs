@@ -2191,6 +2191,16 @@ impl Parser<'_> {
                     destination: destination.to_owned(),
                 };
             }
+            // The declaration form `int flag = FLAG_OFF;`, whose leading type
+            // specifiers the statement walker refuses.
+            let scalar_only = scalar_only
+                || (!contains_call(tokens)
+                    && crate::typed_field_access::is_scalar_initializer(
+                        &destination,
+                        right,
+                        &self.typed_model,
+                        &self.typed_types,
+                    ));
             if let Some(source) = canonical_place(right) {
                 // An enumeration constant names no place this projection can
                 // ever bind, so aliasing it only reports an unresolved alias.

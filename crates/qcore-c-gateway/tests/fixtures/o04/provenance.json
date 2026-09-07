@@ -1,0 +1,34 @@
+{
+ "regions": {
+  "cio_chunk_open": {
+   "bytes": 1931,
+   "first_line": 30,
+   "last_line": 109,
+   "sha256": "c4d2620ae94cf00c659bdc5b5c03875629ba46264ae47d826fc2b1a6673045ad",
+   "upstream_path": "lib/chunkio/src/cio_chunk.c"
+  },
+  "flb_input_chunk_create": {
+   "bytes": 3590,
+   "first_line": 2506,
+   "last_line": 2621,
+   "sha256": "70c73762793f2cc6a51e3976ea86ff6260728a1a6b8ecc329d2a7a87da04b4be",
+   "upstream_path": "src/flb_input_chunk.c"
+  },
+  "flb_input_instance": {
+   "bytes": 11545,
+   "first_line": 244,
+   "last_line": 554,
+   "sha256": "12c327bf2213d609cb7f4ea2092df87d071689a7c45d9e2381ceb2c56493b1c0",
+   "upstream_path": "include/fluent-bit/flb_input.h"
+  },
+  "flb_storage_input": {
+   "bytes": 153,
+   "first_line": 57,
+   "last_line": 61,
+   "sha256": "cd9b81959d70777705e8c05e8cd0ed9d0b9cc5e854967dc89a64b452f375a258",
+   "upstream_path": "include/fluent-bit/flb_storage.h"
+  }
+ },
+ "revision": "90a010910e5b3328f496cc20fadc937547133439",
+ "upstream": "https://github.com/fluent-bit/fluent-bit"
+}

@@ -1,0 +1,116 @@
+struct flb_input_chunk *flb_input_chunk_create(struct flb_input_instance *in, int event_type,
+                                               const char *tag, int tag_len)
+{
+    int ret;
+    int err;
+    int set_down = FLB_FALSE;
+    int has_routes;
+    size_t mask_size;
+    char name[64];
+    struct cio_chunk *chunk;
+    struct flb_storage_input *storage;
+    struct flb_input_chunk *ic;
+
+    storage = in->storage;
+
+    /* chunk name */
+    generate_chunk_name(in, name, sizeof(name) - 1);
+
+    /* open/create target chunk file */
+    chunk = cio_chunk_open(storage->cio, storage->stream, name,
+                           CIO_OPEN, FLB_INPUT_CHUNK_SIZE, &err);
+    if (!chunk) {
+        flb_error("[input chunk] could not create chunk file: %s:%s",
+                  storage->stream->name, name);
+        return NULL;
+    }
+    /*
+     * If the returned chunk at open is 'down', just put it up, write the
+     * content and set it down again.
+     */
+    ret = cio_chunk_is_up(chunk);
+    if (ret == CIO_FALSE) {
+        ret = cio_chunk_up_force(chunk);
+        if (ret == -1) {
+            cio_chunk_close(chunk, CIO_TRUE);
+            return NULL;
+        }
+        set_down = FLB_TRUE;
+    }
+
+    /* Write chunk header */
+    ret = input_chunk_write_header(chunk, event_type, (char *) tag, tag_len);
+    if (ret == -1) {
+        cio_chunk_close(chunk, CIO_TRUE);
+        return NULL;
+    }
+
+    /* Create context for the input instance */
+    ic = flb_calloc(1, sizeof(struct flb_input_chunk));
+    if (!ic) {
+        flb_errno();
+        cio_chunk_close(chunk, CIO_TRUE);
+        return NULL;
+    }
+
+    /*
+     * Check chunk content type to be created: depending of the value set by
+     * the input plugin, this can be FLB_INPUT_LOGS, FLB_INPUT_METRICS or
+     * FLB_INPUT_TRACES.
+     */
+    ic->event_type = event_type;
+    ic->busy = FLB_FALSE;
+    ic->fs_counted = FLB_FALSE;
+    ic->chunk = chunk;
+    ic->fs_backlog = FLB_FALSE;
+    ic->in = in;
+    ic->stream_off = 0;
+    ic->task = NULL;
+    ic->create_time = flb_time_now();
+#ifdef FLB_HAVE_METRICS
+    ic->total_records = 0;
+#endif
+    mask_size = flb_routes_mask_get_size(in->config->router);
+    ic->routes_mask = (flb_route_mask_element *)
+                            flb_calloc(mask_size,
+                                       sizeof(flb_route_mask_element));
+
+    if (ic->routes_mask == NULL) {
+        flb_errno();
+        cio_chunk_close(chunk, CIO_TRUE);
+        flb_free(ic);
+        return NULL;
+    }
+
+
+    /* Calculate the routes_mask for the input chunk */
+    has_routes = flb_routes_mask_set_by_tag(ic->routes_mask, tag, tag_len, in);
+    if (has_routes == 0) {
+        flb_trace("[input chunk] no matching route for input chunk '%s' with tag '%s'",
+                  flb_input_chunk_get_name(ic), tag);
+    }
+
+    msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write);
+    mk_list_add(&ic->_head, &in->chunks);
+
+    if (set_down == FLB_TRUE) {
+        cio_chunk_down(chunk);
+    }
+
+    if (event_type == FLB_INPUT_LOGS) {
+        flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, 0);
+    }
+    else if (event_type == FLB_INPUT_METRICS) {
+        pthread_mutex_lock(&in->metrics_chunk_lock);
+        flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, 0);
+        pthread_mutex_unlock(&in->metrics_chunk_lock);
+    }
+    else if (event_type == FLB_INPUT_TRACES) {
+        flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, 0);
+    }
+    else if (event_type == FLB_INPUT_PROFILES) {
+        flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, 0);
+    }
+
+    return ic;
+}

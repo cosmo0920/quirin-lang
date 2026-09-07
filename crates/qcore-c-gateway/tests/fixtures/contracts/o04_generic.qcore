@@ -1,0 +1,57 @@
+module contract;
+
+// O04 — held-out generic constructor/caller custody API.
+//
+// Deliberately unrelated to ChunkIO and Fluent Bit: every rule under test is
+// stated over declared C types and contract modes, so no name here can matter.
+// These are synthetic trusted test assumptions, not facts about any library.
+
+extern fn g_open(ctx: ptr<mut, u8>, pool: ptr<mut, u8>, flags: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(pool);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn g_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn g_probe(h: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+extern fn g_prepare(h: ptr<mut, u8>, n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+// A one-parameter sink that CONSUMES what it is given. Used to show that a
+// pointer-field actual is admitted only at a declared `Borrowed` position.
+extern fn g_adopt(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A variadic sink whose contract declares only its first parameter. Every
+// further actual is beyond the declared vector, and none of them may be
+// admitted: a contract cannot silently cover actuals it does not describe.
+extern fn g_note(first: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(first);
+    ensures normal resource_return_none();
+};

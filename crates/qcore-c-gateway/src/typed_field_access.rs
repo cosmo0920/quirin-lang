@@ -956,6 +956,25 @@ pub(crate) fn is_scalar_only_noop(
     !texts.is_empty() && scalar_statement_accesses(texts, model, types) == Some(0)
 }
 
+/// Whether an assignment into a declared scalar variable has a right-hand side
+/// that is itself an admitted scalar expression.
+///
+/// This is [`is_scalar_only_noop`] for the *declaration* form `int flag =
+/// FLAG_OFF;`, whose leading type specifiers the statement walker refuses. The
+/// destination must be a declared scalar of this function, so the store can
+/// neither create nor discard a tracked identity, and the right-hand side must
+/// pass the same walker as any other scalar-only statement.
+pub(crate) fn is_scalar_initializer(
+    destination: &str,
+    right: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> bool {
+    types.declared(destination) == Some(&DeclaredType::Scalar)
+        && !right.is_empty()
+        && scalar_statement_accesses(right, model, types) == Some(0)
+}
+
 /// The shared walker: `Some(count)` when every token of the statement is
 /// admitted, counting admitted direct member accesses; `None` on any refusal.
 fn scalar_statement_accesses(

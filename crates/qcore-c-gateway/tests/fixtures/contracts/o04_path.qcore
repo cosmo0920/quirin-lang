@@ -1,0 +1,177 @@
+module contract;
+
+// O04 — the declared custody interface of the constructor-to-caller path card
+// O00 selected (`docs/reports/remaining-o00/README.md` §1, §8).
+//
+// EVERY declaration here is a TRUSTED ASSUMPTION, not a validated fact about
+// ChunkIO or Fluent Bit. None of them is discharged by the bodies in this
+// fixture: `cio_chunk_open`'s own body publishes the chunk into `st->chunks`
+// before returning it (O00 blockers B02/B03), which this projection cannot
+// follow, so the constructor's rollback and success exits stay Unknown while
+// its declared contract is *assumed* at the caller. The card's report lists
+// each of these as a named entry premise.
+//
+// It deliberately lives with the gateway test fixtures rather than in
+// `contract/qcore`: the pinned corpus counts stay at 59 modules, and nothing
+// here is offered as a production declaration.
+
+// --- the constructor -------------------------------------------------------
+// Premise R01 (O00 §6): the constructor hands the caller owned custody of a
+// nullable chunk, and borrows everything else. Not derived from its body.
+extern fn cio_chunk_open(ctx: ptr<mut, u8>, st: ptr<mut, u8>, name: ptr<mut, u8>, flags: i32, size: u64, err: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(st);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_return_owned(nullable);
+};
+
+// Premise R04/R07: the destructor releases a non-null chunk. The richer
+// `chunk_is_live` / `chunk_is_not_busy` / `chunk_has_no_task_or_route_custody`
+// premises of `contract/qcore/chunkio/chunk_destructor.qcore` carry no
+// `resource_contract_v1` marker and are therefore NOT in force here either.
+extern fn cio_chunk_close(ch: ptr<mut, u8>, delete: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ch, nonnull);
+    ensures normal resource_borrowed(delete);
+    ensures normal resource_return_none();
+};
+
+// --- intervening callees the caller's failure arms pass through ------------
+// Each borrows its arguments and returns no custody. O00 §8 feature P3.
+extern fn cio_chunk_is_up(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_chunk_up_force(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_chunk_down(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn generate_chunk_name(in: ptr<mut, u8>, out_buf: ptr<mut, u8>, buf_size: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(in);
+    ensures normal resource_borrowed(out_buf);
+    ensures normal resource_borrowed(buf_size);
+    ensures normal resource_return_none();
+};
+
+extern fn input_chunk_write_header(chunk: ptr<mut, u8>, event_type: i32, tag: ptr<mut, u8>, tag_len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(chunk);
+    ensures normal resource_borrowed(event_type);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<mut, u8>, tag_len: i32, in: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(routes_mask);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_borrowed(in);
+    ensures normal resource_return_none();
+};
+
+// --- the caller's own allocator --------------------------------------------
+extern fn flb_calloc(n: u64, size: u64) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn flb_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The errno-recording expansion: no argument, no custody. `flb_error` and
+// `flb_trace` are deliberately left UNcontracted, so the arms that log stay
+// Unknown; their actuals are chained pointer-field reads this card refuses.
+extern fn flb_errno() -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// --- the constructor body's own callees ------------------------------------
+extern fn malloc(size: u64) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn strdup(s: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn strlen(s: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_log_error(ctx: ptr<mut, u8>, message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_errno() -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn cio_error_reset(ch: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_chunk_counter_total_add(ctx: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
