@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "source_set": "libevent-core",
+  "pins": {
+    "libevent": {
+      "git_commit": "d82464a277d0f42703702c4dfd9af6af38595a83",
+      "clean_paths": [],
+      "description": "libevent release-2.2.2-alpha-11-gd82464a2 (third_party/libevent submodule)"
+    }
+  },
+  "libraries": {
+    "libevent-core": {
+      "pin": "libevent",
+      "source_roots": [
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "evthread_pthread.c"
+            }
+          }
+        },
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "evutil_rand.c"
+            }
+          }
+        },
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "log.c"
+            }
+          }
+        },
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "select.c"
+            }
+          }
+        },
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "strlcpy.c"
+            }
+          }
+        },
+        {
+          "root": ".",
+          "selection": {
+            "exact": {
+              "file": "watch.c"
+            }
+          }
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "evthread_pthread.c",
+          "sha256": "9bd9cf0fc3165c2f8aedee893d16ef260cafbf170cb7364d4eff7ebb25f75171"
+        },
+        {
+          "path": "evutil_rand.c",
+          "sha256": "fb79af93eae3429f550a1d337c7a1ec3cfd4fb9895e5ecaad09081fecff9e7fd"
+        },
+        {
+          "path": "log.c",
+          "sha256": "ac290c8640fa1f8bb75380a5cb721b403bba600a91756de4e5e0b60f326374e7"
+        },
+        {
+          "path": "select.c",
+          "sha256": "77d60f7be70e64dbeb2f6da39367f319782a1c7a4b5dc86a27bb128a5c1884fb"
+        },
+        {
+          "path": "strlcpy.c",
+          "sha256": "930f9cba89eeec89593875cec9d8c959474feef2a5b5d204a3e49dc7e191484d"
+        },
+        {
+          "path": "watch.c",
+          "sha256": "efdf88f5b5eaab14db8e97c3dfef60d2c890a3e66b28d535f0c83aacb3614b50"
+        }
+      ],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "contracts.json",
+  "provider_manifests": []
+}

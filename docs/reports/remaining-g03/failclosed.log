@@ -1,0 +1,10 @@
+control_unmutated: ACCEPTED
+  13 units: 0 Safe / 2 provisional Unsafe / 11 Unknown / 0 data-only / 0 gateway failures
+changed_source_pin: REJECTED
+  audit rejected: pin `fluent-bit`: expected 0000000000000000000000000000000000000001, found 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+changed_audited_bytes: REJECTED
+  audit rejected: [DigestMismatch { path: "lib/chunkio/src/chunkio.c", expected: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", actual: "70e82e18a3b9f42eb01e5cdd2a2530229fd6ebfa76519d15e15d864577ff89bd" }]
+unsupported_compiler_flag: REJECTED
+  audit rejected: compiler option `-Wextra` cannot be preserved by the bounded gateway
+absent_provider_package: REJECTED
+  audit rejected: source-contract package: No such file or directory (os error 2)

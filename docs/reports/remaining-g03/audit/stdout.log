@@ -1,0 +1,79 @@
+  chunkio/lib/chunkio/src/chunkio.c: Unsafe (13/13)
+    resource diagnostics: leak=3, unknown_alias=4, unsupported=96
+    check_root_path: preprocessed line 2243: unsupported: call to uncontracted function `strlen`
+    check_root_path: preprocessed line 2247: unsupported: call to uncontracted function `cio_os_isdir`
+    check_root_path: preprocessed line 2249: unsupported: call to uncontracted function `cio_os_mkpath`
+    100 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_chunk.c: Unknown (30/30): resource projection unresolved: 159 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=159
+    chunk_state_sync: preprocessed line 2382: unsupported: indirect memory access is outside the resource projection
+    chunk_state_sync: preprocessed line 2383: unsupported: indirect memory access is outside the resource projection
+    chunk_state_sync: preprocessed line 2384: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    168 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_error.c: Unknown (4/4): resource projection unresolved: 6 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=6
+    cio_error_get: preprocessed line 1735: unsupported: unmodeled call, aggregate or indirect access in return expression
+    cio_error_get_str: preprocessed line 1721: unsupported: call to uncontracted function `cio_error_get`
+    cio_error_reset: preprocessed line 1746: unsupported: indirect memory access is outside the resource projection
+    3 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_file.c: Unsafe (32/32)
+    resource diagnostics: leak=1, unknown_alias=22, unsupported=306
+    _cio_file_up: preprocessed line 3354: unsupported: indirect memory access is outside the resource projection
+    _cio_file_up: preprocessed line 3355: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    _cio_file_up: preprocessed line 3356: unsupported: indirect memory access is outside the resource projection
+    326 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_file_unix.c: Unknown (15/15): resource projection unresolved: 103 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=8, unsupported=103
+    cio_file_native_apply_acl_and_settings: preprocessed line 3139: unsupported: unsupported assignment expression
+    cio_file_native_apply_acl_and_settings: preprocessed line 3140: unsupported: unsupported assignment expression
+    cio_file_native_apply_acl_and_settings: preprocessed line 3141: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    108 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_log.c: Unknown (2/3): resource projection unresolved: 11 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=11
+    cio_errno_print: preprocessed line 2125: unsupported: indirect memory access is outside the resource projection
+    cio_errno_print: preprocessed line 2126: unsupported: call to uncontracted function `strerror_r`
+    cio_errno_print: preprocessed line 2127: unsupported: call to uncontracted function `fprintf`
+    9 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_memfs.c: Unknown (5/5): resource projection unresolved: 42 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=42
+    cio_memfs_close: preprocessed line 2168: unsupported: indirect memory access is outside the resource projection
+    cio_memfs_close: preprocessed line 2172: unsupported: indirect memory access is outside the resource projection
+    cio_memfs_close: preprocessed line 2173: unsupported: indirect memory access is outside the resource projection
+    42 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_meta.c: Unknown (4/4): resource projection unresolved: 40 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=40
+    cio_meta_cmp: preprocessed line 2445: unsupported: indirect memory access is outside the resource projection
+    cio_meta_cmp: preprocessed line 2447: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cio_meta_cmp: preprocessed line 2448: unsupported: indirect memory access is outside the resource projection
+    37 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_os.c: Unknown (2/3): resource projection unresolved: 9 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=1, unsupported=9
+    cio_os_isdir: preprocessed line 2076: unsupported: call to uncontracted function `stat`
+    cio_os_isdir: preprocessed line 2080: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    cio_os_mkpath: preprocessed line 2090: unsupported: call to uncontracted function `__errno_location`
+    7 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_scan.c: Unknown (3/3): resource projection unresolved: 39 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=39
+    cio_scan_dump: preprocessed line 2347: unsupported: indirect memory access is outside the resource projection
+    cio_scan_dump: preprocessed line 2348: unsupported: indirect memory access is outside the resource projection
+    cio_scan_dump: preprocessed line 2348: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    39 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_stats.c: Unknown (2/2): resource projection unresolved: 23 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=23
+    cio_stats_get: preprocessed line 2114: unsupported: call to uncontracted function `memset`
+    cio_stats_get: preprocessed line 2115: unsupported: indirect memory access is outside the resource projection
+    cio_stats_get: preprocessed line 2115: unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    20 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_stream.c: Unknown (8/8): resource projection unresolved: 58 unsupported operation(s), 13 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=13, unsupported=58
+    check_stream_path: preprocessed line 2128: unsupported: indirect memory access is outside the resource projection
+    check_stream_path: preprocessed line 2131: unsupported: indirect memory access is outside the resource projection
+    check_stream_path: preprocessed line 2134: unsupported: indirect memory access is outside the resource projection
+    68 more diagnostic(s); full inventory in optional resource report
+  chunkio/lib/chunkio/src/cio_utils.c: Unknown (3/4): resource projection unresolved: 28 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=28
+    cio_getpagesize: preprocessed line 2298: unsupported: unmodeled call, aggregate or indirect access in return expression
+    cio_utils_read_file: preprocessed line 2264: unsupported: call to uncontracted function `fopen`
+    cio_utils_read_file: preprocessed line 2266: unsupported: call to uncontracted function `perror`
+    29 more diagnostic(s); full inventory in optional resource report
+13 units: 0 Safe / 2 provisional Unsafe / 11 Unknown / 0 data-only / 0 gateway failures

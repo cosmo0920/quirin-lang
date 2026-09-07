@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "profile_directory": ".",
+  "checkout": "../../../build/cycle19/fluent-bit-clang-source",
+  "compile_database": "../../../build/cycle19/fluent-bit-clang-production/compile_commands.json",
+  "libraries": [
+    "chunkio"
+  ],
+  "report": "../../../build/cycle19/fluent-bit-clang-production/chunkio-core-audit.json"
+}

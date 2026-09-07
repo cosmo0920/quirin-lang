@@ -77,3 +77,20 @@ not overwritten. Custom `--clang` must match `QCORE_CLANG` during auditing.
 The original GCC build is not treated as equivalent. Exact commands, two native
 builds and their one include-path difference are recorded in the
 [build report](reports/w2-clang-cmake-build/README.md).
+
+## Second configured source set (ChunkIO)
+
+The `chunkio-core` source set reuses the same persistent Clang CMake build. No
+extra preparation is needed once the CMetrics setup above has run:
+
+```sh
+cargo run --quiet -p qcore-audit -- contract/profiles/chunkio-core/audit.json
+```
+
+It selects `lib/chunkio/src` out of CMake's unmodified compile database under
+the same Fluent Bit pin and reports 13 units: 0 Safe / 2 provisional Unsafe /
+11 Unknown. No provider is bound, so no source-contract evidence is produced
+and no raw unit is promoted. Fail-closed mutations of this configuration are
+executed by `docs/reports/remaining-g03/failclosed.py`; the recorded run and
+its two generalization findings are in
+[the G03 report](reports/remaining-g03/README.md).

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "source_set": "chunkio-core",
+  "pins": {
+    "fluent-bit": {
+      "git_commit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "clean_paths": [
+        "lib/chunkio"
+      ],
+      "description": "fluent-bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    }
+  },
+  "libraries": {
+    "chunkio": {
+      "pin": "fluent-bit",
+      "source_roots": [
+        {
+          "root": "lib/chunkio/src",
+          "selection": "top_level"
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "lib/chunkio/src/chunkio.c",
+          "sha256": "70e82e18a3b9f42eb01e5cdd2a2530229fd6ebfa76519d15e15d864577ff89bd"
+        },
+        {
+          "path": "lib/chunkio/src/cio_chunk.c",
+          "sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+        },
+        {
+          "path": "lib/chunkio/src/cio_error.c",
+          "sha256": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914"
+        },
+        {
+          "path": "lib/chunkio/src/cio_file.c",
+          "sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257"
+        },
+        {
+          "path": "lib/chunkio/src/cio_file_unix.c",
+          "sha256": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0"
+        },
+        {
+          "path": "lib/chunkio/src/cio_log.c",
+          "sha256": "bb1cbeb73eb8869414aaa46461c3fb7307c3f7a2f32242532819d32dcc5dadb4"
+        },
+        {
+          "path": "lib/chunkio/src/cio_memfs.c",
+          "sha256": "de82d7d9d78d310d40864c2b1d45e09d257f955404a9e7c1f5cf60b3863ac9b9"
+        },
+        {
+          "path": "lib/chunkio/src/cio_meta.c",
+          "sha256": "06285ce862f0db161777e5078d0bcbcf68f7219e35dac94839a47e9670eedbdd"
+        },
+        {
+          "path": "lib/chunkio/src/cio_os.c",
+          "sha256": "e1f59195148d4b2b23114917b0d446b9f50edf53ce5b769ee9753b522f75e21f"
+        },
+        {
+          "path": "lib/chunkio/src/cio_scan.c",
+          "sha256": "2040b4d764d3233a8b88bae99959470d0b085376911cb37f7d26aa8971f3955e"
+        },
+        {
+          "path": "lib/chunkio/src/cio_stats.c",
+          "sha256": "275f0ab1156bef06ea43db7742beda5bc1eb9491777f66a5556f13e368c653ef"
+        },
+        {
+          "path": "lib/chunkio/src/cio_stream.c",
+          "sha256": "5226efb40578e3fc78de3c57cdb9e9e6adfa17b5d3aa2252c9545a7b777a2634"
+        },
+        {
+          "path": "lib/chunkio/src/cio_utils.c",
+          "sha256": "2da002df9b57e1e6a976451a859ca801cef678c88c16d7226d199f4fee2261f6"
+        }
+      ],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "../../cycle19-resource-contracts.json",
+  "provider_manifests": []
+}

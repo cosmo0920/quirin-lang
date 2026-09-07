@@ -951,3 +951,24 @@ digest, and carrying it on audit-report units would change all four pinned
 20 Lean audits pass. The 185-unit audit was not re-run — no prepared Clang build
 tree here — and parity is argued by verified disjointness from the C gateway.
 Evidence: `docs/reports/remaining-d01/README.md`.
+
+Configured second source set (2026-09-07): the new `chunkio-core` profile
+audits 13 pinned ChunkIO translation units through the existing `qcore-audit`
+route from `profile.json` and `audit.json` alone, over CMake's unmodified
+Clang compile database and the existing resource-contract manifest. No
+production Rust changed: the whole `crates/` diff is one new test and one new
+test fixture, and `compiler/` is untouched. The run reports 0 Safe /
+2 provisional Unsafe / 11 Unknown across 13 units (1 Safe / 2 Unsafe /
+120 Unknown functions, 3 unprojected); no raw unit is promoted. Changed pins,
+changed audited digests, unsupported compiler flags and absent provider
+packages each reject with no report, against both the real inputs and hermetic
+fixtures, while unmodeled source forms stay Unknown with keyed diagnostics.
+Report and assumption keys match the CMetrics and synthetic-demo routes
+exactly, except the `source_contracts` block only a configured provider route
+emits; both canonical CMetrics artifacts are byte-identical. Two generalization
+gaps are recorded and deliberately not repaired: a source set whose C sources
+sit at the checkout root cannot be expressed (`source_roots[].root` rejects
+`.`), and a second real CMake project's unmodified database rejects because
+only four frontend flags are transported. All 824 workspace tests, 45 provider
+tests, 43 Python tests, 20 Lean audits and the standing gates pass. Evidence:
+`docs/reports/remaining-g03/README.md`.
