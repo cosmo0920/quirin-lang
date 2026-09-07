@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "scope": "librdkafka adapter imported-operation inventory and a necessary-condition admission census. Measurement only: no verdict, no certificate, no promotion.",
+  "library": "librdkafka",
+  "profile_import_surface": {
+    "source_roots": [
+      "lib/librdkafka-2.15.0/src"
+    ],
+    "audited_files": [
+      "lib/librdkafka-2.15.0/src/rd.h",
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.c"
+    ],
+    "source_witnesses": [
+      "librdkafka-refcount",
+      "librdkafka-typed-queue",
+      "librdkafka-queue-destructor"
+    ],
+    "permitted_mechanisms": [
+      "reference_count",
+      "intrusive_list",
+      "typed_queue",
+      "cascading_destructor",
+      "atomic_publication",
+      "thread_handoff",
+      "reclamation"
+    ],
+    "operation_summaries": 0,
+    "api_dispositions": 0,
+    "accepted_builds": 0,
+    "required_evidence": 0,
+    "callback_summaries": 0,
+    "boolean_field_models": 0,
+    "typed_import": null,
+    "provider": {
+      "plugin_id": "qcore.librdkafka",
+      "diagnostic_namespace": "QP",
+      "lean_theorem_family": "QCore.Concurrency"
+    }
+  },
+  "resource_contract_manifest": {
+    "selected_librdkafka_modules": [
+      "memory.qcore"
+    ],
+    "declared_librdkafka_modules": [
+      "memory.qcore",
+      "queue_destructor.qcore",
+      "refcount.qcore",
+      "typed_queue.qcore"
+    ],
+    "declared_but_unselected": [
+      "queue_destructor.qcore",
+      "refcount.qcore",
+      "typed_queue.qcore"
+    ]
+  },
+  "clang": {
+    "available": true,
+    "checkout_commit": "90a010910e5b3328f496cc20fadc937547133439",
+    "translation_unit": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+    "note": "Census only. Clang is run over the recorded include and macro options of the real build entry, whose own driver is cc. This is not a qcore-audit run and substitutes no compiler for verification purposes.",
+    "config_atomics": [
+      "#define ENABLE_REFCNT_DEBUG 0",
+      "#define HAVE_ATOMICS_32 1",
+      "#define HAVE_ATOMICS_32_ATOMIC 1",
+      "#define HAVE_ATOMICS_32_SYNC 0",
+      "#if (HAVE_ATOMICS_32)",
+      "# if (HAVE_ATOMICS_32_SYNC)"
+    ]
+  },
+  "declared_operations": [
+    {
+      "name": "rd_malloc",
+      "definition_form": "static_inline_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "size_t"
+      ],
+      "actual_result": "void *",
+      "declared_at_line": 145,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 1,
+      "declared_result": "ptr<mut, u8>",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_calloc",
+      "definition_form": "static_inline_function",
+      "actual_arity": 2,
+      "actual_parameters": [
+        "size_t",
+        "size_t"
+      ],
+      "actual_result": "void *",
+      "declared_at_line": 139,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 2,
+      "declared_result": "ptr<mut, u8>",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_strdup",
+      "definition_form": "static_inline_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "const char *"
+      ],
+      "actual_result": "char *",
+      "declared_at_line": 161,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 1,
+      "declared_result": "ptr<mut, u8>",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_strndup",
+      "definition_form": "static_inline_function",
+      "actual_arity": 2,
+      "actual_parameters": [
+        "const char *",
+        "size_t"
+      ],
+      "actual_result": "char *",
+      "declared_at_line": 171,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 2,
+      "declared_result": "ptr<mut, u8>",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_free",
+      "definition_form": "static_inline_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "void *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 157,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 1,
+      "declared_result": "unit",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_realloc",
+      "definition_form": "static_inline_function",
+      "actual_arity": 2,
+      "actual_parameters": [
+        "void *",
+        "size_t"
+      ],
+      "actual_result": "void *",
+      "declared_at_line": 151,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "memory.qcore",
+      "reaches_resource_analyzer": true,
+      "declared_arity": 2,
+      "declared_result": "ptr<mut, u8>",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_kafka_q_destroy_final",
+      "definition_form": "external_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "rd_kafka_q_t *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 57,
+      "audited_file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+      "module": "queue_destructor.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 1,
+      "declared_result": "unit",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_refcnt_add0",
+      "definition_form": "function_like_macro",
+      "macro_expansion": "(R) rd_atomic32_add(R, 1)",
+      "actual_arity": null,
+      "actual_result": null,
+      "module": "refcount.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 1,
+      "declared_result": "i32"
+    },
+    {
+      "name": "rd_refcnt_sub0",
+      "definition_form": "static_inline_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "rd_refcnt_t *"
+      ],
+      "actual_result": "int",
+      "declared_at_line": 354,
+      "audited_file": "lib/librdkafka-2.15.0/src/rd.h",
+      "module": "refcount.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 1,
+      "declared_result": "i32",
+      "arity_matches": true
+    },
+    {
+      "name": "rd_refcnt_destroy_final",
+      "definition_form": "absent",
+      "module": "refcount.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 1,
+      "declared_result": "unit"
+    },
+    {
+      "name": "rd_kafka_q_enq0",
+      "definition_form": "static_inline_function",
+      "actual_arity": 3,
+      "actual_parameters": [
+        "rd_kafka_q_t *",
+        "rd_kafka_op_t *",
+        "int"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 399,
+      "audited_file": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      "module": "typed_queue.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 2,
+      "declared_result": "unit",
+      "arity_matches": false
+    },
+    {
+      "name": "rd_kafka_q_deq0",
+      "definition_form": "static_inline_function",
+      "actual_arity": 2,
+      "actual_parameters": [
+        "rd_kafka_q_t *",
+        "rd_kafka_op_t *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 513,
+      "audited_file": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      "module": "typed_queue.qcore",
+      "reaches_resource_analyzer": false,
+      "declared_arity": 1,
+      "declared_result": "result<own<KafkaQueueEntry>, QueueEmpty>",
+      "arity_matches": false
+    }
+  ],
+  "declared_destructors": [
+    {
+      "name": "rd_kafka_q_destroy_final",
+      "definition_form": "external_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "rd_kafka_q_t *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 57,
+      "audited_file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+      "declared_on_resource_type": "KafkaQueue"
+    },
+    {
+      "name": "rd_kafka_op_destroy",
+      "definition_form": "declared_prototype_only",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "rd_kafka_op_t *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 924,
+      "audited_file": null,
+      "declared_on_resource_type": "KafkaQueueEntry"
+    },
+    {
+      "name": "rd_kafka_q_destroy_final",
+      "definition_form": "external_function",
+      "actual_arity": 1,
+      "actual_parameters": [
+        "rd_kafka_q_t *"
+      ],
+      "actual_result": "void",
+      "declared_at_line": 57,
+      "audited_file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+      "declared_on_resource_type": "KafkaQueueOwner"
+    },
+    {
+      "name": "rd_refcnt_destroy_final",
+      "definition_form": "absent",
+      "declared_on_resource_type": "KafkaReference"
+    }
+  ],
+  "boolean_field_census": {
+    "refusal_histogram": {
+      "calls that are not a `void (struct R *)` frame helper": 86,
+      "unmodelled node kinds": 73,
+      "member accesses outside the int-field model": 72,
+      "unmodelled operators": 63,
+      "body never accesses an int record field, so no field is modelled": 60,
+      "assignments to places other than the modelled record field": 58,
+      "arity 2 is not 1": 25,
+      "arity 3 is not 1": 20,
+      "result type 'rd_kafka_op_t *' is neither int nor void": 8,
+      "arity 4 is not 1": 7,
+      "result type 'rd_kafka_queue_t *' is neither int nor void": 6,
+      "result type 'void *' is neither int nor void": 4,
+      "result type 'rd_bool_t' is neither int nor void": 4,
+      "result type 'rd_kafka_q_t *' is neither int nor void": 4,
+      "arity 6 is not 1": 4,
+      "result type 'char *' is neither int nor void": 3,
+      "arity 5 is not 1": 3,
+      "result type 'size_t' is neither int nor void": 2,
+      "result type 'const char *' is neither int nor void": 2,
+      "arity 7 is not 1": 2,
+      "result type 'rd_kafka_error_t *' is neither int nor void": 2,
+      "result type 'rd_kafka_resp_err_t' is neither int nor void": 2,
+      "result type 'FILE *' is neither int nor void": 1,
+      "result type 'rd_kafka_enq_once_t *' is neither int nor void": 1,
+      "result type 'uint64_t' is neither int nor void": 1,
+      "result type 'rd_kafka_replyq_t' is neither int nor void": 1,
+      "single parameter is not a pointer to a record": 1
+    },
+    "single_reason_near_misses": {
+      "rd_kafka_q_ready": "unmodelled operators: &"
+    },
+    "semantic_profiles": [
+      "qcore.c_boolean_field_contract.v2",
+      "qcore.c_boolean_field_contract.v3"
+    ],
+    "conditions": "necessary structural conditions only: one record-pointer parameter, int or void result, and a body whose statements, operators and member accesses stay inside the importer's grammar with every accessed field declared int",
+    "audited_files": [
+      "lib/librdkafka-2.15.0/src/rd.h",
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h"
+    ],
+    "functions_with_bodies_examined": 96,
+    "functions_with_bodies_per_file": {
+      "lib/librdkafka-2.15.0/src/rd.h": 11,
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.c": 42,
+      "lib/librdkafka-2.15.0/src/rdkafka_queue.h": 43
+    },
+    "structurally_admissible": []
+  }
+}
