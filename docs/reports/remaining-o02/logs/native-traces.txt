@@ -1,0 +1,74 @@
+--- scenario 0
+QCORE_CAP FIXTURE scenario=0
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087071 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x74c0972b4000 len=4096 file_len=4096
+QCORE_CAP GROW call=ftruncate request=8192 ret=0 error=none errno_read=0 len_before=4096 len_after=8192 blocks_before=8 blocks_after=8 transferred=0
+QCORE_CAP REMAP from=1 to=2 addr=0x74c097108000 len=8192 file_len=8192
+QCORE_CAP LOGICAL len=4096
+QCORE_CAP UNMAP gen=2 len=8192 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=0 live_maps=0 live_fds=0
+--- scenario 1
+QCORE_CAP FIXTURE scenario=1
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087073 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x7f21423ef000 len=4096 file_len=4096
+QCORE_CAP GROW call=posix_fallocate request=8192 ret=0 error=none errno_read=0 len_before=4096 len_after=8192 blocks_before=8 blocks_after=16 transferred=0
+QCORE_CAP REMAP from=1 to=2 addr=0x7f2142243000 len=8192 file_len=8192
+QCORE_CAP LOGICAL len=8192
+QCORE_CAP UNMAP gen=2 len=8192 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=1 live_maps=0 live_fds=0
+--- scenario 2
+QCORE_CAP FIXTURE scenario=2
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087075 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x7f4b08a3c000 len=4096 file_len=4096
+QCORE_CAP LIMIT soft_before=inf soft_after=4096
+QCORE_CAP GROW call=ftruncate request=8192 ret=-1 error=27 errno_read=1 len_before=4096 len_after=4096 blocks_before=8 blocks_after=8 transferred=0
+QCORE_CAP GROW call=ftruncate request=8192 ret=-1 error=27 errno_read=1 len_before=4096 len_after=4096 blocks_before=8 blocks_after=8 transferred=0
+QCORE_CAP LIMIT soft_before=4096 soft_after=32768
+QCORE_CAP GROW call=ftruncate request=8192 ret=0 error=none errno_read=1 len_before=4096 len_after=8192 blocks_before=8 blocks_after=8 transferred=0
+QCORE_CAP REMAP from=1 to=2 addr=0x7f4b08890000 len=8192 file_len=8192
+QCORE_CAP LOGICAL len=4096
+QCORE_CAP UNMAP gen=2 len=8192 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=2 live_maps=0 live_fds=0
+--- scenario 3
+QCORE_CAP FIXTURE scenario=3
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087077 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x75188397c000 len=4096 file_len=4096
+QCORE_CAP LIMIT soft_before=inf soft_after=4096
+QCORE_CAP GROW call=posix_fallocate request=8192 ret=27 error=27 errno_read=0 len_before=4096 len_after=4096 blocks_before=8 blocks_after=8 transferred=0
+QCORE_CAP LIMIT soft_before=4096 soft_after=32768
+QCORE_CAP LOGICAL len=4096
+QCORE_CAP UNMAP gen=1 len=4096 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=3 live_maps=0 live_fds=0
+--- scenario 4
+QCORE_CAP FIXTURE scenario=4
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087079 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x7d6508ca7000 len=4096 file_len=4096
+QCORE_CAP LOGICAL len=4096
+QCORE_CAP LIMIT soft_before=inf soft_after=4100
+QCORE_CAP GROW call=write request=4104 ret=4 error=none errno_read=1 len_before=4096 len_after=4100 blocks_before=8 blocks_after=16 transferred=4
+QCORE_CAP LOGICAL len=4100
+QCORE_CAP GROW call=write request=4101 ret=-1 error=27 errno_read=1 len_before=4100 len_after=4100 blocks_before=16 blocks_after=16 transferred=0
+QCORE_CAP LIMIT soft_before=4100 soft_after=32768
+QCORE_CAP UNMAP gen=1 len=4096 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=4 live_maps=0 live_fds=0
+--- scenario 5
+QCORE_CAP FIXTURE scenario=5
+QCORE_CAP SIGNAL handled=1
+QCORE_CAP OPEN gen=1 inode=2087081 file_len=4096 blocks=8
+QCORE_CAP MAP gen=1 addr=0x79670d710000 len=4096 file_len=4096
+QCORE_CAP UNMAP gen=1 len=4096 ret=0
+QCORE_CAP MAP gen=2 addr=0x79670d464000 len=8192 file_len=4096
+QCORE_CAP LOGICAL len=4096
+QCORE_CAP UNMAP gen=2 len=8192 ret=0
+QCORE_CAP CLOSE gen=1 ret=0
+QCORE_CAP END scenario=5 live_maps=0 live_fds=0
