@@ -69,6 +69,7 @@ import QCore.DescriptorObservation
 import QCore.NullableRemoval
 import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
+import QCore.ChunkIntegrityObservation
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 
