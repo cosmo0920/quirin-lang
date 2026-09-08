@@ -3,6 +3,7 @@ import QCore.ContextualCustody
 import QCore.CustodySummary
 import QCore.TypedFieldAccess
 import QCore.ExitResiduals
+import QCore.BorrowedActual
 
 #print axioms QCore.CustodySummary.unvalidated_analysis_never_validates
 #print axioms QCore.CustodySummary.no_reachable_exit_never_validates
@@ -198,3 +199,31 @@ import QCore.ExitResiduals
 #print axioms QCore.ExitResiduals.close_preserves_precision
 #print axioms QCore.ExitResiduals.a_discharged_exit_does_not_promote_an_imprecise_program
 #print axioms QCore.ExitResiduals.every_exit_answer_is_reachable
+
+-- C02-P: the untracked-base closure that produces the admission's `baseBound`
+-- premise (`crates/qcore-c-gateway/src/borrowed_actual.rs::untracked_bases`).
+#print axioms QCore.BorrowedActual.a_protected_formal_is_refused
+#print axioms QCore.BorrowedActual.an_address_taken_name_is_refused
+#print axioms QCore.BorrowedActual.a_mutated_name_is_refused
+#print axioms QCore.BorrowedActual.an_owned_argument_is_refused
+#print axioms QCore.BorrowedActual.a_consumed_argument_is_refused
+#print axioms QCore.BorrowedActual.a_released_argument_is_refused
+#print axioms QCore.BorrowedActual.an_out_argument_is_refused
+#print axioms QCore.BorrowedActual.a_stored_argument_is_refused
+#print axioms QCore.BorrowedActual.an_opaque_assignment_refuses_its_destination
+#print axioms QCore.BorrowedActual.the_refusal_closes_over_assignments
+#print axioms QCore.BorrowedActual.the_refusal_closes_transitively
+#print axioms QCore.BorrowedActual.refusal_depends_only_on_membership
+#print axioms QCore.BorrowedActual.the_refusal_ignores_statement_order
+#print axioms QCore.BorrowedActual.adding_a_fact_only_refuses_more
+#print axioms QCore.BorrowedActual.protecting_more_formals_only_refuses_more
+#print axioms QCore.BorrowedActual.seeded_is_mentioned
+#print axioms QCore.BorrowedActual.an_unmentioned_name_is_not_refused
+#print axioms QCore.BorrowedActual.an_empty_body_refuses_nothing
+#print axioms QCore.BorrowedActual.a_borrowed_argument_alone_does_not_refuse_its_name
+#print axioms QCore.BorrowedActual.an_admitted_read_alone_does_not_refuse_its_destination
+#print axioms QCore.BorrowedActual.a_refused_base_is_never_admitted
+#print axioms QCore.BorrowedActual.an_admitted_actual_has_an_unrefused_base
+#print axioms QCore.BorrowedActual.an_actual_through_a_released_base_stays_indeterminate
+#print axioms QCore.BorrowedActual.a_statement_with_a_refused_base_is_refused
+#print axioms QCore.BorrowedActual.the_admission_survives_the_closure

@@ -1,0 +1,68 @@
+module contract;
+
+// C02-P — held-out generic API for borrowed pointer-field actuals.
+//
+// Deliberately unrelated to ChunkIO, Fluent Bit and to O04's `g_*` family:
+// every rule under test is stated over declared C types and contract modes, so
+// no name here can matter. These are synthetic trusted test assumptions, not
+// facts about any library.
+
+// The constructor. Both pointer parameters are borrowed, so a direct
+// pointer-field read may occupy either position.
+extern fn b_open(cio: ptr<mut, u8>, stream: ptr<mut, u8>, flags: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cio);
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn b_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn b_probe(h: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+extern fn b_write(h: ptr<mut, u8>, n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+// A sink that CONSUMES its argument: a pointer-field actual is admitted only
+// at a declared borrowed position.
+extern fn b_adopt(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A sink that RELEASES its argument. A base this callee released must never be
+// the base of an admitted read afterwards.
+extern fn b_release(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A variadic sink whose contract declares only its first parameter: every
+// further actual is beyond the declared vector and none of them is admitted.
+extern fn b_note(first: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(first);
+    ensures normal resource_return_none();
+};
