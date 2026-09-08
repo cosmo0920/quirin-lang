@@ -275,13 +275,30 @@ fn an_observed_parameter_is_owned_not_borrowed() {
 
 #[test]
 fn direct_recursion_stays_unknown() {
-    let summary = base("void subject(void) { subject(); return; }");
+    // Pin deliberately narrowed by card C03-NFR. Direct recursion by itself no
+    // longer defeats inference: an *effect-free* recursive component now
+    // publishes the neutral contract through the neutral-frame route, which is
+    // pinned in `crates/qcore-c-gateway/tests/neutral_frame_recursion.rs`
+    // together with the reason that start is admissible only at the neutral
+    // element. What still stays `Unknown` — and is the load-bearing half of the
+    // original expectation — is a recursive body that carries a custody effect:
+    // the neutral candidate is refused, and no candidate above it is ever
+    // seeded for a member of its own component.
+    let summary = base(
+        "void helper(void *p) { q_free(p); helper(p); } \
+         void subject(void) { void *p = q_alloc(); helper(p); q_free(p); }",
+    );
     assert_eq!(summary.status, AnalysisStatus::Unknown);
-    assert!(has(&summary, "subject", |kind| matches!(
-        kind,
-        LegacyDiagnosticKind::Unsupported { description }
-            if description.contains("uncontracted function")
-    )));
+    for function in ["helper", "subject"] {
+        assert!(
+            has(&summary, function, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Unsupported { description }
+                    if description.contains("uncontracted function")
+            )),
+            "{function}"
+        );
+    }
 }
 
 #[test]
@@ -304,22 +321,28 @@ fn context_decreasing_allocation_wrapper_preserves_the_callers_leak() {
 #[test]
 fn a_self_consistent_recursive_summary_is_never_accepted() {
     // `bad` is consistent with "releases `p`" — but only for executions that
-    // never terminate. The ascending iteration starts from the empty summary
-    // set, `bad`'s own call is uncontracted on the first round, so nothing
-    // installs. There is no validated decreasing context edge to justify this
-    // call; an assumed release would erase an obligation without evidence.
+    // never terminate. There is no validated decreasing context edge to justify
+    // that call; an assumed release would erase an obligation without evidence,
+    // so no route may ever seed one.
+    //
+    // Pin sharpened by card C03-NFR. The neutral-frame route does publish a
+    // summary for this component now, because `bad` performs no custody event
+    // at all — but the summary it publishes is the *neutral* one, the bottom
+    // element, which asserts the absence of an effect and can never assert one.
+    // The load-bearing expectation is unchanged and now checked directly: the
+    // self-consistent `Released` reading is still never accepted, and the
+    // caller's acquisition is still an undischarged obligation.
     let source = "void bad(void *p) { bad(p); } \
                   void subject(void) { void *p = q_alloc(); bad(p); }";
     let summary = base(source);
-    assert!(no_summary(source, &[Q_BASE], "bad"));
-    assert_eq!(summary.functions["bad"].status, AnalysisStatus::Unknown);
-    assert!(has(&summary, "bad", |kind| matches!(
-        kind,
-        LegacyDiagnosticKind::Unsupported { description }
-            if description.contains("uncontracted function `bad`")
-    )));
-    // With no summary for `bad`, the caller's acquisition is an undischarged
-    // obligation rather than one a self-consistent summary explained away.
+    assert_eq!(
+        summary_in(source, &[Q_BASE], "bad"),
+        ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None)
+    );
+    assert_eq!(summary.functions["bad"].status, AnalysisStatus::Safe);
+    // With only a neutral summary for `bad`, the caller's acquisition is an
+    // undischarged obligation rather than one a self-consistent summary
+    // explained away.
     assert_eq!(summary.status, AnalysisStatus::Unsafe);
     assert!(has(&summary, "subject", |kind| matches!(
         kind,
@@ -978,7 +1001,6 @@ fn general_alias_removal_discovery_remains_unsupported() {
         "void *alias = item; q_remove(owner, alias);",
         "void *alias = owner; q_remove(alias, item);",
         "q_remove(owner, item->child);",
-        "take(owner, item);",
     ] {
         let source = format!("void take(void *owner, void *item) {{ {body} }}");
         assert!(
@@ -986,6 +1008,21 @@ fn general_alias_removal_discovery_remains_unsupported() {
             "accepted {body}"
         );
     }
+    // Pin sharpened by card C03-NFR. A self-recursive body that removes nothing
+    // is now published by the neutral-frame route — but only as the neutral
+    // contract. No removal is discovered from the recursion, which is what this
+    // case exists to refuse.
+    let recursive = "void take(void *owner, void *item) { take(owner, item); }";
+    assert_eq!(
+        summary_in(recursive, &[Q_BASE, Q_CONTAINER_REMOVE], "take"),
+        ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Borrowed,
+                ResourceParameterMode::Borrowed
+            ],
+            ResourceReturnMode::None
+        )
+    );
 }
 
 #[test]
