@@ -3,10 +3,6 @@
 //!
 //! Every contract fixture here lives under `tests/fixtures/`, never under
 //! `contract/qcore/`, so the pinned corpus counts are untouched by this card.
-#[cfg(target_os = "windows")]
-#[path = "../../tests/support/windows_c.rs"]
-mod windows_c;
-
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
@@ -15,6 +11,13 @@ use qcore_compiler::{
 
 const CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+
+// Exercise both checkout styles regardless of the host's Git configuration.
+fn with_line_endings(source: &str) -> [String; 2] {
+    let lf = source.replace("\r\n", "\n");
+    let crlf = lf.replace('\n', "\r\n");
+    [lf, crlf]
+}
 
 fn selection() -> Option<BTreeMap<String, String>> {
     Some(BTreeMap::from([(
@@ -253,8 +256,11 @@ fn run_native(source: &str, label: &str) -> Vec<String> {
 
 #[test]
 fn calling_an_extern_function_without_the_import_refuses() {
-    let source = ROUND_TRIP.replace("import std.extern;\n", "");
-    assert_eq!(codes(&source, selection()), ["Q022"]);
+    for source in with_line_endings(ROUND_TRIP) {
+        let mutated = source.replace("import std.extern;", "");
+        assert_ne!(mutated, source, "the import must have been removed");
+        assert_eq!(codes(&mutated, selection()), ["Q022"]);
+    }
 }
 
 #[test]
@@ -278,20 +284,25 @@ fn declaring_an_extern_function_without_calling_it_needs_no_import() {
 
 #[test]
 fn importing_the_module_in_another_file_does_not_grant_this_one_the_call() {
-    let granted = SourceFile::new("granted.qcore", "module library;\nimport std.extern;\n");
-    let caller = SourceFile::new(
-        "caller.qcore",
-        ROUND_TRIP.replace("import std.extern;\n", ""),
-    );
-    let errors = compile_files(
-        &[granted, caller],
-        &CompileOptions {
-            entry: None,
-            extern_contracts: selection(),
-        },
-    )
-    .unwrap_err();
-    assert_eq!(errors[0].code, "Q022");
+    for source in with_line_endings(ROUND_TRIP) {
+        let granted = SourceFile::new("granted.qcore", "module library;\nimport std.extern;\n");
+        let mutated = source.replace("import std.extern;", "");
+        assert_ne!(
+            mutated, source,
+            "the caller's import must have been removed"
+        );
+        let caller = SourceFile::new("caller.qcore", mutated);
+        let errors = compile_files(
+            &[granted, caller],
+            &CompileOptions {
+                entry: None,
+                extern_contracts: selection(),
+            },
+        )
+        .unwrap_err();
+        assert_eq!(errors[0].code, "Q022");
+        assert_eq!(errors[0].location.path, "caller.qcore");
+    }
 }
 
 // --- Q023: no admitted declared contract. ---
@@ -516,20 +527,25 @@ fn an_inline_contract_on_a_called_extern_declaration_refuses() {
 fn a_mutated_contract_file_refuses_a_previously_admitted_module() {
     // The same source, the same callee names, a silently widened contract: the
     // module that checked before must not check now.
-    let mutated = CONTRACTS.replace(
+    // Normalize only the mutation baseline so this multiline match also works
+    // when Git checked out the contract with CRLF line endings.
+    let contracts = CONTRACTS.replace("\r\n", "\n");
+    let mutated = contracts.replace(
         "ensures normal resource_borrowed(buffer);\n    ensures normal resource_borrowed(value);",
         "ensures normal resource_consumed(buffer, nonnull);\n    ensures normal resource_borrowed(value);",
     );
-    assert!(mutated != CONTRACTS, "the mutation must have applied");
-    let errors = codes(
-        ROUND_TRIP,
-        Some(BTreeMap::from([("mutated.qcore".to_owned(), mutated)])),
-    );
-    // `fill` now consumes `b`, so the later loan and move cannot both stand.
-    assert!(
-        !errors.is_empty(),
-        "a widened contract must not be admitted silently"
-    );
+    assert_ne!(mutated, contracts, "the mutation must have applied");
+    for mutated in with_line_endings(&mutated) {
+        let errors = codes(
+            ROUND_TRIP,
+            Some(BTreeMap::from([("mutated.qcore".to_owned(), mutated)])),
+        );
+        // `fill` now consumes `b`, so the later loan and move cannot both stand.
+        assert!(
+            !errors.is_empty(),
+            "a widened contract must not be admitted silently"
+        );
+    }
 }
 
 // --- The effect row the caller declares must admit the derived one. ---
@@ -559,10 +575,13 @@ fn an_unmodeled_effect_name_refuses() {
 
 #[test]
 fn an_unreleased_owned_return_refuses_under_the_established_custody_pass() {
-    let source = ROUND_TRIP.replace("    qcore_extern_release(move b);\n", "");
-    let codes = codes(&source, selection());
-    assert!(
-        codes.iter().any(|code| code == "Q103" || code == "Q202"),
-        "a leak is reported by the custody/cleanup passes, not by a second extern code: {codes:?}"
-    );
+    for source in with_line_endings(ROUND_TRIP) {
+        let mutated = source.replace("qcore_extern_release(move b);", "");
+        assert_ne!(mutated, source, "the release must have been removed");
+        let codes = codes(&mutated, selection());
+        assert!(
+            codes.iter().any(|code| code == "Q103" || code == "Q202"),
+            "a leak is reported by the custody/cleanup passes, not by a second extern code: {codes:?}"
+        );
+    }
 }
