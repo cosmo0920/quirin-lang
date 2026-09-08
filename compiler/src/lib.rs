@@ -35,6 +35,8 @@ pub use qcore_core::prelude::concurrency::concurrency;
 pub mod counter_contract;
 pub mod counter_source;
 pub mod driver;
+#[path = "teardown_source_capability.rs"]
+pub mod teardown_source_capability;
 pub use qcore_core::error_region;
 pub use qcore_core::executable_model;
 pub mod external_integration;

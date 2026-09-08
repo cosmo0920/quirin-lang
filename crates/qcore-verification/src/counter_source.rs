@@ -163,6 +163,7 @@ impl CounterSourceTask {
             source_effect: None,
             counter_effect: Some(self.import.source_input()),
             reactor_program: None,
+            teardown_source: None,
         }
     }
 

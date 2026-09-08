@@ -81,6 +81,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
             source_effect: None,
             counter_effect: None,
             reactor_program: None,
+            teardown_source: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),

@@ -193,6 +193,7 @@ fn outcome(id: &str, code: &str, version: u16, verdict: ProposedVerdict) -> Veri
             source_effect: None,
             counter_effect: None,
             reactor_program: None,
+            teardown_source: None,
         },
         &task,
         None,

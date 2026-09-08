@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "family": {
+    "family": "list_unlink",
+    "entry": {
+      "function": "mk_list_del",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "void (struct mk_list *)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "prev"
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "next"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "__mk_list_del",
+              "signature": "void (struct mk_list *, struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 0
+                  }
+                },
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 1
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "prev"
+                }
+              },
+              "value": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "cast",
+                  "cast": "NullToPointer",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "NullToPointer",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "next"
+                }
+              },
+              "value": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "cast",
+                  "cast": "NullToPointer",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "NullToPointer",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "helper": {
+      "function": "__mk_list_del",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "void (struct mk_list *, struct mk_list *)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "next"
+                }
+              },
+              "value": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "parameter",
+                  "index": 1
+                }
+              }
+            },
+            {
+              "kind": "write",
+              "place": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct mk_list *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 1
+                    }
+                  },
+                  "name": "prev"
+                }
+              },
+              "value": {
+                "c_type": "struct mk_list *",
+                "expression": {
+                  "kind": "parameter",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "node_c_type": "struct mk_list *"
+  }
+}

@@ -15,6 +15,7 @@ pub mod counter_source;
 pub mod legacy_c;
 mod legacy_summary;
 pub mod source_call_use;
+pub mod teardown_source;
 pub mod typed_c_ast;
 mod typed_field_access;
 pub mod typed_source;
