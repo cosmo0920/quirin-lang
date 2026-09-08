@@ -502,7 +502,7 @@ This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUG
 
 ### L21.1 Reason categories for uncovered obligations
 
-Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is a **specification, not yet an implemented field**; the implementation constraints are recorded below.
+Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is **implemented** (2026-09-08, card REASON-CODES): the vocabulary is published as `qcore_schemas::reason`, `DerivationIncomplete` carries a required `category` field named at construction, and audit-report units and source-contract functions carry a classified `reason_code` that fails closed to `null` rather than defaulting a category. The implementation constraints recorded below remain the rules for extending either carrier; the four archived 185-unit artifacts predate the field and move only at CORPUS-REPIN.
 
 | Category | Means | Representative reasons in force |
 |---|---|---|
