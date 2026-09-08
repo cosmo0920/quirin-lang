@@ -21,6 +21,7 @@ pub mod library_custody;
 pub mod mutex_c_emit;
 pub mod mutex_invariant;
 pub mod native_concurrency;
+pub mod os_endpoint;
 pub mod ownership;
 pub mod research_closure;
 pub mod resource_flow;
@@ -56,6 +57,12 @@ pub use executable_model::{
 pub use inference::{
     InferenceCertificate, InferenceConstraint, InferenceError, PrincipalSolution, UsageInterval,
     check_inference_certificate, infer_principal,
+};
+pub use os_endpoint::{
+    DescriptionState, DescriptorState, Duty, EndpointKind, Epoch, Errno,
+    Outcome as EndpointOutcome, PostState, PostStateClaim, Premise, Premises, Recovery, Refusal,
+    RelationError, Target, WriteBackState, check_claim as check_endpoint_claim, close_poststate,
+    join as join_endpoint_poststates, poisoned_duties,
 };
 pub use ownership::{
     Footprint, OwnershipArithmeticError, OwnershipError, OwnershipOp, OwnershipState,

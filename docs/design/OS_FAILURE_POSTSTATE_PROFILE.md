@@ -1,8 +1,14 @@
 # One real OS failure post-state profile: Linux `close(2)`
 
-**Status:** design. No production code implements this profile; nothing here is
-wired into an audit route, and no verdict, contract corpus count, CT mapping or
-raw Cycle 19 unit changes on its account. Card O03; evidence record
+**Status:** specified, implemented as a model, and formalized. The relation is
+decided in [`crates/qcore-core/src/os_endpoint.rs`](../../crates/qcore-core/src/os_endpoint.rs)
+and formalized in
+[`proof/QCore/OsEndpointPostState.lean`](../../proof/QCore/OsEndpointPostState.lean).
+**Nothing is wired into a production audit route** — `qcore-core` is the
+dependency-free L1 kernel and no analyzer, driver, contract or audit path calls
+the relation; consuming it is follow-on unit U3 (§12). No verdict, contract
+corpus count, CT mapping or raw Cycle 19 unit changes on its account. Card O03;
+evidence record
 [`docs/reports/remaining-o03/README.md`](../reports/remaining-o03/README.md).
 
 This document specifies the failure post-state relation of **one** endpoint
@@ -20,10 +26,15 @@ resulting obligation, and §C04.4 records that scalar failure sentinels such as
 existing nullability-only return mode". This document is the first concrete
 discharge of that requirement for a single operation.
 
-The relation is stated once, executably, in
-[`scripts/o03_close_poststate_relation.py`](../../scripts/o03_close_poststate_relation.py),
-and its refusals are pinned in
-[`scripts/tests/test_o03_close_poststate_relation.py`](../../scripts/tests/test_o03_close_poststate_relation.py).
+The relation is **decided** by `qcore_core::os_endpoint::close_poststate`
+(39 tests) and **formalized** as `QCore.OsEndpointPostState` (27 theorems,
+audited by `proof/AuditOsEndpointPostState.lean`). A supplementary Python
+harness,
+[`scripts/o03_close_poststate_relation.py`](../../scripts/o03_close_poststate_relation.py)
+with
+[its tests](../../scripts/tests/test_o03_close_poststate_relation.py), keeps the
+one thing the other two cannot do: it executes **real, unsuppressed syscalls**
+(§9.2).
 
 ---
 
@@ -308,11 +319,27 @@ untouched.
   condition and pinned by a test — and by probe P3, which measures the kernel
   handing the same number straight back to an unrelated file.
 
-## 9. The validation harness
+## 9. Implementation and evidence
 
-`scripts/o03_close_poststate_relation.py` states the relation and runs a probe;
-`scripts/tests/test_o03_close_poststate_relation.py` holds **38 tests**. Recorded
-output: [`logs/relation_and_probe.json`](../reports/remaining-o03/logs/relation_and_probe.json).
+### 9.0 Where the relation lives
+
+| Artifact | Role |
+|---|---|
+| `crates/qcore-core/src/os_endpoint.rs` | **decides** the relation. `close_poststate`, `join`, `check_claim`, `Epoch`; domain errors are `Result`, not panics. **39 tests**, twelve of them refusals, six exhaustive over the whole `3 × 64 × 10` accepted domain. |
+| `proof/QCore/OsEndpointPostState.lean` | **formalizes** it. **27 theorems**; `mem_all*` prove the enumerations complete and `of_domainAll` lifts a decided `Bool` check to a genuine `∀ t p o`, so the no-retry, no-durability, only-a-live-epoch-may-close, last-reference and record-lock invariants hold over the entire domain. Audited by `proof/AuditOsEndpointPostState.lean`; every theorem depends only on `propext` and `Quot.sound`. |
+| `scripts/o03_close_poststate_relation.py` (+ tests) | **supplementary**: the real-syscall probe (§9.2), and a 38-test cross-check of the same matrix. |
+
+The Lean module **coexists with** `QCore.DescriptorCustody` (§13.1) rather than
+replacing it: that module's pinned theorem is untouched, the two live in
+separate namespaces over separate record types, and reconciling them is U4.
+
+The Rust and Lean developments are two statements of one relation, written to
+agree and checked separately. No extraction or mechanical correspondence ties
+them; establishing that link is the same class of work F01 did for
+`check_concurrent`.
+
+Recorded probe output:
+[`logs/relation_and_probe.json`](../reports/remaining-o03/logs/relation_and_probe.json).
 
 ### 9.1 Refusals
 
@@ -406,7 +433,7 @@ None of these is implemented here. Each is sized so it can be taken alone.
 | **U1** | **Schema record.** An `EndpointOperationContract` in `qcore-schemas`: endpoint kind, target triple, success test, an outcome→disposition table per identity, the premise vector, and the permitted-recovery set. Per this card's instructions it is **specified, not added**. It would be a source-incompatible addition, so `qcore-schemas` would move to **6.0.0** under the documented policy. |
 | **U2** | **Loader vocabulary.** `requires os_endpoint_contract_v1`, total-or-reject, beside `resource_contract_v1` and never silently reinterpreting it. A declaration missing a target, a success test or any outcome row rejects whole. |
 | **U3** | **Gateway transfer function.** The blocking dependency is **relational branch analysis**: the relation is result-dependent, and both C02 §7 and O04 §7 record branch conditions as out of scope. Until an arm can be selected from `ret == 0` and an `errno` comparison, every real call site joins to **`Attempted`**. That is still sound, still fail-closed, and still strictly stronger than a v1 `resource_released` declaration, which would claim an unconditional discharge. |
-| **U4** | **`proof/QCore/DescriptorCustody.lean`.** `Close.Valid` hard-codes `succeeded = false → liveAfter = true` (theorem `accepted_failed_close_retains_custody`). See §13. |
+| **U4** | **`proof/QCore/DescriptorCustody.lean`.** `Close.Valid` hard-codes `succeeded = false → liveAfter = true` (theorem `accepted_failed_close_retains_custody`). See §13. `QCore.OsEndpointPostState` now states the corrected relation alongside it; the pinned theorem is deliberately untouched, and unifying the two record types is the remaining work. |
 | **U5** | **`contract/qcore/monkey/composition.qcore`.** `evutil_closesocket`'s `ensures error(SocketCloseError) descriptor_custody_is_preserved`. See §13. |
 | **U6** | **`munmap` sibling profile**, per §11. |
 | **U7** | **Evidence for O4/O5.** A `SIGSTOP`/timer-driven EINTR fixture on an interruptible filesystem, and a small-loopback-device ENOSPC fixture, would bind the two arms this card takes from documentation alone. Both need privileges the current harness does not assume. |
@@ -471,12 +498,18 @@ must be done deliberately.
   is named as capable of it, and its own failure semantics are not specified here.
 * **No resource-v1 extension.** v1 nullable-pointer meanings, the loader, the
   contract corpus (59 modules) and every clause count are unchanged.
-* **No production wiring.** No crate imports the harness; no audit route,
-  diagnostic code, gate or pinned expectation changed.
+* **No production wiring.** `qcore-core` is the dependency-free L1 kernel and no
+  analyzer, driver, contract or audit route calls `close_poststate`. No
+  diagnostic code, gate or pinned expectation changed, and
+  `proof/QCore/DescriptorCustody.lean` was not touched.
 * **No promotion.** Raw Cycle 19 units stay 2 Safe / 42 provisional Unsafe /
   137 Unknown plus four data-only units; CT coverage is untouched.
-* **Not a proof.** The Linux arms are read from documentation [M], not verified
-  against the kernel; O4 and O5 are unmeasured here (§9.2); the probe's four
-  observations are of one host and bind nothing beyond it.
+* **The Lean theorems are about the model, not the kernel.** They establish that
+  the *relation* is fail-closed. Whether it is faithful to Linux is a premise
+  read from [M], and which arm a real call took is a premise supplied from
+  outside.
+* **Not a proof of the arms.** The Linux arms are read from documentation [M],
+  not verified against the kernel; O4 and O5 are unmeasured here (§9.2); the
+  probe's four observations are of one host and bind nothing beyond it.
 * **A `Released` derivation is a claim about D only.** It says nothing about F
   without A6, and nothing about W ever.
