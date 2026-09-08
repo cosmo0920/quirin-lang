@@ -53,7 +53,8 @@ def classify(site):
 
 
 def route(identifier, name, definition, pattern, replacement, replacement_present,
-          artifacts, exclude=(), dirs=CODE, exclude_definition_file=True):
+          artifacts, exclude=(), dirs=CODE, exclude_definition_file=True,
+          status="retained"):
     if exclude_definition_file:
         exclude = exclude + (definition.split(":", 1)[0],)
     all_sites = sites(pattern, dirs=dirs, exclude=exclude)
@@ -63,6 +64,7 @@ def route(identifier, name, definition, pattern, replacement, replacement_presen
     return {
         "route": identifier,
         "name": name,
+        "status": status,
         "definition": definition,
         "reference_pattern": pattern,
         "references": kinds,
@@ -141,11 +143,12 @@ def main():
         route(
             "P09-G",
             "chunk_source::import_chunk_source zero-helper wrapper",
-            "compiler/src/verifier_plugins/chunkio/chunk_source.rs:122",
+            "removed; was compiler/src/verifier_plugins/chunkio/chunk_source.rs:122",
             r"\bimport_chunk_source\b(?!_with)",
             "import_chunk_source_with_helpers(unit, revision, &[])",
             present(r"pub fn import_chunk_source_with_helpers"),
             [],
+            status="removed-with-parity-archive",
         ),
     ]
     facades = {}

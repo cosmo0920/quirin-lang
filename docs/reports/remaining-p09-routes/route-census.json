@@ -1,11 +1,12 @@
 {
   "measurement": "P09-A..G legacy route census",
-  "commit": "8d0790a48a70aed0a30099dd7ed1977025d5b81a",
+  "commit": "372039b53a29dc53381ca7ce3d65f8d8c7adf6db",
   "note": "reference counts are textual occurrences in compiler/, crates/ and providers/; the route's own definition file is excluded",
   "routes": [
     {
       "route": "P09-A",
       "name": "ChunkIO in-process counter route",
+      "status": "retained",
       "definition": "compiler/src/verifier_plugins/chunkio/teardown_source.rs:43",
       "reference_pattern": "\\bcheck_counter_sources\\b",
       "references": {
@@ -33,6 +34,7 @@
     {
       "route": "P09-B",
       "name": "Libevent in-process event-program route",
+      "status": "retained",
       "definition": "compiler/src/verifier_plugins/libevent/event_driven.rs:407",
       "reference_pattern": "\\bcheck_event_program\\b",
       "references": {
@@ -107,6 +109,7 @@
     {
       "route": "P09-C",
       "name": "SourceContractConfiguration::Direct in the legacy audit example",
+      "status": "retained",
       "definition": "compiler/examples/support/cycle19_compatibility.rs:928",
       "reference_pattern": "SourceContractConfiguration::Direct|SourceContractPolicies",
       "references": {
@@ -142,6 +145,7 @@
     {
       "route": "P09-D",
       "name": "QCORE_CHUNKIO_PACKAGE selector alias",
+      "status": "retained",
       "definition": "compiler/examples/support/cycle19_compatibility.rs:953",
       "reference_pattern": "QCORE_CHUNKIO_PACKAGE",
       "references": {
@@ -161,6 +165,7 @@
     {
       "route": "P09-E",
       "name": "Legacy out-of-protocol reactor record-exchange fixture",
+      "status": "retained",
       "definition": "providers/conformance/src/bin/callback_proposal_writer.rs:1",
       "reference_pattern": "callback_proposal_writer|CallbackProposalError::(MissingOperation|DuplicateOperation|UnsupportedVersion)",
       "references": {
@@ -188,6 +193,7 @@
     {
       "route": "P09-F",
       "name": "Compiler compatibility facades",
+      "status": "retained",
       "definition": "compiler/src/lib.rs",
       "reference_pattern": "crate::(verifier_plugin|external_source|counter_source|research_extensions|cleanup_outcome|source_call_use|typed_source|list_unlink_contract|field_destructor|counter_contract|chunk_contract)\\b|qcore_compiler::(verifier_plugin|external_source|counter_source|research_extensions|cleanup_outcome|source_call_use|typed_source|list_unlink_contract|field_destructor|counter_contract|chunk_contract)\\b",
       "references": {
@@ -240,13 +246,13 @@
           "compiler/tests/counter_route_parity.rs:7",
           "compiler/tests/counter_route_parity.rs:8",
           "compiler/tests/monkey_profile.rs:10",
-          "compiler/tests/unit/chunk_source.rs:285",
-          "compiler/tests/unit/chunk_source.rs:302",
-          "compiler/tests/unit/chunk_source.rs:306",
-          "compiler/tests/unit/chunk_source.rs:416",
-          "compiler/tests/unit/chunk_source.rs:436",
-          "compiler/tests/unit/chunk_source.rs:445",
-          "compiler/tests/unit/chunk_source.rs:456",
+          "compiler/tests/unit/chunk_source.rs:287",
+          "compiler/tests/unit/chunk_source.rs:304",
+          "compiler/tests/unit/chunk_source.rs:308",
+          "compiler/tests/unit/chunk_source.rs:418",
+          "compiler/tests/unit/chunk_source.rs:438",
+          "compiler/tests/unit/chunk_source.rs:447",
+          "compiler/tests/unit/chunk_source.rs:458",
           "compiler/tests/unit/counter_contract.rs:3",
           "compiler/tests/unit/field_destructor.rs:3",
           "compiler/tests/unit/file_attempts.rs:134",
@@ -273,25 +279,15 @@
     {
       "route": "P09-G",
       "name": "chunk_source::import_chunk_source zero-helper wrapper",
-      "definition": "compiler/src/verifier_plugins/chunkio/chunk_source.rs:122",
+      "status": "removed-with-parity-archive",
+      "definition": "removed; was compiler/src/verifier_plugins/chunkio/chunk_source.rs:122",
       "reference_pattern": "\\bimport_chunk_source\\b(?!_with)",
       "references": {
-        "test": [
-          "compiler/tests/p09g_zero_helper_parity.rs:4",
-          "compiler/tests/p09g_zero_helper_parity.rs:12",
-          "compiler/tests/p09g_zero_helper_parity.rs:122",
-          "compiler/tests/p09g_zero_helper_parity.rs:162",
-          "compiler/tests/unit/chunk_contract.rs:2",
-          "compiler/tests/unit/chunk_contract.rs:14",
-          "compiler/tests/unit/chunk_source.rs:7",
-          "compiler/tests/unit/chunk_source.rs:166",
-          "compiler/tests/unit/chunk_source.rs:173",
-          "compiler/tests/unit/chunk_source.rs:178",
-          "compiler/tests/unit/chunk_source.rs:217",
-          "compiler/tests/unit/chunk_source.rs:254"
+        "production": [
+          "compiler/src/verifier_plugins/chunkio/chunk_source.rs:123"
         ]
       },
-      "reference_count": 12,
+      "reference_count": 1,
       "replacement": "import_chunk_source_with_helpers(unit, revision, &[])",
       "replacement_symbol_present": true,
       "pinned_artifacts_influenced": []
