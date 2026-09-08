@@ -239,7 +239,8 @@ fn embedded_template_binding(shipped: &Path, manifest: &PluginManifest) -> usize
     std::fs::remove_dir_all(package).unwrap();
     // The shipped package was never written to, and still verifies.
     assert_eq!(std::fs::read(shipped.join("provider")).unwrap(), executable);
-    qcore_verifier_host::verify_executable_package(shipped).expect("shipped package still verifies");
+    qcore_verifier_host::verify_executable_package(shipped)
+        .expect("shipped package still verifies");
     refused + 1
 }
 
