@@ -31,8 +31,9 @@ pub enum PathBounds {
     /// Every checked function contributes exactly one path. The v2.0 bound
     /// for chunk-lifecycle schedules (design §2.3 step 4).
     SinglePath,
-    /// Reserved for the additive multi-path extension; no derivation emits it
-    /// in this increment.
+    /// A checked function contributes exactly this many complete paths. The
+    /// nullable-field destructor route is the first derivation to emit it; a
+    /// task recording a different path count is a different task.
     BoundedPaths { paths: u64 },
 }
 
@@ -87,6 +88,14 @@ pub enum ObligationProperty {
     /// contract. Caller storage, exclusivity and the unsigned/usize ABI
     /// binding remain the contract's own declared premises.
     CounterUpdateContract,
+    /// One source-derived intrusive-list unlink, together with the complete
+    /// body of the single helper it calls, satisfies its pinned contract.
+    /// Ring membership and exclusive link access remain declared premises.
+    ListUnlinkContract,
+    /// One source-derived nullable-field destructor releases exactly its
+    /// declared owned fields in every realizable nullable state. Allocation
+    /// provenance and the `free`/libc binding remain declared premises.
+    FieldDestructorContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -115,6 +124,8 @@ impl ObligationProperty {
             Self::NoUnknownCallEffect => "no_unknown_call_effect",
             Self::BooleanFieldContract => "boolean_field_contract",
             Self::CounterUpdateContract => "counter_update_contract",
+            Self::ListUnlinkContract => "list_unlink_contract",
+            Self::FieldDestructorContract => "field_destructor_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

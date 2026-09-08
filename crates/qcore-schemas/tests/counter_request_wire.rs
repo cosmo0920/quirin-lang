@@ -83,6 +83,7 @@ fn request(
         source_effect: None,
         counter_effect: counter,
         reactor_program: None,
+        teardown_source: None,
     }
 }
 

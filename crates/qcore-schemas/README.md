@@ -1,4 +1,4 @@
-# qcore-schemas 6.0.0
+# qcore-schemas 7.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -242,3 +242,59 @@ only; no unit contract can inspect it. The admitted checker is
 `qcore.boolean_field_contract.v2`. Version-1 checkers remain usable for old I32
 contexts. No protocol-v1 or ordinary evidence-v2 envelope changes, no new claim of
 source authenticity, and no change to unrelated witness admission follows.
+
+## Teardown source projections (7.0.0)
+
+Version 7.0.0 adds `teardown_summary`: a portable projection of imported typed
+paths for two bounded ChunkIO teardown families — the intrusive-list unlink
+(an entry function together with the complete body of the single helper it
+calls) and the nullable-field backend destructor — plus the proposed readings
+a producer returns for them.
+
+**Why the bump is forced.** Two of the three additions are source-incompatible
+for exhaustive matches and struct literals, exactly as in 4.0.0 and 5.0.0:
+
+| Addition | Kind |
+|---|---|
+| `SemanticWitness::TeardownContract` | new variant on an exhaustively matched enum |
+| `ObligationProperty::{ListUnlinkContract, FieldDestructorContract}` | new variants on an exhaustively matched enum |
+| `VerificationRequestV2::teardown_source` | new required struct field (skipped when absent) |
+
+No existing variant was reused. `ContractObservation` is a recorded-run record
+set and would misdescribe both what this witness is and what accepting it
+means; `CounterContract` carries a single-path unsigned update and cannot hold
+a multi-path release enumeration. The projection could technically have
+travelled as JSON inside a `NormalizedFact::subject`, but that encoding has no
+`deny_unknown_fields`, no schema-version field and no `validate()` rule, so it
+would be a strictly weaker boundary than the typed field the three earlier
+projections already established.
+
+**Existing wire bytes are unchanged.** `teardown_source` is an `Option` that
+defaults to absent and is skipped on serialization, exactly like the three
+projections before it; `crates/qcore-schemas/tests/teardown_request_wire.rs`
+pins that a request carrying none of the four projections serializes with none
+of the four keys and round-trips.
+
+`PathBounds::BoundedPaths` is now emitted for the first time: the destructor
+family is a multi-path body, and the exact path count is part of its task, so a
+re-import with a different path set is a different task. The variant, its serde
+representation and its meaning are unchanged; only the doc comment saying no
+derivation emits it was corrected.
+
+| Boundary | Before | After | Why |
+|---|---|---|---|
+| Rust schema crate | 6.0.0 | **7.0.0** | Exhaustive-variant precedent from 2.0.0, 4.0.0 and 5.0.0 |
+| Plugin protocol | 1 | 1 | Unchanged |
+| Evidence version | 1, 2 | 1, 2 | Unchanged |
+| Teardown source input | — | 1 | New |
+| List unlink semantic profile | — | `qcore.c_list_unlink_contract.v1` | New |
+| Field destructor semantic profile | — | `qcore.c_field_destructor_contract.v1` | New |
+| Teardown input digest key | — | `qcore:teardown-source-input:v1` | New |
+| ChunkIO package | 0.5.0 | **0.6.0** | Adds the two capability routes |
+
+A projection carries the *question* only. For the destructor family that
+includes the owned-field inventory the pinned contract declares, because the
+inventory selects which nullable states must be enumerated; the trusted core
+re-reads that inventory from the contract itself and refuses a task whose
+projection names any other set. No derived reading — no case list, no write
+list, no release order — ever travels in a request.

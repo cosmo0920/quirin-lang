@@ -443,6 +443,7 @@ impl<P: model::ReactorProfile> ReactorCallbackTask<P> {
             source_effect: None,
             counter_effect: None,
             reactor_program: Some(self.import.source_input()),
+            teardown_source: None,
         }
     }
 

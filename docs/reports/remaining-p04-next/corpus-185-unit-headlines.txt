@@ -1,0 +1,2 @@
+base    8d0790a: current revision: 185 source file(s), 186 configuration(s): 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures
+branch  d30395d: current revision: 185 source file(s), 186 configuration(s): 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures

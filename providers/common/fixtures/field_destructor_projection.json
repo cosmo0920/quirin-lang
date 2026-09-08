@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "family": {
+    "family": "field_destructor",
+    "destructor": {
+      "function": "cio_memfs_close",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "void (struct cio_chunk *)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "backend"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 1,
+              "value": {
+                "c_type": "struct cio_memfs *",
+                "expression": {
+                  "kind": "cast",
+                  "cast": "BitCast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_memfs *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "local_end",
+              "local": 1
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "void *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "backend"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 1,
+              "value": {
+                "c_type": "struct cio_memfs *",
+                "expression": {
+                  "kind": "cast",
+                  "cast": "BitCast",
+                  "value": {
+                    "c_type": "void *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_memfs *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_memfs *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 0
+                        }
+                      }
+                    }
+                  },
+                  "name": "name"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 3
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_memfs *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 0
+                        }
+                      }
+                    }
+                  },
+                  "name": "buf_data"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 5
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_memfs *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "symbol",
+                          "operation": 0
+                        }
+                      }
+                    }
+                  },
+                  "name": "meta_data"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 7
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "struct cio_memfs *",
+                      "expression": {
+                        "kind": "cast",
+                        "cast": "BitCast",
+                        "value": {
+                          "c_type": "void *",
+                          "expression": {
+                            "kind": "symbol",
+                            "operation": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "local_end",
+              "local": 1
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "root_c_type": "struct cio_chunk *",
+    "declared_owned_fields": [
+      "backend",
+      "backend__buf_data",
+      "backend__meta_data",
+      "backend__name"
+    ]
+  }
+}

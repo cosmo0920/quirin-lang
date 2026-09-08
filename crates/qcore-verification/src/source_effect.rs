@@ -185,6 +185,7 @@ impl BooleanFieldSourceTask {
             source_effect: Some(self.summary.source_input()),
             counter_effect: None,
             reactor_program: None,
+            teardown_source: None,
         }
     }
 

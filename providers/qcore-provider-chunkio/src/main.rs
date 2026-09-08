@@ -7,6 +7,9 @@ mod source_effect;
 #[path = "../../common/counter_effect.rs"]
 mod counter_effect;
 
+#[path = "../../common/teardown_effect.rs"]
+mod teardown_effect;
+
 use qcore_schemas::plugin::{PluginManifest, VerificationRequestV2, VerificationResponseV2};
 
 /// Each capability inspects the request itself and declines what it does not
@@ -15,7 +18,9 @@ fn propose(
     request: &VerificationRequestV2,
     manifest: &PluginManifest,
 ) -> Option<VerificationResponseV2> {
-    source_effect::propose(request, manifest).or_else(|| counter_effect::propose(request, manifest))
+    source_effect::propose(request, manifest)
+        .or_else(|| counter_effect::propose(request, manifest))
+        .or_else(|| teardown_effect::propose(request, manifest))
 }
 
 fn main() {

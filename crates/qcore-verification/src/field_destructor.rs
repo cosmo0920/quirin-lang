@@ -49,6 +49,50 @@ fn tokens(source: &str) -> Result<Vec<TokenKind>, String> {
         .collect())
 }
 
+/// The owned-field inventory a pinned destructor contract declares, read with
+/// the same `owned_or_null__` rule [`check_field_destructor`] applies. This is
+/// a read-only extraction: it grants nothing, and a caller that disagrees with
+/// it is refused rather than reconciled.
+pub fn declared_owned_fields(source: &str, function: &str) -> Result<BTreeSet<String>, String> {
+    let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+    let declarations: Vec<_> = parsed
+        .declarations
+        .iter()
+        .filter(|d| d.value.name == function)
+        .collect();
+    let [decl] = declarations.as_slice() else {
+        return Err("expected one destructor contract".into());
+    };
+    let mut fields = BTreeSet::new();
+    for clause in &decl
+        .value
+        .function_contract
+        .as_ref()
+        .ok_or("missing destructor contract")?
+        .clauses
+    {
+        if clause.value.kind != SourceContractClauseKind::Requires {
+            continue;
+        }
+        let ts = tokens(&clause.value.expression_source)?;
+        let [TokenKind::Word(name)] = ts.as_slice() else {
+            return Err("unsupported destructor premise".into());
+        };
+        if let Some(path) = name.strip_prefix("owned_or_null__") {
+            if path.split("__").any(|part| part.is_empty()) {
+                return Err("empty field path component".into());
+            }
+            if !fields.insert(path.to_owned()) {
+                return Err("duplicate declared owned field".into());
+            }
+        }
+    }
+    if fields.is_empty() {
+        return Err("destructor contract declares no owned field".into());
+    }
+    Ok(fields)
+}
+
 /// `owned_or_null__a__b` declares the pointer field root->a->b. Every prefix
 /// must also be declared. `old_live__a__b`, `live__a__b`, `released__a__b`
 /// and `release_rank__a__b` are derived facts; rank is zero if no release occurs.

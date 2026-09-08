@@ -463,6 +463,11 @@ pub struct VerificationRequestV2 {
     /// present together with another source projection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reactor_program: Option<crate::reactor_program::ReactorProgramInput>,
+    /// Optional, separately digest-bound source projection for one admitted
+    /// ChunkIO teardown family. Omitted for every other exchange, and never
+    /// present together with another projection.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub teardown_source: Option<crate::teardown_summary::TeardownSourceInput>,
 }
 
 impl VerificationRequestV2 {
@@ -546,6 +551,41 @@ impl VerificationRequestV2 {
                     if symbol == &input.function && translation_unit == &self.unit.translation_unit) =>
                 {}
             None if counter_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
+        }
+        // A teardown projection carries exactly one obligation, whose property
+        // must be the one its own family decides, for the function it names.
+        // It never travels with another projection.
+        let teardown_property = self.obligations.iter().find_map(|obligation| {
+            matches!(
+                obligation.property,
+                crate::obligation::ObligationProperty::ListUnlinkContract
+                    | crate::obligation::ObligationProperty::FieldDestructorContract
+            )
+            .then_some(obligation.property)
+        });
+        match &self.teardown_source {
+            Some(input)
+                if input.version_matches()
+                    && self.source_effect.is_none()
+                    && self.counter_effect.is_none()
+                    && self.reactor_program.is_none()
+                    && self.capability == VerifierCapability::ResourceContracts
+                    && self.obligations.len() == 1
+                    && teardown_property
+                        == Some(match &input.family {
+                            crate::teardown_summary::TeardownFamilyInput::ListUnlink { .. } => {
+                                crate::obligation::ObligationProperty::ListUnlinkContract
+                            }
+                            crate::teardown_summary::TeardownFamilyInput::FieldDestructor {
+                                ..
+                            } => crate::obligation::ObligationProperty::FieldDestructorContract,
+                        })
+                    && matches!(&self.obligations[0].subject,
+                    crate::obligation::ObligationSubject::Function { symbol, translation_unit }
+                    if symbol == input.subject_function()
+                        && translation_unit == &self.unit.translation_unit) => {}
+            None if teardown_property.is_none() => {}
             _ => return Err(RequestError::InvalidObligations),
         }
         // The quiescence obligation is the reactor projection's marker: it is

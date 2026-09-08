@@ -14,6 +14,7 @@ pub mod reactor_source;
 
 pub mod counter_source;
 pub mod source_effect;
+pub mod teardown_source;
 
 pub mod cleanup_outcome;
 pub mod counter_contract;
