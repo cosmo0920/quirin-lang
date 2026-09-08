@@ -8,9 +8,9 @@ use qcore_compiler::field_destructor::FieldDestructorCertificate;
 use qcore_compiler::legacy_c::C11TranslationUnit;
 use qcore_compiler::list_unlink_contract::ListUnlinkCertificate;
 use qcore_compiler::teardown_source_capability::{
-    FIELD_DESTRUCTOR_SEMANTIC_PROFILE, FieldDestructorSourceResult, FieldDestructorSourceTask,
-    LIST_UNLINK_SEMANTIC_PROFILE, ListUnlinkSourceResult, ListUnlinkSourceTask,
-    import_field_destructor_sources, import_list_unlink_sources,
+    FIELD_DESTRUCTOR_SEMANTIC_PROFILE, FieldDestructorSelection, FieldDestructorSourceResult,
+    FieldDestructorSourceTask, LIST_UNLINK_SEMANTIC_PROFILE, ListUnlinkSourceResult,
+    ListUnlinkSourceTask, import_field_destructor_sources, import_list_unlink_sources,
 };
 use qcore_compiler::verifier_plugins::chunkio::{
     PINNED_FLUENT_BIT_REVISION,
@@ -94,12 +94,15 @@ fn destructor_route(source: &str) -> FieldDestructorSourceResult {
     import_field_destructor_sources(
         &unit(source),
         PINNED_FLUENT_BIT_REVISION,
-        "cio_memfs_close",
-        &["cio_chunk", "cio_memfs"],
-        &[("cio_memfs_close", "void", &["struct cio_chunk *"])],
-        &["free"],
-        ROOT_C_TYPE,
-        &OWNED_FIELDS,
+        // Exactly the selection `check_memory_backend_source` passes.
+        &FieldDestructorSelection {
+            function: "cio_memfs_close",
+            records: &["cio_chunk", "cio_memfs"],
+            signature_constraints: &[("cio_memfs_close", "void", &["struct cio_chunk *"])],
+            restricted_calls: &["free"],
+            root_c_type: ROOT_C_TYPE,
+            declared_owned_fields: &OWNED_FIELDS,
+        },
     )
     .unwrap()
 }

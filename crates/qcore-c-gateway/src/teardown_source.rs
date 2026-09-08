@@ -199,7 +199,10 @@ fn value(value: &SourceValue) -> Result<TeardownValueRecord, String> {
 /// Project every complete path of one summary. Scan loops, local starts,
 /// value returns, terminations and every callee outside `callees` stay outside
 /// the vocabulary, so their functions keep the existing `Unknown` result.
-fn project(summary: &SourceSummary, callees: &[Callee<'_>]) -> Result<TeardownFunctionRecord, String> {
+fn project(
+    summary: &SourceSummary,
+    callees: &[Callee<'_>],
+) -> Result<TeardownFunctionRecord, String> {
     if summary.has_scan_loop() {
         return Err("teardown projection does not represent scan loops".into());
     }
@@ -383,21 +386,39 @@ fn project_unlink(
 /// The single libc callee the destructor family admits.
 const FREE_CALLEE: Callee<'static> = ("free", "void (void *)");
 
-/// Import one nullable-field destructor and project it. `declared_owned_fields`
-/// is the inventory the pinned contract declares; the trusted core refuses a
-/// task whose contract does not declare exactly this set.
+/// Explicit selection inputs for one nullable-field destructor import. Every
+/// field is a caller assertion, never something inferred from a proposal.
+pub struct FieldDestructorSelection<'a> {
+    pub function: &'a str,
+    pub records: &'a [&'a str],
+    pub signature_constraints: &'a [(&'a str, &'a str, &'a [&'a str])],
+    /// Functions whose calls use the bounded call vocabulary, exactly as the
+    /// in-process route passes them.
+    pub restricted_calls: &'a [&'a str],
+    pub root_c_type: &'a str,
+    /// The inventory the pinned contract declares. The trusted core refuses a
+    /// task whose contract does not declare exactly this set.
+    pub declared_owned_fields: &'a [&'a str],
+}
+
+/// Import one nullable-field destructor and project it.
 pub fn import_field_destructor_sources(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
-    function: &str,
-    records: &[&str],
-    signature_constraints: &[(&str, &str, &[&str])],
-    restricted_calls: &[&str],
-    root_c_type: &str,
-    declared_owned_fields: &[&str],
+    selection: &FieldDestructorSelection<'_>,
 ) -> Result<FieldDestructorSourceResult, String> {
+    let FieldDestructorSelection {
+        function,
+        records,
+        signature_constraints,
+        restricted_calls,
+        root_c_type,
+        declared_owned_fields,
+    } = *selection;
     if function.is_empty() || root_c_type.is_empty() || declared_owned_fields.is_empty() {
-        return Err("destructor import needs a function, a root C type and a field inventory".into());
+        return Err(
+            "destructor import needs a function, a root C type and a field inventory".into(),
+        );
     }
     let (compiler, identity) = capture(unit, source_revision)?;
     let imported = import_source_functions(

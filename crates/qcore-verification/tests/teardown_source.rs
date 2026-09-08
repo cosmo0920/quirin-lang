@@ -112,7 +112,8 @@ fn the_core_admits_only_its_own_unlink_reading() {
         panic!("unlink reading")
     };
     // Twelve forged readings, each refused against the core's own certificate.
-    let forgeries: Vec<(&str, Box<dyn Fn(&mut qcore_schemas::teardown_summary::ListUnlinkRecord)>)> = vec![
+    type UnlinkForge = Box<dyn Fn(&mut qcore_schemas::teardown_summary::ListUnlinkRecord)>;
+    let forgeries: Vec<(&str, UnlinkForge)> = vec![
         ("emptied cases", Box::new(|r| r.cases.clear())),
         (
             "dropped alias case",
@@ -127,10 +128,7 @@ fn the_core_admits_only_its_own_unlink_reading() {
                 r.cases.push(first);
             }),
         ),
-        (
-            "swapped alias classes",
-            Box::new(|r| r.cases.swap(0, 1)),
-        ),
+        ("swapped alias classes", Box::new(|r| r.cases.swap(0, 1))),
         (
             "relabelled alias flag",
             Box::new(|r| r.cases[0].neighbors_alias = true),
@@ -184,10 +182,13 @@ fn the_core_admits_only_its_own_unlink_reading() {
     assert!(
         task.check(
             task.task(),
-            &witness(&digest, destructor_reading(&destructor_task(
-                &destructor_import(DESTRUCTOR_SOURCE, vec![]),
-                DESTRUCTOR_CONTRACT
-            )))
+            &witness(
+                &digest,
+                destructor_reading(&destructor_task(
+                    &destructor_import(DESTRUCTOR_SOURCE, vec![]),
+                    DESTRUCTOR_CONTRACT
+                ))
+            )
         )
         .is_err()
     );
@@ -423,9 +424,7 @@ fn incompatible_targets_and_inventories_refuse_derivation() {
         ListUnlinkSourceTask::derive(&import, "mk_list.c", "", NODE_QCORE_TYPE, base.clone())
             .is_err()
     );
-    assert!(
-        ListUnlinkSourceTask::derive(&import, "mk_list.c", UNLINK_CONTRACT, "", base).is_err()
-    );
+    assert!(ListUnlinkSourceTask::derive(&import, "mk_list.c", UNLINK_CONTRACT, "", base).is_err());
 
     // The destructor's projected inventory must be the contract's own.
     assert_eq!(
@@ -473,7 +472,10 @@ fn changed_inputs_produce_different_tasks_and_cross_task_witnesses_refuse() {
     let reading = unlink_reading(&task);
     for other in [
         unlink_task(
-            &unlink_import(&format!("// changed actual source\n{UNLINK_SOURCE}"), vec![]),
+            &unlink_import(
+                &format!("// changed actual source\n{UNLINK_SOURCE}"),
+                vec![],
+            ),
             UNLINK_CONTRACT,
         ),
         unlink_task(
@@ -489,7 +491,10 @@ fn changed_inputs_produce_different_tasks_and_cross_task_witnesses_refuse() {
         // Neither direction admits the other's witness.
         assert!(
             other
-                .check(other.task(), &witness(&task.task().task_digest(), reading.clone()))
+                .check(
+                    other.task(),
+                    &witness(&task.task().task_digest(), reading.clone())
+                )
                 .is_err()
         );
         assert!(
@@ -588,17 +593,15 @@ fn unmodeled_bodies_keep_their_functions_unknown_at_import() {
     let result = import_field_destructor_sources(
         &qcore_c_gateway::legacy_c::C11TranslationUnit {
             source: &DESTRUCTOR_SOURCE
-                .replace("void free(void *);", "void free(void *); void cio_free(void *);")
+                .replace(
+                    "void free(void *);",
+                    "void free(void *); void cio_free(void *);",
+                )
                 .replace("free(mf->name);", "cio_free(mf->name);"),
             ..Default::default()
         },
         &revision(),
-        DESTRUCTOR_FUNCTION,
-        &["cio_chunk", "cio_memfs"],
-        &[(DESTRUCTOR_FUNCTION, "void", &["struct cio_chunk *"])],
-        &["free"],
-        ROOT_C_TYPE,
-        &OWNED_FIELDS,
+        &destructor_selection(&OWNED_FIELDS),
     )
     .unwrap();
     assert!(matches!(
@@ -612,12 +615,7 @@ fn unmodeled_bodies_keep_their_functions_unknown_at_import() {
                 ..Default::default()
             },
             &revision(),
-            DESTRUCTOR_FUNCTION,
-            &["cio_chunk", "cio_memfs"],
-            &[(DESTRUCTOR_FUNCTION, "void", &["struct cio_chunk *"])],
-            &["free"],
-            ROOT_C_TYPE,
-            &[],
+            &destructor_selection(&[]),
         )
         .is_err()
     );
@@ -662,10 +660,7 @@ fn a_projection_carries_exactly_one_obligation_of_its_own_family() {
     absent.teardown_source = None;
     assert!(absent.validate().is_err());
     // The two families are distinct questions with distinct tasks.
-    assert_ne!(
-        unlink.task().task_digest(),
-        destructor.task().task_digest()
-    );
+    assert_ne!(unlink.task().task_digest(), destructor.task().task_digest());
     assert_ne!(
         unlink.task().semantic_profile,
         destructor.task().semantic_profile

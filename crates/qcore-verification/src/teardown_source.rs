@@ -14,6 +14,7 @@
 //! pinned contract itself over its own summaries. Agreement alone never
 //! discharges an obligation.
 
+use qcore_c_gateway::boolean_source::SourceInputIdentity;
 use qcore_c_gateway::teardown_source::{FieldDestructorSourceImport, ListUnlinkSourceImport};
 use qcore_schemas::obligation::*;
 use qcore_schemas::plugin::*;
@@ -40,9 +41,7 @@ fn check_target(
     target: &TargetProfile,
     profile: &str,
     import_revision: &str,
-    identity_dialect: &str,
-    compiler_target: &str,
-    helpers_empty: bool,
+    identity: &SourceInputIdentity,
     translation_unit: &str,
     contract_source: &str,
     declared_qcore_type: &str,
@@ -54,7 +53,7 @@ fn check_target(
         || target.profile != profile
         || !matches!(target.dialect.as_str(), "c11" | "gnu99" | "gnu11" | "gnu17")
         || target.revision != import_revision
-        || target.dialect != identity_dialect
+        || target.dialect != identity.dialect()
         || target.platform != std::env::consts::OS
         || target.backend != "native"
     {
@@ -65,10 +64,10 @@ fn check_target(
         "windows" => "windows",
         other => other,
     };
-    if !compiler_target.contains(target_os) {
+    if !identity.compiler_target().contains(target_os) {
         return Err("Clang target does not match the native teardown platform".into());
     }
-    if !helpers_empty {
+    if !identity.helpers().is_empty() {
         return Err("the teardown routes import no helper bodies".into());
     }
     Ok(())
@@ -106,9 +105,7 @@ impl ListUnlinkSourceTask {
             &target,
             LIST_UNLINK_SEMANTIC_PROFILE,
             import.source_revision(),
-            import.input_identity().dialect(),
-            import.input_identity().compiler_target(),
-            import.input_identity().helpers().is_empty(),
+            import.input_identity(),
             translation_unit,
             contract_source,
             node_qcore_type,
@@ -323,9 +320,7 @@ impl FieldDestructorSourceTask {
             &target,
             FIELD_DESTRUCTOR_SEMANTIC_PROFILE,
             import.source_revision(),
-            import.input_identity().dialect(),
-            import.input_identity().compiler_target(),
-            import.input_identity().helpers().is_empty(),
+            import.input_identity(),
             translation_unit,
             contract_source,
             root_qcore_type,

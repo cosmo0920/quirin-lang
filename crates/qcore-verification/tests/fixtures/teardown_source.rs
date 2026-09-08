@@ -6,8 +6,9 @@
 //! pinned contract's own.
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_c_gateway::teardown_source::{
-    FieldDestructorSourceImport, FieldDestructorSourceResult, ListUnlinkSourceImport,
-    ListUnlinkSourceResult, import_field_destructor_sources, import_list_unlink_sources,
+    FieldDestructorSelection, FieldDestructorSourceImport, FieldDestructorSourceResult,
+    ListUnlinkSourceImport, ListUnlinkSourceResult, import_field_destructor_sources,
+    import_list_unlink_sources,
 };
 use qcore_contract::profile_loader::load_profile_directory;
 use qcore_schemas::TargetProfile;
@@ -133,14 +134,22 @@ pub fn destructor_import_result(
             ..Default::default()
         },
         &revision(),
-        DESTRUCTOR_FUNCTION,
-        &["cio_chunk", "cio_memfs"],
-        &[(DESTRUCTOR_FUNCTION, "void", &["struct cio_chunk *"])],
-        &["free"],
-        ROOT_C_TYPE,
-        fields,
+        &destructor_selection(fields),
     )
     .unwrap()
+}
+
+/// The selection the in-process `check_memory_backend_source` route uses, so
+/// both routes import exactly the same body under the same profile.
+pub fn destructor_selection<'a>(fields: &'a [&'a str]) -> FieldDestructorSelection<'a> {
+    FieldDestructorSelection {
+        function: DESTRUCTOR_FUNCTION,
+        records: &["cio_chunk", "cio_memfs"],
+        signature_constraints: &[(DESTRUCTOR_FUNCTION, "void", &["struct cio_chunk *"])],
+        restricted_calls: &["free"],
+        root_c_type: ROOT_C_TYPE,
+        declared_owned_fields: fields,
+    }
 }
 
 pub fn destructor_import(source: &str, definitions: Vec<String>) -> FieldDestructorSourceImport {

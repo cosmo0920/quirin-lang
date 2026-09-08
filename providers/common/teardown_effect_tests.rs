@@ -314,7 +314,8 @@ fn a_changed_unlink_body_changes_the_reading_instead_of_being_ignored() {
     let mut input = unlink();
     {
         let (_, helper, _) = unlink_parts(&mut input);
-        let TeardownOperationRecord::Write { value, .. } = &mut helper.paths[0].operations[0] else {
+        let TeardownOperationRecord::Write { value, .. } = &mut helper.paths[0].operations[0]
+        else {
             panic!("write at index 0")
         };
         value.expression = TeardownExpressionRecord::Parameter { index: 0 };
@@ -540,7 +541,13 @@ fn a_destructor_that_stops_releasing_a_field_is_read_as_such() {
         panic!("a well-formed changed body is still readable")
     };
     let all = reading.cases.last().unwrap();
-    assert_eq!(all.released_in_order, ["backend__name", "backend__buf_data"]);
-    assert!(!all.released_in_order.contains(&"backend__meta_data".to_owned()));
+    assert_eq!(
+        all.released_in_order,
+        ["backend__name", "backend__buf_data"]
+    );
+    assert!(
+        !all.released_in_order
+            .contains(&"backend__meta_data".to_owned())
+    );
     assert!(!all.released_in_order.contains(&"backend".to_owned()));
 }

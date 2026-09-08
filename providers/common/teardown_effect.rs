@@ -11,9 +11,9 @@ use qcore_schemas::SemanticWitness;
 use qcore_schemas::plugin::*;
 use qcore_schemas::teardown_summary::{
     FieldDestructorRecord, FieldReleaseCaseRecord, LinkWriteRecord, ListUnlinkRecord,
-    TeardownContractWitness, TeardownExpressionRecord, TeardownFamilyInput,
-    TeardownFunctionRecord, TeardownOperationRecord, TeardownProposalRecord, TeardownSourceInput,
-    TeardownValueRecord, UnlinkCaseRecord,
+    TeardownContractWitness, TeardownExpressionRecord, TeardownFamilyInput, TeardownFunctionRecord,
+    TeardownOperationRecord, TeardownProposalRecord, TeardownSourceInput, TeardownValueRecord,
+    UnlinkCaseRecord,
 };
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -72,9 +72,7 @@ impl LinkReplay<'_> {
             TeardownExpressionRecord::Parameter { index } if value.c_type == self.node_c_type => {
                 parameters.get(*index as usize).copied()
             }
-            TeardownExpressionRecord::Symbol { operation }
-                if value.c_type == self.node_c_type =>
-            {
+            TeardownExpressionRecord::Symbol { operation } if value.c_type == self.node_c_type => {
                 symbols.get(operation).copied()
             }
             TeardownExpressionRecord::Cast { cast, value: inner }
@@ -204,7 +202,11 @@ fn derive_unlink(
     }
     let mut cases = Vec::new();
     for neighbors_alias in [false, true] {
-        let next = if neighbors_alias { PREVIOUS } else { PREVIOUS + 1 };
+        let next = if neighbors_alias {
+            PREVIOUS
+        } else {
+            PREVIOUS + 1
+        };
         let initial = BTreeMap::from([
             ((ENTRY, "prev".to_owned()), Some(PREVIOUS)),
             ((ENTRY, "next".to_owned()), Some(next)),
@@ -280,7 +282,11 @@ impl FieldReplay<'_> {
                         (Pointer::Null, Pointer::Boolean(false))
                             | (Pointer::Boolean(false), Pointer::Null)
                     );
-                Some(Pointer::Boolean(if operator == "==" { same } else { !same }))
+                Some(Pointer::Boolean(if operator == "==" {
+                    same
+                } else {
+                    !same
+                }))
             }
             _ => None,
         }

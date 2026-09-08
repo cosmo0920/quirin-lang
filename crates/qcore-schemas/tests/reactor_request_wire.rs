@@ -91,6 +91,7 @@ fn request(
         source_effect: None,
         counter_effect: None,
         reactor_program: program,
+        teardown_source: None,
     }
 }
 

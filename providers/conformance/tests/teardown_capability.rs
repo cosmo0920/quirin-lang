@@ -21,10 +21,8 @@ fn build_packages() -> std::path::PathBuf {
         .parent()
         .unwrap()
         .to_path_buf();
-    let output = std::env::temp_dir().join(format!(
-        "qcore-teardown-package-{}",
-        std::process::id()
-    ));
+    let output =
+        std::env::temp_dir().join(format!("qcore-teardown-package-{}", std::process::id()));
     let built = Command::new("python3")
         .arg(root.join("package.py"))
         .args(["build", "--output"])
@@ -206,26 +204,24 @@ fn real_package_proposes_teardown_readings_without_admitting_false_contracts() {
     assert!(rejection.certificate.is_none());
 
     // A body the process reads correctly still cannot buy a false contract.
-    for (contract, task) in [(
-        UNLINK_CONTRACT.replace(
+    let false_unlink = unlink_task(
+        &import,
+        &UNLINK_CONTRACT.replace(
             "ensures normal write_count == 4;",
             "ensures normal write_count == 3;",
         ),
-        "unlink",
-    )] {
-        let false_contract = unlink_task(&import, &contract);
-        let rejection = registry.verify_v2(
-            &false_contract.request(plugin()),
-            false_contract.task(),
-            Some(&false_contract),
-        );
-        assert_eq!(
-            rejection.verdict,
-            ProposedVerdict::Unknown,
-            "a Safe {task} proposal bypassed contract evaluation"
-        );
-        assert!(rejection.diagnostics.iter().any(|d| d.code == "QP009"));
-    }
+    );
+    let rejection = registry.verify_v2(
+        &false_unlink.request(plugin()),
+        false_unlink.task(),
+        Some(&false_unlink),
+    );
+    assert_eq!(
+        rejection.verdict,
+        ProposedVerdict::Unknown,
+        "a Safe unlink proposal bypassed contract evaluation"
+    );
+    assert!(rejection.diagnostics.iter().any(|d| d.code == "QP009"));
     let false_destructor = destructor_task(
         &destructor_import_value,
         &DESTRUCTOR_CONTRACT.replace(
@@ -243,7 +239,10 @@ fn real_package_proposes_teardown_readings_without_admitting_false_contracts() {
 
     // Changed source bytes or build options retire the checker's context.
     for changed in [
-        unlink_import(&format!("// changed actual source\n{UNLINK_SOURCE}"), vec![]),
+        unlink_import(
+            &format!("// changed actual source\n{UNLINK_SOURCE}"),
+            vec![],
+        ),
         unlink_import(UNLINK_SOURCE, vec!["QCORE_OTHER_BUILD=1".into()]),
     ] {
         let other = unlink_task(&changed, UNLINK_CONTRACT);

@@ -21,6 +21,7 @@ import QCore.ShortCircuit
 import QCore.FileClose
 import QCore.FilesystemChunkClose
 import QCore.TeardownTraversal
+import QCore.TeardownAdmission
 import QCore.ParentTeardown
 import QCore.NestedCleanup
 import QCore.UnmapWrapper
