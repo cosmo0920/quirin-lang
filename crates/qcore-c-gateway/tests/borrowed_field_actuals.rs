@@ -31,6 +31,9 @@ const INDIRECT: &str = "indirect memory access is outside the resource projectio
 /// Declarations shared by every fixture. `b_untracked` is declared in C and
 /// deliberately absent from the contract file: a callee without a contract in
 /// force never admits an actual.
+/// `b_probe` accepts any object pointer so the address-of-member refusal is
+/// valid C and reaches QCore's projection without an incompatible-pointer error
+/// or an explicit cast that would test a different refused shape.
 const DECLARATIONS: &str = "\
 struct b_ctx; struct b_pool; struct b_handle; \
 struct b_storage { int state; struct b_ctx *cio; struct b_pool *stream; }; \
@@ -38,7 +41,7 @@ struct b_instance { int flags; struct b_storage *storage; }; \
 union b_view { struct b_ctx *cio; int tag; }; \
 struct b_handle *b_open(struct b_ctx *cio, struct b_pool *stream, int flags); \
 void b_close(struct b_handle *h); \
-int b_probe(struct b_handle *h); \
+int b_probe(void *h); \
 int b_write(struct b_handle *h, int n); \
 void b_adopt(void *p); \
 void b_release(void *p); \
