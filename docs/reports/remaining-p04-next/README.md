@@ -372,8 +372,9 @@ provisional Unsafe raw unit. The complete before/after reports and the diff are
 archived beside this file.
 
 The four re-measured corpus artifacts are not re-pinned by this card: they are
-identical to the base, so the archived baseline under
-`docs/reports/remaining-o04-arms/artifacts/` stands unchanged.
+identical to this branch's base, so whatever baseline `main` carries at merge
+time is unaffected by this change. (`main` moved the archived baseline again
+after this branch was cut — see §8.1.)
 
 The `chunkio-core` second source set and the synthetic configured-audit routes
 are covered by `crates/qcore-audit/tests/second_source_set.rs`,
@@ -528,7 +529,12 @@ than resolved on this branch:
   and five test files). Any new `VerificationRequestV2` literal added on main
   will need the same field.
 - The report's "CT coverage" line records 24/50 at this branch's base and
-  28/50 on main; this card maps no CT case.
+  28/50 on `main`; this card maps no CT case.
+- `main` has continued to advance during this card (P09-G, T08-SRC-CT, then
+  E01-F1's adoption of a new 185-unit baseline). This card touches none of the
+  baseline artifacts: its own corpus re-measurement is byte-identical to its
+  base on both sides, so it neither depends on nor perturbs whichever baseline
+  `main` carries at merge time.
 
 ## 9. Open items and named blockers
 
