@@ -46,6 +46,25 @@ pub struct AuditConfig {
     pub source_revision_policy: SourceRevisionPolicy,
     #[serde(default)]
     pub source_contracts: Option<SourceContractAuditConfig>,
+    /// Which build target's compilation records this audit reads, for a
+    /// database that carries several commands per source file. Absent means the
+    /// database is taken whole, which is the existing behaviour and keeps every
+    /// installed configuration byte-identical.
+    #[serde(default)]
+    pub compile_target: Option<CompileTargetSelection>,
+}
+
+/// An explicit, declared narrowing of a multi-target compilation database.
+///
+/// This exists because refusing to choose is right and choosing silently is
+/// wrong: the audit keeps refusing residual ambiguity, and the *configuration*
+/// — a reviewable, digested input — says which target is under audit.
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields, rename_all = "snake_case")]
+pub struct CompileTargetSelection {
+    /// Keep only records whose `-o` argument begins with this fragment, as the
+    /// database spells it (for CMake, `CMakeFiles/<target>.dir/`).
+    pub object_prefix: String,
 }
 
 /// Historical source evidence requires its original profile pin. A moving
@@ -82,10 +101,10 @@ pub fn select_profile_units(
 ) -> Result<Vec<CompileEntry>, String> {
     let mut selected = BTreeMap::<PathBuf, CompileEntry>::new();
     for root in &library.source_roots {
-        let source_root = checkout
-            .join(&root.root)
+        let declared_root = qcore_contract::profile_loader::source_root_path(checkout, &root.root);
+        let source_root = declared_root
             .canonicalize()
-            .unwrap_or_else(|_| checkout.join(&root.root));
+            .unwrap_or_else(|_| declared_root.clone());
         for entry in entries {
             let entry_file = entry
                 .file
@@ -221,6 +240,10 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     let database_path = resolve(base, &config.compile_database);
     let database = fs::read_to_string(&database_path).map_err(|error| error.to_string())?;
     let entries = compile_entries(&database)?;
+    let entries = match &config.compile_target {
+        Some(selection) => compile_db::select_object_prefix(entries, &selection.object_prefix)?,
+        None => entries,
+    };
     let contract_manifest = profile
         .resource_contract_manifest_path()
         .ok_or("source-set profile supplies no resource contracts")?;
@@ -413,6 +436,13 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional"
         },
     });
+    if let Some(selection) = &config.compile_target {
+        assumptions["compile_target_selection"] = serde_json::json!({
+            "object_prefix": selection.object_prefix,
+            "role": "declared narrowing of a multi-target compilation database; records whose `-o` output does not begin with this fragment were not read",
+            "residual_ambiguity": "still refused: two retained records for one file that differ in any other argument reject the audit",
+        });
+    }
     if let Some(head) = &selected_head {
         if checkout_head(&checkout)? != *head {
             return Err("checkout HEAD changed during audit; rerun with stable inputs".into());

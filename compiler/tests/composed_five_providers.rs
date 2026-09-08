@@ -102,8 +102,17 @@ fn the_default_registry_is_five_built_in_providers_assembled_from_two_profiles()
                 ]
             ),
             ("libevent".to_owned(), vec!["qcore.libevent".to_owned()]),
+            // G03-F installed the `libevent-core` resource-projection source
+            // set. It binds no provider (`provider: null`), so it adds a row
+            // here without changing the load-bearing fact below: still no
+            // single profile declares all five.
+            ("libevent-core".to_owned(), Vec::new()),
         ]),
         "no single profile declares the whole five-provider composition"
+    );
+    assert!(
+        declared.values().all(|ids| ids.len() < 5),
+        "no single profile may declare the whole five-provider composition"
     );
 
     // Every profile-declared provider is the built-in v1 adapter. The shipped

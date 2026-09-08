@@ -497,7 +497,7 @@ fn validate_manifest(manifest: &ProfileManifest) -> Result<(), ProfileDiagnostic
         }
         validate_library_source_profile(name, library)?;
         for root in &library.source_roots {
-            if !is_relative_without_traversal(&root.root) {
+            if !is_admissible_source_root(&root.root, manifest.schema_version) {
                 return Err(inconsistent(format!(
                     "library `{name}` source root `{}` must be relative",
                     root.root
@@ -779,6 +779,35 @@ fn is_relative_with_parents(path: &str) -> bool {
         && Path::new(path)
             .components()
             .all(|component| matches!(component, Component::Normal(_) | Component::ParentDir))
+}
+
+/// Whether a declared source root is admissible at this manifest version.
+///
+/// Manifest version 2 admits exactly one additional spelling, the literal
+/// [`CHECKOUT_ROOT_SOURCE_ROOT`], naming the pinned checkout root itself. The
+/// test is string equality, not path normalisation: `"./src"`, `"a/."`, `".."`,
+/// `"/"` and every absolute spelling keep the version-1 rejection, so the new
+/// root reaches no directory the pinned checkout does not already contain, and
+/// it widens no other declared path (audited files, clean paths, exact unit
+/// selections and provider manifests are validated separately and unchanged).
+#[must_use]
+pub fn is_admissible_source_root(root: &str, schema_version: u32) -> bool {
+    is_relative_without_traversal(root)
+        || (schema_version >= 2 && root == qcore_schemas::profile::CHECKOUT_ROOT_SOURCE_ROOT)
+}
+
+/// The directory a declared source root names inside a checkout.
+///
+/// One resolver so every consumer agrees on what the checkout-root spelling
+/// means: it is the checkout itself, not `checkout/.`, whose textual form would
+/// compare unequal to a canonicalised entry path.
+#[must_use]
+pub fn source_root_path(checkout: &Path, root: &str) -> PathBuf {
+    if root == qcore_schemas::profile::CHECKOUT_ROOT_SOURCE_ROOT {
+        checkout.to_path_buf()
+    } else {
+        checkout.join(root)
+    }
 }
 
 fn is_relative_without_traversal(path: &str) -> bool {

@@ -91,7 +91,16 @@ fn the_shipped_profiles_load_and_are_internally_consistent() {
         let profile = load_profile(source_set).unwrap_or_else(|error| {
             panic!("{source_set} profile must load: {error}");
         });
-        assert_eq!(profile.manifest().schema_version, PROFILE_MANIFEST_VERSION);
+        // Both shipped profiles are byte-identical version-1 manifests. G03-F
+        // defined version 2 (the checkout-root source root) without migrating
+        // them: neither names a root spelling version 1 refuses, so moving
+        // them would change bytes without changing meaning. The exact declared
+        // version stays pinned so a silent migration is a test failure.
+        assert_eq!(profile.manifest().schema_version, 1);
+        assert!(
+            SUPPORTED_PROFILE_MANIFEST_VERSIONS.contains(&profile.manifest().schema_version),
+            "{source_set} declares an unsupported version"
+        );
         assert_eq!(profile.manifest().source_set, source_set);
         assert_eq!(profile.manifest_digest().len(), 64);
         assert_eq!(
@@ -102,7 +111,8 @@ fn the_shipped_profiles_load_and_are_internally_consistent() {
             assert!(profile.manifest().pins.contains_key(&library.pin));
         }
     }
-    assert_eq!(SUPPORTED_PROFILE_MANIFEST_VERSIONS, &[1]);
+    assert_eq!(SUPPORTED_PROFILE_MANIFEST_VERSIONS, &[1, 2]);
+    assert_eq!(PROFILE_MANIFEST_VERSION, 2);
 }
 
 #[test]
@@ -306,14 +316,17 @@ fn f1_absent_profile_is_not_found() {
 
 #[test]
 fn f3_unknown_schema_version_rejects_the_whole_profile() {
+    // The probe moved from 2 to 3 when G03-F defined version 2. A version this
+    // loader does not define still rejects the whole profile; the supported
+    // set is reported verbatim rather than negotiated.
     let directory = scratch_profile("version", LIBEVENT_SOURCE_SET, |document| {
-        document["schema_version"] = serde_json::json!(2);
+        document["schema_version"] = serde_json::json!(3);
     });
     assert_eq!(
         load_profile_directory(&directory).unwrap_err(),
         ProfileDiagnostic::UnsupportedSchemaVersion {
-            found: 2,
-            supported: vec![1],
+            found: 3,
+            supported: vec![1, 2],
         }
     );
 }

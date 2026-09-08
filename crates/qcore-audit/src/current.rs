@@ -55,10 +55,11 @@ pub fn select_configurations(
                     .unwrap_or_else(|_| entry.file.clone());
                 entry_file.extension().is_some_and(|ext| ext == "c")
                     && library.source_roots.iter().any(|root| {
-                        let source_root = checkout
-                            .join(&root.root)
+                        let declared_root =
+                            qcore_contract::profile_loader::source_root_path(checkout, &root.root);
+                        let source_root = declared_root
                             .canonicalize()
-                            .unwrap_or_else(|_| checkout.join(&root.root));
+                            .unwrap_or_else(|_| declared_root.clone());
                         match &root.selection {
                             UnitSelection::TopLevel => {
                                 entry_file.parent() == Some(source_root.as_path())

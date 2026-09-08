@@ -39,11 +39,11 @@ pub use plugin::{
     VerifierCapability,
 };
 pub use profile::{
-    ApiDisposition, AuditedFile, BooleanFieldModel, BuildProfileSelector, CallbackEffectSummary,
-    ImportRole, LibraryProfile, OperationKind, PROFILE_MANIFEST_VERSION, ProfileManifest,
-    ProviderBinding, RequiredEvidenceKind, SUPPORTED_PROFILE_MANIFEST_VERSIONS,
-    SignatureConstraint, SourcePin, SourceRootSelection, SourceWitness, TypedImportProfile,
-    UnitSelection, WitnessCheck,
+    ApiDisposition, AuditedFile, BooleanFieldModel, BuildProfileSelector,
+    CHECKOUT_ROOT_SOURCE_ROOT, CallbackEffectSummary, ImportRole, LibraryProfile, OperationKind,
+    PROFILE_MANIFEST_VERSION, ProfileManifest, ProviderBinding, RequiredEvidenceKind,
+    SUPPORTED_PROFILE_MANIFEST_VERSIONS, SignatureConstraint, SourcePin, SourceRootSelection,
+    SourceWitness, TypedImportProfile, UnitSelection, WitnessCheck,
 };
 pub use reason::{ReasonCategory, ReasonSubject, UnclassifiedReason, UnknownReasonCategory};
 pub use witness::{

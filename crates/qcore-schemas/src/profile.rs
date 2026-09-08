@@ -20,14 +20,36 @@ use serde::{Deserialize, Serialize};
 
 use crate::mechanism::LibraryMechanismSummary;
 
-/// The only profile-manifest version this schema defines.
-pub const PROFILE_MANIFEST_VERSION: u32 = 1;
+/// The newest profile-manifest version this schema defines.
+///
+/// Version 2 changes exactly one admission rule: a [`SourceRootSelection::root`]
+/// may be [`CHECKOUT_ROOT_SOURCE_ROOT`], naming the pinned checkout root itself.
+/// Nothing else moves — no field is added, removed or renamed, no closed
+/// vocabulary is extended, and no existing field changes meaning. The design's
+/// versioning policy (`docs/design/W2_PROFILE_MANIFEST_SCHEMA.md` §2) still
+/// makes it a version event, because the set of admissible manifests changed.
+pub const PROFILE_MANIFEST_VERSION: u32 = 2;
 
 /// The versions a loader built against this schema may accept. Any other
 /// declared version is a whole-profile rejection (design §3, F3): a data file
 /// has no negotiation counterpart, so it either is a supported version or it
 /// is not readable.
-pub const SUPPORTED_PROFILE_MANIFEST_VERSIONS: &[u32] = &[PROFILE_MANIFEST_VERSION];
+///
+/// Version 1 stays supported because the v1 → v2 interpretation is exact and
+/// total in the direction the policy requires: v1 rejects every root a v2
+/// loader would read differently, so a v1 manifest that loads at all means the
+/// same thing under both. The relation is *not* symmetric, and deliberately so
+/// — a manifest that names the checkout root must declare version 2, and the
+/// same bytes under `"schema_version": 1` still reject.
+pub const SUPPORTED_PROFILE_MANIFEST_VERSIONS: &[u32] = &[1, PROFILE_MANIFEST_VERSION];
+
+/// The one spelling that names the pinned checkout root itself as a source
+/// root, admitted from manifest version 2 onwards.
+///
+/// It is an exact string match, not a path-normalisation rule: `"./src"`,
+/// `"a/."`, `".."` and every absolute spelling stay refused, so admitting it
+/// opens no traversal beyond the checkout the pin already fixes.
+pub const CHECKOUT_ROOT_SOURCE_ROOT: &str = ".";
 
 /// Root of `contract/profiles/<source-set>/profile.json`.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -118,7 +140,9 @@ pub struct LibraryProfile {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "snake_case")]
 pub struct SourceRootSelection {
-    /// Root relative to the pin checkout.
+    /// Root relative to the pin checkout, without traversal components; or,
+    /// from manifest version 2, exactly [`CHECKOUT_ROOT_SOURCE_ROOT`] for a
+    /// source set whose C sources sit at the checkout root.
     pub root: String,
     /// How compile-database units under the root are selected.
     pub selection: UnitSelection,
