@@ -8,6 +8,7 @@
 //! layers. This crate has no runtime dependencies and no workspace dependencies.
 
 pub mod advanced_control;
+pub mod aggregate_composition;
 pub mod ast;
 pub mod c_emit;
 pub mod cfg;
