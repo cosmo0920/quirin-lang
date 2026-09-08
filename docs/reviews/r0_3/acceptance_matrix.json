@@ -860,13 +860,14 @@
    "docs/reports/remaining-t00/coverage.json",
    "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
    "docs/reevaluation/ct_manifest.json",
-   "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json"
+   "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+   "docs/reports/wave5-ct-integration/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule). No row claims a stage its executed evidence does not carry; manifest_stages is retained beside stage_derived_status so the divergence stays visible rather than being resolved silently.",
   "totals": {
    "cases": 50,
-   "mapped": 20,
-   "unmapped": 30
+   "mapped": 24,
+   "unmapped": 26
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -874,59 +875,59 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 20
+    "executed": 24
    },
    "elaborate": {
-    "executed": 20
+    "executed": 24
    },
    "task_lowering": {
     "executed": 16,
-    "not_applicable": 4
+    "not_applicable": 8
    },
    "task_ledger_check": {
     "executed": 15,
-    "not_applicable": 5
+    "not_applicable": 9
    },
    "mutex_lowering": {
-    "executed": 4,
+    "executed": 8,
     "not_applicable": 16
    },
    "mutex_invariant_check": {
-    "executed": 4,
+    "executed": 8,
     "not_applicable": 16
    },
    "sequential_whole_program": {
-    "not_applicable": 20
+    "not_applicable": 24
    },
    "sequential_reference_execution": {
-    "not_applicable": 20
+    "not_applicable": 24
    },
    "task_reference_execution": {
     "executed": 11,
-    "not_applicable": 9
+    "not_applicable": 13
    },
    "mutex_reference_execution": {
     "executed": 1,
-    "not_applicable": 19
+    "not_applicable": 23
    },
    "c_emission": {
     "executed": 12,
-    "not_applicable": 8
+    "not_applicable": 12
    },
    "native_execution": {
     "executed": 12,
-    "not_applicable": 8
+    "not_applicable": 12
    },
    "native_sanitized": {
     "executed": 3,
     "recorded_not_gated": 5,
-    "unassessed": 12
+    "unassessed": 16
    },
    "legacy_c_twin": {
-    "not_applicable": 20
+    "not_applicable": 24
    },
    "proof": {
-    "unassessed": 20
+    "unassessed": 24
    }
   },
   "depth_profile": {
@@ -934,15 +935,15 @@
    "native_execution": 9,
    "task_ledger_check": 4,
    "task_lowering": 1,
-   "mutex_invariant_check": 3
+   "mutex_invariant_check": 7
   },
   "observation_counts": {
-   "parse": 20,
-   "elaborate": 20,
+   "parse": 24,
+   "elaborate": 24,
    "task_lowering": 16,
    "task_ledger_check": 15,
-   "mutex_lowering": 4,
-   "mutex_invariant_check": 4,
+   "mutex_lowering": 8,
+   "mutex_invariant_check": 8,
    "task_reference_execution": 26,
    "mutex_reference_execution": 1,
    "c_emission": 28,
@@ -963,7 +964,7 @@
    "blocked-on-W3/W4": 3,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
-   "blocked-on-guard-profile-composition-or-unrepresented-form": 7,
+   "blocked-on-guard-profile-composition-or-unrepresented-form": 3,
    "blocked-on-W3/W4 (conditional half resolved)": 1,
    "DECIDABLE-NOW (coarser reason)": 2,
    "blocked-on-harness-schema (C-twin stage)": 5,
@@ -994,9 +995,10 @@
    "T00 finding O4 is now partially repaired: CT26 is the first CT case whose sanitized native run is GATED (compiler/tests/ct_corpus.rs::mutex_sanitized_run, -fsanitize=address,undefined with detect_leaks=1). The sanitized evidence for CT14/CT16/CT20/CT37/CT50 is still recorded_not_gated as transcripts in docs/reports/w6-*/README.md.",
    "T00 finding O6 is not repeated for this card's cases: CT27/CT29/CT30 carry evidence_target=linux because their accepted controls compile through the Linux-only emission path, even though the case artifacts' own rejections are host-independent. The harness asserts that correspondence rather than leaving it narrative.",
    "The seven remaining mutex-family cases (CT28, CT31, CT32, CT33, CT34, CT46, CT48) no longer carry T00's `no mutex value` blocker - a mutex source form now exists. Their current blockers are task composition inside the guard profile (CT28, CT31's waiter half, CT32), unrepresented forms (CT33 lock ranks, CT34 protection growth, CT48 guard-scoped facts) and Send/Sync derivation (CT46). CT31's Q619 does execute, but only as a consequential second cascade entry in CT29/CT30, never as its own mechanism.",
-   "The three newly-decidable cases (CT24, CT39, CT47) are assessed as decidable from probes, not mapped; two of the three would record a coarser reason than their spec row."
+   "The three newly-decidable cases (CT24, CT39, CT47) are assessed as decidable from probes, not mapped; two of the three would record a coarser reason than their spec row.",
+   "Wave-5 CT integration (docs/reports/wave5-ct-integration/README.md): CT28/CT31/CT32/CT48 map on the source.mutex.guard.v1 route as extended by T03-F. cfg stays unassessed for them — the route has no CFG construction, and the harness enforces the refusal of a cfg: executed claim. proof remains unassessed for all 24 mapped cases; sanitized-native remains 3 of 24. The grown denominator is mapping, not conformance."
   ],
-  "generator_status": "docs/reports/remaining-d02/build_matrix.py derives this section from T00's archived coverage.json alone, which covers only the original eleven mapped cases and asserts its mapped set equals the manifest's. That assertion has not held since T03-CT and now diverges by nine cases (CT26/CT27/CT29/CT30 and CT03/CT04/CT05/CT17/CT18), so the section is hand-maintained and the generator needs a merge step over the two ct_stage_evidence.json files before it can regenerate. Recorded, not silently worked around; T00-CT-SCHEMA already owns the stage-derived summarizer work.",
+  "generator_status": "docs/reports/remaining-d02/build_matrix.py derives this section from T00's archived coverage.json alone, which covers only the original eleven mapped cases and asserts its mapped set equals the manifest's. That assertion has not held since T03-CT and now diverges by thirteen cases (CT26/CT27/CT29/CT30, CT03/CT04/CT05/CT17/CT18 and CT28/CT31/CT32/CT48), so the section is hand-maintained and the generator needs a merge step over the two ct_stage_evidence.json files before it can regenerate. Recorded, not silently worked around; T00-CT-SCHEMA already owns the stage-derived summarizer work.",
   "executed_totals_added_by_t03_ct_integration": {
    "mutex_reference_executions": 1,
    "sanitized_native_compile_and_run": 1,
@@ -1011,6 +1013,17 @@
    "CT24": "Card T04's own proposal, unchanged and still unmapped; its fixture stays in docs/reports/remaining-t04/fixtures/.",
    "CT39": "Refused at model level by FlatEpochBoundV1 (card T08), but there is no epoch source syntax, hence no parser stage and no reference execution.",
    "CT47": "As recorded by T00; unchanged by this wave."
+  },
+  "executed_totals_added_by_wave5_ct_integration": {
+   "mutex_lowerings": 4,
+   "mutex_invariant_checks": 4,
+   "mutex_reference_executions": 0,
+   "sanitized_native_compile_and_run": 0,
+   "in_case_source_controls": 6,
+   "accepted_controls": 4,
+   "refused_controls": 2,
+   "cases_with_proof_evidence": 0,
+   "note": "increment over executed_totals_from_t00 and the T03-CT object, in the same style; no native or proof evidence was added — all four cases are rejections whose accepted controls are route-checked (three render in no thread; CT48's C emission is not compiled by the harness), and evidence_target records only the harness host gate."
   }
  },
  "corpus": {
@@ -1192,9 +1205,9 @@
   },
   {
    "id": "T03-CT-REST",
-   "title": "The seven still-unmapped mutex-family CT cases",
-   "why": "CT28, CT31, CT32, CT33, CT34, CT46 and CT48 were examined against their scenario definitions and left unmapped on purpose. CT28/CT32 and CT31's waiter half need task composition inside the guard profile, which is refused today; CT31's Q619 executes only as a consequential cascade entry in CT29/CT30; CT33 lock ranks, CT34 protection growth and CT48 guard-scoped facts have no source form; CT46 needs Send/Sync derivation. Their T00 blocker label `no mutex value` is now stale.",
-   "source": "docs/reports/remaining-t03-ct-integration/README.md"
+   "title": "The three still-unmapped mutex-family CT cases (was seven)",
+   "why": "CT28/CT31/CT32/CT48 mapped in wave 5 after T03-F landed bounded task composition and guard-scoped facts. Remaining: CT33 (no source form declares a lock rank, so a lock-order cycle cannot be written down), CT34 (CreateMutex fixes declared footprints at creation; no protection-growth form), CT46 (needs Send/Sync derivation, outside L09 and this profile).",
+   "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md"
   },
   {
    "id": "wave3-CT",
@@ -1245,5 +1258,5 @@
    "source": "docs/reports/extern-call-v1/README.md SS7"
   }
  ],
- "updated": "2026-09-08 (wave 5: C02-P, C03-NFR, E03-B, T03-F, P01-F2 and source.extern-call.v1 closed at their stated boundaries; residual follow-ons re-recorded as O04-ARMS, C02-P-ALIAS, C03-NFR-REACH, E03-B-O, T03-GUARD-JOIN, P01-F3, EXTERN-CALL-F; nothing promoted)"
+ "updated": "2026-09-08 (wave 5: six cards closed at their stated boundaries with residual follow-ons re-recorded; wave5-CT: CT28/CT31/CT32/CT48 integrated through the CT harness with stage-derived evidence, CT 20/50 -> 24/50, no native or proof evidence added; nothing promoted)"
 }
