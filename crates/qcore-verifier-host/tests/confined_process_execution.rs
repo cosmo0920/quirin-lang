@@ -427,10 +427,32 @@ fn the_confined_profile_composes_with_the_limit_profile() {
     let reference = limits_only.enforced_limits().unwrap();
     assert_eq!(enforced.rlimits, reference.rlimits);
     assert!(reference.confinement.is_none());
+    // Deliberate pin update, card `P03-F`: the two profiles' *`setrlimit`*
+    // tables are still exactly equal — that is the composition claim, and it is
+    // the assertion above and this one. What is no longer equal is the total
+    // enforceable set: the confining profile additionally installs
+    // `max_execution_processes` as a cgroup quota, which the limit profile
+    // refuses. The load-bearing negative half is kept below: the limit profile
+    // must not claim the quota kind.
     assert_eq!(
-        enforceable_limit_kinds(ProcessExecutionProfile::LinuxConfinedV1),
-        enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1)
+        enforceable_rlimit_kinds(ProcessExecutionProfile::LinuxConfinedV1),
+        enforceable_rlimit_kinds(ProcessExecutionProfile::LinuxRlimitV1)
     );
+    assert!(
+        !enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1)
+            .contains(&MAX_EXECUTION_PROCESSES)
+    );
+    let confined_kinds = enforceable_limit_kinds(ProcessExecutionProfile::LinuxConfinedV1);
+    assert!(confined_kinds.contains(&MAX_EXECUTION_PROCESSES));
+    let extra: Vec<_> = confined_kinds
+        .iter()
+        .filter(|kind| !enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1).contains(kind))
+        .copied()
+        .collect();
+    assert_eq!(extra, vec![MAX_EXECUTION_PROCESSES]);
+    // The composed execution declared no quota, so it installed none, and its
+    // record says exactly that rather than leaving the question open.
+    assert!(enforced.process_quota.is_none());
 }
 
 /// 7. Unavailable enforcement is a refusal before the spawn, not a weaker run:
