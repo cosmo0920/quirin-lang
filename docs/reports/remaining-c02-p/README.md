@@ -235,6 +235,8 @@ Baseline measured on this same checkout before any change.
 | Clippy | `cargo clippy --all-targets -- -D warnings` | — | clean | 0 |
 | Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | — | exit 0 | 0 |
 | Follow-up | `cargo run -p qcore-compiler --example reevaluation_followup` | — | exit 0 | 0 |
+| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | — | **58 passed / 0 failed** | 0 |
+| Python | `python3 -B -m unittest discover -s scripts/tests` | — | **95 ran, OK** | 0 |
 | Lean audits | `python3 scripts/check_lean_audits.py` | 34 | **34 audits passed** | 0 |
 | Pinned 185-unit corpus | `cycle19_fluent_bit_libraries_audit --pinned-evidence` | not run | **not re-measurable** (§6) | — |
 
