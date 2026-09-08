@@ -14,6 +14,7 @@ pub mod obligation;
 pub mod plugin;
 pub mod profile;
 pub mod reactor;
+pub mod reason;
 
 pub mod witness;
 
@@ -44,6 +45,7 @@ pub use profile::{
     SignatureConstraint, SourcePin, SourceRootSelection, SourceWitness, TypedImportProfile,
     UnitSelection, WitnessCheck,
 };
+pub use reason::{ReasonCategory, ReasonSubject, UnclassifiedReason, UnknownReasonCategory};
 pub use witness::{
     BoundOperation, ChunkBackendRecord, ChunkLifecycleWitness, ChunkOperationRecord,
     ChunkResidencyRecord, ContractObservationRecord, ContractObservationWitness, NativeRunBinding,

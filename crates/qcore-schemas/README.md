@@ -1,4 +1,4 @@
-# qcore-schemas 5.0.0
+# qcore-schemas 6.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -172,7 +172,7 @@ predates this route and other exchanges still name it.
 
 | Boundary | Current value | Meaning |
 |---|---|---|
-| Rust schema crate | 5.0.0 | Public API and serde compatibility |
+| Rust schema crate | 6.0.0 | Public API and serde compatibility |
 | Plugin protocol | 1 | Unchanged envelope |
 | Evidence | 1 and 2 | Unchanged negotiation and admission rules |
 | Reactor callback proposal | 1 | Unchanged proposal records |
@@ -184,6 +184,56 @@ predates this route and other exchanges still name it.
 The projection carries no proposal, and a proposal that matches the core's own
 exported inventory still discharges nothing on its own: the core runs its own
 reactor model checker over its own program before any obligation is covered.
+
+## Reason categories for uncovered obligations (6.0.0)
+
+`reason` publishes the closed seven-category vocabulary of
+`docs/QCORE_SPEC_r0_3.md` §L21.1 — `unsupported-syntax`, `missing-premise`,
+`incomplete-obligation-coverage`, `stale-evidence`, `provider-failure`,
+`residual-custody`, `environment-unavailable` — and
+`obligation::DerivationIncomplete` gains a **required** `category` field drawn
+from it. `ReasonCategory::subject` partitions the seven into
+`AnalysedSource`, `Analyser` and `Environment`, with
+`environment-unavailable` the sole environment member, so §L21.1 rule 1 — an
+environment failure is never readable as a statement about the analysed source
+— holds by construction rather than by review.
+
+**Why this is a major crate version, on two independent grounds.**
+
+1. *Source incompatibility.* `DerivationIncomplete` is a plain struct, so every
+   exhaustive construction of it stops compiling. This is the same
+   exhaustive-construction precedent as 2.0.0, 4.0.0 and 5.0.0.
+2. *A tightened validation rule.* The record is `deny_unknown_fields` and
+   `category` has **no** serde default, so a `DerivationIncomplete` recorded
+   before this version is now rejected, and a record written now is rejected by
+   a 5.0.0 consumer. That refusal is the point, not a side effect:
+   `DerivationIncomplete` is an element of `VerificationTask`, whose SHA-256 over
+   canonical JSON travels in every evidence-v2 request and every witness, so a
+   witness recorded against a task whose marker list is non-empty must not
+   validate against a task derived after the change. `tests/reason_codes.rs`
+   pins the refusal in both directions.
+
+**Existing wire bytes.** A task whose `derivation_incomplete` list is *empty*
+serializes byte-identically to 5.0.0 — `"derivation_incomplete":[]` does not
+mention the element shape — so its `task_digest` is unchanged. This was
+measured, not assumed; the measurement and the exact digests that do move are
+recorded in `docs/reports/remaining-reason-codes/README.md`. Nothing else in
+the crate changed: protocol v1, evidence versions 1 and 2, every data-profile
+version, and every other record's bytes are untouched.
+
+The category **refines** a row and replaces nothing (§L21.1 rule 2): no source
+span, `property`, semantic profile, scope, bound, assumption or obligation
+identifier is reachable from it, and `reason` keeps its exact text.
+`ReasonCategory::classify` is the documented free-text mapping for string-only
+rows; it is fail-closed, refusing an unrecognised string rather than defaulting
+it — in particular never onto a category whose subject is the analysed source.
+
+| Boundary | Current value | Meaning |
+|---|---|---|
+| Rust schema crate | 6.0.0 | Public API and serde compatibility |
+| Plugin protocol | 1 | Unchanged envelope |
+| Evidence | 1 and 2 | Unchanged negotiation and admission rules |
+| Reason vocabulary | L21.1, closed at 7 | Adding a category is a compatibility event |
 
 The unit semantic profile is `qcore.c_boolean_field_contract.v3`: two initial
 Boolean states, no scalar result, a nominal record from the opaque import, and

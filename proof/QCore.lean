@@ -72,6 +72,7 @@ import QCore.NullableRemoval
 import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ExternCall
+import QCore.ReasonCategory
 import QCore.ChunkIntegrityObservation
 import QCore.PackageTemplateBinding
 import QCore.RegionTaskCredit
