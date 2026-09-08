@@ -1238,3 +1238,53 @@ task/mutex semantics and general native correctness remain outside this change.
 Validation: 1387 workspace tests passed, 1 ignored; all 32 Lean audits,
 formatting, Clippy, both reevaluation probes and four native examples pass.
 Evidence: `docs/reports/core-concurrency-prelude/README.md`.
+
+Final observation increment (2026-09-08): the last two cards of the 49-card
+remaining-work plan landed through isolated worktrees with per-card reports;
+this paragraph supersedes nothing above and each card's record keeps its own
+boundaries.
+- Reopen corruption/checksum family (O01): an eight-fixture ChunkIO reopen
+  observation family runs the real pinned `cio_chunk_open` path with
+  `CIO_CHECKSUM` enabled — the first recorded `CIO_ERR_BAD_CHECKSUM` run in
+  this repository — over five content classes and three injection states as
+  disjoint axes, with the content class derived from recorded bytes by an
+  independent Rust CRC-32, never read out of the report. All eight corrupted
+  or clean images are byte-identical before and after; custody accounts
+  80/80/0 allocation generations, 6 library closes plus 2 harness
+  reclamations, and 7 library mapping epochs. The decision procedure is
+  `qcore-core::chunk_integrity` (44 tests, 30-row mutation matrix, all
+  refused) with 42 audited Lean theorems
+  (`QCore.ChunkIntegrityObservation`). Two deliberate pin updates: the
+  contract corpus moves 59 to 60 modules
+  (`contract/qcore/chunkio/filesystem_integrity_observation.qcore`, 21
+  clauses, no `resource_contract_v1` marker) and the loader's rejected count
+  moves 144 to 145. The family compiles pinned `lib/chunkio` sources through
+  ChunkIO's standalone CMake because the pinned Fluent Bit build tree is
+  unavailable; no object-code equivalence with a Fluent Bit build is claimed,
+  no production route consumes the relation, and no corruption recovery was
+  observed. Evidence: `docs/reports/remaining-o01/README.md`.
+- Capacity grow boundary (O02): the file-backed chunk grow boundary
+  (`ftruncate`/`fallocate`/`posix_fallocate`/extending `write` and the
+  `ENOSPC`/`EDQUOT`/`EFBIG`-class refusal) is recorded on x86_64 Linux over
+  six sanitized native sequences: length-only grants versus reserved grants
+  (`st_blocks` measured), refusal with identical-repeat refusal, a
+  returned-error-without-`errno` arm, a partial transfer and a live
+  mapping-beyond-end-of-file, with 16 epochs acquired and released. The
+  decided relation is `qcore-core::capacity_boundary` (42 tests, 27 Rust plus
+  14 Lean mutation rows, all refused) with 30 audited Lean theorems
+  (`QCore.CapacityBoundary`); refusals carry module-local keys, no Q-code.
+  `ENOSPC`/`EDQUOT` are classified from man-pages, not observed; metadata
+  boundaries, the pinned-unit route and any production consumer remain open.
+  Evidence: `docs/reports/remaining-o02/README.md`.
+
+With these two cards the 49-card execution plan of 2026-09-07 is fully
+dispositioned: every card is closed at its stated boundary or recorded as an
+explicit named follow-on. Nothing is promoted by this increment: raw Cycle 19
+units stay 2 Safe / 42 provisional Unsafe / 137 Unknown plus four data-only
+units, CT coverage stays 20/50 mapped and full language conformance stays
+false. The contract corpus is now 60 modules by O01's deliberate pin update;
+the four pinned 185-unit artifacts were not re-measured (CORPUS-REPIN remains
+open). `qcore-schemas` is 5.0.0; `qcore-compiler` is 0.2.0. Merged gate at
+this checkpoint: 1473 workspace tests, 58 provider tests, 95 Python tests,
+34 Lean audits, both reevaluation examples exit 0, fmt and clippy clean in
+both workspaces.
