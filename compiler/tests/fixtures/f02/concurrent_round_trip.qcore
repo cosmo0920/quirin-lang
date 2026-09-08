@@ -1,0 +1,40 @@
+// F02. The admitted owned-Buffer worker/capsule/join path, with parent work
+// that is genuinely concurrent with the child's: the parent reads and releases
+// a second Buffer between creation and join, while the child reads and returns
+// the Buffer it was given. Nothing here is new language surface; this is the
+// G02b grammar already accepted by `ScopedOwnedTasksV1`.
+concurrency checked;
+fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
+    let seen = qcore_buffer_read(buffer);
+    return move buffer;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let first = qcore_buffer_new(42)?;
+    match qcore_buffer_new(7) {
+        Result::Ok { value: second } => {
+            thread scope s {
+                match spawn s worker(move first) {
+                    Result::Ok { value: handle } => {
+                        let local = qcore_buffer_read(second);
+                        drop second;
+                        let returned = join move handle?;
+                        let value = qcore_buffer_read(returned);
+                        drop returned;
+                        return value;
+                    }
+                    Result::Err { error: failure } => {
+                        drop second;
+                        let value = qcore_buffer_read(first);
+                        drop first;
+                        return value;
+                    }
+                }
+            }
+        }
+        Result::Err { error: shortfall } => {
+            let value = qcore_buffer_read(first);
+            drop first;
+            return value;
+        }
+    }
+}
