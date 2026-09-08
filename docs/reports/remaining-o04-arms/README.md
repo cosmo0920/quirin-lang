@@ -1,5 +1,14 @@
 # O04-ARMS — per-arm discharge on the remaining early-return arms — 2026-09-09
 
+> **Superseded as the current baseline, 2026-09-09 (later):** card E01-F1
+> re-measured through the same pinned route; its before-run reproduces
+> `artifacts/` here byte-identically (0 added / 0 removed / 0 changed on the
+> exhaustive diff), and its after-run — denominator 4,775 → 4,921, zero unit
+> verdict movement, four of five artifacts byte-identical beyond the additive
+> enumeration block — is the current baseline at
+> `docs/reports/remaining-e01-f1/artifacts/`. This directory remains the
+> O04-ARMS measurement record.
+
 The named continuation of card O04
 ([`docs/reports/remaining-o04/README.md`](../remaining-o04/README.md) §7), which
 discharged the caller's three modeled cleanup arms of `flb_input_chunk_create`
