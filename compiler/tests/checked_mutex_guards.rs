@@ -223,3 +223,143 @@ fn a_broken_invariant_at_the_section_exit_is_located_and_refused() {
     let errors = compile(source).unwrap_err();
     assert_eq!(errors.first().map(String::as_str), Some("Q613@5"));
 }
+
+// ---------------------------------------------------------------------------
+// Card T03-F: the guard-profile completions, end to end.
+// ---------------------------------------------------------------------------
+
+/// The whole stage stack for a section that closes with the **checked**
+/// witness and carries a guard-scoped fact: parse, elaborate, lower, check,
+/// recheck, emit, and run under ASan/UBSan/LSan against the independently
+/// computed reference execution. The certificate must drop
+/// `InvariantPredicateDeclared`, which is the point of the checked witness.
+#[test]
+fn a_checked_witness_module_drops_the_declared_premise_and_still_runs_natively() {
+    let source = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         let f = fact buf;\n\
+         with lock m as g { assert f with g; open g; read buf with g; use f; close g unchanged; }\n\
+         }\n\
+         }\n";
+    let module = compile(source).unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::CheckedMutexGuardsV1
+    );
+    let checked = module.checked.as_checked_mutex_guards().unwrap();
+    assert!(
+        !checked
+            .certificate
+            .assumptions
+            .contains(&ConcurrencyAssumption::InvariantPredicateDeclared),
+        "a section that only read while open needs no declared predicate"
+    );
+    let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
+        &checked.lowered.program,
+        &checked.certificate,
+    )
+    .unwrap();
+    assert!(reference.contains(&"assert 2".to_owned()));
+    assert!(reference.contains(&"use-fact 2".to_owned()));
+    assert_eq!(run_native(module.c_source.as_deref().unwrap()), reference);
+
+    // One word of difference restores the premise.
+    let declared = compile(&source.replace("close g unchanged;", "close g;")).unwrap();
+    assert!(
+        declared
+            .checked
+            .as_checked_mutex_guards()
+            .unwrap()
+            .certificate
+            .assumptions
+            .contains(&ConcurrencyAssumption::InvariantPredicateDeclared)
+    );
+}
+
+/// A module whose trace carries task structure is checked and published, but
+/// this backend emits one thread, so it renders no C. The module is published
+/// without C rather than with C the backend did not produce.
+#[test]
+fn a_composed_child_task_module_checks_and_is_published_without_native_emission() {
+    let source = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         thread scope c { with lock m as gc { open gc; write buf with gc; close gc; } }\n\
+         with lock m as g { read buf with g; }\n\
+         }\n\
+         }\n";
+    let module = compile(source).unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::CheckedMutexGuardsV1
+    );
+    let checked = module.checked.as_checked_mutex_guards().unwrap();
+    assert_eq!(
+        checked.certificate.profile,
+        ConcurrencyProfile::CheckedMutexInvariantV1
+    );
+    assert_eq!(
+        checked.certificate.completed_tasks,
+        vec![1],
+        "the child is created and joined by its creator"
+    );
+    assert_eq!(checked.certificate.destroyed_resources, vec![1]);
+    assert!(
+        module.c_source.is_none(),
+        "the single-thread backend renders no program for a trace with task structure"
+    );
+}
+
+/// The three composed refusals, each located on the statement that caused it.
+#[test]
+fn the_composed_refusals_are_located_on_their_own_statements() {
+    // A child acting through the guard it lexically sees (line 6), then the
+    // join that landed inside the section (line 6 as well: the block's end).
+    let escaping_guard = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         with lock m as g {\n\
+         thread scope c { read buf with g; }\n\
+         }\n\
+         }\n\
+         }\n";
+    let refusal = compile(escaping_guard).unwrap_err();
+    assert_eq!(
+        refusal.first().map(String::as_str),
+        Some("Q612@6"),
+        "{refusal:?}"
+    );
+
+    // An announced acquisition that outlives its task blocks the generation's
+    // destruction at scope exit.
+    let waiter = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         thread scope c { wait m; }\n\
+         }\n\
+         }\n";
+    let refusal = compile(waiter).unwrap_err();
+    assert_eq!(
+        refusal.first().map(String::as_str),
+        Some("Q619@6"),
+        "{refusal:?}"
+    );
+
+    // A fact relied on after the release that dropped it.
+    let stale = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         let f = fact buf;\n\
+         with lock m as g { assert f with g; }\n\
+         with lock m as h { use f; }\n\
+         }\n\
+         }\n";
+    let refusal = compile(stale).unwrap_err();
+    assert_eq!(refusal, vec!["Q616@7"], "{refusal:?}");
+}

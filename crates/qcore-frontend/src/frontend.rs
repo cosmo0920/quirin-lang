@@ -1518,6 +1518,12 @@ impl<'a> SourceParser<'a> {
                     | "close"
                     | "read"
                     | "write"
+                    // Card T03-F's additional leaders, listed for the same
+                    // reason: a fact assertion, a fact use or an announced
+                    // acquisition between two blocks must end the first block.
+                    | "assert"
+                    | "use"
+                    | "wait"
             )
         )
     }
@@ -2168,6 +2174,17 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "protected"
             | "close"
             | "borrow"
+            // Card T03-F's guard-profile completions: the checked
+            // no-write invariant witness (`close g unchanged;`), guard-scoped
+            // refinement facts (`let f = fact r;`, `assert f with g;`,
+            // `use f;`) and an announced acquisition (`wait m;`). Reserved for
+            // the same reason as the words above: they are profile keywords,
+            // not references to bindings.
+            | "unchanged"
+            | "fact"
+            | "assert"
+            | "use"
+            | "wait"
             | "spawn"
             | "join"
             | "copy"

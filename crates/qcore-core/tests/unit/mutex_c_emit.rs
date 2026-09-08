@@ -330,3 +330,118 @@ fn compile_and_run(source: &str) -> Vec<String> {
         observation
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card T03-F.
+// ---------------------------------------------------------------------------
+
+/// One section that only reads, closing with the **checked** witness, and one
+/// guard-scoped fact established and relied on inside it. Both the fact events
+/// and the checked witness are static bookkeeping: they are traced so the two
+/// observations stay comparable, exactly as the invariant phases are.
+fn checked_witness_with_a_fact() -> MutexInvariantProgram {
+    let footprint = AccessFootprint::new(1, 0, 4);
+    MutexInvariantProgram {
+        initial_shares: vec![grant(1, 4)],
+        initial_custody: [(1, 0)].into_iter().collect(),
+        events: vec![
+            MutexInvariantEvent::CreateMutex {
+                task: 0,
+                mutex: 1,
+                protects: vec![footprint],
+                invariant: 1,
+            },
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 1,
+                guard: 1,
+            },
+            MutexInvariantEvent::AssertFact {
+                task: 0,
+                guard: 1,
+                footprint,
+                fact: 1,
+            },
+            MutexInvariantEvent::UseFact { task: 0, fact: 1 },
+            MutexInvariantEvent::OpenInvariant { task: 0, guard: 1 },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint,
+                kind: AccessKind::Read,
+                guard: Some(1),
+            },
+            MutexInvariantEvent::CloseInvariant {
+                task: 0,
+                guard: 1,
+                witness: InvariantWitness::NoWriteOccurred,
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 1 },
+            MutexInvariantEvent::DestroyMutex { task: 0, mutex: 1 },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 1,
+            },
+        ],
+    }
+}
+
+#[test]
+fn guard_scoped_facts_and_the_checked_witness_run_natively_and_match_the_reference() {
+    use crate::mutex_c_emit::{emit_mutex_c11, interpret_mutex_program};
+
+    let program = checked_witness_with_a_fact();
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    assert!(
+        !certificate
+            .assumptions
+            .contains(&crate::mutex_invariant::ConcurrencyAssumption::InvariantPredicateDeclared),
+        "the checked witness adds no declared premise"
+    );
+    let reference = interpret_mutex_program(&program, &certificate).unwrap();
+    assert!(reference.contains(&"assert 1".to_owned()));
+    assert!(reference.contains(&"use-fact 1".to_owned()));
+    let emission = emit_mutex_c11(&program, &certificate).unwrap();
+    assert_eq!(compile_and_run(&emission.source), reference);
+}
+
+#[test]
+fn a_trace_with_task_structure_is_outside_this_backend_and_says_so_before_emitting() {
+    use crate::mutex_c_emit::{MutexEmissionRefusal, emit_mutex_c11, is_single_task_trace};
+    use crate::mutex_invariant::{SharedResourceId, SyncWitness};
+
+    let base = open_write_close();
+    assert!(is_single_task_trace(&base));
+    assert!(is_single_task_trace(&checked_witness_with_a_fact()));
+
+    let certificate = check_mutex_invariant_program(&base).unwrap();
+    for event in [
+        MutexInvariantEvent::Spawn {
+            parent: 0,
+            child: 1,
+        },
+        MutexInvariantEvent::Join {
+            parent: 0,
+            child: 1,
+        },
+        MutexInvariantEvent::RegisterWaiter { task: 0, mutex: 1 },
+        MutexInvariantEvent::TransferCustody {
+            from: 0,
+            to: 1,
+            resource: 1 as SharedResourceId,
+            via: SyncWitness::SpawnEdge { child: 1 },
+        },
+    ] {
+        let mut program = base.clone();
+        program.events.insert(1, event);
+        assert!(
+            !is_single_task_trace(&program),
+            "task structure is not a single-task trace"
+        );
+        // And the backend still refuses it if it is handed one anyway: the
+        // classification is a caller's guard, not a replacement for the gate.
+        assert_eq!(
+            emit_mutex_c11(&program, &certificate),
+            Err(MutexEmissionRefusal::UnsupportedEvent { event: 1 })
+        );
+    }
+}

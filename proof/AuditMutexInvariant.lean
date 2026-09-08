@@ -54,9 +54,9 @@ import QCore.MutexInvariant
 #print axioms QCore.Concurrency.MutexInvariant.checked_certificate_omits_trusted_guard_assumptions
 
 /-! T03: the `source.mutex.guard.v1` lowering onto this profile. Source
-extraction remains a premise, and `Event` has no resource-destruction
-constructor, so these cover generation lifetime and critical-section structure
-only. -/
+extraction remains a premise. Card T03-F added the resource-destruction
+constructor, so scope exit is now covered in both halves; see the T03-F block
+at the end of this file. -/
 
 -- The lowering is total and loses nothing
 #print axioms QCore.Concurrency.MutexInvariant.lowerSection_length
@@ -79,3 +79,33 @@ only. -/
 #print axioms QCore.Concurrency.MutexInvariant.lowered_exit_refuses_an_open_invariant
 #print axioms QCore.Concurrency.MutexInvariant.lowered_exit_refuses_a_live_borrow
 #print axioms QCore.Concurrency.MutexInvariant.accepted_section_leaves_no_live_guard
+
+/-! T03-F: the guard-profile completions — resource destruction, the checked
+invariant witness and the bounded task composition. Source extraction is still
+a premise, and this model still has no clocks, so the Rust checker's
+happens-before conditions on destruction are not among these. -/
+
+-- Resource destruction: the second half of scope exit
+#print axioms QCore.Concurrency.MutexInvariant.destroyEffect_preserves_authority
+#print axioms QCore.Concurrency.MutexInvariant.destroy_requires_custody
+#print axioms QCore.Concurrency.MutexInvariant.protected_resource_rejects_destruction
+#print axioms QCore.Concurrency.MutexInvariant.foreign_share_rejects_destruction
+#print axioms QCore.Concurrency.MutexInvariant.dead_resource_rejects_repeat_destruction
+#print axioms QCore.Concurrency.MutexInvariant.destroyed_resource_rejects_access
+#print axioms QCore.Concurrency.MutexInvariant.accepted_destruction_kills_the_resource
+#print axioms QCore.Concurrency.MutexInvariant.refused_destruction_stops_the_trace
+#print axioms QCore.Concurrency.MutexInvariant.lowerScope_destroys_every_declared_resource
+#print axioms QCore.Concurrency.MutexInvariant.scopeExit_destroys_generations_before_resources
+
+-- The checked `NoWriteOccurred` witness, and the premise it drops
+#print axioms QCore.Concurrency.MutexInvariant.checked_witness_requires_no_write
+#print axioms QCore.Concurrency.MutexInvariant.checked_witness_requires_an_open_invariant
+#print axioms QCore.Concurrency.MutexInvariant.checked_witness_ignores_the_declared_predicate
+#print axioms QCore.Concurrency.MutexInvariant.checked_and_declared_close_agree_on_effect
+#print axioms QCore.Concurrency.MutexInvariant.checked_close_carries_no_declared_predicate_premise
+#print axioms QCore.Concurrency.MutexInvariant.a_section_without_a_declared_close_emits_none
+
+-- Bounded task composition inside the guard profile
+#print axioms QCore.Concurrency.MutexInvariant.join_while_holding_a_guard_is_refused
+#print axioms QCore.Concurrency.MutexInvariant.join_of_a_guard_holding_child_is_refused
+#print axioms QCore.Concurrency.MutexInvariant.a_shareless_task_cannot_access_unguarded
