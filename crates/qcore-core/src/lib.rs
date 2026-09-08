@@ -13,6 +13,7 @@ pub mod c_emit;
 pub mod cfg;
 pub mod cleanup_lowering;
 pub mod concurrency;
+pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
 pub mod index;
@@ -74,6 +75,13 @@ pub use concurrency::{
     AccessFootprint, AccessKind, AccessPermission, ConcurrencyAssumption, ConcurrencyCertificate,
     ConcurrencyDiagnostic, ConcurrencyProfile, ConcurrentEvent, ConcurrentProgram, FULL_ACCESS,
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
+};
+pub use disjoint_footprint::{
+    AllocationId, DerivedFootprint, DescriptorId, DisjointnessJudgement, ElementShape, FieldId,
+    FieldLayout, FieldStorage, FootprintAssumption, FootprintCertificate, FootprintDiagnostic,
+    FootprintEvent, FootprintExport, FootprintProfile, FootprintProgram, FootprintRecheckError,
+    Generation, HandleId, LayoutContract, LayoutDefect, ProtocolCellId, RecordId,
+    UnsupportedFootprint, check_disjoint_footprint_program, recheck_disjoint_footprint_certificate,
 };
 pub use mutex_invariant::{
     BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId, IdentityKind, InvariantId,
