@@ -40,8 +40,13 @@ const COMPILE_FLAGS: [&str; 7] = [
 /// emission retires the recorded native evidence rather than silently
 /// reinterpreting it, so updating these is a deliberate act that must be
 /// recorded in `docs/reports/remaining-f02/README.md`.
-const ROUND_TRIP_C_DIGEST: &str = "7d39f7c9157db610";
-const CONCURRENT_C_DIGEST: &str = "3cb6a22168b481b3";
+// Deliberate pin update at integration (2026-09-08): F02 pinned the emission of
+// its branch point `c60fd91`; the merged tree's generated C additionally
+// carries the T05 write intrinsic surface, the T06 payload ABI and the macOS
+// c11_threads_compat include, so both digests moved. The relation itself was
+// re-verified against the new native runs in this same commit.
+const ROUND_TRIP_C_DIGEST: &str = "b514b7831f116f52";
+const CONCURRENT_C_DIGEST: &str = "ee9b2715649587ff";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 

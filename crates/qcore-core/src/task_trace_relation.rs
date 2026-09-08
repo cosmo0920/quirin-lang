@@ -366,66 +366,98 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
     Ok(events)
 }
 
-fn outcome(value: &TaskOutcome) -> ObservedOutcome {
+/// An observation event outside this relation's observable alphabet. The
+/// relation is stated for the pre-T06 owned worker/capsule/join path; the T05
+/// Buffer write and the T06 typed error payload have no admitted rendering
+/// here, so an observation containing one is refused rather than encoded.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ReferenceTraceError {
+    UnsupportedObservedEvent { index: usize },
+    UnsupportedOutcome { index: usize },
+}
+
+/// Deriving an admitted order from a reference run refuses either way: an
+/// observation the alphabet cannot express, or a rendering the relation's own
+/// constraints reject. Neither refusal admits anything.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TraceDeriveError {
+    Unsupported(ReferenceTraceError),
+    Violation(TraceRelationViolation),
+}
+
+fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, ReferenceTraceError> {
     match value {
-        TaskOutcome::Unit => ObservedOutcome::Unit,
-        TaskOutcome::I32(value) => ObservedOutcome::I32(*value),
-        TaskOutcome::OwnedBuffer(buffer) => ObservedOutcome::Buffer(*buffer),
-        TaskOutcome::Error(tag) => ObservedOutcome::Error(tag.clone()),
+        TaskOutcome::Unit => Ok(ObservedOutcome::Unit),
+        TaskOutcome::I32(value) => Ok(ObservedOutcome::I32(*value)),
+        TaskOutcome::OwnedBuffer(buffer) => Ok(ObservedOutcome::Buffer(*buffer)),
+        TaskOutcome::Error(tag) => Ok(ObservedOutcome::Error(tag.clone())),
+        TaskOutcome::ErrorWithBuffer { .. } => {
+            Err(ReferenceTraceError::UnsupportedOutcome { index })
+        }
     }
 }
 
-/// The reference run's own rendering, in the observable alphabet.
-pub fn reference_trace(observation: &TaskExecutionObservation) -> Vec<ObservedEvent> {
+/// The reference run's own rendering, in the observable alphabet. An event the
+/// alphabet cannot express (a T05 Buffer write, a T06 error payload) refuses
+/// the whole observation; nothing outside the admitted path is encoded.
+pub fn reference_trace(
+    observation: &TaskExecutionObservation,
+) -> Result<Vec<ObservedEvent>, ReferenceTraceError> {
     observation
         .events
         .iter()
-        .map(|event| match event {
-            TaskEvent::BufferAllocated {
-                task,
-                buffer,
-                initial,
-            } => ObservedEvent::Allocated {
-                task: *task,
-                buffer: *buffer,
-                payload: *initial,
-            },
-            TaskEvent::BufferAllocationFailed { task } => {
-                ObservedEvent::AllocationFailed { task: *task }
-            }
-            TaskEvent::BufferRead {
-                task,
-                buffer,
-                value,
-            } => ObservedEvent::Read {
-                task: *task,
-                buffer: *buffer,
-                value: *value,
-            },
-            TaskEvent::BufferDropped { task, buffer } => ObservedEvent::Dropped {
-                task: *task,
-                buffer: *buffer,
-            },
-            TaskEvent::Spawn { task, worker } => ObservedEvent::Spawned {
-                child: *task,
-                worker: *worker as u64,
-            },
-            TaskEvent::CreateFailed { worker } => ObservedEvent::CreationFailed {
-                worker: *worker as u64,
-            },
-            TaskEvent::BufferLoaned { borrower, buffer } => ObservedEvent::Loaned {
-                borrower: *borrower,
-                buffer: *buffer,
-            },
-            TaskEvent::BufferReturned { borrower, buffer } => ObservedEvent::Returned {
-                borrower: *borrower,
-                buffer: *buffer,
-            },
-            TaskEvent::Join { task } => ObservedEvent::Joined { child: *task },
-            TaskEvent::Result { task, outcome: o } => ObservedEvent::Completed {
-                task: *task,
-                outcome: outcome(o),
-            },
+        .enumerate()
+        .map(|(index, event)| {
+            Ok(match event {
+                TaskEvent::BufferAllocated {
+                    task,
+                    buffer,
+                    initial,
+                } => ObservedEvent::Allocated {
+                    task: *task,
+                    buffer: *buffer,
+                    payload: *initial,
+                },
+                TaskEvent::BufferAllocationFailed { task } => {
+                    ObservedEvent::AllocationFailed { task: *task }
+                }
+                TaskEvent::BufferRead {
+                    task,
+                    buffer,
+                    value,
+                } => ObservedEvent::Read {
+                    task: *task,
+                    buffer: *buffer,
+                    value: *value,
+                },
+                TaskEvent::BufferDropped { task, buffer } => ObservedEvent::Dropped {
+                    task: *task,
+                    buffer: *buffer,
+                },
+                TaskEvent::Spawn { task, worker } => ObservedEvent::Spawned {
+                    child: *task,
+                    worker: *worker as u64,
+                },
+                TaskEvent::CreateFailed { worker } => ObservedEvent::CreationFailed {
+                    worker: *worker as u64,
+                },
+                TaskEvent::BufferLoaned { borrower, buffer } => ObservedEvent::Loaned {
+                    borrower: *borrower,
+                    buffer: *buffer,
+                },
+                TaskEvent::BufferReturned { borrower, buffer } => ObservedEvent::Returned {
+                    borrower: *borrower,
+                    buffer: *buffer,
+                },
+                TaskEvent::Join { task } => ObservedEvent::Joined { child: *task },
+                TaskEvent::Result { task, outcome: o } => ObservedEvent::Completed {
+                    task: *task,
+                    outcome: outcome(o, index)?,
+                },
+                TaskEvent::BufferWritten { .. } => {
+                    return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
+                }
+            })
         })
         .collect()
 }
@@ -676,13 +708,16 @@ impl AdmittedCausalOrder {
 
     /// Derive the admitted order from a reference run, re-checking P3 against
     /// the run's own task table rather than assuming it.
-    pub fn derive(observation: &TaskExecutionObservation) -> Result<Self, TraceRelationViolation> {
+    pub fn derive(observation: &TaskExecutionObservation) -> Result<Self, TraceDeriveError> {
         for task in &observation.tasks {
             if task.parent.is_some_and(|parent| parent != ROOT_TASK) {
-                return Err(TraceRelationViolation::UnknownChild { child: task.task });
+                return Err(TraceDeriveError::Violation(
+                    TraceRelationViolation::UnknownChild { child: task.task },
+                ));
             }
         }
-        Self::declare(reference_trace(observation))
+        let events = reference_trace(observation).map_err(TraceDeriveError::Unsupported)?;
+        Self::declare(events).map_err(TraceDeriveError::Violation)
     }
 
     pub fn events(&self) -> &[ObservedEvent] {
