@@ -100,6 +100,51 @@ fn simple_task(unit: char, hooks: &[&str]) -> VerificationTask {
     )
 }
 
+/// A second capability over the same unit identity, so a multi-capability
+/// composition can be exercised at the merge (E03-B2).
+fn resource_task(unit: char, functions: &[&str]) -> VerificationTask {
+    let assumptions = BTreeMap::from([("observations_trusted".to_owned(), true)]);
+    let bounds = TaskBounds::observed_runs();
+    let mut task = VerificationTask {
+        task_version: VERIFICATION_TASK_VERSION,
+        unit: unit_identity(unit),
+        target: target(),
+        semantic_profile: "qcore.fixture_composition_resources.v1".into(),
+        contract_sources: BTreeMap::from([(UNIT.to_owned(), "c".repeat(64))]),
+        bounds: bounds.clone(),
+        assumptions: assumptions.clone(),
+        evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
+        obligations: Vec::new(),
+        derivation_incomplete: Vec::new(),
+    };
+    for symbol in functions {
+        let subject = ObligationSubject::Function {
+            symbol: (*symbol).to_owned(),
+            translation_unit: UNIT.into(),
+        };
+        let obligation_id = task.obligation_id(
+            VerifierCapability::ResourceContracts,
+            ObligationProperty::NoUnknownCallEffect,
+            &subject,
+        );
+        task.obligations.push(Obligation {
+            obligation_id,
+            capability: VerifierCapability::ResourceContracts,
+            property: ObligationProperty::NoUnknownCallEffect,
+            subject,
+            scope: ObligationScope::Functions {
+                symbols: BTreeSet::from([(*symbol).to_owned()]),
+            },
+            bounds: bounds.clone(),
+            assumptions: assumptions.clone(),
+            evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
+        });
+    }
+    task.obligations.sort();
+    task.validate().expect("fixture task is well formed");
+    task
+}
+
 /// Test-double replay. The denominator is the core's own obligation list; a
 /// hook the witness does not record is simply not discharged, and the firewall
 /// compares the discharged set to the core's required set.
@@ -139,6 +184,53 @@ impl WitnessChecker for HookReplay {
     }
 }
 
+/// The same test double for the second capability, keyed by function symbol.
+struct ResourceReplay;
+
+impl WitnessChecker for ResourceReplay {
+    fn capability(&self) -> VerifierCapability {
+        VerifierCapability::ResourceContracts
+    }
+
+    fn check(
+        &self,
+        task: &VerificationTask,
+        witness: &SemanticWitness,
+    ) -> Result<BTreeSet<String>, String> {
+        let SemanticWitness::ContractObservation(witness) = witness else {
+            return Err("fixture checker replays contract observations only".into());
+        };
+        if witness.runs.is_empty() {
+            return Err("no observed run".into());
+        }
+        let mut discharged = BTreeSet::new();
+        for obligation in task.obligations_for(VerifierCapability::ResourceContracts) {
+            let ObligationSubject::Function { symbol, .. } = &obligation.subject else {
+                continue;
+            };
+            let observed = witness.runs.iter().any(|run| {
+                run.observations
+                    .iter()
+                    .any(|record| &record.hook == symbol && record.values.get("ok") == Some(&1))
+            });
+            if observed {
+                discharged.insert(obligation.obligation_id.clone());
+            }
+        }
+        Ok(discharged)
+    }
+}
+
+/// The name a fixture witness records for one obligation, whichever capability
+/// derived it.
+fn observed_name(subject: &ObligationSubject) -> Option<&str> {
+    match subject {
+        ObligationSubject::ObservedContract { function, .. } => Some(function),
+        ObligationSubject::Function { symbol, .. } => Some(symbol),
+        _ => None,
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Provider side.
 // ---------------------------------------------------------------------------
@@ -159,7 +251,10 @@ fn manifest(id: &str) -> PluginManifest {
             platforms: BTreeSet::from(["generic".into()]),
             backends: BTreeSet::from(["native".into()]),
         }],
-        capabilities: BTreeSet::from([VerifierCapability::ObservationHooks]),
+        capabilities: BTreeSet::from([
+            VerifierCapability::ObservationHooks,
+            VerifierCapability::ResourceContracts,
+        ]),
         required_foreign_summaries: BTreeSet::new(),
         required_observation_hooks: BTreeSet::new(),
         filesystem_inputs: BTreeSet::new(),
@@ -232,15 +327,12 @@ impl VerifierProvider for Fixture {
             request
                 .obligations
                 .iter()
-                .filter_map(|obligation| match &obligation.subject {
-                    ObligationSubject::ObservedContract { function, .. } => {
-                        Some(ContractObservationRecord {
-                            function: function.clone(),
-                            hook: function.clone(),
-                            values: BTreeMap::from([("ok".into(), 1)]),
-                        })
-                    }
-                    _ => None,
+                .filter_map(|obligation| {
+                    observed_name(&obligation.subject).map(|name| ContractObservationRecord {
+                        function: name.to_owned(),
+                        hook: name.to_owned(),
+                        values: BTreeMap::from([("ok".into(), 1)]),
+                    })
                 })
                 .collect()
         };
@@ -295,7 +387,11 @@ fn registry(providers: &[(&str, Answer)]) -> VerifierRegistry {
     registry
 }
 
-fn request(plugin: &str, task: &VerificationTask) -> VerificationRequestV2 {
+fn request(
+    plugin: &str,
+    task: &VerificationTask,
+    capability: VerifierCapability,
+) -> VerificationRequestV2 {
     VerificationRequestV2 {
         source_effect: None,
         counter_effect: None,
@@ -304,7 +400,7 @@ fn request(plugin: &str, task: &VerificationTask) -> VerificationRequestV2 {
         evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
         request_id: format!("{plugin}:{}", &task.task_digest()[..16]),
         plugin_id: PluginId::new(plugin).unwrap(),
-        capability: VerifierCapability::ObservationHooks,
+        capability,
         target: task.target.clone(),
         unit: task.unit.clone(),
         assumptions: task.assumptions.clone(),
@@ -324,7 +420,18 @@ fn request(plugin: &str, task: &VerificationTask) -> VerificationRequestV2 {
 }
 
 fn mint(registry: &VerifierRegistry, plugin: &str, task: &VerificationTask) -> VerificationOutcome {
-    registry.verify_v2(&request(plugin, task), task, Some(&HookReplay))
+    let request = request(plugin, task, VerifierCapability::ObservationHooks);
+    registry.verify_v2(&request, task, Some(&HookReplay))
+}
+
+/// The same mint for the second capability (E03-B2's positive control).
+fn mint_resources(
+    registry: &VerifierRegistry,
+    plugin: &str,
+    task: &VerificationTask,
+) -> VerificationOutcome {
+    let request = request(plugin, task, VerifierCapability::ResourceContracts);
+    registry.verify_v2(&request, task, Some(&ResourceReplay))
 }
 
 fn codes(outcome: &VerificationOutcome) -> Vec<&str> {
@@ -530,10 +637,14 @@ fn conflicting_premises_do_not_merge() {
 }
 
 #[test]
-fn a_composite_may_not_understate_its_premise_set() {
-    // Non-conflicting but unequal premise sets. The published representative
-    // certificate carries one provider's assumptions, so merging these would
-    // drop `callbacks_bounded` from the published result.
+fn a_composite_publishes_the_union_of_its_components_premises() {
+    // E03-B1 / E03-O1, repaired. Before: unequal but non-conflicting premise
+    // sets refused with `QP012` ("... would understate its assumptions"),
+    // because the published representative carried one component's
+    // `assumptions_used` and would have dropped `callbacks_bounded` from the
+    // published result. After: there is no representative to understate — the
+    // composite publishes the union, which is the set the merge actually rests
+    // on, and a superset of premises is a weaker claim, never a wider one.
     let registry = registry(&[
         ("example.left", Answer::Honest),
         ("example.right", Answer::Honest),
@@ -553,17 +664,39 @@ fn a_composite_may_not_understate_its_premise_set() {
         ]),
         TaskBounds::observed_runs(),
     );
+    // Symmetric in both directions: a subset and a superset merge the same way.
     for order in [[&narrow, &wide], [&wide, &narrow]] {
         let composed = compose_verification(vec![
             mint(&registry, "example.left", order[0]),
             mint(&registry, "example.right", order[1]),
         ]);
-        assert_eq!(composed.verdict, ProposedVerdict::Unknown);
-        assert_eq!(codes(&composed), vec!["QP012"]);
-        assert!(composed.diagnostics[0].message.contains("understate"));
+        assert_eq!(
+            composed.verdict,
+            ProposedVerdict::Safe,
+            "{:?}",
+            composed.diagnostics
+        );
+        // No component certificate is the merge, so none is published as it.
+        assert!(composed.certificate.is_none());
+        let composite = composed.composite.as_ref().expect("composite published");
+        assert_eq!(*composite.premises(), wide.assumptions);
+        // The union is strictly larger than the narrow component's set: the
+        // premise that used to be dropped is now published.
+        assert!(composite.premises().len() > narrow.assumptions.len());
+        assert_eq!(composite.premises().get("callbacks_bounded"), Some(&false));
+        assert!(
+            composite
+                .certificates()
+                .iter()
+                .any(|certificate| certificate.evidence().assumptions_used
+                    != *composite.premises()),
+            "at least one component understates the composite, which is why the \
+             representative may not be published"
+        );
     }
-    // Control: the identical premise set composes, so the refusal above is
-    // attributable to the premise set alone.
+    // Control: the identical premise set is the union of itself, and with one
+    // distinct certificate per component the composite still has no
+    // representative.
     let matched = task(
         unit_identity('1'),
         &["flush"],
@@ -581,14 +714,203 @@ fn a_composite_may_not_understate_its_premise_set() {
         composed.diagnostics
     );
     assert_eq!(
-        composed
-            .certificate
-            .as_ref()
-            .unwrap()
-            .evidence()
-            .assumptions_used,
+        *composed.composite.as_ref().unwrap().premises(),
         narrow.assumptions
     );
+    // A premise bound to two different values is a contradiction, not a union:
+    // that refusal is unchanged.
+    let contradicting = task(
+        unit_identity('1'),
+        &["flush"],
+        BTreeMap::from([("observations_trusted".to_owned(), false)]),
+        TaskBounds::observed_runs(),
+    );
+    let composed = compose_verification(vec![
+        mint(&registry, "example.left", &narrow),
+        mint(&registry, "example.right", &contradicting),
+    ]);
+    assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(codes(&composed), vec!["QP012"]);
+    assert!(composed.composite.is_none());
+}
+
+#[test]
+fn a_composite_publishes_the_union_of_its_components_coverage_and_provenance() {
+    // E03-B1's other half: coverage, bounds and provenance. Coverage is a
+    // union because every identifier in it was discharged by *some*
+    // component's core-checked replay, and it is the set the required-set
+    // check compares against; provenance is the whole set of contributors.
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.right", Answer::Honest),
+    ]);
+    let left = simple_task('1', &["open", "close"]);
+    let right = simple_task('1', &["flush"]);
+    let outcomes = vec![
+        mint(&registry, "example.left", &left),
+        mint(&registry, "example.right", &right),
+    ];
+    let required = union(&[&left, &right]);
+    let composed = compose_verification_with_inventory(outcomes.clone(), &required);
+    assert_eq!(composed.verdict, ProposedVerdict::Safe);
+    let composite = composed.composite.as_ref().expect("composite published");
+
+    assert_eq!(*composite.coverage(), required);
+    assert_eq!(composite.coverage().len(), 3);
+    assert_eq!(*composite.unit(), left.unit);
+    assert_eq!(
+        composite.plugin_ids().iter().collect::<Vec<_>>(),
+        vec![
+            &PluginId::new("example.left").unwrap(),
+            &PluginId::new("example.right").unwrap()
+        ]
+    );
+    assert_eq!(composite.capabilities().len(), 1);
+    assert_eq!(composite.task_digests().len(), 2);
+    assert_eq!(composite.obligation_bounds().len(), 3);
+    assert_eq!(composite.bounds(), Some(&TaskBounds::observed_runs()));
+
+    // Every component under-reports the merge in coverage and in provenance,
+    // which is exactly why publishing one as the composite was a defect.
+    for certificate in composite.certificates() {
+        assert!(certificate.coverage().is_subset(composite.coverage()));
+        assert_ne!(certificate.coverage(), composite.coverage());
+        assert!(composite.plugin_ids().contains(certificate.plugin_id()));
+    }
+    // `compose_certificates` publishes the same composite, not a second view.
+    assert_eq!(
+        &compose_certificates(&outcomes).expect("composes"),
+        composite
+    );
+}
+
+#[test]
+fn a_single_component_composite_still_publishes_its_certificate() {
+    // The representative exists exactly when a component *is* the merge: one
+    // provider, or the same evidence submitted twice. Anything else has no
+    // honest representative and publishes none.
+    let registry = registry(&[("example.left", Answer::Honest)]);
+    let left = simple_task('1', &["open"]);
+    let one = mint(&registry, "example.left", &left);
+    let required = union(&[&left]);
+
+    let composed = compose_verification_with_inventory(vec![one.clone()], &required);
+    assert_eq!(composed.verdict, ProposedVerdict::Safe);
+    assert_eq!(composed.certificate, one.certificate);
+    assert_eq!(
+        *composed.composite.as_ref().unwrap().coverage(),
+        *one.certificate.as_ref().unwrap().coverage()
+    );
+
+    let duplicated = compose_verification_with_inventory(vec![one.clone(), one.clone()], &required);
+    assert_eq!(duplicated.verdict, ProposedVerdict::Safe);
+    assert_eq!(duplicated.certificate, one.certificate);
+    assert_eq!(
+        duplicated.composite.as_ref().unwrap().certificates().len(),
+        2
+    );
+    assert_eq!(
+        *duplicated.composite.as_ref().unwrap().coverage(),
+        *one.certificate.as_ref().unwrap().coverage(),
+        "a repeat contributes no coverage"
+    );
+}
+
+#[test]
+fn a_composite_publishes_the_tightest_bounds_envelope() {
+    // A composite claim is only as strong as its weakest component, so the
+    // published envelope is the narrower path space and `observed_runs_only`
+    // is the disjunction: one recorded-run component makes the whole
+    // composite a recorded-run claim, which the verdict contract requires.
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.right", Answer::Honest),
+    ]);
+    let observed = simple_task('1', &["open"]);
+    let statically_checked = task(
+        unit_identity('1'),
+        &["flush"],
+        observed.assumptions.clone(),
+        TaskBounds::single_path(),
+    );
+    assert!(!statically_checked.bounds.observed_runs_only);
+    let composed = compose_verification(vec![
+        mint(&registry, "example.left", &observed),
+        mint(&registry, "example.right", &statically_checked),
+    ]);
+    assert_eq!(
+        composed.verdict,
+        ProposedVerdict::Safe,
+        "{:?}",
+        composed.diagnostics
+    );
+    assert!(
+        composed
+            .composite
+            .as_ref()
+            .unwrap()
+            .bounds()
+            .unwrap()
+            .observed_runs_only,
+        "the composite inherits the recorded-run restriction"
+    );
+}
+
+#[test]
+fn certificates_of_two_capabilities_over_one_unit_merge() {
+    // E03-B2's positive control at the merge. Two capabilities over one unit
+    // is now a representable composition: the identities agree because a unit
+    // identity names the artifact, and the obligation identifiers stay
+    // capability-distinct because the capability is hashed into every one.
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.wide", Answer::Honest),
+    ]);
+    let hooks = simple_task('1', &["open"]);
+    let resources = resource_task('1', &["flush"]);
+    assert_eq!(hooks.unit, resources.unit);
+    let outcomes = vec![
+        mint(&registry, "example.left", &hooks),
+        mint_resources(&registry, "example.wide", &resources),
+    ];
+    assert!(
+        outcomes
+            .iter()
+            .all(|outcome| outcome.verdict == ProposedVerdict::Safe),
+        "{outcomes:?}"
+    );
+    let required = hooks
+        .coverage_for(VerifierCapability::ObservationHooks)
+        .into_iter()
+        .chain(resources.coverage_for(VerifierCapability::ResourceContracts))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(required.len(), 2, "the two capabilities' ids are distinct");
+    let composed = compose_verification_with_inventory(outcomes, &required);
+    assert_eq!(
+        composed.verdict,
+        ProposedVerdict::Safe,
+        "{:?}",
+        composed.diagnostics
+    );
+    let composite = composed.composite.as_ref().expect("composite published");
+    assert_eq!(
+        composite.capabilities().iter().copied().collect::<Vec<_>>(),
+        vec![
+            VerifierCapability::ResourceContracts,
+            VerifierCapability::ObservationHooks
+        ]
+    );
+    assert_eq!(*composite.coverage(), required);
+
+    // The identity check is not weakened by this: a different unit still
+    // refuses, whichever capabilities the components carry.
+    let elsewhere = resource_task('2', &["flush"]);
+    let composed = compose_verification(vec![
+        mint(&registry, "example.left", &hooks),
+        mint_resources(&registry, "example.wide", &elsewhere),
+    ]);
+    assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(codes(&composed), vec!["QP015"]);
 }
 
 #[test]
@@ -666,6 +988,7 @@ fn composition_cannot_republish_an_unchecked_unsafe_label() {
             fact_id: None,
         }],
         certificate: None,
+        composite: None,
     };
     for outcomes in [
         vec![alleged.clone()],
@@ -690,6 +1013,7 @@ fn a_safe_verdict_without_a_certificate_never_composes() {
         verdict: ProposedVerdict::Safe,
         diagnostics: vec![],
         certificate: None,
+        composite: None,
     };
     let composed = compose_verification(vec![forged]);
     assert_eq!(composed.verdict, ProposedVerdict::Unknown);

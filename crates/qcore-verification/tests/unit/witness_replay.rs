@@ -50,6 +50,7 @@ fn derive(source: &str, capability: VerifierCapability) -> (SourceProgram, Deriv
                 BTreeSet::new()
             },
             assumptions: BTreeMap::new(),
+            verifier: None,
         };
         derive_task(&inputs, capability)
     };

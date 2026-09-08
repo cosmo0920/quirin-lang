@@ -186,6 +186,7 @@ fn unknown(code: &str, message: impl Into<String>) -> VerificationOutcome {
             fact_id: None,
         }],
         certificate: None,
+        composite: None,
     }
 }
 
@@ -216,6 +217,7 @@ fn dispatch_scope(
     let mut required = BTreeSet::new();
     let mut outcomes = Vec::new();
     let mut diagnostics = Vec::new();
+    let mut absent = Vec::new();
     // A scope that resolved to no provider has nothing to discharge its
     // obligations and is unverified, never vacuously safe.
     if scope.providers.is_empty() {
@@ -228,16 +230,16 @@ fn dispatch_scope(
     }
     for selected in &scope.providers {
         let Some(manifest) = registry.manifest(&selected.plugin_id).cloned() else {
-            // Resolution already reports absence as Q700; keep the scope
-            // unverified rather than proceeding without a provider.
-            diagnostics.push(ScopeDiagnostic {
-                code: "Q701",
-                scope: scope.name.clone(),
-                message: format!(
-                    "plugin `{}` is not installed; its obligations are undischarged",
-                    selected.plugin_id
-                ),
-            });
+            // E03-B4. Without the manifest there is no target profile and no
+            // required-hook denominator, so this provider's obligations cannot
+            // be derived and never enter `required` — which used to leave
+            // `composed.verdict` free to read `Safe` off the providers that
+            // did answer, with only `verified()` and `Q700` standing between
+            // that and a caller. Absence is now a refusal in the composed
+            // verdict itself (`QP002`, the registry's own code for a plugin
+            // that is not installed), so no consumer reading `composed` alone
+            // can see `Safe` for a scope one of whose providers is missing.
+            absent.push(selected.plugin_id.as_str().to_owned());
             continue;
         };
         let target = target_profile(&manifest, selected);
@@ -252,6 +254,8 @@ fn dispatch_scope(
                 )]),
                 required_observation_hooks: manifest.required_observation_hooks.clone(),
                 assumptions: BTreeMap::new(),
+                // E03-B3: provider-indexed obligations are keyed by this.
+                verifier: Some(selected.plugin_id.as_str().to_owned()),
             };
             let DerivedTask { task, replay } = derive_task(&inputs, capability);
             let coverage = task.coverage_for(capability);
@@ -285,7 +289,20 @@ fn dispatch_scope(
             });
         }
     }
-    let composed = if required.is_empty() {
+    let composed = if !absent.is_empty() {
+        let missing = absent.join("`, `");
+        // Absence dominates: an inventory that is missing a provider's
+        // obligations entirely is not a smaller inventory, it is an unknown
+        // one. Reported before the empty-inventory and merge branches so the
+        // composed diagnostic names the cause.
+        unknown(
+            "QP002",
+            format!(
+                "plugin `{missing}` is not installed; its obligations could be neither derived \
+                 nor discharged, so this scope has no composite"
+            ),
+        )
+    } else if required.is_empty() {
         // §3.5, first increment: a derivation with zero obligations is not
         // promoted. This costs completeness, never soundness.
         unknown(

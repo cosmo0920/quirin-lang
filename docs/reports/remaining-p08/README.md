@@ -100,9 +100,9 @@ Driven through **one registry holding all five packages**:
   nonempty, and the four routes' obligation-identifier sets are pairwise
   disjoint.
 - **Assumptions.** Each certificate republishes the task's own premise set;
-  composition later refuses any component that would understate it (E03
-  repair 2), which is why the premise comparison is meaningful rather than
-  decorative.
+  composition publishes the union of those sets and never one component's
+  (E03-B1; before that repair it refused unequal sets outright), which is why
+  the premise comparison is meaningful rather than decorative.
 - **Observation identities.** There are none. No shipped manifest declares a
   `required_observation_hook`, and no route mints a `contract_observation`
   witness — both asserted. The composition therefore carries **no observation
@@ -212,6 +212,20 @@ cannot stand in for an implementing provider.
 
 ---
 
+> **Pins re-checked, 2026-09-08 ([E03-B](../remaining-e03-b/README.md)).**
+> E03-B repaired the four E03-B boundaries. Both of this card's test files pass
+> unchanged and every assertion in them still holds, including all six
+> cross-route `QP015` pairs in §5: those routes differ in `source_digest` as
+> well, so E03-B2's repair (a capability-independent build digest) does not
+> reach them. Two statements of *prose* here are superseded and are corrected
+> in place below: §2's "composition later refuses any component that would
+> understate it (E03 repair 2)" — composition now publishes the premise union
+> instead of refusing — and §5's first blocking gate, which no longer blocks
+> across capabilities. §7's "Composition" row is likewise narrowed: E03-O3 is
+> closed, and only "a second provider able to certify an existing unit"
+> remains. The five-provider completion gate itself is untouched and still
+> **open**.
+
 ## 5. Measured boundary: multi-provider composition is unreachable (P08-F2)
 
 The card's original shape assumed the shipped packages could co-certify a unit.
@@ -220,11 +234,13 @@ by measurement rather than by reading.
 
 Two independent gates block it, in opposite directions:
 
-1. **Across capabilities — E03-B2.** `derive_task` folds the capability's
-   semantic profile into `unit.build_digest`, so two capabilities over one
-   source certify different `UnitIdentity` values and `compose_verification`
-   refuses them with `QP015`. Measured here against the real packages, not a
-   fixture.
+1. **Across capabilities — E03-B2 (repaired 2026-09-08).** At the time of this
+   audit `derive_task` folded the capability's semantic profile into
+   `unit.build_digest`, so two capabilities over one source certified different
+   `UnitIdentity` values and `compose_verification` refused them with `QP015`.
+   E03-B removed that folding; two capabilities of one program now share a unit
+   identity. It does not change this card's measurement, because the routes
+   below differ in `source_digest` too — this gate was never the only one.
 2. **Across providers — the model-library binding.**
    `BooleanFieldSourceTask::derive` refuses any target whose `library` is not
    the model library the summary was imported under. A source imported for
@@ -278,7 +294,7 @@ To claim the gate, each remaining slot needs, in order:
 | `qcore.ctraces` | An implemented `ctraces.span.dropped_counts.v1`: a core checker, a derivable evidence-v2 task (a profile entry with an audited file, a source witness and a field model — the entry currently declares a source root and nothing else), a `SemanticWitness` variant or an existing one that fits, a provider proposal function, and the P06-I4 manifest repair |
 | `qcore.librdkafka` | An implemented `qcore.librdkafka.queue_final_destroy.v1`, plus repair of the six declared-but-unloaded mechanism operations P07 measured as unfaithful, plus the same task/checker/witness/proposal chain and the P06-I4 manifest repair |
 | Both | A profile that binds them, since the `fluent-bit` profile's inventories for these libraries are empty |
-| Composition | Either E03-O3 (capability-independent unit identity) or a second provider able to certify an existing unit, before any multi-provider merge is reachable at all |
+| Composition | A second provider able to certify an existing unit, before any multi-provider merge is reachable at all. (E03-O3, capability-independent unit identity, is closed by E03-B.) |
 
 Until then, `qcore.ctraces` and `qcore.librdkafka` are registered, executed and
 `Unknown` — which is the fail-closed answer, not a gap in this audit.

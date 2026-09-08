@@ -133,11 +133,22 @@ impl CoreCertificate {
 pub struct VerificationOutcome {
     pub verdict: ProposedVerdict,
     pub diagnostics: Vec<PluginDiagnostic>,
+    /// One provider's core-checked certificate. On a composed outcome this is
+    /// present only when every component is the same certificate; see
+    /// [`CompositeCertificate::representative`].
     pub certificate: Option<CoreCertificate>,
+    /// The merge, published by [`compose_verification`] and
+    /// [`compose_verification_with_inventory`] alone. A single-provider
+    /// outcome from the firewall carries `None`: one certificate is not yet a
+    /// composition, and nothing but composition may fill this field.
+    pub composite: Option<CompositeCertificate>,
 }
 
 impl VerificationOutcome {
-    fn unknown(code: &str, message: impl Into<String>) -> Self {
+    /// A scoped `Unknown` with one host diagnostic. Never carries evidence:
+    /// a refusal publishes no certificate and no composite.
+    #[must_use]
+    pub fn unknown(code: &str, message: impl Into<String>) -> Self {
         Self {
             verdict: ProposedVerdict::Unknown,
             diagnostics: vec![PluginDiagnostic {
@@ -146,6 +157,7 @@ impl VerificationOutcome {
                 fact_id: None,
             }],
             certificate: None,
+            composite: None,
         }
     }
 }
@@ -1686,6 +1698,7 @@ impl VerifierRegistry {
                 verdict: ProposedVerdict::Unknown,
                 diagnostics: response.diagnostics,
                 certificate: None,
+                composite: None,
             },
             ProposedVerdict::Unsafe => {
                 // Evidence v2 ships no counterexample checker, so an `Unsafe`
@@ -1737,6 +1750,7 @@ impl VerifierRegistry {
                         task_digest: Some(request.task_digest.clone()),
                         task: Some(task.clone()),
                     }),
+                    composite: None,
                 }
             }
         }
@@ -1838,6 +1852,7 @@ impl VerifierRegistry {
                 verdict: ProposedVerdict::Unknown,
                 diagnostics: response.diagnostics,
                 certificate: None,
+                composite: None,
             },
             ProposedVerdict::Unsafe => {
                 let mut outcome = VerificationOutcome::unknown(
@@ -1867,6 +1882,7 @@ impl VerifierRegistry {
                         task_digest: None,
                         task: None,
                     }),
+                    composite: None,
                 }
             }
         }
@@ -1975,14 +1991,230 @@ impl fmt::Display for RegistryError {
 
 impl std::error::Error for RegistryError {}
 
+/// The composite of several core-checked certificates over one unit (E03-B1).
+///
+/// A [`CoreCertificate`] is attributed to one plugin, one capability and one
+/// core-derived task, so no single component certificate can stand for the
+/// merge. This record is that merge, and it is the only honest publication of
+/// a composed `Safe`:
+///
+/// - **premises: union.** The composite holds only where *every* component's
+///   premises hold, and more assumptions is a weaker claim. Publishing one
+///   component's premise set would drop an assumption the composite genuinely
+///   rests on, which the verdict contract forbids. A key two components bind
+///   to different values is not a union but a contradiction: `QP012`.
+/// - **coverage: union.** Every identifier here was discharged by *some*
+///   component's core-checked replay, and
+///   [`compose_verification_with_inventory`] compares exactly this union to
+///   the core's own required set. Intersection would be wrong in the unsound
+///   direction as a denominator (it under-reports what was required) and wrong
+///   in the honest direction as a numerator (it would discard real discharges).
+/// - **obligation bounds: union, conflicts refused.** Each entry is the bound
+///   the discharging component actually checked that obligation under; one
+///   identifier under two bounds is `QP013`, never a silent widening.
+/// - **task bounds: intersection (the tightest envelope).** A composite claim
+///   is only as strong as its weakest component, so the published path space
+///   is the narrower one and `observed_runs_only` is the disjunction: a
+///   composite containing one recorded-run component is a recorded-run claim.
+/// - **provenance: sets.** Plugin identifiers, capabilities and task digests
+///   are published as the whole sets, never one component's.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CompositeCertificate {
     certificates: Vec<CoreCertificate>,
+    unit: UnitIdentity,
+    premises: BTreeMap<String, bool>,
+    coverage: BTreeSet<String>,
+    obligation_bounds: BTreeMap<String, TaskBounds>,
+    bounds: Option<TaskBounds>,
+    plugin_ids: BTreeSet<PluginId>,
+    capabilities: BTreeSet<VerifierCapability>,
+    task_digests: BTreeSet<String>,
+}
+
+/// The narrower of two path-space bounds. `SinglePath` is the least coverage
+/// any derivation claims, so it absorbs; two explicit path counts take the
+/// minimum. Nothing in this order is provider-supplied.
+const fn tighter_paths(left: PathBounds, right: PathBounds) -> PathBounds {
+    match (left, right) {
+        (PathBounds::SinglePath, _) | (_, PathBounds::SinglePath) => PathBounds::SinglePath,
+        (PathBounds::BoundedPaths { paths: left }, PathBounds::BoundedPaths { paths: right }) => {
+            PathBounds::BoundedPaths {
+                paths: if left <= right { left } else { right },
+            }
+        }
+    }
+}
+
+/// `None` means "not applicable" or "structural", never "unbounded", so a
+/// component that states an explicit count constrains the composite and a
+/// component that states none does not relax it.
+const fn tighter_count(left: Option<u64>, right: Option<u64>) -> Option<u64> {
+    match (left, right) {
+        (Some(left), Some(right)) => Some(if left <= right { left } else { right }),
+        (Some(value), None) | (None, Some(value)) => Some(value),
+        (None, None) => None,
+    }
+}
+
+const fn tighter_bounds(left: &TaskBounds, right: &TaskBounds) -> TaskBounds {
+    TaskBounds {
+        path_exploration: tighter_paths(left.path_exploration, right.path_exploration),
+        schedules_explored: tighter_count(left.schedules_explored, right.schedules_explored),
+        observed_runs_only: left.observed_runs_only || right.observed_runs_only,
+        max_operations: tighter_count(left.max_operations, right.max_operations),
+    }
 }
 
 impl CompositeCertificate {
+    /// Builds the composite, or the refusal that keeps it unpublished. Every
+    /// refusal is an `Unknown`; none of them can produce a verdict.
+    fn compose(certificates: Vec<CoreCertificate>) -> Result<Self, Box<VerificationOutcome>> {
+        let unit = certificates
+            .first()
+            .expect("nonempty checked composition")
+            .unit()
+            .clone();
+        if certificates
+            .iter()
+            .any(|certificate| certificate.unit() != &unit)
+        {
+            return Err(Box::new(VerificationOutcome::unknown(
+                "QP015",
+                "plugins certify different translation-unit identities",
+            )));
+        }
+        let mut premises = BTreeMap::<String, bool>::new();
+        let mut claims = BTreeMap::<(String, FactPredicate), (String, bool)>::new();
+        let mut coverage = BTreeSet::new();
+        let mut obligation_bounds = BTreeMap::<String, TaskBounds>::new();
+        let mut bounds: Option<TaskBounds> = None;
+        let mut every_component_carries_a_task = true;
+        let mut plugin_ids = BTreeSet::new();
+        let mut capabilities = BTreeSet::new();
+        let mut task_digests = BTreeSet::new();
+        for certificate in &certificates {
+            for (name, value) in &certificate.evidence.assumptions_used {
+                if premises
+                    .insert(name.clone(), *value)
+                    .is_some_and(|old| old != *value)
+                {
+                    return Err(Box::new(VerificationOutcome::unknown(
+                        "QP012",
+                        "plugins use conflicting assumptions",
+                    )));
+                }
+            }
+            for claim in &certificate.evidence.claims {
+                let key = (claim.subject.clone(), claim.predicate);
+                if claims
+                    .insert(key, (claim.fact_id.clone(), claim.holds))
+                    .is_some_and(|old| old.1 != claim.holds)
+                {
+                    return Err(Box::new(VerificationOutcome::unknown(
+                        "QP013",
+                        "plugins make conflicting claims",
+                    )));
+                }
+            }
+            for id in certificate.coverage() {
+                coverage.insert(id.clone());
+            }
+            for (id, bound) in certificate.obligation_bounds() {
+                if obligation_bounds
+                    .insert(id.clone(), bound.clone())
+                    .is_some_and(|previous| previous != *bound)
+                {
+                    return Err(Box::new(VerificationOutcome::unknown(
+                        "QP013",
+                        format!("obligation `{id}` is discharged under incomparable bounds"),
+                    )));
+                }
+            }
+            match certificate.task() {
+                Some(task) => {
+                    bounds = Some(bounds.map_or_else(
+                        || task.bounds.clone(),
+                        |previous| tighter_bounds(&previous, &task.bounds),
+                    ));
+                }
+                None => every_component_carries_a_task = false,
+            }
+            plugin_ids.insert(certificate.plugin_id().clone());
+            capabilities.insert(certificate.capability());
+            if let Some(digest) = certificate.task_digest() {
+                task_digests.insert(digest.to_owned());
+            }
+        }
+        Ok(Self {
+            certificates,
+            unit,
+            premises,
+            coverage,
+            obligation_bounds,
+            // A component that carries no task states no bounds, so the
+            // composite cannot state one either.
+            bounds: bounds.filter(|_| every_component_carries_a_task),
+            plugin_ids,
+            capabilities,
+            task_digests,
+        })
+    }
+
     pub fn certificates(&self) -> &[CoreCertificate] {
         &self.certificates
+    }
+
+    /// The single translation-unit identity every component certifies.
+    pub const fn unit(&self) -> &UnitIdentity {
+        &self.unit
+    }
+
+    /// The union of every component's premises: the assumption set the
+    /// composite rests on, in full.
+    pub const fn premises(&self) -> &BTreeMap<String, bool> {
+        &self.premises
+    }
+
+    /// The union of every component's discharged obligation identifiers.
+    pub const fn coverage(&self) -> &BTreeSet<String> {
+        &self.coverage
+    }
+
+    /// Per-obligation bounds; conflicting entries never reach this map.
+    pub const fn obligation_bounds(&self) -> &BTreeMap<String, TaskBounds> {
+        &self.obligation_bounds
+    }
+
+    /// The tightest task bounds envelope every component was checked within,
+    /// or `None` when some component carries no task to state one.
+    pub const fn bounds(&self) -> Option<&TaskBounds> {
+        self.bounds.as_ref()
+    }
+
+    pub const fn plugin_ids(&self) -> &BTreeSet<PluginId> {
+        &self.plugin_ids
+    }
+
+    pub const fn capabilities(&self) -> &BTreeSet<VerifierCapability> {
+        &self.capabilities
+    }
+
+    pub const fn task_digests(&self) -> &BTreeSet<String> {
+        &self.task_digests
+    }
+
+    /// A component certificate that *is* the composite, which exists only when
+    /// every component is the same certificate (one provider, or the same
+    /// evidence submitted more than once). With two distinct components there
+    /// is no such certificate and this is `None`: the published result then
+    /// carries the composite alone, so no caller can read one component's
+    /// coverage, bounds or provenance as the merge's.
+    pub fn representative(&self) -> Option<&CoreCertificate> {
+        let first = self.certificates.first()?;
+        self.certificates
+            .iter()
+            .all(|certificate| certificate == first)
+            .then_some(first)
     }
 }
 
@@ -2026,68 +2258,28 @@ pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationO
         .into_iter()
         .filter_map(|outcome| outcome.certificate)
         .collect::<Vec<_>>();
-    let unit = certificates
-        .first()
-        .expect("nonempty checked composition")
-        .unit();
-    if certificates
-        .iter()
-        .any(|certificate| certificate.unit() != unit)
-    {
-        return VerificationOutcome::unknown(
-            "QP015",
-            "plugins certify different translation-unit identities",
-        );
-    }
-    let mut assumptions = BTreeMap::<String, bool>::new();
-    let mut claims = BTreeMap::<(String, FactPredicate), (String, bool)>::new();
-    for certificate in &certificates {
-        for (name, value) in &certificate.evidence.assumptions_used {
-            if assumptions
-                .insert(name.clone(), *value)
-                .is_some_and(|old| old != *value)
-            {
-                return VerificationOutcome::unknown(
-                    "QP012",
-                    "plugins use conflicting assumptions",
-                );
-            }
-        }
-        for claim in &certificate.evidence.claims {
-            let key = (claim.subject.clone(), claim.predicate);
-            if claims
-                .insert(key, (claim.fact_id.clone(), claim.holds))
-                .is_some_and(|old| old.1 != claim.holds)
-            {
-                return VerificationOutcome::unknown("QP013", "plugins make conflicting claims");
-            }
-        }
-    }
-    // E03 acceptance 2. Composition itself is represented as a core certificate
-    // collection; it cannot fabricate a new provider certificate, so the
-    // leading certificate is returned for API compatibility and all component
-    // certificates are available through `compose_certificates`. That
-    // representative is only honest about the composite's premises when every
-    // component declares the same premise set: a component premise the
-    // representative omits would be silently dropped from the published
-    // result, which the verdict contract forbids. Non-conflicting but unequal
-    // premise sets are therefore refused rather than merged into a certificate
-    // no provider issued. Widening this to a first-class composite premise
-    // union is recorded as open work, not done here.
-    if certificates
-        .iter()
-        .any(|certificate| certificate.evidence.assumptions_used != assumptions)
-    {
-        return VerificationOutcome::unknown(
-            "QP012",
-            "plugins declare different premise sets; the published composite would \
-             understate its assumptions",
-        );
-    }
-    VerificationOutcome {
-        verdict: ProposedVerdict::Safe,
-        diagnostics: Vec::new(),
-        certificate: certificates.first().cloned(),
+    // E03-B1. Composition cannot fabricate a provider certificate, and it no
+    // longer publishes one component's as the merge. It publishes the
+    // composite: the union of the components' premises and coverage, the
+    // per-obligation bounds they were actually checked under, the tightest
+    // task-bounds envelope, and the full provenance sets. `certificate` keeps
+    // a component only when every component is that same certificate, so no
+    // caller reading it can mistake one provider's coverage, bounds or
+    // attribution for the merge's.
+    //
+    // The premise union supersedes the earlier refusal of unequal-but-
+    // compatible premise sets (E03 repair 2, E03-O1). That refusal existed
+    // only because the published representative would have understated its
+    // assumptions; publishing the union states them in full instead, and a
+    // premise two components bind to different values is still `QP012`.
+    match CompositeCertificate::compose(certificates) {
+        Err(refusal) => *refusal,
+        Ok(composite) => VerificationOutcome {
+            verdict: ProposedVerdict::Safe,
+            diagnostics: Vec::new(),
+            certificate: composite.representative().cloned(),
+            composite: Some(composite),
+        },
     }
 }
 
@@ -2113,31 +2305,19 @@ pub fn compose_verification_with_inventory(
              derivation-coverage witness",
         );
     }
-    let composed = compose_verification(outcomes.clone());
+    let composed = compose_verification(outcomes);
     if composed.verdict != ProposedVerdict::Safe {
         return composed;
     }
-    let mut covered = BTreeSet::new();
-    let mut bounds = BTreeMap::<String, TaskBounds>::new();
-    for certificate in outcomes
-        .iter()
-        .filter_map(|outcome| outcome.certificate.as_ref())
-    {
-        for id in certificate.coverage() {
-            covered.insert(id.clone());
-        }
-        for (id, bound) in certificate.obligation_bounds() {
-            if bounds
-                .insert(id.clone(), bound.clone())
-                .is_some_and(|previous| previous != *bound)
-            {
-                return VerificationOutcome::unknown(
-                    "QP013",
-                    format!("obligation `{id}` is discharged under incomparable bounds"),
-                );
-            }
-        }
-    }
+    // The denominator comparison runs against the composite's own coverage
+    // union, which is the same set `compose_certificates` publishes. Bounds
+    // conflicts were already refused while the composite was built.
+    let covered = composed
+        .composite
+        .as_ref()
+        .expect("a safe composition publishes its composite")
+        .coverage()
+        .clone();
     let missing = required.difference(&covered).count();
     if missing != 0 || covered != *required {
         return VerificationOutcome::unknown(
@@ -2152,15 +2332,10 @@ pub fn compose_certificates(
     outcomes: &[VerificationOutcome],
 ) -> Result<CompositeCertificate, Box<VerificationOutcome>> {
     let result = compose_verification(outcomes.to_vec());
-    if result.verdict != ProposedVerdict::Safe {
-        return Err(Box::new(result));
+    match result.composite {
+        Some(composite) if result.verdict == ProposedVerdict::Safe => Ok(composite),
+        _ => Err(Box::new(result)),
     }
-    Ok(CompositeCertificate {
-        certificates: outcomes
-            .iter()
-            .filter_map(|outcome| outcome.certificate.clone())
-            .collect(),
-    })
 }
 
 #[cfg(test)]
@@ -2205,6 +2380,7 @@ mod tests {
                     task_digest: None,
                     task: None,
                 }),
+                composite: None,
             }
         };
         let composed = compose_verification(vec![outcome(true), outcome(false)]);
