@@ -109,7 +109,7 @@ route gets the real process capability. Removing the route removes that choice.
 
 ## 5. The deletion
 
-Commit `<deletion>` (separate, and separately reviewable):
+Commit `106a02b` (separate from the evidence commit, and separately reviewable):
 
 | File | Change |
 |---|---|
