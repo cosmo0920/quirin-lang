@@ -2,6 +2,7 @@
 //! No caller constructs imported summaries or expected witness paths.
 #![cfg(unix)]
 use std::fs;
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -313,11 +314,26 @@ fn changed_main_or_helper_source_cannot_borrow_a_pinned_revision() {
 #[test]
 fn a_failed_selected_process_stays_unknown_without_an_in_process_fallback() {
     let fixture = Fixture::new(false);
-    // The host verifies this package snapshot, but the process refuses a
-    // manifest that disagrees with its compiled package identity.
-    fixture.mutate("package/verifier-plugin.json", |v| {
-        v["package_version"] = json!("0.1.1")
-    });
+    // The host verifies this package snapshot — digest, envelope and every
+    // declaration bind — and the process then fails at dispatch. Since P01-F2
+    // the failure cannot be induced by editing the manifest, so it is induced
+    // where only execution can see it: an executable that carries the very
+    // template the manifest declares and refuses to answer.
+    let executable = fixture.root.join("package/provider");
+    let manifest_path = fixture.root.join("package/verifier-plugin.json");
+    let mut manifest: PluginManifest =
+        serde_json::from_slice(&fs::read(&manifest_path).unwrap()).unwrap();
+    let mut template = manifest.clone();
+    template.package_digest = "0".repeat(64);
+    let mut bytes = b"#!/bin/sh\nexit 3\n".to_vec();
+    bytes.extend(
+        qcore_verifier_host::envelope(&serde_json::to_string_pretty(&template).unwrap())
+            .into_bytes(),
+    );
+    fs::write(&executable, &bytes).unwrap();
+    fs::set_permissions(&executable, PermissionsExt::from_mode(0o755)).unwrap();
+    manifest.package_digest = sha256_hex(&bytes);
+    write_json(&manifest_path, &serde_json::to_value(&manifest).unwrap());
     fixture.run().unwrap();
     let report = fixture.report();
     assert_eq!(report["source_contracts"]["checked_function_contracts"], 0);

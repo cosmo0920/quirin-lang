@@ -1,11 +1,26 @@
 //! Read-only executable package identity checks. This is a local snapshot check,
 //! not signature verification, an OS sandbox or a semantic certificate.
+use crate::embedded_template::verify_embedded_template_binding;
 use crate::{PackageLoadError, PluginEntrypoint, PluginManifest, ProcessProvider};
 use std::path::Path;
 
-/// Check manifest syntax, executable containment and its declared SHA-256.
-/// Does not execute the package. Callers must protect package files against
-/// changes after this check if they require an immutable execution identity.
+/// Check manifest syntax, executable containment, its declared SHA-256, and the
+/// binding of every other declaration to the template embedded in the
+/// executable's bytes.
+///
+/// Does not execute the package: the embedded template is *read* out of the
+/// same bytes the digest is computed over
+/// ([`crate::embedded_template`]). Consequently a schema-valid,
+/// digest-intact edit of `limits`, `targets`, `capabilities` or any other
+/// declared field — including the fields the `linux-rlimit-v1` and
+/// `linux-confined-v1` execution profiles install — is refused by name rather
+/// than accepted.
+///
+/// This remains a snapshot identity, not a signature, source authenticity or an
+/// immutable-execution guarantee: an actor who can rebuild or forge the
+/// executable controls its embedded template too, and the files may change
+/// after this check. Callers must protect package files against changes after
+/// this check if they require an immutable execution identity.
 pub fn verify_executable_package(
     root: impl AsRef<Path>,
 ) -> Result<ProcessProvider, PackageLoadError> {
@@ -42,5 +57,8 @@ pub fn verify_executable_package(
     if qcore_schemas::sha256_hex(&bytes) != manifest.package_digest {
         return Err(error("executable digest mismatch".into()));
     }
+    // Bind the remaining declarations to the executable's own embedded template,
+    // still without executing it. A digest-intact manifest edit fails here.
+    verify_embedded_template_binding(&manifest, &bytes).map_err(|e| error(e.to_string()))?;
     ProcessProvider::new(manifest, root).map_err(|e| error(e.to_string()))
 }

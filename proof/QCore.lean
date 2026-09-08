@@ -70,6 +70,7 @@ import QCore.NullableRemoval
 import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ChunkIntegrityObservation
+import QCore.PackageTemplateBinding
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 

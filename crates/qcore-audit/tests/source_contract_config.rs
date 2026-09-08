@@ -33,14 +33,13 @@ impl Fixture {
     fn package(&self, directory: &str, change: impl FnOnce(&mut Value)) {
         let path = self.0.join(directory);
         fs::create_dir_all(&path).unwrap();
-        // Load validates package identity without executing the bytes.
-        let executable = b"configuration test: never execute";
-        fs::write(path.join("provider"), executable).unwrap();
+        // Load validates package identity, and binds every other declaration to
+        // the template embedded in these bytes, without executing them.
         let mut manifest = json!({
             "plugin_id":"test.widgets", "package_version":"1.0.0",
             "protocol_versions":[1], "evidence_versions":[2],
             "entrypoint":{"kind":"executable","path":"provider"},
-            "package_digest":qcore_schemas::sha256_hex(executable),
+            "package_digest":Value::Null,
             "targets":[{"library":"widgets","revisions":["*"],"profiles":["*"],"dialects":["c11"],"platforms":["*"],"backends":["native"]}],
             "capabilities":["resource_contracts"],
             "required_foreign_summaries":[],"required_observation_hooks":[],"filesystem_inputs":[],
@@ -50,6 +49,20 @@ impl Fixture {
             "lean_theorem_family":"QCore.ChunkSource"
         });
         change(&mut manifest);
+        // A test that names its own digest keeps it; otherwise the installed
+        // digest is the recomputed hash of the bytes written below.
+        let declared = manifest["package_digest"].clone();
+        let mut template = manifest.clone();
+        // An executable cannot embed its own hash: templates carry the build
+        // placeholder, exactly as `providers/package.py` produces them.
+        template["package_digest"] = json!("0".repeat(64));
+        let mut executable = b"configuration test: never execute".to_vec();
+        executable.extend(qcore_verifier_host::envelope(&template.to_string()).into_bytes());
+        fs::write(path.join("provider"), &executable).unwrap();
+        manifest["package_digest"] = match declared {
+            Value::Null => json!(qcore_schemas::sha256_hex(&executable)),
+            value => value,
+        };
         fs::write(path.join("verifier-plugin.json"), manifest.to_string()).unwrap();
     }
 }
