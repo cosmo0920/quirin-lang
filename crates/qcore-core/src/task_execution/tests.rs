@@ -23,6 +23,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
         parameters: vec![],
         result: ScalarType::I32,
         errors,
+        error_payloads: BTreeSet::new(),
         declared_effects: TaskEffects {
             alloc: false,
             spawn: true,
@@ -74,6 +75,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
                     vec![I::ExitScope { scope: 1 }],
                     T::Raise {
                         error: ErrorOperand::Tag(SPAWN_ERROR.into()),
+                        payload: None,
                     },
                 ),
             ),
@@ -92,6 +94,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
                     vec![I::ExitScope { scope: 1 }],
                     T::Raise {
                         error: ErrorOperand::Slot(4),
+                        payload: None,
                     },
                 ),
             ),
@@ -105,6 +108,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
         errors: worker_error
             .map(|tag| BTreeSet::from([tag.into()]))
             .unwrap_or_default(),
+        error_payloads: BTreeSet::new(),
         declared_effects: TaskEffects::default(),
         entry: 0,
         span: span(),
@@ -115,6 +119,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
                 if let Some(tag) = worker_error {
                     T::Raise {
                         error: ErrorOperand::Tag(tag.into()),
+                        payload: None,
                     }
                 } else {
                     T::Return {
@@ -371,6 +376,7 @@ fn declared_rows_permit_unused_operations_and_multiple_error_variants() {
         .terminator
         .kind = TaskTerminatorKind::Raise {
         error: ErrorOperand::Tag("Worker::Second".into()),
+        payload: None,
     };
     let checked = check_task_module(&input).unwrap();
     assert_eq!(

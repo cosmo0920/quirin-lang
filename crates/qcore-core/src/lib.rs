@@ -13,6 +13,7 @@ pub mod c_emit;
 pub mod cfg;
 pub mod cleanup_lowering;
 pub mod concurrency;
+pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
 pub mod index;
@@ -21,6 +22,7 @@ pub mod library_custody;
 pub mod mutex_c_emit;
 pub mod mutex_invariant;
 pub mod native_concurrency;
+pub mod os_endpoint;
 pub mod ownership;
 pub mod research_closure;
 pub mod resource_flow;
@@ -57,6 +59,12 @@ pub use inference::{
     InferenceCertificate, InferenceConstraint, InferenceError, PrincipalSolution, UsageInterval,
     check_inference_certificate, infer_principal,
 };
+pub use os_endpoint::{
+    DescriptionState, DescriptorState, Duty, EndpointKind, Epoch, Errno,
+    Outcome as EndpointOutcome, PostState, PostStateClaim, Premise, Premises, Recovery, Refusal,
+    RelationError, Target, WriteBackState, check_claim as check_endpoint_claim, close_poststate,
+    join as join_endpoint_poststates, poisoned_duties,
+};
 pub use ownership::{
     Footprint, OwnershipArithmeticError, OwnershipError, OwnershipOp, OwnershipState,
     ResourceEntry, ResourceId, check_ownership, execute_ownership,
@@ -74,6 +82,13 @@ pub use concurrency::{
     AccessFootprint, AccessKind, AccessPermission, ConcurrencyAssumption, ConcurrencyCertificate,
     ConcurrencyDiagnostic, ConcurrencyProfile, ConcurrentEvent, ConcurrentProgram, FULL_ACCESS,
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
+};
+pub use disjoint_footprint::{
+    AllocationId, DerivedFootprint, DescriptorId, DisjointnessJudgement, ElementShape, FieldId,
+    FieldLayout, FieldStorage, FootprintAssumption, FootprintCertificate, FootprintDiagnostic,
+    FootprintEvent, FootprintExport, FootprintProfile, FootprintProgram, FootprintRecheckError,
+    Generation, HandleId, LayoutContract, LayoutDefect, ProtocolCellId, RecordId,
+    UnsupportedFootprint, check_disjoint_footprint_program, recheck_disjoint_footprint_certificate,
 };
 pub use mutex_invariant::{
     BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId, IdentityKind, InvariantId,
@@ -104,6 +119,8 @@ pub use weak_memory::{
 pub mod chunk_lifecycle;
 
 pub mod resource_accounting;
+
+pub mod epoch_accounting;
 
 pub mod event_reactor;
 

@@ -1,0 +1,567 @@
+{
+  "schema_version": 1,
+  "card": "wave3-CT",
+  "generated": "2026-09-08",
+  "report": "docs/reports/remaining-wave3-ct-integration/README.md",
+  "purpose": "Per-stage executed evidence for the five task-route CT cases this card mapped (T05's CT03/CT04/CT05 and T06's CT17/CT18). Written in the shape docs/reports/remaining-t00/coverage.json uses for mapped_case_stage_matrix, and alongside docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json, so a future stage-derived summarizer can merge the three files instead of hand-maintaining the aggregate. T00's coverage.json is an archived audit at revision ea2af0f and is deliberately not rewritten here.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control fixture's execution is recorded under aux:, never as the case's own stage. A stage a refused program never reaches is `not_applicable`, not `unassessed`.",
+  "route": "task route (qcore_frontend::source_tasks -> qcore_core::scoped_tasks / task_execution -> qcore_core::task_c_emit), in its ScopedReadSharesV1 and ScopedErrorPayloadV1 profiles",
+  "route_reads_cfg_as_the_task_ir": "The manifest note states the task-route reading: `cfg` names the checked task IR, which these fixtures really construct. That is why every task-route native case claims it (CT01, CT13, CT16 and now CT03/CT17) and why the mutex route never does. Card T05 section 9 proposed `cfg: unassessed` for CT03; this card records the deviation deliberately in its README section 2.",
+  "stage_vocabulary_added": [],
+  "inventory": {
+    "added_mapped_ids": [
+      "CT03",
+      "CT04",
+      "CT05",
+      "CT17",
+      "CT18"
+    ],
+    "mapped_before": 15,
+    "mapped_after": 20,
+    "unmapped_after": 30,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "task_reference_executions": 8,
+    "sanitized_native_compile_and_run": 8,
+    "in_case_source_controls": 6,
+    "accepted_controls": 3,
+    "refused_controls": 2,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT03": {
+      "harness_verdict_mode": "native_heap_scenarios",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 0,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_tasks lowering of `read PLACE share N` captures and `qcore_buffer_write`, reached through compile_files."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::scoped_tasks all-paths check, reached through compile_files; the harness asserts SourceExecutionProfile::ScopedReadSharesV1 so another route cannot satisfy the case."
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 3,
+          "note": "execute_task_module_with_worker_allocations on the checked task IR, once per fixed schedule; it never reads the emitted C."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 3,
+          "note": "one emitted module, compiled once per schedule."
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 3,
+          "note": "the emitted C compiled and run once per schedule; stdout equals the reference observation line for line on the two completing schedules, and the trapped-abort schedule pins what its truncated observation must not contain."
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 3,
+          "note": "ASan + UBSan on every schedule; LeakSanitizer on every schedule whose exit code is 0. Gated by the harness, not a transcript."
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "heap_witness": {
+        "alloc_marker": "SHARE_ALLOC ",
+        "free_marker": "SHARE_FREE ",
+        "per_schedule": {
+          "two_readers_share_one_allocation": {
+            "allocated": 1,
+            "released": 1
+          },
+          "second_creation_refuses": {
+            "allocated": 1,
+            "released": 1
+          },
+          "join_refuses": {
+            "allocated": 1,
+            "released": 0
+          }
+        }
+      }
+    },
+    "CT04": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "exact_diagnostic_cascade": [
+        "Q600"
+      ],
+      "source_reject_controls_executed": 1,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "observations": 1,
+          "note": "the capture and write forms lower; the refusal comes from the ledger, not the grammar."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::scoped_tasks refuses this program; the exact ordered code vector is pinned, not only its head."
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable",
+          "note": "a rejection has no execution post-state."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "aux": {
+        "accepted_control": {
+          "artifact": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+          "executor": "compiler/tests/ct_corpus.rs::run_source_controls",
+          "required_execution_profile": "ScopedReadSharesV1",
+          "host_gate": "linux; on any other host the harness asserts the Q500 unsupported-target refusal and prints an explicit unexecuted line.",
+          "note": "A control's execution is never counted as the case's own stage."
+        }
+      }
+    },
+    "CT05": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "exact_diagnostic_cascade": [
+        "Q600"
+      ],
+      "source_reject_controls_executed": 1,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "observations": 1,
+          "note": "the capture forms lower; the refusal comes from the ledger's lending budget, not the grammar."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::scoped_tasks refuses this program; the exact ordered code vector is pinned, not only its head."
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable",
+          "note": "a rejection has no execution post-state."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "aux": {
+        "accepted_control": {
+          "artifact": "compiler/tests/fixtures/ct/CT05/remainder_fits.qcore",
+          "executor": "compiler/tests/ct_corpus.rs::run_source_controls",
+          "required_execution_profile": "ScopedReadSharesV1",
+          "host_gate": "linux; on any other host the harness asserts the Q500 unsupported-target refusal and prints an explicit unexecuted line.",
+          "note": "A control's execution is never counted as the case's own stage."
+        }
+      }
+    },
+    "CT17": {
+      "harness_verdict_mode": "native_heap_scenarios",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 2,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_tasks lowering of the declared payload row, `raise E::V(b)` and `qcore_error_payload`, reached through compile_files."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::scoped_tasks all-paths check, reached through compile_files; the harness asserts SourceExecutionProfile::ScopedErrorPayloadV1 so another route cannot satisfy the case."
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 5,
+          "note": "execute_task_module_with_worker_allocations on the checked task IR, once per fixed schedule; it never reads the emitted C."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 5,
+          "note": "one emitted module, compiled once per schedule."
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 5,
+          "note": "the emitted C compiled and run once per schedule; stdout equals the reference observation line for line on the four completing schedules, and the trapped-abort schedule pins that no join, no transfer and no release happened."
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+          "observations": 5,
+          "note": "ASan + UBSan on every schedule; LeakSanitizer on every schedule whose exit code is 0. Gated by the harness, not a transcript."
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "heap_witness": {
+        "alloc_marker": "PAYLOAD_ALLOC ",
+        "free_marker": "PAYLOAD_FREE ",
+        "per_schedule": {
+          "success_releases_everything_inside_the_child": {
+            "allocated": 3,
+            "released": 3
+          },
+          "payload_crosses_the_join_exactly_once": {
+            "allocated": 1,
+            "released": 1
+          },
+          "partial_acquisition_releases_the_local_it_does_not_carry": {
+            "allocated": 2,
+            "released": 2
+          },
+          "creation_refuses_and_transfers_nothing": {
+            "allocated": 1,
+            "released": 1
+          },
+          "join_refuses_and_reclaims_nothing": {
+            "allocated": 1,
+            "released": 0
+          }
+        }
+      },
+      "aux": {
+        "rejection_controls": [
+          {
+            "artifact": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qcore",
+            "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+            "expected": "Q600 return/error discards an undelivered error payload"
+          },
+          {
+            "artifact": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qcore",
+            "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+            "expected": "Q600 return/error discards a handle, unconsumed Result or owned buffer"
+          }
+        ],
+        "note": "Both controls run on every host, before the Linux gate. A control's execution is never counted as the case's own stage."
+      }
+    },
+    "CT18": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "exact_diagnostic_cascade": [
+        "Q500"
+      ],
+      "source_reject_controls_executed": 1,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+          "observations": 1,
+          "note": "the declared payload row and the raise lower far enough for the payload type to be read; `borrow<Buffer>` is refused there, at the raise that writes it."
+        },
+        "task_ledger_check": {
+          "status": "not_applicable",
+          "note": "refused during task lowering (Q500), so the program never reaches the core task checker."
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable",
+          "note": "a rejection has no execution post-state."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "aux": {
+        "accepted_control": {
+          "artifact": "compiler/tests/fixtures/ct/CT18/owned_payload.qcore",
+          "executor": "compiler/tests/ct_corpus.rs::run_source_controls",
+          "required_execution_profile": "ScopedErrorPayloadV1",
+          "host_gate": "linux; on any other host the harness asserts the Q500 unsupported-target refusal and prints an explicit unexecuted line.",
+          "note": "A control's execution is never counted as the case's own stage."
+        }
+      }
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT11": {
+      "proposed_by": "docs/reports/remaining-t05/README.md section 9",
+      "measured": "Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] } at the write placed between the two joins.",
+      "reason_left_unmapped": "The scenario reads 'full permission reconstructed while local shared aliases survive'. ScopedReadSharesV1 has no local alias form at all, and the party retaining the share here is an unjoined child task. The refusal direction matches, but the retaining party does not, so mapping it would claim intra-frame alias evidence the corpus does not have. T05 flagged exactly this and left the decision to the integrator.",
+      "unblocks_when": "an owned-pointer alias form exists in the grammar (the same gap that keeps CT06 unmapped)."
+    },
+    "CT06": {
+      "proposed_by": "not proposed (T05 section 9 declined it)",
+      "reason_left_unmapped": "`let copy = buffer;` is refused with 'owned buffers require explicit move or a checked buffer read'. The closest measured fact is that both children receive the same pointer, which is evidence for CT03's acceptance, not for a copy the grammar does not admit."
+    },
+    "CT35": {
+      "proposed_by": "not proposed (T05 section 9 and T08 section 8)",
+      "reason_left_unmapped": "ScopedReadSharesV1 has no byte-size accounting: 'count its live bytes once' is discharged as one allocation counted once, measured by address. FlatEpochBoundV1 checks the 4096 rule at model level, but there is no epoch source syntax, hence no parser stage and no reference execution."
+    },
+    "CT36": {
+      "proposed_by": "not proposed (T08 section 8)",
+      "reason_left_unmapped": "Checked at model level by FlatEpochBoundV1; no source syntax, so no parser stage and no reference execution."
+    },
+    "CT38": {
+      "proposed_by": "not proposed (T08 section 8)",
+      "reason_left_unmapped": "Checked at model level by FlatEpochBoundV1; no source syntax, so no parser stage and no reference execution."
+    },
+    "CT39": {
+      "proposed_by": "not proposed (T08 section 8)",
+      "reason_left_unmapped": "Checked at model level by FlatEpochBoundV1 (epoch_wall_clock_bound always refuses); no source syntax, so no parser stage and no reference execution."
+    },
+    "CT24": {
+      "proposed_by": "docs/reports/remaining-t04/README.md",
+      "reason_left_unmapped": "T04's own proposal, outside this card's five-case scope and unchanged by it; its candidate fixture stays in docs/reports/remaining-t04/fixtures/."
+    },
+    "CT25": {
+      "proposed_by": "docs/reports/remaining-t04/README.md",
+      "reason_left_unmapped": "As CT24."
+    }
+  }
+}

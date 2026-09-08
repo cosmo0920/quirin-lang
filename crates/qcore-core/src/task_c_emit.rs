@@ -30,16 +30,18 @@ fn scalar(value: &ScalarOperand) -> String {
         ScalarOperand::I32(value) if *value < 0 => format!("(-INT32_C({}))", -value),
         ScalarOperand::I32(value) => format!("INT32_C({value})"),
         ScalarOperand::Slot(slot) => format!("s_{slot}.value.scalar"),
-        ScalarOperand::Move(_) | ScalarOperand::Loan(_) => {
+        ScalarOperand::Move(_) | ScalarOperand::Loan { .. } => {
             unreachable!("checked scalar operand is neither owned nor lent")
         }
     }
 }
 
-/// A move and a loan both hand the callee the same pointer value. They differ
-/// only in what the *caller* keeps, which `consume` decides.
+/// A move and a loan both hand the callee the same pointer value — which is
+/// what makes two borrowers of one allocation two readers of one object rather
+/// than two copies. They differ only in what the *caller* keeps, which
+/// `consume` decides.
 fn self_value(operand: &ScalarOperand) -> String {
-    if let ScalarOperand::Move(slot) | ScalarOperand::Loan(slot) = operand {
+    if let ScalarOperand::Move(slot) | ScalarOperand::Loan { slot, .. } = operand {
         format!("s_{slot}.value")
     } else {
         format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand))
@@ -128,6 +130,9 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     InstructionKind::UnwrapInfallible { value_slot, .. } => {
                         slots.insert(*value_slot);
                     }
+                    InstructionKind::TakeErrorPayload { buffer_slot, .. } => {
+                        slots.insert(*buffer_slot);
+                    }
                     InstructionKind::Join {
                         outcome_slot: Some(slot),
                         ..
@@ -181,7 +186,7 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     arguments
                         .iter()
                         .filter_map(|argument| match argument {
-                            ScalarOperand::Loan(slot) => Some(*slot),
+                            ScalarOperand::Loan { slot, .. } => Some(*slot),
                             _ => None,
                         })
                         .collect::<Vec<_>>(),
@@ -209,8 +214,29 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         )
                         .unwrap();
                     }
+                    InstructionKind::TakeErrorPayload {
+                        error_slot,
+                        buffer_slot,
+                    } => {
+                        // The payload leaves the error value in the same
+                        // statement it enters the buffer binding, so no live C
+                        // state ever names it twice.
+                        writeln!(
+                            source,
+                            "    s_{buffer_slot}.value = s_{error_slot}.value; s_{error_slot}.value.buffer = NULL;"
+                        )
+                        .unwrap();
+                    }
                     InstructionKind::ReadBuffer { buffer, value_slot } => {
                         writeln!(source, "    s_{value_slot}.value.scalar = qcore_buffer_read(s_{buffer}.value.buffer, context);").unwrap();
+                    }
+                    InstructionKind::WriteBuffer { buffer, value } => {
+                        writeln!(
+                            source,
+                            "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);",
+                            scalar(value)
+                        )
+                        .unwrap();
                     }
                     InstructionKind::DropBuffer { buffer } => {
                         writeln!(source, "    qcore_buffer_drop(s_{buffer}.value.buffer, context); s_{buffer}.value.buffer = NULL;").unwrap();
@@ -299,7 +325,7 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     // A creation that failed jumped away above, so no loan is
                     // ever announced for a child that does not exist.
                     for argument in arguments {
-                        if let ScalarOperand::Loan(slot) = argument {
+                        if let ScalarOperand::Loan { slot, .. } = argument {
                             writeln!(
                                 source,
                                 "        printf(\"QCORE_BUFFER_LOAN %\" PRIu64 \" %\" PRIu64 \"\\n\", s_{handle_slot}.handle->identity, s_{slot}.value.buffer->generation);"
@@ -324,7 +350,10 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     success,
                     error,
                 } => {
-                    writeln!(source, "    if (s_{result_slot}.result.error != 0) {{\n        s_{error_slot}.error = s_{result_slot}.result.error;\n        goto qcore_block_{error};\n    }}\n    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n    goto qcore_block_{success};").unwrap();
+                    // A failing Result hands its payload, when it has one, to
+                    // the error binding and clears the Result's own copy, so
+                    // both edges move the pointer exactly once.
+                    writeln!(source, "    if (s_{result_slot}.result.error != 0) {{\n        s_{error_slot}.error = s_{result_slot}.result.error;\n        s_{error_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n        goto qcore_block_{error};\n    }}\n    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n    goto qcore_block_{success};").unwrap();
                 }
                 TerminatorKind::Return { value } => {
                     let kind = match function.result {
@@ -344,16 +373,28 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     consume(&mut source, value);
                     source.push_str("    return returned; }\n");
                 }
-                TerminatorKind::Raise { error } => {
+                TerminatorKind::Raise { error, payload } => {
                     let tag = match error {
                         ErrorOperand::Tag(name) => errors[name].to_string(),
                         ErrorOperand::Slot(slot) => format!("s_{slot}.error"),
                     };
-                    writeln!(
-                        source,
-                        "    return (struct qcore_task_result){{0, {{0, NULL}}, {tag}}};"
-                    )
-                    .unwrap();
+                    match payload {
+                        None => writeln!(
+                            source,
+                            "    return (struct qcore_task_result){{0, {{0, NULL}}, {tag}}};"
+                        )
+                        .unwrap(),
+                        Some(operand) => {
+                            writeln!(
+                                source,
+                                "    {{ struct qcore_task_result raised = {{0, {}, {tag}}};",
+                                self_value(operand)
+                            )
+                            .unwrap();
+                            consume(&mut source, operand);
+                            source.push_str("    return raised; }\n");
+                        }
+                    }
                 }
             }
             source_map.push(TaskCMapping {
@@ -369,7 +410,7 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
             span: function.span,
         });
     }
-    source.push_str("int main(void) {\n    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_drop;\n");
+    source.push_str("int main(void) {\n    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_drop;\n");
     for id in module.functions.keys() {
         writeln!(source, "    (void)&qcore_task_fn_{id};").unwrap();
     }
@@ -402,8 +443,9 @@ const RUNTIME: &str = r#"#include <inttypes.h>
 #ifndef QCORE_BUFFER_FREE
 #define QCORE_BUFFER_FREE free
 #endif
-/* Only checked move operations expose this private allocation to workers.
- * Payload and generation never change after successful allocation. */
+/* Only checked move and read-share operations expose this private allocation to
+ * workers. The generation never changes after successful allocation; the
+ * payload changes only through a checked exclusive-authority write. */
 struct qcore_buffer { uint64_t generation; int32_t payload; };
 struct qcore_task_value { int32_t scalar; struct qcore_buffer *buffer; };
 struct qcore_task_result { int kind; struct qcore_task_value value; int error; };
@@ -438,6 +480,7 @@ static void qcore_buffer_print_event(uint64_t task, struct qcore_buffer_event ev
     case 1: printf("QCORE_BUFFER_ALLOC_FAILED %" PRIu64 "\n", task); break;
     case 2: printf("QCORE_BUFFER_READ %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
     case 3: printf("QCORE_BUFFER_DROP %" PRIu64 " %" PRIu64 "\n", task, event.generation); break;
+    case 4: printf("QCORE_BUFFER_WRITE %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
     default: abort();
     }
 }
@@ -474,13 +517,23 @@ static int32_t qcore_buffer_read(const struct qcore_buffer *buffer, struct qcore
     qcore_buffer_event(context, 2, buffer->generation, payload);
     return payload;
 }
+/* Only a checked exclusive-authority holder reaches this: no read share may be
+ * outstanding, so no other thread is reading this object while it is written. */
+static void qcore_buffer_write(struct qcore_buffer *buffer, int32_t payload, struct qcore_task_context *context) {
+    if (buffer == NULL) abort();
+    buffer->payload = payload;
+    qcore_buffer_event(context, 4, buffer->generation, payload);
+}
 static void qcore_buffer_drop(struct qcore_buffer *buffer, struct qcore_task_context *context) {
     if (buffer == NULL) abort();
     qcore_buffer_event(context, 3, buffer->generation, 0);
     QCORE_BUFFER_FREE(buffer);
 }
 static void qcore_task_print_result(uint64_t identity, struct qcore_task_result result) {
-    if (result.error != 0)
+    if (result.error != 0 && result.value.buffer != NULL)
+        printf("QCORE_TASK_RESULT %" PRIu64 " ERROR_BUFFER %s %" PRIu64 "\n", identity,
+               qcore_task_error_name(result.error), result.value.buffer->generation);
+    else if (result.error != 0)
         printf("QCORE_TASK_RESULT %" PRIu64 " ERROR %s\n", identity, qcore_task_error_name(result.error));
     else if (result.kind == 0)
         printf("QCORE_TASK_RESULT %" PRIu64 " UNIT\n", identity);

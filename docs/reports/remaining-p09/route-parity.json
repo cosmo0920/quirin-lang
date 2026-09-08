@@ -1,0 +1,104 @@
+{
+  "absent_profile_root": {
+    "fallback": "none",
+    "load_first_party_manifests": "PackageLoadError",
+    "load_first_party_registry": "PackageLoadError"
+  },
+  "measurement": {
+    "card": "P09",
+    "evidence_version": 1,
+    "new_route": "qcore_compiler::first_party::{load_first_party_manifests, load_first_party_registry}",
+    "old_route": "qcore_compiler::verifier_plugins::{libevent,chunkio}::{manifest, provider}",
+    "profiles_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad7c8b8c318e3c948/compiler/../contract/profiles",
+    "protocol_version": 1
+  },
+  "qcore.chunkio": {
+    "capabilities": [
+      {
+        "capability": "ResourceContracts",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.chunkio.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      },
+      {
+        "capability": "ChunkLifecycle",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.chunkio.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      },
+      {
+        "capability": "TranslationUnitProjection",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.chunkio.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      }
+    ],
+    "entrypoint": "BuiltIn",
+    "foreign_target_routes_agree": true,
+    "hardcoded_route_refuses_executable_entrypoint": "InvalidTarget",
+    "library": "chunkio",
+    "manifest_bytes": 710,
+    "manifest_bytes_equal": true,
+    "manifest_records_equal": true,
+    "package_version": "0.1.0",
+    "undeclared_capability_routes_agree": true
+  },
+  "qcore.libevent": {
+    "capabilities": [
+      {
+        "capability": "ResourceContracts",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.libevent.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      },
+      {
+        "capability": "EventTraces",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.libevent.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      },
+      {
+        "capability": "Concurrency",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.libevent.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      },
+      {
+        "capability": "ObservationHooks",
+        "certificate": false,
+        "diagnostics": [
+          "qcore.libevent.semantic_evidence_unavailable"
+        ],
+        "routes_agree": true,
+        "verdict": "Unknown"
+      }
+    ],
+    "entrypoint": "BuiltIn",
+    "foreign_target_routes_agree": true,
+    "hardcoded_route_refuses_executable_entrypoint": "InvalidTarget",
+    "library": "libevent",
+    "manifest_bytes": 711,
+    "manifest_bytes_equal": true,
+    "manifest_records_equal": true,
+    "package_version": "0.1.0",
+    "undeclared_capability_routes_agree": true
+  }
+}

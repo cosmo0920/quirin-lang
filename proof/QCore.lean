@@ -4,6 +4,9 @@ import QCore.OwnedTaskExecution
 import QCore.TaskExecution
 import QCore.ScopedTasks
 import QCore.ReadLoan
+import QCore.EpochAccounting
+import QCore.ReadShare
+import QCore.ErrorPayload
 import QCore.ContextualCustody
 import QCore.SourceValidation
 import QCore.VerifierEvidenceV2
@@ -55,11 +58,13 @@ import QCore.Compiler
 import QCore.Concurrency
 import QCore.LifetimeCorrespondence
 import QCore.MutexInvariant
+import QCore.DisjointFootprint
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
 import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.DescriptorObservation
 import QCore.NullableRemoval
+import QCore.OsEndpointPostState
 
 /-! The executable formal core of QCore-C revision 0.1. -/

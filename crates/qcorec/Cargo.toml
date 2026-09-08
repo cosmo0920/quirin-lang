@@ -10,6 +10,6 @@ name = "qcorec"
 path = "src/main.rs"
 
 [dependencies]
-qcore-compiler = { path = "../../compiler", version = "0.1.0" }
+qcore-compiler = { path = "../../compiler", version = "0.2.0" }
 serde_json = "1.0.151"
 serde = { version = "1.0.229", features = ["derive"] }

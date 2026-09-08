@@ -17,7 +17,7 @@ pub fn has_source_tasks(source: &SourceProgram) -> bool {
                 || s.value.nested_blocks().iter().any(|b| has_scope(b))
         })
     }
-    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read"))
+    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read" || word == "qcore_buffer_write"))
         || !source.task_expressions().is_empty()
         || source
             .declarations
@@ -91,6 +91,19 @@ struct ParsedEffects {
     join: bool,
     may_block: bool,
     errors: BTreeSet<String>,
+    /// Card T06. The declared subset of `errors` whose variants carry exactly
+    /// one `own<Buffer>`. It is derived from the error type declaration, never
+    /// from a use site, so one tag cannot carry a payload in one function and
+    /// not in another.
+    error_payloads: BTreeSet<String>,
+}
+
+/// A declared nominal error type: its complete variant set and the subset that
+/// carries one owned Buffer.
+#[derive(Clone, Debug, Default)]
+struct ErrorType {
+    variants: BTreeSet<String>,
+    payloads: BTreeSet<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -138,16 +151,16 @@ struct Signature {
 
 fn error_declarations(
     source: &SourceProgram,
-) -> Result<BTreeMap<String, BTreeSet<String>>, SourceDiagnostic> {
+) -> Result<BTreeMap<String, ErrorType>, SourceDiagnostic> {
+    let builtin = |tag: &str| ErrorType {
+        variants: BTreeSet::from([tag.to_owned()]),
+        // Both are raised by the runtime after a failure that acquired
+        // nothing, so neither can ever hold a payload.
+        payloads: BTreeSet::new(),
+    };
     let mut errors = BTreeMap::from([
-        (
-            "AllocError".to_owned(),
-            BTreeSet::from(["AllocError".to_owned()]),
-        ),
-        (
-            "SpawnError".to_owned(),
-            BTreeSet::from(["SpawnError".to_owned()]),
-        ),
+        ("AllocError".to_owned(), builtin("AllocError")),
+        ("SpawnError".to_owned(), builtin("SpawnError")),
     ]);
     for declaration in &source.declarations {
         if declaration.value.kind != DeclarationKind::ErrorType {
@@ -158,7 +171,7 @@ fn error_declarations(
             failure(
                 declaration.span,
                 SemanticPass::TypedErrors,
-                "task execution supports only payload-free nominal error variants",
+                "task execution supports nominal error variants that are payload-free or carry exactly one own<Buffer>",
             )
         };
         if tokens.len() < 6
@@ -169,25 +182,41 @@ fn error_declarations(
         {
             return Err(bad());
         }
-        let mut variants = BTreeSet::new();
+        let mut declared = ErrorType::default();
         let inner = &tokens[3..tokens.len() - 1];
-        let (pairs, remainder) = inner.as_chunks::<2>();
-        if !remainder.is_empty() {
-            return Err(bad());
-        }
-        for pair in pairs {
-            let Some(variant) = name(pair.first()) else {
+        let mut cursor = 0;
+        while cursor < inner.len() {
+            let Some(variant) = name(inner.get(cursor)) else {
                 return Err(bad());
             };
-            if !symbol(pair.get(1), Symbol::Semicolon)
-                || !variants.insert(format!("{}::{variant}", declaration.value.name))
+            let tag = format!("{}::{variant}", declaration.value.name);
+            // `V;` is payload-free; `V(own<Buffer>);` carries exactly one owned
+            // Buffer. Nothing else is admitted, so a scalar, a borrow, several
+            // fields and an empty list each reject rather than degrade.
+            let payload = if symbol(inner.get(cursor + 1), Symbol::Semicolon) {
+                cursor += 2;
+                false
+            } else if symbol(inner.get(cursor + 1), Symbol::LeftParen)
+                && inner.len() > cursor + 7
+                && scalar(&inner[cursor + 2..cursor + 6]) == Some(Scalar::OwnedBuffer)
+                && symbol(inner.get(cursor + 6), Symbol::RightParen)
+                && symbol(inner.get(cursor + 7), Symbol::Semicolon)
             {
+                cursor += 8;
+                true
+            } else {
+                return Err(bad());
+            };
+            if !declared.variants.insert(tag.clone()) {
                 return Err(bad());
             }
+            if payload {
+                declared.payloads.insert(tag);
+            }
         }
-        if variants.is_empty()
+        if declared.variants.is_empty()
             || errors
-                .insert(declaration.value.name.clone(), variants)
+                .insert(declaration.value.name.clone(), declared)
                 .is_some()
         {
             return Err(bad());
@@ -200,7 +229,7 @@ fn signature(
     source: &SourceProgram,
     declaration: &Located<SourceDeclaration>,
     typed: &TypedSourceDeclaration,
-    errors: &BTreeMap<String, BTreeSet<String>>,
+    errors: &BTreeMap<String, ErrorType>,
 ) -> Result<Signature, SourceDiagnostic> {
     let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
     let body = declaration
@@ -333,10 +362,13 @@ fn signature(
                     }
                     let error = name(tokens.get(cursor + 2))
                         .ok_or_else(|| bad("throws requires a nominal error type"))?;
-                    let variants = errors
+                    let declared = errors
                         .get(error)
                         .ok_or_else(|| bad("throws references an unknown error type"))?;
-                    effects.errors.extend(variants.iter().cloned());
+                    effects.errors.extend(declared.variants.iter().cloned());
+                    effects
+                        .error_payloads
+                        .extend(declared.payloads.iter().cloned());
                     key = format!("throws<{error}>");
                     cursor += 4;
                 }
@@ -356,6 +388,19 @@ fn signature(
                 return Err(bad("missing effect after comma"));
             }
         }
+    }
+    // Card T06's bound on the *declared row*, not on a path. When some declared
+    // variant carries a payload, every one of them must, so a joined error
+    // always holds exactly one Buffer and the caller's take is total. A mixed
+    // row would make the payload's presence depend on which variant occurred,
+    // which this profile does not represent. It is a refusal, not a silent
+    // widening: the core would still reject the take on the payload-free path.
+    if !effects.error_payloads.is_empty() && effects.error_payloads != effects.errors {
+        return Err(failure(
+            declaration.span,
+            SemanticPass::TypedErrors,
+            "a declared error row must carry an owned payload on every variant or on none",
+        ));
     }
     Ok(Signature {
         id: typed.symbol,
@@ -382,6 +427,56 @@ impl Scalar {
     }
 }
 
+/// Evaluate a source read share into the ledger's authority unit.
+///
+/// `FULL` is the whole read authority; a decimal literal and a sum of admitted
+/// shares are the fractions of it. Every other form is a represented refusal:
+/// a named share needs a declared share constant, which this profile does not
+/// have. A share of zero grants nothing and a share above the full authority is
+/// not a fraction of it, so both are refused here rather than clamped — the
+/// ledger repeats both checks, so this is the first of two gates, not the only
+/// one.
+fn read_share(share: &SourceShareExpression, span: Span) -> Result<u32, SourceDiagnostic> {
+    let value = match share {
+        SourceShareExpression::Full => qcore_core::task_execution::FULL_READ_AUTHORITY,
+        SourceShareExpression::Parenthesized(inner) => read_share(&inner.value, inner.span)?,
+        SourceShareExpression::Add(left, right) => read_share(&left.value, left.span)?
+            .checked_add(read_share(&right.value, right.span)?)
+            .ok_or_else(|| {
+                failure(
+                    span,
+                    SemanticPass::Concurrency,
+                    "read share sum is outside the representable authority range",
+                )
+            })?,
+        SourceShareExpression::Integer(digits) => digits.parse::<u32>().map_err(|_| {
+            failure(
+                span,
+                SemanticPass::Concurrency,
+                "a read share literal must be a decimal fraction of the full authority",
+            )
+        })?,
+        SourceShareExpression::Name(_) => {
+            return Err(failure(
+                span,
+                SemanticPass::Concurrency,
+                "named read shares require a declared share constant, which is outside this profile",
+            ));
+        }
+    };
+    if value == 0 || value > qcore_core::task_execution::FULL_READ_AUTHORITY {
+        return Err(failure(
+            span,
+            SemanticPass::Concurrency,
+            format!(
+                "a read share must be positive and at most FULL ({}); this capture requests {value}",
+                qcore_core::task_execution::FULL_READ_AUTHORITY
+            ),
+        ));
+    }
+    Ok(value)
+}
+
 fn core_span(span: Span) -> TaskSpan {
     TaskSpan {
         start: span.start,
@@ -396,10 +491,19 @@ enum ValueType {
     Result {
         value: Scalar,
         errors: BTreeSet<String>,
+        /// True when some variant this Result can carry declares an owned
+        /// Buffer payload. Such a Result cannot be propagated with `?`: its
+        /// payload has to be taken on an explicit error arm.
+        error_payload: bool,
     },
     Scope,
     KnownError(String),
-    Error(BTreeSet<String>),
+    Error {
+        errors: BTreeSet<String>,
+        /// True until `qcore_error_payload` takes the Buffer out. While it is
+        /// true the binding cannot be re-raised or silently dropped.
+        payload: bool,
+    },
 }
 
 /// Lower complete source syntax into task execution IR. This checks the source
@@ -467,7 +571,11 @@ fn lower(
     for declaration in &source.declarations {
         if matches!(
             declaration.value.name.as_str(),
-            "qcore_buffer_new" | "qcore_buffer_read" | "AllocError"
+            "qcore_buffer_new"
+                | "qcore_buffer_read"
+                | "qcore_buffer_write"
+                | "qcore_error_payload"
+                | "AllocError"
         ) {
             return Err(failure(
                 declaration.span,
@@ -560,6 +668,7 @@ fn lower(
                     .collect(),
                 result: signature.result.core(),
                 errors: signature.effects.errors.clone(),
+                error_payloads: signature.effects.error_payloads.clone(),
                 declared_effects: TaskEffects {
                     alloc: signature.effects.alloc,
                     spawn: signature.effects.spawn,
@@ -652,7 +761,7 @@ struct Builder<'a> {
     source: &'a SourceProgram,
     signatures: &'a BTreeMap<SymbolId, Signature>,
     signature: &'a Signature,
-    errors: &'a BTreeMap<String, BTreeSet<String>>,
+    errors: &'a BTreeMap<String, ErrorType>,
     environment: Vec<BTreeMap<String, (SymbolId, ValueType)>>,
     scopes: Vec<u64>,
     blocks: BTreeMap<usize, TaskBlock>,
@@ -667,7 +776,7 @@ impl<'a> Builder<'a> {
         source: &'a SourceProgram,
         signatures: &'a BTreeMap<SymbolId, Signature>,
         signature: &'a Signature,
-        errors: &'a BTreeMap<String, BTreeSet<String>>,
+        errors: &'a BTreeMap<String, ErrorType>,
         next_temporary: usize,
     ) -> Self {
         Self {
@@ -744,7 +853,13 @@ impl<'a> Builder<'a> {
                 instructions: self.exit_instructions(span),
                 terminator: TaskTerminator {
                     span: core_span(span),
-                    kind: TaskTerminatorKind::Raise { error },
+                    // Every synthesized raise is payload-free: the two builtin
+                    // failures hold nothing, and `?` is refused for a Result
+                    // whose error can carry a payload.
+                    kind: TaskTerminatorKind::Raise {
+                        error,
+                        payload: None,
+                    },
                 },
             },
         );
@@ -853,6 +968,61 @@ impl<'a> Builder<'a> {
             self.current = success;
             return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
         }
+        if word(tokens.first(), "qcore_buffer_write") {
+            // `qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`. Only an
+            // owner can name the buffer: a read loan is not an `own<Buffer>`
+            // binding, so a borrower cannot reach this form at all, and the
+            // ledger separately refuses the write while any share is out.
+            let comma = tokens
+                .iter()
+                .position(|token| symbol(Some(token), Symbol::Comma))
+                .ok_or_else(|| {
+                    self.bad(
+                        span,
+                        "buffer write requires one owned-buffer name and one i32 value",
+                    )
+                })?;
+            if comma < 3
+                || !symbol(tokens.get(1), Symbol::LeftParen)
+                || matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
+                    != Some(tokens.len().saturating_sub(1))
+            {
+                return Err(self.bad(
+                    span,
+                    "buffer write requires one owned-buffer name and one i32 value",
+                ));
+            }
+            let target = name(tokens.get(2))
+                .filter(|_| comma == 3)
+                .ok_or_else(|| self.bad(span, "buffer write requires an exact buffer name"))?;
+            let (id, kind) = self.lookup(target, span)?;
+            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                return Err(self.bad(
+                    span,
+                    "buffer write requires own<Buffer>; a read loan grants no write authority",
+                ));
+            }
+            let (value, value_kind) =
+                self.scalar_operand(&tokens[comma + 1..tokens.len() - 1], span)?;
+            if value_kind != Scalar::I32 {
+                return Err(self.bad(span, "buffer write requires an i32 value"));
+            }
+            self.instruction(
+                span,
+                TaskInstructionKind::WriteBuffer {
+                    buffer: id.0 as usize,
+                    value,
+                },
+            );
+            self.instruction(
+                span,
+                TaskInstructionKind::BindScalar {
+                    slot,
+                    value: ScalarOperand::Unit,
+                },
+            );
+            return Ok(Some(ValueType::Scalar(Scalar::Unit)));
+        }
         if word(tokens.first(), "qcore_buffer_read") {
             if tokens.len() != 4
                 || !symbol(tokens.get(1), Symbol::LeftParen)
@@ -880,7 +1050,64 @@ impl<'a> Builder<'a> {
             );
             return Ok(Some(ValueType::Scalar(Scalar::I32)));
         }
+        // Card T06. `qcore_error_payload(e)` moves the owned Buffer out of a
+        // bound typed error and into a new owned binding. It is the only way a
+        // payload leaves an error, it works at most once per binding, and the
+        // error keeps its tag afterwards so it can still be inspected.
+        if word(tokens.first(), "qcore_error_payload") {
+            if tokens.len() != 4
+                || !symbol(tokens.get(1), Symbol::LeftParen)
+                || !symbol(tokens.get(3), Symbol::RightParen)
+            {
+                return Err(self.bad(
+                    span,
+                    "taking an error payload requires one exact bound error name",
+                ));
+            }
+            let binding = name(tokens.get(2))
+                .ok_or_else(|| self.bad(span, "taking an error payload requires a name"))?;
+            let (id, kind) = self.lookup(binding, span)?;
+            let ValueType::Error {
+                errors,
+                payload: true,
+            } = kind
+            else {
+                return Err(self.bad(
+                    span,
+                    "qcore_error_payload requires a bound error that still holds an owned payload",
+                ));
+            };
+            self.instruction(
+                span,
+                TaskInstructionKind::TakeErrorPayload {
+                    error_slot: id.0 as usize,
+                    buffer_slot: slot,
+                },
+            );
+            // The binding now names a payload-free error. Rebinding it here is
+            // what makes a second take, and a silent re-raise, impossible.
+            self.rebind(
+                binding,
+                ValueType::Error {
+                    errors,
+                    payload: false,
+                },
+            );
+            return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
+        }
         Ok(None)
+    }
+
+    /// Replace the innermost binding of `name` in place. Only the payload
+    /// state of a typed error changes this way, and only from held to taken.
+    fn rebind(&mut self, name: &str, kind: ValueType) {
+        for scope in self.environment.iter_mut().rev() {
+            if let Some(entry) = scope.get_mut(name) {
+                entry.1 = kind;
+                return;
+            }
+        }
+        unreachable!("rebinding follows a successful lookup of the same name")
     }
 
     fn scalar_operand(
@@ -959,12 +1186,23 @@ impl<'a> Builder<'a> {
         value_slot: usize,
         value: Scalar,
         errors: &BTreeSet<String>,
+        error_payload: bool,
     ) -> Result<ValueType, SourceDiagnostic> {
         if !errors.is_subset(&self.signature.effects.errors) {
             return Err(failure(
                 span,
                 SemanticPass::TypedErrors,
                 "propagated task errors are absent from the function's throws effects",
+            ));
+        }
+        // `?` has no place to name the payload, so it could only discard or
+        // silently forward it. Both are refused: the payload has to be taken
+        // on an explicit error arm.
+        if error_payload {
+            return Err(failure(
+                span,
+                SemanticPass::TypedErrors,
+                "an error that carries an owned payload requires an explicit Result match, not `?`",
             ));
         }
         if errors.is_empty() {
@@ -1044,17 +1282,14 @@ impl<'a> Builder<'a> {
                     ScalarOperand::Move(symbol.0 as usize)
                 }
                 (SourceCaptureMode::Read { share }, Scalar::ReadLoan) => {
-                    // Only the whole read authority is admitted. A fractional
-                    // or named share is a multi-reader split, which this
-                    // profile refuses rather than approximates.
-                    if share.value != SourceShareExpression::Full {
-                        return Err(self.bad(
-                            share.span,
-                            "a read loan requires `share FULL`; fractional read shares are outside this profile",
-                        ));
-                    }
+                    // The share the *borrower* receives. Whether the resource
+                    // has that much authority left to give is the ledger's
+                    // decision, on the path that reaches this creation.
                     loans += 1;
-                    ScalarOperand::Loan(symbol.0 as usize)
+                    ScalarOperand::Loan {
+                        slot: symbol.0 as usize,
+                        share: read_share(&share.value, share.span)?,
+                    }
                 }
                 _ => {
                     return Err(self.bad(
@@ -1201,7 +1436,12 @@ impl<'a> Builder<'a> {
                                 Some(result_slot),
                             )?
                             .ok_or_else(|| self.bad(span, "join match requires a Result value"))?;
-                        let ValueType::Result { value, errors } = kind else {
+                        let ValueType::Result {
+                            value,
+                            errors,
+                            error_payload,
+                        } = kind
+                        else {
                             return Err(self.bad(span, "join match scrutinee is not a Result"));
                         };
                         self.finish(
@@ -1214,7 +1454,13 @@ impl<'a> Builder<'a> {
                                 error,
                             },
                         );
-                        (ValueType::Scalar(value), ValueType::Error(errors))
+                        (
+                            ValueType::Scalar(value),
+                            ValueType::Error {
+                                errors,
+                                payload: error_payload,
+                            },
+                        )
                     }
                 }
             }
@@ -1230,7 +1476,12 @@ impl<'a> Builder<'a> {
                 if found != *symbol_id {
                     return Err(self.bad(span, "Result binding identity mismatch"));
                 }
-                let ValueType::Result { value, errors } = kind else {
+                let ValueType::Result {
+                    value,
+                    errors,
+                    error_payload,
+                } = kind
+                else {
                     return Err(self.bad(span, "match requires an initialized task Result"));
                 };
                 self.finish(
@@ -1243,7 +1494,13 @@ impl<'a> Builder<'a> {
                         error,
                     },
                 );
-                (ValueType::Scalar(value), ValueType::Error(errors))
+                (
+                    ValueType::Scalar(value),
+                    ValueType::Error {
+                        errors,
+                        payload: error_payload,
+                    },
+                )
             }
             None => {
                 let scrutinee = tokens_for(self.source, syntax.scrutinee_span);
@@ -1387,6 +1644,9 @@ impl<'a> Builder<'a> {
                 let worker = &self.signatures[&worker];
                 let value = worker.result;
                 let errors = worker.effects.errors.clone();
+                // The worker's own declared payload row, not the caller's: a
+                // caller cannot decide that a joined error holds nothing.
+                let error_payload = !worker.effects.error_payloads.is_empty();
                 if task.syntax.propagates_error {
                     let result_slot = self.temporary(span)?;
                     let value_slot = match slot {
@@ -1400,7 +1660,14 @@ impl<'a> Builder<'a> {
                             outcome_slot: Some(result_slot),
                         },
                     );
-                    let kind = self.propagate(span, result_slot, value_slot, value, &errors)?;
+                    let kind = self.propagate(
+                        span,
+                        result_slot,
+                        value_slot,
+                        value,
+                        &errors,
+                        error_payload,
+                    )?;
                     if slot.is_none() && value != Scalar::Unit {
                         return Err(self.bad(span, "discarded join result must be unit"));
                     }
@@ -1416,7 +1683,11 @@ impl<'a> Builder<'a> {
                             outcome_slot: slot,
                         },
                     );
-                    Ok(slot.map(|_| ValueType::Result { value, errors }))
+                    Ok(slot.map(|_| ValueType::Result {
+                        value,
+                        errors,
+                        error_payload,
+                    }))
                 }
             }
         }
@@ -1536,7 +1807,12 @@ impl<'a> Builder<'a> {
                             )
                         })?;
                         let (result, kind) = self.lookup(source_name, statement.span)?;
-                        let ValueType::Result { value, errors } = kind else {
+                        let ValueType::Result {
+                            value,
+                            errors,
+                            error_payload,
+                        } = kind
+                        else {
                             return Err(
                                 self.bad(statement.span, "`?` requires a collected task result")
                             );
@@ -1547,6 +1823,7 @@ impl<'a> Builder<'a> {
                             id.0 as usize,
                             value,
                             &errors,
+                            error_payload,
                         )?
                     } else {
                         let (value, scalar) = self.scalar_operand(rhs, statement.span)?;
@@ -1637,7 +1914,7 @@ impl<'a> Builder<'a> {
                     terminated = true;
                 }
                 StatementKind::Raise => {
-                    let error = if tokens.len() == 3
+                    let (error, payload) = if tokens.len() == 3
                         && word(tokens.first(), "raise")
                         && symbol(tokens.get(2), Symbol::Semicolon)
                     {
@@ -1645,7 +1922,7 @@ impl<'a> Builder<'a> {
                             self.bad(statement.span, "raise requires a bound typed error")
                         })?;
                         let (id, kind) = self.lookup(binding, statement.span)?;
-                        match kind {
+                        let error = match kind {
                             ValueType::KnownError(tag) => {
                                 if !self.signature.effects.errors.contains(&tag) {
                                     return Err(failure(
@@ -1656,12 +1933,23 @@ impl<'a> Builder<'a> {
                                 }
                                 ErrorOperand::Tag(tag)
                             }
-                            ValueType::Error(errors) => {
+                            ValueType::Error { errors, payload } => {
                                 if !errors.is_subset(&self.signature.effects.errors) {
                                     return Err(failure(
                                         statement.span,
                                         SemanticPass::TypedErrors,
                                         "bound error variants are absent from throws effects",
+                                    ));
+                                }
+                                // Re-raising a bound error keeps its tag, and a
+                                // tag alone cannot carry a Buffer onward: take
+                                // the payload first, then decide what to do with
+                                // it and which tag to raise.
+                                if payload {
+                                    return Err(failure(
+                                        statement.span,
+                                        SemanticPass::TypedErrors,
+                                        "take the owned payload with qcore_error_payload before re-raising this error",
                                     ));
                                 }
                                 ErrorOperand::Slot(id.0 as usize)
@@ -1672,16 +1960,23 @@ impl<'a> Builder<'a> {
                                     "raise requires a typed error arm binding",
                                 ));
                             }
-                        }
+                        };
+                        (error, None)
                     } else {
-                        if tokens.len() != 5
+                        // `raise E::V;` is payload-free; `raise E::V(b);` moves
+                        // exactly one owned Buffer into the raised error. The
+                        // declaration decides which spelling is required.
+                        let carried = tokens.len() == 8
+                            && symbol(tokens.get(4), Symbol::LeftParen)
+                            && symbol(tokens.get(6), Symbol::RightParen);
+                        if (tokens.len() != 5 && !carried)
                             || !word(tokens.first(), "raise")
                             || !symbol(tokens.get(2), Symbol::ColonColon)
-                            || !symbol(tokens.get(4), Symbol::Semicolon)
+                            || !symbol(tokens.last(), Symbol::Semicolon)
                         {
                             return Err(self.bad(
                                 statement.span,
-                                "task raise requires a bound error or payload-free Error::Variant",
+                                "task raise requires a bound error, Error::Variant, or Error::Variant(buffer)",
                             ));
                         }
                         let error_type = name(tokens.get(1))
@@ -1692,7 +1987,7 @@ impl<'a> Builder<'a> {
                         if !self
                             .errors
                             .get(error_type)
-                            .is_some_and(|errors| errors.contains(&tag))
+                            .is_some_and(|declared| declared.variants.contains(&tag))
                             || !self.signature.effects.errors.contains(&tag)
                         {
                             return Err(failure(
@@ -1701,11 +1996,34 @@ impl<'a> Builder<'a> {
                                 "raised variant must be declared and covered by throws effects",
                             ));
                         }
-                        ErrorOperand::Tag(tag)
+                        if self.signature.effects.error_payloads.contains(&tag) != carried {
+                            return Err(failure(
+                                statement.span,
+                                SemanticPass::TypedErrors,
+                                "raised payload disagrees with the declared error variant",
+                            ));
+                        }
+                        let payload = if carried {
+                            let buffer = name(tokens.get(5)).ok_or_else(|| {
+                                self.bad(statement.span, "an error payload requires one name")
+                            })?;
+                            let (id, kind) = self.lookup(buffer, statement.span)?;
+                            // A loan, a scalar and a Result each fail here: the
+                            // payload has to be an owned Buffer this frame may
+                            // give away, and the raise consumes it.
+                            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                                return Err(self
+                                    .bad(statement.span, "an error payload requires own<Buffer>"));
+                            }
+                            Some(ScalarOperand::Move(id.0 as usize))
+                        } else {
+                            None
+                        };
+                        (ErrorOperand::Tag(tag), payload)
                     };
                     self.instructions
                         .extend(self.exit_instructions(statement.span));
-                    self.finish(statement.span, TaskTerminatorKind::Raise { error });
+                    self.finish(statement.span, TaskTerminatorKind::Raise { error, payload });
                     terminated = true;
                 }
                 _ => {

@@ -1,0 +1,122 @@
+{
+  "id": "CT03",
+  "verdict": "native_heap_scenarios",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "ScopedReadSharesV1 (card T05). One allocation is lent to two children with complementary halves of the 1024-unit read authority; both borrowers read it while the parent also reads it, and the parent's writes sit on either side of the lending window because a write demands reconstructed exclusive authority. Three fixed Linux schedules run the case's own emitted C under ASan/UBSan/LSan with a heap witness that records every Buffer by address. The refusals this acceptance is the complement of are CT04 (write while a share is out) and CT05 (two FULL requests); they are mapped as their own cases rather than duplicated here. `proof` is unassessed: the nineteen QCore.ReadShare theorems constrain the model, not this fixture.",
+  "native_heap_scenarios": {
+    "execution_profile": "ScopedReadSharesV1",
+    "alloc_prefix": "SHARE_ALLOC ",
+    "free_prefix": "SHARE_FREE ",
+    "sanitizer_flags": [
+      "-std=c11",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined"
+    ],
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "rejection_controls": [],
+    "scenarios": [
+      {
+        "name": "two_readers_share_one_allocation",
+        "header": "track.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true,
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_LOAN 2 1\n",
+          "QCORE_BUFFER_READ 1 1 42\n",
+          "QCORE_BUFFER_READ 2 1 42\n"
+        ],
+        "stdout_absent": [],
+        "stdout_order": [
+          "QCORE_BUFFER_WRITE 0 1 42",
+          "QCORE_BUFFER_LOAN 1 1",
+          "QCORE_BUFFER_LOAN 2 1",
+          "QCORE_BUFFER_RETURN 1 1",
+          "QCORE_BUFFER_RETURN 2 1",
+          "QCORE_BUFFER_WRITE 0 1 7",
+          "QCORE_BUFFER_READ 0 1 7",
+          "QCORE_BUFFER_DROP 0 1"
+        ],
+        "heap_allocations": 1,
+        "heap_releases": 1
+      },
+      {
+        "name": "second_creation_refuses",
+        "header": "refuse_second_create.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true,
+          false
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_RETURN 1 1\n",
+          "QCORE_TASK_CREATE_FAILED 0\n"
+        ],
+        "stdout_absent": [
+          "QCORE_BUFFER_LOAN 2 1",
+          "QCORE_BUFFER_WRITE 0 1 7"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 1,
+        "heap_releases": 1
+      },
+      {
+        "name": "join_refuses",
+        "header": "refuse_join.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true,
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": false,
+        "exit_code": 77,
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_LOAN 2 1\n"
+        ],
+        "stdout_absent": [
+          "QCORE_BUFFER_RETURN",
+          "QCORE_TASK_JOIN",
+          "QCORE_BUFFER_WRITE 0 1 7"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 1,
+        "heap_releases": 0
+      }
+    ]
+  }
+}

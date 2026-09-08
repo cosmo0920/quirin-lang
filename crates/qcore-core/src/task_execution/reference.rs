@@ -51,6 +51,11 @@ pub enum TaskEvent {
         buffer: ResourceId,
         value: i32,
     },
+    BufferWritten {
+        task: u64,
+        buffer: ResourceId,
+        value: i32,
+    },
     BufferDropped {
         task: u64,
         buffer: ResourceId,
@@ -90,8 +95,14 @@ pub struct TaskExecutionObservation {
 enum Value {
     Scalar(ScalarValue),
     Result(TaskOutcome),
-    Error(String),
-    Handle { task: u64, handle: u64 },
+    Error {
+        tag: String,
+        payload: Option<ResourceId>,
+    },
+    Handle {
+        task: u64,
+        handle: u64,
+    },
     Consumed,
 }
 // Each finite leaf invocation owns its allocation counter. The task namespace
@@ -133,8 +144,10 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
             _ => Err("reference scalar slot is unavailable".into()),
         },
         // Lending neither consumes nor copies the binding; it produces a
-        // borrowed identity for exactly one creation.
-        ScalarOperand::Loan(id) => match slots.get(id) {
+        // borrowed identity for exactly one creation. The share travels with
+        // the reservation, not with the value: a borrower cannot read its own
+        // share out of the value it was handed.
+        ScalarOperand::Loan { slot, .. } => match slots.get(slot) {
             Some(Value::Scalar(ScalarValue::OwnedBuffer(resource))) => {
                 Ok(ScalarValue::ReadLoan(*resource))
             }
@@ -211,6 +224,34 @@ impl Runtime<'_> {
                             );
                             slots.insert(*value_slot, Value::Scalar(ScalarValue::I32(value)));
                         }
+                        TaskInstructionKind::WriteBuffer { buffer, value } => {
+                            let ScalarValue::I32(written) = scalar(&slots, value)? else {
+                                return Err("reference buffer write requires i32".into());
+                            };
+                            // Independently of the checker: a write demands
+                            // exclusive authority, which the ledger refuses
+                            // while any read share is outstanding.
+                            let ScalarValue::OwnedBuffer(resource) =
+                                scalar(&slots, &ScalarOperand::Move(*buffer))?
+                            else {
+                                return Err("reference buffer write requires owner".into());
+                            };
+                            self.ledger
+                                .use_resource(task, resource)
+                                .map_err(|e| format!("{e:?}"))?;
+                            *self
+                                .buffers
+                                .get_mut(&resource)
+                                .ok_or("reference buffer payload missing")? = written;
+                            self.buffer_event(
+                                task,
+                                TaskEvent::BufferWritten {
+                                    task,
+                                    buffer: resource,
+                                    value: written,
+                                },
+                            );
+                        }
                         TaskInstructionKind::DropBuffer { buffer } => {
                             let ScalarValue::OwnedBuffer(resource) =
                                 take(&mut slots, &ScalarOperand::Move(*buffer))?
@@ -247,7 +288,7 @@ impl Runtime<'_> {
                                 TaskOutcome::Unit => ScalarValue::Unit,
                                 TaskOutcome::I32(value) => ScalarValue::I32(value),
                                 TaskOutcome::OwnedBuffer(id) => ScalarValue::OwnedBuffer(id),
-                                TaskOutcome::Error(_) => {
+                                TaskOutcome::Error(_) | TaskOutcome::ErrorWithBuffer { .. } => {
                                     return Err(
                                         "reference error contradicts checked infallible Result"
                                             .into(),
@@ -256,6 +297,31 @@ impl Runtime<'_> {
                             };
                             slots.insert(*result_slot, Value::Consumed);
                             slots.insert(*value_slot, Value::Scalar(value));
+                        }
+                        TaskInstructionKind::TakeErrorPayload {
+                            error_slot,
+                            buffer_slot,
+                        } => {
+                            let Some(Value::Error {
+                                tag,
+                                payload: Some(resource),
+                            }) = slots.get(error_slot).cloned()
+                            else {
+                                return Err(
+                                    "reference typed error carries no payload to take".into()
+                                );
+                            };
+                            // The reference run checks the ledger itself rather
+                            // than trusting the checked module: only the task
+                            // that actually holds the identity may take it.
+                            self.ledger
+                                .use_resource(task, resource)
+                                .map_err(|e| format!("{e:?}"))?;
+                            slots.insert(*error_slot, Value::Error { tag, payload: None });
+                            slots.insert(
+                                *buffer_slot,
+                                Value::Scalar(ScalarValue::OwnedBuffer(resource)),
+                            );
                         }
                         TaskInstructionKind::EnterScope { scope } => {
                             let actual = self.next_scope;
@@ -283,14 +349,16 @@ impl Runtime<'_> {
                             else {
                                 return Err("reference handle unavailable".into());
                             };
-                            // Read the loans this borrower holds before the
-                            // join closes them, so the returned identities are
+                            // Read the shares this borrower holds before the
+                            // join returns them, so the returned identities are
                             // the ledger's, not the caller's claim.
                             let returned_loans = self
                                 .ledger
                                 .outstanding_loans()
                                 .into_iter()
-                                .filter(|&buffer| self.ledger.loan_borrower(buffer) == Some(child))
+                                .filter(|&buffer| {
+                                    self.ledger.loan_borrowers(buffer).contains(&child)
+                                })
                                 .collect::<Vec<_>>();
                             let completion = self
                                 .ledger
@@ -382,7 +450,7 @@ impl Runtime<'_> {
                     } => {
                         let moved_slots = arguments
                             .iter()
-                            .filter_map(|arg| {
+                            .filter_map(|arg: &ScalarOperand| {
                                 if let ScalarOperand::Move(slot) = arg {
                                     Some(*slot)
                                 } else {
@@ -390,7 +458,8 @@ impl Runtime<'_> {
                                 }
                             })
                             .collect::<Vec<_>>();
-                        let arguments = arguments
+                        let arguments_syntax = arguments;
+                        let arguments = arguments_syntax
                             .iter()
                             .map(|value| scalar(&slots, value))
                             .collect::<Result<Vec<_>, _>>()?;
@@ -404,6 +473,13 @@ impl Runtime<'_> {
                                 }
                             })
                             .collect::<Vec<_>>();
+                        let shares = arguments_syntax
+                            .iter()
+                            .filter_map(|argument| match argument {
+                                ScalarOperand::Loan { share, .. } => Some(*share),
+                                _ => None,
+                            })
+                            .collect::<Vec<_>>();
                         let lent_resources = arguments
                             .iter()
                             .filter_map(|value| {
@@ -413,6 +489,7 @@ impl Runtime<'_> {
                                     None
                                 }
                             })
+                            .zip(shares)
                             .collect::<Vec<_>>();
                         let reservation = self.next_reservation;
                         self.next_reservation += 1;
@@ -448,7 +525,7 @@ impl Runtime<'_> {
                                 task: child,
                                 worker: *worker,
                             });
-                            for &buffer in &lent_resources {
+                            for &(buffer, _) in &lent_resources {
                                 self.events.push(TaskEvent::BufferLoaned {
                                     borrower: child,
                                     buffer,
@@ -460,10 +537,12 @@ impl Runtime<'_> {
                             let outcome = self
                                 .execute(*worker, child, arguments.clone())
                                 .map_err(|e| e.to_string())?;
-                            let returned = if let TaskOutcome::OwnedBuffer(resource) = outcome {
-                                vec![resource]
-                            } else {
-                                vec![]
+                            let returned = match outcome {
+                                TaskOutcome::OwnedBuffer(resource)
+                                | TaskOutcome::ErrorWithBuffer {
+                                    buffer: resource, ..
+                                } => vec![resource],
+                                _ => vec![],
                             };
                             self.ledger
                                 .complete(child, outcome.clone(), &returned)
@@ -521,7 +600,17 @@ impl Runtime<'_> {
                                 block_id = *success;
                             }
                             TaskOutcome::Error(tag) => {
-                                slots.insert(*error_slot, Value::Error(tag));
+                                slots.insert(*error_slot, Value::Error { tag, payload: None });
+                                block_id = *error;
+                            }
+                            TaskOutcome::ErrorWithBuffer { tag, buffer } => {
+                                slots.insert(
+                                    *error_slot,
+                                    Value::Error {
+                                        tag,
+                                        payload: Some(buffer),
+                                    },
+                                );
                                 block_id = *error;
                             }
                         }
@@ -529,15 +618,34 @@ impl Runtime<'_> {
                     TaskTerminatorKind::Return { value } => {
                         return Ok(Some(take(&mut slots, value)?.outcome()?));
                     }
-                    TaskTerminatorKind::Raise { error } => {
+                    TaskTerminatorKind::Raise { error, payload } => {
                         let tag = match error {
                             ErrorOperand::Tag(tag) => tag.clone(),
                             ErrorOperand::Slot(slot) => match slots.get(slot) {
-                                Some(Value::Error(tag)) => tag.clone(),
+                                Some(Value::Error { tag, payload: None }) => tag.clone(),
+                                Some(Value::Error {
+                                    payload: Some(_), ..
+                                }) => {
+                                    return Err(
+                                        "reference rethrow of an undelivered payload is refused"
+                                            .into(),
+                                    );
+                                }
                                 _ => return Err("reference error slot unavailable".into()),
                             },
                         };
-                        return Ok(Some(TaskOutcome::Error(tag)));
+                        return Ok(Some(match payload {
+                            None => TaskOutcome::Error(tag),
+                            Some(operand) => {
+                                let ScalarValue::OwnedBuffer(buffer) = take(&mut slots, operand)?
+                                else {
+                                    return Err(
+                                        "reference error payload requires an owned Buffer".into()
+                                    );
+                                };
+                                TaskOutcome::ErrorWithBuffer { tag, buffer }
+                            }
+                        }));
                     }
                 }
                 Ok(None)
@@ -669,6 +777,11 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
                 buffer,
                 value,
             } => writeln!(output, "QCORE_BUFFER_READ {task} {buffer} {value}").unwrap(),
+            TaskEvent::BufferWritten {
+                task,
+                buffer,
+                value,
+            } => writeln!(output, "QCORE_BUFFER_WRITE {task} {buffer} {value}").unwrap(),
             TaskEvent::BufferDropped { task, buffer } => {
                 writeln!(output, "QCORE_BUFFER_DROP {task} {buffer}").unwrap()
             }
@@ -696,6 +809,11 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
                 TaskOutcome::Error(tag) => {
                     writeln!(output, "QCORE_TASK_RESULT {task} ERROR {tag}").unwrap()
                 }
+                TaskOutcome::ErrorWithBuffer { tag, buffer } => writeln!(
+                    output,
+                    "QCORE_TASK_RESULT {task} ERROR_BUFFER {tag} {buffer}"
+                )
+                .unwrap(),
             },
         }
     }

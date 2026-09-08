@@ -19,15 +19,20 @@
 //! Namespace discipline (§W6 task 3): CT is the language corpus only. WM/VP/LC
 //! probe regressions and per-library provider cases must not be added here.
 //!
-//! Two source routes are represented. The task route (`ScopedCopyTasksV1` /
-//! `ScopedOwnedTasksV1`) is the original eleven cases. The mutex route
-//! (`source.mutex.guard.v1` lowering onto the unedited `CheckedMutexInvariantV1`
-//! checker, card T03) is CT26/CT27/CT29/CT30. The two routes do not share a
-//! stage vocabulary: the mutex route emits directly from its checked event list
-//! and has **no CFG stage**, so a mutex case must never claim `cfg: executed`.
-//! Its rejection cases pin the whole ordered diagnostic cascade rather than its
-//! head, because a refused release that silently dropped the guard would still
-//! satisfy a head-only assertion.
+//! Two source routes are represented. The task route (`ScopedCopyTasksV1`,
+//! `ScopedOwnedTasksV1`, and its `ScopedReadSharesV1` / `ScopedErrorPayloadV1`
+//! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
+//! mutex route (`source.mutex.guard.v1` lowering onto the unedited
+//! `CheckedMutexInvariantV1` checker, card T03) is CT26/CT27/CT29/CT30. The two
+//! routes do not share a stage vocabulary: the mutex route emits directly from
+//! its checked event list and has **no CFG stage**, so a mutex case must never
+//! claim `cfg: executed`, while a task-route case reads `cfg` as the checked
+//! task IR it really constructs (the manifest note states both readings).
+//! Rejection cases on either route pin the whole ordered diagnostic cascade
+//! rather than its head, because a refusal that silently dropped a custody
+//! obligation would still satisfy a head-only assertion, and each carries at
+//! least one control so the refusal is not merely "the profile cannot express
+//! this at all".
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -41,8 +46,8 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT12", "CT13", "CT14", "CT15", "CT16", "CT19", "CT20", "CT26", "CT27", "CT29",
-    "CT30", "CT37", "CT50",
+    "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
+    "CT19", "CT20", "CT26", "CT27", "CT29", "CT30", "CT37", "CT50",
 ];
 /// The `source.mutex.guard.v1` rejection cases (T03 lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker). Each pins its exact ordered diagnostic
@@ -52,6 +57,15 @@ const MUTEX_REJECT_CASES: &[&str] = &["CT27", "CT29", "CT30"];
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
 const MUTEX_SANITIZED_CASE: &str = "CT26";
+/// Task-route rejection cases (cards T05 and T06). Same discipline as the mutex
+/// rejections: the exact ordered code vector plus at least one control that
+/// isolates the refused element from the surrounding program.
+const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
+/// Task-route accept cases whose native evidence is a sanitized run with a heap
+/// witness: every Buffer allocation and release is recorded by address, so
+/// "counted once" and "reclaims nothing" are checked by identity rather than by
+/// the emitted trace alone.
+const HEAP_SCENARIO_CASES: &[&str] = &["CT03", "CT17"];
 const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parser",
@@ -116,6 +130,83 @@ struct ExpectedCase {
     checked_mutex_sanitized: Option<CheckedMutexSanitized>,
     #[serde(default)]
     checked_mutex_reject: Option<CheckedMutexReject>,
+    #[serde(default)]
+    native_heap_scenarios: Option<NativeHeapScenarios>,
+    #[serde(default)]
+    source_reject: Option<SourceReject>,
+}
+
+/// Sanitized task-route native evidence with a heap witness (cards T05, T06).
+/// Every scenario compiles the case's own emitted C with the recorded sanitizer
+/// flags, includes one fixture header, and compares its stdout with the
+/// independently computed reference execution of the same checked module. The
+/// header prints each Buffer allocation and release with its address, so a
+/// scenario states how many objects existed and how many were reclaimed rather
+/// than trusting the trace.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeHeapScenarios {
+    /// The `SourceExecutionProfile` the module must be published under. A case
+    /// that silently changed route would otherwise still pass.
+    execution_profile: String,
+    alloc_prefix: String,
+    free_prefix: String,
+    sanitizer_flags: Vec<String>,
+    ubsan_options: String,
+    rejection_controls: Vec<TaskRejectionControl>,
+    scenarios: Vec<HeapScenario>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct HeapScenario {
+    name: String,
+    /// Fixture header included with `-include`; other fixture headers are
+    /// copied beside it so a header may `#include "track.h"`.
+    header: String,
+    /// `-D` options selecting the injected failure, if any.
+    defines: Vec<String>,
+    spawn_outcomes: Vec<bool>,
+    allocation_outcomes: Vec<bool>,
+    #[serde(default)]
+    worker_allocation_outcomes: BTreeMap<u64, Vec<bool>>,
+    /// LeakSanitizer. Disabled only where the retained allocation *is* the
+    /// observation; at least one scenario per case must enable it.
+    detect_leaks: bool,
+    /// Process exit code. Zero means the run completed, and exactly then its
+    /// stdout must equal the reference observation; a nonzero code is a trapped
+    /// abort whose stdout is a truncated prefix, so such a scenario states what
+    /// must be absent instead.
+    exit_code: i32,
+    stdout_contains: Vec<String>,
+    stdout_absent: Vec<String>,
+    /// Exact stdout lines that must appear in this relative order.
+    stdout_order: Vec<String>,
+    heap_allocations: usize,
+    heap_releases: usize,
+}
+
+/// A refused task-route fixture: the exact ordered diagnostic code vector plus
+/// the controls that keep the refusal from being vacuous.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SourceReject {
+    diagnostic_sequence: Vec<String>,
+    controls: Vec<SourceControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SourceControl {
+    source: String,
+    /// `accept` or `reject`; any other spelling fails the harness.
+    expectation: String,
+    diagnostic_sequence: Vec<String>,
+    /// For an accepted control, the `SourceExecutionProfile` it must select.
+    #[serde(default)]
+    execution_profile: Option<String>,
+    #[allow(dead_code)]
+    note: String,
 }
 
 /// Accepted `source.mutex.guard.v1` evidence. The reference observation is
@@ -323,6 +414,22 @@ fn run_mapped_case(case: &ManifestCase) {
         "{}: mutex rejection metadata is pinned to its own case set",
         case.id
     );
+    assert_eq!(
+        expected.native_heap_scenarios.is_some(),
+        expected.verdict == "native_heap_scenarios"
+    );
+    assert_eq!(
+        expected.native_heap_scenarios.is_some(),
+        HEAP_SCENARIO_CASES.contains(&case.id.as_str()),
+        "{}: sanitized heap-witness evidence is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
+        expected.source_reject.is_some(),
+        SOURCE_REJECT_CASES.contains(&case.id.as_str()),
+        "{}: task-route rejection metadata is pinned to its own case set",
+        case.id
+    );
     // Target-scoped evidence: the native fault modes, the sanitized mutex run,
     // and any mutex rejection whose control compiles through the Linux-only
     // emission path. Recording the last of these repairs T00's finding O6 for
@@ -334,13 +441,18 @@ fn run_mapped_case(case: &ManifestCase) {
             || expected.native_owned_transfer.is_some()
             || expected.native_task_scenarios.is_some()
             || expected.checked_mutex_sanitized.is_some()
+            || expected.native_heap_scenarios.is_some()
             || expected
                 .checked_mutex_reject
                 .as_ref()
                 .is_some_and(|reject| reject
                     .controls
                     .iter()
-                    .any(|control| control.expectation == "accept")))
+                    .any(|control| control.expectation == "accept"))
+            || expected.source_reject.as_ref().is_some_and(|reject| reject
+                .controls
+                .iter()
+                .any(|control| control.expectation == "accept")))
         .then_some("linux"),
         "{}: a case carries target-scoped evidence exactly when a host-gated \
          runner or control executes for it",
@@ -435,6 +547,118 @@ fn run_mapped_case(case: &ManifestCase) {
             assert!(required_files.insert(control.source.clone()));
         }
     }
+    if let Some(native) = &expected.native_heap_scenarios {
+        assert!(!native.scenarios.is_empty());
+        assert!(
+            native
+                .sanitizer_flags
+                .iter()
+                .any(|flag| flag == "-fsanitize=address,undefined"),
+            "{}: the sanitized heap runs must actually request ASan/UBSan",
+            case.id
+        );
+        assert!(
+            native.ubsan_options.contains("halt_on_error=1"),
+            "{}: UBSan must halt rather than continue past a fault",
+            case.id
+        );
+        assert!(
+            !native.alloc_prefix.is_empty() && !native.free_prefix.is_empty(),
+            "{}: the heap witness needs both an allocation and a release marker",
+            case.id
+        );
+        assert!(
+            native
+                .scenarios
+                .iter()
+                .any(|scenario| scenario.detect_leaks),
+            "{}: at least one scenario must run with LeakSanitizer enabled, so \
+             `detect_leaks` cannot be switched off case-wide by editing data",
+            case.id
+        );
+        let names = native
+            .scenarios
+            .iter()
+            .map(|scenario| &scenario.name)
+            .collect::<BTreeSet<_>>();
+        assert_eq!(names.len(), native.scenarios.len());
+        assert!(names.iter().all(|name| !name.is_empty()));
+        for scenario in &native.scenarios {
+            assert!(
+                scenario.heap_releases <= scenario.heap_allocations,
+                "{}: {} cannot release more objects than it allocated",
+                case.id,
+                scenario.name
+            );
+            assert!(
+                scenario
+                    .defines
+                    .iter()
+                    .all(|define| define.starts_with("-D")),
+                "{}: {} may only inject failures through `-D` options",
+                case.id,
+                scenario.name
+            );
+            assert!(
+                scenario.exit_code == 0 || !scenario.stdout_absent.is_empty(),
+                "{}: {} is a trapped abort, so it must state what its truncated \
+                 observation does not contain",
+                case.id,
+                scenario.name
+            );
+            assert!(
+                scenario.exit_code == 0 || !scenario.detect_leaks,
+                "{}: {} retains its allocations on purpose, so LeakSanitizer \
+                 cannot also be asserted clean",
+                case.id,
+                scenario.name
+            );
+            required_files.insert(scenario.header.clone());
+        }
+        for control in &native.rejection_controls {
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
+    if let Some(reject) = &expected.source_reject {
+        assert!(
+            !reject.diagnostic_sequence.is_empty(),
+            "{}: a task-route rejection pins its exact ordered code vector",
+            case.id
+        );
+        assert!(
+            !reject.controls.is_empty(),
+            "{}: a task-route rejection needs at least one control so the \
+             refusal is not vacuous",
+            case.id
+        );
+        for control in &reject.controls {
+            match control.expectation.as_str() {
+                "accept" => {
+                    assert!(
+                        control.diagnostic_sequence.is_empty(),
+                        "{}: an accepted control has no diagnostics",
+                        case.id
+                    );
+                    assert!(
+                        control.execution_profile.is_some(),
+                        "{}: an accepted control must name the route it takes, \
+                         so a control cannot silently pass through another one",
+                        case.id
+                    );
+                }
+                "reject" => {
+                    assert!(
+                        !control.diagnostic_sequence.is_empty(),
+                        "{}: a refused control pins its codes",
+                        case.id
+                    );
+                    assert!(control.execution_profile.is_none());
+                }
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
     if let Some(control) = &expected.positive_control {
         assert_eq!(control.source, "joined_sibling.qcore");
         assert_eq!(control.evidence_target, "linux");
@@ -501,10 +725,14 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     let allowed_stages: BTreeSet<&str> = match expected.verdict.as_str() {
+        // The task route reads `cfg` as the checked task IR it really builds
+        // (the manifest note states that reading), which is why every
+        // task-route native mode claims it and the mutex route never does.
         "native_join_failure"
         | "native_create_recovery"
         | "native_owned_transfer"
-        | "native_task_scenarios" => [
+        | "native_task_scenarios"
+        | "native_heap_scenarios" => [
             "parser",
             "type_checker",
             "reference_execution",
@@ -574,7 +802,18 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(reject) = &expected.checked_mutex_reject {
         run_mutex_controls(&directory, &case.id, reject);
     }
+    if let Some(reject) = &expected.source_reject {
+        run_source_controls(&directory, &case.id, reject);
+    }
     match expected.verdict.as_str() {
+        "native_heap_scenarios" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none()
+            );
+            run_native_heap_scenarios(&directory, &expected, result);
+        }
         "checked_mutex_sanitized" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -741,6 +980,20 @@ fn run_mapped_case(case: &ManifestCase) {
                     case.id
                 );
             }
+            if let Some(reject) = &expected.source_reject {
+                // Same discipline on the task route: the whole vector, in
+                // order. A refusal that also silently dropped a custody
+                // obligation would still satisfy a head-only assertion.
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    reject.diagnostic_sequence,
+                    "{}: exact diagnostic cascade mismatch; actual:\n{rendered}",
+                    case.id
+                );
+            }
             for want in &expected.diagnostics {
                 assert!(
                     diagnostics
@@ -830,11 +1083,13 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 15 of 50 CT cases are mapped
-/// as executed source-level tests; 35 remain unmapped. CT13/CT15/CT26 native
-/// evidence is Linux-scoped, and so are the accepted controls CT27/CT29/CT30
-/// carry. Mapping is not conformance. This test exists so the counts are
-/// visible and any drift is a deliberate edit, not an accident.
+/// The moving count is the W6 genericity metric: 20 of 50 CT cases are mapped
+/// as executed source-level tests; 30 remain unmapped. CT13/CT15/CT26 and the
+/// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
+/// CT04/CT05/CT18/CT27/CT29/CT30 execute on Linux and macOS. The manifest's
+/// `evidence_target` still identifies the archived Linux evidence run. Mapping is not conformance.
+/// This test exists so the counts are visible and any drift is a deliberate
+/// edit, not an accident.
 #[test]
 fn ct_mapping_progress_is_pinned_and_counted() {
     let manifest = load_manifest();
@@ -934,6 +1189,337 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
             other => panic!("{id}: unknown control expectation `{other}`"),
         }
     }
+}
+
+/// The declared `SourceExecutionProfile` label a fixture must select. An
+/// unknown label fails rather than being ignored, so a route cannot be renamed
+/// out from under a case.
+fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
+    use qcore_compiler::SourceExecutionProfile as Profile;
+    match label {
+        "SequentialCleanupV1" => Profile::SequentialCleanupV1,
+        "ScopedCopyTasksV1" => Profile::ScopedCopyTasksV1,
+        "ScopedOwnedTasksV1" => Profile::ScopedOwnedTasksV1,
+        "ScopedReadLoansV1" => Profile::ScopedReadLoansV1,
+        "ScopedReadSharesV1" => Profile::ScopedReadSharesV1,
+        "ScopedErrorPayloadV1" => Profile::ScopedErrorPayloadV1,
+        "CheckedMutexGuardsV1" => Profile::CheckedMutexGuardsV1,
+        other => panic!("unknown execution profile `{other}`"),
+    }
+}
+
+/// The controls a task-route rejection carries. An `accept` control compiles
+/// through the Linux/macOS emission path, so on any other host it must arrive as
+/// the same `Q500` refusal every other route uses — never as a silent skip.
+fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
+    for control in &reject.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let result = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            "accept" => {
+                if !cfg!(any(target_os = "linux", target_os = "macos")) {
+                    unsupported_target(&result.unwrap_err());
+                    eprintln!(
+                        "{id} control {}: source/core checked; threaded emission unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                let module = result.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {} must check, so the case's refusal is not vacuous:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                assert_eq!(
+                    module.execution_profile,
+                    execution_profile(control.execution_profile.as_deref().unwrap()),
+                    "{id} control {} must take the route it names",
+                    control.source
+                );
+            }
+            "reject" => {
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!("{id} control {} must be refused", control.source),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{id} control {}: exact diagnostic vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            other => panic!("{id}: unknown control expectation `{other}`"),
+        }
+    }
+}
+
+/// CT03 and CT17: the whole task-route stage stack on the case's own fixture —
+/// parse, elaborate, lower, check the task IR, reference-execute it, emit C11,
+/// then compile that C under ASan/UBSan (and LSan on Linux) and run it once per fixed
+/// schedule. The reference observation is computed by
+/// `execute_task_module_with_worker_allocations` from the checked task IR and
+/// never reads the emitted C. The included header records every Buffer
+/// allocation and release by address, so "one object, counted once" and
+/// "reclaims nothing" are identity claims rather than trace claims.
+fn run_native_heap_scenarios(
+    directory: &Path,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    use qcore_core::task_execution::{
+        TaskExecutionScript, execute_task_module_with_worker_allocations, render_task_observation,
+    };
+    let native = expected.native_heap_scenarios.as_ref().unwrap();
+    for control in &native.rejection_controls {
+        let path = directory.join(&control.source);
+        let errors = compile_files(
+            &[SourceFile::new(
+                path.to_string_lossy(),
+                fs::read_to_string(&path).unwrap(),
+            )],
+            &CompileOptions::default(),
+        )
+        .unwrap_err();
+        assert!(
+            errors
+                .iter()
+                .any(|error| error.code == control.diagnostic.code
+                    && error.message.contains(&control.diagnostic.message_contains)),
+            "{}: control {} must be refused with its pinned diagnostic; actual:\n{errors:?}",
+            expected.id,
+            control.source
+        );
+    }
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "{}: source/core checked; reference/sanitized-native execution unexecuted on \
+             this host (manifest evidence_target=linux)",
+            expected.id
+        );
+        return;
+    }
+    let module = result.expect("the accepted task fixture must pass all-path checks");
+    assert_eq!(
+        module.execution_profile,
+        execution_profile(&native.execution_profile),
+        "{}: the case must select the route it names, not another one",
+        expected.id
+    );
+    assert!(
+        module.reference_observation.is_none(),
+        "{}: do not substitute the sequential execution profile",
+        expected.id
+    );
+    let checked = module
+        .checked
+        .as_scoped_tasks()
+        .expect("the checked task artifact is explicit for this route");
+    for scenario in &native.scenarios {
+        let reference = render_task_observation(
+            &execute_task_module_with_worker_allocations(
+                checked,
+                &TaskExecutionScript {
+                    spawn_outcomes: scenario.spawn_outcomes.clone(),
+                    allocation_outcomes: scenario.allocation_outcomes.clone(),
+                },
+                &scenario.worker_allocation_outcomes,
+            )
+            .unwrap_or_else(|error| {
+                panic!(
+                    "{}: {} reference execution: {error:?}",
+                    expected.id, scenario.name
+                )
+            }),
+        );
+        let output = sanitized_heap_run(
+            module.c_source.as_deref().unwrap(),
+            directory,
+            native,
+            scenario,
+        );
+        assert_eq!(
+            output.status.code(),
+            Some(scenario.exit_code),
+            "{}: {} exited unexpectedly:\n{}",
+            expected.id,
+            scenario.name,
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let observed = String::from_utf8(output.stdout.clone()).unwrap();
+        if scenario.exit_code == 0 {
+            assert_eq!(
+                observed, reference,
+                "{}: {} native and reference observations must agree line for line",
+                expected.id, scenario.name
+            );
+        }
+        for wanted in &scenario.stdout_contains {
+            assert!(
+                observed.contains(wanted.as_str()),
+                "{}: {} is missing `{wanted}` in:\n{observed}",
+                expected.id,
+                scenario.name
+            );
+        }
+        for forbidden in &scenario.stdout_absent {
+            assert!(
+                !observed.contains(forbidden.as_str()),
+                "{}: {} must not contain `{forbidden}` in:\n{observed}",
+                expected.id,
+                scenario.name
+            );
+        }
+        let mut previous = None;
+        for line in &scenario.stdout_order {
+            let position = observed
+                .lines()
+                .position(|entry| entry == line)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{}: {} is missing the ordered line `{line}` in:\n{observed}",
+                        expected.id, scenario.name
+                    )
+                });
+            if let Some(previous) = previous {
+                assert!(
+                    previous < position,
+                    "{}: {} observed `{line}` out of its pinned order in:\n{observed}",
+                    expected.id,
+                    scenario.name
+                );
+            }
+            previous = Some(position);
+        }
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let addresses = |prefix: &str| {
+            stderr
+                .lines()
+                .filter_map(|line| line.strip_prefix(prefix).map(ToOwned::to_owned))
+                .collect::<Vec<_>>()
+        };
+        let allocated = addresses(&native.alloc_prefix);
+        let released = addresses(&native.free_prefix);
+        assert_eq!(
+            allocated.len(),
+            scenario.heap_allocations,
+            "{}: {} allocated {allocated:?}",
+            expected.id,
+            scenario.name
+        );
+        assert_eq!(
+            released.len(),
+            scenario.heap_releases,
+            "{}: {} released {released:?}",
+            expected.id,
+            scenario.name
+        );
+        for address in &released {
+            assert!(
+                allocated.contains(address),
+                "{}: {} released an address it never allocated: {address}",
+                expected.id,
+                scenario.name
+            );
+            assert_eq!(
+                released.iter().filter(|entry| *entry == address).count(),
+                1,
+                "{}: {} released {address} more than once",
+                expected.id,
+                scenario.name
+            );
+        }
+    }
+}
+
+/// Compiles the emitted C with the recorded sanitizer flags, beside every
+/// fixture header so a header may `#include` another, and runs it once.
+/// `ASAN_OPTIONS` is computed here from the scenario's `detect_leaks` rather
+/// than read from data, so LeakSanitizer cannot be quietly disabled by editing
+/// an option string.
+fn sanitized_heap_run(
+    source: &str,
+    fixtures: &Path,
+    native: &NativeHeapScenarios,
+    scenario: &HeapScenario,
+) -> std::process::Output {
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-ct-heap-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&directory).unwrap();
+    let c_path = directory.join("module.c");
+    let exe_path = directory.join("module");
+    fs::write(&c_path, source).unwrap();
+    for entry in fs::read_dir(fixtures).unwrap() {
+        let entry = entry.unwrap().path();
+        if entry.extension().is_some_and(|extension| extension == "h") {
+            fs::copy(&entry, directory.join(entry.file_name().unwrap())).unwrap();
+        }
+    }
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
+    let mut command = Command::new(compiler);
+    command
+        .args(&native.sanitizer_flags)
+        .args(&scenario.defines);
+    if cfg!(target_os = "macos") {
+        command.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
+    let compiled = command
+        .arg("-include")
+        .arg(directory.join(&scenario.header))
+        .arg(&c_path)
+        .arg("-o")
+        .arg(&exe_path)
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "the C compiler rejected the emitted program for {}:\n{}",
+        scenario.name,
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    let output = Command::new(&exe_path)
+        .env(
+            "ASAN_OPTIONS",
+            if scenario.detect_leaks && !cfg!(target_os = "macos") {
+                "detect_leaks=1:halt_on_error=1"
+            } else {
+                "detect_leaks=0:halt_on_error=1"
+            },
+        )
+        .env("UBSAN_OPTIONS", &native.ubsan_options)
+        .output()
+        .unwrap();
+    fs::remove_dir_all(directory).unwrap();
+    output
 }
 
 /// CT26: the whole `source.mutex.guard.v1` stage stack on the case's own

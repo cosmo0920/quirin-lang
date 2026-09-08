@@ -2152,6 +2152,11 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "FULL"
             | "qcore_buffer_new"
             | "qcore_buffer_read"
+            | "qcore_buffer_write"
+            // Card T06's payload intrinsic. Reserving it keeps a local binding
+            // from shadowing the take form, exactly as the buffer intrinsics
+            // above are protected.
+            | "qcore_error_payload"
             | "qcore_acquire"
             | "qcore_check"
     )

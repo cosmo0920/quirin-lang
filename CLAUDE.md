@@ -8,6 +8,10 @@
 
 @AGENTS.md
 
+Human-facing implementation and status detail lives in `DEVELOPMENT.md`
+(split out of `README.md`, which is now the short summary); add new
+per-increment status paragraphs there.
+
 Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract
 companion. Follow `docs/reviews/r0_3/acceptance.json` for current repair status;
 the supplied archive review is older than merged W2–W5 implementations.
@@ -304,8 +308,9 @@ Coverage at that checkpoint was 7/50 mapped, 43 unmapped. Moves/loans, owned res
 mutexes, nested workers, general control flow and other platforms remain open.
 Evidence: `docs/reports/w6-task-recovery/README.md`.
 
-macOS native concurrency (2026-09-08): scoped copy/owned/read-loan tasks and
-checked mutex guards now check, emit, compile and execute on macOS through an
+macOS native concurrency (2026-09-08): scoped copy/owned/read-loan/read-share
+tasks, typed owned-error payload tasks and checked mutex guards now check,
+emit, compile and execute on macOS through an
 emitted pthread-backed implementation of the C11 thread subset used by QCore.
 The macOS CT harness executes the threaded native and fault-injection cases;
 CT50's separate `MAP_FIXED_NOREPLACE` address-reuse observation remains
