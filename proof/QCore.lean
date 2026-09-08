@@ -66,5 +66,6 @@ import QCore.NativeTeardownObservation
 import QCore.DescriptorObservation
 import QCore.NullableRemoval
 import QCore.OsEndpointPostState
+import QCore.RegionTaskCredit
 
 /-! The executable formal core of QCore-C revision 0.1. -/
