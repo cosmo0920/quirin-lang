@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use qcore_c_gateway::boolean_source::{
     ChunkFrameSummary, ChunkSourceResult, import_chunk_source_with_profile,
 };
-use qcore_c_gateway::legacy_c::C11TranslationUnit;
+use qcore_c_gateway::legacy_c::{C11TranslationUnit, SourceDefinitionInventory};
 use qcore_contract::profile_loader::LoadedProfile;
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -179,9 +179,14 @@ impl SourceContractAudit {
         library: &str,
         file: &str,
         unit: &C11TranslationUnit<'_>,
-        raw_functions: &[String],
+        inventory: &SourceDefinitionInventory,
         profile: &LoadedProfile,
     ) {
+        // Unit E01-F1: the backstop denominator is the *enumerated* definition
+        // set, not the raw token scan, so a macro-expanded or K&R definition
+        // the importer does not cover still receives its own Unknown row here
+        // instead of vanishing from the checked/Unknown split.
+        let raw_functions = inventory.definitions();
         let Some(helpers) = self.helpers.get(library) else {
             return;
         };
@@ -238,18 +243,41 @@ impl SourceContractAudit {
         for function in raw_functions {
             if seen.insert(function.clone()) {
                 self.unknown += 1;
-                let reason = import_failure.as_deref().unwrap_or(
+                // A definition the enumeration itself classified as unread by
+                // any implemented analysis says so; it is not reported as
+                // "absent from the typed import", which would mis-describe it.
+                let unanalyzable = inventory
+                    .unanalyzable()
+                    .iter()
+                    .find(|definition| definition.function() == function)
+                    .map(|definition| definition.form().reason());
+                let reason = unanalyzable.or(import_failure.as_deref()).unwrap_or(
                     "raw source definition absent from the selected typed import; possibly build-excluded",
                 );
                 functions.push(json!({"function": function, "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code(Some(reason))}));
             }
         }
         functions.sort_by(|a, b| a["function"].as_str().cmp(&b["function"].as_str()));
-        self.units.push(json!({
+        let mut record = json!({
             "library": library, "file": file, "source_sha256": qcore_schemas::sha256_hex(unit.source.as_bytes()),
             "raw_source_functions": raw_functions, "functions": functions,
             "import_failure": import_failure,
-        }));
+        });
+        if !inventory.is_complete() {
+            record["enumeration_completeness"] = json!({
+                "completeness": "refused",
+                "refusals": inventory
+                    .refusals()
+                    .iter()
+                    .map(|refusal| json!({
+                        "ground": refusal.as_str(),
+                        "reason": refusal.reason(),
+                        "reason_code": crate::report::reason_code(Some(refusal.reason())),
+                    }))
+                    .collect::<Vec<_>>(),
+            });
+        }
+        self.units.push(record);
     }
 
     pub(crate) fn finish(self) -> Value {

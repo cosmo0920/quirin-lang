@@ -14,7 +14,9 @@ use serde::Serialize;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::legacy_c::{C11TranslationUnit, legacy_c_source_functions, validate_unrestricted_c11};
+use crate::legacy_c::{
+    C11TranslationUnit, enumerate_source_definitions, validate_unrestricted_c11,
+};
 
 use qcore_schemas::chunk_summary::{
     BOOLEAN_FIELD_SOURCE_INPUT_VERSION, BOOLEAN_FIELD_UNIT_SOURCE_INPUT_VERSION,
@@ -682,7 +684,13 @@ pub fn import_chunk_source_with_profile(
         compiler.clone(),
     )?;
     let mut results = Vec::new();
-    for function in legacy_c_source_functions(unit.source) {
+    // Unit E01-F1: the imported denominator is the enumerated main-source
+    // definition set, so a definition produced only by macro expansion reaches
+    // the typed importer instead of silently carrying neither a contract nor an
+    // Unknown row. Nothing here reads a K&R body: such a definition has no
+    // typed AST entry under this importer's lookup and returns `Unknown` with
+    // its own reason, which is the honest outcome, not a new capability.
+    for function in enumerate_source_definitions(unit).definitions().to_vec() {
         let result = function_ast(&source, unit, &function).and_then(|ast| {
             let abi = ast["type"]["qualType"].as_str().unwrap_or("");
             let model = models

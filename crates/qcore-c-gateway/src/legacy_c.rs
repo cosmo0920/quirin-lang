@@ -10,6 +10,14 @@
 #[path = "legacy_out_alias.rs"]
 mod out_alias;
 
+#[path = "legacy_enumeration.rs"]
+pub mod enumeration;
+
+pub use enumeration::{
+    EnumerationRefusal, SourceDefinitionInventory, UnanalyzableDefinition, UnanalyzableForm,
+    enumerate_source_definitions,
+};
+
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
 
@@ -765,9 +773,37 @@ pub fn analyze_unrestricted_c11(
     entry: &str,
     contracts: &ResourceContracts,
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let inventory = match unit.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => Some(enumerate_source_definitions(unit)),
+    };
+    analyze_unrestricted_c11_with_inventory(unit, entry, contracts, inventory.as_ref())
+}
+
+/// [`analyze_unrestricted_c11`] over an inventory the caller already
+/// enumerated (unit **E01-F1**).
+///
+/// A driver that reports the denominator must enumerate it anyway, and the
+/// enumeration costs one Clang preprocessing; this entry point lets the two
+/// share it, and — more importantly — guarantees the analyzer's selection is
+/// *the same inventory the report publishes*, rather than a second, possibly
+/// divergent, computation of it.
+///
+/// `inventory` is `None` exactly when the unit's scope is
+/// [`LegacyFunctionScope::PreprocessedTranslationUnit`], where there is no
+/// main-source restriction to apply.
+pub fn analyze_unrestricted_c11_with_inventory(
+    unit: &C11TranslationUnit<'_>,
+    entry: &str,
+    contracts: &ResourceContracts,
+    inventory: Option<&SourceDefinitionInventory>,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
     let source_functions = match unit.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
-        LegacyFunctionScope::MainSourceDefinitions => Some(function_names(&tokenize(unit.source))),
+        LegacyFunctionScope::MainSourceDefinitions => Some(inventory.map_or_else(
+            || enumerate_source_definitions(unit).definitions().to_vec(),
+            |inventory| inventory.definitions().to_vec(),
+        )),
     };
     let preprocessed_source = validate_unrestricted_c11(unit)?;
     let analysis = match analyze_legacy_c_translation_unit_selected_partial(

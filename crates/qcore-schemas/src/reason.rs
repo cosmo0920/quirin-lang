@@ -286,6 +286,19 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "production C parser is unavailable",
         ReasonCategory::EnvironmentUnavailable,
     ),
+    // `qcore_c_gateway::legacy_c::enumeration` (unit E01-F1): the definition
+    // enumeration could not read the unit's macro expansion, or could not tell
+    // which file the expansion belongs to. Both are failures of the analysis
+    // environment and say nothing about the analysed source, so they are
+    // matched here, ahead of every source-subject rule.
+    (
+        "enumeration completeness refused: macro expansion",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    (
+        "line-marked preprocessing does not name its primary input",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
     // `qcore_c_gateway::typed_c_ast` could not run or read Clang at all.
     (
         "Clang AST unavailable",
@@ -446,6 +459,23 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         ReasonCategory::UnsupportedSyntax,
     ),
     ("unmodeled ", ReasonCategory::UnsupportedSyntax),
+    // `qcore_c_gateway::legacy_c::enumeration` (unit E01-F1): a definition the
+    // enumeration counted whose shape no implemented analysis reads, and the
+    // two boundary refusals that name a construct in the analysed token
+    // stream. The environment grounds of the same family are matched far
+    // earlier, so neither of them can reach these rules.
+    (
+        "identifier-list (K&R) parameter list",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "a file-scope delimiter has no match",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "is neither a definition nor a declaration this scanner reads",
+        ReasonCategory::UnsupportedSyntax,
+    ),
     (
         "outside selected Unix profile",
         ReasonCategory::UnsupportedSyntax,

@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, legacy_c_source_functions,
+    C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{
@@ -400,18 +400,22 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 "library": library, "file": file,
                 "identity_sha256": identity.digest()?, "identity": identity,
             }));
-            let source_functions = legacy_c_source_functions(&source);
+            // Unit E01-F1: enumerate once, here, and hand the *same* inventory
+            // to the resource projection, the report and the source-contract
+            // route. Two independent computations of the denominator could
+            // disagree; one cannot.
+            let inventory = enumerate_source_definitions(&unit);
             project_unit(
                 library,
                 &file,
                 &unit,
-                &source_functions,
+                &inventory,
                 &contracts,
                 &mut report,
                 &mut counts,
             )?;
             if let Some(audit) = &mut source_contracts {
-                audit.analyze_unit(library, &file, &unit, &source_functions, &profile);
+                audit.analyze_unit(library, &file, &unit, &inventory, &profile);
             }
         }
     }

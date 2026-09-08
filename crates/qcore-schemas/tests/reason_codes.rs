@@ -309,6 +309,41 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
             Coverage,
         ),
         ("source-contract configuration: unknown policy", Provider),
+        // -- qcore-c-gateway: legacy_c::enumeration (unit E01-F1) -------------
+        (
+            "enumerated definition uses an identifier-list (K&R) parameter \
+             list, which the resource analyzer's body finder does not read",
+            Syntax,
+        ),
+        (
+            "enumerated definition `knr` is not analysed: enumerated \
+             definition uses an identifier-list (K&R) parameter list, which \
+             the resource analyzer's body finder does not read",
+            Syntax,
+        ),
+        (
+            "enumeration completeness refused: macro expansion for this unit \
+             is unavailable, so a definition produced only by preprocessing \
+             cannot be enumerated",
+            Env,
+        ),
+        (
+            "enumeration completeness refused: the line-marked preprocessing \
+             does not name its primary input, so main-source attribution is \
+             unavailable",
+            Env,
+        ),
+        (
+            "enumeration completeness refused: a file-scope delimiter has no \
+             match, so definition boundaries cannot be established",
+            Syntax,
+        ),
+        (
+            "enumeration completeness refused: a file-scope construct is \
+             neither a definition nor a declaration this scanner reads, so \
+             definition boundaries cannot be established",
+            Syntax,
+        ),
         // -- compiler/examples/support/cycle19_compatibility.rs ---------------
         (
             "selected library requires evidence unavailable in current-revision \
