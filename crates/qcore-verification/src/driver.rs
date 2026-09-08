@@ -159,6 +159,10 @@ pub enum SourceExecutionProfile {
     /// authority. Selected when a capture lends other than the whole authority,
     /// or when the module writes a Buffer.
     ScopedReadSharesV1,
+    /// `ScopedErrorPayloadV1`: the owned-task profile plus one explicitly
+    /// tagged error payload carrying exactly one owned Buffer out of a child
+    /// through its completion and the creator's join.
+    ScopedErrorPayloadV1,
     /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
     /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
     CheckedMutexGuardsV1,
@@ -1211,6 +1215,14 @@ fn compile_task_source(
             }
         })
     });
+    // A typed error payload transfers custody along an error edge, which no
+    // earlier profile does, so it names its own profile rather than being
+    // reported as an ordinary owned-task run.
+    let error_payload_profile = checked
+        .module()
+        .functions
+        .values()
+        .any(|function| !function.error_payloads.is_empty());
     let owned_profile = checked.module().functions.values().any(|function| {
         function.result == ScalarType::OwnedBuffer
             || function
@@ -1248,7 +1260,7 @@ fn compile_task_source(
             .filter(|function| function.result == ScalarType::OwnedBuffer)
             .map(|function| function.name.clone())
             .collect(),
-        custody_payloads: if owned_profile {
+        custody_payloads: if owned_profile || error_payload_profile {
             CustodyPayloadProfile::TypedTaskBuffers
         } else {
             CustodyPayloadProfile::NoResourcePayloads
@@ -1267,6 +1279,8 @@ fn compile_task_source(
         checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
         execution_profile: if read_share_profile {
             SourceExecutionProfile::ScopedReadSharesV1
+        } else if error_payload_profile {
+            SourceExecutionProfile::ScopedErrorPayloadV1
         } else if read_loan_profile {
             SourceExecutionProfile::ScopedReadLoansV1
         } else if owned_profile {

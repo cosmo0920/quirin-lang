@@ -6,6 +6,7 @@ import QCore.ScopedTasks
 import QCore.ReadLoan
 import QCore.EpochAccounting
 import QCore.ReadShare
+import QCore.ErrorPayload
 import QCore.ContextualCustody
 import QCore.SourceValidation
 import QCore.VerifierEvidenceV2

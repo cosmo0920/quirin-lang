@@ -111,6 +111,15 @@ pub enum TaskOutcome {
     I32(i32),
     OwnedBuffer(ResourceId),
     Error(String),
+    /// Card T06: an explicitly tagged error carrying exactly one owned Buffer.
+    /// The tag and the identity are one outcome, so a completion cannot name a
+    /// payload it does not hold or hold a payload it does not name. Exactly one
+    /// Buffer travels this way; a second payload, a borrowed identity and every
+    /// other error ABI stay outside this profile.
+    ErrorWithBuffer {
+        tag: String,
+        buffer: ResourceId,
+    },
 }
 
 /// Returned metadata is not ownership authority: every resource operation still
@@ -750,7 +759,9 @@ impl ScopedTaskLedger {
             if child == ROOT_TASK {
                 return Err(TaskLedgerError::RootCompletion);
             }
-            if matches!(&outcome, TaskOutcome::Error(label) if label.is_empty()) {
+            if matches!(&outcome, TaskOutcome::Error(label) if label.is_empty())
+                || matches!(&outcome, TaskOutcome::ErrorWithBuffer { tag, .. } if tag.is_empty())
+            {
                 return Err(TaskLedgerError::EmptyErrorLabel);
             }
             if !ledger.tasks[&child].scopes.is_empty()
@@ -765,7 +776,14 @@ impl ScopedTaskLedger {
             {
                 return Err(TaskLedgerError::TaskBusy(child));
             }
-            if let TaskOutcome::OwnedBuffer(resource) = &outcome
+            // A typed payload names exactly one identity, whether it is a
+            // normal owned result or a tagged error payload. The remaining
+            // `resources == owned` check below then forces that identity to be
+            // exactly what the child still holds.
+            if let TaskOutcome::OwnedBuffer(resource)
+            | TaskOutcome::ErrorWithBuffer {
+                buffer: resource, ..
+            } = &outcome
                 && resources != [*resource]
             {
                 return Err(TaskLedgerError::CompletionResourceMismatch);
@@ -1049,6 +1067,88 @@ mod tests {
         let result = ledger.join(0, 30).unwrap();
         assert_eq!(result.outcome, TaskOutcome::OwnedBuffer(7));
         assert_eq!(result.resources, [7]);
+        ledger.drop_resource(0, 7).unwrap();
+        ledger.exit_scope(0, 10).unwrap();
+    }
+
+    /// T06 acceptance 1 and 3, at the ledger. A tagged error payload is held to
+    /// the same rule as a typed owned result: the completion names exactly the
+    /// identity it holds, the capsule belongs to nobody until the creator's
+    /// join, and the join hands it over exactly once.
+    #[test]
+    fn a_tagged_error_payload_is_named_exactly_and_transfers_only_at_join() {
+        let mut ledger = opened();
+        for resource in [7, 8] {
+            ledger.acquire(0, resource).unwrap();
+        }
+        spawn(&mut ledger, 20, 1, 30, &[7]);
+        let tagged = |buffer| TaskOutcome::ErrorWithBuffer {
+            tag: "Recovery::Failed".into(),
+            buffer,
+        };
+        // Omitting, substituting, duplicating and padding the payload each
+        // reject, and the empty tag rejects like an empty error label.
+        for (outcome, resources) in [
+            (tagged(7), vec![]),
+            (tagged(8), vec![7]),
+            (tagged(7), vec![7, 7]),
+            (tagged(7), vec![7, 8]),
+            (
+                TaskOutcome::ErrorWithBuffer {
+                    tag: String::new(),
+                    buffer: 7,
+                },
+                vec![7],
+            ),
+        ] {
+            unchanged(&mut ledger, |l| l.complete(1, outcome.clone(), &resources));
+        }
+        ledger.complete(1, tagged(7), &[7]).unwrap();
+
+        // Completion is not custody return: the payload is in the capsule and
+        // neither the parent nor the child may touch it.
+        assert_eq!(
+            ledger.resource_state(7),
+            Some(ResourceState::Live(Custodian::Capsule(1)))
+        );
+        assert!(ledger.use_resource(0, 7).is_err());
+        assert!(ledger.use_resource(1, 7).is_err());
+        unchanged(&mut ledger, |l| l.drop_resource(0, 7));
+        unchanged(&mut ledger, |l| l.exit_scope(0, 10));
+
+        let capsule = ledger.join(0, 30).unwrap();
+        assert_eq!(capsule.outcome, tagged(7));
+        assert_eq!(capsule.resources, [7]);
+        ledger.use_resource(0, 7).unwrap();
+        // The transfer happens once: a second join is refused by the consumed
+        // handle, so the payload cannot be collected or released twice.
+        rejected(&mut ledger, &TaskLedgerError::HandleConsumed(30), |l| {
+            l.join(0, 30)
+        });
+        ledger.drop_resource(0, 7).unwrap();
+        unchanged(&mut ledger, |l| l.drop_resource(0, 7));
+        ledger.drop_resource(0, 8).unwrap();
+        ledger.exit_scope(0, 10).unwrap();
+    }
+
+    /// A child that acquired a local and then failed must release it: the
+    /// completion is refused while any resource other than the named payload is
+    /// still live under the child.
+    #[test]
+    fn a_tagged_error_completion_refuses_an_unreleased_worker_local() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        spawn(&mut ledger, 20, 1, 30, &[7]);
+        ledger.acquire(1, 8).unwrap();
+        let tagged = TaskOutcome::ErrorWithBuffer {
+            tag: "Recovery::Failed".into(),
+            buffer: 7,
+        };
+        unchanged(&mut ledger, |l| l.complete(1, tagged.clone(), &[7]));
+        ledger.drop_resource(1, 8).unwrap();
+        ledger.complete(1, tagged, &[7]).unwrap();
+        assert_eq!(ledger.resource_state(8), Some(ResourceState::Dropped));
+        ledger.join(0, 30).unwrap();
         ledger.drop_resource(0, 7).unwrap();
         ledger.exit_scope(0, 10).unwrap();
     }

@@ -13,6 +13,15 @@
 //! borrowers whose shares sum to no more than the full authority, and adds the
 //! Buffer write whose exclusive-authority requirement the share ledger decides.
 //! Every other borrowing form stays outside this profile.
+//!
+//! The typed error payload (card T06) is equally minimal: a function declares
+//! which of its error tags carry a payload, a payload is exactly one owned
+//! Buffer, a raise of such a tag must move one in, and the joining creator must
+//! take it out of the bound error before that error can be discarded or
+//! re-raised. `SpawnError` and `AllocError` never carry one — the runtime
+//! raises them and holds nothing — and the task entry declares none, because it
+//! has no external custodian. Several payloads, borrowed payloads, scalar
+//! payloads and payload-carrying rethrow of a bound error stay outside.
 pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, MAX_READERS, ScopeId};
 use crate::scoped_tasks::{ResourceId, ResourceState, ScopedTaskLedger, TaskOutcome};
 use std::collections::{BTreeMap, BTreeSet};
@@ -79,6 +88,10 @@ pub struct TaskFunction {
     pub parameters: Vec<(SlotId, ScalarType)>,
     pub result: ScalarType,
     pub errors: BTreeSet<String>,
+    /// The declared subset of `errors` whose raise carries exactly one owned
+    /// Buffer. Membership is part of the signature, not of a path: a tag either
+    /// always carries a payload here or never does.
+    pub error_payloads: BTreeSet<String>,
     pub declared_effects: TaskEffects,
     pub entry: BlockId,
     pub blocks: BTreeMap<BlockId, TaskBlock>,
@@ -130,6 +143,14 @@ pub enum TaskInstructionKind {
         handle: SlotId,
         outcome_slot: Option<SlotId>,
     },
+    /// Move the owned Buffer out of a bound typed error. This is the only way
+    /// a payload leaves an error value, it can happen at most once per error
+    /// binding, and until it happens the error can neither be discarded at an
+    /// exit nor re-raised.
+    TakeErrorPayload {
+        error_slot: SlotId,
+        buffer_slot: SlotId,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskTerminator {
@@ -167,6 +188,10 @@ pub enum TaskTerminatorKind {
     },
     Raise {
         error: ErrorOperand,
+        /// Exactly one owned Buffer when the raised tag declares a payload, and
+        /// nothing otherwise. Only a literal `Move` is admitted, so a payload
+        /// is never a copy, a scalar or a borrowed identity.
+        payload: Option<ScalarOperand>,
     },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -276,13 +301,27 @@ enum AbstractSlot {
         value: Option<AbstractValue>,
         errors: BTreeSet<String>,
         declared_errors: BTreeSet<String>,
+        /// Whether the producing worker's declared error row carries payloads.
+        /// This is a property of the signature, so it is the same on the normal
+        /// and error alternatives of one creation.
+        declared_payloads: bool,
+        /// The owned Buffer this Result's error alternative carries, if any.
+        /// Normal and error alternatives are separate states, so at most one of
+        /// `value` and `error_payload` is ever populated.
+        error_payload: Option<ResourceId>,
     },
-    Error(BTreeSet<String>),
+    Error {
+        errors: BTreeSet<String>,
+        /// Still-undelivered payload. While this is `Some`, the error may not
+        /// be discarded at an exit and may not be re-raised.
+        payload: Option<ResourceId>,
+    },
     Handle {
         worker: FunctionId,
         child: u64,
         handle: u64,
         returned: Option<ResourceId>,
+        error_payload: Option<ResourceId>,
         errors: BTreeSet<String>,
         normal: bool,
     },
@@ -290,16 +329,20 @@ enum AbstractSlot {
 }
 /// Each alternative is derived from a checked worker exit, using original
 /// parameter positions or a proved fresh local result, never caller assertions.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum WorkerReturn {
     Input(usize),
     Fresh,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 struct WorkerExit {
     returned: Option<WorkerReturn>,
     dropped: Vec<usize>,
     error: Option<String>,
+    /// The owned Buffer this error exit carries out of the worker. It is
+    /// derived from the worker's own checked exit, exactly like `returned`,
+    /// and is `None` for every normal exit and every payload-free error.
+    error_payload: Option<WorkerReturn>,
 }
 #[derive(Clone)]
 struct State {
@@ -400,6 +443,20 @@ impl State {
         }) {
             return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
         }
+        // A payload that is still inside a bound error is a duty this exit did
+        // not discharge. The leak check below would also catch it, but naming
+        // it here says which value was left holding the Buffer.
+        if self.slots.values().any(|s| {
+            matches!(
+                s,
+                AbstractSlot::Error {
+                    payload: Some(_),
+                    ..
+                }
+            )
+        }) {
+            return Err("return/error discards an undelivered error payload".into());
+        }
         // An outstanding share is an unfinished lifetime duty, not a leak: name
         // it separately so the refusal says what the exit actually failed to
         // do, which is reclaim the share by joining its borrower.
@@ -457,6 +514,29 @@ fn check_function(
             "SpawnError is reserved for task creation, not leaf worker errors".into(),
         ));
     }
+    // A declared payload row is checked before any path: an undeclared tag, a
+    // runtime-raised tag and the entry function are refused outright rather
+    // than becoming a per-path surprise.
+    if !function.error_payloads.is_subset(&function.errors) {
+        return Err(fail(
+            function.span,
+            "an error payload is declared for a tag outside the declared error row".into(),
+        ));
+    }
+    if function.error_payloads.contains(SPAWN_ERROR)
+        || function.error_payloads.contains(ALLOC_ERROR)
+    {
+        return Err(fail(
+            function.span,
+            "creation and allocation failures hold no resource and carry no payload".into(),
+        ));
+    }
+    if id == module.entry && !function.error_payloads.is_empty() {
+        return Err(fail(
+            function.span,
+            "owned task entry error payloads have no external custodian in this profile".into(),
+        ));
+    }
     // Iterative DAG validation covers even blocks not reached by a particular
     // spawn/result outcome. No cycle is interpreted as successful termination.
     let mut incoming = function
@@ -498,6 +578,7 @@ fn check_function(
                 TaskInstructionKind::BindScalar { slot, .. } => Some(*slot),
                 TaskInstructionKind::ReadBuffer { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::UnwrapInfallible { value_slot, .. } => Some(*value_slot),
+                TaskInstructionKind::TakeErrorPayload { buffer_slot, .. } => Some(*buffer_slot),
                 TaskInstructionKind::Join { outcome_slot, .. } => {
                     effects.join = true;
                     effects.may_block = true;
@@ -710,6 +791,34 @@ fn check_function(
                         state.slots.insert(*result_slot, AbstractSlot::Consumed);
                         state.bind(*value_slot, AbstractSlot::Value(value))?;
                     }
+                    TaskInstructionKind::TakeErrorPayload {
+                        error_slot,
+                        buffer_slot,
+                    } => {
+                        let Some(AbstractSlot::Error { errors, payload }) =
+                            state.slots.get(error_slot).cloned()
+                        else {
+                            return Err(
+                                "taking a payload requires an initialized typed error slot".into(),
+                            );
+                        };
+                        let payload =
+                            payload.ok_or("this typed error carries no owned payload to take")?;
+                        // The error keeps its tags and loses its payload, so a
+                        // second take of the same binding is refused here and
+                        // not by an accidental double account downstream.
+                        state.slots.insert(
+                            *error_slot,
+                            AbstractSlot::Error {
+                                errors,
+                                payload: None,
+                            },
+                        );
+                        state.bind(
+                            *buffer_slot,
+                            AbstractSlot::Value(AbstractValue::Owned(payload)),
+                        )?;
+                    }
                     TaskInstructionKind::EnterScope { scope } => {
                         state
                             .ledger
@@ -733,6 +842,7 @@ fn check_function(
                             child,
                             handle: runtime_handle,
                             returned,
+                            error_payload,
                             errors,
                             normal,
                         }) = state.slots.get(handle).cloned()
@@ -749,7 +859,15 @@ fn check_function(
                             .ledger
                             .join(0, runtime_handle)
                             .map_err(|e| format!("{e:?}"))?;
-                        if capsule.resources != returned.into_iter().collect::<Vec<_>>() {
+                        // Exactly one of the two can be populated on any path,
+                        // so this compares the join against the complete set of
+                        // identities the completion was recorded to hold.
+                        if capsule.resources
+                            != returned
+                                .into_iter()
+                                .chain(error_payload)
+                                .collect::<Vec<_>>()
+                        {
                             return Err("join changed returned resource identity".into());
                         }
                         if state.ledger.task_state(child)
@@ -770,6 +888,8 @@ fn check_function(
                                     value,
                                     errors,
                                     declared_errors: worker.errors.clone(),
+                                    declared_payloads: !worker.error_payloads.is_empty(),
+                                    error_payload,
                                 },
                             )?;
                         }
@@ -915,31 +1035,59 @@ fn check_function(
                                 .drop_resource(reservation, resource)
                                 .map_err(|e| format!("{e:?}"))?;
                         }
-                        let returned = match &exit.returned {
-                            Some(WorkerReturn::Input(input)) => Some(
-                                *captured
-                                    .get(input)
-                                    .ok_or("worker return does not refer to an owned capture")?,
-                            ),
-                            Some(WorkerReturn::Fresh) => {
-                                // The worker exit checked every local allocation:
-                                // exactly this fresh result remains, all others
-                                // are dropped. Materialize its caller-side identity
-                                // under child custody before completion/join.
-                                let resource = success_state.next_id;
-                                success_state.next_id += 1;
-                                success_state
-                                    .ledger
-                                    .acquire(reservation, resource)
-                                    .map_err(|e| format!("{e:?}"))?;
-                                success_state.resources.insert(resource);
-                                Some(resource)
-                            }
-                            None => None,
-                        };
+                        // One resolver for both carried identities: a worker
+                        // exit may hand back at most one, either as its normal
+                        // result or inside its typed error, and both are the
+                        // worker's own checked identity rather than a caller
+                        // assertion.
+                        let resolve =
+                            |carried: &Option<WorkerReturn>,
+                             state: &mut State|
+                             -> Result<Option<ResourceId>, String> {
+                                Ok(match carried {
+                                    Some(WorkerReturn::Input(input)) => {
+                                        Some(*captured.get(input).ok_or(
+                                            "worker return does not refer to an owned capture",
+                                        )?)
+                                    }
+                                    Some(WorkerReturn::Fresh) => {
+                                        // The worker exit checked every local allocation:
+                                        // exactly this fresh result remains, all others
+                                        // are dropped. Materialize its caller-side identity
+                                        // under child custody before completion/join.
+                                        let resource = state.next_id;
+                                        state.next_id += 1;
+                                        state
+                                            .ledger
+                                            .acquire(reservation, resource)
+                                            .map_err(|e| format!("{e:?}"))?;
+                                        state.resources.insert(resource);
+                                        Some(resource)
+                                    }
+                                    None => None,
+                                })
+                            };
+                        let returned = resolve(&exit.returned, &mut success_state)?;
+                        let error_payload = resolve(&exit.error_payload, &mut success_state)?;
+                        if returned.is_some() && error_payload.is_some() {
+                            return Err(
+                                "a worker exit cannot both return and raise a Buffer".into()
+                            );
+                        }
                         let outcome = if let Some(tag) = &exit.error {
-                            TaskOutcome::Error(tag.clone())
+                            match error_payload {
+                                Some(buffer) => TaskOutcome::ErrorWithBuffer {
+                                    tag: tag.clone(),
+                                    buffer,
+                                },
+                                None => TaskOutcome::Error(tag.clone()),
+                            }
                         } else {
+                            if error_payload.is_some() {
+                                return Err(
+                                    "a normal worker exit cannot carry an error payload".into()
+                                );
+                            }
                             match callee.result {
                                 ScalarType::Unit => TaskOutcome::Unit,
                                 ScalarType::I32 => TaskOutcome::I32(0),
@@ -957,7 +1105,10 @@ fn check_function(
                             .complete(
                                 reservation,
                                 outcome,
-                                &returned.into_iter().collect::<Vec<_>>(),
+                                &returned
+                                    .into_iter()
+                                    .chain(error_payload)
+                                    .collect::<Vec<_>>(),
                             )
                             .map_err(|e| format!("{e:?}"))?;
                         success_state.bind(
@@ -967,6 +1118,7 @@ fn check_function(
                                 child: reservation,
                                 handle: reservation,
                                 returned,
+                                error_payload,
                                 errors: exit.error.clone().into_iter().collect(),
                                 normal: exit.error.is_none(),
                             },
@@ -981,22 +1133,46 @@ fn check_function(
                     success,
                     error,
                 } => {
-                    let Some(AbstractSlot::Result { value, errors, .. }) =
-                        state.slots.get(result_slot).cloned()
+                    let Some(AbstractSlot::Result {
+                        value,
+                        errors,
+                        declared_payloads,
+                        error_payload,
+                        ..
+                    }) = state.slots.get(result_slot).cloned()
                     else {
                         return Err("propagation requires an initialized Result slot".into());
                     };
                     state.slots.insert(*result_slot, AbstractSlot::Consumed);
                     // Empty-error scalar matches retain the historical conservative
-                    // arm check. An owned Result never invents an error capsule.
+                    // arm check. An owned Result never invents an error capsule,
+                    // and neither does a payload-carrying one: synthesizing a
+                    // payload-free error there would be a false state, not a
+                    // conservative one. That costs no coverage, because a
+                    // payload row is nonempty by construction, so every such
+                    // creation has a genuine error alternative that checks the
+                    // same arm — and if the worker never raises it, the arm is
+                    // unreachable and the profile refuses the program.
                     if !errors.is_empty()
-                        || value
-                            .as_ref()
-                            .is_some_and(|v| v.ty() != ScalarType::OwnedBuffer)
+                        || (!declared_payloads
+                            && value
+                                .as_ref()
+                                .is_some_and(|v| v.ty() != ScalarType::OwnedBuffer))
                     {
                         let mut failed = state.clone();
-                        failed.bind(*error_slot, AbstractSlot::Error(errors))?;
+                        failed.bind(
+                            *error_slot,
+                            AbstractSlot::Error {
+                                errors,
+                                payload: error_payload,
+                            },
+                        )?;
                         queue.push((*error, failed));
+                    } else if error_payload.is_some() {
+                        // Unreachable by construction, and refused rather than
+                        // assumed: a payload with no error edge would have no
+                        // path on which its duty could be discharged.
+                        return Err("an error payload has no reachable error edge".into());
                     }
                     if let Some(value) = value {
                         state.bind(*value_slot, AbstractSlot::Value(value))?;
@@ -1025,13 +1201,28 @@ fn check_function(
                             })
                             .collect(),
                         error: None,
+                        error_payload: None,
                     });
                 }
-                TaskTerminatorKind::Raise { error } => {
+                TaskTerminatorKind::Raise { error, payload } => {
                     let errors = match error {
                         ErrorOperand::Tag(tag) if error_name(tag) => BTreeSet::from([tag.clone()]),
                         ErrorOperand::Slot(slot) => match state.slots.get(slot) {
-                            Some(AbstractSlot::Error(errors)) => errors.clone(),
+                            // A bound error must have delivered its payload
+                            // before it can be re-raised. Carrying one onward
+                            // through a rethrow is a separate profile.
+                            Some(AbstractSlot::Error {
+                                errors,
+                                payload: None,
+                            }) => errors.clone(),
+                            Some(AbstractSlot::Error {
+                                payload: Some(_), ..
+                            }) => {
+                                return Err(
+                                    "a bound error must deliver its payload before it is re-raised"
+                                        .into(),
+                                );
+                            }
                             _ => {
                                 return Err("raise requires an initialized typed error slot".into());
                             }
@@ -1041,12 +1232,59 @@ fn check_function(
                     if !errors.is_subset(&function.errors) {
                         return Err("raised errors are absent from the declared row".into());
                     }
-                    state.exit(None)?;
+                    // The declared payload row decides, tag by tag, whether
+                    // this raise must move a Buffer in. Both directions are
+                    // refusals: a missing payload and an unexpected one.
+                    let declared = errors
+                        .iter()
+                        .filter(|tag| function.error_payloads.contains(*tag))
+                        .count();
+                    if declared != 0 && declared != errors.len() {
+                        return Err(
+                            "a raise cannot mix payload-carrying and payload-free tags".into()
+                        );
+                    }
+                    if (declared != 0) != payload.is_some() {
+                        return Err(
+                            "raised payload presence disagrees with the declared error payload row"
+                                .into(),
+                        );
+                    }
+                    let carried = match payload {
+                        Some(operand) => {
+                            if !matches!(operand, ScalarOperand::Move(_)) {
+                                return Err(
+                                    "an error payload requires an explicit owned Buffer move"
+                                        .into(),
+                                );
+                            }
+                            let value = state.take(operand)?;
+                            if value.ty() != ScalarType::OwnedBuffer {
+                                return Err("an error payload must be an owned Buffer".into());
+                            }
+                            value.resource()
+                        }
+                        None => None,
+                    };
+                    state.exit(carried)?;
+                    let carried_index = carried.and_then(|resource| {
+                        inputs
+                            .get(&resource)
+                            .copied()
+                            .map(WorkerReturn::Input)
+                            .or(Some(WorkerReturn::Fresh))
+                    });
                     for error in errors {
                         exits.push(WorkerExit {
                             returned: None,
-                            dropped: inputs.values().copied().collect(),
+                            dropped: inputs
+                                .iter()
+                                .filter_map(|(&resource, &index)| {
+                                    (Some(resource) != carried).then_some(index)
+                                })
+                                .collect(),
                             error: Some(error),
+                            error_payload: carried_index.clone(),
                         });
                     }
                 }
@@ -1064,20 +1302,40 @@ fn check_function(
     // Scalar outcome values cannot affect custody in this profile. Once every
     // actual worker exit drops every input, declared scalar/error alternatives
     // are a safe overapproximation with that same checked resource effect.
-    if id != module.entry && function.result != ScalarType::OwnedBuffer {
+    //
+    // A declared error payload breaks exactly that premise: such an exit hands
+    // an identity back instead of dropping it, so the overapproximation would
+    // be wrong rather than conservative. Those functions keep their actual
+    // checked exits, which is what an owned result already does.
+    if id != module.entry
+        && function.result != ScalarType::OwnedBuffer
+        && function.error_payloads.is_empty()
+    {
         let dropped = inputs.values().copied().collect::<Vec<_>>();
         exits = std::iter::once(WorkerExit {
             returned: None,
             dropped: dropped.clone(),
             error: None,
+            error_payload: None,
         })
         .chain(function.errors.iter().cloned().map(|error| WorkerExit {
             returned: None,
             dropped: dropped.clone(),
             error: Some(error),
+            error_payload: None,
         }))
         .collect();
     }
+    // Identical alternatives explore identical caller states; keeping them
+    // would only multiply work. Order is preserved, so nothing is reordered.
+    let mut seen = Vec::new();
+    exits.retain(|exit| {
+        let fresh = !seen.contains(exit);
+        if fresh {
+            seen.push(exit.clone());
+        }
+        fresh
+    });
     Ok(exits)
 }
 

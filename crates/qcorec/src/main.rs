@@ -113,6 +113,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::ScopedReadSharesV1 => {
                     "; scoped owned-buffer tasks with counted read shares (Linux C11)"
                 }
+                qcore_compiler::SourceExecutionProfile::ScopedErrorPayloadV1 => {
+                    "; scoped owned-buffer tasks with one typed error payload (Linux C11)"
+                }
                 qcore_compiler::SourceExecutionProfile::ScopedReadLoansV1 => {
                     "; scoped owned-buffer tasks with one read loan (Linux C11)"
                 }

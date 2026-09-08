@@ -377,6 +377,98 @@ Disjoint slicing, write shares, more than two simultaneous readers, several
 lent resources at once, nested workers and non-Linux native targets remain
 unsupported. See [the read-share report](reports/remaining-t05/README.md).
 
+## G02bc. Tagged error payload
+
+`ScopedErrorPayloadV1` extends G02b with one bounded failure-edge transfer: an
+explicitly tagged error variant carrying exactly one owned Buffer out of one
+child, through its completion capsule and its creator's join. It is selected
+whenever any checked function declares an error payload; a module whose error
+variants are all payload-free keeps its G02a/G02b/G02bb profile unchanged.
+
+```qcore
+concurrency checked;
+error Recovery { Failed(own<Buffer>); }
+fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
+    match qcore_buffer_new(7) {
+        Result::Ok { value: scratch } => {
+            let seen = qcore_buffer_read(payload);
+            drop payload;
+            drop scratch;
+            return seen;
+        }
+        Result::Err { error: exhausted } => {
+            raise Recovery::Failed(payload);
+        }
+    }
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s worker(move buffer) {
+            Result::Ok { value: handle } => {
+                match join move handle {
+                    Result::Ok { value: seen } => {
+                        return seen;
+                    }
+                    Result::Err { error: failure } => {
+                        let recovered = qcore_error_payload(failure);
+                        let value = qcore_buffer_read(recovered);
+                        drop recovered;
+                        return value;
+                    }
+                }
+            }
+            Result::Err { error: refused } => {
+                drop buffer;
+                return 0;
+            }
+        }
+    }
+}
+```
+
+A payload variant is declared exactly `VARIANT(own<Buffer>);` inside an
+`error NAME { … }` declaration. Scalar payloads, `borrow<Buffer>` payloads,
+empty parameter lists and several payload fields are each refused at the
+declaration. A declared error row is **uniform**: either every variant carries a
+payload or none does, so a joined error always holds exactly one Buffer and the
+parent's take is total. A mixed row is a represented refusal, not a widening.
+
+`raise NAME::VARIANT(BUFFER);` moves one owned Buffer into the raised error, and
+`raise NAME::VARIANT;` stays the payload-free spelling. The declaration decides
+which is required, in both directions. `AllocError` and `SpawnError` never carry
+a payload — the runtime raises them after a failure that acquired nothing — and
+the task entry may not declare a payload row at all, because it has no external
+custodian, exactly as it may not declare an `own<Buffer>` result.
+
+`let NAME = qcore_error_payload(ERROR);` is the only way a payload leaves an
+error. The error keeps its tag and loses its payload, so a second take is
+refused, and until the take happens the bound error may neither be discarded at
+an exit nor re-raised. A taken payload is an ordinary owned Buffer with the
+ordinary duty: forgetting it is a leak on the path that forgot it.
+
+A worker's error exit must account for every identity it acquired: locals it did
+not carry must already be released, and the completion names exactly the one
+identity the outcome carries. A creation that failed transfers nothing. A second
+join of the same handle is refused, so the payload can never be collected twice.
+One Buffer may be a normal owned result on one path and a payload on another;
+the checker keeps the two exits apart.
+
+Two core gates cannot be reached from this source surface, because the uniform
+row rule and the entry rule refuse earlier: propagating a payload-carrying
+Result with `?` from a function that also declares a builtin failure, and
+re-raising a bound error that still holds its payload. Both are checked on
+mutated IR so that widening the surface later cannot silently admit them.
+
+Native emission carries the payload in the result value alongside the error tag
+and clears every stale copy as it moves, printing
+`QCORE_TASK_RESULT task ERROR_BUFFER tag generation` distinctly from a
+payload-free `ERROR tag`.
+
+Several payloads, recursive owned graphs, arbitrary error ABIs, payloads on
+nested workers, loans inside payloads and non-Linux native targets remain
+unsupported. See [the error-payload report](reports/remaining-t06/README.md).
+
 ## G02c. Guarded fixed-footprint mutex
 
 `CheckedMutexGuardsV1`, profile id `source.mutex.guard.v1`, lowers a lexical
