@@ -10,6 +10,11 @@ mod windows_c;
 
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
+#[cfg(not(target_os = "windows"))]
+use std::sync::atomic::{AtomicU64, Ordering};
+
+#[cfg(not(target_os = "windows"))]
+static NEXT_NATIVE_RUN: AtomicU64 = AtomicU64::new(0);
 
 fn compile(source: &str) -> Result<qcore_compiler::CompiledModule, Vec<String>> {
     compile_files(
@@ -136,12 +141,13 @@ fn run_native(source: &str) -> Vec<String> {
     {
         use std::process::Command;
         let directory = std::env::temp_dir().join(format!(
-            "qcore-t03-cli-{}-{}",
+            "qcore-t03-cli-{}-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
-                .as_nanos()
+                .as_nanos(),
+            NEXT_NATIVE_RUN.fetch_add(1, Ordering::Relaxed)
         ));
         std::fs::create_dir(&directory).unwrap();
         let path = directory.join("generated.c");
