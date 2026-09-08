@@ -45,6 +45,15 @@ pub use qcore_schemas::witness::{
 pub mod confinement;
 pub use confinement::{AdmittedPath, Confinement, ConfinementPolicy, PathAccess, PathState};
 
+pub mod execution_policy;
+pub use execution_policy::{EXECUTION_POLICY_VERSION, ExecutionPolicy, ExecutionPolicyError};
+
+pub mod process_quota;
+pub use process_quota::{
+    DeclaredKindRole, MAX_EXECUTION_PROCESSES, MechanismAvailability, MechanismProbe, ProcessQuota,
+    QuotaObservation, QuotaPlanRefusal,
+};
+
 /// The evidence-v2 firewall's capability-specific replay hook.
 ///
 /// The *trait* belongs to the verifier host, which orchestrates but never
@@ -405,6 +414,15 @@ pub struct EnforcedLimits {
     /// so records written before this field existed are byte-identical.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub confinement: Option<Confinement>,
+    /// The per-execution process quota this execution installs, and the
+    /// delegated cgroup subtree it was derived from. `None` for every
+    /// execution whose manifest declares no `max_execution_processes` and for
+    /// every profile that installs no quota — which is what those records must
+    /// say rather than leaving the question open. Absent from the serialized
+    /// form when `None`, so records written before this field existed are
+    /// byte-identical.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub process_quota: Option<ProcessQuota>,
 }
 
 impl EnforcedLimits {
@@ -420,6 +438,11 @@ impl EnforcedLimits {
             || "; confinement=none".to_owned(),
             |confinement| format!("; confinement={}", confinement.summary()),
         );
+        let quota = self.process_quota.as_ref().map_or_else(
+            || "; process_quota=none".to_owned(),
+            |quota| format!("; process_quota={}", quota.summary()),
+        );
+        let confinement = format!("{confinement}{quota}");
         format!(
             "profile={}; wall_clock_ms={}; stdout_bytes={}; stderr_bytes={}; \
              process_group_kill={}; rlimits=[{applied}]; unenforced=[{}]{confinement}",
@@ -473,6 +496,14 @@ pub struct ProcessExecutionRecord {
     pub signal: Option<i32>,
     /// The host-side failure text, empty for [`ProcessOutcome::Completed`].
     pub detail: String,
+    /// What the per-execution process quota actually observed, read from the
+    /// kernel after the child exited and before its cgroup was removed.
+    /// `None` when no quota was installed, and — deliberately — also when the
+    /// profile refused before spawning, because nothing ran to observe.
+    /// Absent from the serialized form when `None`, so records written before
+    /// this field existed are byte-identical.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub quota_observed: Option<QuotaObservation>,
 }
 
 impl ProcessExecutionRecord {
@@ -482,9 +513,13 @@ impl ProcessExecutionRecord {
             || format!("profile={}; refused", self.profile),
             |e| e.summary(),
         );
+        let observed = self
+            .quota_observed
+            .as_ref()
+            .map_or_else(String::new, |quota| format!("; {}", quota.summary()));
         format!(
-            "{enforced}; outcome={}; wall_time_ms={}; stdout_bytes={}; stderr_bytes={}; \
-             exit_code={:?}; signal={:?}",
+            "{enforced}{observed}; outcome={}; wall_time_ms={}; stdout_bytes={}; \
+             stderr_bytes={}; exit_code={:?}; signal={:?}",
             serde_json::to_value(self.outcome)
                 .ok()
                 .and_then(|value| value.as_str().map(str::to_owned))
@@ -510,9 +545,10 @@ const LINUX_RLIMIT_V1_KINDS: [(&str, &str); 6] = [
     ("max_processes", "RLIMIT_NPROC"),
 ];
 
-/// The limit kinds a profile can enforce, sorted. Empty for the legacy
-/// profile, which enforces no `setrlimit` kind at all.
-pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static str> {
+/// The `setrlimit` kind names, sorted. Both Linux profiles install exactly
+/// this table, so the confined profile's composed plan is the limit profile's
+/// plan (`docs/reports/remaining-p03/README.md` §2.3).
+pub fn enforceable_rlimit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static str> {
     if !profile.installs_rlimits() || !cfg!(target_os = "linux") {
         return Vec::new();
     }
@@ -520,6 +556,22 @@ pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static
         .iter()
         .map(|(kind, _)| *kind)
         .collect::<Vec<_>>();
+    kinds.sort_unstable();
+    kinds
+}
+
+/// Every limit kind a profile can enforce, sorted, by any mechanism. Empty for
+/// the legacy profile, which enforces no declared kind at all.
+///
+/// The confining profile enforces the `setrlimit` table *and*
+/// [`MAX_EXECUTION_PROCESSES`], which it installs as a cgroup quota rather than
+/// an `setrlimit` (card `P03-F`); the limit profile enforces the `setrlimit`
+/// table only, and refuses the quota kind.
+pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static str> {
+    let mut kinds = enforceable_rlimit_kinds(profile);
+    if cfg!(target_os = "linux") && process_quota::profile_installs_quota(profile) {
+        kinds.extend(process_quota::PROCESS_QUOTA_KINDS);
+    }
     kinds.sort_unstable();
     kinds
 }
@@ -534,6 +586,10 @@ pub struct ProcessProvider {
     /// refusal under [`ProcessExecutionProfile::LinuxConfinedV1`], not an
     /// unconfined execution.
     confinement_policy: Option<ConfinementPolicy>,
+    /// Per-mechanism probe selection. Defaults to asking the kernel, and can
+    /// only force a mechanism *unavailable*, never available, so it can widen
+    /// refusal but never weaken an execution.
+    availability: MechanismAvailability,
     /// The most recent execution's evidence record. Interior mutability keeps
     /// [`VerifierProvider`]'s `&self` dispatch, which providers share behind an
     /// `Arc`, unchanged.
@@ -554,6 +610,7 @@ impl ProcessProvider {
             package_root: package_root.as_ref().to_string_lossy().into_owned(),
             profile: ProcessExecutionProfile::default(),
             confinement_policy: None,
+            availability: MechanismAvailability::default(),
             last_execution: std::sync::Mutex::new(None),
         })
     }
@@ -585,6 +642,30 @@ impl ProcessProvider {
     /// The policy this provider would enforce, if any.
     pub const fn confinement_policy(&self) -> Option<&ConfinementPolicy> {
         self.confinement_policy.as_ref()
+    }
+
+    /// Overrides which kernel mechanisms this provider treats as available.
+    ///
+    /// The override is one-directional by construction:
+    /// [`MechanismProbe`] has no variant that forces a mechanism *available*,
+    /// so this call can only cause additional pre-spawn refusals. It can never
+    /// produce an execution that ran with weaker enforcement than the kernel
+    /// offered, which is why it is safe to expose rather than hide behind a
+    /// build flag. Its purpose is to execute the refusal grounds on a host
+    /// whose kernel provides every mechanism (card `P03-F`; a genuinely absent
+    /// user namespace is exercised separately, without this).
+    #[must_use]
+    pub const fn with_mechanism_availability(
+        mut self,
+        availability: MechanismAvailability,
+    ) -> Self {
+        self.availability = availability;
+        self
+    }
+
+    /// The mechanism probe selection in force.
+    pub const fn mechanism_availability(&self) -> MechanismAvailability {
+        self.availability
     }
 
     /// The evidence record of the most recent execution, if any.
@@ -625,6 +706,7 @@ impl ProcessProvider {
                     rlimits: Vec::new(),
                     unenforced_kinds,
                     confinement: None,
+                    process_quota: None,
                 })
             }
             ProcessExecutionProfile::LinuxRlimitV1 => self.linux_rlimit_v1_limits(self.profile),
@@ -632,10 +714,57 @@ impl ProcessProvider {
                 // The confinement is checked first so an unavailable mechanism
                 // names the mechanism, not the composed limit profile.
                 let confinement = self.linux_confinement()?;
+                let quota = self.linux_process_quota()?;
                 let mut enforced = self.linux_rlimit_v1_limits(self.profile)?;
                 enforced.confinement = Some(confinement);
+                enforced.process_quota = quota;
                 Ok(enforced)
             }
+        }
+    }
+
+    /// The per-execution process quota this manifest declares, or the
+    /// pre-spawn refusal that keeps the package from running.
+    ///
+    /// `Ok(None)` is the manifest declaring no quota kind at all, which is a
+    /// complete answer: the execution installs no quota and its record says so.
+    /// It is never the answer to a declared quota the host could not install.
+    fn linux_process_quota(&self) -> Result<Option<ProcessQuota>, ProviderFailure> {
+        let Some(declared) = self
+            .manifest
+            .limits
+            .additional
+            .get(process_quota::MAX_EXECUTION_PROCESSES)
+        else {
+            return Ok(None);
+        };
+        if *declared == 0 {
+            return Err(ProviderFailure::Protocol(
+                QuotaPlanRefusal::ZeroQuota {
+                    kind: process_quota::MAX_EXECUTION_PROCESSES.to_owned(),
+                }
+                .to_string(),
+            ));
+        }
+        #[cfg(target_os = "linux")]
+        {
+            process_quota::linux::describe(*declared, self.availability.process_quota)
+                .map(Some)
+                .map_err(|error| {
+                    ProviderFailure::Protocol(format!(
+                        "execution profile `{}` cannot install the declared `{}` quota: {error}",
+                        ProcessExecutionProfile::LinuxConfinedV1,
+                        process_quota::MAX_EXECUTION_PROCESSES
+                    ))
+                })
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            Err(ProviderFailure::Protocol(format!(
+                "execution profile `{}` is unavailable on this target; its per-execution process \
+                 quota is a Linux cgroup v2 mechanism and it makes no isolation claim elsewhere",
+                ProcessExecutionProfile::LinuxConfinedV1
+            )))
         }
     }
 
@@ -655,12 +784,17 @@ impl ProcessProvider {
         };
         #[cfg(target_os = "linux")]
         {
-            confinement::linux::describe(policy, &self.package_root, self.manifest.network_access)
-                .map_err(|error| {
-                    ProviderFailure::Protocol(format!(
-                        "execution profile `{profile}` cannot confine this execution: {error}"
-                    ))
-                })
+            confinement::linux::describe(
+                policy,
+                &self.package_root,
+                self.manifest.network_access,
+                self.availability,
+            )
+            .map_err(|error| {
+                ProviderFailure::Protocol(format!(
+                    "execution profile `{profile}` cannot confine this execution: {error}"
+                ))
+            })
         }
         #[cfg(not(target_os = "linux"))]
         {
@@ -690,14 +824,33 @@ impl ProcessProvider {
                 .find(|(name, _)| *name == kind)
                 .map(|(_, resource)| (*resource).to_owned())
         };
+        let rlimit_kinds = enforceable_rlimit_kinds(profile);
         for kind in limits.additional.keys() {
-            if resource_of(kind).is_none() {
-                return Err(ProviderFailure::Protocol(format!(
-                    "execution profile `{profile}` cannot enforce declared limit kind `{kind}`; \
-                     it enforces [{}]",
-                    enforceable_limit_kinds(profile).join(", ")
-                )));
+            // Every declared kind must have a role under this profile. A kind
+            // this profile installs by a mechanism other than `setrlimit` — the
+            // per-execution process quota — has one and is skipped here; a kind
+            // with no role at all is refused, never ignored.
+            match process_quota::declared_kind_role(profile, kind, &rlimit_kinds) {
+                Some(DeclaredKindRole::Rlimit) => {}
+                Some(DeclaredKindRole::ProcessQuota) => continue,
+                None if process_quota::PROCESS_QUOTA_KINDS.contains(&kind.as_str()) => {
+                    return Err(ProviderFailure::Protocol(
+                        QuotaPlanRefusal::ProfileEnforcesNoQuota {
+                            profile,
+                            kind: kind.clone(),
+                        }
+                        .to_string(),
+                    ));
+                }
+                None => {
+                    return Err(ProviderFailure::Protocol(format!(
+                        "execution profile `{profile}` cannot enforce declared limit kind \
+                         `{kind}`; it enforces [{}]",
+                        enforceable_limit_kinds(profile).join(", ")
+                    )));
+                }
             }
+            debug_assert!(resource_of(kind).is_some());
         }
         let mut rlimits = vec![EnforcedRlimit {
             kind: "memory_bytes".to_owned(),
@@ -756,6 +909,7 @@ impl ProcessProvider {
             rlimits,
             unenforced_kinds: Vec::new(),
             confinement: None,
+            process_quota: None,
         })
     }
 
@@ -949,6 +1103,54 @@ type ConfinementHandle = Option<std::os::fd::OwnedFd>;
 #[cfg(all(unix, not(target_os = "linux")))]
 type ConfinementHandle = Option<()>;
 
+/// The per-execution cgroup a declared quota installs, carried from the
+/// pre-spawn creation to the `pre_exec` join and the post-run observation.
+/// `None` is an execution that declares no quota.
+#[cfg(target_os = "linux")]
+type QuotaHandle = Option<process_quota::linux::QuotaSession>;
+#[cfg(all(unix, not(target_os = "linux")))]
+type QuotaHandle = Option<()>;
+
+/// The kernel objects a profile installs in the child, carried together from
+/// the pre-spawn build to the `pre_exec` closures. Bundled so the spawn path
+/// takes one mechanism argument rather than one per mechanism.
+#[cfg(unix)]
+struct PreparedMechanisms {
+    confinement: ConfinementHandle,
+    #[cfg(target_os = "linux")]
+    quota_procs: Option<std::os::fd::OwnedFd>,
+    #[cfg(not(target_os = "linux"))]
+    quota_procs: Option<()>,
+}
+
+/// A write descriptor on the per-execution cgroup's `cgroup.procs`, for the
+/// child's `pre_exec` closure. Opened in the parent, with the parent's
+/// credentials.
+#[cfg(target_os = "linux")]
+fn quota_descriptor(quota: &QuotaHandle) -> Option<std::os::fd::OwnedFd> {
+    quota
+        .as_ref()
+        .and_then(|session| session.procs_descriptor().ok())
+}
+
+#[cfg(all(unix, not(target_os = "linux")))]
+fn quota_descriptor(quota: &QuotaHandle) -> Option<()> {
+    let _ = quota;
+    None
+}
+
+/// Reads the quota's own counters and removes the per-execution cgroup.
+#[cfg(target_os = "linux")]
+fn finish_quota(quota: QuotaHandle) -> Option<QuotaObservation> {
+    quota.map(process_quota::linux::QuotaSession::finish)
+}
+
+#[cfg(all(unix, not(target_os = "linux")))]
+fn finish_quota(quota: QuotaHandle) -> Option<QuotaObservation> {
+    let _ = quota;
+    None
+}
+
 #[cfg(unix)]
 impl ProcessProvider {
     /// Runs the package under the selected execution profile and records what
@@ -973,15 +1175,20 @@ impl ProcessProvider {
                     exit_code: None,
                     signal: None,
                     detail: error.to_string(),
+                    quota_observed: None,
                 });
                 return Err(error);
             }
         };
-        // Building the Landlock ruleset opens every admitted path, so it can
-        // fail; it happens here, before anything is spawned, so a failure is a
-        // refusal rather than an unconfined execution.
-        let confinement = match self.prepare_confinement(&enforced) {
-            Ok(confinement) => confinement,
+        // Building the Landlock ruleset opens every admitted path, and creating
+        // the per-execution cgroup writes into a delegated subtree, so both can
+        // fail; both happen here, before anything is spawned, so a failure is a
+        // refusal rather than an unconfined or unbounded execution.
+        let prepared = self
+            .prepare_confinement(&enforced)
+            .and_then(|confinement| Ok((confinement, self.prepare_quota(&enforced)?)));
+        let (confinement, quota) = match prepared {
+            Ok(prepared) => prepared,
             Err(error) => {
                 self.record_execution(ProcessExecutionRecord {
                     profile: self.profile,
@@ -993,6 +1200,7 @@ impl ProcessProvider {
                     exit_code: None,
                     signal: None,
                     detail: error.to_string(),
+                    quota_observed: None,
                 });
                 return Err(error);
             }
@@ -1003,11 +1211,17 @@ impl ProcessProvider {
         let result = self.run_process(
             frame,
             &enforced,
-            confinement,
+            PreparedMechanisms {
+                confinement,
+                quota_procs: quota_descriptor(&quota),
+            },
             &mut output,
             &mut error_output,
             &mut status,
         );
+        // Observed before the cgroup is removed: `rmdir` only succeeds on an
+        // empty cgroup, and the counters go with it.
+        let quota_observed = finish_quota(quota);
         let outcome = match &result {
             Ok(_) => ProcessOutcome::Completed,
             Err(ProviderFailure::Spawn(_)) => ProcessOutcome::SpawnFailed,
@@ -1039,8 +1253,37 @@ impl ProcessProvider {
                 .err()
                 .map(ToString::to_string)
                 .unwrap_or_default(),
+            quota_observed,
         });
         result
+    }
+
+    /// Creates the per-execution cgroup a declared quota needs.
+    ///
+    /// `None` means no quota was declared, which its record states explicitly
+    /// through `EnforcedLimits::process_quota`.
+    #[cfg(target_os = "linux")]
+    fn prepare_quota(&self, enforced: &EnforcedLimits) -> Result<QuotaHandle, ProviderFailure> {
+        let Some(quota) = enforced.process_quota.as_ref() else {
+            return Ok(None);
+        };
+        process_quota::linux::QuotaSession::create(quota)
+            .map(Some)
+            .map_err(|error| {
+                ProviderFailure::Protocol(format!(
+                    "execution profile `{}` cannot install the declared `{}` quota: {error}",
+                    enforced.profile, quota.kind
+                ))
+            })
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    fn prepare_quota(&self, enforced: &EnforcedLimits) -> Result<QuotaHandle, ProviderFailure> {
+        // Off Linux no profile reaches here with a quota: `enforced_limits`
+        // refuses a declared quota kind before this point.
+        debug_assert!(enforced.process_quota.is_none());
+        let _ = enforced;
+        Ok(None)
     }
 
     /// Creates the kernel objects a confining profile installs in the child.
@@ -1081,17 +1324,21 @@ impl ProcessProvider {
         &self,
         frame: Vec<u8>,
         enforced: &EnforcedLimits,
-        confinement: ConfinementHandle,
+        mechanisms: PreparedMechanisms,
         output: &mut Vec<u8>,
         error_output: &mut Vec<u8>,
         status: &mut Option<std::process::ExitStatus>,
     ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
+        let PreparedMechanisms {
+            confinement,
+            quota_procs,
+        } = mechanisms;
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
         };
         #[cfg(not(target_os = "linux"))]
-        let _ = confinement;
+        let _ = (confinement, quota_procs);
         let deadline = Instant::now()
             .checked_add(Duration::from_millis(enforced.wall_clock_ms))
             .ok_or_else(|| {
@@ -1108,6 +1355,21 @@ impl ProcessProvider {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+        // The quota is joined *first*, before the confinement and before every
+        // `setrlimit`: the child must already be a member of the per-execution
+        // cgroup when its first descendant could exist, and joining after the
+        // user-namespace unshare would depend on how the kernel re-checks a
+        // migration's credentials.
+        #[cfg(target_os = "linux")]
+        if let Some(procs) = quota_procs {
+            use std::os::fd::AsRawFd;
+            // SAFETY: this runs in the forked child before `exec`. It allocates
+            // nothing, acquires no lock and makes one `write`; `procs` is owned
+            // by the closure and stays open until the spawn completes.
+            unsafe {
+                command.pre_exec(move || process_quota::linux::join(procs.as_raw_fd()));
+            }
+        }
         // The ruleset descriptor is close-on-exec, so the child restricts itself
         // with it and the `exec`ed package never sees it. The closure keeps the
         // `OwnedFd` alive until the spawn returns.

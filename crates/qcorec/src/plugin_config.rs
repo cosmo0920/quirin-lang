@@ -1,6 +1,7 @@
 //! Explicit local provider selection. No implicit home-directory configuration.
 use qcore_compiler::verifier_plugin::{
-    PluginId, PluginManifest, VerifierProvider, VerifierRegistry, verify_executable_package,
+    ExecutionPolicy, PluginId, PluginManifest, VerifierProvider, VerifierRegistry,
+    verify_executable_package,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -14,6 +15,17 @@ use std::sync::Arc;
 struct Configuration {
     version: u16,
     packages: Vec<Selection>,
+    /// The execution profile every provider this configuration builds runs
+    /// under (card `P03-F`). Absent means the recorded default: the
+    /// historical, explicitly labeled `unenforced-legacy` profile. The key is
+    /// omitted when it holds that default, so a configuration written before
+    /// this field existed round-trips byte-identically.
+    #[serde(default, skip_serializing_if = "is_default_execution")]
+    execution: ExecutionPolicy,
+}
+
+fn is_default_execution(policy: &ExecutionPolicy) -> bool {
+    *policy == ExecutionPolicy::default()
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -29,6 +41,10 @@ fn read(path: &Path) -> Result<Configuration, String> {
     if config.version != 1 {
         return Err("unsupported provider configuration version".into());
     }
+    // A written execution selection is checked before any package is opened,
+    // so a configuration that names an impossible one builds no provider at
+    // all rather than falling back to a weaker profile.
+    config.execution.validate().map_err(|e| e.to_string())?;
     let mut ids = BTreeSet::new();
     for package in &config.packages {
         package.manifest.validate().map_err(|e| e.to_string())?;
@@ -71,11 +87,24 @@ pub fn registry(path: &Path) -> Result<VerifierRegistry, String> {
                 package.manifest.plugin_id
             ));
         }
+        // The written selection is applied after identity verification and
+        // before registration, so every provider in this registry runs under
+        // exactly the profile the configuration names.
+        let provider = config
+            .execution
+            .apply(provider)
+            .map_err(|e| format!("{}: {e}", package.manifest.plugin_id))?;
         registry
             .register(Arc::new(provider))
             .map_err(|e| e.to_string())?;
     }
     Ok(registry)
+}
+
+/// The execution profile this configuration selects, for `plugins list` and
+/// for a caller that wants to state what a run enforced.
+pub fn execution_policy(path: &Path) -> Result<ExecutionPolicy, String> {
+    Ok(read(path)?.execution)
 }
 pub fn enable(config_path: &Path, package_path: &Path) -> Result<(), String> {
     let provider = verify_executable_package(package_path).map_err(|e| e.to_string())?;
@@ -84,6 +113,9 @@ pub fn enable(config_path: &Path, package_path: &Path) -> Result<(), String> {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Configuration {
             version: 1,
             packages: vec![],
+            // A new configuration records the historical default explicitly;
+            // it is not serialized, so the written bytes are unchanged.
+            execution: ExecutionPolicy::default(),
         },
         Err(e) => return Err(e.to_string()),
     };

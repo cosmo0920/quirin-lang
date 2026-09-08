@@ -579,7 +579,21 @@ pub(crate) mod linux {
         policy: &ConfinementPolicy,
         package_root: &str,
         network_access_declared: bool,
+        availability: crate::process_quota::MechanismAvailability,
     ) -> Result<Confinement, String> {
+        // A forced-unavailable mechanism refuses here, before the kernel is
+        // asked, and names itself as an override so no report can read it as a
+        // statement about the running kernel. The override can only remove a
+        // mechanism, never add one.
+        if let Some(forced) = availability.landlock.forced_refusal("Landlock") {
+            return Err(forced);
+        }
+        if let Some(forced) = availability
+            .user_namespace
+            .forced_refusal("user and network namespace")
+        {
+            return Err(forced);
+        }
         let probe = probe()?;
         let paths = policy
             .entries(package_root)

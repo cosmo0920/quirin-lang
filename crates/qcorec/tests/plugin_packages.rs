@@ -340,3 +340,93 @@ fn configured_source_scope_dispatches_only_the_enabled_process() {
     );
     assert!(!f.package.join("invoked").exists());
 }
+
+/// The configured execution-profile route (card `P03-F`).
+///
+/// Before this, `linux-rlimit-v1` and `linux-confined-v1` were reachable only
+/// from Rust, so every configured run was permanently on the historical
+/// profile. This checks that a written selection reaches the registry, that
+/// the default is unchanged and unwritten, and that a selection the host
+/// cannot honor refuses instead of falling back.
+#[test]
+fn the_execution_profile_is_explicit_configuration_and_defaults_to_the_legacy_one() {
+    let f = Fixture::new("profile-route");
+    succeeds(f.enable());
+    let written = std::fs::read_to_string(&f.config).unwrap();
+    // The default is recorded, not written: an enable produces exactly the
+    // bytes it produced before this field existed.
+    assert!(!written.contains("\"execution\""), "{written}");
+    let reported = succeeds(f.cli(&["plugins", "profile", "--config", f.config.to_str().unwrap()]));
+    assert!(reported.contains("unenforced-legacy"), "{reported}");
+    assert!(!reported.contains("confinement"), "{reported}");
+    // With no configuration at all the answer is the same default.
+    let bare = succeeds(f.cli(&["plugins", "profile"]));
+    assert!(bare.contains("unenforced-legacy"), "{bare}");
+
+    let mut config: serde_json::Value = serde_json::from_str(&written).unwrap();
+    let config_path = f.config.clone();
+    let selected = |value: &mut serde_json::Value, block: serde_json::Value| {
+        value["execution"] = block;
+        std::fs::write(&config_path, serde_json::to_vec_pretty(value).unwrap()).unwrap();
+    };
+
+    // A confining selection reaches the registry and is reported as selected.
+    selected(
+        &mut config,
+        serde_json::json!({
+            "version": 1,
+            "profile": "linux-confined-v1",
+            "confinement": {"base": "linux-runtime-defaults", "read_only": ["/etc/qcore"]}
+        }),
+    );
+    let reported = succeeds(f.cli(&["plugins", "profile", "--config", f.config.to_str().unwrap()]));
+    assert!(reported.contains("linux-confined-v1"), "{reported}");
+    assert!(reported.contains("linux-runtime-defaults"), "{reported}");
+    assert!(succeeds(f.list()).contains("example.cli"));
+
+    // A policy under a profile that installs none is refused, and no registry
+    // is built at all -- the same refusal the provider makes, made earlier.
+    selected(
+        &mut config,
+        serde_json::json!({
+            "version": 1,
+            "profile": "linux-rlimit-v1",
+            "confinement": {"base": "linux-runtime-defaults"}
+        }),
+    );
+    fails(f.list(), "enforces no confinement policy");
+
+    // A confining profile with no policy is refused in the other direction.
+    selected(
+        &mut config,
+        serde_json::json!({"version": 1, "profile": "linux-confined-v1"}),
+    );
+    fails(f.list(), "requires an explicit confinement policy");
+
+    // A relative admitted path would mean whatever the reader's directory
+    // makes it mean, so it is refused rather than resolved.
+    selected(
+        &mut config,
+        serde_json::json!({
+            "version": 1,
+            "profile": "linux-confined-v1",
+            "confinement": {"base": "linux-runtime-defaults", "read_write": ["scratch"]}
+        }),
+    );
+    fails(f.list(), "is relative");
+
+    // An unknown selection version is refused rather than guessed.
+    selected(
+        &mut config,
+        serde_json::json!({"version": 2, "profile": "unenforced-legacy"}),
+    );
+    fails(f.list(), "unsupported execution policy version");
+
+    // An unknown key inside the block is refused too, so a misspelled profile
+    // selection cannot be silently ignored into the default.
+    selected(
+        &mut config,
+        serde_json::json!({"version": 1, "profil": "linux-confined-v1"}),
+    );
+    fails(f.list(), "unknown field");
+}

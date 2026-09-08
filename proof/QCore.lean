@@ -1,3 +1,4 @@
+import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
 import QCore.ConcurrencyPrelude
 import QCore.BooleanFieldUnit

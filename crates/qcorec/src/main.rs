@@ -5,12 +5,13 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use qcore_compiler::verifier_plugin::ExecutionPolicy;
 use qcore_compiler::{
     CompileOptions, PluginId, SourceFile, compile_files, compile_files_with_registry,
     format_diagnostic, load_first_party_registry,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins profile [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -216,6 +217,20 @@ fn plugins_command(arguments: &[String]) -> Result<(), String> {
                     manifest.plugin_id, manifest.package_version, capabilities
                 );
             }
+            Ok(())
+        }
+        // The configured execution profile, stated rather than implied. With no
+        // `--config` there is no configuration to read, so the answer is the
+        // recorded default; a configuration answers with what it selected.
+        [command] if command == "profile" => {
+            let policy = match config {
+                Some(path) => plugin_config::execution_policy(std::path::Path::new(path))?,
+                None => ExecutionPolicy::default(),
+            };
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&policy).map_err(|error| error.to_string())?
+            );
             Ok(())
         }
         [command, raw_id] if command == "inspect" => {
