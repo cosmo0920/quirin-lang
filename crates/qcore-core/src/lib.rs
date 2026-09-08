@@ -11,6 +11,7 @@ pub mod advanced_control;
 pub mod aggregate_composition;
 pub mod ast;
 pub mod c_emit;
+pub mod capacity_boundary;
 pub mod cfg;
 pub mod cleanup_lowering;
 pub mod concurrency;
