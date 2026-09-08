@@ -1,0 +1,47 @@
+{
+  "note": [
+    "Two fixed Linux ASan/UBSan/LSan runs of the two selected F02 programs.",
+    "Executable digests are path-dependent because -g bakes the build directory",
+    "into the debug info; the generated C digest is the reproducible identity.",
+    "No ThreadSanitizer run is offered: TSan does not intercept C11 thrd_create",
+    "(measured in docs/reports/remaining-t04/README.md)."
+  ],
+  "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "target": "x86_64-pc-linux-gnu",
+  "compile_flags": [
+    "-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror", "-g", "-O1",
+    "-fsanitize=address,undefined", "-fno-omit-frame-pointer"
+  ],
+  "environment": {
+    "ASAN_OPTIONS": "detect_leaks=1",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+  },
+  "relation": "qcore.task-trace-relation.v1",
+  "runs": [
+    {
+      "program": "round-trip",
+      "source": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "generated_c_sha256": "f7061e7599901c6af698f278ae3aee3f3f56a09fc2300578ccb5d4e269b0e274",
+      "executable_sha256": "230f17aa207b24dc6f7348156c919ecc57e689d2ab550bd90942ef603f39681f",
+      "exit_status": 0,
+      "sanitizer_output": "none",
+      "observed_facts": 7,
+      "relation_verdict": "admitted"
+    },
+    {
+      "program": "concurrent",
+      "source": "compiler/tests/fixtures/f02/concurrent_round_trip.qcore",
+      "generated_c_sha256": "44599187b5c0aa43fa11862b2cd00f08a007322bf7be76f9398dcc169ef4ec4f",
+      "executable_sha256": "98d2849b1b306754c54ace6632c035fada8e85787dd91859d6789280fcd9ea1e",
+      "exit_status": 0,
+      "sanitizer_output": "none",
+      "observed_facts": 11,
+      "relation_verdict": "admitted"
+    }
+  ],
+  "reproduction": [
+    "cargo run --quiet -p qcorec -- emit -o /tmp/f02.c PROGRAM.qcore",
+    "clang -std=c11 -pthread -Wall -Wextra -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer /tmp/f02.c -o /tmp/f02",
+    "ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/f02"
+  ]
+}

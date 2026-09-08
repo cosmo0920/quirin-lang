@@ -207,8 +207,11 @@ not as a requirement.
 ### 6.1 Proved in Lean (kernel-checked, no new axiom)
 
 Twenty-six theorems in `QCore.TaskTraceRelation`, every one of them registered
-in `AuditTaskTraceRelation.lean`. Measured axiom closure: recorded in §13. No
-`sorry`, no placeholder, no existing model changed.
+in `AuditTaskTraceRelation.lean`. Measured axiom closure: `propext` on
+twenty-three, nothing at all on three, and `Quot.sound` additionally on
+`admitted_traces_report_the_same_facts` — inside the `AuditAll.lean` allowance
+(`propext`, `Classical.choice`, `Quot.sound`), and `Classical.choice` is not
+used. No `sorry`, no placeholder, no existing model changed.
 
 Six are **general**: they quantify over arbitrary reference and observed traces,
 not over a domain.
@@ -261,7 +264,7 @@ Nineteen tests in `crates/qcore-core/tests/task_trace_relation.rs`, four in
 | `the_bounded_enumerator_finds_the_same_six_schedules` | the enumerator agrees with the domain, and honours its bound |
 | `single_transpositions_of_admitted_schedules_are_censused` | §5.2 on D3 |
 | `the_admitted_order_reports_its_own_edges` | 16 and 31 admitted causal edges, pinned |
-| eight named refusal tests | one per constraint family, each with its exact violation value |
+| nine named refusal tests | one per constraint family, each with its exact violation value |
 | two observer tests | the alphabet round-trips; a partially readable line is refused, not skipped |
 | `the_declared_trace_fixtures_are_the_reference_runs` | the domain fixtures are the real reference runs, not hand-written approximations |
 | `the_native_rendering_relates_to_the_admitted_causal_order` | §5.3, with the generated-C digest pinned |
@@ -282,7 +285,6 @@ Acceptance 2. Every native record binds, in one place
 |---|---|---|
 | source digest | `1cc29437772ab764` | `051dfc88eb3ef08f` |
 | generated C digest | `7d39f7c9157db610` | `3cb6a22168b481b3` |
-| executable digest | `9430e5814e71403c` | `9aa0e96c7f41cc5e` |
 | facts / admitted edges | 7 / 16 | 11 / 31 |
 | reference positions | `[0..6]` | `[0..10]` |
 
@@ -291,6 +293,13 @@ target `x86_64-pc-linux-gnu`, flags `-std=c11 -pthread -Wall -Wextra -Werror -g
 -O1`, runtime `c11-threads/qcore_task_start+qcore_task_collect`, observer
 `qcore_core::task_trace_relation::parse_observed_trace`, relation
 `qcore.task-trace-relation.v1`.
+
+`native-runs.json` also records an **executable digest** per run. It is *not*
+reproducible and is deliberately not pinned: `-g` bakes the temporary build
+directory into the debug info, so the same generated C yields a different
+executable digest on every run. It identifies the binary that produced that
+record and nothing more. The generated C digest is the reproducible identity,
+and it is the one the test pins.
 
 Following G01's discipline, the generated-C digests are **pinned in the test**.
 A change to emission retires this record rather than silently reinterpreting it;
@@ -305,10 +314,13 @@ Both programs, built from the same generated C with
 above and run with `ASAN_OPTIONS=detect_leaks=1
 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1`:
 
-| Program | generated C sha256 | executable sha256 | exit | sanitizer output | stdout |
-|---|---|---|---:|---|---|
-| round trip | `f7061e7599901c6a…` | `230f17aa207b24dc…` | 0 | none | the 7 facts, admitted |
-| concurrent | `44599187b5c0aa43…` | `98d2849b1b306754…` | 0 | none | the 11 facts, admitted |
+| Program | generated C sha256 | exit | sanitizer output | stdout |
+|---|---|---:|---|---|
+| round trip | `f7061e7599901c6a…` | 0 | none | the 7 facts, admitted |
+| concurrent | `44599187b5c0aa43…` | 0 | none | the 11 facts, admitted |
+
+Full digests, the exact flag vector, the environment and the reproduction
+commands are in `sanitizer-runs.json`.
 
 No TSan run is offered: ThreadSanitizer does not intercept C11 `thrd_create`
 (measured in T04, `docs/reports/remaining-t04/README.md`), so the concurrent
@@ -438,10 +450,10 @@ Suggested AGENTS.md ledger sentence, for the integrator to place or discard:
 | `crates/qcore-core/tests/fixtures/f02/concurrent_round_trip.trace` | new |
 | `compiler/tests/f02_trace_relation.rs` | new, 4 tests |
 | `compiler/tests/fixtures/f02/concurrent_round_trip.qcore` | new fixture |
-| `proof/QCore/TaskTraceRelation.lean` | new, 22 theorems |
+| `proof/QCore/TaskTraceRelation.lean` | new, 26 theorems |
 | `proof/AuditTaskTraceRelation.lean` | new |
 | `proof/QCore.lean` | +1 import |
-| `docs/reports/remaining-f02/` | this record and `native-runs.json` |
+| `docs/reports/remaining-f02/` | this record, `native-runs.json`, `sanitizer-runs.json` |
 
 `AGENTS.md`, `CLAUDE.md`, `docs/reevaluation/ct_manifest.json`,
 `docs/reviews/r0_3/acceptance.json` and
@@ -452,12 +464,36 @@ No existing production file changed except the one module line.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | (recorded below) |
-| `cargo fmt --all -- --check` | clean |
-| `cargo clippy --all-targets -- -D warnings` | clean |
+| `cargo test --workspace` | exit 0 — **1165 passed**, 0 failed, 1 ignored (1141 at baseline; +19 core tests, +4 compiler tests, +1 compile-fail doctest) |
+| `cargo fmt --all -- --check` | exit 0, clean |
+| `cargo clippy --all-targets -- -D warnings` | exit 0, clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
-| `python3 -B -m unittest discover -s scripts/tests` | 43 passed |
-| `cd proof && lake build` | exit 0 |
-| `python3 -B scripts/check_lean_audits.py` | (recorded below) |
-| `cargo test --manifest-path providers/Cargo.toml` | 56 passed |
+| `python3 -B -m unittest discover -s scripts/tests` | exit 0 — 43 passed |
+| `cd proof && lake build` | exit 0 — 68 jobs (was 67) |
+| `python3 -B scripts/check_lean_audits.py` | exit 0 — **24 audits** (was 23) |
+| `cargo test --manifest-path providers/Cargo.toml` | exit 0 — 56 passed |
+
+Native runs used `clang` 21.1.8 on `x86_64-pc-linux-gnu`;
+`git submodule update --init --recursive` was run once in this worktree, as
+AGENTS.md documents.
+
+### 13.1 Cost, recorded rather than hidden
+
+`QCore.TaskTraceRelation` takes **336 s** to elaborate and peaks near **13 GB**
+of resident memory, which is far more than any other module in `proof/`. The
+cost is D3: 3025 traces of eleven facts, each classified by a transcription of a
+twenty-class relation, in four kernel traversals. Two decisions follow from it
+and are deliberate:
+
+* The 5040-ordering domain (E1) is **Rust-only**. An earlier version put it in
+  Lean as well and reached 17 GB without finishing.
+* The per-class census is **Rust-only**. An earlier version folded a
+  21-element list accumulator through the domain in Lean; because the kernel
+  substitutes a `let` rather than sharing it, the accumulator term grew
+  without bound. The verdict digest — a `Nat` fold of the class codes — pins
+  strictly more (the class of every trace in order, not just the totals) at
+  linear cost, and the readable census is decoded on the Rust side.
+
+Anyone raising a domain bound here should re-measure before committing: this
+module is the workspace's Lean cost outlier.
