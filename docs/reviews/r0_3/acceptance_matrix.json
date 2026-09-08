@@ -863,13 +863,14 @@
    "docs/reports/remaining-t00/coverage.json",
    "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
    "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
-   "docs/reports/wave5-ct-integration/ct_stage_evidence.json"
+   "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+   "docs/reports/wave8-epoch-ct/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count and its exact target_os gate. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 24,
-   "unmapped": 26
+   "mapped": 28,
+   "unmapped": 22
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -884,6 +885,12 @@
     "windows"
    ],
    "elaborate": [
+    "any"
+   ],
+   "epoch_bound_check": [
+    "any"
+   ],
+   "epoch_lowering": [
     "any"
    ],
    "mutex_invariant_check": [
@@ -922,62 +929,72 @@
   },
   "stage_histogram": {
    "parse": {
-    "executed": 24
+    "executed": 28
    },
    "elaborate": {
-    "executed": 24
+    "executed": 28
    },
    "task_lowering": {
     "executed": 16,
-    "not_applicable": 8
+    "not_applicable": 12
    },
    "task_ledger_check": {
     "executed": 15,
-    "not_applicable": 9
+    "not_applicable": 13
    },
    "mutex_lowering": {
     "executed": 8,
-    "not_applicable": 16
+    "not_applicable": 20
    },
    "mutex_invariant_check": {
     "executed": 8,
-    "not_applicable": 16
+    "not_applicable": 20
+   },
+   "epoch_lowering": {
+    "executed": 4,
+    "not_applicable": 24
+   },
+   "epoch_bound_check": {
+    "executed": 4,
+    "not_applicable": 24
    },
    "sequential_whole_program": {
-    "not_applicable": 24
+    "not_applicable": 28
    },
    "sequential_reference_execution": {
-    "not_applicable": 24
+    "not_applicable": 28
    },
    "task_reference_execution": {
     "executed": 11,
-    "not_applicable": 13
+    "not_applicable": 17
    },
    "mutex_reference_execution": {
     "executed": 1,
-    "not_applicable": 23
+    "not_applicable": 27
    },
    "c_emission": {
     "executed": 12,
-    "not_applicable": 12
+    "not_applicable": 16
    },
    "native_execution": {
     "executed": 12,
-    "not_applicable": 12
+    "not_applicable": 16
    },
    "native_sanitized": {
     "executed": 3,
+    "not_applicable": 4,
     "recorded_not_gated": 5,
     "unassessed": 16
    },
    "legacy_c_twin": {
-    "not_applicable": 24
+    "not_applicable": 28
    },
    "proof": {
-    "unassessed": 24
+    "unassessed": 28
    }
   },
   "depth_profile": {
+   "epoch_bound_check": 4,
    "mutex_invariant_check": 7,
    "native_execution": 9,
    "native_sanitized": 3,
@@ -1006,19 +1023,25 @@
    "CT30": "mutex_invariant_check",
    "CT31": "mutex_invariant_check",
    "CT32": "mutex_invariant_check",
+   "CT35": "epoch_bound_check",
+   "CT36": "epoch_bound_check",
    "CT37": "native_execution",
+   "CT38": "epoch_bound_check",
+   "CT39": "epoch_bound_check",
    "CT48": "mutex_invariant_check",
    "CT50": "native_execution"
   },
   "observation_counts": {
    "c_emission": 28,
-   "elaborate": 24,
+   "elaborate": 28,
+   "epoch_bound_check": 4,
+   "epoch_lowering": 4,
    "mutex_invariant_check": 8,
    "mutex_lowering": 8,
    "mutex_reference_execution": 1,
    "native_execution": 28,
    "native_sanitized": 9,
-   "parse": 24,
+   "parse": 28,
    "task_ledger_check": 15,
    "task_lowering": 16,
    "task_reference_execution": 26
@@ -1032,6 +1055,7 @@
     "harness_verdict_mode": "native_owned_transfer",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1061,6 +1085,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1142,6 +1172,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": null,
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1171,6 +1202,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1214,6 +1251,7 @@
     "harness_verdict_mode": "native_heap_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1243,6 +1281,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1315,6 +1359,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1344,6 +1389,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1387,6 +1438,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1416,6 +1468,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1477,6 +1535,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -1531,6 +1595,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -1589,6 +1659,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -1643,6 +1719,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -1701,6 +1783,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -1757,6 +1845,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -1795,6 +1889,7 @@
     "harness_verdict_mode": "native_owned_transfer",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1824,6 +1919,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1891,6 +1992,7 @@
     "harness_verdict_mode": "native_create_recovery",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1920,6 +2022,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -1996,6 +2104,7 @@
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2025,6 +2134,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2093,6 +2208,7 @@
     "harness_verdict_mode": "native_join_failure",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2122,6 +2238,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2189,6 +2311,7 @@
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2218,6 +2341,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2292,6 +2421,7 @@
     "harness_verdict_mode": "native_heap_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2321,6 +2451,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2393,6 +2529,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2419,6 +2556,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2462,6 +2605,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": null,
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2491,6 +2635,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2543,6 +2693,7 @@
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2572,6 +2723,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -2658,6 +2815,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -2712,6 +2875,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -2770,6 +2939,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -2824,6 +2999,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -2882,6 +3063,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -2920,6 +3107,7 @@
     "harness_verdict_mode": "checked_mutex_sanitized",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2950,6 +3138,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3021,6 +3215,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3051,6 +3246,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3104,6 +3305,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3134,6 +3336,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3195,6 +3403,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3225,6 +3434,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3278,6 +3493,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3308,6 +3524,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3368,6 +3590,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3398,6 +3621,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3452,6 +3681,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3482,6 +3712,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -3554,6 +3790,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -3610,6 +3852,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -3642,115 +3890,191 @@
    },
    {
     "id": "CT35",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Count 4096 once",
-    "current_bucket": "blocked-on-W3/W4",
-    "blocker": "no byte-valued quantities; no share/read form for one identity",
-    "bucket_changed_since_batch2": false,
+    "route": "epoch",
+    "harness_verdict_mode": "epoch_bound_figures",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": 2,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "observations": 1
+     },
+     "epoch_bound_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT35/two_cells.qcore",
+      "observations": 1,
+      "note": "Two distinct 4096-byte cells, each read by both tasks: admitted with shared_entry_union.memory = 8192 and epoch_peak.memory = 11008. The union counts cell identities, not readers. The control's whole certificate is pinned, so exactly four figures move."
+     },
+     "refused_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore",
+      "observations": 1,
+      "note": "One task naming the same cell twice refuses with the ordered cascade [Q630] DuplicateSharedEntry. Without it, `counted once` could be an artifact of a lowering that collapses repeats rather than a checked rule."
+     }
+    },
+    "deepest_executed_stage": "epoch_bound_check",
+    "stage_evidence_record": "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "semantic_profile": "source.epoch.bound.v1: two workers each declare `read page;` for the one `let page = share 4096;` cell, so the lowering names one cell identity and the checker's shared entry union counts 4096 once; the published epoch peak is 4096 + (1024 + 1024) + (512 + 2*128) = 6912. The mapping asserts every nonzero axis of the published certificate, not merely that the epoch checked. The two_cells control declares a second distinct 4096-byte cell that both workers read and measures 8192, so the union counts identities and not readers; the repeated_entry control names the same cell twice in one worker and is refused at Q630 rather than deduplicated. DeclaredTaskFootprints, DeclaredRuntimeOverhead, DisjointSharedStorageCells and NoScheduleModel are carried unchanged on the certificate: nothing here imports a footprint from C, from an allocator or from a run."
    },
    {
     "id": "CT36",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Bound at least 8192 plus modeled overhead",
-    "current_bucket": "blocked-on-W3/W4 (conditional half resolved)",
-    "blocker": "no byte quantities and no expected.json form for a bound; conditionals now exist via Result match arms",
-    "bucket_changed_since_batch2": true,
+    "route": "epoch",
+    "harness_verdict_mode": "epoch_bound_figures",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": 2,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "observations": 1
+     },
+     "epoch_bound_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore",
+      "observations": 1,
+      "note": "The same two peaks under zero overhead and an allocation of exactly 8192: admitted, epoch_peak.memory = allocation.memory = 8192. The upper half of the straddle."
+     },
+     "refused_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore",
+      "observations": 1,
+      "note": "One byte below the summed peak refuses with the ordered cascade [Q637, Q638]. A maximized reading would have called 5120 the peak and admitted both controls, so this refusal is what makes the summing falsifiable; both codes are pinned because the head alone would not distinguish the per-task credit check from the whole-epoch one."
+     }
+    },
+    "deepest_executed_stage": "epoch_bound_check",
+    "stage_evidence_record": "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "semantic_profile": "source.epoch.bound.v1: two independent workers declare `peak 3072;` and `peak 5120;`. Every assignment of phases to independent tasks is an admitted configuration, so the peaks are summed rather than maximized: the published concurrent private peak is 8192 and the epoch peak is 8192 + (512 + 2*128) = 8960, at least the summed peaks plus the modeled overhead. Two controls straddle the summed figure with the same two peaks — an allocation of 8192 is admitted and 8191 is refused with the ordered cascade [Q637, Q638] — and a maximized reading would have called 5120 the peak and admitted both, so the refusal is what makes the summing falsifiable. The overhead figures are a declared premise; a `measured RUNS` suffix in their place is Q640."
    },
    {
     "id": "CT37",
@@ -3760,6 +4084,7 @@
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3789,6 +4114,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -3857,115 +4188,177 @@
    },
    {
     "id": "CT38",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "credit partitions absent; an over-release fixture reduces to CT02",
-    "bucket_changed_since_batch2": false,
+    "route": "epoch",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": 1,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "observations": 1
+     },
+     "epoch_bound_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore",
+      "observations": 1,
+      "note": "The same epoch with credits that really do split the total (4096 + 4096 = 8192): admitted, with granted_credits.memory = allocation.memory = 8192 measured on the published certificate. The refusal is keyed to the sum, not to the split."
+     }
+    },
+    "deepest_executed_stage": "epoch_bound_check",
+    "stage_evidence_record": "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "semantic_profile": "source.epoch.bound.v1: two children each declare `credit 6144 effort 100;` out of an epoch that declares `bound 8192 effort 1000;`. Each child's own demand fits its own credit, so no per-task check refuses it; the granted total 12288 exceeds the 8192 allocation and the exact ordered cascade is [Q637] CreditsExceedAllocation on the memory axis. The control splits the same total within it (4096 + 4096 = 8192) and is admitted with granted_credits.memory = allocation.memory = 8192, so the refusal is keyed to the sum and not to the split."
    },
    {
     "id": "CT39",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject unsupported claim",
-    "current_bucket": "DECIDABLE-NOW (coarser reason)",
-    "blocker": "resolved: the silent-acceptance path batch 2 named as the direct blocker is repaired",
-    "bucket_changed_since_batch2": true,
+    "route": "epoch",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": 1,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "observations": 1
+     },
+     "epoch_bound_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_epoch_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore",
+      "observations": 1,
+      "note": "The identical epoch with the claim removed: admitted with work_total.effort = 800 and the NoScheduleModel premise on the certificate (the runner pins the whole premise set for every accepted module). A consumer cannot drop that premise and read 800 as a finish time."
+     }
+    },
+    "deepest_executed_stage": "epoch_bound_check",
+    "stage_evidence_record": "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "semantic_profile": "source.epoch.bound.v1: a well-accounted epoch additionally writes `bound effort as latency;`, asking for its work bound as a completion time. The driver derives and independently rechecks the bound first and only then puts the claim to the profile's own epoch_wall_clock_bound, which always refuses: the exact ordered cascade is [Q639] WallClockUnavailable. The control is the same epoch without the claim, admitted with work_total on the effort axis = 800 and NoScheduleModel on the certificate, so a consumer cannot drop the premise and read the total as a finish time. There is no core count, queueing or preemption anywhere in this profile."
    },
    {
     "id": "CT40",
@@ -3991,6 +4384,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -4049,6 +4448,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -4103,6 +4508,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -4161,6 +4572,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -4215,6 +4632,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -4273,6 +4696,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -4327,6 +4756,12 @@
       "status": "unexecuted"
      },
      "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
       "status": "unexecuted"
      },
      "sequential_whole_program": {
@@ -4385,6 +4820,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -4423,6 +4864,7 @@
     "harness_verdict_mode": "reject",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4453,6 +4895,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
       "observations": 1
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
       "status": "not_applicable"
@@ -4532,6 +4980,12 @@
      "mutex_invariant_check": {
       "status": "unexecuted"
      },
+     "epoch_lowering": {
+      "status": "unexecuted"
+     },
+     "epoch_bound_check": {
+      "status": "unexecuted"
+     },
      "sequential_whole_program": {
       "status": "unexecuted"
      },
@@ -4570,6 +5024,7 @@
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
+    "epoch_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4599,6 +5054,12 @@
       "status": "not_applicable"
      },
      "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "epoch_lowering": {
+      "status": "not_applicable"
+     },
+     "epoch_bound_check": {
       "status": "not_applicable"
      },
      "sequential_whole_program": {
@@ -4668,20 +5129,18 @@
   },
   "unmapped_bucket_counts": {
    "ambiguous + unimplemented-syntax": 1,
-   "blocked-on-unimplemented-syntax": 7,
+   "blocked-on-unimplemented-syntax": 6,
    "blocked-on-task-lowering (share captures)": 1,
-   "blocked-on-W3/W4": 3,
+   "blocked-on-W3/W4": 2,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
    "blocked-on-unimplemented-syntax (no mutex value)": 3,
-   "blocked-on-W3/W4 (conditional half resolved)": 1,
-   "DECIDABLE-NOW (coarser reason)": 2,
    "blocked-on-harness-schema (C-twin stage)": 5,
-   "ambiguous": 1
+   "ambiguous": 1,
+   "DECIDABLE-NOW (coarser reason)": 1
   },
   "newly_decidable_not_mapped": [
    "CT24",
-   "CT39",
    "CT47"
   ],
   "known_manifest_overstatements": [
@@ -4924,7 +5383,7 @@
   {
    "id": "T08-SRC-O",
    "title": "Epoch source-form residuals",
-   "why": "T08-SRC-CT (the harness prerequisites above, then mapping CT35/CT36/CT38/CT39); -EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them).",
+   "why": "T08-SRC-EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them). T08-SRC-CT closed in wave 8: CT35/CT36/CT38/CT39 mapped through the epoch route with exhaustive certificate-figure pinning (docs/reports/wave8-epoch-ct/README.md).",
    "source": "docs/reports/remaining-t08-epoch-src/README.md"
   },
   {
@@ -4940,5 +5399,5 @@
    "source": "docs/reports/remaining-g03-f/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 7 complete: O03-U4U5, G03-F, O04-ARMS, T08-EPOCH-SRC and P03-F closed at their stated boundaries; the 185-unit baseline is deliberately re-pinned to O04-ARMS's after-measurement with headline counts unchanged and zero verdict moves; profile-manifest v2, 28 transported CMake options and the real Libevent audit land; source.epoch.bound.v1 lands check-only; the confined profile gains an enforced per-tree child quota; CT stays 24/50; nothing promoted)"
+ "updated": "2026-09-09 (wave 8 in progress: P09-G removed with archived parity, six routes retained with measured gaps (qcore-compiler 0.3.0); wave8-epoch-ct maps CT35/CT36/CT38/CT39 through the new epoch route and epoch_bound_figures verdict mode — CT 24/50 -> 28/50 by executed-stage evidence only, sanitized-native 3 of 28, proof 0 of 28; nothing promoted)"
 }
