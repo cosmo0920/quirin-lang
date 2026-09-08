@@ -150,3 +150,5 @@ jobs:
           # Compile-database fixtures must use the discovered executable too.
           cargo test -p qcore-compiler --test cycle19_current_command
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test -p qcore-audit --test second_source_set
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

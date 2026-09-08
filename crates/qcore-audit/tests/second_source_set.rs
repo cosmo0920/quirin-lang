@@ -128,17 +128,24 @@ impl Fixture {
         )
         .unwrap();
 
+        // Match the gateway's selected compiler, including QCORE_CLANG and
+        // Visual Studio installations whose Clang is not on PATH.
+        let clang = qcore_c_gateway::clang_command().expect("Clang is required for audit fixtures");
+        let compiler = clang.get_program().to_str().unwrap();
         let database = sources()
             .into_keys()
             .map(|name| {
+                let mut arguments = vec![compiler, "-std=gnu17", "-Wall", "-g"];
+                // These Unix build flags are rejected by native Windows Clang.
+                #[cfg(not(windows))]
+                arguments.extend(["-fPIC", "-Wa,--noexecstack"]);
+                let input = format!("{library_root}/{name}");
+                let output = format!("{name}.o");
+                arguments.extend(["-c", &input, "-o", &output]);
                 json!({
                     "directory": checkout,
-                    "file": format!("{library_root}/{name}"),
-                    "arguments": [
-                        "clang", "-std=gnu17", "-Wall", "-g", "-fPIC", "-Wa,--noexecstack",
-                        "-c", format!("{library_root}/{name}"),
-                        "-o", format!("{name}.o"),
-                    ],
+                    "file": input,
+                    "arguments": arguments,
                 })
             })
             .collect::<Vec<_>>();
@@ -192,7 +199,9 @@ fn a_nested_root_source_set_publishes_keyed_verdicts_from_configuration_alone() 
     let output = fixture.run();
     assert!(
         output.status.success(),
-        "{}",
+        "audit failed ({}):\nstdout:\n{}\nstderr:\n{}",
+        output.status,
+        String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );
     let report = fixture.report();
@@ -233,7 +242,14 @@ fn a_nested_root_source_set_publishes_keyed_verdicts_from_configuration_alone() 
 #[test]
 fn an_unknown_source_form_is_reported_with_a_reason_rather_than_omitted() {
     let fixture = Fixture::new();
-    assert!(fixture.run().status.success());
+    let output = fixture.run();
+    assert!(
+        output.status.success(),
+        "audit failed ({}):\nstdout:\n{}\nstderr:\n{}",
+        output.status,
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
     let report = fixture.report();
     let unknown = report["units"]
         .as_array()

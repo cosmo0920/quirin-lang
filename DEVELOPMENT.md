@@ -341,6 +341,15 @@ full suite.
 
 ## Increment records
 
+Windows second-source-set fixture (2026-09-08): compile databases now name the
+gateway-selected Clang and omit Unix-only build flags on Windows. All five
+tests pass through Visual Studio discovery and explicit `QCORE_CLANG`; CI also
+runs this target with Clang removed from PATH. Failed audit assertions include
+status, stdout and stderr. Production checker and proof semantics are unchanged.
+Formatting, workspace Clippy, both reevaluation probes and the pinned Lean build
+pass. Workspace validation still fails in the untouched `o04_constructor_caller`
+and `counter_source` targets.
+
 Windows executable examples (2026-09-08): `examples/threads/` adds two copied
 workers, an owned-buffer round trip with independent parent work, and two
 shared readers followed by an exclusive parent write. `build-windows.ps1`
