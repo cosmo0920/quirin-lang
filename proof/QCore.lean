@@ -1,3 +1,4 @@
+import QCore.TaskTraceRelation
 import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness
 import QCore.OwnedTaskExecution

@@ -33,13 +33,7 @@ const CONCURRENT_TRACE: &str =
 /// The exact compiler arguments bound into the recorded evidence, before the
 /// input and output paths.
 const COMPILE_FLAGS: [&str; 7] = [
-    "-std=c11",
-    "-pthread",
-    "-Wall",
-    "-Wextra",
-    "-Werror",
-    "-g",
-    "-O1",
+    "-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror", "-g", "-O1",
 ];
 
 /// Digests of the generated C11 for the two selected programs. A change to
@@ -87,7 +81,7 @@ struct NativeRun {
 
 fn build_and_run(name: &str, source: &str) -> NativeRun {
     let module = compile_files(
-        &[SourceFile::new(&format!("{name}.qcore"), source)],
+        &[SourceFile::new(format!("{name}.qcore"), source)],
         &CompileOptions::default(),
     )
     .unwrap();
@@ -229,6 +223,13 @@ fn the_native_evidence_binds_its_whole_identity() {
         .unwrap();
         let order = AdmittedCausalOrder::derive(&observation).unwrap();
         let linearization = relate(&order, &observed).unwrap();
+        let flags = COMPILE_FLAGS
+            .iter()
+            .map(|flag| format!("\"{flag}\""))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let positions = format!("{:?}", linearization.reference_positions);
+        let source_digest = digest(source.as_bytes());
         records.push(format!(
             concat!(
                 "    {{\n",
@@ -249,20 +250,16 @@ fn the_native_evidence_binds_its_whole_identity() {
                 "    }}"
             ),
             name = name,
-            source = digest(source.as_bytes()),
+            source = source_digest,
             c = run.c_digest,
             exe = run.executable_digest,
             compiler = compiler_version,
             target = target,
-            flags = COMPILE_FLAGS
-                .iter()
-                .map(|flag| format!("\"{flag}\""))
-                .collect::<Vec<_>>()
-                .join(", "),
+            flags = flags,
             relation = TRACE_RELATION_IDENTITY,
             events = observed.len(),
             edges = order.edges().len(),
-            positions = format!("{:?}", linearization.reference_positions),
+            positions = positions,
             reference = linearization.is_reference_order(),
         ));
     }

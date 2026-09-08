@@ -104,9 +104,10 @@ impl ObservedEvent {
             | Self::Dropped { task, .. }
             | Self::Completed { task, .. } => Some(*task),
             // P3: the creator, lender and joiner is the root task.
-            Self::Spawned { .. } | Self::Joined { .. } | Self::Loaned { .. } | Self::Returned {
-                ..
-            } => Some(ROOT_TASK),
+            Self::Spawned { .. }
+            | Self::Joined { .. }
+            | Self::Loaned { .. }
+            | Self::Returned { .. } => Some(ROOT_TASK),
             Self::CreationFailed { .. } => None,
         }
     }
@@ -190,7 +191,10 @@ pub enum TraceRelationViolation {
     /// R7 — a child's own activity after it was joined.
     ActivityAfterJoin { child: TaskId },
     /// R8 — a loan read before the loan, or a loan the join never closed.
-    LoanOrder { borrower: TaskId, buffer: ResourceId },
+    LoanOrder {
+        borrower: TaskId,
+        buffer: ResourceId,
+    },
     /// R9 — the root's completion is not the final fact.
     RootResultNotFinal,
 }
@@ -239,7 +243,11 @@ pub struct TraceParseError {
 }
 impl std::fmt::Display for TraceParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "unreadable observation line {}: {:?}", self.line, self.text)
+        write!(
+            f,
+            "unreadable observation line {}: {:?}",
+            self.line, self.text
+        )
     }
 }
 impl std::error::Error for TraceParseError {}
@@ -301,7 +309,9 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
                 _ => None,
             },
             "QCORE_BUFFER_RETURN" => match (number(rest.next()), number(rest.next())) {
-                (Some(borrower), Some(buffer)) => Some(ObservedEvent::Returned { borrower, buffer }),
+                (Some(borrower), Some(buffer)) => {
+                    Some(ObservedEvent::Returned { borrower, buffer })
+                }
                 _ => None,
             },
             "QCORE_TASK_SPAWN" => match (number(rest.next()), number(rest.next())) {
@@ -322,22 +332,24 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
                             outcome: ObservedOutcome::Unit,
                         })
                     }
-                    (Some(task), Some("I32")) => signed(rest.next()).map(|value| {
-                        ObservedEvent::Completed {
+                    (Some(task), Some("I32")) => {
+                        signed(rest.next()).map(|value| ObservedEvent::Completed {
                             task,
                             outcome: ObservedOutcome::I32(value),
-                        }
-                    }),
-                    (Some(task), Some("BUFFER")) => number(rest.next()).map(|buffer| {
-                        ObservedEvent::Completed {
+                        })
+                    }
+                    (Some(task), Some("BUFFER")) => {
+                        number(rest.next()).map(|buffer| ObservedEvent::Completed {
                             task,
                             outcome: ObservedOutcome::Buffer(buffer),
-                        }
-                    }),
-                    (Some(task), Some("ERROR")) => rest.next().map(|tag| ObservedEvent::Completed {
-                        task,
-                        outcome: ObservedOutcome::Error(tag.to_owned()),
-                    }),
+                        })
+                    }
+                    (Some(task), Some("ERROR")) => {
+                        rest.next().map(|tag| ObservedEvent::Completed {
+                            task,
+                            outcome: ObservedOutcome::Error(tag.to_owned()),
+                        })
+                    }
                     _ => None,
                 }
             }
@@ -496,9 +508,9 @@ fn check_order(events: &[ObservedEvent]) -> Result<(), TraceRelationViolation> {
     // R4: allocation is unique and first.
     let mut allocated: BTreeMap<ResourceId, (usize, i32)> = BTreeMap::new();
     for &buffer in &buffers {
-        let sites = single(&|event| {
-            matches!(event, ObservedEvent::Allocated { buffer: b, .. } if *b == buffer)
-        });
+        let sites = single(
+            &|event| matches!(event, ObservedEvent::Allocated { buffer: b, .. } if *b == buffer),
+        );
         if sites.len() > 1 {
             return Err(V::DuplicateAllocation { buffer });
         }
@@ -531,8 +543,9 @@ fn check_order(events: &[ObservedEvent]) -> Result<(), TraceRelationViolation> {
     // R5: release is unique, last, and mandatory.
     let mut released: BTreeMap<ResourceId, usize> = BTreeMap::new();
     for &buffer in &buffers {
-        let sites =
-            single(&|event| matches!(event, ObservedEvent::Dropped { buffer: b, .. } if *b == buffer));
+        let sites = single(
+            &|event| matches!(event, ObservedEvent::Dropped { buffer: b, .. } if *b == buffer),
+        );
         if sites.len() > 1 {
             return Err(V::DuplicateRelease { buffer });
         }
@@ -555,8 +568,9 @@ fn check_order(events: &[ObservedEvent]) -> Result<(), TraceRelationViolation> {
     // R6: creation is unique and precedes everything about or by the child.
     let mut created: BTreeMap<TaskId, usize> = BTreeMap::new();
     for &child in &children {
-        let sites =
-            single(&|event| matches!(event, ObservedEvent::Spawned { child: c, .. } if *c == child));
+        let sites = single(
+            &|event| matches!(event, ObservedEvent::Spawned { child: c, .. } if *c == child),
+        );
         if sites.len() > 1 {
             return Err(V::DuplicateCreation { child });
         }
@@ -640,8 +654,9 @@ fn check_order(events: &[ObservedEvent]) -> Result<(), TraceRelationViolation> {
     }
 
     // R9: the root's completion is the final fact.
-    let roots =
-        single(&|event| matches!(event, ObservedEvent::Completed { task, .. } if *task == ROOT_TASK));
+    let roots = single(
+        &|event| matches!(event, ObservedEvent::Completed { task, .. } if *task == ROOT_TASK),
+    );
     if roots.len() != 1 || roots[0] + 1 != events.len() {
         return Err(V::RootResultNotFinal);
     }
@@ -661,14 +676,10 @@ impl AdmittedCausalOrder {
 
     /// Derive the admitted order from a reference run, re-checking P3 against
     /// the run's own task table rather than assuming it.
-    pub fn derive(
-        observation: &TaskExecutionObservation,
-    ) -> Result<Self, TraceRelationViolation> {
+    pub fn derive(observation: &TaskExecutionObservation) -> Result<Self, TraceRelationViolation> {
         for task in &observation.tasks {
-            if let Some(parent) = task.parent {
-                if parent != ROOT_TASK {
-                    return Err(TraceRelationViolation::UnknownChild { child: task.task });
-                }
+            if task.parent.is_some_and(|parent| parent != ROOT_TASK) {
+                return Err(TraceRelationViolation::UnknownChild { child: task.task });
             }
         }
         Self::declare(reference_trace(observation))
@@ -685,7 +696,7 @@ impl AdmittedCausalOrder {
     pub fn edges(&self) -> Vec<(usize, usize)> {
         let mut edges = BTreeSet::new();
         let index_of = |predicate: &dyn Fn(&ObservedEvent) -> bool| -> Option<usize> {
-            self.events.iter().position(|event| predicate(event))
+            self.events.iter().position(predicate)
         };
         // P1: each actor's own events are program-ordered.
         for actor in actors(&self.events) {
@@ -720,14 +731,14 @@ impl AdmittedCausalOrder {
                     edges.insert((creation, index));
                 }
                 if !matches!(event, ObservedEvent::Returned { .. }) {
-                    if let Some(join) =
-                        index_of(&|other| matches!(other, ObservedEvent::Joined { child: c } if *c == child))
-                    {
+                    if let Some(join) = index_of(
+                        &|other| matches!(other, ObservedEvent::Joined { child: c } if *c == child),
+                    ) {
                         edges.insert((index, join));
                     }
-                } else if let Some(join) =
-                    index_of(&|other| matches!(other, ObservedEvent::Joined { child: c } if *c == child))
-                {
+                } else if let Some(join) = index_of(
+                    &|other| matches!(other, ObservedEvent::Joined { child: c } if *c == child),
+                ) {
                     edges.insert((join, index));
                 }
             }
@@ -830,9 +841,7 @@ pub fn admitted_linearizations(
                 let expected = projection(events, actor);
                 taken.len() <= expected.len() && taken[..] == expected[..taken.len()]
             });
-            if feasible
-                && !search(order, events, used, prefix, admitted, explored, bound)
-            {
+            if feasible && !search(order, events, used, prefix, admitted, explored, bound) {
                 return false;
             }
             prefix.pop();

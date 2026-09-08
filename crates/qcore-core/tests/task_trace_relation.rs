@@ -1,18 +1,20 @@
 //! F02 — the Rust side of one source-to-native trace relation.
 //!
-//! Two declared finite domains are enumerated here and, class for class,
+//! Three declared finite domains are enumerated here and, trace for trace,
 //! by the Lean transcription in `proof/QCore/TaskTraceRelation.lean`:
 //!
-//! * **D1** — every one of the `7! = 5040` orderings of the owned round trip's
-//!   facts. It measures refusal strength against an arbitrary observer.
-//! * **D2** — every one of the `C(11, 2) = 55` program-order interleavings of
-//!   the concurrent round trip's two actors. It measures schedule freedom: how
-//!   many *distinct total orders* the relation admits for one run.
-//! * **D3** — every single transposition of every D2 interleaving, `55 * 55 =
-//!   3025` traces. It measures how much of the surrounding order is genuinely
+//! * **D1** — the `7` schedules of the owned round trip: every ordering of its
+//!   facts that preserves each actor's own program order.
+//! * **D2** — the `C(11, 2) = 55` schedules of the concurrent round trip. It
+//!   measures schedule freedom: how many *distinct total orders* the relation
+//!   admits for one run.
+//! * **D3** — every single transposition of every D2 schedule, `55 * 55 = 3025`
+//!   traces. It measures how much of the surrounding order is genuinely
 //!   constrained rather than incidental.
 //!
-//! Every number pinned below is recomputed independently by the Lean kernel.
+//! Every domain size, trace digest and verdict digest below is recomputed
+//! independently by the Lean kernel. The per-class census and the `5040`-trace
+//! extension are Rust-only, and the report says so.
 
 use qcore_core::task_trace_relation::{
     AdmittedCausalOrder, ObservedEvent, ObservedOutcome, TraceRelationViolation,
@@ -23,9 +25,11 @@ const ROUND_TRIP: &str = include_str!("fixtures/f02/round_trip.trace");
 const CONCURRENT: &str = include_str!("fixtures/f02/concurrent_round_trip.trace");
 
 // Domain sizes, pinned on both sides.
-const D1_SIZE: usize = 5040;
+const D1_SIZE: usize = 7;
 const D2_SIZE: usize = 55;
 const D3_SIZE: usize = D2_SIZE * D2_SIZE;
+/// Rust-only extension: every ordering of the round trip's seven facts.
+const EXTENSION_SIZE: usize = 5040;
 
 fn events(text: &str) -> Vec<ObservedEvent> {
     parse_observed_trace(text).unwrap()
@@ -89,19 +93,15 @@ fn encode_event(event: &ObservedEvent) -> u64 {
         ObservedEvent::Dropped { task, buffer } => 6 + 16 * (task + 8 * buffer),
         ObservedEvent::Loaned { borrower, buffer } => 7 + 16 * (borrower + 8 * buffer),
         ObservedEvent::Returned { borrower, buffer } => 8 + 16 * (borrower + 8 * buffer),
-        ObservedEvent::Completed { task, outcome } => {
-            9 + 16 * (task + 8 * encode_outcome(outcome))
-        }
+        ObservedEvent::Completed { task, outcome } => 9 + 16 * (task + 8 * encode_outcome(outcome)),
         ObservedEvent::Joined { child } => 10 + 16 * child,
     }
 }
 
 fn mix_trace(trace: &[ObservedEvent]) -> u64 {
-    trace
-        .iter()
-        .fold(TRACE_SEED, |accumulator, event| {
-            mix(accumulator, encode_event(event))
-        })
+    trace.iter().fold(TRACE_SEED, |accumulator, event| {
+        mix(accumulator, encode_event(event))
+    })
 }
 
 fn trace_digest(traces: &[Vec<ObservedEvent>]) -> u64 {
@@ -145,47 +145,61 @@ fn apply(trace: &[ObservedEvent], indices: &[usize]) -> Vec<ObservedEvent> {
     indices.iter().map(|&index| trace[index].clone()).collect()
 }
 
-fn domain_one() -> Vec<Vec<ObservedEvent>> {
-    let base = events(ROUND_TRIP);
-    (0..D1_SIZE)
-        .map(|rank| apply(&base, &permutation(base.len(), rank)))
-        .collect()
-}
-
-/// Every interleaving of the two actors that preserves each actor's own order:
-/// the child contributes exactly two facts, placed at every pair of positions.
-fn domain_two() -> Vec<Vec<ObservedEvent>> {
-    let base = events(CONCURRENT);
-    let child: Vec<ObservedEvent> = base
-        .iter()
-        .filter(|event| event.actor() == Some(1))
-        .cloned()
-        .collect();
-    let parent: Vec<ObservedEvent> = base
+/// Every ordering of one run's facts that preserves each actor's own program
+/// order — that is, every *schedule* a different observer of the same execution
+/// could legitimately have rendered. Mirrored by `schedules` in Lean.
+fn schedules(reference: &[ObservedEvent], slot_sets: &[Vec<usize>]) -> Vec<Vec<ObservedEvent>> {
+    let parent: Vec<ObservedEvent> = reference
         .iter()
         .filter(|event| event.actor() == Some(0))
         .cloned()
         .collect();
-    assert_eq!(child.len(), 2);
-    assert_eq!(parent.len(), 9);
-    let mut traces = Vec::new();
-    for first in 0..base.len() {
-        for second in first + 1..base.len() {
+    let child: Vec<ObservedEvent> = reference
+        .iter()
+        .filter(|event| event.actor() == Some(1))
+        .cloned()
+        .collect();
+    slot_sets
+        .iter()
+        .map(|slots| {
             let mut parents = parent.iter();
             let mut children = child.iter();
-            let trace: Vec<ObservedEvent> = (0..base.len())
+            (0..reference.len())
                 .map(|position| {
-                    if position == first || position == second {
+                    if slots.contains(&position) {
                         children.next().unwrap().clone()
                     } else {
                         parents.next().unwrap().clone()
                     }
                 })
-                .collect();
-            traces.push(trace);
-        }
-    }
-    traces
+                .collect()
+        })
+        .collect()
+}
+
+fn pairs(bound: usize) -> Vec<Vec<usize>> {
+    (0..bound)
+        .flat_map(|first| (first + 1..bound).map(move |second| vec![first, second]))
+        .collect()
+}
+
+fn domain_one() -> Vec<Vec<ObservedEvent>> {
+    let slots: Vec<Vec<usize>> = (0..7).map(|position| vec![position]).collect();
+    schedules(&events(ROUND_TRIP), &slots)
+}
+
+fn domain_two() -> Vec<Vec<ObservedEvent>> {
+    schedules(&events(CONCURRENT), &pairs(11))
+}
+
+/// The Rust-only extension: every one of the `7! = 5040` orderings of the round
+/// trip's facts, schedule-preserving or not. It is outside the Lean-kernel
+/// domain for cost, exactly as recorded in the report.
+fn extended_domain() -> Vec<Vec<ObservedEvent>> {
+    let base = events(ROUND_TRIP);
+    (0..EXTENSION_SIZE)
+        .map(|rank| apply(&base, &permutation(base.len(), rank)))
+        .collect()
 }
 
 fn domain_three() -> Vec<Vec<ObservedEvent>> {
@@ -229,9 +243,12 @@ fn the_declared_domains_have_their_pinned_shape_and_digest() {
     assert_eq!(one.len(), D1_SIZE);
     assert_eq!(two.len(), D2_SIZE);
     assert_eq!(three.len(), D3_SIZE);
-    assert_eq!(trace_digest(&one), 13005161553597186085);
+    assert_eq!(trace_digest(&one), 1827949402977241471);
     assert_eq!(trace_digest(&two), 7621727749705747350);
     assert_eq!(trace_digest(&three), 9380586544780836206);
+    let extension = extended_domain();
+    assert_eq!(extension.len(), EXTENSION_SIZE);
+    assert_eq!(trace_digest(&extension), 13005161553597186085);
 }
 
 #[test]
@@ -248,10 +265,28 @@ fn the_round_trip_admits_exactly_one_total_order() {
     // exactly why byte-equal stdout was an adequate check for CT01.
     assert_eq!(admitted.len(), 1);
     assert_eq!(admitted[0], order.events());
+    assert_eq!(verdict_digest(&order, &domain), 6242011289262393457);
+    assert_eq!(
+        census(&order, &domain),
+        vec![(0, 1), (7, 1), (10, 2), (14, 1), (17, 2)]
+    );
+}
+
+/// The Rust-only extension. Only `C(7, 1) = 7` of the 5040 orderings preserve
+/// the per-actor program order, so class `4` dominates; the schedule domain
+/// above is exactly the seven that survive it.
+#[test]
+fn no_ordering_of_the_round_trip_outside_its_one_schedule_is_admitted() {
+    let order = order(ROUND_TRIP);
+    let domain = extended_domain();
+    assert_eq!(
+        domain
+            .iter()
+            .filter(|trace| relate(&order, trace).is_ok())
+            .count(),
+        1
+    );
     assert_eq!(verdict_digest(&order, &domain), 6228814275926525894);
-    // Only `C(7, 1) = 7` of the 5040 orderings survive the per-actor program
-    // order (R3), which is why that class dominates; the remaining six are
-    // refused by a cross-actor constraint, one class each.
     assert_eq!(
         census(&order, &domain),
         vec![(0, 1), (4, 5033), (7, 1), (10, 2), (14, 1), (17, 2)]
