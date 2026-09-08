@@ -1138,7 +1138,7 @@
   {
    "id": "CORPUS-REPIN",
    "title": "Re-measure and re-pin the 185-unit corpus after C02 and G02",
-   "why": "C02 touched shared analysis code (legacy_c.rs) and G02 changed the declared input transport; the four archived artifacts would change in both directions, including possible newly surfaced provisional Unsafe units. The pin gate refused to run in this environment, so nothing was adjusted to fit.",
+   "why": "C02 touched shared analysis code (legacy_c.rs) and G02 changed the declared input transport; the four archived artifacts would change in both directions, including possible newly surfaced provisional Unsafe units. The pin gate refused to run in this environment, so nothing was adjusted to fit. Wave-5 note: C03-NFR re-measured the 185-unit audit at the pin 66910c10 and observed 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only, byte-stable across its change but differing from the archived 42 provisional Unsafe; the re-pin must reconcile this with the explicit-Clang rerun's 43.",
    "invariants": "hard invariants 3 (parity before deletion) and 5 (pinned expectations are intentional): regenerate, diff, archive the diff under docs/reports/ and re-pin deliberately.",
    "source": "docs/reports/remaining-c02/README.md SS6, docs/reports/remaining-g02/README.md SS8"
   },
@@ -1147,24 +1147,6 @@
    "title": "Complete the source function enumeration (macro-expanded and K&R definitions)",
    "why": "such definitions carry no obligation and no residual Unknown row, so the reported checked/Unknown split is not a complete function denominator for such a unit. It promotes nothing today, but it changes the pinned artifacts and the resource selection, so it needs its own parity plan.",
    "source": "docs/reports/remaining-e01/README.md"
-  },
-  {
-   "id": "C02-P",
-   "title": "Borrowed pointer-field reads as contracted-call actuals",
-   "why": "premise 5 refuses every pointer field today; without this the constructor call statement is rejected before the declared contract is consulted, and O04 cannot bind its chunk identity.",
-   "source": "docs/reports/remaining-c02/README.md SS7, docs/reports/remaining-o00/README.md SS8"
-  },
-  {
-   "id": "O04",
-   "title": "Per-arm constructor-to-caller cleanup discharge on the four early-return arms of flb_input_chunk_create",
-   "why": "the single bounded path O00 scoped. Needs C02-P, array-declarator admission, three borrowed callee declarations and per-exit disposition; the success exit, the unenumerated exit and the descriptor/mapping identities stay out of scope.",
-   "source": "docs/reports/remaining-o00/README.md SS8"
-  },
-  {
-   "id": "P01-F2",
-   "title": "Bind non-digest manifest declarations to the executable's embedded template at enable time",
-   "why": "schema-valid, digest-intact edits to limits and targets pass qcorec plugins verify/enable; only package.py verify, which executes the package's self-check, detects them. It cannot admit a Safe verdict, but it changes what the enforced profile installs.",
-   "source": "docs/reports/remaining-p01/README.md SS6"
   },
   {
    "id": "G03-F1",
@@ -1189,24 +1171,6 @@
    "title": "Make the CT manifest and its summarizer stage-derived (T00.1-T00.9)",
    "why": "manifest stage statuses are host-unconditional strings, `cfg` and `type_checker` conflate four real passes, sanitizer evidence is recorded rather than gated, and acceptance.json's two scalars treat a source-rejection case and a four-scenario native case as one identical unit of coverage.",
    "source": "docs/reports/remaining-t00/README.md SS4, SS6"
-  },
-  {
-   "id": "E03-B",
-   "title": "Composite premise union, per-capability build digests, distinct observation obligation ids, absent-provider dispatch verdict",
-   "why": "four recorded completeness boundaries: the published representative carries one component's coverage/bounds/provenance (conservative), derive_task binds build_digest to the capability's semantic profile (two capabilities of one program always QP015), ObservationCoverageComplete yields one obligation id for two providers (sound only because every component must be Safe, now pinned), and dispatch_scope continues past an unregistered provider so composed.verdict alone can read Safe while verified() is false (masked by Q700).",
-   "source": "docs/reports/remaining-e03/README.md"
-  },
-  {
-   "id": "T03-F",
-   "title": "NoWriteOccurred from source, task composition for the guard profile, guard-scoped facts, Lean resource-destruction event",
-   "why": "every T03 certificate carries InvariantPredicateDeclared because no source form reaches NoWriteOccurred; task creation inside the guard profile is refused (blocks CT28/CT31/CT32); CT48 has no source form; the Lean Event model covers generation lifetime only, leaving the Destroy half Rust-tested.",
-   "source": "docs/reports/remaining-t03/README.md"
-  },
-  {
-   "id": "C03-NFR",
-   "title": "Implement the neutral-frame recursion route (C03 units U1-U4, U6-U7)",
-   "why": "the reviewed design admits ~9 corpus functions alone and ~25 with C02-P; the emulation probe is measurably more permissive than the designed route at component withdrawal (pinned), and W4 can publish an InferredValidated record derived using a declaration for the same function (U7, observation not defect).",
-   "source": "docs/reports/remaining-c03/README.md, docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md"
   },
   {
    "id": "P03-F",
@@ -1237,7 +1201,49 @@
    "title": "Map CT11 and the epoch-accounting CT cases once their blockers land",
    "why": "CT11 is blocked on an owned-pointer alias form (T05's profile has no alias; the retaining party is an unjoined child). CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 but have no epoch source syntax, so no parser stage or reference execution can be claimed.",
    "recorded_by": "docs/reports/remaining-wave3-ct-integration/README.md"
+  },
+  {
+   "id": "O04-ARMS",
+   "title": "Per-arm constructor-to-caller cleanup discharge on flb_input_chunk_create (was O04)",
+   "why": "C02-P is now verified landed (docs/reports/remaining-c02-p/README.md), so the constructor call can bind its chunk identity; the remaining needs are array-declarator admission, three borrowed callee declarations and per-exit disposition. The success exit, the unenumerated exit and descriptor/mapping identities stay out of scope.",
+   "source": "docs/reports/remaining-o00/README.md SS8, docs/reports/remaining-c02-p/README.md"
+  },
+  {
+   "id": "C02-P-ALIAS",
+   "title": "May-alias distinct declared names in the borrowed-actual projection",
+   "why": "two distinct declared names that may denote the same object are unrelated by the name-based projection; pinned by a test asserting the field-read and no-field-read forms agree, so a repair moves both rows together. Pre-existing model boundary, not a hole C02-P opened.",
+   "source": "docs/reports/remaining-c02-p/README.md"
+  },
+  {
+   "id": "C03-NFR-REACH",
+   "title": "Neutral-frame recursion reach and the dead uncontracted-call hazard",
+   "why": "the implemented route is refusal-complete but measured corpus reach is 0 (the census estimated ~9 from argument shape; V5 requires whole-body modelling; all 12 reachable self-recursive functions refuse on other blockers, mostly indirect access and unmodelled branch conditions). Also recorded, not repaired: a dead uncontracted call in an otherwise-Safe unit surfaces as ProductionParserRejected instead of Unknown (pre-existing).",
+   "source": "docs/reports/remaining-c03-nfr/README.md"
+  },
+  {
+   "id": "E03-B-O",
+   "title": "Composition residuals after the E03-B repairs",
+   "why": "O1: an absent provider's obligations are refused, not derived (its manifest is unavailable). O2: composition is not associative under its own output. O3: the bounds intersection is argued and unit-tested for count kinds no derivation currently emits.",
+   "source": "docs/reports/remaining-e03-b/README.md"
+  },
+  {
+   "id": "T03-GUARD-JOIN",
+   "title": "Task created and joined strictly inside a guard",
+   "why": "refused by the unedited CheckedMutexInvariantV1 JoinWhileGuardHeld rule; T03-F landed the smallest sound subset (nested thread scope composed in the mutex ledger only, no captures/owned values). Lifting the rule is a semantic change to the pinned checker and needs its own model argument. A child's drop of the parent's borrow is a grammar refusal where the model's EndBorrow would accept; recorded asymmetry.",
+   "source": "docs/reports/remaining-t03-f/README.md"
+  },
+  {
+   "id": "P01-F3",
+   "title": "Template-binding residuals: forged executables, TOCTOU, unverified loader",
+   "why": "a rebuilt or forged executable carries whatever template its builder chose; there is a TOCTOU window between check and dispatch; ProcessProvider::from_package remains an unverified loader (registration is pointed at verify_executable_package). Signature/immutable-execution proof remains out of scope as documented.",
+   "source": "docs/reports/remaining-p01-f2/README.md"
+  },
+  {
+   "id": "EXTERN-CALL-F",
+   "title": "source.extern-call.v1 follow-ons",
+   "why": "resource_out/stored/removed/reallocated/released call modes; nonnull owned returns; sentinel/errno adapters (O03 interaction); buffer extents; variadics/function pointers/callbacks/structs/floats; extern calls in concurrent or error-region contexts; releasing custody on the adapter error arm (currently admitted only with no other live acquisition); cost summaries; linkage verification; the inline Q020/Q021 source-contract consumer. CT45 is closer but still blocked on the single-live-acquisition restriction and an admitted-but-unmodeled contract form.",
+   "source": "docs/reports/extern-call-v1/README.md SS7"
   }
  ],
- "updated": "2026-09-08 (wave3-CT: CT03/CT04/CT05/CT17/CT18 integrated through the CT harness with stage-derived evidence; CT 15/50 -> 20/50, second and third gated sanitized-native CT cases; CT11 and CT35/CT36/CT38/CT39 deliberately unmapped with recorded reasons; nothing promoted)"
+ "updated": "2026-09-08 (wave 5: C02-P, C03-NFR, E03-B, T03-F, P01-F2 and source.extern-call.v1 closed at their stated boundaries; residual follow-ons re-recorded as O04-ARMS, C02-P-ALIAS, C03-NFR-REACH, E03-B-O, T03-GUARD-JOIN, P01-F3, EXTERN-CALL-F; nothing promoted)"
 }
