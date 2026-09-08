@@ -7,8 +7,11 @@
 > This handoff is not a claim that the overall generalization goal is complete.
 
 Consolidated, compressed project state for LLM agents. Humans should read
-[README.md](README.md). Keep this file, `CLAUDE.md`, and `README.md` in sync
-when project status changes; this file is the source of truth for agents.
+[README.md](README.md) for the summary and [DEVELOPMENT.md](DEVELOPMENT.md)
+for implementation and status detail. Keep this file, `CLAUDE.md`,
+`README.md`, and `DEVELOPMENT.md` in sync when project status changes; this
+file is the source of truth for agents. New per-increment status paragraphs
+belong in `DEVELOPMENT.md`'s "Increment records", not in `README.md`.
 
 ## What this project is
 
@@ -49,6 +52,7 @@ parser/model support is not full source-language conformance. Work proceeds in n
 | `proof/` | Lean 4 executable core and safety theorems; `AuditCycleN.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) |
+| `DEVELOPMENT.md` | Human-facing implementation and status detail: repository layout, cycle records, per-increment evidence narratives, full build/validation instructions |
 | `docs/reevaluation/` | Raw audit logs, probe JSON, `ct_manifest.json` (CT01–CT50 tracking) |
 | `third_party/libevent` | Submodule pinned to the audited revision; a test fails if absent or moved |
 
@@ -317,7 +321,8 @@ open gates: `docs/cycles/CYCLE_20.md`. Trust/verdict rules and audit history:
 `docs/QCORE_SPEC_r0_3.md`, `docs/QCORE_CONTRACT_SPEC_r0_3.md`,
 `docs/QCORE_MODULE_MODES.md`,
 `docs/QTT_ALIGNMENT.md`. Contract corpus conventions:
-`contract/qcore/README.md`.
+`contract/qcore/README.md`. Implementation and status detail for humans:
+`DEVELOPMENT.md`.
 
 ## Reopen failure evidence (2026-09-07)
 

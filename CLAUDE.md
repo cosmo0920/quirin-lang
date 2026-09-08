@@ -8,6 +8,10 @@
 
 @AGENTS.md
 
+Human-facing implementation and status detail lives in `DEVELOPMENT.md`
+(split out of `README.md`, which is now the short summary); add new
+per-increment status paragraphs there.
+
 Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract
 companion. Follow `docs/reviews/r0_3/acceptance.json` for current repair status;
 the supplied archive review is older than merged W2–W5 implementations.
