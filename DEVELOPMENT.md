@@ -357,6 +357,27 @@ full suite.
 
 ## Increment records
 
+### Sequential C emission indentation (2026-09-08)
+
+`qcore_core::c_emit::emit_c11`'s runtime helper bodies (`q_trace`,
+`q_acquire`, `q_release`) and `main`'s result/trace report block were written
+with Rust string-literal line continuations, which strip the following line's
+leading whitespace, so those regions of every emitted sequential translation
+unit landed flush left with visually mis-nested braces. The literals now carry
+the intended four-space-per-level indentation; emitted bytes change only in
+leading whitespace, the token stream is identical, and a re-emitted unit
+compiles under `-std=c11 -Wall -Wextra -Werror` with byte-identical program
+output. A new unit test pins the repaired lines and refuses any column-zero
+statement outside preprocessor lines, file-scope declarations, braces and goto
+labels. The task, mutex and extern emitters already placed indentation before
+their continuations and are untouched, so the two pinned F02 emission digests
+do not move (re-emission of all four thread examples verified byte-identical).
+This is a formatting repair of generated C, not a semantic, verdict or
+coverage change. Validation: 1652 workspace tests passed (one new), 1 ignored;
+formatting, Clippy and both reevaluation probes pass; the Lean gate could not
+run on this host because `lake` is not installed, and no Lean-relevant
+semantics changed.
+
 ### Core concurrency prelude (2026-09-08)
 
 Explicit concurrency imports and core prelude (2026-09-08): source files opt in

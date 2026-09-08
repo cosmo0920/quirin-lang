@@ -65,36 +65,40 @@ pub fn emit_c11(cfg: &TypedCfg) -> Result<String, CEmitError> {
     .unwrap();
     writeln!(output, "static size_t q_trace_length = 0;\n").unwrap();
     output.push_str(
-        "static void q_trace(char kind, uint64_t identity)\n\
-         {\n\
-             if (q_trace_length >= (sizeof q_trace_events / sizeof q_trace_events[0])) {\n\
-                 abort();\n\
-             }\n\
-             q_trace_events[q_trace_length].kind = kind;\n\
-             q_trace_events[q_trace_length].identity = identity;\n\
-             q_trace_length += 1;\n\
-         }\n\n\
-         static bool q_acquire(void **slot, bool succeeds, uint64_t identity)\n\
-         {\n\
-             if (!succeeds) {\n\
-                 return false;\n\
-             }\n\
-             *slot = malloc(1);\n\
-             if (*slot == NULL) {\n\
-                 return false;\n\
-             }\n\
-             q_trace('A', identity);\n\
-             return true;\n\
-         }\n\n\
-         static void q_release(void **slot, uint64_t identity)\n\
-         {\n\
-             if (*slot == NULL) {\n\
-                 abort();\n\
-             }\n\
-             free(*slot);\n\
-             *slot = NULL;\n\
-             q_trace('R', identity);\n\
-         }\n\n",
+        r"static void q_trace(char kind, uint64_t identity)
+{
+    if (q_trace_length >= (sizeof q_trace_events / sizeof q_trace_events[0])) {
+        abort();
+    }
+    q_trace_events[q_trace_length].kind = kind;
+    q_trace_events[q_trace_length].identity = identity;
+    q_trace_length += 1;
+}
+
+static bool q_acquire(void **slot, bool succeeds, uint64_t identity)
+{
+    if (!succeeds) {
+        return false;
+    }
+    *slot = malloc(1);
+    if (*slot == NULL) {
+        return false;
+    }
+    q_trace('A', identity);
+    return true;
+}
+
+static void q_release(void **slot, uint64_t identity)
+{
+    if (*slot == NULL) {
+        abort();
+    }
+    free(*slot);
+    *slot = NULL;
+    q_trace('R', identity);
+}
+
+",
     );
 
     writeln!(
@@ -147,15 +151,16 @@ pub fn emit_c11(cfg: &TypedCfg) -> Result<String, CEmitError> {
     )
     .unwrap();
     output.push_str(
-        "    if (q_result.ok) {\n\
-             printf(\"OK %\" PRId32 \"\\n\", q_result.value);\n\
-         } else {\n\
-             printf(\"ERR %\" PRIu32 \"\\n\", (uint32_t)q_result.error.tag);\n\
-         }\n\
-         for (size_t index = 0; index < q_trace_length; index += 1) {\n\
-             printf(\"%c %\" PRIu64 \"\\n\", q_trace_events[index].kind,\n\
-                    q_trace_events[index].identity);\n\
-         }\n",
+        r#"    if (q_result.ok) {
+        printf("OK %" PRId32 "\n", q_result.value);
+    } else {
+        printf("ERR %" PRIu32 "\n", (uint32_t)q_result.error.tag);
+    }
+    for (size_t index = 0; index < q_trace_length; index += 1) {
+        printf("%c %" PRIu64 "\n", q_trace_events[index].kind,
+               q_trace_events[index].identity);
+    }
+"#,
     );
     for resource in cfg.resources() {
         writeln!(output, "    if (q_result.owned_{resource} != NULL) {{").unwrap();

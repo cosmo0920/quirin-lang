@@ -92,6 +92,47 @@ fn emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels() {
 }
 
 #[test]
+fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
+    let cfg = lower_cleanup_cfg(&corpus().remove(1)).unwrap();
+    let c = emit_c11(&cfg).unwrap();
+    // Rust string-literal continuations once stripped this indentation, leaving
+    // the runtime helpers and main's report block flush left. The emitted unit
+    // is meant to be readable, so each nesting level stays four-space indented.
+    for expected in [
+        "    q_trace_events[q_trace_length].kind = kind;",
+        "        abort();",
+        "    q_trace('A', identity);",
+        "        printf(\"OK %\" PRId32 \"\\n\", q_result.value);",
+        "        printf(\"%c %\" PRIu64 \"\\n\", q_trace_events[index].kind,",
+    ] {
+        assert!(
+            c.lines().any(|line| line == expected),
+            "missing indented line in emitted C: {expected:?}"
+        );
+    }
+    // Statements never sit at column 0: only preprocessor lines, file-scope
+    // declarations, function-scope braces and goto labels start there.
+    for line in c.lines() {
+        if line.is_empty() || line.starts_with(' ') {
+            continue;
+        }
+        assert!(
+            line.starts_with('#')
+                || line.starts_with("enum ")
+                || line.starts_with("union ")
+                || line.starts_with("struct ")
+                || line.starts_with("static ")
+                || line.starts_with("int main")
+                || line.ends_with(':')
+                || line == "{"
+                || line == "}"
+                || line == "};",
+            "unindented statement in emitted C: {line:?}"
+        );
+    }
+}
+
+#[test]
 fn compiled_instrumented_c_matches_source_and_cfg() {
     for source in corpus() {
         let cfg = lower_cleanup_cfg(&source).unwrap();
