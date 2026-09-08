@@ -4838,24 +4838,6 @@
    "source": "docs/reports/remaining-e01/README.md"
   },
   {
-   "id": "G03-F1",
-   "title": "Represent a source set whose C sources live at the checkout root",
-   "why": "SourceRootSelection admits only Component::Normal segments, so `.` is rejected even where the loader never reads the root. This prevents a sound result rather than an unsound one, and its repair is a PROFILE_MANIFEST_VERSION decision.",
-   "source": "docs/reports/remaining-g03/README.md"
-  },
-  {
-   "id": "G03-F2",
-   "title": "Consume a second real CMake C project's unmodified compile database",
-   "why": "compile_db accepts four frontend flags; Libevent's own CMakeLists appends 18 more unconditionally. Each additional flag needs a preservation argument through preprocessing, syntax and the typed AST.",
-   "source": "docs/reports/remaining-g03/README.md"
-  },
-  {
-   "id": "P03-F",
-   "title": "Remaining confinement bounds: per-execution child quota, default profile wiring, unexecuted refusal grounds in CI",
-   "why": "linux-confined-v1 confines filesystem and network only; no seccomp/cgroup/other namespace, admitted paths stay fully reachable, and refusal grounds 1 (non-Linux) and 4 (kernel without Landlock/userns) are implemented but were not executed on this host - a CI-matrix item.",
-   "source": "docs/reports/remaining-p03/README.md"
-  },
-  {
    "id": "P04-NEXT",
    "title": "Remaining in-process ChunkIO capabilities with named blockers",
    "why": "thirteen in-process modules stay: list-unlink relates two summaries, the memory-backend destructor carries a call in its path, the cleanup-outcome family carries descriptor/mapping residual custody, traversal/parent_teardown are behind the sealed SourceMatch boundary, and the rest are compositions.",
@@ -4864,7 +4846,7 @@
   {
    "id": "P02-FLAKE",
    "title": "RLIMIT_NPROC conformance test is load-dependent",
-   "why": "a_declared_process_limit_stops_the_fixture_from_forking installs RLIMIT_NPROC=1, which counts every process of the real UID, so under load the host observes Io(Broken pipe) instead of Terminated. Two independent runs reproduced it; it passes in isolation and passed both merged full-gate runs. The assertion is deliberately not weakened.",
+   "why": "a_declared_process_limit_stops_the_fixture_from_forking installs RLIMIT_NPROC=1, which counts every process of the real UID, so under load the host observes Io(Broken pipe) instead of Terminated. Two independent runs reproduced it; it passes in isolation and passed both merged full-gate runs. The assertion is deliberately not weakened. Wave-7 note: P03-F added a deterministic companion under the cgroup pids quota; the original assertion is byte-for-byte unchanged.",
    "source": "docs/reports/remaining-p03/README.md SS9.1, docs/reports/remaining-t03/README.md"
   },
   {
@@ -4876,14 +4858,8 @@
   {
    "id": "wave3-CT",
    "title": "Map CT11 and the epoch-accounting CT cases once their blockers land",
-   "why": "CT11 is blocked on an owned-pointer alias form (T05's profile has no alias; the retaining party is an unjoined child). CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 but have no epoch source syntax, so no parser stage or reference execution can be claimed.",
+   "why": "CT11 stays blocked on T05's no-local-alias caveat. CT35/CT36/CT38/CT39 now have a source form (source.epoch.bound.v1, wave 7) and measured schema-2 rows in docs/reports/remaining-t08-epoch-src/ct_stage_evidence.json, but mapping them needs three harness prerequisites named there: an `epoch` route with epoch_lowering/epoch_bound_check stage names, and an `epoch_bound_figures` verdict mode for the two accept cases. Fixtures are parked under compiler/tests/fixtures/epoch/.",
    "recorded_by": "docs/reports/remaining-wave3-ct-integration/README.md"
-  },
-  {
-   "id": "O04-ARMS",
-   "title": "Per-arm constructor-to-caller cleanup discharge on flb_input_chunk_create (was O04)",
-   "why": "C02-P is now verified landed (docs/reports/remaining-c02-p/README.md), so the constructor call can bind its chunk identity; the remaining needs are array-declarator admission, three borrowed callee declarations and per-exit disposition. The success exit, the unenumerated exit and descriptor/mapping identities stay out of scope.",
-   "source": "docs/reports/remaining-o00/README.md SS8, docs/reports/remaining-c02-p/README.md"
   },
   {
    "id": "C02-P-ALIAS",
@@ -4934,11 +4910,35 @@
    "source": "docs/reports/remaining-reason-codes/README.md, docs/reports/corpus-repin/README.md"
   },
   {
-   "id": "P09-lock",
-   "title": "providers/package.py --locked broke silently at P09's version bumps",
-   "why": "P09 bumped qcore-verification/qcore-verifier-host to 0.2.0 without updating providers/Cargo.lock; the build script passes --locked and nothing in CI runs it, so the break went unnoticed until REASON-CODES. The lockfile is repaired; adding the package build to CI remains open.",
-   "source": "docs/reports/remaining-reason-codes/README.md"
+   "id": "O03-U4-REACTOR-TARGET",
+   "title": "The reactor's event vocabulary carries no close target or errno",
+   "why": "after U4's repair the reactor poisons a failed close, but it answers with the unpinned join because CloseSocket records neither the target POSIX profile nor errno; pinning them needs an event-vocabulary extension.",
+   "source": "docs/reports/remaining-o03-u4u5/README.md"
+  },
+  {
+   "id": "O04-ARMS-O",
+   "title": "Constructor-arm residuals after O04-ARMS",
+   "why": "B08 aggregate stores (incl. ic->chunk = chunk) plus the aggregate branch condition remain the binding constraint on C5; O04-ARMS-VARIADIC (flb_error declared at its one call-site arity, no variadic tail in the contract vocabulary); O04-ARMS-SCALAR-CHAIN (a scalar-terminated chain binds an OpaqueValue rather than deferring to C02's no-op — conservative, one added unknown_alias). The success and unenumerated exits and descriptor/mapping identities stay out of scope.",
+   "source": "docs/reports/remaining-o04-arms/README.md"
+  },
+  {
+   "id": "T08-SRC-O",
+   "title": "Epoch source-form residuals",
+   "why": "T08-SRC-CT (the harness prerequisites above, then mapping CT35/CT36/CT38/CT39); -EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them).",
+   "source": "docs/reports/remaining-t08-epoch-src/README.md"
+  },
+  {
+   "id": "P03-F-O",
+   "title": "Confinement residuals after P03-F",
+   "why": "a CI runner without Landlock (image, not code); pids offered-but-not-enabled parents are refused rather than mutating a shared cgroup; memory/CPU cgroup controllers; seccomp; manifest-declared confinement policy; qcore-audit's own execution block.",
+   "source": "docs/reports/remaining-p03-f/README.md"
+  },
+  {
+   "id": "G03-F-O",
+   "title": "Flag-transport residuals after G03-F",
+   "why": "-ffast-math, -Ofast, bare -O, -fvisibility=hidden and -flto stay refused by name pending preservation arguments; the measured -O3 identity effect (20 of 21 Libevent units preprocess to different text with identical verdicts) is an identity finding to carry into any future dialect-equivalence claim.",
+   "source": "docs/reports/remaining-g03-f/README.md"
   }
  ],
- "updated": "2026-09-08 (wave 6 complete: REASON-CODES implements the L21.1 vocabulary on both carriers with qcore-schemas 6.0.0; T00-CT-SCHEMA lands the stage-derived manifest schema 2 with generated acceptance numbers; CORPUS-REPIN re-measures and deliberately re-pins the four 185-unit artifacts — headline counts unchanged at 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only, the 42-vs-43 delta resolved as files-vs-configurations on src/flb_input_chunk.c per G01's recorded ambiguity, 23 function-level Unknown-to-Safe discharges attributed to C02's whitelist, no unit verdict change, nothing promoted)"
+ "updated": "2026-09-09 (wave 7 complete: O03-U4U5, G03-F, O04-ARMS, T08-EPOCH-SRC and P03-F closed at their stated boundaries; the 185-unit baseline is deliberately re-pinned to O04-ARMS's after-measurement with headline counts unchanged and zero verdict moves; profile-manifest v2, 28 transported CMake options and the real Libevent audit land; source.epoch.bound.v1 lands check-only; the confined profile gains an enforced per-tree child quota; CT stays 24/50; nothing promoted)"
 }
