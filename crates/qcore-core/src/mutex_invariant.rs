@@ -23,6 +23,62 @@
 //! freedom, lock-order analysis, condition variables, reader/writer locks and
 //! try/timed acquisition are outside this profile and are refused, never
 //! approximated.
+//!
+//! # Guard-local join (card `T03-GUARD-JOIN`)
+//!
+//! A join is a *blocking wait*. This model has no blocking: a `Lock` of a held
+//! generation is refused outright rather than parked, and the representable
+//! form of "task `t` is waiting for mutex `m`" is
+//! [`MutexInvariantEvent::RegisterWaiter`]. So the hazard the blanket
+//! `JoinWhileGuardHeld` refusal covers is one the model cannot otherwise see:
+//! the joining task holds `m` and the joined subtree is, or becomes, a waiter
+//! for `m` (or for anything a waiter chain leads back to `m` through), and the
+//! join never returns.
+//!
+//! [`MutexInvariantEvent::GuardLocalJoin`] is the one opt-in exception, and it
+//! removes that hazard by construction rather than by analysis. It is admitted
+//! only when **all** of the following hold; failing any of G3-G10 keeps the
+//! existing `JoinWhileGuardHeld` refusal, and no new diagnostic code exists.
+//!
+//! * **G1** every ordinary join precondition: the parent is active, `child` is
+//!   its unjoined child, and the child is quiescent.
+//! * **G2** `guard` is live and held by `parent` (else `DeadGuard` /
+//!   `WrongGuardAffinity`, the codes those conditions already have).
+//! * **G3** `guard` is the *only* live guard `parent` holds. Two held guards
+//!   would need a wait-for argument across both, which this profile refuses to
+//!   make.
+//! * **G4** the set of guards `parent` held when it spawned `child` was exactly
+//!   `{guard}`. Guard identities are never reused, so this is precisely
+//!   "created strictly inside *this* critical section" — a child created before
+//!   the lock, or in an earlier section over the same generation, fails here.
+//! * **G5** `guard`'s invariant is `Closed` at the join.
+//! * **G6** `guard` has no live guard-derived borrow.
+//! * **G7** neither `child` nor any descendant of `child` named a mutex, a
+//!   guard or a guard-scoped fact *anywhere in the trace*: no lock, unlock,
+//!   error exit, waiter registration, mutex creation or destruction, invariant
+//!   phase change, guard-derived borrow or its release, fact assertion or use,
+//!   protection extension, unsupported construct, and no guarded access. This
+//!   is what makes the deadlock argument structural: a subtree that never names
+//!   a mutex can never be waiting for one.
+//! * **G8** no live mutex records any task of that subtree as a waiter.
+//! * **G9** no task of that subtree holds a nonzero share of any atom.
+//! * **G10** no task of that subtree is the custodian of a live resource.
+//!
+//! G7 is deliberately far wider than "the child cannot take `guard`'s own
+//! mutex". Admitting a child that locks some *other* generation would need the
+//! wait-for graph over every task in the trace, and lock-order analysis is one
+//! of this profile's named exclusions; so the narrow rule refuses it. G9 and
+//! G10 hold vacuously for every trace this profile's own source lowering
+//! produces (shares never move between tasks here), and are checked anyway so
+//! the statement is a fact about the state rather than an argument about
+//! another rule.
+//!
+//! What the admission does **not** establish: that the child's own work is
+//! correct, that the emitted C actually runs the two tasks concurrently, or
+//! deadlock freedom for any trace outside the rule. It adds no assumption to
+//! the certificate — every condition is checked — and it records each admitted
+//! join, with its verified quiet subtree, in
+//! [`MutexInvariantCertificate::admitted_guard_local_joins`].
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -103,6 +159,21 @@ pub enum MutexInvariantEvent {
     Join {
         parent: TaskId,
         child: TaskId,
+    },
+    /// A join of a child that was created **and** is being joined strictly
+    /// inside one critical section of the joining task — card `T03-GUARD-JOIN`.
+    ///
+    /// This is the *only* admitted join while a guard is held, it is opt-in
+    /// (a plain [`MutexInvariantEvent::Join`] keeps refusing with
+    /// `JoinWhileGuardHeld` exactly as before), and every condition of
+    /// `§ guard-local join` below is checked. Anything outside the rule keeps
+    /// the same `JoinWhileGuardHeld` refusal, so no diagnostic code moves.
+    GuardLocalJoin {
+        parent: TaskId,
+        child: TaskId,
+        /// The section the child is local to. Must be live, held by `parent`,
+        /// and the *only* guard `parent` holds.
+        guard: GuardId,
     },
 
     // ---- mutex lifecycle ----
@@ -246,6 +317,20 @@ pub struct InvariantTransition {
     pub from: InvariantPhase,
     pub to: InvariantPhase,
     pub witness: Option<InvariantWitness>,
+}
+
+/// One admitted guard-local join, named on the certificate so a reader can see
+/// exactly which joins landed inside a critical section and under which guard.
+/// A certificate with an empty vector made no such admission at all.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct AdmittedGuardLocalJoin {
+    pub event: usize,
+    pub parent: TaskId,
+    pub child: TaskId,
+    pub guard: GuardId,
+    /// The child and every descendant of it, all of which the checker verified
+    /// named no mutex, guard or guard-scoped fact anywhere in the trace.
+    pub quiet_subtree: Vec<TaskId>,
 }
 
 /// One synchronization edge the checker *derived* and matched against a
@@ -494,6 +579,10 @@ pub struct MutexInvariantCertificate {
     pub protected_shape: BTreeMap<MutexId, Vec<AccessFootprint>>,
     pub admitted_invariant_transitions: Vec<InvariantTransition>,
     pub derived_sync_edges: Vec<DerivedSyncEdge>,
+    /// Joins that landed inside a critical section and were admitted by the
+    /// guard-local rule. Empty unless the trace used
+    /// [`MutexInvariantEvent::GuardLocalJoin`] *and* every condition held.
+    pub admitted_guard_local_joins: Vec<AdmittedGuardLocalJoin>,
 }
 
 impl MutexInvariantCertificate {
@@ -797,6 +886,70 @@ struct RecordedAccess {
 /// Fail-closed: every unsupported construct, unmatched witness and unresolved
 /// authority question is a refusal. A refused event never mutates liveness, so
 /// a rejected destruction leaves its generation live.
+/// The acting task of an event that names a mutex, a guard or a guard-scoped
+/// fact. `None` for the events that name none of the three: task structure,
+/// unguarded access, custody transfer and resource destruction.
+///
+/// This is the whole of guard-local join condition G7's vocabulary; adding an
+/// event kind that touches a mutex without listing it here would widen the
+/// admission silently, so a test pins the classification of every variant.
+const fn mutex_keying_task(event: &MutexInvariantEvent) -> Option<TaskId> {
+    match event {
+        MutexInvariantEvent::CreateMutex { task, .. }
+        | MutexInvariantEvent::DestroyMutex { task, .. }
+        | MutexInvariantEvent::RegisterWaiter { task, .. }
+        | MutexInvariantEvent::Lock { task, .. }
+        | MutexInvariantEvent::Unlock { task, .. }
+        | MutexInvariantEvent::ErrorExit { task, .. }
+        | MutexInvariantEvent::OpenInvariant { task, .. }
+        | MutexInvariantEvent::CloseInvariant { task, .. }
+        | MutexInvariantEvent::BorrowUnderGuard { task, .. }
+        | MutexInvariantEvent::EndBorrow { task, .. }
+        | MutexInvariantEvent::AssertFact { task, .. }
+        | MutexInvariantEvent::UseFact { task, .. }
+        | MutexInvariantEvent::ExtendProtection { task, .. }
+        | MutexInvariantEvent::UnsupportedConstruct { task, .. } => Some(*task),
+        MutexInvariantEvent::Access {
+            task,
+            guard: Some(_),
+            ..
+        } => Some(*task),
+        MutexInvariantEvent::Access { guard: None, .. }
+        | MutexInvariantEvent::Spawn { .. }
+        | MutexInvariantEvent::Join { .. }
+        | MutexInvariantEvent::GuardLocalJoin { .. }
+        | MutexInvariantEvent::TransferCustody { .. }
+        | MutexInvariantEvent::Destroy { .. } => None,
+    }
+}
+
+/// The live guards `task` currently holds.
+fn guards_held_by(guards: &BTreeMap<GuardId, GuardState>, task: TaskId) -> BTreeSet<GuardId> {
+    guards
+        .iter()
+        .filter(|(_, state)| state.holder == task)
+        .map(|(guard, _)| *guard)
+        .collect()
+}
+
+/// `root` together with every task transitively spawned under it. The parent
+/// map is finite and acyclic by construction (a `Spawn` refuses an already
+/// known child), so the fixed point terminates.
+fn descendant_closure(parents: &BTreeMap<TaskId, TaskId>, root: TaskId) -> BTreeSet<TaskId> {
+    let mut closure = BTreeSet::from([root]);
+    loop {
+        let mut grew = false;
+        for (child, parent) in parents {
+            if closure.contains(parent) && closure.insert(*child) {
+                grew = true;
+            }
+        }
+        if !grew {
+            return closure;
+        }
+    }
+}
+
 pub fn check_mutex_invariant_program(
     program: &MutexInvariantProgram,
 ) -> Result<MutexInvariantCertificate, Vec<MutexInvariantDiagnostic>> {
@@ -842,8 +995,20 @@ pub fn check_mutex_invariant_program(
     let mut protected_shape = BTreeMap::<MutexId, Vec<AccessFootprint>>::new();
     let mut transitions = Vec::<InvariantTransition>::new();
     let mut sync_edges = Vec::<DerivedSyncEdge>::new();
+    // Guard-local join bookkeeping (`§ Guard-local join`, G4 and G7).
+    let mut spawn_guards = BTreeMap::<TaskId, BTreeSet<GuardId>>::new();
+    let mut mutex_keyed = BTreeSet::<TaskId>::new();
+    let mut guard_local_joins = Vec::<AdmittedGuardLocalJoin>::new();
 
     for (index, event) in program.events.iter().enumerate() {
+        // G7 is recorded on *occurrence*, before any admission check, so a task
+        // whose lock was itself refused still counts as having named a mutex.
+        // On an accepted trace no event is refused, so this is exactly the set
+        // of admitted mutex-keyed acts; on a refused one it is strictly more
+        // refusing, never less.
+        if let Some(task) = mutex_keying_task(event) {
+            mutex_keyed.insert(task);
+        }
         'event: {
             match event {
                 MutexInvariantEvent::Spawn { parent, child } => {
@@ -862,6 +1027,7 @@ pub fn check_mutex_invariant_program(
                     clocks.insert(*child, parent_clock);
                     active.insert(*child);
                     task_parents.insert(*child, *parent);
+                    spawn_guards.insert(*child, guards_held_by(&guards, *parent));
                 }
                 MutexInvariantEvent::Join { parent, child } => {
                     if !require_active(&clocks, &active, index, *parent, &mut diagnostics) {
@@ -890,6 +1056,101 @@ pub fn check_mutex_invariant_program(
                             child: *child,
                         });
                         break 'event;
+                    }
+                    joined.insert(*child);
+                    joiner_of.insert(*child, *parent);
+                    active.remove(child);
+                    let child_clock = clocks.get(child).cloned().unwrap_or_default();
+                    merge_clock(
+                        clocks.get_mut(parent).expect("parent was checked"),
+                        &child_clock,
+                    );
+                    tick(&mut clocks, *parent);
+                }
+                MutexInvariantEvent::GuardLocalJoin {
+                    parent,
+                    child,
+                    guard,
+                } => {
+                    if !require_active(&clocks, &active, index, *parent, &mut diagnostics) {
+                        break 'event;
+                    }
+                    // G1: the ordinary join's own structural preconditions, with
+                    // the ordinary join's own diagnostics.
+                    if task_parents.get(child) != Some(parent) || joined.contains(child) {
+                        diagnostics.insert(MutexInvariantDiagnostic::UnknownJoin {
+                            event: index,
+                            child: *child,
+                        });
+                        break 'event;
+                    }
+                    // G2: the named section must be this task's own live guard.
+                    let Some(state) = guards.get(guard) else {
+                        diagnostics.insert(MutexInvariantDiagnostic::DeadGuard {
+                            event: index,
+                            guard: *guard,
+                        });
+                        break 'event;
+                    };
+                    if state.holder != *parent {
+                        diagnostics.insert(MutexInvariantDiagnostic::WrongGuardAffinity {
+                            event: index,
+                            guard: *guard,
+                            task: *parent,
+                        });
+                        break 'event;
+                    }
+                    let held = guards_held_by(&guards, *parent);
+                    let subtree = descendant_closure(&task_parents, *child);
+                    let admitted =
+                        // G3: exactly this one section is held.
+                        held.len() == 1 && held.contains(guard)
+                        // G4: created strictly inside this same section.
+                        && spawn_guards.get(child) == Some(&held)
+                        // G5: the protected invariant is not open at the join.
+                        && state.phase == InvariantPhase::Closed
+                        // G6: no guard-derived borrow is live.
+                        && state.borrows.is_empty()
+                        // G7: the joined subtree never named a mutex, guard or
+                        // guard-scoped fact anywhere in the trace.
+                        && subtree.iter().all(|task| !mutex_keyed.contains(task))
+                        // G8: no live generation records it as a waiter.
+                        && !mutexes
+                            .values()
+                            .any(|mutex| mutex.waiters.iter().any(|task| subtree.contains(task)))
+                        // G9: the subtree holds no share of any atom.
+                        && !ledger.task_shares.values().any(|shares| {
+                            shares
+                                .iter()
+                                .any(|(task, share)| *share > 0 && subtree.contains(task))
+                        })
+                        // G10: the subtree is custodian of no live resource.
+                        && !custody.values().any(|task| subtree.contains(task));
+                    if !admitted {
+                        diagnostics.insert(MutexInvariantDiagnostic::JoinWhileGuardHeld {
+                            event: index,
+                            task: *parent,
+                        });
+                    }
+                    let child_busy = guards.values().any(|guard| guard.holder == *child)
+                        || task_parents.iter().any(|(descendant, owner)| {
+                            owner == child && !joined.contains(descendant)
+                        });
+                    if child_busy {
+                        diagnostics.insert(MutexInvariantDiagnostic::NonquiescentJoin {
+                            event: index,
+                            child: *child,
+                        });
+                        break 'event;
+                    }
+                    if admitted {
+                        guard_local_joins.push(AdmittedGuardLocalJoin {
+                            event: index,
+                            parent: *parent,
+                            child: *child,
+                            guard: *guard,
+                            quiet_subtree: subtree.into_iter().collect(),
+                        });
                     }
                     joined.insert(*child);
                     joiner_of.insert(*child, *parent);
@@ -1772,6 +2033,7 @@ pub fn check_mutex_invariant_program(
             protected_shape,
             admitted_invariant_transitions: transitions,
             derived_sync_edges: sync_edges,
+            admitted_guard_local_joins: guard_local_joins,
         })
     } else {
         Err(diagnostics.into_iter().collect())
@@ -1842,6 +2104,10 @@ pub fn recheck_mutex_invariant_certificate(
             mismatch(
                 "derived_sync_edges",
                 derived.derived_sync_edges != certificate.derived_sync_edges,
+            );
+            mismatch(
+                "admitted_guard_local_joins",
+                derived.admitted_guard_local_joins != certificate.admitted_guard_local_joins,
             );
         }
     }

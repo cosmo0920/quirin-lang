@@ -106,7 +106,8 @@ pub use disjoint_footprint::{
     UnsupportedFootprint, check_disjoint_footprint_program, recheck_disjoint_footprint_certificate,
 };
 pub use mutex_invariant::{
-    BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId, IdentityKind, InvariantId,
+    AdmittedGuardLocalJoin, BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId,
+    IdentityKind, InvariantId,
     InvariantPhase, InvariantTransition, InvariantWitness, MutexInvariantCertificate,
     MutexInvariantDiagnostic, MutexInvariantEvent, MutexInvariantProgram, ShareGrant, SyncWitness,
     UnsupportedSynchronization, check_mutex_invariant_program, recheck_mutex_invariant_certificate,
