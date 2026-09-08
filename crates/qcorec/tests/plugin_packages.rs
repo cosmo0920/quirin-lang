@@ -341,7 +341,6 @@ fn configured_source_scope_dispatches_only_the_enabled_process() {
     assert!(!f.package.join("invoked").exists());
 }
 
-
 /// The configured execution-profile route (card `P03-F`).
 ///
 /// Before this, `linux-rlimit-v1` and `linux-confined-v1` were reachable only
@@ -357,12 +356,7 @@ fn the_execution_profile_is_explicit_configuration_and_defaults_to_the_legacy_on
     // The default is recorded, not written: an enable produces exactly the
     // bytes it produced before this field existed.
     assert!(!written.contains("\"execution\""), "{written}");
-    let reported = succeeds(f.cli(&[
-        "plugins",
-        "profile",
-        "--config",
-        f.config.to_str().unwrap(),
-    ]));
+    let reported = succeeds(f.cli(&["plugins", "profile", "--config", f.config.to_str().unwrap()]));
     assert!(reported.contains("unenforced-legacy"), "{reported}");
     assert!(!reported.contains("confinement"), "{reported}");
     // With no configuration at all the answer is the same default.
@@ -385,12 +379,7 @@ fn the_execution_profile_is_explicit_configuration_and_defaults_to_the_legacy_on
             "confinement": {"base": "linux-runtime-defaults", "read_only": ["/etc/qcore"]}
         }),
     );
-    let reported = succeeds(f.cli(&[
-        "plugins",
-        "profile",
-        "--config",
-        f.config.to_str().unwrap(),
-    ]));
+    let reported = succeeds(f.cli(&["plugins", "profile", "--config", f.config.to_str().unwrap()]));
     assert!(reported.contains("linux-confined-v1"), "{reported}");
     assert!(reported.contains("linux-runtime-defaults"), "{reported}");
     assert!(succeeds(f.list()).contains("example.cli"));

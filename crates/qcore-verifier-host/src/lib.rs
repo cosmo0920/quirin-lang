@@ -46,7 +46,7 @@ pub mod confinement;
 pub use confinement::{AdmittedPath, Confinement, ConfinementPolicy, PathAccess, PathState};
 
 pub mod execution_policy;
-pub use execution_policy::{ExecutionPolicy, ExecutionPolicyError, EXECUTION_POLICY_VERSION};
+pub use execution_policy::{EXECUTION_POLICY_VERSION, ExecutionPolicy, ExecutionPolicyError};
 
 pub mod process_quota;
 pub use process_quota::{
@@ -655,7 +655,10 @@ impl ProcessProvider {
     /// whose kernel provides every mechanism (card `P03-F`; a genuinely absent
     /// user namespace is exercised separately, without this).
     #[must_use]
-    pub const fn with_mechanism_availability(mut self, availability: MechanismAvailability) -> Self {
+    pub const fn with_mechanism_availability(
+        mut self,
+        availability: MechanismAvailability,
+    ) -> Self {
         self.availability = availability;
         self
     }
@@ -1108,6 +1111,18 @@ type QuotaHandle = Option<process_quota::linux::QuotaSession>;
 #[cfg(all(unix, not(target_os = "linux")))]
 type QuotaHandle = Option<()>;
 
+/// The kernel objects a profile installs in the child, carried together from
+/// the pre-spawn build to the `pre_exec` closures. Bundled so the spawn path
+/// takes one mechanism argument rather than one per mechanism.
+#[cfg(unix)]
+struct PreparedMechanisms {
+    confinement: ConfinementHandle,
+    #[cfg(target_os = "linux")]
+    quota_procs: Option<std::os::fd::OwnedFd>,
+    #[cfg(not(target_os = "linux"))]
+    quota_procs: Option<()>,
+}
+
 /// A write descriptor on the per-execution cgroup's `cgroup.procs`, for the
 /// child's `pre_exec` closure. Opened in the parent, with the parent's
 /// credentials.
@@ -1196,8 +1211,10 @@ impl ProcessProvider {
         let result = self.run_process(
             frame,
             &enforced,
-            confinement,
-            quota_descriptor(&quota),
+            PreparedMechanisms {
+                confinement,
+                quota_procs: quota_descriptor(&quota),
+            },
             &mut output,
             &mut error_output,
             &mut status,
@@ -1307,14 +1324,16 @@ impl ProcessProvider {
         &self,
         frame: Vec<u8>,
         enforced: &EnforcedLimits,
-        confinement: ConfinementHandle,
-        #[cfg(target_os = "linux")] quota_procs: Option<std::os::fd::OwnedFd>,
-        #[cfg(all(unix, not(target_os = "linux")))] quota_procs: Option<()>,
+        mechanisms: PreparedMechanisms,
         output: &mut Vec<u8>,
         error_output: &mut Vec<u8>,
         status: &mut Option<std::process::ExitStatus>,
     ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
+        let PreparedMechanisms {
+            confinement,
+            quota_procs,
+        } = mechanisms;
         let PluginEntrypoint::Executable { path } = &self.manifest.entrypoint else {
             return Err(ProviderFailure::Protocol("missing executable".into()));
         };

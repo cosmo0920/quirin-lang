@@ -122,7 +122,9 @@ impl ConfinementSelection {
             ConfinementBase::None => ConfinementPolicy::default(),
             ConfinementBase::LinuxRuntimeDefaults => ConfinementPolicy::linux_runtime_defaults(),
         };
-        policy.read_execute.extend(self.read_execute.iter().cloned());
+        policy
+            .read_execute
+            .extend(self.read_execute.iter().cloned());
         policy.read_only.extend(self.read_only.iter().cloned());
         policy.read_write.extend(self.read_write.iter().cloned());
         policy
@@ -220,7 +222,10 @@ impl ExecutionPolicy {
     ///
     /// Additive: a default policy returns the provider with the profile it
     /// already had, which is the historical one.
-    pub fn apply(&self, provider: ProcessProvider) -> Result<ProcessProvider, ExecutionPolicyError> {
+    pub fn apply(
+        &self,
+        provider: ProcessProvider,
+    ) -> Result<ProcessProvider, ExecutionPolicyError> {
         self.validate()?;
         let provider = provider.with_execution_profile(self.profile);
         Ok(match &self.confinement {
@@ -318,7 +323,10 @@ mod tests {
             version: 2,
             ..ExecutionPolicy::default()
         };
-        assert_eq!(policy.validate(), Err(ExecutionPolicyError::UnsupportedVersion(2)));
+        assert_eq!(
+            policy.validate(),
+            Err(ExecutionPolicyError::UnsupportedVersion(2))
+        );
     }
 
     #[test]

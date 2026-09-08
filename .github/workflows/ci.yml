@@ -36,6 +36,30 @@ jobs:
       - name: Check the reevaluation follow-up regressions and controls
         run: cargo run -p qcore-compiler --example reevaluation_followup
 
+      # Card P03-F. `cargo test --workspace` already runs these; naming them
+      # separately with --nocapture puts the executed refusal ground and the
+      # measured quota counters in the CI log, where a silent regression to the
+      # override path would otherwise be invisible.
+      - name: Execute the confinement refusal grounds and the per-execution quota
+        run: |
+          cargo test -p qcore-verifier-host --test execution_quota -- \
+            --nocapture --test-threads=1 2>&1 | tee quota.log
+          grep -q 'P03F-GROUND4:' quota.log
+
+      # Card P03-F, rider P09-lock. `providers/package.py build` runs cargo with
+      # --locked --offline, so a providers/Cargo.lock left stale by a version
+      # bump fails here. Nothing in CI built the packages before, which is how
+      # that lockfile stayed broken from P09 until the wave-6 repair.
+      - name: Build and verify the five provider packages against the pinned lockfile
+        run: |
+          python3 providers/package.py build --output "$RUNNER_TEMP/provider-packages"
+          for package in qcore.chunkio qcore.cmetrics qcore.ctraces qcore.libevent qcore.librdkafka; do
+            python3 providers/package.py verify "$RUNNER_TEMP/provider-packages/$package" > /dev/null
+          done
+
+      - name: Run the provider workspace tests
+        run: cargo test --manifest-path providers/Cargo.toml --workspace
+
   lean:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -85,6 +109,17 @@ jobs:
 
       - name: Lint Windows targets
         run: cargo clippy --workspace --all-targets -- -D warnings
+
+      # Card P03-F, refusal ground 1. P03's confinement suite is
+      # `#![cfg(target_os = "linux")]`, so until now no job executed the
+      # confining profile's non-Linux refusal — it was argued by construction.
+      # This target has no Landlock, no user namespace and no cgroup v2, so the
+      # refusal here is the real one.
+      - name: Execute the non-Linux execution-profile refusals
+        shell: pwsh
+        run: |
+          cargo test -p qcore-verifier-host --test execution_quota -- --nocapture
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build and run the Windows threading examples
         if: matrix.toolchain == 'msvc-core'

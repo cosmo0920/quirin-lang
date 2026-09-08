@@ -14,8 +14,15 @@ use qcore_verifier_host::*;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::PathBuf;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+// Only the Linux cases spawn a package, register a provider or wait on a
+// descendant; the portable cases below decide before anything is spawned, which
+// is what lets the Windows CI job execute the non-Linux refusal ground.
+#[cfg(target_os = "linux")]
 use std::sync::Arc;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+#[cfg(target_os = "linux")]
+use std::time::Duration;
 
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
@@ -55,6 +62,11 @@ impl Fixture {
         fs::set_permissions(&path, fs::Permissions::from_mode(0o700)).unwrap();
     }
 
+    /// Only the Linux cases reach a spawn, so only they need a response
+    /// frame or the ran-marker; the portable cases decide before anything
+    /// runs, which is what lets the Windows job execute the non-Linux
+    /// refusal ground with no package present.
+    #[cfg(target_os = "linux")]
     fn response(&self, request: &VerificationRequest) {
         let response = VerificationResponse {
             protocol_version: request.protocol_version,
@@ -76,6 +88,7 @@ impl Fixture {
     /// spawned would have spawned *unconfined* and left this behind. Its
     /// absence is what separates "refused before spawning" from "spawned and
     /// denied".
+    #[cfg(target_os = "linux")]
     fn ran_marker(&self) -> PathBuf {
         self.package().join("ran.marker")
     }
@@ -209,7 +222,10 @@ fn a_declared_quota_is_refused_off_linux() {
         // subtree; either way it is never "ran without the quota".
         match limits {
             Ok(enforced) => assert_eq!(
-                enforced.process_quota.as_ref().map(|quota| quota.max_processes),
+                enforced
+                    .process_quota
+                    .as_ref()
+                    .map(|quota| quota.max_processes),
                 Some(4)
             ),
             Err(failure) => assert!(
@@ -260,10 +276,15 @@ fn only_the_confining_profile_accepts_the_quota_kind() {
                 if cfg!(target_os = "linux") {
                     let failure = provider.enforced_limits().unwrap_err();
                     assert!(
-                        failure.to_string().contains("installs no per-execution process quota"),
+                        failure
+                            .to_string()
+                            .contains("installs no per-execution process quota"),
                         "{failure}"
                     );
-                    assert!(failure.to_string().contains("linux-confined-v1"), "{failure}");
+                    assert!(
+                        failure.to_string().contains("linux-confined-v1"),
+                        "{failure}"
+                    );
                 }
             }
         }
@@ -286,7 +307,10 @@ fn a_zero_quota_is_refused() {
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
     let failure = provider.enforced_limits().unwrap_err();
-    assert!(failure.to_string().contains("no process at all"), "{failure}");
+    assert!(
+        failure.to_string().contains("no process at all"),
+        "{failure}"
+    );
 }
 
 /// The availability override can only *remove* a mechanism. There is no
@@ -389,7 +413,12 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
     };
     assert_eq!(quota.mechanism, "cgroup-v2-pids");
     assert_eq!(quota.max_processes, 4);
-    assert!(quota.parent_subtree_control.split_whitespace().any(|c| c == "pids"));
+    assert!(
+        quota
+            .parent_subtree_control
+            .split_whitespace()
+            .any(|c| c == "pids")
+    );
 
     let outcome = provider.verify(&request);
     let record = provider.last_execution().unwrap();
@@ -497,13 +526,16 @@ fn the_quota_binds_without_depending_on_the_accounts_process_count() {
     fixture.response(&request);
     fixture.script("(/bin/sleep 1; : > ../writable/descendant.marker) &\n/bin/cat response.bin");
     let mut manifest = manifest();
-    // Two tasks: the entrypoint and exactly one descendant. The account's own
-    // process count is in the hundreds and is irrelevant to this bound, which
-    // is the whole difference from `RLIMIT_NPROC`.
+    // Six tasks: enough headroom that the descendant genuinely starts, which is
+    // what makes the marker assertion below a statement about the process-group
+    // kill rather than about a fork the quota refused. The account's own process
+    // count is in the hundreds and is irrelevant to this bound — that is the
+    // whole difference from `RLIMIT_NPROC`, which binds only by being *below*
+    // the account's existing usage.
     manifest
         .limits
         .additional
-        .insert(MAX_EXECUTION_PROCESSES.into(), 2);
+        .insert(MAX_EXECUTION_PROCESSES.into(), 6);
 
     let provider = ProcessProvider::new(manifest, fixture.package())
         .unwrap()
@@ -520,15 +552,41 @@ fn the_quota_binds_without_depending_on_the_accounts_process_count() {
     let _ = provider.verify(&request);
     let record = provider.last_execution().unwrap();
     let observed = record.quota_observed.unwrap();
-    assert_eq!(observed.max_processes, 2);
+    assert_eq!(observed.max_processes, 6);
     if let Some(peak) = observed.peak_processes {
-        assert!(peak <= 2, "peak {peak} exceeded the declared quota of 2");
+        assert!(peak <= 6, "peak {peak} exceeded the declared quota of 6");
+        // The entrypoint, the backgrounded subshell and its `sleep` all ran, so
+        // the quota did not refuse the descendant.
+        assert!(
+            peak >= 3,
+            "the descendant must genuinely start for the next assertion to mean \
+             anything: {}",
+            observed.summary()
+        );
     }
+    assert_eq!(
+        observed.quota_rejections,
+        Some(0),
+        "this quota is above what the fixture asks for: {}",
+        observed.summary()
+    );
+    // The composition evidence: after the run the per-execution cgroup was
+    // *empty and removable*, so nothing this execution started survived it.
+    // `rmdir` on a cgroup fails while any member remains, so this is a measured
+    // fact about the tree, not a formality.
     assert!(observed.released, "{}", observed.summary());
-    // The descendant is killed with the group before it can write, exactly as
-    // P02's fixture asserts for its own mechanism.
+    assert!(!std::path::Path::new(&observed.cgroup_path).exists());
+    assert!(record.enforced.as_ref().unwrap().process_group_kill);
+    // Deliberately *not* asserted here: that the descendant never wrote its
+    // marker. It holds the inherited stdout/stderr pipes, so the host's read
+    // loop — and therefore its process-group kill — only runs after the
+    // descendant exits, by which time it has written. P02's `max_processes`
+    // fixture can assert marker absence precisely because its descendant never
+    // forks at all. Asserting it here would pass only by accident of timing,
+    // and marker absence is P02's claim about the group kill, not this card's
+    // claim about the quota.
     std::thread::sleep(Duration::from_millis(1500));
-    assert!(!fixture.writable().join("descendant.marker").exists());
+    assert!(fixture.writable().join("descendant.marker").exists());
 }
 
 /// Refusal ground 6, executed deterministically: a forced-unavailable quota
@@ -556,7 +614,10 @@ fn a_forced_unavailable_quota_mechanism_refuses_before_spawning() {
             ..MechanismAvailability::default()
         });
     let precheck = provider.enforced_limits().unwrap_err();
-    assert!(precheck.to_string().contains("availability override"), "{precheck}");
+    assert!(
+        precheck.to_string().contains("availability override"),
+        "{precheck}"
+    );
     assert!(
         precheck
             .to_string()
@@ -608,7 +669,9 @@ fn a_missing_confinement_mechanism_refuses_before_spawning() {
         let precheck = provider.enforced_limits().unwrap_err();
         assert!(precheck.to_string().contains(label), "{precheck}");
         assert!(
-            precheck.to_string().contains("cannot confine this execution"),
+            precheck
+                .to_string()
+                .contains("cannot confine this execution"),
             "{precheck}"
         );
         assert_eq!(provider.verify(&request).unwrap_err(), precheck);
@@ -721,10 +784,138 @@ fn a_written_selection_reaches_the_provider() {
     .unwrap();
     let failure = mismatched.validate().unwrap_err();
     assert!(
-        failure.to_string().contains("enforces no confinement policy"),
+        failure
+            .to_string()
+            .contains("enforces no confinement policy"),
         "{failure}"
     );
-    assert!(mismatched
-        .apply(ProcessProvider::new(manifest(), fixture.package()).unwrap())
-        .is_err());
+    assert!(
+        mismatched
+            .apply(ProcessProvider::new(manifest(), fixture.package()).unwrap())
+            .is_err()
+    );
+}
+
+/// Refusal ground 4, executed against a kernel that **genuinely** denies the
+/// mechanism, with no override involved.
+///
+/// P03 recorded this ground as implemented but never executed, because the
+/// development host has Landlock at ABI 8 and permits unprivileged user
+/// namespaces. An unprivileged process can still construct the denial: inside
+/// a user namespace it is root *of that namespace*, and
+/// `/proc/sys/user/max_user_namespaces` is namespaced and writable there, so
+/// writing `0` makes every further `unshare(CLONE_NEWUSER)` fail with a real
+/// kernel errno. This test re-executes itself in exactly that environment and
+/// asserts the profile refuses before spawning.
+///
+/// Where the environment cannot be constructed — no `unshare(1)`, or a host
+/// that denies unprivileged user namespaces outright — the genuine leg is
+/// reported as unavailable and the same refusal is asserted through the
+/// availability override instead, which exercises the refusal path but not the
+/// kernel's classification. The distinction is printed, so a CI log says which
+/// one ran.
+#[test]
+#[cfg(target_os = "linux")]
+fn a_kernel_that_denies_user_namespaces_refuses_the_confined_profile() {
+    const INNER: &str = "QCORE_P03F_DENIED_USERNS";
+    let fixture = Fixture::new("denied-userns");
+    let request = request();
+    fixture.response(&request);
+    fixture.script(": > ran.marker\n/bin/cat response.bin");
+
+    let refusal = |provider: &ProcessProvider| -> String {
+        let precheck = provider.enforced_limits().unwrap_err().to_string();
+        assert_eq!(
+            provider.verify(&request).unwrap_err().to_string(),
+            precheck,
+            "the pre-spawn refusal and the verify refusal must be the same"
+        );
+        let record = provider.last_execution().unwrap();
+        assert_eq!(record.outcome, ProcessOutcome::RefusedByProfile);
+        assert!(record.enforced.is_none());
+        // Nothing ran: had it run, it would have run *unconfined*, and the
+        // marker write into the read-only package root would have succeeded.
+        assert!(!fixture.ran_marker().exists());
+        precheck
+    };
+
+    if std::env::var_os(INNER).is_some() {
+        // The inner run: this process is in a namespace whose
+        // `max_user_namespaces` is zero, so the kernel itself denies the
+        // mechanism. No override is set.
+        let provider = ProcessProvider::new(manifest(), fixture.package())
+            .unwrap()
+            .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+            .with_confinement_policy(fixture.policy());
+        assert!(!provider.mechanism_availability().any_forced());
+        let precheck = refusal(&provider);
+        assert!(
+            precheck.contains("cannot confine this execution"),
+            "{precheck}"
+        );
+        assert!(
+            precheck.contains("refuses `unshare(CLONE_NEWUSER | CLONE_NEWNET)`"),
+            "the refusal must name the kernel's own answer: {precheck}"
+        );
+        assert!(
+            !precheck.contains("availability override"),
+            "the inner run must reach the real probe: {precheck}"
+        );
+        println!("P03F-GROUND4: kernel-denied user namespace, refused pre-spawn");
+        return;
+    }
+
+    // The outer run: try to build the denying environment.
+    let binary = std::env::current_exe().expect("the test binary knows its own path");
+    let inner = format!(
+        "echo 0 > /proc/sys/user/max_user_namespaces; exec {} --exact {} --nocapture",
+        shell_word(&binary.to_string_lossy()),
+        "a_kernel_that_denies_user_namespaces_refuses_the_confined_profile",
+    );
+    let constructed = std::process::Command::new("unshare")
+        .args(["-Ur", "sh", "-c", &inner])
+        .env(INNER, "1")
+        .output();
+    match constructed {
+        Ok(output) if output.status.success() => {
+            let log = String::from_utf8_lossy(&output.stdout);
+            assert!(
+                log.contains("P03F-GROUND4: kernel-denied user namespace"),
+                "the inner run must report the genuine leg: {log}{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            println!("P03F-GROUND4: executed against a genuinely denying kernel");
+        }
+        other => {
+            // The genuine environment is unavailable here. Say so, and assert
+            // the same refusal shape through the override, which exercises the
+            // refusal path but is not the kernel's classification.
+            let detail = match &other {
+                Ok(output) => String::from_utf8_lossy(&output.stderr).into_owned(),
+                Err(error) => error.to_string(),
+            };
+            println!(
+                "P03F-GROUND4: a denying environment could not be constructed here \
+                 ({}); asserting the refusal path through the override instead",
+                detail.trim()
+            );
+            let provider = ProcessProvider::new(manifest(), fixture.package())
+                .unwrap()
+                .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+                .with_confinement_policy(fixture.policy())
+                .with_mechanism_availability(MechanismAvailability {
+                    user_namespace: MechanismProbe::ForcedUnavailable,
+                    ..MechanismAvailability::default()
+                });
+            let precheck = refusal(&provider);
+            assert!(precheck.contains("availability override"), "{precheck}");
+        }
+    }
+}
+
+/// Quotes one path for `sh -c`. The test binary lives under `target/`, whose
+/// path is the developer's, so it is quoted rather than assumed benign.
+#[cfg(target_os = "linux")]
+fn shell_word(value: &str) -> String {
+    format!("'{}'", value.replace('\'', r"'\''"))
 }

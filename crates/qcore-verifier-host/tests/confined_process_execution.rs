@@ -446,7 +446,9 @@ fn the_confined_profile_composes_with_the_limit_profile() {
     assert!(confined_kinds.contains(&MAX_EXECUTION_PROCESSES));
     let extra: Vec<_> = confined_kinds
         .iter()
-        .filter(|kind| !enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1).contains(kind))
+        .filter(|kind| {
+            !enforceable_limit_kinds(ProcessExecutionProfile::LinuxRlimitV1).contains(kind)
+        })
         .copied()
         .collect();
     assert_eq!(extra, vec![MAX_EXECUTION_PROCESSES]);

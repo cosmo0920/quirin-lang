@@ -246,8 +246,7 @@ impl MechanismAvailability {
     #[must_use]
     pub fn any_forced(&self) -> bool {
         [self.landlock, self.user_namespace, self.process_quota]
-            .iter()
-            .any(|probe| *probe == MechanismProbe::ForcedUnavailable)
+            .contains(&MechanismProbe::ForcedUnavailable)
     }
 }
 
@@ -288,9 +287,11 @@ pub(crate) mod linux {
                 return Ok(PathBuf::from(point.replace("\\040", " ")));
             }
         }
-        Err("this host has no cgroup v2 (unified) mount, so it offers no per-tree \
+        Err(
+            "this host has no cgroup v2 (unified) mount, so it offers no per-tree \
              process quota"
-            .to_owned())
+                .to_owned(),
+        )
     }
 
     /// This process's own cgroup, relative to the unified hierarchy root.
@@ -302,9 +303,11 @@ pub(crate) mod linux {
                 return Ok(path.to_owned());
             }
         }
-        Err("this process is in no cgroup v2 hierarchy, so no per-tree process quota can be \
+        Err(
+            "this process is in no cgroup v2 hierarchy, so no per-tree process quota can be \
              scoped to it"
-            .to_owned())
+                .to_owned(),
+        )
     }
 
     fn probe_once() -> Result<Delegation, String> {
@@ -334,7 +337,10 @@ pub(crate) mod linux {
             })?
             .trim()
             .to_owned();
-        if !subtree_control.split_whitespace().any(|name| name == "pids") {
+        if !subtree_control
+            .split_whitespace()
+            .any(|name| name == "pids")
+        {
             return Err(format!(
                 "cgroup `{}` does not enable the `pids` controller for its children \
                  (cgroup.subtree_control = `{subtree_control}`), so no per-tree process quota \
