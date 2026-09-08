@@ -19,16 +19,21 @@
 //! Namespace discipline (§W6 task 3): CT is the language corpus only. WM/VP/LC
 //! probe regressions and per-library provider cases must not be added here.
 //!
-//! Two source routes are represented. The task route (`ScopedCopyTasksV1`,
+//! Three source routes are represented. The task route (`ScopedCopyTasksV1`,
 //! `ScopedOwnedTasksV1`, and its `ScopedReadSharesV1` / `ScopedErrorPayloadV1`
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
 //! `CheckedMutexInvariantV1` checker, cards T03 and T03-F) is
-//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. Rejection cases on either route pin
-//! the whole ordered diagnostic cascade rather than its head, because a refusal
-//! that silently dropped a custody obligation would still satisfy a head-only
-//! assertion, and each carries at least one control so the refusal is not
-//! merely "the profile cannot express this at all".
+//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. The epoch route
+//! (`source.epoch.bound.v1` lowering onto the unedited `FlatEpochBoundV1`
+//! checker, cards T08-EPOCH-SRC and T08-SRC-CT) is CT35/CT36/CT38/CT39.
+//! Rejection cases on any route pin the whole ordered diagnostic cascade rather
+//! than its head, because a refusal that silently dropped a custody obligation
+//! would still satisfy a head-only assertion, and each carries at least one
+//! control so the refusal is not merely "the profile cannot express this at
+//! all". The epoch route's *accepted* cases carry the symmetric obligation: an
+//! epoch that checks has said nothing until its published certificate is
+//! measured, so `epoch_bound_figures` pins every figure on it.
 //!
 //! Manifest schema 2 (card T00-CT-SCHEMA, tasks T00.1-T00.9) makes the per-case
 //! stage record derived rather than declared. Schema 1 wrote a bare word per
@@ -67,7 +72,8 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
-    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT37", "CT48", "CT50",
+    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT35", "CT36", "CT37",
+    "CT38", "CT39", "CT48", "CT50",
 ];
 /// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
@@ -82,6 +88,16 @@ const MUTEX_SANITIZED_CASE: &str = "CT26";
 /// rejections: the exact ordered code vector plus at least one control that
 /// isolates the refused element from the surrounding program.
 const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
+/// The `source.epoch.bound.v1` rejection cases (card T08-EPOCH-SRC's lowering
+/// onto the unedited `FlatEpochBoundV1` checker, mapped by card T08-SRC-CT).
+/// Same discipline again: the exact ordered code vector plus at least one
+/// control that distinguishes the refused epoch from an admitted one.
+const EPOCH_REJECT_CASES: &[&str] = &["CT38", "CT39"];
+/// The accepted `source.epoch.bound.v1` cases. Their evidence is not the bare
+/// verdict — an epoch that checks says nothing on its own — but the exact
+/// certificate figures the checker published, which is why they carry their own
+/// verdict mode rather than reusing `accept`.
+const EPOCH_FIGURE_CASES: &[&str] = &["CT35", "CT36"];
 /// Task-route accept cases whose native evidence is a sanitized run with a heap
 /// witness: every Buffer allocation and release is recorded by address, so
 /// "counted once" and "reclaims nothing" are checked by identity rather than by
@@ -103,6 +119,8 @@ const STAGE_NAMES: &[&str] = &[
     "task_ledger_check",
     "mutex_lowering",
     "mutex_invariant_check",
+    "epoch_lowering",
+    "epoch_bound_check",
     "sequential_whole_program",
     "sequential_reference_execution",
     "task_reference_execution",
@@ -130,6 +148,25 @@ const STAGE_STATUSES: &[&str] = &[
 /// carry no mapped case — declaring them is what makes "this route has no such
 /// stage" a structural statement rather than a note.
 const ROUTE_STAGES: &[(&str, &[&str])] = &[
+    // `source.epoch.bound.v1` is check-only by construction: an admitted epoch
+    // is an accounting statement about declared shapes, so the driver publishes
+    // it with `c_source: None` and `reference_observation: None`. There is
+    // nothing to execute, nothing to emit and therefore nothing to sanitize, so
+    // this route's vocabulary omits the reference/emission/native stages —
+    // including `native_sanitized`, which is structurally absent here rather
+    // than an open item. That is the one deviation from card T08-EPOCH-SRC's
+    // parked rows, which proposed `native_sanitized: unassessed`; recorded in
+    // `docs/reports/wave8-epoch-ct/README.md`.
+    (
+        "epoch",
+        &[
+            "parse",
+            "elaborate",
+            "epoch_lowering",
+            "epoch_bound_check",
+            "proof",
+        ],
+    ),
     ("legacy_c", &["parse", "legacy_c_twin", "proof"]),
     (
         "mutex_guard",
@@ -200,9 +237,11 @@ const STAGE_DEPTH: &[(&str, u8)] = &[
     ("elaborate", 1),
     ("task_lowering", 2),
     ("mutex_lowering", 2),
+    ("epoch_lowering", 2),
     ("sequential_whole_program", 2),
     ("task_ledger_check", 3),
     ("mutex_invariant_check", 3),
+    ("epoch_bound_check", 3),
     ("task_reference_execution", 4),
     ("mutex_reference_execution", 4),
     ("sequential_reference_execution", 4),
@@ -305,6 +344,61 @@ struct ExpectedCase {
     native_heap_scenarios: Option<NativeHeapScenarios>,
     #[serde(default)]
     source_reject: Option<SourceReject>,
+    #[serde(default)]
+    epoch_bound_figures: Option<EpochBoundFigures>,
+    #[serde(default)]
+    epoch_reject: Option<EpochReject>,
+}
+
+/// Accepted `source.epoch.bound.v1` evidence (cards T08, T08-EPOCH-SRC,
+/// T08-SRC-CT). An admitted epoch is not itself the observation: the route
+/// refuses nothing about a program that declares comfortable figures, so
+/// "checked" alone would map a case without measuring what CT35 and CT36 ask.
+/// What is measured is the certificate the checker published — every nonzero
+/// axis of every quantity on it, keyed `field.axis`, plus the task count and
+/// the exact premise set — so a changed union rule, a maximized peak or a
+/// dropped premise moves a pinned number instead of passing silently.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EpochBoundFigures {
+    /// The `SourceExecutionProfile` the module must be published under, so a
+    /// case that silently changed route would not still pass.
+    execution_profile: String,
+    /// Exactly the certificate's premise set. These are declared premises, not
+    /// facts this route establishes, and naming them here keeps that visible.
+    assumptions: Vec<String>,
+    task_count: u64,
+    /// Exactly the nonzero `field.axis` entries of the published certificate —
+    /// not a chosen subset, which the runner enforces by rebuilding the whole
+    /// map from the certificate and comparing it wholesale.
+    figures: BTreeMap<String, u64>,
+    controls: Vec<EpochControl>,
+}
+
+/// A refused `source.epoch.bound.v1` fixture: the exact ordered diagnostic code
+/// vector plus the controls that keep the refusal from being vacuous.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EpochReject {
+    diagnostic_sequence: Vec<String>,
+    controls: Vec<EpochControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EpochControl {
+    source: String,
+    /// `accept` or `reject`; any other spelling fails the harness.
+    expectation: String,
+    diagnostic_sequence: Vec<String>,
+    /// An accepted control states its own certificate, on the same terms as the
+    /// case: a control that merely "also checks" would not show what differs.
+    #[serde(default)]
+    task_count: Option<u64>,
+    #[serde(default)]
+    figures: BTreeMap<String, u64>,
+    #[allow(dead_code)]
+    note: String,
 }
 
 /// Sanitized task-route native evidence with a heap witness (cards T05, T06).
@@ -575,12 +669,14 @@ fn route_stages(route: &str) -> &'static [&'static str] {
         .1
 }
 
-/// The route a verdict mode really takes. `reject` is the one mode both source
-/// routes share, and the pinned `MUTEX_REJECT_CASES` set — itself cross-checked
-/// against each fixture's `checked_mutex_reject` metadata — decides it.
+/// The route a verdict mode really takes. `reject` is the one mode all three
+/// source routes share, and the pinned `MUTEX_REJECT_CASES` / `EPOCH_REJECT_CASES`
+/// sets — each cross-checked against its fixture's own rejection metadata —
+/// decide it.
 fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
     match verdict {
         "checked_mutex_sanitized" => "mutex_guard",
+        "epoch_bound_figures" => "epoch",
         "native_join_failure"
         | "native_create_recovery"
         | "native_owned_transfer"
@@ -590,6 +686,8 @@ fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
         "reject" => {
             if MUTEX_REJECT_CASES.contains(&case_id) {
                 "mutex_guard"
+            } else if EPOCH_REJECT_CASES.contains(&case_id) {
+                "epoch"
             } else {
                 "task"
             }
@@ -695,22 +793,26 @@ fn derive_stage_plan(
             .iter()
             .any(|code| diagnostic_band(code) >= 600);
 
+    // `reference` is `None` for a route that has no reference-execution stage at
+    // all. The epoch route is check-only, so it has none: an admitted epoch is a
+    // checked accounting statement, not a program with an observation.
     let (lowering, check, reference) = match route {
         "task" => (
             "task_lowering",
             Some("task_ledger_check"),
-            "task_reference_execution",
+            Some("task_reference_execution"),
         ),
         "mutex_guard" => (
             "mutex_lowering",
             Some("mutex_invariant_check"),
-            "mutex_reference_execution",
+            Some("mutex_reference_execution"),
         ),
         "sequential" => (
             "sequential_whole_program",
             None,
-            "sequential_reference_execution",
+            Some("sequential_reference_execution"),
         ),
+        "epoch" => ("epoch_lowering", Some("epoch_bound_check"), None),
         other => panic!("{case_id}: route `{other}` has no mapped case shape"),
     };
 
@@ -731,12 +833,15 @@ fn derive_stage_plan(
     }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
-    if verdict == "accept" && expected.outcome.is_some() {
+    if verdict == "accept"
+        && expected.outcome.is_some()
+        && let Some(reference) = reference
+    {
         plan.insert(reference, StagePlan::executed(base, 1, None));
     }
     if let Some(deep) = deep {
         plan.insert(
-            reference,
+            reference.expect("a native runner implies a reference-execution stage"),
             StagePlan::executed(deep, reference_runs, Some(deep_gate.clone())),
         );
         plan.insert(
@@ -758,6 +863,10 @@ fn derive_stage_plan(
             )
         } else if SANITIZER_TRANSCRIPT_CASES.contains(&case_id) {
             StagePlan::absent("recorded_not_gated")
+        } else if !route_stages(route).contains(&"native_sanitized") {
+            // A route that emits no C has nothing to sanitize: structurally
+            // absent, not an open item somebody could close.
+            StagePlan::absent("not_applicable")
         } else {
             StagePlan::absent("unassessed")
         },
@@ -836,6 +945,22 @@ fn run_mapped_case(case: &ManifestCase) {
         expected.source_reject.is_some(),
         SOURCE_REJECT_CASES.contains(&case.id.as_str()),
         "{}: task-route rejection metadata is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
+        expected.epoch_reject.is_some(),
+        EPOCH_REJECT_CASES.contains(&case.id.as_str()),
+        "{}: epoch-route rejection metadata is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
+        expected.epoch_bound_figures.is_some(),
+        expected.verdict == "epoch_bound_figures"
+    );
+    assert_eq!(
+        expected.epoch_bound_figures.is_some(),
+        EPOCH_FIGURE_CASES.contains(&case.id.as_str()),
+        "{}: accepted epoch-certificate evidence is pinned to its own case set",
         case.id
     );
     // Target-scoped evidence: the native fault modes, the sanitized mutex run,
@@ -1066,6 +1191,36 @@ fn run_mapped_case(case: &ManifestCase) {
             }
             assert!(required_files.insert(control.source.clone()));
         }
+    }
+    if let Some(figures) = &expected.epoch_bound_figures {
+        assert_eq!(
+            figures.execution_profile, "FlatEpochBoundV1",
+            "{}: the accepted epoch cases take the flat-epoch route",
+            case.id
+        );
+        assert!(
+            !figures.figures.is_empty(),
+            "{}: an accepted epoch case states the certificate it measured",
+            case.id
+        );
+        check_epoch_controls_shape(&case.id, &figures.controls, &mut required_files);
+    }
+    if let Some(reject) = &expected.epoch_reject {
+        assert!(
+            !reject.diagnostic_sequence.is_empty(),
+            "{}: an epoch-route rejection pins its exact ordered code vector",
+            case.id
+        );
+        assert!(
+            reject
+                .controls
+                .iter()
+                .any(|control| control.expectation == "accept"),
+            "{}: an epoch rejection needs an accepted control, or the refusal is \
+             only `the profile cannot express this at all`",
+            case.id
+        );
+        check_epoch_controls_shape(&case.id, &reject.controls, &mut required_files);
     }
     if let Some(control) = &expected.positive_control {
         assert_eq!(control.source, "joined_sibling.qcore");
@@ -1333,7 +1488,29 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(reject) = &expected.source_reject {
         run_source_controls(&directory, &case.id, reject);
     }
+    if let Some(reject) = &expected.epoch_reject {
+        run_epoch_controls(&directory, &case.id, &reject.controls);
+    }
     match expected.verdict.as_str() {
+        "epoch_bound_figures" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none(),
+                "{}: an admitted epoch has no execution post-state; its evidence is \
+                 the certificate",
+                case.id
+            );
+            run_epoch_bound_figures(
+                &directory,
+                &case.id,
+                expected
+                    .epoch_bound_figures
+                    .as_ref()
+                    .expect("mode metadata"),
+                result,
+            );
+        }
         "native_heap_scenarios" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -1508,6 +1685,22 @@ fn run_mapped_case(case: &ManifestCase) {
                     case.id
                 );
             }
+            if let Some(reject) = &expected.epoch_reject {
+                // Same discipline on the epoch route. CT36's own control shows
+                // why the whole vector matters here: one byte below the summed
+                // peak refuses on the credits *and* on the epoch, so a
+                // head-only assertion would not distinguish a per-task check
+                // from a whole-epoch one.
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    reject.diagnostic_sequence,
+                    "{}: exact diagnostic cascade mismatch; actual:\n{rendered}",
+                    case.id
+                );
+            }
             if let Some(reject) = &expected.source_reject {
                 // Same discipline on the task route: the whole vector, in
                 // order. A refusal that also silently dropped a custody
@@ -1658,8 +1851,8 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 24 of 50 CT cases are mapped
-/// as executed source-level tests; 26 remain unmapped. CT13/CT15/CT26 and the
+/// The moving count is the W6 genericity metric: 28 of 50 CT cases are mapped
+/// as executed source-level tests; 22 remain unmapped. CT13/CT15/CT26 and the
 /// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
 /// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT48 execute on Linux and macOS.
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
@@ -1924,9 +2117,230 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
 /// The declared `SourceExecutionProfile` label a fixture must select. An
 /// unknown label fails rather than being ignored, so a route cannot be renamed
 /// out from under a case.
+/// Shape rules shared by both epoch verdict modes: an accepted control states a
+/// whole certificate and no diagnostics, a refused one states codes and no
+/// certificate, and every control source joins the fixture inventory.
+fn check_epoch_controls_shape(
+    case_id: &str,
+    controls: &[EpochControl],
+    required_files: &mut BTreeSet<String>,
+) {
+    assert!(
+        !controls.is_empty(),
+        "{case_id}: an epoch case needs at least one control"
+    );
+    for control in controls {
+        match control.expectation.as_str() {
+            "accept" => {
+                assert!(
+                    control.diagnostic_sequence.is_empty(),
+                    "{case_id}: an accepted control has no diagnostics"
+                );
+                assert!(
+                    control.task_count.is_some() && !control.figures.is_empty(),
+                    "{case_id}: an accepted epoch control states the certificate it \
+                     measured, so `it also checks` is never the whole control"
+                );
+            }
+            "reject" => {
+                assert!(
+                    !control.diagnostic_sequence.is_empty(),
+                    "{case_id}: a refused control pins its codes"
+                );
+                assert!(
+                    control.task_count.is_none() && control.figures.is_empty(),
+                    "{case_id}: a refused control publishes no certificate"
+                );
+            }
+            other => panic!("{case_id}: unknown control expectation `{other}`"),
+        }
+        assert!(required_files.insert(control.source.clone()));
+    }
+}
+
+/// Every nonzero axis of every quantity on a published epoch certificate, keyed
+/// `field.axis`, plus its task count. Rebuilding the whole map here — rather
+/// than looking up the keys a fixture happens to name — is what stops a fixture
+/// from pinning only the figures that suit it.
+fn epoch_certificate_figures(
+    certificate: &qcore_core::epoch_accounting::EpochBoundCertificate,
+) -> BTreeMap<String, u64> {
+    let mut figures = BTreeMap::new();
+    for (field, quantity) in [
+        ("shared_entry_union", &certificate.shared_entry_union),
+        (
+            "concurrent_private_peak",
+            &certificate.concurrent_private_peak,
+        ),
+        ("runtime_overhead", &certificate.runtime_overhead),
+        ("epoch_peak", &certificate.epoch_peak),
+        ("completed_residency", &certificate.completed_residency),
+        ("exit_residency", &certificate.exit_residency),
+        ("work_total", &certificate.work_total),
+        ("granted_credits", &certificate.granted_credits),
+        ("allocation", &certificate.allocation),
+    ] {
+        for (axis, amount) in quantity.iter() {
+            figures.insert(format!("{field}.{axis}"), amount);
+        }
+    }
+    figures
+}
+
+/// CT35 and CT36: the accepted half of the `source.epoch.bound.v1` route. The
+/// case's own fixture must be admitted under the flat-epoch profile with exactly
+/// the recorded certificate — every nonzero axis, the task count and the premise
+/// set — and each control must land on its own side of the boundary the case is
+/// about. The route is check-only, so this runner asserts that the published
+/// module carries no emitted C and no reference observation rather than looking
+/// for either.
+fn run_epoch_bound_figures(
+    directory: &Path,
+    case_id: &str,
+    figures: &EpochBoundFigures,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    let module = result.unwrap_or_else(|diagnostics| {
+        panic!(
+            "{case_id}: expected an admitted epoch but the checker refused:\n{}",
+            diagnostics
+                .iter()
+                .map(format_diagnostic)
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    });
+    let certificate = epoch_certificate_of(case_id, &module, &figures.execution_profile);
+    assert_eq!(
+        certificate.task_count, figures.task_count,
+        "{case_id}: task count"
+    );
+    assert_eq!(
+        certificate
+            .assumption_names()
+            .into_iter()
+            .map(str::to_owned)
+            .collect::<Vec<_>>(),
+        figures.assumptions,
+        "{case_id}: the certificate's premise set is part of the measurement — a \
+         dropped premise is a changed claim"
+    );
+    assert_eq!(
+        epoch_certificate_figures(certificate),
+        figures.figures,
+        "{case_id}: published certificate figures"
+    );
+    run_epoch_controls(directory, case_id, &figures.controls);
+}
+
+/// The certificate of an accepted epoch module, with the route and the
+/// check-only shape asserted first.
+fn epoch_certificate_of<'module>(
+    case_id: &str,
+    module: &'module qcore_compiler::CompiledModule,
+    profile: &str,
+) -> &'module qcore_core::epoch_accounting::EpochBoundCertificate {
+    assert_eq!(
+        module.execution_profile,
+        execution_profile(profile),
+        "{case_id}: the module must take the route it names"
+    );
+    assert!(
+        module.c_source.is_none() && module.reference_observation.is_none(),
+        "{case_id}: the flat-epoch route is check-only — it emits no C and runs no \
+         reference execution, which is why its manifest row has no such stage"
+    );
+    let certificate = &module
+        .checked
+        .as_checked_epoch_bound()
+        .unwrap_or_else(|| panic!("{case_id}: the checked artifact variant is explicit"))
+        .certificate;
+    // Every certificate this route publishes — a case's or a control's — carries
+    // all four premises. They are declared assumptions, not facts the route
+    // establishes, so a published certificate that had quietly shed one would be
+    // a stronger claim than anything measured here.
+    assert_eq!(
+        certificate.assumption_names().into_iter().collect::<Vec<_>>(),
+        [
+            "DeclaredRuntimeOverhead",
+            "DeclaredTaskFootprints",
+            "DisjointSharedStorageCells",
+            "NoScheduleModel",
+        ],
+        "{case_id}: the flat-epoch premise set is fixed"
+    );
+    certificate
+}
+
+/// The controls an epoch case carries, on either verdict mode. An accepted
+/// control is held to the same standard as its case: the whole certificate, not
+/// merely acceptance.
+fn run_epoch_controls(directory: &Path, case_id: &str, controls: &[EpochControl]) {
+    for control in controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let result = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            "accept" => {
+                let module = result.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{case_id} control {} must check, so the case's measurement is \
+                         not vacuous:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                let certificate = epoch_certificate_of(case_id, &module, "FlatEpochBoundV1");
+                assert_eq!(
+                    Some(certificate.task_count),
+                    control.task_count,
+                    "{case_id} control {}: task count",
+                    control.source
+                );
+                assert_eq!(
+                    epoch_certificate_figures(certificate),
+                    control.figures,
+                    "{case_id} control {}: published certificate figures",
+                    control.source
+                );
+            }
+            "reject" => {
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!("{case_id} control {} must be refused", control.source),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{case_id} control {}: exact diagnostic vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            other => panic!("{case_id}: unknown control expectation `{other}`"),
+        }
+    }
+}
+
 fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
     use qcore_compiler::SourceExecutionProfile as Profile;
     match label {
+        "FlatEpochBoundV1" => Profile::FlatEpochBoundV1,
         "SequentialCleanupV1" => Profile::SequentialCleanupV1,
         "ScopedCopyTasksV1" => Profile::ScopedCopyTasksV1,
         "ScopedOwnedTasksV1" => Profile::ScopedOwnedTasksV1,

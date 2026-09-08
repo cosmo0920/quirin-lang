@@ -1,0 +1,39 @@
+{
+  "id": "CT39",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q639",
+      "message_contains": "WallClockUnavailable"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "elaborate", "epoch_lowering", "epoch_bound_check"],
+  "notes": "A concurrent work bound read as a wall-clock bound. The epoch itself is well accounted: the driver derives and independently rechecks the bound first, and only then puts `bound effort as latency;` to the profile's own epoch_wall_clock_bound, which always refuses. Q639 is therefore measured against a certificate the checker really issued, which is the whole point of the case — the accounting is fine and the time claim still does not follow.",
+  "epoch_reject": {
+    "diagnostic_sequence": ["Q639"],
+    "controls": [
+      {
+        "source": "work_bound_only.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "task_count": 2,
+        "figures": {
+          "concurrent_private_peak.memory": 8192,
+          "runtime_overhead.memory": 768,
+          "epoch_peak.memory": 8960,
+          "completed_residency.memory": 768,
+          "exit_residency.memory": 512,
+          "work_total.effort": 800,
+          "granted_credits.effort": 1000,
+          "granted_credits.memory": 16384,
+          "allocation.effort": 1000,
+          "allocation.memory": 65536
+        },
+        "note": "The identical epoch with the latency claim removed: admitted, with work_total published on the effort axis as 800 — a quantity, never a duration. NoScheduleModel is on the certificate (the runner pins the whole premise set for accepted controls through the same figures path), so a consumer cannot drop the premise and read 800 as a finish time."
+      }
+    ]
+  }
+}

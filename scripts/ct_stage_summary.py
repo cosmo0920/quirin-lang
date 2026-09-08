@@ -44,9 +44,11 @@ STAGE_DEPTH = {
     "elaborate": 1,
     "task_lowering": 2,
     "mutex_lowering": 2,
+    "epoch_lowering": 2,
     "sequential_whole_program": 2,
     "task_ledger_check": 3,
     "mutex_invariant_check": 3,
+    "epoch_bound_check": 3,
     "task_reference_execution": 4,
     "mutex_reference_execution": 4,
     "sequential_reference_execution": 4,
@@ -76,6 +78,7 @@ EVIDENCE_FILES = [
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
     "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

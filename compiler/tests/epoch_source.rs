@@ -8,12 +8,13 @@
 //! assertion below is about which program the lowering hands it and which code
 //! comes back.
 //!
-//! The four fixtures under `tests/fixtures/epoch/CT3*/` are the proposed
-//! mappings for CT35, CT36, CT38 and CT39 (see
-//! `docs/reports/remaining-t08-epoch-src/README.md`). They live outside
-//! `tests/fixtures/ct/` on purpose: the CT harness fails closed when an
-//! unmapped case has a fixture directory, and mapping them is the integrator's
-//! CT lane, not this card's.
+//! The four fixtures under `tests/fixtures/ct/CT3*/` are the CT35, CT36, CT38
+//! and CT39 mappings (card T08-EPOCH-SRC proposed them; card T08-SRC-CT mapped
+//! them and moved the directories into the harness's layout, see
+//! `docs/reports/wave8-epoch-ct/README.md`). `compiler/tests/ct_corpus.rs` now
+//! also runs all four through the manifest's stage-derived route; the tests
+//! here are the independent second measurement of the same fixture bytes and
+//! are deliberately kept.
 //!
 //! **This route is check-only.** An admitted epoch is an accounting statement
 //! about declared shapes; there is no reference execution, no emitted C and no
@@ -23,7 +24,7 @@ use std::path::{Path, PathBuf};
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
 fn fixture_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/epoch")
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ct")
 }
 
 fn fixture(case: &str, file: &str) -> SourceFile {

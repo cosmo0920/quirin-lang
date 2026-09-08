@@ -1,0 +1,61 @@
+{
+  "id": "CT35",
+  "verdict": "epoch_bound_figures",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "elaborate", "epoch_lowering", "epoch_bound_check"],
+  "notes": "One shared 4096-byte allocation read by two tasks: counted once. The figures below are the whole published certificate, not a chosen subset — the runner rebuilds the map from the certificate and compares it wholesale, so a changed union rule moves a pinned number. epoch_peak = union 4096 + summed private peaks (1024 + 1024) + overhead (512 + 2*128) = 6912. The route is check-only: no emitted C, no reference execution, no native run.",
+  "epoch_bound_figures": {
+    "execution_profile": "FlatEpochBoundV1",
+    "assumptions": [
+      "DeclaredRuntimeOverhead",
+      "DeclaredTaskFootprints",
+      "DisjointSharedStorageCells",
+      "NoScheduleModel"
+    ],
+    "task_count": 2,
+    "figures": {
+      "shared_entry_union.memory": 4096,
+      "concurrent_private_peak.memory": 2048,
+      "runtime_overhead.memory": 768,
+      "epoch_peak.memory": 6912,
+      "completed_residency.memory": 4864,
+      "exit_residency.memory": 4608,
+      "work_total.effort": 20,
+      "granted_credits.effort": 200,
+      "granted_credits.memory": 8192,
+      "allocation.effort": 1000,
+      "allocation.memory": 65536
+    },
+    "controls": [
+      {
+        "source": "two_cells.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "task_count": 2,
+        "figures": {
+          "shared_entry_union.memory": 8192,
+          "concurrent_private_peak.memory": 2048,
+          "runtime_overhead.memory": 768,
+          "epoch_peak.memory": 11008,
+          "completed_residency.memory": 8960,
+          "exit_residency.memory": 8704,
+          "work_total.effort": 20,
+          "granted_credits.effort": 200,
+          "granted_credits.memory": 8192,
+          "allocation.effort": 1000,
+          "allocation.memory": 65536
+        },
+        "note": "Two distinct 4096-byte cells, each read by both tasks, are two footprints: the union is 8192 and the epoch peak rises by exactly that 4096. The union counts cell identities, not readers, which is the claim CT35 makes; only shared_entry_union, epoch_peak, completed_residency and exit_residency move."
+      },
+      {
+        "source": "repeated_entry.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q630"],
+        "note": "One task naming the same cell twice is refused at Q630 DuplicateSharedEntry, not silently deduplicated. Without this control, counting-once could be an artifact of a lowering that collapses repeats rather than a checked rule."
+      }
+    ]
+  }
+}
