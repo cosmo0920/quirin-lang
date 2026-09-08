@@ -3,19 +3,39 @@
 //! `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md`.
 //!
 //! **This file changes no production behaviour and asks for none.** It pins
-//! what the *unchanged* gateway already does, so the design document's
-//! feasibility and rejection arguments cite measurements rather than
-//! expectations. The proposed derivation route is *emulated* by putting the
-//! candidate contract in the declared environment: a declared contract is what
-//! the recursive call site sees, and the defining body is then checked against
-//! that same contract by the ordinary analyzer — exactly the assume-then-
-//! validate step the route would run. The emulation is deliberately *more*
-//! permissive than the route at one point, and
+//! what the gateway does through the *declared-contract emulation*, so the
+//! design document's feasibility and rejection arguments cite measurements
+//! rather than expectations. The route is emulated by putting the candidate
+//! contract in the declared environment: a declared contract is what the
+//! recursive call site sees, and the defining body is then checked against that
+//! same contract by the ordinary analyzer — exactly the assume-then-validate
+//! step the route runs. The emulation is deliberately *more* permissive than
+//! the route at one point, and
 //! [`declared_emulation_does_not_reproduce_component_withdrawal`] pins that
 //! difference instead of hiding it.
 //!
 //! Declared contracts are trusted assumptions. Nothing here reports a defect in
 //! production code, promotes any verdict, or claims a proof.
+//!
+//! # Updated by card C03-NFR (the implemented route)
+//!
+//! The neutral-frame route specified by this card's design document is now
+//! implemented in `crates/qcore-c-gateway/src/legacy_neutral.rs`, and the
+//! implemented route's own matrix lives in
+//! `crates/qcore-c-gateway/tests/neutral_frame_recursion.rs`. Three
+//! expectations here were therefore updated deliberately rather than dropped:
+//!
+//! * the motivating gap — an undeclared neutral component and its callers both
+//!   `Unknown` — is closed for neutral bodies, so that case now pins the
+//!   *residual* gap, an undeclared component that carries an effect;
+//! * the two emulation fixtures that used to read an `InferredValidated` record
+//!   back out of a declared contract no longer do, because unit U7 withholds a
+//!   record derived inside a recursive component one of whose members carries a
+//!   declaration. The declaration still governs every call site, so the verdicts
+//!   those fixtures measure are unchanged; only the published record is gone,
+//!   which is exactly the presentational risk U7 names.
+//!
+//! Everything else in this file is byte-identical to the design-card baseline.
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{
@@ -184,15 +204,24 @@ fn depth_neutral() -> String {
     )])
 }
 
-/// The gap the profile addresses: a recursive component with no contract has no
-/// summary today, and every caller of it is `Unknown` — not because the caller
-/// does anything unsupported, but because the call is uncontracted.
+/// The gap the profile addressed, and the part of it that remains.
+///
+/// When this card was written, *any* undeclared recursive component had no
+/// summary and every caller of it was `Unknown` — not because the caller did
+/// anything unsupported, but because the call was uncontracted. The implemented
+/// neutral-frame route closes that for components whose bodies carry no custody
+/// effect (pinned in `neutral_frame_recursion.rs`). What remains, and is pinned
+/// here, is the same shape with an effect in it: the neutral candidate is
+/// refused, no candidate above it is ever seeded, and the component and its
+/// callers stay `Unknown`.
 #[test]
 fn undeclared_neutral_recursion_leaves_the_component_and_its_callers_unknown() {
     if !clang_available() {
         return;
     }
-    let probe = run(&format!("{NEUTRAL_BORROW}\n{CALLER}"), None);
+    let effectful =
+        "void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } q_transfer(p); }";
+    let probe = run(&format!("{effectful}\n{CALLER}"), None);
     assert_eq!(probe.entry, AnalysisStatus::Unknown);
     assert_eq!(probe.status("depth"), AnalysisStatus::Unknown);
     assert_eq!(
@@ -230,11 +259,11 @@ fn assumed_neutral_components_validate_and_unblock_their_callers() {
             AnalysisStatus::Safe,
             "body: {body}"
         );
-        assert_eq!(
-            probe.summaries.get("depth").map(String::as_str),
-            Some("ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"),
-            "body: {body}"
-        );
+        // U7: the record is *withheld*, because a declaration of this same
+        // recursive component is what the recursive call site read. The
+        // declaration still governs, which is what the three verdicts above
+        // measure.
+        assert_eq!(probe.summaries.get("depth"), None, "body: {body}");
     }
 
     let mutual = "void even(void *p, int n); void odd(void *p, int n);\n\
@@ -251,10 +280,7 @@ fn assumed_neutral_components_validate_and_unblock_their_callers() {
     assert_eq!(probe.entry, AnalysisStatus::Safe);
     for member in ["even", "odd"] {
         assert_eq!(probe.status(member), AnalysisStatus::Safe);
-        assert_eq!(
-            probe.summaries.get(member).map(String::as_str),
-            Some("ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }")
-        );
+        assert_eq!(probe.summaries.get(member), None);
     }
 }
 
@@ -424,12 +450,17 @@ fn an_assumed_effectful_contract_validates_vacuously_under_divergence() {
     );
     assert_eq!(probe.entry, AnalysisStatus::Safe);
     assert_eq!(
-        probe.summaries.get("purge").map(String::as_str),
-        Some(
-            "ResourceFunctionContract { parameters: [Released { nullable: false }, Borrowed], result: None }"
-        ),
-        "the vacuous release is published as a validated summary"
+        probe.status("purge"),
+        AnalysisStatus::Safe,
+        "the vacuous release still validates against its own declaration"
     );
+    // Before card C03-NFR this fixture also *published* the vacuous release as
+    // an `InferredValidated` record. Unit U7 withholds it: a record derived
+    // inside a recursive component that carries a declaration is the
+    // declaration read back, not corroboration of it. The vacuity itself is
+    // untouched — the caller's leak still disappears under the trusted
+    // declaration, which is the measurement this test exists for.
+    assert_eq!(probe.summaries.get("purge"), None);
 
     let mint = "void *mint(int n) { void *r = mint(n); return r; }";
     let owned = module(&["extern fn mint(n: i32) -> ptr<mut, u8>\ncontract {\n\

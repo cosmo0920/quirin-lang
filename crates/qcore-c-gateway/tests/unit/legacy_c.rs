@@ -800,14 +800,19 @@ fn internal_definitions_never_receive_an_automatic_neutral_contract() {
     // function nothing. A call is modeled only through a declared contract or a
     // custody summary that validated, and each body below defeats validation
     // for a different reason — an unmodeled statement, an unresolved alias, a
-    // path-dependent parameter disposition, and recursion.
+    // path-dependent parameter disposition, and recursion carrying an effect.
     // Positive movement from validated summaries is pinned in
     // `compiler/tests/unit/legacy_summary.rs`.
+    //
+    // The last case was narrowed by card C03-NFR: bare `subject() ` recursion
+    // performs no custody event, so the neutral-frame route now validates and
+    // publishes the neutral contract for it. Recursion that carries an effect
+    // is still refused, which is what this list is about.
     for source in [
         "void helper(void *p) { int a[2] = { 1, 2 }; q_free(p); } void subject(void) { void *p = q_alloc(); helper(p); q_free(p); }",
         "void helper(void) { q_free(missing); } void subject(void) { void *p = q_alloc(); helper(); q_free(p); }",
         "void helper(void *p, int c) { if (c) { q_free(p); } } void subject(void) { void *p = q_alloc(); helper(p, 1); }",
-        "void subject(void) { subject(); return; }",
+        "void subject(void) { void *p = q_alloc(); subject(); q_free(p); q_free(p); }",
     ] {
         let summary = analyze_legacy_c_translation_unit(source, "subject", &contracts()).unwrap();
         assert_ne!(summary.status, AnalysisStatus::Safe, "{source}");

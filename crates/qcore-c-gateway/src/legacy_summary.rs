@@ -96,6 +96,27 @@
 //! well-founded ranked validation, not a coinductive assumed contract or a general
 //! termination proof. Unreachable recursive edges may already validate on the
 //! ordinary route under its explicit resource entry preconditions.
+//!
+//! A third route, [`neutral`] (card C03's neutral-frame recursion), applies only
+//! after the two above have published nothing for an undeclared recursive
+//! component. It leaves the control shape completely free and fixes the *effect
+//! content* at the bottom element instead: the only contract it ever seeds for a
+//! member of its own component is `N(m)` — every formal `Borrowed`, result
+//! `None` — and it descends a two-point per-member lattice to the greatest
+//! post-fixed point below all-`Neutral`. Because that assumption states no
+//! precondition and asserts only negative, prefix-closed facts, the optimistic
+//! start is admissible there and nowhere above it; an effectful assumption
+//! validates vacuously under divergence and therefore still requires a rank.
+//!
+//! # Self-dependent records
+//!
+//! A validated summary is published as independent corroboration of a body. A
+//! record derived while a declared contract for a member of the same recursive
+//! component was in force is not that: the recursive call site read the
+//! declaration back. Such records are withheld from [`CustodyDerivation::records`]
+//! (design unit U7). The declaration still governs every call site — no
+//! authority is lost — but a certificate consumer can no longer read a
+//! declaration back as an inference.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -123,6 +144,11 @@ pub(crate) struct CustodyDerivation {
     inferred: BTreeMap<String, ResourceFunctionContract>,
     /// Functions whose validated inference disagrees with their declaration.
     conflicts: BTreeMap<String, (ResourceFunctionContract, ResourceFunctionContract)>,
+    /// Members of a recursive component in which some member carries a declared
+    /// contract. Their inferred records were derived with that declaration in
+    /// force at a call site the component reaches, so they are not independent
+    /// corroboration of anything and are never published (design unit U7).
+    self_dependent: BTreeSet<String>,
 }
 
 impl CustodyDerivation {
@@ -150,11 +176,14 @@ impl CustodyDerivation {
     }
 
     /// The summaries this derivation contributed, as schema records. Declared
-    /// contracts are not repeated here: they travel with the environment.
+    /// contracts are not repeated here: they travel with the environment, and a
+    /// record a declaration of the same recursive component produced is
+    /// withheld rather than republished as an inference (U7).
     pub(crate) fn records(&self) -> Vec<ResourceSummaryRecord> {
         self.inferred
             .iter()
             .filter(|(name, _)| !self.conflicts.contains_key(*name))
+            .filter(|(name, _)| !self.self_dependent.contains(*name))
             .map(|(name, contract)| {
                 ResourceSummaryRecord::new(
                     name.clone(),
@@ -223,21 +252,48 @@ pub(crate) fn derive_custody_summaries(
             }
         }
         let recursive = component.len() > 1 || graph[&component[0]].contains(&component[0]);
+        // (U7) Inside a recursive component a declared contract is what the
+        // recursive call site reads, so an inferred record for any member of it
+        // repeats that declaration instead of corroborating it. Record the
+        // dependence; the declaration keeps governing call sites either way.
+        if recursive && component.iter().any(|n| contracts.contract(n).is_some()) {
+            derivation.self_dependent.extend(component.iter().cloned());
+        }
         if recursive
             && !pending.is_empty()
             && component.iter().all(|n| contracts.contract(n).is_none())
-            && let Some(contexts) =
-                infer_contextual_component(tokens, &component, &derivation.environment)
         {
-            for (name, (contract, cfg)) in contexts {
-                if derivation.inferred.contains_key(&name) {
-                    continue;
+            if let Some(contexts) =
+                infer_contextual_component(tokens, &component, &derivation.environment)
+            {
+                for (name, (contract, cfg)) in contexts {
+                    if derivation.inferred.contains_key(&name) {
+                        continue;
+                    }
+                    derivation
+                        .environment
+                        .insert_contract(name.clone(), contract.clone());
+                    derivation.inferred.insert(name.clone(), contract);
+                    derivation.contextual.insert(name, cfg);
                 }
-                derivation
-                    .environment
-                    .insert_contract(name.clone(), contract.clone());
-                derivation.inferred.insert(name.clone(), contract);
-                derivation.contextual.insert(name, cfg);
+            } else if pending.len() == component.len()
+                // (V2) Ordinary inference and both ranked recursive routes run
+                // first. Neutral-frame recursion is consulted only for a
+                // component that published nothing, and can therefore never
+                // replace or weaken a contract another route published.
+                && let Some(published) = neutral::infer_neutral_component(
+                    tokens,
+                    &component,
+                    contracts,
+                    &derivation.environment,
+                )
+            {
+                for (name, contract) in published {
+                    derivation
+                        .environment
+                        .insert_contract(name.clone(), contract.clone());
+                    derivation.inferred.insert(name, contract);
+                }
             }
         }
     }
@@ -1162,6 +1218,9 @@ fn strongly_connected_components(graph: &BTreeMap<String, BTreeSet<String>>) -> 
     }
     components
 }
+
+#[path = "legacy_neutral.rs"]
+mod neutral;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]
