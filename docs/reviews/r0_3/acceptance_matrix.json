@@ -4832,13 +4832,6 @@
  },
  "named_followups": [
   {
-   "id": "CORPUS-REPIN",
-   "title": "Re-measure and re-pin the 185-unit corpus after C02 and G02",
-   "why": "C02 touched shared analysis code (legacy_c.rs) and G02 changed the declared input transport; the four archived artifacts would change in both directions, including possible newly surfaced provisional Unsafe units. The pin gate refused to run in this environment, so nothing was adjusted to fit. Wave-5 note: C03-NFR re-measured the 185-unit audit at the pin 66910c10 and observed 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only, byte-stable across its change but differing from the archived 42 provisional Unsafe; the re-pin must reconcile this with the explicit-Clang rerun's 43.",
-   "invariants": "hard invariants 3 (parity before deletion) and 5 (pinned expectations are intentional): regenerate, diff, archive the diff under docs/reports/ and re-pin deliberately.",
-   "source": "docs/reports/remaining-c02/README.md SS6, docs/reports/remaining-g02/README.md SS8"
-  },
-  {
    "id": "E01-F1",
    "title": "Complete the source function enumeration (macro-expanded and K&R definitions)",
    "why": "such definitions carry no obligation and no residual Unknown row, so the reported checked/Unknown split is not a complete function denominator for such a unit. It promotes nothing today, but it changes the pinned artifacts and the resource selection, so it needs its own parity plan.",
@@ -4855,18 +4848,6 @@
    "title": "Consume a second real CMake C project's unmodified compile database",
    "why": "compile_db accepts four frontend flags; Libevent's own CMakeLists appends 18 more unconditionally. Each additional flag needs a preservation argument through preprocessing, syntax and the typed AST.",
    "source": "docs/reports/remaining-g03/README.md"
-  },
-  {
-   "id": "REASON-CODES",
-   "title": "Implement the L21.1 reason-code vocabulary for uncovered obligations",
-   "why": "specified prose today with a mapping onto the real strings. Either carrier moves a pinned artifact: DerivationIncomplete is digest-bearing in every evidence-v2 request and witness, and the audit report's per-unit reason is in all four 185-unit artifacts. Environment failures must stay their own category and never be relabelled as source defects.",
-   "source": "docs/reports/remaining-d01/README.md SS3"
-  },
-  {
-   "id": "T00-CT-SCHEMA",
-   "title": "Make the CT manifest and its summarizer stage-derived (T00.1-T00.9)",
-   "why": "manifest stage statuses are host-unconditional strings, `cfg` and `type_checker` conflate four real passes, sanitizer evidence is recorded rather than gated, and acceptance.json's two scalars treat a source-rejection case and a four-scenario native case as one identical unit of coverage.",
-   "source": "docs/reports/remaining-t00/README.md SS4, SS6"
   },
   {
    "id": "P03-F",
@@ -4943,9 +4924,21 @@
   {
    "id": "D02-GEN-REST",
    "title": "build_matrix.py's non-CT sections are a stale hand-coded snapshot",
-   "why": "only ct_conformance is derived and verified against the manifest; named_followups is a hard-coded literal from the original D02 wave (build_matrix.py:1419) and the gate object hard-codes stale counts (e.g. provider_tests: 47 vs 58), so whole-file regeneration would clobber later reconciliations. The integrator adopts the generated ct_conformance section surgically until the remaining sections are derived from live sources.",
+   "why": "only ct_conformance is derived and verified against the manifest; named_followups is a hard-coded literal from the original D02 wave (build_matrix.py:1419) and the gate object hard-codes stale counts (e.g. provider_tests: 47 vs 58), so whole-file regeneration would clobber later reconciliations. The integrator adopts the generated ct_conformance section surgically until the remaining sections are derived from live sources. CORPUS-REPIN adds: the generator's non-CT sections also still record the pre-repin 42-count wording; its own generator_status already flags this.",
    "source": "docs/reports/remaining-t00-ct-schema/README.md, this integration"
+  },
+  {
+   "id": "REASON-CODES-B",
+   "title": "Reason-code residuals after the L21.1 implementation",
+   "why": "B1: opaque OS/tool text carries no code. B2: ChunkSourceResult's Unknown reason enum is untyped. B3: chunk-contracts.json's third reason vocabulary — and, per CORPUS-REPIN's measurement, source-effects.json, which is assembled by the compatibility adapter rather than qcore-audit's report and therefore carries no reason_code field (a documentation error in REASON-CODES §7, not an implementation defect).",
+   "source": "docs/reports/remaining-reason-codes/README.md, docs/reports/corpus-repin/README.md"
+  },
+  {
+   "id": "P09-lock",
+   "title": "providers/package.py --locked broke silently at P09's version bumps",
+   "why": "P09 bumped qcore-verification/qcore-verifier-host to 0.2.0 without updating providers/Cargo.lock; the build script passes --locked and nothing in CI runs it, so the break went unnoticed until REASON-CODES. The lockfile is repaired; adding the package build to CI remains open.",
+   "source": "docs/reports/remaining-reason-codes/README.md"
   }
  ],
- "updated": "2026-09-08 (wave 6, T00-CT-SCHEMA: CT manifest is schema 2 with stage-derived statuses, per-route vocabularies, gated sanitizer claims and generated acceptance numbers; ct_conformance regenerated by the repaired build_matrix.py — the thirteen-case generator divergence is ended; the two increment-totals objects are deliberately dropped in favor of the derived totals and their card reports; CT stays 24/50, nothing promoted)"
+ "updated": "2026-09-08 (wave 6 complete: REASON-CODES implements the L21.1 vocabulary on both carriers with qcore-schemas 6.0.0; T00-CT-SCHEMA lands the stage-derived manifest schema 2 with generated acceptance numbers; CORPUS-REPIN re-measures and deliberately re-pins the four 185-unit artifacts — headline counts unchanged at 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only, the 42-vs-43 delta resolved as files-vs-configurations on src/flb_input_chunk.c per G01's recorded ambiguity, 23 function-level Unknown-to-Safe discharges attributed to C02's whitelist, no unit verdict change, nothing promoted)"
 }
