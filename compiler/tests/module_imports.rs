@@ -29,25 +29,29 @@ fn source_import_enables_existing_checked_task_lowering() {
 
 #[test]
 fn an_import_in_another_file_cannot_enable_concurrency() {
-    let missing = CONTEXT.replace("import std.concurrency;\n", "");
-    assert_ne!(missing, CONTEXT);
     let helper = SourceFile::new(
         "helper.qcore",
         "module library; import std.concurrency; fn helper() -> i32 { return 0; }",
     );
-    for files in [
-        vec![helper.clone(), SourceFile::new("missing.qcore", &missing)],
-        vec![SourceFile::new("missing.qcore", &missing), helper.clone()],
-    ] {
-        let errors = compile_files(&files, &CompileOptions::default()).unwrap_err();
-        assert_eq!(errors[0].code, "Q015");
-        assert_eq!(errors[0].location.path, "missing.qcore");
+    let lf = CONTEXT.replace("\r\n", "\n");
+    for context in [lf.clone(), lf.replace('\n', "\r\n")] {
+        // Remove only the declaration, independent of checkout line endings.
+        let missing = context.replacen("import std.concurrency;", "", 1);
+        assert_ne!(missing, context);
+        for files in [
+            vec![helper.clone(), SourceFile::new("missing.qcore", &missing)],
+            vec![SourceFile::new("missing.qcore", &missing), helper.clone()],
+        ] {
+            let errors = compile_files(&files, &CompileOptions::default()).unwrap_err();
+            assert_eq!(errors[0].code, "Q015");
+            assert_eq!(errors[0].location.path, "missing.qcore");
+        }
+        compile_files(
+            &[helper.clone(), SourceFile::new("context.qcore", &context)],
+            &CompileOptions::default(),
+        )
+        .unwrap();
     }
-    compile_files(
-        &[helper, SourceFile::new("context.qcore", CONTEXT)],
-        &CompileOptions::default(),
-    )
-    .unwrap();
 }
 
 #[test]
