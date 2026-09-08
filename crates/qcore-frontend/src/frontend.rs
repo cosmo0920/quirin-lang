@@ -2152,6 +2152,7 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "FULL"
             | "qcore_buffer_new"
             | "qcore_buffer_read"
+            | "qcore_buffer_write"
             | "qcore_acquire"
             | "qcore_check"
     )

@@ -17,7 +17,7 @@ pub fn has_source_tasks(source: &SourceProgram) -> bool {
                 || s.value.nested_blocks().iter().any(|b| has_scope(b))
         })
     }
-    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read"))
+    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read" || word == "qcore_buffer_write"))
         || !source.task_expressions().is_empty()
         || source
             .declarations
@@ -382,6 +382,56 @@ impl Scalar {
     }
 }
 
+/// Evaluate a source read share into the ledger's authority unit.
+///
+/// `FULL` is the whole read authority; a decimal literal and a sum of admitted
+/// shares are the fractions of it. Every other form is a represented refusal:
+/// a named share needs a declared share constant, which this profile does not
+/// have. A share of zero grants nothing and a share above the full authority is
+/// not a fraction of it, so both are refused here rather than clamped — the
+/// ledger repeats both checks, so this is the first of two gates, not the only
+/// one.
+fn read_share(share: &SourceShareExpression, span: Span) -> Result<u32, SourceDiagnostic> {
+    let value = match share {
+        SourceShareExpression::Full => qcore_core::task_execution::FULL_READ_AUTHORITY,
+        SourceShareExpression::Parenthesized(inner) => read_share(&inner.value, inner.span)?,
+        SourceShareExpression::Add(left, right) => read_share(&left.value, left.span)?
+            .checked_add(read_share(&right.value, right.span)?)
+            .ok_or_else(|| {
+                failure(
+                    span,
+                    SemanticPass::Concurrency,
+                    "read share sum is outside the representable authority range",
+                )
+            })?,
+        SourceShareExpression::Integer(digits) => digits.parse::<u32>().map_err(|_| {
+            failure(
+                span,
+                SemanticPass::Concurrency,
+                "a read share literal must be a decimal fraction of the full authority",
+            )
+        })?,
+        SourceShareExpression::Name(_) => {
+            return Err(failure(
+                span,
+                SemanticPass::Concurrency,
+                "named read shares require a declared share constant, which is outside this profile",
+            ));
+        }
+    };
+    if value == 0 || value > qcore_core::task_execution::FULL_READ_AUTHORITY {
+        return Err(failure(
+            span,
+            SemanticPass::Concurrency,
+            format!(
+                "a read share must be positive and at most FULL ({}); this capture requests {value}",
+                qcore_core::task_execution::FULL_READ_AUTHORITY
+            ),
+        ));
+    }
+    Ok(value)
+}
+
 fn core_span(span: Span) -> TaskSpan {
     TaskSpan {
         start: span.start,
@@ -467,7 +517,7 @@ fn lower(
     for declaration in &source.declarations {
         if matches!(
             declaration.value.name.as_str(),
-            "qcore_buffer_new" | "qcore_buffer_read" | "AllocError"
+            "qcore_buffer_new" | "qcore_buffer_read" | "qcore_buffer_write" | "AllocError"
         ) {
             return Err(failure(
                 declaration.span,
@@ -853,6 +903,61 @@ impl<'a> Builder<'a> {
             self.current = success;
             return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
         }
+        if word(tokens.first(), "qcore_buffer_write") {
+            // `qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`. Only an
+            // owner can name the buffer: a read loan is not an `own<Buffer>`
+            // binding, so a borrower cannot reach this form at all, and the
+            // ledger separately refuses the write while any share is out.
+            let comma = tokens
+                .iter()
+                .position(|token| symbol(Some(token), Symbol::Comma))
+                .ok_or_else(|| {
+                    self.bad(
+                        span,
+                        "buffer write requires one owned-buffer name and one i32 value",
+                    )
+                })?;
+            if comma < 3
+                || !symbol(tokens.get(1), Symbol::LeftParen)
+                || matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
+                    != Some(tokens.len().saturating_sub(1))
+            {
+                return Err(self.bad(
+                    span,
+                    "buffer write requires one owned-buffer name and one i32 value",
+                ));
+            }
+            let target = name(tokens.get(2))
+                .filter(|_| comma == 3)
+                .ok_or_else(|| self.bad(span, "buffer write requires an exact buffer name"))?;
+            let (id, kind) = self.lookup(target, span)?;
+            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                return Err(self.bad(
+                    span,
+                    "buffer write requires own<Buffer>; a read loan grants no write authority",
+                ));
+            }
+            let (value, value_kind) =
+                self.scalar_operand(&tokens[comma + 1..tokens.len() - 1], span)?;
+            if value_kind != Scalar::I32 {
+                return Err(self.bad(span, "buffer write requires an i32 value"));
+            }
+            self.instruction(
+                span,
+                TaskInstructionKind::WriteBuffer {
+                    buffer: id.0 as usize,
+                    value,
+                },
+            );
+            self.instruction(
+                span,
+                TaskInstructionKind::BindScalar {
+                    slot,
+                    value: ScalarOperand::Unit,
+                },
+            );
+            return Ok(Some(ValueType::Scalar(Scalar::Unit)));
+        }
         if word(tokens.first(), "qcore_buffer_read") {
             if tokens.len() != 4
                 || !symbol(tokens.get(1), Symbol::LeftParen)
@@ -1044,17 +1149,14 @@ impl<'a> Builder<'a> {
                     ScalarOperand::Move(symbol.0 as usize)
                 }
                 (SourceCaptureMode::Read { share }, Scalar::ReadLoan) => {
-                    // Only the whole read authority is admitted. A fractional
-                    // or named share is a multi-reader split, which this
-                    // profile refuses rather than approximates.
-                    if share.value != SourceShareExpression::Full {
-                        return Err(self.bad(
-                            share.span,
-                            "a read loan requires `share FULL`; fractional read shares are outside this profile",
-                        ));
-                    }
+                    // The share the *borrower* receives. Whether the resource
+                    // has that much authority left to give is the ledger's
+                    // decision, on the path that reaches this creation.
                     loans += 1;
-                    ScalarOperand::Loan(symbol.0 as usize)
+                    ScalarOperand::Loan {
+                        slot: symbol.0 as usize,
+                        share: read_share(&share.value, share.span)?,
+                    }
                 }
                 _ => {
                     return Err(self.bad(

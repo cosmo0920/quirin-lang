@@ -1,15 +1,19 @@
 //! Finite source-task execution: immutable i32/unit copies, affine owned buffers,
-//! one bounded scoped read loan and leaf workers. Model checking covers
+//! counted scoped read shares and leaf workers. Model checking covers
 //! allocation/creation branches and checked worker custody effects. A reference
 //! run chooses concrete outcomes; it is not the all-path certificate.
-//! Source/native refinement, arbitrary owned graphs, fractional or multi-reader
+//! Source/native refinement, arbitrary owned graphs, disjoint slicing, write
 //! shares and synchronization remain separate boundaries.
 //!
-//! The read loan (card T04) is deliberately minimal: at most one loan is
-//! outstanding at a time, at most one loan argument per creation, a loan is
-//! never copied, re-lent, moved, returned or dropped, and only the creator's
-//! join closes it. Every other borrowing form stays outside this profile.
-pub use crate::scoped_tasks::ScopeId;
+//! The read loan (card T04) is deliberately minimal: at most one *resource* is
+//! lent at a time, at most one loan argument per creation, a loan is never
+//! copied, re-lent, moved, returned or dropped, and only the creator's join
+//! returns its share. Card T05 makes each loan carry a positive share out of
+//! `FULL_READ_AUTHORITY`, so one resource may be lent to at most `MAX_READERS`
+//! borrowers whose shares sum to no more than the full authority, and adds the
+//! Buffer write whose exclusive-authority requirement the share ledger decides.
+//! Every other borrowing form stays outside this profile.
+pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, MAX_READERS, ScopeId};
 use crate::scoped_tasks::{ResourceId, ResourceState, ScopedTaskLedger, TaskOutcome};
 use std::collections::{BTreeMap, BTreeSet};
 pub type FunctionId = usize;
@@ -42,9 +46,14 @@ pub enum ScalarOperand {
     I32(i32),
     Slot(SlotId),
     Move(SlotId),
-    /// Lend an owned Buffer to one child for the outstanding creation. The
-    /// slot keeps its binding; only the authority is suspended.
-    Loan(SlotId),
+    /// Lend `share` of an owned Buffer's read authority to one child for the
+    /// outstanding creation. The slot keeps its binding; only the share leaves.
+    /// `share` is positive and at most `FULL_READ_AUTHORITY`; the ledger
+    /// decides whether the *outstanding total* leaves room for it.
+    Loan {
+        slot: SlotId,
+        share: u32,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ErrorOperand {
@@ -90,6 +99,13 @@ pub enum TaskInstructionKind {
     ReadBuffer {
         buffer: SlotId,
         value_slot: SlotId,
+    },
+    /// Replace a Buffer's payload. This is the operation the share ledger's
+    /// exclusive gate exists for: it is admitted only when the writer owns the
+    /// resource and no read share is outstanding.
+    WriteBuffer {
+        buffer: SlotId,
+        value: ScalarOperand,
     },
     DropBuffer {
         buffer: SlotId,
@@ -311,19 +327,22 @@ impl State {
                 }
                 _ => Err(format!("slot {id} is not an initialized owned buffer")),
             },
-            // Lending demands exclusive authority at the moment of lending, so
-            // a resource that is already loaned, moved away, reserved or
-            // dropped cannot be lent again. A loan itself is never lendable:
-            // this profile has no transitive or nested borrowing.
-            ScalarOperand::Loan(id) => match self.slots.get(id) {
+            // Lending demands ownership plus enough unlent authority. A
+            // resource that was moved away, reserved or dropped is not lendable
+            // at all, and one whose outstanding shares leave no room is refused
+            // with the exact amounts. A loan itself is never lendable: this
+            // profile has no transitive or nested borrowing.
+            ScalarOperand::Loan { slot, share } => match self.slots.get(slot) {
                 Some(AbstractSlot::Value(AbstractValue::Owned(resource))) => {
-                    self.ledger
-                        .use_resource(0, *resource)
-                        .map_err(|e| format!("{e:?}"))?;
+                    if *share == 0 || *share > FULL_READ_AUTHORITY {
+                        return Err(format!(
+                            "a read share must be positive and at most {FULL_READ_AUTHORITY}"
+                        ));
+                    }
                     Ok(AbstractValue::Loan(*resource))
                 }
                 _ => Err(format!(
-                    "slot {id} is not an owned buffer this task may lend"
+                    "slot {slot} is not an owned buffer this task may lend"
                 )),
             },
         }
@@ -381,13 +400,13 @@ impl State {
         }) {
             return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
         }
-        // An outstanding loan is an unfinished lifetime duty, not a leak: name
+        // An outstanding share is an unfinished lifetime duty, not a leak: name
         // it separately so the refusal says what the exit actually failed to
-        // do, which is close the loan by joining its borrower.
+        // do, which is reclaim the share by joining its borrower.
         if let Some(&resource) = self
             .resources
             .iter()
-            .find(|&&resource| self.ledger.loan_borrower(resource).is_some())
+            .find(|&&resource| self.ledger.lent_share(resource) > 0)
         {
             return Err(format!(
                 "return/error leaves resource {resource} lent to an unjoined child"
@@ -650,6 +669,16 @@ fn check_function(
                             AbstractSlot::Value(AbstractValue::Scalar(ScalarType::I32)),
                         )?;
                     }
+                    TaskInstructionKind::WriteBuffer { buffer, value } => {
+                        if state.value(value)?.ty() != ScalarType::I32 {
+                            return Err("buffer write requires a copy i32".into());
+                        }
+                        // `buffer` demands exclusive authority, which the share
+                        // ledger refuses while any read share is outstanding.
+                        // A borrower's slot is a loan, never an owned buffer,
+                        // so no borrower can reach this instruction at all.
+                        state.buffer(*buffer)?;
+                    }
                     TaskInstructionKind::DropBuffer { buffer } => {
                         let resource = state.buffer(*buffer)?;
                         state
@@ -817,31 +846,40 @@ fn check_function(
                             captured.insert(index, resource);
                         }
                         if let AbstractValue::Loan(resource) = value {
-                            let ScalarOperand::Loan(slot) = argument else {
+                            let ScalarOperand::Loan { slot, share } = argument else {
                                 unreachable!()
                             };
                             if !lent_slots.insert(*slot) {
                                 return Err("duplicate read loan of one slot".into());
                             }
-                            loans.push(resource);
+                            loans.push((resource, *share));
                         }
                     }
-                    // The card's bound, enforced structurally rather than
-                    // assumed: one loan per creation, one outstanding at a
-                    // time. Splitting read authority across several borrowers
-                    // is a different profile, not a larger version of this one.
+                    // The card's bounds, enforced structurally rather than
+                    // assumed: one loan argument per creation, and one lent
+                    // resource at a time. How much authority may be handed out,
+                    // and to how many borrowers, is the ledger's decision.
                     if loans.len() > 1 {
                         return Err(
                             "this profile admits at most one read loan per task creation".into(),
                         );
                     }
-                    if !loans.is_empty() && !state.ledger.outstanding_loans().is_empty() {
+                    if loans.iter().any(|(resource, _)| {
+                        state
+                            .ledger
+                            .outstanding_loans()
+                            .iter()
+                            .any(|outstanding| outstanding != resource)
+                    }) {
                         return Err(
                             "this profile admits at most one outstanding read loan at a time"
                                 .into(),
                         );
                     }
-                    if resources.iter().any(|resource| loans.contains(resource)) {
+                    if resources
+                        .iter()
+                        .any(|resource| loans.iter().any(|(lent, _)| lent == resource))
+                    {
                         return Err("one creation cannot both move and lend a resource".into());
                     }
                     let reservation = state.next_id;
