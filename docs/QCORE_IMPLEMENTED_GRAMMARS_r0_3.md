@@ -15,7 +15,8 @@ The grammars below use EBNF: quoted tokens are literals; `{ X }` means repetitio
 
 ```ebnf
 module_header = "module", ("executable" | "library" | "contract"), ";" ;
-source        = [module_header], {declaration} ;
+source        = [module_header], {module_import | declaration} ;
+module_import = "import", IDENT, {".", IDENT}, ";" ;
 contract      = "contract", "{", {clause}, "}" ;
 clause        = "requires", NONEMPTY_EXPRESSION_TOKENS, ";"
               | "ensures", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
@@ -38,6 +39,25 @@ after resolving their initializers. Place/share syntax is not proof of capture
 types, permissions or live handles. These records do not extend G02's sequential executable profile. The separate
 G02a path now checks and executes its supported task subset; the earlier
 [task foundations record](reports/w6-source-task-foundations/README.md) remains historical.
+
+Bundled semantic modules require an explicit top-level `import` in each source
+file. The current registry contains `std.concurrency`:
+
+```qcore
+import std.concurrency;
+concurrency checked;
+```
+
+Import paths are dot-separated identifiers terminated by a semicolon. Imports
+may occur between top-level declarations, after the optional module header, and
+apply to the whole file. Repeated imports are idempotent. Unknown module names
+reject with `Q014`; concurrency forms without their import reject with `Q015`,
+including in uncalled bodies and non-executable modules. Each input file is
+checked before combining declarations: another file's import cannot grant it
+concurrency. Importing vocabulary does not discharge operation checks or make an
+unsupported profile executable. The task profile still requires its
+`concurrency checked;` marker. User-file/package resolution, import aliases,
+wildcards, reexports and implicit/transitive imports are not implemented.
 
 ## G02. Source execution profile
 
@@ -87,6 +107,7 @@ scalar slot; unit uses bare return or a live unit result slot. Explicit supporte
 permitted. Payload-free error variants preserve their exact `E::Variant` tags.
 
 ```qcore
+import std.concurrency;
 concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
@@ -149,6 +170,7 @@ and one immutable i32 payload. Its resource identity is separate from source
 slot and scalar identities. This is not arbitrary `own<T>` elaboration.
 
 ```qcore
+import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
     return move buffer;
@@ -235,6 +257,7 @@ join. It is selected whenever any checked function has a `borrow<Buffer>`
 parameter; a module that lends nothing keeps its G02a/G02b profile unchanged.
 
 ```qcore
+import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
@@ -314,6 +337,7 @@ or when the module writes a Buffer; a module that does neither keeps its
 G02a/G02b/G02bb profile unchanged.
 
 ```qcore
+import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
@@ -387,6 +411,7 @@ whenever any checked function declares an error payload; a module whose error
 variants are all payload-free keeps its G02a/G02b/G02bb profile unchanged.
 
 ```qcore
+import std.concurrency;
 concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
@@ -479,6 +504,7 @@ a `mutex guards` declaration, ahead of the scoped-task routes, and it composes
 with none of them: a module that also creates a task is refused.
 
 ```qcore
+import std.concurrency;
 error Fault { Broken; }
 fn main() -> unit {
     thread scope s {

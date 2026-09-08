@@ -1,3 +1,4 @@
+import std.concurrency;
 error Fault { Broken; }
 
 fn main() -> unit {

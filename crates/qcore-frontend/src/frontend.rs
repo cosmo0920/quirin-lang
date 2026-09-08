@@ -254,6 +254,7 @@ pub enum SourceModuleMode {
 pub struct SourceProgram {
     pub mode: SourceModuleMode,
     pub mode_span: Option<Span>,
+    imports: Vec<Located<String>>,
     source: String,
     lexical_tokens: Vec<Token>,
     task_expressions: Vec<SourceTaskExpression>,
@@ -263,6 +264,11 @@ pub struct SourceProgram {
 }
 
 impl SourceProgram {
+    /// Explicit, file-local bundled module imports with their full source spans.
+    pub fn imports(&self) -> &[Located<String>] {
+        &self.imports
+    }
+
     /// Full match syntax with optional exact builtin Result-pattern recognition.
     pub fn result_matches(&self) -> &[SourceResultMatch] {
         &self.result_matches
@@ -407,6 +413,7 @@ impl<'a> SourceParser<'a> {
 
     fn parse(self) -> Result<SourceProgram, SourceParseError> {
         let mut declarations = Vec::new();
+        let mut imports = Vec::new();
         let mut cursor = 0;
         let mut mode = SourceModuleMode::Executable;
         let mut mode_span = None;
@@ -429,6 +436,31 @@ impl<'a> SourceParser<'a> {
             cursor = 3;
         }
         while cursor < self.tokens.len() {
+            if self.word(cursor, "import") {
+                let start = cursor;
+                cursor += 1;
+                let mut path = self.identifier(cursor)?.to_owned();
+                cursor += 1;
+                while self.tokens.get(cursor).map(|token| &token.kind)
+                    == Some(&TokenKind::Symbol(Symbol::Dot))
+                {
+                    cursor += 1;
+                    path.push('.');
+                    path.push_str(self.identifier(cursor)?);
+                    cursor += 1;
+                }
+                if self.tokens.get(cursor).map(|token| &token.kind)
+                    != Some(&TokenKind::Symbol(Symbol::Semicolon))
+                {
+                    return Err(self.error(cursor, "expected semicolon after module import"));
+                }
+                cursor += 1;
+                imports.push(Located {
+                    span: self.range_span(start, cursor),
+                    value: path,
+                });
+                continue;
+            }
             let (declaration, next) = self.declaration(cursor)?;
             declarations.push(declaration);
             cursor = next;
@@ -436,6 +468,7 @@ impl<'a> SourceParser<'a> {
         let task_expressions = tasks::parse_inventory(&self, &declarations)?;
         let result_matches = result_match::parse_inventory(&self, &declarations)?;
         Ok(SourceProgram {
+            imports,
             task_expressions,
             result_matches,
             mode,
@@ -1451,6 +1484,7 @@ impl<'a> SourceParser<'a> {
             || self.word(index, "fn")
             || self.word(index, "concurrency")
             || self.word(index, "verify")
+            || self.word(index, "import")
     }
 
     fn is_statement_start(&self, index: usize) -> bool {
@@ -1666,6 +1700,7 @@ fn map_index_span(span: Span, slices: &[IndexSlice]) -> Span {
 pub fn elaborate_source(
     program: &SourceProgram,
 ) -> Result<TypedSourceProgram, Vec<SourceDiagnostic>> {
+    crate::module_imports::check_source_imports(program)?;
     let mut diagnostics = Vec::new();
     let mut globals = BTreeMap::new();
     let mut next_symbol = 0_u32;

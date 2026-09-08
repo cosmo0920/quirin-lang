@@ -40,6 +40,12 @@ and explicit cleanup. Translation checks and native differential runs cover
 that reduced model; broader structural syntax and separately checked semantic
 models do not imply complete source-language support.
 
+The Rust kernel exposes its checked concurrency models through
+`qcore_core::prelude::concurrency`, with a matching bounded Lean proof entry point,
+`QCore.ConcurrencyPrelude`. The [thread examples](examples/threads/README.md#mapping-source-examples-to-the-core-prelude)
+show how source opts in with `import std.concurrency;`; concurrency is unavailable
+without that file-local import. General task/mutex composition remains open.
+
 ## Status at a glance
 
 This is a research project that advances in bounded, individually accepted

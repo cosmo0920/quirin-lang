@@ -17,7 +17,7 @@ fn work[file_count: Idx<Count<File>>](file: own<File> use one, flag: bool) -> re
   error region cleanup { let temp = move file; raise Io::Failed { code: 3 }; } catch (Io::Failed { code }) quant open cleanup as pack { drop temp; discharge pack; }
   unsafe { return 0; }
 }
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn future(shared: i32) -> unit { footprint cell = shared; thread scope s { let task = spawn s work(copy shared); join move task; } with lock shared as guard { guard.value = 1; } }
 "#;
 
@@ -139,7 +139,7 @@ fn classifies_all_sequential_statement_families() {
 
 #[test]
 fn classifies_parameter_types_for_typed_source_ir() {
-    let source = "fn types(a: i32, b: own<File>, c: borrow<'s, const, File>, d: quant<access, p, FULL>, e: result<i32, {Io}>, f: task<'s, i32, {Io}>, g: mutex<File>) -> unit { return; }";
+    let source = "import std.concurrency; fn types(a: i32, b: own<File>, c: borrow<'s, const, File>, d: quant<access, p, FULL>, e: result<i32, {Io}>, f: task<'s, i32, {Io}>, g: mutex<File>) -> unit { return; }";
     let program = parse_source_program(source).unwrap();
     let parameters = &program.declarations[0].value.parameters;
     assert_eq!(
@@ -276,7 +276,7 @@ fn maps_every_existing_semantic_boundary_to_a_source_diagnostic() {
 
 #[test]
 fn concurrency_header_binders_have_body_local_symbol_identity() {
-    let source = "fn main(m: i32) -> unit { with lock m as g { g; } thread scope s { s; } }";
+    let source = "import std.concurrency; fn main(m: i32) -> unit { with lock m as g { g; } thread scope s { s; } }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let function = &typed.declarations[0];
     let lock = &function.statements[0];
@@ -291,7 +291,7 @@ fn concurrency_header_binders_have_body_local_symbol_identity() {
         scope.nested[0].referenced_symbols
     );
 
-    let source = "fn main(m: i32) -> unit { with lock m as m { m; } m; }";
+    let source = "import std.concurrency; fn main(m: i32) -> unit { with lock m as m { m; } m; }";
     let typed = elaborate_source(&parse_source_program(source).unwrap()).unwrap();
     let function = &typed.declarations[0];
     assert_ne!(
@@ -307,11 +307,11 @@ fn concurrency_header_binders_have_body_local_symbol_identity() {
 #[test]
 fn concurrency_binders_do_not_hide_unresolved_inputs_or_escape_their_body() {
     for source in [
-        "fn main() -> unit { with lock missing as g { g; } }",
-        "fn main() -> unit { with lock m as m { m; } }",
-        "fn main(m: i32) -> unit { with lock m as g { } g; }",
-        "fn main() -> unit { thread scope s { } s; }",
-        "fn main() -> unit { thread scope s { } thread scope t { s; } }",
+        "import std.concurrency; fn main() -> unit { with lock missing as g { g; } }",
+        "import std.concurrency; fn main() -> unit { with lock m as m { m; } }",
+        "import std.concurrency; fn main(m: i32) -> unit { with lock m as g { } g; }",
+        "import std.concurrency; fn main() -> unit { thread scope s { } s; }",
+        "import std.concurrency; fn main() -> unit { thread scope s { } thread scope t { s; } }",
     ] {
         let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
         assert!(
@@ -320,8 +320,8 @@ fn concurrency_binders_do_not_hide_unresolved_inputs_or_escape_their_body() {
         );
     }
     for source in [
-        "fn main(m: i32) -> unit { with lock m as g { let g = 0; } }",
-        "fn main() -> unit { thread scope s { let s = 0; } }",
+        "import std.concurrency; fn main(m: i32) -> unit { with lock m as g { let g = 0; } }",
+        "import std.concurrency; fn main() -> unit { thread scope s { let s = 0; } }",
     ] {
         let errors = elaborate_source(&parse_source_program(source).unwrap()).unwrap_err();
         assert!(

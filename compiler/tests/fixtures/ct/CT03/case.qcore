@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);

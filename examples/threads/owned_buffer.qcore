@@ -1,3 +1,4 @@
+import std.concurrency;
 // Move one buffer to a worker while the parent uses a separate buffer.
 concurrency checked;
 

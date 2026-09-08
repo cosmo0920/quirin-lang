@@ -8,6 +8,9 @@ use std::fmt;
 
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram, interpret_source};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
+use qcore_core::prelude::concurrency::{
+    mutex_c_emit, mutex_invariant, task_c_emit, task_execution,
+};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
@@ -96,7 +99,7 @@ pub enum CustodyPayloadProfile {
 #[derive(Clone, Debug)]
 pub enum CheckedSourceModule {
     Sequential(Box<CheckedProgram>),
-    ScopedTasks(Box<qcore_core::task_execution::CheckedTaskModule>),
+    ScopedTasks(Box<task_execution::CheckedTaskModule>),
     /// One entry function checked under `CheckedMutexInvariantV1`. The
     /// certificate is the evidence; the lowered program is retained beside it so
     /// a consumer can re-derive rather than believe it.
@@ -108,7 +111,7 @@ pub enum CheckedSourceModule {
 #[derive(Clone, Debug)]
 pub struct CheckedMutexGuardModule {
     pub lowered: qcore_frontend::source_mutex::LoweredMutexModule,
-    pub certificate: qcore_core::mutex_invariant::MutexInvariantCertificate,
+    pub certificate: mutex_invariant::MutexInvariantCertificate,
 }
 
 impl CheckedSourceModule {
@@ -119,7 +122,7 @@ impl CheckedSourceModule {
         }
     }
 
-    pub fn as_scoped_tasks(&self) -> Option<&qcore_core::task_execution::CheckedTaskModule> {
+    pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
             Self::Sequential(_) | Self::CheckedMutexGuards(_) => None,
             Self::ScopedTasks(program) => Some(program),
@@ -234,6 +237,23 @@ pub fn compile_files_with_registry(
                 error.message,
                 &ranges,
             )]
+        })?;
+        qcore_frontend::module_imports::check_source_imports(&parsed).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    map_raw_diagnostic(
+                        error.code,
+                        error.pass,
+                        Span {
+                            start: error.span.start + range.start,
+                            end: error.span.end + range.start,
+                        },
+                        error.message,
+                        &ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
         })?;
         modes.push(parsed.mode);
         let mut source = file.source.clone();
@@ -1163,24 +1183,23 @@ fn compile_task_source(
                 .map(|error| map_diagnostic(error, ranges))
                 .collect::<Vec<_>>()
         })?;
-    let checked =
-        qcore_core::task_execution::check_task_module(&task_module).map_err(|errors| {
-            errors
-                .into_iter()
-                .map(|error| {
-                    map_raw_diagnostic(
-                        "Q600",
-                        SemanticPass::Concurrency,
-                        Span {
-                            start: error.span.start,
-                            end: error.span.end,
-                        },
-                        error.message,
-                        ranges,
-                    )
-                })
-                .collect::<Vec<_>>()
-        })?;
+    let checked = task_execution::check_task_module(&task_module).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                map_raw_diagnostic(
+                    "Q600",
+                    SemanticPass::Concurrency,
+                    Span {
+                        start: error.span.start,
+                        end: error.span.end,
+                    },
+                    error.message,
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
     if !cfg!(any(
         target_os = "linux",
         target_os = "macos",
@@ -1191,8 +1210,8 @@ fn compile_task_source(
             "native scoped task emission currently requires a Linux, macOS or Windows threads target",
         )]);
     }
-    let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
-    use qcore_core::task_execution::{
+    let emission = task_c_emit::emit_task_c11(&checked);
+    use task_execution::{
         FULL_READ_AUTHORITY, ScalarOperand, ScalarType, TaskInstructionKind, TaskTerminatorKind,
     };
     // A read loan is a strictly stronger claim than owned transfer, so it names
@@ -1326,8 +1345,8 @@ fn compile_mutex_source(
                 .collect::<Vec<_>>()
         },
     )?;
-    let certificate = qcore_core::mutex_invariant::check_mutex_invariant_program(&lowered.program)
-        .map_err(|errors| {
+    let certificate =
+        mutex_invariant::check_mutex_invariant_program(&lowered.program).map_err(|errors| {
             errors
                 .iter()
                 .map(|error| map_diagnostic(lowered.locate(error), ranges))
@@ -1335,16 +1354,14 @@ fn compile_mutex_source(
         })?;
     // The driver never publishes a certificate it did not independently
     // re-derive from the same lowered program.
-    qcore_core::mutex_invariant::recheck_mutex_invariant_certificate(
-        &lowered.program,
-        &certificate,
-    )
-    .map_err(|errors| {
-        vec![plain_diagnostic(
-            "Q600",
-            format!("checked mutex certificate failed independent recheck: {errors:?}"),
-        )]
-    })?;
+    mutex_invariant::recheck_mutex_invariant_certificate(&lowered.program, &certificate).map_err(
+        |errors| {
+            vec![plain_diagnostic(
+                "Q600",
+                format!("checked mutex certificate failed independent recheck: {errors:?}"),
+            )]
+        },
+    )?;
     let result_profile = SourceResultProfile {
         scalar_results: std::collections::BTreeMap::from([(
             entry.clone(),
@@ -1367,8 +1384,8 @@ fn compile_mutex_source(
             "native checked mutex emission currently requires a Linux, macOS or Windows threads target",
         )]);
     }
-    let emission = qcore_core::mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate)
-        .map_err(|refusal| {
+    let emission =
+        mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(|refusal| {
             vec![plain_diagnostic(
                 "Q600",
                 format!("the checked mutex backend refused this trace: {refusal:?}"),

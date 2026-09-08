@@ -1,3 +1,4 @@
+import std.concurrency;
 fn main() -> unit {
     thread scope s {
         let left = protected 4;

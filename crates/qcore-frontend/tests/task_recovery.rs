@@ -12,7 +12,7 @@ fn checked(source: &str) -> Result<CheckedTaskModule, String> {
     check_task_module(&module).map_err(|e| format!("{e:?}"))
 }
 
-const RECOVERY: &str = "concurrency checked;
+const RECOVERY: &str = "import std.concurrency; concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
  let first_value = 42; let second_value = 7;
@@ -77,7 +77,7 @@ fn direct_join_and_existing_result_matches_preserve_worker_error_tags() {
             ""
         };
         let source = format!(
-            "concurrency checked; error Work {{ First; Second; }} fn worker(x:i32)->i32 effects {{throws<Work>}} {{raise Work::Second;}} fn main()->i32 effects {{throws<SpawnError>,throws<Work>,spawn,join,may_block}} {{let x=1;thread scope s {{let h=spawn s worker(copy x)?;{binding} match {scrutinee} {{Result::Ok {{value:v}} => {{return v;}} Result::Err {{error:e}} => {{raise e;}}}}}}}}"
+            "import std.concurrency; concurrency checked; error Work {{ First; Second; }} fn worker(x:i32)->i32 effects {{throws<Work>}} {{raise Work::Second;}} fn main()->i32 effects {{throws<SpawnError>,throws<Work>,spawn,join,may_block}} {{let x=1;thread scope s {{let h=spawn s worker(copy x)?;{binding} match {scrutinee} {{Result::Ok {{value:v}} => {{return v;}} Result::Err {{error:e}} => {{raise e;}}}}}}}}"
         );
         let module = checked(&source).unwrap();
         let result = execute_task_module(&module, &TaskExecutionScript::default()).unwrap();
@@ -101,7 +101,7 @@ fn direct_join_and_existing_result_matches_preserve_worker_error_tags() {
 
 #[test]
 fn both_arms_continue_without_exporting_arm_locals_or_inventing_phi_values() {
-    let source = "concurrency checked; fn worker(x:i32)->unit{return;} fn main()->i32 effects {spawn,join,may_block} {let x=5; thread scope s {match spawn s worker(copy x) {Result::Ok {value:h}=>{join move h;} Result::Err {error:e}=>{let x=9;}}} return x;}";
+    let source = "import std.concurrency; concurrency checked; fn worker(x:i32)->unit{return;} fn main()->i32 effects {spawn,join,may_block} {let x=5; thread scope s {match spawn s worker(copy x) {Result::Ok {value:h}=>{join move h;} Result::Err {error:e}=>{let x=9;}}} return x;}";
     let module = checked(source).unwrap();
     for succeeds in [true, false] {
         assert_eq!(
@@ -165,7 +165,7 @@ fn nested_handlers_and_same_name_binders_keep_their_lexical_identity() {
         );
     }
     let source = format!(
-        "concurrency checked;fn worker(x:i32)->unit{{return;}}fn main()->i32 effects{{spawn,join,may_block}}{{let x=1;thread scope s {{{body}}}}}"
+        "import std.concurrency; concurrency checked;fn worker(x:i32)->unit{{return;}}fn main()->i32 effects{{spawn,join,may_block}}{{let x=1;thread scope s {{{body}}}}}"
     );
     let module = checked(&source).unwrap();
     let succeeded = execute_task_module(&module, &TaskExecutionScript::default()).unwrap();
@@ -192,7 +192,7 @@ fn nested_handlers_and_same_name_binders_keep_their_lexical_identity() {
 
 #[test]
 fn match_error_arm_can_precede_success_and_one_arm_can_continue() {
-    let source = "concurrency checked;fn worker(x:i32)->unit{return;}fn main()->i32 effects{spawn,join,may_block}{let x=4;thread scope s{match spawn s worker(copy x){Result::Err{error:e}=>{return 8;}Result::Ok{value:h}=>{join move h;}}}return x;}";
+    let source = "import std.concurrency; concurrency checked;fn worker(x:i32)->unit{return;}fn main()->i32 effects{spawn,join,may_block}{let x=4;thread scope s{match spawn s worker(copy x){Result::Err{error:e}=>{return 8;}Result::Ok{value:h}=>{join move h;}}}return x;}";
     let module = checked(source).unwrap();
     for (succeeds, value) in [(true, 4), (false, 8)] {
         assert_eq!(
@@ -208,6 +208,6 @@ fn match_error_arm_can_precede_success_and_one_arm_can_continue() {
             TaskOutcome::I32(value)
         );
     }
-    let doubled_result = "concurrency checked;fn worker(x:i32)->i32{return x;}fn main()->i32 effects{throws<SpawnError>,spawn,join,may_block}{let x=4;thread scope s{let h=spawn s worker(copy x)?;let r=join move h;match r{Result::Ok{value:v}=>{}Result::Err{error:e}=>{}}match r{Result::Ok{value:v}=>{return v;}Result::Err{error:e}=>{return 0;}}}}";
+    let doubled_result = "import std.concurrency; concurrency checked;fn worker(x:i32)->i32{return x;}fn main()->i32 effects{throws<SpawnError>,spawn,join,may_block}{let x=4;thread scope s{let h=spawn s worker(copy x)?;let r=join move h;match r{Result::Ok{value:v}=>{}Result::Err{error:e}=>{}}match r{Result::Ok{value:v}=>{return v;}Result::Err{error:e}=>{return 0;}}}}";
     assert!(checked(doubled_result).is_err());
 }

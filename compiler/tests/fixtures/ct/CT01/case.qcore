@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }
 fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {

@@ -1,3 +1,4 @@
+import std.concurrency;
 // Two readers each borrow half of the buffer's 1024 read-share units.
 concurrency checked;
 

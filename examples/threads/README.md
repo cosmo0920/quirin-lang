@@ -8,6 +8,58 @@ Linux and macOS. The Windows instructions below use MSVC's `cl.exe`.
 | [two_workers.qcore](two_workers.qcore) | Two copied inputs, both workers started before either join, recovery if the second creation fails | `7` |
 | [owned_buffer.qcore](owned_buffer.qcore) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile | `42` |
 | [shared_readers.qcore](shared_readers.qcore) | Two read-only workers share one buffer; joining both restores the parent's write access | `7` |
+| [core_context.qcore](core_context.qcore) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback | `42` |
+
+## Mapping source examples to the core prelude
+
+The frontend lowers these examples into the checked models exposed by
+`qcore_core::prelude::concurrency`. The prelude is a Rust import surface for
+compiler and library implementers. Every `.qcore` example explicitly opts in:
+
+```qcore
+import std.concurrency;
+concurrency checked;
+```
+
+The import makes the bundled concurrency vocabulary available in that source
+file. Without it, concurrency forms reject with `Q015`. The marker selects the
+checked task profile, and `thread scope` constructs a particular scoped context.
+Imports do not propagate from other input files. Unknown module paths reject
+with `Q014`; user-file imports are not yet supported.
+
+| QCore source operation | Core model operation | Lean model |
+|---|---|---|
+| `import std.concurrency;` | Exact `ModuleImports::resolve`, initially empty | `ModuleImports` proves explicit selection and fail-closed resolution |
+| `thread scope context` | `ScopedTaskLedger::enter_scope` / `exit_scope` | `TaskExecution` checks handle quiescence; it is not a complete lexical-scope model |
+| `spawn context worker(move buffer)` | `reserve`, then `commit` or `rollback` | `ScopedTasks` proves custody transfer and rollback; `TaskExecution` models creation outcomes |
+| Worker `return move buffer` | `complete` retains a completion capsule | `ScopedTasks` / `TaskExecution` distinguish completion from collection |
+| `join move handle` | Creator `join` collects the outcome and returns custody | `ScopedTasks` / `TaskExecution` prove custody return and one-time handle consumption |
+| `read buffer share 512` in `shared_readers` | `reserve_with_loans` and share reclamation on join | `ReadShare` proves the lending budget and restoration after the last share |
+
+Run the [Rust custody-model counterpart](../../crates/qcore-core/examples/concurrency_prelude.rs)
+of `core_context.qcore`:
+
+```sh
+cargo run -p qcore-core --example concurrency_prelude
+```
+
+It executes the model for successful and failed creation, including refusal of
+scope exit before join. It does not start native threads or model buffer values.
+To check, emit and run the QCore counterpart on Linux:
+
+```sh
+mkdir -p target/thread-examples
+cargo run -p qcorec -- check examples/threads/core_context.qcore
+cargo run -p qcorec -- emit examples/threads/core_context.qcore -o target/thread-examples/core_context.c
+clang -std=c11 -pthread -Wall -Wextra -Werror target/thread-examples/core_context.c -o target/thread-examples/core_context
+target/thread-examples/core_context
+```
+
+`import QCore.ConcurrencyPrelude` makes the corresponding bounded Lean models
+and selected proved properties available. It does not prove arbitrary native
+execution or combined task/mutex behavior. The integration test runs the real
+source example on Unix with successful and injected failed creation, comparing
+both traces with the core reference execution and checking exact buffer release.
 
 ## Build and run on Windows
 
@@ -18,7 +70,7 @@ developer shell sets up the compiler, headers and linker libraries; adding
 `cl.exe` alone to PATH is insufficient. See Microsoft's
 [command-line C walkthrough](https://learn.microsoft.com/en-us/cpp/build/walkthrough-compile-a-c-program-on-the-command-line).
 
-Build and run all three examples:
+Build and run all four examples:
 
 ```powershell
 .\examples\threads\build-windows.ps1 -Run

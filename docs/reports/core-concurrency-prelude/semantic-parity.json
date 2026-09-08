@@ -1,0 +1,143 @@
+{
+  "baseline_commit": "2d2bc5401dc75b8cdc5299b15db107b98c6eb9be",
+  "files": [
+    {
+      "path": "crates/qcore-core/src/concurrency.rs",
+      "before_sha256": "2d90e495a9b494d3048f01e4bbfc5256f998c346ec273e9e28868fb832165595",
+      "after_sha256": "2d90e495a9b494d3048f01e4bbfc5256f998c346ec273e9e28868fb832165595",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/mutex_c_emit.rs",
+      "before_sha256": "8179e624e3c8e75b7f07dd606a604cfcb24aadad0c304c79525ca50b526f1f28",
+      "after_sha256": "8179e624e3c8e75b7f07dd606a604cfcb24aadad0c304c79525ca50b526f1f28",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/mutex_invariant.rs",
+      "before_sha256": "718612369c07d90d099ce5f203809d41549392cac31be4aaf75eeff30f3b12b2",
+      "after_sha256": "718612369c07d90d099ce5f203809d41549392cac31be4aaf75eeff30f3b12b2",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/native_concurrency.rs",
+      "before_sha256": "0b4c2c6a5eb656e050dba13a6c92032811306f5abc35b13d8f06cca695d107ea",
+      "after_sha256": "0b4c2c6a5eb656e050dba13a6c92032811306f5abc35b13d8f06cca695d107ea",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/region_task_credit.rs",
+      "before_sha256": "a4aca91f4848de1c55f135ae117841660e3b271f58ed053c0adff93ec6465b0c",
+      "after_sha256": "a4aca91f4848de1c55f135ae117841660e3b271f58ed053c0adff93ec6465b0c",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/scoped_tasks.rs",
+      "before_sha256": "5d7a23f1fed1d4d6bfb528de1c691e33ea86e458356a6bd175a645422b038fec",
+      "after_sha256": "5d7a23f1fed1d4d6bfb528de1c691e33ea86e458356a6bd175a645422b038fec",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/task_c_emit.rs",
+      "before_sha256": "d42c302f01bb0d5226a0ff8857bf41a3078dd6ff9674dcac9d7ebeb35fbf3b9c",
+      "after_sha256": "d42c302f01bb0d5226a0ff8857bf41a3078dd6ff9674dcac9d7ebeb35fbf3b9c",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/task_execution/reference.rs",
+      "before_sha256": "b6099d51672c975df43c535ec5e3dfc7cff4efdf04830328ff510de9b2eef74f",
+      "after_sha256": "b6099d51672c975df43c535ec5e3dfc7cff4efdf04830328ff510de9b2eef74f",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/task_execution/tests.rs",
+      "before_sha256": "f761788046d3417860b7e0f8276febd5be8ded8b730f45314d519fc7fdbab017",
+      "after_sha256": "f761788046d3417860b7e0f8276febd5be8ded8b730f45314d519fc7fdbab017",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/task_execution.rs",
+      "before_sha256": "c39e88c801c469de6bac30149fc6c95352ddc03f885d7015b3e29881ff442d5e",
+      "after_sha256": "c39e88c801c469de6bac30149fc6c95352ddc03f885d7015b3e29881ff442d5e",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/task_trace_relation.rs",
+      "before_sha256": "6bd25a910a8c88754ac8824caecdaec3116c3cd4ba18f494d13301d65a7f04bc",
+      "after_sha256": "6bd25a910a8c88754ac8824caecdaec3116c3cd4ba18f494d13301d65a7f04bc",
+      "identical": true
+    },
+    {
+      "path": "crates/qcore-core/src/weak_memory.rs",
+      "before_sha256": "4b535cbd1ef3f4cda2760ce1227ab03bf1eb59aff0975646c75205ce4656d61e",
+      "after_sha256": "4b535cbd1ef3f4cda2760ce1227ab03bf1eb59aff0975646c75205ce4656d61e",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/Concurrency.lean",
+      "before_sha256": "17e9fd400cddd5cb9ef5d12fdb2926ca4ac012a11f955ecf32518d596758f85e",
+      "after_sha256": "17e9fd400cddd5cb9ef5d12fdb2926ca4ac012a11f955ecf32518d596758f85e",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/ErrorPayload.lean",
+      "before_sha256": "2bde1abd061d6076f03ffdb578724b12b53c1f0752a7f3939aba91a4675b8c2d",
+      "after_sha256": "2bde1abd061d6076f03ffdb578724b12b53c1f0752a7f3939aba91a4675b8c2d",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/LifetimeCorrespondence.lean",
+      "before_sha256": "852b071ccbab75a3a4f90af0cdbfc9f4e0b0b333506df8cd2fd0feed31e949c6",
+      "after_sha256": "852b071ccbab75a3a4f90af0cdbfc9f4e0b0b333506df8cd2fd0feed31e949c6",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/MutexInvariant.lean",
+      "before_sha256": "1fd19b2b834c824702435cd66edd877552520aca5f67f53bd3428e92ab1612a1",
+      "after_sha256": "1fd19b2b834c824702435cd66edd877552520aca5f67f53bd3428e92ab1612a1",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/OwnedTaskExecution.lean",
+      "before_sha256": "41abc2aac0fff0a65628a0549efa65f85cfa1448a3440f4d611263cbe4bbbe6d",
+      "after_sha256": "41abc2aac0fff0a65628a0549efa65f85cfa1448a3440f4d611263cbe4bbbe6d",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/ReadLoan.lean",
+      "before_sha256": "bbc39e3c529583637566446c7d571eebba87223a50bb12d858650117842267c1",
+      "after_sha256": "bbc39e3c529583637566446c7d571eebba87223a50bb12d858650117842267c1",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/ReadShare.lean",
+      "before_sha256": "bd050556d968d41c57825cca6b8bf5df4a1c7de78a91b2143504466081609464",
+      "after_sha256": "bd050556d968d41c57825cca6b8bf5df4a1c7de78a91b2143504466081609464",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/RegionTaskCredit.lean",
+      "before_sha256": "4feeadb3093b22be9e656d39ffe1837174523340c6c6259a6ba99e5edbb88845",
+      "after_sha256": "4feeadb3093b22be9e656d39ffe1837174523340c6c6259a6ba99e5edbb88845",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/ScopedTasks.lean",
+      "before_sha256": "3294328db40f7f0fb8b3564273a8d4a9869095c6b3afb368d9e9227ceb02187c",
+      "after_sha256": "3294328db40f7f0fb8b3564273a8d4a9869095c6b3afb368d9e9227ceb02187c",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/TaskExecution.lean",
+      "before_sha256": "50702660f62ec19ba084a233c9bcf607239cd3d6670ca675f1715ff02db4d720",
+      "after_sha256": "50702660f62ec19ba084a233c9bcf607239cd3d6670ca675f1715ff02db4d720",
+      "identical": true
+    },
+    {
+      "path": "proof/QCore/TaskTraceRelation.lean",
+      "before_sha256": "6be43fc6c2d5fc7a9c22255d9d7ed319fd24f58e41f73434355a6f3704ab46c8",
+      "after_sha256": "6be43fc6c2d5fc7a9c22255d9d7ed319fd24f58e41f73434355a6f3704ab46c8",
+      "identical": true
+    }
+  ]
+}

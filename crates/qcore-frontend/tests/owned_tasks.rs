@@ -104,7 +104,7 @@ fn implicit_copy_wrong_capture_types_and_unquantified_owned_inputs_reject() {
 
 #[test]
 fn explicit_second_allocation_failure_releases_prior_owner() {
-    let source = "concurrency checked; fn main()->i32 effects {alloc,throws<AllocError>} {
+    let source = "import std.concurrency; concurrency checked; fn main()->i32 effects {alloc,throws<AllocError>} {
         let first=qcore_buffer_new(7)?;
         match qcore_buffer_new(42) {
             Result::Ok {value:second} => {let value=qcore_buffer_read(second);drop second;drop first;return value;}
@@ -132,7 +132,7 @@ fn explicit_second_allocation_failure_releases_prior_owner() {
 
 #[test]
 fn two_owned_inputs_return_one_original_and_release_the_other_on_every_path() {
-    let source = "concurrency checked;
+    let source = "import std.concurrency; concurrency checked;
     fn worker(first:own<Buffer> use one,second:own<Buffer> use one)->own<Buffer> {drop first;return move second;}
     fn main()->i32 effects {alloc,throws<AllocError>,spawn,join,may_block} {
       let first=qcore_buffer_new(7)?;
@@ -197,11 +197,11 @@ fn raw_ir_cannot_forge_scalar_access_to_owned_identity_or_skip_its_drop() {
 
 #[test]
 fn leaf_allocation_is_checked_while_owned_root_results_and_uncalled_bad_bodies_reject() {
-    assert!(checked("concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;drop b;return 1;} fn main()->i32 {return 0;}").is_ok());
+    assert!(checked("import std.concurrency; concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;drop b;return 1;} fn main()->i32 {return 0;}").is_ok());
     for source in [
-        "concurrency checked; fn main()->own<Buffer> effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return move b;}",
-        "concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return 1;} fn main()->i32 {return 0;}",
-        "concurrency checked; fn worker(b:own<Buffer> use one)->i32 {return 1;} fn main()->i32 {let b=qcore_buffer_new(1)?;drop b;return 0;}",
+        "import std.concurrency; concurrency checked; fn main()->own<Buffer> effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return move b;}",
+        "import std.concurrency; concurrency checked; fn worker()->i32 effects {alloc,throws<AllocError>} {let b=qcore_buffer_new(1)?;return 1;} fn main()->i32 {return 0;}",
+        "import std.concurrency; concurrency checked; fn worker(b:own<Buffer> use one)->i32 {return 1;} fn main()->i32 {let b=qcore_buffer_new(1)?;drop b;return 0;}",
     ] {
         assert!(checked(source).is_err(), "{source}");
     }

@@ -36,8 +36,8 @@ repeated headers, and misplaced headers are rejected.
 For multiple input files, an executable file selects executable compilation;
 otherwise a library file selects library compilation; otherwise all files
 are contracts. Contract declarations can therefore accompany libraries or an
-executable. This is one shared module namespace, not a new import/name-mangling
-system. Duplicate declarations remain errors. `--entry` on an entirely
+executable. Input declarations still share one namespace; bundled capability
+imports remain file-local. Duplicate declarations remain errors. `--entry` on an entirely
 library/contract compilation is rejected (`Q403`); include an executable file
 to select an entry. Every supported function body still goes through the same
 semantic checks in each mode.
@@ -88,3 +88,24 @@ of quantitative transfers through arbitrary bodies. Cost total/peak types and
 extensions to the separate legacy `quant<access, ...>` profile remain outside
 this addition. The native regression fixture is
 `contract/qcore/language/quantified_indices.qcore`.
+
+## Explicit bundled module imports
+
+Bundled semantic modules require an explicit top-level `import` in each source
+file. The current registry contains `std.concurrency`:
+
+```qcore
+import std.concurrency;
+concurrency checked;
+```
+
+Import paths are dot-separated identifiers terminated by a semicolon. Imports
+may occur between top-level declarations, after the optional module header, and
+apply to the whole file. Repeated imports are idempotent. Unknown module names
+reject with `Q014`; concurrency forms without their import reject with `Q015`,
+including in uncalled bodies and non-executable modules. Each input file is
+checked before combining declarations: another file's import cannot grant it
+concurrency. Importing vocabulary does not discharge operation checks or make an
+unsupported profile executable. The task profile still requires its
+`concurrency checked;` marker. User-file/package resolution, import aliases,
+wildcards, reexports and implicit/transitive imports are not implemented.

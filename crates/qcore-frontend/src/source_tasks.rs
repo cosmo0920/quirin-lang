@@ -411,9 +411,10 @@ fn signature(
     })
 }
 
-use qcore_core::task_execution::{
-    ErrorOperand, ScalarOperand, ScalarType, TaskBlock, TaskEffects, TaskFunction, TaskInstruction,
-    TaskInstructionKind, TaskModule, TaskSpan, TaskTerminator, TaskTerminatorKind,
+use qcore_core::prelude::concurrency::task_execution::{
+    ErrorOperand, FULL_READ_AUTHORITY, ScalarOperand, ScalarType, TaskBlock, TaskEffects,
+    TaskFunction, TaskInstruction, TaskInstructionKind, TaskModule, TaskSpan, TaskTerminator,
+    TaskTerminatorKind,
 };
 
 impl Scalar {
@@ -438,7 +439,7 @@ impl Scalar {
 /// one.
 fn read_share(share: &SourceShareExpression, span: Span) -> Result<u32, SourceDiagnostic> {
     let value = match share {
-        SourceShareExpression::Full => qcore_core::task_execution::FULL_READ_AUTHORITY,
+        SourceShareExpression::Full => FULL_READ_AUTHORITY,
         SourceShareExpression::Parenthesized(inner) => read_share(&inner.value, inner.span)?,
         SourceShareExpression::Add(left, right) => read_share(&left.value, left.span)?
             .checked_add(read_share(&right.value, right.span)?)
@@ -464,13 +465,13 @@ fn read_share(share: &SourceShareExpression, span: Span) -> Result<u32, SourceDi
             ));
         }
     };
-    if value == 0 || value > qcore_core::task_execution::FULL_READ_AUTHORITY {
+    if value == 0 || value > FULL_READ_AUTHORITY {
         return Err(failure(
             span,
             SemanticPass::Concurrency,
             format!(
                 "a read share must be positive and at most FULL ({}); this capture requests {value}",
-                qcore_core::task_execution::FULL_READ_AUTHORITY
+                FULL_READ_AUTHORITY
             ),
         ));
     }

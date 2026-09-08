@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 error WorkerError { Failed; }
 fn worker(value: i32) -> i32 effects {alloc, throws<AllocError>, throws<WorkerError>} {

@@ -38,7 +38,7 @@ use std::collections::BTreeMap;
 
 use crate::frontend::*;
 use crate::lexer::{Span, Symbol, Token, TokenKind};
-use qcore_core::mutex_invariant::{
+use qcore_core::prelude::concurrency::mutex_invariant::{
     AccessFootprint, AccessKind, FULL_ACCESS, InvariantWitness, MutexId, MutexInvariantDiagnostic,
     MutexInvariantEvent, MutexInvariantProgram, ShareGrant, SharedResourceId,
     UnsupportedSynchronization,
@@ -230,13 +230,14 @@ impl Lowering {
 /// Lower one entry function to a checked-profile program.
 ///
 /// The returned program still requires
-/// `qcore_core::mutex_invariant::check_mutex_invariant_program`; lowering
+/// `qcore_core::prelude::concurrency::mutex_invariant::check_mutex_invariant_program`; lowering
 /// establishes nothing on its own.
 pub fn lower_source_mutex(
     source: &SourceProgram,
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredMutexModule, Vec<SourceDiagnostic>> {
+    crate::module_imports::check_source_imports(source)?;
     lower(source, typed, entry).map_err(|diagnostic| vec![diagnostic])
 }
 

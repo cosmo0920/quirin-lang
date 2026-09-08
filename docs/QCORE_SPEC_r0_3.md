@@ -94,7 +94,7 @@ module contract;
 
 The three lines above are alternatives, not a valid three-header file. An absent header means executable mode. Contract and library modules do not select or synthesize a process entry. A function named `main` in those modes is an ordinary definition. Current non-executable modes do not produce C library objects or establish a public ABI.
 
-Multiple files share one namespace. Executable mode wins if any file is executable; otherwise library wins if any file is a library; otherwise the compilation is a contract compilation. This is not an import system or namespace hierarchy. Duplicate declarations remain errors. `--entry` without any executable input is rejected with `Q403`.
+Multiple files share one namespace. Executable mode wins if any file is executable; otherwise library wins if any file is a library; otherwise the compilation is a contract compilation. Combining files does not resolve user-file imports or introduce a namespace hierarchy; bundled capability imports remain file-local. Duplicate declarations remain errors. `--entry` without any executable input is rejected with `Q403`.
 
 In executable mode the driver honors an explicitly selected entry, otherwise selects `main` or its documented single-function fallback. The emitted entry MUST have no parameters. Unsupported or ambiguous entry selection is an error. All supported source function bodies, including uncalled definitions, are submitted to the source checks.
 
@@ -107,6 +107,25 @@ cargo run -p qcorec -- plugins list
 ```
 
 The historical `cargo run -p qcore-compiler --bin qcorec` spelling is obsolete after the CLI split.
+
+Bundled semantic modules require an explicit top-level `import` in each source
+file. The current registry contains `std.concurrency`:
+
+```qcore
+import std.concurrency;
+concurrency checked;
+```
+
+Import paths are dot-separated identifiers terminated by a semicolon. Imports
+may occur between top-level declarations, after the optional module header, and
+apply to the whole file. Repeated imports are idempotent. Unknown module names
+reject with `Q014`; concurrency forms without their import reject with `Q015`,
+including in uncalled bodies and non-executable modules. Each input file is
+checked before combining declarations: another file's import cannot grant it
+concurrency. Importing vocabulary does not discharge operation checks or make an
+unsupported profile executable. The task profile still requires its
+`concurrency checked;` marker. User-file/package resolution, import aliases,
+wildcards, reexports and implicit/transitive imports are not implemented.
 
 ## L05. Structural declarations versus complete typing
 
@@ -425,7 +444,7 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 |---|---|---|---|
 | `Q000` | `NameResolution` (per input file) | `qcore-verification::driver` | An input file does not parse as a QCore declaration. |
 | `Q001`, `Q016` | `Index` | `qcore-frontend` | `Q001` generic index/quant presentation; `Q016` dimension/axis declaration validity (checked unconditionally) and quant-index type resolution. |
-| `Q010`–`Q013` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name. |
+| `Q010`–`Q015` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name, `Q014` unknown imported module, `Q015` concurrency used without its file-local import. |
 | `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule and the task route's source-contract gate; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |

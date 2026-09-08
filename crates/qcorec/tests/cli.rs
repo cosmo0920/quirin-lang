@@ -174,7 +174,7 @@ fn cli_checks_emits_and_executes_native_source_tasks() {
     std::fs::write(
         &input,
         r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     let x = 42;
@@ -230,7 +230,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     assert!(String::from_utf8_lossy(&executed.stdout).contains("QCORE_TASK_RESULT 0 I32 42"));
     // A source failure must not replace an existing emitted artifact.
     let original = std::fs::read(&c).unwrap();
-    std::fs::write(&input, "concurrency checked; fn main() -> unit { thread scope s { let h = spawn s main()?; } return; }").unwrap();
+    std::fs::write(&input, "import std.concurrency; concurrency checked; fn main() -> unit { thread scope s { let h = spawn s main()?; } return; }").unwrap();
     let rejected = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
         .arg(&input)

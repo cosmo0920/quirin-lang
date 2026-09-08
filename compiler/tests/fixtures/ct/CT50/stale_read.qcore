@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 fn main() -> i32 effects { alloc, throws<AllocError> } {
     let old = qcore_buffer_new(7)?;

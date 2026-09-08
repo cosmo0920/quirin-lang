@@ -40,7 +40,7 @@ fn codes(source: &str) -> Result<LoweredMutexModule, Vec<String>> {
 }
 
 fn entry(body: &str) -> String {
-    format!("fn main() -> unit {{ thread scope s {{ {body} }} }}")
+    format!("import std.concurrency; fn main() -> unit {{ thread scope s {{ {body} }} }}")
 }
 
 const OPEN_WRITE_CLOSE: &str = "let buf = protected 4; let m = mutex guards buf; \
@@ -185,7 +185,7 @@ fn a_guard_name_does_not_exist_after_its_block() {
 
 #[test]
 fn task_creation_composed_with_a_checked_mutex_is_refused() {
-    let source = "fn worker(x: i32) -> i32 { return x; } \
+    let source = "import std.concurrency; fn worker(x: i32) -> i32 { return x; } \
          fn main() -> unit { thread scope s { let buf = protected 4; \
          let m = mutex guards buf; let h = spawn s worker(copy buf); } }";
     assert_eq!(
@@ -442,8 +442,8 @@ fn constructs_outside_the_admitted_grammar_refuse_with_a_located_diagnostic() {
 #[test]
 fn a_source_contract_and_a_nonunit_entry_stay_refused() {
     for source in [
-        "fn main() -> unit contract { requires x; } { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
-        "fn main() -> i32 { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
+        "import std.concurrency; fn main() -> unit contract { requires x; } { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
+        "import std.concurrency; fn main() -> i32 { thread scope s { let buf = protected 4; let m = mutex guards buf; } }",
     ] {
         assert!(matches!(
             lower(source).unwrap_err().as_slice(),

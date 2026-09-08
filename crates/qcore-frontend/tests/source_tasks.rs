@@ -15,7 +15,7 @@ fn lower(source: &str) -> Result<TaskModule, String> {
 
 fn module(body: &str) -> String {
     format!(
-        "concurrency checked; {WORKER} fn main() -> i32 {EFFECTS} {{ let x: i32 = -7; {body} }}"
+        "import std.concurrency; concurrency checked; {WORKER} fn main() -> i32 {EFFECTS} {{ let x: i32 = -7; {body} }}"
     )
 }
 
@@ -59,14 +59,14 @@ fn scalar_copy_source_lowers_to_dynamic_creation_and_explicit_collection() {
 fn direct_join_propagation_and_infallible_unit_discard_are_supported() {
     check_task_module(&lower(&module("thread scope s { let h = spawn s worker(copy x)?; let value: i32 = join move h?; return value; }")).unwrap()).unwrap();
     let source = format!(
-        "concurrency checked; fn worker(x: i32) -> unit {{ return; }} fn main() -> unit {EFFECTS} {{ let x = 1; thread scope s {{ let h = spawn s worker(copy x)?; join move h; }} return; }}"
+        "import std.concurrency; concurrency checked; fn worker(x: i32) -> unit {{ return; }} fn main() -> unit {EFFECTS} {{ let x = 1; thread scope s {{ let h = spawn s worker(copy x)?; join move h; }} return; }}"
     );
     check_task_module(&lower(&source).unwrap()).unwrap();
 }
 
 #[test]
 fn declared_worker_error_is_preserved_as_a_distinct_outcome() {
-    let source = "concurrency checked; error WorkError { Failed; } fn worker(x: i32) -> i32 effects { throws<WorkError> } { raise WorkError::Failed; } fn main() -> i32 effects { throws<SpawnError>, throws<WorkError>, spawn, join, may_block } { let x = 3; thread scope s { let h = spawn s worker(copy x)?; let r = join move h; let value = r?; return value; } }";
+    let source = "import std.concurrency; concurrency checked; error WorkError { Failed; } fn worker(x: i32) -> i32 effects { throws<WorkError> } { raise WorkError::Failed; } fn main() -> i32 effects { throws<SpawnError>, throws<WorkError>, spawn, join, may_block } { let x = 3; thread scope s { let h = spawn s worker(copy x)?; let r = join move h; let value = r?; return value; } }";
     let ir = lower(source).unwrap();
     check_task_module(&ir).unwrap();
     let worker = ir.functions.values().find(|f| f.name == "worker").unwrap();
@@ -105,7 +105,7 @@ fn same_name_handles_and_empty_scope_binders_keep_exact_identities() {
 #[test]
 fn detection_covers_uncalled_and_empty_scopes_without_admitting_other_forms() {
     let parsed = parse_source_program(
-        "fn main() -> unit { return; } fn unused() -> unit { thread scope s { } return; }",
+        "import std.concurrency; fn main() -> unit { return; } fn unused() -> unit { thread scope s { } return; }",
     )
     .unwrap();
     assert!(has_source_tasks(&parsed));
@@ -206,13 +206,13 @@ fn independent_source_and_symbol_metadata_check_rejects_forgery() {
 
 #[test]
 fn thread_scope_cannot_replace_an_earlier_body_with_a_later_structural_block() {
-    let source = "concurrency checked; fn main() -> i32 { thread scope s { qcore_acquire(1, true, SpawnError); } ignored { } return 0; }";
+    let source = "import std.concurrency; concurrency checked; fn main() -> i32 { thread scope s { qcore_acquire(1, true, SpawnError); } ignored { } return 0; }";
     assert!(lower(source).is_err(), "an earlier scope body was erased");
 }
 
 #[test]
 fn declared_error_family_and_unused_effect_permissions_are_preserved() {
-    let source = "concurrency checked; error WorkError { First; Second; } fn worker(x: i32) -> i32 effects { throws<WorkError>, join, may_block } { raise WorkError::Second; } fn main() -> i32 effects { throws<SpawnError>, throws<WorkError>, spawn, join, may_block } { let x = 0; thread scope s { let h = spawn s worker(copy x)?; let value = join move h?; return value; } }";
+    let source = "import std.concurrency; concurrency checked; error WorkError { First; Second; } fn worker(x: i32) -> i32 effects { throws<WorkError>, join, may_block } { raise WorkError::Second; } fn main() -> i32 effects { throws<SpawnError>, throws<WorkError>, spawn, join, may_block } { let x = 0; thread scope s { let h = spawn s worker(copy x)?; let value = join move h?; return value; } }";
     let ir = lower(source).unwrap();
     check_task_module(&ir).unwrap();
     let worker = ir.functions.values().find(|f| f.name == "worker").unwrap();

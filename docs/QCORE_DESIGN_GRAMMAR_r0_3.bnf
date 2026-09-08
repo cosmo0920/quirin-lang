@@ -1,6 +1,6 @@
 # QCore extended design grammar, revision 0.3 (2026-09-07)
 # TARGET ONLY: not a statement of parser, type-checker, or driver conformance.
-# Collected from all 19 BNF blocks in obsolete/QCORE_SPEC_r0_2.md; module header added.
+# Collected from all 19 BNF blocks in obsolete/QCORE_SPEC_r0_2.md; module header and bundled imports added.
 # Consumer grammars and semantic side conditions: QCORE_IMPLEMENTED_GRAMMARS_r0_3.md.
 # Normative semantics and open implementation requirements: QCORE_SPEC_r0_3.md
 # and QCORE_CONTRACT_SPEC_r0_3.md. Policy-consumer syntax is specified separately.
@@ -26,6 +26,10 @@
 
 <declaration-list> ::= ε
                      | <declaration> <declaration-list>
+                     | <module-import> <declaration-list>
+
+<module-import> ::= "import" <module-path> ";"
+<module-path> ::= <identifier> | <identifier> "." <module-path>
 
 <declaration> ::= <dimension-declaration>
                 | <axis-declaration>

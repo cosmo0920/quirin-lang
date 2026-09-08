@@ -1,4 +1,5 @@
 import QCore.TaskTraceRelation
+import QCore.ConcurrencyPrelude
 import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness
 import QCore.OwnedTaskExecution

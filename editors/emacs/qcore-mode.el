@@ -20,7 +20,7 @@
 
 (defconst qcore-mode--keywords
   '("module" "executable" "library" "contract" "dimension" "quant" "axis"
-    "type" "resource" "error" "const" "extern" "fn" "concurrency" "checked"
+    "type" "resource" "error" "const" "extern" "fn" "import" "concurrency" "checked"
     "verify" "scope" "plugin" "version" "profile" "capabilities"
     "effects" "requires" "ensures" "normal" "any" "use" "as" "idx"
     "let" "drop" "move" "discharge" "guard" "return" "raise" "break"

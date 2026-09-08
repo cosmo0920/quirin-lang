@@ -1,3 +1,4 @@
+import std.concurrency;
 // Start both workers before joining either one.
 concurrency checked;
 

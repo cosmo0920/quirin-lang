@@ -33,7 +33,7 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 
 /// The canonical lending program: allocate, lend, read from both sides while
 /// the loan is outstanding, join to close it, read again, release.
-const LEND_AND_JOIN: &str = "concurrency checked;
+const LEND_AND_JOIN: &str = "import std.concurrency; concurrency checked;
 fn reader(payload: borrow<Buffer>) -> i32 {
   let seen = qcore_buffer_read(payload);
   return seen;
@@ -299,7 +299,7 @@ fn emission_consumes_a_moved_capture_and_never_a_lent_one() {
         "a lent capture must not be consumed"
     );
 
-    let moved = "concurrency checked;
+    let moved = "import std.concurrency; concurrency checked;
 fn taker(payload: own<Buffer> use one) -> i32 {
   let seen = qcore_buffer_read(payload);
   drop payload;

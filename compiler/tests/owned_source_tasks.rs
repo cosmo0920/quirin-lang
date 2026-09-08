@@ -2,7 +2,7 @@
 //! requested allocation/thread boundary; they never manufacture checked IR.
 #![cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
-use qcore_core::task_execution::{
+use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_task_module, render_task_observation,
 };
 use std::fs;
@@ -11,6 +11,28 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 const ROUND_TRIP: &str = include_str!("fixtures/ct/CT01/case.qcore");
+
+#[test]
+fn core_context_example_matches_reference_on_creation_success_and_failure() {
+    let source = include_str!("../../examples/threads/core_context.qcore");
+    for created in [true, false] {
+        let fault = if created {
+            ""
+        } else {
+            r#"
+#include <threads.h>
+static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
+    (void)thread; (void)worker; (void)argument; return thrd_error;
+}
+#define QCORE_TASK_CREATE fail_create
+"#
+        };
+        let (module, output) = native(source, Some(&format!("{TRACK_BUFFER}\n{fault}")));
+        matches_reference(&module, &output, vec![created], vec![true]);
+        one_buffer_released(&output);
+        assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 42\n"));
+    }
+}
 
 fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule, Output) {
     let module = compile_files(
@@ -221,7 +243,7 @@ fn owned_child_drop_precedes_exact_recoverable_error_collection() {
 
 #[test]
 fn distinct_owned_captures_survive_partial_child_release_and_second_allocation_failure() {
-    let source = "concurrency checked;
+    let source = "import std.concurrency; concurrency checked;
     fn worker(first:own<Buffer> use one,second:own<Buffer> use one)->own<Buffer> {drop first;return move second;}
     fn main()->i32 effects {alloc,throws<AllocError>,spawn,join,may_block} {
       let first=qcore_buffer_new(7)?;
@@ -255,7 +277,7 @@ static void *second_fails(size_t size) { return ++calls == 2 ? NULL : malloc(siz
 }
 
 const FRESH_WORKER: &str = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let buffer = qcore_buffer_new(value)?;
     return move buffer;
@@ -303,7 +325,7 @@ fn worker_allocates_fresh_result_and_creator_joins_reads_and_drops_it() {
 }
 
 const WORKER_SECOND_ALLOCATION: &str = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let first = qcore_buffer_new(7)?;
     match qcore_buffer_new(value) {
@@ -467,7 +489,7 @@ static void *allocate_for_task(size_t size, uint64_t task, uint64_t attempt) {{
 }
 
 const PARALLEL_FRESH_WORKERS: &str = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects {alloc, throws<AllocError>} {
     let buffer = qcore_buffer_new(value)?;
     return move buffer;

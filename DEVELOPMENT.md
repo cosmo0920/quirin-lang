@@ -357,6 +357,24 @@ full suite.
 
 ## Increment records
 
+### Core concurrency prelude (2026-09-08)
+
+Explicit concurrency imports and core prelude (2026-09-08): source files opt in
+with `import std.concurrency;`; the concurrency context is unavailable by default.
+The core owns exact bundled-module resolution; the frontend rejects unknown
+modules (`Q014`) and missing imports (`Q015`) before checking each file, so imports
+do not leak across compilation inputs. The task profile retains its separate
+`concurrency checked;` marker. `qcore_core::prelude::concurrency` exposes existing
+core models and backend APIs through compatible Rust imports; frontend lowering
+and the verification driver consume it. `QCore.ConcurrencyPrelude` exposes 14
+existing bounded properties and imports six new module-selection theorems.
+Thread examples and current source fixtures opt in explicitly, with a paired
+Rust custody example. Arbitrary user/package imports, implicit imports, combined
+task/mutex semantics and general native correctness remain outside this change.
+Validation: 1387 workspace tests passed, 1 ignored; all 32 Lean audits,
+formatting, Clippy, both reevaluation probes and four native examples pass.
+Evidence: `docs/reports/core-concurrency-prelude/README.md`.
+
 Windows Clang fixture repair (2026-09-08): O04's reduced prelude uses
 Clang target integer types, and the generic consuming sink accepts object
 pointers without incompatible C calls. Fixture-local Git attributes preserve

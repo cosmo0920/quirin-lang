@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
     let buffer = qcore_buffer_new(value)?;

@@ -1,0 +1,318 @@
+{
+  "platform": "Linux",
+  "workspace": {
+    "command": [
+      "cargo",
+      "test",
+      "--workspace"
+    ],
+    "exit_code": 0,
+    "test_totals": {
+      "passed": 1387,
+      "failed": 0,
+      "ignored": 1
+    },
+    "sanitizers": "Executed outside sandbox after LeakSanitizer refused its ptrace restriction."
+  },
+  "lean": {
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "exit_code": 0,
+    "audits": 32
+  },
+  "other_checks": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 1.24
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 7.75
+    },
+    {
+      "name": "reevaluation_probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit_code": 0,
+      "seconds": 1.96
+    },
+    {
+      "name": "reevaluation_followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit_code": 0,
+      "seconds": 0.79
+    },
+    {
+      "name": "prelude_example",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-core",
+        "--example",
+        "concurrency_prelude"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06
+    },
+    {
+      "name": "cli_build",
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "qcorec"
+      ],
+      "exit_code": 0,
+      "seconds": 0.49
+    }
+  ],
+  "emacs": {
+    "command": [
+      "emacs",
+      "-Q",
+      "--batch",
+      "-L",
+      "editors/emacs",
+      "-l",
+      "qcore-mode-tests.el",
+      "-f",
+      "ert-run-tests-batch-and-exit"
+    ],
+    "exit_code": 0,
+    "passed": 9
+  },
+  "examples": [
+    {
+      "example": "examples/threads/two_workers.qcore",
+      "expected_main_result": 7,
+      "source_sha256": "2a62415bcb919b30e4a42bbee02d40996567f656f4cb88535fa7ef33fb615021",
+      "c_sha256": "6780851c927189a0a3d2db83628691e7adf1e1d55b2fb2221c77845b42f0e3a4",
+      "steps": [
+        {
+          "command": [
+            "target/debug/qcorec",
+            "check",
+            "examples/threads/two_workers.qcore"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/debug/qcorec",
+            "emit",
+            "examples/threads/two_workers.qcore",
+            "-o",
+            "target/thread-examples/two_workers.c"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-pthread",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "target/thread-examples/two_workers.c",
+            "-o",
+            "target/thread-examples/two_workers"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/thread-examples/two_workers"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "trace": "QCORE_TASK_SPAWN 1 0\nQCORE_TASK_SPAWN 2 0\nQCORE_TASK_RESULT 2 I32 7\nQCORE_TASK_JOIN 2\nQCORE_TASK_RESULT 1 I32 42\nQCORE_TASK_JOIN 1\nQCORE_TASK_RESULT 0 I32 7\n"
+    },
+    {
+      "example": "examples/threads/owned_buffer.qcore",
+      "expected_main_result": 42,
+      "source_sha256": "d83e17079d8eb5f68dc5f117b59a099c47565d34af3c858b28b166e6548cbd10",
+      "c_sha256": "f1519578a581ad37bdd383f099d9ceb9cf92da06e3265b426a3f1787131f3fd0",
+      "steps": [
+        {
+          "command": [
+            "target/debug/qcorec",
+            "check",
+            "examples/threads/owned_buffer.qcore"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/debug/qcorec",
+            "emit",
+            "examples/threads/owned_buffer.qcore",
+            "-o",
+            "target/thread-examples/owned_buffer.c"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-pthread",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "target/thread-examples/owned_buffer.c",
+            "-o",
+            "target/thread-examples/owned_buffer"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/thread-examples/owned_buffer"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "trace": "QCORE_BUFFER_ALLOC 0 1 42\nQCORE_BUFFER_ALLOC 0 2 7\nQCORE_TASK_SPAWN 1 0\nQCORE_BUFFER_READ 0 2 7\nQCORE_BUFFER_DROP 0 2\nQCORE_BUFFER_READ 1 1 42\nQCORE_TASK_RESULT 1 BUFFER 1\nQCORE_TASK_JOIN 1\nQCORE_BUFFER_READ 0 1 42\nQCORE_BUFFER_DROP 0 1\nQCORE_TASK_RESULT 0 I32 42\n"
+    },
+    {
+      "example": "examples/threads/shared_readers.qcore",
+      "expected_main_result": 7,
+      "source_sha256": "c8e5b504cbf114f59b2e36075185e7b7ebe23154486a46d6c9e14af95b8e4147",
+      "c_sha256": "b5d97b813db8cadc176a1f0871544118301cf85145a05a4a2d3c56d5450ce756",
+      "steps": [
+        {
+          "command": [
+            "target/debug/qcorec",
+            "check",
+            "examples/threads/shared_readers.qcore"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/debug/qcorec",
+            "emit",
+            "examples/threads/shared_readers.qcore",
+            "-o",
+            "target/thread-examples/shared_readers.c"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-pthread",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "target/thread-examples/shared_readers.c",
+            "-o",
+            "target/thread-examples/shared_readers"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/thread-examples/shared_readers"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "trace": "QCORE_BUFFER_ALLOC 0 1 1\nQCORE_BUFFER_WRITE 0 1 42\nQCORE_TASK_SPAWN 1 0\nQCORE_BUFFER_LOAN 1 1\nQCORE_TASK_SPAWN 2 0\nQCORE_BUFFER_LOAN 2 1\nQCORE_BUFFER_READ 0 1 42\nQCORE_BUFFER_READ 1 1 42\nQCORE_TASK_RESULT 1 I32 42\nQCORE_TASK_JOIN 1\nQCORE_BUFFER_RETURN 1 1\nQCORE_BUFFER_READ 2 1 42\nQCORE_TASK_RESULT 2 I32 42\nQCORE_TASK_JOIN 2\nQCORE_BUFFER_RETURN 2 1\nQCORE_BUFFER_WRITE 0 1 7\nQCORE_BUFFER_READ 0 1 7\nQCORE_BUFFER_DROP 0 1\nQCORE_TASK_RESULT 0 I32 7\n"
+    },
+    {
+      "example": "examples/threads/core_context.qcore",
+      "expected_main_result": 42,
+      "source_sha256": "1ec2d9599289c190719cebb5015b642fc2b0fa8bfb6bb69e4f50518580a25fd9",
+      "c_sha256": "f4309f4b22a958ca240f583ec2cb2911409b27fc71a90f73e66a79159e35fd79",
+      "steps": [
+        {
+          "command": [
+            "target/debug/qcorec",
+            "check",
+            "examples/threads/core_context.qcore"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/debug/qcorec",
+            "emit",
+            "examples/threads/core_context.qcore",
+            "-o",
+            "target/thread-examples/core_context.c"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-pthread",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "target/thread-examples/core_context.c",
+            "-o",
+            "target/thread-examples/core_context"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "target/thread-examples/core_context"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "trace": "QCORE_BUFFER_ALLOC 0 1 42\nQCORE_TASK_SPAWN 1 0\nQCORE_TASK_RESULT 1 BUFFER 1\nQCORE_TASK_JOIN 1\nQCORE_BUFFER_READ 0 1 42\nQCORE_BUFFER_DROP 0 1\nQCORE_TASK_RESULT 0 I32 42\n"
+    }
+  ],
+  "log_sha256": {
+    "workspace-final.log": "a3e6b2cd5e6e4c35bbdd03aeec0557091a5eb1721dfa0a194ebd49e2f6090c72",
+    "lean-final.log": "fa7724b5d4720f96c306a32312d109c37d98b9ec7f269fa41a09e5d6c55f2e45",
+    "fmt-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clippy-final.log": "30685352c9044200956f37a5a569c12df4bfa61075ce75985543dd0cb3ae63b0",
+    "reevaluation_probe-final.log": "7f450de4bd59c62cbb2ef358d169dbbde7d594570457ebb2f83cb16863b5c649",
+    "reevaluation_followup-final.log": "c795ce0465773f6cd8e15a016d4142ff194c05f17428c69427342399ce174183",
+    "prelude_example-final.log": "0fab51a0d4032cd443964fbe2087b7bf44a8809d07df10ffde56d8f3bf47be8d",
+    "emacs.log": "82e074585a6e62f4ac3cc2e1ca2e7aacec233b9ca23f6dba447ff2701e8a6137",
+    "mutation-regressions.log": "db9b988386311cd38a2dabcdb9066019240d23b9d18d55d429cdf7a4a16262b6"
+  }
+}

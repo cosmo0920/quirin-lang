@@ -27,7 +27,7 @@ fn compile(source: &str) -> Result<qcore_compiler::CompiledModule, Vec<String>> 
     })
 }
 
-const GUARDED: &str = "fn main() -> unit {\n\
+const GUARDED: &str = "import std.concurrency; fn main() -> unit {\n\
      thread scope s {\n\
      let buf = protected 4;\n\
      let m = mutex guards buf;\n\
@@ -82,7 +82,7 @@ fn a_guarded_module_selects_the_checked_mutex_profile_and_emits_native_locking()
 /// contention or any other backend.
 #[test]
 fn an_accepted_source_fixture_runs_natively_and_matches_its_reference_execution() {
-    let source = "fn main() -> unit {\n\
+    let source = "import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -199,7 +199,7 @@ fn run_native(source: &str) -> Vec<String> {
 
 #[test]
 fn an_unguarded_write_to_a_protected_footprint_is_located_and_refused() {
-    let source = "fn main() -> unit {\n\
+    let source = "import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\
@@ -213,7 +213,7 @@ fn an_unguarded_write_to_a_protected_footprint_is_located_and_refused() {
 
 #[test]
 fn a_broken_invariant_at_the_section_exit_is_located_and_refused() {
-    let source = "fn main() -> unit {\n\
+    let source = "import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
          let m = mutex guards buf;\n\

@@ -26,7 +26,7 @@ use std::collections::BTreeMap;
 /// locals, and on either allocation failure raises a tagged error carrying the
 /// parent's Buffer back while releasing whatever it did acquire. The parent
 /// takes the payload out of the bound error, reads it and releases it.
-const PAYLOAD: &str = "concurrency checked;
+const PAYLOAD: &str = "import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -387,7 +387,7 @@ fn propagation_cannot_carry_an_owned_payload() {
     // declared row carries payloads is joined with `?`. The row is uniform, so
     // the declaration itself is admitted and `?` is what refuses.
     rejects(
-        "concurrency checked;
+        "import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -432,7 +432,7 @@ fn main() -> i32 effects { alloc, throws<Recovery>, spawn, join, may_block } {
 #[test]
 fn a_scoped_borrow_cannot_escape_inside_an_error_payload() {
     rejects(
-        "concurrency checked;
+        "import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: borrow<Buffer>) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -495,7 +495,7 @@ fn the_task_entry_cannot_declare_an_error_payload() {
     // `main` declares only `Recovery`, so its row is uniform and the
     // declaration gate admits it; the refusal is the entry rule itself.
     rejects(
-        "concurrency checked;
+        "import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {
@@ -610,7 +610,7 @@ fn the_payload_intrinsic_is_reserved_and_typed() {
 /// checker keeps them apart per path.
 #[test]
 fn one_buffer_can_be_a_result_on_one_path_and_a_payload_on_another() {
-    const EITHER: &str = "concurrency checked;
+    const EITHER: &str = "import std.concurrency; concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: own<Buffer> use one) -> own<Buffer> effects { alloc, throws<Recovery> } {
   match qcore_buffer_new(7) {

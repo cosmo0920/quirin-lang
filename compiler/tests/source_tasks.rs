@@ -21,7 +21,7 @@ use std::process::Output;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 const COPY_TASK: &str = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 fn worker(x: i32) -> i32 { return x; }
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     let x = 42;
@@ -36,7 +36,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 
 #[test]
 fn resolved_spawn_and_join_require_the_checked_source_profile() {
-    let source = "fn worker() -> unit { return; } fn main() -> unit { thread scope s { let h = spawn s worker()?; let r = join move h; } return; }";
+    let source = "import std.concurrency; fn worker() -> unit { return; } fn main() -> unit { thread scope s { let h = spawn s worker()?; let r = join move h; } return; }";
     let parsed = parse_source_program(source).unwrap();
     assert_eq!(parsed.task_expressions().len(), 2);
     let typed = elaborate_source(&parsed).unwrap();
@@ -225,7 +225,7 @@ static void forbidden_free(void *p) { (void)p; _Exit(91); }
 #[test]
 #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
 fn empty_scopes_and_uncalled_workers_emit_complete_warning_clean_c() {
-    let source = "concurrency checked; fn unused(x: i32) -> i32 { return x; } fn main() -> unit { thread scope s { } return; }";
+    let source = "import std.concurrency; concurrency checked; fn unused(x: i32) -> i32 { return x; } fn main() -> unit { thread scope s { } return; }";
     let (module, output) = native(source, None);
     assert_eq!(module.checked.function_count(), 2);
     assert_eq!(
@@ -249,7 +249,7 @@ fn dynamic_creation_failure_cannot_strand_a_previous_sibling() {
 #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
 fn worker_errors_and_sequential_copy_results_preserve_exact_outcomes() {
     let failure = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 error WorkerFailure { Broken; Other; }
 fn worker() -> i32 effects { throws<WorkerFailure> } { raise WorkerFailure::Broken; }
 fn main() -> i32 effects { throws<SpawnError>, throws<WorkerFailure>, spawn, join, may_block } {
@@ -368,7 +368,7 @@ fn failed_creation_handler_cannot_drop_an_existing_sibling() {
 #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
 fn result_handlers_collect_siblings_before_rethrowing_exact_worker_errors() {
     let direct = r#"
-concurrency checked;
+import std.concurrency; concurrency checked;
 error WorkerFailure { First; Second; }
 fn worker(x: i32) -> i32 { return x; }
 fn failing() -> i32 effects { throws<WorkerFailure> } { raise WorkerFailure::Second; }

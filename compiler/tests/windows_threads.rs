@@ -118,7 +118,7 @@ fn windows_read_loan_shares_and_owned_error_match_reference() {
     for source in [
         include_str!("fixtures/ct/CT03/case.qcore"),
         include_str!("fixtures/ct/CT17/case.qcore"),
-        "concurrency checked;
+        "import std.concurrency; concurrency checked;
          fn reader(p: borrow<Buffer>) -> i32 { let x = qcore_buffer_read(p); return x; }
          fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
            let b = qcore_buffer_new(42)?;

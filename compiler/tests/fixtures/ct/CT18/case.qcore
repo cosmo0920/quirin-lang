@@ -1,3 +1,4 @@
+import std.concurrency;
 concurrency checked;
 error Recovery { Failed(own<Buffer>); }
 fn worker(payload: borrow<Buffer>) -> i32 effects { alloc, throws<Recovery> } {

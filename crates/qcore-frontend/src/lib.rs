@@ -8,6 +8,7 @@
 pub mod check;
 pub mod frontend;
 pub mod lexer;
+pub mod module_imports;
 pub mod parser;
 pub mod quant_index;
 pub mod source_mutex;
