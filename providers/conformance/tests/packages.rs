@@ -111,6 +111,138 @@ fn raw(package: &Path, frame: &[u8]) -> Output {
 fn json_frame(value: &serde_json::Value) -> Vec<u8> {
     encode_protocol_frame(value, DEFAULT_MAX_FRAME_BYTES).unwrap()
 }
+/// P01-F2: a shipped package's declarations must be bound to the template its
+/// own executable carries, by reading bytes only. Each edit below is
+/// schema-valid and leaves `package_digest` intact, so before this binding
+/// existed the read-only CLI verifier accepted all of them; the fields are
+/// exactly those an enforced execution profile installs plus the routing scope.
+fn embedded_template_binding(shipped: &Path, manifest: &PluginManifest) -> usize {
+    let executable = std::fs::read(shipped.join("provider")).unwrap();
+    let count = |needle: &str| {
+        executable
+            .windows(needle.len())
+            .filter(|window| *window == needle.as_bytes())
+            .count()
+    };
+    assert_eq!(count(qcore_verifier_host::TEMPLATE_BEGIN), 1);
+    assert_eq!(count(qcore_verifier_host::TEMPLATE_END), 1);
+    let template = qcore_verifier_host::extract_template(&executable).unwrap();
+    assert_eq!(template.plugin_id, manifest.plugin_id);
+    qcore_verifier_host::verify_executable_package(shipped).expect("shipped package verifies");
+    // Tamper on a copy: the shipped package stays byte-identical, and no file
+    // another thread may execute is ever rewritten here.
+    let package = &shipped.with_file_name(format!(
+        "{}.binding",
+        shipped.file_name().unwrap().to_string_lossy()
+    ));
+    std::fs::create_dir_all(package).unwrap();
+    std::fs::write(package.join("provider"), &executable).unwrap();
+    let manifest_path = package.join("verifier-plugin.json");
+    let original = std::fs::read(shipped.join("verifier-plugin.json")).unwrap();
+    std::fs::write(&manifest_path, &original).unwrap();
+    qcore_verifier_host::verify_executable_package(package).expect("the copy verifies too");
+    type Edit = (&'static str, Box<dyn Fn(&mut PluginManifest)>);
+    let edits: Vec<Edit> = vec![
+        (
+            "limits.timeout_ms",
+            Box::new(|m: &mut PluginManifest| m.limits.timeout_ms *= 12),
+        ),
+        (
+            "limits.memory_bytes",
+            Box::new(|m: &mut PluginManifest| m.limits.memory_bytes *= 4),
+        ),
+        (
+            "limits.output_bytes",
+            Box::new(|m: &mut PluginManifest| m.limits.output_bytes *= 2),
+        ),
+        (
+            "limits.additional.cpu_seconds",
+            Box::new(|m: &mut PluginManifest| {
+                m.limits.additional.insert("cpu_seconds".into(), 3_600);
+            }),
+        ),
+        (
+            "limits.additional.max_processes",
+            Box::new(|m: &mut PluginManifest| {
+                m.limits.additional.insert("max_processes".into(), 4_096);
+            }),
+        ),
+        (
+            "targets[0].library",
+            Box::new(|m: &mut PluginManifest| m.targets[0].library = "other_library".into()),
+        ),
+        (
+            "targets[0].platforms",
+            Box::new(|m: &mut PluginManifest| m.targets[0].platforms = ["*".into()].into()),
+        ),
+        (
+            "capabilities",
+            Box::new(|m: &mut PluginManifest| {
+                m.capabilities.insert(VerifierCapability::Concurrency);
+            }),
+        ),
+        (
+            "filesystem_inputs",
+            Box::new(|m: &mut PluginManifest| m.filesystem_inputs = ["extra".into()].into()),
+        ),
+        (
+            "trust_class",
+            Box::new(|m: &mut PluginManifest| m.trust_class = PluginTrustClass::ThirdParty),
+        ),
+    ];
+    let mut refused = 0;
+    for (field, edit) in &edits {
+        let mut changed = manifest.clone();
+        edit(&mut changed);
+        if changed == *manifest {
+            continue; // this package already declares the edited value
+        }
+        assert!(changed.validate().is_ok(), "{field} stays schema-valid");
+        std::fs::write(&manifest_path, serde_json::to_vec_pretty(&changed).unwrap()).unwrap();
+        let Err(error) = qcore_verifier_host::verify_executable_package(package) else {
+            panic!("digest-intact declaration edit must be refused: {field}");
+        };
+        assert!(
+            error
+                .message
+                .contains(&format!("installed manifest field `{field}` diverges")),
+            "{field}: {}",
+            error.message
+        );
+        refused += 1;
+    }
+    // A stripped envelope refuses distinctly instead of downgrading. Both
+    // markers are overwritten in place, so the executable keeps its length and
+    // only the envelope disappears.
+    let mut stripped = executable.clone();
+    for marker in [
+        qcore_verifier_host::TEMPLATE_BEGIN,
+        qcore_verifier_host::TEMPLATE_END,
+    ] {
+        let start = stripped
+            .windows(marker.len())
+            .position(|window| window == marker.as_bytes())
+            .unwrap();
+        stripped.splice(
+            start..start + marker.len(),
+            std::iter::repeat_n(b'.', marker.len()),
+        );
+    }
+    let mut without = manifest.clone();
+    without.package_digest = sha256_hex(&stripped);
+    std::fs::write(&manifest_path, serde_json::to_vec_pretty(&without).unwrap()).unwrap();
+    std::fs::write(package.join("provider"), &stripped).unwrap();
+    let Err(error) = qcore_verifier_host::verify_executable_package(package) else {
+        panic!("a stripped envelope must be refused");
+    };
+    assert!(error.message.contains("carries no"), "{}", error.message);
+    std::fs::remove_dir_all(package).unwrap();
+    // The shipped package was never written to, and still verifies.
+    assert_eq!(std::fs::read(shipped.join("provider")).unwrap(), executable);
+    qcore_verifier_host::verify_executable_package(shipped).expect("shipped package still verifies");
+    refused + 1
+}
+
 fn rejected(package: &Path, wire: &[u8]) {
     let output = raw(package, wire);
     assert!(!output.status.success());
@@ -140,6 +272,7 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
         serde_json::from_slice(&std::fs::read(output.join("packages.json")).unwrap()).unwrap();
     assert_eq!(index["artifacts"].as_array().unwrap().len(), 5);
     let mut cases = 0;
+    let mut bound = 0;
     let mut parity = Vec::new();
     for artifact in index["artifacts"].as_array().unwrap() {
         let id = artifact["plugin_id"].as_str().unwrap();
@@ -348,9 +481,10 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             sha256_hex(&std::fs::read(package.join("provider")).unwrap()),
             manifest.package_digest
         );
+        bound += embedded_template_binding(&package, &manifest);
     }
     println!(
-        "five process packages: {cases} exact v1 response/Unknown parity cases; all declared capabilities return v2 Unknown; identity/version/framing/package mutations rejected"
+        "five process packages: {cases} exact v1 response/Unknown parity cases; all declared capabilities return v2 Unknown; identity/version/framing/package mutations rejected; {bound} digest-intact declaration edits and stripped envelopes refused by the embedded-template binding"
     );
     println!("PARITY_JSON {}", serde_json::to_string(&parity).unwrap());
     std::fs::remove_dir_all(output).unwrap();

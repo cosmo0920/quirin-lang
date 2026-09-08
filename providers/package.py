@@ -23,13 +23,46 @@ def templates():
     return sorted(ROOT.glob("qcore-provider-*/provider-template.json"))
 
 
+TEMPLATE_BEGIN = b"<<<qcore.provider-template.v1:begin>>>"
+TEMPLATE_END = b"<<<qcore.provider-template.v1:end>>>"
+
+
+def embedded_template(executable_bytes):
+    """Read the manifest template out of the executable without running it.
+
+    Mirrors `qcore_verifier_host::embedded_template`, which is the checked
+    implementation; this supplementary copy keeps `package.py verify` able to
+    report the same refusal before it spawns anything.
+    """
+    if executable_bytes.count(TEMPLATE_BEGIN) != 1 or executable_bytes.count(TEMPLATE_END) != 1:
+        raise ValueError("executable does not carry exactly one manifest template envelope")
+    start = executable_bytes.index(TEMPLATE_BEGIN) + len(TEMPLATE_BEGIN)
+    end = executable_bytes.index(TEMPLATE_END)
+    if end < start:
+        raise ValueError("executable's manifest template envelope is unterminated")
+    return json.loads(executable_bytes[start:end].decode())
+
+
 def verify(package):
     manifest = json.loads((package / "verifier-plugin.json").read_text())
     if manifest.get("entrypoint") != {"kind": "executable", "path": "provider"}:
         raise ValueError("first-party package entrypoint must be provider")
     executable = package / "provider"
+    executable_bytes = executable.read_bytes()
     if digest(executable) != manifest["package_digest"]:
         raise ValueError(f"executable digest mismatch: {package}")
+    # Bind every other declaration to the embedded template before executing.
+    template = embedded_template(executable_bytes)
+    declared = dict(manifest)
+    declared.pop("package_digest")
+    embedded = dict(template)
+    embedded.pop("package_digest")
+    for field in sorted(set(declared) | set(embedded)):
+        if declared.get(field) != embedded.get(field):
+            raise ValueError(
+                f"installed manifest field `{field}` diverges from the executable's "
+                f"embedded template: {package}"
+            )
     checked = subprocess.run([str(executable.resolve()), "--verify-package"],
                              cwd=package, check=True, capture_output=True, text=True, timeout=10, env={})
     if json.loads(checked.stdout) != manifest:

@@ -55,13 +55,20 @@ No provider binary is checked into the source tree.
 
 Each package contains `provider` and `verifier-plugin.json`. Its
 `package_digest` is the executable's SHA-256. The executable embeds its
-manifest template and verifies every installed manifest field against it,
+manifest template between the markers `<<<qcore.provider-template.v1:begin>>>`
+and `<<<qcore.provider-template.v1:end>>>`, exactly once, so a host can read it
+back out of the executable's bytes. Both the running package and the read-only
+CLI verifier compare every installed manifest field against that template,
 substituting only the recomputed executable digest. Package ID/version,
-capabilities, limits, targets, evidence versions and trust labels cannot be
-changed independently of the binary. The all-zero digest in a source
+capabilities, limits (including every `limits.additional` kind an enforced
+execution profile installs), targets, filesystem inputs, evidence versions and
+trust labels cannot be changed independently of the binary; a divergence is
+refused by field name, and an absent, duplicated, truncated or unparseable
+envelope is refused distinctly. The all-zero digest in a source
 `provider-template.json` is a build placeholder and is never an installed
 package digest. Verification establishes this binding, not a signature or
-source authenticity; retain the archive hash from a trusted build record.
+source authenticity: whoever can rebuild or forge the executable controls its
+embedded template too. Retain the archive hash from a trusted build record.
 
 ## Invocation and installation
 
@@ -85,9 +92,15 @@ Extract a verified archive into a versioned directory and register its
 absolute package path using the existing host API:
 
 ```rust,ignore
-let provider = qcore_verifier_host::ProcessProvider::from_package(package_path)?;
+let provider = qcore_verifier_host::verify_executable_package(package_path)?;
 registry.register(std::sync::Arc::new(provider))?;
 ```
+
+`verify_executable_package` is the checked route: it applies path containment,
+the declared digest and the embedded-template binding. `ProcessProvider::from_package`
+is a plain loader that applies none of them, and is for callers that verify
+separately (the conformance harness drives mutated packages through it on
+purpose).
 
 Explicit registration avoids silently replacing the default in-process
 first-party registry. For upgrade, verify a newly built version in a separate
@@ -113,10 +126,12 @@ Config updates use a sibling temporary file and rename. They are local edits,
 not a distributed or concurrent-writer transaction protocol.
 
 The CLI verifier is read-only and does not execute the package: it validates
-manifest syntax, resolved path containment and the declared executable hash.
-It establishes a snapshot identity, not a signature, runtime compatibility,
-embedded-template binding or source authenticity. `package.py verify` additionally
-executes the first-party `--verify-package` self-check. Keep packages protected
+manifest syntax, resolved path containment, the declared executable hash, and
+the binding of every other declaration to the template embedded in those same
+bytes. It establishes a snapshot identity, not a signature, runtime
+compatibility or source authenticity. `package.py verify` additionally executes
+the first-party `--verify-package` self-check, which reaches the same verdict
+from inside the process. Keep packages protected
 from mutation between verification and dispatch; no immutable-file or OS sandbox
 guarantee is added. `qcorec` default provider selection is unchanged. The standalone `package.py verify` command and the
 binary's `--verify-package` mode check an installed package; no new protocol

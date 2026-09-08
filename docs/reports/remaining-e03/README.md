@@ -271,6 +271,13 @@ What this card establishes, and nothing more:
 - `qcore-audit`'s resource verdicts are untouched. A provisional `Unsafe` unit
   is still provisional and is still not an upstream defect.
 
+> **Superseded, 2026-09-08.** All four boundaries below (E03-B1 … E03-B4) and
+> the open items E03-O1 … E03-O4 are repaired by
+> [E03-B](../remaining-e03-b/README.md). The measured statements in this
+> section describe the code *before* that card; the paragraph in §"Repair 2"
+> above also describes a refusal E03-B replaced with a composite premise union.
+> Everything else in this record still holds.
+
 ## Open items
 
 - **E03-O1** — first-class composite premises. Repair 2 refuses unequal but

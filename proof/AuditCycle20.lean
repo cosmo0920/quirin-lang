@@ -23,9 +23,36 @@ import QCore.VerifierPlugin
 #print axioms QCore.VerifierPlugin.Composition.duplicate_certificate_adds_no_coverage
 #print axioms QCore.VerifierPlugin.Composition.duplicate_evidence_cannot_cover_a_missing_obligation
 #print axioms QCore.VerifierPlugin.Composition.distinct_unit_identities_are_unknown
-#print axioms QCore.VerifierPlugin.Composition.distinct_premise_sets_are_unknown
-#print axioms QCore.VerifierPlugin.Composition.safe_premises_are_uniform
 #print axioms QCore.VerifierPlugin.Composition.incomparable_bounds_are_unknown
+
+-- E03-B1: the published composite replaces the component representative.
+-- `distinct_premise_sets_are_unknown` and `safe_premises_are_uniform` are
+-- deliberately retired: they stated the pre-repair refusal of unequal but
+-- compatible premise sets, which the composite premise union supersedes.
+#print axioms QCore.VerifierPlugin.Composition.conflicting_premise_values_are_unknown
+#print axioms QCore.VerifierPlugin.Composition.unequal_premise_sets_merge
+#print axioms QCore.VerifierPlugin.Composition.uniform_premises_still_merge
+#print axioms QCore.VerifierPlugin.Composition.composite_publishes_every_component_premise
+#print axioms QCore.VerifierPlugin.Composition.composite_premises_come_from_components
+#print axioms QCore.VerifierPlugin.Composition.safe_premises_are_consistent
+#print axioms QCore.VerifierPlugin.Composition.representative_is_every_component
+#print axioms QCore.VerifierPlugin.Composition.distinct_components_have_no_representative
+
+-- E03-B2: unit identity names the artifact, not the capability.
+#print axioms QCore.VerifierPlugin.Composition.capabilities_of_one_artifact_share_a_unit
+#print axioms QCore.VerifierPlugin.Composition.distinct_artifacts_have_distinct_units
+#print axioms QCore.VerifierPlugin.Composition.obligation_keys_stay_capability_distinct
+
+-- E03-B3: provider-indexed coverage obligations.
+#print axioms QCore.VerifierPlugin.Composition.distinct_providers_have_distinct_coverage_keys
+#print axioms QCore.VerifierPlugin.Composition.distinct_denominators_have_distinct_coverage_keys
+#print axioms QCore.VerifierPlugin.Composition.one_providers_certificate_leaves_the_others_key_uncovered
+
+-- E03-B4: an absent provider refuses the composed verdict itself.
+#print axioms QCore.VerifierPlugin.Composition.absent_provider_scope_is_unknown
+#print axioms QCore.VerifierPlugin.Composition.present_scope_is_the_merge
+#print axioms QCore.VerifierPlugin.Composition.honest_scope_still_composes
+#print axioms QCore.VerifierPlugin.Composition.honest_scope_with_an_absent_provider_refuses
 
 #print axioms QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory
 #print axioms QCore.VerifierEvidenceV2.accepted_hook_has_recomputed_observation

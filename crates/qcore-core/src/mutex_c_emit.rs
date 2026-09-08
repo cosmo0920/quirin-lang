@@ -8,8 +8,10 @@
 //! pairing, footprint extents, and allocation lifetime on one Linux target and
 //! one compiler invocation. It is **not** evidence about contention, about any
 //! multi-threaded schedule, about the C memory model, or about the invariant
-//! predicate — the profile admits no task creation at all, and the predicate
-//! stays the `InvariantPredicateDeclared` premise.
+//! predicate — a trace carrying task structure is outside this backend
+//! entirely ([`is_single_task_trace`]), and the predicate stays the
+//! `InvariantPredicateDeclared` premise on every section that closes by
+//! declaration.
 //!
 //! [`interpret_mutex_program`] computes the same observation from the checked
 //! event list. Agreement between the two is a translation check for the
@@ -44,6 +46,26 @@ pub struct MutexCEmission {
     pub source: String,
     /// Byte length of each emitted resource allocation.
     pub resource_bytes: BTreeMap<SharedResourceId, u32>,
+}
+
+/// Whether this backend implements the trace at all.
+///
+/// The backend emits **one** thread. A trace carrying task structure — task
+/// creation, a join, a custody transfer between tasks, or an announced
+/// acquisition that only another thread could satisfy — is outside it. Callers
+/// use this to distinguish "checked, but this backend renders no native
+/// program" from "the backend refused a trace it was supposed to render";
+/// [`emit_mutex_c11`] still refuses such a trace if it is handed one.
+pub fn is_single_task_trace(program: &MutexInvariantProgram) -> bool {
+    !program.events.iter().any(|event| {
+        matches!(
+            event,
+            MutexInvariantEvent::Spawn { .. }
+                | MutexInvariantEvent::Join { .. }
+                | MutexInvariantEvent::TransferCustody { .. }
+                | MutexInvariantEvent::RegisterWaiter { .. }
+        )
+    })
 }
 
 /// Byte written by the access at `index`. Deterministic and identical in both
@@ -146,6 +168,16 @@ pub fn interpret_mutex_program(
                     }
                     _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
                 }
+            }
+            // Guard-scoped refinement facts have no runtime representation, in
+            // exactly the sense the invariant phases do not: the core decided
+            // their extent statically. They are traced so the two observations
+            // stay comparable.
+            MutexInvariantEvent::AssertFact { fact, .. } => {
+                trace.push(format!("assert {fact}"));
+            }
+            MutexInvariantEvent::UseFact { fact, .. } => {
+                trace.push(format!("use-fact {fact}"));
             }
             MutexInvariantEvent::BorrowUnderGuard { borrow, .. } => {
                 trace.push(format!("borrow {borrow}"));
@@ -267,6 +299,12 @@ pub fn emit_mutex_c11(
                     .unwrap(),
                     _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
                 }
+            }
+            MutexInvariantEvent::AssertFact { fact, .. } => {
+                writeln!(source, "    printf(\"assert {fact}\\n\");").unwrap();
+            }
+            MutexInvariantEvent::UseFact { fact, .. } => {
+                writeln!(source, "    printf(\"use-fact {fact}\\n\");").unwrap();
             }
             MutexInvariantEvent::BorrowUnderGuard {
                 footprint, borrow, ..

@@ -53,6 +53,7 @@ import QCore.ResearchExtensions
 import QCore.TypedErrors
 import QCore.TypedFieldAccess
 import QCore.ExitResiduals
+import QCore.BorrowedActual
 import QCore.Usage
 import QCore.UsageDemand
 import QCore.WholeProgram
@@ -70,6 +71,7 @@ import QCore.NullableRemoval
 import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ChunkIntegrityObservation
+import QCore.PackageTemplateBinding
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 

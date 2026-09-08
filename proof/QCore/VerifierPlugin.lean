@@ -134,10 +134,43 @@ def unitsAgree : List Certificate -> Bool
   | head :: tail => tail.all (fun other => other.unitId == head.unitId)
 
 /-- The published composite is one certificate, so a component premise set the
-representative omits would be dropped from the published result. -/
+representative omits would be dropped from the published result. Retained as
+the pre-E03-B1 relation; `composeInventory` no longer uses it, and
+`uniform_premises_still_merge` pins that its accepting cases still merge. -/
 def premisesAgree : List Certificate -> Bool
   | [] => true
   | head :: tail => tail.all (fun other => other.premises == head.premises)
+
+/-! ### E03-B1: the published composite
+
+Before this repair the merge published one component certificate as the
+composite and refused any pair whose premise sets were not equal, because that
+representative would otherwise have understated the assumptions the merge rests
+on. The repair publishes the composite itself, so:
+
+* `compositePremises` is the **union**: the merge holds only where every
+  component's premises hold, and a larger premise set is a weaker claim. A name
+  two components bind to different values is not a union but a contradiction,
+  and `premisesConsistent` still refuses it.
+* `compositeCoverage` is the **union**: each identifier in it was discharged by
+  some component, and it is the set compared to the core's required set.
+* `representative` exists only when a component *is* the merge. -/
+
+/-- A premise name two certificates bind to different values. -/
+def premisesConsistent (certificates : List Certificate) : Bool :=
+  (certificates.flatMap Certificate.premises).all (fun left =>
+    (certificates.flatMap Certificate.premises).all (fun right =>
+      !(left.1 == right.1) || left.2 == right.2))
+
+/-- The union of every component's premises: what the composite publishes. -/
+def compositePremises (certificates : List Certificate) : List (Nat × Bool) :=
+  certificates.flatMap Certificate.premises
+
+/-- The published representative: a component certificate that is the whole
+merge, which exists only when every component is that same certificate. -/
+def representative : List Certificate -> Option Certificate
+  | [] => none
+  | head :: tail => if tail.all (fun other => other == head) then some head else none
 
 def boundEntries (certificates : List Certificate) : List (Nat × Nat) :=
   certificates.flatMap Certificate.bounds
@@ -161,7 +194,7 @@ def composable (outcomes : List Outcome) (required : List Nat) : Bool :=
   | none => false
   | some certificates =>
       !certificates.isEmpty && !required.isEmpty &&
-        unitsAgree certificates && premisesAgree certificates &&
+        unitsAgree certificates && premisesConsistent certificates &&
         boundsAgree certificates && coversExactly certificates required
 
 def composeInventory (outcomes : List Outcome) (required : List Nat) : Verdict :=
@@ -290,32 +323,108 @@ theorem distinct_unit_identities_are_unknown
   | none => simp [collect, gathered]
   | some tail => simp [collect, gathered, unitsAgree, distinct]
 
-/-- Certificates publishing different premise sets do not merge, whether the
-difference is a conflicting value or a premise one of them omits. -/
-theorem distinct_premise_sets_are_unknown
+/-- A premise name two certificates bind to different values is a
+contradiction, not a union: the merge refuses it (`QP012`). This is the
+soundness half of the premise rule and is unchanged by E03-B1. -/
+theorem conflicting_premise_values_are_unknown
     (left right : Certificate) (rest : List Outcome) (required : List Nat)
-    (distinct : right.premises ≠ left.premises) :
+    (name : Nat) (leftValue rightValue : Bool)
+    (leftEntry : left.premises = [(name, leftValue)])
+    (rightEntry : right.premises = [(name, rightValue)])
+    (distinct : leftValue ≠ rightValue) :
     composeInventory (.safe left :: .safe right :: rest) required = .unknown := by
   unfold composeInventory composable
   cases gathered : collect rest with
   | none => simp [collect, gathered]
-  | some tail => simp [collect, gathered, premisesAgree, distinct]
+  | some tail =>
+    simp [collect, gathered, premisesConsistent, leftEntry, rightEntry,
+      distinct, Ne.symm distinct]
 
-/-- A merged `safe` publishes one premise set that every component declared. -/
-theorem safe_premises_are_uniform
-    {outcomes : List Outcome} {required : List Nat}
-    {head : Certificate} {tail : List Certificate}
+/-- Non-vacuity for E03-B1's completeness half: two components whose premise
+sets differ without conflicting now merge. Before the repair this was refused,
+because the published representative would have omitted premise `8`. -/
+theorem unequal_premise_sets_merge :
+    composeInventory
+      [.safe ⟨1, [(7, true)], [10], [(10, 1)]⟩,
+        .safe ⟨1, [(7, true), (8, false)], [11], [(11, 1)]⟩]
+      [10, 11] = .safe := by
+  decide
+
+/-- The retained uniform case still merges, so the repair widened the relation
+and did not move it. -/
+theorem uniform_premises_still_merge :
+    premisesAgree [⟨1, [(7, true)], [10], [(10, 1)]⟩, ⟨1, [(7, true)], [11], [(11, 1)]⟩] = true ∧
+      composeInventory
+        [.safe ⟨1, [(7, true)], [10], [(10, 1)]⟩, .safe ⟨1, [(7, true)], [11], [(11, 1)]⟩]
+        [10, 11] = .safe := by
+  exact ⟨by decide, by decide⟩
+
+/-- Nothing a component declared is dropped from the published composite: the
+premise union contains every component premise. This is what makes publishing
+the composite honest where publishing a representative was not. -/
+theorem composite_publishes_every_component_premise
+    (certificates : List Certificate) (certificate : Certificate)
+    (member : certificate ∈ certificates)
+    (premise : Nat × Bool) (declared : premise ∈ certificate.premises) :
+    premise ∈ compositePremises certificates := by
+  simp only [compositePremises, List.mem_flatMap]
+  exact ⟨certificate, member, declared⟩
+
+/-- And nothing is invented: every published premise belongs to a component. -/
+theorem composite_premises_come_from_components
+    (certificates : List Certificate) (premise : Nat × Bool)
+    (published : premise ∈ compositePremises certificates) :
+    ∃ certificate ∈ certificates, premise ∈ certificate.premises := by
+  simpa only [compositePremises, List.mem_flatMap] using published
+
+/-- A merged `safe` publishes a premise set that binds each name once. -/
+theorem safe_premises_are_consistent
+    {outcomes : List Outcome} {required : List Nat} {inventory : List Certificate}
     (accepted : composeInventory outcomes required = .safe)
-    (gathered : collect outcomes = some (head :: tail))
-    (other : Certificate) (member : other ∈ tail) :
-    other.premises = head.premises := by
+    (gathered : collect outcomes = some inventory)
+    (left right : Nat × Bool)
+    (leftPublished : left ∈ compositePremises inventory)
+    (rightPublished : right ∈ compositePremises inventory)
+    (sameName : left.1 = right.1) :
+    left.2 = right.2 := by
   have valid := composable_of_safe accepted
   unfold composable at valid
   rw [gathered] at valid
   simp at valid
-  have agree : premisesAgree (head :: tail) = true := valid.1.1.2
-  simp [premisesAgree] at agree
-  exact agree other member
+  have consistent : premisesConsistent inventory = true := valid.1.1.2
+  unfold premisesConsistent at consistent
+  simp only [compositePremises] at leftPublished rightPublished
+  simp only [List.all_eq_true, Bool.or_eq_true, beq_iff_eq,
+    Bool.not_eq_eq_eq_not] at consistent
+  rcases consistent left leftPublished right rightPublished with mismatch | equal
+  · exact absurd sameName (by simpa using mismatch)
+  · simpa using equal
+
+/-- The representative is published only when a component *is* the merge: with
+two distinct components there is none, so no caller can read one component's
+coverage, bounds or provenance as the composite's. -/
+theorem representative_is_every_component
+    (certificates : List Certificate) (certificate : Certificate)
+    (published : representative certificates = some certificate)
+    (other : Certificate) (member : other ∈ certificates) :
+    other = certificate := by
+  cases certificates with
+  | nil => simp [representative] at published
+  | cons head tail =>
+    unfold representative at published
+    by_cases uniform : tail.all (fun other => other == head) = true
+    · simp only [uniform, if_true, Option.some.injEq] at published
+      cases published
+      rcases List.mem_cons.mp member with rfl | inTail
+      · rfl
+      · simpa using (List.all_eq_true.mp uniform other inTail)
+    · simp [uniform] at published
+
+/-- Two distinct components have no representative at all. -/
+theorem distinct_components_have_no_representative
+    (left right : Certificate) (distinct : right ≠ left) :
+    representative [left, right] = none := by
+  simp [representative, distinct]
 
 /-- One obligation discharged under two different bounds does not merge. -/
 theorem incomparable_bounds_are_unknown
@@ -331,6 +440,126 @@ theorem incomparable_bounds_are_unknown
   | some tail =>
     simp [collect, gathered, boundsAgree, boundEntries, leftEntry, rightEntry,
       distinct, Ne.symm distinct]
+
+/-! ## Unit identity and provider-indexed obligations (E03-B2, E03-B3)
+
+Two smaller models, both about *identifiers* rather than about the merge.
+
+`derive_task` used to fold the capability's semantic profile into the unit's
+build digest, so two capabilities of one program certified different units and
+every multi-capability merge refused with `QP015`. A unit identity names the
+artifact, so it is now capability-independent; the capability separation is
+carried by the obligation key, which contains it. Both directions matter: the
+capabilities must agree on one artifact, and two artifacts must still differ.
+
+`ObservationCoverageComplete` carries subject `Unit`, so two providers over one
+unit derived one identifier for two different claims — "every hook *I* require
+was checked". The identifier is now keyed additionally by the provider and the
+hook denominator the replay decides it against. -/
+
+/-- One derivation: an artifact, asked about under one capability. -/
+structure Derivation where
+  artifact : Nat
+  capability : Nat
+  deriving DecidableEq, Repr
+
+/-- The unit identity, deliberately not a function of the capability. -/
+def unitIdentity (derivation : Derivation) : Nat := derivation.artifact
+
+/-- An obligation key still carries the capability, so identifiers of two
+capabilities over one artifact stay distinct. -/
+def obligationKey (derivation : Derivation) (base : Nat) : Nat × Nat :=
+  (derivation.capability, base)
+
+/-- E03-B2, completeness half: two capabilities over one artifact agree on the
+unit identity, so the merge can represent them. -/
+theorem capabilities_of_one_artifact_share_a_unit
+    (artifact left right : Nat) :
+    unitIdentity ⟨artifact, left⟩ = unitIdentity ⟨artifact, right⟩ := rfl
+
+/-- E03-B2, soundness half: a real artifact difference still changes the unit
+identity, so `distinct_unit_identities_are_unknown` still refuses it. -/
+theorem distinct_artifacts_have_distinct_units
+    (left right capability : Nat) (distinct : left ≠ right) :
+    unitIdentity ⟨left, capability⟩ ≠ unitIdentity ⟨right, capability⟩ := distinct
+
+/-- Nothing is lost by dropping the capability from the unit identity: the
+obligation key still separates the capabilities. -/
+theorem obligation_keys_stay_capability_distinct
+    (artifact left right base : Nat) (distinct : left ≠ right) :
+    obligationKey ⟨artifact, left⟩ base ≠ obligationKey ⟨artifact, right⟩ base := by
+  simp [obligationKey, distinct]
+
+/-- A provider-indexed obligation key: the provider and the denominator the
+core decides the obligation against. -/
+def coverageKey (provider denominator : Nat) : Nat × Nat := (provider, denominator)
+
+/-- E03-B3: two providers derive two coverage obligations, so neither
+certificate can discharge the other's. -/
+theorem distinct_providers_have_distinct_coverage_keys
+    (left right denominator : Nat) (distinct : left ≠ right) :
+    coverageKey left denominator ≠ coverageKey right denominator := by
+  simp [coverageKey, distinct]
+
+/-- The denominator is keyed too: the same provider asked about a different
+hook set is a different obligation. -/
+theorem distinct_denominators_have_distinct_coverage_keys
+    (provider left right : Nat) (distinct : left ≠ right) :
+    coverageKey provider left ≠ coverageKey provider right := by
+  simp [coverageKey, distinct]
+
+/-- And the composed consequence: if one provider's certificate covers only its
+own key, the other provider's key is uncovered and the merge stays `unknown` —
+the soundness that used to rest on "every component must be `Safe`". -/
+theorem one_providers_certificate_leaves_the_others_key_uncovered
+    (unit left right : Nat) (premises : List (Nat × Bool))
+    (bounds : List (Nat × Nat)) (distinct : left ≠ right) :
+    composeInventory [.safe ⟨unit, premises, [left], bounds⟩] [left, right] = .unknown := by
+  refine uncovered_obligation_is_unknown (inventory := [⟨unit, premises, [left], bounds⟩])
+    (by simp [collect]) right (by simp) ?_
+  simp [covered, Ne.symm distinct]
+
+/-! ## Scope dispatch with an absent provider (E03-B4)
+
+`dispatch_scope` skipped a provider the registry could not find *before*
+deriving its obligations, so those obligations never entered the required set
+and the composed verdict could read `safe` off the providers that did answer.
+Absence is now a refusal in the composed verdict itself. -/
+
+/-- The composed verdict of one scope. `absent` lists providers the registry
+could not find, whose obligations therefore could not be derived at all. -/
+def composeScope (absent : List Nat) (outcomes : List Outcome) (required : List Nat) : Verdict :=
+  if absent.isEmpty then composeInventory outcomes required else .unknown
+
+/-- A scope naming a provider that is not installed is `unknown`, whatever the
+providers that did answer returned. -/
+theorem absent_provider_scope_is_unknown
+    (absent : List Nat) (missing : absent ≠ []) (outcomes : List Outcome)
+    (required : List Nat) :
+    composeScope absent outcomes required = .unknown := by
+  unfold composeScope
+  cases absent with
+  | nil => exact absurd rfl missing
+  | cons _ _ => simp
+
+/-- Non-vacuity, and the control for the theorem above: with no absent provider
+the scope is exactly the merge, and an honest scope still composes `safe`. -/
+theorem present_scope_is_the_merge (outcomes : List Outcome) (required : List Nat) :
+    composeScope [] outcomes required = composeInventory outcomes required := by
+  simp [composeScope]
+
+theorem honest_scope_still_composes :
+    composeScope []
+      [.safe ⟨1, [(7, true)], [10], [(10, 1)]⟩, .safe ⟨1, [(7, true)], [11], [(11, 1)]⟩]
+      [10, 11] = .safe := by
+  decide
+
+/-- The same scope, with one provider missing, refuses. -/
+theorem honest_scope_with_an_absent_provider_refuses :
+    composeScope [42]
+      [.safe ⟨1, [(7, true)], [10], [(10, 1)]⟩, .safe ⟨1, [(7, true)], [11], [(11, 1)]⟩]
+      [10, 11] = .unknown := by
+  decide
 
 end Composition
 

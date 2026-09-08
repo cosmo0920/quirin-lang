@@ -53,6 +53,9 @@ fn task_with_assumptions(assumptions: BTreeMap<String, bool>) -> DerivedTask {
             contract_sources: BTreeMap::from([("unit.qc".into(), SOURCE.into())]),
             required_observation_hooks: BTreeSet::from(["resize".into()]),
             assumptions,
+            // The dispatcher derives for a named provider (E03-B3), so the
+            // helper must too or the pinned request bytes will not match.
+            verifier: Some("example.conformance".to_owned()),
         },
         VerifierCapability::ObservationHooks,
     )

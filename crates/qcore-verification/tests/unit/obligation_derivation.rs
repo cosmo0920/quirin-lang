@@ -34,6 +34,7 @@ pub(crate) fn inputs<'a>(program: &'a SourceProgram) -> DerivationInputs<'a> {
         contract_sources: BTreeMap::from([("unit.qc".to_owned(), program.source().to_owned())]),
         required_observation_hooks: BTreeSet::new(),
         assumptions: BTreeMap::new(),
+        verifier: None,
     }
 }
 

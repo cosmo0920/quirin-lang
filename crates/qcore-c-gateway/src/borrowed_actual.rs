@@ -447,3 +447,323 @@ pub(crate) fn is_opaque_field_read(
 ) -> bool {
     bases.readable && admitted_access(right, 0, model, types, &bases.risky) == Some(right.len())
 }
+
+#[cfg(test)]
+mod tests {
+    use qcore_schemas::contract::{
+        ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+    };
+
+    use super::*;
+
+    /// Split like the importer's own tokenizer: identifiers, numbers and one
+    /// character per punctuation token, so `->` is `-` followed by `>`.
+    fn texts(source: &str) -> Vec<&str> {
+        let bytes = source.as_bytes();
+        let mut tokens = Vec::new();
+        let mut cursor = 0;
+        while cursor < bytes.len() {
+            let byte = bytes[cursor];
+            if byte.is_ascii_whitespace() {
+                cursor += 1;
+            } else if byte.is_ascii_alphabetic() || byte == b'_' {
+                let start = cursor;
+                while cursor < bytes.len()
+                    && (bytes[cursor].is_ascii_alphanumeric() || bytes[cursor] == b'_')
+                {
+                    cursor += 1;
+                }
+                tokens.push(&source[start..cursor]);
+            } else if byte.is_ascii_digit() {
+                let start = cursor;
+                while cursor < bytes.len() && bytes[cursor].is_ascii_alphanumeric() {
+                    cursor += 1;
+                }
+                tokens.push(&source[start..cursor]);
+            } else {
+                tokens.push(&source[cursor..cursor + 1]);
+                cursor += 1;
+            }
+        }
+        tokens
+    }
+
+    /// One record with a scalar and two pointer members, plus the locals every
+    /// case below declares. Deliberately generic: no rule reads a name.
+    const DECLARATIONS: &str = "struct rec { int state ; struct a * one ; struct b * two ; } ; \
+         union view { struct a * one ; int tag ; } ;";
+
+    const LOCALS: &str = "struct rec * base ; struct rec * other ; struct rec value ; \
+         struct a * held ; int n ;";
+
+    /// `borrow` borrows both pointer positions; `sink` consumes; `drop`
+    /// releases; `variadic` declares only its first parameter.
+    fn contracts() -> ResourceContracts {
+        let mut contracts = ResourceContracts::default();
+        contracts.insert_contract(
+            "borrow",
+            ResourceFunctionContract::new(
+                [
+                    ResourceParameterMode::Borrowed,
+                    ResourceParameterMode::Borrowed,
+                ],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "sink",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Consumed { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "drop",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Released { nullable: false }],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts.insert_contract(
+            "variadic",
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Borrowed],
+                ResourceReturnMode::None,
+            ),
+        );
+        contracts
+    }
+
+    struct Fixture {
+        model: TypedAccessModel,
+        types: FunctionTypes,
+        bases: UntrackedBases,
+        contracts: ResourceContracts,
+    }
+
+    /// Build the three declaration facts the classification reads, over one
+    /// function body written in the importer's own token shape.
+    fn fixture(body: &str) -> Fixture {
+        fixture_with_declarations(DECLARATIONS, body)
+    }
+
+    fn fixture_with_declarations(declarations: &str, body: &str) -> Fixture {
+        let unit = format!("{declarations} {LOCALS} {body}");
+        let unit: &'static str = Box::leak(unit.into_boxed_str());
+        let all = texts(unit);
+        let model = TypedAccessModel::read(&all);
+        let body_tokens = texts(Box::leak(format!("{LOCALS} {body}").into_boxed_str()));
+        let protected = BTreeSet::new();
+        let types = FunctionTypes::read(&model, &[], &body_tokens, &protected);
+        let contracts = contracts();
+        let bases = untracked_bases(&body_tokens, &protected, &contracts, &model, &types);
+        Fixture {
+            model,
+            types,
+            bases,
+            contracts,
+        }
+    }
+
+    /// The admitted spans of one statement, written in isolation.
+    fn spans(fixture: &Fixture, statement: &str) -> Vec<(usize, usize)> {
+        let statement: &'static str = Box::leak(statement.to_owned().into_boxed_str());
+        let tokens = texts(statement);
+        borrowed_actual_spans(
+            &tokens,
+            &fixture.contracts,
+            &fixture.model,
+            &fixture.types,
+            &fixture.bases,
+        )
+    }
+
+    fn opaque_read(fixture: &Fixture, right: &str) -> bool {
+        let right: &'static str = Box::leak(right.to_owned().into_boxed_str());
+        let tokens = texts(right);
+        is_opaque_field_read(&tokens, &fixture.model, &fixture.types, &fixture.bases)
+    }
+
+    #[test]
+    fn a_pointer_member_at_a_borrowed_position_is_admitted() {
+        let fixture = fixture("borrow ( base -> one , base -> two ) ;");
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one , base -> two ) ;").len(),
+            2
+        );
+    }
+
+    #[test]
+    fn a_scalar_member_at_a_borrowed_position_is_admitted_too() {
+        let fixture = fixture("borrow ( base -> state , base -> two ) ;");
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> state , base -> two ) ;").len(),
+            2
+        );
+    }
+
+    #[test]
+    fn a_record_valued_base_is_admitted_through_the_dot_form() {
+        let fixture = fixture("borrow ( value . one , value . two ) ;");
+        assert_eq!(
+            spans(&fixture, "borrow ( value . one , value . two ) ;").len(),
+            2
+        );
+    }
+
+    #[test]
+    fn a_consuming_position_is_never_admitted() {
+        let fixture = fixture("sink ( base -> one ) ;");
+        assert!(spans(&fixture, "sink ( base -> one ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_releasing_position_is_never_admitted() {
+        let fixture = fixture("drop ( base -> one ) ;");
+        assert!(spans(&fixture, "drop ( base -> one ) ;").is_empty());
+    }
+
+    #[test]
+    fn an_uncontracted_callee_never_admits_an_actual() {
+        let fixture = fixture("unknown_callee ( base -> one ) ;");
+        assert!(spans(&fixture, "unknown_callee ( base -> one ) ;").is_empty());
+    }
+
+    #[test]
+    fn an_actual_beyond_the_declared_vector_is_never_admitted() {
+        let fixture = fixture("variadic ( n , base -> one ) ;");
+        assert!(spans(&fixture, "variadic ( n , base -> one ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_partial_argument_is_never_admitted() {
+        let fixture = fixture("borrow ( base -> state + 1 , base -> two ) ;");
+        // Only the whole second argument qualifies; the sum does not.
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> state + 1 , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    #[test]
+    fn a_chained_access_is_never_admitted() {
+        let fixture = fixture("borrow ( base -> one -> next , base -> two ) ;");
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one -> next , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    #[test]
+    fn a_union_base_is_never_admitted() {
+        let fixture = fixture("union view * seen ; borrow ( seen -> one , base -> two ) ;");
+        assert!(!fixture.model.borrowable_field("view", "one"));
+        // Only the `struct rec` argument is admitted; the union base is not.
+        assert_eq!(
+            spans(&fixture, "borrow ( seen -> one , base -> two ) ;"),
+            vec![(7, 11)]
+        );
+    }
+
+    #[test]
+    fn a_base_consumed_anywhere_in_the_body_is_never_admitted() {
+        let fixture = fixture("sink ( base ) ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_base_released_anywhere_in_the_body_is_never_admitted() {
+        let fixture = fixture("drop ( base ) ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_base_passed_to_an_uncontracted_callee_is_never_admitted() {
+        let fixture = fixture("unknown_callee ( base ) ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn an_address_taken_base_is_never_admitted() {
+        let fixture = fixture("held = & base ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn an_incremented_base_is_never_admitted() {
+        let fixture = fixture("base ++ ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_compound_assigned_base_is_never_admitted() {
+        let fixture = fixture("base += 1 ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    #[test]
+    fn a_base_assigned_from_an_opaque_expression_is_never_admitted() {
+        let fixture =
+            fixture("base = unknown_callee ( n ) ; borrow ( base -> one , base -> two ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    /// The refusal is flow-insensitive on purpose: the read appears before the
+    /// assignment, and is refused anyway.
+    #[test]
+    fn the_refusal_of_a_base_does_not_depend_on_statement_order() {
+        let fixture =
+            fixture("borrow ( base -> one , base -> two ) ; base = unknown_callee ( n ) ;");
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+    }
+
+    /// The transitive closure: a name assigned from a refused name is refused.
+    #[test]
+    fn the_refusal_closes_over_assignments() {
+        let fixture = fixture(
+            "base = unknown_callee ( n ) ; other = base ; borrow ( other -> one , other -> two ) ;",
+        );
+        assert!(spans(&fixture, "borrow ( other -> one , other -> two ) ;").is_empty());
+    }
+
+    /// A base assigned from an admitted field read stays admissible: that is
+    /// the shape the real constructor-to-caller path needs.
+    #[test]
+    fn a_base_assigned_from_an_admitted_field_read_stays_admissible() {
+        let fixture = fixture("other = base -> one ; borrow ( base -> one , base -> two ) ;");
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one , base -> two ) ;").len(),
+            2
+        );
+    }
+
+    #[test]
+    fn a_whole_admitted_access_is_an_opaque_field_read() {
+        let fixture = fixture("other = base -> one ;");
+        assert!(opaque_read(&fixture, "base -> one"));
+        assert!(!opaque_read(&fixture, "base -> one -> next"));
+        assert!(!opaque_read(&fixture, "base -> one + 1"));
+    }
+
+    /// An unreadable declaration refuses every access in the function, which is
+    /// what makes the declaration-completeness premise hold for the admitted set.
+    #[test]
+    fn an_unreadable_function_admits_nothing() {
+        let fixture = fixture_with_declarations(
+            "struct rec { int state ; struct a * one ; struct b * two ; } ;",
+            "void ( * hook ) ( int ) ; borrow ( base -> one , base -> two ) ;",
+        );
+        assert!(!fixture.types.is_readable());
+        assert!(spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+        assert!(!opaque_read(&fixture, "base -> one"));
+    }
+
+    /// Non-vacuity: with every premise satisfied the whitelist does admit, so
+    /// the refusals above are refusals and not an empty rule.
+    #[test]
+    fn the_whitelist_is_not_empty() {
+        let fixture = fixture("borrow ( base -> one , base -> two ) ;");
+        assert!(!spans(&fixture, "borrow ( base -> one , base -> two ) ;").is_empty());
+        assert!(opaque_read(&fixture, "base -> one"));
+    }
+}

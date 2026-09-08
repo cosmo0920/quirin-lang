@@ -1,6 +1,27 @@
-use qcore_compiler::{PluginEntrypoint, PluginId};
+use qcore_compiler::verifier_plugin::envelope;
+use qcore_compiler::{PluginEntrypoint, PluginId, PluginManifest};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
+
+/// Write a package executable carrying `manifest` as its embedded template, and
+/// the installed manifest that binds to it. The file is never executed by
+/// verification, so plain bytes carrying the envelope are a faithful stand-in
+/// for a compiled provider: what the gate reads is exactly these bytes.
+fn install(package: &Path, manifest: &mut PluginManifest, executable_body: &str) {
+    let mut template = manifest.clone();
+    // An executable cannot embed its own hash; real templates carry the same
+    // all-zero build placeholder, which the installed digest never equals.
+    template.package_digest = "0".repeat(64);
+    let mut bytes = executable_body.as_bytes().to_vec();
+    bytes.extend(envelope(&serde_json::to_string_pretty(&template).unwrap()).into_bytes());
+    std::fs::write(package.join("provider"), &bytes).unwrap();
+    manifest.package_digest = qcore_compiler::verifier_plugin::sha256_hex(&bytes);
+    std::fs::write(
+        package.join("verifier-plugin.json"),
+        serde_json::to_vec(manifest).unwrap(),
+    )
+    .unwrap();
+}
 
 struct Fixture {
     root: PathBuf,
@@ -18,15 +39,9 @@ impl Fixture {
         manifest.entrypoint = PluginEntrypoint::Executable {
             path: "provider".into(),
         };
-        manifest.package_digest =
-            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855".into();
-        // Deliberately not executable: verification must read it without launching.
-        std::fs::write(package.join("provider"), "").unwrap();
-        std::fs::write(
-            package.join("verifier-plugin.json"),
-            serde_json::to_vec(&manifest).unwrap(),
-        )
-        .unwrap();
+        // Deliberately not executable: verification must read it without
+        // launching, so the "executable" is just bytes carrying the template.
+        install(&package, &mut manifest, "");
         Self {
             config: root.join("plugins.json"),
             root,
@@ -82,11 +97,23 @@ fn package_selection_is_explicit_pinned_and_reversible() {
     assert!(succeeds(f.list()).contains("example.cli"));
     assert!(!succeeds(f.list()).contains("qcore.libevent"));
     let original = std::fs::read(&f.config).unwrap();
-    let manifest = f.package.join("verifier-plugin.json");
-    let mut json: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(&manifest).unwrap()).unwrap();
-    json["package_version"] = "9.9.9".into();
-    std::fs::write(&manifest, serde_json::to_vec(&json).unwrap()).unwrap();
+    let manifest_path = f.package.join("verifier-plugin.json");
+    let installed: PluginManifest =
+        serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+    // A schema-valid, digest-intact declaration edit is bound to the
+    // executable's own template and refused by field name.
+    let mut edited = installed.clone();
+    edited.package_version = "9.9.9".into();
+    std::fs::write(&manifest_path, serde_json::to_vec(&edited).unwrap()).unwrap();
+    fails(
+        f.list(),
+        "installed manifest field `package_version` diverges",
+    );
+    assert_eq!(std::fs::read(&f.config).unwrap(), original);
+    // A coherently rebuilt package at the same path binds, and is then caught by
+    // the separate pinned-manifest comparison instead.
+    let mut rebuilt = edited.clone();
+    install(&f.package, &mut rebuilt, "rebuilt");
     fails(f.list(), "changed since enable");
     assert_eq!(std::fs::read(&f.config).unwrap(), original);
     // Explicit re-enable is the package upgrade/review decision.
@@ -138,18 +165,11 @@ fn discovery_order_is_independent_of_selection_order() {
         manifest.entrypoint = PluginEntrypoint::Executable {
             path: "provider".into(),
         };
-        manifest.package_digest =
-            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855".into();
         // Distinct declared libraries keep registration free of route conflicts.
         for target in &mut manifest.targets {
             target.library = format!("library{index}");
         }
-        std::fs::write(package.join("provider"), "").unwrap();
-        std::fs::write(
-            package.join("verifier-plugin.json"),
-            serde_json::to_vec(&manifest).unwrap(),
-        )
-        .unwrap();
+        install(&package, &mut manifest, "");
         packages.push(package);
     }
     let listing = |config: &Path, order: &[usize]| {
@@ -261,17 +281,9 @@ fn configured_source_scope_dispatches_only_the_enabled_process() {
     use std::os::unix::fs::PermissionsExt;
     let f = Fixture::new("dispatch");
     let executable = f.package.join("provider");
-    std::fs::write(
-        &executable,
-        "#!/bin/sh\nprintf invoked > invoked\nexit 23\n",
-    )
-    .unwrap();
-    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
     let manifest_path = f.package.join("verifier-plugin.json");
     let mut manifest: PluginManifest =
         serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
-    manifest.package_digest =
-        "b825beca93d78556d05b77634bcc85da3c2ea8217cea3f80c38f8f6ef1edf6a1".into();
     manifest.capabilities = BTreeSet::from([VerifierCapability::ObservationHooks]);
     manifest.evidence_versions = BTreeSet::from([1, 2]);
     manifest.required_observation_hooks = BTreeSet::from(["resize".into()]);
@@ -284,7 +296,14 @@ fn configured_source_scope_dispatches_only_the_enabled_process() {
         platforms: BTreeSet::from([std::env::consts::OS.into()]),
         backends: BTreeSet::from(["native".into()]),
     }];
-    std::fs::write(&manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+    // The shell body precedes the envelope, so `sh` exits before reaching it and
+    // the template still sits in the file the gate reads.
+    install(
+        &f.package,
+        &mut manifest,
+        "#!/bin/sh\nprintf invoked > invoked\nexit 23\n",
+    );
+    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
     succeeds(f.enable());
     let input = f.root.join("source.qcore");
     std::fs::write(&input, "extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };\nverify scope s { plugin example.cli profile default capabilities { observation_hooks }; }\nfn main() -> i32 { return 7; }").unwrap();

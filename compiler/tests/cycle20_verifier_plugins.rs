@@ -276,6 +276,7 @@ fn composition_cannot_promote_an_uncertified_safe_label() {
         verdict: ProposedVerdict::Safe,
         diagnostics: Vec::new(),
         certificate: None,
+        composite: None,
     };
     let composed = compose_verification(vec![forged]);
     assert_eq!(composed.verdict, ProposedVerdict::Unknown);
