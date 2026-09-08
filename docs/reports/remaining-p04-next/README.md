@@ -371,6 +371,10 @@ are byte-identical**: one checked function contract, six Unknown functions,
 provisional Unsafe raw unit. The complete before/after reports and the diff are
 archived beside this file.
 
+The four re-measured corpus artifacts are not re-pinned by this card: they are
+identical to the base, so the archived baseline under
+`docs/reports/remaining-o04-arms/artifacts/` stands unchanged.
+
 The `chunkio-core` second source set and the synthetic configured-audit routes
 are covered by `crates/qcore-audit/tests/second_source_set.rs`,
 `root_source_set.rs`, `configured_cli.rs`, `source_contract_config.rs`,
@@ -388,25 +392,44 @@ T08-SRC-CT — this card maps no CT case and changes neither number.
 
 The full pinned corpus was additionally re-measured on both sides, over one
 freshly prepared explicit-Clang tree (Fluent Bit `66910c10`, Monkey with forced
-Libevent), with `QCORE_CLANG=/usr/bin/clang` on both runs so the recorded
-compile identities are comparable:
+Libevent), from the **same working directory** with
+`QCORE_CLANG=/usr/bin/clang` fixed on both runs:
 
-| | Result |
+| Run | Result |
 |---|---|
 | Base commit `8d0790a` | 185 source files, 186 configurations: 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures |
 | This branch | 185 source files, 186 configurations: 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures |
-| `diff -r` of the four serialized artifacts | see below |
+| `diff -r` of the four serialized artifacts | **byte-identical** |
 
-The 43 is the current-route **configuration** count that CORPUS-REPIN already
-resolved against the archived 42 **files**: `src/flb_input_chunk.c` appears
-twice under G01's recorded compile-configuration ambiguity. No unit verdict
-moves in either direction, and no provisional Unsafe unit is newly surfaced.
+`diff -r before2/ after/` over `resource-diagnostics.json` (16 MB),
+`resource-diagnostics.contracts.json`,
+`resource-diagnostics.chunk-contracts.json` and `monkey-source.json` reports
+**no difference at all**. The 43 is the current-route **configuration** count
+that CORPUS-REPIN already reconciled with the archived 42 **files**:
+`src/flb_input_chunk.c` appears twice under G01's recorded
+compile-configuration ambiguity. No unit verdict moves in either direction and
+no provisional Unsafe unit is newly surfaced.
 
-One methodological note, recorded rather than hidden: an earlier attempt at this
-comparison ran the base side without `QCORE_CLANG`, which moved every recorded
-`program` field from `/usr/bin/clang` to `clang` and, with it, every derived
-`inventory_sha256`. That was an environment difference, not a code difference,
-and the runs above fix the environment on both sides.
+Two measurement artifacts are recorded rather than hidden, because both were
+found by doing the comparison rather than assuming it:
+
+1. An earlier attempt ran the base side without `QCORE_CLANG`, which moved
+   every recorded `program` field from `/usr/bin/clang` to `clang` and, with
+   it, every derived `inventory_sha256`. That is an environment difference, not
+   a code difference.
+2. A second attempt ran the two sides from two different worktree directories.
+   The contract-source map is keyed by **absolute path**, so every key, the
+   `resource_contract_sources` digest over them and the derived
+   `inventory_sha256` moved — 2,246 lines. Filtering that diff for any line
+   that is *not* one of those three mechanical fields returned **zero lines**:
+   no verdict, no diagnostic, no coverage number, no source digest and no
+   compile-task argument differed. Both sides were then re-run from the same
+   directory, which is the byte-identical result above.
+
+That the recorded compile-task identity is sensitive to the checkout's absolute
+path is a property of the existing identity scheme, not something this card
+introduces; it is noted here because it makes naive cross-worktree artifact
+comparison misleading.
 
 ## 7. Lean inventory
 
@@ -458,6 +481,22 @@ Run in this worktree on Linux with Clang available:
 | `python3 -B -m unittest discover -s scripts/tests` | 108 passed |
 | `python3 providers/package.py build` + `qcorec plugins verify` × 5 | all five packages built and verified (exit 0) |
 | Canonical CMetrics audit, before vs after | 2 lines, both rebuilt `package_digest` |
+| 185-unit corpus, before vs after, same directory | all four artifacts **byte-identical** |
+
+Every row above was re-measured after the worktree was recreated mid-card (see
+§8.2), so the recorded numbers are from the worktree as it stands.
+
+## 8.2 Process note
+
+The isolated worktree for this card was pruned by an external cleanup while the
+card was paused, which briefly left the shell in the main checkout and moved
+that checkout onto this branch. It was restored to `main` at `92a7032`, the
+worktree was recreated at the same path from the same branch, and every commit
+survived (`git log` shows all five). No work was lost and no other worktree or
+branch was touched. The full gate was then re-run from the recreated worktree,
+which is what §8 reports. `build/cycle19/` scratch trees for the corpus
+measurement live under the main checkout's ignored `build/` directory, where
+the preparation scripts write by design.
 
 `lake` is not on the default `PATH` on this host; it was run from
 `~/.elan/bin`.
@@ -517,5 +556,6 @@ than resolved on this branch:
   exists, but it is still a datum the request carries that is derived from the
   contract rather than from the source; that deviation from P04's "no derived
   result" phrasing is recorded here rather than hidden.
-- The 185-unit corpus was not re-pinned by this card; see §6 for what was
-  measured instead.
+- The 185-unit corpus was not re-pinned by this card — it was re-measured
+  byte-identical on both sides (§6.1), so the archived baseline stands; see §6
+  for what was measured instead.
