@@ -1,0 +1,36 @@
+{
+  "id": "CT38",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q637",
+      "message_contains": "CreditsExceedAllocation { axis: \"memory\", granted: 12288, allocation: 8192 }"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "elaborate", "epoch_lowering", "epoch_bound_check"],
+  "notes": "Child credits splitting a total to more than the total. Each child's own demand fits its own credit, so no per-task check refuses this; it is the granted sum 6144 + 6144 against the 8192 allocation that does, at Q637 and only there. The refusal reaches the epoch_bound_check stage, so it is a checked accounting refusal and not a grammar one.",
+  "epoch_reject": {
+    "diagnostic_sequence": ["Q637"],
+    "controls": [
+      {
+        "source": "split_within_total.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "task_count": 2,
+        "figures": {
+          "concurrent_private_peak.memory": 2048,
+          "epoch_peak.memory": 2048,
+          "work_total.effort": 20,
+          "granted_credits.effort": 200,
+          "granted_credits.memory": 8192,
+          "allocation.effort": 1000,
+          "allocation.memory": 8192
+        },
+        "note": "The same epoch with credits that really do split the total: 4096 + 4096 = 8192, admitted with granted_credits.memory equal to allocation.memory. The refusal is keyed to the sum and not to the split, and the split-within-total certificate is pinned so `equal to the allocation` is measured rather than asserted."
+      }
+    ]
+  }
+}

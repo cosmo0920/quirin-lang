@@ -120,6 +120,10 @@ for cid in mapped_ids:
             "harness_verdict_mode": case["harness_verdict_mode"],
             "manifest_evidence_target": case.get("evidence_target"),
             "source_reject_controls_executed": entry.get("source_reject_controls_executed"),
+            # The epoch route counts its controls under its own key: both its
+            # accepted cases and its rejections carry them, so `source_reject`
+            # would be the wrong name for the CT35/CT36 rows (card T08-SRC-CT).
+            "epoch_controls_executed": entry.get("epoch_controls_executed"),
             # Schema 2 makes the manifest entry and the stage-derived status the
             # same object, so the old side-by-side `manifest_stages` column that
             # existed to keep their divergence visible is gone.

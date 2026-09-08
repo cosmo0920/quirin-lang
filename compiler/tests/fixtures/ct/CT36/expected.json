@@ -1,0 +1,54 @@
+{
+  "id": "CT36",
+  "verdict": "epoch_bound_figures",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "elaborate", "epoch_lowering", "epoch_bound_check"],
+  "notes": "Concurrent incremental peaks 3072 and 5120: the bound is at least 8192 plus the modeled overhead. Independent tasks make every assignment of phases an admitted configuration, so the peaks are summed and not maximized: concurrent_private_peak = 8192 and epoch_peak = 8192 + 768. The two controls straddle the summed figure so the summing is falsifiable rather than merely asserted.",
+  "epoch_bound_figures": {
+    "execution_profile": "FlatEpochBoundV1",
+    "assumptions": [
+      "DeclaredRuntimeOverhead",
+      "DeclaredTaskFootprints",
+      "DisjointSharedStorageCells",
+      "NoScheduleModel"
+    ],
+    "task_count": 2,
+    "figures": {
+      "concurrent_private_peak.memory": 8192,
+      "runtime_overhead.memory": 768,
+      "epoch_peak.memory": 8960,
+      "completed_residency.memory": 768,
+      "exit_residency.memory": 512,
+      "work_total.effort": 30,
+      "granted_credits.effort": 200,
+      "granted_credits.memory": 16384,
+      "allocation.effort": 1000,
+      "allocation.memory": 65536
+    },
+    "controls": [
+      {
+        "source": "summed_allocation.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "task_count": 2,
+        "figures": {
+          "concurrent_private_peak.memory": 8192,
+          "epoch_peak.memory": 8192,
+          "granted_credits.memory": 8192,
+          "allocation.effort": 1000,
+          "allocation.memory": 8192
+        },
+        "note": "The same two peaks under a zero overhead and an allocation of exactly 8192: admitted, with the epoch peak equal to the allocation. This is the upper control of the straddle, and it also shows the overhead is a declared addend rather than a constant folded into the peak."
+      },
+      {
+        "source": "maximized_allocation.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q637", "Q638"],
+        "note": "One byte below the summed peak. A maximized reading would have called 5120 the peak and admitted this too, so the refusal is what makes the summing falsifiable. Both codes are pinned: the credits exceed the allocation and so does the epoch, which distinguishes a per-task check from a whole-epoch one."
+      }
+    ]
+  }
+}

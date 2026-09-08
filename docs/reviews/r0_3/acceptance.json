@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 24,
-  "ct_unmapped": 26,
+  "ct_mapped": 28,
+  "ct_unmapped": 22,
   "findings": [
     {
       "id": "R01",
@@ -261,62 +261,72 @@
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 24
+        "executed": 28
       },
       "elaborate": {
-        "executed": 24
+        "executed": 28
       },
       "task_lowering": {
         "executed": 16,
-        "not_applicable": 8
+        "not_applicable": 12
       },
       "task_ledger_check": {
         "executed": 15,
-        "not_applicable": 9
+        "not_applicable": 13
       },
       "mutex_lowering": {
         "executed": 8,
-        "not_applicable": 16
+        "not_applicable": 20
       },
       "mutex_invariant_check": {
         "executed": 8,
-        "not_applicable": 16
+        "not_applicable": 20
+      },
+      "epoch_lowering": {
+        "executed": 4,
+        "not_applicable": 24
+      },
+      "epoch_bound_check": {
+        "executed": 4,
+        "not_applicable": 24
       },
       "sequential_whole_program": {
-        "not_applicable": 24
+        "not_applicable": 28
       },
       "sequential_reference_execution": {
-        "not_applicable": 24
+        "not_applicable": 28
       },
       "task_reference_execution": {
         "executed": 11,
-        "not_applicable": 13
+        "not_applicable": 17
       },
       "mutex_reference_execution": {
         "executed": 1,
-        "not_applicable": 23
+        "not_applicable": 27
       },
       "c_emission": {
         "executed": 12,
-        "not_applicable": 12
+        "not_applicable": 16
       },
       "native_execution": {
         "executed": 12,
-        "not_applicable": 12
+        "not_applicable": 16
       },
       "native_sanitized": {
         "executed": 3,
+        "not_applicable": 4,
         "recorded_not_gated": 5,
         "unassessed": 16
       },
       "legacy_c_twin": {
-        "not_applicable": 24
+        "not_applicable": 28
       },
       "proof": {
-        "unassessed": 24
+        "unassessed": 28
       }
     },
     "depth_profile": {
+      "epoch_bound_check": 4,
       "mutex_invariant_check": 7,
       "native_execution": 9,
       "native_sanitized": 3,
@@ -325,13 +335,15 @@
     },
     "observation_counts": {
       "c_emission": 28,
-      "elaborate": 24,
+      "elaborate": 28,
+      "epoch_bound_check": 4,
+      "epoch_lowering": 4,
       "mutex_invariant_check": 8,
       "mutex_lowering": 8,
       "mutex_reference_execution": 1,
       "native_execution": 28,
       "native_sanitized": 9,
-      "parse": 24,
+      "parse": 28,
       "task_ledger_check": 15,
       "task_lowering": 16,
       "task_reference_execution": 26
@@ -379,6 +391,12 @@
         "windows"
       ],
       "elaborate": [
+        "any"
+      ],
+      "epoch_bound_check": [
+        "any"
+      ],
+      "epoch_lowering": [
         "any"
       ],
       "mutex_invariant_check": [
@@ -437,7 +455,11 @@
       "CT30": "mutex_invariant_check",
       "CT31": "mutex_invariant_check",
       "CT32": "mutex_invariant_check",
+      "CT35": "epoch_bound_check",
+      "CT36": "epoch_bound_check",
       "CT37": "native_execution",
+      "CT38": "epoch_bound_check",
+      "CT39": "epoch_bound_check",
       "CT48": "mutex_invariant_check",
       "CT50": "native_execution"
     },

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "note": "Inherited requirements with explicitly bounded source mappings. Mapping is not full language conformance. SCHEMA 2 (card T00-CT-SCHEMA, T00.1-T00.9): every per-case stage entry is an object whose status is derived from named executed evidence, not a host-unconditional string. An `executed` entry must name the `executor` (a pinned runner in compiler/tests/ct_corpus.rs), the `artifact` that runner reads (the case's own fixture), an `observations` count of runner invocations, and, where the runner is host-gated, the exact `host_gate` list of target_os values on which it runs; the harness recomputes all of that from its own dispatch and refuses any drift, so on a host outside the gate the entry reads as unexecuted instead of inheriting `executed`. Statuses are `executed`, `recorded_not_gated` (an archived transcript that no workspace test re-runs; it must carry a `record` pointer and can never be counted as executed), `not_applicable` (the stage is structurally absent for this route, or the case's own refusal provably never reaches it) and `unassessed`. `native_sanitized` and `proof` are never `not_applicable`, because a gated sanitized re-run or a bound theorem could be added for any case. SCHEMA 1's `cfg` and `type_checker` are gone: they conflated four real passes and their reading differed per route. The stage vocabulary now names the passes that exist (parse, elaborate, task_lowering, task_ledger_check, mutex_lowering, mutex_invariant_check, sequential_whole_program, sequential_reference_execution, task_reference_execution, mutex_reference_execution, c_emission, native_execution, native_sanitized, legacy_c_twin, proof) and each case declares its `route`. A route's possible stages are listed under stage_vocabulary.routes; every stage outside them is structurally absent for that route. The task route (ScopedCopyTasksV1/ScopedOwnedTasksV1 and its ScopedReadSharesV1/ScopedErrorPayloadV1 extensions) builds a checked task IR, which is what schema 1's `cfg` meant there; the source.mutex.guard.v1 route (CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48) emits directly from a checked event list and has no CFG stage at all, which schema 1 could only express as `cfg: unassessed`. The sequential and legacy_c routes are declared and currently carry no mapped case. CT28/CT31/CT32/CT48 are the card T03-F additions (bounded task composition inside the guard profile, the `wait` announced acquisition, and guard-scoped facts); their accepted controls are route-checked, and for CT28/CT31/CT32 those controls are multi-task modules this backend cannot render in one thread, so they carry no native evidence and their `evidence_target` records the Q500 host gate rather than an executed run. Several unmapped cases have recorded reasons rather than absent evidence. CT11 asks for full permission reconstructed while local shared *aliases* survive; ScopedReadSharesV1 has no local alias form at all, and in the closest measured program the party retaining the share is an unjoined child task, so mapping it would answer a different question (card T05 section 9). CT06 needs an owned-pointer copy form the grammar does not admit. CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 (card T08) but have no source syntax, hence no parser stage and no reference execution, so they stay unmapped until epoch source syntax lands.",
+  "note": "Inherited requirements with explicitly bounded source mappings. Mapping is not full language conformance. SCHEMA 2 (card T00-CT-SCHEMA, T00.1-T00.9): every per-case stage entry is an object whose status is derived from named executed evidence, not a host-unconditional string. An `executed` entry must name the `executor` (a pinned runner in compiler/tests/ct_corpus.rs), the `artifact` that runner reads (the case's own fixture), an `observations` count of runner invocations, and, where the runner is host-gated, the exact `host_gate` list of target_os values on which it runs; the harness recomputes all of that from its own dispatch and refuses any drift, so on a host outside the gate the entry reads as unexecuted instead of inheriting `executed`. Statuses are `executed`, `recorded_not_gated` (an archived transcript that no workspace test re-runs; it must carry a `record` pointer and can never be counted as executed), `not_applicable` (the stage is structurally absent for this route, or the case's own refusal provably never reaches it) and `unassessed`. `proof` is never `not_applicable`, because a bound theorem could be added for any case. `native_sanitized` is `not_applicable` on a route that has no `c_emission` stage and `unassessed` everywhere else: card T08-SRC-CT deliberately narrowed the earlier universal rule when the check-only `epoch` route landed, because there is nothing to sanitize where nothing is emitted, and the route vocabulary \u2014 not the case \u2014 decides it. SCHEMA 1's `cfg` and `type_checker` are gone: they conflated four real passes and their reading differed per route. The stage vocabulary now names the passes that exist (parse, elaborate, task_lowering, task_ledger_check, mutex_lowering, mutex_invariant_check, epoch_lowering, epoch_bound_check, sequential_whole_program, sequential_reference_execution, task_reference_execution, mutex_reference_execution, c_emission, native_execution, native_sanitized, legacy_c_twin, proof) and each case declares its `route`. A route's possible stages are listed under stage_vocabulary.routes; every stage outside them is structurally absent for that route. The task route (ScopedCopyTasksV1/ScopedOwnedTasksV1 and its ScopedReadSharesV1/ScopedErrorPayloadV1 extensions) builds a checked task IR, which is what schema 1's `cfg` meant there; the source.mutex.guard.v1 route (CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48) emits directly from a checked event list and has no CFG stage at all, which schema 1 could only express as `cfg: unassessed`. The source.epoch.bound.v1 route (CT35/CT36/CT38/CT39, cards T08-EPOCH-SRC and T08-SRC-CT) lowers a lexical epoch declaration onto the unedited FlatEpochBoundV1 checker and is check-only: an admitted epoch is a checked accounting statement about declared shapes, published with c_source: None and reference_observation: None, so it has no reference-execution, emission, native or sanitized stage at all. The sequential and legacy_c routes are declared and currently carry no mapped case. CT28/CT31/CT32/CT48 are the card T03-F additions (bounded task composition inside the guard profile, the `wait` announced acquisition, and guard-scoped facts); their accepted controls are route-checked, and for CT28/CT31/CT32 those controls are multi-task modules this backend cannot render in one thread, so they carry no native evidence and their `evidence_target` records the Q500 host gate rather than an executed run. Several unmapped cases have recorded reasons rather than absent evidence. CT11 asks for full permission reconstructed while local shared *aliases* survive; ScopedReadSharesV1 has no local alias form at all, and in the closest measured program the party retaining the share is an unjoined child task, so mapping it would answer a different question (card T05 section 9). CT06 needs an owned-pointer copy form the grammar does not admit. CT35/CT36/CT38/CT39 are now mapped on the epoch route (card T08-SRC-CT) after card T08-EPOCH-SRC supplied the source syntax; their accepted cases carry the epoch_bound_figures verdict mode, whose evidence is the exact published certificate rather than the bare verdict, because an epoch that merely checks has measured nothing. Every quantity on those certificates is a declared figure and the four FlatEpochBoundV1 premises are carried unchanged, so mapping these four adds no native, sanitized or proof evidence.",
   "stage_vocabulary": {
     "stages": [
       "parse",
@@ -9,6 +9,8 @@
       "task_ledger_check",
       "mutex_lowering",
       "mutex_invariant_check",
+      "epoch_lowering",
+      "epoch_bound_check",
       "sequential_whole_program",
       "sequential_reference_execution",
       "task_reference_execution",
@@ -26,6 +28,13 @@
       "unassessed"
     ],
     "routes": {
+      "epoch": [
+        "parse",
+        "elaborate",
+        "epoch_lowering",
+        "epoch_bound_check",
+        "proof"
+      ],
       "legacy_c": [
         "parse",
         "legacy_c_twin",
@@ -105,6 +114,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -202,6 +217,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -270,6 +291,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -372,6 +399,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -443,6 +476,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -499,6 +538,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -558,6 +603,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -613,6 +664,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -672,6 +729,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -729,6 +792,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -784,6 +853,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -854,6 +929,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -951,6 +1032,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -1044,6 +1131,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -1142,6 +1235,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -1235,6 +1334,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -1331,6 +1436,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -1430,6 +1541,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -1501,6 +1618,12 @@
         "mutex_invariant_check": {
           "status": "not_applicable"
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -1569,6 +1692,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -1654,6 +1783,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -1709,6 +1844,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -1768,6 +1909,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -1825,6 +1972,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -1880,6 +2033,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -1951,6 +2110,12 @@
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
           "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
           "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
         },
         "sequential_whole_program": {
           "status": "not_applicable"
@@ -2052,6 +2217,12 @@
           "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
           "observations": 1
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -2122,6 +2293,12 @@
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
           "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
           "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
         },
         "sequential_whole_program": {
           "status": "not_applicable"
@@ -2194,6 +2371,12 @@
           "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
           "observations": 1
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -2264,6 +2447,12 @@
           "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
           "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
           "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
         },
         "sequential_whole_program": {
           "status": "not_applicable"
@@ -2336,6 +2525,12 @@
           "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
           "observations": 1
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -2407,6 +2602,12 @@
           "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
           "observations": 1
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -2463,6 +2664,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -2522,6 +2729,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -2556,52 +2769,71 @@
       "scenario": "One shared 4096-byte allocation read by two tasks",
       "expected": "Count 4096 once",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "semantic_profile": "source.epoch.bound.v1: two workers each declare `read page;` for the one `let page = share 4096;` cell, so the lowering names one cell identity and the checker's shared entry union counts 4096 once; the published epoch peak is 4096 + (1024 + 1024) + (512 + 2*128) = 6912. The mapping asserts every nonzero axis of the published certificate, not merely that the epoch checked. The two_cells control declares a second distinct 4096-byte cell that both workers read and measures 8192, so the union counts identities and not readers; the repeated_entry control names the same cell twice in one worker and is refused at Q630 rather than deduplicated. DeclaredTaskFootprints, DeclaredRuntimeOverhead, DisjointSharedStorageCells and NoScheduleModel are carried unchanged on the certificate: nothing here imports a footprint from C, from an allocator or from a run.",
+      "harness_verdict_mode": "epoch_bound_figures",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "observations": 1
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "observations": 1
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
+          "observations": 1
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "proof": {
           "status": "unassessed"
@@ -2613,52 +2845,71 @@
       "scenario": "Concurrent incremental peaks 3072 and 5120 bytes",
       "expected": "Bound at least 8192 plus modeled overhead",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "semantic_profile": "source.epoch.bound.v1: two independent workers declare `peak 3072;` and `peak 5120;`. Every assignment of phases to independent tasks is an admitted configuration, so the peaks are summed rather than maximized: the published concurrent private peak is 8192 and the epoch peak is 8192 + (512 + 2*128) = 8960, at least the summed peaks plus the modeled overhead. Two controls straddle the summed figure with the same two peaks \u2014 an allocation of 8192 is admitted and 8191 is refused with the ordered cascade [Q637, Q638] \u2014 and a maximized reading would have called 5120 the peak and admitted both, so the refusal is what makes the summing falsifiable. The overhead figures are a declared premise; a `measured RUNS` suffix in their place is Q640.",
+      "harness_verdict_mode": "epoch_bound_figures",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "observations": 1
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "observations": 1
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
+          "observations": 1
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "proof": {
           "status": "unassessed"
@@ -2704,6 +2955,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
@@ -2766,52 +3023,71 @@
       "scenario": "Child credit splits total more than original credit",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "semantic_profile": "source.epoch.bound.v1: two children each declare `credit 6144 effort 100;` out of an epoch that declares `bound 8192 effort 1000;`. Each child's own demand fits its own credit, so no per-task check refuses it; the granted total 12288 exceeds the 8192 allocation and the exact ordered cascade is [Q637] CreditsExceedAllocation on the memory axis. The control splits the same total within it (4096 + 4096 = 8192) and is admitted with granted_credits.memory = allocation.memory = 8192, so the refusal is keyed to the sum and not to the split.",
+      "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "observations": 1
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "observations": 1
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
+          "observations": 1
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "proof": {
           "status": "unassessed"
@@ -2823,52 +3099,71 @@
       "scenario": "Concurrent work bound used as wall-clock bound",
       "expected": "Reject unsupported claim",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "semantic_profile": "source.epoch.bound.v1: a well-accounted epoch additionally writes `bound effort as latency;`, asking for its work bound as a completion time. The driver derives and independently rechecks the bound first and only then puts the claim to the profile's own epoch_wall_clock_bound, which always refuses: the exact ordered cascade is [Q639] WallClockUnavailable. The control is the same epoch without the claim, admitted with work_total on the effort axis = 800 and NoScheduleModel on the certificate, so a consumer cannot drop the premise and read the total as a finish time. There is no core count, queueing or preemption anywhere in this profile.",
+      "harness_verdict_mode": "reject",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "observations": 1
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "observations": 1
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
+          "observations": 1
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "proof": {
           "status": "unassessed"
@@ -2901,6 +3196,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -2960,6 +3261,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -3015,6 +3322,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -3074,6 +3387,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -3129,6 +3448,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -3188,6 +3513,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -3245,6 +3576,12 @@
         "mutex_invariant_check": {
           "status": "unassessed"
         },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
+          "status": "unassessed"
+        },
         "sequential_whole_program": {
           "status": "unassessed"
         },
@@ -3300,6 +3637,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -3372,6 +3715,12 @@
           "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
           "observations": 1
         },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
         "sequential_whole_program": {
           "status": "not_applicable"
         },
@@ -3428,6 +3777,12 @@
           "status": "unassessed"
         },
         "mutex_invariant_check": {
+          "status": "unassessed"
+        },
+        "epoch_lowering": {
+          "status": "unassessed"
+        },
+        "epoch_bound_check": {
           "status": "unassessed"
         },
         "sequential_whole_program": {
@@ -3498,6 +3853,12 @@
           "status": "not_applicable"
         },
         "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
           "status": "not_applicable"
         },
         "sequential_whole_program": {
