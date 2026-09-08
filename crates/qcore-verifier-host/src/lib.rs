@@ -2213,5 +2213,15 @@ mod tests {
     }
 }
 
+/// The published digest function package identities are expressed in; re-exported
+/// so package tooling need not depend on the schema crate directly.
+pub use qcore_schemas::sha256_hex;
+
+pub mod embedded_template;
+pub use embedded_template::{
+    TEMPLATE_BEGIN, TEMPLATE_END, TemplateBindingError, envelope, extract_template,
+    verify_embedded_template_binding,
+};
+
 pub mod package;
 pub use package::verify_executable_package;

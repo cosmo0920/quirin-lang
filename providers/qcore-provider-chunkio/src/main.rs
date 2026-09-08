@@ -20,7 +20,17 @@ fn propose(
 
 fn main() {
     if let Err(error) =
-        runtime::run_with_v2(include_str!("../provider-template.json"), Some(propose))
+        // The markers make the compiled-in template one contiguous, locatable
+        // blob in the executable, so a host can bind an installed manifest's
+        // declarations to it without executing this program.
+        runtime::run_with_v2(
+            concat!(
+                "<<<qcore.provider-template.v1:begin>>>\n",
+                include_str!("../provider-template.json"),
+                "<<<qcore.provider-template.v1:end>>>"
+            ),
+            Some(propose),
+        )
     {
         eprintln!("provider: {error}");
         std::process::exit(2);

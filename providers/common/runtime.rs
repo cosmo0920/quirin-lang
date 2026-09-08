@@ -5,8 +5,30 @@ use qcore_schemas::sha256_hex;
 use serde::Serialize;
 use std::io::{Read, Write};
 
+/// Strip the marker envelope `main` wraps the compiled-in template with.
+///
+/// The markers are located by the JSON object they surround rather than by
+/// their own spelling, deliberately: a host binds an installed manifest to this
+/// template by finding **exactly one** marker in the executable's bytes
+/// (`qcore_verifier_host::embedded_template`), so this file must not place a
+/// second copy of a marker in the binary. The markers carry no brace, and the
+/// template is one JSON object, so the outermost braces delimit it exactly.
+fn embedded(template: &str) -> Result<&str, String> {
+    let start = template
+        .find('{')
+        .ok_or("embedded manifest template envelope carries no JSON object")?;
+    let end = template
+        .rfind('}')
+        .ok_or("embedded manifest template envelope carries no JSON object")?;
+    if end < start {
+        return Err("embedded manifest template envelope is damaged".into());
+    }
+    Ok(&template[start..=end])
+}
+
 fn package(template: &str) -> Result<PluginManifest, String> {
-    let mut expected: PluginManifest = serde_json::from_str(template).map_err(|e| e.to_string())?;
+    let mut expected: PluginManifest =
+        serde_json::from_str(embedded(template)?).map_err(|e| e.to_string())?;
     expected.validate().map_err(|e| e.to_string())?;
     let executable = std::env::current_exe().map_err(|e| e.to_string())?;
     expected.package_digest = sha256_hex(&std::fs::read(executable).map_err(|e| e.to_string())?);

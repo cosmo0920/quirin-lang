@@ -10,7 +10,7 @@ use qcore_compiler::{
     format_diagnostic, load_first_party_registry,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n";
+const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {

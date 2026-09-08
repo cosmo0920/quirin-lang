@@ -7,7 +7,11 @@ mod source_effect;
 
 fn main() {
     if let Err(error) = runtime::run_with_v2(
-        include_str!("../../tests/fixtures/configured_boolean_source/provider-template.json"),
+        concat!(
+            "<<<qcore.provider-template.v1:begin>>>\n",
+            include_str!("../../tests/fixtures/configured_boolean_source/provider-template.json"),
+            "<<<qcore.provider-template.v1:end>>>"
+        ),
         Some(source_effect::propose),
     ) {
         eprintln!("sample provider: {error}");
