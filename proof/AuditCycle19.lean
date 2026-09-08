@@ -45,6 +45,29 @@ import QCore.ChunkSource
 #print axioms QCore.DescriptorCustody.accepted_failed_close_retains_custody
 #print axioms QCore.DescriptorCustody.accepted_error_query_is_borrowed
 #print axioms QCore.DescriptorCustody.accepted_descriptor_teardown_is_complete_and_unique
+
+-- Card O03-U4: the close clause is target-qualified and decided against
+-- `QCore.OsEndpointPostState.closePostState`. The legacy record keeps its
+-- success arm only; its withdrawn "returns on failure" arm is refused, and
+-- retention on a failure is admitted only where the documentation states it.
+#print axioms QCore.DescriptorCustody.a_failed_legacy_close_record_is_refused
+#print axioms QCore.DescriptorCustody.the_returns_on_failure_record_is_refused
+#print axioms QCore.DescriptorCustody.the_legacy_success_arm_is_the_relation_under_sole_custody
+#print axioms QCore.DescriptorCustody.accepted_close_agrees_with_the_endpoint_relation
+#print axioms QCore.DescriptorCustody.no_accepted_close_discharges_the_data_duty
+#print axioms QCore.DescriptorCustody.accepted_custody_is_discharged_exactly_when_the_epoch_is_released
+#print axioms QCore.DescriptorCustody.a_failed_close_retains_the_descriptor_only_on_posix2024_eintr
+#print axioms QCore.DescriptorCustody.a_failed_linux_close_releases_the_descriptor_and_permits_no_retry
+#print axioms QCore.DescriptorCustody.an_unpinned_failed_close_is_poisoned_and_permits_no_recovery
+#print axioms QCore.DescriptorCustody.the_targeted_returns_on_failure_record_is_refused
+#print axioms QCore.DescriptorCustody.the_truthful_linux_deferred_io_record_is_accepted
+#print axioms QCore.DescriptorCustody.a_retry_claim_after_a_failed_linux_close_is_refused
+#print axioms QCore.DescriptorCustody.a_durability_claim_is_refused
+#print axioms QCore.DescriptorCustody.a_successful_close_without_sole_custody_is_not_a_discharge
+-- Rust/Lean agreement over the whole relation domain; the Rust counterpart is
+-- `crates/qcore-core/tests/os_endpoint_correspondence.rs`.
+#print axioms QCore.DescriptorCustody.close_relation_domain_size
+#print axioms QCore.DescriptorCustody.close_relation_digest
 #print axioms QCore.ControlFlow.accepted_import_preserves_declared_control_edges
 #print axioms QCore.ControlFlow.accepted_import_has_no_unresolved_jump
 #print axioms QCore.ControlFlow.accepted_import_edges_reference_known_nodes

@@ -40,6 +40,31 @@ contract {
     ensures any descriptor_custody_is_preserved;
 };
 
+// Card O03-U5. At the pinned submodule revision d82464a2,
+// third_party/libevent/evutil.c:613-621, this function is a thin forwarder with
+// no error translation of its own:
+//
+//     int evutil_closesocket(evutil_socket_t sock)
+//     { #ifndef _WIN32  return close(sock);  #else  return closesocket(sock);  #endif }
+//
+// Two consequences the declared text must state, not assume.
+//
+// (1) The error channel is the platform's own and is never translated here.
+//     On every non-Windows build the failure is reported through errno; on
+//     Windows closesocket reports through WSAGetLastError(), which
+//     evutil_socket_geterror reads (include/event2/util.h:523-531 vs 561-566).
+//     Reading one channel on the other platform reads an unrelated value.
+//
+// (2) On the audited non-Windows build this call *is* close(2), whose failure
+//     post-state is target-qualified: see docs/design/OS_FAILURE_POSTSTATE_PROFILE.md
+//     and QCore.OsEndpointPostState. On Linux a failed close releases the
+//     descriptor anyway except on EBADF, and POSIX.1-2024 requires the retry
+//     Linux documents as a hazard, so with no pinned target the endpoint is
+//     indeterminate and no recovery is permitted. The error arm therefore
+//     asserts an UNRESOLVED endpoint carrying the conservative residual. The
+//     superseded clause here read "ensures error(SocketCloseError)
+//     descriptor_custody_is_preserved", which asserted a live, reusable
+//     descriptor and thereby prescribed exactly that forbidden retry.
 extern fn evutil_closesocket(
     descriptor: own<Descriptor> use one
 ) -> result<unit, SocketCloseError>
@@ -48,7 +73,11 @@ contract {
     requires descriptor_has_close_custody;
     requires descriptor_has_no_active_callback;
     ensures normal descriptor_custody_is_discharged_once;
-    ensures error(SocketCloseError) descriptor_custody_is_preserved;
+    ensures error(SocketCloseError) descriptor_custody_is_unresolved;
+    ensures error(SocketCloseError) descriptor_number_must_not_be_reused;
+    ensures error(SocketCloseError) no_close_retry_is_permitted;
+    ensures error(SocketCloseError) close_error_is_read_on_the_platform_channel;
+    ensures any data_durability_is_not_discharged;
 };
 
 extern fn cb_event(

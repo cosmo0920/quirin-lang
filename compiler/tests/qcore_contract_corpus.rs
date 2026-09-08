@@ -284,7 +284,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/callback_binding.qcore", "binding_runtime_effect", 2),
     ("monkey/composition.qcore", "evutil_socketpair", 3),
     ("monkey/composition.qcore", "evutil_socket_geterror", 2),
-    ("monkey/composition.qcore", "evutil_closesocket", 4),
+    // Deliberate pin update (card O03-U5): the superseded
+    // `descriptor_custody_is_preserved` error clause asserted a live, reusable
+    // descriptor for an operation that is `close(2)` on the audited build, and
+    // is replaced by four clauses stating the unresolved endpoint, the reuse
+    // and retry prohibitions and the platform error channel, plus one `any`
+    // clause separating durability. 4 -> 8.
+    ("monkey/composition.qcore", "evutil_closesocket", 8),
     ("monkey/composition.qcore", "cb_event", 3),
     ("monkey/composition.qcore", "cb_timeout", 4),
     ("monkey/composition.qcore", "cb_wait_2_timeout", 2),
@@ -456,6 +462,14 @@ fn contract_surface_is_pinned_as_structured_clauses() {
     assert!(has_normal && has_error && has_any);
 
     for required in [
+        // Card O03-U5: the corrected `evutil_closesocket` error arm. The
+        // superseded `descriptor_custody_is_preserved` clause on that
+        // declaration is refused below.
+        "descriptor_custody_is_unresolved",
+        "descriptor_number_must_not_be_reused",
+        "no_close_retry_is_permitted",
+        "close_error_is_read_on_the_platform_channel",
+        "data_durability_is_not_discharged",
         "handoff_has_synchronization_evidence",
         "every_cross_context_transition_has_typed_evidence",
         "delete_only_is_not_object_destruction",
@@ -471,4 +485,76 @@ fn contract_surface_is_pinned_as_structured_clauses() {
             "missing pinned contract predicate `{required}`"
         );
     }
+}
+
+/// Card O03-U5. `evutil_closesocket` is `close(sock)` on every non-Windows
+/// build and `closesocket(sock)` on Windows, with no error translation
+/// (`third_party/libevent/evutil.c:613-621` at the pinned revision). Its
+/// declared error arm therefore may not assert preserved custody: on the
+/// audited build a failed close has already released the descriptor except on
+/// `EBADF`, so "custody is preserved" prescribes the retry the platform
+/// documents as a hazard. This pins the corrected arm and refuses the old one
+/// by name, on that declaration only — `evutil_socket_geterror` keeps its own
+/// `descriptor_custody_is_preserved` clause, which is a borrow and is correct.
+#[test]
+fn the_closesocket_error_arm_states_an_unresolved_endpoint() {
+    let path = corpus_root().join("monkey/composition.qcore");
+    let source = fs::read_to_string(&path).expect("contract source is readable");
+    let parsed = parse_source_program(&source).expect("contract source parses");
+
+    let mut checked = 0;
+    for declaration in &parsed.declarations {
+        if declaration.value.name != "evutil_closesocket" {
+            continue;
+        }
+        checked += 1;
+        let contract = declaration
+            .value
+            .function_contract
+            .as_ref()
+            .expect("evutil_closesocket has a contract");
+        let error_arm = contract
+            .clauses
+            .iter()
+            .filter(|clause| {
+                matches!(
+                    &clause.value.kind,
+                    SourceContractClauseKind::Ensures(SourceContractExitSelector::Error(_))
+                        | SourceContractClauseKind::Quant(SourceContractExitSelector::Error(_))
+                )
+            })
+            .map(|clause| clause.value.expression_source.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            error_arm,
+            vec![
+                "descriptor_custody_is_unresolved".to_owned(),
+                "descriptor_number_must_not_be_reused".to_owned(),
+                "no_close_retry_is_permitted".to_owned(),
+                "close_error_is_read_on_the_platform_channel".to_owned(),
+            ],
+        );
+        assert!(
+            !contract
+                .clauses
+                .iter()
+                .any(|clause| clause.value.expression_source == "descriptor_custody_is_preserved"),
+            "the withdrawn returns-on-failure clause is back on evutil_closesocket"
+        );
+        assert!(
+            contract.clauses.iter().any(|clause| {
+                clause.value.expression_source == "data_durability_is_not_discharged"
+                    && matches!(
+                        &clause.value.kind,
+                        SourceContractClauseKind::Ensures(SourceContractExitSelector::Any)
+                            | SourceContractClauseKind::Quant(SourceContractExitSelector::Any)
+                    )
+            }),
+            "durability must stay separated from descriptor custody on every exit"
+        );
+    }
+    assert_eq!(
+        checked, 1,
+        "expected exactly one evutil_closesocket declaration"
+    );
 }

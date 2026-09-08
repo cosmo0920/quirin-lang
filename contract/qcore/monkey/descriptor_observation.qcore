@@ -26,7 +26,10 @@ contract {
 };
 
 // A native failed close is outside this platform-bounded profile. The general
-// conditional descriptor model is separately specified in composition.qcore.
+// conditional descriptor model is separately specified in composition.qcore,
+// whose error arm is target-qualified by the close(2) failure post-state
+// relation (docs/design/OS_FAILURE_POSTSTATE_PROFILE.md, card O03-U5): a failed
+// close leaves the endpoint unresolved, never live and retriable.
 extern fn observation_close() -> unit
 contract {
     ensures normal not active_io_callback;

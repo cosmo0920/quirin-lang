@@ -1,4 +1,7 @@
 use super::*;
+use crate::os_endpoint::{
+    Duty, Errno, Outcome as EndpointOutcome, Premises, Target, close_poststate,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct TestProfile(bool);
@@ -172,4 +175,112 @@ fn descriptor_custody_is_independent_of_any_library_profile() {
             .iter()
             .any(|e| matches!(e, EventDiagnostic::L03DescriptorCustody { .. }))
     );
+}
+
+/// Card O03-U4. The reactor vocabulary carries neither a target nor an
+/// `errno`, so `close_poststate` answers `Indeterminate` with no permitted
+/// recovery for every failed close. The number is therefore poisoned: neither
+/// usable, nor retriable, nor free, and the endpoint stays unresolved.
+fn failed_close_program(tail: Vec<EventOperation<TestProfile>>) -> EventProgram<TestProfile> {
+    let mut operations = vec![
+        EventOperation::CreateSocketPair {
+            descriptors: Some((3, 4)),
+        },
+        EventOperation::CloseSocket {
+            descriptor: 3,
+            succeeds: false,
+        },
+    ];
+    operations.extend(tail);
+    operations.push(EventOperation::CloseSocket {
+        descriptor: 4,
+        succeeds: true,
+    });
+    EventProgram {
+        live_arguments: BTreeSet::new(),
+        operations,
+    }
+}
+
+#[test]
+fn a_failed_close_agrees_with_the_unpinned_endpoint_relation() {
+    // The declared disposition, read from the relation rather than assumed.
+    for errno in [
+        Errno::Ebadf,
+        Errno::Eintr,
+        Errno::Eio,
+        Errno::Enospc,
+        Errno::Edquot,
+        Errno::Other,
+        Errno::Unobserved,
+    ] {
+        let derived = close_poststate(
+            Target::Unpinned,
+            Premises::default(),
+            EndpointOutcome::MinusOne(errno),
+        )
+        .expect("in domain");
+        assert!(derived.descriptor.is_poisoned(), "{errno:?}");
+        assert!(derived.permitted_recovery.is_empty(), "{errno:?}");
+        assert!(derived.duties.contains(&Duty::NoRetryClose), "{errno:?}");
+        assert!(derived.duties.contains(&Duty::NoUse), "{errno:?}");
+        assert!(
+            derived.duties.contains(&Duty::NoTreatNumberAsFree),
+            "{errno:?}"
+        );
+        assert!(
+            derived.duties.contains(&Duty::KeepInDenominator),
+            "{errno:?}"
+        );
+    }
+
+    // `NoRetryClose`: the retry the old declared model required is refused at
+    // its own operation, and the endpoint still fails the terminal check.
+    let retried = failed_close_program(vec![EventOperation::CloseSocket {
+        descriptor: 3,
+        succeeds: true,
+    }]);
+    let diagnostics = check_event_program(&retried, &[]).unwrap_err();
+    assert!(
+        diagnostics.contains(&EventDiagnostic::L03DescriptorCustody {
+            operation: 2,
+            descriptor: 3,
+        })
+    );
+    assert!(
+        diagnostics.contains(&EventDiagnostic::L03DescriptorCustody {
+            operation: retried.operations.len(),
+            descriptor: 3,
+        })
+    );
+
+    // `NoUse`: a borrowing error query on the poisoned number is refused.
+    let queried = failed_close_program(vec![EventOperation::GetSocketError { descriptor: 3 }]);
+    assert!(check_event_program(&queried, &[]).unwrap_err().contains(
+        &EventDiagnostic::L03DescriptorCustody {
+            operation: 2,
+            descriptor: 3,
+        }
+    ));
+
+    // `NoTreatNumberAsFree`: a fresh pair may not claim the poisoned number.
+    let reused = failed_close_program(vec![EventOperation::CreateSocketPair {
+        descriptors: Some((3, 5)),
+    }]);
+    assert!(check_event_program(&reused, &[]).unwrap_err().contains(
+        &EventDiagnostic::L03DescriptorCustody {
+            operation: 2,
+            descriptor: 3,
+        }
+    ));
+
+    // `KeepInDenominator`: the plain failed close is still refused, and the
+    // successfully closed sibling is unaffected.
+    let plain = failed_close_program(Vec::new());
+    assert!(check_event_program(&plain, &[]).unwrap_err().contains(
+        &EventDiagnostic::L03DescriptorCustody {
+            operation: plain.operations.len(),
+            descriptor: 3,
+        }
+    ));
 }

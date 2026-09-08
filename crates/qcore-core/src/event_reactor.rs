@@ -236,6 +236,17 @@ pub enum EventOperation<P> {
         descriptor: DescriptorId,
     },
     /// Socket close consumes close custody only on its success branch.
+    ///
+    /// The failure branch does **not** retain a usable descriptor. This trace
+    /// vocabulary carries no target and no `errno`, and
+    /// [`crate::os_endpoint::close_poststate`] answers
+    /// [`crate::os_endpoint::DescriptorState::Indeterminate`] for every failed
+    /// close on an unpinned target, with no permitted recovery: on Linux the
+    /// descriptor is already released except on `EBADF`, while POSIX.1-2024
+    /// requires the retry Linux documents as a hazard. A failed close therefore
+    /// poisons the number here — the custody stays unresolved and every later
+    /// operation on that number, a retried close included, is refused (card
+    /// O03-U4; `docs/design/OS_FAILURE_POSTSTATE_PROFILE.md` §7.3).
     CloseSocket {
         descriptor: DescriptorId,
         succeeds: bool,
@@ -436,6 +447,11 @@ struct BuffereventState {
 enum DescriptorCustody {
     SocketPair,
     Bufferevent(BuffereventKey),
+    /// A close was attempted on this number and failed. The endpoint stays in
+    /// the live denominator and the number is neither usable, retriable nor
+    /// free — the conservative residual of
+    /// [`crate::os_endpoint::DescriptorState::Indeterminate`].
+    Poisoned,
 }
 
 #[derive(Clone, Debug)]
@@ -836,7 +852,9 @@ pub fn check_event_program<P: ReactorProfile>(
                 }
             }
             EventOperation::GetSocketError { descriptor } => {
-                if closed_descriptors.contains(descriptor) {
+                if closed_descriptors.contains(descriptor)
+                    || descriptor_custody.get(descriptor) == Some(&DescriptorCustody::Poisoned)
+                {
                     diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,
@@ -867,8 +885,14 @@ pub fn check_event_program<P: ReactorProfile>(
                             observed = ObservedKind::DescriptorClose;
                         }
                         Some(DescriptorCustody::SocketPair) => {
-                            // A failed close retains the obligation. The
-                            // terminal custody check rejects an absent retry.
+                            // A failed close leaves the endpoint unresolved,
+                            // not live: with no target and no errno the
+                            // post-state relation is indeterminate and permits
+                            // no recovery. The number is poisoned, so the
+                            // terminal custody check still refuses and every
+                            // later operation on it — a retry included — is
+                            // refused at its own operation index.
+                            descriptor_custody.insert(*descriptor, DescriptorCustody::Poisoned);
                         }
                         _ => {
                             diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
@@ -897,7 +921,9 @@ pub fn check_event_program<P: ReactorProfile>(
                     diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
                         operation: operation_index,
                     });
-                } else if closed_descriptors.contains(descriptor) {
+                } else if closed_descriptors.contains(descriptor)
+                    || descriptor_custody.get(descriptor) == Some(&DescriptorCustody::Poisoned)
+                {
                     diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
                         operation: operation_index,
                         descriptor: *descriptor,

@@ -765,6 +765,111 @@ pub fn check_claim(
     Ok(None)
 }
 
+/// A submitted **declared close record**: what a producer says happened, and
+/// what it says the post-state is.
+///
+/// This is the record layer `QCore.DescriptorCustody` checks in Lean, mirrored
+/// here so the two developments state the same admission rule (card O03-U4).
+/// The historical record shape carried one `live_after: bool`, which cannot
+/// express "the descriptor is gone **and** nothing was discharged"; this shape
+/// carries the target, the outcome, the five-valued descriptor state and the
+/// permitted recovery separately, and every field is checked against
+/// [`close_poststate`] rather than believed.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CloseRecord {
+    pub target: Target,
+    pub premises: Premises,
+    pub outcome: Outcome,
+    /// The producer asserts the epoch was live before the call (premise A2).
+    pub live_before: bool,
+    pub descriptor_after: DescriptorState,
+    /// The producer asserts a `close` on this number is permitted afterwards.
+    pub may_retry_close: bool,
+    /// The producer asserts the descriptor custody obligation ended.
+    pub custody_discharged: bool,
+    /// The producer asserts the data reached the disk. No arm of the relation
+    /// ever derives this, so a record claiming it is always refused.
+    pub data_duty_discharged: bool,
+}
+
+/// Why a declared close record was refused. Module-local keys; no diagnostic
+/// code is claimed for this model-level admission.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CloseRecordRefusal {
+    /// The record does not assert a live epoch before the call.
+    NoLiveEpochBefore,
+    /// The record claims durability, which `close` never establishes.
+    ClaimsDataDuty,
+    /// The relation has nothing to say about this input.
+    OutsideRelationDomain(RelationError),
+    /// The claimed descriptor state is not the derived one.
+    Descriptor {
+        claimed: DescriptorState,
+        derived: DescriptorState,
+    },
+    /// The claimed recovery is not the derived one — the direction that
+    /// licenses the retry the platform documents as a hazard.
+    Recovery { claimed: bool, derived: bool },
+    /// The claimed discharge is not the derived one.
+    Discharge { claimed: bool, derived: bool },
+}
+
+/// The accepted record together with the post-state the relation derived for
+/// it. There is no other constructor, so an accepted record cannot exist
+/// without the relation having agreed with every field.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CloseRecordCertificate {
+    pub checked: CloseRecord,
+    pub derived: PostState,
+}
+
+/// Admit a declared close record only when the target-qualified relation
+/// derives exactly what it claims.
+///
+/// The custody obligation is discharged exactly when the relation derives
+/// [`DescriptorState::Released`]; a poisoned or retained epoch discharges
+/// nothing. Durability is never discharged.
+///
+/// # Errors
+///
+/// [`CloseRecordRefusal`] — the record is refused, never repaired.
+pub fn check_close_record(
+    record: &CloseRecord,
+) -> Result<CloseRecordCertificate, CloseRecordRefusal> {
+    if !record.live_before || !record.premises.epoch_live {
+        return Err(CloseRecordRefusal::NoLiveEpochBefore);
+    }
+    if record.data_duty_discharged {
+        return Err(CloseRecordRefusal::ClaimsDataDuty);
+    }
+    let derived = close_poststate(record.target, record.premises, record.outcome)
+        .map_err(CloseRecordRefusal::OutsideRelationDomain)?;
+    if record.descriptor_after != derived.descriptor {
+        return Err(CloseRecordRefusal::Descriptor {
+            claimed: record.descriptor_after,
+            derived: derived.descriptor,
+        });
+    }
+    let derived_recovery = derived.permitted_recovery.contains(&Recovery::Close);
+    if record.may_retry_close != derived_recovery {
+        return Err(CloseRecordRefusal::Recovery {
+            claimed: record.may_retry_close,
+            derived: derived_recovery,
+        });
+    }
+    let derived_discharge = derived.descriptor == DescriptorState::Released;
+    if record.custody_discharged != derived_discharge {
+        return Err(CloseRecordRefusal::Discharge {
+            claimed: record.custody_discharged,
+            derived: derived_discharge,
+        });
+    }
+    Ok(CloseRecordCertificate {
+        checked: record.clone(),
+        derived,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1324,5 +1429,214 @@ mod tests {
             .descriptor,
             suppressed_observation
         );
+    }
+
+    // ---------------------------------------------------------------
+    // The declared close record (card O03-U4)
+    //
+    // These mirror, test for theorem, the corrected `QCore.DescriptorCustody`
+    // admission rule. The historical Lean model hard-coded "a failed close
+    // retains the descriptor"; on this target that both rejects a truthful
+    // record of a real failure and models the epoch as usable, which licenses
+    // the retry the platform documents as a hazard.
+    // ---------------------------------------------------------------
+
+    fn record_from(
+        target: Target,
+        premises: Premises,
+        outcome: Outcome,
+        derived: &PostState,
+    ) -> CloseRecord {
+        CloseRecord {
+            target,
+            premises,
+            outcome,
+            live_before: true,
+            descriptor_after: derived.descriptor,
+            may_retry_close: derived.permitted_recovery.contains(&Recovery::Close),
+            custody_discharged: derived.descriptor == DescriptorState::Released,
+            data_duty_discharged: false,
+        }
+    }
+
+    fn record(target: Target, outcome: Outcome) -> CloseRecord {
+        let premises = Premises::default();
+        let derived = with(target, premises, outcome);
+        record_from(target, premises, outcome, &derived)
+    }
+
+    /// The old model's second disjunct, as a record: a Linux `EIO` failure
+    /// claiming the descriptor is still live and nothing was discharged. The
+    /// old `Close.Valid` accepted exactly this shape; the relation refuses it.
+    #[test]
+    fn the_returns_on_failure_record_is_refused() {
+        let mut forged = record(Target::Linux, Outcome::MinusOne(Errno::Eio));
+        forged.descriptor_after = DescriptorState::Retained;
+        forged.custody_discharged = false;
+        assert_eq!(
+            check_close_record(&forged),
+            Err(CloseRecordRefusal::Descriptor {
+                claimed: DescriptorState::Retained,
+                derived: DescriptorState::Released,
+            })
+        );
+    }
+
+    /// The other direction of the same defect: a truthful record of a real
+    /// Linux failure, which the old model rejected outright.
+    #[test]
+    fn the_truthful_linux_failure_record_is_accepted() {
+        for errno in [Errno::Eintr, Errno::Eio, Errno::Enospc, Errno::Edquot] {
+            let truthful = record(Target::Linux, Outcome::MinusOne(errno));
+            assert_eq!(truthful.descriptor_after, DescriptorState::Released);
+            assert!(!truthful.may_retry_close);
+            let certificate = check_close_record(&truthful).expect("truthful record");
+            assert_eq!(certificate.derived.writeback, WriteBackState::Failed);
+            assert!(
+                certificate
+                    .derived
+                    .duties
+                    .contains(&Duty::ReportPossibleDataLoss)
+            );
+        }
+    }
+
+    /// The hazard the old model licensed: a retry after a failed Linux close.
+    #[test]
+    fn no_accepted_record_permits_a_retry_after_a_failed_linux_close() {
+        for errno in [
+            Errno::Eintr,
+            Errno::Eio,
+            Errno::Enospc,
+            Errno::Edquot,
+            Errno::Ebadf,
+            Errno::Other,
+            Errno::Unobserved,
+        ] {
+            let mut forged = record(Target::Linux, Outcome::MinusOne(errno));
+            assert!(!forged.may_retry_close, "{errno:?}");
+            forged.may_retry_close = true;
+            assert_eq!(
+                check_close_record(&forged),
+                Err(CloseRecordRefusal::Recovery {
+                    claimed: true,
+                    derived: false,
+                }),
+                "{errno:?}"
+            );
+        }
+    }
+
+    /// Retention on a failure is admitted **only** where the documentation says
+    /// it happens: POSIX.1-2024 `EINTR`. That is the corrected content of the
+    /// historical `accepted_failed_close_retains_custody`.
+    #[test]
+    fn a_failed_close_retains_the_descriptor_only_on_posix2024_eintr() {
+        let mut retaining = Vec::new();
+        for (target, premises, outcome) in domain() {
+            if !matches!(outcome, Outcome::MinusOne(_)) {
+                continue;
+            }
+            if with(target, premises, outcome).descriptor == DescriptorState::Retained {
+                retaining.push((target, outcome));
+            }
+        }
+        assert!(!retaining.is_empty(), "the arm must not be vacuous");
+        for (target, outcome) in retaining {
+            assert_eq!(target, Target::Posix2024);
+            assert_eq!(outcome, Outcome::MinusOne(Errno::Eintr));
+        }
+    }
+
+    /// With no target pinned, every failed close is poisoned, discharges
+    /// nothing and permits nothing. This is the disposition the Cycle 18
+    /// reactor vocabulary — which carries neither target nor errno — must take.
+    #[test]
+    fn an_unpinned_failed_close_is_poisoned_and_permits_no_recovery() {
+        for errno in [
+            Errno::Ebadf,
+            Errno::Eintr,
+            Errno::Eio,
+            Errno::Enospc,
+            Errno::Edquot,
+            Errno::Other,
+            Errno::Unobserved,
+        ] {
+            let accepted = record(Target::Unpinned, Outcome::MinusOne(errno));
+            assert!(accepted.descriptor_after.is_poisoned(), "{errno:?}");
+            assert!(!accepted.may_retry_close, "{errno:?}");
+            assert!(!accepted.custody_discharged, "{errno:?}");
+            check_close_record(&accepted).expect("truthful record");
+        }
+    }
+
+    /// No record may claim durability, on any target, under any outcome; and a
+    /// record that does not assert a live epoch before the call is refused
+    /// before the relation is consulted.
+    #[test]
+    fn no_accepted_record_discharges_the_data_duty() {
+        for (target, premises, outcome) in domain() {
+            let derived = with(target, premises, outcome);
+            assert_ne!(derived.writeback, WriteBackState::Discharged);
+            let mut forged = record_from(target, premises, outcome, &derived);
+            forged.data_duty_discharged = true;
+            let expected = if premises.epoch_live {
+                CloseRecordRefusal::ClaimsDataDuty
+            } else {
+                CloseRecordRefusal::NoLiveEpochBefore
+            };
+            assert_eq!(check_close_record(&forged), Err(expected));
+        }
+    }
+
+    /// A successful close identifies the epoch it closed only under sole
+    /// custody. Without it the record cannot claim a discharge.
+    #[test]
+    fn a_successful_close_without_sole_custody_is_not_a_discharge() {
+        let premises = Premises {
+            sole_custodian: false,
+            ..Premises::default()
+        };
+        assert_eq!(
+            with(Target::Linux, premises, Outcome::Zero).descriptor,
+            DescriptorState::Indeterminate
+        );
+        let forged = CloseRecord {
+            target: Target::Linux,
+            premises,
+            outcome: Outcome::Zero,
+            live_before: true,
+            descriptor_after: DescriptorState::Released,
+            may_retry_close: false,
+            custody_discharged: true,
+            data_duty_discharged: false,
+        };
+        assert_eq!(
+            check_close_record(&forged),
+            Err(CloseRecordRefusal::Descriptor {
+                claimed: DescriptorState::Released,
+                derived: DescriptorState::Indeterminate,
+            })
+        );
+    }
+
+    /// Discharge is exactly release: a poisoned or retained epoch still owes
+    /// its obligation, on every target and every outcome.
+    #[test]
+    fn custody_is_discharged_exactly_when_the_epoch_is_released() {
+        for (target, premises, outcome) in domain() {
+            if !premises.epoch_live {
+                continue;
+            }
+            let derived = with(target, premises, outcome);
+            let truthful = record_from(target, premises, outcome, &derived);
+            check_close_record(&truthful).expect("truthful record");
+            let mut forged = truthful;
+            forged.custody_discharged = !forged.custody_discharged;
+            assert!(matches!(
+                check_close_record(&forged),
+                Err(CloseRecordRefusal::Discharge { .. })
+            ));
+        }
     }
 }

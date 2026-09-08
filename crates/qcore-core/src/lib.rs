@@ -74,9 +74,10 @@ pub use inference::{
     check_inference_certificate, infer_principal,
 };
 pub use os_endpoint::{
-    DescriptionState, DescriptorState, Duty, EndpointKind, Epoch, Errno,
-    Outcome as EndpointOutcome, PostState, PostStateClaim, Premise, Premises, Recovery, Refusal,
-    RelationError, Target, WriteBackState, check_claim as check_endpoint_claim, close_poststate,
+    CloseRecord, CloseRecordCertificate, CloseRecordRefusal, DescriptionState, DescriptorState,
+    Duty, EndpointKind, Epoch, Errno, Outcome as EndpointOutcome, PostState, PostStateClaim,
+    Premise, Premises, Recovery, Refusal, RelationError, Target, WriteBackState,
+    check_claim as check_endpoint_claim, check_close_record, close_poststate,
     join as join_endpoint_poststates, poisoned_duties,
 };
 pub use ownership::{

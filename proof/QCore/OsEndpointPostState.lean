@@ -16,11 +16,12 @@ Five descriptor post-states are distinguished. `attempted` is an *analysis* gap
 which only pinning the target can resolve. They carry identical conservative
 duties, and neither permits any recovery.
 
-**This module coexists with `QCore.DescriptorCustody` and does not replace it.**
-That module's `accepted_failed_close_retains_custody` states the "returns on
-failure" policy over its own record type; the relation here is the corrected,
-target-qualified one. Reconciling them is recorded as follow-on unit U4 and is
-deliberately not done here, because that theorem is a pinned artifact.
+**`QCore.DescriptorCustody` now depends on this module** (card O03-U4, closing
+O03's follow-on): its `TargetedClose` record is admitted only when
+`closePostState` derives exactly what the record claims, and its legacy
+four-field `Close` record has had its "returns on failure" arm withdrawn rather
+than left contradicting the relation. Nothing in this module changed for that
+repair; the dependency runs one way only.
 
 This is a model of the *decisions*, not of kernel semantics. Which arm a real
 call took, and whether the documentation is faithful to the kernel, are premises
