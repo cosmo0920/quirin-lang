@@ -856,14 +856,16 @@
   }
  ],
  "ct_conformance": {
+  "generator_status": "regenerating: this section is produced by docs/reports/remaining-d02/build_matrix.py from docs/reevaluation/ct_manifest.json (schema 2) through scripts/ct_stage_summary.py, and the script asserts that the manifest, every archived per-card ct_stage_evidence.json and docs/reviews/r0_3/acceptance.json all agree before it writes anything. Card T00-CT-SCHEMA ended the thirteen-case divergence that came from reading T00's eleven-case coverage.json alone.",
   "derived_from": [
+   "docs/reevaluation/ct_manifest.json",
+   "scripts/ct_stage_summary.py",
    "docs/reports/remaining-t00/coverage.json",
    "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
-   "docs/reevaluation/ct_manifest.json",
    "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
    "docs/reports/wave5-ct-integration/ct_stage_evidence.json"
   ],
-  "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule). No row claims a stage its executed evidence does not carry; manifest_stages is retained beside stage_derived_status so the divergence stays visible rather than being resolved silently.",
+  "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count and its exact target_os gate. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
    "mapped": 24,
@@ -871,8 +873,53 @@
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
-   "linux"
+   "linux",
+   "macos",
+   "windows"
   ],
+  "host_scope": {
+   "c_emission": [
+    "linux",
+    "macos",
+    "windows"
+   ],
+   "elaborate": [
+    "any"
+   ],
+   "mutex_invariant_check": [
+    "any"
+   ],
+   "mutex_lowering": [
+    "any"
+   ],
+   "mutex_reference_execution": [
+    "linux",
+    "macos"
+   ],
+   "native_execution": [
+    "linux",
+    "macos",
+    "windows"
+   ],
+   "native_sanitized": [
+    "linux",
+    "macos"
+   ],
+   "parse": [
+    "any"
+   ],
+   "task_ledger_check": [
+    "any"
+   ],
+   "task_lowering": [
+    "any"
+   ],
+   "task_reference_execution": [
+    "linux",
+    "macos",
+    "windows"
+   ]
+  },
   "stage_histogram": {
    "parse": {
     "executed": 24
@@ -931,25 +978,3686 @@
    }
   },
   "depth_profile": {
-   "native_sanitized": 3,
+   "mutex_invariant_check": 7,
    "native_execution": 9,
+   "native_sanitized": 3,
    "task_ledger_check": 4,
-   "task_lowering": 1,
-   "mutex_invariant_check": 7
+   "task_lowering": 1
+  },
+  "case_depth": {
+   "CT01": "native_execution",
+   "CT02": "task_ledger_check",
+   "CT03": "native_sanitized",
+   "CT04": "task_ledger_check",
+   "CT05": "task_ledger_check",
+   "CT12": "native_execution",
+   "CT13": "native_execution",
+   "CT14": "native_execution",
+   "CT15": "native_execution",
+   "CT16": "native_execution",
+   "CT17": "native_sanitized",
+   "CT18": "task_lowering",
+   "CT19": "task_ledger_check",
+   "CT20": "native_execution",
+   "CT26": "native_sanitized",
+   "CT27": "mutex_invariant_check",
+   "CT28": "mutex_invariant_check",
+   "CT29": "mutex_invariant_check",
+   "CT30": "mutex_invariant_check",
+   "CT31": "mutex_invariant_check",
+   "CT32": "mutex_invariant_check",
+   "CT37": "native_execution",
+   "CT48": "mutex_invariant_check",
+   "CT50": "native_execution"
   },
   "observation_counts": {
-   "parse": 24,
-   "elaborate": 24,
-   "task_lowering": 16,
-   "task_ledger_check": 15,
-   "mutex_lowering": 8,
-   "mutex_invariant_check": 8,
-   "task_reference_execution": 26,
-   "mutex_reference_execution": 1,
    "c_emission": 28,
+   "elaborate": 24,
+   "mutex_invariant_check": 8,
+   "mutex_lowering": 8,
+   "mutex_reference_execution": 1,
    "native_execution": 28,
-   "native_sanitized": 9
+   "native_sanitized": 9,
+   "parse": 24,
+   "task_ledger_check": 15,
+   "task_lowering": 16,
+   "task_reference_execution": 26
   },
+  "ct_rows": [
+   {
+    "id": "CT01",
+    "mapping_status": "mapped",
+    "expected": "Accept",
+    "route": "task",
+    "harness_verdict_mode": "native_owned_transfer",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "cli_end_to_end": {
+      "status": "executed",
+      "executor": "crates/qcorec/tests/cli.rs::cli_names_owned_profile_and_emits_real_buffer_transfer",
+      "host_gate": [
+       "linux"
+      ],
+      "note": "qcorec check + emit + clang + run on CT01/case.qcore (Linux-gated)"
+     },
+     "frontend_mutation_matrix": {
+      "status": "executed",
+      "executor": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qcore)",
+      "note": "~25 mutation/adversarial variants checked at the task ledger"
+     }
+    },
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Linux native allocation, pointer-preserving child return, creator join and exactly-once parent drop agree with reference execution. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open."
+   },
+   {
+    "id": "CT02",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. The parent read after successful move rejects at Q600; CT01 supplies the accepted native control. Failed creation retains the original parent binding. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open."
+   },
+   {
+    "id": "CT03",
+    "mapping_status": "mapped",
+    "expected": "Accept",
+    "route": "task",
+    "harness_verdict_mode": "native_heap_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "native_sanitized": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "ScopedReadSharesV1: one owned Buffer lent to two children with complementary halves of the 1024-unit read authority, both reading it while the parent also reads it, and Buffer writes on either side of the lending window because a write demands reconstructed exclusive authority. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and three fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - one object allocated and released exactly once across two live borrowers, a refused second creation returning only its own share, and a refused join returning none and reclaiming nothing. The complementary refusals are mapped as CT04 and CT05. This is not evidence about arbitrary schedules, other targets or the C memory model; ThreadSanitizer does not intercept C11 thrd_create, so data-race freedom rests on the checker's no-write-while-shared rule. The lending budget is over authority handed out, not a separation-logic fraction; disjoint slicing, write shares, more than two readers, byte accounting and nested workers stay refused."
+   },
+   {
+    "id": "CT04",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "ScopedReadSharesV1: the parent writes its Buffer while both children still hold their halves. Refused with the exact single-entry cascade [Q600] carrying LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2, 3] }, which names the outstanding total and every borrower rather than the bare fact of a loan. An accepted Linux control moves the same write after both joins, so the refusal is keyed to the outstanding shares and not to writing at all. A rejection carries no execution post-state, so only parse and check are executed."
+   },
+   {
+    "id": "CT05",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "ScopedReadSharesV1: two children each request the whole read authority for one allocation. Refused with the exact single-entry cascade [Q600] carrying ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }; the excess request is refused as a whole and the outstanding total is unchanged. An accepted Linux control lends 511 and 513 of the same allocation, so the budget boundary is a boundary rather than a blanket refusal of two borrowers. A rejection carries no execution post-state, so only parse and check are executed."
+   },
+   {
+    "id": "CT06",
+    "mapping_status": "unmapped",
+    "expected": "Still same permission identity",
+    "current_bucket": "ambiguous + unimplemented-syntax",
+    "blocker": "expected result is not an accept/reject verdict, and aliasing is refused outright",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT07",
+    "mapping_status": "unmapped",
+    "expected": "Accept with bounds/disjointness proof",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no array types, indexing or disjointness in source",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT08",
+    "mapping_status": "unmapped",
+    "expected": "Reject or analyzer potential/unknown",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "as CT07; also wants an `unknown` verdict the harness lacks",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT09",
+    "mapping_status": "unmapped",
+    "expected": "Accept only after layout/access proof",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no struct/field access in source",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT10",
+    "mapping_status": "unmapped",
+    "expected": "Reject independent concurrent writes",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "no bit-fields; no C-twin stage",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT11",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "blocker": "needs share reconstruction with surviving aliases",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT12",
+    "mapping_status": "mapped",
+    "expected": "Capture state restored; no task obligation",
+    "route": "task",
+    "harness_verdict_mode": "native_owned_transfer",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 2,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 2,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+      "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
+      "observations": 2,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "ScopedOwnedTasksV1: actual own<Buffer> affine move/return with root allocation, immutable i32 payload and payload-free errors. Injected native creation failure restores the original buffer binding for read/drop, with no child or join obligation. A successful-create control transfers the same pointer through child return and creator join. Loans, general owned graphs, owned errors and native runtime refinement proofs remain open."
+   },
+   {
+    "id": "CT13",
+    "mapping_status": "mapped",
+    "expected": "First task must still be joined",
+    "route": "task",
+    "harness_verdict_mode": "native_create_recovery",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+      "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
+      "observations": 3,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "cli_end_to_end": {
+      "status": "executed",
+      "executor": "crates/qcorec/tests/cli.rs::cli_recovery_joins_first_child_after_second_creation_fails",
+      "host_gate": [
+       "linux"
+      ],
+      "note": "qcorec check + emit + clang -DQCORE_CT_FAIL_CREATE=2 + run (Linux-gated)"
+     }
+    },
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedCopyTasksV1 explicit creation recovery: real source matches the second spawn result. Failure preserves the first task until the Err arm explicitly joins its exact native thread, then returns42. Success joins both children and returns7; initial failure has no child. A failure arm omitting the prior join rejects with Q600 ScopeBusy. Reference and native outcomes agree for all3 fixture creation scripts. This tests scalar copies and task obligations, not owned/loan capture restoration, arbitrary handlers or other native platforms."
+   },
+   {
+    "id": "CT14",
+    "mapping_status": "mapped",
+    "expected": "No restored parent authority",
+    "route": "task",
+    "harness_verdict_mode": "native_task_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "recorded_not_gated",
+      "record": "docs/reports/w6-completed-child-custody/README.md"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedOwnedTasksV1: the native adapter waits for the actual worker body and completion-record write before creation returns to the parent. Parent read/drop of the moved Buffer before join reject at Q600 despite worker completion. The accepted control joins, consumes the owned Result and drops the original generation. Exact pointers and join-before-reclamation checks retain the allocation and environment while completed but unjoined. This is one owned Buffer, not loan/share restoration or a general scheduler proof."
+   },
+   {
+    "id": "CT15",
+    "mapping_status": "mapped",
+    "expected": "No quiescence, no environment reclamation",
+    "route": "task",
+    "harness_verdict_mode": "native_join_failure",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 2,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_join_failure",
+      "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
+      "observations": 2,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedCopyTasksV1 native fault evidence: a real i32-copy worker is created; successful control joins then frees the environment and returns 42. An injected native join failure establishes no quiescence and aborts before result publication or environment reclamation. The fault is supplied only by a test runtime adapter. Reference execution covers the successful control; native join failure has no returning reference transition. No source-owned payload/loan restoration, full runtime refinement or other-platform native conformance is claimed."
+   },
+   {
+    "id": "CT16",
+    "mapping_status": "mapped",
+    "expected": "Clean locals, return loans, carry declared payload",
+    "route": "task",
+    "harness_verdict_mode": "native_task_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "recorded_not_gated",
+      "record": "docs/reports/w6-worker-allocation/README.md"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "sequential_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::ct16_retains_sequential_implicit_cleanup_control",
+      "note": "separate fixture fixtures/task_worker_allocations/sequential_worker_error.qcore; exercises the SEQUENTIAL CFG reference execution, not CT16/case.qcore"
+     }
+    },
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedOwnedTasksV1 worker-local allocation: a real child acquires up to two Buffers, explicitly drops all acquired locals before raising WorkerError::Failed or a bound AllocError, and the creator joins before receiving the error. Four native/reference scenarios cover success, either allocation failure and creation failure with exact pointer/thread checks. Missing cleanup in either worker error arm rejects at Q600. The earlier sequential implicit-cleanup control remains separately executed. Loans, owned error payloads, arbitrary handlers and native refinement proofs remain open."
+   },
+   {
+    "id": "CT17",
+    "mapping_status": "mapped",
+    "expected": "Join transfers it exactly once",
+    "route": "task",
+    "harness_verdict_mode": "native_heap_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 5,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 5,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 5,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "native_sanitized": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "observations": 5,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "ScopedErrorPayloadV1: exactly one owned Buffer rides an explicitly tagged worker error out of one child, through its completion capsule and its creator's join, and is taken out of the bound error exactly once. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and five fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - the success path releases all three objects inside the child, either worker allocation failure carries the parent's original identity back and releases every local it does not carry, a refused creation transfers nothing, and a refused join reclaims neither payload nor environment. Two negative controls pin that an undelivered payload and an unreleased taken payload are refused at Q600. One payload, one flat own<Buffer>: recursive owned graphs, several payloads, mixed declared rows, nested workers and loans inside payloads stay refused, and no race detector covers this backend."
+   },
+   {
+    "id": "CT18",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_lowering",
+    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "ScopedErrorPayloadV1: a scoped capture borrow cannot leave its child inside an error payload. Refused with the exact single-entry cascade [Q500] carrying 'an error payload requires own<Buffer>', at the raise that writes it rather than at the join. An accepted Linux control is the same program whose worker owns its payload, so the refusal is keyed to the borrowed capture and not to the raise form. A rejection carries no execution post-state, so only parse and check are executed."
+   },
+   {
+    "id": "CT19",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "reference_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_positive_control",
+      "host_gate": [
+       "linux"
+      ],
+      "note": "joined_sibling.qcore: Linux-gated task reference execution only; never compiled or run natively"
+     }
+    },
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Actual scoped-copy task source checking: a second spawn with immediate ? has a dynamic failure edge leaving the first live handle, and rejects with Q600 ScopeBusy. The separate joined_sibling.qcore control joins the first task before creating the second; Linux checking/reference execution accepts it with both children joined. The rejected case executes parser/type checker only. No resource capture, sibling recovery handler or native execution of the rejected program is claimed."
+   },
+   {
+    "id": "CT20",
+    "mapping_status": "mapped",
+    "expected": "Accept with all result obligations accounted",
+    "route": "task",
+    "harness_verdict_mode": "native_task_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
+      "observations": 4,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "recorded_not_gated",
+      "record": "docs/reports/w6-handler-rethrow/README.md"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedOwnedTasksV1: an in-scope second-creation error handler joins the first child, drops its returned Buffer and rethrows the bound payload-free SpawnError. Four native/reference scenarios cover success, allocation failure and each creation failure with exact buffer/environment identities and join-before-reclamation checks. Omitting the sibling join or returned-buffer drop rejects at Q600. Owned error payloads, loans, arbitrary handlers, worker allocation and native refinement proofs remain open."
+   },
+   {
+    "id": "CT21",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "no source path emits RegionOp::QuantOpen",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT22",
+    "mapping_status": "unmapped",
+    "expected": "Accept",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "as CT21; also needs credits",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT23",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "quantitative credits are not in any executable subset",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT24",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
+    "blocker": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT25",
+    "mapping_status": "unmapped",
+    "expected": "Accept",
+    "current_bucket": "ambiguous (partially unblocked)",
+    "blocker": "joins now exist; loan expiry does not",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT26",
+    "mapping_status": "mapped",
+    "expected": "Accept",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "checked_mutex_sanitized",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 0,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "native_sanitized": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 lowered onto the unedited CheckedMutexInvariantV1 checker: two lexical critical sections over one mutex generation and one declared footprint, on one Linux thread. Executed from the fixture: parse, elaborate, lower, check, independent certificate recheck, C11 emission, and a run of the emitted C under ASan/UBSan/LSan whose stdout agrees line for line with interpret_mutex_program over the checked event list. `cfg` is unassessed because this route has no CFG stage at all. One thread, one target, one compiler invocation: not evidence about contention, scheduling, publication or the C memory model. DeclaredFootprintShape and InvariantPredicateDeclared are carried premises, and source-to-trace refinement is unproved in both Rust and Lean."
+   },
+   {
+    "id": "CT27",
+    "mapping_status": "mapped",
+    "expected": "Reject without a valid composite protocol",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "note": "Two generations over two disjoint declared footprints check, so Q617 is keyed to the shared payload and not to declaring a second mutex. Linux-gated because the control reaches the emission path."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1: a second `mutex guards` over an already protected footprint is refused at Q617 FootprintAlreadyProtected, so no composite protocol is admitted; the exact ordered cascade [Q617, Q600 UnknownMutex] is pinned. The disjoint_payloads control declares two generations over two disjoint payloads and is accepted, so the refusal is keyed to the shared payload rather than to the number of mutexes. Only parser and type_checker execute on the case artifact; the accepted control compiles through the Linux-only emission path, which is what evidence_target records. No composite or nested protection protocol, lock ordering, or post-creation protection growth is established."
+   },
+   {
+    "id": "CT28",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "emits_c": false,
+      "note": "The same child takes its own acquisition of the same generation, writes under its own guard, and the creator reads after the join. Multi-task, so the guard backend renders it in no thread at all: it is published checked with c_source: None. The control is route-checked (as_checked_mutex_guards()), not compiled and not run; host_gate records the Q500 target refusal, which is evaluated before the emission decision."
+     },
+     "refused_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
+      "observations": 1,
+      "note": "The second half of the scenario name: the child unlocks the creator's guard (close g) instead of reading through it, and refuses with the identical [Q612, Q600] cascade, so guard affinity is keyed to the acting task and not to the operation kind."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task written inside a critical section can lexically name the creator's guard, and acting through it is refused at Q612 WrongGuardAffinity; the exact ordered cascade [Q612, Q600 JoinWhileGuardHeld] is pinned, so the refusal is shown not to have released the guard the creator still holds. Both halves of the scenario execute: the case uses the creator's guard (`read buf with g`), and the child_unlocks control unlocks it (`close g`), refusing identically, so affinity is keyed to the acting task and not to the operation. The own_acquisition control is accepted: the same child takes its own acquisition of the same generation and the creator reads after the join. Only parser and type_checker execute; cfg is unassessed because this route emits from a checked event list and has no CFG stage. No native evidence: the accepted control is multi-task and this backend emits one thread, so it is published checked with c_source: None, and evidence_target records the Q500 host gate rather than a compiled or executed run."
+   },
+   {
+    "id": "CT29",
+    "mapping_status": "mapped",
+    "expected": "Reject unless restored before unlock",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT29/restored.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "note": "The scenario's `unless restored` half: the same typed error raised after `close g;` checks."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1: a typed-error exit taken with the invariant open is refused at Q614 InvariantOpenAtErrorExit, with the exact ordered cascade [Q614, Q619, Q600, Q600, Q600] pinned so the refusal is shown not to have released the guard. The restored.qcore control closes the invariant before raising the same error and is accepted, which is the scenario's `unless restored` half. Q613 and Q614 stay distinct codes: the error path is attributed separately from the normal path, and the Lean theorem typed_error_exit_obeys_the_normal_release_rule proves both exits obey the same release rule. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. The invariant predicate has no runtime representation and stays the InvariantPredicateDeclared premise."
+   },
+   {
+    "id": "CT30",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT30/released.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "note": "The same borrow released inside its own section checks, so Q615 is keyed to the escape and not to borrowing under a guard."
+     },
+     "refused_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore",
+      "observations": 1,
+      "note": "The second escape mechanism: naming the borrow binder after its block fails at Q013 unknown name because the binder is body-local. Q013 is name resolution, deliberately not relabelled as a concurrency verdict, and is recorded as the weaker of the two mechanisms."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1: a guard-derived borrow still live at its critical section's end is refused at Q615 GuardBorrowEscape, with the exact ordered cascade [Q615, Q619, Q600, Q600, Q600] pinned. Two escape mechanisms execute: this one, and the escaped_borrow control, where naming the borrow binder after its block fails at Q013 unknown name because the binder is body-local; Q013 is recorded as name resolution and deliberately not relabelled as a concurrency verdict. The released.qcore control takes the same borrow, reads through the guard and drops it inside the section, and is accepted. Only parser and type_checker execute on the case artifact; the accepted control is Linux-gated. This profile refuses task creation outright, so a borrow cannot travel to a child here at all: no claim is made that a guard is unmovable in a future profile that admits tasks."
+   },
+   {
+    "id": "CT31",
+    "mapping_status": "mapped",
+    "expected": "Reject",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT31/performed.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "emits_c": false,
+      "note": "The announcing task performs the acquisition, and the core's Lock withdraws the waiter, so destruction is quiescent. Multi-task and `wait`-bearing (RegisterWaiter is in the emission-refused set), so it is published checked with c_source: None; route-checked, not compiled and not run."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card T03-F's `wait NAME;` form: an announced acquisition a child never performs blocks the generation's destruction at scope exit, refused at Q619 NonquiescentMutexDestruction with the exact ordered cascade [Q619, Q600 NonquiescentDestruction, Q600 OutstandingMutex, Q600 OutstandingWaiter] pinned; every entry after the first shows the refused destruction left the generation, the protected resource and the waiter outstanding rather than quietly destroying one of them. RegisterWaiter had no source form before T03-F, which is why this case was unmappable. The performed control has the announcing task perform the acquisition, withdrawing the announcement, and is accepted. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: `wait` is in the emission-refused set, so the control publishes with c_source: None and evidence_target records the Q500 host gate only. This is the model's waiter bookkeeping, not a blocking-acquisition or deadlock claim."
+   },
+   {
+    "id": "CT32",
+    "mapping_status": "mapped",
+    "expected": "Reject in initial profile",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 1,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "emits_c": false,
+      "note": "The identical child block, moved one statement past the section's end, checks. Multi-task, so it is published checked with c_source: None; route-checked, not compiled and not run."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task created and joined strictly inside a critical section is refused at Q600 JoinWhileGuardHeld, and the cascade is exactly one entry long because the empty child body is well formed and nothing else is disturbed. The joined_outside control moves the identical block one statement past the section's end and is accepted, so the refusal is keyed to the join landing while a guard is held. This is the unedited T02 checker rule: T03-F declined to widen it, so a join strictly inside a guard is a refusal in this profile rather than a feature. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: the accepted control is multi-task and publishes with c_source: None; evidence_target records the Q500 host gate only."
+   },
+   {
+    "id": "CT33",
+    "mapping_status": "unmapped",
+    "expected": "Reject rank proof",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT34",
+    "mapping_status": "unmapped",
+    "expected": "Unsupported in fixed-shape profile",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT35",
+    "mapping_status": "unmapped",
+    "expected": "Count 4096 once",
+    "current_bucket": "blocked-on-W3/W4",
+    "blocker": "no byte-valued quantities; no share/read form for one identity",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT36",
+    "mapping_status": "unmapped",
+    "expected": "Bound at least 8192 plus modeled overhead",
+    "current_bucket": "blocked-on-W3/W4 (conditional half resolved)",
+    "blocker": "no byte quantities and no expected.json form for a bound; conditionals now exist via Result match arms",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT37",
+    "mapping_status": "mapped",
+    "expected": "Allocation remains live in completion capsule",
+    "route": "task",
+    "harness_verdict_mode": "native_task_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_sanitized": {
+      "status": "recorded_not_gated",
+      "record": "docs/reports/w6-completed-child-custody/README.md"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "sequential_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::ct37_retains_sequential_transferred_payload_control",
+      "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
+     }
+    },
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open."
+   },
+   {
+    "id": "CT38",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "credit partitions absent; an over-release fixture reduces to CT02",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT39",
+    "mapping_status": "unmapped",
+    "expected": "Reject unsupported claim",
+    "current_bucket": "DECIDABLE-NOW (coarser reason)",
+    "blocker": "resolved: the silent-acceptance path batch 2 named as the direct blocker is repaired",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT40",
+    "mapping_status": "unmapped",
+    "expected": "Not certified; unsupported lifetime/publication protocol",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT41",
+    "mapping_status": "unmapped",
+    "expected": "No synchronization proof",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT42",
+    "mapping_status": "unmapped",
+    "expected": "Preserve shared protocol-cell identity",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT43",
+    "mapping_status": "unmapped",
+    "expected": "Unknown; no whole-program proof",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT44",
+    "mapping_status": "unmapped",
+    "expected": "Reject",
+    "current_bucket": "ambiguous",
+    "blocker": "the available rejection is about the handle, not about a capture whose environment expires",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT45",
+    "mapping_status": "unmapped",
+    "expected": "Require access contract or report unknown",
+    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT46",
+    "mapping_status": "unmapped",
+    "expected": "Accept only through verified mutex protocol",
+    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "blocker": "needs Send/Sync conditions and a verified mutex protocol",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT47",
+    "mapping_status": "unmapped",
+    "expected": "Reject automatic cross-thread acceptance",
+    "current_bucket": "DECIDABLE-NOW (coarser reason)",
+    "blocker": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
+    "bucket_changed_since_batch2": true,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT48",
+    "mapping_status": "mapped",
+    "expected": "Invalidate/re-establish, never assume",
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "not_applicable"
+     },
+     "task_ledger_check": {
+      "status": "not_applicable"
+     },
+     "mutex_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "observations": 1
+     },
+     "mutex_invariant_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "observations": 1
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "not_applicable"
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "not_applicable"
+     },
+     "native_execution": {
+      "status": "not_applicable"
+     },
+     "native_sanitized": {
+      "status": "unassessed"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
+      "host_gate": [
+       "linux"
+      ],
+      "observations": 1,
+      "emits_c": true,
+      "note": "Re-establishing the refinement under the second guard mints a fresh fact and checks, so the spec's 'invalidate/re-establish, never assume' expectation is exercised in both directions. Single-task, so this control DOES emit C — the only one of the four this card adds that does — but the harness route-checks it and does not compile or run it."
+     },
+     "refused_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
+      "observations": 1,
+      "note": "A declared but never asserted fact refuses at Q600 UnknownFact, a different code from the case's Q616, so the case's diagnostic is keyed to a fact that existed and was dropped rather than to one that never existed."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card T03-F's guard-scoped facts: a refinement established under one guard and relied on under a later acquisition of the same mutex is refused at Q616 StaleProtectedFact, cascade exactly [Q616] because the release that dropped the fact was itself well formed. Both directions of the spec's invalidate/re-establish expectation execute: the reasserted control re-establishes the fact under the second guard and is accepted; the never_asserted control refuses at Q600 UnknownFact, so Q616 is staleness rather than absence. The binder is declared at thread-scope level so the name resolves and the model refuses the use, which is the semantic refusal the T03 CT integration report recorded the weaker Q013 unknown-name refusal as insufficient for. Only parser and type_checker execute; cfg is unassessed (no CFG stage). Not established: a fact has no predicate, so this is refinement invalidation and not refinement content. The reasserted control is single-task and does emit C, but the harness route-checks it rather than running it; evidence_target records the Q500 host gate."
+   },
+   {
+    "id": "CT49",
+    "mapping_status": "unmapped",
+    "expected": "Validate partial order, not exact total trace",
+    "current_bucket": "blocked-on-unimplemented-syntax",
+    "blocker": "the harness pins an exact total transcript (stdout == render_task_observation), which is the opposite of a partial-order check",
+    "bucket_changed_since_batch2": false,
+    "stage_derived_status": {
+     "parse": {
+      "status": "unexecuted"
+     },
+     "elaborate": {
+      "status": "unexecuted"
+     },
+     "task_lowering": {
+      "status": "unexecuted"
+     },
+     "task_ledger_check": {
+      "status": "unexecuted"
+     },
+     "mutex_lowering": {
+      "status": "unexecuted"
+     },
+     "mutex_invariant_check": {
+      "status": "unexecuted"
+     },
+     "sequential_whole_program": {
+      "status": "unexecuted"
+     },
+     "sequential_reference_execution": {
+      "status": "unexecuted"
+     },
+     "task_reference_execution": {
+      "status": "unexecuted"
+     },
+     "mutex_reference_execution": {
+      "status": "unexecuted"
+     },
+     "c_emission": {
+      "status": "unexecuted"
+     },
+     "native_execution": {
+      "status": "unexecuted"
+     },
+     "native_sanitized": {
+      "status": "unexecuted"
+     },
+     "legacy_c_twin": {
+      "status": "unexecuted"
+     },
+     "proof": {
+      "status": "unexecuted"
+     }
+    },
+    "deepest_executed_stage": null
+   },
+   {
+    "id": "CT50",
+    "mapping_status": "mapped",
+    "expected": "Old capability cannot authorize new identity",
+    "route": "task",
+    "harness_verdict_mode": "native_task_scenarios",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": 2,
+    "stage_derived_status": {
+     "parse": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1
+     },
+     "elaborate": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1
+     },
+     "task_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1
+     },
+     "task_ledger_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1
+     },
+     "mutex_lowering": {
+      "status": "not_applicable"
+     },
+     "mutex_invariant_check": {
+      "status": "not_applicable"
+     },
+     "sequential_whole_program": {
+      "status": "not_applicable"
+     },
+     "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "mutex_reference_execution": {
+      "status": "not_applicable"
+     },
+     "c_emission": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
+     },
+     "native_execution": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+      "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux"
+      ]
+     },
+     "native_sanitized": {
+      "status": "recorded_not_gated",
+      "record": "docs/reports/w6-reused-address/README.md"
+     },
+     "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "proof": {
+      "status": "unassessed"
+     }
+    },
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_execution",
+    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "semantic_profile": "Linux ScopedOwnedTasksV1 Buffer lifetime identity: two successful root allocations are separated by real munmap/mmap at the same numeric address using MAP_FIXED_NOREPLACE. Native release hooks check generations 1 and 2, exact mapping identity and complete release. Stale read/drop of the first consumed binding after the new allocation reject at Q600. Native stdout agrees with reference generation events. This covers owned Buffer mappings, not arbitrary raw pointers, descriptors, allocator failures or full source/native refinement."
+   }
+  ],
   "executed_totals_from_t00": {
    "task_reference_executions": 18,
    "native_compile_and_run": 19,
@@ -960,20 +4668,18 @@
   },
   "unmapped_bucket_counts": {
    "ambiguous + unimplemented-syntax": 1,
-   "blocked-on-unimplemented-syntax": 3,
+   "blocked-on-unimplemented-syntax": 7,
+   "blocked-on-task-lowering (share captures)": 1,
    "blocked-on-W3/W4": 3,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
-   "blocked-on-guard-profile-composition-or-unrepresented-form": 3,
+   "blocked-on-unimplemented-syntax (no mutex value)": 3,
    "blocked-on-W3/W4 (conditional half resolved)": 1,
    "DECIDABLE-NOW (coarser reason)": 2,
    "blocked-on-harness-schema (C-twin stage)": 5,
-   "ambiguous": 1,
-   "blocked-on-scenario-mismatch (no local alias form)": 1,
-   "blocked-on-model-only-epoch-accounting (no source syntax)": 4
+   "ambiguous": 1
   },
   "newly_decidable_not_mapped": [
-   "CT11",
    "CT24",
    "CT39",
    "CT47"
@@ -990,40 +4696,17 @@
    "O9 - Both fixtures' completion_before_join.h is a 66-byte one-line #include of compiler/tests/fixtures/task_worker_allocations/completion_before_join.h. The inventory assertion covers the stub, not the adapter that actually forces worker completion before creation returns. The shared adapter is outside the CT fixture tree and outside the inventory check."
   ],
   "notes": [
-   "Mapping is not conformance. `proof` is unassessed for all 15 mapped cases and no Lean theorem is bound to any CT fixture.",
-   "Two source routes are now represented and they do not share a stage vocabulary. The eleven task-route cases read `cfg` as the task IR (T00 finding O1). The four source.mutex.guard.v1 cases (CT26/CT27/CT29/CT30) emit directly from a checked event list and have NO CFG stage, so the manifest keeps `cfg: unassessed` for them and the stage-derived rows use mutex_lowering / mutex_invariant_check / mutex_reference_execution instead of the task stage names.",
-   "T00 finding O4 is now partially repaired: CT26 is the first CT case whose sanitized native run is GATED (compiler/tests/ct_corpus.rs::mutex_sanitized_run, -fsanitize=address,undefined with detect_leaks=1). The sanitized evidence for CT14/CT16/CT20/CT37/CT50 is still recorded_not_gated as transcripts in docs/reports/w6-*/README.md.",
-   "T00 finding O6 is not repeated for this card's cases: CT27/CT29/CT30 carry evidence_target=linux because their accepted controls compile through the Linux-only emission path, even though the case artifacts' own rejections are host-independent. The harness asserts that correspondence rather than leaving it narrative.",
-   "The seven remaining mutex-family cases (CT28, CT31, CT32, CT33, CT34, CT46, CT48) no longer carry T00's `no mutex value` blocker - a mutex source form now exists. Their current blockers are task composition inside the guard profile (CT28, CT31's waiter half, CT32), unrepresented forms (CT33 lock ranks, CT34 protection growth, CT48 guard-scoped facts) and Send/Sync derivation (CT46). CT31's Q619 does execute, but only as a consequential second cascade entry in CT29/CT30, never as its own mechanism.",
-   "The three newly-decidable cases (CT24, CT39, CT47) are assessed as decidable from probes, not mapped; two of the three would record a coarser reason than their spec row.",
-   "Wave-5 CT integration (docs/reports/wave5-ct-integration/README.md): CT28/CT31/CT32/CT48 map on the source.mutex.guard.v1 route as extended by T03-F. cfg stays unassessed for them — the route has no CFG construction, and the harness enforces the refusal of a cfg: executed claim. proof remains unassessed for all 24 mapped cases; sanitized-native remains 3 of 24. The grown denominator is mapping, not conformance."
+   "Mapping is not conformance. `proof` is unassessed for every mapped case and no Lean theorem is bound to any CT fixture (T00.7 remains open).",
+   "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now refuses an `executed` sanitized claim from any other case.",
+   "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this generator's inputs no longer allow.",
+   "The unmapped triage rows are recorded analysis, not stage evidence, and come from T00's audit filtered to the cases that are still unmapped."
   ],
-  "generator_status": "docs/reports/remaining-d02/build_matrix.py derives this section from T00's archived coverage.json alone, which covers only the original eleven mapped cases and asserts its mapped set equals the manifest's. That assertion has not held since T03-CT and now diverges by thirteen cases (CT26/CT27/CT29/CT30, CT03/CT04/CT05/CT17/CT18 and CT28/CT31/CT32/CT48), so the section is hand-maintained and the generator needs a merge step over the two ct_stage_evidence.json files before it can regenerate. Recorded, not silently worked around; T00-CT-SCHEMA already owns the stage-derived summarizer work.",
-  "executed_totals_added_by_t03_ct_integration": {
-   "mutex_reference_executions": 1,
-   "sanitized_native_compile_and_run": 1,
-   "in_case_source_controls": 4,
-   "accepted_controls": 3,
-   "refused_controls": 1,
-   "cases_with_proof_evidence": 0,
-   "note": "executed_totals_from_t00 above is left exactly as T00 measured it at revision ea2af0f; this object is the increment, not a restatement."
-  },
   "newly_decidable_not_mapped_reasons": {
+   "_note": "hand-maintained commentary, not generator output — build_matrix.py drops this key on regeneration and it is re-added deliberately; the generated newly_decidable_not_mapped and unmapped_bucket_counts derive from T00's triage vocabulary, which is coarser than these later per-card refinements (recorded pre-existing divergence, see remaining-t00-ct-schema §integrator notes).",
    "CT11": "Measured: ScopedReadSharesV1 refuses reconstruction while a share is retained (Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] }). Left unmapped because the scenario says 'while local shared aliases survive' and this profile has no local alias form; the retaining party is an unjoined child task, so mapping it would answer a different question (card T05 section 9).",
    "CT24": "Card T04's own proposal, unchanged and still unmapped; its fixture stays in docs/reports/remaining-t04/fixtures/.",
    "CT39": "Refused at model level by FlatEpochBoundV1 (card T08), but there is no epoch source syntax, hence no parser stage and no reference execution.",
    "CT47": "As recorded by T00; unchanged by this wave."
-  },
-  "executed_totals_added_by_wave5_ct_integration": {
-   "mutex_lowerings": 4,
-   "mutex_invariant_checks": 4,
-   "mutex_reference_executions": 0,
-   "sanitized_native_compile_and_run": 0,
-   "in_case_source_controls": 6,
-   "accepted_controls": 4,
-   "refused_controls": 2,
-   "cases_with_proof_evidence": 0,
-   "note": "increment over executed_totals_from_t00 and the T03-CT object, in the same style; no native or proof evidence was added — all four cases are rejections whose accepted controls are route-checked (three render in no thread; CT48's C emission is not compiled by the harness), and evidence_target records only the harness host gate."
   }
  },
  "corpus": {
@@ -1256,7 +4939,13 @@
    "title": "source.extern-call.v1 follow-ons",
    "why": "resource_out/stored/removed/reallocated/released call modes; nonnull owned returns; sentinel/errno adapters (O03 interaction); buffer extents; variadics/function pointers/callbacks/structs/floats; extern calls in concurrent or error-region contexts; releasing custody on the adapter error arm (currently admitted only with no other live acquisition); cost summaries; linkage verification; the inline Q020/Q021 source-contract consumer. CT45 is closer but still blocked on the single-live-acquisition restriction and an admitted-but-unmodeled contract form.",
    "source": "docs/reports/extern-call-v1/README.md SS7"
+  },
+  {
+   "id": "D02-GEN-REST",
+   "title": "build_matrix.py's non-CT sections are a stale hand-coded snapshot",
+   "why": "only ct_conformance is derived and verified against the manifest; named_followups is a hard-coded literal from the original D02 wave (build_matrix.py:1419) and the gate object hard-codes stale counts (e.g. provider_tests: 47 vs 58), so whole-file regeneration would clobber later reconciliations. The integrator adopts the generated ct_conformance section surgically until the remaining sections are derived from live sources.",
+   "source": "docs/reports/remaining-t00-ct-schema/README.md, this integration"
   }
  ],
- "updated": "2026-09-08 (wave 5: six cards closed at their stated boundaries with residual follow-ons re-recorded; wave5-CT: CT28/CT31/CT32/CT48 integrated through the CT harness with stage-derived evidence, CT 20/50 -> 24/50, no native or proof evidence added; nothing promoted)"
+ "updated": "2026-09-08 (wave 6, T00-CT-SCHEMA: CT manifest is schema 2 with stage-derived statuses, per-route vocabularies, gated sanitizer claims and generated acceptance numbers; ct_conformance regenerated by the repaired build_matrix.py — the thirteen-case generator divergence is ended; the two increment-totals objects are deliberately dropped in favor of the derived totals and their card reports; CT stays 24/50, nothing promoted)"
 }
