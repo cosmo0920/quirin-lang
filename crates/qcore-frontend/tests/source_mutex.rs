@@ -849,3 +849,193 @@ fn main() -> unit {
 "#;
     codes(source).unwrap();
 }
+
+// ---------------------------------------------------------------------------
+// Guard-local children (card T03-GUARD-JOIN).
+//
+// `thread scope c under g { … }` opts a child into the core's guard-local join.
+// Every refusal below is one statement away from the accepted control, and the
+// plain `thread scope c { … }` form is untouched throughout.
+// ---------------------------------------------------------------------------
+
+/// The accepted control: one mutex-silent child created and joined strictly
+/// inside its own critical section.
+#[test]
+fn a_guard_local_child_created_and_joined_inside_its_section_checks() {
+    let module = codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ read buf with g; thread scope c under g {{ }} \
+         read buf with g; }}"
+    )))
+    .unwrap();
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    assert_eq!(certificate.admitted_guard_local_joins.len(), 1);
+    assert_eq!(certificate.completed_tasks, vec![1]);
+    // The admission is checked: it names no premise of its own.
+    assert_eq!(
+        certificate.assumptions,
+        std::collections::BTreeSet::from([
+            ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds,
+            ConcurrencyAssumption::DeclaredFootprintShape,
+        ])
+    );
+    // The child's join lowered to the guard-local event, and to nothing else:
+    // an ordinary `Join` here would be the refused direction.
+    assert!(
+        module
+            .program
+            .events
+            .iter()
+            .any(|event| matches!(event, MutexInvariantEvent::GuardLocalJoin { .. }))
+    );
+    assert!(
+        !module
+            .program
+            .events
+            .iter()
+            .any(|event| matches!(event, MutexInvariantEvent::Join { .. }))
+    );
+}
+
+/// The opt-in is real: the same block without `under g` keeps CT32's refusal.
+#[test]
+fn the_plain_child_form_inside_a_section_still_refuses() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ read buf with g; thread scope c {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// A guard-local child that tries to take a generation is refused twice over:
+/// the acquisition itself is this profile's represented `NestedProtectingMutex`
+/// refusal (`Q622`, because the child inherits the enclosing section lexically),
+/// and the guard-local join is refused (`Q600`) because the child named a mutex
+/// at all. The self-deadlock is never representable.
+#[test]
+fn a_guard_local_child_that_locks_a_generation_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c under g \
+             {{ with lock m as gc {{ read buf with gc; }} }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q622", "Q600"]
+    );
+}
+
+/// A guard-local child that acts through the guard it lexically sees is refused
+/// at `Q612` before the join rule is even reached, and the join refuses too.
+#[test]
+fn a_guard_local_child_cannot_act_through_the_creators_guard() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c under g {{ read buf with g; }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q612", "Q600"]
+    );
+}
+
+/// `under` names *this* section. Outside one, and naming another guard, are
+/// grammar refusals here rather than silent downgrades to a plain join.
+#[test]
+fn the_guard_local_header_must_name_its_own_enclosing_section() {
+    assert_eq!(
+        lower(&entry(&format!(
+            "{DECLARATIONS} thread scope c under g {{ }}"
+        )))
+        .unwrap_err(),
+        vec!["Q013"],
+        "no section is open, so the guard name does not even resolve"
+    );
+    assert_eq!(
+        lower(&entry(
+            "let buf = protected 4; let m = mutex guards buf; \
+             with lock m as g { with lock m as g2 { } thread scope c under g2 { } }"
+        ))
+        .unwrap_err(),
+        vec!["Q013"],
+        "a guard binder is body-local, so a sibling section's guard is unresolvable"
+    );
+}
+
+/// The guard-local admission does not survive leaving the section: a child
+/// written after the block still uses the plain form, and `under` there is a
+/// name-resolution refusal because guard binders are body-local.
+#[test]
+fn a_guard_local_header_cannot_escape_its_section() {
+    codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ read buf with g; }} thread scope c {{ }}"
+    )))
+    .unwrap();
+    assert_eq!(
+        lower(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ read buf with g; }} thread scope c under g {{ }}"
+        )))
+        .unwrap_err(),
+        vec!["Q013"]
+    );
+}
+
+/// A guard-local child may itself create a quiet grandchild; a grandchild that
+/// names a mutex refuses the whole admission.
+#[test]
+fn the_quiet_subtree_rule_reaches_a_grandchild() {
+    codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ thread scope c under g {{ thread scope d {{ }} }} }}"
+    )))
+    .unwrap();
+    // The grandchild's announced acquisition refuses the join (`Q600`) and, as
+    // the pinned cascade shows, keeps the waiter outstanding so the generation
+    // cannot be destroyed either (`Q619`). Nothing here silently released it.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c under g \
+             {{ thread scope d {{ wait m; }} }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q619", "Q600", "Q600", "Q600", "Q600"]
+    );
+}
+
+/// A guard-local join with the invariant open is refused: protected memory is
+/// in a declared-broken state where the join lands.
+#[test]
+fn a_guard_local_join_with_an_open_invariant_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ open g; thread scope c under g {{ }} \
+             write buf with g; close g; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// A guard-local join with a live guard-derived borrow is refused.
+#[test]
+fn a_guard_local_join_with_a_live_borrow_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ let b = borrow buf with g; \
+             thread scope c under g {{ }} drop b; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// A guard-local child that announces an acquisition of the enclosing
+/// generation is exactly the deadlock the blanket refusal covered.
+#[test]
+fn a_guard_local_child_that_waits_for_the_held_generation_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c under g {{ wait m; }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q619", "Q600", "Q600", "Q600", "Q600"]
+    );
+}
