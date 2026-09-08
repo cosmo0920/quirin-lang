@@ -6,7 +6,8 @@ use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, legacy_c_source_functions, validate_unrestricted_c11,
+    C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
+    legacy_c_source_functions, validate_unrestricted_c11,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, sha256_hex};
@@ -197,11 +198,16 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(identity).map_err(|error| error.to_string())?;
+                // Unit E01-F1: the enumerated denominator replaces the raw
+                // token scan wherever a unit exists to preprocess. The scan
+                // above stays as the *fallback* denominator for a
+                // configuration that never became a unit.
+                let inventory = enumerate_source_definitions(&unit);
                 project_unit(
                     library,
                     &file,
                     &unit,
-                    &functions,
+                    &inventory,
                     &self.contracts,
                     &mut self.report,
                     &mut self.counts,

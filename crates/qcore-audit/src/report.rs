@@ -4,7 +4,8 @@ use std::fs;
 use std::path::Path;
 
 use qcore_c_gateway::legacy_c::{
-    LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, UnrestrictedLegacyResult,
+    LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, SourceDefinitionInventory,
+    UnrestrictedLegacyResult,
 };
 use qcore_schemas::reason::ReasonCategory;
 use serde_json::{Value, json};
@@ -69,6 +70,55 @@ impl AuditReport {
             "source_functions": functions, "functions": [], "not_projected": functions,
             "diagnostic_counts": {},
         }));
+    }
+
+    /// Attach the enumerated main-source definition inventory to the
+    /// immediately preceding unit (unit **E01-F1**).
+    ///
+    /// This block *refines* the row and replaces nothing: `source_functions`
+    /// is the same denominator the analyzer selected over, and
+    /// `not_projected` keeps its meaning. What it adds is the honest account
+    /// of that denominator — which definitions exist only after preprocessing,
+    /// which ones no implemented analysis reads and why, and whether the
+    /// definition set was established at all. A refused completeness claim is
+    /// a scoped `Unknown` about the *inventory*, never a claim about the
+    /// analysed functions.
+    pub fn record_enumeration(&mut self, inventory: &SourceDefinitionInventory) {
+        let unanalyzable = inventory
+            .unanalyzable()
+            .iter()
+            .map(|definition| {
+                let reason = definition.form().reason();
+                json!({
+                    "function": definition.function(),
+                    "status": "unknown",
+                    "form": definition.form().as_str(),
+                    "reason": reason,
+                    "reason_code": reason_code(Some(reason)),
+                })
+            })
+            .collect::<Vec<_>>();
+        let refusals = inventory
+            .refusals()
+            .iter()
+            .map(|refusal| {
+                let reason = refusal.reason();
+                json!({
+                    "ground": refusal.as_str(),
+                    "reason": reason,
+                    "reason_code": reason_code(Some(reason)),
+                })
+            })
+            .collect::<Vec<_>>();
+        let Some(unit) = self.units.last_mut() else {
+            return;
+        };
+        unit["enumeration"] = json!({
+            "completeness": if inventory.is_complete() { "established" } else { "refused" },
+            "refusals": refusals,
+            "absent_from_raw_scan": inventory.absent_from_raw_scan(),
+            "unanalyzable": unanalyzable,
+        });
     }
 
     /// Attach the exact configuration inventory to the immediately preceding
@@ -179,6 +229,7 @@ impl AuditReport {
             "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
             "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
             "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
+            "enumeration_meaning": "the enumerated main-source definition denominator (E01-F1): `absent_from_raw_scan` names main-source definitions the historical raw token scan did not see — produced by macro expansion, or lost by that scan for another reason — each an ordinary definition in the preprocessed unit that the unmodified analyzer reads; `unanalyzable` definitions are counted but not read by the resource analyzer and carry their own classified Unknown row; `completeness: refused` means the definition set itself could not be established on the named ground, so no whole-unit Safe claim is published over it",
             "reason_code_meaning": "closed reason-code vocabulary of QCORE_SPEC_r0_3 L21.1 classifying the sibling reason; null asserts no category, either because there is no reason or because the closed vocabulary does not recognise it; `environment-unavailable` says nothing about the analysed source and never contributes to a provisional Unsafe",
             "diagnostic_counts": self.diagnostic_counts, "units": self.units,
         });

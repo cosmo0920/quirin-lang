@@ -20,7 +20,7 @@ use qcore_c_gateway::boolean_source::{
 };
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, UnrestrictedLegacyResult, analyze_unrestricted_c11,
-    legacy_c_source_functions,
+    enumerate_source_definitions, legacy_c_source_functions,
 };
 use qcore_contract::profile_loader::load_profile_directory;
 use qcore_schemas::chunk_summary::{
@@ -195,11 +195,18 @@ fn assert_inventory(
         })
         .collect();
     assert_eq!(observed, hand, "{label}: derived inventory");
-    let enumerated: BTreeSet<String> = legacy_c_source_functions(source).into_iter().collect();
+    // Unit E01-F1: the denominator this compares against is the *enumerated*
+    // definition set, not the raw token scan. The enumeration is a superset of
+    // that scan, so this assertion is strictly tighter than the one it replaces.
+    let enumerated: BTreeSet<String> = enumerate_source_definitions(&unit(source))
+        .definitions()
+        .iter()
+        .cloned()
+        .collect();
     let accounted: BTreeSet<String> = derived.keys().cloned().collect();
     assert_eq!(
         accounted, enumerated,
-        "{label}: every enumerated raw definition must stay in the inventory"
+        "{label}: every enumerated definition must stay in the inventory"
     );
     derived
 }
@@ -433,37 +440,76 @@ fn scope_exclusions_leave_definitions_outside_the_derived_inventory() {
     );
     std::fs::remove_dir_all(&directory).unwrap();
 
-    // (b) Residual boundary, pinned rather than repaired: the enumeration is a
-    // raw token scan of the unpreprocessed main source, so a definition that
-    // only exists after macro expansion, and a K&R-style definition, are absent
-    // from the inventory entirely — no obligation and no residual Unknown row.
-    // `docs/reports/remaining-e01/README.md` records this as unit E01-F1.
+    // (b) Boundary E01-B1, *repaired* by unit E01-F1
+    // (`docs/reports/remaining-e01-f1/README.md`). This block previously pinned
+    // the gap: a definition that exists only after macro expansion, and a K&R
+    // definition, were absent from the inventory entirely — no obligation and
+    // no residual Unknown row. Both are now counted.
+    //
+    // The pin is deliberately updated in place rather than deleted, and its
+    // load-bearing half is kept: `legacy_c_source_functions` is *still* the raw
+    // token scan and still misses both shapes. That function is the
+    // enumeration's monotonicity base, not the audited denominator; the
+    // denominator is `enumerate_source_definitions`, and that is what the
+    // assertions moved to.
     let macro_defined = format!(
         "{LAYOUT}\n#define DEFN(n) int n(struct cio_chunk *p) {{ return p->lock; }}\nDEFN(run)\n"
     );
     assert!(legacy_c_source_functions(&macro_defined).is_empty());
-    assert!(inventory(&unit(&macro_defined), &[]).is_empty());
+    assert_eq!(
+        enumerate_source_definitions(&unit(&macro_defined)).definitions(),
+        ["run"]
+    );
+    // A macro-expanded definition is an ordinary definition once expanded, so
+    // the *unmodified* importer reaches it and it carries a real row.
+    assert_eq!(
+        inventory(&unit(&macro_defined), &[])
+            .keys()
+            .cloned()
+            .collect::<Vec<_>>(),
+        ["run"],
+        "a macro-expanded definition must carry a row, not vanish"
+    );
+
     let knr = format!("{LAYOUT} int run(p) struct cio_chunk *p; {{ return p->lock; }}");
     assert!(legacy_c_source_functions(&knr).is_empty());
-    assert!(inventory(&unit(&knr), &[]).is_empty());
+    let knr_inventory = enumerate_source_definitions(&unit(&knr));
+    assert_eq!(knr_inventory.definitions(), ["run"]);
+    // Counted, and counted as unread: this unit completes the denominator, it
+    // does not teach any analysis to read a K&R body.
+    assert_eq!(knr_inventory.unanalyzable().len(), 1);
+    assert_eq!(knr_inventory.unanalyzable()[0].function(), "run");
+    assert!(!knr_inventory.supports_unit_safe());
+    // It carries a row. Which row is capability-specific: `unanalyzable` names
+    // the shapes the *resource* analyzer's body finder cannot read, and this
+    // Boolean importer reads Clang's typed AST instead, so it may well derive a
+    // contract here. What E01-B1 forbade — no row at all — is what is repaired.
+    let knr_row = inventory(&unit(&knr), &[]);
+    assert_eq!(knr_row.keys().cloned().collect::<Vec<_>>(), ["run"]);
 
-    // The exclusion is fail-closed for callers: the shared enumeration also
-    // selects the resource route's analyzed set, and a call into an excluded
-    // definition leaves the caller `Unknown` instead of assuming an effect.
+    // The caller direction is unchanged, and is now demonstrated on a
+    // definition that is *in* the denominator rather than absent from it: the
+    // enumeration selects the resource route's analyzed set, and a callee whose
+    // own effects are unresolved leaves its caller `Unknown` either way.
     let program = "void sink(int *);\n\
                    #define DEFN(n) void n(void) { int *p = 0; sink(p); }\n\
                    DEFN(hidden)\n\
                    int main(void) { hidden(); return 0; }\n";
-    let excluded = C11TranslationUnit {
+    let selected = C11TranslationUnit {
         source: program,
         function_scope: LegacyFunctionScope::MainSourceDefinitions,
         ..Default::default()
     };
     assert_eq!(legacy_c_source_functions(program), ["main"]);
-    let result = analyze_unrestricted_c11(&excluded, "main", &Default::default()).unwrap();
+    assert_eq!(
+        enumerate_source_definitions(&selected).definitions(),
+        ["hidden", "main"],
+        "the previously excluded definition is now in the denominator"
+    );
+    let result = analyze_unrestricted_c11(&selected, "main", &Default::default()).unwrap();
     assert!(
         matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
-        "a call into an excluded definition must stay Unknown"
+        "a call into a definition with unresolved effects must stay Unknown"
     );
 }
 

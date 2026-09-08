@@ -160,13 +160,15 @@ pub use inference::{
     check_inference_certificate, infer_principal,
 };
 pub use legacy_c::{
-    AnalysisStatus, C11TranslationUnit, CCompilerDialect, ContractTrust, LegacyCError, LegacyCfg,
-    LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope,
-    LegacyFunctionSummary, LegacyInstruction, LegacyNodeId, LegacyProgramSummary,
-    LegacySafetyCertificate, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
-    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord, UnrestrictedLegacyResult,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, ContractTrust, EnumerationRefusal,
+    LegacyCError, LegacyCfg, LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind,
+    LegacyFunctionScope, LegacyFunctionSummary, LegacyInstruction, LegacyNodeId,
+    LegacyProgramSummary, LegacySafetyCertificate, ResourceApiKind, ResourceContracts,
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
+    SourceDefinitionInventory, UnanalyzableDefinition, UnanalyzableForm, UnrestrictedLegacyResult,
     analyze_legacy_c, analyze_legacy_c_translation_unit, analyze_legacy_c11,
-    analyze_unrestricted_c11, check_legacy_safety_certificate, legacy_c_source_functions,
+    analyze_unrestricted_c11, analyze_unrestricted_c11_with_inventory,
+    check_legacy_safety_certificate, enumerate_source_definitions, legacy_c_source_functions,
     validate_unrestricted_c11,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};

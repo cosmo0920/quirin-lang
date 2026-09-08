@@ -25,7 +25,7 @@ use qcore_compiler::verifier_plugins::libevent::monkey_source::{
 };
 use qcore_compiler::{
     C11TranslationUnit, LegacyFunctionScope, ResourceContracts, classify_libevent_symbol,
-    derive_library_summary_profile, legacy_c_source_functions, verify_pinned_libevent_source,
+    derive_library_summary_profile, enumerate_source_definitions, verify_pinned_libevent_source,
 };
 
 /// W2: the pinned revision, the clean-path list and the audited-file
@@ -587,7 +587,6 @@ fn audit_library(
     for entry in entries {
         let source = fs::read_to_string(&entry.file)
             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
-        let source_functions = legacy_c_source_functions(&source);
         let file = entry
             .file
             .strip_prefix(source_root)
@@ -603,6 +602,10 @@ fn audit_library(
             function_scope: LegacyFunctionScope::MainSourceDefinitions,
             input: options.input,
         };
+        // Unit E01-F1: the pinned route reports the same enumerated
+        // denominator the configured driver does, so macro-expanded and K&R
+        // definitions are counted here too.
+        let inventory = enumerate_source_definitions(&unit);
         if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
             let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
             for function in &evidence {
@@ -830,7 +833,7 @@ fn audit_library(
             library,
             &file,
             &unit,
-            &source_functions,
+            &inventory,
             contracts,
             report,
             &mut counts,

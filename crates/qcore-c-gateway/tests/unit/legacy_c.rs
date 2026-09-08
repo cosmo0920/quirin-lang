@@ -736,8 +736,22 @@ fn unrestricted_gateway_requires_an_explicit_gnu_dialect() {
     }
 }
 
+/// Deliberate pin update, unit **E01-F1**
+/// (`docs/reports/remaining-e01-f1/README.md`).
+///
+/// This test used to assert that a definition produced by expanding a macro
+/// *in the main source* was outside `MainSourceDefinitions` scope, and that
+/// `subject` was therefore `Safe`. That was boundary **E01-B1** enshrined as a
+/// feature: the expansion happens at a main-source line, so the definition is a
+/// main-source definition, and excluding it bought a `Safe` verdict for the
+/// rest of the unit. It is now enumerated, analysed by the unmodified analyzer,
+/// and — being unmodeled — leaves the unit `Unknown`.
+///
+/// The property the test was really protecting is boundary **E01-B2**, header
+/// scope, and that is kept: the third leg moves the same helper into a real
+/// header, where the exclusion is genuine and `subject` is `Safe` again.
 #[test]
-fn main_source_scope_excludes_macro_expanded_header_bodies() {
+fn main_source_scope_excludes_header_bodies_but_not_main_source_expansions() {
     if !crate::test_support::clang_available() {
         return;
     }
@@ -769,14 +783,57 @@ void subject(void) { void *p = q_alloc(); q_free(p); }\n";
         function_scope: LegacyFunctionScope::MainSourceDefinitions,
         ..C11TranslationUnit::default()
     };
+    // The raw token scan still misses it — that scan is the enumeration's
+    // monotonicity base, not the audited denominator.
+    assert_eq!(legacy_c_source_functions(source), vec!["subject"]);
+    let inventory = enumerate_source_definitions(&source_only);
+    assert_eq!(inventory.definitions(), ["header_helper", "subject"]);
+    assert_eq!(inventory.absent_from_raw_scan(), ["header_helper"]);
     match analyze_unrestricted_c11(&source_only, "subject", &contracts()) {
+        Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => {
+            let partial = partial.expect("projection should be available");
+            assert_eq!(
+                partial.functions["header_helper"].status,
+                AnalysisStatus::Unknown
+            );
+        }
+        Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+        other => panic!("a main-source expansion must not be excluded: {other:?}"),
+    }
+
+    // Boundary E01-B2, unchanged: a definition spelled in a real header is out
+    // of the audited scope, and the main source still proves.
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-e01f1-scope-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    std::fs::create_dir_all(&directory).unwrap();
+    std::fs::write(
+        directory.join("e01f1_scope.h"),
+        "static void header_helper(void) { struct Local { int value; }; }\n",
+    )
+    .unwrap();
+    let header_source = "\
+#include \"e01f1_scope.h\"\n\
+void *q_alloc(void);\n\
+void q_free(void *);\n\
+void subject(void) { void *p = q_alloc(); q_free(p); }\n";
+    let with_header = C11TranslationUnit {
+        source: header_source,
+        include_paths: vec![directory.to_string_lossy().into_owned()],
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        ..C11TranslationUnit::default()
+    };
+    match analyze_unrestricted_c11(&with_header, "subject", &contracts()) {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
             assert_eq!(certificate.checked_functions, vec!["subject"]);
             check_legacy_safety_certificate(&certificate).unwrap();
         }
         Err(LegacyCError::ProductionParserUnavailable(_)) => {}
-        other => panic!("source-only proof was blocked by expanded helper: {other:?}"),
+        other => panic!("source-only proof was blocked by a header body: {other:?}"),
     }
+    std::fs::remove_dir_all(&directory).unwrap();
 }
 
 #[test]
