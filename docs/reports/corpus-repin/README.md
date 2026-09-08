@@ -1,5 +1,14 @@
 # CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts
 
+> **Superseded as the current baseline, 2026-09-09:** card O04-ARMS re-measured
+> the corpus through this same pinned route before and after its analyzer
+> change; the *before* run reproduces `artifacts/` here byte-identically for
+> `diagnostics.json`/`chunk-contracts.json`, and the *after* run — headline
+> counts unchanged, no verdict moves, diagnostics moved in 4 units in the
+> fail-closed direction — is the current baseline at
+> `docs/reports/remaining-o04-arms/artifacts/`, with the complete diffs
+> archived beside it. This directory remains the wave-6 measurement record.
+
 **Date:** 2026-09-08. **Base:** `a63fbae` (*Update spec §L21.1 prose: the
 reason-code vocabulary is implemented*). **Card type:** measurement, run
 deliberately as a **pin-moving** card under hard invariants 3 (parity before
