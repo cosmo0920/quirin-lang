@@ -231,6 +231,16 @@ imports the same C bodies through both routes.
 
 ## 5. Mutation and refusal matrices
 
+Measured totals, in the E02 style, counted from the test sources rather than
+estimated: **25 forged readings** driven through the two core checkers
+(12 unlink + 13 destructor, each asserted to actually differ from the accepted
+reading before it is submitted), **24 further core-side refusals**
+(identity, binding, false contracts, derivation, import, request admission),
+**34 provider-side refusals** over the real projected bytes, and **9
+end-to-end Unknown outcomes** through the real built package — 92 rows, all
+refused. No mutation was admitted, so no gate was changed and no repair was
+required by the matrix itself.
+
 ### Core-side (`crates/qcore-verification/tests/teardown_source.rs`, 7 tests)
 
 **Unlink, twelve forged readings, each refused against the core's own
@@ -288,13 +298,13 @@ importer no longer emits.
 
 - Accepted readings: both alias classes with their exact writes and helper
   counts; all nine realizable nullable states with the exact release order.
-- **Unlink refusals (17):** wrong schema version; empty function; entry equal to
+- **Unlink refusals (18):** wrong schema version; empty function; entry equal to
   helper; mismatched revisions; wrong entry signature; wrong helper signature;
   empty node type; an empty body; a missing trailing return; a second entry
   path; an oversized body; a foreign callee; swapped call arguments; a dropped
   call argument; a non-void call result; a read of a cell with no supplied live
   binding; a guard the family does not model; a second helper body.
-- **Destructor refusals (12):** wrong schema version; wrong signature; empty
+- **Destructor refusals (16):** wrong schema version; wrong signature; empty
   root type; empty inventory; a duplicated field; an empty field name; an
   oversized inventory; a dropped declared field (the freeing path then reads an
   unmodeled field); releasing the parent while a declared child is live; a
