@@ -165,6 +165,18 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              construct: __FILE__",
             Coverage,
         ),
+        // -- qcore-c-gateway: typed_c_ast ------------------------------------
+        ("Clang AST unavailable: no such file", Env),
+        ("Clang stdin unavailable", Env),
+        ("Clang input writer panicked", Env),
+        ("Clang input failed: broken pipe", Env),
+        ("Clang AST failed: signal 9", Env),
+        ("unsupported Clang AST JSON: trailing characters", Env),
+        ("Clang AST rejected source: expected ';'", Syntax),
+        (
+            "expected one selected definition after preprocessing, found 0",
+            Coverage,
+        ),
         // -- qcore-c-gateway: boolean_source ---------------------------------
         (
             "outside single borrowed chunk / int-or-void-result source profile",
@@ -173,6 +185,70 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
         ("helper signature or parameter binding mismatch", Syntax),
         ("unmodeled statement DeclStmt", Syntax),
         ("unmodeled expression CallExpr", Syntax),
+        ("unmodeled function parameters or attributes", Syntax),
+        ("unmodeled function definition", Syntax),
+        ("unmodeled helper parameters or attributes", Syntax),
+        ("unmodeled helper definition", Syntax),
+        ("unmodeled helper callee", Syntax),
+        ("expected one ordinary declared record", Syntax),
+        ("expected one complete chunk record definition", Syntax),
+        ("expected one direct lifecycle field", Syntax),
+        (
+            "chunk dependency layout has unmodeled attributes or fields",
+            Syntax,
+        ),
+        (
+            "lifecycle field must be an ordinary non-volatile int, not a bitfield",
+            Syntax,
+        ),
+        (
+            "field assignment leaves the Boolean lifecycle domain",
+            Syntax,
+        ),
+        ("ambiguous Boolean field models for one record ABI", Syntax),
+        ("unsupported Boolean field operation mapping", Syntax),
+        ("unsupported Boolean field result ABI", Syntax),
+        ("function has no modeled chunk field access", Syntax),
+        (
+            "source path falls through without an explicit return",
+            Syntax,
+        ),
+        (
+            "helper record has no selected declared Boolean model",
+            Syntax,
+        ),
+        ("helper record is not a selected Boolean model", Syntax),
+        ("helper record differs from caller model record", Syntax),
+        (
+            "helper requires one declared record pointer and void result",
+            Syntax,
+        ),
+        ("helper requires direct constant field assignments", Syntax),
+        ("helper requires a direct assignment", Syntax),
+        ("helper requires direct borrowed parameter", Syntax),
+        (
+            "helper field is not bound to its borrowed parameter",
+            Syntax,
+        ),
+        ("helper assignment is not a constant", Syntax),
+        ("helper has no checked field writes", Syntax),
+        ("helper writes a declared Boolean model field", Syntax),
+        (
+            "helper declaration, structural layout, or uniqueness mismatch",
+            Syntax,
+        ),
+        // Identity, revision and analyser-bound refusals from the same importer:
+        // these must NOT reach a source-subject rule.
+        ("Clang identity changed during Boolean source import", Env),
+        (
+            "ChunkIO source revision does not match the pinned revision",
+            Stale,
+        ),
+        ("chunk helper source revision mismatch", Stale),
+        ("helper source/build/profile selection mismatch", Stale),
+        ("source expression exceeds the import depth limit", Coverage),
+        ("source statement exceeds the import depth limit", Coverage),
+        ("duplicate helper identity", Coverage),
         // -- qcore-audit: compile_db -----------------------------------------
         ("empty compiler executable", Env),
         ("unsupported compilation dialect `c++17`", Env),

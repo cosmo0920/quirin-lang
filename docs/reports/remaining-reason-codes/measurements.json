@@ -1,0 +1,390 @@
+{
+  "artifacts": {
+    "chunkio_core": {
+      "path": "docs/reports/remaining-reason-codes/audit/chunkio-core-audit.json.gz",
+      "sha256_gz": "014af61d8d1a7648b00458190d3816f8da0b0c9253ea15a7149c94646e2bc432",
+      "sha256_uncompressed": "a686fb6f9acb9c2f688191abd685b2e9f232ed73e448406ff72f1dadb16f332c"
+    },
+    "chunkio_core_assumptions": {
+      "path": "docs/reports/remaining-reason-codes/audit/chunkio-core-audit.assumptions.json",
+      "sha256": "f16499793b7cd94c95b28116e273de3ce7220d8d6e77c20fae47f7d37c032527"
+    },
+    "cmetrics": {
+      "path": "docs/reports/remaining-reason-codes/audit/cmetrics-audit.json",
+      "sha256": "648d755c0f8d7dcac04ca79ed742efc03ea5acbf73504459ec3b7739748eee7d"
+    },
+    "cmetrics_assumptions": {
+      "path": "docs/reports/remaining-reason-codes/audit/cmetrics-audit.assumptions.json",
+      "sha256": "643b747444fca01de67f84d331e73e0a4da08992b4dc8a11e434eb9569bea87a"
+    },
+    "synthetic_demo": {
+      "path": "docs/reports/remaining-reason-codes/audit/synthetic-demo-report.json",
+      "sha256": "7543a958004ddd55c60e7234d76f1abb0940c0a4a4774100d43328bacb01cbee"
+    }
+  },
+  "audit_digests": {
+    "chunkio-core-audit.json": {
+      "after_sha256": "a686fb6f9acb9c2f688191abd685b2e9f232ed73e448406ff72f1dadb16f332c",
+      "before_sha256": "2b3a48a15ebc623ade2ddfb01677c97c71e881ed085b75e0ab66c8d38ab3f57b"
+    },
+    "cmetrics-audit.json": {
+      "after_sha256": "648d755c0f8d7dcac04ca79ed742efc03ea5acbf73504459ec3b7739748eee7d",
+      "before_sha256": "61c5637c8218d156617a7af3cf929a8bb2fc415a6b5cf00ca179ab80293b74a9"
+    },
+    "synthetic-demo report.json": {
+      "after_sha256": "7543a958004ddd55c60e7234d76f1abb0940c0a4a4774100d43328bacb01cbee",
+      "archived_sha256": "154eaa5eb7182cd3022772d223838e947692d3ed54782b2bbf91388dd2557093"
+    }
+  },
+  "base_commit": "cf2e5ee",
+  "card": "REASON-CODES",
+  "manifest_parity": {
+    "qcore.chunkio": {
+      "changed_keys": [
+        "package_digest"
+      ],
+      "detail": {
+        "package_digest": {
+          "after": "743cd2c4064c84148cd59b8ae862cd19864d5e40b649c776d4a6aebc610f9ded",
+          "before": "5f38cf90e09b718ff9b788e2511e84657fc311c87e80832bec418188b4ae323f"
+        }
+      },
+      "identical_keys": [
+        "capabilities",
+        "certificate_checker",
+        "entrypoint",
+        "evidence_versions",
+        "filesystem_inputs",
+        "lean_theorem_family",
+        "limits",
+        "network_access",
+        "package_version",
+        "plugin_id",
+        "protocol_versions",
+        "required_foreign_summaries",
+        "required_observation_hooks",
+        "targets",
+        "trust_class"
+      ]
+    },
+    "qcore.cmetrics": {
+      "changed_keys": [
+        "package_digest"
+      ],
+      "detail": {
+        "package_digest": {
+          "after": "ba3110b61142abfcd8a629d1b6d2ede4e9de48aa2dd0f6e08382d6eb62604e90",
+          "before": "5f77c31d853e450667332b0898f546e72d5204c9c38a0dcbf1ccfa2e41822e44"
+        }
+      },
+      "identical_keys": [
+        "capabilities",
+        "certificate_checker",
+        "entrypoint",
+        "evidence_versions",
+        "filesystem_inputs",
+        "lean_theorem_family",
+        "limits",
+        "network_access",
+        "package_version",
+        "plugin_id",
+        "protocol_versions",
+        "required_foreign_summaries",
+        "required_observation_hooks",
+        "targets",
+        "trust_class"
+      ]
+    },
+    "qcore.ctraces": {
+      "changed_keys": [
+        "package_digest"
+      ],
+      "detail": {
+        "package_digest": {
+          "after": "487cf30e89c3954ad55f529501def748422ea174ad85843008dcd04d8eb0dc44",
+          "before": "53effe7e0e7b61c6eb98b81df4071d029b2edee69e995617d807210b45443a3e"
+        }
+      },
+      "identical_keys": [
+        "capabilities",
+        "certificate_checker",
+        "entrypoint",
+        "evidence_versions",
+        "filesystem_inputs",
+        "lean_theorem_family",
+        "limits",
+        "network_access",
+        "package_version",
+        "plugin_id",
+        "protocol_versions",
+        "required_foreign_summaries",
+        "required_observation_hooks",
+        "targets",
+        "trust_class"
+      ]
+    },
+    "qcore.libevent": {
+      "changed_keys": [
+        "package_digest"
+      ],
+      "detail": {
+        "package_digest": {
+          "after": "df41b61e9019143347de32c5d9680f11f5132610c25f4ed0b13884a3bfa4c872",
+          "before": "5ed8b5bd97f47cf0b0588bf4be65014eae368bd43e2ca9d1a01bccf99726bd38"
+        }
+      },
+      "identical_keys": [
+        "capabilities",
+        "certificate_checker",
+        "entrypoint",
+        "evidence_versions",
+        "filesystem_inputs",
+        "lean_theorem_family",
+        "limits",
+        "network_access",
+        "package_version",
+        "plugin_id",
+        "protocol_versions",
+        "required_foreign_summaries",
+        "required_observation_hooks",
+        "targets",
+        "trust_class"
+      ]
+    },
+    "qcore.librdkafka": {
+      "changed_keys": [
+        "package_digest"
+      ],
+      "detail": {
+        "package_digest": {
+          "after": "1d3bebed644de69f23e72f31614588ea774fcd03e263034c1b3e3ef5143e231b",
+          "before": "40efbb05fc5f342c64df377065126b2fa00184d8e225b1f115571e308c21f724"
+        }
+      },
+      "identical_keys": [
+        "capabilities",
+        "certificate_checker",
+        "entrypoint",
+        "evidence_versions",
+        "filesystem_inputs",
+        "lean_theorem_family",
+        "limits",
+        "network_access",
+        "package_version",
+        "plugin_id",
+        "protocol_versions",
+        "required_foreign_summaries",
+        "required_observation_hooks",
+        "targets",
+        "trust_class"
+      ]
+    }
+  },
+  "package_parity": {
+    "after": {
+      "artifacts": [
+        {
+          "archive_sha256": "59e16e8f50e30dfb0c1b1f79da4f856f08e03eeaa76d1079a87cca0425f8466e",
+          "executable_sha256": "743cd2c4064c84148cd59b8ae862cd19864d5e40b649c776d4a6aebc610f9ded",
+          "manifest_sha256": "64f45dbe672ff882ba6d1525b888a854bd8d88d3c7ed57780ff1dfb632c556d7",
+          "plugin_id": "qcore.chunkio"
+        },
+        {
+          "archive_sha256": "5074bbcb01eeb9f5cb57d5cea23ed53019895ee50ebec573a6d3b82b4a2d0c0c",
+          "executable_sha256": "ba3110b61142abfcd8a629d1b6d2ede4e9de48aa2dd0f6e08382d6eb62604e90",
+          "manifest_sha256": "da6069bd2385823e694e4dfee8eff79f2ea021a524dcfc1d930a447a1a9e4a59",
+          "plugin_id": "qcore.cmetrics"
+        },
+        {
+          "archive_sha256": "33c6d432c577ef33e3186b0a9bd5da9de358d5c3086256b0457fef81f278de9a",
+          "executable_sha256": "487cf30e89c3954ad55f529501def748422ea174ad85843008dcd04d8eb0dc44",
+          "manifest_sha256": "0f7946dea9ad3892272ee6872176add22b0bc2b3c153817620ff9b88f9e4fc0b",
+          "plugin_id": "qcore.ctraces"
+        },
+        {
+          "archive_sha256": "c8c3b68a40bd7ad9eccb45c2a5dc38817be08fc76ffffa7ea03fcf194e8307d2",
+          "executable_sha256": "df41b61e9019143347de32c5d9680f11f5132610c25f4ed0b13884a3bfa4c872",
+          "manifest_sha256": "6fd3a3e8efc95272ef6c5118c663d5239700b941fdfeeaab228109a926ed48ac",
+          "plugin_id": "qcore.libevent"
+        },
+        {
+          "archive_sha256": "6e9e5ca9086ee7e1fc4afa1928fd0f504a69c56618c37a4ed61001aaddd75128",
+          "executable_sha256": "1d3bebed644de69f23e72f31614588ea774fcd03e263034c1b3e3ef5143e231b",
+          "manifest_sha256": "f3abe6f55f0dd43e2b8831ea90ee54051c5800ad9db5af22ad81e308dfd0dfae",
+          "plugin_id": "qcore.librdkafka"
+        }
+      ],
+      "evidence_versions": [
+        1,
+        2
+      ],
+      "lock_sha256": "d2389f0faa15c46d458e4acdf03d813765bd77a037a4e7fac61f92d5bb5fec37",
+      "protocol_version": 1,
+      "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+      "schema_version": 1,
+      "semantic_profile": "per_package_declared_profiles"
+    },
+    "before": {
+      "artifacts": [
+        {
+          "archive_sha256": "0746165d9350e38d1d508d4227f1fa66fa4bf42a9e070d00c874972610fe9d28",
+          "executable_sha256": "5f38cf90e09b718ff9b788e2511e84657fc311c87e80832bec418188b4ae323f",
+          "manifest_sha256": "f3b0f6500023e592b0859cf3dbb11d6a96377d53a7081174958ab95870484a7d",
+          "plugin_id": "qcore.chunkio"
+        },
+        {
+          "archive_sha256": "662270c2f4c4132043971a4cdf91e5889cd405b73c4df0f8aa571eabfef54afc",
+          "executable_sha256": "5f77c31d853e450667332b0898f546e72d5204c9c38a0dcbf1ccfa2e41822e44",
+          "manifest_sha256": "59bf26771c1e65a8a85629848f9899a2053b822926fba55913f5ebcf154ebcc4",
+          "plugin_id": "qcore.cmetrics"
+        },
+        {
+          "archive_sha256": "2432c8b57819093e5d7fb4c6e633563308d67ba1e5c8cc4ca224a8fb7aed198d",
+          "executable_sha256": "53effe7e0e7b61c6eb98b81df4071d029b2edee69e995617d807210b45443a3e",
+          "manifest_sha256": "8b90dd7f92c43a81b067eac91dc57d559a07574ec645e618629e3ada17001b25",
+          "plugin_id": "qcore.ctraces"
+        },
+        {
+          "archive_sha256": "51c93a6bac9fb8af328fb9966f2605b809e48039aa59bcf0125107e87e1974d4",
+          "executable_sha256": "5ed8b5bd97f47cf0b0588bf4be65014eae368bd43e2ca9d1a01bccf99726bd38",
+          "manifest_sha256": "3fa60ace05e127d12b241c8f46bcc217349aa575ca5867bf8435d2f8ce1650c2",
+          "plugin_id": "qcore.libevent"
+        },
+        {
+          "archive_sha256": "d9ff62fd09871f67ee91eae25b600a742f6d65bb379058a518bd5b86b235095c",
+          "executable_sha256": "40efbb05fc5f342c64df377065126b2fa00184d8e225b1f115571e308c21f724",
+          "manifest_sha256": "e7021f1cb11cc9aeaca2e1ca04f720825d3d0c2c5ecc7fe449bb5d58e655083f",
+          "plugin_id": "qcore.librdkafka"
+        }
+      ],
+      "evidence_versions": [
+        1,
+        2
+      ],
+      "lock_sha256": "c15d6d27386aa9c3606580dae4fc17cc84adf250cd11d1bdff18d72e42448f79",
+      "protocol_version": 1,
+      "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+      "schema_version": 1,
+      "semantic_profile": "per_package_declared_profiles"
+    },
+    "moved": [
+      {
+        "after": "59e16e8f50e30dfb0c1b1f79da4f856f08e03eeaa76d1079a87cca0425f8466e",
+        "before": "0746165d9350e38d1d508d4227f1fa66fa4bf42a9e070d00c874972610fe9d28",
+        "field": "archive_sha256",
+        "plugin": "qcore.chunkio"
+      },
+      {
+        "after": "743cd2c4064c84148cd59b8ae862cd19864d5e40b649c776d4a6aebc610f9ded",
+        "before": "5f38cf90e09b718ff9b788e2511e84657fc311c87e80832bec418188b4ae323f",
+        "field": "executable_sha256",
+        "plugin": "qcore.chunkio"
+      },
+      {
+        "after": "64f45dbe672ff882ba6d1525b888a854bd8d88d3c7ed57780ff1dfb632c556d7",
+        "before": "f3b0f6500023e592b0859cf3dbb11d6a96377d53a7081174958ab95870484a7d",
+        "field": "manifest_sha256",
+        "plugin": "qcore.chunkio"
+      },
+      {
+        "after": "5074bbcb01eeb9f5cb57d5cea23ed53019895ee50ebec573a6d3b82b4a2d0c0c",
+        "before": "662270c2f4c4132043971a4cdf91e5889cd405b73c4df0f8aa571eabfef54afc",
+        "field": "archive_sha256",
+        "plugin": "qcore.cmetrics"
+      },
+      {
+        "after": "ba3110b61142abfcd8a629d1b6d2ede4e9de48aa2dd0f6e08382d6eb62604e90",
+        "before": "5f77c31d853e450667332b0898f546e72d5204c9c38a0dcbf1ccfa2e41822e44",
+        "field": "executable_sha256",
+        "plugin": "qcore.cmetrics"
+      },
+      {
+        "after": "da6069bd2385823e694e4dfee8eff79f2ea021a524dcfc1d930a447a1a9e4a59",
+        "before": "59bf26771c1e65a8a85629848f9899a2053b822926fba55913f5ebcf154ebcc4",
+        "field": "manifest_sha256",
+        "plugin": "qcore.cmetrics"
+      },
+      {
+        "after": "33c6d432c577ef33e3186b0a9bd5da9de358d5c3086256b0457fef81f278de9a",
+        "before": "2432c8b57819093e5d7fb4c6e633563308d67ba1e5c8cc4ca224a8fb7aed198d",
+        "field": "archive_sha256",
+        "plugin": "qcore.ctraces"
+      },
+      {
+        "after": "487cf30e89c3954ad55f529501def748422ea174ad85843008dcd04d8eb0dc44",
+        "before": "53effe7e0e7b61c6eb98b81df4071d029b2edee69e995617d807210b45443a3e",
+        "field": "executable_sha256",
+        "plugin": "qcore.ctraces"
+      },
+      {
+        "after": "0f7946dea9ad3892272ee6872176add22b0bc2b3c153817620ff9b88f9e4fc0b",
+        "before": "8b90dd7f92c43a81b067eac91dc57d559a07574ec645e618629e3ada17001b25",
+        "field": "manifest_sha256",
+        "plugin": "qcore.ctraces"
+      },
+      {
+        "after": "c8c3b68a40bd7ad9eccb45c2a5dc38817be08fc76ffffa7ea03fcf194e8307d2",
+        "before": "51c93a6bac9fb8af328fb9966f2605b809e48039aa59bcf0125107e87e1974d4",
+        "field": "archive_sha256",
+        "plugin": "qcore.libevent"
+      },
+      {
+        "after": "df41b61e9019143347de32c5d9680f11f5132610c25f4ed0b13884a3bfa4c872",
+        "before": "5ed8b5bd97f47cf0b0588bf4be65014eae368bd43e2ca9d1a01bccf99726bd38",
+        "field": "executable_sha256",
+        "plugin": "qcore.libevent"
+      },
+      {
+        "after": "6fd3a3e8efc95272ef6c5118c663d5239700b941fdfeeaab228109a926ed48ac",
+        "before": "3fa60ace05e127d12b241c8f46bcc217349aa575ca5867bf8435d2f8ce1650c2",
+        "field": "manifest_sha256",
+        "plugin": "qcore.libevent"
+      },
+      {
+        "after": "6e9e5ca9086ee7e1fc4afa1928fd0f504a69c56618c37a4ed61001aaddd75128",
+        "before": "d9ff62fd09871f67ee91eae25b600a742f6d65bb379058a518bd5b86b235095c",
+        "field": "archive_sha256",
+        "plugin": "qcore.librdkafka"
+      },
+      {
+        "after": "1d3bebed644de69f23e72f31614588ea774fcd03e263034c1b3e3ef5143e231b",
+        "before": "40efbb05fc5f342c64df377065126b2fa00184d8e225b1f115571e308c21f724",
+        "field": "executable_sha256",
+        "plugin": "qcore.librdkafka"
+      },
+      {
+        "after": "f3abe6f55f0dd43e2b8831ea90ee54051c5800ad9db5af22ad81e308dfd0dfae",
+        "before": "e7021f1cb11cc9aeaca2e1ca04f720825d3d0c2c5ecc7fe449bb5d58e655083f",
+        "field": "manifest_sha256",
+        "plugin": "qcore.librdkafka"
+      }
+    ],
+    "unmoved": [
+      {
+        "field": "plugin_id",
+        "plugin": "qcore.chunkio",
+        "value": "qcore.chunkio"
+      },
+      {
+        "field": "plugin_id",
+        "plugin": "qcore.cmetrics",
+        "value": "qcore.cmetrics"
+      },
+      {
+        "field": "plugin_id",
+        "plugin": "qcore.ctraces",
+        "value": "qcore.ctraces"
+      },
+      {
+        "field": "plugin_id",
+        "plugin": "qcore.libevent",
+        "value": "qcore.libevent"
+      },
+      {
+        "field": "plugin_id",
+        "plugin": "qcore.librdkafka",
+        "value": "qcore.librdkafka"
+      }
+    ]
+  }
+}

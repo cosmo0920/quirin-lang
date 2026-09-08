@@ -286,9 +286,41 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "production C parser is unavailable",
         ReasonCategory::EnvironmentUnavailable,
     ),
+    // `qcore_c_gateway::typed_c_ast` could not run or read Clang at all.
+    (
+        "Clang AST unavailable",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    (
+        "Clang stdin unavailable",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    (
+        "Clang input writer panicked",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    ("Clang input failed", ReasonCategory::EnvironmentUnavailable),
+    ("Clang AST failed", ReasonCategory::EnvironmentUnavailable),
+    (
+        "unsupported Clang AST JSON",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    (
+        "Clang identity changed during Boolean source import",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
     // ---- stale evidence: an identity mismatch, never a source defect. ----
     (
         "does not match its pinned bytes",
+        ReasonCategory::StaleEvidence,
+    ),
+    (
+        "does not match the pinned revision",
+        ReasonCategory::StaleEvidence,
+    ),
+    ("source revision mismatch", ReasonCategory::StaleEvidence),
+    (
+        "source/build/profile selection mismatch",
         ReasonCategory::StaleEvidence,
     ),
     (
@@ -349,6 +381,18 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         ReasonCategory::IncompleteObligationCoverage,
     ),
     (
+        "expected one selected definition after preprocessing",
+        ReasonCategory::IncompleteObligationCoverage,
+    ),
+    (
+        "exceeds the import depth limit",
+        ReasonCategory::IncompleteObligationCoverage,
+    ),
+    (
+        "duplicate helper identity",
+        ReasonCategory::IncompleteObligationCoverage,
+    ),
+    (
         "was not found",
         ReasonCategory::IncompleteObligationCoverage,
     ),
@@ -404,6 +448,110 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     ("unmodeled ", ReasonCategory::UnsupportedSyntax),
     (
         "outside selected Unix profile",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    // `qcore_c_gateway::boolean_source` typed-import refusals. Every one names
+    // a declaration, record, field, statement or expression in the analysed
+    // translation unit that the Boolean field model does not cover. The
+    // identity, revision, depth-bound and Clang-tool refusals above are
+    // matched earlier, so none of them can reach these rules.
+    (
+        "Clang AST rejected source",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "expected one ordinary declared record",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "expected one complete chunk record definition",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "expected one direct lifecycle field",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "has unmodeled attributes or fields",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "lifecycle field must be an ordinary non-volatile int",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "field assignment leaves the Boolean lifecycle domain",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "ambiguous Boolean field models for one record ABI",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "unsupported Boolean field operation mapping",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "unsupported Boolean field result ABI",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "function has no modeled chunk field access",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "source path falls through without an explicit return",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    // The helper-import refusals, enumerated rather than caught by a
+    // "helper" prefix rule: a prefix catch-all onto a source-subject category
+    // is the exact hazard this table is ordered to avoid.
+    (
+        "helper record has no selected declared Boolean model",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper record is not a selected Boolean model",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper record differs from caller model record",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper requires one declared record pointer and void result",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper requires direct constant field assignments",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper requires a direct assignment",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper requires direct borrowed parameter",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper field is not bound to its borrowed parameter",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper assignment is not a constant",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper has no checked field writes",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper writes a declared Boolean model field",
+        ReasonCategory::UnsupportedSyntax,
+    ),
+    (
+        "helper declaration, structural layout, or uniqueness mismatch",
         ReasonCategory::UnsupportedSyntax,
     ),
 ];

@@ -1,0 +1,153 @@
+{
+  "compile_database_sha256": "ca5441e51b6965e8270f633fd0de798247b7fc1fcecfcc3a4b21f598605ddd6e",
+  "compile_task_identity_version": 1,
+  "compile_tasks": [
+    {
+      "file": "src/balanced.c",
+      "identity": {
+        "arguments": [
+          "cc",
+          "-std=c11",
+          "-c",
+          "src/balanced.c",
+          "-o",
+          "balanced.c.o"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "cc",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "ca5441e51b6965e8270f633fd0de798247b7fc1fcecfcc3a4b21f598605ddd6e",
+          "resource_contract_manifest": "814ce94d68273983fa39213d6db77b7072b52655537b6e03c1debf1a3dfecdaa",
+          "source_profile": "0a4c52c2c2aa83073e8308164a90ea93cb4c55dadef5943601dae793a17d506a"
+        },
+        "dialect": "c11",
+        "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+        "file": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout/src/balanced.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "237d4a46748dcaec57d36dd69d8eb7e56d362eb7492f4311f206ba0efb96d43c",
+        "preprocessing_error": null,
+        "preprocessor_options": [],
+        "raw_source_sha256": "237d4a46748dcaec57d36dd69d8eb7e56d362eb7492f4311f206ba0efb96d43c",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+            "spelled": "src/balanced.c"
+          }
+        }
+      },
+      "identity_sha256": "db21f75900d1e0735d8e1fe87ff28fc14ceaa02ec50573874f3547fedf619000",
+      "library": "sample"
+    },
+    {
+      "file": "src/leak.c",
+      "identity": {
+        "arguments": [
+          "cc",
+          "-std=c11",
+          "-c",
+          "src/leak.c",
+          "-o",
+          "leak.c.o"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "cc",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "ca5441e51b6965e8270f633fd0de798247b7fc1fcecfcc3a4b21f598605ddd6e",
+          "resource_contract_manifest": "814ce94d68273983fa39213d6db77b7072b52655537b6e03c1debf1a3dfecdaa",
+          "source_profile": "0a4c52c2c2aa83073e8308164a90ea93cb4c55dadef5943601dae793a17d506a"
+        },
+        "dialect": "c11",
+        "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+        "file": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout/src/leak.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "22049c4e8759dfde8f61d0b7e24fd0e2b2c508bda5aff225dfef928e8aa3acad",
+        "preprocessing_error": null,
+        "preprocessor_options": [],
+        "raw_source_sha256": "22049c4e8759dfde8f61d0b7e24fd0e2b2c508bda5aff225dfef928e8aa3acad",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+            "spelled": "src/leak.c"
+          }
+        }
+      },
+      "identity_sha256": "5dfe09be7b44e5260191f24d1c296d231a5cbd7fbad0254e783e96eadb253a47",
+      "library": "sample"
+    },
+    {
+      "file": "src/opaque.c",
+      "identity": {
+        "arguments": [
+          "cc",
+          "-std=c11",
+          "-c",
+          "src/opaque.c",
+          "-o",
+          "opaque.c.o"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "cc",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "ca5441e51b6965e8270f633fd0de798247b7fc1fcecfcc3a4b21f598605ddd6e",
+          "resource_contract_manifest": "814ce94d68273983fa39213d6db77b7072b52655537b6e03c1debf1a3dfecdaa",
+          "source_profile": "0a4c52c2c2aa83073e8308164a90ea93cb4c55dadef5943601dae793a17d506a"
+        },
+        "dialect": "c11",
+        "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+        "file": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout/src/opaque.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "0e8c35202892def7f79c637c01bc7f9c45f03c78b96435722dca41a997574c05",
+        "preprocessing_error": null,
+        "preprocessor_options": [],
+        "raw_source_sha256": "0e8c35202892def7f79c637c01bc7f9c45f03c78b96435722dca41a997574c05",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/checkout",
+            "spelled": "src/opaque.c"
+          }
+        }
+      },
+      "identity_sha256": "117374814f634c01653138a523c59b82d55e19eed5f2989c6e89f26f49f558da",
+      "library": "sample"
+    }
+  ],
+  "contract_manifest": "{\n  \"schema_version\": 1,\n  \"modules\": [\n    \"memory.qcore\"\n  ]\n}\n",
+  "contracts": {
+    "/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-next-implementation-waves-050ed5/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/demo2/profiles/sample/../../memory.qcore": "module contract;\nextern fn alloc() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nonnull);\n};\nextern fn dispose(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nonnull);\n    ensures normal resource_return_none();\n};\n"
+  },
+  "profile": {
+    "pin.sample": "1a5cdd4056e81fca0b076546b6f06ebcfdbcbbc3",
+    "profile_digest": "0a4c52c2c2aa83073e8308164a90ea93cb4c55dadef5943601dae793a17d506a",
+    "schema_version": "1",
+    "source_set": "sample",
+    "trust": "declared source-set assumptions, not verified upstream behavior"
+  },
+  "schema_version": 1,
+  "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+  "source_sha256": {
+    "sample/src/balanced.c": "237d4a46748dcaec57d36dd69d8eb7e56d362eb7492f4311f206ba0efb96d43c",
+    "sample/src/leak.c": "22049c4e8759dfde8f61d0b7e24fd0e2b2c508bda5aff225dfef928e8aa3acad",
+    "sample/src/opaque.c": "0e8c35202892def7f79c637c01bc7f9c45f03c78b96435722dca41a997574c05"
+  }
+}
