@@ -65,7 +65,8 @@ Arbitrary retained contract predicates are not treated as builtins.")
     ;; Only complete character literals receive string syntax below.
     (modify-syntax-entry ?' "." table)
     ;; Angle brackets also express comparisons; do not make them paired.
-    (dolist (char '(?< ?> ?+ ?- ?= ?! ?& ?% ?? ?: ?. ?, ?\;))
+    ;; `|` appears only inside the `[|`/`|]` quant delimiter alias.
+    (dolist (char '(?< ?> ?+ ?- ?= ?! ?& ?% ?? ?: ?. ?, ?\; ?|))
       (modify-syntax-entry char "." table))
     table)
   "Syntax table for QCore source, shared by executable and contract modules.")

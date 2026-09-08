@@ -157,3 +157,78 @@ fn where_binders_cannot_shadow_visible_runtime_locals() {
         "{errors:?}"
     );
 }
+
+#[test]
+fn bracket_alias_elaborates_identically_to_the_angle_form() {
+    for (angle, bracket) in [
+        ("quant<n where n := 5>", "quant[|n where n := 5|]"),
+        (
+            "quant<credit, { memory = n } where n := m + 2, m := 3, n < 6, n > 4>",
+            "quant[|credit, { memory = n } where n := m + 2, m := 3, n < 6, n > 4|]",
+        ),
+    ] {
+        let angle_typed = elaborate_source(&parse_source_program(&source(angle)).unwrap()).unwrap();
+        let parsed = parse_source_program(&source(bracket)).unwrap();
+        let bracket_typed = elaborate_source(&parsed).unwrap();
+        let angle_quant = &angle_typed
+            .declarations
+            .iter()
+            .find(|decl| decl.name == "f")
+            .unwrap()
+            .quant_index_types[0];
+        let bracket_quant = &bracket_typed
+            .declarations
+            .iter()
+            .find(|decl| decl.name == "f")
+            .unwrap()
+            .quant_index_types[0];
+        assert_eq!(angle_quant.mode, bracket_quant.mode, "{bracket}");
+        assert_eq!(angle_quant.fields, bracket_quant.fields, "{bracket}");
+        assert_eq!(angle_quant.bindings, bracket_quant.bindings, "{bracket}");
+        assert!(parsed.syntax_equivalent(&parse_source_program(&parsed.to_string()).unwrap()));
+        compile_files(
+            &[SourceFile::new("alias.qcore", source(bracket))],
+            &CompileOptions::default(),
+        )
+        .unwrap();
+    }
+}
+
+#[test]
+fn bracket_alias_parses_in_parameter_and_return_position_with_contract_clauses() {
+    // The bracket twin of contract/qcore/language/quantified_indices.qcore,
+    // exercised inline so the pinned corpus fixture stays untouched.
+    let text = "module contract;\n\
+        quant axis chunks : credit<Count<Chunk>>;\n\
+        extern fn preserve_five_chunk_credits(\n\
+            credit: quant[|n where n := 5|] use one\n\
+        ) -> quant[|credit, { chunks = total } where total := base + 2, base := 3, total <= 5|]\n\
+        contract {\n\
+            requires caller_owns_chunk_credit;\n\
+            quant normal returned_credit.chunks == old(credit.chunks);\n\
+        };\n";
+    let parsed = parse_source_program(text).unwrap();
+    assert!(parsed.syntax_equivalent(&parse_source_program(&parsed.to_string()).unwrap()));
+    let function = parsed
+        .declarations
+        .iter()
+        .find(|decl| decl.value.name == "preserve_five_chunk_credits")
+        .unwrap();
+    assert_eq!(function.value.quant_index_types.len(), 2);
+    let contract = function.value.function_contract.as_ref().unwrap();
+    assert_eq!(contract.clauses.len(), 2);
+}
+
+#[test]
+fn mixed_or_unterminated_quant_delimiters_are_refused_not_repaired() {
+    for quant in [
+        "quant[|n where n := 5>",
+        "quant<n where n := 5|]",
+        "quant[|n where n := 5",
+        "quant[|credit, { memory = n } where n := 5>",
+    ] {
+        assert!(parse_source_program(&source(quant)).is_err(), "{quant}");
+    }
+    // A bare vertical bar stays a lex error; only `[|` / `|]` are admitted.
+    assert!(parse_source_program(&source("quant<n where n := 5> | i32")).is_err());
+}

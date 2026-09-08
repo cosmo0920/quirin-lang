@@ -755,7 +755,8 @@ A natural grade denotes `[n,n]`. Bounds must fit `u64`; finite lower bounds must
 ## G04. Closed quantitative indices
 
 ```ebnf
-quant_type = "quant", "<", (scalar | vector), [where_clause], ">" ;
+quant_type = "quant", "<", (scalar | vector), [where_clause], ">"
+           | "quant", "[|", (scalar | vector), [where_clause], "|]" ;
 scalar     = expr ;
 vector     = ("credit" | "live"), ",", "{", field, {",", field}, "}" ;
 field      = IDENT, "=", expr ;
@@ -776,6 +777,8 @@ Numbers and arithmetic use checked `u128` natural semantics. `monus(a,b)` requir
 
 The parser rejects atom nesting beyond its depth-32 condition and addition beyond its term-limit condition of 64 added terms. Resolution/evaluation impose additional depth/dependency guards in the same implementation. These are explicit implementation limits, not mathematical restrictions on natural numbers.
 
+`quant[| ... |]` is a delimiter alias for `quant< ... >` over the identical interior grammar: `[|` and `|]` are single lexer symbols, both spellings resolve to the same closed-index type, and the opener fixes the required closer, so a mixed pair such as `quant[| ... >` is refused, never repaired. A bare `|` remains a lexer error. The alias exists because `<`/`>` collide visually with where-clause comparison operators; it adds no semantic surface.
+
 `quant<cost,...>` is rejected by this resolver as a future total/peak profile. `quant<access,...>` is skipped by this closed-index parser for separate handling; skipping it is not source-level access verification. The axis environment is now built and validated unconditionally, including modules without quantitative type occurrences (R05).
 
 Source: `crates/qcore-frontend/src/quant_index.rs`, `frontend.rs:1519–1548`. A supported canonical example is:
@@ -784,6 +787,7 @@ Source: `crates/qcore-frontend/src/quant_index.rs`, `frontend.rs:1519–1548`. A
 module contract;
 quant axis chunks : credit<Count<Chunk>>;
 extern fn keep(q: quant<n where n := 5> use one) -> unit;
+extern fn hold(q: quant[|n where n := 5|] use one) -> unit;
 ```
 
 ## G05. Resource loader v1

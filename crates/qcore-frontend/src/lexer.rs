@@ -46,6 +46,10 @@ pub enum Symbol {
     RightBrace,
     LeftBracket,
     RightBracket,
+    /// `[|`, the readable opener aliasing `<` on quantitative index types.
+    QuantOpen,
+    /// `|]`, the readable closer aliasing `>` on quantitative index types.
+    QuantClose,
     Arrow,
     FatArrow,
     ColonColon,
@@ -206,6 +210,8 @@ impl Lexer<'_> {
             Some("!=") => Some(Symbol::NotEqual),
             Some("<=") => Some(Symbol::LessEqual),
             Some(">=") => Some(Symbol::GreaterEqual),
+            Some("[|") => Some(Symbol::QuantOpen),
+            Some("|]") => Some(Symbol::QuantClose),
             _ => None,
         };
         if let Some(symbol) = two {

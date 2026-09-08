@@ -51,22 +51,37 @@ pub struct ResolvedQuantIndexType {
     pub bindings: BTreeMap<String, IndexTerm>,
 }
 
+/// Returns the closing symbol matching a quant type opener at `cursor + 1`,
+/// or `None` when the tokens at `cursor` do not begin a quant index type.
+/// `quant<...>` and its readable alias `quant[|...|]` are the same type; a
+/// mixed opener/closer pair is refused by the closer expectation, never
+/// repaired.
+fn quant_opener_close(tokens: &[Token], cursor: usize) -> Option<Symbol> {
+    if tokens.get(cursor).map(|token| &token.kind) != Some(&TokenKind::Word("quant".into()))
+        || tokens.get(cursor + 2).map(|token| &token.kind)
+            == Some(&TokenKind::Word("access".into()))
+    {
+        return None;
+    }
+    match tokens.get(cursor + 1).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Less)) => Some(Symbol::Greater),
+        Some(TokenKind::Symbol(Symbol::QuantOpen)) => Some(Symbol::QuantClose),
+        _ => None,
+    }
+}
+
 pub(crate) fn parse_quant_index_types(
     tokens: &[Token],
 ) -> Result<Vec<SourceQuantIndexType>, SourceParseError> {
     let mut output = Vec::new();
     let mut cursor = 0;
     while cursor + 1 < tokens.len() {
-        if tokens[cursor].kind == TokenKind::Word("quant".into())
-            && tokens[cursor + 1].kind == TokenKind::Symbol(Symbol::Less)
-            && tokens.get(cursor + 2).map(|token| &token.kind)
-                != Some(&TokenKind::Word("access".into()))
-        {
+        if let Some(close) = quant_opener_close(tokens, cursor) {
             let mut parser = Parser {
                 tokens,
                 cursor: cursor + 2,
             };
-            output.push(parser.quant_type(tokens[cursor].span.start)?);
+            output.push(parser.quant_type(tokens[cursor].span.start, close)?);
             cursor = parser.cursor;
         } else {
             cursor += 1;
@@ -84,18 +99,14 @@ pub(crate) fn quant_type_end(
     tokens: &[Token],
     cursor: usize,
 ) -> Result<Option<usize>, SourceParseError> {
-    if tokens.get(cursor).map(|token| &token.kind) != Some(&TokenKind::Word("quant".into()))
-        || tokens.get(cursor + 1).map(|token| &token.kind) != Some(&TokenKind::Symbol(Symbol::Less))
-        || tokens.get(cursor + 2).map(|token| &token.kind)
-            == Some(&TokenKind::Word("access".into()))
-    {
+    let Some(close) = quant_opener_close(tokens, cursor) else {
         return Ok(None);
-    }
+    };
     let mut parser = Parser {
         tokens,
         cursor: cursor + 2,
     };
-    parser.quant_type(tokens[cursor].span.start)?;
+    parser.quant_type(tokens[cursor].span.start, close)?;
     Ok(Some(parser.cursor))
 }
 
@@ -148,7 +159,11 @@ impl Parser<'_> {
         self.cursor += 1;
         Ok(name)
     }
-    fn quant_type(&mut self, start: usize) -> Result<SourceQuantIndexType, SourceParseError> {
+    fn quant_type(
+        &mut self,
+        start: usize,
+        close: Symbol,
+    ) -> Result<SourceQuantIndexType, SourceParseError> {
         let explicit_mode = if self.word("credit") {
             Some(AxisMode::Credit)
         } else if self.word("live") {
@@ -230,7 +245,7 @@ impl Parser<'_> {
                 }
             }
         }
-        self.expect(Symbol::Greater)?;
+        self.expect(close)?;
         Ok(SourceQuantIndexType {
             span: Span {
                 start,

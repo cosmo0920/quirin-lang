@@ -166,6 +166,8 @@ extern fn reserve(q: quant<n where n := 5> use one)
 
 This is an index-elaboration example. It does not prove that `reserve` preserves or manufactures credit.
 
+`quant[| ... |]` is an equivalent delimiter spelling of `quant< ... >` with the identical interior grammar and semantics; the opener fixes the required closer, so mixed pairs are rejected. The alias exists for readability where `<`/`>` would sit beside comparison operators; it introduces no new type.
+
 Each `where n := e` is a type-local definition. Definitions can refer to later definitions in the same clause, but cycles, duplicate definitions, shadowing of forbidden visible names, unbound/runtime names, and incompatible dimensions are rejected. A binding must acquire a dimension from its use; a standalone unused binding with no dimension is not silently accepted as dimensionless. Type-local names do not become runtime locals or global constants.
 
 Scalar `quant<e ...>` shorthand selects the sole credit axis in the environment. Zero or multiple credit axes make that shorthand ambiguous. Vector fields MUST be unique and have the requested axis mode. Omitted vector axes are not implicitly declared resources.
