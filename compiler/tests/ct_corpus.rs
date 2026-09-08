@@ -797,6 +797,7 @@ fn run_mapped_case(case: &ManifestCase) {
         &files,
         &CompileOptions {
             entry: expected.entry.clone(),
+            ..CompileOptions::default()
         },
     );
 
@@ -2237,6 +2238,7 @@ fn ct16_retains_sequential_implicit_cleanup_control() {
         )],
         &CompileOptions {
             entry: Some("worker".into()),
+            ..CompileOptions::default()
         },
     )
     .unwrap();
@@ -2263,6 +2265,7 @@ fn ct37_retains_sequential_transferred_payload_control() {
         )],
         &CompileOptions {
             entry: Some("worker".into()),
+            ..CompileOptions::default()
         },
     )
     .unwrap();

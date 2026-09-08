@@ -43,6 +43,11 @@ pub enum ParameterOwnership {
 pub struct CallSite {
     pub callee: SymbolId,
     pub arguments: Vec<ResourceId>,
+    /// The identity a call that returns fresh custody binds in the caller's
+    /// ledger (card `source.extern-call.v1`, design §3.4). `None` for every
+    /// call whose callee returns no custody, which is every source call in the
+    /// established sequential subset.
+    pub result: Option<ResourceId>,
     pub span: Span,
 }
 
@@ -120,10 +125,34 @@ struct LocalChecked {
 
 /// Runs every established sequential pass and resolves all function summaries.
 /// Any failure is returned at the source function or call span that owns it.
+///
+/// Every call target must be a checked source function. Card
+/// `source.extern-call.v1` adds the second dispatch arm through
+/// [`check_whole_program_with_externs`]; this entry point supplies no extern
+/// environment, so its behavior is exactly what it always was.
 pub fn check_whole_program(
     source: &TypedSourceProgram,
     errors: &ErrorDeclarations,
     semantics: Vec<FunctionSemantics>,
+) -> Result<CheckedProgram, Vec<SourceDiagnostic>> {
+    check_whole_program_with_externs(source, errors, semantics, &BTreeMap::new())
+}
+
+/// Two-way call resolution: a callee is a checked source function, or a
+/// declared extern function whose summary the caller derived from an admitted
+/// contract and supplies here (card `source.extern-call.v1`).
+///
+/// An extern summary is a **declared assumption**, not a checked body: this
+/// function consumes it exactly like a source summary at call sites, and every
+/// verdict downstream is valid only relative to that declaration. Extern
+/// symbols are leaves — they contribute no call-graph edge, are never
+/// candidates for the recursive post-fixed-point rule, and never receive a
+/// `CheckedFunction`, because there is no body to check.
+pub fn check_whole_program_with_externs(
+    source: &TypedSourceProgram,
+    errors: &ErrorDeclarations,
+    semantics: Vec<FunctionSemantics>,
+    externs: &BTreeMap<SymbolId, FunctionSummary>,
 ) -> Result<CheckedProgram, Vec<SourceDiagnostic>> {
     let source_functions = source
         .declarations
@@ -173,7 +202,7 @@ pub fn check_whole_program(
             ));
         }
         for call in &function.calls {
-            if !source_functions.contains_key(&call.callee) {
+            if !source_functions.contains_key(&call.callee) && !externs.contains_key(&call.callee) {
                 diagnostics.push(diagnostic(
                     SemanticPass::NameResolution,
                     call.span,
@@ -186,12 +215,20 @@ pub fn check_whole_program(
         return Err(diagnostics);
     }
 
+    // Extern leaves carry no body and therefore no edge: including them would
+    // make `reaches` index a graph node that does not exist, and would let a
+    // declared assumption participate in the recursive post-fixed-point rule.
     let graph = supplied
         .iter()
         .map(|(symbol, function)| {
             (
                 *symbol,
-                function.calls.iter().map(|call| call.callee).collect(),
+                function
+                    .calls
+                    .iter()
+                    .map(|call| call.callee)
+                    .filter(|callee| !externs.contains_key(callee))
+                    .collect(),
             )
         })
         .collect::<BTreeMap<_, BTreeSet<_>>>();
@@ -243,7 +280,10 @@ pub fn check_whole_program(
             )
         })
         .collect::<BTreeMap<_, _>>();
-    while summaries.len() < local.len() {
+    // Declared extern summaries seed the fixed point beside recursive
+    // contracts: they are given, never computed from a body.
+    summaries.extend(externs.iter().map(|(symbol, s)| (*symbol, s.clone())));
+    while summaries.len() < local.len() + externs.len() {
         let ready = local
             .iter()
             .filter(|(symbol, _)| !summaries.contains_key(symbol))
@@ -482,7 +522,7 @@ fn check_local(
             semantics
                 .calls
                 .iter()
-                .flat_map(|call| call.arguments.iter()),
+                .flat_map(|call| call.arguments.iter().chain(call.result.iter())),
         )
     {
         if !universe.contains(identity) {
@@ -570,6 +610,19 @@ fn check_identity_transfer(
             if *mode == ParameterOwnership::Consumed {
                 live.remove(&identity);
             }
+        }
+        // A call that returns fresh custody binds one new identity here. It is
+        // introduced after the consumptions of the same call, so a callee that
+        // both consumes and produces cannot silently reuse an argument's
+        // identity for its result.
+        if let Some(result) = call.result
+            && !live.insert(result)
+        {
+            return Err(diagnostic(
+                SemanticPass::Ownership,
+                call.span,
+                "a returned resource identity is already live in the caller",
+            ));
         }
     }
     let expected = unique_identities(&function.semantics.identity_exit).ok_or_else(|| {
