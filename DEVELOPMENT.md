@@ -366,7 +366,11 @@ baselines and still assert that substitution occurred. All 14 O04 assertions
 pass through native Visual Studio discovery; both affected targets (20 tests)
 pass with explicit `QCORE_CLANG`. Windows CI covers both routes. Strict C type checks
 also pass for Windows x64 and Linux x64 targets. Checker/Lean semantics,
-production verdicts and pinned upstream contents are unchanged. Validation:
+production verdicts and pinned upstream contents are unchanged. The completed
+Windows workspace gate records 1,316 passed, zero failed and one ignored,
+superseding the earlier fixture-failure limitation. Formatting, workspace
+Clippy, both reevaluation probes, the rebased Lean build and all 31 audits
+pass. Validation:
 `docs/reports/windows-clang-fixtures/README.md`.
 
 Windows second-source-set fixture (2026-09-08): compile databases now name the

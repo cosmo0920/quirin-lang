@@ -51,11 +51,16 @@ examples pass before and after the rebase. The pinned Lean build and all 31
 audits also pass before and after the rebase (75 build jobs). Submodule initialization
 completed and Libevent matches gitlink `d82464a277d0f42703702c4dfd9af6af38595a83`.
 
-The first workspace run was stopped for the requested rebase, with no reported
-test failure before interruption. At the user's subsequent commit/push request,
-the restarted workspace suite is still running; the incoming commit's changed
-Lean build and audit runner subsequently passed. This record does not claim a completed
-aggregate gate for the rebased tree. Logs are in
+The completed Windows workspace gate on the rebased fixes records **1,316
+passed, 0 failed, 1 ignored**, including doctests. The command was
+`cargo test --workspace --no-fail-fast -- --test-threads=8`, with explicit
+`QCORE_CLANG` pointing to the Visual Studio Clang above. The ignored test is
+the O04 reporting aid. This supersedes the earlier Windows fixture-failure
+limitation; native Linux/macOS execution was not repeated.
+
+The fixes were committed and pushed as `e74501d` while that aggregate run was
+still in progress. This follow-up records its successful completion. See the
+[validation summary](validation.log). Complete local logs are in
 `target/windows-clang-fixtures-rebased-{workspace,lean,clippy,probe,followup}.log`;
 the focused post-rebase logs use the same prefix with `o04` and `counter`.
 

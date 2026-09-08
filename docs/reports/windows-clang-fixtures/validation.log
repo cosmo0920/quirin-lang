@@ -1,0 +1,314 @@
+Windows x64 validation, 2026-09-08
+Fix commit: e74501d, based on origin/main 93f071c
+Clang: Visual Studio 2026 Clang 22.1.3, x86_64-pc-windows-msvc
+Command: cargo test --workspace --no-fail-fast -- --test-threads=8
+QCORE_CLANG explicitly selects the Visual Studio Clang executable.
+Exit status: 0
+Total: 1316 passed, 0 failed, 1 ignored (the O04 ledger reporting aid).
+
+Workspace target summaries:
+Running unittests src\lib.rs (target\debug\deps\qcore_audit-9653b8ce842b1265.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\main.rs (target\debug\deps\qcore_audit-2aea89e7fb76ac0f.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\compile_options.rs (target\debug\deps\compile_options-0d5007bcb70afaa6.exe)
+running 12 tests
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.35s
+Running tests\compile_task_identity.rs (target\debug\deps\compile_task_identity-4ec71a7f46a17d22.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.98s
+Running tests\configured_cli.rs (target\debug\deps\configured_cli-be2fc48ee887edbd.exe)
+running 14 tests
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.30s
+Running tests\second_source_set.rs (target\debug\deps\second_source_set-b2858d9162f0f534.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.44s
+Running tests\source_contract_config.rs (target\debug\deps\source_contract_config-95d15f5b25e9469f.exe)
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+Running unittests src\lib.rs (target\debug\deps\qcore_c_gateway-64da30772a5eefbe.exe)
+running 162 tests
+test result: ok. 162 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.49s
+Running tests\boolean_frame_helpers.rs (target\debug\deps\boolean_frame_helpers-dc18fd5d23e884c5.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.89s
+Running tests\c03_neutral_frame_recursion_probe.rs (target\debug\deps\c03_neutral_frame_recursion_probe-eef324a9a509b6d4.exe)
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.33s
+Running tests\contextual_recursion.rs (target\debug\deps\contextual_recursion-f7d5b1c29ba45bb6.exe)
+running 14 tests
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 34.35s
+Running tests\custody_summary_regression.rs (target\debug\deps\custody_summary_regression-2265ebf65992b05a.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.63s
+Running tests\o04_constructor_caller.rs (target\debug\deps\o04_constructor_caller-f87e134dede8a1df.exe)
+running 15 tests
+test result: ok. 14 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.77s
+Running tests\typed_body_comparison.rs (target\debug\deps\typed_body_comparison-6f9f3f920a34b034.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.02s
+Running tests\typed_field_access.rs (target\debug\deps\typed_field_access-520ba300da8cd9da.exe)
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.73s
+Running unittests src\lib.rs (target\debug\deps\qcore_compiler-d92fda8422b76bf4.exe)
+running 160 tests
+test result: ok. 160 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 478.46s
+Running tests\checked_mutex_guards.rs (target\debug\deps\checked_mutex_guards-415f19714252d27e.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+Running tests\composed_five_providers.rs (target\debug\deps\composed_five_providers-b0981162c1809480.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\contract_consumers.rs (target\debug\deps\contract_consumers-c1145519efeb10a0.exe)
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\contract_loader.rs (target\debug\deps\contract_loader-bd80027ed9bb63e8.exe)
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+Running tests\counter_route_parity.rs (target\debug\deps\counter_route_parity-25de7471246c0b29.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.50s
+Running tests\ct_corpus.rs (target\debug\deps\ct_corpus-585a082797b33fea.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.08s
+Running tests\cycle19_current_command.rs (target\debug\deps\cycle19_current_command-d996be6a87a192ae.exe)
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.62s
+Running tests\cycle20_verifier_plugins.rs (target\debug\deps\cycle20_verifier_plugins-b9027f9a56323622.exe)
+running 17 tests
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+Running tests\error_payload_tasks.rs (target\debug\deps\error_payload_tasks-770dd2a0df92b4f7.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\f02_trace_relation.rs (target\debug\deps\f02_trace_relation-ec445f7e22cc7568.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\first_party_discovery.rs (target\debug\deps\first_party_discovery-c70624c1a3deb400.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+Running tests\libevent_submodule.rs (target\debug\deps\libevent_submodule-d484234fdc44ef5d.exe)
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+Running tests\module_modes.rs (target\debug\deps\module_modes-9a874fb087ff8fe9.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+Running tests\monkey_profile.rs (target\debug\deps\monkey_profile-1da7a08d79b39903.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.60s
+Running tests\nullable_removed.rs (target\debug\deps\nullable_removed-f9b79ebd3839ed06.exe)
+running 19 tests
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.34s
+Running tests\owned_source_tasks.rs (target\debug\deps\owned_source_tasks-754143418804f404.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\profile_loader.rs (target\debug\deps\profile_loader-ae855f487d5dd311.exe)
+running 18 tests
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.93s
+Running tests\qcore_contract_corpus.rs (target\debug\deps\qcore_contract_corpus-73f201f91e23b115.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+Running tests\quant_index_contracts.rs (target\debug\deps\quant_index_contracts-61c0776ff7a47160.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+Running tests\reactor_route_parity.rs (target\debug\deps\reactor_route_parity-6cae8a7245087967.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\scoped_read_loans.rs (target\debug\deps\scoped_read_loans-70a4b3acc99f5acf.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\scoped_read_shares.rs (target\debug\deps\scoped_read_shares-7a288848cfc35847.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\source_tasks.rs (target\debug\deps\source_tasks-adcf4eefcf677532.exe)
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.88s
+Running tests\toolchain_compatibility.rs (target\debug\deps\toolchain_compatibility-cd9b16af2204186c.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+Running tests\w3_evidence_v2.rs (target\debug\deps\w3_evidence_v2-1edec5a4a46a0990.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+Running tests\windows_threads.rs (target\debug\deps\windows_threads-2b66339633da432d.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.75s
+Running tests\workspace_layering.rs (target\debug\deps\workspace_layering-90a93033900ffc34.exe)
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\lib.rs (target\debug\deps\qcore_contract-e39194faa2605a99.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+Running tests\boolean_frame_policy.rs (target\debug\deps\boolean_frame_policy-c5621b894170783b.exe)
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\chunk_policy_records.rs (target\debug\deps\chunk_policy_records-a08630a2cc4543e3.exe)
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\lib.rs (target\debug\deps\qcore_core-74c7158e37941e2f.exe)
+running 407 tests
+test result: ok. 407 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.08s
+Running tests\lifetime_correspondence.rs (target\debug\deps\lifetime_correspondence-373d7aa225bb81e4.exe)
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+Running tests\task_trace_relation.rs (target\debug\deps\task_trace_relation-bc8a8825a061ff2a.exe)
+running 19 tests
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+Running unittests src\lib.rs (target\debug\deps\qcore_frontend-1b962a419aeaab25.exe)
+running 37 tests
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\error_payloads.rs (target\debug\deps\error_payloads-59ea65a351924780.exe)
+running 17 tests
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+Running tests\owned_tasks.rs (target\debug\deps\owned_tasks-3c0ccb094824eb0e.exe)
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\read_loans.rs (target\debug\deps\read_loans-4ff934a1ae41c573.exe)
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\read_shares.rs (target\debug\deps\read_shares-4065cbf45f000d56.exe)
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\result_match_syntax.rs (target\debug\deps\result_match_syntax-8e32514bfb05637f.exe)
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\source_mutex.rs (target\debug\deps\source_mutex-dd94bc85d2df9b59.exe)
+running 22 tests
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\source_tasks.rs (target\debug\deps\source_tasks-48490d1dfc4e91b5.exe)
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\task_recovery.rs (target\debug\deps\task_recovery-e9e7a59e0639fada.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\task_syntax.rs (target\debug\deps\task_syntax-20e140a97b7dfcb6.exe)
+running 8 tests
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\lib.rs (target\debug\deps\qcore_schemas-66356f92bd72a07e.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\boolean_result_abi.rs (target\debug\deps\boolean_result_abi-875f2629ebb648d1.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\counter_request_wire.rs (target\debug\deps\counter_request_wire-8650bdd3e59aaaf6.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\plugin_limit_kinds.rs (target\debug\deps\plugin_limit_kinds-5a7ff4c05b4e9b58.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\reactor_records.rs (target\debug\deps\reactor_records-dd24a2ef84dc8b05.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\reactor_request_wire.rs (target\debug\deps\reactor_request_wire-38dc351054a0bd4a.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\schema_canonicalization.rs (target\debug\deps\schema_canonicalization-9e21901e59f1c377.exe)
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\lib.rs (target\debug\deps\qcore_verification-80d129c373c6cf89.exe)
+running 13 tests
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\composition_relation.rs (target\debug\deps\composition_relation-9a12ec878d8fd3be.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\counter_source.rs (target\debug\deps\counter_source-dfd2cb7c6250812f.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.33s
+Running tests\ctraces_capability_boundary.rs (target\debug\deps\ctraces_capability_boundary-54052125a6249300.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.98s
+Running tests\generic_driver.rs (target\debug\deps\generic_driver-ccc815173af16b21.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\generic_source.rs (target\debug\deps\generic_source-10d5b00d2f925b47.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.51s
+Running tests\reactor_callback.rs (target\debug\deps\reactor_callback-7ce6be99a386c1ec.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\reactor_source.rs (target\debug\deps\reactor_source-2bb8813a21e416de.exe)
+running 7 tests
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\source_effect.rs (target\debug\deps\source_effect-1ebd64cb18ececb0.exe)
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.72s
+Running tests\source_effect_helper_target.rs (target\debug\deps\source_effect_helper_target-0fa2f7a29cd2f7e5.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\source_effect_mutations.rs (target\debug\deps\source_effect_mutations-65cdaaa001e21980.exe)
+running 11 tests
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.83s
+Running tests\source_effect_obligations.rs (target\debug\deps\source_effect_obligations-ecad3b8ea2126c4f.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.92s
+Running tests\source_profile_boundary.rs (target\debug\deps\source_profile_boundary-514d841b32ff5023.exe)
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running unittests src\lib.rs (target\debug\deps\qcore_verifier_host-2505c3799388b3f8.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\composition_relation.rs (target\debug\deps\composition_relation-6606e0f5004a314e.exe)
+running 13 tests
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\confined_process_execution.rs (target\debug\deps\confined_process_execution-6180ba9ffa8a4df1.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\diagnostic_attribution.rs (target\debug\deps\diagnostic_attribution-41828a2efad7168c.exe)
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+Running tests\enforced_process_limits.rs (target\debug\deps\enforced_process_limits-c710f9311a82c67c.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\standalone_host.rs (target\debug\deps\standalone_host-e50ca0fd6bdc18fa.exe)
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running unittests src\main.rs (target\debug\deps\qcorec-ed58317a04ea4296.exe)
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Running tests\cli.rs (target\debug\deps\cli-23b56826836cdf46.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+Running tests\plugin_packages.rs (target\debug\deps\plugin_packages-de276d3b682f884b.exe)
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+Doc-tests qcore_audit
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Doc-tests qcore_c_gateway
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+Doc-tests qcore_compiler
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+Doc-tests qcore_contract
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Doc-tests qcore_core
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+Doc-tests qcore_frontend
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Doc-tests qcore_schemas
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Doc-tests qcore_verification
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+Doc-tests qcore_verifier_host
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Other completed checks:
+cargo fmt --all -- --check: exit 0
+cargo clippy --workspace --all-targets -- -D warnings: exit 0
+cargo run -p qcore-compiler --example reevaluation_probe: exit 0
+cargo run -p qcore-compiler --example reevaluation_followup: exit 0
+python scripts/check_lean_audits.py --verbose: exit 0; 75 build jobs, 31 audits passed
+git submodule update --init --recursive: exit 0; Libevent gitlink and checkout both d82464a277d0f42703702c4dfd9af6af38595a83
+Focused post-rebase O04 tests: 14 passed, 1 reporting aid ignored
+Focused post-rebase counter-source tests: 6 passed
+C11 syntax and width assertions with -Werror: Windows x64 and Linux x64 targets both exit 0
+No native Linux/macOS execution was repeated.
