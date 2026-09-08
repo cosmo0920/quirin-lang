@@ -1171,10 +1171,10 @@ fn compile_task_source(
                 })
                 .collect::<Vec<_>>()
         })?;
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         return Err(vec![plain_diagnostic(
             "Q500",
-            "native scoped task emission currently requires a Linux C11 threads target",
+            "native scoped task emission currently requires a Linux or macOS threads target",
         )]);
     }
     let emission = qcore_core::task_c_emit::emit_task_c11(&checked);
@@ -1313,10 +1313,10 @@ fn compile_mutex_source(
         lowered: lowered.clone(),
         certificate: certificate.clone(),
     }));
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         return Err(vec![plain_diagnostic(
             "Q500",
-            "native checked mutex emission currently requires a Linux C11 threads target",
+            "native checked mutex emission currently requires a Linux or macOS threads target",
         )]);
     }
     let emission = qcore_core::mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate)

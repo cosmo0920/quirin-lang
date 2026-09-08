@@ -282,9 +282,17 @@ fn compile_and_run(source: &str) -> Vec<String> {
     );
     let run = Command::new(&binary_path)
         // LeakSanitizer is part of AddressSanitizer here and is left enabled:
-        // reclamation of every emitted allocation is exactly what this run has
-        // to witness.
-        .env("ASAN_OPTIONS", "detect_leaks=1:halt_on_error=1")
+        // reclamation of every emitted allocation is exactly what the Linux
+        // run has to witness. Apple Clang reports leak detection unsupported,
+        // so macOS still runs ASan/UBSan with leak detection disabled.
+        .env(
+            "ASAN_OPTIONS",
+            if cfg!(target_os = "macos") {
+                "detect_leaks=0:halt_on_error=1"
+            } else {
+                "detect_leaks=1:halt_on_error=1"
+            },
+        )
         .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
         .output()
         .unwrap();

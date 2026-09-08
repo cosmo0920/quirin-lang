@@ -867,13 +867,13 @@ fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
     assert!(
         diagnostics[0]
             .message
-            .contains("requires a Linux C11 threads target"),
+            .contains("requires a Linux or macOS threads target"),
         "{diagnostics:?}"
     );
 }
 
 /// The controls a mutex rejection carries. An `accept` control compiles through
-/// the Linux-only emission path, so on any other host it must arrive as the
+/// the Linux/macOS emission path, so on any other host it must arrive as the
 /// same `Q500` refusal every other route uses — never as a silent skip.
 fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
     for control in &reject.controls {
@@ -886,10 +886,10 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
         );
         match control.expectation.as_str() {
             "accept" => {
-                if !cfg!(target_os = "linux") {
+                if !cfg!(any(target_os = "linux", target_os = "macos")) {
                     unsupported_target(&result.unwrap_err());
                     eprintln!(
-                        "{id} control {}: source/core checked; Linux emission unexecuted on this host",
+                        "{id} control {}: source/core checked; threaded emission unexecuted on this host",
                         control.source
                     );
                     continue;
@@ -938,7 +938,7 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
 
 /// CT26: the whole `source.mutex.guard.v1` stage stack on the case's own
 /// fixture — parse, elaborate, lower, check, independently recheck, emit, then
-/// compile the emitted C under ASan/UBSan/LSan and run it. The native stdout is
+/// compile the emitted C under ASan/UBSan (and LSan on Linux) and run it. The native stdout is
 /// compared line for line with `interpret_mutex_program`, which is written
 /// against the checked event list and never reads the emitted C.
 fn run_checked_mutex_sanitized(
@@ -947,10 +947,10 @@ fn run_checked_mutex_sanitized(
 ) {
     use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
     let mutex = expected.checked_mutex_sanitized.as_ref().unwrap();
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "{}: source/core checked; Linux mutex reference/native execution unexecuted on this host \
+            "{}: source/core checked; mutex reference/native execution unexecuted on this host \
              (manifest evidence_target=linux)",
             expected.id
         );
@@ -1019,7 +1019,7 @@ fn run_checked_mutex_sanitized(
         "{}: every critical section must release",
         expected.id
     );
-    let c = module.c_source.as_deref().expect("Linux emission");
+    let c = module.c_source.as_deref().expect("threaded emission");
     for wanted in &mutex.emitted_c_contains {
         assert!(
             c.contains(wanted.as_str()),
@@ -1061,14 +1061,20 @@ fn mutex_sanitized_run(source: &str, mutex: &CheckedMutexSanitized) -> Vec<Strin
         "C compiler rejected the emitted program:\n{}",
         String::from_utf8_lossy(&compiled.stderr)
     );
+    let asan_options = if cfg!(target_os = "macos") {
+        // Apple's AddressSanitizer does not implement LeakSanitizer.
+        "detect_leaks=0:halt_on_error=1"
+    } else {
+        &mutex.asan_options
+    };
     let run = Command::new(&binary)
-        .env("ASAN_OPTIONS", &mutex.asan_options)
+        .env("ASAN_OPTIONS", asan_options)
         .env("UBSAN_OPTIONS", &mutex.ubsan_options)
         .output()
         .unwrap();
     assert!(
         run.status.success(),
-        "emitted program failed under ASan/UBSan/LSan:\n{}",
+        "emitted program failed under the platform sanitizers:\n{}",
         String::from_utf8_lossy(&run.stderr)
     );
     let observation = String::from_utf8(run.stdout)
@@ -1087,10 +1093,10 @@ fn run_positive_control(directory: &Path, expected: &PositiveControl) {
         &[SourceFile::new(path.to_string_lossy(), source)],
         &CompileOptions::default(),
     );
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "CT19 joined-sibling control: source/core checked; Linux reference/native evidence unexecuted on this host"
+            "CT19 joined-sibling control: source/core checked; threaded reference/native evidence unexecuted on this host"
         );
         return;
     }
@@ -1127,10 +1133,10 @@ fn run_native_join_failure(
 ) {
     let native = expected.native_join_failure.as_ref().unwrap();
     assert!(directory.join(&native.header).is_file());
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "CT15: source/core checked; Linux native/reference execution unexecuted on this host (manifest evidence_target=linux)"
+            "CT15: source/core checked; native/reference execution unexecuted on this host (manifest evidence_target=linux)"
         );
         return;
     }
@@ -1231,9 +1237,20 @@ fn native_fault_run_defines(
     let exe_path = directory.join("module");
     fs::write(&c_path, source).unwrap();
     let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
-    let compiled = Command::new(compiler)
+    let mut command = Command::new(compiler);
+    command
         .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
-        .args(defines)
+        .args(defines);
+    if cfg!(target_os = "macos") {
+        // Fault-injection headers are force-included before the generated
+        // source, so make their `<threads.h>` include resolve to the same
+        // pthread-backed compatibility surface used by emitted C.
+        command.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
+    let compiled = command
         .arg("-include")
         .arg(header)
         .arg(&c_path)
@@ -1279,10 +1296,10 @@ fn run_native_create_recovery(
             .any(|error| error.code == "Q600" && error.message.contains("ScopeBusy")),
         "{errors:?}"
     );
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "CT13: source/core checked; Linux native/reference creation-recovery evidence unexecuted on this host"
+            "CT13: source/core checked; native/reference creation-recovery evidence unexecuted on this host"
         );
         return;
     }
@@ -1355,10 +1372,10 @@ fn run_native_owned_transfer(
         TaskExecutionScript, execute_task_module, render_task_observation,
     };
     let native = expected.native_owned_transfer.as_ref().unwrap();
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "{}: Linux owned-task reference/native evidence unexecuted on this host",
+            "{}: owned-task reference/native evidence unexecuted on this host",
             expected.id
         );
         return;
@@ -1442,10 +1459,10 @@ fn run_native_task_scenarios(
             "{errors:?}"
         );
     }
-    if !cfg!(target_os = "linux") {
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
-            "{}: Linux task scenarios unexecuted on this host",
+            "{}: threaded task scenarios unexecuted on this host",
             expected.id
         );
         return;
@@ -1512,6 +1529,14 @@ fn run_native_task_scenarios(
             })
             .collect::<Vec<_>>();
         assert_eq!(owned, scenario.owned_child_results);
+        if expected.id == "CT50" && !cfg!(target_os = "linux") {
+            // CT50 is not a threading fixture: its native evidence requires
+            // Linux MAP_FIXED_NOREPLACE. The source, reference, CFG, and C
+            // emission stages still execute on macOS; only that OS-specific
+            // mapping-address observation remains Linux-scoped.
+            eprintln!("CT50: Linux MAP_FIXED_NOREPLACE native observation unexecuted on this host");
+            continue;
+        }
         let output = native_fault_run_defines(
             module.c_source.as_deref().unwrap(),
             &directory.join(&native.header),

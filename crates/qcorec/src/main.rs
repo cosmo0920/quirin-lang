@@ -111,16 +111,16 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         if let Some(entry) = &module.entry {
             let profile = match module.execution_profile {
                 qcore_compiler::SourceExecutionProfile::ScopedReadLoansV1 => {
-                    "; scoped owned-buffer tasks with one read loan (Linux C11)"
+                    "; scoped owned-buffer tasks with one read loan (Linux/macOS threads)"
                 }
                 qcore_compiler::SourceExecutionProfile::ScopedOwnedTasksV1 => {
-                    "; scoped owned-buffer tasks (Linux C11)"
+                    "; scoped owned-buffer tasks (Linux/macOS threads)"
                 }
                 qcore_compiler::SourceExecutionProfile::ScopedCopyTasksV1 => {
-                    "; scoped copy tasks (Linux C11)"
+                    "; scoped copy tasks (Linux/macOS threads)"
                 }
                 qcore_compiler::SourceExecutionProfile::CheckedMutexGuardsV1 => {
-                    "; checked mutex guards (Linux C11)"
+                    "; checked mutex guards (Linux/macOS threads)"
                 }
                 _ => "",
             };

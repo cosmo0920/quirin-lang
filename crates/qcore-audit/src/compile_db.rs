@@ -259,6 +259,15 @@ fn resolve_path(directory: &Path, path: &str) -> String {
     }
 }
 
+fn same_existing_path(left: &Path, right: &Path) -> bool {
+    left == right
+        || left
+            .canonicalize()
+            .ok()
+            .zip(right.canonicalize().ok())
+            .is_some_and(|(left, right)| left == right)
+}
+
 pub fn shell_words(command: &str) -> Result<Vec<String>, String> {
     let mut words = Vec::new();
     let mut word = String::new();
@@ -573,7 +582,10 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
         } else if word == "-c" {
             compile += 1;
         } else if !word.starts_with('-')
-            && Path::new(&resolve_path(&entry.directory, word)) == entry.file
+            && same_existing_path(
+                Path::new(&resolve_path(&entry.directory, word)),
+                &entry.file,
+            )
         {
             inputs += 1;
             spelled_input = Some(word.clone());

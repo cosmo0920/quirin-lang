@@ -159,9 +159,11 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     manifest.package_digest = "a".repeat(64);
     manifest.limits.timeout_ms = 40;
     let mut request = request();
-    // Larger than an ordinary pipe buffer: closing input necessarily interrupts
-    // transmission, even if the parent gets the first scheduler time slice.
-    request.request_id = "x".repeat(1024 * 1024);
+    // Larger than Linux's and macOS's maximum dynamically grown pipe capacity:
+    // closing input necessarily interrupts transmission, even if the parent
+    // gets the first scheduler time slice.
+    request.request_id = "x".repeat(8 * 1024 * 1024);
+    manifest.limits.output_bytes = 16 * 1024 * 1024;
     let write_script = |body: &str| {
         fs::write(&script, format!("#!/bin/sh\n{body}\n")).unwrap();
         fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
@@ -175,6 +177,10 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     assert!(!package.join("descendant.marker").exists());
 
     write_script("exec 0<&-\n/bin/sleep 0.3\n: > live.marker");
+    // Allow the shell to execute the close even on a slower macOS scheduler;
+    // it stays alive beyond this deadline, so Timeout would still be wrong.
+    manifest.limits.timeout_ms = 100;
+    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
     assert!(matches!(
         provider.verify(&request),
         Err(ProviderFailure::Io(_))
@@ -193,7 +199,7 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     };
     fs::write(
         package.join("response.bin"),
-        encode_protocol_frame(&response, DEFAULT_MAX_FRAME_BYTES).unwrap(),
+        encode_protocol_frame(&response, manifest.limits.output_bytes).unwrap(),
     )
     .unwrap();
     write_script("exec 0<&-\n/bin/cat response.bin");

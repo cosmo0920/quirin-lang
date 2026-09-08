@@ -20,6 +20,8 @@
 //! in `docs/reports/remaining-p03/README.md`. It is confinement of two named
 //! resource classes, not a general OS sandbox.
 
+#![cfg_attr(not(target_os = "linux"), allow(dead_code))]
+
 use std::fmt;
 
 use serde::{Deserialize, Serialize};

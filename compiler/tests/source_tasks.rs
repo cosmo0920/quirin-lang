@@ -1,18 +1,18 @@
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::SourceExecutionProfile;
 use qcore_compiler::frontend::{elaborate_source, parse_source_program};
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_core::scoped_tasks::TaskOutcome;
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_core::task_execution::{
     TaskExecutionScript, execute_task_module, render_task_observation,
 };
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::fs;
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::process::{Command, Output};
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::sync::atomic::{AtomicU64, Ordering};
 
 const COPY_TASK: &str = r#"
@@ -61,9 +61,9 @@ fn resolved_spawn_and_join_require_the_checked_source_profile() {
     assert!(!errors.iter().any(|e| e.code == "Q013"), "{errors:?}");
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 static NEXT: AtomicU64 = AtomicU64::new(0);
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule, Output) {
     let module = compile_files(
         &[SourceFile::new("native-tasks.qcore", source)],
@@ -89,6 +89,12 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"]);
+    if cfg!(target_os = "macos") {
+        compiler.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
     if let Some(header) = header {
         let path = directory.join("fault.h");
         fs::write(&path, header).unwrap();
@@ -106,7 +112,7 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
     (module, output)
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn matches_reference(
     module: &qcore_compiler::CompiledModule,
     output: &Output,
@@ -129,7 +135,7 @@ fn matches_reference(
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn actual_native_copy_worker_matches_reference_and_retains_scalar_extrema() {
     for value in ["42", "-2147483648", "2147483647"] {
         let source = COPY_TASK.replace("let x = 42", &format!("let x = {value}"));
@@ -143,7 +149,7 @@ fn actual_native_copy_worker_matches_reference_and_retains_scalar_extrema() {
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn allocation_and_native_creation_failure_follow_the_checked_error_edge() {
     for (header, released) in [
         (
@@ -187,7 +193,7 @@ static void record_free(void *p) { fputs("FREE\n", stderr); free(p); }
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn unexpected_native_join_failure_aborts_before_environment_reclamation() {
     let header = r#"
 #include <threads.h>
@@ -204,7 +210,7 @@ static void forbidden_free(void *p) { (void)p; _Exit(91); }
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn empty_scopes_and_uncalled_workers_emit_complete_warning_clean_c() {
     let source = "concurrency checked; fn unused(x: i32) -> i32 { return x; } fn main() -> unit { thread scope s { } return; }";
     let (module, output) = native(source, None);
@@ -227,7 +233,7 @@ fn dynamic_creation_failure_cannot_strand_a_previous_sibling() {
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn worker_errors_and_sequential_copy_results_preserve_exact_outcomes() {
     let failure = r#"
 concurrency checked;
@@ -278,7 +284,7 @@ static int second_create_fails(thrd_t *t, thrd_start_t f, void *p) {
 }
 
 #[test]
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(any(target_os = "linux", target_os = "macos")))]
 fn unsupported_native_target_rejects_explicitly() {
     let errors = compile_files(
         &[SourceFile::new("tasks.qcore", COPY_TASK)],
@@ -288,13 +294,13 @@ fn unsupported_native_target_rejects_explicitly() {
     assert!(
         errors
             .iter()
-            .any(|error| error.message.contains("Linux C11 threads target")),
+            .any(|error| error.message.contains("Linux or macOS threads target")),
         "{errors:?}"
     );
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn explicit_creation_recovery_joins_prior_sibling_on_each_dynamic_outcome() {
     let source = include_str!("fixtures/ct/CT13/case.qcore");
     let (module, output) = native(source, None);
@@ -346,7 +352,7 @@ fn failed_creation_handler_cannot_drop_an_existing_sibling() {
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn result_handlers_collect_siblings_before_rethrowing_exact_worker_errors() {
     let direct = r#"
 concurrency checked;
@@ -397,7 +403,7 @@ fn main() -> i32 effects { throws<SpawnError>, throws<WorkerFailure>, spawn, joi
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn second_start_allocation_failure_preserves_the_prior_native_task() {
     let header = r#"
 #include <stdlib.h>
