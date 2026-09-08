@@ -1,0 +1,40 @@
+// Two readers each borrow half of the buffer's 1024 read-share units.
+concurrency checked;
+
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+    let buffer = qcore_buffer_new(1)?;
+    let prepared = qcore_buffer_write(buffer, 42);
+    thread scope workers {
+        match spawn workers reader(read buffer share 512) {
+            Result::Ok { value: first } => {
+                match spawn workers reader(read buffer share 512) {
+                    Result::Ok { value: second } => {
+                        // Reads remain allowed while the children hold shares.
+                        let during = qcore_buffer_read(buffer);
+                        let a = join move first?;
+                        let b = join move second?;
+                        // Joining both children restores exclusive write access.
+                        let restored = qcore_buffer_write(buffer, 7);
+                        let after = qcore_buffer_read(buffer);
+                        drop buffer;
+                        return after;
+                    }
+                    Result::Err { error: refused } => {
+                        let a = join move first?;
+                        drop buffer;
+                        return a;
+                    }
+                }
+            }
+            Result::Err { error: failure } => {
+                drop buffer;
+                return 0;
+            }
+        }
+    }
+}

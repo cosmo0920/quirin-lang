@@ -1,0 +1,27 @@
+// Start both workers before joining either one.
+concurrency checked;
+
+fn worker(value: i32) -> i32 {
+    return value;
+}
+
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let first_value = 42;
+    let second_value = 7;
+    thread scope workers {
+        let first = spawn workers worker(copy first_value)?;
+        match spawn workers worker(copy second_value) {
+            Result::Ok { value: second } => {
+                // Join order need not match creation order.
+                let second_result = join move second?;
+                let first_result = join move first?;
+                return second_result;
+            }
+            Result::Err { error: failure } => {
+                // A refused second creation still leaves the first task to join.
+                let first_result = join move first?;
+                return first_result;
+            }
+        }
+    }
+}

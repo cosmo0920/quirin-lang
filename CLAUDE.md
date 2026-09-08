@@ -22,6 +22,9 @@ editor support, not a change to language conformance or verification.
 
 Claude-specific additions:
 
+- Native threading examples: `examples/threads/README.md` explains `cl.exe`
+  compilation; `build-windows.ps1 -Run` emits, builds and runs copied-worker,
+  owned-buffer and shared-reader examples into `target/thread-examples/`.
 - The current Cycle 19 nested-teardown boundary is recorded in
   `docs/reports/cycle19-file-descriptor-failures/README.md` and the AGENTS.md status
   ledger. Its native memory and controlled failure observations bind concrete allocation/

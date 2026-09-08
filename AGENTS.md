@@ -293,6 +293,9 @@ Lean toolchain via `proof/lean-toolchain` (elan).
 
 ## Key entry points
 
+- Native threading examples: `examples/threads/README.md` explains `cl.exe`
+  compilation; `build-windows.ps1 -Run` emits, builds and runs copied-worker,
+  owned-buffer and shared-reader examples into `target/thread-examples/`.
 - Editor: `editors/emacs/qcore-mode.el` provides lexical source/contract
   highlighting for `.qcore`/`.qc`; see `editors/emacs/README.md` for setup and
   ERT checks. Highlighting does not imply executable or verified support.

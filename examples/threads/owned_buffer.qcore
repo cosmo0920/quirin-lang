@@ -1,0 +1,40 @@
+// Move one buffer to a worker while the parent uses a separate buffer.
+concurrency checked;
+
+fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
+    let seen = qcore_buffer_read(buffer);
+    return move buffer;
+}
+
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let first = qcore_buffer_new(42)?;
+    match qcore_buffer_new(7) {
+        Result::Ok { value: second } => {
+            thread scope workers {
+                match spawn workers worker(move first) {
+                    Result::Ok { value: handle } => {
+                        // The parent can use second while the child owns first.
+                        let local = qcore_buffer_read(second);
+                        drop second;
+                        let returned = join move handle?;
+                        let value = qcore_buffer_read(returned);
+                        drop returned;
+                        return value;
+                    }
+                    Result::Err { error: failure } => {
+                        // Failed creation restores first to the parent.
+                        drop second;
+                        let value = qcore_buffer_read(first);
+                        drop first;
+                        return value;
+                    }
+                }
+            }
+        }
+        Result::Err { error: shortfall } => {
+            let value = qcore_buffer_read(first);
+            drop first;
+            return value;
+        }
+    }
+}

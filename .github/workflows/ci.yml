@@ -82,6 +82,13 @@ jobs:
       - name: Lint Windows targets
         run: cargo clippy --workspace --all-targets -- -D warnings
 
+      - name: Build and run the Windows threading examples
+        if: matrix.toolchain == 'msvc-core'
+        shell: pwsh
+        run: |
+          $env:QCORE_CLANG = Join-Path $env:RUNNER_TEMP 'missing-qcore-clang.exe'
+          .\examples\threads\build-windows.ps1 -Run
+
       - name: Check core functionality using MSVC with Clang unavailable
         if: matrix.toolchain == 'msvc-core'
         shell: pwsh

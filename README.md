@@ -89,6 +89,14 @@ cargo build --bin qcorec
 ./target/debug/qcorec emit -o generated.c examples/cycle12.qc
 ```
 
+For native multithreading, see the [runnable examples](examples/threads/README.md).
+From Visual Studio Developer PowerShell at the repository root, build and run
+all three with:
+
+```powershell
+.\examples\threads\build-windows.ps1 -Run
+```
+
 The standing per-change gate — the full command list every change must pass,
 including formatting, Clippy and both reevaluation probes — is in
 [`AGENTS.md`](AGENTS.md). Windows setup, Clang discovery order and CI job

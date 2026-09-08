@@ -270,10 +270,16 @@ Scoped task and checked mutex emission embeds the required C11 thread subset
 on Windows, adapted from Monkey winpthreads. In the developer shell:
 
 ```powershell
-cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qcore -o generated.c
+cargo run -p qcorec -- emit examples/threads/two_workers.qcore -o generated.c
 cl /nologo /std:c11 /W4 /WX generated.c /Fe:generated.exe
 .\generated.exe
 ```
+
+The [threading examples](examples/threads/README.md) cover copied inputs,
+owned-buffer transfer and shared readers. Build and run all three with
+`.\examples\threads\build-windows.ps1 -Run`; the script puts C, object and
+executable files in `target\thread-examples\`. The MSVC core CI job runs the
+same script with Clang discovery disabled.
 
 No extra header, object file or pthread library is needed. The native test
 harness uses MSVC's `/experimental:c11atomics` for its synchronization observers;
@@ -334,6 +340,22 @@ emission, native generated-C execution) and an MSVC-plus-Clang analysis job
 full suite.
 
 ## Increment records
+
+Windows executable examples (2026-09-08): `examples/threads/` adds two copied
+workers, an owned-buffer round trip with independent parent work, and two
+shared readers followed by an exclusive parent write. `build-windows.ps1`
+emits C and builds executables under `target/thread-examples/`; `-Run` executes
+them. All three run under MSVC with `/std:c11 /W4 /WX` and an unavailable
+`QCORE_CLANG`, producing main results 7, 42 and 7 respectively. The Windows
+MSVC core CI job runs the same script. The guide explains developer-shell
+setup, compile/link commands, process exit codes and the buffered trace output.
+Compiler, runtime and proof semantics are unchanged. Formatting, workspace
+Clippy, both reevaluation probes, the pinned Lean build and all 31 audits pass.
+The aggregate Windows workspace run records 1,306 passed, ten existing fixture
+failures and one ignored test. The failures are two in `second_source_set`,
+seven in `o04_constructor_caller` and one in `counter_source`. These failures
+are outside the example changes; the run started before the concurrent
+audit-fixture repair was finished.
 
 Windows native concurrency (2026-09-08): the shared emitted C11 thread subset
 now includes a self-contained Windows implementation adapted from Monkey
