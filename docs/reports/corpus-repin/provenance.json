@@ -1,0 +1,95 @@
+{
+  "card": "CORPUS-REPIN",
+  "commands": {
+    "current_route": "QCORE_CLANG=/usr/bin/clang cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --compile-database <build>/compile_commands.json <clone> <monkey compile_commands.json> <reports>/monkey-source.json <reports>/resource-diagnostics.json",
+    "pinned_route": "QCORE_CLANG=/usr/bin/clang QCORE_CHUNKIO_PACKAGE=build/cycle19/provider-packages-repin/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --pinned-evidence <clone> <monkey compile_commands.json> <reports>/monkey-source.json <reports>/resource-diagnostics.json",
+    "prepare": "python3 -B scripts/prepare_cycle19_clang_audit.py --fluent-bit /home/cosmo/Documents/GitHub/fluent-bit --revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 --clang clang --clangxx clang++",
+    "provider_packages": "python3 -B providers/package.py build --output build/cycle19/provider-packages-repin"
+  },
+  "date": "2026-09-08",
+  "deviations": [
+    "The archived run consumed the developer checkout's own ad-hoc GCC build database (/usr/bin/cc, FLB_DEV/FLB_TESTS_INTERNAL/FLB_AWS/FLB_IN_EBPF/FLB_WAMRC/... ). That checkout has moved off the pin and its historical configuration is not recorded anywhere in this repository, so it is not reproducible. This re-pin uses the reproducible explicit-Clang CMake build that scripts/prepare_cycle19_clang_audit.py prepares at the pin, and feeds the *same* database to both routes. Every consequence of that substitution is itemised in the report.",
+    "The pinned compatibility route reads <root>/build/compile_commands.json. The prepared CMake build lives outside the clone, so its compile_commands.json was copied to <clone>/build/ verbatim. No gate was bypassed and no command was rewritten: the pinned route received byte-identical database content to the --compile-database the current route received.",
+    "The prepared Monkey source copy lives under this worktree, so the four wrapper paths that embed an absolute source path differ from the archived ones. This is location provenance, not analysis."
+  ],
+  "host": {
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "clang_path": "/usr/bin/clang",
+    "cmake": "cmake version 4.2.3",
+    "platform": "Linux 7.0.0-30-generic x86_64",
+    "python": "Python 3.14.4",
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)"
+  },
+  "inputs": {
+    "chunkio_package": "build/cycle19/provider-packages-repin/qcore.chunkio",
+    "cmake_build": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8f44301482587f88/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/fluent-bit-clang-production",
+    "compile_database_entries": 1415,
+    "compile_database_sha256": "f3af7ec4c10775a0ed929d292a7d7aa8e0d4eabf8aa81912e391c336f0f18285",
+    "fluent_bit_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "fluent_bit_upstream": "/home/cosmo/Documents/GitHub/fluent-bit (read-only; its own HEAD was never moved)",
+    "independent_clone": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8f44301482587f88/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/fluent-bit-clang-source",
+    "monkey_database_entries": 142,
+    "monkey_database_sha256": "2c0b6955fec6853e6f9dd53094ab94426e498d0785a3cadda2cf74928dd97e84",
+    "monkey_source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "provider_packages": "build/cycle19/provider-packages-repin (rebuilt for this run)"
+  },
+  "logs": {
+    "audit-current-route.log": {
+      "bytes": 115714,
+      "sha256": "9373b1e81e2cad2ba3c69c7242ab2e16a8d4269619a4c13e3fa5123126a8917a"
+    },
+    "audit-pinned-route-submodule-refusal.log": {
+      "bytes": 113666,
+      "sha256": "bcfaf29d021cd9d30b90b422012fde64cecf41fb7d316c87c5bbe4566ab1a4f9"
+    },
+    "audit-pinned-route.log": {
+      "bytes": 133233,
+      "sha256": "0fdfc8729bec2bbd0c4a7db4a7018bce3cc5de9c946a02e305199e700c0e688b"
+    },
+    "clippy.log": {
+      "bytes": 1713,
+      "sha256": "56579196b8b9fbfc95a0ff4c92316ba5ec52af5291bcb54e757674b2a7af4f4d"
+    },
+    "fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "followup.log": {
+      "bytes": 10271,
+      "sha256": "e1018a31bf33e123d2525dd7a37c8d66da481dd338c406e22db35ef960a74c94"
+    },
+    "lean-audits.log": {
+      "bytes": 137307,
+      "sha256": "45aee72e7942c47e2c38b94996ad4099d5e973f1a5aac0c468e0775b8af1cd13"
+    },
+    "prediction-comparison.log": {
+      "bytes": 1335,
+      "sha256": "868d9e75c4428f9065ceb9ed78d1e5d5eb7755081f4d958ac08b52390591b343"
+    },
+    "prepare.log": {
+      "bytes": 1221,
+      "sha256": "e4bd7da84ea2be2e22c49381e8f05ebdbc918d93412f0e106ab740d5e8ddbe1b"
+    },
+    "probe.log": {
+      "bytes": 2601,
+      "sha256": "c16e3c98ebd9b8a477e119806fab5f66f314fbdf92dd192a3a2c23255be367c9"
+    },
+    "provider-packages.log": {
+      "bytes": 3440,
+      "sha256": "1615ab2e881973d473818608a1912e0f3e165025b5993192285e9ff3b9cbd469"
+    },
+    "python.log": {
+      "bytes": 445,
+      "sha256": "a233297de72b2b00fc774161fae4eb263b5401e8584a8faa400795d9e3dcec0f"
+    },
+    "tests.log": {
+      "bytes": 159943,
+      "sha256": "e31ad90483836faf36b3944d6257811c47f8c80fb66147fd1b96ec200981d915"
+    }
+  },
+  "repository": {
+    "branch_head": "a63fbae77bad2998959e7946726aa7fe76779eb2",
+    "libevent_submodule": "d82464a277d0f42703702c4dfd9af6af38595a83"
+  },
+  "schema_version": 1
+}

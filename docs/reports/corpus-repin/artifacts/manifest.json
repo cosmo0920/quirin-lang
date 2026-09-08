@@ -1,0 +1,50 @@
+{
+  "chunk-contracts": {
+    "archived_baseline_bytes": 4141225,
+    "archived_baseline_sha256": "df92980655aa3662c1b9130e80539588b58c1574daa33234992db6b3455536da",
+    "archived_path": "docs/reports/corpus-repin/artifacts/chunk-contracts.json.gz",
+    "byte_identical_to_baseline": false,
+    "produced_file": "resource-diagnostics.chunk-contracts.json",
+    "uncompressed_bytes": 4141225,
+    "uncompressed_sha256": "29122661dfe34b04759c0eec6d0c1c9b91fd60d78990bab3e3e4fdd77032d9ea"
+  },
+  "contracts": {
+    "archived_path": "docs/reports/corpus-repin/artifacts/contracts.json.gz",
+    "produced_file": "resource-diagnostics.contracts.json",
+    "uncompressed_bytes": 8168,
+    "uncompressed_sha256": "6c86fddbbd78368d751617dba50e356e851814145816004475d3e514372be760"
+  },
+  "current-route-diagnostics": {
+    "archived_path": "docs/reports/corpus-repin/artifacts/current-route-diagnostics.json.gz",
+    "produced_file": "resource-diagnostics.json (run_current, --compile-database)",
+    "uncompressed_bytes": 16222549,
+    "uncompressed_sha256": "065f65fea1fde232f409265678cf8bc50722501705fd52964c3561effb1ea598"
+  },
+  "diagnostics": {
+    "archived_baseline_bytes": 11006128,
+    "archived_baseline_sha256": "6628bf3bcef7c093c82f3c21d8f170f54b1fab5409710b8a61711fef7de18e90",
+    "archived_path": "docs/reports/corpus-repin/artifacts/diagnostics.json.gz",
+    "byte_identical_to_baseline": false,
+    "produced_file": "resource-diagnostics.json",
+    "uncompressed_bytes": 10741560,
+    "uncompressed_sha256": "c323d408b0ebbcb21ef0640bbffb180664a933274d17e62e6a8b6aec7f2cbb2e"
+  },
+  "source": {
+    "archived_baseline_bytes": 1663331,
+    "archived_baseline_sha256": "baef422337aed1b31fb6cabad0645b420bbb90e420869d40965e6515e95560ef",
+    "archived_path": "docs/reports/corpus-repin/artifacts/source.json.gz",
+    "byte_identical_to_baseline": false,
+    "produced_file": "monkey-source.json",
+    "uncompressed_bytes": 1665474,
+    "uncompressed_sha256": "806fd6357c51f6d6ae5cac95e7b4b854eeb5a8296d7357685d270c9bc6c1d366"
+  },
+  "source-effects": {
+    "archived_baseline_bytes": 114434,
+    "archived_baseline_sha256": "4a09358a8d51b60587779f0f760e6da97b4d3575df1e3df038b7b82fce2088f8",
+    "archived_path": "docs/reports/corpus-repin/artifacts/source-effects.json.gz",
+    "byte_identical_to_baseline": false,
+    "produced_file": "resource-diagnostics.source-effects.json",
+    "uncompressed_bytes": 114479,
+    "uncompressed_sha256": "26545c57a60b0af460c767eb533b20561c00d7dbbf75b93bd7de7fb82419d5b8"
+  }
+}

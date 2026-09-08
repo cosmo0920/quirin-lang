@@ -1,0 +1,1089 @@
+{
+  "archived": "docs/reports/w5-cmetrics-unit-provider/diagnostics.json.gz",
+  "c02_attribution": {
+    "added_in_those_descriptions": 0,
+    "descriptions": [
+      "indirect memory access is outside the resource projection",
+      "unrecognized assignment destination",
+      "unsupported assignment expression"
+    ],
+    "net": 1538,
+    "other_removals": 101,
+    "removed_in_those_descriptions": 1538,
+    "share_of_all_removals": 0.9384
+  },
+  "card": "CORPUS-REPIN",
+  "function_status_transition_counts": {
+    "Unknown -> Safe": 23
+  },
+  "function_status_transitions": [
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "cio_set_max_chunks_up",
+      "unit": [
+        "chunkio",
+        "chunkio.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "cio_error_reset",
+      "unit": [
+        "chunkio",
+        "cio_error.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "cmt_counter_allow_reset",
+      "unit": [
+        "cmetrics",
+        "cmt_counter.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "prom_fmt_init",
+      "unit": [
+        "cmetrics",
+        "cmt_encode_prometheus.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "otel_span_set_dropped_attributes_count",
+      "unit": [
+        "ctraces",
+        "ctr_encode_opentelemetry.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "otel_span_set_dropped_events_count",
+      "unit": [
+        "ctraces",
+        "ctr_encode_opentelemetry.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "otel_span_set_end_time",
+      "unit": [
+        "ctraces",
+        "ctr_encode_opentelemetry.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "otel_span_set_start_time",
+      "unit": [
+        "ctraces",
+        "ctr_encode_opentelemetry.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_link_set_dropped_attr_count",
+      "unit": [
+        "ctraces",
+        "ctr_link.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_link_set_flags",
+      "unit": [
+        "ctraces",
+        "ctr_link.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_resource_set_dropped_attr_count",
+      "unit": [
+        "ctraces",
+        "ctr_resource.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_end_ts",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_event_set_dropped_attributes_count",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_kind_set",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_set_dropped_attributes_count",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_set_dropped_events_count",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_set_dropped_link_count",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_set_dropped_links_count",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "ctr_span_set_flags",
+      "unit": [
+        "ctraces",
+        "ctr_span.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "LZ4_decoderRingBufferSize",
+      "unit": [
+        "librdkafka",
+        "lz4.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "rd_kafka_error_set_fatal",
+      "unit": [
+        "librdkafka",
+        "rdkafka_error.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "rd_kafka_error_set_retriable",
+      "unit": [
+        "librdkafka",
+        "rdkafka_error.c"
+      ]
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "rd_kafka_error_set_txn_requires_abort",
+      "unit": [
+        "librdkafka",
+        "rdkafka_error.c"
+      ]
+    }
+  ],
+  "line_independent_delta": {
+    "added": [
+      {
+        "category": "leak",
+        "count": 6,
+        "description": "live obligation acquired at preprocessed line 19357"
+      },
+      {
+        "category": "leak",
+        "count": 3,
+        "description": "live obligation acquired at preprocessed line 20258"
+      },
+      {
+        "category": "leak",
+        "count": 2,
+        "description": "live obligation acquired at preprocessed line 6464"
+      },
+      {
+        "category": "leak",
+        "count": 2,
+        "description": "live obligation acquired at preprocessed line 6694"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 2,
+        "description": "unresolved resource identity `summary`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2446"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `cur`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6275"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6290"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6568"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6572"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6715"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6600"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6963"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5933"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6854"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `scheduler_mode`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6741"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6749"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6768"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5820"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `table`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5602"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5612"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5980"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5984"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6201"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6273"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6297"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6323"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6374"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6377"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `counter`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `exp_histogram`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `gauge`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `histogram`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `untyped`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6206"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `av`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1878"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2170"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1954"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2093"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1827"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `mf`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5976"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 18667"
+      }
+    ],
+    "added_total": 57,
+    "removed": [
+      {
+        "category": "unsupported",
+        "count": 776,
+        "description": "unsupported assignment expression"
+      },
+      {
+        "category": "unsupported",
+        "count": 468,
+        "description": "indirect memory access is outside the resource projection"
+      },
+      {
+        "category": "unsupported",
+        "count": 294,
+        "description": "unrecognized assignment destination"
+      },
+      {
+        "category": "leak",
+        "count": 6,
+        "description": "live obligation acquired at preprocessed line 19363"
+      },
+      {
+        "category": "unsupported",
+        "count": 5,
+        "description": "call to uncontracted function `prom_fmt_init`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 5,
+        "description": "unresolved resource identity `RD_KAFKA_RESP_ERR_NO_ERROR`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 4,
+        "description": "unresolved resource identity `RD_KAFKA_RESOURCE_UNKNOWN`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 4,
+        "description": "unresolved resource identity `RD_KAFKA_ACL_OPERATION_UNKNOWN`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 4,
+        "description": "unresolved resource identity `RD_KAFKA_ACL_PERMISSION_TYPE_UNKNOWN`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 4,
+        "description": "unresolved resource identity `ErrorCode`"
+      },
+      {
+        "category": "leak",
+        "count": 3,
+        "description": "live obligation acquired at preprocessed line 20264"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 2,
+        "description": "unresolved resource identity `RD_KAFKA_ADMIN_TARGET_CONTROLLER`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 2,
+        "description": "unresolved resource identity `error_code`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 2,
+        "description": "unresolved resource identity `RD_KAFKA_RESOURCE_PATTERN_LITERAL`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 2,
+        "description": "unresolved resource identity `RD_KAFKA_RESOURCE_PATTERN_UNKNOWN`"
+      },
+      {
+        "category": "leak",
+        "count": 2,
+        "description": "live obligation acquired at preprocessed line 6458"
+      },
+      {
+        "category": "unsupported",
+        "count": 2,
+        "description": "call to uncontracted function `ctr_span_end_ts`"
+      },
+      {
+        "category": "leak",
+        "count": 2,
+        "description": "live obligation acquired at preprocessed line 6688"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2440"
+      },
+      {
+        "category": "unsupported",
+        "count": 1,
+        "description": "call to uncontracted function `rd_kafka_error_set_fatal`"
+      },
+      {
+        "category": "unsupported",
+        "count": 1,
+        "description": "call to uncontracted function `rd_kafka_error_set_retriable`"
+      },
+      {
+        "category": "unsupported",
+        "count": 1,
+        "description": "call to uncontracted function `rd_kafka_error_set_txn_requires_abort`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `e`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6269"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6284"
+      },
+      {
+        "category": "unsupported",
+        "count": 1,
+        "description": "call to uncontracted function `ctr_span_kind_set`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6562"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6566"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6709"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6594"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6957"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5927"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6848"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6735"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6743"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6762"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5814"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5596"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5600"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5974"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5978"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6195"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6267"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6291"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6317"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6368"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6371"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__BAD_MSG`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__UNKNOWN_PROTOCOL`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__FATAL`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `RD_KAFKA_BROKER_STATE_INIT`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `RD_KAFKA_COORD_GROUP`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `quantiles`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 6200"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1866"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2158"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1942"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 2081"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 1815"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 5970"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `start`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `thrd_timedout`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `r`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `new_positive_buckets`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `new_negative_buckets`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `OPENTELEMETRY__PROTO__METRICS__V1__NUMBER_DATA_POINT__VALUE_AS_INT`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `OPENTELEMETRY__PROTO__METRICS__V1__NUMBER_DATA_POINT__VALUE_AS_DOUBLE`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `LZ4F_OK_NoError`"
+      },
+      {
+        "category": "unknown_alias",
+        "count": 1,
+        "description": "unresolved resource identity `result`"
+      },
+      {
+        "category": "leak",
+        "count": 1,
+        "description": "live obligation acquired at preprocessed line 18673"
+      }
+    ],
+    "removed_total": 1639
+  },
+  "measured": "docs/reports/corpus-repin/artifacts/diagnostics.json.gz",
+  "preprocessed_line_offsets": [
+    {
+      "matched": 907,
+      "offset": -6,
+      "total": 907,
+      "unit": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c"
+      ]
+    },
+    {
+      "matched": 33,
+      "offset": 12,
+      "total": 33,
+      "unit": [
+        "monkey-libevent",
+        "mk_core/mk_event.c"
+      ]
+    },
+    {
+      "matched": 19,
+      "offset": 6,
+      "total": 19,
+      "unit": [
+        "monkey-libevent",
+        "mk_core/mk_file.c"
+      ]
+    },
+    {
+      "matched": 200,
+      "offset": 12,
+      "total": 200,
+      "unit": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c"
+      ]
+    },
+    {
+      "matched": 107,
+      "offset": 6,
+      "total": 107,
+      "unit": [
+        "monkey-libevent",
+        "mk_core/mk_string.c"
+      ]
+    },
+    {
+      "matched": 17,
+      "offset": 6,
+      "total": 18,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_cache.c"
+      ]
+    },
+    {
+      "matched": 41,
+      "offset": 12,
+      "total": 41,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_clock.c"
+      ]
+    },
+    {
+      "matched": 227,
+      "offset": 6,
+      "total": 227,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_config.c"
+      ]
+    },
+    {
+      "matched": 130,
+      "offset": 6,
+      "total": 130,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c"
+      ]
+    },
+    {
+      "matched": 103,
+      "offset": 6,
+      "total": 103,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_header.c"
+      ]
+    },
+    {
+      "matched": 432,
+      "offset": 6,
+      "total": 432,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_http.c"
+      ]
+    },
+    {
+      "matched": 252,
+      "offset": 6,
+      "total": 252,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c"
+      ]
+    },
+    {
+      "matched": 58,
+      "offset": 6,
+      "total": 58,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_http_thread.c"
+      ]
+    },
+    {
+      "matched": 25,
+      "offset": 6,
+      "total": 25,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_kernel.c"
+      ]
+    },
+    {
+      "matched": 168,
+      "offset": 6,
+      "total": 168,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c"
+      ]
+    },
+    {
+      "matched": 62,
+      "offset": 6,
+      "total": 62,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_mimetype.c"
+      ]
+    },
+    {
+      "matched": 61,
+      "offset": 6,
+      "total": 61,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_net.c"
+      ]
+    },
+    {
+      "matched": 221,
+      "offset": 6,
+      "total": 221,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_plugin.c"
+      ]
+    },
+    {
+      "matched": 186,
+      "offset": 6,
+      "total": 186,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_scheduler.c"
+      ]
+    },
+    {
+      "matched": 160,
+      "offset": 6,
+      "total": 160,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_server.c"
+      ]
+    },
+    {
+      "matched": 70,
+      "offset": 6,
+      "total": 70,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_socket.c"
+      ]
+    },
+    {
+      "matched": 81,
+      "offset": 6,
+      "total": 81,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_stream.c"
+      ]
+    },
+    {
+      "matched": 24,
+      "offset": 6,
+      "total": 24,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_user.c"
+      ]
+    },
+    {
+      "matched": 72,
+      "offset": 6,
+      "total": 72,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_utils.c"
+      ]
+    },
+    {
+      "matched": 268,
+      "offset": 6,
+      "total": 268,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/mk_vhost.c"
+      ]
+    },
+    {
+      "matched": 76,
+      "offset": 6,
+      "total": 76,
+      "unit": [
+        "monkey-libevent",
+        "mk_server/monkey.c"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "unit_set": {
+    "added": [
+      [
+        "cmetrics",
+        "cmt_atomic_clang.c"
+      ]
+    ],
+    "common": 184,
+    "removed": [
+      [
+        "cmetrics",
+        "cmt_atomic_gcc.c"
+      ]
+    ]
+  },
+  "unit_status": {
+    "after": {
+      "Safe": 2,
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4
+    },
+    "before": {
+      "Safe": 2,
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4
+    }
+  },
+  "unit_status_transitions": []
+}
