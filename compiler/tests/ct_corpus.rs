@@ -130,10 +130,7 @@ const STAGE_STATUSES: &[&str] = &[
 /// carry no mapped case — declaring them is what makes "this route has no such
 /// stage" a structural statement rather than a note.
 const ROUTE_STAGES: &[(&str, &[&str])] = &[
-    (
-        "legacy_c",
-        &["parse", "legacy_c_twin", "proof"],
-    ),
+    ("legacy_c", &["parse", "legacy_c_twin", "proof"]),
     (
         "mutex_guard",
         &[
@@ -726,10 +723,11 @@ fn derive_stage_plan(
     if !refused_before_lowering {
         plan.insert(lowering, StagePlan::executed(base, 1, None));
     }
-    if let Some(check) = check {
-        if !refused_before_lowering && reached_model_check {
-            plan.insert(check, StagePlan::executed(base, 1, None));
-        }
+    if let Some(check) = check
+        && !refused_before_lowering
+        && reached_model_check
+    {
+        plan.insert(check, StagePlan::executed(base, 1, None));
     }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
@@ -1147,9 +1145,10 @@ fn run_mapped_case(case: &ManifestCase) {
             .collect(),
     };
     let plan = derive_stage_plan(&case.id, &expected, &observed_codes);
-    let route = case.route.as_deref().unwrap_or_else(|| {
-        panic!("{}: a mapped case must declare its route", case.id)
-    });
+    let route = case
+        .route
+        .as_deref()
+        .unwrap_or_else(|| panic!("{}: a mapped case must declare its route", case.id));
     assert_eq!(
         route,
         route_for_case(&case.id, &expected.verdict),
@@ -1230,10 +1229,10 @@ fn run_mapped_case(case: &ManifestCase) {
                     case.id
                 );
                 assert_eq!(
-                    record.host_gate.as_ref().map(|gate| gate
-                        .iter()
-                        .map(String::as_str)
-                        .collect::<Vec<_>>()),
+                    record
+                        .host_gate
+                        .as_ref()
+                        .map(|gate| gate.iter().map(String::as_str).collect::<Vec<_>>()),
                     planned.host_gate.clone(),
                     "{}: `{stage}` must record the exact host gate of its runner, so the \
                      status cannot be read as host-unconditional",
@@ -1548,13 +1547,11 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     // The manifest states its own vocabulary so a reader knows what the words
     // mean; this file is the authority, so data can never widen it.
     assert_eq!(
-        manifest.stage_vocabulary.stages,
-        STAGE_NAMES,
+        manifest.stage_vocabulary.stages, STAGE_NAMES,
         "manifest stage vocabulary drifted from the harness"
     );
     assert_eq!(
-        manifest.stage_vocabulary.statuses,
-        STAGE_STATUSES,
+        manifest.stage_vocabulary.statuses, STAGE_STATUSES,
         "manifest status vocabulary drifted from the harness"
     );
     assert_eq!(
@@ -1736,8 +1733,9 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
             if record.status != "executed" {
                 continue;
             }
-            *observations.entry(stage).or_insert(0) +=
-                record.observations.expect("an executed stage counts its runs");
+            *observations.entry(stage).or_insert(0) += record
+                .observations
+                .expect("an executed stage counts its runs");
             let hosts = host_scope.entry(stage).or_default();
             match &record.host_gate {
                 Some(gate) => hosts.extend(gate.iter().cloned()),
