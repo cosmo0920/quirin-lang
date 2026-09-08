@@ -1,0 +1,25 @@
+import std.concurrency;
+fn main() -> unit {
+    thread scope e epoch {
+        let page = share 4096;
+        let other = share 4096;
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope reader_a {
+            read page;
+            read other;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            join(drop);
+        }
+        thread scope reader_b {
+            read page;
+            read other;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            join(drop);
+        }
+    }
+}

@@ -673,6 +673,74 @@ code. Emission declares each callee from the ABI table and calls it directly;
 which object file supplies the symbol is the builder's premise. See
 [the extern-call record](reports/extern-call-v1/README.md).
 
+## G02e. Flat-epoch quantitative bound
+
+`source.epoch.bound.v1`. Selected before every other concurrent route by the
+`epoch` marker on a thread scope, because an epoch scope is also a
+`thread scope` and a module declaring a quantitative epoch must not be handed to
+a route that models no accounting. Lowers onto the unedited `FlatEpochBoundV1`
+checker (`qcore_core::epoch_accounting`, diagnostics `Q630`–`Q641`).
+
+```ebnf
+epoch_module = "import", "std.concurrency", ";", entry ;
+entry        = "fn", NAME, "(", ")", "->", "unit", "{", epoch_scope, "}" ;
+epoch_scope  = "thread", "scope", NAME, "epoch", "{", { header | worker }, "}" ;
+
+header       = cell | allocation | overhead | latency_claim ;
+cell         = "let", NAME, "=", "share", NAT, ";" ;
+allocation   = "bound", NAT, "effort", NAT, ";" ;
+overhead     = "overhead", "scope", NAT, "thread", NAT, [ "measured", NAT ], ";" ;
+latency_claim= "bound", "effort", "as", "latency", ";" ;
+
+worker       = "thread", "scope", NAME, "{", { clause }, "}" ;
+clause       = "read", NAME, ";" | "write", NAME, ";"
+             | "peak", NAT, ";" | "effort", NAT, ";"
+             | "credit", NAT, "effort", NAT, ";"
+             | "retained", NAT, ";"
+             | "join", "(", ( "move" | "drop" | "close" ), ")", ";"
+             | worker ;
+```
+
+Two axes are declared: `memory` carries every byte figure and `effort` carries
+the profile's work quantity. `allocation` and `overhead` each appear exactly
+once; `credit` appears exactly once per worker; `peak`, `effort`, `retained` and
+the join clause at most once each. Every `NAT` is read at `u64` and an
+out-of-range literal is refused, never wrapped.
+
+The join clause is the creator's act, written in the child's block:
+`join(move)` transfers the completed child's result to the creator,
+`join(drop)` releases it there, and `join(close)` is the representable claim
+that the result stopped being live at completion — refused by the core at
+`Q634`. A worker with no join clause lowers to an unjoined task (`Q635`). The
+parentheses are load-bearing: a bare `join` is claimed by the scoped-task
+profile's expression scanner, so this profile's join is always written
+`join(...)`.
+
+Shapes the profile does not model become *program content* the core refuses
+rather than grammar the lowering hides: `write NAME;` is
+`UnsupportedEpochShape::SharedMutation` and a nested worker block is
+`NestedTask` (both `Q632`); a shared entry naming something other than a
+declared cell keeps an identity the storage list does not contain (`Q631`); a
+repeated `read` of one cell in one worker is not deduplicated (`Q630`); and
+`overhead … measured RUNS;` offers a native measurement in place of the declared
+figures, which is `Q640`. Everything outside this grammar — a clause word the
+profile does not have, a missing header, a second declaration, a `spawn`/`join`
+task expression, `join(close)` with nothing retained — is refused at `Q600`.
+
+`bound effort as latency;` is a request, not a grant: the lowering records it
+and the driver puts it to `epoch_wall_clock_bound`, which always refuses
+(`Q639`). This profile has no schedule model, so no quantity it derives is ever
+a time.
+
+Every quantity here is a **declared premise** of `FlatEpochBoundV1`
+(`DeclaredTaskFootprints`, `DeclaredRuntimeOverhead`,
+`DisjointSharedStorageCells`, `NoScheduleModel`); nothing on this route imports
+a peak, a result, a credit or an overhead figure from C, from an allocator or
+from a measured run. The route is **check-only**: an admitted epoch is a checked
+accounting statement about a declared shape, so it emits no C, runs no reference
+execution and implies no native run. See
+[the epoch source record](reports/remaining-t08-epoch-src/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf

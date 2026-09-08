@@ -1,0 +1,19 @@
+import std.concurrency;
+fn main() -> unit {
+    thread scope e epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope stage_a {
+            peak 3072;
+            effort 400;
+            credit 8192 effort 500;
+            join(drop);
+        }
+        thread scope stage_b {
+            peak 5120;
+            effort 400;
+            credit 8192 effort 500;
+            join(drop);
+        }
+    }
+}
