@@ -18,6 +18,11 @@
 #undef main
 
 static unsigned profile_case, fd_epoch, map_epoch;
+/* Endpoint call tallies, kept separate per operation and per outcome so a
+ * library release is never counted as a harness reclamation. Existing profiles
+ * ignore them; they default to zero and change no observed behaviour. */
+static unsigned os_close_ok, os_close_failed, os_unmap_ok, os_unmap_failed, os_map_ok, os_map_failed;
+static int profile_flags, fail_mmap;
 static int opened_fd=-1, map_live, fail_chmod, fail_close;
 static void *last_map;
 static size_t last_map_size;
@@ -56,13 +61,17 @@ int __wrap_chmod(const char *path,mode_t mode) {
 int __wrap_close(int fd) {
     int injected=tracking && fail_close;
     errno=0;int result=injected?(errno=EIO,-1):__real_close(fd);int error=errno;
-    if(tracking) {os_prefix("close");printf(",\"fd\":%d,\"epoch\":%u,\"result\":%d,\"errno\":%d,\"injected\":%d}\n",fd,fd_epoch,result,error,injected);}
+    if(tracking) {
+        if(result==0)os_close_ok++;else os_close_failed++;
+        os_prefix("close");printf(",\"fd\":%d,\"epoch\":%u,\"result\":%d,\"errno\":%d,\"injected\":%d}\n",fd,fd_epoch,result,error,injected);}
     errno=error;return result;
 }
 void *__wrap_mmap(void *address,size_t size,int prot,int flags,int fd,off_t offset) {
-    errno=0;void *result=__real_mmap(address,size,prot,flags,fd,offset);int error=errno;
+    int injected=tracking && fail_mmap;
+    errno=0;void *result=injected?(errno=EIO,MAP_FAILED):__real_mmap(address,size,prot,flags,fd,offset);int error=errno;
     if(tracking) {
-        if(result!=MAP_FAILED) {assert(!map_live);map_epoch++;map_live=1;last_map=result;last_map_size=size;}
+        if(result!=MAP_FAILED) {assert(!map_live);map_epoch++;map_live=1;last_map=result;last_map_size=size;os_map_ok++;}
+        else os_map_failed++;
         os_prefix("map");printf(",\"address\":%llu,\"size\":%zu,\"prot\":%d,\"flags\":%d,\"fd\":%d,\"fd_epoch\":%u,\"offset\":%lld,\"result\":%llu,\"errno\":%d,\"epoch\":%u}\n",
             (unsigned long long)(uintptr_t)address,size,prot,flags,fd,fd_epoch,(long long)offset,(unsigned long long)(uintptr_t)result,error,map_epoch);
     }
@@ -74,7 +83,7 @@ int __wrap_munmap(void *map,size_t size) {
     if(tracking && map!=MAP_FAILED) assert(map_live && map==last_map && size==last_map_size);
     errno=0;int result=__real_munmap(map,size);int error=errno;
     if(tracking) {
-        if(result==0)map_live=0;
+        if(result==0){map_live=0;os_unmap_ok++;}else os_unmap_failed++;
         os_prefix("unmap");printf(",\"map\":%llu,\"size\":%zu,\"epoch\":%u,\"result\":%d,\"errno\":%d}\n",(unsigned long long)(uintptr_t)map,size,map_epoch,result,error);
     }
     errno=error;return result;
@@ -128,6 +137,7 @@ static void profile_init(char *root,unsigned number,const char *kind) {
     backend_snapshot_hook=profile_backend;before_free_hook=profile_before_free;extra_function_name=profile_function;
     tracking=1;
     struct cio_options options;cio_options_init(&options);options.root_path=root;options.chmod="0700";
+    options.flags|=profile_flags;
     context=cio_create(&options);assert(context);
     struct cio_stream *stp=cio_stream_create(context,"stream-0",CIO_STORE_FS);assert(stp);streams[stream_count++]=stp;
 }

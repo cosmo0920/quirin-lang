@@ -12,6 +12,7 @@ pub mod aggregate_composition;
 pub mod ast;
 pub mod c_emit;
 pub mod cfg;
+pub mod chunk_integrity;
 pub mod cleanup_lowering;
 pub mod concurrency;
 pub mod disjoint_footprint;
@@ -43,6 +44,13 @@ pub use c_emit::{CEmitError, emit_c11, parse_c_observation};
 pub use cfg::{
     BasicBlock, BlockId, CfgError, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ErrorVariant,
     ExecutionObservation, ExecutionOutcome, TraceEvent, TypedCfg, interpret_cfg,
+};
+pub use chunk_integrity::{
+    AllocationLedger, CaseRecord, CaseVerdict, ConstructorOutcome, ContentClass, EndpointLedger,
+    Injection, IntegrityRefusal, Verdict as IntegrityVerdict, classify_content, crc32,
+    expected_outcome, parse_records as parse_integrity_records,
+    policy_values as integrity_policy_values, validate_case as validate_integrity_case,
+    validate_family as validate_integrity_family,
 };
 pub use cleanup_lowering::{
     LoweringError, SourceOp, SourceProgram, interpret_source, lower_cleanup_cfg,

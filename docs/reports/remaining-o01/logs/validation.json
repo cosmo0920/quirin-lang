@@ -1,0 +1,1 @@
+{"content_classes":{"bad_checksum":2,"bad_magic":1,"clean":3,"truncated_content":1,"truncated_header":1},"durability_proved":false,"injected_operations":{"close":2,"mmap":1,"none":5},"kind":"chunk_integrity_validation","static_certificate":false,"validated_executions":8}
