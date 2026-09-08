@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Two source routes are represented and they do not share a stage vocabulary: task-route cases (ScopedCopyTasksV1/ScopedOwnedTasksV1 and its ScopedReadSharesV1/ScopedErrorPayloadV1 extensions) read `cfg` as the checked task IR they construct, while source.mutex.guard.v1 cases (CT26/CT27/CT29/CT30) emit directly from a checked event list and have no CFG stage, so `cfg` stays unassessed for them. Mapping is not full language conformance. Several unmapped cases have recorded reasons rather than absent evidence. CT11 asks for full permission reconstructed while local shared *aliases* survive; ScopedReadSharesV1 has no local alias form at all, and in the closest measured program the party retaining the share is an unjoined child task, so mapping it would answer a different question (card T05 section 9). CT06 needs an owned-pointer copy form the grammar does not admit. CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 (card T08) but have no source syntax, hence no parser stage and no reference execution, so they stay unmapped until epoch source syntax lands.",
+  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Two source routes are represented and they do not share a stage vocabulary: task-route cases (ScopedCopyTasksV1/ScopedOwnedTasksV1 and its ScopedReadSharesV1/ScopedErrorPayloadV1 extensions) read `cfg` as the checked task IR they construct, while source.mutex.guard.v1 cases (CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48) emit directly from a checked event list and have no CFG stage, so `cfg` stays unassessed for them. CT28/CT31/CT32/CT48 are the card T03-F additions (bounded task composition inside the guard profile, the `wait` announced acquisition, and guard-scoped facts); their accepted controls are route-checked, and for CT28/CT31/CT32 those controls are multi-task modules this backend cannot render in one thread, so they carry no native evidence and their `evidence_target` records the Q500 host gate rather than an executed run. Mapping is not full language conformance. Several unmapped cases have recorded reasons rather than absent evidence. CT11 asks for full permission reconstructed while local shared *aliases* survive; ScopedReadSharesV1 has no local alias form at all, and in the closest measured program the party retaining the share is an unjoined child task, so mapping it would answer a different question (card T05 section 9). CT06 needs an owned-pointer copy form the grammar does not admit. CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 (card T08) but have no source syntax, hence no parser stage and no reference execution, so they stay unmapped until epoch source syntax lands.",
   "cases": [
     {
       "id": "CT01",
@@ -480,17 +480,18 @@
       "scenario": "Guard is moved to a child or unlocked by another thread",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT28/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task written inside a critical section can lexically name the creator's guard, and acting through it is refused at Q612 WrongGuardAffinity; the exact ordered cascade [Q612, Q600 JoinWhileGuardHeld] is pinned, so the refusal is shown not to have released the guard the creator still holds. Both halves of the scenario execute: the case uses the creator's guard (`read buf with g`), and the child_unlocks control unlocks it (`close g`), refusing identically, so affinity is keyed to the acting task and not to the operation. The own_acquisition control is accepted: the same child takes its own acquisition of the same generation and the creator reads after the join. Only parser and type_checker execute; cfg is unassessed because this route emits from a checked event list and has no CFG stage. No native evidence: the accepted control is multi-task and this backend emits one thread, so it is published checked with c_source: None, and evidence_target records the Q500 host gate rather than a compiled or executed run.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT29",
@@ -533,34 +534,36 @@
       "scenario": "Mutex destroyed with outstanding handle borrower/waiter",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT31/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1 with card T03-F's `wait NAME;` form: an announced acquisition a child never performs blocks the generation's destruction at scope exit, refused at Q619 NonquiescentMutexDestruction with the exact ordered cascade [Q619, Q600 NonquiescentDestruction, Q600 OutstandingMutex, Q600 OutstandingWaiter] pinned; every entry after the first shows the refused destruction left the generation, the protected resource and the waiter outstanding rather than quietly destroying one of them. RegisterWaiter had no source form before T03-F, which is why this case was unmappable. The performed control has the announcing task perform the acquisition, withdrawing the announcement, and is accepted. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: `wait` is in the emission-refused set, so the control publishes with c_source: None and evidence_target records the Q500 host gate only. This is the model's waiter bookkeeping, not a blocking-acquisition or deadlock claim.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT32",
       "scenario": "Join while a guard is held",
       "expected": "Reject in initial profile",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT32/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task created and joined strictly inside a critical section is refused at Q600 JoinWhileGuardHeld, and the cascade is exactly one entry long because the empty child body is well formed and nothing else is disturbed. The joined_outside control moves the identical block one statement past the section's end and is accepted, so the refusal is keyed to the join landing while a guard is held. This is the unedited T02 checker rule: T03-F declined to widen it, so a join strictly inside a guard is a refusal in this profile rather than a feature. Only parser and type_checker execute; cfg is unassessed (no CFG stage). No native evidence: the accepted control is multi-task and publishes with c_source: None; evidence_target records the Q500 host gate only.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT33",
@@ -823,17 +826,18 @@
       "scenario": "Stale heap refinement reused after mutex release/reacquire",
       "expected": "Invalidate/re-establish, never assume",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT48/case.qcore",
+      "semantic_profile": "source.mutex.guard.v1 with card T03-F's guard-scoped facts: a refinement established under one guard and relied on under a later acquisition of the same mutex is refused at Q616 StaleProtectedFact, cascade exactly [Q616] because the release that dropped the fact was itself well formed. Both directions of the spec's invalidate/re-establish expectation execute: the reasserted control re-establishes the fact under the second guard and is accepted; the never_asserted control refuses at Q600 UnknownFact, so Q616 is staleness rather than absence. The binder is declared at thread-scope level so the name resolves and the model refuses the use, which is the semantic refusal the T03 CT integration report recorded the weaker Q013 unknown-name refusal as insufficient for. Only parser and type_checker execute; cfg is unassessed (no CFG stage). Not established: a fact has no predicate, so this is refinement invalidation and not refinement content. The reasserted control is single-task and does emit C, but the harness route-checks it rather than running it; evidence_target records the Q500 host gate.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT49",

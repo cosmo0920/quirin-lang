@@ -1,0 +1,46 @@
+{
+  "id": "CT28",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q612",
+      "message_contains": "WrongGuardAffinity"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "JoinWhileGuardHeld"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task written inside a critical section can lexically *name* the creator's guard, and acting through it is refused at Q612 WrongGuardAffinity, with the exact ordered cascade [Q612, Q600 JoinWhileGuardHeld] pinned. Pinning the second entry is what shows the refusal did not silently release the guard: the creator still holds it where the child's join lands. Both halves of the scenario execute on their own artifacts — case.qcore is the guard *used* by another task (read buf with g), and the child_unlocks.qcore control is the guard *unlocked* by another task (close g); both refuse identically, so the rule is keyed to the acting task rather than to the operation. The own_acquisition.qcore control is accepted: the same child takes its own acquisition of the same generation, writes under its own guard, and the creator reads after the join — so Q612 is keyed to acting through a guard the child does not hold, not to a child touching a protected footprint at all. Only parser and type_checker execute on the case artifact; cfg is unassessed because source.mutex.guard.v1 emits directly from its checked event list and has no CFG stage at all. NOT established: any native evidence. The accepted control is a multi-task module and this backend emits one thread, so it is published checked with c_source: None (card T03-F section 3.5); evidence_target=linux records that the control is still host-gated — the Q500 non-Linux/macOS/Windows target refusal is evaluated before the emission decision — and NOT that its C was compiled or run. No composition with the scoped task ledger, no schedule, no contention and no C memory-model claim.",
+  "checked_mutex_reject": {
+    "diagnostic_sequence": [
+      "Q612",
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "own_acquisition.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "note": "the same child takes its own acquisition of the same generation and the creator reads after the join, so the refusal is keyed to the borrowed guard rather than to child tasks or to the protected footprint. Multi-task, so it publishes with c_source: None; it is route-checked, not natively run."
+      },
+      {
+        "source": "child_unlocks.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q612",
+          "Q600"
+        ],
+        "note": "the second half of the scenario name: the child unlocks the creator's guard rather than reading through it, and refuses with the identical cascade, so guard affinity is checked per acting task and not per operation kind."
+      }
+    ]
+  }
+}
