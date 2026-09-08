@@ -86,32 +86,32 @@ descriptors, shared cell → distinct cells.
 
 | Obligation | Rust | Lean |
 |---|---|---|
-| bounds are checked, not assumed | `a_slice_past_the_declared_extent_is_refused` (`Q633`, with an in-bounds positive control) | `sliceBytes_within_extent` |
+| bounds are checked, not assumed | `a_slice_past_the_declared_extent_is_refused` (`Q653`, with an in-bounds positive control) | `sliceBytes_within_extent` |
 | the bounds arithmetic cannot wrap | `an_element_range_that_wraps_a_u32_is_refused_rather_than_wrapping` — `elem_offset = u32::MAX`, `elem_count = 2` reports `elem_end = 4294967297` instead of `1` | — |
-| degenerate and unrepresentable extents | `a_degenerate_or_unrepresentable_extent_is_refused` (`Q630`, five cases including a `2 × 0x8000_0000` byte extent exactly one past the representation) | `sliceBytes_nonempty` |
-| the interval is derived, not believed | `a_supplied_byte_interval_is_compared_never_believed` — an agreeing interval is admitted, a wider one is `Q645` with both numbers named | — |
+| degenerate and unrepresentable extents | `a_degenerate_or_unrepresentable_extent_is_refused` (`Q650`, five cases including a `2 × 0x8000_0000` byte extent exactly one past the representation) | `sliceBytes_nonempty` |
+| the interval is derived, not believed | `a_supplied_byte_interval_is_compared_never_believed` — an agreeing interval is admitted, a wider one is `Q665` with both numbers named | — |
 | the element→byte encoding is faithful | — | `range_disjoint_iff_bytes_disjoint`, **both directions** over a nonzero element size |
 | an admitted judgement means no shared byte | — | `disjoint_intervals_share_no_byte`, `admitted_memory_disjointness_shares_no_byte` |
 | the refusal is not vacuous | `slices_touching_at_one_boundary_are_disjoint_and_overlapping_ones_are_refused` | `overlapping_intervals_share_a_byte` |
-| **one generation identity** | `disjointness_across_two_allocation_identities_is_refused_not_assumed` — refused (`Q642`) *even when the byte numbers look disjoint*, so the refusal is about the identity, not the arithmetic | `admitted_disjointness_has_a_ground` (the memory ground requires a common `alloc` **and** a common `gen`), `cross_allocation_disjointness_is_refused`, `stale_generation_is_refused` |
+| **one generation identity** | `disjointness_across_two_allocation_identities_is_refused_not_assumed` — refused (`Q662`) *even when the byte numbers look disjoint*, so the refusal is about the identity, not the arithmetic | `admitted_disjointness_has_a_ground` (the memory ground requires a common `alloc` **and** a common `gen`), `cross_allocation_disjointness_is_refused`, `stale_generation_is_refused` |
 | the decision cannot be bought by operand order | — | `admitted_disjointness_is_symmetric` |
 
 ### 3.2 "Overlaps and stale aliases reject; struct fields and bit-fields require distinct explicit layout contracts"
 
 | Obligation | Rust | Lean |
 |---|---|---|
-| overlap rejects | `slices_touching_at_one_boundary_…` (`Q640`), `a_slice_is_never_disjoint_from_itself_or_from_a_copy_of_itself` (both the same handle twice and two handles over one range) | `nonempty_interval_is_not_disjoint_from_itself` |
-| reallocation retires every handle | `reallocation_retires_every_handle_of_the_previous_generation` — two stale operands each report `Q632`, a re-derivation under the new generation is admitted, and deriving under the retired one is refused | `reallocation_retires_every_handle_of_the_old_generation` |
-| destruction retires them and is terminal | `a_destroyed_allocation_retires_its_handles_and_admits_nothing_further` (`Q632` then three `Q646` cases: derive, re-destroy, reallocate) | `destruction_retires_every_handle` |
+| overlap rejects | `slices_touching_at_one_boundary_…` (`Q660`), `a_slice_is_never_disjoint_from_itself_or_from_a_copy_of_itself` (both the same handle twice and two handles over one range) | `nonempty_interval_is_not_disjoint_from_itself` |
+| reallocation retires every handle | `reallocation_retires_every_handle_of_the_previous_generation` — two stale operands each report `Q652`, a re-derivation under the new generation is admitted, and deriving under the retired one is refused | `reallocation_retires_every_handle_of_the_old_generation` |
+| destruction retires them and is terminal | `a_destroyed_allocation_retires_its_handles_and_admits_nothing_further` (`Q652` then three `Q666` cases: derive, re-destroy, reallocate) | `destruction_retires_every_handle` |
 | a generation is never reused or lowered | `a_reallocation_may_not_reuse_or_lower_a_generation` | — |
 | retirement is not a blunt instrument | — | `retirement_preserves_other_allocations` |
-| a stale handle decides nothing at all | (the `Q632` cases above precede every interval comparison) | `a_stale_handle_decides_nothing`, plus the pair `live_handles_of_one_generation_are_decided` / `the_same_pair_after_a_reallocation_is_refused` |
-| handle identities are never reused | `handle_and_allocation_identities_are_never_reused` (`Q634`, including after retirement) | — |
-| fields need an explicit layout contract | `a_record_allocation_without_a_layout_contract_is_refused` (`Q636`, and a contract for a *different* record does not serve), `distinct_addressable_fields_are_disjoint_only_under_a_layout_contract` as the positive control | `addressable_fields_with_disjoint_ranges_are_disjoint`; there is no other constructor for a field footprint |
-| a contract is total or refused | `an_inconsistent_layout_contract_is_refused_whole` — 11 defects across `Q637`, plus `DuplicateRecord`; `a_refused_layout_contract_refuses_every_derivation_that_names_its_record` | — |
+| a stale handle decides nothing at all | (the `Q652` cases above precede every interval comparison) | `a_stale_handle_decides_nothing`, plus the pair `live_handles_of_one_generation_are_decided` / `the_same_pair_after_a_reallocation_is_refused` |
+| handle identities are never reused | `handle_and_allocation_identities_are_never_reused` (`Q654`, including after retirement) | — |
+| fields need an explicit layout contract | `a_record_allocation_without_a_layout_contract_is_refused` (`Q656`, and a contract for a *different* record does not serve), `distinct_addressable_fields_are_disjoint_only_under_a_layout_contract` as the positive control | `addressable_fields_with_disjoint_ranges_are_disjoint`; there is no other constructor for a field footprint |
+| a contract is total or refused | `an_inconsistent_layout_contract_is_refused_whole` — 11 defects across `Q657`, plus `DuplicateRecord`; `a_refused_layout_contract_refuses_every_derivation_that_names_its_record` | — |
 | a field stays inside its element | — | `field_stays_inside_its_element` |
-| unknown field, wrong base | `an_unknown_field_is_refused` (`Q638`), `a_field_derivation_needs_a_record_base_of_exactly_one_element` (`Q639`: scalar allocation, two-element base, descriptor base) | — |
-| **bit-fields sharing a unit are one memory location** | `adjacent_bitfields_of_one_storage_unit_are_never_disjoint` — bit ranges `0..3` and `3..8` are disjoint and the pair is still `Q641` | `shared_bitfield_unit_is_never_disjoint`, quantified over **every** pair of byte ranges and bit ranges |
+| unknown field, wrong base | `an_unknown_field_is_refused` (`Q658`), `a_field_derivation_needs_a_record_base_of_exactly_one_element` (`Q659`: scalar allocation, two-element base, descriptor base) | — |
+| **bit-fields sharing a unit are one memory location** | `adjacent_bitfields_of_one_storage_unit_are_never_disjoint` — bit ranges `0..3` and `3..8` are disjoint and the pair is still `Q661` | `shared_bitfield_unit_is_never_disjoint`, quantified over **every** pair of byte ranges and bit ranges |
 | the unit rule is not a disguised overlap | (the refusal names the unit) | `the_bitfield_rule_precedes_the_interval_rule` |
 | the positive controls | `bitfields_in_distinct_storage_units_are_disjoint`, `a_bitfield_and_an_addressable_field_of_one_record_are_decided_by_bytes` | `distinct_bitfield_units_are_decided_by_bytes`, `an_addressable_field_shares_no_storage_unit` |
 | a bit-field never leaks into the old checkers | `adjacent_bitfields_…` asserts `export() == SharedMemoryLocation { unit: 0 }` | — |
@@ -120,7 +120,7 @@ The last row is the fail-closed edge that is easy to miss.
 `DerivedFootprint::export` is a three-way `FootprintExport`, not an `Option`:
 projecting a bit-field unit onto a plain `AccessFootprint` would let
 `check_concurrent` compare two bit-fields of one unit by bytes and call them
-unrelated, which is exactly what `Q641` exists to prevent.
+unrelated, which is exactly what `Q661` exists to prevent.
 
 ### 3.3 "State separately how descriptor aliases sharing a protocol cell differ from memory-slice disjointness"
 
@@ -128,9 +128,9 @@ Stated in the design document §2.6 and enforced:
 
 | Obligation | Rust | Lean |
 |---|---|---|
-| two descriptors over one cell are never disjoint | `two_descriptors_sharing_a_protocol_cell_are_never_disjoint` (`Q644`) | `descriptors_sharing_a_cell_are_never_disjoint` |
+| two descriptors over one cell are never disjoint | `two_descriptors_sharing_a_protocol_cell_are_never_disjoint` (`Q664`) | `descriptors_sharing_a_cell_are_never_disjoint` |
 | distinct cells are decided | `two_descriptors_over_distinct_cells_are_disjoint` | `descriptors_over_distinct_cells_are_disjoint` |
-| the kinds never mix | `memory_disjointness_does_not_transfer_to_a_protocol_cell` — one program admits two disjoint slices of a buffer, then refuses `(slice, descriptor)` and `(descriptor, slice)` with `Q643` and the descriptor pair with `Q644` | `memory_and_descriptor_are_incomparable`, both argument orders |
+| the kinds never mix | `memory_disjointness_does_not_transfer_to_a_protocol_cell` — one program admits two disjoint slices of a buffer, then refuses `(slice, descriptor)` and `(descriptor, slice)` with `Q663` and the descriptor pair with `Q664` | `memory_and_descriptor_are_incomparable`, both argument orders |
 
 The separation in one sentence: a memory slice is a **set of bytes**, and
 disjointness of two slices is a statement about that set; a descriptor is a
@@ -147,7 +147,7 @@ follow-on unit F4.
 
 ## 4. Refusal vocabulary
 
-Eighteen named refusals occupying the free `Q630`–`Q647` range, inside the
+Eighteen named refusals occupying the free `Q650`–`Q667` range, inside the
 `Q6xx` concurrency range of `docs/QCORE_SPEC_r0_3.md` §L21.
 `named_refusals_occupy_the_q630_to_q647_range` pins the whole table, asserts
 each code is used once, asserts `Display` starts with the code, and asserts the
@@ -231,7 +231,7 @@ warning.
   is untouched at **15/50 mapped**. CT07–CT10 and CT42 are *candidates* only
   (§8); mapping any of them requires executed source-stage evidence, which
   requires F1/F4.
-* **No cross-allocation reasoning.** Two allocations are `Q642`. This is a real
+* **No cross-allocation reasoning.** Two allocations are `Q662`. This is a real
   precision cost: a partition across two `malloc`ed buffers, which a C
   programmer would call obviously disjoint, is Unknown here. It is the honest
   position for a model with no allocator.
@@ -257,10 +257,10 @@ the prototype already decides at the model level.
 | Case | Scenario | What the model already decides | Still needed to map |
 |---|---|---|---|
 | CT07 | two disjoint array halves mutated independently | `two_disjoint_halves_of_one_allocation_are_admitted`; `two_halves_of_one_allocation_are_admitted` (Lean) | F1 source slices; a Buffer write statement (T04 §7); native execution |
-| CT08 | overlapping array ranges | `slices_touching_at_one_boundary_are_disjoint_and_overlapping_ones_are_refused` (`Q640`) | F1 |
+| CT08 | overlapping array ranges | `slices_touching_at_one_boundary_are_disjoint_and_overlapping_ones_are_refused` (`Q660`) | F1 |
 | CT09 | distinct ordinary struct fields — accept only after layout/access proof | `distinct_addressable_fields_are_disjoint_only_under_a_layout_contract` with `a_record_allocation_without_a_layout_contract_is_refused` as its refusal half | F1 and F2 (a *real* layout, not a declared one — CT09 says "layout proof") |
-| CT10 | adjacent bit-fields in one memory location — reject independent concurrent writes | `adjacent_bitfields_of_one_storage_unit_are_never_disjoint` (`Q641`), with disjoint bit ranges | F1, F2, and a write statement |
-| CT42 | two descriptors share an underlying logical state | `two_descriptors_sharing_a_protocol_cell_are_never_disjoint` (`Q644`) and `memory_disjointness_does_not_transfer_to_a_protocol_cell` (`Q643`) | F4 (cell identity derived from source, not declared) |
+| CT10 | adjacent bit-fields in one memory location — reject independent concurrent writes | `adjacent_bitfields_of_one_storage_unit_are_never_disjoint` (`Q661`), with disjoint bit ranges | F1, F2, and a write statement |
+| CT42 | two descriptors share an underlying logical state | `two_descriptors_sharing_a_protocol_cell_are_never_disjoint` (`Q664`) and `memory_disjointness_does_not_transfer_to_a_protocol_cell` (`Q663`) | F4 (cell identity derived from source, not declared) |
 
 Proposed ledger text for the integrator, if this card is consolidated:
 
@@ -268,7 +268,7 @@ Proposed ledger text for the integrator, if this card is consolidated:
 > byte intervals from element ranges and decides disjointness only against one
 > allocation generation; two allocation identities, a stale generation, a shared
 > bit-field storage unit, a shared protocol cell and a memory/descriptor pair
-> are each a named refusal in the free `Q630`–`Q647` range. Record fields exist
+> are each a named refusal in the free `Q650`–`Q667` range. Record fields exist
 > only under a whole-record layout contract validated by eleven structural rules
 > with no partial admission. Certificates name three declared premises and never
 > `DeclaredDisjointness`, which an independent recheck refuses before comparing
@@ -294,7 +294,7 @@ Proposed ledger text for the integrator, if this card is consolidated:
    structure with no state machine at all. Extending it would have meant
    editing a 1,923-line pinned module with 48 pinned tests to add an orthogonal
    concern. The cost of the choice is that composition is deferred to F3.
-3. **`Q630`–`Q647` rather than extending `Q6xx` upward from `Q624`.** A
+3. **`Q650`–`Q667` rather than extending `Q6xx` upward from `Q624`.** A
    decade-round gap after T02's `Q623` leaves room for a mutex-invariant
    follow-on to extend its own family without colliding.
 4. **`FootprintExport` is a three-way enum, not `Option<AccessFootprint>`.**

@@ -84,12 +84,12 @@ a judgement. Its rules apply in this order:
 
 | Situation | Outcome |
 |---|---|
-| one memory footprint, one descriptor footprint | `IncomparableFootprintKinds` (`Q643`) |
-| two memory footprints, different `AllocationId` | `CrossAllocationDisjointnessUnsupported` (`Q642`) |
-| two memory footprints, different `Generation` | `StaleGeneration` (`Q632`) |
-| two memory footprints, one bit-field storage unit | `SharedBitfieldUnit` (`Q641`) |
-| two memory footprints, otherwise | interval arithmetic; overlap is `OverlappingFootprints` (`Q640`) |
-| two descriptors, same `ProtocolCellId` | `SharedProtocolCell` (`Q644`) |
+| one memory footprint, one descriptor footprint | `IncomparableFootprintKinds` (`Q663`) |
+| two memory footprints, different `AllocationId` | `CrossAllocationDisjointnessUnsupported` (`Q662`) |
+| two memory footprints, different `Generation` | `StaleGeneration` (`Q652`) |
+| two memory footprints, one bit-field storage unit | `SharedBitfieldUnit` (`Q661`) |
+| two memory footprints, otherwise | interval arithmetic; overlap is `OverlappingFootprints` (`Q660`) |
+| two descriptors, same `ProtocolCellId` | `SharedProtocolCell` (`Q664`) |
 | two descriptors, distinct cells | disjoint |
 
 **Cross-allocation disjointness is a refusal, not a free answer.** Two distinct
@@ -98,7 +98,7 @@ bytes cannot alias needs an allocator model and a non-overlap argument this
 profile does not have. Answering "disjoint" there would smuggle in exactly the
 kind of unproven non-aliasing the card excludes. The acceptance clause is
 therefore stated only *against one underlying generation identity*, and the
-cross-allocation question is `Q642` with `CrossAllocationAliasProof` also
+cross-allocation question is `Q662` with `CrossAllocationAliasProof` also
 present as an explicit `Unsupported` construct.
 
 ### 2.4 Staleness
@@ -151,9 +151,9 @@ consequences:
 1. **Byte disjointness says nothing about a cell.** Two descriptors may touch
    disjoint bytes, or no bytes at all, and still both advance one offset.
 2. **Cell identity is the whole decision.** Two descriptors over one cell are
-   never disjoint (`Q644`), whatever their byte footprints.
+   never disjoint (`Q664`), whatever their byte footprints.
 3. **The kinds do not mix.** `decide_disjoint` on one memory footprint and one
-   descriptor is `IncomparableFootprintKinds` (`Q643`), in both argument orders.
+   descriptor is `IncomparableFootprintKinds` (`Q663`), in both argument orders.
    Refusing the question is the point: an implementation that answered
    "disjoint" would let a proof about bytes license independent use of two
    descriptors, which is the CT42 failure.
@@ -186,7 +186,7 @@ table) is follow-on unit F4.
 
 ### 3.2 "Overlaps and stale aliases reject; struct fields and bit-fields require distinct explicit layout contracts"
 
-* Overlaps: `Q640`, with a positive control that slices touching at exactly one
+* Overlaps: `Q660`, with a positive control that slices touching at exactly one
   boundary are admitted, and `nonempty_interval_is_not_disjoint_from_itself`.
 * Stale aliases: `reallocation_retires_every_handle_of_the_old_generation`,
   `destruction_retires_every_handle`, `a_stale_handle_decides_nothing`, plus
@@ -214,31 +214,31 @@ that buffer belongs to.
 
 ## 4. Refusal vocabulary
 
-`Q630`–`Q647`, inside the `Q6xx` concurrency range of
+`Q650`–`Q667`, inside the `Q6xx` concurrency range of
 `docs/QCORE_SPEC_r0_3.md` §L21. `Q600` (bounded concurrency and scoped tasks)
 and `Q610`–`Q623` (T02) are **not** reused; `named_refusals_occupy_the_q630_to_q647_range`
 pins the whole table and asserts the absence of the reserved codes.
 
 | Code | Diagnostic |
 |---|---|
-| `Q630` | `InvalidExtent` (zero element size, zero count, empty slice, unrepresentable byte extent) |
-| `Q631` | `UnknownAllocation` |
-| `Q632` | `StaleGeneration` |
-| `Q633` | `SliceOutOfBounds` |
-| `Q634` | `IdentityNotFresh` |
-| `Q635` | `UnknownHandle` |
-| `Q636` | `LayoutContractMissing` |
-| `Q637` | `InconsistentLayoutContract` |
-| `Q638` | `UnknownField` |
-| `Q639` | `ElementShapeMismatch` |
-| `Q640` | `OverlappingFootprints` |
-| `Q641` | `SharedBitfieldUnit` |
-| `Q642` | `CrossAllocationDisjointnessUnsupported` |
-| `Q643` | `IncomparableFootprintKinds` |
-| `Q644` | `SharedProtocolCell` |
-| `Q645` | `DerivedFootprintMismatch` |
-| `Q646` | `DestroyedAllocation` |
-| `Q647` | `UnsupportedFootprintConstruct` |
+| `Q650` | `InvalidExtent` (zero element size, zero count, empty slice, unrepresentable byte extent) |
+| `Q651` | `UnknownAllocation` |
+| `Q652` | `StaleGeneration` |
+| `Q653` | `SliceOutOfBounds` |
+| `Q654` | `IdentityNotFresh` |
+| `Q655` | `UnknownHandle` |
+| `Q656` | `LayoutContractMissing` |
+| `Q657` | `InconsistentLayoutContract` |
+| `Q658` | `UnknownField` |
+| `Q659` | `ElementShapeMismatch` |
+| `Q660` | `OverlappingFootprints` |
+| `Q661` | `SharedBitfieldUnit` |
+| `Q662` | `CrossAllocationDisjointnessUnsupported` |
+| `Q663` | `IncomparableFootprintKinds` |
+| `Q664` | `SharedProtocolCell` |
+| `Q665` | `DerivedFootprintMismatch` |
+| `Q666` | `DestroyedAllocation` |
+| `Q667` | `UnsupportedFootprintConstruct` |
 
 Ten shapes are **represented refusals** rather than omissions, each a real
 `FootprintEvent::Unsupported` so that "the profile refuses it" is testable:
@@ -273,7 +273,7 @@ projects onto `AccessFootprint`; a bit-field unit returns
 `SharedMemoryLocation { unit }` because exporting its interval alone would lose
 the memory-location fact; a descriptor returns `NotMemory`. Silently exporting a
 bit-field interval into `check_concurrent` would let the older checker call two
-bit-fields of one unit unrelated, which is exactly the defect `Q641` exists to
+bit-fields of one unit unrelated, which is exactly the defect `Q661` exists to
 prevent.
 
 ---

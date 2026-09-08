@@ -298,7 +298,7 @@ pub enum FootprintAssumption {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FootprintDiagnostic {
-    /// `Q630` family: a zero element size, a zero count, a zero-length slice or
+    /// `Q650` family: a zero element size, a zero count, a zero-length slice or
     /// a byte extent that does not fit the interval representation.
     InvalidExtent {
         event: usize,
@@ -417,29 +417,29 @@ pub enum LayoutDefect {
 }
 
 impl FootprintDiagnostic {
-    /// The named refusals of this profile occupy `Q630`-`Q647`. `Q600` and
+    /// The named refusals of this profile occupy `Q650`-`Q667`. `Q600` and
     /// `Q610`-`Q623` belong to the bounded concurrency model and the checked
     /// mutex-invariant profile and are not reused here.
     pub const fn code(&self) -> &'static str {
         match self {
-            Self::InvalidExtent { .. } => "Q630",
-            Self::UnknownAllocation { .. } => "Q631",
-            Self::StaleGeneration { .. } => "Q632",
-            Self::SliceOutOfBounds { .. } => "Q633",
-            Self::IdentityNotFresh { .. } => "Q634",
-            Self::UnknownHandle { .. } => "Q635",
-            Self::LayoutContractMissing { .. } => "Q636",
-            Self::InconsistentLayoutContract { .. } => "Q637",
-            Self::UnknownField { .. } => "Q638",
-            Self::ElementShapeMismatch { .. } => "Q639",
-            Self::OverlappingFootprints { .. } => "Q640",
-            Self::SharedBitfieldUnit { .. } => "Q641",
-            Self::CrossAllocationDisjointnessUnsupported { .. } => "Q642",
-            Self::IncomparableFootprintKinds { .. } => "Q643",
-            Self::SharedProtocolCell { .. } => "Q644",
-            Self::DerivedFootprintMismatch { .. } => "Q645",
-            Self::DestroyedAllocation { .. } => "Q646",
-            Self::UnsupportedFootprintConstruct { .. } => "Q647",
+            Self::InvalidExtent { .. } => "Q650",
+            Self::UnknownAllocation { .. } => "Q651",
+            Self::StaleGeneration { .. } => "Q652",
+            Self::SliceOutOfBounds { .. } => "Q653",
+            Self::IdentityNotFresh { .. } => "Q654",
+            Self::UnknownHandle { .. } => "Q655",
+            Self::LayoutContractMissing { .. } => "Q656",
+            Self::InconsistentLayoutContract { .. } => "Q657",
+            Self::UnknownField { .. } => "Q658",
+            Self::ElementShapeMismatch { .. } => "Q659",
+            Self::OverlappingFootprints { .. } => "Q660",
+            Self::SharedBitfieldUnit { .. } => "Q661",
+            Self::CrossAllocationDisjointnessUnsupported { .. } => "Q662",
+            Self::IncomparableFootprintKinds { .. } => "Q663",
+            Self::SharedProtocolCell { .. } => "Q664",
+            Self::DerivedFootprintMismatch { .. } => "Q665",
+            Self::DestroyedAllocation { .. } => "Q666",
+            Self::UnsupportedFootprintConstruct { .. } => "Q667",
         }
     }
 }

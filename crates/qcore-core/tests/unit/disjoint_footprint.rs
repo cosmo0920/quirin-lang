@@ -1497,11 +1497,11 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
     let table: [(FootprintDiagnostic, &'static str); 18] = [
         (
             FootprintDiagnostic::InvalidExtent { event: 0, alloc: 1 },
-            "Q630",
+            "Q650",
         ),
         (
             FootprintDiagnostic::UnknownAllocation { event: 0, alloc: 1 },
-            "Q631",
+            "Q651",
         ),
         (
             FootprintDiagnostic::StaleGeneration {
@@ -1510,7 +1510,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 named: 1,
                 live: None,
             },
-            "Q632",
+            "Q652",
         ),
         (
             FootprintDiagnostic::SliceOutOfBounds {
@@ -1519,35 +1519,35 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 elem_end: 1,
                 count: 0,
             },
-            "Q633",
+            "Q653",
         ),
         (
             FootprintDiagnostic::IdentityNotFresh {
                 event: 0,
                 handle: 1,
             },
-            "Q634",
+            "Q654",
         ),
         (
             FootprintDiagnostic::UnknownHandle {
                 event: 0,
                 handle: 1,
             },
-            "Q635",
+            "Q655",
         ),
         (
             FootprintDiagnostic::LayoutContractMissing {
                 event: 0,
                 record: 1,
             },
-            "Q636",
+            "Q656",
         ),
         (
             FootprintDiagnostic::InconsistentLayoutContract {
                 record: 1,
                 reason: LayoutDefect::ZeroSize,
             },
-            "Q637",
+            "Q657",
         ),
         (
             FootprintDiagnostic::UnknownField {
@@ -1555,14 +1555,14 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 record: 1,
                 field: 1,
             },
-            "Q638",
+            "Q658",
         ),
         (
             FootprintDiagnostic::ElementShapeMismatch {
                 event: 0,
                 handle: 1,
             },
-            "Q639",
+            "Q659",
         ),
         (
             FootprintDiagnostic::OverlappingFootprints {
@@ -1570,7 +1570,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 left: 1,
                 right: 2,
             },
-            "Q640",
+            "Q660",
         ),
         (
             FootprintDiagnostic::SharedBitfieldUnit {
@@ -1579,7 +1579,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 right: 2,
                 unit: 0,
             },
-            "Q641",
+            "Q661",
         ),
         (
             FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
@@ -1587,7 +1587,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 left: 1,
                 right: 2,
             },
-            "Q642",
+            "Q662",
         ),
         (
             FootprintDiagnostic::IncomparableFootprintKinds {
@@ -1595,7 +1595,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 left: 1,
                 right: 2,
             },
-            "Q643",
+            "Q663",
         ),
         (
             FootprintDiagnostic::SharedProtocolCell {
@@ -1604,7 +1604,7 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 right: 2,
                 cell: 1,
             },
-            "Q644",
+            "Q664",
         ),
         (
             FootprintDiagnostic::DerivedFootprintMismatch {
@@ -1613,18 +1613,18 @@ fn named_refusals_occupy_the_q630_to_q647_range() {
                 declared: (0, 1),
                 derived: (0, 2),
             },
-            "Q645",
+            "Q665",
         ),
         (
             FootprintDiagnostic::DestroyedAllocation { event: 0, alloc: 1 },
-            "Q646",
+            "Q666",
         ),
         (
             FootprintDiagnostic::UnsupportedFootprintConstruct {
                 event: 0,
                 construct: UnsupportedFootprint::UnionMember,
             },
-            "Q647",
+            "Q667",
         ),
     ];
 
