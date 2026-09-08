@@ -23,7 +23,8 @@
 //! `ScopedOwnedTasksV1`, and its `ScopedReadSharesV1` / `ScopedErrorPayloadV1`
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
-//! `CheckedMutexInvariantV1` checker, card T03) is CT26/CT27/CT29/CT30. The two
+//! `CheckedMutexInvariantV1` checker, cards T03 and T03-F) is
+//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. The two
 //! routes do not share a stage vocabulary: the mutex route emits directly from
 //! its checked event list and has **no CFG stage**, so a mutex case must never
 //! claim `cfg: executed`, while a task-route case reads `cfg` as the checked
@@ -51,13 +52,14 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
-    "CT19", "CT20", "CT26", "CT27", "CT29", "CT30", "CT37", "CT50",
+    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT37", "CT48", "CT50",
 ];
-/// The `source.mutex.guard.v1` rejection cases (T03 lowering onto the unedited
-/// `CheckedMutexInvariantV1` checker). Each pins its exact ordered diagnostic
-/// code vector, not merely its head, and carries at least one control that
-/// distinguishes the refused construct from the admitted one.
-const MUTEX_REJECT_CASES: &[&str] = &["CT27", "CT29", "CT30"];
+/// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
+/// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
+/// composition, `wait` announcement and guard-scoped facts). Each pins its exact
+/// ordered diagnostic code vector, not merely its head, and carries at least one
+/// control that distinguishes the refused construct from the admitted one.
+const MUTEX_REJECT_CASES: &[&str] = &["CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT48"];
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
 const MUTEX_SANITIZED_CASE: &str = "CT26";
@@ -1088,11 +1090,14 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 20 of 50 CT cases are mapped
-/// as executed source-level tests; 30 remain unmapped. CT13/CT15/CT26 and the
+/// The moving count is the W6 genericity metric: 24 of 50 CT cases are mapped
+/// as executed source-level tests; 26 remain unmapped. CT13/CT15/CT26 and the
 /// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
-/// CT04/CT05/CT18/CT27/CT29/CT30 execute on Linux and macOS. The manifest's
-/// `evidence_target` still identifies the archived Linux evidence run. Mapping is not conformance.
+/// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT48 execute on Linux and macOS.
+/// The manifest's `evidence_target` still identifies the archived Linux evidence
+/// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
+/// accepted controls are multi-task modules this backend renders in no thread at
+/// all (published checked with `c_source: None`, card T03-F §3.5). Mapping is not conformance.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]

@@ -1,0 +1,32 @@
+{
+  "id": "CT32",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q600",
+      "message_contains": "JoinWhileGuardHeld"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1 with card T03-F's bounded task composition: a child task created and joined strictly inside a critical section is refused at Q600 JoinWhileGuardHeld, and the cascade is exactly one entry long. That length is the observation, not an omission — the child body here is empty and well formed, so nothing else about it is wrong, and a longer cascade would mean the refusal had also disturbed the guard or the generation. The joined_outside.qcore control moves the same child block one statement out of the section and is accepted, so the refusal is keyed to the join landing while the creator holds a guard rather than to the child existing. This is the checker's own unedited rule (T02): T03-F explicitly declined to widen it, which is why 'created and joined strictly inside a guard' is a refusal in this profile rather than a feature. Only parser and type_checker execute on the case artifact; cfg is unassessed because this route has no CFG stage. NOT established: any native evidence — the accepted control is a multi-task module and this backend emits one thread, so it publishes checked with c_source: None; evidence_target=linux records host gating by the Q500 target refusal, not a compiled or executed run. No claim is made about whether some future profile could admit such a join safely.",
+  "checked_mutex_reject": {
+    "diagnostic_sequence": [
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "joined_outside.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "note": "the identical child block, moved one statement past the section's end, checks — so JoinWhileGuardHeld is keyed to the held guard and not to the child. Multi-task, so it publishes with c_source: None; route-checked, not natively run."
+      }
+    ]
+  }
+}

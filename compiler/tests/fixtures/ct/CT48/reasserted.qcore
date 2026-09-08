@@ -1,0 +1,10 @@
+import std.concurrency;
+fn main() -> unit {
+    thread scope s {
+        let buf = protected 4;
+        let m = mutex guards buf;
+        let f = fact buf;
+        with lock m as g { assert f with g; }
+        with lock m as h { assert f with h; use f; }
+    }
+}

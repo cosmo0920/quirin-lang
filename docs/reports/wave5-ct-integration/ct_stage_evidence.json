@@ -1,0 +1,395 @@
+{
+  "schema_version": 1,
+  "card": "wave5-CT",
+  "generated": "2026-09-08",
+  "report": "docs/reports/wave5-ct-integration/README.md",
+  "purpose": "Per-stage executed evidence for the four source.mutex.guard.v1 CT cases this card mapped from card T03-F's proposals. Written in the same shape as docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json so a future stage-derived summarizer can merge the three files instead of hand-maintaining the aggregate. T00's coverage.json is an archived audit at revision ea2af0f and is deliberately not rewritten here.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control fixture's execution is recorded under aux:, never as the case's own stage.",
+  "route": "source.mutex.guard.v1 (qcore_frontend::source_mutex -> qcore_core::mutex_invariant), extended by card T03-F with bounded task composition, the `wait` announced acquisition and guard-scoped facts",
+  "route_has_no_cfg_stage": "This route emits directly from the checked event list. There is no CFG construction, so `cfg` can never read `executed` for these cases and the manifest keeps it `unassessed`. CT03's `cfg: executed` precedent belongs to the task route, which reads `cfg` as the checked task IR it really builds; following it here would claim a stage that does not exist.",
+  "stage_vocabulary_added": [],
+  "no_native_evidence_added": "All four cases are rejections, so none reaches c_emission or native_execution. Three of the four accepted controls (CT28, CT31, CT32) are multi-task modules that the guard backend renders in no thread at all and that are therefore published checked with c_source: None (card T03-F section 3.5). CT48's accepted control is single-task and does emit C, but the harness route-checks every control rather than compiling it. The `evidence_target: linux` these cases carry records the harness's host gate \u2014 the Q500 non-Linux/macOS/Windows target refusal, which is evaluated before the emission decision \u2014 and NOT a compiled or executed run. No sanitized run, no schedule, no contention and no C memory-model claim is added by this card.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT28",
+      "CT31",
+      "CT32",
+      "CT48"
+    ],
+    "mapped_before": 20,
+    "mapped_after": 24,
+    "unmapped_after": 26,
+    "total": 50
+  },
+  "mapped_case_stage_matrix": {
+    "CT28": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 2,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
+          "observations": 1,
+          "note": "Rejection at Q612 WrongGuardAffinity, with the exact ordered cascade [Q612, Q600 JoinWhileGuardHeld] pinned. The second entry is load-bearing: it shows the refusal left the creator still holding the guard rather than silently releasing it."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
+          "host_gate": [
+            "linux"
+          ],
+          "observations": 1,
+          "emits_c": false,
+          "note": "The same child takes its own acquisition of the same generation, writes under its own guard, and the creator reads after the join. Multi-task, so the guard backend renders it in no thread at all: it is published checked with c_source: None. The control is route-checked (as_checked_mutex_guards()), not compiled and not run; host_gate records the Q500 target refusal, which is evaluated before the emission decision."
+        },
+        "aux:refused_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
+          "observations": 1,
+          "note": "The second half of the scenario name: the child unlocks the creator's guard (close g) instead of reading through it, and refuses with the identical [Q612, Q600] cascade, so guard affinity is keyed to the acting task and not to the operation kind."
+        }
+      }
+    },
+    "CT31": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 1,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
+          "observations": 1,
+          "note": "Rejection at Q619 NonquiescentMutexDestruction, with the exact ordered cascade [Q619, Q600 NonquiescentDestruction, Q600 OutstandingMutex, Q600 OutstandingWaiter] pinned. Every entry after the first shows the refused destruction left the generation, the protected resource and the waiter outstanding rather than destroying one of them anyway."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT31/performed.qcore",
+          "host_gate": [
+            "linux"
+          ],
+          "observations": 1,
+          "emits_c": false,
+          "note": "The announcing task performs the acquisition, and the core's Lock withdraws the waiter, so destruction is quiescent. Multi-task and `wait`-bearing (RegisterWaiter is in the emission-refused set), so it is published checked with c_source: None; route-checked, not compiled and not run."
+        }
+      }
+    },
+    "CT32": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 1,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
+          "observations": 1,
+          "note": "Rejection at Q600 JoinWhileGuardHeld, cascade exactly one entry long. The length is the observation: the child body is empty and well formed, so a longer cascade would mean the refusal had also disturbed the guard or the generation."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
+          "host_gate": [
+            "linux"
+          ],
+          "observations": 1,
+          "emits_c": false,
+          "note": "The identical child block, moved one statement past the section's end, checks. Multi-task, so it is published checked with c_source: None; route-checked, not compiled and not run."
+        }
+      }
+    },
+    "CT48": {
+      "harness_verdict_mode": "reject",
+      "manifest_stages": {
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "unassessed",
+        "cfg": "unassessed",
+        "native_backend": "unassessed",
+        "proof": "unassessed"
+      },
+      "manifest_evidence_target": "linux",
+      "source_reject_controls_executed": 2,
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
+          "observations": 1,
+          "note": "Rejection at Q616 StaleProtectedFact, cascade exactly [Q616] because the release that dropped the fact was itself well formed. The binder is declared at thread-scope level, so the name resolves and the model refuses the use; a body-local binder would have produced the weaker Q013 unknown-name refusal the T03 CT integration report already recorded as insufficient."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
+          "host_gate": [
+            "linux"
+          ],
+          "observations": 1,
+          "emits_c": true,
+          "note": "Re-establishing the refinement under the second guard mints a fresh fact and checks, so the spec's 'invalidate/re-establish, never assume' expectation is exercised in both directions. Single-task, so this control DOES emit C \u2014 the only one of the four this card adds that does \u2014 but the harness route-checks it and does not compile or run it."
+        },
+        "aux:refused_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
+          "observations": 1,
+          "note": "A declared but never asserted fact refuses at Q600 UnknownFact, a different code from the case's Q616, so the case's diagnostic is keyed to a fact that existed and was dropped rather than to one that never existed."
+        }
+      }
+    }
+  },
+  "executed_totals_added": {
+    "mutex_lowerings": 4,
+    "mutex_invariant_checks": 4,
+    "mutex_reference_executions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "in_case_source_controls": 6,
+    "accepted_controls": 4,
+    "refused_controls": 2,
+    "cases_with_proof_evidence": 0
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT33": "Lock-order cycle. Rank mode is a represented refusal in CheckedMutexInvariantV1, not a feature; there is no source form that declares a lock rank, so a cycle cannot be written down. Unchanged by card T03-F, which states this explicitly.",
+    "CT34": "Protected graph grows after creation. CreateMutex fixes its declared footprints at creation and there is no growth form; post-creation protection growth is refused rather than modelled.",
+    "CT46": "Needs Send/Sync derivation, which is outside L09 and outside this profile entirely."
+  }
+}
