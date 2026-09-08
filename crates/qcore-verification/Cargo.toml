@@ -1,6 +1,6 @@
 [package]
 name = "qcore-verification"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Trusted obligation derivation, witness replay and scope dispatch over the QCore kernel and verifier host."
@@ -10,7 +10,7 @@ qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "5.0.0" }
-qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.1.0" }
+qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.2.0" }
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

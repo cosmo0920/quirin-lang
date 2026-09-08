@@ -180,6 +180,17 @@ pub struct DerivationInputs<'a> {
     pub contract_sources: BTreeMap<String, String>,
     /// Hooks the provider's manifest declares it requires observations for.
     pub required_observation_hooks: BTreeSet<String>,
+    /// The provider this inventory is being derived for, when there is one.
+    ///
+    /// E03-B3. Some obligations are about a *provider's* denominator rather
+    /// than about a named program entity — `ObservationCoverageComplete` says
+    /// "every hook this provider requires was checked" — and their subject
+    /// (`Unit`) does not distinguish them. This field, together with the
+    /// resolved hook denominator, is what makes their identifiers distinct, so
+    /// one provider's certificate can never discharge another's. `None` means
+    /// the derivation is not provider-scoped; the denominator alone then keys
+    /// such obligations.
+    pub verifier: Option<String>,
     /// Caller conditions are preserved. Observation derivation adds its required
     /// conditional trust flag only when absent; explicit false fails closed.
     pub assumptions: BTreeMap<String, bool>,
@@ -215,13 +226,26 @@ pub fn derive_task(inputs: &DerivationInputs<'_>, capability: VerifierCapability
             source_digest: sha256_hex(source.as_bytes()),
             // The QCore dispatch path compiles from source with no separate
             // build artifact; the build identity is the derivation identity.
+            //
+            // E03-B2. This digest is deliberately *not* keyed by the
+            // capability. A unit identity names the artifact, and one source
+            // program is one artifact however many capabilities are asked
+            // about it; keying it by the semantic profile made two
+            // capabilities of one program certify different units, so
+            // `compose_verification` refused every multi-capability scope with
+            // `QP015` and a legitimate composition was not representable.
+            //
+            // Nothing is lost by dropping it. The capability separation lives
+            // where it is checked: `semantic_profile` and `capability` are
+            // both hashed into every `obligation_id`, the whole task
+            // (obligations included) is hashed into `task_digest`, and every
+            // witness is bound to that digest by the firewall. A witness
+            // minted for one capability's task therefore still cannot be
+            // replayed against another's, and a real artifact difference —
+            // different source bytes or a different translation unit — still
+            // changes this digest and still refuses with `QP015`.
             build_digest: sha256_hex(
-                format!(
-                    "qcore-derivation/v1\u{1f}{}\u{1f}{}",
-                    semantic_profile(capability),
-                    inputs.translation_unit
-                )
-                .as_bytes(),
+                format!("qcore-derivation/v1\u{1f}{}", inputs.translation_unit).as_bytes(),
             ),
             translation_unit: inputs.translation_unit.to_owned(),
         },
@@ -261,6 +285,37 @@ pub fn derive_task(inputs: &DerivationInputs<'_>, capability: VerifierCapability
     DerivedTask { task, replay }
 }
 
+/// The identifier of an obligation whose subject does not name what it is
+/// about (E03-B3).
+///
+/// `ObservationCoverageComplete` has subject `Unit`, so two providers over one
+/// unit derived one identifier for two different claims: "every hook *I*
+/// require was checked". It was sound only because `compose_verification`
+/// requires every component to be `Safe`, so no provider's obligation was ever
+/// covered by another's certificate alone — a coincidence of the merge rule,
+/// not a property of the obligation.
+///
+/// The identifier is therefore keyed additionally by the core-computed
+/// denominator the replay actually decides the obligation against: the
+/// provider it was derived for and the resolved required-hook set. The base
+/// identity is `VerificationTask::obligation_id`'s, so an unkeyed obligation's
+/// bytes are unchanged; the separator makes the keyed pre-image unambiguous.
+/// Nothing here is provider-supplied.
+fn scoped_obligation_id(
+    task: &VerificationTask,
+    capability: VerifierCapability,
+    property: ObligationProperty,
+    subject: &ObligationSubject,
+    denominator: &str,
+) -> String {
+    let base = task.obligation_id(capability, property, subject);
+    format!(
+        "{}:{}",
+        capability.as_str(),
+        &sha256_hex(format!("{base}\u{1f}{denominator}").as_bytes())[..24]
+    )
+}
+
 fn push_obligation(
     task: &mut VerificationTask,
     capability: VerifierCapability,
@@ -270,6 +325,26 @@ fn push_obligation(
     bounds: TaskBounds,
 ) {
     let obligation_id = task.obligation_id(capability, property, &subject);
+    push_identified_obligation(
+        task,
+        obligation_id,
+        capability,
+        property,
+        subject,
+        scope,
+        bounds,
+    );
+}
+
+fn push_identified_obligation(
+    task: &mut VerificationTask,
+    obligation_id: String,
+    capability: VerifierCapability,
+    property: ObligationProperty,
+    subject: ObligationSubject,
+    scope: ObligationScope,
+    bounds: TaskBounds,
+) {
     if task
         .obligations
         .iter()
@@ -838,11 +913,36 @@ fn derive_observation_hooks(
         );
     }
     if !inventory.required_hooks.is_empty() {
-        push_obligation(
+        // E03-B3. The claim is "every hook of *this* denominator was checked",
+        // so the identifier is keyed by the provider and by the resolved hook
+        // set the replay decides it against — the same `required_hooks` map
+        // `ContractObservationReplay` quantifies over. Two providers over one
+        // unit now derive two obligations, and neither certificate can
+        // discharge the other's.
+        let denominator = format!(
+            "observation-coverage/v1\u{1f}{}\u{1f}{}",
+            inputs.verifier.as_deref().unwrap_or(""),
+            inventory
+                .required_hooks
+                .keys()
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("\u{1e}")
+        );
+        let subject = ObligationSubject::Unit;
+        let obligation_id = scoped_obligation_id(
             task,
             capability,
             ObligationProperty::ObservationCoverageComplete,
-            ObligationSubject::Unit,
+            &subject,
+            &denominator,
+        );
+        push_identified_obligation(
+            task,
+            obligation_id,
+            capability,
+            ObligationProperty::ObservationCoverageComplete,
+            subject,
             ObligationScope::ObservedRuns {
                 run_ids: BTreeSet::new(),
             },

@@ -14,6 +14,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
 use qcore_frontend::frontend::{SourceProgram, parse_source_program};
+use qcore_schemas::obligation::ObligationProperty;
 use qcore_schemas::witness::{
     ContractObservationRecord, ContractObservationWitness, NativeRunBinding, ObservedRun,
 };
@@ -217,10 +218,11 @@ fn two_providers_discharge_one_scopes_whole_obligation_inventory() {
     );
 
     // The core's required set is the union over both providers' tasks. Each
-    // provider contributes its own hook obligation; the unit-scoped
-    // `ObservationCoverageComplete` obligation has the same core-computed
-    // identifier for both, so the union has three members, not four, and both
-    // providers had to discharge the shared one under their own inventory.
+    // provider contributes its own hook obligation and its own coverage
+    // obligation: four members. (Before E03-B3's repair the unit-scoped
+    // `ObservationCoverageComplete` obligation had one core-computed
+    // identifier for both providers and this union had three members, sound
+    // only because every component must be `Safe`.)
     let required = report.scopes[0]
         .capabilities
         .iter()
@@ -230,7 +232,7 @@ fn two_providers_discharge_one_scopes_whole_obligation_inventory() {
                 .coverage_for(VerifierCapability::ObservationHooks)
         })
         .collect::<BTreeSet<_>>();
-    assert_eq!(required.len(), 3);
+    assert_eq!(required.len(), 4);
     let covered = report.scopes[0]
         .capabilities
         .iter()
@@ -258,20 +260,33 @@ fn two_providers_discharge_one_scopes_whole_obligation_inventory() {
         .verdict,
         ProposedVerdict::Safe
     );
-    // The published composite still names the recorded-run premise.
-    let certificate = report.scopes[0]
+    // E03-B1. Two distinct components, so no single certificate is the merge:
+    // the published result carries the composite and no representative.
+    assert!(report.scopes[0].composed.certificate.is_none());
+    let composite = report.scopes[0]
         .composed
-        .certificate
+        .composite
         .as_ref()
-        .expect("composed certificate");
+        .expect("composed composite");
+    assert_eq!(composite.certificates().len(), 2);
+    assert_eq!(*composite.coverage(), required);
     assert_eq!(
-        certificate
-            .evidence()
-            .assumptions_used
-            .get("observations_trusted"),
+        composite.premises().get("observations_trusted"),
         Some(&true)
     );
-    assert!(certificate.task().unwrap().bounds.observed_runs_only);
+    assert!(composite.bounds().unwrap().observed_runs_only);
+    assert_eq!(composite.plugin_ids().len(), 2);
+    assert_eq!(
+        composite.capabilities().iter().copied().collect::<Vec<_>>(),
+        vec![VerifierCapability::ObservationHooks]
+    );
+    assert_eq!(composite.task_digests().len(), 2);
+    // Every component's own coverage is a strict subset of the composite's, so
+    // publishing one would have understated the merge.
+    for certificate in composite.certificates() {
+        assert!(certificate.coverage().is_subset(composite.coverage()));
+        assert_ne!(certificate.coverage(), composite.coverage());
+    }
 }
 
 #[test]
@@ -373,17 +388,14 @@ fn an_empty_scope_is_unverified_rather_than_vacuously_safe() {
     assert_eq!(report.scopes[0].composed.diagnostics[0].code, "QP016");
 }
 
-#[test]
-fn capability_scoped_unit_identities_do_not_merge_across_capabilities() {
-    // Measured boundary, not a repair: `build_digest` is derived from the
-    // capability's semantic profile, so two capabilities of one source program
-    // certify different `UnitIdentity` values and `compose_verification`
-    // refuses them with QP015. Multi-capability scopes therefore cannot be
-    // verified in this increment; this costs completeness, never soundness.
-    let parsed = program();
-    let inputs = DerivationInputs {
+fn derivation_inputs<'a>(
+    parsed: &'a SourceProgram,
+    verifier: Option<&str>,
+    hooks: &[&str],
+) -> DerivationInputs<'a> {
+    DerivationInputs {
         translation_unit: UNIT,
-        program: &parsed,
+        program: parsed,
         target: TargetProfile {
             library: "conformance".into(),
             revision: "source".into(),
@@ -392,25 +404,193 @@ fn capability_scoped_unit_identities_do_not_merge_across_capabilities() {
             platform: std::env::consts::OS.into(),
             backend: "native".into(),
         },
-        contract_sources: BTreeMap::from([(UNIT.to_owned(), SOURCE.to_owned())]),
-        required_observation_hooks: BTreeSet::from(["resize".to_owned()]),
+        contract_sources: BTreeMap::from([(UNIT.to_owned(), parsed.source().to_owned())]),
+        required_observation_hooks: hooks
+            .iter()
+            .map(|hook| (*hook).to_owned())
+            .collect::<BTreeSet<_>>(),
         assumptions: BTreeMap::new(),
-    };
+        verifier: verifier.map(ToOwned::to_owned),
+    }
+}
+
+#[test]
+fn one_program_has_one_unit_identity_across_capabilities() {
+    // E03-B2, repaired. Before: `build_digest` folded in the capability's
+    // semantic profile, so two capabilities of one source program certified
+    // different `UnitIdentity` values and `compose_verification` refused every
+    // multi-capability scope with QP015 — a completeness cost with no
+    // soundness content. After: one program is one unit, and the capability
+    // separation lives where it is checked.
+    let parsed = program();
+    let inputs = derivation_inputs(&parsed, None, &["resize"]);
     let observation = derive_task(&inputs, VerifierCapability::ObservationHooks);
     let lifecycle = derive_task(&inputs, VerifierCapability::ChunkLifecycle);
-    assert_eq!(
-        observation.task.unit.source_digest,
-        lifecycle.task.unit.source_digest
-    );
+    assert_eq!(observation.task.unit, lifecycle.task.unit);
+
+    // What used to be carried by the unit identity is still carried, and is
+    // still what binds a witness: the profile, the task digest and every
+    // obligation identifier stay capability-distinct.
     assert_ne!(
-        observation.task.unit.build_digest,
-        lifecycle.task.unit.build_digest
+        observation.task.semantic_profile,
+        lifecycle.task.semantic_profile
     );
+    assert_ne!(observation.task.task_digest(), lifecycle.task.task_digest());
+    let observation_ids = observation
+        .task
+        .coverage_for(VerifierCapability::ObservationHooks);
+    assert!(!observation_ids.is_empty());
+    assert!(
+        observation_ids
+            .iter()
+            .all(|id| id.starts_with("observation_hooks:"))
+    );
+    assert!(
+        observation
+            .task
+            .coverage_for(VerifierCapability::ChunkLifecycle)
+            .is_empty()
+    );
+
     // Independently, the lifecycle derivation is incomplete here, so it can
-    // never reach `Safe` whatever a provider returns.
+    // never reach `Safe` whatever a provider returns: this repair represents a
+    // multi-capability composition, it does not promote one.
     assert!(
         lifecycle
             .task
             .is_incomplete_for(VerifierCapability::ChunkLifecycle)
+    );
+}
+
+#[test]
+fn a_real_artifact_difference_still_refuses_the_merge() {
+    // The other half of E03-B2: dropping the capability from the build digest
+    // must not drop the identity check. A different source program and a
+    // different translation unit each still change the unit identity.
+    let parsed = program();
+    let other = parse_source_program(&format!("{SOURCE}fn spare() -> i32 {{ return 1; }}\n"))
+        .expect("fixture parses");
+    let mine = derive_task(
+        &derivation_inputs(&parsed, None, &["resize"]),
+        VerifierCapability::ObservationHooks,
+    );
+    let theirs = derive_task(
+        &derivation_inputs(&other, None, &["resize"]),
+        VerifierCapability::ObservationHooks,
+    );
+    assert_ne!(mine.task.unit.source_digest, theirs.task.unit.source_digest);
+    assert_ne!(mine.task.unit, theirs.task.unit);
+
+    let mut renamed = derivation_inputs(&parsed, None, &["resize"]);
+    renamed.translation_unit = "other.qc";
+    let elsewhere = derive_task(&renamed, VerifierCapability::ObservationHooks);
+    assert_ne!(
+        mine.task.unit.build_digest, elsewhere.task.unit.build_digest,
+        "the build digest still names the translation unit"
+    );
+}
+
+#[test]
+fn two_providers_derive_two_distinct_coverage_obligations() {
+    // E03-B3, repaired. Before: `ObservationCoverageComplete` has subject
+    // `Unit`, so both providers derived *one* identifier for two different
+    // claims, and the two-provider required set had three members. It was
+    // sound only because every component must be `Safe`. After: the identifier
+    // is keyed by the provider and by the resolved hook denominator the replay
+    // decides it against, so the required set has four.
+    let parsed = program();
+    let coverage = |verifier: &str, hook: &str| {
+        derive_task(
+            &derivation_inputs(&parsed, Some(verifier), &[hook]),
+            VerifierCapability::ObservationHooks,
+        )
+        .task
+        .obligations
+        .into_iter()
+        .filter(|obligation| obligation.property == ObligationProperty::ObservationCoverageComplete)
+        .map(|obligation| obligation.obligation_id)
+        .collect::<Vec<_>>()
+    };
+    let left = coverage("example.left", "resize");
+    let right = coverage("example.right", "grow");
+    assert_eq!(left.len(), 1);
+    assert_eq!(right.len(), 1);
+    assert_ne!(left, right, "distinct providers, distinct obligations");
+    // Both halves of the key matter, and each alone changes the identifier.
+    assert_ne!(left, coverage("example.right", "resize"));
+    assert_ne!(left, coverage("example.left", "grow"));
+    // The subject is unchanged, so the repair is in the identifier alone.
+    assert_eq!(left, coverage("example.left", "resize"));
+}
+
+#[test]
+fn one_providers_certificate_cannot_discharge_anothers_coverage_obligation() {
+    // The adversarial direction of E03-B3: the honest provider's certificate
+    // must not cover the silent provider's coverage obligation. Pre-repair the
+    // shared identifier left exactly one obligation uncovered here; now two
+    // are, and the count is pinned so the property cannot drift back.
+    let report = dispatch(Answer::Honest, Answer::Unknown);
+    assert!(!report.scopes[0].verified());
+    let required = report.scopes[0]
+        .capabilities
+        .iter()
+        .flat_map(|dispatch| {
+            dispatch
+                .task
+                .coverage_for(VerifierCapability::ObservationHooks)
+        })
+        .collect::<BTreeSet<_>>();
+    let covered = report.scopes[0]
+        .capabilities
+        .iter()
+        .filter_map(|dispatch| dispatch.outcome.certificate.as_ref())
+        .flat_map(|certificate| certificate.coverage().iter().cloned())
+        .collect::<BTreeSet<_>>();
+    assert_eq!(required.len(), 4);
+    assert_eq!(covered.len(), 2);
+    assert_eq!(required.difference(&covered).count(), 2);
+}
+
+#[test]
+fn an_absent_provider_refuses_the_composed_verdict_itself() {
+    // E03-B4, repaired. Before: `dispatch_scope` skipped an unregistered
+    // provider before deriving its obligations, so they never entered the
+    // required set and `composed.verdict` alone could read `Safe` while
+    // `verified()` was false — masked only by `Q700` at resolution and by
+    // every consumer reading `diagnostics()`. After: absence is a refusal in
+    // the composed verdict, under the registry's own `QP002`.
+    let registry = registry(Answer::Honest, Answer::Honest);
+    let parsed = program();
+    let mut resolved = registry.resolve_source_scopes(&parsed).unwrap();
+
+    // Control: the same scope without the absent provider composes `Safe`, so
+    // the refusal below is attributable to the absence alone.
+    let control = dispatch_scopes(&parsed, UNIT, &resolved, &registry);
+    assert_eq!(control.scopes[0].composed.verdict, ProposedVerdict::Safe);
+
+    resolved[0].providers.push(ResolvedVerifierUse {
+        plugin_id: PluginId::new("example.absent").unwrap(),
+        package_version: "0.1.0".into(),
+        profile: "default".into(),
+        capabilities: BTreeSet::from([VerifierCapability::ObservationHooks]),
+    });
+    let report = dispatch_scopes(&parsed, UNIT, &resolved, &registry);
+    assert!(!report.scopes[0].verified());
+    assert_eq!(report.scopes[0].composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(report.scopes[0].composed.diagnostics[0].code, "QP002");
+    assert!(
+        report.scopes[0].composed.diagnostics[0]
+            .message
+            .contains("example.absent")
+    );
+    assert!(report.scopes[0].composed.certificate.is_none());
+    assert!(report.scopes[0].composed.composite.is_none());
+    // The providers that did answer are still dispatched and still reported.
+    assert_eq!(report.scopes[0].capabilities.len(), 2);
+    assert!(
+        report.scopes[0]
+            .capabilities
+            .iter()
+            .all(|dispatch| dispatch.outcome.verdict == ProposedVerdict::Safe)
     );
 }
