@@ -97,6 +97,7 @@ fn canonical_serialization_is_byte_stable_across_insertion_orders() {
             }],
             derivation_incomplete: vec![DerivationIncomplete {
                 capability: VerifierCapability::EventTraces,
+                category: qcore_schemas::ReasonCategory::IncompleteObligationCoverage,
                 reason: "no derivation in this increment".into(),
             }],
         }

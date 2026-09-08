@@ -288,6 +288,7 @@ fn task_envelope_cannot_be_rebound_and_incomplete_derivations_stay_unknown() {
         .derivation_incomplete
         .push(DerivationIncomplete {
             capability: VerifierCapability::ObservationHooks,
+            category: qcore_schemas::ReasonCategory::IncompleteObligationCoverage,
             reason: "missing importer".into(),
         });
     assert_eq!(

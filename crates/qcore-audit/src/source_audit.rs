@@ -220,14 +220,15 @@ impl SourceContractAudit {
                                 }
                                 Err(error) => {
                                     self.unknown += 1;
-                                    functions.push(json!({"function": summary.function(), "status": "unknown", "reason": error.to_string(), "import_identity": summary.input_identity()}));
+                                    let reason = error.to_string();
+                                    functions.push(json!({"function": summary.function(), "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code(Some(&reason)), "import_identity": summary.input_identity()}));
                                 }
                             }
                         }
                         ChunkSourceResult::Unknown { function, reason } => {
                             seen.insert(function.clone());
                             self.unknown += 1;
-                            functions.push(json!({"function": function, "status": "unknown", "reason": reason}));
+                            functions.push(json!({"function": function, "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code(Some(&reason))}));
                         }
                     }
                 }
@@ -237,7 +238,10 @@ impl SourceContractAudit {
         for function in raw_functions {
             if seen.insert(function.clone()) {
                 self.unknown += 1;
-                functions.push(json!({"function": function, "status": "unknown", "reason": import_failure.as_deref().unwrap_or("raw source definition absent from the selected typed import; possibly build-excluded")}));
+                let reason = import_failure.as_deref().unwrap_or(
+                    "raw source definition absent from the selected typed import; possibly build-excluded",
+                );
+                functions.push(json!({"function": function, "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code(Some(reason))}));
             }
         }
         functions.sort_by(|a, b| a["function"].as_str().cmp(&b["function"].as_str()));

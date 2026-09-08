@@ -322,3 +322,203 @@ fn observation_trust_preserves_explicit_caller_refusal() {
         );
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card REASON-CODES: the closed L21.1 category carried on every marker.
+// ---------------------------------------------------------------------------
+
+/// Every marker this deriver can emit, produced by a real derivation run
+/// rather than by quoting the source. Each entry names the site it exercises.
+fn emitted_markers() -> Vec<(
+    &'static str,
+    qcore_schemas::obligation::DerivationIncomplete,
+)> {
+    let mut rows = Vec::new();
+    let mut push = |label: &'static str, derived: DerivedTask| {
+        for marker in derived.task.derivation_incomplete {
+            rows.push((label, marker));
+        }
+    };
+
+    // Reserved capabilities: no derivation at all.
+    let program = parse_source_program(LIFECYCLE_UNIT).expect("fixture parses");
+    push(
+        "no-core-derivation",
+        derive_task(&inputs(&program), VerifierCapability::EventTraces),
+    );
+    // Resource contracts: the gateway-owned custody derivation.
+    push(
+        "gateway-custody",
+        derive_task(&inputs(&program), VerifierCapability::ResourceContracts),
+    );
+    // Chunk lifecycle over a clean unit: the unconditional ABI-import gap.
+    push(
+        "lifecycle-abi-import",
+        derive_task(&inputs(&program), VerifierCapability::ChunkLifecycle),
+    );
+
+    // LifecycleScan gaps, one crafted unit per site.
+    for (label, source) in [
+        (
+            "structured-control-flow",
+            "fn run() -> unit { if 1 { let c = cio_ctx_create(); } return; }",
+        ),
+        (
+            "operations-after-return",
+            "fn run() -> unit { return; let c = cio_ctx_create(); }",
+        ),
+        (
+            "unknown-call-effect",
+            "fn run() -> unit { frobnicate(); return; }",
+        ),
+        (
+            "model-call-arity",
+            "fn run() -> unit { let c = cio_ctx_create(1); return; }",
+        ),
+        (
+            "unbound-created-identity",
+            "fn run() -> unit { cio_ctx_create(); return; }",
+        ),
+        (
+            "unresolved-argument",
+            "fn run() -> unit { cio_ctx_destroy(nope); return; }",
+        ),
+        (
+            "cross-function-order-bound",
+            "fn a() -> unit { let c = cio_ctx_create(); return; }\nfn b() -> unit { let d = cio_ctx_create(); return; }",
+        ),
+        (
+            "shadowed-identity",
+            "fn run() -> unit { let c = cio_ctx_create(); let c = cio_ctx_create(); return; }",
+        ),
+    ] {
+        if let Ok(program) = parse_source_program(source) {
+            push(
+                label,
+                derive_task(&inputs(&program), VerifierCapability::ChunkLifecycle),
+            );
+        }
+    }
+
+    // Observation hooks: the premise sites.
+    let program =
+        parse_source_program("extern fn resize() -> unit contract { ensures normal ok == 1; };")
+            .expect("fixture parses");
+    let mut refused = inputs(&program);
+    refused.required_observation_hooks = BTreeSet::from(["resize".to_owned()]);
+    refused
+        .assumptions
+        .insert("observations_trusted".into(), false);
+    push(
+        "refused-observations-trusted",
+        derive_task(&refused, VerifierCapability::ObservationHooks),
+    );
+
+    let mut absent = inputs(&program);
+    absent.required_observation_hooks = BTreeSet::from(["absent".to_owned()]);
+    push(
+        "missing-extern-hook",
+        derive_task(&absent, VerifierCapability::ObservationHooks),
+    );
+
+    let mut ambiguous = inputs(&program);
+    ambiguous
+        .contract_sources
+        .insert("other.qcore".into(), program.source().into());
+    ambiguous.required_observation_hooks = BTreeSet::from(["resize".to_owned()]);
+    push(
+        "ambiguous-contract",
+        derive_task(&ambiguous, VerifierCapability::ObservationHooks),
+    );
+
+    let mut unparseable = inputs(&program);
+    unparseable
+        .contract_sources
+        .insert("broken.qcore".into(), "fn (".into());
+    unparseable.required_observation_hooks = BTreeSet::from(["resize".to_owned()]);
+    push(
+        "unparseable-contract",
+        derive_task(&unparseable, VerifierCapability::ObservationHooks),
+    );
+
+    rows
+}
+
+#[test]
+fn every_emitted_marker_agrees_with_the_documented_reason_mapping() {
+    let rows = emitted_markers();
+    assert!(
+        !rows.is_empty(),
+        "no marker was produced; the test is vacuous"
+    );
+    for (label, marker) in &rows {
+        let classified = qcore_schemas::reason::ReasonCategory::classify(&marker.reason)
+            .unwrap_or_else(|_| {
+                panic!(
+                    "[{label}] emitted reason classifies to nothing: `{}`",
+                    marker.reason
+                )
+            });
+        assert_eq!(
+            classified, marker.category,
+            "[{label}] the typed site and the documented mapping disagree for `{}`",
+            marker.reason
+        );
+    }
+}
+
+#[test]
+fn derivation_never_labels_a_gap_an_environment_failure() {
+    // Derivation runs entirely over already-imported trusted inputs. If a row
+    // here ever claimed `environment-unavailable`, the category would be
+    // describing something this code cannot observe.
+    for (label, marker) in emitted_markers() {
+        assert!(
+            !marker.category.is_environment(),
+            "[{label}] derivation claimed an environment failure: `{}`",
+            marker.reason
+        );
+    }
+}
+
+#[test]
+fn the_derivation_category_corpus_reaches_both_halves_of_the_partition() {
+    use qcore_schemas::reason::ReasonCategory as Category;
+    let categories: BTreeSet<Category> = emitted_markers()
+        .into_iter()
+        .map(|(_, marker)| marker.category)
+        .collect();
+    assert!(categories.contains(&Category::UnsupportedSyntax));
+    assert!(categories.contains(&Category::IncompleteObligationCoverage));
+    assert!(categories.contains(&Category::MissingPremise));
+    assert_eq!(
+        categories.len(),
+        3,
+        "derivation reached an unexpected category set: {categories:?}"
+    );
+    assert!(categories.iter().any(|c| c.describes_analysed_source()));
+    assert!(categories.iter().any(|c| !c.describes_analysed_source()));
+}
+
+#[test]
+fn relabeling_a_marker_retires_the_task_in_both_directions() {
+    let program = parse_source_program(LIFECYCLE_UNIT).expect("fixture parses");
+    let derived = derive_task(&inputs(&program), VerifierCapability::ChunkLifecycle);
+    assert!(!derived.task.derivation_incomplete.is_empty());
+    let original = derived.task.task_digest();
+
+    let mut relabeled = derived.task.clone();
+    relabeled.derivation_incomplete[0].category =
+        qcore_schemas::reason::ReasonCategory::EnvironmentUnavailable;
+    let moved = relabeled.task_digest();
+    assert_ne!(
+        original, moved,
+        "a witness recorded against the original task must not replay against a \
+         task whose marker was relabeled, nor the reverse"
+    );
+    // The reason text itself is untouched: the category refines, never replaces.
+    assert_eq!(
+        relabeled.derivation_incomplete[0].reason,
+        derived.task.derivation_incomplete[0].reason
+    );
+}

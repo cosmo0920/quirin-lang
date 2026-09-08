@@ -26,6 +26,7 @@ use qcore_schemas::obligation::{
     ObligationSubject, TaskBounds, VERIFICATION_TASK_VERSION, VerificationTask,
 };
 use qcore_schemas::plugin::{TargetProfile, UnitIdentity, VerifierCapability};
+use qcore_schemas::reason::ReasonCategory;
 use qcore_schemas::witness::{ChunkOperationRecord, SourceSite};
 
 /// The chunk-lifecycle operation the core's API table pins for a call site.
@@ -274,6 +275,9 @@ pub fn derive_task(inputs: &DerivationInputs<'_>, capability: VerifierCapability
             // honestly empty inventory (design §1.4.4).
             task.derivation_incomplete.push(DerivationIncomplete {
                 capability,
+                // The analyser has no derivation here; this says nothing about
+                // the analysed source (§L21.1).
+                category: ReasonCategory::IncompleteObligationCoverage,
                 reason: "no core derivation for this capability in evidence v2.0 \
                          (event/concurrency model extraction is W5)"
                     .into(),
@@ -490,12 +494,28 @@ fn statement_calls(source: &str, span: Span) -> Option<Vec<StatementCall>> {
 
 struct LifecycleScan {
     inventory: LifecycleInventory,
-    incomplete: Vec<String>,
+    /// Each gap carries its closed L21.1 category at the point it is recorded.
+    /// The category is never recovered from the prose afterwards.
+    incomplete: Vec<(ReasonCategory, String)>,
     bindings: BTreeMap<String, (EntityKind, u32)>,
     parents: BTreeMap<u32, (u32, u32)>,
 }
 
 impl LifecycleScan {
+    /// Record a gap whose subject is a construct in the analysed source
+    /// (§L21.1 `unsupported-syntax`).
+    fn unsupported_syntax(&mut self, reason: String) {
+        self.incomplete
+            .push((ReasonCategory::UnsupportedSyntax, reason));
+    }
+
+    /// Record a gap whose subject is this increment's own coverage bound, not
+    /// anything in the analysed source (§L21.1 `incomplete-obligation-coverage`).
+    fn incomplete_coverage(&mut self, reason: String) {
+        self.incomplete
+            .push((ReasonCategory::IncompleteObligationCoverage, reason));
+    }
+
     fn resolve(&mut self, name: Option<&String>, expected: EntityKind) -> Option<u32> {
         match name.and_then(|name| self.bindings.get(name)) {
             Some(&(kind, id)) if kind == expected => Some(id),
@@ -513,7 +533,7 @@ fn scan_block(
 ) {
     for (position, statement) in block.statements.iter().enumerate() {
         if !statement.value.nested_blocks().is_empty() {
-            scan.incomplete.push(format!(
+            scan.unsupported_syntax(format!(
                 "`{function}` contains structured control flow; the evidence-v2.0 \
                  schedule bound is a single path per function"
             ));
@@ -522,13 +542,12 @@ fn scan_block(
         let statement_text = source[statement.span.start..statement.span.end].trim();
         if statement_text == "return;" {
             if position + 1 != block.statements.len() {
-                scan.incomplete
-                    .push(format!("`{function}` has operations after a return"));
+                scan.unsupported_syntax(format!("`{function}` has operations after a return"));
             }
             break;
         }
         let Some(calls) = statement_calls(source, statement.span) else {
-            scan.incomplete.push(format!(
+            scan.unsupported_syntax(format!(
                 "`{function}` has a statement whose call structure could not be recovered"
             ));
             continue;
@@ -544,7 +563,7 @@ fn scan_block(
         };
         for call in calls {
             let Some(shape) = lifecycle_shape(&call.callee) else {
-                scan.incomplete.push(format!(
+                scan.unsupported_syntax(format!(
                     "`{function}` has unknown call effect `{}`",
                     call.callee
                 ));
@@ -556,7 +575,7 @@ fn scan_block(
                 _ => 1,
             };
             if call.arguments.len() != arity {
-                scan.incomplete.push(format!(
+                scan.unsupported_syntax(format!(
                     "`{function}` has unsupported model-call arity for `{}`",
                     call.callee
                 ));
@@ -566,8 +585,7 @@ fn scan_block(
                 .as_ref()
                 .is_some_and(|name| scan.bindings.contains_key(name))
             {
-                scan.incomplete
-                    .push(format!("`{function}` shadows a lifecycle identity"));
+                scan.unsupported_syntax(format!("`{function}` shadows a lifecycle identity"));
                 continue;
             }
             let template = classify(scan, shape, &call, binding.as_ref(), function);
@@ -612,7 +630,7 @@ fn classify(
     function: &str,
 ) -> Option<OperationTemplate> {
     let unresolved = |scan: &mut LifecycleScan, detail: &str| {
-        scan.incomplete.push(format!(
+        scan.unsupported_syntax(format!(
             "`{function}` calls `{}`: {detail}",
             call.callee.clone()
         ));
@@ -734,7 +752,7 @@ fn derive_chunk_lifecycle(
     if functions_with_sites.len() > 1 {
         // Cross-function order admissibility needs the inlined call-structure
         // linearization; the v2.0 bound is a single analyzed function.
-        scan.incomplete.push(format!(
+        scan.incomplete_coverage(format!(
             "lifecycle call sites appear in {} functions; the evidence-v2.0 order bound \
              covers a single analyzed function",
             functions_with_sites.len()
@@ -743,10 +761,11 @@ fn derive_chunk_lifecycle(
     // This syntax inventory is useful for replay conformance, but spelling
     // alone does not import a real API's fallibility, backend, residency,
     // deletion flags or symbol binding. Do not mint source-safety certificates.
-    scan.incomplete.push("source lifecycle effect/ABI import is unavailable; model-call spelling does not establish runtime outcomes or provider-chosen parameters".into());
-    for reason in &scan.incomplete {
+    scan.incomplete_coverage("source lifecycle effect/ABI import is unavailable; model-call spelling does not establish runtime outcomes or provider-chosen parameters".into());
+    for (category, reason) in &scan.incomplete {
         task.derivation_incomplete.push(DerivationIncomplete {
             capability,
+            category: *category,
             reason: reason.clone(),
         });
     }
@@ -841,6 +860,9 @@ fn derive_observation_hooks(
     if !trusted {
         task.derivation_incomplete.push(DerivationIncomplete {
             capability,
+            // A declared premise the analysis requires was refused by the
+            // caller: §L21.1 `missing-premise`, not a statement about source.
+            category: ReasonCategory::MissingPremise,
             reason: "caller refuses the observations_trusted assumption required for recorded observation replay".into(),
         });
     }
@@ -861,6 +883,9 @@ fn derive_observation_hooks(
         let Ok(module) = qcore_frontend::frontend::parse_source_program(text) else {
             task.derivation_incomplete.push(DerivationIncomplete {
                 capability,
+                // The unparseable text is a *trusted contract input* of this
+                // task, not the analysed source: §L21.1 `missing-premise`.
+                category: ReasonCategory::MissingPremise,
                 reason: format!("contract module `{path}` does not parse"),
             });
             continue;
@@ -874,6 +899,8 @@ fn derive_observation_hooks(
             {
                 task.derivation_incomplete.push(DerivationIncomplete {
                     capability,
+                    // Again the declared contract, not the analysed source.
+                    category: ReasonCategory::MissingPremise,
                     reason: format!(
                         "ambiguous observation contract `{}`",
                         declaration.value.name
@@ -886,6 +913,8 @@ fn derive_observation_hooks(
         let Some(module) = declared.get(hook) else {
             task.derivation_incomplete.push(DerivationIncomplete {
                 capability,
+                // §L21.1 lists this reason verbatim under `missing-premise`.
+                category: ReasonCategory::MissingPremise,
                 reason: format!(
                     "required observation hook `{hook}` has no `extern fn` contract in the \
                      unit's trusted contract sources"
@@ -1002,6 +1031,9 @@ fn derive_resource_contracts(inputs: &DerivationInputs<'_>, task: &mut Verificat
     // capability can never reach `Safe` through it. Discharge is W4 work.
     task.derivation_incomplete.push(DerivationIncomplete {
         capability,
+        // §L21.1 lists this reason verbatim under
+        // `incomplete-obligation-coverage`.
+        category: ReasonCategory::IncompleteObligationCoverage,
         reason: "per-allocation-site custody derivation runs in the unrestricted-C gateway; \
                  the QCore verify-scope path derives call-effect and parameter-mode \
                  obligations only (gateway summaries are not imported here)"

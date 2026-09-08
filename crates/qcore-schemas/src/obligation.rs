@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::digest::sha256_hex;
 use crate::plugin::{TargetProfile, UnitIdentity, VerifierCapability};
+use crate::reason::ReasonCategory;
 
 /// Version of the *task semantics*, not of the protocol frame. Bumped when
 /// the meaning of a derived inventory changes (SV-LIB direction, design §1.1).
@@ -247,11 +248,30 @@ pub struct Obligation {
 /// A construct the deriver could not classify. Recorded on the task rather
 /// than silently omitted: a task carrying one of these can never reach `Safe`
 /// for the affected capability (design §1.4).
+///
+/// `category` is the closed L21.1 classification of `reason`. It refines the
+/// row and replaces nothing: `capability` and `reason` keep their exact meaning
+/// and bytes. The field is **required**, not optional with a default — a record
+/// that omits it is refused at deserialization, which is what makes an
+/// evidence-v2 witness recorded before this increment fail against a task
+/// derived after it, and vice versa.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DerivationIncomplete {
     pub capability: VerifierCapability,
+    /// The closed L21.1 category. Named explicitly at every construction site;
+    /// never defaulted, and never inferred from `reason` in production.
+    pub category: ReasonCategory,
     pub reason: String,
+}
+
+impl DerivationIncomplete {
+    /// `true` when this row makes a claim about the analysed source. An
+    /// environment failure is structurally excluded (§L21.1 rule 1).
+    #[must_use]
+    pub const fn describes_analysed_source(&self) -> bool {
+        self.category.describes_analysed_source()
+    }
 }
 
 /// The complete, versioned verification task (design §1.1). The digest of
