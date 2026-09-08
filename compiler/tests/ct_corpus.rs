@@ -2260,7 +2260,10 @@ fn epoch_certificate_of<'module>(
     // establishes, so a published certificate that had quietly shed one would be
     // a stronger claim than anything measured here.
     assert_eq!(
-        certificate.assumption_names().into_iter().collect::<Vec<_>>(),
+        certificate
+            .assumption_names()
+            .into_iter()
+            .collect::<Vec<_>>(),
         [
             "DeclaredRuntimeOverhead",
             "DeclaredTaskFootprints",
