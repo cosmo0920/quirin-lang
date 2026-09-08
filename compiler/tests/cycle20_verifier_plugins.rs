@@ -81,17 +81,22 @@ fn builtin_assertions_cannot_establish_safety() {
 
 #[test]
 fn extracted_plugins_preserve_manifests_and_fail_closed_for_every_capability() {
-    use qcore_compiler::verifier_plugins::{chunkio, libevent};
-
-    let mut registry = VerifierRegistry::default();
-    registry
-        .register(Arc::new(libevent::provider().unwrap()))
-        .unwrap();
-    registry
-        .register(Arc::new(chunkio::provider().unwrap()))
-        .unwrap();
+    // P09 removed the per-plugin hardcoded `libevent::provider()` /
+    // `chunkio::provider()` selection route after re-measured parity
+    // (`docs/reports/remaining-p09/README.md`). The same expectations are now
+    // asserted through the surviving profile-package discovery route; a
+    // separately registered provider must still answer identically to the
+    // discovered one.
     let first_party = first_party_registry();
-    for manifest in [libevent::manifest().unwrap(), chunkio::manifest().unwrap()] {
+    for plugin in ["qcore.libevent", "qcore.chunkio"] {
+        let manifest = first_party_manifests()
+            .into_iter()
+            .find(|manifest| manifest.plugin_id.as_str() == plugin)
+            .unwrap();
+        let mut registry = VerifierRegistry::default();
+        registry
+            .register(Arc::new(BuiltInProvider::new(manifest.clone()).unwrap()))
+            .unwrap();
         assert!(registry.manifests().contains(&&manifest));
         assert!(first_party.manifests().contains(&&manifest));
         for capability in &manifest.capabilities {
@@ -106,6 +111,19 @@ fn extracted_plugins_preserve_manifests_and_fail_closed_for_every_capability() {
                 format!("{}.semantic_evidence_unavailable", manifest.plugin_id)
             );
         }
+        // The deleted route forced a built-in adapter regardless of the
+        // declared entrypoint. Nothing may reintroduce that: an executable
+        // manifest is refused here, so only discovery's `ProcessProvider` arm
+        // can serve one.
+        let mut executable = manifest.clone();
+        executable.entrypoint = PluginEntrypoint::Executable {
+            path: "provider".into(),
+        };
+        executable.package_digest = digest('c');
+        assert!(matches!(
+            BuiltInProvider::new(executable),
+            Err(qcore_compiler::ManifestError::InvalidTarget)
+        ));
     }
 }
 
@@ -422,9 +440,14 @@ fn reproducibility_metadata_does_not_establish_semantic_evidence() {
     let req = request("qcore.libevent", "libevent");
     let response = echo_response(&manifest, &req);
     let evidence = response.evidence.unwrap();
+    // The provider version is the plugin *package* version the manifest
+    // declares, not this crate's version. Those two strings were both `0.1.0`
+    // until P09 versioned `qcore-compiler` to `0.2.0`, which exposed the
+    // coincidence; the assertion is retargeted at the value the code actually
+    // publishes, not relaxed.
     assert_eq!(
         evidence.reproducibility.provider_version,
-        env!("CARGO_PKG_VERSION")
+        manifest.package_version
     );
     assert_eq!(
         evidence.reproducibility.package_digest,

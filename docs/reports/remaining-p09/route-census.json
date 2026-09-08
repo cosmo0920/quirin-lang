@@ -1,0 +1,64 @@
+{
+  "card": "P09",
+  "purpose": "Selection census: which retained legacy route can be deleted now, measured by its remaining callers and by whether its replacement can serve them.",
+  "method": "ripgrep over compiler/, crates/ and providers/ excluding target/, then manual read of each call site.",
+  "candidates": [
+    {
+      "route": "compiler/src/verifier_plugins/chunkio/teardown_source.rs::check_counter_sources",
+      "replacement": "qcore.chunkio 0.5.0 process capability + qcore_verification::counter_source::CounterSourceTask (P04)",
+      "parity_dossier": "docs/reports/remaining-p04/README.md §4; compiler/tests/counter_route_parity.rs (byte-identical CounterCertificate on all four cio_chunk_counter_total_* helpers)",
+      "callers": {
+        "production": [
+          "compiler/examples/support/cycle19_compatibility.rs:554 (feeds MemoryCloseDependencies.counter)",
+          "compiler/examples/support/cycle19_compatibility.rs:701 (emits the `unsigned_counters` record into the pinned teardown artifact)"
+        ],
+        "tests": [
+          "compiler/tests/counter_route_parity.rs",
+          "compiler/tests/unit/memory_close.rs",
+          "compiler/tests/unit/filesystem_chunk_close.rs"
+        ]
+      },
+      "selected": false,
+      "reason": "Parity scope is narrower than the callers. P04 proves certificate equality; it does not provide the caller's requirement, which is a certificate produced with no provider process. No configured audit route selects the qcore.chunkio counter capability (P04 §8), so deleting the in-process route removes the certificate that the pinned Cycle 19 teardown artifact serialises and that MemoryCloseDependencies consumes. Re-measuring that artifact is impossible in this worktree: the developer Fluent Bit checkout is at 90a010910, off the profile pin, and no prepared Clang CMake build tree exists, so the audit's own pin gate refuses to run. Deleting under those conditions would violate invariant 3 (parity before deletion) and invariant 5 (pinned expectations are intentional)."
+    },
+    {
+      "route": "compiler/src/verifier_plugins/libevent/event_driven.rs::check_event_program",
+      "replacement": "qcore.libevent 0.2.0 process capability + qcore_verification::reactor_source::ReactorCallbackTask (P05)",
+      "parity_dossier": "docs/reports/remaining-p05/README.md; compiler/tests/reactor_route_parity.rs",
+      "callers": {
+        "production": [
+          "compiler/src/external_integration.rs:230 (Monkey composition certificate)"
+        ],
+        "tests": [
+          "compiler/tests/unit/event_driven.rs (Cycle 18 model suite, ~20 call sites)",
+          "compiler/tests/unit/external_integration.rs",
+          "compiler/tests/reactor_route_parity.rs",
+          "compiler/tests/workspace_layering.rs:290 (pinned compatibility path)"
+        ]
+      },
+      "selected": false,
+      "reason": "Same structural mismatch, in the other direction. The process route is a witness-replay route that requires a registered provider package and a derived evidence-v2 task; it cannot answer `check_event_program(&program, accepted_builds) -> Result<EventCertificate, _>` for an in-process caller. P05 itself records that the moved capability has no production caller. Deleting the in-process checker would delete the Monkey composition and the whole Cycle 18 model suite with no replacement, which is capability removal, not route consolidation."
+    },
+    {
+      "route": "compiler/examples/support/cycle19_compatibility.rs::SourceContractConfiguration::Direct",
+      "replacement": "SourceContractConfiguration::Process (configured source-contract dispatch, w5-configured-source-contracts)",
+      "parity_dossier": "docs/reports/w5-configured-source-contracts/audit-parity.json",
+      "selected": false,
+      "reason": "The archived parity is between the two *process* selectors (QCORE_SOURCE_CONTRACTS and the QCORE_CHUNKIO_PACKAGE alias), not between Direct and Process. The Process route additionally emits `provider_source_effect` records, so the default (no selector) artifacts are not byte-identical to the process artifacts, and re-measuring needs the same unavailable pinned corpus."
+    },
+    {
+      "route": "compiler/src/verifier_plugins/{libevent,chunkio}/mod.rs::{manifest, provider}",
+      "replacement": "compiler/src/first_party.rs::{load_first_party_manifests, load_first_party_registry}",
+      "parity_dossier": "docs/reports/w2-provider-discovery/README.md (field-for-field parity, no compiled fallback); re-measured here in docs/reports/remaining-p09/route-parity.json",
+      "callers": {
+        "production": [],
+        "tests": [
+          "compiler/tests/cycle20_verifier_plugins.rs:88,91,94",
+          "compiler/tests/first_party_route_parity.rs (this card's temporary harness)"
+        ]
+      },
+      "selected": true,
+      "reason": "Zero production callers, a replacement already used as the default everywhere (first_party_registry / first_party_manifests), and a parity surface that is fully re-measurable in this worktree without the pinned Fluent Bit corpus. The hardcoded route is strictly less capable: it forces BuiltInProvider regardless of the manifest's declared entrypoint, so an executable first-party package is refused with ManifestError::InvalidTarget where discovery builds a ProcessProvider. That gap became live when P04 and P05 shipped executable qcore.chunkio 0.5.0 and qcore.libevent 0.2.0 packages."
+    }
+  ]
+}
