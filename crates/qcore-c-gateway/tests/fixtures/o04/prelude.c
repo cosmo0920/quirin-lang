@@ -36,9 +36,11 @@
 #define FLB_HAVE_METRICS 1
 #define CIO_HAVE_BACKEND_FILESYSTEM 1
 
-typedef unsigned long size_t;
-typedef long ssize_t;
-typedef unsigned long uint64_t;
+/* Use the analyzing Clang target's types without requiring target libc headers.
+ * Windows x64 is LLP64: unsigned long is neither size_t nor uint64_t there. */
+typedef __SIZE_TYPE__ size_t;
+typedef __PTRDIFF_TYPE__ ssize_t;
+typedef __UINT64_TYPE__ uint64_t;
 typedef uint64_t flb_route_mask_element;
 typedef char *flb_sds_t;
 typedef int pthread_mutex_t;

@@ -73,7 +73,8 @@ mutex emission runs on Linux C11 threads, macOS pthreads, and Windows through
 an emitted winpthreads-derived compatibility subset. Emitted C is self-contained;
 Windows builds need no pthread library. See the [Windows thread guide](docs/reports/windows-c11-threads/README.md). The full test suite also
 exercises existing-C analysis, which needs Clang for preprocessing, syntax
-validation, and its JSON AST.
+validation, and its JSON AST. See the [Windows Clang fixture validation](docs/reports/windows-clang-fixtures/README.md)
+for target types, pinned source bytes and platform test evidence.
 
 ```sh
 git submodule update --init --recursive

@@ -156,3 +156,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test -p qcore-audit --test second_source_set
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test -p qcore-c-gateway --test o04_constructor_caller
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test -p qcore-verification --test counter_source
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

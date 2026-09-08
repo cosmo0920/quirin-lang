@@ -74,11 +74,12 @@ fn a_false_contract_refuses_a_correct_reading() {
     }
     let import = imported(SOURCE, vec![]);
     // Claim the decrement increments; the path is unchanged and still exact.
-    let inverted = CONTRACT.replace(
+    let baseline = CONTRACT.replace("\r\n", "\n");
+    let inverted = baseline.replace(
         "requires counter_field__total_chunks;\n    requires counter_positive;\n    ensures normal delta == -1;",
         "requires counter_field__total_chunks;\n    requires counter_below_maximum;\n    ensures normal delta == 1;",
     );
-    assert_ne!(inverted, CONTRACT);
+    assert_ne!(inverted, baseline);
     let rejected = task(&import, &inverted);
     assert!(rejected.evaluate().is_err());
     for delta in [-1, 1] {

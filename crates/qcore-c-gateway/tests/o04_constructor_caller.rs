@@ -451,11 +451,12 @@ fn a_borrowed_destructor_turns_every_cleanup_arm_into_a_residual() {
     if !clang_available() {
         return;
     }
-    let weakened = PATH_CONTRACTS.replace(
+    let baseline = PATH_CONTRACTS.replace("\r\n", "\n");
+    let weakened = baseline.replace(
         "    ensures normal resource_released(ch, nonnull);\n    ensures normal resource_borrowed(delete);",
         "    ensures normal resource_borrowed(ch);\n    ensures normal resource_borrowed(delete);",
     );
-    assert_ne!(weakened, PATH_CONTRACTS, "the destructor clause moved");
+    assert_ne!(weakened, baseline, "the destructor clause moved");
     let result = analyze_unrestricted_c11(
         &C11TranslationUnit {
             source: &real_unit(),
@@ -490,6 +491,9 @@ fn a_borrowed_destructor_turns_every_cleanup_arm_into_a_residual() {
 // Held-out generic family
 // --------------------------------------------------------------------------
 
+// The consuming sink accepts each object-pointer type used by the fixtures,
+// like free. Its custody contract still consumes its argument; the rejection
+// cases must reach the resource projection with well-typed C.
 const GENERIC_DECLARATIONS: &str = "\
 struct g_ctx; struct g_pool; struct g_handle; \
 struct g_conf { int mode; struct g_ctx *ctx; struct g_pool *pool; }; \
@@ -499,7 +503,7 @@ struct g_handle *g_open(struct g_ctx *ctx, struct g_pool *pool, int flags); \
 void g_close(struct g_handle *h); \
 int g_probe(struct g_handle *h); \
 int g_prepare(struct g_handle *h, int n); \
-void g_adopt(struct g_handle *h); \
+void g_adopt(void *h); \
 void g_note(int first, ...);";
 
 /// The positive case: acquisition, two failure arms that clean up, and a

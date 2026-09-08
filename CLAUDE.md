@@ -1206,3 +1206,15 @@ status, stdout and stderr. Production checker and proof semantics are unchanged.
 Formatting, workspace Clippy, both reevaluation probes and the pinned Lean build
 pass. Workspace validation still fails in the untouched `o04_constructor_caller`
 and `counter_source` targets.
+
+Windows Clang fixture repair (2026-09-08): O04's reduced prelude uses
+Clang target integer types, and the generic consuming sink accepts object
+pointers without incompatible C calls. Fixture-local Git attributes preserve
+the four upstream excerpts' exact LF bytes and existing hashes. Both the O04
+and counter-source negative contract tests normalize only their local mutation
+baselines and still assert that substitution occurred. All 14 O04 assertions
+pass through native Visual Studio discovery; both affected targets (20 tests)
+pass with explicit `QCORE_CLANG`. Windows CI covers both routes. Strict C type checks
+also pass for Windows x64 and Linux x64 targets. Checker/Lean semantics,
+production verdicts and pinned upstream contents are unchanged. Validation:
+`docs/reports/windows-clang-fixtures/README.md`.
