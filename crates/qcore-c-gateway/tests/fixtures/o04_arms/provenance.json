@@ -1,0 +1,21 @@
+{
+ "note": "The two intermediate-link record declarations card O04-ARMS's bounded access chains cross, taken byte-verbatim from the same upstream revision card O04 pinned. The card's own C1 discharge rests on `struct cio_stream` being the second link of `storage->stream->name`; `struct flb_config` is the second link of `in->config->router`. O04's own fixture directory is byte-unchanged.",
+ "regions": {
+  "cio_stream": {
+   "bytes": 479,
+   "first_line": 25,
+   "last_line": 33,
+   "sha256": "5d5ba8ba376adb4a09af1593f1e3bdcb026ba2141ca831de317be60f5c794a14",
+   "upstream_path": "lib/chunkio/include/chunkio/cio_stream.h"
+  },
+  "flb_config": {
+   "bytes": 10180,
+   "first_line": 60,
+   "last_line": 365,
+   "sha256": "cfaa66fb4b05bb23e9f8414b428e62ece19691ee5af53aff9cdcf0b5218ec420",
+   "upstream_path": "include/fluent-bit/flb_config.h"
+  }
+ },
+ "revision": "90a010910e5b3328f496cc20fadc937547133439",
+ "upstream": "https://github.com/fluent-bit/fluent-bit"
+}

@@ -1,0 +1,9 @@
+struct cio_stream {
+    int type;                   /* type: CIO_STORE_FS or CIO_STORE_MEM */
+    char *name;                 /* stream name */
+    struct mk_list _head;       /* head link to ctx->streams list */
+    struct mk_list chunks;      /* list of all chunks in the stream */
+    struct mk_list chunks_up;   /* list of chunks who are 'up'   */
+    struct mk_list chunks_down; /* list of chunks who are 'down' */
+    void *parent;               /* ref to parent ctx */
+};

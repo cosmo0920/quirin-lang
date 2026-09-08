@@ -1,0 +1,2 @@
+# These upstream excerpts are byte-pinned in provenance.json.
+*.txt text eol=lf

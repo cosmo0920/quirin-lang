@@ -19,6 +19,9 @@
 //! * an **opaque field read** — an assignment whose entire right-hand side is
 //!   exactly such an access and whose destination is a plain local name.
 //!
+//! Card O04-ARMS widens both shapes from one member selection to a **bounded
+//! chain** of them (`base -> f1 -> f2`), under premise (3) below, which O04-ARMS widened.
+//!
 //! Nothing here relaxes the *destination* side of the lexical gate. A store
 //! through `->`, `.` or `[` keeps its existing rejection and its existing
 //! diagnostic, which is what makes premise (4) below hold by construction.
@@ -32,9 +35,25 @@
 //!    once in the unit, and every one of its member declarations was read. The
 //!    member is declared with no array modifier and no `volatile`/`_Atomic`,
 //!    and is either a scalar or a pointer — never an aggregate sub-object.
-//! 3. **The access does not continue** into `->`, `.`, `[` or `(`. Chains such
-//!    as `a->b->c` are refused, so a read never crosses an aggregate this
-//!    projection cannot name.
+//! 3. **Bounded, fully typed chain** (widened by O04-ARMS). The access is
+//!    `base` followed by at most [`ACCESS_CHAIN_LIMIT`] member selections. Every selection *before the
+//!    last* is written `->` and its member must be declared *exactly*
+//!    `struct POINTEE *` — [`TypedAccessModel::record_pointer_field`] — so the
+//!    walk re-enters the same declaration model at `POINTEE`, where an
+//!    incomplete, ambiguous or `union` record refuses. The last selection must
+//!    satisfy premise (2) and must not continue into `->`, `.`, `[` or `(`. A
+//!    `.` may appear only as the first selection, on a record-valued base:
+//!    continuing with `.` would cross a nested aggregate sub-object, refused.
+//!
+//!    A chain reads through intermediate *places* this function never names.
+//!    That is the same exposure premise (4) already accepts at depth one and
+//!    that C02-P recorded as **C02-P-ALIAS**: two distinct declared names that
+//!    may alias are unrelated by this name-based projection. Nothing new is
+//!    assumed — an intermediate place can only have been released in this
+//!    function through some local bound by an *opaque* field read, and
+//!    releasing an opaque-bound name reports `UnknownAlias`, so no such body
+//!    can reach `Safe`. That containment is pinned by
+//!    `releasing_an_opaque_bound_name_is_never_silently_admitted`.
 //! 4. **The base carries no tracked identity.** [`untracked_bases`] computes a
 //!    syntactic over-approximation of the names this function may bind to a
 //!    resource identity, and refuses every base in it. This is the premise C02
@@ -358,7 +377,23 @@ fn argument_spans(body: &[&str], call_index: usize) -> Option<Vec<(usize, usize)
     None
 }
 
-/// If an admitted direct member access starts at `start`, its end (exclusive).
+/// Maximum number of member selections one admitted access may contain.
+///
+/// Depth 1 is C02-P's original direct access; O04-ARMS raises it so that
+/// `storage -> stream -> name` and `in -> config -> router` — the two chains
+/// that keep the caller's first early-return arm and its allocator-size read
+/// unmodeled — can be read. A longer chain is refused, not truncated.
+const ACCESS_CHAIN_LIMIT: usize = 4;
+
+/// If an admitted member access starts at `start`, its end (exclusive).
+///
+/// The access is `base` followed by one to [`ACCESS_CHAIN_LIMIT`] member
+/// selections. Every selection *before the last* must be an
+/// [`TypedAccessModel::record_pointer_field`] continued with `->`; the last
+/// selects a [`TypedAccessModel::borrowable_field`] and must not continue into
+/// `->`, `.`, `[` or `(`. A `.` may only appear as the first selection, on a
+/// record-valued base: continuing with `.` would cross a nested aggregate
+/// sub-object, which this rule refuses by construction.
 fn admitted_access(
     texts: &[&str],
     start: usize,
@@ -370,7 +405,7 @@ fn admitted_access(
     if risky.contains(base) {
         return None;
     }
-    let (field_index, arrow) =
+    let (mut field_index, arrow) =
         if texts.get(start + 1) == Some(&"-") && texts.get(start + 2) == Some(&">") {
             (start + 3, true)
         } else if texts.get(start + 1) == Some(&".") {
@@ -378,24 +413,37 @@ fn admitted_access(
         } else {
             return None;
         };
-    let field = texts
-        .get(field_index)
-        .copied()
-        .filter(|field| is_name(field))?;
-    let tag = match (types.declared_type(base), arrow) {
-        (Some(DeclaredType::RecordPointer(tag)), true) => tag,
-        (Some(DeclaredType::Record(tag)), false) => tag,
+    let mut tag = match (types.declared_type(base), arrow) {
+        (Some(DeclaredType::RecordPointer(tag)), true) => tag.clone(),
+        (Some(DeclaredType::Record(tag)), false) => tag.clone(),
         _ => return None,
     };
-    if !model.borrowable_field(tag, field) {
-        return None;
+    for _ in 0..ACCESS_CHAIN_LIMIT {
+        let field = texts
+            .get(field_index)
+            .copied()
+            .filter(|field| is_name(field))?;
+        let continues_with_arrow =
+            texts.get(field_index + 1) == Some(&"-") && texts.get(field_index + 2) == Some(&">");
+        if continues_with_arrow {
+            // An intermediate link: the member must itself be a fully typed
+            // `struct POINTEE *`, and the walk re-enters this model at
+            // `POINTEE`, where an incomplete, ambiguous or union record
+            // refuses.
+            tag = model.record_pointer_field(&tag, field)?.to_owned();
+            field_index += 3;
+            continue;
+        }
+        if !model.borrowable_field(&tag, field) {
+            return None;
+        }
+        match texts.get(field_index + 1) {
+            Some(&".") | Some(&"[") | Some(&"(") => return None,
+            _ => {}
+        }
+        return Some(field_index + 1);
     }
-    match texts.get(field_index + 1) {
-        Some(&".") | Some(&"[") | Some(&"(") => return None,
-        Some(&"-") if texts.get(field_index + 2) == Some(&">") => return None,
-        _ => {}
-    }
-    Some(field_index + 1)
+    None
 }
 
 /// The token spans of one statement that are admitted borrowed pointer-field
@@ -645,13 +693,138 @@ mod tests {
         );
     }
 
+    /// O04-ARMS deliberately widened C02-P's "a chain is never admitted" pin to
+    /// "a chain through a record this reader did not fully type is never
+    /// admitted". `struct a` has no definition in this unit, so the walk
+    /// refuses at its second link — the load-bearing half of the original
+    /// expectation, kept and now attributed to its real reason.
     #[test]
-    fn a_chained_access_is_never_admitted() {
+    fn a_chain_through_an_undefined_record_is_never_admitted() {
         let fixture = fixture("borrow ( base -> one -> next , base -> two ) ;");
         assert_eq!(
             spans(&fixture, "borrow ( base -> one -> next , base -> two ) ;").len(),
             1
         );
+    }
+
+    /// The positive direction: with every link fully typed the chain is
+    /// admitted, so the refusals around it are refusals and not an empty rule.
+    #[test]
+    fn a_fully_typed_chain_is_admitted() {
+        let fixture = fixture_with_declarations(
+            "struct leaf { int state ; struct b * two ; } ; \
+             struct mid { struct leaf * down ; } ; \
+             struct rec { int state ; struct mid * one ; struct b * two ; } ;",
+            "borrow ( base -> one -> down -> two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(
+                &fixture,
+                "borrow ( base -> one -> down -> two , base -> two ) ;"
+            )
+            .len(),
+            2
+        );
+    }
+
+    /// A chain longer than the bound is refused rather than truncated.
+    #[test]
+    fn a_chain_beyond_the_bound_is_never_admitted() {
+        let fixture = fixture_with_declarations(
+            "struct leaf { struct leaf * down ; struct b * two ; } ; \
+             struct rec { int state ; struct leaf * one ; struct b * two ; } ;",
+            "borrow ( base -> one -> down -> down -> down -> two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(
+                &fixture,
+                "borrow ( base -> one -> down -> down -> down -> two , base -> two ) ;"
+            )
+            .len(),
+            1
+        );
+    }
+
+    /// A `union` anywhere in the chain refuses the whole access.
+    #[test]
+    fn a_chain_through_a_union_is_never_admitted() {
+        let fixture = fixture_with_declarations(
+            "union mid { struct b * two ; int tag ; } ; \
+             struct rec { int state ; union mid * one ; struct b * two ; } ;",
+            "borrow ( base -> one -> two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one -> two , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    /// A tag defined twice is ambiguous, and refuses as an intermediate link
+    /// exactly as it refuses as a final one.
+    #[test]
+    fn a_chain_through_an_ambiguous_tag_is_never_admitted() {
+        let fixture = fixture_with_declarations(
+            "struct mid { struct b * two ; } ; struct mid { int state ; } ; \
+             struct rec { int state ; struct mid * one ; struct b * two ; } ;",
+            "borrow ( base -> one -> two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one -> two , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    /// A double-star member is not `struct POINTEE *`, so it never continues.
+    #[test]
+    fn a_chain_through_a_double_pointer_member_is_never_admitted() {
+        let fixture = fixture_with_declarations(
+            "struct mid { struct b * two ; } ; \
+             struct rec { int state ; struct mid * * one ; struct b * two ; } ;",
+            "borrow ( base -> one -> two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one -> two , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    /// Continuing with `.` would cross a nested aggregate sub-object.
+    #[test]
+    fn a_chain_continued_with_a_dot_is_never_admitted() {
+        let fixture = fixture_with_declarations(
+            "struct mid { struct b * two ; } ; \
+             struct rec { int state ; struct mid * one ; struct b * two ; } ;",
+            "borrow ( base -> one . two , base -> two ) ;",
+        );
+        assert_eq!(
+            spans(&fixture, "borrow ( base -> one . two , base -> two ) ;").len(),
+            1
+        );
+    }
+
+    /// A chain's root is still subject to premise (4): a bound base refuses the
+    /// whole chain, at any depth.
+    #[test]
+    fn a_bound_base_refuses_the_whole_chain() {
+        let fixture = fixture_with_declarations(
+            "struct mid { struct b * two ; } ; \
+             struct rec { int state ; struct mid * one ; struct b * two ; } ;",
+            "sink ( base ) ; borrow ( base -> one -> two , n ) ;",
+        );
+        assert!(spans(&fixture, "borrow ( base -> one -> two , n ) ;").is_empty());
+    }
+
+    /// A chain is an opaque field read too, so the same value may bind a local.
+    #[test]
+    fn a_fully_typed_chain_is_an_opaque_field_read() {
+        let fixture = fixture_with_declarations(
+            "struct mid { struct b * two ; } ; \
+             struct rec { int state ; struct mid * one ; struct b * two ; } ;",
+            "held = base -> one -> two ;",
+        );
+        assert!(opaque_read(&fixture, "base -> one -> two"));
+        assert!(!opaque_read(&fixture, "base -> one -> two -> next"));
+        assert!(!opaque_read(&fixture, "base -> one -> two + 1"));
     }
 
     #[test]
