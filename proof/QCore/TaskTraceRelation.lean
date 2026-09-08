@@ -34,11 +34,13 @@ general C refinement.
 
 namespace QCore.TaskTraceRelation
 
--- Every domain theorem below is closed by kernel evaluation over hundreds or
--- thousands of traces, which needs more elaborator recursion and heartbeats
--- than the defaults allow. Neither option changes what is checked: `decide`
--- still produces `of_decide_eq_true rfl` and the kernel still replays the whole
--- computation.
+-- D3's generated traces must be expanded once before evaluating its verdicts.
+-- Reducing the nested schedules/transpositions afresh at every use makes plain
+-- `decide` prohibitively expensive. `cbv` supplies a kernel-checked equality for
+-- that expansion; `decide +kernel` then checks the concrete result once.
+-- AuditAll still permits only the standard logical axioms. The domain,
+-- relation, theorem statements and pinned results remain unchanged.
+-- The bounded computations need more recursion/heartbeats than the defaults.
 set_option maxRecDepth 100000
 set_option maxHeartbeats 4000000
 
@@ -461,24 +463,28 @@ def domainThree : List (List Event) :=
 
 /-! ## Domain agreement -/
 
-theorem domain_one_size : domainOne.length = 7 := by decide
-theorem domain_two_size : domainTwo.length = 55 := by decide
-theorem domain_three_size : domainThree.length = 3025 := by decide
+set_option cbv.maxSteps 4000000
 
-theorem domain_one_trace_digest : traceDigest domainOne = 1827949402977241471 := by decide
-theorem domain_two_trace_digest : traceDigest domainTwo = 7621727749705747350 := by decide
-theorem domain_three_trace_digest : traceDigest domainThree = 9380586544780836206 := by decide
+theorem domain_one_size : domainOne.length = 7 := by decide +kernel
+theorem domain_two_size : domainTwo.length = 55 := by decide +kernel
+theorem domain_three_size : domainThree.length = 3025 := by decide +kernel
+
+theorem domain_one_trace_digest : traceDigest domainOne = 1827949402977241471 := by decide +kernel
+theorem domain_two_trace_digest : traceDigest domainTwo = 7621727749705747350 := by decide +kernel
+theorem domain_three_trace_digest : traceDigest domainThree = 9380586544780836206 := by decide +kernel
 
 /-! ## Transcription agreement and the measured results -/
 
 theorem domain_one_verdict_digest :
-    verdictDigest roundTrip domainOne = 6242011289262393457 := by decide
+    verdictDigest roundTrip domainOne = 6242011289262393457 := by decide +kernel
 
 theorem domain_two_verdict_digest :
-    verdictDigest concurrent domainTwo = 3851450914538809003 := by decide
+    verdictDigest concurrent domainTwo = 3851450914538809003 := by decide +kernel
 
 theorem domain_three_verdict_digest :
-    verdictDigest concurrent domainThree = 15391469991380593011 := by decide
+    verdictDigest concurrent domainThree = 15391469991380593011 := by
+  conv => lhs; arg 2; cbv
+  decide +kernel
 
 /-! ## What the relation admits
 
@@ -490,25 +496,27 @@ unique schedule. That is a measurement about this program — and the reason
 byte-equal stdout was an adequate check for CT01 — not a property of the
 relation. -/
 theorem domain_one_admits_only_the_reference_order :
-    domainOne.filter (fun trace => relate roundTrip trace == 0) = [roundTrip] := by decide
+    domainOne.filter (fun trace => relate roundTrip trace == 0) = [roundTrip] := by decide +kernel
 
-theorem domain_two_admits_six_schedules : admittedCount concurrent domainTwo = 6 := by decide
+theorem domain_two_admits_six_schedules : admittedCount concurrent domainTwo = 6 := by decide +kernel
 
 /-- The reference rendering is one of the six. -/
 theorem domain_two_admits_the_reference_rendering :
-    domainTwo.contains concurrent = true ∧ relate concurrent concurrent = 0 := by decide
+    domainTwo.contains concurrent = true ∧ relate concurrent concurrent = 0 := by decide +kernel
 
 /-- ... and it is not the only one: the relation admits five renderings of this
 same run that byte equality against the reference would refuse. -/
 theorem domain_two_admits_a_schedule_other_than_the_reference :
     ((domainTwo.filter fun trace => relate concurrent trace == 0).filter
-      fun trace => trace != concurrent).length = 5 := by decide
+      fun trace => trace != concurrent).length = 5 := by decide +kernel
 
 /-- Eighteen of the 3025 perturbations land on another admitted schedule, so the
 admitted set is genuinely a partial order and not the reference total order
 under another name. -/
 theorem domain_three_admits_eighteen_perturbations :
-    admittedCount concurrent domainThree = 18 := by decide
+    admittedCount concurrent domainThree = 18 := by
+  conv => lhs; arg 2; cbv
+  decide +kernel
 
 /-! ## Non-vacuity
 
@@ -517,7 +525,7 @@ refuses everything, so both directions are pinned in every domain. The refusal
 side is derived from the two facts already evaluated above rather than costing a
 second traversal. -/
 
-theorem domain_one_admits_one_schedule : admittedCount roundTrip domainOne = 1 := by decide
+theorem domain_one_admits_one_schedule : admittedCount roundTrip domainOne = 1 := by decide +kernel
 
 theorem domain_one_refuses_part_of_its_domain :
     admittedCount roundTrip domainOne < domainOne.length := by

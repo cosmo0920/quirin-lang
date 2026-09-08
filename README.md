@@ -78,7 +78,7 @@ validation, and its JSON AST.
 ```sh
 git submodule update --init --recursive
 cargo test --workspace
-cd proof && lake build
+python3 scripts/check_lean_audits.py
 ```
 
 Try the CLI:

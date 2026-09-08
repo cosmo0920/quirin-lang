@@ -8,6 +8,15 @@
 
 @AGENTS.md
 
+Lean build performance (2026-09-08): TaskTraceRelation's finite-domain proofs
+expand D3's generated inputs once before kernel evaluation; theorem statements,
+domains, digests and allowed axioms are unchanged. The affected-module rebuild
+passes in 47.5 seconds locally; the next incremental build takes 0.13 seconds.
+`python3 scripts/check_lean_audits.py` now builds from the pinned proof directory,
+reports progress, enforces finite time limits and cleans up workers on timeout
+or cancellation. All 31 audits, eight runner tests and the standing gates pass.
+Evidence: `docs/reports/lean-build-performance/README.md`.
+
 Human-facing implementation and status detail lives in `DEVELOPMENT.md`
 (split out of `README.md`, which is now the short summary); add new
 per-increment status paragraphs there.

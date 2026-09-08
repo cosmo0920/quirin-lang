@@ -247,15 +247,31 @@ validation, and its JSON AST; `cl.exe` cannot replace that dependency.
 ```sh
 git submodule update --init --recursive
 cargo test --workspace
-cd proof
-lake build
+python3 scripts/check_lean_audits.py
 ```
 
 The Rust suite verifies that `third_party/libevent` is at the audited
 revision and still contains the source constructs the Cycle 18 model relies
 on; CI initializes the submodule before this gate. The Lean toolchain is
-selected through `proof/lean-toolchain` (install a Lean 4 stable toolchain
-via elan first).
+selected through `proof/lean-toolchain` (install elan first). The audit runner
+starts Lake inside `proof`, builds incrementally, then runs every `Audit*.lean`
+with warnings treated as failures. It reports elapsed time every 15 seconds,
+limits the build to 600 seconds and each audit to 120 seconds, and stops the
+active process tree on timeout or Ctrl-C. Limits can be set with
+`--build-timeout`, `--audit-timeout`, and `--heartbeat`; `--verbose` shows Lake
+build commands. Use `--skip-build` only after a successful build of the current
+sources.
+
+For a build without audits, use `(cd proof && lake build)`. From the repository
+root, `lake -d proof ...` can make elan query the default `stable` release before
+Lake applies `-d`; selecting the working directory first uses the pinned
+toolchain directly. `QCore.lean` only imports the proof modules: checking that
+file alone does not run the axiom audits. Keep `proof/.lake` for incremental
+reuse. To profile the trace relation independently:
+
+```sh
+(cd proof && lake env lean -Dprofiler=true QCore/TaskTraceRelation.lean)
+```
 
 ### Windows
 
@@ -365,6 +381,15 @@ failures and one ignored test. The failures are two in `second_source_set`,
 seven in `o04_constructor_caller` and one in `counter_source`. These failures
 are outside the example changes; the run started before the concurrent
 audit-fixture repair was finished.
+
+Lean build performance (2026-09-08): TaskTraceRelation's finite-domain proofs
+expand D3's generated inputs once before kernel evaluation; theorem statements,
+domains, digests and allowed axioms are unchanged. The affected-module rebuild
+passes in 47.5 seconds locally; the next incremental build takes 0.13 seconds.
+`python3 scripts/check_lean_audits.py` now builds from the pinned proof directory,
+reports progress, enforces finite time limits and cleans up workers on timeout
+or cancellation. All 31 audits, eight runner tests and the standing gates pass.
+Evidence: `docs/reports/lean-build-performance/README.md`.
 
 Windows native concurrency (2026-09-08): the shared emitted C11 thread subset
 now includes a self-contained Windows implementation adapted from Monkey

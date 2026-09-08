@@ -272,6 +272,15 @@ Generic Lean names are also available with historical aliases:
 ChunkIO lock theorem remain usable. See
 `docs/reports/w7-generic-lean-names/README.md` for name-only parity and compatibility audits.
 
+Lean build performance (2026-09-08): TaskTraceRelation's finite-domain proofs
+expand D3's generated inputs once before kernel evaluation; theorem statements,
+domains, digests and allowed axioms are unchanged. The affected-module rebuild
+passes in 47.5 seconds locally; the next incremental build takes 0.13 seconds.
+`python3 scripts/check_lean_audits.py` now builds from the pinned proof directory,
+reports progress, enforces finite time limits and cleans up workers on timeout
+or cancellation. All 31 audits, eight runner tests and the standing gates pass.
+Evidence: `docs/reports/lean-build-performance/README.md`.
+
 ## Standing per-change gate
 
 Run before claiming any change complete:
@@ -283,7 +292,7 @@ cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0
 cargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0
-cd proof && lake build
+python3 scripts/check_lean_audits.py
 ```
 
 Clang is required for existing-C analysis tests (`QCORE_CLANG` overrides

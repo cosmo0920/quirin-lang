@@ -38,6 +38,7 @@ jobs:
 
   lean:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out proof sources
         uses: actions/checkout@v4
@@ -49,8 +50,11 @@ jobs:
           auto-config: false
           build: true
 
+      - name: Test bounded Lean audit orchestration
+        run: python3 -m unittest scripts.tests.test_check_lean_audits
+
       - name: Check all theorem audits and the complete QCore axiom closure
-        run: python3 scripts/check_lean_audits.py
+        run: python3 scripts/check_lean_audits.py --skip-build
 
   windows:
     runs-on: windows-2022
