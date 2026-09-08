@@ -182,6 +182,11 @@ inductive Event where
   | errorExit (task : TaskId) (guard : GuardId)
   | openInvariant (task : TaskId) (guard : GuardId)
   | closeInvariant (task : TaskId) (guard : GuardId) (invariant : InvariantId)
+  /-- The *checked* invariant witness (`close g unchanged;`): the invariant is
+  restored because nothing was written while it was open. It consults no
+  declared predicate, so a section closing this way carries no
+  `invariantPredicateDeclared` premise. -/
+  | closeUnwritten (task : TaskId) (guard : GuardId)
   | access (task : TaskId) (footprint : Footprint) (kind : AccessKind)
       (guard : Option GuardId)
   | borrowUnderGuard (task : TaskId) (guard : GuardId) (footprint : Footprint)
@@ -190,6 +195,9 @@ inductive Event where
   | assertFact (task : TaskId) (guard : GuardId) (footprint : Footprint) (fact : FactId)
   | useFact (task : TaskId) (fact : FactId)
   | transferCustody (sender receiver : TaskId) (resource : ResourceId) (via : Witness)
+  /-- Resource destruction, the other half of scope exit. Parked authority is
+  outstanding authority: a live generation over the resource blocks it. -/
+  | destroy (task : TaskId) (resource : ResourceId)
   | extendProtection (task : TaskId) (mutex : MutexId) (footprint : Footprint)
   | unsupportedConstruct (task : TaskId)
   deriving DecidableEq, Repr
@@ -294,6 +302,13 @@ def canClose (s : State) (task : TaskId) (guard : GuardId) (invariant : Invarian
       g.holder == task && g.phase == .opened &&
         s.mutexSat g.mutex (fun m => m.invariant == invariant))
 
+/-- The checked witness. Same shape as `canClose` with the declared-predicate
+conjunct replaced by a fact the checker owns: no write happened while the
+invariant was open. -/
+def canCloseUnwritten (s : State) (task : TaskId) (guard : GuardId) : Bool :=
+  s.act task &&
+    s.guardSat guard (fun g => g.holder == task && g.phase == .opened && !g.wroteWhileOpen)
+
 def closeEffect (s : State) (guard : GuardId) : State :=
   { s with guards := s.guards.map (fun g =>
       if g.id == guard then
@@ -351,6 +366,32 @@ def transferEffect (s : State) (receiver : TaskId) (resource : ResourceId) : Sta
   { s with custody := (resource, receiver) ::
       s.custody.filter (fun entry => entry.1 != resource) }
 
+/-- A holding that keeps `resource` alive against the destroying task: a parked
+mutex share, or any live share of another task. -/
+def outstandingOver (task : TaskId) (resource : ResourceId) (h : Holding) : Bool :=
+  h.footprint.resource == resource &&
+    (match h.custodian with
+     | .task t => t != task && 0 < h.share
+     | .mutex _ => true)
+
+/-- Destruction requires custody, liveness and quiescence. Parked authority is
+outstanding authority, so a live generation over any part of the resource
+blocks it; so does a share still held by another task. -/
+def canDestroy (s : State) (task : TaskId) (resource : ResourceId) : Bool :=
+  s.act task && !s.destroyedResources.contains resource &&
+    s.custody.contains (resource, task) &&
+    !s.mutexes.any (fun m => m.protects.any (fun f => f.resource == resource)) &&
+    !s.holdings.any (outstandingOver task resource)
+
+/-- The destroyed resource leaves custody and liveness. Its holding is left in
+place on purpose: the conserved total stays exactly invariant, and a dead
+resource is unreachable anyway, because every access guard tests
+`destroyedResources` first. The Rust ledger instead retires those atoms from
+its conservation check; the two agree on what is reachable. -/
+def destroyEffect (s : State) (resource : ResourceId) : State :=
+  { s with destroyedResources := resource :: s.destroyedResources
+           custody := s.custody.filter (fun entry => entry.1 != resource) }
+
 def step (s : State) : Event → Option State
   | .spawn parent child =>
       if canSpawn s parent child then some (spawnEffect s parent child) else none
@@ -373,6 +414,8 @@ def step (s : State) : Event → Option State
       if canOpen s task guard then some (openEffect s guard) else none
   | .closeInvariant task guard invariant =>
       if canClose s task guard invariant then some (closeEffect s guard) else none
+  | .closeUnwritten task guard =>
+      if canCloseUnwritten s task guard then some (closeEffect s guard) else none
   | .access task footprint kind none =>
       if canAccessUnguarded s task footprint kind then some s else none
   | .access task footprint kind (some guard) =>
@@ -389,6 +432,8 @@ def step (s : State) : Event → Option State
   | .transferCustody sender receiver resource via =>
       if canTransfer s sender receiver resource via then
         some (transferEffect s receiver resource) else none
+  | .destroy task resource =>
+      if canDestroy s task resource then some (destroyEffect s resource) else none
   -- The protected shape is fixed at creation: a refusal, not an omission.
   | .extendProtection _ _ _ => none
   -- Condition variables, try/timed locks, rwlocks and nested protecting
@@ -491,11 +536,12 @@ theorem guard_is_not_transferable {s : State} {task : TaskId} {guard : GuardId}
       step s (.errorExit task guard) = none ∧
       step s (.openInvariant task guard) = none ∧
       step s (.closeInvariant task guard invariant) = none ∧
+      step s (.closeUnwritten task guard) = none ∧
       step s (.access task f kind (some guard)) = none ∧
       step s (.borrowUnderGuard task guard f borrow) = none ∧
       step s (.assertFact task guard f fact) = none := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp [step, canRelease, canOpen, canClose, canAccessGuarded, canBorrow,
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    simp [step, canRelease, canOpen, canClose, canCloseUnwritten, canAccessGuarded, canBorrow,
       State.guardSat, held, foreign]
 
 /-! ## 4. The invariant holds at every exit -/
@@ -933,6 +979,8 @@ is covered by the Rust tests, not by the theorems below. -/
 inductive Inner where
   | openInv
   | closeInv
+  /-- `close g unchanged;` — the checked witness of card T03-F. -/
+  | closeChecked
   | read (f : Footprint)
   | write (f : Footprint)
   | borrow (b : BorrowId) (f : Footprint)
@@ -960,6 +1008,7 @@ def exitEvent (task : TaskId) (s : CriticalSection) : Event :=
 def lowerInner (task : TaskId) (guard : GuardId) (inv : InvariantId) : Inner → Event
   | .openInv => .openInvariant task guard
   | .closeInv => .closeInvariant task guard inv
+  | .closeChecked => .closeUnwritten task guard
   | .read f => .access task f .read (some guard)
   | .write f => .access task f .write (some guard)
   | .borrow b f => .borrowUnderGuard task guard f b
@@ -974,12 +1023,22 @@ over them. Scope exit destroys every generation in reverse declaration order. -/
 structure Scope where
   generations : List (MutexId × InvariantId × Footprint)
   sections : List CriticalSection
+  /-- The protected resources the scope declared. Scope exit destroys each of
+  them after every generation over it, which is the `Destroy` half card T03-F
+  adds to this model. Defaulted, so every scope written before it existed
+  denotes exactly the trace it denoted then. -/
+  resources : List ResourceId := []
   deriving DecidableEq, Repr
+
+/-- Scope exit: every generation in reverse declaration order, then every
+resource in reverse declaration order. -/
+def scopeExit (task : TaskId) (sc : Scope) : List Event :=
+  sc.generations.reverse.map (fun g => Event.destroyMutex task g.1) ++
+    sc.resources.reverse.map (Event.destroy task)
 
 def lowerScope (task : TaskId) (sc : Scope) : List Event :=
   sc.generations.map (fun g => Event.createMutex task g.1 [g.2.2] g.2.1) ++
-    ((sc.sections.map (lowerSection task)).flatten ++
-      sc.generations.reverse.map (fun g => Event.destroyMutex task g.1))
+    ((sc.sections.map (lowerSection task)).flatten ++ scopeExit task sc)
 
 /-- Task structure: spawning, joining, and custody transfer between tasks. -/
 def isTaskEvent : Event → Bool
@@ -1064,13 +1123,16 @@ private theorem sections_have_no_task_event (task : TaskId) (sections : List Cri
 custody transfer to another task appears anywhere in a lowered scope. -/
 theorem lowerScope_emits_no_task_event (task : TaskId) (sc : Scope) (e : Event)
     (mem : e ∈ lowerScope task sc) : isTaskEvent e = false := by
-  rw [lowerScope, List.mem_append, List.mem_append] at mem
-  rcases mem with create | inner | destroy
+  rw [lowerScope, List.mem_append, List.mem_append, scopeExit, List.mem_append] at mem
+  rcases mem with create | inner | destroy | retire
   · obtain ⟨g, _, eq⟩ := List.mem_map.mp create
     subst eq
     rfl
   · exact sections_have_no_task_event task sc.sections e inner
   · obtain ⟨g, _, eq⟩ := List.mem_map.mp destroy
+    subst eq
+    rfl
+  · obtain ⟨r, _, eq⟩ := List.mem_map.mp retire
     subst eq
     rfl
 
@@ -1116,13 +1178,24 @@ private theorem lockedGuard_of_destroys (task : TaskId)
   | nil => rfl
   | cons g t ih => rw [List.map_cons, List.filterMap_cons, ih]; rfl
 
+private theorem lockedGuard_of_retires (task : TaskId) (resources : List ResourceId) :
+    (resources.map (Event.destroy task)).filterMap lockedGuard = [] := by
+  induction resources with
+  | nil => rfl
+  | cons r t ih => rw [List.map_cons, List.filterMap_cons, ih]; rfl
+
+private theorem lockedGuard_of_scopeExit (task : TaskId) (sc : Scope) :
+    (scopeExit task sc).filterMap lockedGuard = [] := by
+  rw [scopeExit, List.filterMap_append, lockedGuard_of_destroys task sc.generations.reverse,
+    lockedGuard_of_retires task sc.resources.reverse]
+  rfl
+
 /-- A scope mints exactly one guard per critical section, in source order: the
 lowering neither shares an authority between two blocks nor manufactures one. -/
 theorem lowerScope_mints_one_guard_per_section (task : TaskId) (sc : Scope) :
     (lowerScope task sc).filterMap lockedGuard = sc.sections.map (fun s => s.guard) := by
   rw [lowerScope, List.filterMap_append, List.filterMap_append,
-    lockedGuard_of_creates, lockedGuard_of_sections,
-    lockedGuard_of_destroys task sc.generations.reverse]
+    lockedGuard_of_creates, lockedGuard_of_sections, lockedGuard_of_scopeExit]
   simp
 
 /-- Scope exit destroys every generation the scope declared. Whether that
@@ -1134,8 +1207,28 @@ theorem lowerScope_destroys_every_declared_generation (task : TaskId) (sc : Scop
   have base : Event.destroyMutex task g.1 ∈
       sc.generations.reverse.map (fun g => Event.destroyMutex task g.1) :=
     List.mem_map_of_mem (List.mem_reverse.mpr mem)
-  rw [lowerScope, List.mem_append, List.mem_append]
-  exact Or.inr (Or.inr base)
+  rw [lowerScope, List.mem_append, List.mem_append, scopeExit, List.mem_append]
+  exact Or.inr (Or.inr (Or.inl base))
+
+/-- The other half of scope exit, and the reason `Event` gained a
+resource-destruction constructor in card T03-F: the lowering attempts to
+destroy every resource the scope declared, not only every generation. Whether
+the attempt is *admitted* is `canDestroy`'s quiescence rule. -/
+theorem lowerScope_destroys_every_declared_resource (task : TaskId) (sc : Scope)
+    (r : ResourceId) (mem : r ∈ sc.resources) :
+    Event.destroy task r ∈ lowerScope task sc := by
+  have base : Event.destroy task r ∈ sc.resources.reverse.map (Event.destroy task) :=
+    List.mem_map_of_mem (List.mem_reverse.mpr mem)
+  rw [lowerScope, List.mem_append, List.mem_append, scopeExit, List.mem_append]
+  exact Or.inr (Or.inr (Or.inr base))
+
+/-- Scope exit destroys every generation before it destroys any resource. The
+order is not decoration: `canDestroy` refuses while a generation still parks
+authority over the resource, so the reverse order could never be admitted. -/
+theorem scopeExit_destroys_generations_before_resources (task : TaskId) (sc : Scope) :
+    scopeExit task sc =
+      sc.generations.reverse.map (fun g => Event.destroyMutex task g.1) ++
+        sc.resources.reverse.map (Event.destroy task) := rfl
 
 /-! ### What an accepted lowering forces -/
 
@@ -1271,5 +1364,264 @@ example : (run held (lowerScope 0 (scopeOf
 example : run held (lowerScope 0 (scopeOf
     [{ mutex := 1, guard := 1, invariant := 1,
        body := [.write cell], raises := false }])) = none := by decide
+
+/-! ## 12. Resource destruction (card T03-F)
+
+`Event` gained `destroy` here, so the second half of scope exit is decided by
+this model rather than resting on the Rust tests alone. The rules mirror
+`qcore_core::mutex_invariant`'s `Destroy` arm: custody, liveness, and
+quiescence against parked and foreign authority. Ordering against unsynchronized
+accesses is the Rust checker's vector-clock rule and is **not** modeled here;
+this model has no clocks, exactly as it has none for `canDestroyMutex`. -/
+
+theorem destroyEffect_preserves_authority (s : State) (resource : ResourceId) :
+    (destroyEffect s resource).authorityTotal = s.authorityTotal := rfl
+
+/-- Only the custodian destroys. -/
+theorem destroy_requires_custody {s : State} {task : TaskId} {resource : ResourceId}
+    (foreign : (resource, task) ∉ s.custody) :
+    step s (.destroy task resource) = none := by
+  simp [step, canDestroy, foreign]
+
+/-- Parked authority is outstanding authority: a live generation over any part
+of the resource blocks its destruction. This is why scope exit destroys every
+generation before any resource. -/
+theorem protected_resource_rejects_destruction {s : State} {task : TaskId}
+    {resource : ResourceId} {record : MutexRecord} (live : record ∈ s.mutexes)
+    (protects : record.protects.any (fun f => f.resource == resource) = true) :
+    step s (.destroy task resource) = none := by
+  have any : s.mutexes.any (fun m => m.protects.any (fun f => f.resource == resource)) = true :=
+    List.any_eq_true.mpr ⟨record, live, protects⟩
+  simp [step, canDestroy, any]
+
+/-- A share another live task still holds blocks destruction too. -/
+theorem foreign_share_rejects_destruction {s : State} {task other : TaskId}
+    {resource : ResourceId} {h : Holding} (held : h ∈ s.holdings)
+    (over : h.footprint.resource = resource) (custodian : h.custodian = .task other)
+    (foreign : other ≠ task) (share : 0 < h.share) :
+    step s (.destroy task resource) = none := by
+  have any : s.holdings.any (outstandingOver task resource) = true := by
+    refine List.any_eq_true.mpr ⟨h, held, ?_⟩
+    simp [outstandingOver, over, custodian, foreign, share]
+  simp [step, canDestroy, any]
+
+/-- A destroyed resource is dead forever. -/
+theorem dead_resource_rejects_repeat_destruction {s : State} {task : TaskId}
+    {resource : ResourceId} (dead : resource ∈ s.destroyedResources) :
+    step s (.destroy task resource) = none := by
+  simp [step, canDestroy, dead]
+
+/-- And it is unreachable: neither an unguarded nor a guarded access to a
+destroyed resource is admitted. -/
+theorem destroyed_resource_rejects_access {s : State} {task : TaskId} {f : Footprint}
+    {kind : AccessKind} {guard : Option GuardId}
+    (dead : f.resource ∈ s.destroyedResources) :
+    step s (.access task f kind guard) = none := by
+  cases guard <;> simp [step, canAccessUnguarded, canAccessGuarded, dead]
+
+/-- An accepted destruction retires the resource from liveness and from
+custody. -/
+theorem accepted_destruction_kills_the_resource {s next : State} {task : TaskId}
+    {resource : ResourceId} (accepted : step s (.destroy task resource) = some next) :
+    resource ∈ next.destroyedResources ∧ (resource, task) ∉ next.custody := by
+  cases h : canDestroy s task resource with
+  | false => simp [step, h] at accepted
+  | true =>
+      simp only [step, h, if_true, Option.some.injEq] at accepted
+      subst accepted
+      refine ⟨List.mem_cons_self .., ?_⟩
+      intro mem
+      have := (List.mem_filter.mp mem).2
+      simp at this
+
+/-- Fail-closed: a refused destruction is not skipped, it stops the trace. -/
+theorem refused_destruction_stops_the_trace {s : State} {task : TaskId}
+    {resource : ResourceId} {rest : List Event}
+    (refused : step s (.destroy task resource) = none) :
+    run s (.destroy task resource :: rest) = none := by
+  simp [run, refused]
+
+/-! ## 13. The checked invariant witness (card T03-F)
+
+`close g unchanged;` asks the checker to own the fact the declared witness only
+asserts. The two witnesses have the same effect and differ only in what
+justifies them, so the checked one is not a weaker close. -/
+
+theorem checked_witness_requires_no_write {s : State} {task : TaskId} {guard : GuardId}
+    {record : GuardRecord} (held : s.guardOf guard = some record)
+    (wrote : record.wroteWhileOpen = true) : step s (.closeUnwritten task guard) = none := by
+  simp [step, canCloseUnwritten, State.guardSat, held, wrote]
+
+theorem checked_witness_requires_an_open_invariant {s : State} {task : TaskId}
+    {guard : GuardId} {record : GuardRecord} (held : s.guardOf guard = some record)
+    (closed : record.phase = .closed) : step s (.closeUnwritten task guard) = none := by
+  simp [step, canCloseUnwritten, State.guardSat, held, closed]
+
+/-- The checked witness consults no declared predicate: whatever invariant
+identity the generations declare, acceptance is unchanged. That is precisely
+why a section closing this way carries no `invariantPredicateDeclared`
+premise. -/
+theorem checked_witness_ignores_the_declared_predicate (s : State) (task : TaskId)
+    (guard : GuardId) (f : MutexRecord → MutexRecord) :
+    canCloseUnwritten { s with mutexes := s.mutexes.map f } task guard
+      = canCloseUnwritten s task guard := rfl
+
+/-- The two witnesses agree on the state they produce. -/
+theorem checked_and_declared_close_agree_on_effect {s t u : State} {task : TaskId}
+    {guard : GuardId} {inv : InvariantId}
+    (checked : step s (.closeUnwritten task guard) = some t)
+    (declared : step s (.closeInvariant task guard inv) = some u) : t = u := by
+  cases hc : canCloseUnwritten s task guard with
+  | false => simp [step, hc] at checked
+  | true =>
+      cases hd : canClose s task guard inv with
+      | false => simp [step, hd] at declared
+      | true =>
+          simp only [step, hc, hd, if_true, Option.some.injEq] at checked declared
+          exact checked ▸ declared ▸ rfl
+
+/-- A `check` that declares no predicate names none: the premise is dropped,
+not renamed. -/
+theorem checked_close_carries_no_declared_predicate_premise {initial : State}
+    {events : List Event} {declaredShape : Bool} {certificate : Certificate}
+    (result : check initial events declaredShape false = some certificate) :
+    Assumption.invariantPredicateDeclared ∉ certificate.premises := by
+  unfold check at result
+  cases hrun : run initial events with
+  | none => rw [hrun] at result; simp at result
+  | some final =>
+      rw [hrun] at result
+      simp only [Option.map_some] at result
+      cases Option.some.inj result
+      cases declaredShape <;> simp [premises]
+
+/-- Which lowered events would need a declared predicate. -/
+def declaresInvariant : Event → Bool
+  | .closeInvariant _ _ _ => true
+  | _ => false
+
+/-- The source-shape half of the same statement: a section whose body never
+uses the declared close lowers to a trace containing no `closeInvariant`, so
+nothing in it can demand the declared predicate. -/
+theorem a_section_without_a_declared_close_emits_none (task : TaskId) (s : CriticalSection)
+    (checked : Inner.closeInv ∉ s.body) (e : Event) (mem : e ∈ lowerSection task s) :
+    declaresInvariant e = false := by
+  rw [lowerSection, List.mem_cons, List.mem_append, List.mem_singleton] at mem
+  rcases mem with eq | inner | eq
+  · subst eq; rfl
+  · obtain ⟨i, hi, eq⟩ := List.mem_map.mp inner
+    subst eq
+    cases i with
+    | closeInv => exact absurd hi checked
+    | _ => rfl
+  · subst eq; cases hr : s.raises <;> simp [exitEvent, hr, declaresInvariant]
+
+/-! ## 14. Bounded task composition inside the guard profile (card T03-F)
+
+The source profile's child-task form is a nested `thread scope`, created where
+the block opens and joined where it closes. Nothing below widens the ledger:
+these are the *existing* rules, stated as the reasons the composition is
+bounded where it is. -/
+
+/-- A join is refused while the joining task holds a guard. This is why a child
+task written *inside* a critical section is refused: its join lands inside the
+guard. -/
+theorem join_while_holding_a_guard_is_refused {s : State} {parent child : TaskId}
+    {record : GuardRecord} (live : record ∈ s.guards) (holder : record.holder = parent) :
+    step s (.join parent child) = none := by
+  have quiet : s.guards.all (fun g => g.holder != parent && g.holder != child) = false := by
+    refine List.all_eq_false.mpr ⟨record, live, ?_⟩
+    simp [holder]
+  simp [step, canJoin, quiet]
+
+/-- Nor is a child joinable while it still holds a section of its own: the
+child releases before the creator collects it. -/
+theorem join_of_a_guard_holding_child_is_refused {s : State} {parent child : TaskId}
+    {record : GuardRecord} (live : record ∈ s.guards) (holder : record.holder = child) :
+    step s (.join parent child) = none := by
+  have quiet : s.guards.all (fun g => g.holder != parent && g.holder != child) = false := by
+    refine List.all_eq_false.mpr ⟨record, live, ?_⟩
+    simp [holder]
+  simp [step, canJoin, quiet]
+
+/-- A child receives no share, so an unprotected footprint is out of reach for
+it; `unguarded_access_to_protected_footprint_is_rejected` covers the protected
+case. Together: every access a child makes is mutex-mediated or refused. -/
+theorem a_shareless_task_cannot_access_unguarded {s : State} {task : TaskId} {f : Footprint}
+    {kind : AccessKind} (none_held : s.taskShare task f = 0) :
+    step s (.access task f kind none) = none := by
+  cases kind <;> simp [step, canAccessUnguarded, none_held, fullAccess]
+
+/-! ### Decidable scenarios for §12-§14 -/
+
+private def custodied : State :=
+  { holdings := [{ custodian := .task 0, footprint := cell, share := fullAccess }]
+    custody := [(1, 0)] }
+
+private def scopeOver (sections : List CriticalSection) : Scope :=
+  { generations := [(1, 1, cell)], sections := sections, resources := [1] }
+
+-- Whole scope exit: one generation, one section, then both destructions.
+example : (run custodied (lowerScope 0 (scopeOver
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeInv], raises := false }]))).isSome = true := by
+  decide
+
+-- The resource may not be destroyed while its generation is still live.
+example : run custodied [.createMutex 0 1 [cell] 1, .destroy 0 1] = none := by decide
+
+-- Destroying the generation first admits it.
+example : (run custodied
+    [.createMutex 0 1 [cell] 1, .destroyMutex 0 1, .destroy 0 1]).isSome = true := by decide
+
+-- A resource is destroyed once.
+example : run custodied [.destroy 0 1, .destroy 0 1] = none := by decide
+
+-- A destroyed resource is unreachable.
+example : run custodied [.destroy 0 1, .access 0 cell .read none] = none := by decide
+
+-- `open g; read buf with g; close g unchanged;` checks, and needs no declared
+-- predicate.
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .read cell, .closeChecked], raises := false }]))).isSome = true := by
+  decide
+
+-- The same section with a write cannot use the checked witness.
+example : run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeChecked], raises := false }])) = none := by decide
+
+-- but it closes by declaration.
+example : (run held (lowerScope 0 (scopeOf
+    [{ mutex := 1, guard := 1, invariant := 1,
+       body := [.openInv, .write cell, .closeInv], raises := false }]))).isSome = true := by
+  decide
+
+-- One child task: it takes the generation itself, writes, releases, and is
+-- joined; the creator then reads under its own section.
+example : (run custodied
+    [.createMutex 0 1 [cell] 1, .spawn 0 1,
+     .lock 1 1 1, .openInvariant 1 1, .access 1 cell .write (some 1),
+     .closeInvariant 1 1 1, .unlock 1 1,
+     .join 0 1,
+     .lock 0 1 2, .access 0 cell .read (some 2), .unlock 0 2,
+     .destroyMutex 0 1, .destroy 0 1]).isSome = true := by decide
+
+-- A child written inside a critical section is refused: its join lands while
+-- the creator still holds the guard.
+example : run held
+    [.createMutex 0 1 [cell] 1, .lock 0 1 1, .spawn 0 1, .join 0 1] = none := by decide
+
+-- and a child that names the creator's guard is refused before that.
+example : run held
+    [.createMutex 0 1 [cell] 1, .lock 0 1 1, .spawn 0 1,
+     .access 1 cell .read (some 1)] = none := by decide
+
+-- An announced acquisition outlives the announcing task's join and blocks the
+-- generation's destruction.
+example : run custodied
+    [.createMutex 0 1 [cell] 1, .spawn 0 1, .registerWaiter 1 1, .join 0 1,
+     .destroyMutex 0 1] = none := by decide
 
 end QCore.Concurrency.MutexInvariant

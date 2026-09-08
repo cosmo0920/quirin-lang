@@ -500,8 +500,10 @@ unsupported. See [the error-payload report](reports/remaining-t06/README.md).
 `CheckedMutexGuardsV1`, profile id `source.mutex.guard.v1`, lowers a lexical
 guard onto the `CheckedMutexInvariantV1` model checker
 (`crates/qcore-core/src/mutex_invariant.rs`). It is selected by the presence of
-a `mutex guards` declaration, ahead of the scoped-task routes, and it composes
-with none of them: a module that also creates a task is refused.
+a `mutex guards` declaration, ahead of the scoped-task routes. It composes with
+none of them: a module using the scoped-task `spawn`/`join` expressions is
+refused. Its own bounded child-task form is a nested `thread scope` block
+(card T03-F).
 
 ```qcore
 import std.concurrency;
@@ -519,6 +521,17 @@ fn main() -> unit {
             drop b;                     // the borrow dies inside its section
         }
         with lock m as g2 { read buf with g2; }
+        let f = fact buf;               // a guard-scoped refinement fact
+        with lock m as g3 {
+            assert f with g3;
+            open g3;
+            read buf with g3;
+            use f;
+            close g3 unchanged;         // restored, and *checked*: no write
+        }
+        thread scope c {                // one child task, joined at `}`
+            with lock m as gc { read buf with gc; }
+        }
     }                                   // scope exit destroys m, then buf
 }
 ```
@@ -529,13 +542,25 @@ entry       = "fn" , NAME , "(" , ")" , "->" , "unit" , "{" , scope , "}" ;
 scope       = "thread" , "scope" , NAME , "{" , { outer } , "}" ;
 outer       = "let" , NAME , "=" , "protected" , NAT , ";"
             | "let" , NAME , "=" , "mutex" , "guards" , NAME , ";"
+            | "let" , NAME , "=" , "fact" , NAME , ";"
             | ( "read" | "write" ) , NAME , ";"
+            | "wait" , NAME , ";"
+            | "use" , NAME , ";"
+            | "thread" , "scope" , NAME , "{" , { child } , "}"
             | "with" , "lock" , NAME , "as" , NAME , "{" , { inner } , "}" ;
-inner       = ( "open" | "close" ) , NAME , ";"
+inner       = "open" , NAME , ";"
+            | "close" , NAME , [ "unchanged" ] , ";"
             | ( "read" | "write" ) , NAME , "with" , NAME , ";"
             | "let" , NAME , "=" , "borrow" , NAME , "with" , NAME , ";"
             | "drop" , NAME , ";"
+            | "assert" , NAME , "with" , NAME , ";"
+            | "use" , NAME , ";"
+            | "wait" , NAME , ";"
+            | "thread" , "scope" , NAME , "{" , { child } , "}"
             | "raise" , NAME , "::" , NAME , ";" ;
+child       = (* any `outer` or `inner` form except a declaration and except
+                 `drop`; a child inherits the enclosing critical section
+                 lexically and holds none of its authority *) ;
 ```
 
 `mutex guards R;` fixes the protected footprint syntactically at the
@@ -549,22 +574,47 @@ Guard names bind only inside their own `with lock` body, so a guard-derived
 name mentioned after the block is `Q013`, not a concurrency diagnostic. A write
 requires the invariant to be declared broken first, and both the normal block
 end and a `raise` require it restored and every guard-derived borrow released
-(`Q613`, `Q614`, `Q615`). `close g;` supplies a *declared* witness: every
-certificate from this route carries `InvariantPredicateDeclared` and
-`DeclaredFootprintShape`, and never `GuardFootprintAuthority` or
-`SynchronizedCustodyEdges`. A nested `with lock` lowers to an explicit
-unsupported-construct event and is refused at `Q622`; `defer` inside a critical
-section, and every other statement outside the grammar above, is refused at
-`Q600`. Scope exit destroys each generation and then each resource, under the
-model's quiescence rules.
+(`Q613`, `Q614`, `Q615`). `close g;` supplies a *declared* witness, so a
+certificate covering it carries `InvariantPredicateDeclared`;
+`close g unchanged;` supplies the **checked** witness and carries none.
+`DeclaredFootprintShape` is on every certificate from this route, and
+`GuardFootprintAuthority` and `SynchronizedCustodyEdges` never are. A nested
+`with lock` lowers to an explicit unsupported-construct event and is refused at
+`Q622`; `defer` inside a critical section, and every other statement outside
+the grammar above, is refused at `Q600`. Scope exit destroys each generation
+and then each resource, under the model's quiescence rules.
+
+Card T03-F's three completions, each bounded by a stated rule:
+
+* **`close g unchanged;`** is admitted only when every statement since this
+  guard's `open` was a read or a fact use — the shape the lowering can decide.
+  Any other shape is refused at `Q600` and never silently downgraded to the
+  declared witness.
+* **`let f = fact r;` / `assert f with g;` / `use f;`** are guard-scoped
+  refinement facts. Each assertion mints a fresh model identity, so relying on
+  a fact after its guard was released is `Q616`, relying on one that was never
+  asserted is `Q600 UnknownFact`, and a child task relying on its parent's fact
+  is `Q616`.
+* **A nested `thread scope c { … }`** is one child task, created where the
+  block opens and joined where it closes. The child receives no share and no
+  custody, so a protected footprint is reachable to it only through its own
+  acquisition (`Q611` otherwise); naming the enclosing guard is `Q612`; and a
+  child block written *inside* a critical section is refused because its join
+  lands while the creator holds the guard (`Q600 JoinWhileGuardHeld`). A child
+  declares no resource, generation or fact, and may not release a borrow it did
+  not take (`Q600`). **`wait m;`** announces an acquisition and, if never
+  performed, blocks the generation's destruction (`Q619`).
 
 Native emission uses one thread and C11 `mtx_t` with real heap footprints on
 Linux, macOS and Windows (the latter two through the emitted compatibility layer);
 the reference execution of the checked event list must reproduce the same
-observation. There is no contention, no second thread, no condition variable,
-no try/timed lock, no reader/writer lock and no lock ranking in this profile,
-and the invariant predicate itself is declared, never proved. See
-[the T03 record](reports/remaining-t03/README.md).
+observation. There is no condition variable, no try/timed lock, no
+reader/writer lock and no lock ranking in this profile. A module whose trace
+carries task structure (`spawn`, `join`, a custody transfer or an announced
+acquisition) is checked but has **no native rendering**: the backend emits one
+thread, so the module is published with no C rather than with C the backend did
+not produce. See [the T03 record](reports/remaining-t03/README.md) and
+[the T03-F record](reports/remaining-t03-f/README.md).
 
 ## G03. Source parameter usage grades
 

@@ -1384,13 +1384,22 @@ fn compile_mutex_source(
             "native checked mutex emission currently requires a Linux, macOS or Windows threads target",
         )]);
     }
-    let emission =
-        mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(|refusal| {
-            vec![plain_diagnostic(
-                "Q600",
-                format!("the checked mutex backend refused this trace: {refusal:?}"),
-            )]
-        })?;
+    // A checked trace carrying task structure is *checked* but has no native
+    // rendering: this backend emits one thread. The module is published without
+    // C, never with C the backend did not produce, and never as a silent
+    // success that dropped the task events.
+    let c_source = if mutex_c_emit::is_single_task_trace(&lowered.program) {
+        let emission =
+            mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(|refusal| {
+                vec![plain_diagnostic(
+                    "Q600",
+                    format!("the checked mutex backend refused this trace: {refusal:?}"),
+                )]
+            })?;
+        Some(emission.source)
+    } else {
+        None
+    };
     Ok(CompiledModule {
         checked,
         execution_profile: SourceExecutionProfile::CheckedMutexGuardsV1,
@@ -1398,7 +1407,7 @@ fn compile_mutex_source(
         mode,
         result_profile,
         entry: Some(entry),
-        c_source: Some(emission.source),
+        c_source,
         source_map: Vec::new(),
         // A reference observation for this route is the mutex trace, not the
         // sequential cleanup observation this field carries.

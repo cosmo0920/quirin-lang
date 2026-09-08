@@ -451,3 +451,401 @@ fn a_source_contract_and_a_nonunit_entry_stay_refused() {
         ));
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card T03-F: the guard-profile completions.
+//
+// Three source forms land here, and each is tested in both directions: what it
+// admits, and what it refuses. A form that only ever accepted would not show
+// that the rule is the rule.
+// ---------------------------------------------------------------------------
+
+const DECLARATIONS: &str = "let buf = protected 4; let m = mutex guards buf;";
+
+fn premises(module: &LoweredMutexModule) -> std::collections::BTreeSet<&'static str> {
+    check_mutex_invariant_program(&module.program)
+        .expect("this fixture checks")
+        .assumption_names()
+}
+
+/// Sub-item 1. A section that only read while its invariant was open closes
+/// with the **checked** witness, and its certificate drops
+/// `InvariantPredicateDeclared`. The same section with one write keeps it.
+#[test]
+fn a_read_only_open_region_closes_with_the_checked_witness_and_drops_the_declared_premise() {
+    let checked = codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ open g; read buf with g; close g unchanged; }}"
+    )))
+    .unwrap();
+    assert_eq!(
+        premises(&checked),
+        std::collections::BTreeSet::from([
+            "InitialAuthorityAndUniqueLifetimeIds",
+            "DeclaredFootprintShape",
+        ]),
+        "a checked witness is the checker's own fact, so no predicate is declared"
+    );
+    assert!(matches!(
+        checked
+            .program
+            .events
+            .iter()
+            .find(|event| matches!(event, MutexInvariantEvent::CloseInvariant { .. })),
+        Some(MutexInvariantEvent::CloseInvariant {
+            witness: qcore_core::mutex_invariant::InvariantWitness::NoWriteOccurred,
+            ..
+        })
+    ));
+
+    // The control differs by one word and keeps the premise.
+    let declared = codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ open g; read buf with g; close g; }}"
+    )))
+    .unwrap();
+    assert!(premises(&declared).contains("InvariantPredicateDeclared"));
+}
+
+/// The decidable shape is exactly "every statement since `open` was a read".
+/// Anything else is refused here — never silently downgraded to the declared
+/// witness, which would hide the difference the premise records.
+#[test]
+fn an_undecidable_open_region_refuses_the_checked_witness_rather_than_downgrading_it() {
+    for body in [
+        // a write while open
+        "open g; write buf with g; close g unchanged;",
+        // a guard-derived borrow: this profile models no write through it, and
+        // does not claim to
+        "open g; let b = borrow buf with g; drop b; close g unchanged;",
+        // an announced acquisition
+        "open g; wait m; close g unchanged;",
+        // a child task's statements are statements too
+        "open g; thread scope c { } close g unchanged;",
+        // no open region at all
+        "close g unchanged;",
+    ] {
+        let source = entry(&format!("{DECLARATIONS} with lock m as g {{ {body} }}"));
+        assert_eq!(lower(&source).unwrap_err(), vec!["Q600"], "body: {body}");
+    }
+}
+
+/// The region is tracked per guard and per region: a write in an earlier region
+/// of the same section does not license the checked witness, and does not
+/// forbid it either.
+#[test]
+fn the_checked_witness_is_tracked_per_guard_and_per_region() {
+    let module = codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ open g; write buf with g; close g; \
+         open g; read buf with g; close g unchanged; }}"
+    )))
+    .unwrap();
+    assert!(
+        premises(&module).contains("InvariantPredicateDeclared"),
+        "the first region closed by declaration, so the section still carries the premise"
+    );
+    let witnesses = module
+        .program
+        .events
+        .iter()
+        .filter_map(|event| match event {
+            MutexInvariantEvent::CloseInvariant { witness, .. } => Some(*witness),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        witnesses,
+        vec![
+            qcore_core::mutex_invariant::InvariantWitness::Declared { invariant: 1 },
+            qcore_core::mutex_invariant::InvariantWitness::NoWriteOccurred,
+        ]
+    );
+}
+
+/// Sub-item 3. A fact established under one guard is usable under that guard.
+#[test]
+fn a_guard_scoped_fact_is_usable_inside_the_guard_that_established_it() {
+    let module = codes(&entry(&format!(
+        "{DECLARATIONS} let f = fact buf; \
+         with lock m as g {{ assert f with g; read buf with g; use f; }}"
+    )))
+    .unwrap();
+    assert!(
+        module
+            .program
+            .events
+            .iter()
+            .any(|event| matches!(event, MutexInvariantEvent::AssertFact { fact: 2, .. }))
+    );
+    assert!(
+        module
+            .program
+            .events
+            .iter()
+            .any(|event| matches!(event, MutexInvariantEvent::UseFact { fact: 2, .. }))
+    );
+}
+
+/// …and unusable outside it. This is CT48's mechanism reached from source: the
+/// release dropped the fact, so the next section's use is stale rather than
+/// unresolvable.
+#[test]
+fn a_guard_scoped_fact_does_not_survive_the_release_that_dropped_it() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} let f = fact buf; \
+             with lock m as g {{ assert f with g; }} \
+             with lock m as h {{ use f; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q616"],
+        "a fact from a released section is stale, not unknown and not silently live"
+    );
+    // Re-establishing it under the second guard is a *new* fact and checks.
+    codes(&entry(&format!(
+        "{DECLARATIONS} let f = fact buf; \
+         with lock m as g {{ assert f with g; }} \
+         with lock m as h {{ assert f with h; use f; }}"
+    )))
+    .unwrap();
+}
+
+#[test]
+fn a_fact_is_refused_before_it_is_asserted_and_outside_every_guard() {
+    // Declared but never established: the identity the declaration denotes is
+    // one no assertion mints, so the core refuses it as unknown.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} let f = fact buf; with lock m as g {{ use f; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+    // Used with no guard held at all.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} let f = fact buf; with lock m as g {{ assert f with g; }} use f;"
+        )))
+        .unwrap_err(),
+        vec!["Q616"]
+    );
+    // An undeclared fact name is a name error, and is deliberately not
+    // relabelled as a concurrency verdict — the same separation `Q013` already
+    // has for an unknown guard or mutex.
+    assert_eq!(
+        lower(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ assert nothing with g; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q013"]
+    );
+}
+
+/// A child task may name a fact its parent established, and is refused: the
+/// fact is keyed to the guard's holder, not to the mutex.
+#[test]
+fn a_child_task_cannot_rely_on_its_parents_fact() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} let f = fact buf; \
+             with lock m as g {{ assert f with g; thread scope c {{ use f; }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q616", "Q600"],
+        "the stale-fact refusal leads; the join inside the guard follows"
+    );
+}
+
+/// Sub-item 2. The admitted composition: a child task takes the generation
+/// itself, and the creator reads after joining it.
+#[test]
+fn a_child_task_may_take_the_generation_and_the_creator_reads_after_the_join() {
+    let module = codes(&entry(&format!(
+        "{DECLARATIONS} \
+         thread scope c {{ with lock m as gc {{ open gc; write buf with gc; close gc; }} }} \
+         with lock m as g {{ read buf with g; }}"
+    )))
+    .unwrap();
+    let events = &module.program.events;
+    assert!(events.iter().any(|event| matches!(
+        event,
+        MutexInvariantEvent::Spawn {
+            parent: 0,
+            child: 1
+        }
+    )));
+    assert!(events.iter().any(|event| matches!(
+        event,
+        MutexInvariantEvent::Join {
+            parent: 0,
+            child: 1
+        }
+    )));
+    assert!(
+        events
+            .iter()
+            .any(|event| matches!(event, MutexInvariantEvent::Lock { task: 1, .. }))
+    );
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    assert_eq!(certificate.completed_tasks, vec![1]);
+    assert_eq!(certificate.destroyed_resources, vec![1]);
+}
+
+/// The child holds no share, so every access it makes is mutex-mediated or
+/// refused. Nothing here grants a child authority the creator did not park.
+#[test]
+fn a_child_task_reaches_a_protected_resource_only_through_its_own_acquisition() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} thread scope c {{ read buf; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q611"]
+    );
+}
+
+/// CT28's mechanism from source: a child written inside a critical section can
+/// *name* the creator's guard, and acting through it is refused.
+#[test]
+fn a_child_task_cannot_act_through_the_guard_it_lexically_sees() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c {{ read buf with g; }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q612", "Q600"]
+    );
+    for body in ["open g;", "close g;", "let b = borrow buf with g;"] {
+        let source = entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ thread scope c {{ {body} }} }}"
+        ));
+        assert_eq!(
+            codes(&source).unwrap_err().first().map(String::as_str),
+            Some("Q612"),
+            "body: {body}"
+        );
+    }
+}
+
+/// CT32's mechanism from source: the child's join lands inside the guard, and
+/// the core refuses it. The control moves the same block out of the section.
+#[test]
+fn a_child_task_created_inside_a_critical_section_cannot_be_joined_there() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ read buf with g; thread scope c {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"],
+        "JoinWhileGuardHeld, and nothing else: the child itself is well formed"
+    );
+    codes(&entry(&format!(
+        "{DECLARATIONS} with lock m as g {{ read buf with g; }} thread scope c {{ }}"
+    )))
+    .unwrap();
+}
+
+/// A child may not release its parent's borrow.
+#[test]
+fn a_child_task_may_not_end_a_borrow_it_did_not_take() {
+    // Deliberately a grammar refusal: the model's `EndBorrow` checks only that
+    // the acting task is live, so lowering this would be *accepted* there.
+    assert_eq!(
+        lower(&entry(&format!(
+            "{DECLARATIONS} with lock m as g {{ let b = borrow buf with g; \
+             thread scope c {{ drop b; }} drop b; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// Declarations stay with the creating task at thread-scope level.
+#[test]
+fn a_child_task_declares_no_resource_generation_or_fact() {
+    for body in [
+        "let other = protected 4;",
+        "let n = mutex guards buf;",
+        "let f = fact buf;",
+    ] {
+        assert_eq!(
+            lower(&entry(&format!(
+                "{DECLARATIONS} thread scope c {{ {body} }}"
+            )))
+            .unwrap_err(),
+            vec!["Q600"],
+            "body: {body}"
+        );
+    }
+}
+
+/// The scoped task profile's own expression forms remain refused: their
+/// captures, owned values and completion capsules have no representation here.
+#[test]
+fn the_scoped_task_expression_forms_are_still_refused() {
+    let source = "import std.concurrency; \
+         fn worker(value: i32 use one) -> unit { } \
+         fn main() -> unit { thread scope s { \
+         let buf = protected 4; let m = mutex guards buf; \
+         let h = spawn s worker(copy buf); join move h; } }";
+    assert_eq!(
+        lower(source).unwrap_err(),
+        vec!["Q600"],
+        "the scoped task profile's expressions are refused before anything else is examined"
+    );
+}
+
+/// CT31's mechanism from source: an announced acquisition outlives the
+/// announcing task and blocks the generation's destruction.
+#[test]
+fn an_announced_acquisition_blocks_the_generations_destruction() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{DECLARATIONS} thread scope c {{ wait m; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q619", "Q600", "Q600", "Q600"],
+        "NonquiescentMutexDestruction leads; the refused destruction leaves the \
+         generation, the resource and the waiter outstanding"
+    );
+    // The control: the announcing task performs the acquisition, which
+    // withdraws the announcement.
+    codes(&entry(&format!(
+        "{DECLARATIONS} thread scope c {{ wait m; with lock m as gc {{ read buf with gc; }} }}"
+    )))
+    .unwrap();
+}
+
+/// The program printed in `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md` §G02c must
+/// check, or the documented grammar is not the implemented one.
+#[test]
+fn the_documented_grammar_example_checks() {
+    let source = r#"import std.concurrency;
+error Fault { Broken; }
+fn main() -> unit {
+    thread scope s {
+        let buf = protected 4;
+        let m = mutex guards buf;
+        with lock m as g {
+            open g;
+            write buf with g;
+            close g;
+            let b = borrow buf with g;
+            read buf with g;
+            drop b;
+        }
+        with lock m as g2 { read buf with g2; }
+        let f = fact buf;
+        with lock m as g3 {
+            assert f with g3;
+            open g3;
+            read buf with g3;
+            use f;
+            close g3 unchanged;
+        }
+        thread scope c {
+            with lock m as gc { read buf with gc; }
+        }
+    }
+}
+"#;
+    codes(source).unwrap();
+}
