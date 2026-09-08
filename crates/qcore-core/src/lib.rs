@@ -107,6 +107,8 @@ pub mod resource_accounting;
 
 pub mod event_reactor;
 
+pub mod region_task_credit;
+
 pub mod scoped_tasks;
 
 pub mod task_c_emit;
