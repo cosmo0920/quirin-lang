@@ -14,8 +14,12 @@ process.
   delimiter alias merge, which is unrelated to this card and appears in the
   `git diff 60939ff..HEAD` statistics for `crates/qcore-frontend` and
   `compiler/tests/quant_index_contracts.rs`).
-- Baseline reproduced before any change: **1734 workspace tests passed, 0
-  failed, 3 ignored**; 58 provider tests; 108 Python tests; 42 Lean audits.
+- Baseline re-measured at that branch point by checking the base commit out
+  into its own worktree: **1752 workspace tests passed, 0 failed, 3 ignored**;
+  58 provider tests; 108 Python tests; 42 Lean audits. (An earlier in-session
+  reading of 1734 raced with edits already on disk and is superseded; 1752 is
+  independently corroborated by main's P09-G commit message, which records the
+  same count for the same base.)
 - Libevent submodule initialized at the pinned revision with
   `git -c protocol.file.allow=always submodule update --init --recursive`.
 - The in-process adapters are **retained**, not replaced (invariant 3). Route
@@ -365,9 +369,34 @@ are covered by `crates/qcore-audit/tests/second_source_set.rs`,
 conformance tests, all of which pass unchanged.
 
 **Nothing is promoted.** Raw Cycle 19 units remain 2 Safe / 42 provisional
-Unsafe / 137 Unknown plus four data-only units; CT coverage remains 24/50
-mapped; the contract corpus remains 60 modules; full language conformance
-remains false.
+Unsafe / 137 Unknown plus four data-only units; the contract corpus remains 60
+modules; full language conformance remains false. CT coverage was 24/50 mapped
+at this branch's base commit and is 28/50 on `main` after wave-8's
+T08-SRC-CT — this card maps no CT case and changes neither number.
+
+## 6.1 The 185-unit corpus, re-measured before and after
+
+The full pinned corpus was additionally re-measured on both sides, over one
+freshly prepared explicit-Clang tree (Fluent Bit `66910c10`, Monkey with forced
+Libevent), with `QCORE_CLANG=/usr/bin/clang` on both runs so the recorded
+compile identities are comparable:
+
+| | Result |
+|---|---|
+| Base commit `8d0790a` | 185 source files, 186 configurations: 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures |
+| This branch | 185 source files, 186 configurations: 2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures |
+| `diff -r` of the four serialized artifacts | see below |
+
+The 43 is the current-route **configuration** count that CORPUS-REPIN already
+resolved against the archived 42 **files**: `src/flb_input_chunk.c` appears
+twice under G01's recorded compile-configuration ambiguity. No unit verdict
+moves in either direction, and no provisional Unsafe unit is newly surfaced.
+
+One methodological note, recorded rather than hidden: an earlier attempt at this
+comparison ran the base side without `QCORE_CLANG`, which moved every recorded
+`program` field from `/usr/bin/clang` to `clang` and, with it, every derived
+`inventory_sha256`. That was an environment difference, not a code difference,
+and the runs above fix the environment on both sides.
 
 ## 7. Lean inventory
 
@@ -409,7 +438,7 @@ Run in this worktree on Linux with Clang available:
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | **1768 passed, 0 failed, 3 ignored** (1734 baseline + 7 core replay + 4 parity + 3 schema wire + 20 elsewhere in the two suites' recount) |
+| `cargo test --workspace` | **1768 passed, 0 failed, 3 ignored** (1752 baseline + 7 core replay + 4 parity + 3 schema wire + 2 gateway `compile_fail` doctests = 1768, exactly) |
 | `cargo fmt --all -- --check` | clean (workspace and `providers/`) |
 | `cargo clippy --all-targets -- -D warnings` | clean (workspace and `providers/`) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -422,6 +451,35 @@ Run in this worktree on Linux with Clang available:
 
 `lake` is not on the default `PATH` on this host; it was run from
 `~/.elan/bin`.
+
+## 8.1 For the integrator: overlap with `main` after wave 8
+
+This branch is based on `8d0790a`; `main` has since advanced to `92a7032`
+(P09-G, T08-SRC-CT, CT 28/50). The overlap is small and recorded here rather
+than resolved on this branch:
+
+- **P09-G removed `chunk_source::import_chunk_source`** (the zero-helper
+  convenience wrapper) and moved `qcore-compiler` to 0.3.0. This card never
+  calls that function and adds nothing to `chunk_source`; the new modules are
+  `teardown_source` under new names in the gateway, the verification adapter
+  and the compiler facade. **No textual overlap with the removed wrapper.**
+- `compiler/Cargo.toml` is touched by both: this branch changes only the
+  `qcore-schemas` requirement line (`6.0.0` → `7.0.0`); P09-G changes only the
+  crate's own `version` line (`0.2.0` → `0.3.0`). Different lines, same file —
+  take both.
+- `crates/qcorec/Cargo.toml` is touched by P09-G only; this branch does not
+  edit it. Its `qcore-compiler` requirement should stay at main's `0.3.0`.
+- The schema bump to **7.0.0** rewrites the `version = "6.0.0"` requirement in
+  six manifests plus `providers/Cargo.toml`,
+  `compiler/tests/fixtures/w3/provider/{Cargo.toml,Cargo.lock}` and
+  `providers/Cargo.lock`. If any wave-8 card also bumped a schema requirement,
+  those single lines are the only contention.
+- Three request-literal sites gain `teardown_source: None`
+  (`crates/qcore-verification/src/{verify_dispatch,counter_source,source_effect,reactor_source}.rs`
+  and five test files). Any new `VerificationRequestV2` literal added on main
+  will need the same field.
+- The report's "CT coverage" line records 24/50 at this branch's base and
+  28/50 on main; this card maps no CT case.
 
 ## 9. Open items and named blockers
 
