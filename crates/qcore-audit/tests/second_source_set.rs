@@ -318,10 +318,16 @@ fn an_absent_provider_package_rejects_the_configured_source_contract_route() {
     assert!(!fixture.0.join("output/report.json").exists());
 }
 
-/// The transported build flags are accepted; an optimization option the
-/// gateway cannot preserve rejects rather than being silently discarded.
-/// (`-Wextra` was the original probe until ba0e017 admitted it as a
-/// transported frontend flag; `-O2` remains unrepresentable.)
+/// The transported build flags are accepted; a build option the gateway
+/// cannot preserve rejects rather than being silently discarded.
+///
+/// Probe history, each substitution recorded rather than the assertion
+/// weakened: `-Wextra` was the original probe until ba0e017 admitted it as a
+/// transported frontend flag, and `-O2` replaced it until G03-F admitted the
+/// whole `-O` level set (an optimization level is preprocessing-visible, so
+/// dropping it analysed different code). `-ffast-math` is the current probe:
+/// it defines `__FAST_MATH__` and changes floating-point semantics, has no
+/// preservation argument here, and is therefore refused.
 #[test]
 fn a_compiler_option_the_gateway_cannot_preserve_rejects_the_database() {
     let fixture = Fixture::new();
@@ -330,13 +336,13 @@ fn a_compiler_option_the_gateway_cannot_preserve_rejects_the_database() {
             entry["arguments"]
                 .as_array_mut()
                 .unwrap()
-                .insert(2, json!("-O2"));
+                .insert(2, json!("-ffast-math"));
         }
     });
     let output = fixture.run();
     assert!(!output.status.success());
     assert!(
-        String::from_utf8_lossy(&output.stderr).contains("-O2"),
+        String::from_utf8_lossy(&output.stderr).contains("-ffast-math"),
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );

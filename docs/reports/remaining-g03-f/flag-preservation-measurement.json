@@ -1,0 +1,264 @@
+{
+  "-Wall": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wextra": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wno-unused-parameter": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wstrict-aliasing": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wstrict-prototypes": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wundef": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-fno-strict-aliasing": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wmissing-prototypes": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Winit-self": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wmissing-field-initializers": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wdeclaration-after-statement": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Waddress": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Woverride-init": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wwrite-strings": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wno-unused-function": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wno-pragmas": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wvla": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-Wno-void-pointer-to-enum-cast": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-O0": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-O1": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": false,
+    "macros_added": [
+      "#define _BITS_STDIO_H 1",
+      "#define _EXTERN_INLINE __extern_inline",
+      "#define __OPTIMIZE__ 1",
+      "#define __USE_EXTERN_INLINES 1",
+      "#define fread_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ char *__ptr = (char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) { int __c = getc_unlocked (__stream); if (__c == EOF) break; *__ptr++ = __c; } ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fread_unlocked (ptr, size, n, stream))))",
+      "#define fwrite_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ const char *__ptr = (const char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) if (putc_unlocked (*__ptr++, __stream) == EOF) break; ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fwrite_unlocked (ptr, size, n, stream))))",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-O2": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": false,
+    "macros_added": [
+      "#define _BITS_STDIO_H 1",
+      "#define _EXTERN_INLINE __extern_inline",
+      "#define __OPTIMIZE__ 1",
+      "#define __USE_EXTERN_INLINES 1",
+      "#define fread_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ char *__ptr = (char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) { int __c = getc_unlocked (__stream); if (__c == EOF) break; *__ptr++ = __c; } ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fread_unlocked (ptr, size, n, stream))))",
+      "#define fwrite_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ const char *__ptr = (const char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) if (putc_unlocked (*__ptr++, __stream) == EOF) break; ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fwrite_unlocked (ptr, size, n, stream))))",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-O3": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": false,
+    "macros_added": [
+      "#define _BITS_STDIO_H 1",
+      "#define _EXTERN_INLINE __extern_inline",
+      "#define __OPTIMIZE__ 1",
+      "#define __USE_EXTERN_INLINES 1",
+      "#define fread_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ char *__ptr = (char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) { int __c = getc_unlocked (__stream); if (__c == EOF) break; *__ptr++ = __c; } ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fread_unlocked (ptr, size, n, stream))))",
+      "#define fwrite_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ const char *__ptr = (const char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) if (putc_unlocked (*__ptr++, __stream) == EOF) break; ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fwrite_unlocked (ptr, size, n, stream))))",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-Os": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [
+      "#define __OPTIMIZE_SIZE__ 1",
+      "#define __OPTIMIZE__ 1",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-Oz": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [
+      "#define __OPTIMIZE_SIZE__ 1",
+      "#define __OPTIMIZE__ 1",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-Og": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": false,
+    "macros_added": [
+      "#define _BITS_STDIO_H 1",
+      "#define _EXTERN_INLINE __extern_inline",
+      "#define __OPTIMIZE__ 1",
+      "#define __USE_EXTERN_INLINES 1",
+      "#define fread_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ char *__ptr = (char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) { int __c = getc_unlocked (__stream); if (__c == EOF) break; *__ptr++ = __c; } ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fread_unlocked (ptr, size, n, stream))))",
+      "#define fwrite_unlocked(ptr,size,n,stream) (__extension__ ((__builtin_constant_p (size) && __builtin_constant_p (n) && (size_t) (size) * (size_t) (n) <= 8 && (size_t) (size) != 0) ? ({ const char *__ptr = (const char *) (ptr); FILE *__stream = (stream); size_t __cnt; for (__cnt = (size_t) (size) * (size_t) (n); __cnt > 0; --__cnt) if (putc_unlocked (*__ptr++, __stream) == EOF) break; ((size_t) (size) * (size_t) (n) - __cnt) / (size_t) (size); }) : (((__builtin_constant_p (size) && (size_t) (size) == 0) || (__builtin_constant_p (n) && (size_t) (n) == 0)) ? ((void) (ptr), (void) (stream), (void) (size), (void) (n), (size_t) 0) : fwrite_unlocked (ptr, size, n, stream))))",
+      "#define htonl(x) __bswap_32 (x)",
+      "#define htons(x) __bswap_16 (x)",
+      "#define ntohl(x) __bswap_32 (x)",
+      "#define ntohs(x) __bswap_16 (x)"
+    ],
+    "macros_removed": [
+      "#define __NO_INLINE__ 1"
+    ],
+    "stderr_lines": 0
+  },
+  "-g": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [],
+    "stderr_lines": 0
+  },
+  "-fPIC": {
+    "preprocess_exit": 0,
+    "preprocessed_identical": true,
+    "macros_added": [],
+    "macros_removed": [
+      "#define __PIE__ 2",
+      "#define __pie__ 2"
+    ],
+    "stderr_lines": 0
+  }
+}

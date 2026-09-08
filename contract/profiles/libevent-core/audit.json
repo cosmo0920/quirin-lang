@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "profile_directory": ".",
+  "checkout": "../../../third_party/libevent",
+  "compile_database": "../../../build/cycle19/libevent-clang-build/compile_commands.json",
+  "libraries": [
+    "libevent-core"
+  ],
+  "compile_target": {
+    "object_prefix": "CMakeFiles/event_core_static.dir/"
+  },
+  "report": "../../../build/cycle19/libevent-clang-build/libevent-core-audit.json"
+}

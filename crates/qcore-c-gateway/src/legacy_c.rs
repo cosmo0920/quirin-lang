@@ -316,8 +316,58 @@ pub enum CPreprocessorOption {
     FrontendFlag(CFrontendFlag),
 }
 
+/// One `-O` optimization level, spelled exactly as the build spelled it.
+///
+/// An optimization level is *not* a code-generation-only request: Clang's
+/// preprocessor defines `__OPTIMIZE__` (and `__OPTIMIZE_SIZE__` for the size
+/// levels) and drops `__NO_INLINE__` whenever a level above `-O0` is selected,
+/// and glibc headers branch on those macros. Dropping the build's level
+/// therefore analyses a *different* translation unit; the measurement backing
+/// this is recorded in `docs/reports/remaining-g03-f/README.md`. Levels are a
+/// closed set: a level this enum cannot name is refused, never approximated.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum COptimizationLevel {
+    /// `-O0`
+    None,
+    /// `-O1`
+    Level1,
+    /// `-O2`
+    Level2,
+    /// `-O3`
+    Level3,
+    /// `-Os`
+    Size,
+    /// `-Oz`
+    MinimumSize,
+    /// `-Og`
+    Debug,
+}
+
+impl COptimizationLevel {
+    /// The build spelling this level was admitted from, reproduced verbatim.
+    #[must_use]
+    pub const fn spelling(self) -> &'static str {
+        match self {
+            Self::None => "-O0",
+            Self::Level1 => "-O1",
+            Self::Level2 => "-O2",
+            Self::Level3 => "-O3",
+            Self::Size => "-Os",
+            Self::MinimumSize => "-Oz",
+            Self::Debug => "-Og",
+        }
+    }
+}
+
 /// Explicit build flags admitted to Clang preprocessing, syntax and typed AST.
 /// Assembler requests are retained but no object/stack property is certified.
+///
+/// Every member is admitted because its effect on what this gateway reads —
+/// the preprocessed token stream, the syntax phase and the typed AST — has a
+/// recorded preservation argument, and it is reproduced verbatim on all three
+/// Clang invocations by [`CFrontendFlag::append_to`]. A build option with no
+/// such argument stays refused by the callers that build this type; there is no
+/// catch-all member and no "ignore unknown flag" path.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub enum CFrontendFlag {
     AllWarnings,
@@ -329,6 +379,53 @@ pub enum CFrontendFlag {
     AssemblerNoExecStack,
     /// Select one Apple Clang architecture using its two-argument `-arch` form.
     Architecture(String),
+    // --- Diagnostic-only warning selections -------------------------------
+    // Each of the members below selects or deselects one Clang warning group.
+    // Warning selection is measured to leave the preprocessed token stream
+    // byte-identical and the predefined macro set unchanged, so transporting
+    // one preserves the recorded compile command without changing the analysed
+    // program. None of them is `-Werror`: no warning becomes a hard error, so
+    // an admitted unit cannot be turned into a refusal by its warning set.
+    /// `-Wstrict-aliasing`
+    StrictAliasingWarnings,
+    /// `-Wstrict-prototypes`
+    StrictPrototypes,
+    /// `-Wundef`
+    UndefinedIdentifierWarnings,
+    /// `-Wmissing-prototypes`
+    MissingPrototypes,
+    /// `-Winit-self`
+    InitSelf,
+    /// `-Wmissing-field-initializers`
+    MissingFieldInitializers,
+    /// `-Wdeclaration-after-statement`
+    DeclarationAfterStatement,
+    /// `-Waddress`
+    AddressComparisons,
+    /// `-Woverride-init`
+    OverrideInit,
+    /// `-Wwrite-strings`
+    WriteStrings,
+    /// `-Wvla`
+    VariableLengthArrays,
+    /// `-Wno-unused-parameter`
+    NoUnusedParameter,
+    /// `-Wno-unused-function`
+    NoUnusedFunction,
+    /// `-Wno-pragmas`
+    NoPragmas,
+    /// `-Wno-void-pointer-to-enum-cast`
+    NoVoidPointerToEnumCast,
+    // --- Code generation ---------------------------------------------------
+    /// `-fno-strict-aliasing`: relaxes the aliasing rule the optimizer may
+    /// assume. Measured to change neither the predefined macros nor the
+    /// preprocessed text; it is transported so the recorded command is
+    /// reproduced, and, exactly like [`Self::AssemblerNoExecStack`], no object
+    /// or aliasing property is certified by admitting it.
+    NoStrictAliasing,
+    /// `-O0` … `-Og`: transported because the level is visible to the
+    /// preprocessor (see [`COptimizationLevel`]).
+    Optimization(COptimizationLevel),
 }
 
 impl CFrontendFlag {
@@ -341,6 +438,23 @@ impl CFrontendFlag {
             Self::PositionIndependentCode => command.arg("-fPIC"),
             Self::AssemblerNoExecStack => command.arg("-Wa,--noexecstack"),
             Self::Architecture(architecture) => command.args(["-arch", architecture]),
+            Self::StrictAliasingWarnings => command.arg("-Wstrict-aliasing"),
+            Self::StrictPrototypes => command.arg("-Wstrict-prototypes"),
+            Self::UndefinedIdentifierWarnings => command.arg("-Wundef"),
+            Self::MissingPrototypes => command.arg("-Wmissing-prototypes"),
+            Self::InitSelf => command.arg("-Winit-self"),
+            Self::MissingFieldInitializers => command.arg("-Wmissing-field-initializers"),
+            Self::DeclarationAfterStatement => command.arg("-Wdeclaration-after-statement"),
+            Self::AddressComparisons => command.arg("-Waddress"),
+            Self::OverrideInit => command.arg("-Woverride-init"),
+            Self::WriteStrings => command.arg("-Wwrite-strings"),
+            Self::VariableLengthArrays => command.arg("-Wvla"),
+            Self::NoUnusedParameter => command.arg("-Wno-unused-parameter"),
+            Self::NoUnusedFunction => command.arg("-Wno-unused-function"),
+            Self::NoPragmas => command.arg("-Wno-pragmas"),
+            Self::NoVoidPointerToEnumCast => command.arg("-Wno-void-pointer-to-enum-cast"),
+            Self::NoStrictAliasing => command.arg("-fno-strict-aliasing"),
+            Self::Optimization(level) => command.arg(level.spelling()),
         };
     }
 }

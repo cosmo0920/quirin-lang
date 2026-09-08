@@ -1,0 +1,120 @@
+{
+  "schema_version": 2,
+  "source_set": "libevent-core",
+  "pins": {
+    "libevent": {
+      "git_commit": "d82464a277d0f42703702c4dfd9af6af38595a83",
+      "clean_paths": [],
+      "description": "libevent release-2.2.2-alpha-11-gd82464a2 (third_party/libevent submodule)"
+    }
+  },
+  "libraries": {
+    "libevent-core": {
+      "pin": "libevent",
+      "source_roots": [
+        {
+          "root": ".",
+          "selection": "top_level"
+        }
+      ],
+      "audited_files": [
+        {
+          "path": "buffer.c",
+          "sha256": "dc938263e2dfc80de5a3ceb2fd7aa9b593e6680a4e4eb91d80aac7644f4ab473"
+        },
+        {
+          "path": "bufferevent.c",
+          "sha256": "a53f140ef9594f14d89aae614e9814e98d23ad10c21c9253938f2510504b3f9c"
+        },
+        {
+          "path": "bufferevent_filter.c",
+          "sha256": "f7757b6133e2eb86d6ecb4cc750173b1d87e5c5c250462422885ac9320ef275a"
+        },
+        {
+          "path": "bufferevent_pair.c",
+          "sha256": "85730bf2534c29a3195b997c9dc8055f31bab8b3236fe1d4d579c90c06c0d510"
+        },
+        {
+          "path": "bufferevent_ratelim.c",
+          "sha256": "bb3507b5ece50d2d79dda8fadb1c542af37c094cd6f3f3137324e34b2a4cae94"
+        },
+        {
+          "path": "bufferevent_sock.c",
+          "sha256": "55c7541e0322fc54d015e0e73d7570aedd2d730ff2ab71a2d75551bebbc8b009"
+        },
+        {
+          "path": "epoll.c",
+          "sha256": "0ec28d24574a7498673127107dcd429f4ef4c4f183bc78a110cfd5edbebc3311"
+        },
+        {
+          "path": "event.c",
+          "sha256": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346"
+        },
+        {
+          "path": "evmap.c",
+          "sha256": "3f54685d26c1a3429e3b2463f342d1b2ffd111d19947c28b7a2d8123d8fb025a"
+        },
+        {
+          "path": "evthread.c",
+          "sha256": "cbe4989c6af6be0063d8e0d1681d8c7442c56055b759d2fa0bdaeedf4d3798a2"
+        },
+        {
+          "path": "evutil.c",
+          "sha256": "2273f20507eda04ee11cb747567d184abdb9b25f21a173743e6b4eec73fa0915"
+        },
+        {
+          "path": "evutil_rand.c",
+          "sha256": "fb79af93eae3429f550a1d337c7a1ec3cfd4fb9895e5ecaad09081fecff9e7fd"
+        },
+        {
+          "path": "evutil_time.c",
+          "sha256": "dc1ee3286b5de7a119709e6c85681fd5fd64400b14f3e6a06cf9456f145a3f31"
+        },
+        {
+          "path": "listener.c",
+          "sha256": "a8e440de065fa780ca865d511e34f53bc06b98c17e82203d9f00fe77261a6473"
+        },
+        {
+          "path": "log.c",
+          "sha256": "ac290c8640fa1f8bb75380a5cb721b403bba600a91756de4e5e0b60f326374e7"
+        },
+        {
+          "path": "poll.c",
+          "sha256": "99f22a7f90c8fbf8139900971161101d86118d6c6cd852139da8d7e8b82da98c"
+        },
+        {
+          "path": "select.c",
+          "sha256": "77d60f7be70e64dbeb2f6da39367f319782a1c7a4b5dc86a27bb128a5c1884fb"
+        },
+        {
+          "path": "signal.c",
+          "sha256": "cf98f91c17991c4005c1bc784d1f329541be3a3babb4fc05b966d1c21dc86883"
+        },
+        {
+          "path": "signalfd.c",
+          "sha256": "e2c905bc8f24e1f06942d46852c7653aa1b9e0bbab2338ed9c902a6b8734b1bb"
+        },
+        {
+          "path": "strlcpy.c",
+          "sha256": "930f9cba89eeec89593875cec9d8c959474feef2a5b5d204a3e49dc7e191484d"
+        },
+        {
+          "path": "watch.c",
+          "sha256": "efdf88f5b5eaab14db8e97c3dfef60d2c890a3e66b28d535f0c83aacb3614b50"
+        }
+      ],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": null,
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": "contracts.json",
+  "provider_manifests": []
+}

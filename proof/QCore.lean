@@ -73,6 +73,7 @@ import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ExternCall
 import QCore.ReasonCategory
+import QCore.SourceRootAdmission
 import QCore.ChunkIntegrityObservation
 import QCore.PackageTemplateBinding
 import QCore.RegionTaskCredit

@@ -255,7 +255,7 @@ pub fn run(
                 "the compatibility adapter requires one source root per selected library".into(),
             );
         };
-        let source_root = root.join(&selection.root);
+        let source_root = qcore_contract::profile_loader::source_root_path(&root, &selection.root);
         let selected = match &selection.selection {
             qcore_schemas::profile::UnitSelection::TopLevel => {
                 let mut selected = entries

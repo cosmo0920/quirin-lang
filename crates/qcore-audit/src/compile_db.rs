@@ -483,6 +483,92 @@ fn literal_string_definition(value: &str) -> bool {
     !escaped
 }
 
+/// The complete table of build options this gateway transports verbatim into
+/// preprocessing, syntax and the typed AST.
+///
+/// This is an allowlist keyed on the exact spelling: an option absent from it
+/// is refused by [`compiler_options`], never dropped. Every entry has a
+/// recorded preservation argument in `docs/reports/remaining-g03-f/README.md`
+/// (measured `-E -P` text and `-dM` macro-set effects). Adding a row means
+/// supplying that argument, not widening a default.
+fn frontend_flag(word: &str) -> Option<CFrontendFlag> {
+    use qcore_c_gateway::legacy_c::COptimizationLevel as Level;
+    Some(match word {
+        "-Wall" => CFrontendFlag::AllWarnings,
+        "-Wextra" => CFrontendFlag::ExtraWarnings,
+        "-g" => CFrontendFlag::DebugInformation,
+        "-fPIC" => CFrontendFlag::PositionIndependentCode,
+        "-Wa,--noexecstack" => CFrontendFlag::AssemblerNoExecStack,
+        "-Wstrict-aliasing" => CFrontendFlag::StrictAliasingWarnings,
+        "-Wstrict-prototypes" => CFrontendFlag::StrictPrototypes,
+        "-Wundef" => CFrontendFlag::UndefinedIdentifierWarnings,
+        "-Wmissing-prototypes" => CFrontendFlag::MissingPrototypes,
+        "-Winit-self" => CFrontendFlag::InitSelf,
+        "-Wmissing-field-initializers" => CFrontendFlag::MissingFieldInitializers,
+        "-Wdeclaration-after-statement" => CFrontendFlag::DeclarationAfterStatement,
+        "-Waddress" => CFrontendFlag::AddressComparisons,
+        "-Woverride-init" => CFrontendFlag::OverrideInit,
+        "-Wwrite-strings" => CFrontendFlag::WriteStrings,
+        "-Wvla" => CFrontendFlag::VariableLengthArrays,
+        "-Wno-unused-parameter" => CFrontendFlag::NoUnusedParameter,
+        "-Wno-unused-function" => CFrontendFlag::NoUnusedFunction,
+        "-Wno-pragmas" => CFrontendFlag::NoPragmas,
+        "-Wno-void-pointer-to-enum-cast" => CFrontendFlag::NoVoidPointerToEnumCast,
+        "-fno-strict-aliasing" => CFrontendFlag::NoStrictAliasing,
+        // A level is preprocessing-visible, so it is named exactly. Bare `-O`,
+        // `-Ofast` and every other spelling stay refused rather than being
+        // folded onto a neighbouring level.
+        "-O0" => CFrontendFlag::Optimization(Level::None),
+        "-O1" => CFrontendFlag::Optimization(Level::Level1),
+        "-O2" => CFrontendFlag::Optimization(Level::Level2),
+        "-O3" => CFrontendFlag::Optimization(Level::Level3),
+        "-Os" => CFrontendFlag::Optimization(Level::Size),
+        "-Oz" => CFrontendFlag::Optimization(Level::MinimumSize),
+        "-Og" => CFrontendFlag::Optimization(Level::Debug),
+        _ => return None,
+    })
+}
+
+/// Keep only the compile records whose declared object output starts with an
+/// explicitly configured prefix.
+///
+/// A multi-target CMake project records one command per (source, target) pair;
+/// the commands differ only in `-o`, but the audit must not pick between them
+/// on its own — that silent choice is exactly the defect recorded in
+/// `docs/reports/remaining-g01/README.md`. This is the explicit alternative:
+/// the audit configuration names the target's object directory and everything
+/// else is discarded before selection. It narrows the database; it never merges
+/// two configurations, so [`select_unique_configuration`] and
+/// `select_profile_units` keep refusing any residual ambiguity.
+pub fn select_object_prefix(
+    entries: Vec<CompileEntry>,
+    prefix: &str,
+) -> Result<Vec<CompileEntry>, String> {
+    if prefix.trim().is_empty() || prefix.starts_with('-') || prefix.contains('$') {
+        return Err("compile-target object prefix must be a nonempty plain path fragment".into());
+    }
+    let mut kept = Vec::new();
+    for entry in entries {
+        let words = shell_words(&entry.command)?;
+        // Only the two-word `-o PATH` form is recognised. A record whose output
+        // this cannot read does not match, so it is dropped rather than kept on
+        // an assumption about its target.
+        let output = words
+            .windows(2)
+            .find(|pair| pair[0] == "-o")
+            .map(|pair| pair[1].clone());
+        if output.is_some_and(|output| output.starts_with(prefix)) {
+            kept.push(entry);
+        }
+    }
+    if kept.is_empty() {
+        return Err(format!(
+            "compile-target object prefix `{prefix}` selects no compilation record"
+        ));
+    }
+    Ok(kept)
+}
+
 /// The configurable driver accepts only options whose preprocessing effects
 /// this gateway can preserve. Existing pinned adapters retain their explicitly
 /// bounded historical projection via `compiler_options_compatibility`.
@@ -551,14 +637,7 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
                 _ => unreachable!(),
             };
             options.preprocessor_options.push(option);
-        } else if let Some(flag) = match word.as_str() {
-            "-Wall" => Some(CFrontendFlag::AllWarnings),
-            "-Wextra" => Some(CFrontendFlag::ExtraWarnings),
-            "-g" => Some(CFrontendFlag::DebugInformation),
-            "-fPIC" => Some(CFrontendFlag::PositionIndependentCode),
-            "-Wa,--noexecstack" => Some(CFrontendFlag::AssemblerNoExecStack),
-            _ => None,
-        } {
+        } else if let Some(flag) = frontend_flag(word) {
             frontend_flags = true;
             options
                 .preprocessor_options
