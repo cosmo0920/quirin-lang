@@ -6,11 +6,14 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
   ],
   "evidence_target": "linux",
   "notes": "ScopedErrorPayloadV1 (card T06). One owned Buffer rides a tagged worker error out of one child, through its completion capsule and its creator's join, and is taken out of the bound error exactly once. Five fixed Linux schedules run the case's own emitted C under ASan/UBSan/LSan with a heap witness recording every Buffer by address: the success path releases everything inside the child, either allocation failure carries the parent's original identity back, a refused creation transfers nothing, and a refused join reclaims nothing (LeakSanitizer is off there because the retained allocation is the observation). Two negative controls pin that an undelivered payload and an unreleased taken payload are refused. `proof` is unassessed: the nineteen QCore.ErrorPayload theorems constrain the model, not this fixture.",

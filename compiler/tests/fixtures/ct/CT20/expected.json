@@ -6,11 +6,13 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution"
   ],
   "evidence_target": "linux",
   "notes": "Linux ScopedOwnedTasksV1: an in-scope second-creation error handler joins the first child, drops its returned Buffer and rethrows the bound payload-free SpawnError. Four native/reference scenarios cover success, allocation failure and each creation failure with exact buffer/environment identities and join-before-reclamation checks. Omitting the sibling join or returned-buffer drop rejects at Q600. Owned error payloads, loans, arbitrary handlers, worker allocation and native refinement proofs remain open.",

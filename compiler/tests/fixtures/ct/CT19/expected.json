@@ -11,8 +11,10 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
   ],
   "positive_control": {
     "source": "joined_sibling.qcore",

@@ -6,11 +6,14 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
   ],
   "evidence_target": "linux",
   "notes": "ScopedReadSharesV1 (card T05). One allocation is lent to two children with complementary halves of the 1024-unit read authority; both borrowers read it while the parent also reads it, and the parent's writes sit on either side of the lending window because a write demands reconstructed exclusive authority. Three fixed Linux schedules run the case's own emitted C under ASan/UBSan/LSan with a heap witness that records every Buffer by address. The refusals this acceptance is the complement of are CT04 (write while a share is out) and CT05 (two FULL requests); they are mapped as their own cases rather than duplicated here. `proof` is unassessed: the nineteen QCore.ReadShare theorems constrain the model, not this fixture.",

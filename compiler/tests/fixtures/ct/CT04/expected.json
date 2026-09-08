@@ -11,8 +11,10 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
   ],
   "evidence_target": "linux",
   "notes": "ScopedReadSharesV1 (card T05). A Buffer write demands reconstructed exclusive authority, so the parent may not write while both children still hold their halves. The diagnostic names the outstanding total and every borrower, not just the fact of a loan. The accepted control is the same program with the write moved after both joins, which shows the refusal is keyed to the outstanding shares rather than to writing at all.",

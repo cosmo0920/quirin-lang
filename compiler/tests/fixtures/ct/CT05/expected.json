@@ -11,8 +11,10 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
   ],
   "evidence_target": "linux",
   "notes": "ScopedReadSharesV1 (card T05). Two children each requesting the whole 1024-unit read authority for one allocation exceeds the lending budget, and the excess request is refused as a whole with the outstanding total and the request named. The accepted control lends 511 and 513 of the same allocation, so the boundary is a boundary rather than a blanket refusal of two borrowers.",

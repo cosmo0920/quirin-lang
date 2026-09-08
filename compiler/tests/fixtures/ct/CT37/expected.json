@@ -6,11 +6,13 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution"
   ],
   "evidence_target": "linux",
   "notes": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open.",

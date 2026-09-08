@@ -6,11 +6,13 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution"
   ],
   "notes": "Actual Linux C11 source tasks move a malloc-backed immutable i32 Buffer. Exact pointer allocation/free and join-before-environment-free are checked. Failure restores the original parent binding and creates no child. Lean transfer lemmas are separate model evidence, not native refinement.",
   "evidence_target": "linux",

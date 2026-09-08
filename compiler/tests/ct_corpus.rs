@@ -24,16 +24,31 @@
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
 //! `CheckedMutexInvariantV1` checker, cards T03 and T03-F) is
-//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. The two
-//! routes do not share a stage vocabulary: the mutex route emits directly from
-//! its checked event list and has **no CFG stage**, so a mutex case must never
-//! claim `cfg: executed`, while a task-route case reads `cfg` as the checked
-//! task IR it really constructs (the manifest note states both readings).
-//! Rejection cases on either route pin the whole ordered diagnostic cascade
-//! rather than its head, because a refusal that silently dropped a custody
-//! obligation would still satisfy a head-only assertion, and each carries at
-//! least one control so the refusal is not merely "the profile cannot express
-//! this at all".
+//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. Rejection cases on either route pin
+//! the whole ordered diagnostic cascade rather than its head, because a refusal
+//! that silently dropped a custody obligation would still satisfy a head-only
+//! assertion, and each carries at least one control so the refusal is not
+//! merely "the profile cannot express this at all".
+//!
+//! Manifest schema 2 (card T00-CT-SCHEMA, tasks T00.1-T00.9) makes the per-case
+//! stage record derived rather than declared. Schema 1 wrote a bare word per
+//! stage — and two of its six names, `cfg` and `type_checker`, conflated four
+//! real passes and had to be *read differently per route*, so a task-route case
+//! and a mutex-route case rendered identically while running different
+//! machinery. Schema 2 names the passes that exist, gives each route its own
+//! stage vocabulary, and requires an `executed` entry to name the runner, the
+//! artifact, the invocation count and the exact `target_os` gate behind it.
+//! `derive_stage_plan` recomputes every one of those from this harness's own
+//! dispatch, the fixture's own scenario data and the diagnostic codes the
+//! compiler really produced, and `run_mapped_case` refuses any disagreement, so
+//! the manifest is checked evidence and not a self-certifying claim. A route
+//! that has no such pass records it as *structurally absent*
+//! (`not_applicable`): the mutex route emits directly from its checked event
+//! list, so it has no CFG-shaped stage at all, which schema 1 could only spell
+//! as an indefinite `cfg: unassessed`. Sanitizer evidence is gated: only a case
+//! a runner really compiles with `-fsanitize=…` may read `native_sanitized:
+//! executed`, and the five cases whose sanitizer evidence is an archived
+//! transcript must read `recorded_not_gated` with a pointer to it.
 
 #[cfg(target_os = "windows")]
 #[path = "../../tests/support/windows_c.rs"]
@@ -73,13 +88,132 @@ const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
 /// the emitted trace alone.
 const HEAP_SCENARIO_CASES: &[&str] = &["CT03", "CT17"];
 const TOTAL_CASES: usize = 50;
+
+/// Manifest schema 2 (card T00-CT-SCHEMA, tasks T00.1-T00.9). Schema 1's `cfg`
+/// and `type_checker` are gone: they conflated four real passes and their
+/// reading differed per route, so a mutex-route case and a task-route case could
+/// render identically while executing different machinery. These are the passes
+/// that exist, in pipeline order. Every mapped case declares its `route`, and a
+/// stage outside that route's vocabulary is *structurally absent*
+/// (`not_applicable`), never "unassessed forever".
 const STAGE_NAMES: &[&str] = &[
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend",
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "mutex_lowering",
+    "mutex_invariant_check",
+    "sequential_whole_program",
+    "sequential_reference_execution",
+    "task_reference_execution",
+    "mutex_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized",
+    "legacy_c_twin",
     "proof",
+];
+/// `executed` needs an executor, an artifact and an observation count;
+/// `recorded_not_gated` needs a `record` pointer and is never counted as
+/// executed (T00 finding O4: the ASan transcripts are re-run by nothing);
+/// `not_applicable` is a stage this route or this refusal provably never
+/// reaches; `unassessed` is an open stage.
+const STAGE_STATUSES: &[&str] = &[
+    "executed",
+    "recorded_not_gated",
+    "not_applicable",
+    "unassessed",
+];
+/// Per-route stage vocabulary. A route's list is exactly the stages that route
+/// *can* execute; the harness refuses any other stage claiming anything but
+/// `not_applicable`. `sequential` and `legacy_c` are declared and currently
+/// carry no mapped case — declaring them is what makes "this route has no such
+/// stage" a structural statement rather than a note.
+const ROUTE_STAGES: &[(&str, &[&str])] = &[
+    (
+        "legacy_c",
+        &["parse", "legacy_c_twin", "proof"],
+    ),
+    (
+        "mutex_guard",
+        &[
+            "parse",
+            "elaborate",
+            "mutex_lowering",
+            "mutex_invariant_check",
+            "mutex_reference_execution",
+            "c_emission",
+            "native_execution",
+            "native_sanitized",
+            "proof",
+        ],
+    ),
+    (
+        "sequential",
+        &[
+            "parse",
+            "elaborate",
+            "sequential_whole_program",
+            "sequential_reference_execution",
+            "c_emission",
+            "native_execution",
+            "native_sanitized",
+            "proof",
+        ],
+    ),
+    (
+        "task",
+        &[
+            "parse",
+            "elaborate",
+            "task_lowering",
+            "task_ledger_check",
+            "task_reference_execution",
+            "c_emission",
+            "native_execution",
+            "native_sanitized",
+            "proof",
+        ],
+    ),
+];
+/// The only executors a manifest stage entry may name. A stage cannot be
+/// credited to a runner this file does not have.
+const RUNNER_REGISTRY: &[&str] = &[
+    "compiler/tests/ct_corpus.rs::run_mapped_case",
+    "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+    "compiler/tests/ct_corpus.rs::run_native_create_recovery",
+    "compiler/tests/ct_corpus.rs::run_native_join_failure",
+    "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+    "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+    "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+];
+/// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
+/// only if a harness runner really compiles its emitted C with `-fsanitize=…`
+/// and runs it. Every other case's sanitizer evidence is a transcript.
+const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26"];
+/// Cases whose sanitizer evidence is an archived transcript that no workspace
+/// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
+/// never `executed`.
+const SANITIZER_TRANSCRIPT_CASES: &[&str] = &["CT14", "CT16", "CT20", "CT37", "CT50"];
+/// Depth rank per stage: the deepest executed stage of a case is the one with
+/// the greatest rank. Ranks are shared across routes so a task-route ledger
+/// check and a mutex-route invariant check sit at the same depth.
+const STAGE_DEPTH: &[(&str, u8)] = &[
+    ("parse", 0),
+    ("elaborate", 1),
+    ("task_lowering", 2),
+    ("mutex_lowering", 2),
+    ("sequential_whole_program", 2),
+    ("task_ledger_check", 3),
+    ("mutex_invariant_check", 3),
+    ("task_reference_execution", 4),
+    ("mutex_reference_execution", 4),
+    ("sequential_reference_execution", 4),
+    ("legacy_c_twin", 4),
+    ("c_emission", 5),
+    ("native_execution", 6),
+    ("native_sanitized", 7),
+    ("proof", 8),
 ];
 
 #[derive(Deserialize)]
@@ -88,7 +222,38 @@ struct Manifest {
     schema_version: u32,
     #[allow(dead_code)]
     note: String,
+    stage_vocabulary: StageVocabulary,
     cases: Vec<ManifestCase>,
+}
+
+/// The vocabulary is carried in the manifest so a reader knows what the words
+/// mean, and pinned against this file so data cannot widen it.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StageVocabulary {
+    stages: Vec<String>,
+    statuses: Vec<String>,
+    routes: BTreeMap<String, Vec<String>>,
+}
+
+/// One per-case stage entry. A status is only as good as the evidence named
+/// beside it, which is why `executed` cannot be written without an executor, an
+/// artifact and a count, and why a host-gated runner must state its gate rather
+/// than leaving the status host-unconditional (T00 finding O3).
+#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[serde(deny_unknown_fields)]
+struct StageRecord {
+    status: String,
+    #[serde(default)]
+    executor: Option<String>,
+    #[serde(default)]
+    artifact: Option<String>,
+    #[serde(default)]
+    observations: Option<usize>,
+    #[serde(default)]
+    host_gate: Option<Vec<String>>,
+    #[serde(default)]
+    record: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -101,9 +266,12 @@ struct ManifestCase {
     expected: String,
     spec_section: String,
     mapping_status: String,
+    route: Option<String>,
     source_fixture: Option<String>,
     semantic_profile: Option<String>,
-    stages: BTreeMap<String, String>,
+    #[serde(default)]
+    harness_verdict_mode: Option<String>,
+    stages: BTreeMap<String, StageRecord>,
     #[serde(default)]
     evidence_target: Option<String>,
 }
@@ -364,6 +532,242 @@ fn trace_token(event: &TraceEvent) -> String {
         TraceEvent::Release(resource) => format!("release:{resource}"),
         TraceEvent::Transfer(resource) => format!("transfer:{resource}"),
     }
+}
+
+/// What this harness derives for one stage of one case: the status, the runner
+/// that produced it, how many times that runner invoked it, and the exact set of
+/// `target_os` values on which it runs. `host_gate: None` means the stage runs
+/// on every host.
+#[derive(Clone)]
+struct StagePlan {
+    status: &'static str,
+    executor: Option<&'static str>,
+    observations: Option<usize>,
+    host_gate: Option<Vec<&'static str>>,
+}
+
+impl StagePlan {
+    fn absent(status: &'static str) -> Self {
+        StagePlan {
+            status,
+            executor: None,
+            observations: None,
+            host_gate: None,
+        }
+    }
+
+    fn executed(
+        executor: &'static str,
+        observations: usize,
+        host_gate: Option<Vec<&'static str>>,
+    ) -> Self {
+        StagePlan {
+            status: "executed",
+            executor: Some(executor),
+            observations: Some(observations),
+            host_gate,
+        }
+    }
+}
+
+fn route_stages(route: &str) -> &'static [&'static str] {
+    ROUTE_STAGES
+        .iter()
+        .find(|(name, _)| *name == route)
+        .unwrap_or_else(|| panic!("unknown CT route `{route}`"))
+        .1
+}
+
+/// The route a verdict mode really takes. `reject` is the one mode both source
+/// routes share, and the pinned `MUTEX_REJECT_CASES` set — itself cross-checked
+/// against each fixture's `checked_mutex_reject` metadata — decides it.
+fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
+    match verdict {
+        "checked_mutex_sanitized" => "mutex_guard",
+        "native_join_failure"
+        | "native_create_recovery"
+        | "native_owned_transfer"
+        | "native_task_scenarios"
+        | "native_heap_scenarios" => "task",
+        "accept" => "sequential",
+        "reject" => {
+            if MUTEX_REJECT_CASES.contains(&case_id) {
+                "mutex_guard"
+            } else {
+                "task"
+            }
+        }
+        other => panic!("{case_id}: unknown verdict vocabulary `{other}`"),
+    }
+}
+
+fn diagnostic_band(code: &str) -> u32 {
+    code.trim_start_matches('Q')
+        .parse::<u32>()
+        .unwrap_or_else(|_| panic!("unparsable diagnostic code `{code}`"))
+}
+
+/// Derive every stage entry for one case from this harness's dispatch, the
+/// fixture's own scenario data, and the diagnostic codes the compiler really
+/// produced on the fixture. Nothing here reads the manifest, which is what
+/// makes the manifest checkable rather than self-certifying.
+fn derive_stage_plan(
+    case_id: &str,
+    expected: &ExpectedCase,
+    observed_codes: &[&str],
+) -> BTreeMap<&'static str, StagePlan> {
+    let verdict = expected.verdict.as_str();
+    let route = route_for_case(case_id, verdict);
+    let base = "compiler/tests/ct_corpus.rs::run_mapped_case";
+    let deep = match verdict {
+        "native_owned_transfer" => Some("compiler/tests/ct_corpus.rs::run_native_owned_transfer"),
+        "native_create_recovery" => Some("compiler/tests/ct_corpus.rs::run_native_create_recovery"),
+        "native_join_failure" => Some("compiler/tests/ct_corpus.rs::run_native_join_failure"),
+        "native_task_scenarios" => Some("compiler/tests/ct_corpus.rs::run_native_task_scenarios"),
+        "native_heap_scenarios" => Some("compiler/tests/ct_corpus.rs::run_native_heap_scenarios"),
+        "checked_mutex_sanitized" => {
+            Some("compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized")
+        }
+        _ => None,
+    };
+    // Invocation counts, read from the fixture data each runner loops over — an
+    // observation count is a fact about the runner, not a number to be typed in.
+    let (reference_runs, native_runs) = match verdict {
+        "native_owned_transfer" => {
+            let runs = if expected
+                .native_owned_transfer
+                .as_ref()
+                .expect("mode metadata")
+                .fail_create
+            {
+                2
+            } else {
+                1
+            };
+            (runs, runs)
+        }
+        "native_create_recovery" => (3, 3),
+        // One reference execution of the control; two compile-and-run cycles,
+        // the successful join and the injected failure.
+        "native_join_failure" => (1, 2),
+        "native_task_scenarios" => {
+            let runs = expected
+                .native_task_scenarios
+                .as_ref()
+                .expect("mode metadata")
+                .scenarios
+                .len();
+            (runs, runs)
+        }
+        "native_heap_scenarios" => {
+            let runs = expected
+                .native_heap_scenarios
+                .as_ref()
+                .expect("mode metadata")
+                .scenarios
+                .len();
+            (runs, runs)
+        }
+        "checked_mutex_sanitized" => (1, 1),
+        _ => (0, 0),
+    };
+    let all_three = vec!["linux", "macos", "windows"];
+    // The two sanitized runners return on Windows after asserting that the
+    // emitted C exists, so emission is reached on all three hosts while the
+    // sanitized compile-and-run is Unix-only.
+    let deep_gate = if matches!(verdict, "native_heap_scenarios" | "checked_mutex_sanitized") {
+        vec!["linux", "macos"]
+    } else {
+        all_three.clone()
+    };
+    // CT50's native observation needs Linux `MAP_FIXED_NOREPLACE`; every other
+    // stage of that case runs wherever the threads backend does.
+    let native_gate = if case_id == "CT50" {
+        vec!["linux"]
+    } else {
+        deep_gate.clone()
+    };
+
+    let refused = !observed_codes.is_empty();
+    let refused_before_lowering = refused
+        && observed_codes
+            .iter()
+            .all(|code| diagnostic_band(code) < 500);
+    let reached_model_check = !refused
+        || observed_codes
+            .iter()
+            .any(|code| diagnostic_band(code) >= 600);
+
+    let (lowering, check, reference) = match route {
+        "task" => (
+            "task_lowering",
+            Some("task_ledger_check"),
+            "task_reference_execution",
+        ),
+        "mutex_guard" => (
+            "mutex_lowering",
+            Some("mutex_invariant_check"),
+            "mutex_reference_execution",
+        ),
+        "sequential" => (
+            "sequential_whole_program",
+            None,
+            "sequential_reference_execution",
+        ),
+        other => panic!("{case_id}: route `{other}` has no mapped case shape"),
+    };
+
+    let mut plan: BTreeMap<&'static str, StagePlan> = STAGE_NAMES
+        .iter()
+        .map(|stage| (*stage, StagePlan::absent("not_applicable")))
+        .collect();
+    plan.insert("parse", StagePlan::executed(base, 1, None));
+    plan.insert("elaborate", StagePlan::executed(base, 1, None));
+    if !refused_before_lowering {
+        plan.insert(lowering, StagePlan::executed(base, 1, None));
+    }
+    if let Some(check) = check {
+        if !refused_before_lowering && reached_model_check {
+            plan.insert(check, StagePlan::executed(base, 1, None));
+        }
+    }
+    // The plain sequential accept mode runs its reference execution inside
+    // `compile_files` itself, so it has no separate runner and no host gate.
+    if verdict == "accept" && expected.outcome.is_some() {
+        plan.insert(reference, StagePlan::executed(base, 1, None));
+    }
+    if let Some(deep) = deep {
+        plan.insert(
+            reference,
+            StagePlan::executed(deep, reference_runs, Some(deep_gate.clone())),
+        );
+        plan.insert(
+            "c_emission",
+            StagePlan::executed(deep, native_runs, Some(all_three.clone())),
+        );
+        plan.insert(
+            "native_execution",
+            StagePlan::executed(deep, native_runs, Some(native_gate)),
+        );
+    }
+    plan.insert(
+        "native_sanitized",
+        if SANITIZED_GATED_CASES.contains(&case_id) {
+            StagePlan::executed(
+                deep.expect("a gated sanitized case has a native runner"),
+                native_runs,
+                Some(deep_gate),
+            )
+        } else if SANITIZER_TRANSCRIPT_CASES.contains(&case_id) {
+            StagePlan::absent("recorded_not_gated")
+        } else {
+            StagePlan::absent("unassessed")
+        },
+    );
+    // No CT fixture has a theorem bound to it. Advancing this is card T00.7 and
+    // requires editing this line deliberately.
+    plan.insert("proof", StagePlan::absent("unassessed"));
+    plan
 }
 
 fn run_mapped_case(case: &ManifestCase) {
@@ -719,79 +1123,6 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
 
-    // Per-stage manifest statuses must match exactly what this harness runs.
-    let executed: BTreeSet<&str> = expected
-        .stages_executed
-        .iter()
-        .map(String::as_str)
-        .collect();
-    assert!(
-        executed.contains("parser") && executed.contains("type_checker"),
-        "{}: a mapped case must at least execute the parser and type checker",
-        case.id
-    );
-    let allowed_stages: BTreeSet<&str> = match expected.verdict.as_str() {
-        // The task route reads `cfg` as the checked task IR it really builds
-        // (the manifest note states that reading), which is why every
-        // task-route native mode claims it and the mutex route never does.
-        "native_join_failure"
-        | "native_create_recovery"
-        | "native_owned_transfer"
-        | "native_task_scenarios"
-        | "native_heap_scenarios" => [
-            "parser",
-            "type_checker",
-            "reference_execution",
-            "cfg",
-            "native_backend",
-        ]
-        .into_iter()
-        .collect(),
-        // `cfg` is absent on purpose: `source.mutex.guard.v1` emits directly
-        // from the checked event list and has no CFG stage at all, so claiming
-        // it would be false (T00's rule: a stage is executed only where a named
-        // test runs it on the case's own artifact).
-        "checked_mutex_sanitized" => [
-            "parser",
-            "type_checker",
-            "reference_execution",
-            "native_backend",
-        ]
-        .into_iter()
-        .collect(),
-        "accept" if expected.outcome.is_some() => {
-            ["parser", "type_checker", "reference_execution", "cfg"]
-                .into_iter()
-                .collect()
-        }
-        "accept" | "reject" => ["parser", "type_checker"].into_iter().collect(),
-        other => panic!("{}: unknown verdict vocabulary `{other}`", case.id),
-    };
-    assert_eq!(
-        executed, allowed_stages,
-        "{}: claimed stages must match this mode's actual runner",
-        case.id
-    );
-    for stage in &executed {
-        assert!(
-            STAGE_NAMES.contains(stage),
-            "{}: unknown stage `{stage}` in expected.json",
-            case.id
-        );
-    }
-    for (stage, status) in &case.stages {
-        let want = if executed.contains(stage.as_str()) {
-            "executed"
-        } else {
-            "unassessed"
-        };
-        assert_eq!(
-            status, want,
-            "{}: manifest stage `{stage}` must be `{want}` to match the executed fixture",
-            case.id
-        );
-    }
-
     let source = fs::read_to_string(&source_path)
         .unwrap_or_else(|error| panic!("cannot read {}: {error}", source_path.display()));
     let files = [SourceFile::new(recorded.to_string(), source)];
@@ -801,6 +1132,197 @@ fn run_mapped_case(case: &ManifestCase) {
             entry: expected.entry.clone(),
             ..CompileOptions::default()
         },
+    );
+
+    // Per-stage manifest evidence is derived here, from this harness's own
+    // dispatch plus what the compiler actually reported on this fixture, and the
+    // manifest must record exactly that. This is the T00.1/T00.4 repair: the
+    // manifest no longer carries hand-written status strings whose reading
+    // depended on the route.
+    let observed_codes: Vec<&str> = match &result {
+        Ok(_) => Vec::new(),
+        Err(diagnostics) => diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.code.as_str())
+            .collect(),
+    };
+    let plan = derive_stage_plan(&case.id, &expected, &observed_codes);
+    let route = case.route.as_deref().unwrap_or_else(|| {
+        panic!("{}: a mapped case must declare its route", case.id)
+    });
+    assert_eq!(
+        route,
+        route_for_case(&case.id, &expected.verdict),
+        "{}: the declared route must be the one this verdict mode really takes",
+        case.id
+    );
+    assert_eq!(
+        case.harness_verdict_mode.as_deref(),
+        Some(expected.verdict.as_str()),
+        "{}: the manifest must record the harness mode that produced its stage evidence",
+        case.id
+    );
+    let route_vocabulary: BTreeSet<&str> = route_stages(route).iter().copied().collect();
+    let mut claimed_stages: Vec<&str> = case.stages.keys().map(String::as_str).collect();
+    claimed_stages.sort_unstable();
+    let mut all_stages: Vec<&str> = STAGE_NAMES.to_vec();
+    all_stages.sort_unstable();
+    assert_eq!(
+        claimed_stages, all_stages,
+        "{}: every case states every stage; a missing key is not an absent stage",
+        case.id
+    );
+    for stage in STAGE_NAMES {
+        let record = &case.stages[*stage];
+        let planned = &plan[stage];
+        assert!(
+            STAGE_STATUSES.contains(&record.status.as_str()),
+            "{}: unknown stage status `{}` for `{stage}`",
+            case.id,
+            record.status
+        );
+        if !route_vocabulary.contains(stage) {
+            assert_eq!(
+                record.status, "not_applicable",
+                "{}: `{stage}` is not a stage of route `{route}`, so it is structurally \
+                 absent, never unassessed",
+                case.id
+            );
+        }
+        assert_eq!(
+            record.status, planned.status,
+            "{}: stage `{stage}` claims `{}` but this harness derives `{}`",
+            case.id, record.status, planned.status
+        );
+        match record.status.as_str() {
+            "executed" => {
+                let executor = record.executor.as_deref().unwrap_or_else(|| {
+                    panic!("{}: `{stage}` is executed but names no executor", case.id)
+                });
+                assert!(
+                    RUNNER_REGISTRY.contains(&executor),
+                    "{}: `{stage}` names executor `{executor}`, which is not a runner in \
+                     this harness",
+                    case.id
+                );
+                assert_eq!(
+                    Some(executor),
+                    planned.executor,
+                    "{}: `{stage}` is executed by a different runner than it claims",
+                    case.id
+                );
+                let artifact = record.artifact.as_deref().unwrap_or_else(|| {
+                    panic!("{}: `{stage}` is executed but names no artifact", case.id)
+                });
+                assert_eq!(
+                    artifact, recorded,
+                    "{}: `{stage}` must be executed on the case's own fixture",
+                    case.id
+                );
+                assert!(
+                    repo_root().join(artifact).is_file(),
+                    "{}: `{stage}` names artifact `{artifact}`, which does not exist",
+                    case.id
+                );
+                assert_eq!(
+                    record.observations, planned.observations,
+                    "{}: `{stage}` observation count must equal the runner's invocations",
+                    case.id
+                );
+                assert_eq!(
+                    record.host_gate.as_ref().map(|gate| gate
+                        .iter()
+                        .map(String::as_str)
+                        .collect::<Vec<_>>()),
+                    planned.host_gate.clone(),
+                    "{}: `{stage}` must record the exact host gate of its runner, so the \
+                     status cannot be read as host-unconditional",
+                    case.id
+                );
+                assert!(record.record.is_none());
+            }
+            "recorded_not_gated" => {
+                assert_eq!(
+                    *stage, "native_sanitized",
+                    "{}: only sanitizer evidence is currently recorded rather than gated",
+                    case.id
+                );
+                let pointer = record.record.as_deref().unwrap_or_else(|| {
+                    panic!(
+                        "{}: `{stage}` is recorded_not_gated but names no record",
+                        case.id
+                    )
+                });
+                assert!(
+                    repo_root().join(pointer).is_file(),
+                    "{}: `{stage}` names record `{pointer}`, which does not exist",
+                    case.id
+                );
+                assert!(
+                    record.executor.is_none()
+                        && record.artifact.is_none()
+                        && record.observations.is_none()
+                        && record.host_gate.is_none(),
+                    "{}: a recorded transcript has no executor, artifact, count or host \
+                     gate — that is what distinguishes it from executed evidence",
+                    case.id
+                );
+            }
+            _ => assert!(
+                record.executor.is_none()
+                    && record.artifact.is_none()
+                    && record.observations.is_none()
+                    && record.host_gate.is_none()
+                    && record.record.is_none(),
+                "{}: `{stage}` is `{}` and may carry no evidence fields",
+                case.id,
+                record.status
+            ),
+        }
+    }
+    // T00.3: the sanitizer gate. `executed` here is admissible only for a case
+    // a runner really compiles with `-fsanitize=…` and runs.
+    assert_eq!(
+        case.stages["native_sanitized"].status == "executed",
+        SANITIZED_GATED_CASES.contains(&case.id.as_str()),
+        "{}: a sanitized-native claim requires the harness-gated run",
+        case.id
+    );
+    assert_eq!(
+        case.stages["native_sanitized"].status == "recorded_not_gated",
+        SANITIZER_TRANSCRIPT_CASES.contains(&case.id.as_str()),
+        "{}: transcript-only sanitizer evidence is pinned to its own case set",
+        case.id
+    );
+
+    // The fixture repeats its executed stage set in the same vocabulary, and it
+    // must agree with what the manifest and this harness derived.
+    let executed: BTreeSet<&str> = expected
+        .stages_executed
+        .iter()
+        .map(String::as_str)
+        .collect();
+    for stage in &executed {
+        assert!(
+            STAGE_NAMES.contains(stage),
+            "{}: unknown stage `{stage}` in expected.json",
+            case.id
+        );
+    }
+    let derived_executed: BTreeSet<&str> = STAGE_NAMES
+        .iter()
+        .copied()
+        .filter(|stage| plan[stage].status == "executed")
+        .collect();
+    assert_eq!(
+        executed, derived_executed,
+        "{}: expected.json's stages_executed must match the derived plan",
+        case.id
+    );
+    assert!(
+        executed.contains("parse") && executed.contains("elaborate"),
+        "{}: a mapped case must at least parse and elaborate its own fixture",
+        case.id
     );
 
     if let Some(control) = &expected.positive_control {
@@ -879,11 +1401,11 @@ fn run_mapped_case(case: &ManifestCase) {
                         .join("\n")
                 )
             });
-            let wants_execution = executed.contains("reference_execution");
+            let wants_execution = executed.contains("sequential_reference_execution");
             assert_eq!(
                 wants_execution,
                 expected.outcome.is_some(),
-                "{}: reference_execution stage and expected outcome must agree",
+                "{}: the reference execution stage and the expected outcome must agree",
                 case.id
             );
             if let Some(outcome) = &expected.outcome {
@@ -1021,8 +1543,44 @@ fn run_mapped_case(case: &ManifestCase) {
 #[test]
 fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     let manifest = load_manifest();
-    assert_eq!(manifest.schema_version, 1);
+    assert_eq!(manifest.schema_version, 2);
     assert_eq!(manifest.cases.len(), TOTAL_CASES);
+    // The manifest states its own vocabulary so a reader knows what the words
+    // mean; this file is the authority, so data can never widen it.
+    assert_eq!(
+        manifest.stage_vocabulary.stages,
+        STAGE_NAMES,
+        "manifest stage vocabulary drifted from the harness"
+    );
+    assert_eq!(
+        manifest.stage_vocabulary.statuses,
+        STAGE_STATUSES,
+        "manifest status vocabulary drifted from the harness"
+    );
+    assert_eq!(
+        manifest
+            .stage_vocabulary
+            .routes
+            .iter()
+            .map(|(name, stages)| (
+                name.as_str(),
+                stages.iter().map(String::as_str).collect::<Vec<_>>()
+            ))
+            .collect::<Vec<_>>(),
+        ROUTE_STAGES
+            .iter()
+            .map(|(name, stages)| (*name, stages.to_vec()))
+            .collect::<Vec<_>>(),
+        "manifest route vocabulary drifted from the harness"
+    );
+    for (_, stages) in ROUTE_STAGES {
+        for stage in *stages {
+            assert!(
+                STAGE_NAMES.contains(stage),
+                "route vocabulary names `{stage}`, which is not a stage"
+            );
+        }
+    }
 
     let mut mapped = Vec::new();
     let mut unmapped = Vec::new();
@@ -1055,13 +1613,26 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
                 assert!(
                     case.source_fixture.is_none()
                         && case.semantic_profile.is_none()
-                        && case.evidence_target.is_none(),
+                        && case.evidence_target.is_none()
+                        && case.route.is_none()
+                        && case.harness_verdict_mode.is_none(),
                     "{}: an unmapped case must not carry fixture metadata",
                     case.id
                 );
+                // An unmapped case has no route, so no stage of it is
+                // structurally absent either: every stage is genuinely
+                // unassessed, and carries no evidence field.
                 assert!(
-                    case.stages.values().all(|status| status == "unassessed"),
-                    "{}: an unmapped case must keep all stages `unassessed`",
+                    case.stages.values().all(|record| record
+                        == &StageRecord {
+                            status: "unassessed".to_owned(),
+                            executor: None,
+                            artifact: None,
+                            observations: None,
+                            host_gate: None,
+                            record: None,
+                        }),
+                    "{}: an unmapped case must keep all stages `unassessed` with no evidence",
                     case.id
                 );
                 unmapped.push(case.id.clone());
@@ -1120,6 +1691,153 @@ fn ct_mapping_progress_is_pinned_and_counted() {
         "unmapped CT case count"
     );
     assert_eq!(mapped + unmapped, TOTAL_CASES, "every case is counted");
+}
+
+fn stage_depth(stage: &str) -> u8 {
+    STAGE_DEPTH
+        .iter()
+        .find(|(name, _)| *name == stage)
+        .unwrap_or_else(|| panic!("stage `{stage}` has no depth rank"))
+        .1
+}
+
+/// The stage-derived CT summary (T00.9). Every number here is computed from the
+/// manifest's per-stage evidence, which `run_mapped_case` has independently
+/// checked against this harness's own dispatch. Nothing is hand-kept, and the
+/// `mapped`/`unmapped` pair is retained beside the derived rows rather than
+/// standing alone: on its own it treats a source-rejection case and a
+/// five-scenario sanitized case as one identical unit of coverage.
+fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
+    use serde_json::{Map, Value, json};
+    let mut histogram: BTreeMap<&str, BTreeMap<&str, usize>> = STAGE_NAMES
+        .iter()
+        .map(|stage| (*stage, BTreeMap::new()))
+        .collect();
+    let mut observations: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut host_scope: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
+    let mut depth_profile: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut case_depth: BTreeMap<&str, &str> = BTreeMap::new();
+    let mut mapped = 0usize;
+    let mut unmapped = 0usize;
+    for case in &manifest.cases {
+        if case.mapping_status != "mapped" {
+            unmapped += 1;
+            continue;
+        }
+        mapped += 1;
+        let mut deepest: Option<&'static str> = None;
+        for stage in STAGE_NAMES {
+            let record = &case.stages[*stage];
+            *histogram
+                .get_mut(stage)
+                .expect("stage")
+                .entry(record.status.as_str())
+                .or_insert(0) += 1;
+            if record.status != "executed" {
+                continue;
+            }
+            *observations.entry(stage).or_insert(0) +=
+                record.observations.expect("an executed stage counts its runs");
+            let hosts = host_scope.entry(stage).or_default();
+            match &record.host_gate {
+                Some(gate) => hosts.extend(gate.iter().cloned()),
+                None => {
+                    hosts.insert("any".to_owned());
+                }
+            }
+            if deepest.is_none_or(|current| stage_depth(stage) > stage_depth(current)) {
+                deepest = Some(stage);
+            }
+        }
+        let deepest = deepest.expect("a mapped case executes at least the parser");
+        *depth_profile.entry(deepest).or_insert(0) += 1;
+        case_depth.insert(case.id.as_str(), deepest);
+    }
+    let mut histogram_json = Map::new();
+    for stage in STAGE_NAMES {
+        histogram_json.insert(
+            (*stage).to_owned(),
+            json!(
+                histogram[stage]
+                    .iter()
+                    .map(|(status, count)| ((*status).to_owned(), *count))
+                    .collect::<BTreeMap<String, usize>>()
+            ),
+        );
+    }
+    json!({
+        "mapped": mapped,
+        "unmapped": unmapped,
+        "stage_histogram": Value::Object(histogram_json),
+        "observation_counts": observations,
+        "host_scope": host_scope,
+        "depth_profile": depth_profile,
+        "case_depth": case_depth,
+    })
+}
+
+/// The consumable acceptance numbers are generated from the manifest, not
+/// hand-kept beside it (T00.9 / T00 finding O7). `acceptance.json` names the
+/// fields the generator owns; this test recomputes each of them and refuses any
+/// drift, so the record cannot claim depth its stage evidence does not carry.
+#[test]
+fn ct_acceptance_summary_is_derived_from_the_manifest() {
+    let manifest = load_manifest();
+    let derived = ct_stage_summary(&manifest);
+    let path = repo_root().join("docs/reviews/r0_3/acceptance.json");
+    let acceptance: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display())),
+    )
+    .unwrap_or_else(|error| panic!("cannot parse {}: {error}", path.display()));
+    let evidence = acceptance
+        .get("ct_evidence")
+        .expect("acceptance.json carries the stage-derived CT block");
+    let generated: Vec<&str> = evidence
+        .get("generated_fields")
+        .expect("the CT block names the fields its generator owns")
+        .as_array()
+        .expect("generated_fields is a list")
+        .iter()
+        .map(|name| name.as_str().expect("field name"))
+        .collect();
+    assert_eq!(
+        generated,
+        [
+            "ct_mapped",
+            "ct_unmapped",
+            "stage_histogram",
+            "observation_counts",
+            "host_scope",
+            "depth_profile",
+            "case_depth",
+        ],
+        "the generated field set is itself pinned, so a field cannot quietly \
+         become hand-maintained"
+    );
+    assert_eq!(
+        acceptance.get("ct_mapped"),
+        Some(&derived["mapped"]),
+        "ct_mapped is generated from the manifest"
+    );
+    assert_eq!(
+        acceptance.get("ct_unmapped"),
+        Some(&derived["unmapped"]),
+        "ct_unmapped is generated from the manifest"
+    );
+    for field in [
+        "stage_histogram",
+        "observation_counts",
+        "host_scope",
+        "depth_profile",
+        "case_depth",
+    ] {
+        assert_eq!(
+            evidence.get(field),
+            Some(&derived[field]),
+            "acceptance.json `{field}` is not what the manifest's stage evidence derives"
+        );
+    }
 }
 
 fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {

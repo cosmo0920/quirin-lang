@@ -6,11 +6,13 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution"
   ],
   "evidence_target": "linux",
   "notes": "Linux ScopedOwnedTasksV1 worker-local allocation: a real child acquires up to two Buffers, explicitly drops all acquired locals before raising WorkerError::Failed or a bound AllocError, and the creator joins before receiving the error. Four native/reference scenarios cover success, either allocation failure and creation failure with exact pointer/thread checks. Missing cleanup in either worker error arm rejects at Q600. The earlier sequential implicit-cleanup control remains separately executed. Loans, owned error payloads, arbitrary handlers and native refinement proofs remain open.",

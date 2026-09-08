@@ -6,10 +6,14 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "mutex_lowering",
+    "mutex_invariant_check",
+    "mutex_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
   ],
   "evidence_target": "linux",
   "notes": "source.mutex.guard.v1: two lexical critical sections over the same CheckedMutexInvariantV1 generation and the same declared footprint. The route lowers the source to a checked event list, the driver independently rechecks the certificate before publishing it, and the C11 backend emits real mtx_t operations. `cfg` is deliberately NOT claimed: this route emits directly from the checked event list and has no CFG stage, so a `cfg: executed` status would be false. The reference observation is computed by interpret_mutex_program against the checked event list, does not read the emitted C, and is compared line-for-line with the sanitized native run. One thread, one Linux target, one compiler invocation: this is not evidence about contention, scheduling, publication or the C memory model, and source-to-trace refinement remains a premise. Every certificate from this route carries DeclaredFootprintShape and InvariantPredicateDeclared.",

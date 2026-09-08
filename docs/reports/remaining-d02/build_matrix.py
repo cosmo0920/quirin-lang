@@ -5,8 +5,14 @@ Every count in the emitted matrix is derived from a manifest or a validated run
 record that is read here, never hand-copied:
 
   * CT stage rows/histogram/depth profile/observation counts
-        <- docs/reports/remaining-t00/coverage.json (T00) cross-checked against
-           docs/reevaluation/ct_manifest.json
+        <- docs/reevaluation/ct_manifest.json (schema 2), whose per-stage
+           evidence compiler/tests/ct_corpus.rs rederives from its own dispatch,
+           summarized through scripts/ct_stage_summary.py and cross-checked
+           against every archived per-card ct_stage_evidence.json
+        Until card T00-CT-SCHEMA this section read T00's eleven-case
+        coverage.json alone and asserted its mapped set equalled the manifest's.
+        That assertion stopped holding at T03-CT and the section diverged by
+        thirteen cases; the merge below is what ended that.
   * corpus and checkpoint counts
         <- docs/reports/remaining-b00/ledger.json (B00)
   * contract corpus module count      <- contract/qcore/*/*.qcore on disk
@@ -24,7 +30,15 @@ import re
 import sys
 
 ROOT = pathlib.Path(sys.argv[1]).resolve()
-OUT = ROOT / "docs/reviews/r0_3/acceptance_matrix.json"
+# `--out PATH` writes elsewhere, so the generator can be verified against the
+# manifest without overwriting the committed matrix.
+if "--out" in sys.argv:
+    OUT = pathlib.Path(sys.argv[sys.argv.index("--out") + 1]).resolve()
+else:
+    OUT = ROOT / "docs/reviews/r0_3/acceptance_matrix.json"
+
+sys.path.insert(0, str(ROOT / "scripts"))
+import ct_stage_summary  # noqa: E402
 
 GATE = {
     "workspace_tests": int(sys.argv[2]),
@@ -62,97 +76,78 @@ schemas_version = re.search(
 ).group(1)
 
 # ------------------------------------------------------------------- CT section
+# The manifest is the source of truth: compiler/tests/ct_corpus.rs rederives
+# every one of its stage entries from its own dispatch and refuses drift, so
+# reading it here is reading checked evidence. The archived per-card records are
+# merged only for the `aux:` rows (controls, CLI end-to-end runs, mutation
+# matrices) that the manifest has no field for, and ct_stage_summary's
+# provenance check is what keeps the two from separating again.
 cases = {c["id"]: c for c in manifest["cases"]}
-stage_matrix = coverage["mapped_case_stage_matrix"]
-mapped_ids = coverage["inventory"]["mapped_ids"]
+mapped_ids = sorted(
+    (c["id"] for c in manifest["cases"] if c["mapping_status"] == "mapped"),
+    key=lambda name: int(name[2:]),
+)
+archived_evidence = ct_stage_summary.merge_evidence(ROOT)
+ct_summary = ct_stage_summary.summarize(ROOT)
+provenance_problems = ct_stage_summary.check_provenance(ROOT)
+assert not provenance_problems, provenance_problems
+assert not ct_stage_summary.check_acceptance(ROOT), ct_stage_summary.check_acceptance(ROOT)
+assert set(archived_evidence) == set(mapped_ids)
+assert len(cases) == 50 == ct_summary["ct_mapped"] + ct_summary["ct_unmapped"]
 
-assert set(mapped_ids) == {c["id"] for c in manifest["cases"] if c["mapping_status"] == "mapped"}
-assert set(stage_matrix) == set(mapped_ids)
-assert len(cases) == coverage["inventory"]["total"] == 50
-
-STAGE_ORDER = [
-    "parse",
-    "elaborate",
-    "task_lowering",
-    "task_ledger_check",
-    "sequential_whole_program",
-    "sequential_reference_execution",
-    "task_reference_execution",
-    "c_emission",
-    "native_execution",
-    "native_sanitized",
-    "legacy_c_twin",
-    "proof",
-]
-DEPTH_ORDER = [
-    "parse",
-    "elaborate",
-    "task_lowering",
-    "task_ledger_check",
-    "task_reference_execution",
-    "c_emission",
-    "native_execution",
-    "native_sanitized",
-    "proof",
-]
+STAGE_ORDER = list(manifest["stage_vocabulary"]["stages"])
+histogram = ct_summary["stage_histogram"]
+depth_profile = ct_summary["depth_profile"]
+observation_counts = ct_summary["observation_counts"]
+host_gates = {
+    host
+    for hosts in ct_summary["host_scope"].values()
+    for host in hosts
+    if host != "any"
+}
 
 ct_rows = []
-histogram = {stage: {} for stage in STAGE_ORDER}
-depth_profile = {}
-observation_counts = {}
-host_gates = set()
-
-for cid in sorted(mapped_ids):
-    entry = stage_matrix[cid]
+for cid in mapped_ids:
+    case = cases[cid]
+    entry = archived_evidence[cid]
     verified = entry["verified_stages"]
-    row_stages = {}
-    deepest = None
-    for stage in STAGE_ORDER:
-        record = verified.get(stage)
-        if record is None:
-            status = "unassessed"
-            cell = {"status": status}
-        else:
-            status = record["status"]
-            cell = {"status": status}
-            for key in ("executor", "artifact", "host_gate", "observations", "record", "note"):
-                if key in record:
-                    cell[key] = record[key]
-            if status == "executed" and "observations" in record:
-                observation_counts[stage] = (
-                    observation_counts.get(stage, 0) + record["observations"]
-                )
-            for gate in record.get("host_gate", []):
-                host_gates.add(gate)
-        histogram[stage][status] = histogram[stage].get(status, 0) + 1
-        row_stages[stage] = cell
-        if status == "executed" and stage in DEPTH_ORDER:
-            deepest = stage
-    auxiliary = {
-        key.split(":", 1)[1]: value for key, value in verified.items() if key.startswith("aux:")
-    }
-    depth_profile[deepest] = depth_profile.get(deepest, 0) + 1
     ct_rows.append(
         {
             "id": cid,
             "mapping_status": "mapped",
-            "expected": cases[cid]["expected"],
-            "harness_verdict_mode": entry.get("harness_verdict_mode"),
-            "manifest_stages": entry["manifest_stages"],
-            "manifest_evidence_target": entry.get("manifest_evidence_target"),
+            "expected": case["expected"],
+            "route": case["route"],
+            "harness_verdict_mode": case["harness_verdict_mode"],
+            "manifest_evidence_target": case.get("evidence_target"),
             "source_reject_controls_executed": entry.get("source_reject_controls_executed"),
-            "stage_derived_status": row_stages,
-            "auxiliary_executed_stages": auxiliary,
-            "deepest_executed_stage": deepest,
-            "semantic_profile": cases[cid]["semantic_profile"],
+            # Schema 2 makes the manifest entry and the stage-derived status the
+            # same object, so the old side-by-side `manifest_stages` column that
+            # existed to keep their divergence visible is gone.
+            "stage_derived_status": {stage: case["stages"][stage] for stage in STAGE_ORDER},
+            "auxiliary_executed_stages": {
+                key.split(":", 1)[1]: value
+                for key, value in verified.items()
+                if key.startswith("aux:")
+            },
+            "deepest_executed_stage": ct_summary["case_depth"][cid],
+            "stage_evidence_record": entry["source"],
+            "semantic_profile": case["semantic_profile"],
         }
     )
 
+# Triage of the unmapped cases is recorded analysis, not stage evidence, and
+# T00's audit predates thirteen mappings, so its rows are filtered to the cases
+# that are still unmapped and every one of those must be covered.
 triage = coverage["unmapped_triage"]
+unmapped_ids = [c["id"] for c in manifest["cases"] if c["mapping_status"] == "unmapped"]
+triage_cases = [case for case in triage["cases"] if case["id"] in set(unmapped_ids)]
+assert {case["id"] for case in triage_cases} == set(unmapped_ids), sorted(
+    set(unmapped_ids) - {case["id"] for case in triage["cases"]}
+)
 bucket_counts = {}
-for case in triage["cases"]:
+for case in triage_cases:
     bucket_counts[case["current_bucket"]] = bucket_counts.get(case["current_bucket"], 0) + 1
-for case in triage["cases"]:
+for case in triage_cases:
     ct_rows.append(
         {
             "id": case["id"],
@@ -168,29 +163,49 @@ for case in triage["cases"]:
 ct_rows.sort(key=lambda row: int(row["id"][2:]))
 
 ct_section = {
+    "generator_status": (
+        "regenerating: this section is produced by docs/reports/remaining-d02/build_matrix.py "
+        "from docs/reevaluation/ct_manifest.json (schema 2) through "
+        "scripts/ct_stage_summary.py, and the script asserts that the manifest, every archived "
+        "per-card ct_stage_evidence.json and docs/reviews/r0_3/acceptance.json all agree before "
+        "it writes anything. Card T00-CT-SCHEMA ended the thirteen-case divergence that came "
+        "from reading T00's eleven-case coverage.json alone."
+    ),
     "derived_from": [
-        "docs/reports/remaining-t00/coverage.json",
         "docs/reevaluation/ct_manifest.json",
-    ],
+        "scripts/ct_stage_summary.py",
+    ]
+    + ct_stage_summary.EVIDENCE_FILES,
     "derivation_rule": (
         "a stage is 'executed' only where a named workspace test runs it on the case's own "
-        "artifact (T00's rule). No row claims a stage its executed evidence does not carry; "
-        "manifest_stages is retained beside stage_derived_status so the divergence stays "
-        "visible rather than being resolved silently."
+        "artifact (T00's rule), and the manifest entry must name that executor, that artifact, "
+        "its invocation count and its exact target_os gate. "
+        "compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any "
+        "drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes "
+        "the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` "
+        "and `type_checker`, which conflated four passes and read differently per route, are "
+        "gone."
     ),
     "totals": {
         "cases": len(cases),
-        "mapped": coverage["inventory"]["mapped"],
-        "unmapped": coverage["inventory"]["unmapped"],
+        "mapped": ct_summary["ct_mapped"],
+        "unmapped": ct_summary["ct_unmapped"],
     },
     "reporting_host": "linux",
     "host_gates_load_bearing": sorted(host_gates),
+    "host_scope": ct_summary["host_scope"],
     "stage_histogram": {stage: histogram[stage] for stage in STAGE_ORDER},
     "depth_profile": depth_profile,
+    "case_depth": ct_summary["case_depth"],
     "observation_counts": observation_counts,
+    # The per-CT rows were built and then only counted; T00.9 asked for them in
+    # the record, so they are emitted.
+    "ct_rows": ct_rows,
     "executed_totals_from_t00": coverage["executed_totals"],
     "unmapped_bucket_counts": bucket_counts,
-    "newly_decidable_not_mapped": triage["newly_decidable"],
+    "newly_decidable_not_mapped": [
+        cid for cid in triage["newly_decidable"] if cid in set(unmapped_ids)
+    ],
     "known_manifest_overstatements": [
         finding["id"] + " - " + finding["finding"]
         if isinstance(finding, dict) and "finding" in finding
@@ -198,14 +213,17 @@ ct_section = {
         for finding in coverage["claims_exceeding_executed_evidence"]
     ],
     "notes": [
-        "Mapping is not conformance. `proof` is unassessed for all 11 mapped cases and no Lean "
-        "theorem is bound to any CT fixture.",
+        "Mapping is not conformance. `proof` is unassessed for every mapped case and no Lean "
+        "theorem is bound to any CT fixture (T00.7 remains open).",
         "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the "
-        "transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them.",
-        "T02 added the CheckedMutexInvariantV1 model after T00's audit and deliberately mapped "
-        "no CT case; CT26-CT34/CT46/CT48 keep their `no mutex value` source blocker.",
-        "The three newly-decidable cases (CT24, CT39, CT47) are assessed as decidable from "
-        "probes, not mapped; two of the three would record a coarser reason than their spec row.",
+        "transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. "
+        "Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now "
+        "refuses an `executed` sanitized claim from any other case.",
+        "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the "
+        "record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this "
+        "generator's inputs no longer allow.",
+        "The unmapped triage rows are recorded analysis, not stage evidence, and come from "
+        "T00's audit filtered to the cases that are still unmapped.",
     ],
 }
 

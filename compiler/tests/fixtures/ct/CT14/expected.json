@@ -6,11 +6,13 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker",
-    "reference_execution",
-    "cfg",
-    "native_backend"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution"
   ],
   "evidence_target": "linux",
   "notes": "Linux ScopedOwnedTasksV1: the native adapter waits for the actual worker body and completion-record write before creation returns to the parent. Parent read/drop of the moved Buffer before join reject at Q600 despite worker completion. The accepted control joins, consumes the owned Result and drops the original generation. Exact pointers and join-before-reclamation checks retain the allocation and environment while completed but unjoined. This is one owned Buffer, not loan/share restoration or a general scheduler proof.",

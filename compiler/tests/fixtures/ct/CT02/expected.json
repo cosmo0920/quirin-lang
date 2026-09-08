@@ -11,8 +11,10 @@
   "outcome": null,
   "trace": null,
   "stages_executed": [
-    "parser",
-    "type_checker"
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
   ],
   "notes": "Actual own<Buffer> move capture rejects a parent read in the successful-spawn arm. CT01 executes the corresponding joined-return control; the creation-failure arm may still read and drop the restored original buffer."
 }
