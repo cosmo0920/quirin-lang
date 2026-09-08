@@ -1560,6 +1560,12 @@ pub enum SemanticPass {
     CleanupLowering,
     CEmission,
     Concurrency,
+    /// Card `source.extern-call.v1`: admission and bridging of a call to a
+    /// declared extern function. Owns `Q022`–`Q027` (spec §L21). It is a
+    /// separate pass from `OrdinaryTypes` on purpose: `Q020`/`Q021` refuse
+    /// *unenforced source contracts* and keep their exact behavior, while this
+    /// pass consumes *explicitly selected declared* contracts.
+    ExternCall,
     PluginVerification,
 }
 
@@ -2211,6 +2217,11 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "qcore_error_payload"
             | "qcore_acquire"
             | "qcore_check"
+            // Card `source.extern-call.v1`: the literal outcome control of the
+            // nullable-owned-return adapter. Reserved so a local binding named
+            // `succeeds` cannot shadow the adapter form, exactly as the
+            // mutex-guard keywords above are protected.
+            | "succeeds"
     )
 }
 
@@ -2261,6 +2272,9 @@ pub fn source_diagnostic(
         SemanticPass::CleanupLowering => "Q202",
         SemanticPass::CEmission => "Q500",
         SemanticPass::Concurrency => "Q600",
+        // The generic presentation code of the extern-call pass. The specific
+        // conditions Q023-Q027 are issued at their own emission sites.
+        SemanticPass::ExternCall => "Q022",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

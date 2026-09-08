@@ -68,6 +68,7 @@ fn mode_is_explicit_and_entry_cannot_silently_override_it() {
             &[file],
             &CompileOptions {
                 entry: Some("main".into()),
+                ..CompileOptions::default()
             },
         )
         .unwrap_err();

@@ -102,10 +102,10 @@ pub use concurrency::{
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
 };
 pub use driver::{
-    CheckedMutexGuardModule, CheckedSourceModule, CompileOptions, CompiledModule,
-    CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic, SourceExecutionProfile, SourceFile,
-    SourceLocation, SourceResultProfile, compile_files, compile_files_with_registry,
-    format_diagnostic,
+    CheckedExternModule, CheckedMutexGuardModule, CheckedSourceModule, CompileOptions,
+    CompiledModule, CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic,
+    SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile, compile_files,
+    compile_files_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,
@@ -181,6 +181,9 @@ pub use ownership::{
     ResourceEntry, ResourceId, check_ownership, execute_ownership,
 };
 pub use parser::{ParseError, parse_program};
+/// Card `source.extern-call.v1`: the bounded extern-call model, its C11
+/// backend and its reference execution.
+pub use qcore_core::{extern_c_emit, extern_call};
 pub use research_closure::{
     OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, PROMOTED_RESEARCH_QUESTIONS, Progress,
     ResearchClosureCertificate, ResearchClosureError, ResearchProgram, ResourceSafetyCertificate,

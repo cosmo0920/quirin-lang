@@ -3,7 +3,7 @@ use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind,
 };
 use crate::lexer::{Span, Symbol, TokenKind};
-use qcore_core::module_imports::{CONCURRENCY_MODULE, ModuleImports};
+use qcore_core::module_imports::{CONCURRENCY_MODULE, EXTERN_MODULE, ModuleImports};
 
 /// Importing another compilation input never grants this file a capability.
 /// Call this on each input before combining declarations across files.
@@ -35,7 +35,33 @@ pub fn check_source_imports(
             ),
         }]);
     }
+    if !imports.extern_calls()
+        && let Some(span) = extern_call_span(program)
+    {
+        return Err(vec![SourceDiagnostic {
+            code: "Q022",
+            pass: SemanticPass::ExternCall,
+            span,
+            message: format!(
+                "calling a declared extern function requires an explicit `import {EXTERN_MODULE};` in this source file"
+            ),
+        }]);
+    }
     Ok(imports)
+}
+
+/// The first call in this file whose callee is one of this file's own `extern
+/// fn` declarations, in a statement form `source.extern-call.v1` can express.
+/// Declaring an extern function is not calling one, so a contract module and
+/// every existing declaration-only file are untouched, and resolution stays
+/// file-local: importing another compilation input never grants this file the
+/// vocabulary. One detector serves both this gate and route selection, so a
+/// file can never be routed to the extern profile without having needed the
+/// import, or need the import without being routed there.
+fn extern_call_span(program: &SourceProgram) -> Option<Span> {
+    crate::source_extern::called_extern_names(program)
+        .into_values()
+        .next()
 }
 
 // Inspect structural concurrency forms rather than treating a ghost field named

@@ -51,6 +51,7 @@ For documentation, this revision names the current boundaries as follows. These 
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `qcorec check`, `qcorec emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
 | `source.tasks.copy.v1` | `compile_files`, `qcorec check`, `qcorec emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
+| `source.extern-call.v1` | `compile_files` with an explicit `CompileOptions` extern contract selection | A flat sequential entry calling declared extern functions under admitted resource-contract v1 shapes; results are valid only relative to those declarations. No extents, no excluded C04 mode, no concurrent or error-region context. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
 | `index.closed` | `quant_index` | Closed, dimensioned natural expressions in credit/live types. |
 | `model.sequential` | Ownership, usage, flow, typed-error, error-region and CFG APIs | Supplied semantic IR; not a general source elaborator. |
@@ -311,6 +312,8 @@ Emission additionally requires reachable callees to be observationally pure unde
 
 Source `if`, `match`, loops, arbitrary assignment, general arithmetic evaluation, nonliteral returns, error-region bodies, source borrowing, source concurrency, and arbitrary extern calls are not executable through the `source.exec12` path. Structural recognition of those forms MUST NOT be reported as implemented lowering.
 
+A *bounded* extern-call boundary is executable through the separate `source.extern-call.v1` path described later in this section. It does not widen `source.exec12`, which continues to refuse every call whose target is not a source function.
+
 The result-literal parser now accepts the full signed i32 range, including `-2147483648`, by checking the signed result using a wider representation. Out-of-range literals reject. This R07 repair does not implement general result expressions or full owned-result typing.
 
 The separate `source.tasks.copy.v1` path now lowers marked scoped-task source
@@ -345,6 +348,34 @@ successful-allocation ordinals, preserving identity across native scheduling
 orders. Explicit cleanup is required on every supported task error path; general
 implicit worker cleanup and nested workers remain open. See the
 [worker-allocation evidence](reports/w6-worker-allocation/README.md).
+
+The separate `source.extern-call.v1` path makes a **call to a declared extern
+function** executable at one bounded boundary. A file opts in with
+`import std.extern;` (`Q022` otherwise, `Q014` for an unknown module name), and
+the callee's contract MUST come from an explicit `CompileOptions` selection
+loaded by the resource-contract v1 loader: there is no default environment, no
+filesystem search and no fallback, and an inline source `contract { … }` on a
+called extern declaration is refused rather than enforced. Of the C04 vocabulary
+this path calls only scalars by value, `resource_borrowed` on an admitted
+pointer, `resource_consumed(p, nonnull)`, `resource_return_none()` with a `unit`
+or scalar result, and `resource_return_owned(nullable)` whose null arm MUST be
+branched at the call site into the existing typed-error exit. `resource_owned`,
+`resource_released`, `resource_out`, `resource_stored`, `resource_removed`,
+`resource_return_reallocated`, a nonnull owned return and a nullable consumed
+parameter are each refused by name. Length and extent are not transported: C04
+pointers are extentless `u8` projections, so no declaration on this path says
+how many bytes a callee touches, and every certificate records that premise
+along with each callee's declared contract and the builder's linkage premise.
+The derived effect row is `{Io}`, plus `Alloc` exactly when the contract returns
+owned custody and `Mut` exactly when some parameter is a `mut` pointer; the
+caller's declared `effects { … }` row MUST admit it. Extern calls are admitted
+in a flat sequential entry body only — task workers, `with lock` bodies, error
+regions, nested blocks and the `source.exec12` driver body path keep their
+existing refusals. A result reached through an extern contract is valid only
+*relative to* that declaration (`ContractTrust::Declared`); it is never a proof
+about the C implementation. See
+[implemented grammar G02d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls)
+and the [extern-call evidence](reports/extern-call-v1/README.md).
 
 ## L15. Lowering, observations, and translation certificates
 
@@ -447,7 +478,8 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `Q000` | `NameResolution` (per input file) | `qcore-verification::driver` | An input file does not parse as a QCore declaration. |
 | `Q001`, `Q016` | `Index` | `qcore-frontend` | `Q001` generic index/quant presentation; `Q016` dimension/axis declaration validity (checked unconditionally) and quant-index type resolution. |
 | `Q010`–`Q015` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name, `Q014` unknown imported module, `Q015` concurrency used without its file-local import. |
-| `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule and the task route's source-contract gate; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
+| `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule, the task route's source-contract gate, and an `effects { … }` row naming an effect the extern-call profile does not model; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
+| `Q022`–`Q027` | `ExternCall` | `qcore-frontend`, `qcore-verification::driver` | Admission and bridging of a call to a **declared** extern function (`source.extern-call.v1`). `Q022` an extern call in a file without its `import std.extern;`; `Q023` the callee has no admitted declared contract in the explicit selection (no selection, a selection that does not load, or an absent name); `Q024` the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count; `Q025` the mandatory nullable-owned-return adapter is missing, applied to a callee that returns no custody, names a declared non-error, or cannot discharge live custody on its error arm; `Q026` an extern call in a context this profile refuses (a nested block, a non-entry function, or an entry with parameters); `Q027` a declared input and the checked artifact disagree — an `extern fn` declaration against its selected contract, an inline `contract { … }` on a called extern declaration, a selection that no longer reproduces its own sources, or a published certificate against its independent rederivation. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
 | `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |
@@ -459,6 +491,8 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `<plugin-id>.<local-code>` | — | Providers | Provider-owned diagnostics; exact selected plugin ID and one 1–128-byte ASCII local component (letters, digits, `_`, `-`). |
 
 Reserving all four of `Q700`–`Q703` corrects a documentation drift, not a code change: `Q702` and `Q703` have existed in `crates/qcore-verification/src/verify_dispatch.rs` since the W3 dispatch increment, and the code is the authority. An earlier revision of this row named only `Q700` and `Q701`, which was narrower than the implementation; `AGENTS.md` was already accurate.
+
+The `ExternCall` pass is separate from `OrdinaryTypes` on purpose. `Q020` and `Q021` refuse *unenforced source* `contract { … }` blocks and keep exactly the behavior recorded below; the `ExternCall` pass consumes *explicitly selected declared* contracts through the resource-contract v1 loader and never enforces an inline block. Their coexistence is the reason `source.extern-call.v1` is not the inline source-contract consumer those two codes are waiting for.
 
 `Q020` and `Q021` both refuse an unenforced source `contract { … }`, on the task and sequential routes respectively. They are recorded here as **intentionally route-specific and not to be unified** until a source-contract consumer lands: the two gates do not have the same rejection coverage (the task gate also refuses an empty `contract { }`, which the sequential route accepts), so collapsing them to one code would change what is rejected. A code change is semantic; unification is the consumer's work, not a diagnostic-cleanup change.
 

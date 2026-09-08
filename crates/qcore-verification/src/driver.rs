@@ -14,7 +14,7 @@ use qcore_core::prelude::concurrency::{
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
-use qcore_core::{ExecutionObservation, emit_c11};
+use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -45,6 +45,16 @@ impl SourceFile {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct CompileOptions {
     pub entry: Option<String>,
+    /// Explicit selection of declared extern contract modules, as an immutable
+    /// path → source-text map loaded by the total-or-reject resource-contract
+    /// v1 loader (card `source.extern-call.v1`).
+    ///
+    /// `None` selects nothing. A module that calls a declared extern function
+    /// with no selection is refused at `Q023`; there is no default environment,
+    /// no filesystem search and no fallback. Contracts admitted here are
+    /// `ContractTrust::Declared` assumptions about C implementations this
+    /// repository never analysed.
+    pub extern_contracts: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -104,6 +114,22 @@ pub enum CheckedSourceModule {
     /// certificate is the evidence; the lowered program is retained beside it so
     /// a consumer can re-derive rather than believe it.
     CheckedMutexGuards(Box<CheckedMutexGuardModule>),
+    /// One entry function checked under `source.extern-call.v1`. Both the
+    /// extern-call certificate and the ordinary sequential evidence are
+    /// retained, because both were required: the call sites are checked by the
+    /// core extern checker and the surrounding custody, flow and effect
+    /// obligations by the established sequential passes.
+    ExternCalls(Box<CheckedExternModule>),
+}
+
+/// A checked `source.extern-call.v1` module.
+#[derive(Clone, Debug)]
+pub struct CheckedExternModule {
+    pub lowered: qcore_frontend::source_extern::LoweredExternModule,
+    pub certificate: extern_call::ExternCallCertificate,
+    /// The same entry re-checked by every established sequential pass, with the
+    /// declared extern summaries supplied as call-site assumptions.
+    pub sequential: CheckedProgram,
 }
 
 /// A checked `source.mutex.guard.v1` module: the lowered trace and the
@@ -118,21 +144,28 @@ impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
             Self::Sequential(program) => Some(program),
-            Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) => None,
+            Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) | Self::ExternCalls(_) => None,
         }
     }
 
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
-            Self::Sequential(_) | Self::CheckedMutexGuards(_) => None,
+            Self::Sequential(_) | Self::CheckedMutexGuards(_) | Self::ExternCalls(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
 
     pub fn as_checked_mutex_guards(&self) -> Option<&CheckedMutexGuardModule> {
         match self {
-            Self::Sequential(_) | Self::ScopedTasks(_) => None,
+            Self::Sequential(_) | Self::ScopedTasks(_) | Self::ExternCalls(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
+        }
+    }
+
+    pub fn as_extern_calls(&self) -> Option<&CheckedExternModule> {
+        match self {
+            Self::Sequential(_) | Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) => None,
+            Self::ExternCalls(module) => Some(module),
         }
     }
 
@@ -143,6 +176,9 @@ impl CheckedSourceModule {
             // One entry function is checked on this route; the profile admits
             // no calls, so the count is not a coverage claim about a module.
             Self::CheckedMutexGuards(_) => 1,
+            // Likewise: the extern-call profile lowers exactly one entry, and
+            // the declared callees have no checked body to count.
+            Self::ExternCalls(_) => 1,
         }
     }
 }
@@ -169,6 +205,9 @@ pub enum SourceExecutionProfile {
     /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
     /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
     CheckedMutexGuardsV1,
+    /// `source.extern-call.v1`: a flat sequential entry that calls declared
+    /// extern functions through explicitly selected, admitted contracts.
+    ExternCallsV1,
 }
 
 #[derive(Clone, Debug)]
@@ -182,6 +221,11 @@ pub struct CompiledModule {
     pub c_source: Option<String>,
     pub source_map: Vec<EmittedSourceMap>,
     pub reference_observation: Option<ExecutionObservation>,
+    /// Reference execution of a `source.extern-call.v1` trace, computed from
+    /// the checked event list independently of the emitted C. Kept separate
+    /// from `reference_observation`, which carries the sequential cleanup
+    /// observation and models no extern call.
+    pub extern_observation: Option<extern_c_emit::ExternObservation>,
 }
 
 #[derive(Debug)]
@@ -357,6 +401,13 @@ pub fn compile_files_with_registry(
     if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
         return compile_task_source(&parsed, &typed, mode, options, &ranges);
     }
+    // Selected after the concurrent routes on purpose: a module that both
+    // spawns and calls an extern function stays with the task route, which
+    // keeps its existing refusal. Lifting that is a separate card, because a
+    // task worker is a separate checked model (design §3.4).
+    if qcore_frontend::source_extern::has_source_extern(&parsed) {
+        return compile_extern_source(&parsed, &typed, mode, options, &ranges);
+    }
     let error_names = parsed
         .declarations
         .iter()
@@ -417,6 +468,7 @@ pub fn compile_files_with_registry(
             c_source: None,
             source_map: Vec::new(),
             reference_observation: None,
+            extern_observation: None,
         });
     }
     let entry = select_entry(&typed, options).map_err(|diagnostic| vec![diagnostic])?;
@@ -463,6 +515,7 @@ pub fn compile_files_with_registry(
         c_source: Some(c_source),
         source_map,
         reference_observation: Some(reference_observation),
+        extern_observation: None,
     })
 }
 
@@ -697,6 +750,7 @@ fn synthesize_function(
                     calls.push(CallSite {
                         callee,
                         arguments: Vec::new(),
+                        result: None,
                         span: statement.span,
                     });
                 } else {
@@ -1320,6 +1374,259 @@ fn compile_task_source(
         // Creation is dynamic. A single chosen reference execution is not the
         // evidence that all creation and completion alternatives are checked.
         reference_observation: None,
+        extern_observation: None,
+    })
+}
+
+/// Card `source.extern-call.v1`. Every step here fails closed: no contract
+/// selection, an absent name, an unadmitted mode, an unbridgeable type, a
+/// missing null adapter, a refused context or a declaration that disagrees
+/// with its selected contract each produce a diagnostic and no module.
+///
+/// A module accepted here is checked twice over the same lowering: the core
+/// extern checker validates the call sites and the adapter, and every
+/// established sequential pass validates the surrounding custody, resource
+/// flow and effect obligations with the declared extern summaries supplied as
+/// call-site assumptions. Neither check is derived from the other.
+fn compile_extern_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_extern;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free extern-calling modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let called = source_extern::called_extern_names(parsed);
+    let first_span = called
+        .values()
+        .copied()
+        .next()
+        .unwrap_or(Span { start: 0, end: 0 });
+    let Some(sources) = options.extern_contracts.as_ref() else {
+        return Err(vec![map_raw_diagnostic(
+            "Q023",
+            SemanticPass::ExternCall,
+            first_span,
+            "calling a declared extern function requires an explicit extern contract selection; there is no default environment".into(),
+            ranges,
+        )]);
+    };
+    let contracts = qcore_contract::contract_loader::load_resource_contract_sources(sources)
+        .map_err(|error| {
+            vec![map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                first_span,
+                format!("the selected extern contract environment does not load: {error}"),
+                ranges,
+            )]
+        })?;
+    // The environment is reloaded from its own retained text before use, so a
+    // selection that no longer reproduces itself is refused rather than trusted.
+    qcore_contract::contract_loader::check_source_assumptions(&contracts).map_err(|error| {
+        vec![map_raw_diagnostic(
+            "Q027",
+            SemanticPass::ExternCall,
+            first_span,
+            format!("the selected extern contracts differ from their declared sources: {error}"),
+            ranges,
+        )]
+    })?;
+    let signatures =
+        qcore_contract::extern_bridge::declared_signatures(&contracts).map_err(|error| {
+            vec![map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                first_span,
+                error,
+                ranges,
+            )]
+        })?;
+
+    let declarations = source_extern::source_extern_declarations(parsed)
+        .into_iter()
+        .map(|declaration| (declaration.name.clone(), declaration))
+        .collect::<BTreeMap<_, _>>();
+    let mut diagnostics = Vec::new();
+    let mut callees = BTreeMap::new();
+    for (name, span) in &called {
+        let Some(declaration) = declarations.get(name) else {
+            continue;
+        };
+        if declaration.has_inline_contract {
+            diagnostics.push(map_raw_diagnostic(
+                "Q027",
+                SemanticPass::ExternCall,
+                declaration.span,
+                format!(
+                    "`{name}` carries an inline `contract {{ … }}` block, which this profile does not enforce; the contract must come from the explicit selection"
+                ),
+                ranges,
+            ));
+            continue;
+        }
+        let (Some(contract), Some(signature)) = (contracts.contract(name), signatures.get(name))
+        else {
+            diagnostics.push(map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                *span,
+                format!(
+                    "`{name}` has no admitted declared contract in the selected extern contract environment"
+                ),
+                ranges,
+            ));
+            continue;
+        };
+        if declaration.parameter_types != signature.parameter_types
+            || declaration.result_type != signature.result_type
+            || declaration.parameter_names != signature.parameter_names
+        {
+            diagnostics.push(map_raw_diagnostic(
+                "Q027",
+                SemanticPass::ExternCall,
+                declaration.span,
+                format!(
+                    "`{name}` is declared `({}) -> {}` here but `({}) -> {}` in {}",
+                    declaration.parameter_types.join(", "),
+                    declaration.result_type,
+                    signature.parameter_types.join(", "),
+                    signature.result_type,
+                    signature.module
+                ),
+                ranges,
+            ));
+            continue;
+        }
+        let declared =
+            match qcore_contract::extern_bridge::declared_contract(name, signature, contract) {
+                Ok(declared) => declared,
+                Err(error) => {
+                    diagnostics.push(map_raw_diagnostic(
+                        "Q024",
+                        SemanticPass::ExternCall,
+                        declaration.span,
+                        error,
+                        ranges,
+                    ));
+                    continue;
+                }
+            };
+        match extern_call::bridge_contract(name, &declared) {
+            Ok(callee) => {
+                callees.insert(name.clone(), callee);
+            }
+            Err(refusal) => diagnostics.push(map_raw_diagnostic(
+                "Q024",
+                SemanticPass::ExternCall,
+                declaration.span,
+                format!("`{name}` is not callable in `source.extern-call.v1`: {refusal}"),
+                ranges,
+            )),
+        }
+    }
+    if !diagnostics.is_empty() {
+        return Err(diagnostics);
+    }
+
+    let lowered =
+        source_extern::lower_source_extern(parsed, typed, &entry, &callees).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let certificate = extern_call::check_extern_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::ExternCall,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    extern_call::recheck_extern_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q027",
+            SemanticPass::ExternCall,
+            lowered.scope_span,
+            format!("the extern-call certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let error_names = lowered.program.errors.clone();
+    let sequential = qcore_frontend::whole_program::check_whole_program_with_externs(
+        typed,
+        &ErrorDeclarations::new(error_names.iter().cloned()),
+        vec![lowered.semantics.clone()],
+        &lowered.extern_summaries,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
+    };
+    let reference_observation =
+        extern_c_emit::interpret_extern_program(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q500",
+                    format!("the extern-call reference execution refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+    let emission =
+        extern_c_emit::emit_extern_c11(&lowered.program, &certificate).map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q500",
+                format!("the extern-call backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::ExternCalls(Box::new(CheckedExternModule {
+            lowered,
+            certificate,
+            sequential,
+        })),
+        execution_profile: SourceExecutionProfile::ExternCallsV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the extern call trace, not
+        // the sequential cleanup observation this field carries.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
     })
 }
 
@@ -1412,6 +1719,7 @@ fn compile_mutex_source(
         // A reference observation for this route is the mutex trace, not the
         // sequential cleanup observation this field carries.
         reference_observation: None,
+        extern_observation: None,
     })
 }
 

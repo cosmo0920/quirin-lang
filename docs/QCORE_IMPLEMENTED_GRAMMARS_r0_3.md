@@ -78,7 +78,7 @@ BOOL          = "true" | "false" ;
 
 `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
 
-`qcore_acquire` and `qcore_check` take literal Boolean controls in this profile. They are model operations, not general malloc calls or arbitrary runtime conditions. General expressions, argument-taking calls, indirect calls, calls through a shadowing local, calls to extern declarations, nested source control flow, source lambdas and source threading are not accepted by this driver body path. Local `use` annotations are explicitly rejected here rather than ignored.
+`qcore_acquire` and `qcore_check` take literal Boolean controls in this profile. They are model operations, not general malloc calls or arbitrary runtime conditions. General expressions, argument-taking calls, indirect calls, calls through a shadowing local, calls to extern declarations, nested source control flow, source lambdas and source threading are not accepted by this driver body path. Local `use` annotations are explicitly rejected here rather than ignored. A bounded extern call is accepted by the separate `source.extern-call.v1` path of §G02d, which is selected before this one and does not widen it: this body path still refuses every call whose target is not a zero-parameter source function.
 
 A direct call must resolve to a zero-parameter source function. For C emission, it must also have supported acyclic call structure and an interpreted observation with no resource trace, a normal result, and no owned payload. It is not enough that the function's aggregate net resource change is zero. Declared user effects and general contract predicates are not comprehensively checked by this slice.
 
@@ -615,6 +615,63 @@ acquisition) is checked but has **no native rendering**: the backend emits one
 thread, so the module is published with no C rather than with C the backend did
 not produce. See [the T03 record](reports/remaining-t03/README.md) and
 [the T03-F record](reports/remaining-t03-f/README.md).
+
+## G02d. Bounded extern calls
+
+`source.extern-call.v1`. Selected when a source file declares an `extern fn`
+and a function body calls it, after the concurrent routes: a module that also
+spawns or locks stays with those routes and keeps their existing refusals.
+
+```ebnf
+extern_module = "import", "std.extern", ";",
+                { error_decl | extern_decl | entry } ;
+extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
+                "->", ABI_TYPE, ";" ;
+entry         = "fn", NAME, "(", ")", "->", "unit",
+                [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+                "{", { extern_stmt }, "}" ;
+extern_stmt   = acquisition | plain_call | "return", ";" ;
+acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
+                "succeeds", BOOL, "else", "raise", ERROR_NAME, ";" ;
+plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
+arg           = [ "-" ], NAT | NAME | "move", NAME ;
+EFFECT        = "io" | "alloc" | "mut" ;
+```
+
+`ABI_TYPE` is exactly the resource-contract v1 projection of §G05. The callee's
+contract is **not** written here: it comes from an explicit `CompileOptions`
+selection loaded by the same total-or-reject loader, and an inline
+`contract { … }` block on a called extern declaration is refused (`Q027`) rather
+than enforced. The source declaration's parameter names, parameter types and
+result type must equal the selected module's, or the call is refused.
+
+Callable C04 shapes are exactly: scalars by value (data only), `resource_borrowed`
+on `ptr<mut, u8>` or `ptr<const, u8>`, `resource_consumed(p, nonnull)` on
+`ptr<mut, u8>`, `resource_return_none()` with a `unit` or scalar result, and
+`resource_return_owned(nullable)` returning `ptr<mut, u8>`. `resource_owned`,
+`resource_released`, `resource_out`, `resource_stored`, `resource_removed`,
+`resource_return_reallocated`, a nonnull owned return, a nullable consumed
+parameter, a custody mode on a scalar, a borrowed `ptr<mut, ptr<mut, u8>>` and a
+consumed `ptr<const, u8>` are each refused by their own name (`Q024`).
+
+`succeeds BOOL` is the fixture's literal outcome control, exactly as in
+`qcore_acquire`/`qcore_check`: a controlled model operation, not a claim about
+when a production allocator fails. Both arms are exercisable, and the emitted C
+compares the real result's nullness against the declared control and exits with
+status 70 if they disagree. The `else raise ERROR;` arm is mandatory for a
+nullable owned return (`Q025`); the bounded v1 adapter admits it only where no
+acquired identity is live, because releasing custody on an extern error arm is
+not in this profile.
+
+The derived effect row is `{io}`, plus `alloc` exactly for an owned return and
+`mut` exactly when some parameter is a `mut` pointer; the entry's declared row
+must admit it, and an absent row therefore admits no extern call at all. Length
+and extent are not transported, so no declaration here constrains how many bytes
+a callee touches. Custody liveness, leaks and resource flow are checked by the
+established sequential passes over the same lowering, not by a second extern
+code. Emission declares each callee from the ABI table and calls it directly;
+which object file supplies the symbol is the builder's premise. See
+[the extern-call record](reports/extern-call-v1/README.md).
 
 ## G03. Source parameter usage grades
 

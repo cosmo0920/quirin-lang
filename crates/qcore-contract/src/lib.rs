@@ -8,6 +8,7 @@
 
 pub mod contract_loader;
 pub mod contract_observation;
+pub mod extern_bridge;
 pub mod profile_loader;
 
 mod profile_json;

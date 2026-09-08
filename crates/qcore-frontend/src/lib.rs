@@ -11,6 +11,7 @@ pub mod lexer;
 pub mod module_imports;
 pub mod parser;
 pub mod quant_index;
+pub mod source_extern;
 pub mod source_mutex;
 pub mod source_tasks;
 
@@ -28,4 +29,5 @@ pub mod whole_program;
 pub use whole_program::{
     CallSite, CheckedFunction, CheckedProgram, FunctionSemantics,
     FunctionSummary as WholeFunctionSummary, ParameterOwnership, check_whole_program,
+    check_whole_program_with_externs,
 };

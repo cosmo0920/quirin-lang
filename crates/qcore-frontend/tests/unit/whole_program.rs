@@ -79,6 +79,7 @@ fn checks_an_acyclic_whole_program_and_preserves_cfg_observation() {
                 vec![CallSite {
                     callee: leaf,
                     arguments: Vec::new(),
+                    result: None,
                     span: call_span(&source, "root"),
                 }],
             ),
@@ -126,6 +127,7 @@ fn recursive_scc_requires_an_explicit_contract() {
             vec![CallSite {
                 callee: symbol,
                 arguments: Vec::new(),
+                result: None,
                 span: call_span(&source, "looped"),
             }],
         )],
@@ -145,6 +147,7 @@ fn recursive_post_fixed_summary_is_accepted() {
         vec![CallSite {
             callee: symbol,
             arguments: Vec::new(),
+            result: None,
             span: call_span(&source, "looped"),
         }],
     );
@@ -170,6 +173,7 @@ fn recursive_summary_must_cover_one_unfolding() {
         vec![CallSite {
             callee: symbol,
             arguments: Vec::new(),
+            result: None,
             span: call_span(&source, "looped"),
         }],
     );
@@ -204,6 +208,7 @@ fn consumed_parameter_transfers_the_same_identity_across_a_call() {
         vec![CallSite {
             callee: sink,
             arguments: vec![7],
+            result: None,
             span: call_span(&source, "root"),
         }],
     );
@@ -237,6 +242,7 @@ fn returned_parameter_preserves_identity_for_the_caller() {
         vec![CallSite {
             callee: inspect,
             arguments: vec![9],
+            result: None,
             span: call_span(&source, "root"),
         }],
     );
@@ -267,6 +273,7 @@ fn owned_call_parameters_cannot_alias_one_identity() {
         vec![CallSite {
             callee: pair,
             arguments: vec![3, 3],
+            result: None,
             span: call_span(&source, "root"),
         }],
     );
@@ -317,6 +324,7 @@ fn callee_effects_must_fit_the_callers_declared_row() {
         vec![CallSite {
             callee: io,
             arguments: Vec::new(),
+            result: None,
             span: call_span(&source, "root"),
         }],
     );

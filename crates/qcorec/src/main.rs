@@ -93,7 +93,13 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 .map_err(|error| format!("{}: {error}", path.display()))
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let options = CompileOptions { entry };
+    // The CLI selects no extern contract environment. A source file that calls
+    // a declared extern function is therefore refused at `Q023` through this
+    // entry point; a selection flag is a named follow-on, not a default.
+    let options = CompileOptions {
+        entry,
+        extern_contracts: None,
+    };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
         compile_files_with_registry(&files, &options, &registry)
