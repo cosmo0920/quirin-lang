@@ -4,7 +4,7 @@ use crate::chunk_lifecycle::{
 };
 
 fn import(body: &str) -> Vec<ChunkSourceResult> {
-    import_chunk_source(
+    import_chunk_source_with_helpers(
         &C11TranslationUnit {
             source: &format!(
                 "struct flb_input_chunk {{ int busy; int other; }};\n\
@@ -13,6 +13,7 @@ fn import(body: &str) -> Vec<ChunkSourceResult> {
             ..Default::default()
         },
         PINNED_FLUENT_BIT_REVISION,
+        &[],
     )
     .unwrap()
 }
@@ -163,19 +164,19 @@ fn source_configuration_and_parameter_qualifiers_are_not_erased() {
         ..Default::default()
     };
     assert!(matches!(
-        import_chunk_source(&unit, PINNED_FLUENT_BIT_REVISION)
+        import_chunk_source_with_helpers(&unit, PINNED_FLUENT_BIT_REVISION, &[])
             .unwrap()
             .as_slice(),
         [ChunkSourceResult::Unknown { .. }]
     ));
     unit.definitions.push("INCLUDE_F".into());
     assert!(matches!(
-        import_chunk_source(&unit, PINNED_FLUENT_BIT_REVISION)
+        import_chunk_source_with_helpers(&unit, PINNED_FLUENT_BIT_REVISION, &[])
             .unwrap()
             .as_slice(),
         [ChunkSourceResult::Summary(_)]
     ));
-    assert!(import_chunk_source(&unit, "other revision").is_err());
+    assert!(import_chunk_source_with_helpers(&unit, "other revision", &[]).is_err());
     assert!(matches!(
         import("int f(volatile struct flb_input_chunk *p) { return p->busy; }").as_slice(),
         [ChunkSourceResult::Unknown { .. }]
@@ -214,12 +215,13 @@ fn bitfields_and_volatile_members_cannot_receive_boolean_field_summaries() {
             "struct flb_input_chunk {{ {declaration}; }};\n\
              int f(struct flb_input_chunk *p) {{ p->busy = 1; return p->busy; }}"
         );
-        let results = import_chunk_source(
+        let results = import_chunk_source_with_helpers(
             &C11TranslationUnit {
                 source: &source,
                 ..Default::default()
             },
             PINNED_FLUENT_BIT_REVISION,
+            &[],
         )
         .unwrap();
         assert!(
@@ -251,7 +253,7 @@ fn unlock_with(helper: &ChunkFrameSummary) -> ChunkSourceSummary {
         ..Default::default()
     };
     assert!(matches!(
-        import_chunk_source(&unit, PINNED_FLUENT_BIT_REVISION)
+        import_chunk_source_with_helpers(&unit, PINNED_FLUENT_BIT_REVISION, &[])
             .unwrap()
             .as_slice(),
         [ChunkSourceResult::Unknown { .. }]

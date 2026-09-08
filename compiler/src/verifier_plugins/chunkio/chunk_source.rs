@@ -119,13 +119,10 @@ pub enum ChunkSourceResult {
 /// Report every discovered main-source function, including definitions absent
 /// after preprocessing. The revision is a caller assertion; the external audit
 /// additionally verifies Git identity and a clean source tree.
-pub fn import_chunk_source(
-    unit: &C11TranslationUnit<'_>,
-    source_revision: &str,
-) -> Result<Vec<ChunkSourceResult>, String> {
-    import_chunk_source_with_helpers(unit, source_revision, &[])
-}
-
+///
+/// P09-G removed the zero-helper convenience overload `import_chunk_source`;
+/// call this with an empty helper slice instead. Parity was measured first and
+/// is archived in `docs/reports/remaining-p09-routes/g-route-parity.json`.
 pub fn import_chunk_source_with_helpers(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,

@@ -1,5 +1,5 @@
 use super::*;
-use crate::chunk_source::{ChunkSourceResult, import_chunk_source};
+use crate::chunk_source::{ChunkSourceResult, import_chunk_source_with_helpers};
 use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
 use crate::legacy_c::C11TranslationUnit;
 
@@ -11,12 +11,13 @@ fn summary(body: &str) -> ChunkSourceSummary {
         "struct flb_input_chunk {{ int busy; }};\n\
          struct cio_chunk {{ int lock; }};\n{body}"
     );
-    let results = import_chunk_source(
+    let results = import_chunk_source_with_helpers(
         &C11TranslationUnit {
             source: &source,
             ..Default::default()
         },
         PINNED_FLUENT_BIT_REVISION,
+        &[],
     )
     .unwrap();
     let [ChunkSourceResult::Summary(summary)] = results.as_slice() else {
