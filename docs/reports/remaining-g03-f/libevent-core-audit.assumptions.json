@@ -1,0 +1,3113 @@
+{
+  "compile_database_sha256": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+  "compile_target_selection": {
+    "object_prefix": "CMakeFiles/event_core_static.dir/",
+    "residual_ambiguity": "still refused: two retained records for one file that differ in any other argument reject the audit",
+    "role": "declared narrowing of a multi-target compilation database; records whose `-o` output does not begin with this fragment were not read"
+  },
+  "compile_task_identity_version": 1,
+  "compile_tasks": [
+    {
+      "file": "buffer.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/buffer.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/buffer.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/buffer.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "a064327b6f7a034976c3f7e6d318def104a355900da72170a7ffec59f3b1b6a8",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "dc938263e2dfc80de5a3ceb2fd7aa9b593e6680a4e4eb91d80aac7644f4ab473",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/buffer.c"
+          }
+        }
+      },
+      "identity_sha256": "289c3ee4044e783916c10248a41e5e2fa13439b5b8b72ab98a596442c7694888",
+      "library": "libevent-core"
+    },
+    {
+      "file": "bufferevent.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/bufferevent.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "9816f3c242925231d450c6ab4cf06ad5740e545f92d434aaa8f7e6c77aa9a74b",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "a53f140ef9594f14d89aae614e9814e98d23ad10c21c9253938f2510504b3f9c",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent.c"
+          }
+        }
+      },
+      "identity_sha256": "b1cd7f54fd91e7433f63f2bcebb3e10356a082a2ebd62a51fa1c1b684b6db6c9",
+      "library": "libevent-core"
+    },
+    {
+      "file": "bufferevent_filter.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/bufferevent_filter.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_filter.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_filter.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "9d6953a70c736136a5b714396fad9d49de0f3a637e84607f3aa38db364982b8c",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "f7757b6133e2eb86d6ecb4cc750173b1d87e5c5c250462422885ac9320ef275a",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_filter.c"
+          }
+        }
+      },
+      "identity_sha256": "e649a837118767c34ef5e59ba41e3317c24979d7509cef81e97f1b546dab4d4e",
+      "library": "libevent-core"
+    },
+    {
+      "file": "bufferevent_pair.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/bufferevent_pair.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_pair.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_pair.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "28deb51642dc72bace3be366540b4ce61239a0ba697e325d18a719baee0d53e0",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "85730bf2534c29a3195b997c9dc8055f31bab8b3236fe1d4d579c90c06c0d510",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_pair.c"
+          }
+        }
+      },
+      "identity_sha256": "25e3a2517d6948a3d35b8764ee61d1fb4d382fef7291e9c8fcabe5b34bfee776",
+      "library": "libevent-core"
+    },
+    {
+      "file": "bufferevent_ratelim.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/bufferevent_ratelim.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_ratelim.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_ratelim.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "2054ea61b44142549207faa6fdea1290dc88a8cde027da787624a011f94d65a5",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "bb3507b5ece50d2d79dda8fadb1c542af37c094cd6f3f3137324e34b2a4cae94",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_ratelim.c"
+          }
+        }
+      },
+      "identity_sha256": "4823df18de2c9513d9c8ee67f30ad52e27491bd989ddcc3d63b02f43f8816bc0",
+      "library": "libevent-core"
+    },
+    {
+      "file": "bufferevent_sock.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/bufferevent_sock.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_sock.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_sock.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "68c0670faff88cd861007c06585e3bb7aa18cc5f67f06a58eebf1d8cd469569a",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "55c7541e0322fc54d015e0e73d7570aedd2d730ff2ab71a2d75551bebbc8b009",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/bufferevent_sock.c"
+          }
+        }
+      },
+      "identity_sha256": "144bd2f66f1cc260affd70d00683b77d7767298da9bcbe6459ad9ab415c81ba3",
+      "library": "libevent-core"
+    },
+    {
+      "file": "epoll.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/epoll.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/epoll.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/epoll.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "7669c1c34273737c940da94a75f7bb851c874fbbdbffa52c02143c4caa877eb6",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "0ec28d24574a7498673127107dcd429f4ef4c4f183bc78a110cfd5edbebc3311",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/epoll.c"
+          }
+        }
+      },
+      "identity_sha256": "ef4dc251b7a01d2a3cf779637ebe68442ea0d46670881650a922e0fedc1234cd",
+      "library": "libevent-core"
+    },
+    {
+      "file": "event.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/event.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/event.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/event.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "a9c10d102a109afe5b3481e7fd1336e5537b8e8dc9dcfeb993bfd6950adcc4ac",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/event.c"
+          }
+        }
+      },
+      "identity_sha256": "db03eee0294f2467552dcf99efd518a8efed2361dd61491bb3a2c70a0b10df59",
+      "library": "libevent-core"
+    },
+    {
+      "file": "evmap.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/evmap.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evmap.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evmap.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "9b5d1e2d77d85a919b3710d098cbf6060b31b92bde0edad9a158edde7b129fd3",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "3f54685d26c1a3429e3b2463f342d1b2ffd111d19947c28b7a2d8123d8fb025a",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evmap.c"
+          }
+        }
+      },
+      "identity_sha256": "aa449d3b40e3f8a10d7c61f662e1c604d92f6e590f78edf8b24636690da7d6e4",
+      "library": "libevent-core"
+    },
+    {
+      "file": "evthread.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/evthread.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evthread.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evthread.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "6da737d2616de9bf8d1a244576074f7d383ccea80047e07ab1efb8c55a637ec3",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "cbe4989c6af6be0063d8e0d1681d8c7442c56055b759d2fa0bdaeedf4d3798a2",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evthread.c"
+          }
+        }
+      },
+      "identity_sha256": "28e1edd1b7b944686d152ed60b71d8a6079e15dec57839881bde62368b0e2b69",
+      "library": "libevent-core"
+    },
+    {
+      "file": "evutil.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/evutil.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "878e4cd494b64515a33d1eab7f38be2351809628e078d1ffadb71f76777e6a40",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "2273f20507eda04ee11cb747567d184abdb9b25f21a173743e6b4eec73fa0915",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil.c"
+          }
+        }
+      },
+      "identity_sha256": "3683af318980cbd991f7c65eea32b71834b5c4f8926cf3c947ead92a41dfcd1e",
+      "library": "libevent-core"
+    },
+    {
+      "file": "evutil_rand.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/evutil_rand.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_rand.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_rand.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "fe8c970577da7daba95d0fdfb4ea22632f98a0ad96dfa5f885a0218be52a179e",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "fb79af93eae3429f550a1d337c7a1ec3cfd4fb9895e5ecaad09081fecff9e7fd",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_rand.c"
+          }
+        }
+      },
+      "identity_sha256": "b0f7ba8f7d7dfd9a326d363a4139964aae49a77bcafac4e612cf31719184efc5",
+      "library": "libevent-core"
+    },
+    {
+      "file": "evutil_time.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/evutil_time.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_time.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_time.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "9302fb0d572e981dfae97655cf87ef46b53c43cf2ecb447d90f48b0bf5d0f945",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "dc1ee3286b5de7a119709e6c85681fd5fd64400b14f3e6a06cf9456f145a3f31",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/evutil_time.c"
+          }
+        }
+      },
+      "identity_sha256": "5fd3c59939908e40d40373b865a86dbad2b57b035b30b7f968a6fa4b73e78216",
+      "library": "libevent-core"
+    },
+    {
+      "file": "listener.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/listener.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/listener.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/listener.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "81622a54c83430fb6cf850682729e6467f22e97e5bd5d313c5869f163d3ed823",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "a8e440de065fa780ca865d511e34f53bc06b98c17e82203d9f00fe77261a6473",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/listener.c"
+          }
+        }
+      },
+      "identity_sha256": "cdefad6db59d6fee9406463956ae38af4d50573ecb818a6d93d80982a8962bc7",
+      "library": "libevent-core"
+    },
+    {
+      "file": "log.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/log.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/log.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/log.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "e8ff1df882ddd8bf28227d539e44dc0e42576795fcec4c3a94290055c7085577",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "ac290c8640fa1f8bb75380a5cb721b403bba600a91756de4e5e0b60f326374e7",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/log.c"
+          }
+        }
+      },
+      "identity_sha256": "864484e6e24698d534a3300c599c827bc6ea1da0716ea980bb03eee9eabe98ee",
+      "library": "libevent-core"
+    },
+    {
+      "file": "poll.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/poll.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/poll.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/poll.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "632eee06f8b28bc7cecd1cadb4adafe50b5d52c7545d8362d80c6e69f1d310c4",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "99f22a7f90c8fbf8139900971161101d86118d6c6cd852139da8d7e8b82da98c",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/poll.c"
+          }
+        }
+      },
+      "identity_sha256": "8be2d804cc77455aae67476db4cf193062957e09f9b49f58ce1f1647c0293140",
+      "library": "libevent-core"
+    },
+    {
+      "file": "select.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/select.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/select.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/select.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "3086097d58200d3be8677ecf7f086404868049fd19c45c0cdbf7b7e433cf4162",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "77d60f7be70e64dbeb2f6da39367f319782a1c7a4b5dc86a27bb128a5c1884fb",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/select.c"
+          }
+        }
+      },
+      "identity_sha256": "445873830197a2fe79647dc3316abde41a41a704aadc5d3cf1512cb68a31bfd9",
+      "library": "libevent-core"
+    },
+    {
+      "file": "signal.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/signal.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signal.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signal.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "ecf8098334e40074383cc540667664dc35ca04e173e5c5e35e3ff68c83ac459a",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "cf98f91c17991c4005c1bc784d1f329541be3a3babb4fc05b966d1c21dc86883",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signal.c"
+          }
+        }
+      },
+      "identity_sha256": "f6e59b68ed66e8ad967ae77f3f4e2a08e1379d264ef8a2ccff15ce63bf9cd97e",
+      "library": "libevent-core"
+    },
+    {
+      "file": "signalfd.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/signalfd.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signalfd.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signalfd.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "afc118a7be5a86f51326b514555f766f46a19dee441f4e19881756c883c953a6",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "e2c905bc8f24e1f06942d46852c7653aa1b9e0bbab2338ed9c902a6b8734b1bb",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/signalfd.c"
+          }
+        }
+      },
+      "identity_sha256": "95aa2ba05738ee46f0d02815d9ceb7f1aac9128470a134f1807b617dcbbd035c",
+      "library": "libevent-core"
+    },
+    {
+      "file": "strlcpy.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/strlcpy.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/strlcpy.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/strlcpy.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "4239e5e60e684018955b658c4d19c15c58ab206bdff39feff9bcc593d27efd9b",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "930f9cba89eeec89593875cec9d8c959474feef2a5b5d204a3e49dc7e191484d",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/strlcpy.c"
+          }
+        }
+      },
+      "identity_sha256": "5bff69e71dc68c53e148cfd3ab71dc8ad53649f2cc2906b9d158698b2a7549be",
+      "library": "libevent-core"
+    },
+    {
+      "file": "watch.c",
+      "identity": {
+        "arguments": [
+          "/usr/bin/clang",
+          "-DHAVE_CONFIG_H",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat",
+          "-I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent",
+          "-Wall",
+          "-Wextra",
+          "-Wno-unused-parameter",
+          "-Wstrict-aliasing",
+          "-Wstrict-prototypes",
+          "-Wundef",
+          "-fno-strict-aliasing",
+          "-Wmissing-prototypes",
+          "-Winit-self",
+          "-Wmissing-field-initializers",
+          "-Wdeclaration-after-statement",
+          "-Waddress",
+          "-Woverride-init",
+          "-Wwrite-strings",
+          "-Wno-unused-function",
+          "-Wno-pragmas",
+          "-Wvla",
+          "-Wno-void-pointer-to-enum-cast",
+          "-O3",
+          "-DNDEBUG",
+          "-std=gnu17",
+          "-o",
+          "CMakeFiles/event_core_static.dir/watch.c.o",
+          "-c",
+          "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/watch.c"
+        ],
+        "compiler": {
+          "program": "clang",
+          "target": "x86_64-pc-linux-gnu",
+          "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+        },
+        "declared_driver": "/usr/bin/clang",
+        "definitions": [],
+        "dependencies": {
+          "compile_database": "650c111166e0d22f3a1de52f6314f551e45595a063b3ad6cf205c208f64727b0",
+          "resource_contract_manifest": "cd2ea1cb541216508f1418bffdddb0dceed39eee62f8efc36d4ba636c804dace",
+          "source_profile": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434"
+        },
+        "dialect": "gnu17",
+        "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+        "file": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/watch.c",
+        "function_scope": "main_source_definitions",
+        "include_paths": [],
+        "preprocessed_source_sha256": "dd9adf0874e931978cc2c5fe87ab962c370144ef734a76e307a2070b4ffd2cec",
+        "preprocessing_error": null,
+        "preprocessor_options": [
+          {
+            "Define": "HAVE_CONFIG_H"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/include"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/compat"
+          },
+          {
+            "Include": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent"
+          },
+          {
+            "FrontendFlag": "AllWarnings"
+          },
+          {
+            "FrontendFlag": "ExtraWarnings"
+          },
+          {
+            "FrontendFlag": "NoUnusedParameter"
+          },
+          {
+            "FrontendFlag": "StrictAliasingWarnings"
+          },
+          {
+            "FrontendFlag": "StrictPrototypes"
+          },
+          {
+            "FrontendFlag": "UndefinedIdentifierWarnings"
+          },
+          {
+            "FrontendFlag": "NoStrictAliasing"
+          },
+          {
+            "FrontendFlag": "MissingPrototypes"
+          },
+          {
+            "FrontendFlag": "InitSelf"
+          },
+          {
+            "FrontendFlag": "MissingFieldInitializers"
+          },
+          {
+            "FrontendFlag": "DeclarationAfterStatement"
+          },
+          {
+            "FrontendFlag": "AddressComparisons"
+          },
+          {
+            "FrontendFlag": "OverrideInit"
+          },
+          {
+            "FrontendFlag": "WriteStrings"
+          },
+          {
+            "FrontendFlag": "NoUnusedFunction"
+          },
+          {
+            "FrontendFlag": "NoPragmas"
+          },
+          {
+            "FrontendFlag": "VariableLengthArrays"
+          },
+          {
+            "FrontendFlag": "NoVoidPointerToEnumCast"
+          },
+          {
+            "FrontendFlag": {
+              "Optimization": "Level3"
+            }
+          },
+          {
+            "Define": "NDEBUG"
+          }
+        ],
+        "raw_source_sha256": "efdf88f5b5eaab14db8e97c3dfef60d2c890a3e66b28d535f0c83aacb3614b50",
+        "schema_version": 1,
+        "source_input": {
+          "DeclaredFile": {
+            "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/build/cycle19/libevent-clang-build",
+            "spelled": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/third_party/libevent/watch.c"
+          }
+        }
+      },
+      "identity_sha256": "b8c0a94b3bab5596f1beafd12466eb1a91fa55c17e0327c194f21ffbb1d58ac7",
+      "library": "libevent-core"
+    }
+  ],
+  "contract_manifest": "{\n  \"schema_version\": 1,\n  \"modules\": [\n    \"libevent_memory.qcore\"\n  ]\n}\n",
+  "contracts": {
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a819c36ccc835c1d4/contract/profiles/libevent-core/libevent_memory.qcore": "module contract;\n\n// Declared resource-projection assumptions for the pinned `libevent-core`\n// source set, vocabulary version 1. These are trusted declarations about the\n// documented Libevent allocator API (`mm-internal.h`); they do not verify any\n// Libevent body and they promote nothing. Borrowed scalar/opaque arguments\n// carry no resource custody requirement. Libevent's `mm_*` names are macros\n// that expand to these external symbols before the gateway sees them.\n\nextern fn event_mm_malloc_(sz: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(sz);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn event_mm_calloc_(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn event_mm_strdup_(str: ptr<const, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn event_mm_realloc_(p: ptr<mut, u8>, sz: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_owned(p, nullable);\n    ensures normal resource_borrowed(sz);\n    ensures normal resource_return_reallocated(p, nullable);\n};\n\nextern fn event_mm_free_(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nullable);\n    ensures normal resource_return_none();\n};\n"
+  },
+  "profile": {
+    "pin.libevent": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "profile_digest": "2bd98177c3a57d741f15ec021dfb0b0e6b02a3642e1b9ba0559b01704eacd434",
+    "schema_version": "2",
+    "source_set": "libevent-core",
+    "trust": "declared source-set assumptions, not verified upstream behavior"
+  },
+  "schema_version": 1,
+  "scope": "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional",
+  "source_sha256": {
+    "libevent-core/buffer.c": "dc938263e2dfc80de5a3ceb2fd7aa9b593e6680a4e4eb91d80aac7644f4ab473",
+    "libevent-core/bufferevent.c": "a53f140ef9594f14d89aae614e9814e98d23ad10c21c9253938f2510504b3f9c",
+    "libevent-core/bufferevent_filter.c": "f7757b6133e2eb86d6ecb4cc750173b1d87e5c5c250462422885ac9320ef275a",
+    "libevent-core/bufferevent_pair.c": "85730bf2534c29a3195b997c9dc8055f31bab8b3236fe1d4d579c90c06c0d510",
+    "libevent-core/bufferevent_ratelim.c": "bb3507b5ece50d2d79dda8fadb1c542af37c094cd6f3f3137324e34b2a4cae94",
+    "libevent-core/bufferevent_sock.c": "55c7541e0322fc54d015e0e73d7570aedd2d730ff2ab71a2d75551bebbc8b009",
+    "libevent-core/epoll.c": "0ec28d24574a7498673127107dcd429f4ef4c4f183bc78a110cfd5edbebc3311",
+    "libevent-core/event.c": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346",
+    "libevent-core/evmap.c": "3f54685d26c1a3429e3b2463f342d1b2ffd111d19947c28b7a2d8123d8fb025a",
+    "libevent-core/evthread.c": "cbe4989c6af6be0063d8e0d1681d8c7442c56055b759d2fa0bdaeedf4d3798a2",
+    "libevent-core/evutil.c": "2273f20507eda04ee11cb747567d184abdb9b25f21a173743e6b4eec73fa0915",
+    "libevent-core/evutil_rand.c": "fb79af93eae3429f550a1d337c7a1ec3cfd4fb9895e5ecaad09081fecff9e7fd",
+    "libevent-core/evutil_time.c": "dc1ee3286b5de7a119709e6c85681fd5fd64400b14f3e6a06cf9456f145a3f31",
+    "libevent-core/listener.c": "a8e440de065fa780ca865d511e34f53bc06b98c17e82203d9f00fe77261a6473",
+    "libevent-core/log.c": "ac290c8640fa1f8bb75380a5cb721b403bba600a91756de4e5e0b60f326374e7",
+    "libevent-core/poll.c": "99f22a7f90c8fbf8139900971161101d86118d6c6cd852139da8d7e8b82da98c",
+    "libevent-core/select.c": "77d60f7be70e64dbeb2f6da39367f319782a1c7a4b5dc86a27bb128a5c1884fb",
+    "libevent-core/signal.c": "cf98f91c17991c4005c1bc784d1f329541be3a3babb4fc05b966d1c21dc86883",
+    "libevent-core/signalfd.c": "e2c905bc8f24e1f06942d46852c7653aa1b9e0bbab2338ed9c902a6b8734b1bb",
+    "libevent-core/strlcpy.c": "930f9cba89eeec89593875cec9d8c959474feef2a5b5d204a3e49dc7e191484d",
+    "libevent-core/watch.c": "efdf88f5b5eaab14db8e97c3dfef60d2c890a3e66b28d535f0c83aacb3614b50"
+  }
+}

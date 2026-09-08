@@ -1,0 +1,121 @@
+  libevent-core/buffer.c: Unknown (101/103): resource projection unresolved: 1097 unsupported operation(s), 100 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=100, unsupported=1097
+    APPEND_CHAIN: preprocessed line 5038: unsupported: indirect memory access is outside the resource projection
+    APPEND_CHAIN: preprocessed line 5038: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    APPEND_CHAIN: preprocessed line 5039: unsupported: indirect memory access is outside the resource projection
+    1194 more diagnostic(s); full inventory in optional resource report
+  libevent-core/bufferevent.c: Unknown (54/55): resource projection unresolved: 473 unsupported operation(s), 14 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=14, unsupported=473
+    bufferevent_add_event_: preprocessed line 5012: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    bufferevent_add_event_: preprocessed line 5013: unsupported: unmodeled call, aggregate or indirect access in return expression
+    bufferevent_add_event_: preprocessed line 5015: unsupported: unmodeled call, aggregate or indirect access in return expression
+    484 more diagnostic(s); full inventory in optional resource report
+  libevent-core/bufferevent_filter.c: Unsafe (19/19)
+    resource diagnostics: leak=1, unknown_alias=13, unsupported=144
+    be_filter_ctrl: preprocessed line 3299: unsupported: call to uncontracted function `upcast`
+    be_filter_ctrl: preprocessed line 3300: unsupported: indirect memory access is outside the resource projection
+    be_filter_ctrl: preprocessed line 3304: unsupported: call to uncontracted function `upcast`
+    155 more diagnostic(s); full inventory in optional resource report
+  libevent-core/bufferevent_pair.c: Unknown (14/14): resource projection unresolved: 96 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=96
+    be_pair_destruct: preprocessed line 2958: unsupported: call to uncontracted function `upcast`
+    be_pair_destruct: preprocessed line 2959: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    be_pair_destruct: preprocessed line 2960: unsupported: indirect memory access is outside the resource projection
+    96 more diagnostic(s); full inventory in optional resource report
+  libevent-core/bufferevent_ratelim.c: Unsafe (44/44)
+    resource diagnostics: leak=2, unknown_alias=19, unsupported=406
+    bev_group_random_element_: preprocessed line 4444: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    bev_group_random_element_: preprocessed line 4446: unsupported: C operator `sizeof` requires type/operand analysis
+    bev_group_random_element_: preprocessed line 4447: unsupported: indirect memory access is outside the resource projection
+    424 more diagnostic(s); full inventory in optional resource report
+  libevent-core/bufferevent_sock.c: Unknown (21/21): resource projection unresolved: 183 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=12, unsupported=183
+    be_socket_ctrl: preprocessed line 3898: unsupported: indirect memory access is outside the resource projection
+    be_socket_ctrl: preprocessed line 3901: unsupported: indirect memory access is outside the resource projection
+    be_socket_destruct: preprocessed line 3825: unsupported: call to uncontracted function `__builtin_offsetof`
+    192 more diagnostic(s); full inventory in optional resource report
+  libevent-core/epoll.c: Unknown (10/10): resource projection unresolved: 93 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=93
+    change_to_string: preprocessed line 4694: unsupported: unrecognized assignment destination
+    close_epoll_handle: preprocessed line 4621: unsupported: call to uncontracted function `close`
+    epoll_apply_changes: preprocessed line 4777: unsupported: indirect memory access is outside the resource projection
+    95 more diagnostic(s); full inventory in optional resource report
+  libevent-core/event.c: Unknown (172/174): resource projection unresolved: 1230 unsupported operation(s), 87 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=87, unsupported=1230
+    clear_time_cache: preprocessed line 4249: unsupported: indirect memory access is outside the resource projection
+    common_timeout_callback: preprocessed line 4962: unknown_alias: unresolved resource identity `arg`
+    common_timeout_callback: preprocessed line 4963: unsupported: indirect memory access is outside the resource projection
+    1314 more diagnostic(s); full inventory in optional resource report
+  libevent-core/evmap.c: Unknown (15/17): resource projection unresolved: 104 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=104
+    evmap_io_active_: preprocessed line 3881: unsupported: indirect memory access is outside the resource projection
+    evmap_io_active_: preprocessed line 3884: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    evmap_io_active_: preprocessed line 3886: unsupported: indirect memory access is outside the resource projection
+    106 more diagnostic(s); full inventory in optional resource report
+  libevent-core/evthread.c: Unknown (18/29): resource projection unresolved: 104 unsupported operation(s), 15 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=15, unsupported=104
+    debug_cond_wait: preprocessed line 2526: unknown_alias: unresolved resource identity `lock_`
+    debug_cond_wait: preprocessed line 2527: unsupported: C operator `sizeof` requires type/operand analysis
+    debug_cond_wait: preprocessed line 2528: unsupported: indirect memory access is outside the resource projection
+    116 more diagnostic(s); full inventory in optional resource report
+  libevent-core/evutil.c: Unsafe (81/92)
+    resource diagnostics: leak=1, unknown_alias=42, unsupported=467
+    EVUTIL_TOLOWER_: preprocessed line 5513: unsupported: unmodeled call, aggregate or indirect access in return expression
+    EVUTIL_TOUPPER_: preprocessed line 5517: unsupported: unmodeled call, aggregate or indirect access in return expression
+    ai_find_protocol: preprocessed line 4801: unknown_alias: unresolved resource identity `ai`
+    507 more diagnostic(s); full inventory in optional resource report
+  libevent-core/evutil_rand.c: Unknown (8/8): resource projection unresolved: 3 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unsupported=3
+    ev_arc4random_buf: preprocessed line 2327: unsupported: call to uncontracted function `arc4random_buf`
+    evutil_secure_rng_get_bytes: preprocessed line 2333: unsupported: call to uncontracted function `ev_arc4random_buf`
+    evutil_secure_rng_init: preprocessed line 2312: unsupported: call to uncontracted function `arc4random`
+  libevent-core/evutil_time.c: Unknown (10/13): resource projection unresolved: 45 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=45
+    adjust_monotonic_time: preprocessed line 2436: unsupported: indirect memory access is outside the resource projection
+    adjust_monotonic_time: preprocessed line 2436: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    adjust_monotonic_time: preprocessed line 2436: unsupported: unmodeled expression may mutate a formal resource identity
+    44 more diagnostic(s); full inventory in optional resource report
+  libevent-core/listener.c: Unsafe (16/32)
+    resource diagnostics: leak=1, unknown_alias=4, unsupported=125
+    evconnlistener_disable: preprocessed line 3182: unsupported: indirect memory access is outside the resource projection
+    evconnlistener_disable: preprocessed line 3182: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    evconnlistener_disable: preprocessed line 3183: unsupported: indirect memory access is outside the resource projection
+    127 more diagnostic(s); full inventory in optional resource report
+  libevent-core/log.c: Unknown (14/14): resource projection unresolved: 41 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=5, unsupported=41
+    event_debugx_: preprocessed line 2352: unsupported: call to uncontracted function `__builtin_va_start`
+    event_debugx_: preprocessed line 2353: unsupported: call to uncontracted function `event_logv_`
+    event_debugx_: preprocessed line 2354: unsupported: call to uncontracted function `__builtin_va_end`
+    43 more diagnostic(s); full inventory in optional resource report
+  libevent-core/poll.c: Unknown (5/6): resource projection unresolved: 71 unsupported operation(s), 3 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=3, unsupported=71
+    poll_add: preprocessed line 3851: unsupported: indirect memory access is outside the resource projection
+    poll_add: preprocessed line 3853: unknown_alias: unresolved resource identity `idx_`
+    poll_add: preprocessed line 3855: unsupported: C operator `sizeof` requires type/operand analysis
+    71 more diagnostic(s); full inventory in optional resource report
+  libevent-core/select.c: Unknown (7/8): resource projection unresolved: 70 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=70
+    select_add: preprocessed line 3856: unsupported: indirect memory access is outside the resource projection
+    select_add: preprocessed line 3858: unsupported: C operator `sizeof` requires type/operand analysis
+    select_add: preprocessed line 3860: unsupported: unmodeled call, aggregate or indirect access in branch condition
+    69 more diagnostic(s); full inventory in optional resource report
+  libevent-core/signal.c: Unknown (13/13): resource projection unresolved: 106 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=7, unsupported=106
+    evsig_add: preprocessed line 3987: unsupported: indirect memory access is outside the resource projection
+    evsig_add: preprocessed line 3989: unsupported: C operator `sizeof` requires type/operand analysis
+    evsig_add: preprocessed line 3990: unsupported: indirect memory access is outside the resource projection
+    110 more diagnostic(s); full inventory in optional resource report
+  libevent-core/signalfd.c: Unknown (5/5): resource projection unresolved: 58 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=4, unsupported=58
+    sigfd_add: preprocessed line 3207: unsupported: indirect memory access is outside the resource projection
+    sigfd_add: preprocessed line 3208: unsupported: C operator `sizeof` requires type/operand analysis
+    sigfd_add: preprocessed line 3209: unsupported: C operator `sizeof` requires type/operand analysis
+    59 more diagnostic(s); full inventory in optional resource report
+  libevent-core/strlcpy.c: Unknown (0/1): C function `event_strlcpy_` was not found
+  libevent-core/watch.c: Unknown (6/6): resource projection unresolved: 24 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)
+    resource diagnostics: unknown_alias=2, unsupported=24
+    evwatch_base: preprocessed line 3593: unsupported: unmodeled call, aggregate or indirect access in return expression
+    evwatch_check_new: preprocessed line 3587: unsupported: braced initializer, expression, or declaration is not modeled
+    evwatch_check_new: preprocessed line 3588: unsupported: unmodeled call, aggregate or indirect access in return expression
+    23 more diagnostic(s); full inventory in optional resource report
+21 units: 0 Safe / 4 provisional Unsafe / 17 Unknown / 0 data-only / 0 gateway failures

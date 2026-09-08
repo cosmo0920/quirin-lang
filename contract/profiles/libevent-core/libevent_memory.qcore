@@ -1,0 +1,45 @@
+module contract;
+
+// Declared resource-projection assumptions for the pinned `libevent-core`
+// source set, vocabulary version 1. These are trusted declarations about the
+// documented Libevent allocator API (`mm-internal.h`); they do not verify any
+// Libevent body and they promote nothing. Borrowed scalar/opaque arguments
+// carry no resource custody requirement. Libevent's `mm_*` names are macros
+// that expand to these external symbols before the gateway sees them.
+
+extern fn event_mm_malloc_(sz: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(sz);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn event_mm_calloc_(count: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(count);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn event_mm_strdup_(str: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(str);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn event_mm_realloc_(p: ptr<mut, u8>, sz: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(p, nullable);
+    ensures normal resource_borrowed(sz);
+    ensures normal resource_return_reallocated(p, nullable);
+};
+
+extern fn event_mm_free_(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
