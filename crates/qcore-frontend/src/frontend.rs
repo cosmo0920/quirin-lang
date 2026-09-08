@@ -2222,6 +2222,22 @@ fn is_reserved_source_word(word: &str) -> bool {
             // `succeeds` cannot shadow the adapter form, exactly as the
             // mutex-guard keywords above are protected.
             | "succeeds"
+            // Card T08-EPOCH-SRC's flat-epoch accounting profile keywords
+            // (`source.epoch.bound.v1`): the scope marker, the declared
+            // overhead header and its measured-basis suffix, the per-task
+            // quantities and the work-as-time claim. Reserved for the same
+            // reason as every profile keyword above: they are clause words in
+            // an epoch declaration, never references to a binding. `share`,
+            // `bound`, `read`, `write`, `join`, `move`, `drop`, `close`,
+            // `thread`, `scope` and `as` are already reserved and are reused.
+            | "epoch"
+            | "overhead"
+            | "peak"
+            | "effort"
+            | "credit"
+            | "retained"
+            | "latency"
+            | "measured"
     )
 }
 

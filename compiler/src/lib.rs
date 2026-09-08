@@ -102,8 +102,8 @@ pub use concurrency::{
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
 };
 pub use driver::{
-    CheckedExternModule, CheckedMutexGuardModule, CheckedSourceModule, CompileOptions,
-    CompiledModule, CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic,
+    CheckedEpochModule, CheckedExternModule, CheckedMutexGuardModule, CheckedSourceModule,
+    CompileOptions, CompiledModule, CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic,
     SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile, compile_files,
     compile_files_with_registry, format_diagnostic,
 };

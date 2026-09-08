@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "card": "T08-EPOCH-SRC",
+  "generated": "2026-09-09",
+  "report": "docs/reports/remaining-t08-epoch-src/README.md",
+  "status": "PROPOSAL ONLY. docs/reevaluation/ct_manifest.json and docs/reviews/r0_3/acceptance.json are NOT edited by this card. The integrator's CT lane owns mapping; these rows are the measured evidence that lane needs.",
+  "purpose": "Per-stage executed evidence for the four source.epoch.bound.v1 CT cases this card unblocks (CT35, CT36, CT38, CT39), written in the shape of docs/reports/wave5-ct-integration/ct_stage_evidence.json so the CT lane can merge rather than re-measure.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control fixture's execution is recorded under `controls`, never as the case's own stage.",
+  "route": "source.epoch.bound.v1 (qcore_frontend::source_epoch -> qcore_core::epoch_accounting::check_flat_epoch), reached through compile_files; the checker is unedited by this card",
+  "manifest_changes_the_ct_lane_must_make_first": {
+    "stage_vocabulary.stages": [
+      "add `epoch_lowering` and `epoch_bound_check`, beside the existing per-profile pairs task_lowering/task_ledger_check and mutex_lowering/mutex_invariant_check"
+    ],
+    "stage_vocabulary.routes": [
+      "add route `epoch` = [parse, elaborate, epoch_lowering, epoch_bound_check, proof]"
+    ],
+    "compiler/tests/ct_corpus.rs": [
+      "extend STAGE_NAMES, STAGE_DEPTH and the pinned route table with the same two stage names and the `epoch` route (the harness cross-checks its own tables against the manifest vocabulary and refuses drift)",
+      "add a verdict mode for accepted epoch cases: `reject` already covers CT38/CT39, but CT35/CT36 are accepts whose evidence is exact certificate figures, not just a verdict — the runner must assert the figures named under `accepted_certificate` below or the mapping claims less than this card measured",
+      "move the fixture directories from compiler/tests/fixtures/epoch/CT3x/ to compiler/tests/fixtures/ct/CT3x/ (the harness fails closed when an unmapped case already owns a fixture directory, which is why they are parked outside it here)"
+    ]
+  },
+  "route_has_no_emission_or_execution_stage": "This profile is check-only: an admitted epoch is a checked accounting statement about declared shapes, so the driver publishes it with c_source: None and reference_observation: None. c_emission, native_execution, task/mutex/sequential stages and legacy_c_twin are structurally absent for the `epoch` route. native_sanitized and proof are never `not_applicable` under schema 2 and stay `unassessed`: this card adds no sanitized run and claims no per-case proof stage.",
+  "lean_is_adjacent_evidence_not_a_stage": "proof/QCore/EpochSourceLowering.lean carries 37 audited theorems, including the CT35 and CT36 declarations as worked Lean examples (twoReaders, twoStages) and the CT38 credit refusal and CT39 latency claim. Those model the declaration form, not the fixture bytes, and there is no digest tying the Lean transcription to the fixture. `proof` therefore stays `unassessed` for all four cases, matching the wave-5 discipline of not claiming a stage the executed evidence does not carry.",
+  "inventory": {
+    "proposed_mapped_ids": ["CT35", "CT36", "CT38", "CT39"],
+    "mapped_before": 24,
+    "mapped_after_if_the_lane_accepts": 28,
+    "unmapped_after_if_the_lane_accepts": 22,
+    "total": 50,
+    "sanitized_native_after": "3 of 28 (unchanged; this card adds none)",
+    "proof_after": "0 of 28 (unchanged)"
+  },
+  "proposed_case_rows": {
+    "CT35": {
+      "scenario": "One shared 4096-byte allocation read by two tasks",
+      "expected": "Count 4096 once",
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT35/case.qcore",
+      "harness_verdict_mode": "epoch_bound_figures",
+      "semantic_profile": "source.epoch.bound.v1: two workers each declare `read page;` for one `let page = share 4096;` cell. The lowering names one cell identity, so the checker's shared entry union counts 4096 once and the published epoch peak is 4096 + (1024 + 1024) + (512 + 2*128) = 6912. The two_cells control declares a second distinct 4096-byte cell both workers read and measures 8192, so the union counts identities rather than readers. The repeated_entry control names the same cell twice in one worker and is refused at Q630 DuplicateSharedEntry rather than deduplicated. Declared footprints, declared runtime overhead and disjoint shared cells remain premises of FlatEpochBoundV1; nothing here imports a footprint from C or from a run.",
+      "accepted_certificate": {
+        "shared_entry_union.memory": 4096,
+        "concurrent_private_peak.memory": 2048,
+        "runtime_overhead.memory": 768,
+        "epoch_peak.memory": 6912,
+        "task_count": 2
+      },
+      "controls": {
+        "compiler/tests/fixtures/ct/CT35/two_cells.qcore": "accepted; shared_entry_union.memory = 8192",
+        "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore": "refused; ordered cascade [\"Q630\"]"
+      },
+      "stages": {
+        "parse": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct35_counts_one_shared_allocation_once_however_many_tasks_read_it", "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore", "observations": 1},
+        "elaborate": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct35_counts_one_shared_allocation_once_however_many_tasks_read_it", "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore", "observations": 1},
+        "epoch_lowering": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct35_counts_one_shared_allocation_once_however_many_tasks_read_it", "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore", "observations": 1, "note": "qcore_frontend::source_epoch::lower_source_epoch, reached through compile_files."},
+        "epoch_bound_check": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct35_counts_one_shared_allocation_once_however_many_tasks_read_it", "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore", "observations": 1, "note": "qcore_core::epoch_accounting::check_flat_epoch plus the driver's independent recheck_epoch_bound."},
+        "task_lowering": {"status": "not_applicable"},
+        "task_ledger_check": {"status": "not_applicable"},
+        "mutex_lowering": {"status": "not_applicable"},
+        "mutex_invariant_check": {"status": "not_applicable"},
+        "sequential_whole_program": {"status": "not_applicable"},
+        "sequential_reference_execution": {"status": "not_applicable"},
+        "task_reference_execution": {"status": "not_applicable"},
+        "mutex_reference_execution": {"status": "not_applicable"},
+        "c_emission": {"status": "not_applicable"},
+        "native_execution": {"status": "not_applicable"},
+        "native_sanitized": {"status": "unassessed"},
+        "legacy_c_twin": {"status": "not_applicable"},
+        "proof": {"status": "unassessed"}
+      }
+    },
+    "CT36": {
+      "scenario": "Concurrent incremental peaks 3072 and 5120 bytes",
+      "expected": "Bound at least 8192 plus modeled overhead",
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT36/case.qcore",
+      "harness_verdict_mode": "epoch_bound_figures",
+      "semantic_profile": "source.epoch.bound.v1: two independent workers declare `peak 3072;` and `peak 5120;`. Because every assignment of phases to independent tasks is an admitted configuration, the peaks are summed rather than maximized: the published concurrent private peak is 8192 and the epoch peak is 8192 + (512 + 2*128) = 8960, at least the summed peaks plus the modeled overhead. Two controls straddle the summed figure with the same two peaks: an allocation of 8192 is admitted and 8191 is refused with the ordered cascade [Q637, Q638]. A maximized reading would have called 5120 the peak and admitted both, so the refusal is what makes the summing falsifiable. The overhead figures are a declared premise; a `measured RUNS` suffix in their place is Q640 (exercised elsewhere in the same test file).",
+      "accepted_certificate": {
+        "concurrent_private_peak.memory": 8192,
+        "runtime_overhead.memory": 768,
+        "epoch_peak.memory": 8960,
+        "task_count": 2
+      },
+      "controls": {
+        "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore": "accepted; allocation 8192 exactly covers the summed peak",
+        "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore": "refused; ordered cascade [\"Q637\", \"Q638\"] one byte below the summed peak"
+      },
+      "stages": {
+        "parse": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead", "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore", "observations": 1},
+        "elaborate": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead", "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore", "observations": 1},
+        "epoch_lowering": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead", "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore", "observations": 1},
+        "epoch_bound_check": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct36_sums_concurrent_private_peaks_and_adds_the_declared_overhead", "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore", "observations": 1},
+        "task_lowering": {"status": "not_applicable"},
+        "task_ledger_check": {"status": "not_applicable"},
+        "mutex_lowering": {"status": "not_applicable"},
+        "mutex_invariant_check": {"status": "not_applicable"},
+        "sequential_whole_program": {"status": "not_applicable"},
+        "sequential_reference_execution": {"status": "not_applicable"},
+        "task_reference_execution": {"status": "not_applicable"},
+        "mutex_reference_execution": {"status": "not_applicable"},
+        "c_emission": {"status": "not_applicable"},
+        "native_execution": {"status": "not_applicable"},
+        "native_sanitized": {"status": "unassessed"},
+        "legacy_c_twin": {"status": "not_applicable"},
+        "proof": {"status": "unassessed"}
+      }
+    },
+    "CT38": {
+      "scenario": "Child credit splits total more than original credit",
+      "expected": "Reject",
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT38/case.qcore",
+      "harness_verdict_mode": "reject",
+      "semantic_profile": "source.epoch.bound.v1: two children each declare `credit 6144 effort 100;` out of an epoch that declares `bound 8192 effort 1000;`. Each child's own demand fits its own credit, so no per-task check refuses it; the granted total 12288 exceeds the 8192 allocation and the exact ordered cascade is [Q637] CreditsExceedAllocation on the memory axis. The control splits the same total within it (4096 + 4096 = 8192) and is admitted with granted_credits.memory = allocation.memory = 8192, so the refusal is keyed to the sum and not to the split.",
+      "diagnostic_cascade": ["Q637"],
+      "controls": {
+        "compiler/tests/fixtures/ct/CT38/split_within_total.qcore": "accepted; granted_credits.memory = 8192 = allocation.memory"
+      },
+      "stages": {
+        "parse": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation", "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore", "observations": 1},
+        "elaborate": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation", "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore", "observations": 1},
+        "epoch_lowering": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation", "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore", "observations": 1},
+        "epoch_bound_check": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct38_refuses_child_credits_that_sum_beyond_the_epoch_allocation", "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore", "observations": 1},
+        "task_lowering": {"status": "not_applicable"},
+        "task_ledger_check": {"status": "not_applicable"},
+        "mutex_lowering": {"status": "not_applicable"},
+        "mutex_invariant_check": {"status": "not_applicable"},
+        "sequential_whole_program": {"status": "not_applicable"},
+        "sequential_reference_execution": {"status": "not_applicable"},
+        "task_reference_execution": {"status": "not_applicable"},
+        "mutex_reference_execution": {"status": "not_applicable"},
+        "c_emission": {"status": "not_applicable"},
+        "native_execution": {"status": "not_applicable"},
+        "native_sanitized": {"status": "unassessed"},
+        "legacy_c_twin": {"status": "not_applicable"},
+        "proof": {"status": "unassessed"}
+      }
+    },
+    "CT39": {
+      "scenario": "Concurrent work bound used as wall-clock bound",
+      "expected": "Reject unsupported claim",
+      "mapping_status": "mapped",
+      "route": "epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT39/case.qcore",
+      "harness_verdict_mode": "reject",
+      "semantic_profile": "source.epoch.bound.v1: a well-accounted epoch additionally writes `bound effort as latency;`, asking for its work bound as a completion time. The driver derives and rechecks the bound first and only then puts the claim to the profile's own epoch_wall_clock_bound, which always refuses: the exact ordered cascade is [Q639] WallClockUnavailable. The control is the same epoch without the claim: admitted, with work_total on the effort axis = 800 and EpochAssumption::NoScheduleModel on the certificate, so a consumer cannot drop the premise and read the total as a finish time. There is no core count, queueing or preemption anywhere in this profile.",
+      "diagnostic_cascade": ["Q639"],
+      "controls": {
+        "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore": "accepted; work_total.effort = 800, NoScheduleModel present, epoch_wall_clock_bound still refuses on the published certificate"
+      },
+      "stages": {
+        "parse": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound", "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore", "observations": 1},
+        "elaborate": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound", "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore", "observations": 1},
+        "epoch_lowering": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound", "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore", "observations": 1},
+        "epoch_bound_check": {"status": "executed", "executor": "compiler/tests/epoch_source.rs::ct39_refuses_reading_the_work_bound_as_a_wall_clock_bound", "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore", "observations": 1, "note": "The bound is derived and rechecked before the claim is refused, so Q639 is measured against a certificate the checker really issued."},
+        "task_lowering": {"status": "not_applicable"},
+        "task_ledger_check": {"status": "not_applicable"},
+        "mutex_lowering": {"status": "not_applicable"},
+        "mutex_invariant_check": {"status": "not_applicable"},
+        "sequential_whole_program": {"status": "not_applicable"},
+        "sequential_reference_execution": {"status": "not_applicable"},
+        "task_reference_execution": {"status": "not_applicable"},
+        "mutex_reference_execution": {"status": "not_applicable"},
+        "c_emission": {"status": "not_applicable"},
+        "native_execution": {"status": "not_applicable"},
+        "native_sanitized": {"status": "unassessed"},
+        "legacy_c_twin": {"status": "not_applicable"},
+        "proof": {"status": "unassessed"}
+      }
+    }
+  }
+}

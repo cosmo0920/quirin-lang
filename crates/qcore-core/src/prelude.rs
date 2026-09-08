@@ -49,13 +49,18 @@
 pub mod concurrency {
     // Keep each model's identity and certificate vocabulary qualified.
     pub use crate::{
-        concurrency, mutex_c_emit, mutex_invariant, native_concurrency, region_task_credit,
-        scoped_tasks, task_c_emit, task_execution, task_trace_relation, weak_memory,
+        concurrency, epoch_accounting, mutex_c_emit, mutex_invariant, native_concurrency,
+        region_task_credit, scoped_tasks, task_c_emit, task_execution, task_trace_relation,
+        weak_memory,
     };
 
     // Common construction/checking operations are available without a glob
     // import of conflicting TaskId, ResourceId, State or Outcome definitions.
     pub use crate::concurrency::{ConcurrentProgram, check_concurrent};
+    pub use crate::epoch_accounting::{
+        FlatEpochProgram, check_flat_epoch, epoch_residency, epoch_wall_clock_bound,
+        recheck_epoch_bound,
+    };
     pub use crate::mutex_invariant::{
         MutexInvariantProgram, check_mutex_invariant_program, recheck_mutex_invariant_certificate,
     };

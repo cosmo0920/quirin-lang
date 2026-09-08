@@ -134,6 +134,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::CheckedMutexGuardsV1 => {
                     "; checked mutex guards (Linux/macOS/Windows threads)"
                 }
+                qcore_compiler::SourceExecutionProfile::FlatEpochBoundV1 => {
+                    "; flat-epoch quantitative bound (checked accounting only, no emission)"
+                }
                 _ => "",
             };
             println!(

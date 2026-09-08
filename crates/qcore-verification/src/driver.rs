@@ -9,7 +9,7 @@ use std::fmt;
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram, interpret_source};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
-    mutex_c_emit, mutex_invariant, task_c_emit, task_execution,
+    epoch_accounting, mutex_c_emit, mutex_invariant, task_c_emit, task_execution,
 };
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
@@ -114,6 +114,10 @@ pub enum CheckedSourceModule {
     /// certificate is the evidence; the lowered program is retained beside it so
     /// a consumer can re-derive rather than believe it.
     CheckedMutexGuards(Box<CheckedMutexGuardModule>),
+    /// One entry function checked under `FlatEpochBoundV1`. The certificate is
+    /// the evidence; the lowered epoch is retained beside it so a consumer can
+    /// re-derive rather than believe it.
+    CheckedEpochBound(Box<CheckedEpochModule>),
     /// One entry function checked under `source.extern-call.v1`. Both the
     /// extern-call certificate and the ordinary sequential evidence are
     /// retained, because both were required: the call sites are checked by the
@@ -140,31 +144,64 @@ pub struct CheckedMutexGuardModule {
     pub certificate: mutex_invariant::MutexInvariantCertificate,
 }
 
+/// A checked `source.epoch.bound.v1` module: the lowered flat epoch and the
+/// quantitative bound a caller can independently recheck. The certificate's
+/// premises are `FlatEpochBoundV1`'s own — declared footprints, declared
+/// runtime overhead, disjoint shared cells and no schedule model — and this
+/// route discharges none of them.
+#[derive(Clone, Debug)]
+pub struct CheckedEpochModule {
+    pub lowered: qcore_frontend::source_epoch::LoweredEpochModule,
+    pub certificate: epoch_accounting::EpochBoundCertificate,
+}
+
 impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
             Self::Sequential(program) => Some(program),
-            Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) | Self::ExternCalls(_) => None,
+            Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ExternCalls(_) => None,
         }
     }
 
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
-            Self::Sequential(_) | Self::CheckedMutexGuards(_) | Self::ExternCalls(_) => None,
+            Self::Sequential(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ExternCalls(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
 
     pub fn as_checked_mutex_guards(&self) -> Option<&CheckedMutexGuardModule> {
         match self {
-            Self::Sequential(_) | Self::ScopedTasks(_) | Self::ExternCalls(_) => None,
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ExternCalls(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
+        }
+    }
+
+    pub fn as_checked_epoch_bound(&self) -> Option<&CheckedEpochModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::ExternCalls(_) => None,
+            Self::CheckedEpochBound(module) => Some(module),
         }
     }
 
     pub fn as_extern_calls(&self) -> Option<&CheckedExternModule> {
         match self {
-            Self::Sequential(_) | Self::ScopedTasks(_) | Self::CheckedMutexGuards(_) => None,
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -179,6 +216,9 @@ impl CheckedSourceModule {
             // Likewise: the extern-call profile lowers exactly one entry, and
             // the declared callees have no checked body to count.
             Self::ExternCalls(_) => 1,
+            // And likewise for the flat epoch: one entry declares the whole
+            // epoch, and its workers are declared shapes, not checked bodies.
+            Self::CheckedEpochBound(_) => 1,
         }
     }
 }
@@ -208,6 +248,11 @@ pub enum SourceExecutionProfile {
     /// `source.extern-call.v1`: a flat sequential entry that calls declared
     /// extern functions through explicitly selected, admitted contracts.
     ExternCallsV1,
+    /// `source.epoch.bound.v1`: one flat epoch of independent declared workers
+    /// over fixed-shape shared storage, checked by `FlatEpochBoundV1`. A
+    /// checked accounting statement about a declared shape: this route has no
+    /// reference execution and no C emission.
+    FlatEpochBoundV1,
 }
 
 #[derive(Clone, Debug)]
@@ -392,6 +437,12 @@ pub fn compile_files_with_registry(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    if qcore_frontend::source_epoch::has_source_epoch(&parsed) {
+        // Selected before every other concurrent route: an epoch scope is also
+        // a `thread scope`, and a module that declares a quantitative epoch
+        // must not be handed to a route that models no accounting at all.
+        return compile_epoch_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_mutex::has_source_mutex(&parsed) {
         // Selected before the task route: a `thread scope` alone also selects
         // scoped tasks, and a module declaring a mutex generation must not be
@@ -1718,6 +1769,85 @@ fn compile_mutex_source(
         source_map: Vec::new(),
         // A reference observation for this route is the mutex trace, not the
         // sequential cleanup observation this field carries.
+        reference_observation: None,
+        extern_observation: None,
+    })
+}
+
+/// Compile one `source.epoch.bound.v1` module.
+///
+/// The route is check-only by construction. The profile's quantities are
+/// declared shapes, not resources this backend allocates, so there is nothing
+/// to execute and nothing to emit: `c_source` and `reference_observation` stay
+/// `None`, and no native or sanitized run is implied by an admitted epoch.
+fn compile_epoch_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free flat-epoch modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_epoch::lower_source_epoch(parsed, typed, &entry).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    let certificate =
+        epoch_accounting::check_flat_epoch(&lowered.program).map_err(|diagnostics| {
+            diagnostics
+                .iter()
+                .map(|diagnostic| map_diagnostic(lowered.locate(diagnostic), ranges))
+                .collect::<Vec<_>>()
+        })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    epoch_accounting::recheck_epoch_bound(&lowered.program, &certificate).map_err(|errors| {
+        vec![plain_diagnostic(
+            "Q600",
+            format!("flat-epoch certificate failed independent recheck: {errors:?}"),
+        )]
+    })?;
+    // A module that asked to read the work bound as a completion time gets the
+    // profile's own answer, from the profile's own entry point. There is no
+    // schedule model here, so the request is refused (`Q639`) after the bound
+    // was derived: the epoch may be perfectly well accounted and the time
+    // claim still not follow from it.
+    if lowered.latency_claim.is_some() {
+        let Err(refusal) = epoch_accounting::epoch_wall_clock_bound(&certificate) else {
+            unreachable!("a wall-clock bound is never available in this profile")
+        };
+        return Err(vec![map_diagnostic(lowered.locate(&refusal), ranges)]);
+    }
+    let result_profile = SourceResultProfile {
+        scalar_results: std::collections::BTreeMap::from([(
+            entry.clone(),
+            ExecutableResultType::Unit,
+        )]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::CheckedEpochBound(Box::new(CheckedEpochModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::FlatEpochBoundV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: None,
+        source_map: Vec::new(),
         reference_observation: None,
         extern_observation: None,
     })
