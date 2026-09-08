@@ -134,9 +134,9 @@ Captures must be `copy` of direct immutable i32 local/parameter names. General
 expressions, assignments, loops, general branches, resources, loans, move/read/write
 captures, mutexes, externs, globals, user contracts and task-bearing workers
 reject in every definition. Entry-free task modules are not admitted yet.
-The native driver currently supports Linux C11 threads and macOS through an
-emitted pthread-backed compatibility implementation of the required C11 thread
-subset; it explicitly rejects other targets. Its start record survives until successful native join; failed
+The native driver supports Linux C11 threads, macOS through an emitted pthread
+adapter, and Windows through an emitted winpthreads-derived C11 thread subset;
+it explicitly rejects other targets. Its start record survives until successful native join; failed
 join aborts without reclaiming possibly accessed storage. These rules do not
 establish general C11/shared-memory or cross-platform refinement. See the
 [recovery execution record](reports/w6-task-recovery/README.md).
@@ -222,7 +222,7 @@ not a wall-clock schedule. C11 publication/join, allocator correctness and
 source/core/native correspondence remain explicit refinement boundaries.
 Lean model lemmas and fixed native pointer/sanitizer observations are separate
 evidence. Owned graphs/error payloads, shared memory, mutexes, nested
-workers, general control flow and non-Linux native targets remain unsupported.
+workers, general control flow and targets other than Linux, macOS and Windows remain unsupported.
 One bounded borrowing form is admitted by G02bb below; every other loan form
 remains unsupported.
 See [the owned task report](reports/w6-owned-source-tasks/README.md).
@@ -299,7 +299,7 @@ checker rule, not a dynamic measurement — no race detector covers this backend
 because ThreadSanitizer does not intercept C11 `thrd_create`.
 
 Write loans, loans of anything but a Buffer, loans across nested workers,
-loans held past a scope and non-Linux native targets remain unsupported. See
+loans held past a scope and targets other than Linux, macOS and Windows remain unsupported. See
 [the read-loan report](reports/remaining-t04/README.md). Fractional and
 multi-reader shares are G02bc.
 
@@ -375,7 +375,7 @@ and lending never consumes the lender's binding — only its release does.
 the loan and return trace lines are unchanged from G02bb.
 
 Disjoint slicing, write shares, more than two simultaneous readers, several
-lent resources at once, nested workers and non-Linux native targets remain
+lent resources at once, nested workers and targets other than Linux, macOS and Windows remain
 unsupported. See [the read-share report](reports/remaining-t05/README.md).
 
 ## G02bc. Tagged error payload
@@ -467,7 +467,7 @@ and clears every stale copy as it moves, printing
 payload-free `ERROR tag`.
 
 Several payloads, recursive owned graphs, arbitrary error ABIs, payloads on
-nested workers, loans inside payloads and non-Linux native targets remain
+nested workers, loans inside payloads and targets other than Linux, macOS and Windows remain
 unsupported. See [the error-payload report](reports/remaining-t06/README.md).
 
 ## G02c. Guarded fixed-footprint mutex
@@ -532,7 +532,8 @@ section, and every other statement outside the grammar above, is refused at
 `Q600`. Scope exit destroys each generation and then each resource, under the
 model's quiescence rules.
 
-Native emission is one Linux thread using C11 `mtx_t` and real heap footprints;
+Native emission uses one thread and C11 `mtx_t` with real heap footprints on
+Linux, macOS and Windows (the latter two through the emitted compatibility layer);
 the reference execution of the checked event list must reproduce the same
 observation. There is no contention, no second thread, no condition variable,
 no try/timed lock, no reader/writer lock and no lock ranking in this profile,

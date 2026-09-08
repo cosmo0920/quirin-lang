@@ -34,6 +34,10 @@
 //! least one control so the refusal is not merely "the profile cannot express
 //! this at all".
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -1122,13 +1126,13 @@ fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
     assert!(
         diagnostics[0]
             .message
-            .contains("requires a Linux or macOS threads target"),
+            .contains("requires a Linux, macOS or Windows threads target"),
         "{diagnostics:?}"
     );
 }
 
 /// The controls a mutex rejection carries. An `accept` control compiles through
-/// the Linux/macOS emission path, so on any other host it must arrive as the
+/// the Linux/macOS/Windows emission path, so on any other host it must arrive as the
 /// same `Q500` refusal every other route uses — never as a silent skip.
 fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
     for control in &reject.controls {
@@ -1141,7 +1145,11 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
         );
         match control.expectation.as_str() {
             "accept" => {
-                if !cfg!(any(target_os = "linux", target_os = "macos")) {
+                if !cfg!(any(
+                    target_os = "linux",
+                    target_os = "macos",
+                    target_os = "windows"
+                )) {
                     unsupported_target(&result.unwrap_err());
                     eprintln!(
                         "{id} control {}: source/core checked; threaded emission unexecuted on this host",
@@ -1209,7 +1217,7 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
 }
 
 /// The controls a task-route rejection carries. An `accept` control compiles
-/// through the Linux/macOS emission path, so on any other host it must arrive as
+/// through the Linux/macOS/Windows emission path, so on any other host it must arrive as
 /// the same `Q500` refusal every other route uses — never as a silent skip.
 fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
     for control in &reject.controls {
@@ -1222,7 +1230,11 @@ fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
         );
         match control.expectation.as_str() {
             "accept" => {
-                if !cfg!(any(target_os = "linux", target_os = "macos")) {
+                if !cfg!(any(
+                    target_os = "linux",
+                    target_os = "macos",
+                    target_os = "windows"
+                )) {
                     unsupported_target(&result.unwrap_err());
                     eprintln!(
                         "{id} control {}: source/core checked; threaded emission unexecuted on this host",
@@ -1310,7 +1322,25 @@ fn run_native_heap_scenarios(
             control.source
         );
     }
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if cfg!(target_os = "windows") {
+        assert!(
+            result
+                .as_ref()
+                .expect("Windows source must check and emit")
+                .c_source
+                .is_some()
+        );
+        eprintln!(
+            "{}: emitted on Windows; Unix sanitizer evidence unexecuted on this host",
+            expected.id
+        );
+        return;
+    }
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "{}: source/core checked; reference/sanitized-native execution unexecuted on \
@@ -1533,7 +1563,25 @@ fn run_checked_mutex_sanitized(
 ) {
     use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
     let mutex = expected.checked_mutex_sanitized.as_ref().unwrap();
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if cfg!(target_os = "windows") {
+        assert!(
+            result
+                .as_ref()
+                .expect("Windows source must check and emit")
+                .c_source
+                .is_some()
+        );
+        eprintln!(
+            "{}: emitted on Windows; Unix sanitizer evidence unexecuted on this host",
+            expected.id
+        );
+        return;
+    }
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "{}: source/core checked; mutex reference/native execution unexecuted on this host \
@@ -1679,7 +1727,11 @@ fn run_positive_control(directory: &Path, expected: &PositiveControl) {
         &[SourceFile::new(path.to_string_lossy(), source)],
         &CompileOptions::default(),
     );
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "CT19 joined-sibling control: source/core checked; threaded reference/native evidence unexecuted on this host"
@@ -1719,7 +1771,11 @@ fn run_native_join_failure(
 ) {
     let native = expected.native_join_failure.as_ref().unwrap();
     assert!(directory.join(&native.header).is_file());
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "CT15: source/core checked; native/reference execution unexecuted on this host (manifest evidence_target=linux)"
@@ -1810,49 +1866,61 @@ fn native_fault_run_defines(
     header: &Path,
     defines: &[String],
 ) -> std::process::Output {
-    use std::process::Command;
-    use std::sync::atomic::{AtomicU64, Ordering};
-    static NEXT: AtomicU64 = AtomicU64::new(0);
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-ct-native-{}-{}",
-        std::process::id(),
-        NEXT.fetch_add(1, Ordering::Relaxed)
-    ));
-    fs::create_dir_all(&directory).unwrap();
-    let c_path = directory.join("module.c");
-    let exe_path = directory.join("module");
-    fs::write(&c_path, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
-    let mut command = Command::new(compiler);
-    command
-        .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
-        .args(defines);
-    if cfg!(target_os = "macos") {
-        // Fault-injection headers are force-included before the generated
-        // source, so make their `<threads.h>` include resolve to the same
-        // pthread-backed compatibility surface used by emitted C.
-        command.arg("-I").arg(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/tests/fixtures/apple-threads"
-        ));
-    }
-    let compiled = command
-        .arg("-include")
-        .arg(header)
-        .arg(&c_path)
-        .arg("-o")
-        .arg(&exe_path)
-        .output()
-        .unwrap();
-    assert!(
-        compiled.status.success(),
-        "CT emitted C failed: {} (artifact {})",
-        String::from_utf8_lossy(&compiled.stderr),
-        c_path.display()
+    #[cfg(target_os = "windows")]
+    return windows_c::run(
+        source,
+        Some(&format!(
+            "#include \"{}\"",
+            header.to_string_lossy().replace('\\', "/")
+        )),
+        defines,
     );
-    let output = Command::new(&exe_path).output().unwrap();
-    fs::remove_dir_all(directory).unwrap();
-    output
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::process::Command;
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-ct-native-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&directory).unwrap();
+        let c_path = directory.join("module.c");
+        let exe_path = directory.join("module");
+        fs::write(&c_path, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".to_owned());
+        let mut command = Command::new(compiler);
+        command
+            .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
+            .args(defines);
+        if cfg!(target_os = "macos") {
+            // Fault-injection headers are force-included before the generated
+            // source, so make their `<threads.h>` include resolve to the same
+            // pthread-backed compatibility surface used by emitted C.
+            command.arg("-I").arg(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/tests/fixtures/apple-threads"
+            ));
+        }
+        let compiled = command
+            .arg("-include")
+            .arg(header)
+            .arg(&c_path)
+            .arg("-o")
+            .arg(&exe_path)
+            .output()
+            .unwrap();
+        assert!(
+            compiled.status.success(),
+            "CT emitted C failed: {} (artifact {})",
+            String::from_utf8_lossy(&compiled.stderr),
+            c_path.display()
+        );
+        let output = Command::new(&exe_path).output().unwrap();
+        fs::remove_dir_all(directory).unwrap();
+        output
+    }
 }
 
 fn run_native_create_recovery(
@@ -1882,7 +1950,11 @@ fn run_native_create_recovery(
             .any(|error| error.code == "Q600" && error.message.contains("ScopeBusy")),
         "{errors:?}"
     );
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "CT13: source/core checked; native/reference creation-recovery evidence unexecuted on this host"
@@ -1958,7 +2030,11 @@ fn run_native_owned_transfer(
         TaskExecutionScript, execute_task_module, render_task_observation,
     };
     let native = expected.native_owned_transfer.as_ref().unwrap();
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "{}: owned-task reference/native evidence unexecuted on this host",
@@ -2045,7 +2121,11 @@ fn run_native_task_scenarios(
             "{errors:?}"
         );
     }
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         unsupported_target(&result.unwrap_err());
         eprintln!(
             "{}: threaded task scenarios unexecuted on this host",

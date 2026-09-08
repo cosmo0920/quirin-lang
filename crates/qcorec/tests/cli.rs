@@ -4,6 +4,47 @@
 
 use std::process::Command;
 
+#[cfg(target_os = "windows")]
+#[path = "../../../tests/support/windows_c.rs"]
+mod windows_c;
+
+#[test]
+#[cfg(target_os = "windows")]
+fn cli_windows_emission_recovers_from_second_creation_failure() {
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../compiler/tests/fixtures/ct/CT13");
+    let directory = std::env::temp_dir().join(format!("qcore-cli-windows-{}", std::process::id()));
+    std::fs::create_dir_all(&directory).unwrap();
+    let c = directory.join("recovery.c");
+    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg(fixture.join("case.qcore"))
+        .output()
+        .unwrap();
+    assert!(checked.status.success(), "{checked:?}");
+    assert!(String::from_utf8_lossy(&checked.stdout).contains("Linux/macOS/Windows threads"));
+    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("emit")
+        .arg(fixture.join("case.qcore"))
+        .arg("-o")
+        .arg(&c)
+        .output()
+        .unwrap();
+    assert!(emitted.status.success(), "{emitted:?}");
+    let output = windows_c::run(
+        &std::fs::read_to_string(&c).unwrap(),
+        Some(&std::fs::read_to_string(fixture.join("create_failure.h")).unwrap()),
+        &["-DQCORE_CT_FAIL_CREATE=2".to_owned()],
+    );
+    assert!(output.status.success(), "{output:?}");
+    assert_eq!(output.stdout, b"QCORE_TASK_SPAWN 1 0\nQCORE_TASK_CREATE_FAILED 0\nQCORE_TASK_RESULT 1 I32 42\nQCORE_TASK_JOIN 1\nQCORE_TASK_RESULT 0 I32 42\n");
+    assert_eq!(
+        output.stderr,
+        b"CREATE_OK:1\nCREATE_FAILED:2\nFREE\nJOIN_OK:1\nFREE\n"
+    );
+    std::fs::remove_dir_all(directory).unwrap();
+}
+
 #[test]
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
@@ -21,7 +62,7 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
     assert!(checked.status.success(), "{checked:?}");
     assert!(
         String::from_utf8_lossy(&checked.stdout)
-            .contains("scoped owned-buffer tasks (Linux/macOS threads)")
+            .contains("scoped owned-buffer tasks (Linux/macOS/Windows threads)")
     );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
@@ -158,7 +199,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     );
     assert!(
         String::from_utf8_lossy(&checked.stdout)
-            .contains("scoped copy tasks (Linux/macOS threads)")
+            .contains("scoped copy tasks (Linux/macOS/Windows threads)")
     );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
@@ -221,7 +262,7 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
     assert!(checked.status.success(), "{checked:?}");
     assert!(
         String::from_utf8_lossy(&checked.stdout)
-            .contains("scoped copy tasks (Linux/macOS threads)")
+            .contains("scoped copy tasks (Linux/macOS/Windows threads)")
     );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")

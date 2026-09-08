@@ -266,6 +266,22 @@ native C so the SDK, linker, and runtime DLLs are available. Generated-C
 tests discover MSVC through the `cc` crate; no `cc` or `clang` command on
 PATH is required.
 
+Scoped task and checked mutex emission embeds the required C11 thread subset
+on Windows, adapted from Monkey winpthreads. In the developer shell:
+
+```powershell
+cargo run -p qcorec -- emit compiler/tests/fixtures/ct/CT13/case.qcore -o generated.c
+cl /nologo /std:c11 /W4 /WX generated.c /Fe:generated.exe
+.\generated.exe
+```
+
+No extra header, object file or pthread library is needed. The native test
+harness uses MSVC's `/experimental:c11atomics` for its synchronization observers;
+the emitted task runtime itself does not require that switch. The supported
+surface is joinable creation/join, equality/yield and plain non-recursive
+mutexes, not the full C11 header. See
+[the Windows thread report](docs/reports/windows-c11-threads/README.md).
+
 For existing-C analysis and the full test suite, also install Visual
 Studio's optional **C++ Clang tools for Windows** or a standalone LLVM
 installation (see
@@ -318,6 +334,22 @@ emission, native generated-C execution) and an MSVC-plus-Clang analysis job
 full suite.
 
 ## Increment records
+
+Windows native concurrency (2026-09-08): the shared emitted C11 thread subset
+now includes a self-contained Windows implementation adapted from Monkey
+winpthreads. Joinable start records preserve signed int results; failed native
+creation frees unpublished storage, and failed wait/close retains the record
+and result until successful join. Plain non-recursive mutexes use exclusive
+SRW locks. Source task and mutex routes admit Windows; MSVC tests cover native
+reference agreement, failure recovery, completed-but-unjoined custody and
+mutex contention. Unix sanitizer fixtures and CT50's Linux mapping observation
+retain their target scope; CT mappings and checker/Lean semantics are unchanged.
+This is the emitted subset, not full pthread/C11-threads conformance.
+The pinned Lean build and all 31 audits pass; the aggregate workspace gate
+retains ten failures in three untouched audit targets.
+See `docs/reports/windows-c11-threads/README.md` for provenance, build commands,
+validation and platform limits.
+
 
 The dated entries below are archived in the order they landed. Each one keeps
 its own checkpoint, counts and boundaries; a later entry does not supersede an

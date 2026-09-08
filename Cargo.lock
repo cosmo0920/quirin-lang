@@ -147,6 +147,7 @@ dependencies = [
 name = "qcorec"
 version = "0.1.0"
 dependencies = [
+ "cc",
  "qcore-compiler",
  "serde",
  "serde_json",

@@ -69,8 +69,9 @@ narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
 
 The Rust compiler and `qcorec check` / `qcorec emit` do not require Clang.
 Compiling emitted C requires a C11 compiler. Native scoped task and checked
-mutex emission runs on Linux C11 threads and on macOS through an emitted
-pthread-backed compatibility layer. The full test suite also
+mutex emission runs on Linux C11 threads, macOS pthreads, and Windows through
+an emitted winpthreads-derived compatibility subset. Emitted C is self-contained;
+Windows builds need no pthread library. See the [Windows thread guide](docs/reports/windows-c11-threads/README.md). The full test suite also
 exercises existing-C analysis, which needs Clang for preprocessing, syntax
 validation, and its JSON AST.
 

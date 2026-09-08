@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
+#if !defined(_WIN32)
 #include <unistd.h>
+#endif
 static void *ct_buffer, *ct_record;
 static int ct_created, ct_joined;
 static thrd_t ct_thread;
@@ -39,8 +41,17 @@ static int ct_create(thrd_t *thread,thrd_start_t worker,void *argument) {
     ct_worker=worker;
     if (thrd_create(thread,ct_complete_body,argument)!=thrd_success) abort();
     ct_thread=*thread;ct_created=1;
+#if defined(_WIN32)
+    ULONGLONG started = GetTickCount64();
+#else
     alarm(5);
-    while (!atomic_load_explicit(&ct_body_done,memory_order_acquire)) thrd_yield();
+#endif
+    while (!atomic_load_explicit(&ct_body_done,memory_order_acquire)) {
+#if defined(_WIN32)
+        if (GetTickCount64() - started >= 5000) abort();
+#endif
+        thrd_yield();
+    }
     fputs("CREATE_RETURNS_AFTER_BODY\n",stderr);
     return thrd_success;
 }

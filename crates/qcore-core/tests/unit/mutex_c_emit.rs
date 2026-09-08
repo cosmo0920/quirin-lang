@@ -5,8 +5,15 @@
 //! with the independently computed reference execution. This is a translation
 //! check for the selected model and inputs on one Linux target; it establishes
 //! nothing about contention, other targets or the invariant predicate.
+#[cfg(target_os = "windows")]
+#[path = "../../../../tests/support/windows_c.rs"]
+mod windows_c;
+
+#[cfg(not(target_os = "windows"))]
 use std::fs;
+#[cfg(not(target_os = "windows"))]
 use std::process::Command;
+#[cfg(not(target_os = "windows"))]
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use crate::mutex_invariant::{
@@ -14,6 +21,7 @@ use crate::mutex_invariant::{
     ShareGrant, check_mutex_invariant_program,
 };
 
+#[cfg(not(target_os = "windows"))]
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 fn grant(resource: u32, end: u32) -> ShareGrant {
@@ -242,70 +250,83 @@ fn emission_refuses_anything_outside_the_single_task_subset() {
 }
 
 fn compile_and_run(source: &str) -> Vec<String> {
-    let sequence = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
-    let timestamp = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-t03-{}-{timestamp}-{sequence}",
-        std::process::id()
-    ));
-    fs::create_dir(&directory).unwrap();
-    let source_path = directory.join("generated.c");
-    let binary_path = directory.join("generated");
-    fs::write(&source_path, source).unwrap();
+    #[cfg(target_os = "windows")]
+    {
+        let output = windows_c::run(source, None, &[]);
+        assert!(output.status.success(), "{output:?}");
+        String::from_utf8(output.stdout)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect()
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let sequence = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-t03-{}-{timestamp}-{sequence}",
+            std::process::id()
+        ));
+        fs::create_dir(&directory).unwrap();
+        let source_path = directory.join("generated.c");
+        let binary_path = directory.join("generated");
+        fs::write(&source_path, source).unwrap();
 
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile = Command::new(&compiler)
-        .current_dir(&directory)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&source_path)
-        .arg("-o")
-        .arg(&binary_path)
-        .output()
-        .unwrap();
-    assert!(
-        compile.status.success(),
-        "C compiler rejected the emitted mutex program:\n{}",
-        String::from_utf8_lossy(&compile.stderr)
-    );
-    let run = Command::new(&binary_path)
-        // LeakSanitizer is part of AddressSanitizer here and is left enabled:
-        // reclamation of every emitted allocation is exactly what the Linux
-        // run has to witness. Apple Clang reports leak detection unsupported,
-        // so macOS still runs ASan/UBSan with leak detection disabled.
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
-    assert!(
-        run.status.success(),
-        "emitted mutex program failed under ASan/UBSan/LSan:\n{}",
-        String::from_utf8_lossy(&run.stderr)
-    );
-    let observation = String::from_utf8(run.stdout)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    fs::remove_dir_all(directory).unwrap();
-    observation
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .current_dir(&directory)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&source_path)
+            .arg("-o")
+            .arg(&binary_path)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted mutex program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary_path)
+            // LeakSanitizer is part of AddressSanitizer here and is left enabled:
+            // reclamation of every emitted allocation is exactly what the Linux
+            // run has to witness. Apple Clang reports leak detection unsupported,
+            // so macOS still runs ASan/UBSan with leak detection disabled.
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        assert!(
+            run.status.success(),
+            "emitted mutex program failed under ASan/UBSan/LSan:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let observation = String::from_utf8(run.stdout)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        fs::remove_dir_all(directory).unwrap();
+        observation
+    }
 }

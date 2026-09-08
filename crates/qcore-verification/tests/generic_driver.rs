@@ -54,7 +54,11 @@ fn owned_task_source_uses_the_same_checked_kernel_without_compiler_adapters() {
         &CompileOptions::default(),
         &VerifierRegistry::default(),
     );
-    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
         assert!(result.is_err());
         return;
     }

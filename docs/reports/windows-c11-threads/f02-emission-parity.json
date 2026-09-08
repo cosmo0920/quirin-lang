@@ -1,0 +1,19 @@
+{
+  "upstream": "87ef606",
+  "normalization": "CRLF to LF to reproduce Git LF checkout emission",
+  "non_windows_branch_body_unchanged": true,
+  "runs": [
+    {
+      "program": "round-trip",
+      "previous_c_fnv1a": "b514b7831f116f52",
+      "current_c_fnv1a": "5c27711846f9a518",
+      "header_only_change": true
+    },
+    {
+      "program": "concurrent",
+      "previous_c_fnv1a": "ee9b2715649587ff",
+      "current_c_fnv1a": "0b511480da31c73d",
+      "header_only_change": true
+    }
+  ]
+}

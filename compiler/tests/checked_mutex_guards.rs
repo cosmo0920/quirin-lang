@@ -4,6 +4,10 @@
 //! publish a certificate it independently rechecked, and emit C11 that names
 //! real `mtx_t` operations. Rejections must still arrive as located
 //! diagnostics on the same route rather than falling through to another one.
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
 
@@ -118,66 +122,79 @@ fn an_accepted_source_fixture_runs_natively_and_matches_its_reference_execution(
 }
 
 fn run_native(source: &str) -> Vec<String> {
-    use std::process::Command;
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-t03-cli-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
+    #[cfg(target_os = "windows")]
+    {
+        let output = windows_c::run(source, None, &[]);
+        assert!(output.status.success(), "{output:?}");
+        String::from_utf8(output.stdout)
             .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let path = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&path, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&path)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile.status.success(),
-        "C compiler rejected the emitted program:\n{}",
-        String::from_utf8_lossy(&compile.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
-    assert!(
-        run.status.success(),
-        "emitted program failed under ASan/UBSan/LSan:\n{}",
-        String::from_utf8_lossy(&run.stderr)
-    );
-    let observation = String::from_utf8(run.stdout)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    std::fs::remove_dir_all(directory).unwrap();
-    observation
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect()
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-t03-cli-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let path = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&path, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&path)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        assert!(
+            run.status.success(),
+            "emitted program failed under ASan/UBSan/LSan:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let observation = String::from_utf8(run.stdout)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        std::fs::remove_dir_all(directory).unwrap();
+        observation
+    }
 }
 
 #[test]

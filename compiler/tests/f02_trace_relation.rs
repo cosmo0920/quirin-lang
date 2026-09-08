@@ -45,8 +45,13 @@ const COMPILE_FLAGS: [&str; 7] = [
 // carries the T05 write intrinsic surface, the T06 payload ABI and the macOS
 // c11_threads_compat include, so both digests moved. The relation itself was
 // re-verified against the new native runs in this same commit.
-const ROUND_TRIP_C_DIGEST: &str = "b514b7831f116f52";
-const CONCURRENT_C_DIGEST: &str = "ee9b2715649587ff";
+// Windows integration (2026-09-08): only the embedded compatibility header
+// changed. Restoring the previous header reproduces both previous pins exactly;
+// the Linux/Apple branch bodies are unchanged. Windows native relation checks
+// and the byte comparison are in the Windows thread report; archived Linux
+// executable evidence remains historical until the Linux tests run again.
+const ROUND_TRIP_C_DIGEST: &str = "5c27711846f9a518";
+const CONCURRENT_C_DIGEST: &str = "0b511480da31c73d";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 

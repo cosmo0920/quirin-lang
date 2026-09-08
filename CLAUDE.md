@@ -1170,3 +1170,18 @@ advances to 20/50 mapped, by executed-stage evidence only. The four pinned
 checkpoint: 1379 workspace tests, 58 provider tests, 81 Python tests, 31 Lean
 audits, both reevaluation examples exit 0, fmt and clippy clean in both
 workspaces.
+
+Windows native concurrency (2026-09-08): the shared emitted C11 thread subset
+now includes a self-contained Windows implementation adapted from Monkey
+winpthreads. Joinable start records preserve signed int results; failed native
+creation frees unpublished storage, and failed wait/close retains the record
+and result until successful join. Plain non-recursive mutexes use exclusive
+SRW locks. Source task and mutex routes admit Windows; MSVC tests cover native
+reference agreement, failure recovery, completed-but-unjoined custody and
+mutex contention. Unix sanitizer fixtures and CT50's Linux mapping observation
+retain their target scope; CT mappings and checker/Lean semantics are unchanged.
+This is the emitted subset, not full pthread/C11-threads conformance.
+The pinned Lean build and all 31 audits pass; the aggregate workspace gate
+retains ten failures in three untouched audit targets.
+See `docs/reports/windows-c11-threads/README.md` for provenance, build commands,
+validation and platform limits.

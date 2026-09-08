@@ -2,7 +2,7 @@
 name = "qcore-core"
 version = "0.1.0"
 edition = "2024"
-license = "MIT OR Apache-2.0"
+license = "(MIT OR Apache-2.0) AND BSD-3-Clause"
 description = "Provider-independent semantic kernel of QCore-C."
 
 [dev-dependencies]

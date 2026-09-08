@@ -497,3 +497,20 @@ and are deliberate:
 
 Anyone raising a domain bound here should re-measure before committing: this
 module is the workspace's Lean cost outlier.
+
+### Windows compatibility integration (2026-09-08)
+
+The Windows thread commit rebased onto `87ef606` changes the embedded header in
+both selected emitted programs. The LF-checkout C fingerprints are deliberately
+updated from `b514b7831f116f52` to `5c27711846f9a518` (round trip) and from
+`ee9b2715649587ff` to `0b511480da31c73d` (concurrent). Restoring just the old
+header reproduces both old pins exactly, and the Apple/native-C11 branch bodies
+are unchanged. The comparison is archived in
+[f02-emission-parity.json](../windows-c11-threads/f02-emission-parity.json).
+
+The Windows native test checks both current emission pins and both real native
+renderings against this relation, plus refusal after deleting a fact. This is
+Windows evidence; the archived Linux native/executable records above remain
+historical. The Linux tests retain their full native compile/run and identity
+checks against the new pins; a new Linux run is left to Linux CI. No relation
+rule, domain, Lean theorem or verdict digest changes.
