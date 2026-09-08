@@ -90,6 +90,22 @@ struct RecordInfo {
     /// actual rule in [`crate::borrowed_actual`], never by the scalar no-op
     /// rule: a pointer member may not be *written* under this classification.
     borrowable_fields: BTreeSet<String>,
+    /// Members declared *exactly* `struct TAG * name` — one star, a `struct`
+    /// specifier, no array modifier and no rejecting qualifier — mapped to
+    /// `TAG`. Only these members may be *continued through* by the bounded
+    /// access chain of [`crate::borrowed_actual`]; every other member ends the
+    /// chain or refuses it. A `union`, a typedef this reader will not resolve,
+    /// a multi-star member and a record-valued member are all absent here by
+    /// construction, so a chain can never cross one.
+    record_pointer_fields: BTreeMap<String, String>,
+}
+
+/// The three member classifications one readable record body yields.
+#[derive(Clone, Debug, Default)]
+struct RecordMembers {
+    scalar_fields: BTreeSet<String>,
+    borrowable_fields: BTreeSet<String>,
+    record_pointer_fields: BTreeMap<String, String>,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -310,17 +326,19 @@ impl TypedAccessModel {
                 entry.complete = false;
                 entry.scalar_fields.clear();
                 entry.borrowable_fields.clear();
+                entry.record_pointer_fields.clear();
                 continue;
             }
             if entry.union_tag {
                 continue;
             }
             let body = texts[index + 3..close].to_vec();
-            if let Some((scalar_fields, borrowable_fields)) = self.read_record_body(&body) {
+            if let Some(members) = self.read_record_body(&body) {
                 let entry = self.records.entry(tag.to_owned()).or_default();
                 entry.complete = true;
-                entry.scalar_fields = scalar_fields;
-                entry.borrowable_fields = borrowable_fields;
+                entry.scalar_fields = members.scalar_fields;
+                entry.borrowable_fields = members.borrowable_fields;
+                entry.record_pointer_fields = members.record_pointer_fields;
             }
         }
     }
@@ -332,7 +350,7 @@ impl TypedAccessModel {
     /// this reader cannot resolve yields `None`, and the whole record is then
     /// inadmissible. Reading only the members it understands would risk
     /// attributing a scalar type to a name it had actually misparsed.
-    fn read_record_body(&self, body: &[&str]) -> Option<(BTreeSet<String>, BTreeSet<String>)> {
+    fn read_record_body(&self, body: &[&str]) -> Option<RecordMembers> {
         if body
             .iter()
             .any(|text| matches!(*text, "{" | "}" | "(" | ")" | ":" | "="))
@@ -341,6 +359,7 @@ impl TypedAccessModel {
         }
         let mut scalar_fields = BTreeSet::new();
         let mut borrowable_fields = BTreeSet::new();
+        let mut record_pointer_fields = BTreeMap::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -370,11 +389,25 @@ impl TypedAccessModel {
                 // A pointer member of any pointee type is readable as a value.
                 // The member's own declaration must not be `volatile`/`_Atomic`.
                 if declarator.stars >= 1 && !qualified {
+                    // Exactly `struct TAG *` is additionally continuable: the
+                    // access chain may follow it into `TAG`. `declared_type`
+                    // commits to `RecordPointer` only for one star over a
+                    // `struct` specifier, so unions, typedefs it will not
+                    // resolve and deeper pointers are excluded here.
+                    if let DeclaredType::RecordPointer(pointee) =
+                        self.declared_type(&specifiers, declarator.stars, false)
+                    {
+                        record_pointer_fields.insert(name.clone(), pointee);
+                    }
                     borrowable_fields.insert(name);
                 }
             }
         }
-        Some((scalar_fields, borrowable_fields))
+        Some(RecordMembers {
+            scalar_fields,
+            borrowable_fields,
+            record_pointer_fields,
+        })
     }
 
     fn read_enum_constants(&mut self, texts: &[&str]) {
@@ -484,6 +517,22 @@ impl TypedAccessModel {
                 && record.definitions == 1
                 && record.borrowable_fields.contains(field)
         })
+    }
+
+    /// The record tag `tag`'s member `field` points at, when that member is
+    /// declared *exactly* `struct POINTEE *` in `tag`'s single complete
+    /// non-union definition. `None` for every other member, so a bounded access
+    /// chain can be continued only through a member this reader fully typed.
+    ///
+    /// The pointee record itself is **not** checked here: the chain walker
+    /// re-enters this model at the next link, so an incomplete, ambiguous or
+    /// `union` pointee refuses there.
+    pub(crate) fn record_pointer_field(&self, tag: &str, field: &str) -> Option<&str> {
+        self.records
+            .get(tag)
+            .filter(|record| record.complete && !record.union_tag && record.definitions == 1)
+            .and_then(|record| record.record_pointer_fields.get(field))
+            .map(String::as_str)
     }
 }
 

@@ -1,0 +1,47 @@
+// O04-ARMS — the additional declared callee premises the caller's remaining
+// early-return arms traverse. Concatenated onto `o04_path.qcore`, which stays
+// byte-unchanged so card O04's own measurement keeps its exact premise set.
+//
+// EVERY declaration here is a TRUSTED ASSUMPTION, exactly like O04's. Neither
+// is derived from any body in this fixture, and neither is offered as a
+// production declaration: this file lives with the gateway test fixtures, so
+// the pinned `contract/qcore` corpus count is untouched.
+//
+// O00 §8 feature P3 predicted three logging entry points (`flb_log_check`,
+// `flb_log_print`, `flb_errno_print`). In the byte-verbatim upstream region the
+// caller writes `flb_error(...)`, the macro those three expand from, so the
+// prediction collapses to one declaration here. The second declaration
+// (`flb_routes_mask_get_size`) was NOT in P3's list and was found by
+// re-measurement; `flb_time_now`, the third uncontracted callee the arms
+// traverse, is measured *inert* — its statement is an indirect store that
+// refuses before any contract is consulted — and is deliberately left
+// undeclared rather than declared for appearances.
+
+// --- the logging expansion ------------------------------------------------
+// Premise: the error-logging entry point borrows every argument and returns no
+// custody.
+//
+// LIMITATION, recorded rather than hidden: `flb_error` is declared
+// `void flb_error(const char *format, ...)` in C, and the resource contract
+// vocabulary has no variadic-tail form. This declaration therefore covers
+// exactly the three-argument shape this call site uses; a call at any other
+// arity is refused, not silently covered, because an actual beyond the declared
+// parameter vector is never admitted. Generalising to a declared variadic tail
+// is the named follow-on O04-ARMS-VARIADIC.
+extern fn flb_error(format: ptr<mut, u8>, detail: ptr<mut, u8>, name: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_borrowed(detail);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+};
+
+// --- the routes-mask sizing helper ----------------------------------------
+// Premise: sizing the routes mask borrows the router and returns a scalar.
+extern fn flb_routes_mask_get_size(router: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(router);
+    ensures normal resource_return_none();
+};

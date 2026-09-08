@@ -1,0 +1,53 @@
+module contract;
+
+// O04-ARMS — held-out generic constructor/caller custody API for the bounded
+// access chain.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to O04's own `g_*`
+// family: every rule under test is stated over declared C types and contract
+// modes, so no name here can matter. These are synthetic trusted test
+// assumptions, not facts about any library.
+
+extern fn h_open(ctx: ptr<mut, u8>, pool: ptr<mut, u8>, flags: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(pool);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn h_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+// probe: borrows the handle and returns a scalar.
+extern fn h_probe(h: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+// A one-parameter sink that CONSUMES what it is given. Used to show that a
+// chained actual is admitted only at a declared `Borrowed` position, and that a
+// root the projection may bind refuses the whole chain.
+extern fn h_adopt(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A variadic sink whose contract declares only its first parameter. Every
+// further actual is beyond the declared vector, and none of them may be
+// admitted: a contract cannot silently cover actuals it does not describe.
+extern fn h_note(first: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(first);
+    ensures normal resource_return_none();
+};

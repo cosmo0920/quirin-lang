@@ -39,6 +39,7 @@ struct b_ctx; struct b_pool; struct b_handle; \
 struct b_storage { int state; struct b_ctx *cio; struct b_pool *stream; }; \
 struct b_instance { int flags; struct b_storage *storage; }; \
 union b_view { struct b_ctx *cio; int tag; }; \
+struct b_holder { int kind; union b_view *view; }; \
 struct b_handle *b_open(struct b_ctx *cio, struct b_pool *stream, int flags); \
 void b_close(struct b_handle *h); \
 int b_probe(void *h); \
@@ -377,10 +378,17 @@ fn every_other_refused_shape_keeps_its_unknown_and_its_diagnostic() {
             "void w(struct b_instance *in) { struct b_storage *storage; storage = in->storage; \
              b_note(0, storage->cio); }",
         ),
+        // Deliberately widened by card O04-ARMS. C02-P refused every chain by
+        // construction; the bounded chain rule now admits one whose every
+        // intermediate link is declared exactly `struct POINTEE *` over a
+        // complete, unambiguous, non-union record, so `in->storage->cio` is
+        // modeled (pinned positively in `o04_arms.rs`). The load-bearing half
+        // is kept here on a chain the reader did *not* fully type: `view` is a
+        // `union` pointer, so the walk refuses at its intermediate link.
         (
-            "a chained access is not a direct member read",
-            "struct b_handle *w(struct b_instance *in, int n) { struct b_handle *chunk; \
-             chunk = b_open(in->storage->cio, 0, n); b_close(chunk); return 0; }",
+            "a chain through a link the reader did not type is not a direct member read",
+            "struct b_handle *w(struct b_holder *hold, int n) { struct b_handle *chunk; \
+             chunk = b_open(hold->view->cio, 0, n); b_close(chunk); return 0; }",
         ),
         (
             "a union base is never admitted",

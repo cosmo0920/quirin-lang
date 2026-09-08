@@ -1,0 +1,67 @@
+{
+  "chunk-contracts": {
+    "archived_path": "docs/reports/remaining-o04-arms/artifacts/chunk-contracts.json.gz",
+    "baseline_run_bytes": 4141225,
+    "baseline_run_identical_to_corpus_repin": true,
+    "baseline_run_sha256": "29122661dfe34b04759c0eec6d0c1c9b91fd60d78990bab3e3e4fdd77032d9ea",
+    "byte_identical_to_baseline_run": true,
+    "byte_identical_to_corpus_repin": true,
+    "corpus_repin_bytes": 4141225,
+    "corpus_repin_sha256": "29122661dfe34b04759c0eec6d0c1c9b91fd60d78990bab3e3e4fdd77032d9ea",
+    "produced_file": "resource-diagnostics.chunk-contracts.json",
+    "uncompressed_bytes": 4141225,
+    "uncompressed_sha256": "29122661dfe34b04759c0eec6d0c1c9b91fd60d78990bab3e3e4fdd77032d9ea"
+  },
+  "contracts": {
+    "archived_path": "docs/reports/remaining-o04-arms/artifacts/contracts.json.gz",
+    "baseline_run_bytes": 8368,
+    "baseline_run_identical_to_corpus_repin": false,
+    "baseline_run_sha256": "1606c64d73a02fe7813bd5ff0836c1a0e713731cc3fc24537acd206ec743c006",
+    "byte_identical_to_baseline_run": false,
+    "byte_identical_to_corpus_repin": false,
+    "corpus_repin_bytes": 8168,
+    "corpus_repin_sha256": "6c86fddbbd78368d751617dba50e356e851814145816004475d3e514372be760",
+    "produced_file": "resource-diagnostics.contracts.json",
+    "uncompressed_bytes": 8168,
+    "uncompressed_sha256": "bd3d595bce472a61537793ff50773ea3d0674a7dbd70eaaf26c286e9eddd1b7d"
+  },
+  "diagnostics": {
+    "archived_path": "docs/reports/remaining-o04-arms/artifacts/diagnostics.json.gz",
+    "baseline_run_bytes": 10741560,
+    "baseline_run_identical_to_corpus_repin": true,
+    "baseline_run_sha256": "c323d408b0ebbcb21ef0640bbffb180664a933274d17e62e6a8b6aec7f2cbb2e",
+    "byte_identical_to_baseline_run": false,
+    "byte_identical_to_corpus_repin": false,
+    "corpus_repin_bytes": 10741560,
+    "corpus_repin_sha256": "c323d408b0ebbcb21ef0640bbffb180664a933274d17e62e6a8b6aec7f2cbb2e",
+    "produced_file": "resource-diagnostics.json",
+    "uncompressed_bytes": 10740605,
+    "uncompressed_sha256": "d97626fcda0cdb4d90e6f06ef28ce2035c6331bb12f5a09f5542b1eca9685004"
+  },
+  "source": {
+    "archived_path": "docs/reports/remaining-o04-arms/artifacts/source.json.gz",
+    "baseline_run_bytes": 1665474,
+    "baseline_run_identical_to_corpus_repin": false,
+    "baseline_run_sha256": "179b3cd35f1fcc4a3ce0f8b1cdd8ad121c50c83b256c245f1a36dc5f1a1594fa",
+    "byte_identical_to_baseline_run": true,
+    "byte_identical_to_corpus_repin": false,
+    "corpus_repin_bytes": 1665474,
+    "corpus_repin_sha256": "806fd6357c51f6d6ae5cac95e7b4b854eeb5a8296d7357685d270c9bc6c1d366",
+    "produced_file": "monkey-source.json",
+    "uncompressed_bytes": 1665474,
+    "uncompressed_sha256": "179b3cd35f1fcc4a3ce0f8b1cdd8ad121c50c83b256c245f1a36dc5f1a1594fa"
+  },
+  "source-effects": {
+    "archived_path": "docs/reports/remaining-o04-arms/artifacts/source-effects.json.gz",
+    "baseline_run_bytes": 114479,
+    "baseline_run_identical_to_corpus_repin": false,
+    "baseline_run_sha256": "ef0e9feab187d4253ce2f98f954abb0e6108b265c6b21b2859d7164416e2318e",
+    "byte_identical_to_baseline_run": false,
+    "byte_identical_to_corpus_repin": false,
+    "corpus_repin_bytes": 114479,
+    "corpus_repin_sha256": "26545c57a60b0af460c767eb533b20561c00d7dbbf75b93bd7de7fb82419d5b8",
+    "produced_file": "resource-diagnostics.source-effects.json",
+    "uncompressed_bytes": 114479,
+    "uncompressed_sha256": "5daaa35586063ae28b0573718b898f96daf26e97acd3f542ad14d65e40bae176"
+  }
+}
