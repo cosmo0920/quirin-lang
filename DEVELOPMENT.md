@@ -357,6 +357,29 @@ full suite.
 
 ## Increment records
 
+### Quant delimiter alias `[| |]` (2026-09-09)
+
+`quant[| ... |]` is now an accepted delimiter alias for `quant< ... >` on
+closed quantitative index types, over the byte-identical interior grammar.
+`[|` and `|]` are new single lexer symbols occupying previously rejected
+syntax space (a bare `|` was and remains a lexer error, so no existing
+program changes meaning); the opener fixes the required closer, and a mixed
+pair such as `quant[| ... >` is refused, never repaired. Both spellings
+resolve to the same `SourceQuantIndexType`/`ResolvedQuantIndexType`, source
+spellings round-trip verbatim, and the `quant<access ...>` exclusion applies
+symmetrically to both openers. The alias exists because the angle form's
+closing `>` sits beside where-clause comparison operators; it adds no type,
+no diagnostic code and no semantic surface, so no Lean change is required
+(the resolver and everything downstream are untouched). Five new tests pin
+lexing beside plain brackets, identical elaboration of both spellings, the
+bracket twin of the pinned `quantified_indices.qcore` fixture in parameter,
+return and contract-clause position (the corpus file itself is untouched),
+and mixed/unterminated-delimiter refusals. The implemented-grammars G04
+entry, spec prose and the Emacs mode's `|` punctuation class are updated in
+the same change. Validation: 1752 workspace tests passed (5 new),
+3 ignored, 0 failed; formatting, Clippy, both reevaluation probes, all
+42 Lean audits and the 9 Emacs ERT checks pass.
+
 ### Sequential C emission indentation (2026-09-08)
 
 `qcore_core::c_emit::emit_c11`'s runtime helper bodies (`q_trace`,
