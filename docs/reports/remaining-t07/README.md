@@ -90,7 +90,7 @@ After **every** operation the checker re-derives
 Σ frames.allowable + Σ packs.allowable + Σ child_credit + spent + abandoned
 ```
 
-and refuses any state where it is not the program's `initial_credit` (`Q643`).
+and refuses any state where it is not the program's `initial_credit` (`Q673`).
 The duty sets do not appear in that sum, which is the formal content of
 acceptance 1: there is no arithmetic in which a duty could be spent, and no
 operation that reads a duty to produce credit.
@@ -131,16 +131,16 @@ The same program in the Lean model
 
 | Attempt | Measured refusal |
 |---|---|
-| discharge with the created child unjoined | `Q640` `PendingLifetimeObligation { region: "work", duty: Join(30) }` |
-| discharge with the child's read loan outstanding | `Q640` `PendingLifetimeObligation { region: "work", duty: LoanExpiry(7) }` |
-| spend the region's whole remainder, then discharge with a live join | `Q640`, unchanged — spending retires nothing |
-| exit a region normally with credit left | `Q644` `UnusedCredit { region, remainder }` |
-| exit the root region normally with credit left | `Q644` `UnusedCredit { region: "main", remainder: 3 }` |
+| discharge with the created child unjoined | `Q670` `PendingLifetimeObligation { region: "work", duty: Join(30) }` |
+| discharge with the child's read loan outstanding | `Q670` `PendingLifetimeObligation { region: "work", duty: LoanExpiry(7) }` |
+| spend the region's whole remainder, then discharge with a live join | `Q670`, unchanged — spending retires nothing |
+| exit a region normally with credit left | `Q674` `UnusedCredit { region, remainder }` |
+| exit the root region normally with credit left | `Q674` `UnusedCredit { region: "main", remainder: 3 }` |
 | release a resource the open pack holds | `Q302` `ResourceHeldByCleanupPack(8)` |
 | move a loaned resource into the error payload | `Q600` `LoanOutstanding { resource: 7, borrower: 1 }` (the ledger's own refusal) |
 
 Full message text is pinned, e.g.
-`Q640: region \`work\` cannot abandon credit while the join of handle \`30\` is outstanding`.
+`Q670: region \`work\` cannot abandon credit while the join of handle \`30\` is outstanding`.
 
 The last row is where the *access permission* clause is discharged concretely: a
 payload move is an exclusive use, so T04's loan rule refuses it without this
@@ -150,11 +150,11 @@ profile having to restate the rule.
 
 | Attempt | Measured refusal |
 |---|---|
-| discharge while the child still holds four of the six endowed | `Q641` `ChildCreditOutstanding { region: "work", child: 1, amount: 3 }` |
-| the parent spends what it lent the child | `Q645` `InsufficientCredit { region: "work", requested: 3, available: 2 }` — the frame simply does not have it |
-| endow a child beyond the region's credit | `Q645` `InsufficientCredit { requested: 7, available: 6 }` |
-| a child returns more than it was lent | `Q645` `InsufficientCredit { requested: 5, available: 4 }` |
-| discharge after a **failed** join | `Q640` `Join(30)`, permanently |
+| discharge while the child still holds four of the six endowed | `Q671` `ChildCreditOutstanding { region: "work", child: 1, amount: 3 }` |
+| the parent spends what it lent the child | `Q675` `InsufficientCredit { region: "work", requested: 3, available: 2 }` — the frame simply does not have it |
+| endow a child beyond the region's credit | `Q675` `InsufficientCredit { requested: 7, available: 6 }` |
+| a child returns more than it was lent | `Q675` `InsufficientCredit { requested: 5, available: 4 }` |
+| discharge after a **failed** join | `Q670` `Join(30)`, permanently |
 | retry a failed join | `Q600` `JoinFailed(30)` (the ledger's own terminal rule) |
 | fail a join that already succeeded | `Q600` `HandleConsumed(30)` |
 
@@ -174,7 +174,7 @@ would shadow the other two out of existence.
 A duty belongs to the region that opened it. An inner region may abandon its own
 remainder while an *enclosing* region's loan is live; the enclosing region is
 then refused at its own exit, naming its own duty
-(`an_enclosing_regions_duty_is_enforced_at_its_own_exit`, `Q640` `LoanExpiry(7)`
+(`an_enclosing_regions_duty_is_enforced_at_its_own_exit`, `Q670` `LoanExpiry(7)`
 at region `main`). The alternative — refusing any abandonment anywhere while any
 duty is live anywhere — would be stricter but would stop attributing the refusal
 to the region that can act on it.
@@ -200,8 +200,8 @@ Refusals around it:
 |---|---|
 | rethrow with the pack still open | `Q307` `RethrowWithUndischargedCleanup` |
 | return from the handler without discharging | `Q305` `CleanupPackNotDischarged` |
-| let an error carry a join out of the thread scope | `Q642` `ObligationEscapesScope { duty: Join(30) }` |
-| drop a payload obligation at a normal exit | `Q647` `PayloadObligationDropped { resource: 7 }` |
+| let an error carry a join out of the thread scope | `Q672` `ObligationEscapesScope { duty: Join(30) }` |
+| drop a payload obligation at a normal exit | `Q677` `PayloadObligationDropped { resource: 7 }` |
 | discharge twice | `Q304` `CleanupPackDuplicated("pack")` |
 | discharge a binding the handler does not hold | `Q302` `UnknownCleanupCapability("elsewhere")` |
 | open the wrong region | `Q303` `WrongRegionOpened { expected: "work", actual: "elsewhere" }` |
@@ -229,21 +229,21 @@ the same test so the matrix measures the edits and not a broken fixture.
 
 Three families, kept separate so that "the profile refuses X" is testable:
 
-* **The eight named refusals of this profile** occupy the free `Q640`–`Q647`
+* **The eight named refusals of this profile** occupy the free `Q670`–`Q677`
   range (`Q600` is the live scoped-task refusal, `Q601`–`Q609` and `Q624`–`Q629`
   appear only as a superseded revision-0.2 design allocation under
   `docs/obsolete/`, and T02 occupies `Q610`–`Q623`):
 
   | Diagnostic | Code |
   |---|---|
-  | `PendingLifetimeObligation` | `Q640` |
-  | `ChildCreditOutstanding` | `Q641` |
-  | `ObligationEscapesScope` | `Q642` |
-  | `CreditNotConserved` | `Q643` |
-  | `UnusedCredit` | `Q644` |
-  | `InsufficientCredit` | `Q645` |
-  | `ObligationOutsideRegion` | `Q646` |
-  | `PayloadObligationDropped` | `Q647` |
+  | `PendingLifetimeObligation` | `Q670` |
+  | `ChildCreditOutstanding` | `Q671` |
+  | `ObligationEscapesScope` | `Q672` |
+  | `CreditNotConserved` | `Q673` |
+  | `UnusedCredit` | `Q674` |
+  | `InsufficientCredit` | `Q675` |
+  | `ObligationOutsideRegion` | `Q676` |
+  | `PayloadObligationDropped` | `Q677` |
 
 * **Carried over from the error-region pass**, condition for condition, keeping
   the code that pass already emits: `Q300` an undeclared raised error, `Q302`
@@ -269,8 +269,8 @@ said here rather than left to look load-bearing:
 
 | Check | Why it cannot fire today |
 |---|---|
-| `Q643` `CreditNotConserved` | it is the conservation checkpoint itself; `step_preserves_accounted` is the proof that it never fires. Its value is that conservation is *checked at runtime after every operation*, not merely argued. |
-| `Q646` `ObligationOutsideRegion` | the root region is implicit and pushed before the body, so the frame stack is never empty inside a program. |
+| `Q673` `CreditNotConserved` | it is the conservation checkpoint itself; `step_preserves_accounted` is the proof that it never fires. Its value is that conservation is *checked at runtime after every operation*, not merely argued. |
+| `Q676` `ObligationOutsideRegion` | the root region is implicit and pushed before the body, so the frame stack is never empty inside a program. |
 | `Q309` `ResourceInPayloadAndCleanupPack` | a payload move removes the resource's release duty, and re-acquiring a payload identity is already `Q302` `DuplicateResourceIdentity`. |
 
 A fourth, the handler-exit `Q307` arm, is a backstop because `Raise` refuses an
@@ -385,9 +385,9 @@ clauses word for word:
 
 | Case | Scenario | Model-level evidence here | Mappable? |
 |---|---|---|---|
-| CT21 | Quant opening discards positive access permission | `an_outstanding_read_loan_blocks_the_abandonment_of_its_regions_credit` — `Q640` `LoanExpiry(7)`, plus the ledger's own `Q600` `LoanOutstanding` on a payload move | **no** |
+| CT21 | Quant opening discards positive access permission | `an_outstanding_read_loan_blocks_the_abandonment_of_its_regions_credit` — `Q670` `LoanExpiry(7)`, plus the ledger's own `Q600` `LoanOutstanding` on a payload move | **no** |
 | CT22 | Quant opening discards parent-local unused credit after joins | the deliverable, plus `an_unjoined_child_blocks_the_abandonment_of_its_regions_credit` | **no** |
-| CT23 | Parent abandons child-owned credit during its own error | `a_parent_cannot_abandon_credit_that_is_out_with_a_child` — `Q641` | **no** |
+| CT23 | Parent abandons child-owned credit during its own error | `a_parent_cannot_abandon_credit_that_is_out_with_a_child` — `Q671` | **no** |
 | CT24 | Cleanup destroys an owner before child join | T04 already proposed a source fixture | not this card's |
 | CT25 | Cleanup destroys owner after joins and loan expiry | T04 already proposed a source fixture | not this card's |
 
@@ -455,7 +455,7 @@ ledger for this checkpoint, and 1169 − 28 reproduces it exactly.
    unvalidated, and T06's note that the merged driver mislabels a shares+payload
    module as `ScopedReadSharesV1` is untested against this profile. **Decision:
    whether a follow-on card should validate the combined feature set.**
-2. **`Q640`–`Q647` are a new block.** `docs/QCORE_SPEC_r0_3.md` §L21 is
+2. **`Q670`–`Q677` are a new block.** `docs/QCORE_SPEC_r0_3.md` §L21 is
    deliberately unedited, matching how T02's `Q610`–`Q623` were left. **Decision:
    whether to record both blocks in the per-code table in one edit.** The codes
    themselves are pinned by test here and by T02's report there.

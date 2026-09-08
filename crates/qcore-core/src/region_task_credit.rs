@@ -15,18 +15,18 @@
 //!   return at join, and abandonment at discharge; none of them reads or writes
 //!   the duty set. A checkpoint after every operation re-derives
 //!   `initial = Σ frames + Σ child-held + spent + abandoned` and refuses a
-//!   violation (`Q643`), so no duty can ever be converted into credit.
+//!   violation (`Q673`), so no duty can ever be converted into credit.
 //! * **Abandonment is the error path's only credit sink, and it is gated.**
 //!   Discharging an opened cleanup pack abandons the pack's remaining allowable
 //!   credit — but only after every join it opened has been performed, every read
 //!   loan it opened has expired and every unit of credit it lent to a child has
-//!   come back (`Q640`, `Q641`). A failed join is terminal, so a pack whose child
+//!   come back (`Q670`, `Q671`). A failed join is terminal, so a pack whose child
 //!   was never observed to finish can never be discharged.
 //! * **An obligation cannot leave the thread scope on an error edge.** A normal
 //!   exit closes the scope through the ledger's own `ScopeBusy` rule; an
 //!   escaping error must carry no outstanding join, loan or child-credit duty
-//!   (`Q642`), and its payload and remaining destroy duties are recorded on the
-//!   certificate rather than dropped (`Q647`).
+//!   (`Q672`), and its payload and remaining destroy duties are recorded on the
+//!   certificate rather than dropped (`Q677`).
 //!
 //! Whether a duty is still outstanding is **derived from the ledger** on every
 //! query, never from this module's bookkeeping: a join duty closes only when
@@ -303,14 +303,14 @@ pub struct RegionTaskCertificate {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RegionTaskDiagnostic {
-    // ---- the eight named refusals of this profile (Q640-Q647) ----
-    /// `Q640`: a cleanup pack was discharged, or a region exited, while a join
+    // ---- the eight named refusals of this profile (Q670-Q677) ----
+    /// `Q670`: a cleanup pack was discharged, or a region exited, while a join
     /// or read loan it opened is still outstanding. Acceptance 1 and 2.
     PendingLifetimeObligation {
         region: RegionName,
         duty: Duty,
     },
-    /// `Q641`: the same, for credit that is out with a child. Named separately
+    /// `Q671`: the same, for credit that is out with a child. Named separately
     /// so "a duty is outstanding" and "the parent is trying to abandon someone
     /// else's credit" are distinguishable refusals.
     ChildCreditOutstanding {
@@ -318,32 +318,32 @@ pub enum RegionTaskDiagnostic {
         child: TaskId,
         amount: u64,
     },
-    /// `Q642`: an error left the thread scope carrying a join, loan or
+    /// `Q672`: an error left the thread scope carrying a join, loan or
     /// child-credit obligation.
     ObligationEscapesScope {
         duty: Duty,
     },
-    /// `Q643`: the conservation checkpoint failed. Credit was created or
+    /// `Q673`: the conservation checkpoint failed. Credit was created or
     /// destroyed outside the five accounted movements.
     CreditNotConserved {
         expected: u64,
         observed: u64,
     },
-    /// `Q644`: a normal exit from a region leaves unspent allowable credit.
+    /// `Q674`: a normal exit from a region leaves unspent allowable credit.
     /// Only the error path may abandon credit.
     UnusedCredit {
         region: RegionName,
         remainder: u64,
     },
-    /// `Q645`: an endowment, spend or child loan exceeds the frame's credit.
+    /// `Q675`: an endowment, spend or child loan exceeds the frame's credit.
     InsufficientCredit {
         region: RegionName,
         requested: u64,
         available: u64,
     },
-    /// `Q646`: an operation that opens a duty or moves credit has no region.
+    /// `Q676`: an operation that opens a duty or moves credit has no region.
     ObligationOutsideRegion,
-    /// `Q647`: a payload resource was still owned at an exit that cannot carry
+    /// `Q677`: a payload resource was still owned at an exit that cannot carry
     /// it.
     PayloadObligationDropped {
         resource: ResourceId,
@@ -387,21 +387,21 @@ pub enum RegionTaskDiagnostic {
 }
 
 impl RegionTaskDiagnostic {
-    /// The eight named refusals of this profile occupy the free `Q640`-`Q647`
+    /// The eight named refusals of this profile occupy the free `Q670`-`Q677`
     /// range. Refusals carried over from the error-region pass keep the exact
     /// `Q3xx` code that pass already emits for the same condition, and
     /// structural refusals carried over from the scoped-task ledger keep the
     /// concurrency pass's existing `Q600`. No code is repurposed.
     pub fn code(&self) -> &'static str {
         match self {
-            Self::PendingLifetimeObligation { .. } => "Q640",
-            Self::ChildCreditOutstanding { .. } => "Q641",
-            Self::ObligationEscapesScope { .. } => "Q642",
-            Self::CreditNotConserved { .. } => "Q643",
-            Self::UnusedCredit { .. } => "Q644",
-            Self::InsufficientCredit { .. } => "Q645",
-            Self::ObligationOutsideRegion => "Q646",
-            Self::PayloadObligationDropped { .. } => "Q647",
+            Self::PendingLifetimeObligation { .. } => "Q670",
+            Self::ChildCreditOutstanding { .. } => "Q671",
+            Self::ObligationEscapesScope { .. } => "Q672",
+            Self::CreditNotConserved { .. } => "Q673",
+            Self::UnusedCredit { .. } => "Q674",
+            Self::InsufficientCredit { .. } => "Q675",
+            Self::ObligationOutsideRegion => "Q676",
+            Self::PayloadObligationDropped { .. } => "Q677",
             Self::UndeclaredError(_) => "Q300",
             Self::WrongRegionOpened { .. } => "Q303",
             Self::CleanupPackDuplicated(_) => "Q304",

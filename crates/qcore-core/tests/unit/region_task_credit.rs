@@ -239,10 +239,10 @@ fn an_unjoined_child_blocks_the_abandonment_of_its_regions_credit() {
             duty: Duty::Join(30)
         }
     );
-    assert_eq!(refusal.code(), "Q640");
+    assert_eq!(refusal.code(), "Q670");
     assert_eq!(
         refusal.to_string(),
-        "Q640: region `work` cannot abandon credit while the join of handle `30` is outstanding"
+        "Q670: region `work` cannot abandon credit while the join of handle `30` is outstanding"
     );
 
     // Joining first is admitted, and the whole remainder is then abandoned.
@@ -304,7 +304,7 @@ fn an_outstanding_read_loan_blocks_the_abandonment_of_its_regions_credit() {
             duty: Duty::LoanExpiry(7)
         }
     );
-    assert_eq!(refusal.code(), "Q640");
+    assert_eq!(refusal.code(), "Q670");
 
     // The loan gate is exactly as strong as the ledger's own loan state and no
     // stronger: the join closes the loan, and the discharge is then admitted.
@@ -391,7 +391,7 @@ fn a_normal_region_exit_refuses_to_abandon_its_remainder() {
             remainder: 2
         }
     );
-    assert_eq!(refusal.code(), "Q644");
+    assert_eq!(refusal.code(), "Q674");
 
     // And the root region is not exempt.
     let root = refused(&program(4, vec![RegionTaskOp::Spend(1)]));
@@ -452,10 +452,10 @@ fn a_parent_cannot_abandon_credit_that_is_out_with_a_child() {
             amount: 3
         }
     );
-    assert_eq!(refusal.code(), "Q641");
+    assert_eq!(refusal.code(), "Q671");
     assert_eq!(
         refusal.to_string(),
-        "Q641: region `work` cannot abandon `3` credit held by child `1`"
+        "Q671: region `work` cannot abandon `3` credit held by child `1`"
     );
 
     // The parent cannot spend the child's credit either: it is not in the
@@ -474,7 +474,7 @@ fn a_parent_cannot_abandon_credit_that_is_out_with_a_child() {
             available: 2
         }
     );
-    assert_eq!(overspend.code(), "Q645");
+    assert_eq!(overspend.code(), "Q675");
 }
 
 /// The reporting precedence, pinned so that no duty family can be shadowed out
@@ -759,10 +759,10 @@ fn an_error_cannot_carry_a_lifetime_obligation_out_of_the_scope() {
             duty: Duty::Join(30)
         }
     );
-    assert_eq!(refusal.code(), "Q642");
+    assert_eq!(refusal.code(), "Q672");
     assert_eq!(
         refusal.to_string(),
-        "Q642: the join of handle `30` escapes the thread scope"
+        "Q672: the join of handle `30` escapes the thread scope"
     );
 }
 
@@ -778,7 +778,7 @@ fn a_payload_obligation_cannot_be_dropped_at_a_normal_exit() {
         refusal,
         RegionTaskDiagnostic::PayloadObligationDropped { resource: 7 }
     );
-    assert_eq!(refusal.code(), "Q647");
+    assert_eq!(refusal.code(), "Q677");
 
     // Releasing it explicitly is admitted, and the release is recorded.
     let certificate = checked(&program(
@@ -998,7 +998,7 @@ fn duties_and_credit_have_no_home_outside_a_region() {
             available: 0
         }
     );
-    assert_eq!(RegionTaskDiagnostic::ObligationOutsideRegion.code(), "Q646");
+    assert_eq!(RegionTaskDiagnostic::ObligationOutsideRegion.code(), "Q676");
 }
 
 /// An undeclared error is refused at both sites that name one.
@@ -1091,7 +1091,7 @@ fn a_forged_certificate_is_refused_field_by_field() {
 }
 
 /// Every diagnostic this profile can raise carries the code its family owns,
-/// and the eight named refusals are exactly `Q640`-`Q647`.
+/// and the eight named refusals are exactly `Q670`-`Q677`.
 #[test]
 fn the_named_refusals_occupy_the_free_q640_range() {
     let named = [
@@ -1100,7 +1100,7 @@ fn the_named_refusals_occupy_the_free_q640_range() {
                 region: WORK.into(),
                 duty: Duty::LoanExpiry(7),
             },
-            "Q640",
+            "Q670",
         ),
         (
             RegionTaskDiagnostic::ChildCreditOutstanding {
@@ -1108,27 +1108,27 @@ fn the_named_refusals_occupy_the_free_q640_range() {
                 child: 1,
                 amount: 2,
             },
-            "Q641",
+            "Q671",
         ),
         (
             RegionTaskDiagnostic::ObligationEscapesScope {
                 duty: Duty::LoanExpiry(7),
             },
-            "Q642",
+            "Q672",
         ),
         (
             RegionTaskDiagnostic::CreditNotConserved {
                 expected: 1,
                 observed: 2,
             },
-            "Q643",
+            "Q673",
         ),
         (
             RegionTaskDiagnostic::UnusedCredit {
                 region: WORK.into(),
                 remainder: 1,
             },
-            "Q644",
+            "Q674",
         ),
         (
             RegionTaskDiagnostic::InsufficientCredit {
@@ -1136,12 +1136,12 @@ fn the_named_refusals_occupy_the_free_q640_range() {
                 requested: 2,
                 available: 1,
             },
-            "Q645",
+            "Q675",
         ),
-        (RegionTaskDiagnostic::ObligationOutsideRegion, "Q646"),
+        (RegionTaskDiagnostic::ObligationOutsideRegion, "Q676"),
         (
             RegionTaskDiagnostic::PayloadObligationDropped { resource: 7 },
-            "Q647",
+            "Q677",
         ),
     ];
     let codes = named
@@ -1155,7 +1155,7 @@ fn the_named_refusals_occupy_the_free_q640_range() {
     assert_eq!(
         codes,
         [
-            "Q640", "Q641", "Q642", "Q643", "Q644", "Q645", "Q646", "Q647"
+            "Q670", "Q671", "Q672", "Q673", "Q674", "Q675", "Q676", "Q677"
         ]
     );
 
