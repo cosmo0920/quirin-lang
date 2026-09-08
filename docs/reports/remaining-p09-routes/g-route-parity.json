@@ -1,0 +1,81 @@
+{
+  "cases": [
+    {
+      "case": "release_summary",
+      "definitions": [],
+      "digest": "d270856de9f9b99af57e51535a25c9cb41d4de9fa1ff7340a2d3da4c7b07d55b",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 653
+    },
+    {
+      "case": "busy_summary",
+      "definitions": [],
+      "digest": "4d07d584ae888d2bd60ecebacb4ea1b8fbd2e157400d5369f64f2547b0a1890e",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 674
+    },
+    {
+      "case": "lock_summary",
+      "definitions": [],
+      "digest": "ce59df3b7c610f7f73ff51c2dbca6dd25a23426e81f59383f3dffb08db17757a",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 664
+    },
+    {
+      "case": "volatile_pointer_is_unknown",
+      "definitions": [],
+      "digest": "4d38a379fb93104cfdf208e9c2bcdaa75aa692f03fdd2972cb2b51ffbbb7e3bd",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 107
+    },
+    {
+      "case": "definition_absent_after_preprocessing",
+      "definitions": [],
+      "digest": "b0c81e01cc9fc91ac570cde6e9c986b58aeb076004d47574c4b6e91fdc2fd8de",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 103
+    },
+    {
+      "case": "definition_present_after_preprocessing",
+      "definitions": [
+        "INCLUDE_F"
+      ],
+      "digest": "9970669a2e98d862405a6b0ea9a22ea6b2296277348003b86c32ae1ed67f3966",
+      "identical": true,
+      "outcome": "results",
+      "results": 1,
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "serialized_bytes": 642
+    },
+    {
+      "case": "revision_mismatch_rejects",
+      "definitions": [],
+      "digest": "67ffb1af527a21bd357fd33fad11a808c28a14d6d6d528026708be37360587e1",
+      "identical": true,
+      "outcome": "rejected",
+      "results": null,
+      "revision": "other revision",
+      "serialized_bytes": 70
+    }
+  ],
+  "clang": "\"clang\" \"--driver-mode=gcc\"",
+  "measurement": "p09-g zero-helper wrapper parity",
+  "new_route": "qcore_compiler::verifier_plugins::chunkio::chunk_source::import_chunk_source_with_helpers(unit, revision, &[])",
+  "old_route": "qcore_compiler::chunk_source::import_chunk_source(unit, revision)",
+  "pinned_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+}
