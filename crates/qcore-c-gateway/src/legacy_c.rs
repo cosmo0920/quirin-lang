@@ -318,24 +318,30 @@ pub enum CPreprocessorOption {
 
 /// Explicit build flags admitted to Clang preprocessing, syntax and typed AST.
 /// Assembler requests are retained but no object/stack property is certified.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub enum CFrontendFlag {
     AllWarnings,
     ExtraWarnings,
+    /// Warn when an undefined preprocessor identifier starts with this prefix.
+    UndefPrefix(String),
     DebugInformation,
     PositionIndependentCode,
     AssemblerNoExecStack,
+    /// Select one Apple Clang architecture using its two-argument `-arch` form.
+    Architecture(String),
 }
 
 impl CFrontendFlag {
-    pub(crate) fn clang_argument(self) -> &'static str {
+    fn append_to(&self, command: &mut std::process::Command) {
         match self {
-            Self::AllWarnings => "-Wall",
-            Self::ExtraWarnings => "-Wextra",
-            Self::DebugInformation => "-g",
-            Self::PositionIndependentCode => "-fPIC",
-            Self::AssemblerNoExecStack => "-Wa,--noexecstack",
-        }
+            Self::AllWarnings => command.arg("-Wall"),
+            Self::ExtraWarnings => command.arg("-Wextra"),
+            Self::UndefPrefix(prefix) => command.arg(format!("-Wundef-prefix={prefix}")),
+            Self::DebugInformation => command.arg("-g"),
+            Self::PositionIndependentCode => command.arg("-fPIC"),
+            Self::AssemblerNoExecStack => command.arg("-Wa,--noexecstack"),
+            Self::Architecture(architecture) => command.args(["-arch", architecture]),
+        };
     }
 }
 
@@ -343,7 +349,7 @@ impl C11TranslationUnit<'_> {
     pub(crate) fn append_frontend_flags(&self, command: &mut std::process::Command) {
         for option in &self.preprocessor_options {
             if let CPreprocessorOption::FrontendFlag(flag) = option {
-                command.arg(flag.clang_argument());
+                flag.append_to(command);
             }
         }
     }
@@ -484,7 +490,7 @@ impl CPreprocessorOption {
             Self::Define(value) => ("-D", value),
             Self::Undefine(value) => ("-U", value),
             Self::FrontendFlag(flag) => {
-                command.arg(flag.clang_argument());
+                flag.append_to(command);
                 return;
             }
         };

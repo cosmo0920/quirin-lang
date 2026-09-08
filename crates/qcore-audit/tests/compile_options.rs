@@ -254,6 +254,9 @@ fn command_structure_and_unmodeled_options_fail_closed() {
         "clang -c src/unit.c -Werror",
         "clang -c src/unit.c -fshort-enums",
         "clang -c src/unit.c -include hidden.h",
+        "clang -std=c11 -c src/unit.c -Wundef-prefix=",
+        "clang -std=c11 -c src/unit.c -arch",
+        "clang -std=c11 -c src/unit.c -arch -Wall",
     ] {
         let mut entry = f.entry(&[]);
         entry.command = command.into();
@@ -270,13 +273,17 @@ fn build_flags_match_direct_clang_preprocessing_and_typed_ast() {
     use std::io::Write;
     use std::process::Stdio;
     let f = Fixture::new();
-    let source = "#if defined(__PIE__)\n#define MODE 4\n#elif defined(__PIC__)\n#define MODE 2\n#else\n#define MODE 0\n#endif\nint observed(void) { return MODE; }";
+    let source = "#if defined(__arm64__)\n#define ARCH 64\n#elif defined(__x86_64__)\n#define ARCH 86\n#else\n#define ARCH 0\n#endif\n#if defined(__PIE__)\n#define MODE (ARCH + 4)\n#elif defined(__PIC__)\n#define MODE (ARCH + 2)\n#else\n#define MODE ARCH\n#endif\nint observed(void) { return MODE; }";
     for flags in [
         vec!["-Wall"],
         vec!["-Wextra"],
         vec!["-g"],
         vec!["-fPIC"],
         vec!["-Wa,--noexecstack"],
+        vec!["-Wundef-prefix=TARGET_OS_"],
+        vec!["-arch", "arm64"],
+        vec!["-arch", "x86_64"],
+        vec!["-Wundef-prefix=TARGET_OS_", "-arch", "arm64"],
         vec!["-Wall", "-g", "-fPIC", "-Wa,--noexecstack", "-Wall"],
     ] {
         let mut child = clang_command()

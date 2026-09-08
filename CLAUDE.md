@@ -1288,3 +1288,13 @@ open). `qcore-schemas` is 5.0.0; `qcore-compiler` is 0.2.0. Merged gate at
 this checkpoint: 1473 workspace tests, 58 provider tests, 95 Python tests,
 34 Lean audits, both reevaluation examples exit 0, fmt and clippy clean in
 both workspaces.
+
+macOS Cycle19 compiler-option transport (2026-09-08): ordered typed frontend
+inputs now preserve Apple Clang `-Wundef-prefix=<prefix>` and `-arch
+<architecture>` through preprocessing, syntax and typed-AST phases, while
+malformed forms, missing explicit dialects and compiler substitution still
+reject. The prepared `11651d47` replay completes 180 files / 181 configurations:
+2 Safe / 41 provisional Unsafe / 134 Unknown / 4 data-only / 0 gateway failures,
+with zero option refusals. This does not replace the pinned 185-unit ledger or
+promote raw units. Evidence:
+`docs/reports/macos-cycle19-compiler-options/README.md`.

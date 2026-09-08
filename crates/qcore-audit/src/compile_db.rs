@@ -563,6 +563,31 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
             options
                 .preprocessor_options
                 .push(CPreprocessorOption::FrontendFlag(flag));
+        } else if let Some(prefix) = word.strip_prefix("-Wundef-prefix=") {
+            if prefix.is_empty() || prefix.contains('$') {
+                return Err("invalid -Wundef-prefix argument".into());
+            }
+            frontend_flags = true;
+            options
+                .preprocessor_options
+                .push(CPreprocessorOption::FrontendFlag(
+                    CFrontendFlag::UndefPrefix(prefix.into()),
+                ));
+        } else if word == "-arch" {
+            cursor += 1;
+            let architecture = words.get(cursor).ok_or("missing -arch argument")?;
+            if architecture.is_empty()
+                || architecture.starts_with('-')
+                || architecture.contains('$')
+            {
+                return Err("invalid -arch argument".into());
+            }
+            frontend_flags = true;
+            options
+                .preprocessor_options
+                .push(CPreprocessorOption::FrontendFlag(
+                    CFrontendFlag::Architecture(architecture.clone()),
+                ));
         } else if let Some(standard) = word.strip_prefix("-std=") {
             explicit_dialect = true;
             options.dialect = match standard {

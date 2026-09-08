@@ -80,7 +80,10 @@ an emitted winpthreads-derived compatibility subset. Emitted C is self-contained
 Windows builds need no pthread library. See the [Windows thread guide](docs/reports/windows-c11-threads/README.md). The full test suite also
 exercises existing-C analysis, which needs Clang for preprocessing, syntax
 validation, and its JSON AST. See the [Windows Clang fixture validation](docs/reports/windows-clang-fixtures/README.md)
-for target types, pinned source bytes and platform test evidence.
+for target types, pinned source bytes and platform test evidence. On macOS, the
+configured audit also preserves Apple Clang architecture and undefined-prefix
+warning options across all three gateway phases; see the
+[macOS Cycle19 compiler-option replay](docs/reports/macos-cycle19-compiler-options/README.md).
 
 ```sh
 git submodule update --init --recursive
