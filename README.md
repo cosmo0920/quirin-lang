@@ -1,10 +1,5 @@
 # QCore-C
 
-> **Handoff, 2026-09-07:** managed subagents were halted at the user's request;
-> do not restart them without a new user instruction. Full text and the current
-> implementation checkpoint: [DEVELOPMENT.md](DEVELOPMENT.md#handoff-2026-09-07)
-> and [the handoff record](docs/HANDOFF_2026-09-07.md).
-
 QCore-C is a research language for **quantitative types**, **owned
 resources**, **typed recoverable errors**, **checked cleanup**, and **checked
 concurrency**, lowering to portable C11. Alongside the language, the project
