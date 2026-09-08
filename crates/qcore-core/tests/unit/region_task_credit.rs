@@ -7,6 +7,7 @@
 //! same program with one edit, so a refusal is never a mistake about syntax.
 
 use super::*;
+use crate::scoped_tasks::FULL_READ_AUTHORITY;
 
 const WORK: &str = "work";
 const ROOT: &str = "main";
@@ -812,7 +813,8 @@ fn a_loaned_resource_cannot_be_moved_into_an_error_payload() {
         refusal,
         RegionTaskDiagnostic::Ledger(TaskLedgerError::LoanOutstanding {
             resource: 7,
-            borrower: 1
+            outstanding: FULL_READ_AUTHORITY,
+            borrowers: vec![1]
         })
     );
     assert_eq!(refusal.code(), "Q600");
@@ -1405,7 +1407,8 @@ fn a_mutation_matrix_over_the_deliverable_rejects_every_row() {
             ]),
             RegionTaskDiagnostic::Ledger(TaskLedgerError::LoanOutstanding {
                 resource: 7,
-                borrower: 1,
+                outstanding: FULL_READ_AUTHORITY,
+                borrowers: vec![1],
             }),
         ),
         (

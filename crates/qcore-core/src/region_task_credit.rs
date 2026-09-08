@@ -607,7 +607,7 @@ impl State {
                 )
             }),
             Duty::Join(handle) => !self.joined_handles.contains(&handle),
-            Duty::LoanExpiry(resource) => self.ledger.loan_borrower(resource).is_some(),
+            Duty::LoanExpiry(resource) => !self.ledger.loan_borrowers(resource).is_empty(),
             Duty::ChildCredit(child) => self.child_credit.contains_key(&child),
         }
     }
@@ -830,12 +830,19 @@ impl Analyzer<'_> {
                 available,
             });
         }
+        // T07 lends only the whole read authority (T04-style loans); the T05
+        // counted-share ledger expects (resource, share) pairs.
+        let whole_loans: Vec<(crate::scoped_tasks::ResourceId, u32)> = spawn
+            .loans
+            .iter()
+            .map(|&resource| (resource, crate::scoped_tasks::FULL_READ_AUTHORITY))
+            .collect();
         state.ledger.reserve_with_loans(
             ROOT_TASK,
             self.program.scope,
             spawn.reservation,
             &spawn.moves,
-            &spawn.loans,
+            &whole_loans,
         )?;
         match spawn.outcome {
             // A creation that did not happen lent nothing, moved nothing and
