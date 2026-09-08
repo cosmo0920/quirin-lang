@@ -542,6 +542,19 @@ Coverage at that checkpoint was 7/50 mapped, 43 unmapped. Moves/loans, owned res
 mutexes, nested workers, general control flow and other platforms remain open.
 Evidence: `docs/reports/w6-task-recovery/README.md`.
 
+macOS native concurrency (2026-09-08): scoped copy/owned/read-loan/read-share
+tasks, typed owned-error payload tasks and checked mutex guards now check, emit,
+compile and execute on macOS through an emitted pthread-backed implementation
+of the C11 thread subset used by QCore. The macOS CT harness executes the
+threaded native and fault-injection cases; CT50's separate
+`MAP_FIXED_NOREPLACE` address-reuse observation remains Linux-only. Apple
+ASan/UBSan runs remain enabled, while leak detection stays a Linux-only
+observation because Apple's AddressSanitizer does not provide LSan. Configured
+audit compile inputs compare canonical existing paths so the macOS `/var` to
+`/private/var` alias cannot spuriously invalidate a pinned task, and archived
+Linux trace replay pins Linux errno values instead of reading the host Python
+errno table.
+
 Nullable removal and custody transfer validation (2026-09-07): W4 now validates
 nullable `Removed` preconditions, including null-guarded nonnull removal and
 reordered direct forwarding. Null refinement removes only the absent child's

@@ -50,7 +50,7 @@ For documentation, this revision names the current boundaries as follows. These 
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `qcorec check`, `qcorec emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
-| `source.tasks.copy.v1` | `compile_files`, `qcorec check`, `qcorec emit` | Linux C11 threads; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
+| `source.tasks.copy.v1` | `compile_files`, `qcorec check`, `qcorec emit` | Linux C11 threads or the emitted macOS pthread compatibility layer; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
 | `index.closed` | `quant_index` | Closed, dimensioned natural expressions in credit/live types. |
 | `model.sequential` | Ownership, usage, flow, typed-error, error-region and CFG APIs | Supplied semantic IR; not a general source elaborator. |
@@ -295,7 +295,9 @@ Source `if`, `match`, loops, arbitrary assignment, general arithmetic evaluation
 The result-literal parser now accepts the full signed i32 range, including `-2147483648`, by checking the signed result using a wider representation. Out-of-range literals reject. This R07 repair does not implement general result expressions or full owned-result typing.
 
 The separate `source.tasks.copy.v1` path now lowers marked scoped-task source
-through an opaque checked task IR and emits real Linux C11 threads. It supports
+through an opaque checked task IR and emits real threads on Linux and macOS. Linux
+uses C11 threads directly; macOS uses an emitted pthread-backed implementation
+of the required C11 thread subset. It supports
 immutable i32 copies, leaf workers with i32/unit results, dynamic creation
 failure, explicit creator join, collected Results and separate `?` propagation.
 The source execution profile and checked-artifact variant are explicit. Native

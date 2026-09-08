@@ -134,8 +134,9 @@ Captures must be `copy` of direct immutable i32 local/parameter names. General
 expressions, assignments, loops, general branches, resources, loans, move/read/write
 captures, mutexes, externs, globals, user contracts and task-bearing workers
 reject in every definition. Entry-free task modules are not admitted yet.
-The native driver currently supports Linux C11 threads and explicitly rejects
-other targets. Its start record survives until successful native join; failed
+The native driver currently supports Linux C11 threads and macOS through an
+emitted pthread-backed compatibility implementation of the required C11 thread
+subset; it explicitly rejects other targets. Its start record survives until successful native join; failed
 join aborts without reclaiming possibly accessed storage. These rules do not
 establish general C11/shared-memory or cross-platform refinement. See the
 [recovery execution record](reports/w6-task-recovery/README.md).

@@ -14,6 +14,10 @@ from check_file_constructor_failure_trace import canonical, PLAN
 SUCCESS = (0,2)
 MAP_FAILED = 2**64-1
 FAILURES = (0,1,1,2,1,1,2,2)
+# The records are Linux ABI observations. Python's errno module describes the
+# host running the replay (macOS uses a different EOPNOTSUPP number), so pin the
+# observed Linux value instead of silently reinterpreting the trace.
+LINUX_EOPNOTSUPP = 95
 
 
 def check_process(process, scenario):
@@ -98,8 +102,8 @@ def check_case(records,process,scenario):
                 # strategy to POSIX allocation. A positive result is an error;
                 # errno retains EOPNOTSUPP from the native fallback selection.
                 consume("constructor_resize",fd=fd,offset=0,length=4096,
-                    result=errno.ENOSPC if scenario==4 else 0,errno_before=errno.EOPNOTSUPP,
-                    errno=errno.EOPNOTSUPP,injected=int(scenario==4))
+                    result=errno.ENOSPC if scenario==4 else 0,errno_before=LINUX_EOPNOTSUPP,
+                    errno=LINUX_EOPNOTSUPP,injected=int(scenario==4))
                 if scenario!=4:
                     require(cursor<len(records),"missing native map")
                     mapping=records[cursor].get("result",0)

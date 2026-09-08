@@ -1,6 +1,6 @@
 //! Actual source-to-native ownership transfer. Fault hooks affect only the
 //! requested allocation/thread boundary; they never manufacture checked IR.
-#![cfg(target_os = "linux")]
+#![cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_core::task_execution::{
     TaskExecutionScript, execute_task_module, render_task_observation,
@@ -31,6 +31,12 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"]);
+    if cfg!(target_os = "macos") {
+        compiler.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
     if let Some(header) = header {
         let path = directory.join("fault.h");
         fs::write(&path, header).unwrap();

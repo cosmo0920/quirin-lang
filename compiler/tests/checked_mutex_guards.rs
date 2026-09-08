@@ -4,10 +4,8 @@
 //! publish a certificate it independently rechecked, and emit C11 that names
 //! real `mtx_t` operations. Rejections must still arrive as located
 //! diagnostics on the same route rather than falling through to another one.
-use qcore_compiler::{
-    CompileOptions, ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile, SourceFile,
-    compile_files,
-};
+use qcore_compiler::{CompileOptions, SourceFile, compile_files};
+use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
 
 fn compile(source: &str) -> Result<qcore_compiler::CompiledModule, Vec<String>> {
     compile_files(
@@ -157,7 +155,14 @@ fn run_native(source: &str) -> Vec<String> {
         String::from_utf8_lossy(&compile.stderr)
     );
     let run = Command::new(&binary)
-        .env("ASAN_OPTIONS", "detect_leaks=1:halt_on_error=1")
+        .env(
+            "ASAN_OPTIONS",
+            if cfg!(target_os = "macos") {
+                "detect_leaks=0:halt_on_error=1"
+            } else {
+                "detect_leaks=1:halt_on_error=1"
+            },
+        )
         .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
         .output()
         .unwrap();

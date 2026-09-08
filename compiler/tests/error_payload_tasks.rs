@@ -1,19 +1,20 @@
 //! Native evidence for the bounded typed error payload (card T06).
 //!
 //! Each fixed scenario is compiled from the real emitted C and run once under
-//! AddressSanitizer, UndefinedBehaviorSanitizer and LeakSanitizer, and its
+//! AddressSanitizer and UndefinedBehaviorSanitizer (plus LeakSanitizer on
+//! Linux), and its
 //! stdout is compared line for line with the independently computed reference
 //! execution of the same checked module.
 //!
-//! What this is *not*: it is one Linux target, one compiler invocation and four
-//! fixed schedules. It says nothing about arbitrary schedules, other targets, or
+//! What this is *not*: it is one Linux or macOS target, one compiler invocation
+//! and four fixed schedules. It says nothing about arbitrary schedules, other targets, or
 //! the C memory model in general. No race detector runs here: ThreadSanitizer
 //! does not intercept C11 `thrd_create`, which this backend uses, and a
 //! `-fsanitize=thread` build of any emitted task program dies in the child
 //! before the worker body runs (measured for card T04 against a fixture with no
 //! payload at all). The payload's single-transfer property therefore rests on
 //! the checker's rule, not on a dynamic detector.
-#![cfg(target_os = "linux")]
+#![cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::task_execution::{
     TaskExecutionScript, execute_task_module_with_worker_allocations, render_task_observation,
@@ -140,18 +141,26 @@ fn build_and_run(module: &CompiledModule, header: &str, leaks: bool) -> Output {
     let fault = directory.join("fault.h");
     fs::write(&c, module.c_source.as_ref().unwrap()).unwrap();
     fs::write(&fault, header).unwrap();
-    let compiled = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()))
-        .args([
-            "-std=c11",
-            "-pthread",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-g",
-            "-O0",
-            "-fno-omit-frame-pointer",
-            "-fsanitize=address,undefined",
-        ])
+    let mut compiler =
+        Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
+    compiler.args([
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-g",
+        "-O0",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address,undefined",
+    ]);
+    if cfg!(target_os = "macos") {
+        compiler.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
+    let compiled = compiler
         .arg("-include")
         .arg(&fault)
         .arg(&c)
@@ -167,7 +176,7 @@ fn build_and_run(module: &CompiledModule, header: &str, leaks: bool) -> Output {
     let output = Command::new(&executable)
         .env(
             "ASAN_OPTIONS",
-            if leaks {
+            if leaks && !cfg!(target_os = "macos") {
                 "detect_leaks=1:halt_on_error=1"
             } else {
                 "detect_leaks=0:halt_on_error=1"

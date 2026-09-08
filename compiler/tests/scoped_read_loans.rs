@@ -5,7 +5,7 @@
 //! observation is compared line for line with the independently computed
 //! reference execution.
 //!
-//! What this is *not*: it is one Linux target, one compiler invocation and a
+//! What this is *not*: it is one Linux or macOS target, one compiler invocation and a
 //! handful of fixed schedules. It is not evidence about arbitrary schedules,
 //! about other targets, or about the C memory model in general.
 //!
@@ -20,7 +20,7 @@
 //! backend's thread primitive and not of this card. Data-race freedom for the
 //! lending window therefore rests on the checker's rule that nothing may write
 //! a loaned resource, not on a dynamic detector.
-#![cfg(target_os = "linux")]
+#![cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::task_execution::{
     TaskExecutionScript, execute_task_module, render_task_observation,
@@ -110,6 +110,12 @@ fn run(module: &CompiledModule, header: Option<&str>, sanitizers: &str, leaks: b
         "-fno-omit-frame-pointer",
         sanitizers,
     ]);
+    if cfg!(target_os = "macos") {
+        compiler.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
     if let Some(header) = header {
         let path = directory.join("fault.h");
         fs::write(&path, header).unwrap();
@@ -129,7 +135,7 @@ fn run(module: &CompiledModule, header: Option<&str>, sanitizers: &str, leaks: b
     let output = Command::new(&executable)
         .env(
             "ASAN_OPTIONS",
-            if leaks {
+            if leaks && !cfg!(target_os = "macos") {
                 "detect_leaks=1:halt_on_error=1"
             } else {
                 "detect_leaks=0:halt_on_error=1"

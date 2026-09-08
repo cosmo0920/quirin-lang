@@ -98,6 +98,7 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
     let mut source = format!(
         "#define QCORE_TASK_ARGUMENT_CAPACITY {capacity}\n#define QCORE_BUFFER_EVENT_CAPACITY {event_capacity}\n"
     );
+    source.push_str(include_str!("c11_threads_compat.h"));
     source.push_str(RUNTIME);
     source.push_str("static const char *qcore_task_error_name(int tag) {\n    switch (tag) {\n");
     for (name, tag) in &errors {
@@ -421,10 +422,6 @@ const RUNTIME: &str = r#"#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <threads.h>
-#if defined(__STDC_NO_THREADS__)
-#error "The scoped task profile requires C11 threads"
-#endif
 #ifndef QCORE_TASK_CALLOC
 #define QCORE_TASK_CALLOC calloc
 #endif

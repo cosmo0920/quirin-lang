@@ -7,6 +7,7 @@
 //! Nothing here claims filesystem or network confinement, which is a separate
 //! card.
 #![cfg(unix)]
+#![cfg_attr(not(target_os = "linux"), allow(dead_code, unused_imports))]
 
 use qcore_verifier_host::*;
 use std::collections::{BTreeMap, BTreeSet};
@@ -156,6 +157,7 @@ fn applied(record: &ProcessExecutionRecord, kind: &str) -> Option<u64> {
 ///    fixture completes under the legacy profile — so the bound comes from the
 ///    enforcement, not from the fixture.
 #[test]
+#[cfg(target_os = "linux")]
 fn memory_growth_beyond_the_declared_limit_is_bounded() {
     let fixture = Fixture::new("memory");
     let request = request();
@@ -205,6 +207,7 @@ fn memory_growth_beyond_the_declared_limit_is_bounded() {
 /// 2. Output past the declared cap is bounded and reported as an output-limit
 ///    failure, never as a decoded response.
 #[test]
+#[cfg(target_os = "linux")]
 fn output_flooding_beyond_the_cap_is_bounded() {
     let fixture = Fixture::new("output");
     let request = request();
@@ -249,6 +252,7 @@ fn manifest_for_registry() -> PluginManifest {
 
 /// 3a. A wall-clock hang is killed within tolerance of the declared deadline.
 #[test]
+#[cfg(target_os = "linux")]
 fn a_wall_clock_hang_is_killed_within_tolerance() {
     let fixture = Fixture::new("wall");
     let request = request();
@@ -274,6 +278,7 @@ fn a_wall_clock_hang_is_killed_within_tolerance() {
 /// 3b. A CPU spin is killed by `RLIMIT_CPU` well before the wall-clock
 ///     deadline, so the two limit kinds are independently enforced.
 #[test]
+#[cfg(target_os = "linux")]
 fn a_cpu_spin_is_killed_by_the_declared_cpu_limit() {
     let fixture = Fixture::new("cpu");
     let request = request();
@@ -303,6 +308,7 @@ fn a_cpu_spin_is_killed_by_the_declared_cpu_limit() {
 /// 4a. A descendant that outlives its parent does not outlive the execution:
 ///     the host kills the child's whole process group on every exit path.
 #[test]
+#[cfg(target_os = "linux")]
 fn descendants_do_not_outlive_the_execution() {
     let fixture = Fixture::new("descendant");
     let request = request();
@@ -323,6 +329,7 @@ fn descendants_do_not_outlive_the_execution() {
 /// 4b. A declared `max_processes` limit is installed, and a package that
 ///     declares one below its own usage cannot fork at all.
 #[test]
+#[cfg(target_os = "linux")]
 fn a_declared_process_limit_stops_the_fixture_from_forking() {
     let fixture = Fixture::new("nproc");
     let request = request();
@@ -350,6 +357,7 @@ fn a_declared_process_limit_stops_the_fixture_from_forking() {
 ///    anything is spawned. The refusal is explicit and is never a downgrade to
 ///    the unenforcing profile.
 #[test]
+#[cfg(target_os = "linux")]
 fn a_declared_but_unenforceable_limit_kind_is_refused() {
     let fixture = Fixture::new("refusal");
     let request = request();
@@ -411,6 +419,7 @@ fn a_declared_but_unenforceable_limit_kind_is_refused() {
 /// 6. A well-behaved provider under generous limits still completes, and the
 ///    record states exactly what was enforced.
 #[test]
+#[cfg(target_os = "linux")]
 fn a_well_behaved_provider_completes_under_the_enforced_profile() {
     let fixture = Fixture::new("wellbehaved");
     let request = request();
@@ -461,6 +470,7 @@ fn a_well_behaved_provider_completes_under_the_enforced_profile() {
 /// An undeclared CPU budget is derived from the wall clock rather than left
 /// out, and the derivation is recorded as derived, not as a declaration.
 #[test]
+#[cfg(target_os = "linux")]
 fn an_undeclared_cpu_budget_is_derived_and_labeled() {
     let fixture = Fixture::new("derived");
     let mut manifest = manifest();

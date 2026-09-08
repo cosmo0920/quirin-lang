@@ -5,7 +5,7 @@
 use std::process::Command;
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let source = root.join("compiler/tests/fixtures/ct/CT01/case.qcore");
@@ -20,7 +20,8 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
         .unwrap();
     assert!(checked.status.success(), "{checked:?}");
     assert!(
-        String::from_utf8_lossy(&checked.stdout).contains("scoped owned-buffer tasks (Linux C11)")
+        String::from_utf8_lossy(&checked.stdout)
+            .contains("scoped owned-buffer tasks (Linux/macOS threads)")
     );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
@@ -121,7 +122,7 @@ fn plugin_discovery_errors_are_reported_without_builtin_fallback() {
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn cli_checks_emits_and_executes_native_source_tasks() {
     let directory =
         std::env::temp_dir().join(format!("qcore-cli-source-tasks-{}", std::process::id()));
@@ -155,7 +156,10 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
         "{}",
         String::from_utf8_lossy(&checked.stderr)
     );
-    assert!(String::from_utf8_lossy(&checked.stdout).contains("scoped copy tasks (Linux C11)"));
+    assert!(
+        String::from_utf8_lossy(&checked.stdout)
+            .contains("scoped copy tasks (Linux/macOS threads)")
+    );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
         .arg(&input)
@@ -199,7 +203,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 }
 
 #[test]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn cli_recovery_joins_first_child_after_second_creation_fails() {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../compiler/tests/fixtures/ct/CT13");
@@ -215,7 +219,10 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
         .output()
         .unwrap();
     assert!(checked.status.success(), "{checked:?}");
-    assert!(String::from_utf8_lossy(&checked.stdout).contains("scoped copy tasks (Linux C11)"));
+    assert!(
+        String::from_utf8_lossy(&checked.stdout)
+            .contains("scoped copy tasks (Linux/macOS threads)")
+    );
     let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
         .arg("emit")
         .arg(&source)
@@ -225,16 +232,24 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
         .unwrap();
     assert!(emitted.status.success(), "{emitted:?}");
     // An explicit invalid QCORE_CLANG must fail this test, never skip it.
-    let compiled = Command::new(std::env::var_os("QCORE_CLANG").unwrap_or_else(|| "clang".into()))
-        .args([
-            "-std=c11",
-            "-pthread",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-DQCORE_CT_FAIL_CREATE=2",
-            "-include",
-        ])
+    let mut compiler =
+        Command::new(std::env::var_os("QCORE_CLANG").unwrap_or_else(|| "clang".into()));
+    compiler.args([
+        "-std=c11",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-DQCORE_CT_FAIL_CREATE=2",
+    ]);
+    if cfg!(target_os = "macos") {
+        compiler.arg("-I").arg(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../compiler/tests/fixtures/apple-threads"),
+        );
+    }
+    let compiled = compiler
+        .arg("-include")
         .arg(fixture.join("create_failure.h"))
         .arg(&c)
         .arg("-o")

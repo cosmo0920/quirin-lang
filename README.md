@@ -68,7 +68,9 @@ narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
 ## Quick start
 
 The Rust compiler and `qcorec check` / `qcorec emit` do not require Clang.
-Compiling emitted C requires a C11 compiler. The full test suite also
+Compiling emitted C requires a C11 compiler. Native scoped task and checked
+mutex emission runs on Linux C11 threads and on macOS through an emitted
+pthread-backed compatibility layer. The full test suite also
 exercises existing-C analysis, which needs Clang for preprocessing, syntax
 validation, and its JSON AST.
 

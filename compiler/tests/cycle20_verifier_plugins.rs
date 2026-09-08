@@ -721,13 +721,19 @@ fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
     assert!(!package.join("launched.marker").exists());
 
     // A closed input pipe must clean up after spawn, even with unread input.
-    write_script("exec 0<&-\n/bin/sleep 0.15\n: > io.marker");
+    // Give the newly spawned shell enough time to run the close on slower
+    // macOS schedulers. The provider must remain alive beyond that allowance
+    // so this still distinguishes a broken input pipe from a timeout.
+    write_script("exec 0<&-\n/bin/sleep 0.3\n: > io.marker");
     let mut large = request("qcore.libevent", "libevent");
-    large.request_id = "x".repeat(1024 * 1024);
-    let (result, elapsed) = run(manifest.clone(), large);
+    large.request_id = "x".repeat(8 * 1024 * 1024);
+    let mut closed_input = manifest.clone();
+    closed_input.limits.timeout_ms = 100;
+    closed_input.limits.output_bytes = 16 * 1024 * 1024;
+    let (result, elapsed) = run(closed_input, large);
     assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
-    assert!(elapsed < Duration::from_millis(200));
-    std::thread::sleep(Duration::from_millis(200));
+    assert!(elapsed < Duration::from_millis(500));
+    std::thread::sleep(Duration::from_millis(350));
     assert!(!package.join("io.marker").exists());
 
     let req = request("qcore.libevent", "libevent");
