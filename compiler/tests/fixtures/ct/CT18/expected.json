@@ -1,0 +1,33 @@
+{
+  "id": "CT18",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q500",
+      "message_contains": "an error payload requires own<Buffer>"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "ScopedErrorPayloadV1 (card T06). A scoped capture borrow cannot leave the child inside an error payload: an error payload admits exactly one own<Buffer>, and a borrow is refused where it is written rather than at the join. The accepted control is the same program whose worker owns its payload, so the refusal is keyed to the borrow in the payload position rather than to tagged error payloads in general.",
+  "source_reject": {
+    "diagnostic_sequence": [
+      "Q500"
+    ],
+    "controls": [
+      {
+        "source": "owned_payload.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedErrorPayloadV1",
+        "note": "The same shape with own<Buffer> moved into the worker checks, so the refusal is keyed to the borrowed capture and not to the raise form."
+      }
+    ]
+  }
+}
