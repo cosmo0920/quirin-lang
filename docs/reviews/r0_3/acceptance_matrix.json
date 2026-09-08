@@ -5291,18 +5291,6 @@
  },
  "named_followups": [
   {
-   "id": "E01-F1",
-   "title": "Complete the source function enumeration (macro-expanded and K&R definitions)",
-   "why": "such definitions carry no obligation and no residual Unknown row, so the reported checked/Unknown split is not a complete function denominator for such a unit. It promotes nothing today, but it changes the pinned artifacts and the resource selection, so it needs its own parity plan.",
-   "source": "docs/reports/remaining-e01/README.md"
-  },
-  {
-   "id": "P04-NEXT",
-   "title": "Remaining in-process ChunkIO capabilities with named blockers",
-   "why": "thirteen in-process modules stay: list-unlink relates two summaries, the memory-backend destructor carries a call in its path, the cleanup-outcome family carries descriptor/mapping residual custody, traversal/parent_teardown are behind the sealed SourceMatch boundary, and the rest are compositions.",
-   "source": "docs/reports/remaining-p04/README.md"
-  },
-  {
    "id": "P02-FLAKE",
    "title": "RLIMIT_NPROC conformance test is load-dependent",
    "why": "a_declared_process_limit_stops_the_fixture_from_forking installs RLIMIT_NPROC=1, which counts every process of the real UID, so under load the host observes Io(Broken pipe) instead of Terminated. Two independent runs reproduced it; it passes in isolation and passed both merged full-gate runs. The assertion is deliberately not weakened. Wave-7 note: P03-F added a deterministic companion under the cgroup pids quota; the original assertion is byte-for-byte unchanged.",
@@ -5316,8 +5304,8 @@
   },
   {
    "id": "wave3-CT",
-   "title": "Map CT11 and the epoch-accounting CT cases once their blockers land",
-   "why": "CT11 stays blocked on T05's no-local-alias caveat. CT35/CT36/CT38/CT39 now have a source form (source.epoch.bound.v1, wave 7) and measured schema-2 rows in docs/reports/remaining-t08-epoch-src/ct_stage_evidence.json, but mapping them needs three harness prerequisites named there: an `epoch` route with epoch_lowering/epoch_bound_check stage names, and an `epoch_bound_figures` verdict mode for the two accept cases. Fixtures are parked under compiler/tests/fixtures/epoch/.",
+   "title": "Map CT11 once an owned-pointer alias source form exists",
+   "why": "CT35/CT36/CT38/CT39 mapped in wave 8 through the epoch route (docs/reports/wave8-epoch-ct/README.md). CT11 alone remains: blocked on T05's no-local-alias caveat — the scenario says 'while local shared aliases survive' and the profile has no local alias form, so mapping it today would answer a different question.",
    "recorded_by": "docs/reports/remaining-wave3-ct-integration/README.md"
   },
   {
@@ -5397,7 +5385,25 @@
    "title": "Flag-transport residuals after G03-F",
    "why": "-ffast-math, -Ofast, bare -O, -fvisibility=hidden and -flto stay refused by name pending preservation arguments; the measured -O3 identity effect (20 of 21 Libevent units preprocess to different text with identical verdicts) is an identity finding to carry into any future dialect-equivalence claim.",
    "source": "docs/reports/remaining-g03-f/README.md"
+  },
+  {
+   "id": "P09-ROUTES-O",
+   "title": "Six legacy routes retained with measured gaps after P09-G's removal",
+   "why": "P09-G (the zero-helper chunk_source wrapper) is removed with archived parity; qcore-compiler is 0.3.0. A..F stay with named gaps: A needs a configured audit route that selects the counter capability at all; B has 8 production callers and 14 pinned refusal assertions on the adapter; C's real blocker is the Direct-mode no-selector default (measured — the pinned artifacts were produced in Process mode); F is a test-rehoming refactor plus multi-path API break, not eleven pure re-exports; D/E per the route census.",
+   "source": "docs/reports/remaining-p09-routes/README.md"
+  },
+  {
+   "id": "E01-F1-O",
+   "title": "Enumeration residuals after the denominator completion",
+   "why": "E01-F1-RAW: the raw tokenizer reads # on a macro continuation line as a directive, swallowing a closing brace — the actual cause of the 146 hidden rdkafka.c definitions; repairing it changes legacy_c_source_functions and needs its own parity run. E01-F1-STDIN (stdin attribution rests on transport), E01-F1-DENOM (pre-existing non-empty not_projected under Safe), E01-F1-COST (one extra clang -E per unit).",
+   "source": "docs/reports/remaining-e01-f1/README.md"
+  },
+  {
+   "id": "P04-NEXT-O",
+   "title": "Remaining ChunkIO capabilities after the teardown pair moved",
+   "why": "A: file_attempts needs a third vocabulary (call-result def/use, not path replay). B: file_outcomes and file_delete consume file_attempts' certificate. C: traversal and parent_teardown are behind the sealed SourceMatch boundary. Seven compositions remain over other certificates, two of them also behind SourceMatch. The moved pair (list-unlink, memory-backend destructor) retains its in-process routes pending parity-based removal.",
+   "source": "docs/reports/remaining-p04-next/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 8 in progress: P09-G removed with archived parity, six routes retained with measured gaps (qcore-compiler 0.3.0); wave8-epoch-ct maps CT35/CT36/CT38/CT39 through the new epoch route and epoch_bound_figures verdict mode — CT 24/50 -> 28/50 by executed-stage evidence only, sanitized-native 3 of 28, proof 0 of 28; nothing promoted)"
+ "updated": "2026-09-09 (wave 8 complete: P09-G removed with archived parity and six routes retained with measured gaps; CT 24/50 -> 28/50 through the epoch route; the function denominator completes at 4,921 with the raw-tokenizer cause named and the baseline deliberately re-pinned to E01-F1's after-measurement at zero verdict movement; the ChunkIO teardown pair moves through the process boundary with a 92-row mutation matrix (qcore-schemas 7.0.0); nothing promoted)"
 }
