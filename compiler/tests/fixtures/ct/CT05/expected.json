@@ -1,0 +1,33 @@
+{
+  "id": "CT05",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q600",
+      "message_contains": "ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "ScopedReadSharesV1 (card T05). Two children each requesting the whole 1024-unit read authority for one allocation exceeds the lending budget, and the excess request is refused as a whole with the outstanding total and the request named. The accepted control lends 511 and 513 of the same allocation, so the boundary is a boundary rather than a blanket refusal of two borrowers.",
+  "source_reject": {
+    "diagnostic_sequence": [
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "remainder_fits.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedReadSharesV1",
+        "note": "511 + 513 = 1024 checks, so ShareExceedsAuthority is keyed to the total exceeding the budget and not to two children holding shares."
+      }
+    ]
+  }
+}

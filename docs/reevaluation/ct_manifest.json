@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Two source routes are represented and they do not share a stage vocabulary: task-route cases (ScopedCopyTasksV1/ScopedOwnedTasksV1) read `cfg` as the task IR, while source.mutex.guard.v1 cases (CT26/CT27/CT29/CT30) emit directly from a checked event list and have no CFG stage, so `cfg` stays unassessed for them. Mapping is not full language conformance.",
+  "note": "Inherited requirements with explicitly bounded source mappings. Per-stage executed evidence is scoped by evidence_target where present; an unsupported host verifies the target rejection and reports native execution unexecuted on that host. Two source routes are represented and they do not share a stage vocabulary: task-route cases (ScopedCopyTasksV1/ScopedOwnedTasksV1 and its ScopedReadSharesV1/ScopedErrorPayloadV1 extensions) read `cfg` as the checked task IR they construct, while source.mutex.guard.v1 cases (CT26/CT27/CT29/CT30) emit directly from a checked event list and have no CFG stage, so `cfg` stays unassessed for them. Mapping is not full language conformance. Several unmapped cases have recorded reasons rather than absent evidence. CT11 asks for full permission reconstructed while local shared *aliases* survive; ScopedReadSharesV1 has no local alias form at all, and in the closest measured program the party retaining the share is an unjoined child task, so mapping it would answer a different question (card T05 section 9). CT06 needs an owned-pointer copy form the grammar does not admit. CT35/CT36/CT38/CT39 are checked at model level by FlatEpochBoundV1 (card T08) but have no source syntax, hence no parser stage and no reference execution, so they stay unmapped until epoch source syntax lands.",
   "cases": [
     {
       "id": "CT01",
@@ -42,51 +42,54 @@
       "scenario": "Parent and child share reads with complementary positive shares",
       "expected": "Accept",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "semantic_profile": "ScopedReadSharesV1: one owned Buffer lent to two children with complementary halves of the 1024-unit read authority, both reading it while the parent also reads it, and Buffer writes on either side of the lending window because a write demands reconstructed exclusive authority. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and three fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - one object allocated and released exactly once across two live borrowers, a refused second creation returning only its own share, and a refused join returning none and reclaiming nothing. The complementary refusals are mapped as CT04 and CT05. This is not evidence about arbitrary schedules, other targets or the C memory model; ThreadSanitizer does not intercept C11 thrd_create, so data-race freedom rests on the checker's no-write-while-shared rule. The lending budget is over authority handed out, not a separation-logic fraction; disjoint slicing, write shares, more than two readers, byte accounting and nested workers stay refused.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT04",
       "scenario": "Parent writes while child retains a read share",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT04/case.qcore",
+      "semantic_profile": "ScopedReadSharesV1: the parent writes its Buffer while both children still hold their halves. Refused with the exact single-entry cascade [Q600] carrying LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2, 3] }, which names the outstanding total and every borrower rather than the bare fact of a loan. An accepted Linux control moves the same write after both joins, so the refusal is keyed to the outstanding shares and not to writing at all. A rejection carries no execution post-state, so only parse and check are executed.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT05",
       "scenario": "Two children each request FULL for the same memory",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT05/case.qcore",
+      "semantic_profile": "ScopedReadSharesV1: two children each request the whole read authority for one allocation. Refused with the exact single-entry cascade [Q600] carrying ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }; the excess request is refused as a whole and the outstanding total is unchanged. An accepted Linux control lends 511 and 513 of the same allocation, so the budget boundary is a boundary rather than a blanket refusal of two borrowers. A rejection carries no execution post-state, so only parse and check are executed.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT06",
@@ -285,34 +288,36 @@
       "scenario": "Worker error payload contains owned result",
       "expected": "Join transfers it exactly once",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT17/case.qcore",
+      "semantic_profile": "ScopedErrorPayloadV1: exactly one owned Buffer rides an explicitly tagged worker error out of one child, through its completion capsule and its creator's join, and is taken out of the bound error exactly once. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and five fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - the success path releases all three objects inside the child, either worker allocation failure carries the parent's original identity back and releases every local it does not carry, a refused creation transfers nothing, and a refused join reclaims neither payload nor environment. Two negative controls pin that an undelivered payload and an unreleased taken payload are refused at Q600. One payload, one flat own<Buffer>: recursive owned graphs, several payloads, mixed declared rows, nested workers and loans inside payloads stay refused, and no race detector covers this backend.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
-        "reference_execution": "unassessed",
-        "cfg": "unassessed",
-        "native_backend": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
+        "reference_execution": "executed",
+        "cfg": "executed",
+        "native_backend": "executed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT18",
       "scenario": "Worker error payload contains scoped capture borrow",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "source_fixture": "compiler/tests/fixtures/ct/CT18/case.qcore",
+      "semantic_profile": "ScopedErrorPayloadV1: a scoped capture borrow cannot leave its child inside an error payload. Refused with the exact single-entry cascade [Q500] carrying 'an error payload requires own<Buffer>', at the raise that writes it rather than at the join. An accepted Linux control is the same program whose worker owns its payload, so the refusal is keyed to the borrowed capture and not to the raise form. A rejection carries no execution post-state, so only parse and check are executed.",
       "stages": {
-        "parser": "unassessed",
-        "type_checker": "unassessed",
+        "parser": "executed",
+        "type_checker": "executed",
         "reference_execution": "unassessed",
         "cfg": "unassessed",
         "native_backend": "unassessed",
         "proof": "unassessed"
-      }
+      },
+      "evidence_target": "linux"
     },
     {
       "id": "CT19",

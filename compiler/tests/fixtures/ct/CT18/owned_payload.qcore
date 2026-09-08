@@ -1,0 +1,38 @@
+concurrency checked;
+error Recovery { Failed(own<Buffer>); }
+fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
+  match qcore_buffer_new(7) {
+    Result::Ok { value: first } => {
+      drop first;
+      let seen = qcore_buffer_read(payload);
+      drop payload;
+      return seen;
+    }
+    Result::Err { error: exhausted } => {
+      raise Recovery::Failed(payload);
+    }
+  }
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(42)?;
+  thread scope s {
+    match spawn s worker(move buffer) {
+      Result::Ok { value: handle } => {
+        match join move handle {
+          Result::Ok { value: seen } => {
+            return seen;
+          }
+          Result::Err { error: failure } => {
+            let recovered = qcore_error_payload(failure);
+            drop recovered;
+            return 0;
+          }
+        }
+      }
+      Result::Err { error: refused } => {
+        drop buffer;
+        return 0;
+      }
+    }
+  }
+}

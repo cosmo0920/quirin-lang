@@ -1,0 +1,33 @@
+{
+  "id": "CT04",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q600",
+      "message_contains": "LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2, 3] }"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker"
+  ],
+  "evidence_target": "linux",
+  "notes": "ScopedReadSharesV1 (card T05). A Buffer write demands reconstructed exclusive authority, so the parent may not write while both children still hold their halves. The diagnostic names the outstanding total and every borrower, not just the fact of a loan. The accepted control is the same program with the write moved after both joins, which shows the refusal is keyed to the outstanding shares rather than to writing at all.",
+  "source_reject": {
+    "diagnostic_sequence": [
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "write_after_joins.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedReadSharesV1",
+        "note": "The identical program with the write placed after both joins checks, so Q600 LoanOutstanding is keyed to the outstanding shares and not to the write form."
+      }
+    ]
+  }
+}

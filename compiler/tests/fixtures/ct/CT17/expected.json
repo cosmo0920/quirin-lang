@@ -1,0 +1,191 @@
+{
+  "id": "CT17",
+  "verdict": "native_heap_scenarios",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parser",
+    "type_checker",
+    "reference_execution",
+    "cfg",
+    "native_backend"
+  ],
+  "evidence_target": "linux",
+  "notes": "ScopedErrorPayloadV1 (card T06). One owned Buffer rides a tagged worker error out of one child, through its completion capsule and its creator's join, and is taken out of the bound error exactly once. Five fixed Linux schedules run the case's own emitted C under ASan/UBSan/LSan with a heap witness recording every Buffer by address: the success path releases everything inside the child, either allocation failure carries the parent's original identity back, a refused creation transfers nothing, and a refused join reclaims nothing (LeakSanitizer is off there because the retained allocation is the observation). Two negative controls pin that an undelivered payload and an unreleased taken payload are refused. `proof` is unassessed: the nineteen QCore.ErrorPayload theorems constrain the model, not this fixture.",
+  "native_heap_scenarios": {
+    "execution_profile": "ScopedErrorPayloadV1",
+    "alloc_prefix": "PAYLOAD_ALLOC ",
+    "free_prefix": "PAYLOAD_FREE ",
+    "sanitizer_flags": [
+      "-std=c11",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined"
+    ],
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "rejection_controls": [
+      {
+        "source": "undelivered_payload.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "return/error discards an undelivered error payload"
+        }
+      },
+      {
+        "source": "unreleased_payload.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "return/error discards a handle, unconsumed Result or owned buffer"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "success_releases_everything_inside_the_child",
+        "header": "track.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_TASK_RESULT 1 I32 42\n"
+        ],
+        "stdout_absent": [
+          "ERROR_BUFFER"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 3,
+        "heap_releases": 3
+      },
+      {
+        "name": "payload_crosses_the_join_exactly_once",
+        "header": "track.h",
+        "defines": [
+          "-DPAYLOAD_FAIL_TASK=1",
+          "-DPAYLOAD_FAIL_ATTEMPT=1"
+        ],
+        "spawn_outcomes": [
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "worker_allocation_outcomes": {
+          "1": [
+            false
+          ]
+        },
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_TASK_RESULT 1 ERROR_BUFFER Recovery::Failed 1\n"
+        ],
+        "stdout_absent": [],
+        "stdout_order": [
+          "QCORE_TASK_JOIN 1",
+          "QCORE_BUFFER_READ 0 1 42",
+          "QCORE_BUFFER_DROP 0 1"
+        ],
+        "heap_allocations": 1,
+        "heap_releases": 1
+      },
+      {
+        "name": "partial_acquisition_releases_the_local_it_does_not_carry",
+        "header": "track.h",
+        "defines": [
+          "-DPAYLOAD_FAIL_TASK=1",
+          "-DPAYLOAD_FAIL_ATTEMPT=2"
+        ],
+        "spawn_outcomes": [
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "worker_allocation_outcomes": {
+          "1": [
+            true,
+            false
+          ]
+        },
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [],
+        "stdout_absent": [
+          "QCORE_BUFFER_DROP 1 1\n"
+        ],
+        "stdout_order": [
+          "QCORE_BUFFER_ALLOC 1 4294967297 7",
+          "QCORE_BUFFER_DROP 1 4294967297",
+          "QCORE_TASK_RESULT 1 ERROR_BUFFER Recovery::Failed 1"
+        ],
+        "heap_allocations": 2,
+        "heap_releases": 2
+      },
+      {
+        "name": "creation_refuses_and_transfers_nothing",
+        "header": "refuse_create.h",
+        "defines": [],
+        "spawn_outcomes": [
+          false
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_TASK_CREATE_FAILED 1\n",
+          "QCORE_BUFFER_DROP 0 1\n"
+        ],
+        "stdout_absent": [
+          "ERROR_BUFFER"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 1,
+        "heap_releases": 1
+      },
+      {
+        "name": "join_refuses_and_reclaims_nothing",
+        "header": "refuse_join.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "worker_allocation_outcomes": {
+          "1": [
+            false
+          ]
+        },
+        "detect_leaks": false,
+        "exit_code": 77,
+        "stdout_contains": [
+          "QCORE_TASK_SPAWN 1 1\n"
+        ],
+        "stdout_absent": [
+          "QCORE_TASK_JOIN",
+          "ERROR_BUFFER",
+          "QCORE_BUFFER_READ 0 1"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 1,
+        "heap_releases": 0
+      }
+    ]
+  }
+}
