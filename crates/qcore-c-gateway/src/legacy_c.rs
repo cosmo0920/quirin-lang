@@ -1091,8 +1091,8 @@ pub(crate) fn recursive_component_census(
     contracts: &ResourceContracts,
     selected_functions: Option<&[String]>,
 ) -> Vec<crate::legacy_census::NeutralComponentCensus> {
-    let tokens = tokenize(source);
-    let mut names = function_names(&tokens);
+    let (tokens, conditionals) = tokenize_with_conditionals(source);
+    let mut names = function_names(&tokens, &conditionals).definitions;
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
