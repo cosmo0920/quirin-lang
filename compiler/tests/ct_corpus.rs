@@ -24,7 +24,7 @@
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
 //! `CheckedMutexInvariantV1` checker, cards T03 and T03-F) is
-//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. The epoch route
+//! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT33/CT34/CT48. The epoch route
 //! (`source.epoch.bound.v1` lowering onto the unedited `FlatEpochBoundV1`
 //! checker, cards T08-EPOCH-SRC and T08-SRC-CT) is CT35/CT36/CT38/CT39. The
 //! `legacy_c` route (card CT-CTWIN) is CT43/CT45: those two cases have no QCore
@@ -81,8 +81,8 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
-    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT35", "CT36",
-    "CT37", "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
+    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35",
+    "CT36", "CT37", "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN). These two cases name C constructs that
 /// no QCore syntax expresses, so their artifact is a `.c` twin analyzed through
@@ -96,11 +96,12 @@ const LEGACY_C_TWIN_CASES: &[&str] = &["CT43", "CT45"];
 /// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
 /// composition, `wait` announcement and guard-scoped facts, and by CT33-RANKS's
-/// opt-in lock-rank discipline). Each pins its exact
+/// opt-in lock-rank discipline, and by CT34-GROWTH's opt-in protection growth).
+/// Each pins its exact
 /// ordered diagnostic code vector, not merely its head, and carries at least one
 /// control that distinguishes the refused construct from the admitted one.
 const MUTEX_REJECT_CASES: &[&str] = &[
-    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT48",
+    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT48",
 ];
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
@@ -589,9 +590,18 @@ struct CheckedMutexReject {
 #[serde(deny_unknown_fields)]
 struct MutexControl {
     source: String,
-    /// `accept` or `reject`; any other spelling fails the harness.
+    /// `accept`, `accept_check_only` or `reject`; any other spelling fails the
+    /// harness.
     expectation: String,
     diagnostic_sequence: Vec<String>,
+    /// `accept_check_only` only (card CT34-GROWTH boundary 3, CT34-GROWTH-NATIVE):
+    /// the exact ordered code vector `compile_files` produces for a control the
+    /// *checker* admits but the C backend declines to render. Pinning it is what
+    /// keeps a check-only admission from being reported as a full acceptance,
+    /// and what makes the backend's refusal a recorded decision rather than an
+    /// omission.
+    #[serde(default)]
+    backend_refusal: Vec<String>,
     #[allow(dead_code)]
     note: String,
 }
@@ -1130,10 +1140,14 @@ fn run_mapped_case(case: &ManifestCase) {
             || expected
                 .checked_mutex_reject
                 .as_ref()
-                .is_some_and(|reject| reject
-                    .controls
-                    .iter()
-                    .any(|control| control.expectation == "accept"))
+                .is_some_and(|reject| reject.controls.iter().any(|control| matches!(
+                    control.expectation.as_str(),
+                    // Both admitted-control kinds reach `compile_files`, whose
+                    // mutex route refuses a non-Linux/macOS/Windows host at
+                    // `Q500` before it ever reaches the backend, so both are
+                    // host-gated in exactly the same way.
+                    "accept" | "accept_check_only"
+                )))
             || expected.source_reject.as_ref().is_some_and(|reject| reject
                 .controls
                 .iter()
@@ -1218,16 +1232,33 @@ fn run_mapped_case(case: &ManifestCase) {
              is not vacuous",
             case.id
         );
+        assert!(
+            reject
+                .controls
+                .iter()
+                .any(|control| control.expectation != "reject"),
+            "{}: a mutex rejection needs an admitted control, or the refusal is \
+             only `the profile cannot express this at all`",
+            case.id
+        );
         for control in &reject.controls {
             match control.expectation.as_str() {
                 "accept" => assert!(
-                    control.diagnostic_sequence.is_empty(),
-                    "{}: an accepted control has no diagnostics",
+                    control.diagnostic_sequence.is_empty() && control.backend_refusal.is_empty(),
+                    "{}: an accepted control has no diagnostics and no backend refusal",
+                    case.id
+                ),
+                // The checker admits it; the C backend declines to render it.
+                // Both halves are pinned, so neither can be quietly dropped.
+                "accept_check_only" => assert!(
+                    control.diagnostic_sequence.is_empty() && !control.backend_refusal.is_empty(),
+                    "{}: a check-only control states the backend refusal that makes \
+                     it check-only, so `it checks` is never the whole control",
                     case.id
                 ),
                 "reject" => assert!(
-                    !control.diagnostic_sequence.is_empty(),
-                    "{}: a refused control pins its codes",
+                    !control.diagnostic_sequence.is_empty() && control.backend_refusal.is_empty(),
+                    "{}: a refused control pins its codes and reaches no backend",
                     case.id
                 ),
                 other => panic!("{}: unknown control expectation `{other}`", case.id),
@@ -2066,18 +2097,21 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 31 of 50 CT cases are mapped
-/// as executed tests over their own fixture; 19 remain unmapped. Twenty-nine of
-/// the thirty-one are source-level; CT43 and CT45 are C twins executed through
+/// The moving count is the W6 genericity metric: 32 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 18 remain unmapped. Thirty of
+/// the thirty-two are source-level; CT43 and CT45 are C twins executed through
 /// the unrestricted-C gateway, which is a different artifact and a different
 /// property, so they are counted here and separated in the report.
 /// CT13/CT15/CT26 and the
-/// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
-/// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT33/CT48 execute on Linux and macOS.
+/// CT03/CT17 sanitized heap scenarios and the admitted controls carried by
+/// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT33/CT34/CT48 execute on Linux and macOS.
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
 /// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
 /// accepted controls are multi-task modules this backend renders in no thread at
-/// all (published checked with `c_source: None`, card T03-F §3.5). Mapping is not conformance.
+/// all (published checked with `c_source: None`, card T03-F §3.5), and for CT34
+/// only the same gate, because its admitted control is `accept_check_only` — the
+/// checker admits the growth and the C backend deliberately refuses to render it
+/// (card CT34-GROWTH boundary 3). Mapping is not conformance.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -2288,7 +2322,7 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
         let source = fs::read_to_string(&path)
             .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
         let result = compile_files(
-            &[SourceFile::new(path.to_string_lossy(), source)],
+            &[SourceFile::new(path.to_string_lossy(), source.clone())],
             &CompileOptions::default(),
         );
         match control.expectation.as_str() {
@@ -2320,6 +2354,103 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
                     module.checked.as_checked_mutex_guards().is_some(),
                     "{id} control {} must take the checked mutex route",
                     control.source
+                );
+            }
+            // Card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE): protection growth
+            // is admitted by `CheckedMutexInvariantV1` and deliberately refused by
+            // the C backend, because nothing in that backend reads a generation's
+            // declared shape. A control on that feature is therefore *checked*
+            // rather than *compiled*, and this branch asserts both halves: the
+            // core admits the module and really records the growth, and
+            // `compile_files` refuses with the exact pinned vector. Asserting only
+            // the first would report a check-only admission as an acceptance;
+            // asserting only the second would not distinguish it from a refusal.
+            "accept_check_only" => {
+                let parsed = qcore_frontend::frontend::parse_source_program(&source)
+                    .unwrap_or_else(|error| panic!("{id} control {}: {error}", control.source));
+                assert!(
+                    qcore_frontend::source_mutex::has_source_mutex(&parsed),
+                    "{id} control {}: route detection must select the mutex route",
+                    control.source
+                );
+                let typed = qcore_frontend::frontend::elaborate_source(&parsed).unwrap_or_else(
+                    |diagnostics| {
+                        panic!(
+                            "{id} control {} must elaborate: {:?}",
+                            control.source,
+                            diagnostics
+                                .iter()
+                                .map(|d| d.code.to_owned())
+                                .collect::<Vec<_>>()
+                        )
+                    },
+                );
+                let lowered =
+                    qcore_frontend::source_mutex::lower_source_mutex(&parsed, &typed, "main")
+                        .unwrap_or_else(|diagnostics| {
+                            panic!(
+                                "{id} control {} must lower: {:?}",
+                                control.source,
+                                diagnostics
+                                    .iter()
+                                    .map(|d| d.code.to_owned())
+                                    .collect::<Vec<_>>()
+                            )
+                        });
+                let certificate = qcore_core::mutex_invariant::check_mutex_invariant_program(
+                    &lowered.program,
+                )
+                .unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {} must check, so the case's refusal is not vacuous: {:?}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(|d| lowered.locate(d).code.to_owned())
+                            .collect::<Vec<_>>()
+                    )
+                });
+                assert!(
+                    !certificate.admitted_protection_growths.is_empty(),
+                    "{id} control {} must actually record the growth it performs — a \
+                     control that checked without growing would attribute nothing",
+                    control.source
+                );
+                if !cfg!(any(
+                    target_os = "linux",
+                    target_os = "macos",
+                    target_os = "windows"
+                )) {
+                    unsupported_target(&result.unwrap_err());
+                    eprintln!(
+                        "{id} control {}: source/core checked; the backend's check-only \
+                         refusal is unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!(
+                        "{id} control {} must be refused by the C backend: this route \
+                         renders no growth, and a silent acceptance would emit a mutex \
+                         protecting less than the model says",
+                        control.source
+                    ),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.backend_refusal,
+                    "{id} control {}: exact backend refusal vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
                 );
             }
             "reject" => {

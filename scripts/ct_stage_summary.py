@@ -83,6 +83,7 @@ EVIDENCE_FILES = [
     "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
     "docs/reports/wave9-ctwin/ct_stage_evidence.json",
     "docs/reports/wave11-ct33/ct_stage_evidence.json",
+    "docs/reports/wave13-ct34/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
