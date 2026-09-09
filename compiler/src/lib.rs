@@ -259,6 +259,12 @@ pub(crate) mod test_support {
     static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
     static CLANG_WARNING: Once = Once::new();
 
+    /// Normalize compile-time text fixtures before syntax-preserving assembly
+    /// or comparison, independently of Git's platform checkout policy.
+    pub(crate) fn normalize_newlines(source: &str) -> String {
+        source.replace("\r\n", "\n")
+    }
+
     /// Execute syntax-only POSIX LP64 fixtures with their declared target, even
     /// when the installed Clang defaults to Windows LLP64. Child-only settings
     /// keep concurrent native-target tests and the user's override untouched.
@@ -354,5 +360,25 @@ fn main() {
                 false
             }
         }
+    }
+
+    #[test]
+    fn newline_normalization_preserves_lf_syntax() {
+        let source = "int f(void) {\n    return 0;\n}\n";
+        assert_eq!(normalize_newlines(source), source);
+    }
+
+    #[test]
+    fn newline_normalization_maps_crlf_and_mixed_syntax_to_lf() {
+        assert_eq!(
+            normalize_newlines("int f(void) {\r\n    return 0;\n}\r\n"),
+            "int f(void) {\n    return 0;\n}\n"
+        );
+    }
+
+    #[test]
+    fn newline_normalization_is_idempotent() {
+        let once = normalize_newlines("a\r\nb\nc\r\n");
+        assert_eq!(normalize_newlines(&once), once);
     }
 }

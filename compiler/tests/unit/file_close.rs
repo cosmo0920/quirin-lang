@@ -6,8 +6,9 @@ use crate::verifier_plugins::chunkio::{
     teardown_source::COUNTER_CONTRACT, unmap_wrapper::check_unmap_wrapper_source,
 };
 fn fixture() -> String {
-    let source = include_str!("../fixtures/chunkio/unmap_source.c")
-        .replace("struct cio_file {", "struct cio_file {int fd;");
+    let source =
+        crate::test_support::normalize_newlines(include_str!("../fixtures/chunkio/unmap_source.c"))
+            .replace("struct cio_file {", "struct cio_file {int fd;");
     let start = source.find("void cio_file_close(").unwrap();
     format!(
         "{}{}",
@@ -222,9 +223,9 @@ int cio_file_native_delete(struct cio_file *cf){if(cf->fd!=-1 || cf->map!=(void*
 
 /// The moved process route reads its five bodies out of a committed `.c` file
 /// rather than reconstructing them, so the two routes cannot silently drift onto
-/// different source. This asserts the committed bytes **are** the ones this
-/// retained in-process suite builds; `QCORE_WRITE_FILE_CLOSE_FIXTURE` names a
-/// path to regenerate them.
+/// different source. This asserts the committed syntax, after excluding the
+/// checkout's line-ending policy, **is** what this retained in-process suite
+/// builds; `QCORE_WRITE_FILE_CLOSE_FIXTURE` names a path to regenerate it.
 #[test]
 fn the_committed_file_close_fixture_is_the_source_this_route_reads() {
     let built = deletion_fixture();
@@ -234,7 +235,9 @@ fn the_committed_file_close_fixture_is_the_source_this_route_reads() {
     }
     assert_eq!(
         built,
-        include_str!("../fixtures/chunkio/file_close_source.c"),
+        crate::test_support::normalize_newlines(include_str!(
+            "../fixtures/chunkio/file_close_source.c"
+        )),
         "the committed file_close fixture is no longer the source the \
          in-process route reads"
     );
