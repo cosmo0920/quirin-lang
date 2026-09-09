@@ -165,6 +165,7 @@ impl CounterSourceTask {
             reactor_program: None,
             teardown_source: None,
             call_use_source: None,
+            cleanup_replay_source: None,
         }
     }
 

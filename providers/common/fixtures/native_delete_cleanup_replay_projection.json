@@ -1,0 +1,736 @@
+{
+  "schema_version": 1,
+  "prerequisite": {
+    "semantic_profile": "qcore.c_call_result_use.v1",
+    "task_digest": "7a5e7ef528bbe021dccfd461c732b459f41f0ea5bd6b99fd56c637a4d38916d2",
+    "obligation_id": "resource_contracts:f77c4a3207841a48dbc5e182"
+  },
+  "family": {
+    "family": "guarded_delete",
+    "body": {
+      "function": "cio_file_native_delete",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "int (struct cio_file *)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "return_value",
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "-",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "map"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  },
+                  "right": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "cast",
+                          "cast": "NullToPointer",
+                          "value": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "integer",
+                              "value": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "return_value",
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "-",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "map"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  },
+                  "right": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "cast",
+                          "cast": "NullToPointer",
+                          "value": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "integer",
+                              "value": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "path"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "unlink",
+              "signature": "int (const char *)",
+              "arguments": [
+                {
+                  "c_type": "const char *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "NoOp",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 4
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "int"
+            },
+            {
+              "kind": "local_write",
+              "local": 1,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 5
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "call",
+              "function": "__errno_location",
+              "signature": "int *(void)",
+              "arguments": [],
+              "result_type": "int *"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "*",
+                  "value": {
+                    "c_type": "int *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 8
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "cio_errno_print",
+              "signature": "int (int, const char *, int)",
+              "arguments": [
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 9
+                  }
+                },
+                {
+                  "c_type": "const char *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "NoOp",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "cast",
+                        "cast": "ArrayToPointerDecay",
+                        "value": {
+                          "c_type": "char[7]",
+                          "expression": {
+                            "kind": "string",
+                            "value": "\"test.c\""
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "integer",
+                    "value": "1"
+                  }
+                }
+              ],
+              "result_type": "int"
+            },
+            {
+              "kind": "local_end",
+              "local": 1
+            },
+            {
+              "kind": "return_value",
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "-",
+                  "value": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "fd"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 0
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "map"
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "!=",
+                  "left": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 2
+                    }
+                  },
+                  "right": {
+                    "c_type": "char *",
+                    "expression": {
+                      "kind": "cast",
+                      "cast": "BitCast",
+                      "value": {
+                        "c_type": "void *",
+                        "expression": {
+                          "kind": "cast",
+                          "cast": "NullToPointer",
+                          "value": {
+                            "c_type": "int",
+                            "expression": {
+                              "kind": "integer",
+                              "value": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_file *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "path"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "unlink",
+              "signature": "int (const char *)",
+              "arguments": [
+                {
+                  "c_type": "const char *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "NoOp",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 4
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "int"
+            },
+            {
+              "kind": "local_write",
+              "local": 1,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 5
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "unary",
+                      "operator": "-",
+                      "value": {
+                        "c_type": "int",
+                        "expression": {
+                          "kind": "integer",
+                          "value": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "local_end",
+              "local": 1
+            },
+            {
+              "kind": "return_value",
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "0"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "profile": {
+      "function": "cio_file_native_delete",
+      "root_type": "struct cio_file *",
+      "syscall": "unlink",
+      "syscall_signature": "int (const char *)",
+      "presence_field": "fd",
+      "fields": [
+        {
+          "name": "fd",
+          "c_type": "int",
+          "reset": {
+            "reset": "integer",
+            "value": -1
+          }
+        },
+        {
+          "name": "map",
+          "c_type": "char *",
+          "reset": {
+            "reset": "null"
+          }
+        },
+        {
+          "name": "path",
+          "c_type": "char *",
+          "reset": {
+            "reset": "null"
+          }
+        }
+      ],
+      "argument_fields": [
+        "path"
+      ],
+      "errno_function": "__errno_location",
+      "report_function": "cio_errno_print"
+    },
+    "mapping_field": "map"
+  }
+}

@@ -321,6 +321,12 @@ pub enum SemanticWitness {
     /// path projection. Equality binds the proposal to that import; the core
     /// still evaluates the pinned contract itself.
     CallResultUse(Box<crate::call_use_summary::CallResultUseWitness>),
+    /// One symbolic cleanup replay — every sampled prestate's selected path,
+    /// initial lattice state, return value, call counts and field transition —
+    /// recomputed from the core's own typed path projection and declared
+    /// profile. Equality binds the proposal to that import; the core still runs
+    /// its own unedited replay and evaluates the pinned contract itself.
+    CleanupReplay(Box<crate::cleanup_replay_summary::CleanupReplayWitness>),
 }
 
 impl SemanticWitness {
@@ -337,6 +343,7 @@ impl SemanticWitness {
             Self::TeardownContract(witness) => &witness.task_digest,
             Self::ReactorCallback(witness) => &witness.task_digest,
             Self::CallResultUse(witness) => &witness.task_digest,
+            Self::CleanupReplay(witness) => &witness.task_digest,
         }
     }
 
@@ -350,6 +357,7 @@ impl SemanticWitness {
             Self::TeardownContract(_) => "teardown_contract",
             Self::ReactorCallback(_) => "reactor_callback",
             Self::CallResultUse(_) => "call_result_use",
+            Self::CleanupReplay(_) => "cleanup_replay",
         }
     }
 }

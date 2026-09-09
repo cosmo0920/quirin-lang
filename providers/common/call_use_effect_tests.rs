@@ -269,5 +269,6 @@ fn request(input: &CallUseSourceInput) -> VerificationRequestV2 {
         reactor_program: None,
         teardown_source: None,
         call_use_source: Some(input.clone()),
+        cleanup_replay_source: None,
     }
 }

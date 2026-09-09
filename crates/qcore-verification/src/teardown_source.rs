@@ -224,6 +224,7 @@ impl ListUnlinkSourceTask {
             reactor_program: None,
             teardown_source: Some(self.import.source_input()),
             call_use_source: None,
+            cleanup_replay_source: None,
         }
     }
 
@@ -444,6 +445,7 @@ impl FieldDestructorSourceTask {
             reactor_program: None,
             teardown_source: Some(self.import.source_input()),
             call_use_source: None,
+            cleanup_replay_source: None,
         }
     }
 

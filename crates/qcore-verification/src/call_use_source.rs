@@ -261,6 +261,7 @@ impl FileAttemptSourceTask {
             reactor_program: None,
             teardown_source: None,
             call_use_source: Some(self.import.source_input()),
+            cleanup_replay_source: None,
         }
     }
 

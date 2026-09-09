@@ -340,12 +340,21 @@ fn no_production_derivation_states_a_schedule_or_operation_count() {
          vacuity argument for that kind must be re-examined: {counts:?}"
     );
     // The census behind this file's header table, pinned so it stays true:
-    // three derivations state `BoundedPaths`, and the fourth site is the
+    // four derivations state `BoundedPaths`, and the fifth site is the
     // intersection itself.
+    //
+    // Deliberate pin update (card `P04-B2`): the symbolic cleanup-replay
+    // derivation joins the list. It is the same kind of site as the other
+    // three — a function-scoped source task whose exact complete-path count is
+    // bound into the task — so E03-B-O3's vacuity argument for the *count*
+    // kinds is unaffected: the load-bearing negative half above, that no
+    // production site states `schedules_explored: Some` or
+    // `max_operations: Some`, is unchanged and still asserted.
     assert_eq!(
         bounded_paths,
         BTreeSet::from([
             "crates/qcore-verification/src/call_use_source.rs".to_owned(),
+            "crates/qcore-verification/src/cleanup_replay_source.rs".to_owned(),
             "crates/qcore-verification/src/source_effect.rs".to_owned(),
             "crates/qcore-verification/src/teardown_source.rs".to_owned(),
             "crates/qcore-verifier-host/src/lib.rs".to_owned(),

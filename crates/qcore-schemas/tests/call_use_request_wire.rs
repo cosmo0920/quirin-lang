@@ -104,6 +104,7 @@ fn request(
         reactor_program: None,
         teardown_source: None,
         call_use_source: call_use,
+        cleanup_replay_source: None,
     }
 }
 
@@ -111,14 +112,16 @@ fn request(
 fn a_request_without_a_projection_keeps_its_previous_wire_shape() {
     let plain = request(None, Vec::new());
     let value = serde_json::to_value(&plain).unwrap();
-    // All four earlier projections and this fifth one serialize away, so an
-    // existing request's bytes are unchanged by the 8.0.0 addition.
+    // All four earlier projections, this fifth one and the sixth
+    // (cleanup-replay) one serialize away, so an existing request's bytes are
+    // unchanged by the 8.0.0 and 9.0.0 additions alike.
     for key in [
         "source_effect",
         "counter_effect",
         "reactor_program",
         "teardown_source",
         "call_use_source",
+        "cleanup_replay_source",
     ] {
         assert!(value.get(key).is_none(), "{key} appeared in the wire form");
     }

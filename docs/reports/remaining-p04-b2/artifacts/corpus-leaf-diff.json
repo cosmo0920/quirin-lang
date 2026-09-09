@@ -1,0 +1,260 @@
+{
+ "source_effects_moved": [
+  {
+   "path": "/results/16/bounds/resource_contracts:26d75aef8575f5635b80492e/observed_runs_only",
+   "before": null,
+   "after": false
+  },
+  {
+   "path": "/results/16/bounds/resource_contracts:26d75aef8575f5635b80492e/path_exploration/kind",
+   "before": null,
+   "after": "bounded_paths"
+  },
+  {
+   "path": "/results/16/bounds/resource_contracts:26d75aef8575f5635b80492e/path_exploration/paths",
+   "before": null,
+   "after": 4
+  },
+  {
+   "path": "/results/16/bounds/resource_contracts:3f2a27484cd167dc53cea710/observed_runs_only",
+   "before": false,
+   "after": null
+  },
+  {
+   "path": "/results/16/bounds/resource_contracts:3f2a27484cd167dc53cea710/path_exploration/kind",
+   "before": "bounded_paths",
+   "after": null
+  },
+  {
+   "path": "/results/16/bounds/resource_contracts:3f2a27484cd167dc53cea710/path_exploration/paths",
+   "before": 4,
+   "after": null
+  },
+  {
+   "path": "/results/16/evidence/coverage/0",
+   "before": "resource_contracts:3f2a27484cd167dc53cea710",
+   "after": "resource_contracts:26d75aef8575f5635b80492e"
+  },
+  {
+   "path": "/results/16/evidence/reproducibility/package_digest",
+   "before": "80d82d959902071425486e746364d368239e3550f531b5c1d8ff65d90b75c4eb",
+   "after": "1d45add7c756cf76a9bdd2e61ff40d4bcb33750d5357bc46cbc7f49c73e20618"
+  },
+  {
+   "path": "/results/16/evidence/reproducibility/provider_version",
+   "before": "0.7.0",
+   "after": "0.8.0"
+  },
+  {
+   "path": "/results/16/evidence/unit/build_digest",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/16/import_identity/configuration_digest",
+   "before": "69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21",
+   "after": "a9d23efad62eb675b3a592471fbde487344686c77f691a5fa23c61cc3bb09883"
+  },
+  {
+   "path": "/results/16/import_identity/helpers/cio_error_reset/configuration_digest",
+   "before": "69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21",
+   "after": "a9d23efad62eb675b3a592471fbde487344686c77f691a5fa23c61cc3bb09883"
+  },
+  {
+   "path": "/results/16/task/contract_sources/qcore:boolean-field-import:v1",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/16/task/obligations/0/obligation_id",
+   "before": "resource_contracts:3f2a27484cd167dc53cea710",
+   "after": "resource_contracts:26d75aef8575f5635b80492e"
+  },
+  {
+   "path": "/results/16/task/unit/build_digest",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/16/witness/task_digest",
+   "before": "49591e7f57bfc7e9d032d3565b16f098c076c417e4c9fff740c19337e638a1a3",
+   "after": "dca4ebf5ea29ec8f08b0aa8ef9560d7f5296848a160e0d44f1d32a75aed578c2"
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:5ddab4b346eb290ab3d52de6/observed_runs_only",
+   "before": null,
+   "after": false
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:5ddab4b346eb290ab3d52de6/path_exploration/kind",
+   "before": null,
+   "after": "bounded_paths"
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:5ddab4b346eb290ab3d52de6/path_exploration/paths",
+   "before": null,
+   "after": 4
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:72d7882bd1b078d698f0fb93/observed_runs_only",
+   "before": false,
+   "after": null
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:72d7882bd1b078d698f0fb93/path_exploration/kind",
+   "before": "bounded_paths",
+   "after": null
+  },
+  {
+   "path": "/results/24/bounds/resource_contracts:72d7882bd1b078d698f0fb93/path_exploration/paths",
+   "before": 4,
+   "after": null
+  },
+  {
+   "path": "/results/24/evidence/coverage/0",
+   "before": "resource_contracts:72d7882bd1b078d698f0fb93",
+   "after": "resource_contracts:5ddab4b346eb290ab3d52de6"
+  },
+  {
+   "path": "/results/24/evidence/reproducibility/package_digest",
+   "before": "80d82d959902071425486e746364d368239e3550f531b5c1d8ff65d90b75c4eb",
+   "after": "1d45add7c756cf76a9bdd2e61ff40d4bcb33750d5357bc46cbc7f49c73e20618"
+  },
+  {
+   "path": "/results/24/evidence/reproducibility/provider_version",
+   "before": "0.7.0",
+   "after": "0.8.0"
+  },
+  {
+   "path": "/results/24/evidence/unit/build_digest",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/24/import_identity/configuration_digest",
+   "before": "69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21",
+   "after": "a9d23efad62eb675b3a592471fbde487344686c77f691a5fa23c61cc3bb09883"
+  },
+  {
+   "path": "/results/24/import_identity/helpers/cio_error_reset/configuration_digest",
+   "before": "69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21",
+   "after": "a9d23efad62eb675b3a592471fbde487344686c77f691a5fa23c61cc3bb09883"
+  },
+  {
+   "path": "/results/24/task/contract_sources/qcore:boolean-field-import:v1",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/24/task/obligations/0/obligation_id",
+   "before": "resource_contracts:72d7882bd1b078d698f0fb93",
+   "after": "resource_contracts:5ddab4b346eb290ab3d52de6"
+  },
+  {
+   "path": "/results/24/task/unit/build_digest",
+   "before": "75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe",
+   "after": "8a23def35d2af68b8df2f6de125a54dc56fc639b1da9f7c8460c04a63cdecf8d"
+  },
+  {
+   "path": "/results/24/witness/task_digest",
+   "before": "0ef081ef897ea4c3ec62591a9b303f5667d56629aa72a12860375e3a519a4f0f",
+   "after": "6b44b4805e61bd0d3d8fea75c0b7d4866108e31f29727293433c328b81caf1e6"
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:215121330c9522a88f6c005d/observed_runs_only",
+   "before": null,
+   "after": false
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:215121330c9522a88f6c005d/path_exploration/kind",
+   "before": null,
+   "after": "bounded_paths"
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:215121330c9522a88f6c005d/path_exploration/paths",
+   "before": null,
+   "after": 4
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:737ab83369828820cd4736f7/observed_runs_only",
+   "before": false,
+   "after": null
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:737ab83369828820cd4736f7/path_exploration/kind",
+   "before": "bounded_paths",
+   "after": null
+  },
+  {
+   "path": "/results/63/bounds/resource_contracts:737ab83369828820cd4736f7/path_exploration/paths",
+   "before": 4,
+   "after": null
+  },
+  {
+   "path": "/results/63/evidence/coverage/0",
+   "before": "resource_contracts:737ab83369828820cd4736f7",
+   "after": "resource_contracts:215121330c9522a88f6c005d"
+  },
+  {
+   "path": "/results/63/evidence/reproducibility/package_digest",
+   "before": "80d82d959902071425486e746364d368239e3550f531b5c1d8ff65d90b75c4eb",
+   "after": "1d45add7c756cf76a9bdd2e61ff40d4bcb33750d5357bc46cbc7f49c73e20618"
+  },
+  {
+   "path": "/results/63/evidence/reproducibility/provider_version",
+   "before": "0.7.0",
+   "after": "0.8.0"
+  },
+  {
+   "path": "/results/63/evidence/unit/build_digest",
+   "before": "993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5",
+   "after": "77ab6e58584e90118871fe443195c8cdbd0ba1c87d9026f5abe1dad62ed6e1fd"
+  },
+  {
+   "path": "/results/63/import_identity/configuration_digest",
+   "before": "059790ecb05cb02c84b6105939773659acea5f47cfdef29f2a8eba90c6547288",
+   "after": "13ee5b72272128bcf10470b73c6b5d98a75beded0513cdffc9815f479d585f30"
+  },
+  {
+   "path": "/results/63/task/contract_sources/qcore:boolean-field-import:v1",
+   "before": "993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5",
+   "after": "77ab6e58584e90118871fe443195c8cdbd0ba1c87d9026f5abe1dad62ed6e1fd"
+  },
+  {
+   "path": "/results/63/task/obligations/0/obligation_id",
+   "before": "resource_contracts:737ab83369828820cd4736f7",
+   "after": "resource_contracts:215121330c9522a88f6c005d"
+  },
+  {
+   "path": "/results/63/task/unit/build_digest",
+   "before": "993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5",
+   "after": "77ab6e58584e90118871fe443195c8cdbd0ba1c87d9026f5abe1dad62ed6e1fd"
+  },
+  {
+   "path": "/results/63/witness/task_digest",
+   "before": "1d0b120154303d7dde99bc4f5798ba511542f8ba48b84490e211b909d408e87a",
+   "after": "4aac7fda7b907c1764b901745a33c00c19503d94255bc91b491541df53b9fc83"
+  }
+ ],
+ "contracts_moved_keys": {
+  "before": [
+   "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/resource_memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/libc/memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/librdkafka/memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/monkey/memory.qcore"
+  ],
+  "after": [
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a134e19f858b3b0c4/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a134e19f858b3b0c4/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/resource_memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a134e19f858b3b0c4/compiler/../contract/profiles/fluent-bit/../../qcore/libc/memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a134e19f858b3b0c4/compiler/../contract/profiles/fluent-bit/../../qcore/librdkafka/memory.qcore",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a134e19f858b3b0c4/compiler/../contract/profiles/fluent-bit/../../qcore/monkey/memory.qcore"
+  ]
+ },
+ "byte_identical": [
+  "resource-diagnostics.json",
+  "monkey-source.json",
+  "resource-diagnostics.chunk-contracts.json"
+ ]
+}

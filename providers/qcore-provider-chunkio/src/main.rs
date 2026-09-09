@@ -13,6 +13,9 @@ mod teardown_effect;
 #[path = "../../common/call_use_effect.rs"]
 mod call_use_effect;
 
+#[path = "../../common/cleanup_replay_effect.rs"]
+mod cleanup_replay_effect;
+
 use qcore_schemas::plugin::{PluginManifest, VerificationRequestV2, VerificationResponseV2};
 
 /// Each capability inspects the request itself and declines what it does not
@@ -25,6 +28,7 @@ fn propose(
         .or_else(|| counter_effect::propose(request, manifest))
         .or_else(|| teardown_effect::propose(request, manifest))
         .or_else(|| call_use_effect::propose(request, manifest))
+        .or_else(|| cleanup_replay_effect::propose(request, manifest))
 }
 
 fn main() {

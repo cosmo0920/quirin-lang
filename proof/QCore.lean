@@ -26,6 +26,7 @@ import QCore.CallUseAdmission
 import QCore.ParentTeardown
 import QCore.NestedCleanup
 import QCore.UnmapWrapper
+import QCore.CleanupReplayAgreement
 import QCore.CleanupVocabulary
 import QCore.CleanupOutcome
 import QCore.CallbackBinding

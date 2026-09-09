@@ -473,6 +473,11 @@ pub struct VerificationRequestV2 {
     /// never present together with another projection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub call_use_source: Option<crate::call_use_summary::CallUseSourceInput>,
+    /// Optional, separately digest-bound symbolic-replay projection for one
+    /// admitted ChunkIO cleanup-outcome family. Omitted for every other
+    /// exchange, and never present together with another projection.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cleanup_replay_source: Option<crate::cleanup_replay_summary::CleanupReplaySourceInput>,
 }
 
 impl VerificationRequestV2 {
@@ -618,6 +623,36 @@ impl VerificationRequestV2 {
                     if symbol == input.subject_function()
                         && translation_unit == &self.unit.translation_unit) => {}
             None if call_use_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
+        }
+        // A cleanup-replay projection carries exactly one obligation, of its
+        // own property, for the function it names, and never travels with
+        // another projection. Its prerequisite triple must be complete: an
+        // empty component is a lookup key that names nothing.
+        let cleanup_replay_obligations = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property == crate::obligation::ObligationProperty::CleanupReplayContract
+            })
+            .count();
+        match &self.cleanup_replay_source {
+            Some(input)
+                if input.version_matches()
+                    && input.prerequisite.is_complete()
+                    && self.source_effect.is_none()
+                    && self.counter_effect.is_none()
+                    && self.reactor_program.is_none()
+                    && self.teardown_source.is_none()
+                    && self.call_use_source.is_none()
+                    && self.capability == VerifierCapability::ResourceContracts
+                    && cleanup_replay_obligations == 1
+                    && self.obligations.len() == 1
+                    && matches!(&self.obligations[0].subject,
+                    crate::obligation::ObligationSubject::Function { symbol, translation_unit }
+                    if symbol == input.subject_function()
+                        && translation_unit == &self.unit.translation_unit) => {}
+            None if cleanup_replay_obligations == 0 => {}
             _ => return Err(RequestError::InvalidObligations),
         }
         // The quiescence obligation is the reactor projection's marker: it is
