@@ -18,8 +18,8 @@
 //!
 //! # The decision, and what it deliberately does not decide
 //!
-//! [`borrowed_actual_liveness`] answers [`BorrowLiveness::DefinitelyReleased`]
-//! only under a conjunction of *must* facts, all read from the settled state:
+//! [`borrowed_actual_liveness`] answers [`BorrowLiveness::DefinitelyNotLive`]
+//! only under a conjunction of facts read from the settled state:
 //!
 //! 1. the name is **bound with a settled denotation** — exactly one target
 //!    site, not `unknown`, not `may_be_null` — reusing ALIAS-LOCALS's
@@ -27,17 +27,26 @@
 //!    committed to one identity on every reaching path;
 //! 2. that identity carries **no unresolved effect**, so the projection has not
 //!    already declined to commit to what happened to it;
-//! 3. its joined status is **exactly `RELEASED`** — no `LIVE`, no `ESCAPED`, no
-//!    `CONTAINED` bit anywhere. Because the status join is a bitwise union,
-//!    the absence of every other bit means no reaching path leaves the identity
-//!    in any other state.
+//! 3. its joined status satisfies [`custody_definitely_ended`]: **no** reaching
+//!    path leaves the body a pointer the projection knows to be alive (no
+//!    `LIVE`, no `CONTAINED`) and **some** reaching path destroyed the identity
+//!    (`RELEASED`). Because the status join is a bitwise union, an absent bit is
+//!    a must-fact and a present one a may-fact, so that reads as "custody ended
+//!    on every path, and one of them was a destruction".
+//!
+//! Card BORROW-LIVENESS required the status to be *exactly* `RELEASED`; card
+//! HYGIENE-14 derived the condition above from the join semantics and admitted
+//! the one further union it covers, `RELEASED | ESCAPED` — a release on one
+//! branch joined with a consumption on the other. The unions that stay admitted,
+//! and why, are tabulated on [`custody_definitely_ended`].
 //!
 //! Every other shape is [`BorrowLiveness::NotDecided`] and keeps the existing
 //! answer byte-for-byte: an unbound name (**every scalar `Borrowed` actual is
 //! one** — §C04.2 admits scalars in exactly this position and nowhere else), an
-//! unknown, ambiguous or possibly-null binding, a live identity, an escaped one
-//! (custody moved is not custody destroyed), any mixed status, an identity this
-//! function never acquired, and any site under an unresolved effect.
+//! unknown, ambiguous or possibly-null binding, a live identity, a contained
+//! one, an escaped one on its own (custody moved is not custody destroyed and
+//! nothing is known to have gone wrong), an identity this function never
+//! acquired, and any site under an unresolved effect.
 //!
 //! This is deliberately **stricter in the state dimension than the existing
 //! `Unsafe` kinds**: `DoubleRelease` fires on `status & RELEASED != 0`, a *may*
@@ -71,15 +80,21 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::legacy_c::{self, RELEASED};
 use crate::may_alias::Denotation;
 
 /// What the projection's own bindings say about one `Borrowed` actual.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum BorrowLiveness {
-    /// The projection committed to exactly one identity for this name, and that
-    /// identity is released on every path reaching the call. The precondition
-    /// this card implements is violated.
-    DefinitelyReleased,
+    /// The projection committed to exactly one identity for this name; **no**
+    /// path reaching the call leaves that identity in a state where this body
+    /// holds a pointer the projection knows to be alive, and **some** path
+    /// destroyed it. The precondition is violated.
+    ///
+    /// Card HYGIENE-14 widened this from "released on every path" to the exact
+    /// status-set condition [`custody_definitely_ended`] states; the original
+    /// case (`RELEASED` on every path) is one of its two members.
+    DefinitelyNotLive,
     /// Anything else. No claim is made in either direction and the existing
     /// answer is preserved exactly.
     NotDecided,
@@ -101,12 +116,57 @@ pub(crate) struct BorrowSite<'a> {
     pub(crate) unresolved: &'a BTreeSet<usize>,
 }
 
-/// The status bitmap of an identity that is released on every reaching path.
+/// The status bits whose reaching path leaves this body a pointer the
+/// projection knows to be **alive**, so a read of it is entitled there.
 ///
-/// Kept as a local constant rather than importing the analyzer's flags, so the
-/// decision below is stated over one literal value and the Lean model can pin
-/// the same one. `legacy_c::RELEASED` is asserted equal to it by a test there.
-pub(crate) const RELEASED_ONLY: u8 = 2;
+/// * `LIVE` — the body acquired the identity and still holds custody.
+/// * `CONTAINED` — the identity sits inside a container this body still tracks.
+///   Containment is not destruction: the object is alive on that path, and the
+///   analyzer treats a contained child as an outstanding obligation rather than
+///   a finished one (`cascade_resource_action` moves it to a terminal state only
+///   when the *owner* is released or escapes).
+const ENTITLES_A_READ: u8 = legacy_c::LIVE | legacy_c::CONTAINED;
+
+/// The four bits the analyzer's status bitmap can carry. A status outside this
+/// mask is a state this rule was not written for, and is not decided.
+const MODELLED: u8 = legacy_c::LIVE | legacy_c::RELEASED | legacy_c::ESCAPED | legacy_c::CONTAINED;
+
+/// The exact status-set condition under which a settled identity is
+/// **definitely not live** for this body (card HYGIENE-14,
+/// `BORROW-LIVENESS-MIXED`).
+///
+/// `AbstractState::join` is a bitwise union over reaching paths, so a *present*
+/// bit is a may-fact and an *absent* bit is a must-fact. The condition is the
+/// conjunction of one must-fact and one may-fact:
+///
+/// 1. `status & ENTITLES_A_READ == 0` — **no** reaching path leaves the body a
+///    pointer this projection knows to be alive;
+/// 2. `status & RELEASED != 0` — **some** reaching path destroyed the identity.
+///
+/// Over the modelled bits that set is exactly `{RELEASED}` and
+/// `{RELEASED, ESCAPED}`. The mixed join is the addition: a path that released
+/// and a path that consumed both ended this body's custody, and the released one
+/// destroyed the value, so there is no path on which the projection can say the
+/// borrow reads something it knows to be there.
+///
+/// The unions this deliberately leaves admitted, each for its own reason —
+/// all pinned in the tests below and in `QCore.BorrowLiveness`:
+///
+/// | Status | Why it is not refused |
+/// |---|---|
+/// | anything with `LIVE` (`LIVE`, `LIVE\|RELEASED`, …) | a reaching path leaves the body holding live custody; the borrow is entitled there. This is the must-half card BORROW-LIVENESS proved in both directions. |
+/// | anything with `CONTAINED` (`CONTAINED`, `CONTAINED\|RELEASED`, …) | containment is not destruction; the object is alive inside its container on that path. |
+/// | `ESCAPED` alone | **no** path invalidated it. `resource_consumed` "is not a proof of destruction" (§C04.2), and it is not a proof of survival either — but nothing is known to have gone wrong, so the rule declines. `C02-P-ALIAS-CONSUME` is preserved exactly. |
+/// | absent, or `0` | the projection tracks no identity here. |
+/// | any bit outside `MODELLED` | a state this rule was not written for. |
+///
+/// The published class stays `Unknown` (`UnknownAlias`): the refusal says the
+/// projection will not certify this read, **not** that the read is a defect.
+/// That is why the mixed join is admissible here and would not be under an
+/// `Unsafe` claim — on the escaped path the pointee may well still be alive.
+pub(crate) fn custody_definitely_ended(status: u8) -> bool {
+    status & ENTITLES_A_READ == 0 && status & RELEASED != 0 && status & !MODELLED == 0
+}
 
 /// Decide the `Borrowed` liveness precondition for one actual.
 ///
@@ -123,10 +183,9 @@ pub(crate) fn borrowed_actual_liveness(site: BorrowSite<'_>) -> BorrowLiveness {
     if site.unresolved.contains(&identity) {
         return BorrowLiveness::NotDecided;
     }
-    if site.resources.get(&identity) == Some(&RELEASED_ONLY) {
-        BorrowLiveness::DefinitelyReleased
-    } else {
-        BorrowLiveness::NotDecided
+    match site.resources.get(&identity) {
+        Some(status) if custody_definitely_ended(*status) => BorrowLiveness::DefinitelyNotLive,
+        _ => BorrowLiveness::NotDecided,
     }
 }
 
@@ -134,10 +193,8 @@ pub(crate) fn borrowed_actual_liveness(site: BorrowSite<'_>) -> BorrowLiveness {
 mod tests {
     use super::*;
 
-    const LIVE: u8 = 1;
-    const RELEASED: u8 = 2;
-    const ESCAPED: u8 = 4;
-    const CONTAINED: u8 = 8;
+    // The analyzer's own flags, not copies of their numbers (card HYGIENE-14).
+    use crate::legacy_c::{CONTAINED, ESCAPED, LIVE};
 
     struct Fixture {
         targets: BTreeSet<usize>,
@@ -176,16 +233,59 @@ mod tests {
     }
 
     #[test]
-    fn a_settled_name_denoting_a_released_identity_is_definitely_released() {
+    fn a_settled_name_denoting_a_released_identity_is_definitely_not_live() {
         assert_eq!(
             Fixture::settled(RELEASED).decide(),
-            BorrowLiveness::DefinitelyReleased
+            BorrowLiveness::DefinitelyNotLive
         );
     }
 
+    /// Card HYGIENE-14, `BORROW-LIVENESS-MIXED`: released on one branch and
+    /// consumed on the other. Both arms ended this body's custody and one of
+    /// them destroyed the identity, so no reaching path leaves a pointer the
+    /// projection knows to be alive.
     #[test]
-    fn the_released_only_status_is_the_analyzer_flag() {
-        assert_eq!(RELEASED_ONLY, RELEASED);
+    fn a_release_joined_with_a_consumption_is_definitely_not_live() {
+        assert_eq!(
+            Fixture::settled(RELEASED | ESCAPED).decide(),
+            BorrowLiveness::DefinitelyNotLive
+        );
+    }
+
+    /// The whole classification, stated as a table over every subset of the
+    /// four modelled bits, so a change to the condition has to move a row here.
+    #[test]
+    fn the_refusable_status_sets_are_exactly_released_and_released_with_escaped() {
+        let refusable: Vec<u8> = (0..=15u8)
+            .filter(|status| custody_definitely_ended(*status))
+            .collect();
+        assert_eq!(refusable, vec![RELEASED, RELEASED | ESCAPED]);
+    }
+
+    /// A bit outside the analyzer's four is a state this rule was not written
+    /// for; it must not be swept into the refusal by the mask.
+    #[test]
+    fn an_unmodelled_status_bit_is_not_decided() {
+        assert!(!custody_definitely_ended(RELEASED | 16));
+        assert_eq!(
+            Fixture::settled(RELEASED | 16).decide(),
+            BorrowLiveness::NotDecided
+        );
+    }
+
+    /// Card BORROW-LIVENESS kept a local copy of the released bit and asserted
+    /// it equalled the analyzer's; card HYGIENE-14 removed the copy — the module
+    /// classifies `legacy_c`'s own flags — so what is worth pinning now is that
+    /// the four are the distinct single bits the join unions.
+    #[test]
+    fn the_classified_flags_are_the_analyzer_s_own_distinct_bits() {
+        let bits = [LIVE, RELEASED, ESCAPED, CONTAINED];
+        for bit in bits {
+            assert_eq!(bit.count_ones(), 1, "each status is one bit");
+            assert_eq!(bit & MODELLED, bit);
+        }
+        assert_eq!(bits.iter().fold(0u8, |all, bit| all | bit), MODELLED);
+        assert_eq!(ENTITLES_A_READ, LIVE | CONTAINED);
     }
 
     #[test]
@@ -204,19 +304,21 @@ mod tests {
     }
 
     /// Custody moved is not custody destroyed: `resource_consumed` transfers the
-    /// obligation "without claiming that the callee destroys it" (§C04.2).
+    /// obligation "without claiming that the callee destroys it" (§C04.2). On
+    /// its own it is also not a *destruction*, so nothing is known to have gone
+    /// wrong and the rule declines — `C02-P-ALIAS-CONSUME`, preserved by card
+    /// HYGIENE-14 while the `RELEASED | ESCAPED` join became refusable.
     #[test]
-    fn an_escaped_identity_is_not_decided() {
+    fn an_escaped_identity_on_its_own_is_not_decided() {
         assert_eq!(
             Fixture::settled(ESCAPED).decide(),
             BorrowLiveness::NotDecided
         );
-        assert_eq!(
-            Fixture::settled(ESCAPED | RELEASED).decide(),
-            BorrowLiveness::NotDecided
-        );
     }
 
+    /// Containment is not destruction — the object is alive inside its
+    /// container on that path — so a contained bit entitles the read exactly
+    /// as `LIVE` does, joined or alone.
     #[test]
     fn a_contained_identity_is_not_decided() {
         assert_eq!(
@@ -227,6 +329,21 @@ mod tests {
             Fixture::settled(CONTAINED | RELEASED).decide(),
             BorrowLiveness::NotDecided
         );
+        assert_eq!(
+            Fixture::settled(CONTAINED | RELEASED | ESCAPED).decide(),
+            BorrowLiveness::NotDecided
+        );
+    }
+
+    /// The must-half survives the widening: adding *any* entitling path to a
+    /// refusable status admits it again.
+    #[test]
+    fn an_entitling_path_added_to_a_refusable_status_admits_it() {
+        for refusable in [RELEASED, RELEASED | ESCAPED] {
+            assert!(custody_definitely_ended(refusable));
+            assert!(!custody_definitely_ended(refusable | LIVE));
+            assert!(!custody_definitely_ended(refusable | CONTAINED));
+        }
     }
 
     /// Every scalar `Borrowed` actual takes this path, and §C04.2 admits
@@ -290,7 +407,7 @@ mod tests {
     #[test]
     fn the_unresolved_guard_is_load_bearing() {
         let mut fixture = Fixture::settled(RELEASED);
-        assert_eq!(fixture.decide(), BorrowLiveness::DefinitelyReleased);
+        assert_eq!(fixture.decide(), BorrowLiveness::DefinitelyNotLive);
         fixture.unresolved.insert(1);
         assert_eq!(fixture.decide(), BorrowLiveness::NotDecided);
     }

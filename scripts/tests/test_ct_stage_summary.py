@@ -34,7 +34,11 @@ class MutableRoot:
         self.directory = pathlib.Path(tempfile.mkdtemp(prefix="qcore-ct-summary-"))
 
     def __enter__(self):
-        for relative in [summary.MANIFEST, summary.ACCEPTANCE] + summary.EVIDENCE_FILES:
+        for relative in [
+            summary.MANIFEST,
+            summary.ACCEPTANCE,
+            summary.TRIAGE,
+        ] + summary.EVIDENCE_FILES:
             target = self.directory / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / relative, target)
@@ -51,6 +55,8 @@ class MutableRoot:
 
     def write_evidence(self, relative, data):
         (self.directory / relative).write_text(json.dumps(data, indent=2) + "\n")
+    def write_triage(self, coverage):
+        (self.directory / summary.TRIAGE).write_text(json.dumps(coverage, indent=2) + "\n")
 
 
 class SummaryTest(unittest.TestCase):
@@ -253,6 +259,106 @@ class SummaryTest(unittest.TestCase):
             self.assertEqual(row["route"], case["route"])
             self.assertEqual(row["stage_derived_status"], case["stages"])
             self.assertEqual(row["deepest_executed_stage"], derived["case_depth"][case["id"]])
+
+    # ------------------------------------------------------------------
+    # Card HYGIENE-14, finding D02-BUCKETS-STALE: the triage tally.
+    # ------------------------------------------------------------------
+
+    def test_the_bucket_tally_sums_to_the_unmapped_count(self):
+        """The exact property whose silent violation was the finding.
+
+        The hand-kept mirror summed to 22 against `ct_unmapped: 18` because the
+        four cases wave 8 mapped were never decremented out of a row belonging
+        to another lane's record.
+        """
+        derived = summary.summarize(ROOT)
+        self.assertEqual(
+            sum(derived["unmapped_bucket_counts"].values()), derived["ct_unmapped"]
+        )
+
+    def test_every_unmapped_case_is_classified_exactly_once(self):
+        manifest = load_manifest()
+        unmapped = summary.unmapped_ids(manifest)
+        self.assertEqual(len(unmapped), summary.summarize(ROOT)["ct_unmapped"])
+        rows = json.loads((ROOT / summary.TRIAGE).read_text())["unmapped_triage"]["cases"]
+        classified = [case["id"] for case in rows if case["id"] in set(unmapped)]
+        self.assertEqual(sorted(classified), sorted(unmapped))
+        self.assertEqual(len(classified), len(set(classified)))
+
+    def test_mapping_a_case_moves_the_tally_without_anyone_editing_it(self):
+        """The structural half of the repair.
+
+        A lane that maps a case cannot leave the tally behind: the counted set
+        is the manifest's own unmapped set, so the committed record drifts the
+        moment the mapping lands and the drift names this field.
+        """
+        manifest = load_manifest()
+        before = summary.unmapped_bucket_counts(ROOT, manifest)
+        for case in manifest["cases"]:
+            if case["id"] == "CT24":
+                case["mapping_status"] = "mapped"
+                case["route"] = "task"
+                case["stages"] = copy.deepcopy(
+                    next(c for c in manifest["cases"] if c["id"] == "CT02")["stages"]
+                )
+        with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            after = summary.unmapped_bucket_counts(scratch.directory, manifest)
+            self.assertEqual(sum(after.values()), sum(before.values()) - 1)
+            self.assertNotIn("DECIDABLE-NOW (with a distinguishing fixture)", after)
+            self.assertIn(
+                "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
+                summary.check_acceptance(scratch.directory),
+            )
+
+    def test_an_unclassified_unmapped_case_fails_closed(self):
+        """A hole is refused rather than counted as a zero."""
+        coverage = json.loads((ROOT / summary.TRIAGE).read_text())
+        coverage["unmapped_triage"]["cases"] = [
+            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT44"
+        ]
+        with MutableRoot() as scratch:
+            scratch.write_triage(coverage)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_bucket_counts(scratch.directory)
+
+    def test_a_second_triage_row_for_one_case_fails_closed(self):
+        """Measured while writing this test, and repaired rather than pinned.
+
+        A duplicate row does not disturb the *sum*, so the sum assertion cannot
+        catch it; the obvious lookup let the last row silently decide the label.
+        One case, one classification, or refuse.
+        """
+        coverage = json.loads((ROOT / summary.TRIAGE).read_text())
+        extra = dict(
+            next(
+                case
+                for case in coverage["unmapped_triage"]["cases"]
+                if case["id"] == "CT44"
+            )
+        )
+        extra["current_bucket"] = "invented"
+        coverage["unmapped_triage"]["cases"].append(extra)
+        with MutableRoot() as scratch:
+            scratch.write_triage(coverage)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_bucket_counts(scratch.directory)
+
+    def test_newly_decidable_ids_must_still_be_unmapped(self):
+        self.assertEqual(summary.check_newly_decidable(ROOT), [])
+        manifest = load_manifest()
+        for case in manifest["cases"]:
+            if case["id"] == "CT11":
+                case["mapping_status"] = "mapped"
+        with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            self.assertEqual(
+                summary.check_newly_decidable(scratch.directory),
+                [
+                    "acceptance.json newly_decidable_not_mapped names CT11, "
+                    "which the manifest maps"
+                ],
+            )
 
     def test_a_stage_without_a_depth_rank_fails_closed(self):
         manifest = load_manifest()

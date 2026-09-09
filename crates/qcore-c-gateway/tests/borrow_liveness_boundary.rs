@@ -339,23 +339,54 @@ fn a_release_on_one_branch_only_is_not_definite() {
     );
 }
 
-/// The same non-definiteness without any other diagnostic: released on one
-/// branch and **consumed** on the other. Dead on neither path is not the same
-/// as dead on both, and the rule declines rather than guessing.
+/// **The card HYGIENE-14 movement** (`BORROW-LIVENESS-MIXED`): released on one
+/// branch and **consumed** on the other, then borrowed.
 ///
-/// This is a recorded boundary rather than a success: the body is still `Safe`,
-/// and `BORROW-LIVENESS-MIXED` in the card report says so plainly.
+/// Card BORROW-LIVENESS recorded this as `Safe` and left it open, on the
+/// reading that the identity is "dead on one path only". The condition derived
+/// from the join semantics is different and sharper: neither arm leaves this
+/// body a pointer the projection knows to be alive — a release destroyed it and
+/// a consumption moved it away — and one of them destroyed it, so there is no
+/// reaching path on which the borrow reads something the projection can vouch
+/// for. It is refused, in the same `Unknown` class and with no new code.
 ///
-/// BASE: `Safe`, no diagnostics — identical.
+/// The `else` arm keeps `ESCAPED` alone admitted (below): what makes *this*
+/// shape refusable is the `RELEASED` bit that the other arm contributes.
+///
+/// BASE (card BORROW-LIVENESS): **`Safe`, no diagnostics** — moved.
 #[test]
-fn a_release_joined_with_a_consumption_is_not_definite() {
+fn a_release_joined_with_a_consumption_is_definitely_not_live() {
     if !clang_available() {
         return;
     }
-    admitted(
+    refused(
         "released on one branch, consumed on the other",
         "void w(int n, int c) { struct b_handle *one; one = b_open(0, 0, n); \
          if (!one) { return; } if (c) { b_release(one); } else { b_adopt(one); } b_probe(one); }",
+        &["unknown_alias:one"],
+    );
+}
+
+/// The must-half survives the widening. A third arm leaves the identity `LIVE`,
+/// so the joined status is `LIVE | RELEASED | ESCAPED`, one reaching path does
+/// entitle the read, and the rule declines — leaving exactly the answer the body
+/// already had for the live arm.
+///
+/// Without this control the widened condition could not be distinguished from
+/// "any status containing `RELEASED`", which would be the may-fact the existing
+/// `Unsafe` kinds use and would refuse the branch-local shape above it.
+#[test]
+fn an_entitling_third_branch_keeps_the_mixed_join_admitted() {
+    if !clang_available() {
+        return;
+    }
+    preserved(
+        "released on one branch, consumed on another, live on a third",
+        "void w(int n, int c, int d) { struct b_handle *one; one = b_open(0, 0, n); \
+         if (!one) { return; } if (c) { b_release(one); } else if (d) { b_adopt(one); } \
+         b_probe(one); }",
+        AnalysisStatus::Unsafe,
+        &["leak"],
     );
 }
 

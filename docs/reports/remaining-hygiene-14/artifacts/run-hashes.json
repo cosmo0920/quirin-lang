@@ -1,0 +1,45 @@
+{
+ "artifacts": {
+  "chunk-contracts": {
+   "after_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+   "before_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+   "bytes": 4186178,
+   "identical": true
+  },
+  "contracts": {
+   "after_sha256": "7b6f2b761890fe3cd7a2a5d4dd18acda79f0af4f2a60ad12e2d4874408ae9c3e",
+   "before_sha256": "7b6f2b761890fe3cd7a2a5d4dd18acda79f0af4f2a60ad12e2d4874408ae9c3e",
+   "bytes": 13759,
+   "identical": true
+  },
+  "diagnostics": {
+   "after_sha256": "70994e38bac7e45ab3218058e19de46d5f8721803f515222f6b49bdd8a0e57de",
+   "before_sha256": "70994e38bac7e45ab3218058e19de46d5f8721803f515222f6b49bdd8a0e57de",
+   "bytes": 11147459,
+   "identical": true
+  },
+  "source": {
+   "after_sha256": "06bbb40ffef3e58e02d31e05788c0f41bf7276cc0b61d6fed09cefab574828a5",
+   "before_sha256": "06bbb40ffef3e58e02d31e05788c0f41bf7276cc0b61d6fed09cefab574828a5",
+   "bytes": 1665474,
+   "identical": true
+  },
+  "source-effects": {
+   "after_sha256": "ed4d08ed7b296bf86552ded6b0ac1296f75c45060f936cfcc3e4a7f6538ff774",
+   "before_sha256": "ed4d08ed7b296bf86552ded6b0ac1296f75c45060f936cfcc3e4a7f6538ff774",
+   "bytes": 118502,
+   "identical": true
+  }
+ },
+ "baseline": "docs/reports/wave13-corpus/artifacts/",
+ "baseline_reproduced": {
+  "chunk-contracts.json": "byte-identical",
+  "contracts.json": "differs: path-literal provenance only (worktree prefix in six contract source paths)",
+  "diagnostics.json": "byte-identical",
+  "source-effects.json": "differs: package identity only (package_digest/build_digest and derived configuration digests)",
+  "source.json": "differs: path-literal provenance only (command/directory/file and two __FILE__ expansions)"
+ },
+ "card": "HYGIENE-14",
+ "census_run_diagnostics_sha256": "70994e38bac7e45ab3218058e19de46d5f8721803f515222f6b49bdd8a0e57de",
+ "note": "Run hashes for the three pinned-route runs. AFTER is byte-identical to BEFORE on all five artifacts, so the pin is not moved and the AFTER set is not re-archived. The census run's diagnostics.json equals both."
+}

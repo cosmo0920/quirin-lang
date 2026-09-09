@@ -359,17 +359,15 @@
     },
     "unmapped_bucket_counts": {
       "ambiguous + unimplemented-syntax": 1,
-      "blocked-on-unimplemented-syntax": 3,
-      "blocked-on-W3/W4": 3,
+      "blocked-on-unimplemented-syntax": 6,
+      "blocked-on-task-lowering (share captures)": 1,
+      "blocked-on-W3/W4": 2,
       "DECIDABLE-NOW (with a distinguishing fixture)": 1,
       "ambiguous (partially unblocked)": 1,
-      "blocked-on-guard-profile-composition-or-unrepresented-form": 1,
-      "blocked-on-W3/W4 (conditional half resolved)": 1,
-      "DECIDABLE-NOW (coarser reason)": 2,
       "blocked-on-gateway-expressiveness (C-twin measured)": 3,
       "ambiguous": 1,
-      "blocked-on-scenario-mismatch (no local alias form)": 1,
-      "blocked-on-model-only-epoch-accounting (no source syntax)": 4
+      "blocked-on-unimplemented-syntax (no mutex value)": 1,
+      "DECIDABLE-NOW (coarser reason)": 1
     },
     "newly_decidable_not_mapped": [
       "CT11",
@@ -390,7 +388,8 @@
       "host_scope",
       "tool_scope",
       "depth_profile",
-      "case_depth"
+      "case_depth",
+      "unmapped_bucket_counts"
     ],
     "host_scope": {
       "c_emission": [
@@ -486,7 +485,6 @@
       "generated_fields",
       "hand_maintained_fields",
       "reporting_host",
-      "unmapped_bucket_counts",
       "newly_decidable_not_mapped",
       "newly_decidable_not_mapped_reasons",
       "cause"

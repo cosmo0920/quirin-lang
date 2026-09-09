@@ -2352,7 +2352,76 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
         "tool_scope": tool_scope,
         "depth_profile": depth_profile,
         "case_depth": case_depth,
+        "unmapped_bucket_counts": unmapped_bucket_counts(manifest),
     })
+}
+
+/// The triage tally over the cases the manifest *currently* leaves unmapped
+/// (card HYGIENE-14, finding `D02-BUCKETS-STALE`).
+///
+/// The hand-kept mirror in `acceptance.json` had drifted to a sum of 22 against
+/// `ct_unmapped: 18`: a lane that maps a case edits the row its own case left,
+/// and the four cases wave 8 mapped were never decremented out of another
+/// lane's row. Deriving the *label* is not possible — the manifest carries no
+/// blocker field for an unmapped case, and card T00's archived triage is the
+/// only per-case record there is — but deriving the *set of counted cases* is,
+/// and that is what ends the rot: a case that gets mapped leaves this tally in
+/// the same commit that maps it.
+///
+/// Two total-or-reject conditions, matching `scripts/ct_stage_summary.py`
+/// exactly:
+///
+/// * an unmapped case with no archived triage row is a hole, not a zero;
+/// * the counts must sum to the number of unmapped cases — the property whose
+///   silent violation *is* the finding.
+fn unmapped_bucket_counts(manifest: &Manifest) -> BTreeMap<String, usize> {
+    let path = repo_root().join("docs/reports/remaining-t00/coverage.json");
+    let triage: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display())),
+    )
+    .unwrap_or_else(|error| panic!("cannot parse {}: {error}", path.display()));
+    let mut rows: BTreeMap<&str, &str> = BTreeMap::new();
+    for case in triage["unmapped_triage"]["cases"]
+        .as_array()
+        .expect("T00's triage lists its cases")
+    {
+        let id = case["id"].as_str().expect("a triage row names its case");
+        let bucket = case["current_bucket"]
+            .as_str()
+            .expect("a triage row names its bucket");
+        // One case, one classification. A duplicate row does not disturb the
+        // sum, so the sum assertion below cannot catch it — the natural
+        // map-building lets the last row silently decide the label.
+        assert!(
+            rows.insert(id, bucket).is_none(),
+            "{id}: two triage rows classify the same case in {}",
+            path.display()
+        );
+    }
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    let mut unmapped = 0usize;
+    for case in &manifest.cases {
+        if case.mapping_status == "mapped" {
+            continue;
+        }
+        unmapped += 1;
+        let bucket = rows.get(case.id.as_str()).unwrap_or_else(|| {
+            panic!(
+                "{}: unmapped with no archived triage row in {}",
+                case.id,
+                path.display()
+            )
+        });
+        *counts.entry((*bucket).to_owned()).or_insert(0) += 1;
+    }
+    assert_eq!(
+        counts.values().sum::<usize>(),
+        unmapped,
+        "the bucket tally must account for every unmapped case — a sum that \
+         drifts from ct_unmapped is exactly finding D02-BUCKETS-STALE"
+    );
+    counts
 }
 
 /// The consumable acceptance numbers are generated from the manifest, not
@@ -2391,6 +2460,9 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
             "tool_scope",
             "depth_profile",
             "case_depth",
+            // Card HYGIENE-14: the triage tally is generated too, over the case
+            // set this manifest fixes. Its labels stay T00's archived analysis.
+            "unmapped_bucket_counts",
         ],
         "the generated field set is itself pinned, so a field cannot quietly \
          become hand-maintained"
@@ -2412,11 +2484,35 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
         "tool_scope",
         "depth_profile",
         "case_depth",
+        "unmapped_bucket_counts",
     ] {
         assert_eq!(
             evidence.get(field),
             Some(&derived[field]),
             "acceptance.json `{field}` is not what the manifest's stage evidence derives"
+        );
+    }
+    // `newly_decidable_not_mapped` stays hand-kept — whether a case is decidable
+    // *now* is a judgment no record derives — but "not mapped" is a manifest
+    // fact, so the half of it that can go stale the way the buckets did is
+    // checked here (card HYGIENE-14).
+    let mapped_ids: BTreeSet<&str> = manifest
+        .cases
+        .iter()
+        .filter(|case| case.mapping_status == "mapped")
+        .map(|case| case.id.as_str())
+        .collect();
+    for entry in evidence
+        .get("newly_decidable_not_mapped")
+        .expect("the CT block lists the newly decidable cases it did not map")
+        .as_array()
+        .expect("newly_decidable_not_mapped is a list")
+    {
+        let case_id = entry.as_str().expect("case id");
+        assert!(
+            !mapped_ids.contains(case_id),
+            "acceptance.json still calls {case_id} newly decidable and not mapped, but the \
+             manifest maps it"
         );
     }
 }

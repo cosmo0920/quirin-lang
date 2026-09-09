@@ -19,16 +19,41 @@ which is exactly the shape a formal parameter has).
 
 ## What is decided
 
-`liveness` answers `definitelyReleased` only under a conjunction of must facts:
+`liveness` answers `definitelyNotLive` only under a conjunction of facts:
 
 * the name is **bound with a settled denotation** — exactly one target, not
   `unknown`, not `mayBeNull` — the same commitment `QCore.MayAlias.settled`
   reads, shared so the two rules cannot drift apart;
 * that identity carries **no unresolved effect**;
-* its joined status is **exactly released** — no `live`, no `escaped`, no
-  `contained` bit anywhere. Because `Status.join` is a pointwise union, the
-  absence of every other bit is the statement that *no* reaching path leaves the
-  identity in another state (`a_refusal_implies_every_incoming_path_released`).
+* its joined status satisfies `custodyDefinitelyEnded`: **no** bit that entitles
+  a read (`live`, `contained`) and **some** `released` bit. Because `Status.join`
+  is a pointwise union, an absent bit is a must fact and a present one a may
+  fact, so the condition reads "custody ended on every reaching path, and one of
+  them destroyed the identity"
+  (`a_refusal_implies_no_incoming_path_entitles_a_read`).
+
+Card ALIAS-LOCALS-BORROW-LIVENESS required the status to be **exactly**
+released; card HYGIENE-14 (`BORROW-LIVENESS-MIXED`) derived the condition above
+from the join semantics, which admits one further union —
+`released ∪ escaped`, a release on one branch joined with a consumption on the
+other. `the_refusable_statuses_are_exactly_released_and_released_with_escaped`
+decides the whole sixteen-status domain, and its Rust twin
+(`borrow_liveness::tests::the_refusable_status_sets_are_exactly_…`) enumerates
+the same domain by bitmap code, so the two sides pin one table.
+
+Two of that card's theorems were **retired by name** rather than quietly
+restated, because the widening made them false:
+`a_release_joined_with_an_escape_is_never_refused` (now
+`a_release_joined_with_an_escape_is_refused`) and
+`a_refusal_implies_every_incoming_path_released` (now
+`a_refusal_implies_no_incoming_path_entitles_a_read`, which no longer claims
+anything about the escaped bit). `a_refusal_names_a_settled_released_identity`
+became `a_refusal_names_a_settled_identity_whose_custody_ended` for the same
+reason.
+
+The Rust decision carries one further conjunct with no counterpart here: a
+status bit outside the analyzer's four is not decided. This model has exactly
+four bits by construction, so the conjunct is unstatable rather than omitted.
 
 Everything else is `notDecided` and preserves the existing answer exactly,
 including every scalar actual — §C04.2 admits scalars in `Borrowed` positions
@@ -94,7 +119,42 @@ def join (a b : Status) : Status :=
   ⟨a.live || b.live, a.released || b.released, a.escaped || b.escaped,
    a.contained || b.contained⟩
 
+/-- The bits whose reaching path leaves this body a pointer the projection knows
+    to be **alive**, so a read of it is entitled there.
+
+    `live` is the body's own retained custody. `contained` is an identity held
+    beneath an owner: containment is not destruction, and the analyzer moves a
+    contained child to a terminal state only when its *owner* is released or
+    escapes. -/
+def entitlesARead (st : Status) : Bool := st.live || st.contained
+
+/-- The analyzer's `u8` bitmap for this status: `LIVE = 1`, `RELEASED = 2`,
+    `ESCAPED = 4`, `CONTAINED = 8`. Present so this model and the Rust module
+    can pin the *same* table over the *same* domain rather than two tables that
+    happen to read alike. -/
+def code (st : Status) : Nat :=
+  (if st.live then 1 else 0) + (if st.released then 2 else 0)
+    + (if st.escaped then 4 else 0) + (if st.contained then 8 else 0)
+
 end Status
+
+/-- Every status the four bits can take, enumerated by bitmap code — the same
+    `0..=15` domain the Rust test enumerates. -/
+def allStatuses : List Status :=
+  (List.range 16).map fun n =>
+    ⟨n % 2 == 1, (n / 2) % 2 == 1, (n / 4) % 2 == 1, (n / 8) % 2 == 1⟩
+
+/-- The status-set condition of card HYGIENE-14: **no** reaching path leaves the
+    body a pointer the projection knows to be alive, and **some** reaching path
+    destroyed the identity.
+
+    Both halves are load-bearing and both are audited: dropping the first would
+    refuse a live identity (`an_entitling_incoming_path_prevents_the_refusal`),
+    and dropping the second would refuse a merely consumed one, closing the
+    `C02-P-ALIAS-CONSUME` boundary through the back door
+    (`the_released_conjunct_is_load_bearing`). -/
+def custodyDefinitelyEnded (st : Status) : Bool :=
+  !st.entitlesARead && st.released
 
 /-- What one name denotes here, as `AbstractPointer` records it. -/
 structure Denotation where
@@ -127,9 +187,10 @@ structure Facts where
 
 /-- The decision. -/
 inductive Liveness where
-  /-- The projection committed to one identity and that identity is released on
-      every path reaching this call. -/
-  | definitelyReleased
+  /-- The projection committed to one identity; no path reaching this call
+      leaves that identity in a state where the body holds a pointer the
+      projection knows to be alive, and some path destroyed it. -/
+  | definitelyNotLive
   /-- Anything else. No claim in either direction. -/
   | notDecided
 deriving DecidableEq, Repr
@@ -143,7 +204,7 @@ def liveness (f : Facts) : Liveness :=
     | none => .notDecided
     | some s =>
       if f.unresolved s then .notDecided
-      else if f.status s = Status.releasedOnly then .definitelyReleased
+      else if custodyDefinitelyEnded (f.status s) then .definitelyNotLive
       else .notDecided
 
 /-- The three verdict classes `classify_diagnostics` publishes. -/
@@ -159,7 +220,7 @@ deriving DecidableEq, Repr
 def publish (v : Verdict) (l : Liveness) : Verdict :=
   match l with
   | .notDecided => v
-  | .definitelyReleased =>
+  | .definitelyNotLive =>
     match v with
     | .violation => .violation
     | _ => .unresolved
@@ -179,12 +240,41 @@ def settledAt (st : Status) : Facts :=
     a `Borrowed` position. The may-alias relation cannot reach it — it relates
     two *distinct* names — and this rule does. -/
 theorem a_settled_released_identity_is_refused :
-    liveness (settledAt Status.releasedOnly) = .definitelyReleased := by
+    liveness (settledAt Status.releasedOnly) = .definitelyNotLive := by
   decide
 
 /-- The refusal withdraws a certificate rather than issuing an allegation. -/
 theorem a_refusal_withdraws_a_certificate :
-    publish .safe .definitelyReleased = .unresolved := by
+    publish .safe .definitelyNotLive = .unresolved := by
+  decide
+
+/-- **Card HYGIENE-14's movement** (`BORROW-LIVENESS-MIXED`): released on one
+    branch and consumed on the other. Both arms ended this body's custody and
+    one of them destroyed the identity, so no reaching path leaves a pointer the
+    projection knows to be alive.
+
+    This retires card ALIAS-LOCALS-BORROW-LIVENESS's
+    `a_release_joined_with_an_escape_is_never_refused`, which stated the
+    opposite; the retirement is deliberate and named in the module header. -/
+theorem a_release_joined_with_an_escape_is_refused :
+    liveness (settledAt (Status.join Status.releasedOnly Status.escapedOnly))
+      = .definitelyNotLive := by
+  decide
+
+/-- The whole classification, decided over the entire sixteen-status domain and
+    reported by the analyzer's own bitmap codes: `2` is `RELEASED` and `6` is
+    `RELEASED | ESCAPED`. The Rust module's
+    `the_refusable_status_sets_are_exactly_released_and_released_with_escaped`
+    enumerates `0..=15` and pins the same two values, so neither side can widen
+    the condition without the other's table moving. -/
+theorem the_refusable_statuses_are_exactly_released_and_released_with_escaped :
+    (allStatuses.filter custodyDefinitelyEnded).map Status.code = [2, 6] := by
+  decide
+
+/-- …and the enumeration really is the whole domain, in the analyzer's own
+    numbering. -/
+theorem the_enumerated_domain_is_every_bitmap :
+    allStatuses.map Status.code = List.range 16 := by
   decide
 
 /-! ## Every way the decision fails closed -/
@@ -214,10 +304,10 @@ theorem a_release_on_one_branch_only_is_never_refused :
       = .notDecided := by
   decide
 
-/-- Released on one branch and consumed on another is likewise undecided: dead
-    on neither path is not the same as dead on both. -/
-theorem a_release_joined_with_an_escape_is_never_refused :
-    liveness (settledAt (Status.join Status.releasedOnly Status.escapedOnly))
+/-- Released on one branch and **contained** on another: containment leaves the
+    object alive beneath its owner, so a reaching path does entitle the read. -/
+theorem a_release_joined_with_a_containment_is_never_refused :
+    liveness (settledAt (Status.join Status.releasedOnly Status.containedOnly))
       = .notDecided := by
   decide
 
@@ -270,12 +360,16 @@ theorem an_unresolved_effect_site_is_never_refused :
 /-! ## The converse: a refusal names the facts it claims -/
 
 /-- Every refusal is backed by a settled binding whose identity carries no
-    unresolved effect and whose joined status is exactly released. The rule
-    invents nothing. -/
-theorem a_refusal_names_a_settled_released_identity (f : Facts)
-    (h : liveness f = .definitelyReleased) :
+    unresolved effect and whose joined status satisfies the condition. The rule
+    invents nothing.
+
+    Card HYGIENE-14 retired this theorem's predecessor,
+    `a_refusal_names_a_settled_released_identity`, whose final conjunct said the
+    status was *exactly* released. -/
+theorem a_refusal_names_a_settled_identity_whose_custody_ended (f : Facts)
+    (h : liveness f = .definitelyNotLive) :
     ∃ d s, f.denotation = some d ∧ d.settled = some s ∧
-      f.unresolved s = false ∧ f.status s = Status.releasedOnly := by
+      f.unresolved s = false ∧ custodyDefinitelyEnded (f.status s) = true := by
   cases hd : f.denotation with
   | none => simp [liveness, hd] at h
   | some d =>
@@ -284,7 +378,7 @@ theorem a_refusal_names_a_settled_released_identity (f : Facts)
     | some s =>
       by_cases hu : f.unresolved s = true
       · simp [liveness, hd, hs, hu] at h
-      · by_cases hr : f.status s = Status.releasedOnly
+      · by_cases hr : custodyDefinitelyEnded (f.status s) = true
         · exact ⟨d, s, rfl, hs, by simpa using hu, hr⟩
         · simp [liveness, hd, hs, hu, hr] at h
 
@@ -300,26 +394,37 @@ theorem the_join_is_idempotent (a : Status) : Status.join a a = a := by
     refusal, however many other paths released it. -/
 theorem a_live_incoming_path_prevents_the_refusal (a b : Status) (h : a.live = true) :
     liveness (settledAt (Status.join a b)) = .notDecided := by
-  simp [liveness, settledAt, Denotation.settled, Status.join, Status.releasedOnly, h]
+  simp [liveness, settledAt, Denotation.settled, custodyDefinitelyEnded,
+    Status.entitlesARead, Status.join, h]
+
+/-- The same for a containment: the widened rule keeps *both* entitling bits, so
+    a contained incoming path is as protective as a live one. -/
+theorem an_entitling_incoming_path_prevents_the_refusal (a b : Status)
+    (h : a.live = true ∨ a.contained = true) :
+    liveness (settledAt (Status.join a b)) = .notDecided := by
+  cases h with
+  | inl h =>
+    simp [liveness, settledAt, Denotation.settled, custodyDefinitelyEnded,
+      Status.entitlesARead, Status.join, h]
+  | inr h =>
+    simp [liveness, settledAt, Denotation.settled, custodyDefinitelyEnded,
+      Status.entitlesARead, Status.join, h]
 
 /-- The must half, stated over the join: a refusal at a merge point implies that
-    **neither** incoming path left the identity live, escaped or contained, and
-    that at least one of them released it. -/
-theorem a_refusal_implies_every_incoming_path_released (a b : Status)
-    (h : liveness (settledAt (Status.join a b)) = .definitelyReleased) :
-    a.live = false ∧ b.live = false ∧ a.escaped = false ∧ b.escaped = false ∧
+    **no** incoming path left the identity live or contained, and that at least
+    one of them released it. It says nothing about the escaped bit — that is
+    exactly what card HYGIENE-14 changed, and the retired predecessor
+    `a_refusal_implies_every_incoming_path_released` claimed otherwise. -/
+theorem a_refusal_implies_no_incoming_path_entitles_a_read (a b : Status)
+    (h : liveness (settledAt (Status.join a b)) = .definitelyNotLive) :
+    a.live = false ∧ b.live = false ∧
       a.contained = false ∧ b.contained = false ∧
       (a.released = true ∨ b.released = true) := by
-  have hj : Status.join a b = Status.releasedOnly := by
-    by_cases hne : Status.join a b = Status.releasedOnly
-    · exact hne
-    · simp [liveness, settledAt, Denotation.settled, hne] at h
-  have := congrArg Status.live hj
-  have h2 := congrArg Status.released hj
-  have h3 := congrArg Status.escaped hj
-  have h4 := congrArg Status.contained hj
-  simp [Status.join, Status.releasedOnly] at this h2 h3 h4
-  exact ⟨this.1, this.2, h3.1, h3.2, h4.1, h4.2, h2⟩
+  revert h
+  obtain ⟨l1, r1, e1, c1⟩ := a
+  obtain ⟨l2, r2, e2, c2⟩ := b
+  cases l1 <;> cases r1 <;> cases e1 <;> cases c1 <;>
+    cases l2 <;> cases r2 <;> cases e2 <;> cases c2 <;> decide
 
 /-! ## The rule against the existing `Unsafe` bar -/
 
@@ -331,12 +436,13 @@ def doubleReleaseBar (st : Status) : Bool := st.released
 /-- Every state this rule refuses would also satisfy the existing `Unsafe`
     kinds' state test. -/
 theorem a_refusal_satisfies_the_existing_bar (st : Status)
-    (h : liveness (settledAt st) = .definitelyReleased) : doubleReleaseBar st = true := by
-  have hst : st = Status.releasedOnly := by
-    by_cases hne : st = Status.releasedOnly
+    (h : liveness (settledAt st) = .definitelyNotLive) : doubleReleaseBar st = true := by
+  have hc : custodyDefinitelyEnded st = true := by
+    by_cases hne : custodyDefinitelyEnded st = true
     · exact hne
     · simp [liveness, settledAt, Denotation.settled, hne] at h
-  simp [doubleReleaseBar, hst, Status.releasedOnly]
+  simp only [custodyDefinitelyEnded, Bool.and_eq_true] at hc
+  simpa [doubleReleaseBar] using hc.2
 
 /-- …and the converse fails, so this rule requires **strictly more** of the
     projection state than the kinds published as provisional `Unsafe` do. The
@@ -352,7 +458,7 @@ theorem the_rule_never_certifies (v : Verdict) (l : Liveness)
     (h : publish v l = .safe) : v = .safe := by
   cases l with
   | notDecided => simpa [publish] using h
-  | definitelyReleased => cases v <;> simp [publish] at h
+  | definitelyNotLive => cases v <;> simp [publish] at h
 
 /-- The rule never manufactures an upstream defect allegation: a function that
     was not already in the `violation` class does not enter it here. -/
@@ -360,7 +466,7 @@ theorem a_refusal_is_never_the_violation_class (v : Verdict) (l : Liveness)
     (h : v ≠ .violation) : publish v l ≠ .violation := by
   cases l with
   | notDecided => simpa [publish] using h
-  | definitelyReleased => cases v <;> simp [publish] at h ⊢
+  | definitelyNotLive => cases v <;> simp [publish] at h ⊢
 
 /-- An existing violation is not softened by this rule either. -/
 theorem an_existing_violation_survives (l : Liveness) :
@@ -389,7 +495,7 @@ theorem recording_an_unresolved_effect_only_drops_refusals
 
 /-- The `unresolved` guard is load-bearing: the same facts without it fire. -/
 theorem the_unresolved_guard_is_load_bearing :
-    liveness (settledAt Status.releasedOnly) = .definitelyReleased ∧
+    liveness (settledAt Status.releasedOnly) = .definitelyNotLive ∧
       liveness { denotation := some ⟨[0], false, false⟩
                  status := fun _ => Status.releasedOnly
                  unresolved := fun _ => true } = .notDecided := by
@@ -398,17 +504,34 @@ theorem the_unresolved_guard_is_load_bearing :
 /-- The settled guard is load-bearing: the identical status with an ambiguous
     binding does not fire. -/
 theorem the_settled_guard_is_load_bearing :
-    liveness (settledAt Status.releasedOnly) = .definitelyReleased ∧
+    liveness (settledAt Status.releasedOnly) = .definitelyNotLive ∧
       liveness { denotation := some ⟨[0, 1], false, false⟩
                  status := fun _ => Status.releasedOnly
                  unresolved := fun _ => false } = .notDecided := by
+  exact ⟨by decide, by decide⟩
+
+/-- The `released` conjunct is load-bearing, which is what keeps
+    `C02-P-ALIAS-CONSUME` open rather than closing it through the back door: a
+    consumed identity alone is admitted, and it is the *added* release that makes
+    the join refusable. -/
+theorem the_released_conjunct_is_load_bearing :
+    liveness (settledAt Status.escapedOnly) = .notDecided ∧
+      liveness (settledAt (Status.join Status.escapedOnly Status.releasedOnly))
+        = .definitelyNotLive := by
+  exact ⟨by decide, by decide⟩
+
+/-- The entitling conjunct is load-bearing in both of its bits. -/
+theorem the_entitling_conjunct_is_load_bearing :
+    liveness (settledAt (Status.join Status.releasedOnly Status.liveOnly)) = .notDecided ∧
+      liveness (settledAt (Status.join Status.releasedOnly Status.containedOnly))
+        = .notDecided := by
   exact ⟨by decide, by decide⟩
 
 /-- The status guard is load-bearing: the identical settled binding over a live
     identity does not fire, so a re-acquisition between the release and the
     borrow restores the admission. -/
 theorem a_reacquired_identity_is_admitted_again :
-    liveness (settledAt Status.releasedOnly) = .definitelyReleased ∧
+    liveness (settledAt Status.releasedOnly) = .definitelyNotLive ∧
       liveness (settledAt Status.liveOnly) = .notDecided := by
   exact ⟨by decide, by decide⟩
 

@@ -314,9 +314,13 @@ triage_cases = [case for case in triage["cases"] if case["id"] in set(unmapped_i
 assert {case["id"] for case in triage_cases} == set(unmapped_ids), sorted(
     set(unmapped_ids) - {case["id"] for case in triage["cases"]}
 )
-bucket_counts = {}
-for case in triage_cases:
-    bucket_counts[case["current_bucket"]] = bucket_counts.get(case["current_bucket"], 0) + 1
+# One authority for the tally (card HYGIENE-14, finding D02-BUCKETS-STALE):
+# this generator's counts were the *correct* ones while `acceptance.json`'s
+# hand-kept mirror drifted to a sum of 22, so the derivation moved into the
+# shared summarizer and both records now read the same function, which refuses
+# a tally that does not sum to the number of unmapped cases.
+bucket_counts = ct_stage_summary.unmapped_bucket_counts(ROOT, manifest)
+assert sum(bucket_counts.values()) == len(unmapped_ids)
 # T00's `blocker` text is frozen at revision ea2af0f, and for a case whose
 # blocker has since been repaired it can read as a false statement about the
 # implementation. CT34 was the worked example — its frozen text says "no source
