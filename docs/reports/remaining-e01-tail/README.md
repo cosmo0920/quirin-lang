@@ -81,7 +81,22 @@ about the analysed source and can never contribute to a provisional `Unsafe`.
 A real Clang stream always balances, so this ground has **measured corpus reach
 0** and is exercised at the reader level, not through a preprocessing (§2.2).
 
-### 1.4 What the repair does not close
+### 1.4 Why the repair is inert on the corpus, by input inspection
+
+The two rules can only disagree where a `#line` directive appears, so the
+corpus was searched for one directly, independently of any audit run:
+
+| Tree | files carrying a `#line` directive |
+|---|---|
+| the whole pinned Fluent Bit clone (`*.c`, `*.h`) | **2** — `lib/onigmo/enc/jis/props.h` and `lib/nghttp2-1.65.0/third-party/mruby/…/y.tab.c`, neither in any audited library |
+| the prepared Monkey/Libevent tree | **0** |
+| top-level `/usr/include` and `/usr/include/x86_64-linux-gnu` | **0** |
+
+So no audited unit reaches a marker the two rules read differently, and the
+denominator is expected to be unchanged before the run is made. §4 is the
+confirmation, not the argument.
+
+### 1.5 What the repair does not close
 
 * Which *headers* a `HistoricalStdin` unit finds is still decided by the
   gateway process's working directory rather than the includer's, because the
@@ -628,7 +643,7 @@ not interact.
   shadows nothing.
 * **E01-B2**, **E01-B3**, **E01-B4** — unchanged.
 * Clang's marker-flag semantics and the analyzer's body finder remain tool and
-  Rust boundaries, pinned behaviourally, not proved (§1.4, §6).
+  Rust boundaries, pinned behaviourally, not proved (§1.5, §6).
 
 Nothing here establishes that any audited source is safe, and no raw unit is
 promoted.
