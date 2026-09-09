@@ -16,6 +16,7 @@
 
 use qcore_c_gateway::boolean_source::SourceInputIdentity;
 use qcore_c_gateway::teardown_source::{FieldDestructorSourceImport, ListUnlinkSourceImport};
+use qcore_schemas::call_use_summary::PrerequisiteIdentity;
 use qcore_schemas::obligation::*;
 use qcore_schemas::plugin::*;
 use qcore_schemas::teardown_summary::{
@@ -227,6 +228,33 @@ impl ListUnlinkSourceTask {
             cleanup_replay_source: None,
             composition_source: None,
         }
+    }
+
+    /// This task's own identity, for a *dependent* capability to name it by.
+    /// It carries no verdict, certificate or reading — only the semantic
+    /// profile, the task digest and the single obligation identifier, each of
+    /// which the dependent's core re-derives for itself.
+    pub fn prerequisite_identity(&self) -> PrerequisiteIdentity {
+        PrerequisiteIdentity {
+            semantic_profile: self.task.semantic_profile.clone(),
+            task_digest: self.task.task_digest(),
+            obligation_id: self.task.obligations[0].obligation_id.clone(),
+        }
+    }
+
+    /// Re-run this task's own evaluation for a dependent and confirm the
+    /// claimed identity is the one this context derives.
+    pub fn revalidate_as_prerequisite(
+        &self,
+        claimed: &PrerequisiteIdentity,
+    ) -> Result<ListUnlinkCertificate, String> {
+        if !claimed.is_complete() {
+            return Err("list unlink prerequisite identity is incomplete".into());
+        }
+        if *claimed != self.prerequisite_identity() {
+            return Err("list unlink prerequisite identity is not the one the core derives".into());
+        }
+        self.evaluate()
     }
 
     /// Re-check both imported bodies against the pinned contract. This is the
@@ -449,6 +477,35 @@ impl FieldDestructorSourceTask {
             cleanup_replay_source: None,
             composition_source: None,
         }
+    }
+
+    /// This task's own identity, for a *dependent* capability to name it by.
+    /// It carries no verdict, certificate or reading — only the semantic
+    /// profile, the task digest and the single obligation identifier, each of
+    /// which the dependent's core re-derives for itself.
+    pub fn prerequisite_identity(&self) -> PrerequisiteIdentity {
+        PrerequisiteIdentity {
+            semantic_profile: self.task.semantic_profile.clone(),
+            task_digest: self.task.task_digest(),
+            obligation_id: self.task.obligations[0].obligation_id.clone(),
+        }
+    }
+
+    /// Re-run this task's own evaluation for a dependent and confirm the
+    /// claimed identity is the one this context derives.
+    pub fn revalidate_as_prerequisite(
+        &self,
+        claimed: &PrerequisiteIdentity,
+    ) -> Result<FieldDestructorCertificate, String> {
+        if !claimed.is_complete() {
+            return Err("field destructor prerequisite identity is incomplete".into());
+        }
+        if *claimed != self.prerequisite_identity() {
+            return Err(
+                "field destructor prerequisite identity is not the one the core derives".into(),
+            );
+        }
+        self.evaluate()
     }
 
     /// Re-check the imported body against the pinned contract, exhausting
