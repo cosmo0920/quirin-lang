@@ -1,5 +1,10 @@
 # Wave-11 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-09 (wave-12 consolidation):**
+> `docs/reports/wave12-corpus/artifacts/` is the current baseline — 59 units
+> changed, triangulated exactly to W4-EXPR-POS (28 function discharges) and
+> O04-B09B10, headline unchanged. This directory remains the wave-11 record.
+
 **Date:** 2026-09-09. **Tree:** main `0f5b7bd` (all five wave-11 cards
 merged). Integrator-run, closing the wave under hard invariants 3 and 5.
 
