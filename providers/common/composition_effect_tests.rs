@@ -893,7 +893,11 @@ fn degenerate_memory_close_questions_decline() {
         paths: Vec::new(),
         profile_assumptions: BTreeMap::new(),
     };
-    let rows: Vec<(&str, Box<dyn Fn() -> Option<MemoryCloseCompositionRecord>>)> = vec![
+    type MemoryCloseRow = (
+        &'static str,
+        Box<dyn Fn() -> Option<MemoryCloseCompositionRecord>>,
+    );
+    let rows: Vec<MemoryCloseRow> = vec![
         ("wrapper emptied", {
             let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
             let body = empty_body("cio_chunk_close", &wrapper.signature);
@@ -1106,7 +1110,7 @@ fn the_memory_close_request_gate_is_exact() {
         ),
     ];
     // Three rows that mutate the transported question itself.
-    let mut mutated = |label: &'static str, change: fn(&mut CompositionSourceInput)| {
+    let mutated = |label: &'static str, change: fn(&mut CompositionSourceInput)| {
         let mut projection = memory_close_projection();
         change(&mut projection);
         (
