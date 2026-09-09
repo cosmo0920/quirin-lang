@@ -12,6 +12,14 @@
 //! same-tagged **locals** are related too, and added the definite-alias
 //! relation kind (`docs/reports/remaining-alias-locals/README.md`).
 //!
+//! Card ALIAS-LOCALS-BORROW-LIVENESS is a **different relation** and lives in
+//! `borrow_liveness_boundary.rs`: it decides one name's own binding, never a
+//! peer. The two must not blur, and this file's
+//! `the_measured_plain_name_control_no_longer_certifies` is the pin that keeps
+//! them apart — a *may* pair whose own binding is an uncontracted formal gains
+//! nothing from that card. One assertion here moved deliberately, recorded on
+//! the test itself.
+//!
 //! Every body below was measured before the rule that governs it landed — the
 //! v1 family at the branch base `695f0e1`, the ALIAS-LOCALS family at `67961f1`
 //! — and the `BASE:` line of each test says what it answered there, so every
@@ -463,10 +471,19 @@ fn two_local_copies_of_one_formal_are_refused() {
 ///
 /// The published claim is still the existing `UnknownAlias`, deliberately:
 /// `docs/reports/remaining-alias-locals/README.md` §3 records why no stronger
-/// kind this checker owns is honest here, and names the follow-on
-/// `ALIAS-LOCALS-BORROW-LIVENESS` that would change it.
+/// kind this checker owns is honest here.
 ///
-/// BASE: `Safe`, no diagnostics.
+/// **Deliberately strengthened by card ALIAS-LOCALS-BORROW-LIVENESS.** That
+/// follow-on gave `Borrowed` positions the liveness precondition this model had
+/// never implemented, so the same body is now refused *twice over*: once by
+/// this card's peer relation, naming `two/one`, and once by its own binding,
+/// naming `two`. **This card's obligation is the load-bearing half of the pin
+/// and is still asserted in full** — the assertion below is the complete
+/// obligation vector, so `two/one` cannot quietly disappear behind the newer
+/// rule. The complete *diagnostic* vector is asserted in
+/// `borrow_liveness_boundary.rs`.
+///
+/// BASE: `Safe`, no diagnostics. After ALIAS-LOCALS: `[two/one]`.
 #[test]
 fn a_definite_copy_read_after_release_no_longer_certifies() {
     if !clang_available() {

@@ -10,6 +10,7 @@
 
 mod aggregate_store;
 pub mod boolean_source;
+mod borrow_liveness;
 mod borrowed_actual;
 pub mod call_use_source;
 mod clang;
