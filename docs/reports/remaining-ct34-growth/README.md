@@ -409,17 +409,26 @@ Run in this worktree at the final commit:
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | **GATE_WORKSPACE** |
+| `cargo test --workspace --no-fail-fast` | **2145 passed, 0 failed, 4 ignored** (wave-11 checkpoint: 2119 / 4 ignored; +26 from this card) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | GATE_PROBE1 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | GATE_PROBE2 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | **53 audits pass** (file count unchanged; `AuditMutexInvariant.lean` grows by 18 theorems) |
-| `providers/` `cargo test --no-fail-fast` | GATE_PROVIDERS |
-| `python3 -m unittest discover -s scripts/tests` | GATE_PYTHON |
+| `providers/` `cargo test --no-fail-fast` | **76 passed, 0 failed** |
+| `python3 -m unittest discover -s scripts/tests` | **125 tests, OK** |
+
+Load note: one run of the workspace suite failed
+`a_confined_fixture_cannot_write_outside_the_admitted_paths`
+(`qcore-verifier-host`, `Io("Broken pipe")`) — the recorded load-flaky P03
+confinement case, untouched by this card. It passed in isolation (12/12) and in
+a second full-workspace run of the same tree. The number above is from the run
+where it passed; no assertion was weakened.
 
 New tests by file: 12 in `crates/qcore-frontend/tests/source_mutex.rs`
-(63 → 75), 14 in `crates/qcore-core/tests/unit/mutex_invariant.rs`.
+(63 → 75), 14 in `crates/qcore-core/tests/unit/mutex_invariant.rs`, and one row
+added to `crates/qcore-core/tests/unit/mutex_c_emit.rs`'s existing
+emission-refusal matrix.
 
 The pinned 185-unit artifacts are untouched **by construction, not
 re-measured**: no C-gateway, audit, contract or schema file is in this card's
@@ -440,12 +449,16 @@ does not apply one.
    `MutexAuthorityNotConserved { event, resource }`). A third code was considered
    and rejected as over-fragmentation; the two are distinguished by test, not by
    code. Named **CT34-GROWTH-Q621**.
-3. **No native evidence.** Growth is a change to the model's bookkeeping, not to
-   emitted C: the emitted `mtx_t` protects whatever the program says it does, and
-   nothing in the backend reads `protects`. No sanitized native run was added,
-   and none is claimed. Whether a real C program's protected region can be
-   widened the way this model says is the same `DeclaredFootprintShape` premise
-   as before, now over a larger region.
+3. **No native evidence: the growth route is check-only, by pinned decision.**
+   Nothing in the C backend reads a generation's declared shape, so an emitted
+   `mtx_t` would protect less than the model says. Rather than emit that, both
+   `emit_mutex_c11` and `interpret_mutex_program` refuse a `GrowProtection`
+   event under the existing `UnsupportedEvent` catch-all — already the
+   behaviour, now asserted alongside the other four out-of-subset events, so it
+   is a decision rather than an omission. No sanitized native run was added and
+   none is claimed. Whether a real C program's protected region can be widened
+   the way this model says is the same `DeclaredFootprintShape` premise as
+   before, now over a larger region. Named **CT34-GROWTH-NATIVE**.
 4. **A refused growth produces a seven-entry cascade.** The lowering mints the
    new predicate identity before the core decides, so a refused growth leaves the
    section closing on an identity the generation never took. Every entry is
