@@ -105,6 +105,12 @@ host_gates = {
     for host in hosts
     if host != "any"
 }
+tool_gates = {
+    tool
+    for tools in ct_summary["tool_scope"].values()
+    for tool in tools
+    if tool != "none"
+}
 
 ct_rows = []
 for cid in mapped_ids:
@@ -124,6 +130,10 @@ for cid in mapped_ids:
             # accepted cases and its rejections carry them, so `source_reject`
             # would be the wrong name for the CT35/CT36 rows (card T08-SRC-CT).
             "epoch_controls_executed": entry.get("epoch_controls_executed"),
+            # The legacy_c route counts its controls under its own key too: a
+            # C twin's controls are gateway analyses, and one of them varies the
+            # declared contracts rather than the source (card CT-CTWIN).
+            "legacy_c_controls_executed": entry.get("legacy_c_controls_executed"),
             # Schema 2 makes the manifest entry and the stage-derived status the
             # same object, so the old side-by-side `manifest_stages` column that
             # existed to keep their divergence visible is gone.
@@ -183,7 +193,8 @@ ct_section = {
     "derivation_rule": (
         "a stage is 'executed' only where a named workspace test runs it on the case's own "
         "artifact (T00's rule), and the manifest entry must name that executor, that artifact, "
-        "its invocation count and its exact target_os gate. "
+        "its invocation count, its exact target_os gate and the external tools its runner cannot "
+        "start without. "
         "compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any "
         "drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes "
         "the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` "
@@ -198,6 +209,10 @@ ct_section = {
     "reporting_host": "linux",
     "host_gates_load_bearing": sorted(host_gates),
     "host_scope": ct_summary["host_scope"],
+    # The tool axis is separate from the host axis: the legacy_c route's stages
+    # run on any target and only where Clang exists (card CT-CTWIN).
+    "tool_scope": ct_summary["tool_scope"],
+    "tool_gates_load_bearing": sorted(tool_gates),
     "stage_histogram": {stage: histogram[stage] for stage in STAGE_ORDER},
     "depth_profile": depth_profile,
     "case_depth": ct_summary["case_depth"],
@@ -228,6 +243,12 @@ ct_section = {
         "generator's inputs no longer allow.",
         "The unmapped triage rows are recorded analysis, not stage evidence, and come from "
         "T00's audit filtered to the cases that are still unmapped.",
+        "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed "
+        "through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a "
+        "different artifact and a different property — a resource projection over declared "
+        "contracts, not a source-language check — and their Unknown verdicts are what their "
+        "scenarios ask for, each with a control the gateway checks so the refusal is "
+        "attributable. Neither adds native, sanitized or proof evidence.",
     ],
 }
 

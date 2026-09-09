@@ -1,0 +1,15 @@
+module contract;
+
+// The access contract the case's `expected` names as the alternative to
+// reporting Unknown: a declared effect for the otherwise unknown destructor.
+// Loading it alongside `contracts.qcore` — over the *same* case.c bytes — is
+// the contract-varying control: with the declaration the unit checks, without
+// it the unit is Unknown. The declaration is a trusted premise, not a fact
+// established about `q_destroy`'s absent body.
+
+extern fn q_destroy(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
