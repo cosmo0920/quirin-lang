@@ -97,10 +97,22 @@ registry.register(std::sync::Arc::new(provider))?;
 ```
 
 `verify_executable_package` is the checked route: it applies path containment,
-the declared digest and the embedded-template binding. `ProcessProvider::from_package`
-is a plain loader that applies none of them, and is for callers that verify
-separately (the conformance harness drives mutated packages through it on
-purpose).
+the declared digest and the embedded-template binding, and it keeps the
+executable's descriptor open so every later spawn can confirm the file has not
+been substituted (card `P01-F3`). `ProcessProvider::from_package` now delegates
+to it, so there is no unverified way to build a registrable provider:
+`ProcessProvider` is produced by verification alone.
+
+A caller that genuinely wants an unchecked load asks for it by name, and gets a
+type that says so — `UnverifiedProvider`, which is not a `VerifierProvider` and
+therefore cannot be registered. The conformance harness uses it to drive
+deliberately mutated packages. `UnverifiedProvider::into_verified` is the one
+bridge back, and it runs the same gate.
+
+The identity re-check narrows the window between verification and dispatch; it
+does not close it, and it is not signature verification. An actor who can
+produce the executable controls its embedded template too. Keep the operational
+rule: retain the archive hash from a trusted build record.
 
 Explicit registration avoids silently replacing the default in-process
 first-party registry. For upgrade, verify a newly built version in a separate

@@ -228,12 +228,11 @@ pub use verifier_plugin::{
     RegistryError, Reproducibility, ResolvedVerifierScope, ResolvedVerifierUse,
     ScopeResolutionError, SemanticWitness, SourceSite, SupportedTarget, TargetProfile, TaskBounds,
     UnitIdentity, UnverifiedProvider, VERIFICATION_TASK_VERSION, VerificationOutcome,
-    VerificationRequest,
-    VerificationRequestV2, VerificationResponse, VerificationResponseV2, VerificationTask,
-    VerifierCapability, VerifierProvider, VerifierRegistry, WitnessChecker, compose_certificates,
-    compose_verification, compose_verification_with_inventory, decode_protocol_frame,
-    encode_protocol_frame, first_party_manifests, first_party_registry, load_first_party_manifests,
-    load_first_party_registry,
+    VerificationRequest, VerificationRequestV2, VerificationResponse, VerificationResponseV2,
+    VerificationTask, VerifierCapability, VerifierProvider, VerifierRegistry, WitnessChecker,
+    compose_certificates, compose_verification, compose_verification_with_inventory,
+    decode_protocol_frame, encode_protocol_frame, first_party_manifests, first_party_registry,
+    load_first_party_manifests, load_first_party_registry,
 };
 pub use weak_memory::{
     C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,

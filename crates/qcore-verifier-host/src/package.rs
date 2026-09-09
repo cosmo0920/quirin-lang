@@ -64,7 +64,8 @@ pub fn verify_executable_package(
     }
     // Bind the remaining declarations to the executable's own embedded template,
     // still without executing it. A digest-intact manifest edit fails here.
-    verify_embedded_template_binding(&manifest, opened.bytes()).map_err(|e| error(e.to_string()))?;
+    verify_embedded_template_binding(&manifest, opened.bytes())
+        .map_err(|e| error(e.to_string()))?;
     ProcessProvider::verified(manifest, root, opened.into_verified(digest))
         .map_err(|e| error(e.to_string()))
 }

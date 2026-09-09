@@ -39,8 +39,8 @@ use std::fmt;
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
-use crate::embedded_template::{TemplateBindingError, verify_embedded_template_binding};
 use crate::PluginManifest;
+use crate::embedded_template::{TemplateBindingError, verify_embedded_template_binding};
 
 /// Why a verified executable could not be confirmed unchanged at spawn time.
 ///
@@ -240,12 +240,11 @@ impl VerifiedExecutable {
         }
         verify_embedded_template_binding(manifest, &bytes)
             .map_err(IdentityRefusal::TemplateUnbound)?;
-        let metadata = std::fs::metadata(&self.path).map_err(|error| {
-            IdentityRefusal::PathReplaced {
+        let metadata =
+            std::fs::metadata(&self.path).map_err(|error| IdentityRefusal::PathReplaced {
                 path: self.path.display().to_string(),
                 detail: error.to_string(),
-            }
-        })?;
+            })?;
         if !metadata.is_file() {
             return Err(IdentityRefusal::PathReplaced {
                 path: self.path.display().to_string(),

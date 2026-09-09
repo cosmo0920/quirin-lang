@@ -379,9 +379,18 @@ fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
     fs::remove_dir_all(package).unwrap();
 }
 
+/// Discovery registers a package only after **verifying** it (card `P01-F3`).
+///
+/// Before that card, discovery registered whatever carried a well-formed
+/// `verifier-plugin.json` — including, as the first half here measures, a
+/// package with no executable at all and a placeholder digest. Both halves run:
+/// the manifest-only directory is now an error with nothing registered, and the
+/// installed package is discovered.
+#[cfg(unix)]
 #[test]
-fn package_discovery_loads_a_versioned_manifest() {
+fn package_discovery_verifies_before_it_registers() {
     use std::fs;
+    use std::os::unix::fs::PermissionsExt;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     let unique = SystemTime::now()
@@ -400,12 +409,31 @@ fn package_discovery_loads_a_versioned_manifest() {
         path: "provider".into(),
     };
     manifest.package_digest = digest('0');
+
+    // The manifest alone, exactly as this test used to install it: no
+    // executable, and a placeholder digest that names no file.
     fs::write(
         package.join("verifier-plugin.json"),
         serde_json::to_vec_pretty(&manifest).unwrap(),
     )
     .unwrap();
+    let mut registry = VerifierRegistry::default();
+    let errors = registry
+        .discover_packages(&root)
+        .expect_err("an unverifiable package is not registered");
+    assert_eq!(errors.len(), 1);
+    assert!(
+        registry
+            .manifest(&PluginId::new("example.discovered").unwrap())
+            .is_none()
+    );
 
+    // The same directory, installed as a real package: the executable exists,
+    // carries the manifest template, and the manifest carries its digest.
+    fs::write(package.join("provider"), "#!/bin/sh\nexit 0\n").unwrap();
+    fs::set_permissions(package.join("provider"), fs::Permissions::from_mode(0o700)).unwrap();
+    let provider = install_verifiable(&package, &manifest);
+    assert_eq!(provider.manifest().plugin_id.as_str(), "example.discovered");
     let mut registry = VerifierRegistry::default();
     assert_eq!(registry.discover_packages(&root).unwrap(), 1);
     assert!(

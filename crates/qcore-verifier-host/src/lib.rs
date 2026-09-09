@@ -1017,6 +1017,32 @@ impl ProcessProvider {
 /// but its results can never reach a verdict route by accident.
 ///
 /// [`UnverifiedProvider::into_verified`] is the one bridge, and it verifies.
+///
+/// A registry cannot take one:
+///
+/// ```compile_fail
+/// use std::sync::Arc;
+/// use qcore_verifier_host::{UnverifiedProvider, VerifierRegistry};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// let mut registry = VerifierRegistry::default();
+/// registry.register(Arc::new(provider)).unwrap();
+/// ```
+///
+/// Nor can the wrapped provider be moved out of it and registered instead:
+///
+/// ```compile_fail
+/// use qcore_verifier_host::{ProcessProvider, UnverifiedProvider};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// let taken: ProcessProvider = *provider;
+/// ```
+///
+/// What it *can* do is read its own manifest, which is a load, not a verdict:
+///
+/// ```no_run
+/// use qcore_verifier_host::{UnverifiedProvider, VerifierProvider};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// println!("{}", provider.manifest().plugin_id);
+/// ```
 pub struct UnverifiedProvider {
     inner: ProcessProvider,
     package_root: std::path::PathBuf,
@@ -1283,16 +1309,17 @@ struct PreparedMechanisms {
     quota_procs: Option<()>,
 }
 
-/// What the spawn-time package-identity re-check observed, carried back out of
-/// the spawn path so the execution record can classify a refusal and publish the
-/// measured residual window.
+/// What the spawn path observed, carried back out so the execution record can
+/// classify the outcome and publish the measured residual window.
 #[cfg(unix)]
 #[derive(Default)]
-struct IdentityObservation {
-    /// The re-check refused: nothing was spawned.
-    refused: bool,
+struct SpawnObservation {
+    /// The direct child's exit status, once it has been reaped.
+    status: Option<std::process::ExitStatus>,
+    /// The package-identity re-check refused: nothing was spawned.
+    identity_refused: bool,
     /// Microseconds from the completed re-check to `spawn` returning.
-    window_us: Option<u64>,
+    identity_window_us: Option<u64>,
 }
 
 /// A write descriptor on the per-execution cgroup's `cgroup.procs`, for the
@@ -1381,8 +1408,7 @@ impl ProcessProvider {
         };
         let mut output = Vec::new();
         let mut error_output = Vec::new();
-        let mut status = None;
-        let mut identity = IdentityObservation::default();
+        let mut observed = SpawnObservation::default();
         let result = self.run_process(
             frame,
             &enforced,
@@ -1392,16 +1418,16 @@ impl ProcessProvider {
             },
             &mut output,
             &mut error_output,
-            &mut status,
-            &mut identity,
+            &mut observed,
         );
+        let status = observed.status;
         // Observed before the cgroup is removed: `rmdir` only succeeds on an
         // empty cgroup, and the counters go with it.
         let quota_observed = finish_quota(quota);
         let outcome = match &result {
             // The package identity re-check refused: nothing was spawned, and
             // the refusal is its own outcome rather than a profile refusal.
-            Err(_) if identity.refused => ProcessOutcome::RefusedByIdentity,
+            Err(_) if observed.identity_refused => ProcessOutcome::RefusedByIdentity,
             Ok(_) => ProcessOutcome::Completed,
             Err(ProviderFailure::Spawn(_)) => ProcessOutcome::SpawnFailed,
             Err(ProviderFailure::Timeout) => ProcessOutcome::WallClockTimeout,
@@ -1419,7 +1445,7 @@ impl ProcessProvider {
             profile: self.profile,
             // A refused identity spawned nothing, so it reports no enforced
             // limits, exactly as a refused profile does.
-            enforced: if identity.refused {
+            enforced: if observed.identity_refused {
                 None
             } else {
                 Some(enforced)
@@ -1439,7 +1465,7 @@ impl ProcessProvider {
                 .map(ToString::to_string)
                 .unwrap_or_default(),
             quota_observed,
-            identity_window_us: identity.window_us,
+            identity_window_us: observed.identity_window_us,
         });
         result
     }
@@ -1513,8 +1539,7 @@ impl ProcessProvider {
         mechanisms: PreparedMechanisms,
         output: &mut Vec<u8>,
         error_output: &mut Vec<u8>,
-        status: &mut Option<std::process::ExitStatus>,
-        identity: &mut IdentityObservation,
+        observed: &mut SpawnObservation,
     ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
         let PreparedMechanisms {
@@ -1533,7 +1558,14 @@ impl ProcessProvider {
             })?;
         let limit = enforced.stdout_bytes;
         let wire_limit = limit.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
-        let executable = Path::new(&self.package_root).join(path);
+        // A verified provider executes the *canonical* path verification
+        // resolved and re-checks below, not the spelled entrypoint. The two
+        // differ whenever the entrypoint is a symbolic link, and a check on one
+        // path with an `execve` on another would be no check at all.
+        let executable = match self.verified_executable() {
+            Some(executable) => executable.path().to_path_buf(),
+            None => Path::new(&self.package_root).join(path),
+        };
         let mut command = Command::new(&executable);
         command
             .current_dir(&self.package_root)
@@ -1608,7 +1640,7 @@ impl ProcessProvider {
         let checked_at = match self.verified_executable() {
             Some(executable) => {
                 if let Err(refusal) = executable.revalidate(&self.manifest) {
-                    identity.refused = true;
+                    observed.identity_refused = true;
                     return Err(ProviderFailure::Protocol(refusal.to_string()));
                 }
                 Some(Instant::now())
@@ -1623,12 +1655,8 @@ impl ProcessProvider {
         // `spawn` returns after the child has reported a successful `execve`, so
         // this is a genuine upper bound on the residual window rather than an
         // estimate of it.
-        identity.window_us = checked_at.map(|checked_at| {
-            checked_at
-                .elapsed()
-                .as_micros()
-                .min(u128::from(u64::MAX)) as u64
-        });
+        observed.identity_window_us = checked_at
+            .map(|checked_at| checked_at.elapsed().as_micros().min(u128::from(u64::MAX)) as u64);
         let mut stdin = child.0.stdin.take();
         let mut stdout = child
             .0
@@ -1654,14 +1682,14 @@ impl ProcessProvider {
             // Observe direct-child exit before deciding which bound failed.
             // An exited provider can leave descendant-held output pipes even
             // when its input reader vanished before our first write.
-            if status.is_none() {
-                *status = child
+            if observed.status.is_none() {
+                observed.status = child
                     .0
                     .try_wait()
                     .map_err(|error| ProviderFailure::Io(error.to_string()))?;
             }
             if Instant::now() >= deadline {
-                if status.is_none()
+                if observed.status.is_none()
                     && let Some(error) = input_failure
                 {
                     return Err(error);
@@ -1700,7 +1728,7 @@ impl ProcessProvider {
             if !error_done {
                 error_done = read_available(&mut stderr, error_output, enforced.stderr_bytes)?;
             }
-            if let Some(exit) = *status
+            if let Some(exit) = observed.status
                 && output_done
                 && error_done
                 && stdin.is_none()
