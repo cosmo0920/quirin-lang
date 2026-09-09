@@ -119,6 +119,7 @@ fn request(
         counter_effect: None,
         reactor_program: None,
         teardown_source: teardown,
+        call_use_source: None,
     }
 }
 
@@ -133,6 +134,7 @@ fn a_request_without_a_projection_keeps_its_previous_wire_shape() {
         "counter_effect",
         "reactor_program",
         "teardown_source",
+        "call_use_source",
     ] {
         assert!(value.get(key).is_none(), "{key} appeared in the wire form");
     }

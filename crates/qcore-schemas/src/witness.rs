@@ -317,6 +317,10 @@ pub enum SemanticWitness {
     /// reactor program projection. Equality binds the proposal to that
     /// program; the core still runs its own reactor model checker.
     ReactorCallback(Box<crate::reactor_program::ReactorCallbackWitness>),
+    /// One call-result def/use reading recomputed from the core's own typed
+    /// path projection. Equality binds the proposal to that import; the core
+    /// still evaluates the pinned contract itself.
+    CallResultUse(Box<crate::call_use_summary::CallResultUseWitness>),
 }
 
 impl SemanticWitness {
@@ -332,6 +336,7 @@ impl SemanticWitness {
             Self::CounterContract(witness) => &witness.task_digest,
             Self::TeardownContract(witness) => &witness.task_digest,
             Self::ReactorCallback(witness) => &witness.task_digest,
+            Self::CallResultUse(witness) => &witness.task_digest,
         }
     }
 
@@ -344,6 +349,7 @@ impl SemanticWitness {
             Self::CounterContract(_) => "counter_contract",
             Self::TeardownContract(_) => "teardown_contract",
             Self::ReactorCallback(_) => "reactor_callback",
+            Self::CallResultUse(_) => "call_result_use",
         }
     }
 }

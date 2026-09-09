@@ -52,6 +52,7 @@ pub use witness::{
     ObservedRun, PLUGIN_EVIDENCE_VERSION_V2, SemanticWitness, SourceSite,
 };
 
+pub mod call_use_summary;
 pub mod chunk_summary;
 pub mod counter_summary;
 pub mod reactor_program;

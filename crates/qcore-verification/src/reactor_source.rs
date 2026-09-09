@@ -444,6 +444,7 @@ impl<P: model::ReactorProfile> ReactorCallbackTask<P> {
             counter_effect: None,
             reactor_program: Some(self.import.source_input()),
             teardown_source: None,
+            call_use_source: None,
         }
     }
 

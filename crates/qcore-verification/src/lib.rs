@@ -12,10 +12,12 @@ pub mod witness_replay;
 pub mod reactor_callback;
 pub mod reactor_source;
 
+pub mod call_use_source;
 pub mod counter_source;
 pub mod source_effect;
 pub mod teardown_source;
 
+pub mod call_use_contract;
 pub mod cleanup_outcome;
 pub mod counter_contract;
 pub mod field_destructor;

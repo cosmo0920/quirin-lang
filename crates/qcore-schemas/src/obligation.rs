@@ -96,6 +96,10 @@ pub enum ObligationProperty {
     /// declared owned fields in every realizable nullable state. Allocation
     /// provenance and the `free`/libc binding remain declared premises.
     FieldDestructorContract,
+    /// One source-derived filesystem cleanup-attempt body has the call-result
+    /// def/use shape its pinned policy requires. Successful OS cleanup,
+    /// descriptor and mapping custody remain outside this property entirely.
+    CallResultUseContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -126,6 +130,7 @@ impl ObligationProperty {
             Self::CounterUpdateContract => "counter_update_contract",
             Self::ListUnlinkContract => "list_unlink_contract",
             Self::FieldDestructorContract => "field_destructor_contract",
+            Self::CallResultUseContract => "call_result_use_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

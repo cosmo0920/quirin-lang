@@ -868,8 +868,9 @@ fn the_shipped_packages_declare_disjoint_libraries_and_no_observation_hook() {
         versions,
         BTreeMap::from([
             // Deliberate pin update: 0.6.0 adds the two teardown-contract
-            // capability routes to the same `chunkio` library target.
-            ("qcore.chunkio".to_owned(), "0.6.0".to_owned()),
+            // capability routes to the same `chunkio` library target, and
+            // 0.7.0 adds the call-result def/use route to it.
+            ("qcore.chunkio".to_owned(), "0.7.0".to_owned()),
             ("qcore.cmetrics".to_owned(), "0.2.0".to_owned()),
             ("qcore.ctraces".to_owned(), "0.1.0".to_owned()),
             ("qcore.librdkafka".to_owned(), "0.1.0".to_owned()),
