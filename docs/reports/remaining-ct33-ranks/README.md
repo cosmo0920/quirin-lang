@@ -145,6 +145,7 @@ Admitting nesting does not widen guard authority. Measured and pinned:
 | Enclosing invariant open across the nesting | admitted | nothing in the inner section can reach the outer footprint, and the outer `close` is still required before its `unlock` |
 | Enclosing guard-derived borrow live across the nesting | admitted | still keyed to the outer guard, and leaving it live at the outer section's end is still `Q615` (full cascade pinned) |
 | `close g unchanged;` after a nesting | refused `Q600` | a nested acquisition is a statement, so it invalidates the decidable read-only region; the checked witness is never silently downgraded |
+| T03-GUARD-JOIN's `thread scope c under g` inside a nested section | refused `Q600` | that card's condition G3 wants the joining guard to be the *only* one held, and it was argued for one held guard; two guards keep the existing `JoinWhileGuardHeld` refusal. The same join in an unnested section is still admitted, so nesting narrowed nothing and widened nothing |
 
 ## 4. Exact diagnostic vectors
 

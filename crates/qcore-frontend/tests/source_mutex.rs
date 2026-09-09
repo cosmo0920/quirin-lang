@@ -1360,3 +1360,28 @@ fn a_nested_section_invalidates_the_checked_no_write_witness() {
         vec!["Q600"]
     );
 }
+
+/// Nesting composes with card T03-GUARD-JOIN in the conservative direction:
+/// its condition G3 requires the joining guard to be the *only* one the parent
+/// holds, so a guard-local join written inside a nested section is refused
+/// while the same join in an unnested section is admitted. The nesting
+/// admission does not quietly widen a rule that was argued for one held guard.
+#[test]
+fn a_guard_local_join_inside_a_nested_section_is_refused() {
+    // Admitted: one held guard, the guard-local join's own section.
+    codes(&entry(&format!(
+        "{RANKED} with lock b as gb {{ thread scope c under gb {{ }} }}"
+    )))
+    .unwrap();
+    // Refused: the same join with the outer section also held.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ with lock b as gb {{ \
+             thread scope c under gb {{ }} }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"],
+        "G3 wants the section to be the only one held; two guards keep the \
+         existing JoinWhileGuardHeld refusal"
+    );
+}
