@@ -22,7 +22,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_frontend::frontend::SourceProgram;
-use qcore_schemas::obligation::ObligationProperty;
+use qcore_schemas::obligation::{DerivationIncomplete, ObligationProperty};
+use qcore_schemas::reason::ReasonCategory;
 
 use crate::obligation_derivation::{CoreReplayInputs, DerivationInputs, DerivedTask, derive_task};
 use crate::verifier_plugin::{
@@ -44,6 +45,24 @@ pub struct ScopeDiagnostic {
     pub message: String,
 }
 
+/// What the core read to derive one capability's obligation inventory.
+///
+/// E03-B-O1. An absent provider's obligations used to be *unstated*: the
+/// dispatcher skipped the provider before deriving anything, so the scope's
+/// inventory silently shrank to the providers that answered. The core derives
+/// them anyway wherever the derivation reads nothing from the manifest, and
+/// the absence becomes the refusal *on* those obligations.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DerivationBasis {
+    /// The provider is installed and its manifest was read (never executed).
+    InstalledManifest,
+    /// The provider is not installed. The obligations are the ones the
+    /// derivation states without any manifest input; see
+    /// [`manifest_dependent_derivation`] for the capability whose inventory
+    /// cannot be stated at all in that case.
+    ProviderAbsent,
+}
+
 /// The result of dispatching one `(provider, capability)` pair.
 #[derive(Clone, Debug)]
 pub struct CapabilityDispatch {
@@ -53,12 +72,19 @@ pub struct CapabilityDispatch {
     pub outcome: VerificationOutcome,
     /// `true` when a provider process/adapter was actually invoked.
     pub dispatched: bool,
+    /// What the derivation of `task` was able to read (E03-B-O1).
+    pub derivation: DerivationBasis,
 }
 
 #[derive(Clone, Debug)]
 pub struct ScopeDispatch {
     pub scope: String,
     pub capabilities: Vec<CapabilityDispatch>,
+    /// Every core-derived obligation identifier this scope requires, including
+    /// those of a provider that is not installed (E03-B-O1). This is the
+    /// denominator `compose_verification_with_inventory` is given; publishing
+    /// it makes the stated inventory readable instead of internal.
+    pub required: BTreeSet<String>,
     pub composed: VerificationOutcome,
     pub diagnostics: Vec<ScopeDiagnostic>,
 }
@@ -160,6 +186,57 @@ fn target_profile(manifest: &PluginManifest, selected: &ResolvedVerifierUse) -> 
     )
 }
 
+/// Why a capability's obligation inventory cannot be stated without the
+/// provider's installed manifest, when it cannot (E03-B-O1).
+///
+/// Measured against `obligation_derivation.rs`, not assumed. The only manifest
+/// field any derivation reads is `required_observation_hooks`, and the only
+/// derivation that reads it is `ObservationHooks`: it derives one
+/// `ObservationChecked` obligation per required hook and keys its
+/// `ObservationCoverageComplete` identifier by that resolved hook set (E03-B3).
+/// Without the manifest the denominator is unknown, so both the per-hook
+/// obligations and the coverage obligation's identity are unavailable — and an
+/// empty-denominator coverage obligation would be a vacuous claim, which is
+/// exactly what a fail-closed inventory must not state.
+///
+/// Every other capability's derivation reads only the program, the core's
+/// contract sources and the caller's assumptions. `target` is recorded on the
+/// task but never enters `VerificationTask::obligation_id`, so the identifiers
+/// derived without a manifest are the identifiers the installed provider's
+/// derivation states.
+#[must_use]
+pub const fn manifest_dependent_derivation(capability: VerifierCapability) -> Option<&'static str> {
+    match capability {
+        VerifierCapability::ObservationHooks => Some(
+            "the provider is not installed, so its declared required_observation_hooks \
+             denominator is unavailable: the per-hook obligations and the identity of the \
+             provider-keyed coverage obligation cannot be derived without it",
+        ),
+        VerifierCapability::ResourceContracts
+        | VerifierCapability::EventTraces
+        | VerifierCapability::ChunkLifecycle
+        | VerifierCapability::Concurrency
+        | VerifierCapability::TranslationUnitProjection => None,
+    }
+}
+
+/// The target identity of a derivation run without the provider's manifest.
+///
+/// The library a manifest declares is unknown and nothing guesses one. This
+/// task is never sent anywhere — no request is built for an absent provider —
+/// and the target is not part of any obligation identifier, so an empty
+/// library weakens no identifier and cannot be mistaken for a match.
+fn absent_target_profile(selected: &ResolvedVerifierUse) -> TargetProfile {
+    TargetProfile {
+        library: String::new(),
+        revision: "source".into(),
+        profile: selected.profile.clone(),
+        dialect: "qcore".into(),
+        platform: std::env::consts::OS.to_owned(),
+        backend: "native".into(),
+    }
+}
+
 fn checker_for<'a>(
     capability: VerifierCapability,
     replay: &'a CoreReplayInputs,
@@ -233,16 +310,82 @@ fn dispatch_scope(
     }
     for selected in &scope.providers {
         let Some(manifest) = registry.manifest(&selected.plugin_id).cloned() else {
-            // E03-B4. Without the manifest there is no target profile and no
-            // required-hook denominator, so this provider's obligations cannot
-            // be derived and never enter `required` — which used to leave
-            // `composed.verdict` free to read `Safe` off the providers that
-            // did answer, with only `verified()` and `Q700` standing between
-            // that and a caller. Absence is now a refusal in the composed
-            // verdict itself (`QP002`, the registry's own code for a plugin
-            // that is not installed), so no consumer reading `composed` alone
-            // can see `Safe` for a scope one of whose providers is missing.
+            // E03-B4. Absence is a refusal in the composed verdict itself
+            // (`QP002`, the registry's own code for a plugin that is not
+            // installed), so no consumer reading `composed` alone can see
+            // `Safe` for a scope one of whose providers is missing.
+            //
+            // E03-B-O1. The obligations are stated first. Every derivation but
+            // `ObservationHooks` reads nothing from the manifest, so the core
+            // derives the absent provider's inventory exactly as it would with
+            // the provider installed, enters it in `required`, and records the
+            // absence as the refusal *on* those obligations rather than
+            // refusing to state them. `manifest_dependent_derivation` names the
+            // measured exception, whose denominator only the manifest carries.
             absent.push(selected.plugin_id.as_str().to_owned());
+            for &capability in &selected.capabilities {
+                let inputs = DerivationInputs {
+                    translation_unit,
+                    program,
+                    target: absent_target_profile(selected),
+                    contract_sources: BTreeMap::from([(
+                        translation_unit.to_owned(),
+                        program.source().to_owned(),
+                    )]),
+                    // Not "no hooks are required": the declaration is
+                    // unavailable, which is why the capability below withholds
+                    // its inventory instead of stating an empty one.
+                    required_observation_hooks: BTreeSet::new(),
+                    assumptions: BTreeMap::new(),
+                    verifier: Some(selected.plugin_id.as_str().to_owned()),
+                };
+                let DerivedTask {
+                    mut task,
+                    replay: _,
+                } = derive_task(&inputs, capability);
+                if let Some(reason) = manifest_dependent_derivation(capability) {
+                    // An inventory derived against a denominator the core does
+                    // not have is not this capability's inventory: withhold it
+                    // and record why. (The manifest-free derivation states no
+                    // obligation today; clearing is the fail-closed guard that
+                    // keeps that true if it ever states one.)
+                    task.obligations.clear();
+                    task.derivation_incomplete.push(DerivationIncomplete {
+                        capability,
+                        // A provider the environment does not offer, never a
+                        // statement about the analysed source (spec §L21.1).
+                        category: ReasonCategory::EnvironmentUnavailable,
+                        reason: reason.to_owned(),
+                    });
+                    task.derivation_incomplete.sort();
+                }
+                let coverage = task.coverage_for(capability);
+                for id in &coverage {
+                    required.insert(id.clone());
+                }
+                let outcome = unknown(
+                    "QP002",
+                    format!(
+                        "plugin `{}` is not installed: {} core-derived obligation(s) of \
+                         capability `{capability}` have no evidence, and none can be \
+                         requested",
+                        selected.plugin_id,
+                        coverage.len()
+                    ),
+                );
+                // Defense in depth: even if the scope-level absence refusal
+                // below were ever removed, these `Unknown` components would
+                // keep the merge from reading `Safe`.
+                outcomes.push(outcome.clone());
+                capabilities.push(CapabilityDispatch {
+                    plugin_id: selected.plugin_id.as_str().to_owned(),
+                    capability,
+                    task,
+                    outcome,
+                    dispatched: false,
+                    derivation: DerivationBasis::ProviderAbsent,
+                });
+            }
             continue;
         };
         let target = target_profile(&manifest, selected);
@@ -289,6 +432,7 @@ fn dispatch_scope(
                 task,
                 outcome,
                 dispatched,
+                derivation: DerivationBasis::InstalledManifest,
             });
         }
     }
@@ -301,8 +445,8 @@ fn dispatch_scope(
         unknown(
             "QP002",
             format!(
-                "plugin `{missing}` is not installed; its obligations could be neither derived \
-                 nor discharged, so this scope has no composite"
+                "plugin `{missing}` is not installed; its core-derived obligations have no \
+                 evidence and none can be requested, so this scope has no composite"
             ),
         )
     } else if required.is_empty() {
@@ -357,6 +501,7 @@ fn dispatch_scope(
     ScopeDispatch {
         scope: scope.name.clone(),
         capabilities,
+        required,
         composed,
         diagnostics,
     }

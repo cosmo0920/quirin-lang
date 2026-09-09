@@ -406,6 +406,16 @@ What this card establishes, and nothing more:
 
 ## 10. Open items
 
+> **Superseded 2026-09-09 by [E03-B-O](../remaining-e03-b-o/README.md).** The
+> first three items below are dispositioned there: O1 is repaired for the five
+> capabilities whose derivation reads no manifest field (measured), with
+> `ObservationHooks` withholding its inventory under a recorded
+> `environment-unavailable` reason (**E03-B-O1-HOOKS**); O2 is repaired —
+> composition is associative under its own output; O3's premise is corrected by
+> census (three production derivations do state `BoundedPaths`, and two real
+> ones are composed there), with the two remaining count kinds pinned by a
+> tripwire. The fourth item is unchanged.
+
 - **E03-B-O1** — an absent provider's obligations are refused, not derived.
   Deriving them would need the manifest the registry does not have; a scope
   could instead carry its own declared denominator, which is a source-language

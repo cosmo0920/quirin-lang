@@ -54,6 +54,43 @@ import QCore.VerifierPlugin
 #print axioms QCore.VerifierPlugin.Composition.honest_scope_still_composes
 #print axioms QCore.VerifierPlugin.Composition.honest_scope_with_an_absent_provider_refuses
 
+-- E03-B-O1: an absent provider's obligations are derived where the derivation
+-- reads nothing from the manifest, and withheld with a reason where it does.
+#print axioms QCore.VerifierPlugin.Composition.absent_derivation_states_the_installed_inventory
+#print axioms QCore.VerifierPlugin.Composition.absent_derivation_withholds_a_manifest_dependent_inventory
+#print axioms QCore.VerifierPlugin.Composition.the_measured_capability_table_is_not_vacuous
+#print axioms QCore.VerifierPlugin.Composition.stated_absent_obligations_only_refuse
+#print axioms QCore.VerifierPlugin.Composition.absent_provider_scope_is_unknown_however_much_is_stated
+
+-- E03-B-O2: composition is associative under its own output.
+#print axioms QCore.VerifierPlugin.Composition.collect_safe
+#print axioms QCore.VerifierPlugin.Composition.flatten_leaves
+#print axioms QCore.VerifierPlugin.Composition.regrouping_is_the_same_component_sequence
+#print axioms QCore.VerifierPlugin.Composition.composition_is_associative
+#print axioms QCore.VerifierPlugin.Composition.regrouped_components_merge
+#print axioms QCore.VerifierPlugin.Composition.regrouping_cannot_hide_a_conflict
+#print axioms QCore.VerifierPlugin.Composition.re_submitting_a_composite_adds_no_coverage
+
+-- E03-B-O3: the tightest-envelope intersection, kind by kind.
+#print axioms QCore.VerifierPlugin.Composition.tighter_paths_is_a_lower_bound
+#print axioms QCore.VerifierPlugin.Composition.tighter_count_is_a_lower_bound
+#print axioms QCore.VerifierPlugin.Composition.the_envelope_is_a_lower_bound
+#print axioms QCore.VerifierPlugin.Composition.envelope_is_commutative
+#print axioms QCore.VerifierPlugin.Composition.envelope_is_idempotent
+#print axioms QCore.VerifierPlugin.Composition.a_single_path_absorbs
+#print axioms QCore.VerifierPlugin.Composition.an_absent_count_does_not_relax
+#print axioms QCore.VerifierPlugin.Composition.recorded_runs_are_contagious
+#print axioms QCore.VerifierPlugin.Composition.every_count_kind_takes_the_minimum
+#print axioms QCore.VerifierPlugin.Composition.pathsAtMost_refl
+#print axioms QCore.VerifierPlugin.Composition.countAtMost_refl
+#print axioms QCore.VerifierPlugin.Composition.atMost_refl
+#print axioms QCore.VerifierPlugin.Composition.pathsAtMost_trans
+#print axioms QCore.VerifierPlugin.Composition.countAtMost_trans
+#print axioms QCore.VerifierPlugin.Composition.atMost_trans
+#print axioms QCore.VerifierPlugin.Composition.fold_is_a_lower_bound
+#print axioms QCore.VerifierPlugin.Composition.the_published_envelope_bounds_every_component
+#print axioms QCore.VerifierPlugin.Composition.an_empty_composition_states_no_envelope
+
 #print axioms QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory
 #print axioms QCore.VerifierEvidenceV2.accepted_hook_has_recomputed_observation
 #print axioms QCore.VerifierEvidenceV2.incomplete_inventory_rejects

@@ -2496,6 +2496,13 @@ impl CompositeCertificate {
     }
 }
 
+/// Merges several provider outcomes into one composed outcome.
+///
+/// Composition is n-ary over components and **associative under its own
+/// output** (E03-B-O2): a composed outcome may be fed back in, and any
+/// grouping of the same component sequence publishes the same composite. The
+/// refusal rules are decided once, over the fully flattened component
+/// sequence, so no grouping can hide a conflict from them.
 pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationOutcome {
     if outcomes.is_empty() {
         return VerificationOutcome::unknown("QP010", "composition has no plugin results");
@@ -2526,16 +2533,33 @@ pub fn compose_verification(outcomes: Vec<VerificationOutcome>) -> VerificationO
     {
         return VerificationOutcome::unknown("QP011", "a required plugin result is unknown");
     }
-    if outcomes.iter().any(|outcome| outcome.certificate.is_none()) {
-        return VerificationOutcome::unknown(
-            "QP014",
-            "a safe plugin result is missing its core certificate",
-        );
+    // E03-B-O2. Composition is n-ary over *components*, and a composed outcome
+    // is a legitimate component: it is taken apart into the components it was
+    // built from, so composing a composite is composing its parts. Grouping is
+    // therefore invisible to the published merge — `compose([compose([a, b]),
+    // c])` and `compose([a, b, c])` build the same `CompositeCertificate`,
+    // because both reduce to the same component sequence before a single
+    // `CompositeCertificate::compose` decides every conflict over all of them.
+    //
+    // This admits nothing new. A `CompositeCertificate` has private fields, a
+    // private constructor and no deserialization, so the only way to hold one
+    // is to have obtained it from a composition of certificates the firewall
+    // already minted; flattening re-decides every conflict rule over exactly
+    // those certificates. A `Safe` outcome carrying neither a certificate nor a
+    // composite is still `QP014`.
+    let mut certificates = Vec::new();
+    for outcome in outcomes {
+        match (outcome.composite, outcome.certificate) {
+            (Some(composite), _) => certificates.extend_from_slice(composite.certificates()),
+            (None, Some(certificate)) => certificates.push(certificate),
+            (None, None) => {
+                return VerificationOutcome::unknown(
+                    "QP014",
+                    "a safe plugin result is missing its core certificate",
+                );
+            }
+        }
     }
-    let certificates = outcomes
-        .into_iter()
-        .filter_map(|outcome| outcome.certificate)
-        .collect::<Vec<_>>();
     // E03-B1. Composition cannot fabricate a provider certificate, and it no
     // longer publishes one component's as the merge. It publishes the
     // composite: the union of the components' premises and coverage, the
