@@ -534,35 +534,56 @@ Run in this worktree on Linux with Clang available.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see §8.1 |
+| `cargo test --workspace --no-fail-fast` | **2565 passed, 0 failed, 8 ignored** (+28 new) |
 | `cargo fmt --all -- --check` (both workspaces) | clean |
-| `cargo clippy --all-targets -- -D warnings` (both workspaces) | clean |
+| `cargo clippy --all-targets -- -D warnings` (both workspaces) | clean (see §8.5) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 -B scripts/check_lean_audits.py` | **65 audits passed** (64 → 65), no new axiom |
-| `cargo test --manifest-path providers/Cargo.toml --workspace` | see §8.1 |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --no-fail-fast` | **108 passed, 0 failed** (102 → 108) |
 | `python3 -B providers/package.py build` + `qcorec plugins verify` × 5 | all five built and verified (exit 0); ChunkIO 0.10.0 → **0.11.0** |
-| `python3 -m unittest discover -s scripts/tests` | one failure, §8.3 |
-| Canonical CMetrics audit, before vs after | §8.2 |
+| `python3 -m unittest discover -s scripts/tests` | 135 tests, **1 failed** — §8.3 |
+| Canonical CMetrics audit, before vs after | **byte-identical** — §8.2 |
 
-### 8.1 Test counts
+### 8.1 New tests
 
-(filled in from the merged run; see the integrator summary)
+Twenty-eight new workspace tests — 12 core-side positive
+(`memory_close_composition_source.rs`), 8 mutation
+(`memory_close_composition_mutations.rs`), 3 route parity
+(`memory_close_route_parity.rs`) and 5 wire
+(`composition_request_wire.rs`, 9 → 14) — plus six in the providers workspace:
+4 producer-side (`composition_effect_tests.rs`) and 2 conformance
+(`memory_close_composition_capability.rs`).
 
-### 8.2 The corpus and the canonical audit
+### 8.2 The canonical CMetrics audit is byte-identical, measured
 
-No gateway analysis rule changed (§6) and the retained in-process entry point
-publishes a byte-identical certificate (§4.1), so the pinned 185-unit artifacts
-cannot move from this card. The measured statement is in §8.2 of the gate table
-above.
+Not argued: measured, in this worktree, with the five provider packages built
+**once** from this branch's tree and used for both runs, so the comparison
+isolates the analysis change from the package-identity residue.
 
-The four pinned 185-unit artifacts were **not** re-measured here: that needs a
-prepared pinned upstream clone and the audit's own pin gate refuses without one.
-This is the same position `P04-COMPOSE-A`, `P04-B2` and several earlier cards
-recorded. The integrator's corpus consolidation should expect **no change from
-this card** beyond the package-identity residue class — the ChunkIO
-`provider_version` and `package_digest` leaves in `source-effects.json`, as in
-every card that bumps that package — plus the schemas-12.0.0 package digests.
+```sh
+python3 -B scripts/prepare_cmetrics_clang_audit.py \
+  --fluent-bit <checkout> --revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+cargo run -p qcore-audit -- <build>/cmetrics-audit.json.config
+```
+
+The audit was run at this branch's head, the worktree checked out at the
+untouched base commit `19fbaa5`, and the audit run again. Both reports are
+`cd2f42229d7780758f6f3ee0507ea027989d7bcec96d70a5c9fca85e0218b702`, with the
+same `1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0
+gateway failures` and the same `1 checked function contract(s) / 6 Unknown`.
+
+That is what the diff shape predicts (§6): no gateway analysis rule changed, and
+the retained in-process route publishes a byte-identical certificate (§4.1).
+
+**The four pinned 185-unit artifacts were not re-measured here**: that needs a
+prepared pinned upstream clone for the whole corpus and the audit's own pin gate
+refuses without one. This is the same position `P04-COMPOSE-A`, `P04-B2` and
+several earlier cards recorded. The integrator's corpus consolidation should
+expect **no change from this card** beyond the package-identity residue class —
+the ChunkIO `provider_version` and `package_digest` leaves in
+`source-effects.json`, as in every card that bumps that package, plus the
+schemas-12.0.0 package digests.
 
 ### 8.3 One Python failure the card cannot fix, by instruction
 
@@ -579,7 +600,18 @@ Regenerate the matrix (or supply `--gate`) at the wave's close, exactly as waves
 9–14 did. Nothing else in the matrix moves from this card: the contract corpus
 stays 64 modules, CT coverage is untouched at 32/50, and no verdict moves.
 
-### 8.4 One pre-existing failure repaired in passing, recorded loudly
+### 8.4 Two environment findings, both recorded rather than absorbed
+
+**The submodule.** A first full workspace run failed three targets:
+`libevent_submodule`, `profile_loader` and `enforced_process_limits`. The first
+two were the uninitialised `third_party/libevent` submodule — the standing
+gate's own `git submodule update --init --recursive` step, which this worktree
+had not run — and both pass once it is initialised. The third is the recorded
+load-flaky P02 `RLIMIT_NPROC` row (`P02-FLAKE`), which **passes in isolation**
+(12 passed) and whose assertion is deliberately unweakened. The clean run
+recorded in the table above is the one taken after initialising the submodule.
+
+### 8.5 One pre-existing failure repaired in passing, recorded loudly
 
 `cargo clippy --workspace --all-targets -- -D warnings` **fails at the untouched
 base commit `19fbaa5`** on this host's toolchain (Rust 1.98 Clippy):
