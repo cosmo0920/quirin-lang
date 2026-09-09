@@ -1,0 +1,128 @@
+== cio_file.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 23, "unsupported": 295}
+        -> {"leak": 1, "unknown_alias": 23, "unsupported": 293}
+    cio_file_open: Unknown -> Unknown  {'call to uncontracted function `open_and_up`': -1}
+    open_and_up: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== cio_memfs.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 7, "unsupported": 34}
+        -> {"unknown_alias": 7, "unsupported": 33}
+    reason: "resource projection unresolved: 34 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 33 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    cio_memfs_open: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== cmt_encode_cloudwatch_emf.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 7, "unsupported": 217}
+        -> {"unknown_alias": 7, "unsupported": 206}
+    reason: "resource projection unresolved: 217 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 206 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    pack_cmetrics_type: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -6}
+    pack_histogram_metric: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -5}
+== cmt_encode_opentelemetry.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 18, "unknown_alias": 114, "unsupported": 866}
+        -> {"leak": 18, "unknown_alias": 114, "unsupported": 862}
+    append_attribute_to_exponential_histogram_data_point: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+    append_attribute_to_histogram_data_point: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+    append_attribute_to_summary_data_point: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+    append_metric_to_scope_metrics: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== cmt_encode_opentelemetry_batch.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 4, "unknown_alias": 23, "unsupported": 200}
+        -> {"leak": 4, "unknown_alias": 23, "unsupported": 199}
+    request_data_point_count: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+== cmt_encode_prometheus.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 10, "unsupported": 256}
+        -> {"leak": 1, "unknown_alias": 10, "unsupported": 247}
+    append_metric_value: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -3}
+    metric_banner: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -6}
+== cmt_histogram.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 4, "unknown_alias": 11, "unsupported": 74}
+        -> {"leak": 4, "unknown_alias": 11, "unsupported": 73}
+    check_buckets: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+== ctr_encode_text.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 1, "unsupported": 193}
+        -> {"unknown_alias": 1, "unsupported": 191}
+    reason: "resource projection unresolved: 193 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 191 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+    format_array: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1, 'unmodeled call, aggregate or indirect access in branch condition': -1}
+== ctr_span.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 11, "unsupported": 105}
+        -> {"unknown_alias": 11, "unsupported": 104}
+    reason: "resource projection unresolved: 105 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 104 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)"
+    ctr_span_kind_string: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in switch expression': -1}
+== flb_input_chunk.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 10, "unknown_alias": 121, "unsupported": 856}
+        -> {"leak": 10, "unknown_alias": 121, "unsupported": 847}
+    flb_input_chunk_is_mem_overlimit: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in branch condition': -2}
+    flb_input_chunk_is_storage_overlimit: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    flb_input_chunk_is_task_safe_delete: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    flb_input_chunk_output_would_exceed_limit: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -2}
+    flb_input_chunk_release_lock: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    input_chunk_append_raw: Unknown -> Unknown  {'call to uncontracted function `flb_input_chunk_is_mem_overlimit`': -1}
+    logs_tag_records_metrics_enabled: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== lz4.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 32, "unsupported": 594}
+        -> {"unknown_alias": 32, "unsupported": 592}
+    reason: "resource projection unresolved: 594 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 592 unsupported operation(s), 32 unresolved alias(es), 0 custody summary conflict(s)"
+    LZ4_compress_fast_extState: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    LZ4_compress_fast_extState_fastReset: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== lz4frame.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 30, "unsupported": 654}
+        -> {"unknown_alias": 30, "unsupported": 652}
+    reason: "resource projection unresolved: 654 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 652 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)"
+    LZ4F_getErrorCode: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    LZ4F_getErrorName: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== mk_core/mk_iov.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 5, "unsupported": 39}
+        -> {"unknown_alias": 5, "unsupported": 35}
+    reason: "resource projection unresolved: 39 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 35 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)"
+    mk_iov_consume: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1, 'unmodeled call, aggregate or indirect access in branch condition': -1}
+    mk_iov_realloc: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -2}
+== mk_server/mk_http.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 20, "unsupported": 474}
+        -> {"unknown_alias": 20, "unsupported": 473}
+    reason: "resource projection unresolved: 474 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 473 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+    mk_http_keepalive_check: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== mk_server/mk_kernel.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 4, "unsupported": 21}
+        -> {"unknown_alias": 4, "unsupported": 20}
+    reason: "resource projection unresolved: 21 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 20 unsupported operation(s), 4 unresolved alias(es), 0 custody summary conflict(s)"
+    mk_kernel_features_print: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== mk_server/mk_scheduler.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 7, "unknown_alias": 20, "unsupported": 196}
+        -> {"leak": 7, "unknown_alias": 20, "unsupported": 194}
+    mk_sched_broadcast_signal: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+    mk_sched_workers_join: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': -1}
+== mk_server/mk_user.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 1, "unsupported": 31}
+        -> {"unknown_alias": 1, "unsupported": 30}
+    reason: "resource projection unresolved: 31 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 30 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+    mk_user_undo_uidgid: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== mk_server/mk_vhost.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 8, "unknown_alias": 30, "unsupported": 250}
+        -> {"leak": 8, "unknown_alias": 30, "unsupported": 249}
+    mk_vhost_fdt_open: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== nanopb/pb_decode.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 6, "unsupported": 301}
+        -> {"unknown_alias": 6, "unsupported": 299}
+    reason: "resource projection unresolved: 301 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 299 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    pb_dec_bytes: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+    pb_dec_string: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -1}
+== rdkafka_telemetry_decode.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 10, "unsupported": 384}
+        -> {"unknown_alias": 10, "unsupported": 382}
+    reason: "resource projection unresolved: 384 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 382 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+    data_msg_callback: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in branch condition': -2}
+
+total diagnostic delta:
+      -45  unmodeled call, aggregate or indirect access in branch condition
+      -11  unmodeled call, aggregate or indirect access in for-loop condition
+       -1  call to uncontracted function `open_and_up`
+       -1  unmodeled call, aggregate or indirect access in switch expression
+       -1  call to uncontracted function `flb_input_chunk_is_mem_overlimit`

@@ -1089,6 +1089,25 @@ pub(crate) fn is_scalar_initializer(
         && scalar_statement_accesses(right, model, types) == Some(0)
 }
 
+/// Whether an *expression* operand run is admitted by the same walker, with any
+/// number of admitted direct member accesses including none.
+///
+/// Card W4-EXPR-POS reads the six expression positions of `legacy_c` through
+/// this entry point (see [`crate::neutral_position`]). It is the union of
+/// [`is_scalar_field_noop`] and [`is_scalar_only_noop`]'s conditions minus their
+/// disjoint access-count requirements: both counts are custody-neutral by the
+/// same argument, and an expression position — unlike a statement — has no
+/// reason to distinguish them. The empty run is admitted, so that an expression
+/// consisting of exactly one admitted neutral call leaves nothing to reject;
+/// the caller refuses an empty *expression* before ever reaching here.
+pub(crate) fn is_scalar_operand_expression(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> bool {
+    scalar_statement_accesses(texts, model, types).is_some()
+}
+
 /// The shared walker: `Some(count)` when every token of the statement is
 /// admitted, counting admitted direct member accesses; `None` on any refusal.
 fn scalar_statement_accesses(
