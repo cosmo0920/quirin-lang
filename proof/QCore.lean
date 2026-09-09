@@ -50,6 +50,7 @@ import QCore.ListUnlink
 import QCore.CounterSource
 import QCore.FieldDestructor
 import QCore.ChunkSource
+import QCore.FrameHelperTask
 import QCore.ControlFlow
 import QCore.ExecutableModel
 import QCore.Flow

@@ -84,6 +84,12 @@ pub enum ObligationProperty {
     NoUnknownCallEffect,
     /// Both Boolean prestates satisfy a source-derived borrowed-field contract.
     BooleanFieldContract,
+    /// One source-derived constant-write frame helper writes only ordinary
+    /// declared metadata fields and preserves the record's modeled Boolean
+    /// fields, as its pinned contract requires. Live storage, exclusive access
+    /// and cross-unit record ABI equality remain the contract's own declared
+    /// premises; no custody, lifecycle or whole-unit claim is made.
+    FrameHelperContract,
     /// One source-derived unsigned unit counter update satisfies its pinned
     /// contract. Caller storage, exclusivity and the unsigned/usize ABI
     /// binding remain the contract's own declared premises.
@@ -139,6 +145,7 @@ impl ObligationProperty {
             Self::ParameterModeRespected => "parameter_mode_respected",
             Self::NoUnknownCallEffect => "no_unknown_call_effect",
             Self::BooleanFieldContract => "boolean_field_contract",
+            Self::FrameHelperContract => "frame_helper_contract",
             Self::CounterUpdateContract => "counter_update_contract",
             Self::ListUnlinkContract => "list_unlink_contract",
             Self::FieldDestructorContract => "field_destructor_contract",

@@ -116,6 +116,7 @@ impl DispatchReport {
 fn predicate_for(property: ObligationProperty) -> FactPredicate {
     match property {
         ObligationProperty::BooleanFieldContract
+        | ObligationProperty::FrameHelperContract
         | ObligationProperty::CounterUpdateContract
         | ObligationProperty::ListUnlinkContract
         | ObligationProperty::FieldDestructorContract
