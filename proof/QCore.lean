@@ -1,3 +1,4 @@
+import QCore.BucketTally
 import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
 import QCore.ConcurrencyPrelude

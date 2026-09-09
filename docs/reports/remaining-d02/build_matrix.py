@@ -611,7 +611,15 @@ for section, (owner, _) in SECTION_OWNERS.items():
     assert f"{section}.*" in FIELD_OWNERS, f"{section} has no catch-all field owner"
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
-OUT.write_text(json.dumps(matrix, indent=2, ensure_ascii=True) + "\n")
+# The committed matrix has been `indent=1, ensure_ascii=False` since the original
+# D02 wave, and this writer's `indent=2, ensure_ascii=True` never matched it: the
+# committed file carries literal em dashes, so the ASCII escaping was plainly
+# never applied to it. Every "adopt the regenerated matrix" commit therefore
+# re-serialised the generator's output by hand, and a regeneration adopted
+# verbatim would have reformatted all 11,798 lines and buried its real change.
+# Card HYGIENE-16 moves the writer to the committed byte form rather than the
+# file to the writer's, so a regeneration is now reviewable as its own diff.
+OUT.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + "\n")
 print("wrote", OUT)
 print("carried hand-maintained sections from", PREVIOUS)
 print("gate provenance:", GATE_PROVENANCE)
