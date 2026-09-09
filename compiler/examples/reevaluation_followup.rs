@@ -91,7 +91,7 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     manifest.limits.timeout_ms = 20;
     fs::write(&script, "#!/bin/sh\n/bin/sleep 0.4 &\nwait\n").unwrap();
     fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
-    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
+    let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let start = Instant::now();
     let outcome = provider.verify(&request());
     let elapsed_ms = start.elapsed().as_millis();
@@ -120,13 +120,13 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     .unwrap();
     manifest.limits.timeout_ms = 1000;
     manifest.limits.output_bytes = payload_bytes;
-    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
+    let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let outcome = provider.verify(&req);
     results.push(serde_json::json!({"id": "VP07_frame_limit_disagreement", "payload_bytes": payload_bytes,
         "frame_bytes": frame.len(), "codec_accepts": codec_ok, "process_result": format!("{outcome:?}"),
         "pass": codec_ok && outcome.is_ok()}));
     manifest.limits.output_bytes = frame.len();
-    let outcome = ProcessProvider::new(manifest.clone(), &package)
+    let outcome = UnverifiedProvider::new(manifest.clone(), &package)
         .unwrap()
         .verify(&req);
     results.push(
@@ -142,7 +142,7 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     .unwrap();
     manifest.limits.output_bytes = 1;
     manifest.limits.timeout_ms = 20;
-    let outcome = ProcessProvider::new(manifest, &package)
+    let outcome = UnverifiedProvider::new(manifest, &package)
         .unwrap()
         .verify(&req);
     let marker_at_return = package.join("after-return.marker").exists();

@@ -91,6 +91,29 @@ impl Fixture {
         self.package().join("ran.marker")
     }
 
+    /// Installs the fixture as a package that actually *verifies*, so it can be
+    /// registered: a registry takes only verified providers (card `P01-F3`).
+    /// The manifest template follows the script's last command — inert to `sh`,
+    /// and bytes the host reads without executing anything.
+    fn install(&self, manifest: PluginManifest) {
+        let script = self.package().join("provider.sh");
+        let mut bytes = fs::read(&script).unwrap();
+        // `exit` before the envelope: `sh` parses commands one at a time, so
+        // it stops before the marker lines, which are not shell syntax.
+        bytes.extend(b"exit $?\n");
+        bytes.extend(envelope(&serde_json::to_string(&manifest).unwrap()).into_bytes());
+        bytes.push(b'\n');
+        fs::write(&script, &bytes).unwrap();
+        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        let mut installed = manifest;
+        installed.package_digest = sha256_hex(&fs::read(&script).unwrap());
+        fs::write(
+            self.package().join("verifier-plugin.json"),
+            serde_json::to_vec(&installed).unwrap(),
+        )
+        .unwrap();
+    }
+
     fn policy(&self) -> ConfinementPolicy {
         ConfinementPolicy::linux_runtime_defaults()
             .admitting_read_write(self.writable().to_string_lossy().into_owned())
@@ -165,15 +188,15 @@ fn manifest() -> PluginManifest {
     }
 }
 
-fn confined(fixture: &Fixture) -> ProcessProvider {
-    ProcessProvider::new(manifest(), fixture.package())
+fn confined(fixture: &Fixture) -> UnverifiedProvider {
+    UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy())
 }
 
-fn legacy(fixture: &Fixture) -> ProcessProvider {
-    ProcessProvider::new(manifest(), fixture.package()).unwrap()
+fn legacy(fixture: &Fixture) -> UnverifiedProvider {
+    UnverifiedProvider::new(manifest(), fixture.package()).unwrap()
 }
 
 fn confinement(record: &ProcessExecutionRecord) -> Confinement {
@@ -408,7 +431,7 @@ fn the_confined_profile_composes_with_the_limit_profile() {
     manifest.limits.memory_bytes = 8 * 1024 * 1024;
     manifest.limits.additional.insert("cpu_seconds".into(), 30);
 
-    let provider = ProcessProvider::new(manifest.clone(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest.clone(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -421,7 +444,7 @@ fn the_confined_profile_composes_with_the_limit_profile() {
     assert!(enforced.unenforced_kinds.is_empty());
 
     // The composed rlimit plan is exactly the limit profile's plan.
-    let limits_only = ProcessProvider::new(manifest, fixture.package())
+    let limits_only = UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1);
     let reference = limits_only.enforced_limits().unwrap();
@@ -466,7 +489,7 @@ fn a_confining_profile_without_a_policy_is_refused_before_spawning() {
     fixture.response(&request);
     fixture.script(": > ran.marker\n/bin/cat response.bin");
 
-    let provider = ProcessProvider::new(manifest(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1);
     let precheck = provider.enforced_limits().unwrap_err();
@@ -485,10 +508,12 @@ fn a_confining_profile_without_a_policy_is_refused_before_spawning() {
     assert!(!fixture.ran_marker().exists());
 
     let mut registry = VerifierRegistry::default();
+    // A registry takes only *verified* providers (card `P01-F3`).
+    fixture.install(manifest());
     registry
         .register(Arc::new(
-            ProcessProvider::new(manifest(), fixture.package())
-                .unwrap()
+            verify_executable_package(fixture.package())
+                .expect("the installed fixture verifies")
                 .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1),
         ))
         .unwrap();
@@ -513,7 +538,7 @@ fn a_policy_under_a_non_confining_profile_is_refused() {
         ProcessExecutionProfile::UnenforcedLegacy,
         ProcessExecutionProfile::LinuxRlimitV1,
     ] {
-        let provider = ProcessProvider::new(manifest(), fixture.package())
+        let provider = UnverifiedProvider::new(manifest(), fixture.package())
             .unwrap()
             .with_execution_profile(profile)
             .with_confinement_policy(fixture.policy());
@@ -548,7 +573,7 @@ fn an_uninstallable_policy_is_refused_before_spawning() {
     let unreachable = fixture.root.join("dangling");
     std::os::unix::fs::symlink(fixture.root.join("never-created"), &unreachable).unwrap();
 
-    let provider = ProcessProvider::new(manifest(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(
@@ -586,7 +611,7 @@ fn an_uninstallable_policy_is_refused_before_spawning() {
 fn an_absent_admitted_path_grants_nothing_and_is_recorded() {
     let fixture = Fixture::new("absent");
     let missing = fixture.root.join("never-created");
-    let provider = ProcessProvider::new(manifest(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(
@@ -639,7 +664,7 @@ fn the_evidence_records_the_achieved_confinement_and_its_boundary() {
     // byte-identical to the ones written before this field existed.
     let json = serde_json::to_value(record.enforced.as_ref().unwrap()).unwrap();
     assert!(json["confinement"]["landlock_abi"].is_number());
-    let unconfined = ProcessProvider::new(manifest(), fixture.package())
+    let unconfined = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1)
         .enforced_limits()
@@ -655,7 +680,7 @@ fn the_evidence_records_the_achieved_confinement_and_its_boundary() {
 #[test]
 fn the_default_profile_still_confines_nothing() {
     let fixture = Fixture::new("default");
-    let provider = ProcessProvider::new(manifest(), fixture.package()).unwrap();
+    let provider = UnverifiedProvider::new(manifest(), fixture.package()).unwrap();
     assert_eq!(
         provider.execution_profile(),
         ProcessExecutionProfile::UnenforcedLegacy

@@ -12,8 +12,8 @@ use std::sync::Arc;
 use qcore_contract::profile_loader::load_profile_directory;
 
 use crate::verifier_plugin::{
-    BuiltInProvider, PackageLoadError, PluginEntrypoint, PluginManifest, ProcessProvider,
-    VerifierProvider, VerifierRegistry,
+    BuiltInProvider, PackageLoadError, PluginEntrypoint, PluginManifest, VerifierProvider,
+    VerifierRegistry, verify_executable_package,
 };
 
 fn failure(path: &Path, error: impl ToString) -> PackageLoadError {
@@ -78,10 +78,25 @@ pub fn load_first_party_registry(root: &Path) -> Result<VerifierRegistry, Packag
             PluginEntrypoint::BuiltIn => Arc::new(
                 BuiltInProvider::new(manifest).map_err(|error| failure(&package_root, error))?,
             ),
-            PluginEntrypoint::Executable { .. } => Arc::new(
-                ProcessProvider::new(manifest, &package_root)
-                    .map_err(|error| failure(&package_root, error))?,
-            ),
+            // Verified, not merely loaded (card `P01-F3`): the declared digest
+            // and the executable's own embedded manifest template must bind
+            // before the package can serve a request, and the verified manifest
+            // must be exactly the one the profile declared. Before this, an
+            // executable provider was registered from profile metadata alone.
+            PluginEntrypoint::Executable { .. } => {
+                let provider = verify_executable_package(&package_root)
+                    .map_err(|error| failure(&package_root, error.message))?;
+                if provider.manifest() != &manifest {
+                    return Err(failure(
+                        &package_root,
+                        format!(
+                            "installed manifest for `{}` differs from the profile's declaration",
+                            manifest.plugin_id
+                        ),
+                    ));
+                }
+                Arc::new(provider)
+            }
         };
         registry
             .register(provider)

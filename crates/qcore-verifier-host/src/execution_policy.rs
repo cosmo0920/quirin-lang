@@ -233,6 +233,23 @@ impl ExecutionPolicy {
             None => provider,
         })
     }
+
+    /// The same selection over a package that has not been verified.
+    ///
+    /// Separate on purpose (card `P01-F3`): applying a policy must not be a way
+    /// to turn an [`crate::UnverifiedProvider`] into a registrable one, so this
+    /// returns the unverified type it was given.
+    pub fn apply_unverified(
+        &self,
+        provider: crate::UnverifiedProvider,
+    ) -> Result<crate::UnverifiedProvider, ExecutionPolicyError> {
+        self.validate()?;
+        let provider = provider.with_execution_profile(self.profile);
+        Ok(match &self.confinement {
+            Some(selection) => provider.with_confinement_policy(selection.policy()),
+            None => provider,
+        })
+    }
 }
 
 #[cfg(test)]

@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
 #[cfg(unix)]
-use qcore_compiler::ProcessProvider;
+use qcore_compiler::UnverifiedProvider;
 use qcore_compiler::{
     BuiltInProvider, CompileOptions, EvidenceClaim, FactPredicate, NormalizedFact,
     PLUGIN_EVIDENCE_VERSION, PLUGIN_PROTOCOL_VERSION, PluginEntrypoint, PluginId, ProposedEvidence,
@@ -308,6 +308,38 @@ fn protocol_rejects_unknown_fields_instead_of_guessing_a_schema() {
     assert!(decode_protocol_frame::<VerificationRequest>(&frame, 16 * 1024).is_err());
 }
 
+/// Installs a package that actually *verifies*: the script carries the manifest
+/// template its installed manifest binds to, exactly as a shipped provider
+/// executable does, after an `exit` that `sh` never reads past. A registry takes
+/// only verified providers (card `P01-F3`), so a test that registers one must
+/// install a real package rather than assert over an unchecked directory.
+#[cfg(unix)]
+fn install_verifiable(
+    package: &std::path::Path,
+    manifest: &qcore_compiler::PluginManifest,
+) -> qcore_compiler::ProcessProvider {
+    use qcore_compiler::verifier_plugin::{envelope, sha256_hex, verify_executable_package};
+    use std::os::unix::fs::PermissionsExt;
+    let PluginEntrypoint::Executable { path } = &manifest.entrypoint else {
+        panic!("an executable package");
+    };
+    let script = package.join(path);
+    let mut bytes = std::fs::read(&script).unwrap();
+    bytes.extend(b"exit $?\n");
+    bytes.extend(envelope(&serde_json::to_string(manifest).unwrap()).into_bytes());
+    bytes.push(b'\n');
+    std::fs::write(&script, &bytes).unwrap();
+    std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o700)).unwrap();
+    let mut installed = manifest.clone();
+    installed.package_digest = sha256_hex(&std::fs::read(&script).unwrap());
+    std::fs::write(
+        package.join("verifier-plugin.json"),
+        serde_json::to_vec(&installed).unwrap(),
+    )
+    .unwrap();
+    verify_executable_package(package).expect("the installed fixture verifies")
+}
+
 #[cfg(unix)]
 #[test]
 fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
@@ -337,7 +369,7 @@ fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
     manifest.limits.timeout_ms = 20;
     let mut registry = VerifierRegistry::default();
     registry
-        .register(Arc::new(ProcessProvider::new(manifest, &package).unwrap()))
+        .register(Arc::new(install_verifiable(&package, &manifest)))
         .unwrap();
     let outcome = registry.verify(&request("example.hang", "libevent"));
     assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
@@ -565,9 +597,7 @@ fn vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety() {
     manifest.package_digest = digest('0');
     let mut registry = VerifierRegistry::default();
     registry
-        .register(Arc::new(
-            ProcessProvider::new(manifest.clone(), &package).unwrap(),
-        ))
+        .register(Arc::new(install_verifiable(&package, &manifest)))
         .unwrap();
     for empty in [false, true] {
         let mut req = request("example.echo", "libevent");
@@ -684,7 +714,7 @@ fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
     manifest.limits.timeout_ms = 20;
     manifest.package_digest = digest('0');
     let run = |manifest: qcore_compiler::PluginManifest, req: VerificationRequest| {
-        let provider = ProcessProvider::new(manifest, &package).unwrap();
+        let provider = UnverifiedProvider::new(manifest, &package).unwrap();
         let (send, recv) = mpsc::channel();
         let start = Instant::now();
         std::thread::spawn(move || {

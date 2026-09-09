@@ -129,14 +129,48 @@ fn manifest() -> PluginManifest {
     }
 }
 
-fn enforced(manifest: PluginManifest, fixture: &Fixture) -> ProcessProvider {
-    ProcessProvider::new(manifest, fixture.path())
+fn enforced(manifest: PluginManifest, fixture: &Fixture) -> UnverifiedProvider {
+    UnverifiedProvider::new(manifest, fixture.path())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1)
 }
 
-fn legacy(manifest: PluginManifest, fixture: &Fixture) -> ProcessProvider {
-    ProcessProvider::new(manifest, fixture.path()).unwrap()
+fn legacy(manifest: PluginManifest, fixture: &Fixture) -> UnverifiedProvider {
+    UnverifiedProvider::new(manifest, fixture.path()).unwrap()
+}
+
+/// Installs the fixture as a package that actually *verifies*, and returns the
+/// registrable provider.
+///
+/// A registry takes only verified providers (card `P01-F3`), so the script
+/// carries the manifest template its installed manifest binds to, exactly as a
+/// shipped provider executable does. The envelope follows the script body; the
+/// shell never parses past its own last command, so the template is inert to
+/// `sh` and is bytes to the host, which never executes the package to read it.
+fn registrable(
+    manifest: PluginManifest,
+    fixture: &Fixture,
+    profile: ProcessExecutionProfile,
+) -> ProcessProvider {
+    let script = fixture.path().join("provider.sh");
+    let mut bytes = fs::read(&script).unwrap();
+    // `exit` before the envelope: `sh` parses commands one at a time, so it
+    // stops before the marker lines, which are not shell syntax.
+    bytes.extend(b"exit $?\n");
+    bytes.extend(envelope(&serde_json::to_string(&manifest).unwrap()).into_bytes());
+    bytes.push(b'\n');
+    fs::write(&script, &bytes).unwrap();
+    fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+    let mut installed = manifest;
+    installed.package_digest = sha256_hex(&fs::read(&script).unwrap());
+    fs::write(
+        fixture.path().join("verifier-plugin.json"),
+        serde_json::to_vec(&installed).unwrap(),
+    )
+    .unwrap();
+    verify_executable_package(fixture.path())
+        .expect("the installed fixture verifies")
+        .with_execution_profile(profile)
 }
 
 /// Grows a shell variable to 16 MiB, then answers.
@@ -235,7 +269,11 @@ fn output_flooding_beyond_the_cap_is_bounded() {
 
     let mut registry = VerifierRegistry::default();
     registry
-        .register(Arc::new(enforced(manifest_for_registry(), &fixture)))
+        .register(Arc::new(registrable(
+            manifest_for_registry(),
+            &fixture,
+            ProcessExecutionProfile::LinuxRlimitV1,
+        )))
         .unwrap();
     let outcome = registry.verify(&request);
     assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
@@ -386,7 +424,11 @@ fn a_declared_but_unenforceable_limit_kind_is_refused() {
 
     let mut registry = VerifierRegistry::default();
     registry
-        .register(Arc::new(enforced(manifest.clone(), &fixture)))
+        .register(Arc::new(registrable(
+            manifest.clone(),
+            &fixture,
+            ProcessExecutionProfile::LinuxRlimitV1,
+        )))
         .unwrap();
     let outcome = registry.verify(&request);
     assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
@@ -534,7 +576,7 @@ fn the_profile_is_target_qualified() {
 #[test]
 fn the_default_profile_is_the_unenforced_legacy_one() {
     let fixture = Fixture::new("default");
-    let provider = ProcessProvider::new(manifest(), fixture.path()).unwrap();
+    let provider = UnverifiedProvider::new(manifest(), fixture.path()).unwrap();
     assert_eq!(
         provider.execution_profile(),
         ProcessExecutionProfile::UnenforcedLegacy
