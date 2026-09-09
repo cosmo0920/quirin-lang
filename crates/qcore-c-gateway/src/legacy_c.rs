@@ -227,6 +227,12 @@ pub struct LegacyCfg {
     pub function: String,
     pub entry: LegacyNodeId,
     pub nodes: Vec<LegacyCfgNode>,
+    /// Card **CTWIN-PUBLISH**: the assignment destinations of this body whose
+    /// object has **static storage duration** — file-scope objects it does not
+    /// shadow, plus its own `static` locals. Derived from the same preprocessed
+    /// token stream as every other typed premise, so certificate rederivation
+    /// reproduces it; see [`crate::publication`].
+    pub publications: BTreeSet<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1505,7 +1511,7 @@ pub(crate) fn build_function_cfg(
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
     let variadic_tails = declared_variadic_tails(contracts);
-    let (typed_model, typed_types, typed_bases, store_bases) = typed_access_facts(
+    let (typed_model, typed_types, typed_bases, store_bases, publications) = typed_access_facts(
         tokens,
         function,
         body_start,
@@ -1536,7 +1542,7 @@ pub(crate) fn build_function_cfg(
                 function: function.to_owned(),
                 line: failure_line.max(line),
             })?;
-    Ok(CfgBuilder::build(function, &statements))
+    Ok(CfgBuilder::build(function, &statements, publications))
 }
 
 /// The callees `contracts` declares a variadic data tail for (card O04-TRACE).
@@ -1581,6 +1587,7 @@ fn typed_access_facts(
     FunctionTypes,
     UntrackedBases,
     AggregateStoreBases,
+    BTreeSet<String>,
 ) {
     let texts = tokens
         .iter()
@@ -1600,6 +1607,11 @@ fn typed_access_facts(
             FunctionTypes::default(),
             UntrackedBases::default(),
             AggregateStoreBases::default(),
+            // No body was located, so no statement of it is analyzed and no
+            // destination of it can be classified. An empty set here never
+            // admits anything: the refusal below fires only on a name this
+            // reader positively recognised.
+            BTreeSet::new(),
         );
     };
     let types = FunctionTypes::read(
@@ -1634,7 +1646,13 @@ fn typed_access_facts(
         &model,
         &types,
     );
-    (model, types, bases, stores)
+    // CTWIN-PUBLISH: the assignment destinations of this body whose object has
+    // static storage duration — file-scope objects this body does not shadow,
+    // plus its own `static` locals. Read from the same token stream for the
+    // same reason as every set above.
+    let publications =
+        crate::publication::destinations(&texts, &texts[body_start + 1..body_end], &formals);
+    (model, types, bases, stores, publications)
 }
 
 /// The parenthesis indices of the definition whose body starts at `body_start`.
@@ -4210,7 +4228,11 @@ struct SwitchTargets {
 }
 
 impl CfgBuilder {
-    fn build(function: &str, statements: &[Statement]) -> LegacyCfg {
+    fn build(
+        function: &str,
+        statements: &[Statement],
+        publications: BTreeSet<String>,
+    ) -> LegacyCfg {
         let mut builder = Self {
             nodes: Vec::new(),
             labels: BTreeMap::new(),
@@ -4235,6 +4257,7 @@ impl CfgBuilder {
             function: function.to_owned(),
             entry,
             nodes: builder.nodes,
+            publications,
         }
     }
 
@@ -5445,6 +5468,11 @@ struct TransferContext<'a> {
     /// of these: a transfer into a caller-owned aggregate is invisible at the
     /// call site and is refused rather than modeled (O00 blocker B08).
     caller_sites: BTreeSet<usize>,
+    /// Card **CTWIN-PUBLISH**: the destinations whose object outlives the call.
+    /// Storing an identity *this body* holds into one of them is a publication
+    /// the projection does not model, and is refused; see
+    /// [`reject_publication`].
+    publications: BTreeSet<String>,
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -5464,6 +5492,7 @@ pub(crate) fn analyze_cfg_with_entry(
             .flatten()
             .copied()
             .collect(),
+        publications: cfg.publications.clone(),
     };
     // C02-P-ALIAS: computed once, before the custody work list starts, and only
     // read below. See [`alias_facts`].
@@ -5685,6 +5714,42 @@ fn observe_residual(
     }
 }
 
+/// Card **CTWIN-PUBLISH**: report a store of a tracked identity into an object
+/// that outlives the call, and poison the path exactly as any other unmodeled
+/// construct does.
+///
+/// **Why refusal rather than an escape.** Modeling the store as an
+/// [`LegacyInstruction::Escape`] would be fail-closed in one direction only.
+/// A published-then-released body would become a `ReleaseAfterEscape`, but a
+/// published-and-*not*-released body — measured `Unsafe` with a `Leak` before
+/// this card — would become **`Safe`**, because the escape discharges the
+/// residual. That is a promotion, and it asserts an accounting no contract
+/// states: unlike a return or a declared consuming position, a store into a
+/// file-scope object hands custody to no named party. Both directions are
+/// therefore withdrawn: this projection can say nothing about a resource whose
+/// custody left through an unmodeled publication protocol.
+fn reject_publication(
+    function: &str,
+    line: usize,
+    place: &str,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!(
+                "publication of a tracked resource into the static-storage object `{place}` is outside the resource projection"
+            ),
+        },
+    });
+    for pointer in state.pointers.values_mut() {
+        pointer.unknown = true;
+        pointer.may_be_null = true;
+    }
+}
+
 /// Report an indirect store the contract in force does not sanction, and
 /// poison the state exactly as an unmodeled construct would. The importer
 /// *names* `*out` so an out-parameter contract can describe it; without such a
@@ -5767,6 +5832,54 @@ fn transfer(
             pointer.may_be_null = true;
         }
         return state;
+    }
+    // CTWIN-PUBLISH: a store of an identity *this body* holds into an object
+    // that outlives the call is a publication this projection does not model.
+    // Checked here, before any effect of the instruction applies, and
+    // flow-sensitively: naming such a destination is not the refusal, storing
+    // a tracked identity into it is. See [`reject_publication`] for why both
+    // directions are withdrawn rather than an escape recorded, and
+    // [`crate::publication`] for how the destination set is read.
+    if let Some(place) = destination.filter(|place| context.publications.contains(*place)) {
+        let published = match &node.instruction {
+            // The value is whatever `source` denotes here. A caller-held site
+            // is deliberately excluded: publishing a *borrowed* pointer is a
+            // lifetime question this projection never claimed to decide, and
+            // refusing it would newly refuse bodies that are sound in the
+            // acquire/release accounting this projection does decide
+            // (CTWIN-PUBLISH-BORROWED).
+            LegacyInstruction::Alias { source, .. } => state
+                .pointers
+                .get(source)
+                .filter(|pointer| {
+                    pointer
+                        .targets
+                        .iter()
+                        .any(|site| !context.caller_sites.contains(site))
+                })
+                .cloned(),
+            // An acquisition bound directly to such an object publishes it at
+            // the moment it is created. Refused *before* the site exists, so
+            // there is nothing to carry forward.
+            LegacyInstruction::Acquire { .. } => Some(AbstractPointer::default()),
+            LegacyInstruction::ContractCall { contract, .. } => {
+                (!matches!(contract.result, ResourceReturnMode::None))
+                    .then(AbstractPointer::default)
+            }
+            // `Clear` stores the null constant and `OpaqueValue` a value this
+            // function never tracks; neither publishes a resource identity.
+            _ => None,
+        };
+        if let Some(pointer) = published {
+            // The published identities carry an unresolved effect from here on,
+            // exactly as an unresolved callee effect does: the projection can
+            // no longer say whether they are released, so a residual leak that
+            // *depends on* this publication stays `Unknown` instead of being
+            // reported as a validated violation (the w4-nullable-removal rule).
+            mark_unresolved_effect(&mut state, &pointer);
+            reject_publication(function, node.line, place, &mut state, diagnostics);
+            return state;
+        }
     }
     // A store through a pointer is modeled only where the contract in force
     // declares that slot an out parameter. `ContractCall` handles its own

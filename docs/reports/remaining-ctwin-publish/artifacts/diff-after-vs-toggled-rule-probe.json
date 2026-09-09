@@ -1,0 +1,356 @@
+{
+ "chunk-contracts": {
+  "identical": true,
+  "left_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "right_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "identical": true,
+  "left_sha256": "a92964bd7af298bcdb837cd98723071aec9423164b0fba4409302b8193eec110",
+  "right_sha256": "a92964bd7af298bcdb837cd98723071aec9423164b0fba4409302b8193eec110"
+ },
+ "diagnostics": {
+  "changed_units": 6,
+  "diagnostic_leaf_moves": [
+   {
+    "added": 1,
+    "added_sample": [
+     [
+      "cJSON_ParseWithLengthOpts",
+      2219,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `global_error` is outside the resource projection"
+     ]
+    ],
+    "removed": 1,
+    "removed_sample": [
+     [
+      "cJSON_ParseWithLengthOpts",
+      2219,
+      "unknown_alias",
+      "unresolved resource identity `local_error`"
+     ]
+    ],
+    "unit": "librdkafka/cJSON.c"
+   },
+   {
+    "added": 1,
+    "added_sample": [
+     [
+      "LZ4F_getErrorName",
+      1154,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `codeError` is outside the resource projection"
+     ]
+    ],
+    "removed": 2,
+    "removed_sample": [
+     [
+      "LZ4F_getErrorName",
+      1154,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "LZ4F_getErrorName",
+      1156,
+      "unknown_alias",
+      "unresolved resource identity `codeError`"
+     ]
+    ],
+    "unit": "librdkafka/lz4frame.c"
+   },
+   {
+    "added": 13,
+    "added_sample": [
+     [
+      "create_jws_compact_serialization",
+      20513,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `jose_header_encoded` is outside the resource projection"
+     ],
+     [
+      "do_unittest_config_empty_should_fail",
+      21009,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `sasl_oauthbearer_config` is outside the resource projection"
+     ],
+     [
+      "do_unittest_config_empty_value_should_fail",
+      21047,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `expected_prefix` is outside the resource projection"
+     ],
+     [
+      "do_unittest_config_no_principal_should_fail",
+      20990,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `sasl_oauthbearer_config` is outside the resource projection"
+     ],
+     [
+      "do_unittest_config_unrecognized_should_fail",
+      21027,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `sasl_oauthbearer_config` is outside the resource projection"
+     ],
+     [
+      "parse_ujws_config",
+      20405,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `prefix_principal_claim_name` is outside the resource projection"
+     ]
+    ],
+    "removed": 13,
+    "removed_sample": [
+     [
+      "create_jws_compact_serialization",
+      20513,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "do_unittest_config_empty_should_fail",
+      21009,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "do_unittest_config_empty_value_should_fail",
+      21047,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "do_unittest_config_no_principal_should_fail",
+      20990,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "do_unittest_config_unrecognized_should_fail",
+      21027,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "parse_ujws_config",
+      20405,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ]
+    ],
+    "unit": "librdkafka/rdkafka_sasl_oauthbearer.c"
+   },
+   {
+    "added": 4,
+    "added_sample": [
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields",
+      22038,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `scope` is outside the resource projection"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields",
+      22039,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `expected_post_fields` is outside the resource projection"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+      22054,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `expected_post_fields` is outside the resource projection"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_with_empty_key",
+      22013,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `empty_token_format` is outside the resource projection"
+     ]
+    ],
+    "removed": 4,
+    "removed_sample": [
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields",
+      22038,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields",
+      22039,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+      22054,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ],
+     [
+      "ut_sasl_oauthbearer_oidc_with_empty_key",
+      22013,
+      "unknown_alias",
+      "unresolved resource identity `__qcore_literal__`"
+     ]
+    ],
+    "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c"
+   },
+   {
+    "added": 5,
+    "added_sample": [
+     [
+      "rd_kafka_transport_close",
+      20239,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_kafka_curr_transport` is outside the resource projection"
+     ],
+     [
+      "rd_kafka_transport_connect_done",
+      20389,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_kafka_curr_transport` is outside the resource projection"
+     ],
+     [
+      "rd_kafka_transport_io_serve",
+      20631,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_kafka_curr_transport` is outside the resource projection"
+     ],
+     [
+      "rd_kafka_transport_recv",
+      20412,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_kafka_curr_transport` is outside the resource projection"
+     ],
+     [
+      "rd_kafka_transport_send",
+      20398,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_kafka_curr_transport` is outside the resource projection"
+     ]
+    ],
+    "removed": 5,
+    "removed_sample": [
+     [
+      "rd_kafka_transport_close",
+      20239,
+      "unknown_alias",
+      "unresolved resource identity `rktrans`"
+     ],
+     [
+      "rd_kafka_transport_connect_done",
+      20389,
+      "unknown_alias",
+      "unresolved resource identity `rktrans`"
+     ],
+     [
+      "rd_kafka_transport_io_serve",
+      20631,
+      "unknown_alias",
+      "unresolved resource identity `rktrans`"
+     ],
+     [
+      "rd_kafka_transport_recv",
+      20412,
+      "unknown_alias",
+      "unresolved resource identity `rktrans`"
+     ],
+     [
+      "rd_kafka_transport_send",
+      20398,
+      "unknown_alias",
+      "unresolved resource identity `rktrans`"
+     ]
+    ],
+    "unit": "librdkafka/rdkafka_transport.c"
+   },
+   {
+    "added": 1,
+    "added_sample": [
+     [
+      "rd_qsort_r",
+      2880,
+      "unsupported",
+      "publication of a tracked resource into the static-storage object `rd_qsort_r_arg` is outside the resource projection"
+     ]
+    ],
+    "removed": 1,
+    "removed_sample": [
+     [
+      "rd_qsort_r",
+      2880,
+      "unknown_alias",
+      "unresolved resource identity `arg`"
+     ]
+    ],
+    "unit": "librdkafka/rdports.c"
+   }
+  ],
+  "function_status_moves": [],
+  "identical": false,
+  "left_sha256": "1da0555bd5e3c5a698f1e4114881fb2bdedf9a564bc6bc0a61803e9b66ecd84b",
+  "left_totals": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  },
+  "right_sha256": "90c7d78792f3c9f9f647f50594e5121c0386f905f5ad56d2bfe5579a9fa752e1",
+  "right_totals": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  },
+  "unit_verdict_moves": [
+   {
+    "left": "Unknown",
+    "left_reason": "resource projection unresolved: 683 unsupported operation(s), 78 unresolved alias(es), 0 custody summary conflict(s)",
+    "right": "Unknown",
+    "right_reason": "resource projection unresolved: 684 unsupported operation(s), 77 unresolved alias(es), 0 custody summary conflict(s)",
+    "unit": "librdkafka/cJSON.c"
+   },
+   {
+    "left": "Unknown",
+    "left_reason": "resource projection unresolved: 652 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)",
+    "right": "Unknown",
+    "right_reason": "resource projection unresolved: 653 unsupported operation(s), 28 unresolved alias(es), 0 custody summary conflict(s)",
+    "unit": "librdkafka/lz4frame.c"
+   },
+   {
+    "left": "Unknown",
+    "left_reason": "resource projection unresolved: 470 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)",
+    "right": "Unknown",
+    "right_reason": "resource projection unresolved: 483 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)",
+    "unit": "librdkafka/rdkafka_sasl_oauthbearer.c"
+   },
+   {
+    "left": "Unknown",
+    "left_reason": "resource projection unresolved: 185 unsupported operation(s), 12 unresolved alias(es), 0 custody summary conflict(s)",
+    "right": "Unknown",
+    "right_reason": "resource projection unresolved: 190 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)",
+    "unit": "librdkafka/rdkafka_transport.c"
+   },
+   {
+    "left": "Unknown",
+    "left_reason": "resource projection unresolved: 2 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)",
+    "right": "Unknown",
+    "right_reason": "resource projection unresolved: 3 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+    "unit": "librdkafka/rdports.c"
+   }
+  ]
+ },
+ "source": {
+  "identical": true,
+  "left_sha256": "ca7a21a4fd96db6098495b5147909062d6c5f7c4612eaa2f4095234273ab6211",
+  "right_sha256": "ca7a21a4fd96db6098495b5147909062d6c5f7c4612eaa2f4095234273ab6211"
+ },
+ "source-effects": {
+  "identical": true,
+  "left_sha256": "d4bf2be2b4a8c8f04a881f830a793f3540a50f56f903d446230ce56952298097",
+  "right_sha256": "d4bf2be2b4a8c8f04a881f830a793f3540a50f56f903d446230ce56952298097"
+ }
+}

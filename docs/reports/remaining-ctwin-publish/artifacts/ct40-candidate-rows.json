@@ -1,0 +1,69 @@
+{
+ "note": "Measured schema-2 candidate rows for CT40, recorded by card CTWIN-PUBLISH for the NEXT CT lane. docs/reevaluation/ct_manifest.json is UNTOUCHED by this card and CT coverage stays 32/50. Nothing here is a mapping.",
+ "measured_on": "the committed CTWIN-PUBLISH tree, through analyze_unrestricted_c11 with `subject` as the declared entry, over CT43's own generic q_* contract surface",
+ "candidate_case_source": "void *q_alloc(void);\nvoid q_free(void *p);\n\nvoid *_Atomic g_published;\n\nvoid subject(void) { void *p = q_alloc(); g_published = p; q_free(p); }\n",
+ "candidate_control_source": "void *q_alloc(void);\nvoid q_free(void *p);\n\nvoid *_Atomic g_published;\n\nvoid subject(void) { void *p = q_alloc(); q_free(p); }\n",
+ "CT40": {
+  "id": "CT40",
+  "scenario": "Atomic pointer points to prematurely freed memory",
+  "expected": "Not certified; unsupported lifetime/publication protocol",
+  "spec_section": "55",
+  "mapping_status": "unmapped (candidate rows only)",
+  "route": "legacy_c",
+  "semantic_profile": "UnrestrictedC11ResourceProjection",
+  "harness_verdict_mode": "legacy_c_twin",
+  "measured": {
+   "verdict": "unknown",
+   "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+   "function_status": {
+    "subject": "unknown"
+   },
+   "diagnostics": [
+    "subject:4:unknown_alias:p",
+    "subject:4:unsupported:publication of a tracked resource into the static-storage object `g_published` is outside the resource projection"
+   ]
+  },
+  "controls": [
+   {
+    "form": "source",
+    "removes": "exactly the publication statement `g_published = p;`",
+    "expectation": "safe",
+    "function_status": {
+     "subject": "safe"
+    },
+    "diagnostics": [],
+    "note": "Satisfies clause (b) of the wave-9 attribution rule FOR THE PUBLICATION: removing the named construct moves the verdict."
+   }
+  ],
+  "stages": {
+   "parse": {
+    "status": "executed",
+    "observations": 1,
+    "tool_gate": ["clang"]
+   },
+   "legacy_c_twin": {
+    "status": "executed",
+    "observations": 2,
+    "tool_gate": ["clang"]
+   },
+   "proof": {
+    "status": "unassessed"
+   },
+   "_every_other_stage": "not_applicable, under the wave-9 legacy_c route rule (the gateway analyzes C rather than producing any, so there is no c_emission stage and nothing to sanitize)"
+  },
+  "measurement_the_lane_must_weigh": {
+   "atomic_is_not_load_bearing": "The identical body with a plain `void *g_published;` yields a byte-identical verdict, reason and diagnostic vector. The scenario's TITLE names an atomic pointer; its `expected` text names the publication protocol, and that is the construct the attribution rests on. This card does not decide whether that satisfies the lane's rule."
+  }
+ },
+ "CT41": {
+  "id": "CT41",
+  "mapping_status": "stays unmapped",
+  "decision": "The `volatile` invariance recorded by wave 9 is ASSERTED CORRECT by CTWIN-PUBLISH §5 and pinned by `a_volatile_qualifier_moves_no_resource_projection_verdict`: C11 volatile is not a synchronization primitive (§5.1.2.4 gives happens-before to atomics, mutexes and thread creation/join only), so a projection deriving no synchronization fact must answer identically. A mapping would be vacuous under clause (b).",
+  "suggested_blocker_text": "the resource projection has no synchronization model; the volatile invariance is asserted as correct by CTWIN-PUBLISH §5 rather than open"
+ },
+ "CT42": {
+  "id": "CT42",
+  "mapping_status": "stays unmapped, unchanged",
+  "note": "CT-CTWIN-DESCRIPTOR is out of this card's scope and nothing here touches it."
+ }
+}

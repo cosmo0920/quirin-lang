@@ -410,6 +410,11 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
         }
     }
     let entries = vec![zero.entry, nonzero.entry + node_offset];
+    // Both contexts are built from the same body, so their CTWIN-PUBLISH
+    // destination sets agree; the union is taken rather than assumed so that a
+    // future context whose set differs cannot silently lose one half's
+    // refusals.
+    zero.publications.append(&mut nonzero.publications);
     zero.nodes.extend(nonzero.nodes);
     zero.entry = zero.nodes.len();
     zero.nodes.push(LegacyCfgNode {
