@@ -232,8 +232,12 @@ Three deliberate choices, each recorded rather than assumed:
   the *report's* denominator. This one is about the *certificate's* coverage, so
   it belongs where the certificate is issued. Every caller of
   `analyze_unrestricted_c11` is covered, not only the audit driver. E01-F1's
-  projection-layer rule is retained unchanged — it is now partly redundant, and
-  removing a second independent check to tidy up would be a weakening.
+  projection-layer rule is **retained unchanged**. One of its two halves is now
+  subsumed — an `unanalyzable` name is a selected definition the analyzer does
+  not read, so the gateway refuses first — while the other, a *refused*
+  completeness claim over an otherwise fully covered unit, is still the only
+  thing that catches that case. Removing the subsumed half to tidy up would
+  delete a second independent check, so it stays.
 * **Only the `Safe` arm is gated.** An `Unsafe` verdict names a validated
   reachable violation in a function that *was* analysed; an unread definition
   elsewhere does not retract it, and downgrading would discard a real finding
@@ -256,6 +260,12 @@ Three deliberate choices, each recorded rather than assumed:
 spirit of C03-NFR's and C03-REACH's reach findings: it is a fail-closed gate
 against a hole that is currently unoccupied, and its evidence is held-out
 fixtures and Lean.
+
+Reach 0 is not the same as "the hole is small". The corpus carries **89
+unprojected definitions across 25 units** (21 `Unknown`, 4 `Unsafe` on the
+current route); the gate is inert only because none of those units is otherwise
+clean. Any one of them becoming clean — which is what every W4 admission card
+is trying to do — would have published a `Safe` over unread definitions.
 
 ### 3.3 Two pinned expectations updated
 
@@ -475,16 +485,18 @@ not about this repository.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | <!-- WS --> |
+| `cargo test --workspace` | **2,548 passed, 0 failed** (§7.3) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | **one pre-existing failure, not this card's** (§7.1); clean everywhere else, and clean for `--workspace --lib --bins` |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | <!-- P1 --> |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | <!-- P2 --> |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 -B scripts/check_lean_audits.py` | **66 audits passed** (64 → 66) |
-| `cargo test --manifest-path providers/Cargo.toml` | <!-- PROV --> |
+| `cargo test --manifest-path providers/Cargo.toml` | passed, 0 failed |
 | `python3 -B -m unittest discover -s scripts/tests` | **134 passed, 1 failed by design** (§7.2) |
-| pinned 185-unit audit | <!-- CORPUS --> |
+| pinned 185-unit audit, current route | exit 0, 0 gateway failures; 185 files / 186 configurations, 2 Safe / 43 provisional Unsafe (42 distinct files) / 137 Unknown / 4 data-only — CORPUS-REPIN's recorded current-route figures |
+| pinned 185-unit audit, `--pinned-evidence` route | <!-- CORPUS --> |
 | `chunkio-core` configured audit | exit 0; 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown — its recorded result, unchanged |
+| `libevent-core` configured audit | exit 0; 21 units, 0 Safe / 4 provisional Unsafe / 17 Unknown — G03-F's recorded result, unchanged (§7.4) |
 
 New tests: 9 integration (`e01_stdin_attribution.rs` 5,
 `e01_denominator_coverage.rs` 4) plus 3 reader-level unit tests.
@@ -511,8 +523,27 @@ out of scope for this card; **the integrator must regenerate it.**
 
 `qcore-verifier-host`'s `a_declared_process_limit_stops_the_fixture_from_forking`
 (the recorded P02 `RLIMIT_NPROC` flake, `docs/reports/remaining-p03/README.md`
-§9.1) failed in the loaded aggregate run and <!-- FLAKE -->. Its assertion is
-untouched.
+§9.1, which counts every process of the real UID) failed once while three
+corpus audits were running concurrently on this host, and **passed on the
+immediately following run**, which is the 2,548-passed figure above. Its
+assertion is untouched.
+
+### 7.4 Two second-source-set audits as independent controls
+
+Both configured routes were run at this branch and reproduce their recorded
+results exactly, so this card's two repairs are visible to be inert there:
+
+* **`chunkio-core`** — 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown;
+  0 enumeration refusals, 0 unanalyzable, 0 `Safe` units with unprojected
+  definitions.
+* **`libevent-core`** — 21 units, 0 Safe / 4 provisional Unsafe / 17 Unknown;
+  727 enumerated definitions, 62 `absent_from_raw_scan`, 0 unanalyzable, 0
+  `Safe` units with unprojected definitions, and **2 enumeration refusals**
+  (`buffer.c`, `bufferevent_sock.c`) — both on
+  `conditional-arm-depth-disagreement`, which is **E01-RAW-COND's** ground and
+  predates this card. The new `unbalanced-include-markers` ground has reach 0
+  here as well, and every reason on the route still classifies (no
+  `reason_code: null` row).
 
 ---
 
@@ -546,6 +577,18 @@ not interact.
   the strictness ever costs a real unit.
 * **E01-TAIL-COST-DOUBLE-PP**, **E01-TAIL-COST-DISCOVERY** — the two measured
   redundancies, each larger than the enumeration's cost (§5.4).
+* **E01-TAIL-REASON-ROWS** — the two free-text reasons this card introduces do
+  not classify through `qcore_schemas::reason::REASON_RULES`, so a row carrying
+  one would publish `reason_code: null`. That is the documented fail-closed
+  default ("null asserts no category"), not a defect, and it is verified to
+  affect **no** published row today because both grounds have measured corpus
+  reach 0 (§4). `qcore-schemas` is outside this card's scope, so the rows are
+  deliberately not added; the markers a future card should use are
+  `"include stack does not balance"` → `EnvironmentUnavailable` (matched in the
+  environment section, ahead of every source-subject rule, as its siblings are)
+  and `"carry no analysed row"` → a coverage category. Measured against the
+  current 100 rules, neither string matches any existing marker, so adding them
+  shadows nothing.
 * **E01-B2**, **E01-B3**, **E01-B4** — unchanged.
 * Clang's marker-flag semantics and the analyzer's body finder remain tool and
   Rust boundaries, pinned behaviourally, not proved (§1.4, §6).
