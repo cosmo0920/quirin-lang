@@ -314,7 +314,10 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
         let body = if actual == "storage->self->flag" {
             // The launder: `&storage` seeds the base risky, so the very chain
             // that is admitted everywhere else in this table is refused here.
-            probe_body(actual).replace("void *handle;", "void *handle; struct y_mid **alias = &storage;")
+            probe_body(actual).replace(
+                "void *handle;",
+                "void *handle; struct y_mid **alias = &storage;",
+            )
         } else {
             probe_body(actual)
         };
@@ -356,6 +359,38 @@ fn a_released_base_is_never_read_through_in_a_tail() {
     assert!(
         !matches!(analyze(body, "y_probe"), UnrestrictedLegacyResult::Safe(_)),
         "a released base must never reach Safe"
+    );
+}
+
+/// **A body-acquired aggregate base is refused in a tail, and deliberately so.**
+/// Card O04-READ-BOUND admits a member read through a base *this body bound*, at
+/// a declared position, with the linked children's liveness required
+/// flow-sensitively. That route reads `contract.parameters.get(position)` and so
+/// covers **declared** positions only: a tail index yields `None` and is skipped.
+/// This card did not extend it, so the shape where a field could hold a tracked
+/// identity this body stored there simply does not arise on the tail route — it
+/// is refused by premise (4), because a call-bound base is risky.
+#[test]
+fn a_body_acquired_aggregate_base_is_refused_in_a_tail() {
+    if !clang_available() {
+        return;
+    }
+    let body = "void y_probe(void) { \
+         struct y_mid *m; \
+         m = y_open(8); \
+         if (!m) { return; } \
+         y_log(\"held %d\", m->flag); \
+         y_close(m); \
+     }";
+    let summary = summary(body, "y_probe");
+    assert!(
+        !unsupported(&summary).is_empty(),
+        "a body-acquired aggregate base must refuse in a tail: {:?}",
+        summary.diagnostics
+    );
+    assert!(
+        !matches!(analyze(body, "y_probe"), UnrestrictedLegacyResult::Safe(_)),
+        "a body-acquired aggregate base must never reach Safe on this route"
     );
 }
 

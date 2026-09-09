@@ -1,0 +1,22 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4403 -> 4403 (+0)
+  unsupported: 49896 -> 49895 (-1)
+units with diagnostic-count changes: 1
+  fluent-bit-chunk/flb_input_chunk.c: {'unsupported': -1}
+description inventory deltas:
+  unsupported / 'indirect memory access is outside the resource projection': 18866 -> 18865 (-1)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_create L19581 unsupported: indirect memory access is outside the resource projection
+leaves added: 0; leaves removed: 1

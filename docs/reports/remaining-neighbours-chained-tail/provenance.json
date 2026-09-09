@@ -1,0 +1,44 @@
+{
+  "card": "NEIGHBOURS-CHAINED-TAIL",
+  "date": "2026-09-10",
+  "base_commit": "8069a99",
+  "branch": "worktree-agent-a1233907e18fdc1ad",
+  "commands": {
+    "prepare": "python3 -B scripts/prepare_cycle19_clang_audit.py --fluent-bit /home/cosmo/Documents/GitHub/fluent-bit --revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 --clang clang --clangxx clang++",
+    "provider_packages": "python3 -B providers/package.py build --output build/cycle19/provider-packages-chained-tail",
+    "pinned_route": "QCORE_CLANG=/usr/bin/clang QCORE_CHUNKIO_PACKAGE=<worktree>/build/cycle19/provider-packages-chained-tail/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --pinned-evidence <pin>/fluent-bit-clang-source <pin>/monkey/monkey-build/compile_commands.json <out>/monkey-source.json <out>/resource-diagnostics.json",
+    "census": "python3 -B docs/reports/remaining-neighbours-chained-tail/census.py --before measure/before --after measure/after",
+    "archive": "python3 -B docs/reports/remaining-neighbours-chained-tail/archive.py --measured measure/after --output docs/reports/remaining-neighbours-chained-tail/artifacts"
+  },
+  "route": "canonical pinned compatibility route, both runs, same prepared clone, same provider packages, same compile databases",
+  "before_state": "the BEFORE run was executed with the worktree checked out at base main 8069a99 (git checkout 8069a99), so not one byte of this card's diff was present; the branch was restored before the AFTER run",
+  "host": {
+    "platform": "Linux 7.0.0-30-generic x86_64",
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "clang_path": "/usr/bin/clang",
+    "cmake": "cmake version 4.2.3",
+    "python": "Python 3.14.4",
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)"
+  },
+  "inputs": {
+    "fluent_bit_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "fluent_bit_upstream": "/home/cosmo/Documents/GitHub/fluent-bit (read-only; its own HEAD was never moved)",
+    "independent_clone": "<worktree>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/fluent-bit-clang-source",
+    "cmake_build": "<worktree>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/fluent-bit-clang-production",
+    "compile_database_sha256": "d59c35359dc3f5ba3fdb4f27b2c3bd7c3788667fbe1df05114436e66199da34f",
+    "monkey_database_sha256": "cf8c4e711568ed30b03de0dd96ef6ede8366ca341890865408d9cc12f3cff442",
+    "libevent_submodule": "d82464a277d0f42703702c4dfd9af6af38595a83 (initialised for this measurement; the pin gate refuses without it)"
+  },
+  "deviations": [
+    "The prepared CMake build lives outside the clone, so its compile_commands.json was copied verbatim to <clone>/build/compile_commands.json, which is where the pinned compatibility route reads it. No command was rewritten and both routes received byte-identical database content. This is card CORPUS-REPIN's recorded deviation 2, reproduced.",
+    "The clone and the prepared Monkey source copy live under this worktree, so every artifact that records an absolute input path (monkey-source.json, resource-diagnostics.contracts.json) differs from the wave-15 archive by that prefix alone, and __FILE__ expansions differ by string length for the same reason. This is card CORPUS-REPIN's recorded deviation 3. It is location provenance, not analysis.",
+    "Provider packages were rebuilt for this run, so resource-diagnostics.source-effects.json carries this run's own package_digest/build_digest/configuration_digest. This is the package-identity residue wave 9 and wave 13 already recorded."
+  ],
+  "artifacts": {
+    "before": "docs/reports/remaining-neighbours-chained-tail/artifacts-before/ (manifest.json carries each SHA-256)",
+    "after": "docs/reports/remaining-neighbours-chained-tail/artifacts/ (manifest.json carries each SHA-256)",
+    "census": "docs/reports/remaining-neighbours-chained-tail/logs/census.txt",
+    "logs": "docs/reports/remaining-neighbours-chained-tail/logs/audit-before.log.gz, audit-after.log.gz"
+  },
+  "re_pin": "NONE. The global 185-unit baseline stays at docs/reports/wave15-corpus/artifacts/; the integrator consolidates."
+}

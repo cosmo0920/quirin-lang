@@ -605,8 +605,14 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // **The added load-bearing half.** The same actual, made non-conforming by a
     // subscript the chain rule refuses, restores the exact measurement this test
     // used to pin. The admission is narrow and it is what decides the residual.
-    let subscripted = source.replace("storage->stream->name, name);", "storage->stream->name[0], name);");
-    assert_ne!(subscripted, source, "the subscript substitution did not apply");
+    let subscripted = source.replace(
+        "storage->stream->name, name);",
+        "storage->stream->name[0], name);",
+    );
+    assert_ne!(
+        subscripted, source,
+        "the subscript substitution did not apply"
+    );
     let refused = function(
         program(&analyze_real(&subscripted, &real_contracts())),
         "flb_input_chunk_create",

@@ -302,15 +302,17 @@ theorem an_admitted_chain_names_no_bound_base (s : Site) (ok : admits s = true)
   have data := every_admitted_actual_is_data s ok a present
   rw [argumentIsData, isChain, notData] at data
   simp only [Bool.false_or] at data
-  constructor
-  · by_contra h
-    simp only [Bool.not_eq_false] at h
-    rw [a_bound_root_never_admits_a_chain c h] at data
-    exact Bool.noConfusion data
-  · by_contra h
-    simp only [Bool.not_eq_false] at h
-    rw [a_continued_access_never_admits c h] at data
-    exact Bool.noConfusion data
+  refine ⟨?_, ?_⟩
+  · cases bound : c.baseBound with
+    | false => rfl
+    | true =>
+      rw [a_bound_root_never_admits_a_chain c bound] at data
+      exact Bool.noConfusion data
+  · cases continues : c.continuesAfterLast with
+    | false => rfl
+    | true =>
+      rw [a_continued_access_never_admits c continues] at data
+      exact Bool.noConfusion data
 
 /-! ## Extension, not replacement: the chain half is the borrowed half -/
 
