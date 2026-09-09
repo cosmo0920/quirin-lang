@@ -1,0 +1,19 @@
+== literal 0 (exact): 5
+   flb_input_chunk.c:2606  0
+   flb_input_chunk.c:2610  0
+   flb_input_chunk.c:2614  0
+   flb_input_chunk.c:2617  0
+   flb_oauth2_jwt.c:908  0
+== non-literal expression: 11
+   flb_callback.c:67  sizeof(struct flb_callback_entry *)
+   flb_env.c:186  vlen
+   flb_env.c:283  vlen
+   flb_hash_table.c:401  ssize_t val_size
+   flb_http_common.c:308  value_length
+   flb_http_common.c:1171  value_length
+   flb_input_chunk.c:215  sizeof(value)
+   flb_upstream_ha.c:312  vlen
+   http_server/flb_http_server_http1.c:462  (ssize_t) value_length
+   http_server/flb_http_server_http2.c:140  (ssize_t) value_length
+   http_server/flb_http_server_http2.c:559  value_length
+TOTAL 16

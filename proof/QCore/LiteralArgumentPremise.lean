@@ -576,4 +576,393 @@ theorem a_positive_size_takes_the_copy_arm : arm 8 = Arm.copy := by decide
 
 theorem the_two_arms_are_distinct : Arm.reference ≠ Arm.copy := by decide
 
+/-! ## 4. Which call-site spellings are the declared constant
+
+Card **HASH-REFINE**. §1 compares an actual against the declared literal as token
+vectors, exactly. That is sound but *narrow*: a call site writing `0L` or `(0)`
+passes the very constant the premise names, and refusing it withdraws a
+declaration the premise says applies — a silent narrowing whose real cause is a
+spelling, reported as if it were a value.
+
+§C04.5.1 fixes which spellings are that constant. The relation modelled here
+erases exactly two things and nothing else:
+
+* **matched enclosing parentheses**, which are grammar, and
+* **an integer suffix**, which fixes the constant's *type* and not its value.
+
+Everything else keeps its refusal, because deciding it would need a capability
+the premise deliberately lacks — arithmetic (`0 + 0`, `-0`), a base (`0x0`, and
+the leading zero of `00`, since `010` is 8), reaching into a cast, or symbol
+resolution.
+
+Four sentences are proved.
+
+**It is decided, not evaluated.** An admitted spelling's digit run and sign are
+returned verbatim from one integer token of the actual's own stream: nothing is
+normalised, carried, negated or re-based, and no value is computed in order to
+compare one.
+
+**It is exact.** Every admitted spelling *denotes* the declared constant. The
+`denote` function below exists only to state this; the implementation never
+computes it.
+
+**It is a strict widening.** Every actual that satisfied the exact test still
+satisfies this one, so no call site the premise used to admit can have been
+withdrawn — which is what makes the corpus re-measurement's byte-identity a
+check on this change rather than a coincidence.
+
+**It never crosses a value.** An admitted spelling of one constant satisfies no
+declaration of another, and a sign is never erased. -/
+
+/-- A decimal digit run. -/
+abbrev Digits := List Nat
+
+/-- Whether a digit run is one this relation decides: nonempty, and without a
+leading zero, which in C is an octal prefix rather than a decimal digit. -/
+def digitsDecided : Digits → Bool
+  | [] => false
+  | [_] => true
+  | 0 :: _ :: _ => false
+  | _ :: _ :: _ => true
+
+/-- What follows an integer token's digit run. The gateway's C tokenizer takes a
+digit and every alphanumeric byte after it as one token, so the letters arrive
+attached and are classified here rather than assumed away. -/
+inductive Suffix where
+  /-- Nothing follows the digits: the canonical declared spelling. -/
+  | bare
+  /-- An admitted C11 6.4.4.1 integer suffix — `L`, `u`, `ULL`. It fixes the
+  constant's type and leaves its value alone. -/
+  | admitted (code : Nat)
+  /-- Letters that are not an admitted suffix: the `x0` of `0x0`, the `b1` of
+  `0b1`, the `i32` of `0i32`. Reading them needs a base or a foreign vocabulary. -/
+  | foreign (code : Nat)
+  deriving DecidableEq, Repr
+
+def suffixAdmitted : Suffix → Bool
+  | Suffix.bare => true
+  | Suffix.admitted _ => true
+  | Suffix.foreign _ => false
+
+/-- One C token, at the granularity this relation reads them. -/
+inductive Tok where
+  | lparen
+  | rparen
+  | minus
+  /-- An integer-constant token: its leading decimal digit run and what follows. -/
+  | integer (digits : Digits) (suffix : Suffix)
+  /-- Any other token: an operator, an identifier, a keyword, a punctuator. -/
+  | other (code : Nat)
+  deriving DecidableEq, Repr
+
+/-- The canonical declared spelling of a constant: an optional minus and one
+unsuffixed integer token. This is exactly what the loader admits as `LITERAL`. -/
+def declaredTokens (negative : Bool) (d : Digits) : List Tok :=
+  if negative then [Tok.minus, Tok.integer d Suffix.bare] else [Tok.integer d Suffix.bare]
+
+/-- The tokens left when the enclosing parentheses are erased, or `none` when the
+leading `(` run and the trailing `)` run do not balance.
+
+Both runs are read off the ends, so a parenthesis that belongs to something else
+— the cast in `(long) 0`, the second operand of `(0) + (0)` — is never erased:
+either the runs disagree in length, or what is left still carries the stray
+parenthesis and no literal is read out of it. Both are exhibited below. -/
+def coreOpens (t : List Tok) : Nat :=
+  (t.takeWhile (fun token => token == Tok.lparen)).length
+
+def coreRest (t : List Tok) : List Tok := t.drop (coreOpens t)
+
+def coreCloses (t : List Tok) : Nat :=
+  ((coreRest t).reverse.takeWhile (fun token => token == Tok.rparen)).length
+
+def core (t : List Tok) : Option (List Tok) :=
+  if coreCloses t == coreOpens t then
+    some ((coreRest t).take ((coreRest t).length - coreCloses t))
+  else
+    none
+
+/-- Read one integer constant out of an already-unwrapped token vector. The
+result is the token's *own* digit run: this function selects, it does not
+compute. -/
+def readLiteral : List Tok → Option (Bool × Digits)
+  | [Tok.integer d s] => if digitsDecided d && suffixAdmitted s then some (false, d) else none
+  | [Tok.minus, Tok.integer d s] =>
+      -- `-0` is not a second spelling of `0`: equating them is evaluating the
+      -- sign, and the loader refuses to declare it either.
+      if digitsDecided d && suffixAdmitted s && !(d == [0]) then some (true, d) else none
+  | _ => none
+
+/-- The declared constant an actual spells, if this relation decides it. -/
+def canonical (t : List Tok) : Option (Bool × Digits) := (core t).bind readLiteral
+
+/-- The value of a decimal digit run. Nothing in the implementation computes
+this; it is here so that "the admitted spellings are the same constant" can be
+*stated*. -/
+def value (d : Digits) : Nat := d.foldl (fun acc digit => acc * 10 + digit) 0
+
+/-- The integer a spelling denotes, where this relation decides it at all. -/
+def denote (t : List Tok) : Option Int :=
+  (canonical t).map fun (negative, d) =>
+    if negative then -(value d : Int) else (value d : Int)
+
+/-- The premise test, refined: an actual satisfies a declared literal either by
+being it token for token, or by spelling it. -/
+def satisfiesSpelling (actual : List Tok) (negative : Bool) (d : Digits) : Bool :=
+  (actual == declaredTokens negative d) || (canonical actual == some (negative, d))
+
+/-! ### Decided, not evaluated: the digits and the sign are read, not computed -/
+
+/-- Every integer token's digit run in a token vector, in order. -/
+def digitRuns : List Tok → List Digits
+  | [] => []
+  | Tok.integer d _ :: rest => d :: digitRuns rest
+  | _ :: rest => digitRuns rest
+
+/-- **The literal reader selects; it does not compute.** Whatever it returns, the
+unwrapped vector it read *is* one integer token carrying exactly those digits,
+optionally preceded by the minus whose presence is exactly the sign returned. -/
+theorem the_read_literal_is_the_token_itself {t : List Tok} {negative : Bool} {d : Digits}
+    (h : readLiteral t = some (negative, d)) :
+    (negative = false ∧ ∃ s, t = [Tok.integer d s])
+      ∨ (negative = true ∧ ∃ s, t = [Tok.minus, Tok.integer d s]) := by
+  unfold readLiteral at h
+  split at h
+  · rename_i e s
+    split at h
+    · simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inl ⟨h.1.symm, s, by rw [h.2]⟩
+    · exact absurd h (by simp)
+  · rename_i e s
+    split at h
+    · simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inr ⟨h.1.symm, s, by rw [h.2]⟩
+    · exact absurd h (by simp)
+  · exact absurd h (by simp)
+
+/-- The same fact as a digit-run identity: the unwrapped vector carries exactly
+one digit run, and it is the one returned. -/
+theorem an_admitted_spelling_returns_its_own_digits {t c : List Tok} {negative : Bool}
+    {d : Digits} (hc : core t = some c) (h : canonical t = some (negative, d)) :
+    digitRuns c = [d] := by
+  have hr : readLiteral c = some (negative, d) := by
+    unfold canonical at h; rw [hc] at h; simpa using h
+  rcases the_read_literal_is_the_token_itself hr with ⟨_, s, hs⟩ | ⟨_, s, hs⟩ <;>
+    simp [hs, digitRuns]
+
+/-- The vector the literal is read out of is a contiguous slice of the actual's
+own token stream — a `drop` followed by a `take`, by definition — so nothing is
+read from anywhere else. -/
+theorem the_core_is_a_contiguous_slice {t c : List Tok} (h : core t = some c) :
+    c = (t.drop (coreOpens t)).take ((coreRest t).length - coreCloses t) := by
+  unfold core at h
+  split at h
+  · simpa [coreRest] using h.symm
+  · exact absurd h (by simp)
+
+/-! ### Exact: every admitted spelling denotes the declared constant -/
+
+/-- The declared spelling of a decided constant canonicalises to itself, so the
+declared form is a fixed point of the relation. -/
+theorem a_declared_literal_is_its_own_canonical_form
+    {negative : Bool} {d : Digits} (hd : digitsDecided d = true)
+    (hz : negative = true → (!(d == [0])) = true) :
+    canonical (declaredTokens negative d) = some (negative, d) := by
+  cases negative with
+  | false =>
+      simp [declaredTokens, canonical, core, coreOpens, coreRest, coreCloses, readLiteral,
+        suffixAdmitted, hd]
+  | true =>
+      simp [declaredTokens, canonical, core, coreOpens, coreRest, coreCloses, readLiteral,
+        suffixAdmitted, hd, hz rfl]
+
+/-- **The soundness sentence.** Whatever spelling was admitted, it denotes
+exactly the constant the declaration names. -/
+theorem an_admitted_spelling_denotes_the_declared_constant
+    {t : List Tok} {negative : Bool} {d : Digits}
+    (h : canonical t = some (negative, d)) (hd : digitsDecided d = true)
+    (hz : negative = true → (!(d == [0])) = true) :
+    denote t = denote (declaredTokens negative d) := by
+  unfold denote
+  rw [h, a_declared_literal_is_its_own_canonical_form hd hz]
+
+/-- And `denote` is not constant: it separates the constants the premise names. -/
+theorem denote_separates_two_constants :
+    denote (declaredTokens false [0]) ≠ denote (declaredTokens false [8]) := by decide
+
+/-! ### A strict widening: nothing that matched before can have been withdrawn -/
+
+theorem exact_token_equality_still_satisfies (negative : Bool) (d : Digits) :
+    satisfiesSpelling (declaredTokens negative d) negative d = true := by
+  simp [satisfiesSpelling]
+
+theorem the_refinement_only_admits {actual : List Tok} {negative : Bool} {d : Digits}
+    (h : actual = declaredTokens negative d) :
+    satisfiesSpelling actual negative d = true := by
+  rw [h]; exact exact_token_equality_still_satisfies negative d
+
+/-- Every actual the refined test admits either *is* the declared vector or
+denotes the declared constant. There is no third way in. -/
+theorem admission_is_identity_or_denotation {actual : List Tok} {negative : Bool} {d : Digits}
+    (h : satisfiesSpelling actual negative d = true) :
+    actual = declaredTokens negative d ∨ canonical actual = some (negative, d) := by
+  unfold satisfiesSpelling at h
+  simp only [Bool.or_eq_true, beq_iff_eq] at h
+  exact h
+
+/-! ### The admitted spellings, decided -/
+
+/-- The suffix code standing for `L`. -/
+def suffixL : Suffix := Suffix.admitted 0
+
+/-- `0`, the declared spelling. -/
+def spellZero : List Tok := [Tok.integer [0] Suffix.bare]
+/-- `(0)`. -/
+def spellParenZero : List Tok := [Tok.lparen, Tok.integer [0] Suffix.bare, Tok.rparen]
+/-- `((0))`. -/
+def spellDoubleParenZero : List Tok :=
+  [Tok.lparen, Tok.lparen, Tok.integer [0] Suffix.bare, Tok.rparen, Tok.rparen]
+/-- `0L`: the same digit run with an admitted suffix. -/
+def spellSuffixedZero : List Tok := [Tok.integer [0] suffixL]
+/-- `(0L)`. -/
+def spellParenSuffixedZero : List Tok := [Tok.lparen, Tok.integer [0] suffixL, Tok.rparen]
+
+theorem the_declared_spelling_is_admitted :
+    satisfiesSpelling spellZero false [0] = true := by decide
+
+theorem a_parenthesised_spelling_is_admitted :
+    satisfiesSpelling spellParenZero false [0] = true := by decide
+
+theorem a_doubly_parenthesised_spelling_is_admitted :
+    satisfiesSpelling spellDoubleParenZero false [0] = true := by decide
+
+theorem a_suffixed_spelling_is_admitted :
+    satisfiesSpelling spellSuffixedZero false [0] = true := by decide
+
+theorem a_parenthesised_suffixed_spelling_is_admitted :
+    satisfiesSpelling spellParenSuffixedZero false [0] = true := by decide
+
+/-- **Non-vacuity of the widening.** Both admitted spellings differ from the
+declared vector, so the refinement decides strictly more than the exact test
+did — and each is admitted by the canonical clause, not by identity. -/
+theorem the_widening_admits_more_than_exact_equality :
+    spellParenZero ≠ declaredTokens false [0]
+      ∧ spellSuffixedZero ≠ declaredTokens false [0]
+      ∧ canonical spellParenZero = some (false, [0])
+      ∧ canonical spellSuffixedZero = some (false, [0]) := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-! ### The refused spellings, and the capability each would need -/
+
+/-- `0 + 0` — arithmetic. -/
+def spellSum : List Tok :=
+  [Tok.integer [0] Suffix.bare, Tok.other 0, Tok.integer [0] Suffix.bare]
+/-- `-0` — arithmetic: unary minus. -/
+def spellNegativeZero : List Tok := [Tok.minus, Tok.integer [0] Suffix.bare]
+/-- `0x0` — a base; the trailing letters are not an admitted suffix. -/
+def spellHexZero : List Tok := [Tok.integer [0] (Suffix.foreign 0)]
+/-- `00` — a base: a leading zero is octal, and `010` is 8. -/
+def spellOctalZero : List Tok := [Tok.integer [0, 0] Suffix.bare]
+/-- `(long) 0` — a cast, whose operand this relation does not reach into. -/
+def spellCastZero : List Tok :=
+  [Tok.lparen, Tok.other 1, Tok.rparen, Tok.integer [0] Suffix.bare]
+/-- `ZERO` left as an identifier — symbol resolution. -/
+def spellIdentifier : List Tok := [Tok.other 2]
+/-- `(0) + (0)` — arithmetic, and the enclosing parentheses do not match. -/
+def spellParenSum : List Tok :=
+  [Tok.lparen, Tok.integer [0] Suffix.bare, Tok.rparen, Tok.other 0,
+   Tok.lparen, Tok.integer [0] Suffix.bare, Tok.rparen]
+
+theorem arithmetic_is_refused : satisfiesSpelling spellSum false [0] = false := by decide
+
+theorem a_negated_zero_is_refused :
+    satisfiesSpelling spellNegativeZero false [0] = false := by decide
+
+theorem an_alternate_base_is_refused :
+    satisfiesSpelling spellHexZero false [0] = false := by decide
+
+theorem an_octal_spelling_is_refused :
+    satisfiesSpelling spellOctalZero false [0] = false := by decide
+
+theorem a_cast_is_refused : satisfiesSpelling spellCastZero false [0] = false := by decide
+
+theorem an_identifier_is_refused :
+    satisfiesSpelling spellIdentifier false [0] = false := by decide
+
+theorem an_unmatched_parenthesis_pair_is_refused :
+    satisfiesSpelling spellParenSum false [0] = false := by decide
+
+/-- **The leading zero must not be stripped**, and is not: `010` denotes 8, so
+admitting it against a declared `10` would be a wrong answer rather than a
+missing one. It is refused against every declaration. -/
+theorem an_octal_run_matches_no_decimal_declaration {negative : Bool} {d : Digits}
+    (hd : digitsDecided d = true) :
+    satisfiesSpelling [Tok.integer [0, 1, 0] Suffix.bare] negative d = false := by
+  have hne : d ≠ [0, 1, 0] := by rintro rfl; simp [digitsDecided] at hd
+  cases negative <;>
+    simp [satisfiesSpelling, declaredTokens, canonical, core, coreOpens, coreRest, coreCloses,
+      readLiteral, digitsDecided, Ne.symm hne]
+
+/-! ### The widening never crosses a value -/
+
+theorem an_admitted_zero_never_satisfies_another_constant :
+    satisfiesSpelling spellParenZero false [8] = false
+      ∧ satisfiesSpelling spellSuffixedZero false [8] = false := by
+  refine ⟨by decide, by decide⟩
+
+/-- `(-1)` spells `-1` and does not spell `1`: a sign is erased by nothing. -/
+theorem a_sign_is_never_erased :
+    satisfiesSpelling [Tok.lparen, Tok.minus, Tok.integer [1] Suffix.bare, Tok.rparen] true [1]
+        = true
+      ∧ satisfiesSpelling [Tok.lparen, Tok.minus, Tok.integer [1] Suffix.bare, Tok.rparen] false
+          [1] = false := by
+  refine ⟨by decide, by decide⟩
+
+/-! ## 5. The premise on any parameter (card HASH-REFINE, HASH-CLAUSE-TYPE)
+
+The clause is admitted on a parameter of any declared type. The mechanism of §1
+reads the parameter *index* and nothing about its type, so the statement to prove
+is that admitting the clause there cannot make a consumer more permissive: a
+premise whose literal no call site can supply withdraws every call, and the
+declaration applied is still the declared one, unchanged. -/
+
+/-- A declaration whose premise names parameter 1 — a pointer parameter in the
+gateway's fixture — and the literal `0`, C's null pointer constant. -/
+def pointerPremise : Premise := ⟨1, [0]⟩
+
+def pointerDeclared : Environment where
+  contracts := fun n => if n = 0 then some ⟨[Mode.borrowed, Mode.borrowed]⟩ else none
+  premises := fun n => if n = 0 then [pointerPremise] else []
+  poisoned := false
+
+/-- The null-sentinel call: the second actual is the literal `0`. -/
+def atNullSentinel : Call := ⟨0, [[1], [0]]⟩
+/-- A call passing a real pointer there. -/
+def atLivePointer : Call := ⟨0, [[1], [2]]⟩
+
+theorem the_null_sentinel_call_is_applied :
+    applied pointerDeclared atNullSentinel = some ⟨[Mode.borrowed, Mode.borrowed]⟩ := by decide
+
+theorem the_live_pointer_call_is_withdrawn :
+    applied pointerDeclared atLivePointer = none := by decide
+
+/-- **A premise no call site can satisfy is vacuous in the refusing direction.**
+This is the second half of the type decision: admitting the clause on a pointer
+parameter cannot admit anything, because the only thing a premise does is
+withdraw. -/
+theorem an_unsatisfiable_pointer_premise_withdraws_every_call
+    (arguments : List Tokens) (h : ∀ a ∈ arguments, a ≠ [7]) :
+    applied { pointerDeclared with premises := fun n => if n = 0 then [⟨1, [7]⟩] else [] }
+        ⟨0, arguments⟩ = none := by
+  refine an_unmet_premise_applies_nothing ?_
+  unfold unmet
+  simp only [Bool.or_eq_true]
+  refine Or.inr (List.any_eq_true.mpr ⟨⟨1, [7]⟩, by simp, ?_⟩)
+  simp only [Bool.not_eq_true']
+  unfold satisfies
+  cases hg : arguments[1]? with
+  | none => simp
+  | some a =>
+      have : a ≠ [7] := h a (List.mem_of_getElem? hg)
+      simp [this]
+
 end QCore.LiteralArgumentPremise

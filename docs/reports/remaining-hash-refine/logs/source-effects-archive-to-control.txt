@@ -1,0 +1,121 @@
+leaves archived=998 measured=998
+added=15 removed=15 changed=26
+  +  results/[16]/bounds/resource_contracts:a4633d33a8f1322a4c8586f9/max_operations = None
+  +  results/[16]/bounds/resource_contracts:a4633d33a8f1322a4c8586f9/observed_runs_only = False
+  +  results/[16]/bounds/resource_contracts:a4633d33a8f1322a4c8586f9/path_exploration/kind = 'bounded_paths'
+  +  results/[16]/bounds/resource_contracts:a4633d33a8f1322a4c8586f9/path_exploration/paths = 4
+  +  results/[16]/bounds/resource_contracts:a4633d33a8f1322a4c8586f9/schedules_explored = None
+  +  results/[24]/bounds/resource_contracts:855061222e9b57ed75d5a0da/max_operations = None
+  +  results/[24]/bounds/resource_contracts:855061222e9b57ed75d5a0da/observed_runs_only = False
+  +  results/[24]/bounds/resource_contracts:855061222e9b57ed75d5a0da/path_exploration/kind = 'bounded_paths'
+  +  results/[24]/bounds/resource_contracts:855061222e9b57ed75d5a0da/path_exploration/paths = 4
+  +  results/[24]/bounds/resource_contracts:855061222e9b57ed75d5a0da/schedules_explored = None
+  +  results/[63]/bounds/resource_contracts:981b3e535681a2ce9a023482/max_operations = None
+  +  results/[63]/bounds/resource_contracts:981b3e535681a2ce9a023482/observed_runs_only = False
+  +  results/[63]/bounds/resource_contracts:981b3e535681a2ce9a023482/path_exploration/kind = 'bounded_paths'
+  +  results/[63]/bounds/resource_contracts:981b3e535681a2ce9a023482/path_exploration/paths = 4
+  +  results/[63]/bounds/resource_contracts:981b3e535681a2ce9a023482/schedules_explored = None
+  -  results/[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710/max_operations = None
+  -  results/[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710/observed_runs_only = False
+  -  results/[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710/path_exploration/kind = 'bounded_paths'
+  -  results/[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710/path_exploration/paths = 4
+  -  results/[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710/schedules_explored = None
+  -  results/[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93/max_operations = None
+  -  results/[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93/observed_runs_only = False
+  -  results/[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93/path_exploration/kind = 'bounded_paths'
+  -  results/[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93/path_exploration/paths = 4
+  -  results/[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93/schedules_explored = None
+  -  results/[63]/bounds/resource_contracts:737ab83369828820cd4736f7/max_operations = None
+  -  results/[63]/bounds/resource_contracts:737ab83369828820cd4736f7/observed_runs_only = False
+  -  results/[63]/bounds/resource_contracts:737ab83369828820cd4736f7/path_exploration/kind = 'bounded_paths'
+  -  results/[63]/bounds/resource_contracts:737ab83369828820cd4736f7/path_exploration/paths = 4
+  -  results/[63]/bounds/resource_contracts:737ab83369828820cd4736f7/schedules_explored = None
+
+changed leaves by final key name:
+  [0]: 3
+  build_digest: 6
+  configuration_digest: 5
+  obligation_id: 3
+  package_digest: 3
+  qcore:boolean-field-import:v1: 3
+  task_digest: 3
+
+first 40 changed leaves:
+   results/[16]/evidence/coverage/[0]
+      archived 'resource_contracts:3f2a27484cd167dc53cea710'
+      measured 'resource_contracts:a4633d33a8f1322a4c8586f9'
+   results/[16]/evidence/reproducibility/package_digest
+      archived '6902ec4c651d1598fc0518c1d383246a3d34dfe187e418f605a1ea907e58a1a1'
+      measured '99e9d55abdb82835f8f38a871cf15732c03532703b5871568dbb25f7490415bd'
+   results/[16]/evidence/unit/build_digest
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[16]/import_identity/configuration_digest
+      archived '69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21'
+      measured '0b444e7e1048744b014aa2c8b9a59ec92eaff82de5450bb1bf3787f7f04d6264'
+   results/[16]/import_identity/helpers/cio_error_reset/configuration_digest
+      archived '69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21'
+      measured '0b444e7e1048744b014aa2c8b9a59ec92eaff82de5450bb1bf3787f7f04d6264'
+   results/[16]/task/contract_sources/qcore:boolean-field-import:v1
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[16]/task/obligations/[0]/obligation_id
+      archived 'resource_contracts:3f2a27484cd167dc53cea710'
+      measured 'resource_contracts:a4633d33a8f1322a4c8586f9'
+   results/[16]/task/unit/build_digest
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[16]/witness/task_digest
+      archived '49591e7f57bfc7e9d032d3565b16f098c076c417e4c9fff740c19337e638a1a3'
+      measured '6cabf5725c56bd8dfbecfab9d23e37270f1c04bedf995d425150d4465054be30'
+   results/[24]/evidence/coverage/[0]
+      archived 'resource_contracts:72d7882bd1b078d698f0fb93'
+      measured 'resource_contracts:855061222e9b57ed75d5a0da'
+   results/[24]/evidence/reproducibility/package_digest
+      archived '6902ec4c651d1598fc0518c1d383246a3d34dfe187e418f605a1ea907e58a1a1'
+      measured '99e9d55abdb82835f8f38a871cf15732c03532703b5871568dbb25f7490415bd'
+   results/[24]/evidence/unit/build_digest
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[24]/import_identity/configuration_digest
+      archived '69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21'
+      measured '0b444e7e1048744b014aa2c8b9a59ec92eaff82de5450bb1bf3787f7f04d6264'
+   results/[24]/import_identity/helpers/cio_error_reset/configuration_digest
+      archived '69e7c4b46c6819bf165ce9e9799e733008291ec825a7e9b431cfe6167d5f8f21'
+      measured '0b444e7e1048744b014aa2c8b9a59ec92eaff82de5450bb1bf3787f7f04d6264'
+   results/[24]/task/contract_sources/qcore:boolean-field-import:v1
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[24]/task/obligations/[0]/obligation_id
+      archived 'resource_contracts:72d7882bd1b078d698f0fb93'
+      measured 'resource_contracts:855061222e9b57ed75d5a0da'
+   results/[24]/task/unit/build_digest
+      archived '75425aa63c0d38c200cf12f89abec0913df3c3080519e075c5ca0055f1ce4bfe'
+      measured '253a88c8ac3ae671613c9fb4d67ca189cff3db48a93891328a2846d8084bd2fc'
+   results/[24]/witness/task_digest
+      archived '0ef081ef897ea4c3ec62591a9b303f5667d56629aa72a12860375e3a519a4f0f'
+      measured '49df4b68f13eac2f4743d1781c1a9bad54dcc1dbe31bd7264d74112d574d7970'
+   results/[63]/evidence/coverage/[0]
+      archived 'resource_contracts:737ab83369828820cd4736f7'
+      measured 'resource_contracts:981b3e535681a2ce9a023482'
+   results/[63]/evidence/reproducibility/package_digest
+      archived '6902ec4c651d1598fc0518c1d383246a3d34dfe187e418f605a1ea907e58a1a1'
+      measured '99e9d55abdb82835f8f38a871cf15732c03532703b5871568dbb25f7490415bd'
+   results/[63]/evidence/unit/build_digest
+      archived '993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5'
+      measured 'f57749666adae275128ebdbeaa4b7dfccf13b6de261c8b7ad1b19a4957616b6d'
+   results/[63]/import_identity/configuration_digest
+      archived '059790ecb05cb02c84b6105939773659acea5f47cfdef29f2a8eba90c6547288'
+      measured '30d23f080b48f1b34cdeaaf9a861b88329e86d5fac03420b9feba26b3056e950'
+   results/[63]/task/contract_sources/qcore:boolean-field-import:v1
+      archived '993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5'
+      measured 'f57749666adae275128ebdbeaa4b7dfccf13b6de261c8b7ad1b19a4957616b6d'
+   results/[63]/task/obligations/[0]/obligation_id
+      archived 'resource_contracts:737ab83369828820cd4736f7'
+      measured 'resource_contracts:981b3e535681a2ce9a023482'
+   results/[63]/task/unit/build_digest
+      archived '993558a82d5fe3410c124e6a1d68661c33a8f9d70085067a71c7c124971941b5'
+      measured 'f57749666adae275128ebdbeaa4b7dfccf13b6de261c8b7ad1b19a4957616b6d'
+   results/[63]/witness/task_digest
+      archived '1d0b120154303d7dde99bc4f5798ba511542f8ba48b84490e211b909d408e87a'
+      measured '8ce140d5a7670ac80750bfdc2a3d7044be1e5f3adf2914d3c8d7d8d633288941'

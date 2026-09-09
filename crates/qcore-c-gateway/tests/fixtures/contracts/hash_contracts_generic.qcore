@@ -59,3 +59,25 @@ contract {
     ensures normal resource_borrowed(size);
     ensures normal resource_return_none();
 };
+
+// HASH-REFINE — the null-sentinel use of the premise, on a POINTER parameter.
+//
+// `p_forget(t, v)` has two arms upstream: at a null `v` it empties the whole
+// table and releases nothing the caller owns, and at a non-null `v` it takes
+// custody of `v` and frees it. This declaration is read off the FIRST arm only,
+// so its premise names the pointer parameter and the literal `0` — which is
+// exactly C's null pointer constant (C11 6.3.2.3p3). The other arm, whose
+// custody transfer this declaration does not model, is refused as uncontracted.
+//
+// This is the legitimate C04 use that decided HASH-CLAUSE-TYPE against
+// restricting the clause to scalar parameters. Nothing about it is special to
+// pointers in the mechanism: the premise compares the call site's token vector,
+// and a pointer premise, like every other, can only withdraw call sites.
+extern fn p_forget(t: ptr<mut, u8>, v: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(v, 0);
+    ensures normal resource_borrowed(t);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};

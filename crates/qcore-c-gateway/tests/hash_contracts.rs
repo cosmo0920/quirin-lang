@@ -134,7 +134,8 @@ struct p_table *p_open(int n); \
 void p_close(struct p_table *t); \
 struct p_value *p_new(int n); \
 void p_release(struct p_value *v); \
-int p_publish(struct p_table *t, void *v, long size);";
+int p_publish(struct p_table *t, void *v, long size); \
+int p_forget(struct p_table *t, void *v);";
 
 fn analyze_with(contracts: &str, body: &str, entry: &str) -> UnrestrictedLegacyResult {
     let source = format!("{DECLARATIONS} {body}");
@@ -285,13 +286,19 @@ fn a_non_literal_size_is_outside_the_declared_premise() {
     if !clang_available() {
         return;
     }
+    // `0L` was in this list until card HASH-REFINE decided it: a suffix names a
+    // type, not a value, so refusing it narrowed the declaration below what it
+    // declared. It moves to `the_admitted_spellings_are_decided_at_a_real_call`
+    // and every other row here is unchanged.
     for actual in [
         "n",
         "sizeof(struct p_value)",
         "(long) n",
         "0 + 0",
         "-0",
-        "0L",
+        "0x0",
+        "00",
+        "(long) 0",
     ] {
         let body = format!(
             "void p_g6(int n) {{ {OPENED} p_publish(t, v, {actual}); p_release(v); p_close(t); }}"
@@ -355,8 +362,17 @@ const PARITY_ACTUALS: &[&str] = &[
 ];
 
 /// **The refusal set the directive produced**, measured with both carriers
-/// present and pinned here so the claim survives the directive's retirement.
-/// `true` is "the declaration was withdrawn at this call site".
+/// present and pinned by card HASH-CLAUSE so the claim survives the directive's
+/// retirement. `true` is "the declaration was withdrawn at this call site".
+///
+/// **Two rows were deliberately moved by card HASH-REFINE**, in the *applying*
+/// direction, and they are the only two: `0L` and `(0)` are the declared
+/// literal `0` written with a type suffix and with parentheses, and the
+/// declaration says the actual must be that constant, not that spelling. Both
+/// are decided structurally with no evaluation. The nine other rows — including
+/// `0 + 0` and `-0`, which would need arithmetic — are unchanged, and the
+/// corpus was re-measured byte-identical because no real call site spells the
+/// literal either way (report §4).
 const PINNED_REFUSALS: &[bool] = &[
     false, // 0                       — the declared literal
     true,  // 8
@@ -365,10 +381,39 @@ const PINNED_REFUSALS: &[bool] = &[
     true,  // n
     true,  // sizeof(struct p_value)
     true,  // (long) n
-    true,  // 0 + 0
-    true,  // -0
-    true,  // 0L
-    true,  // (0)                      — parenthesised, not the literal token
+    true,  // 0 + 0                    — arithmetic
+    true,  // -0                       — arithmetic: unary minus
+    false, // 0L                       — HASH-REFINE: a suffix names a type
+    false, // (0)                      — HASH-REFINE: parentheses are grammar
+];
+
+/// The spellings card HASH-REFINE newly admits, with the two erasures that
+/// decide them, and the spellings it deliberately still refuses with the
+/// capability each would need. Measured at a real call site through Clang, so
+/// the unit table in `legacy_literal_premise` is not the only evidence.
+const REFINED_SPELLINGS: &[(&str, bool, &str)] = &[
+    ("0", false, "the declared spelling"),
+    ("(0)", false, "matched parentheses are grammar"),
+    ("((0))", false, "repeated, still matched"),
+    ("0L", false, "a suffix names a type, not a value"),
+    ("0u", false, "likewise"),
+    ("0ULL", false, "likewise"),
+    ("(0L)", false, "both erasures at once"),
+    ("0 + 0", true, "needs arithmetic"),
+    ("-0", true, "needs arithmetic: unary minus"),
+    ("-(0)", true, "needs arithmetic: unary minus"),
+    ("0x0", true, "needs a base"),
+    ("00", true, "needs a base: a leading zero is octal"),
+    (
+        "(long) 0",
+        true,
+        "a cast, whose operand is not reached into",
+    ),
+    (
+        "(0) + (0)",
+        true,
+        "arithmetic; the parentheses do not match",
+    ),
 ];
 
 /// `flb_input_chunk_create`'s complete ordered unsupported-diagnostic vector on
@@ -465,6 +510,186 @@ fn print_the_carrier_parity_table() {
 
 fn withdrawal(refused: bool) -> &'static str {
     if refused { "withdrawn" } else { "applied" }
+}
+
+// --------------------------------------------------------------------------
+// Card HASH-REFINE: HASH-CLAUSE-LITERAL, the admitted call-site spellings
+// --------------------------------------------------------------------------
+
+/// **The spelling-equivalence table, at a real call site.** Each row is
+/// compiled by Clang, analyzed through the whole gateway and decided by the
+/// premise, so the widening is measured where it acts rather than only on
+/// hand-built token vectors.
+#[test]
+fn the_admitted_spellings_are_decided_at_a_real_call() {
+    if !clang_available() {
+        return;
+    }
+    for (actual, refused, ground) in REFINED_SPELLINGS {
+        assert_eq!(
+            withdrawn_under(GENERIC_CONTRACTS, actual),
+            *refused,
+            "`{actual}` decided wrongly ({ground})"
+        );
+    }
+}
+
+/// **The widening never crosses a value.** Every admitted spelling of `0` is
+/// still refused against a declaration whose literal is `8`, so the erasures
+/// are erasures and not a numeric comparison.
+#[test]
+fn an_admitted_spelling_of_one_literal_never_satisfies_another() {
+    if !clang_available() {
+        return;
+    }
+    let eight = GENERIC_CONTRACTS.replace(
+        "requires resource_literal_argument(size, 0);",
+        "requires resource_literal_argument(size, 8);",
+    );
+    assert_ne!(eight, GENERIC_CONTRACTS, "the substitution applied");
+    for actual in ["0", "(0)", "0L", "0ULL", "(0L)"] {
+        assert!(
+            withdrawn_under(&eight, actual),
+            "`{actual}` must not satisfy the declared literal `8`"
+        );
+    }
+    for actual in ["8", "(8)", "8L"] {
+        assert!(
+            !withdrawn_under(&eight, actual),
+            "`{actual}` is the declared literal `8`"
+        );
+    }
+}
+
+/// A declared literal the loader now refuses cannot reach the analyzer at all:
+/// the octal and negative-zero spellings reject the whole module (card
+/// HASH-REFINE's loader tightening), so there is no declared side for the
+/// call-site relation to be asked about.
+#[test]
+fn the_loader_refuses_a_non_canonical_declared_literal() {
+    for spelling in ["010", "-0", "00", "0L", "0x0"] {
+        let text = GENERIC_CONTRACTS.replace(
+            "requires resource_literal_argument(size, 0);",
+            &format!("requires resource_literal_argument(size, {spelling});"),
+        );
+        assert_ne!(text, GENERIC_CONTRACTS, "the substitution applied");
+        assert!(
+            load_resource_contract_sources(&BTreeMap::from([(
+                "hash_contracts_generic.qcore".to_owned(),
+                text,
+            )]))
+            .is_err(),
+            "the loader admitted the declared literal `{spelling}`"
+        );
+    }
+}
+
+// --------------------------------------------------------------------------
+// Card HASH-REFINE: HASH-CLAUSE-TYPE, the premise on a pointer parameter
+// --------------------------------------------------------------------------
+
+const OUTSIDE_FORGET: &str = "call to `p_forget` outside its declared literal-argument premise";
+
+/// Whether `p_forget`'s declaration was withdrawn at a call passing `actual`.
+fn forget_withdrawn(actual: &str) -> bool {
+    let body =
+        format!("void p_gt(void) {{ {OPENED} p_forget(t, {actual}); p_release(v); p_close(t); }}");
+    let result = analyze_generic(&body, "p_gt");
+    match &result {
+        UnrestrictedLegacyResult::Safe(_) => false,
+        _ => unsupported(function(program(&result), "p_gt")).contains(&OUTSIDE_FORGET),
+    }
+}
+
+/// **The null-sentinel use is real.** A premise naming a *pointer* parameter
+/// and the literal `0` restricts the declaration to call sites passing a null
+/// pointer constant, which is a legitimate C04 reading of a two-arm callee.
+/// This is the measured case that decided HASH-CLAUSE-TYPE against restricting
+/// the clause to scalar parameters.
+#[test]
+fn a_pointer_premise_admits_exactly_the_null_sentinel_call() {
+    if !clang_available() {
+        return;
+    }
+    // C11 6.3.2.3p3: an integer constant expression with value 0 is a null
+    // pointer constant, and a suffix does not change that.
+    for actual in ["0", "(0)", "0L"] {
+        assert!(
+            !forget_withdrawn(actual),
+            "`{actual}` is a null pointer constant and satisfies the premise"
+        );
+    }
+    // The other arm — the one this declaration was not read off — is refused.
+    for actual in ["v", "(void *) 0", "&t"] {
+        assert!(
+            forget_withdrawn(actual),
+            "`{actual}` must be outside the declared premise"
+        );
+    }
+}
+
+/// **A pointer premise can only withdraw.** Without it the same non-null call
+/// is covered by the declaration; with it that call is refused, and the
+/// declaration is otherwise identical. Both directions are measured, so the
+/// admission recorded for HASH-CLAUSE-TYPE rests on evidence rather than on the
+/// mechanism's uniformity alone.
+#[test]
+fn a_pointer_premise_only_ever_withdraws() {
+    if !clang_available() {
+        return;
+    }
+    let unrestricted =
+        GENERIC_CONTRACTS.replace("    requires resource_literal_argument(v, 0);\n", "");
+    assert_ne!(unrestricted, GENERIC_CONTRACTS, "the substitution applied");
+    let body = format!("void p_gu(void) {{ {OPENED} p_forget(t, v); p_release(v); p_close(t); }}");
+    assert!(
+        matches!(
+            analyze_with(&unrestricted, &body, "p_gu"),
+            UnrestrictedLegacyResult::Safe(_)
+        ),
+        "the unrestricted declaration covers the non-null call"
+    );
+    let restricted = analyze_generic(&body, "p_gu");
+    assert!(
+        !matches!(restricted, UnrestrictedLegacyResult::Safe(_)),
+        "the pointer premise withdraws it: {restricted:?}"
+    );
+    assert!(
+        unsupported(function(program(&restricted), "p_gu")).contains(&OUTSIDE_FORGET),
+        "with the named refusal: {:?}",
+        unsupported(function(program(&restricted), "p_gu"))
+    );
+}
+
+/// A vacuous pointer premise — a nonzero literal, which is not even a valid
+/// pointer actual without a cast — withdraws every call rather than admitting
+/// one. This is the second direction of the type decision: admitting the clause
+/// on a pointer parameter cannot make anything more permissive.
+#[test]
+fn a_vacuous_pointer_premise_withdraws_every_call() {
+    if !clang_available() {
+        return;
+    }
+    let vacuous = GENERIC_CONTRACTS.replace(
+        "requires resource_literal_argument(v, 0);",
+        "requires resource_literal_argument(v, 7);",
+    );
+    assert_ne!(vacuous, GENERIC_CONTRACTS, "the substitution applied");
+    for actual in ["0", "0L", "v", "(void *) 0"] {
+        let body = format!(
+            "void p_gv(void) {{ {OPENED} p_forget(t, {actual}); p_release(v); p_close(t); }}"
+        );
+        let result = analyze_with(&vacuous, &body, "p_gv");
+        assert!(
+            !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+            "`{actual}` must be withdrawn under a vacuous premise"
+        );
+        assert!(
+            unsupported(function(program(&result), "p_gv")).contains(&OUTSIDE_FORGET),
+            "`{actual}`: {:?}",
+            unsupported(function(program(&result), "p_gv"))
+        );
+    }
 }
 
 /// A premise text the loader cannot re-read refuses **every** contracted call
