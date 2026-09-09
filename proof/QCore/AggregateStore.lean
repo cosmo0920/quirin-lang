@@ -71,9 +71,16 @@ inductive MemberKind where
   /-- Exactly one `*` over a specifier list the reader resolved to a `struct`
       tag or to an arithmetic type. It holds exactly one pointer value. -/
   | singlePointer
-  /-- `void *`, two or more stars, an array, a function pointer, a bit-field,
-      an aggregate sub-object, or a typedef the reader will not resolve.
-      Never admitted. -/
+  /-- Card **ALIAS-AGGREGATE**: exactly `void *` — the literal one-token `void`
+      specifier list with exactly one star, unqualified. It holds exactly one
+      pointer value, so a *store* into it replaces exactly one identity, but it
+      names no pointee, so no *read* of it can be matched against a callee's
+      declared parameter type. Admitted as a store destination and refused as a
+      bound read (`QCore.BoundFieldRead.admitsRead` requires `singlePointer`). -/
+  | opaquePointer
+  /-- `const void *`, `void **`, two or more stars, an array, a function
+      pointer, a bit-field, an aggregate sub-object, or a typedef the reader
+      will not resolve. Never admitted. -/
   | refusedShape
   deriving DecidableEq
 
@@ -119,21 +126,40 @@ structure Store where
   /-- The member carries `volatile` or `_Atomic`. -/
   qualified : Bool
   value : Value
+  /-- Whether the stored variable's declared type is **exactly** the member's
+      declared pointee type. A `singlePointer` member requires it; an
+      `opaquePointer` member has no declared pointee, so there is nothing to
+      match and the requirement is replaced by
+      [`valueIsDeclaredRecordPointer`] (card **ALIAS-AGGREGATE**). -/
+  valueTagMatches : Bool
+  /-- Whether the stored value is a single declared name whose declared type is
+      `struct TAG *` for *some* tag. This is what an `opaquePointer` member
+      requires instead of an exact match: the value must be one pointer
+      identity this projection can name. A cast, a call, an address-of, a
+      scalar and every non-record pointer make it `false`. -/
+  valueIsDeclaredRecordPointer : Bool
   deriving DecidableEq
 
 /-- The member premise: an admitted member kind, unqualified. -/
 def memberOk (s : Store) : Bool :=
-  (s.member == MemberKind.scalar || s.member == MemberKind.singlePointer)
+  (s.member == MemberKind.scalar
+      || s.member == MemberKind.singlePointer
+      || s.member == MemberKind.opaquePointer)
     && !s.qualified
 
 /-- The value premise. A scalar member can never hold an identity, so only an
-    untracked value may reach it; a pointer member additionally admits the null
-    constant and a declared pointer of exactly the member's declared type. -/
+    untracked value may reach it; a `singlePointer` member additionally admits
+    the null constant and a declared pointer of *exactly* the member's declared
+    type; an `opaquePointer` member admits the null constant and any declared
+    record pointer, because it has no declared pointee to match. -/
 def valueOk (s : Store) : Bool :=
   match s.value with
   | Value.untracked => true
-  | Value.null => s.member == MemberKind.singlePointer
-  | Value.tracked => s.member == MemberKind.singlePointer
+  | Value.null =>
+      s.member == MemberKind.singlePointer || s.member == MemberKind.opaquePointer
+  | Value.tracked =>
+      (s.member == MemberKind.singlePointer && s.valueTagMatches)
+        || (s.member == MemberKind.opaquePointer && s.valueIsDeclaredRecordPointer)
 
 /-- The whitelist. Every clause is a conjunct, so failing any one refuses. -/
 def admitsStore (s : Store) : Bool :=
@@ -445,7 +471,16 @@ def admittedExample : Store :=
     oneSelection := true
     member := MemberKind.singlePointer
     qualified := false
-    value := Value.tracked }
+    value := Value.tracked
+    valueTagMatches := true
+    valueIsDeclaredRecordPointer := true }
+
+/-- Card **ALIAS-AGGREGATE**: the same admitted store through a `void *`
+    member, whose value is a declared record pointer of an unrelated tag. -/
+def opaqueExample : Store :=
+  { admittedExample with
+    member := MemberKind.opaquePointer
+    valueTagMatches := false }
 
 def liveOwner : Owner :=
   { bound := true
@@ -484,5 +519,82 @@ theorem a_released_owner_flips_the_admitted_store :
 theorem a_caller_held_owner_flips_the_admitted_store :
     storeStep admittedExample { liveOwner with callerHeld := true } = Outcome.refused := by
   rfl
+
+/-! ## The opaque member (card ALIAS-AGGREGATE)
+
+The third member class is admitted **only** as a store destination, and the
+asymmetry is the whole of its soundness argument. What a link is used for —
+escape cascade, overwrite replacement, and the deliberate non-cascade of a
+release — reads the *identity*, never the member's declared type; the one use
+that would need a declared type is the bound read, and
+`QCore.BoundFieldRead.admitsRead` requires `singlePointer`, so an opaque member
+can never occupy one. What the store still requires is that the value be a
+pointer identity this projection can name.
+-/
+
+/-- Non-vacuity: a `void *` member with a record-pointer value of an unrelated
+    tag is admitted, and links against a live aggregate. -/
+theorem an_opaque_member_store_is_admitted : admitsStore opaqueExample = true := by
+  rfl
+
+theorem the_admitted_opaque_store_links :
+    storeStep opaqueExample liveOwner = Outcome.linked := by
+  rfl
+
+/-- The exact-tag premise is **not** what the opaque member requires: the same
+    store is admitted with `valueTagMatches := false`, which is exactly the
+    production shape (`void *chunk` receiving a `struct cio_chunk *`). -/
+theorem the_opaque_member_does_not_require_an_exact_tag :
+    admitsStore { opaqueExample with valueTagMatches := false } = true := by
+  rfl
+
+/-- What replaces it. A value that is not a declared record pointer — a cast, a
+    call, an address-of, a scalar, a non-record pointer — refuses. -/
+theorem an_opaque_member_refuses_a_value_that_is_not_a_declared_record_pointer
+    (s : Store) (isOpaque : s.member = MemberKind.opaquePointer)
+    (tracked : s.value = Value.tracked)
+    (notPointer : s.valueIsDeclaredRecordPointer = false) : admitsStore s = false := by
+  simp [admitsStore, valueOk, isOpaque, tracked, notPointer]
+
+/-- The typed member is unchanged in the other direction: it still requires the
+    exact tag, so the opaque relaxation did not leak into it. -/
+theorem a_single_pointer_member_still_requires_the_exact_tag (s : Store)
+    (typed : s.member = MemberKind.singlePointer) (tracked : s.value = Value.tracked)
+    (mismatch : s.valueTagMatches = false) : admitsStore s = false := by
+  simp [admitsStore, valueOk, typed, tracked, mismatch]
+
+/-- Every base and destination premise still refuses an opaque store: the third
+    class widened the *member* premise and nothing else. -/
+theorem an_opaque_member_store_keeps_every_base_premise (s : Store)
+    (_isOpaque : s.member = MemberKind.opaquePointer) (aliased : s.baseAliased = true) :
+    admitsStore s = false := by
+  simp [admitsStore, aliased]
+
+theorem an_opaque_member_store_keeps_the_qualifier_premise (s : Store)
+    (_isOpaque : s.member = MemberKind.opaquePointer) (qualified : s.qualified = true) :
+    admitsStore s = false := by
+  simp [admitsStore, memberOk, qualified]
+
+/-- The flow-sensitive owner premise is untouched: an opaque store through an
+    aggregate this body already released refuses exactly as a typed one does. -/
+theorem a_released_owner_flips_the_admitted_opaque_store :
+    storeStep opaqueExample { liveOwner with status := Disposition.released }
+      = Outcome.refused := by
+  rfl
+
+theorem a_caller_held_owner_flips_the_admitted_opaque_store :
+    storeStep opaqueExample { liveOwner with callerHeld := true } = Outcome.refused := by
+  rfl
+
+/-- The member classes are mutually exclusive by construction, so no member is
+    decided by two rules and admission cannot depend on the order in which the
+    reader asks. This is the model half of the Rust `admitted_field` check that
+    the three classifications sum to exactly one. -/
+theorem the_member_classes_are_exclusive (k : MemberKind) :
+    (k == MemberKind.scalar).toNat
+        + (k == MemberKind.singlePointer).toNat
+        + (k == MemberKind.opaquePointer).toNat
+        + (k == MemberKind.refusedShape).toNat = 1 := by
+  cases k <;> rfl
 
 end QCore.AggregateStore

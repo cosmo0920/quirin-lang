@@ -106,6 +106,17 @@ struct RecordInfo {
     /// unresolved-typedef members are absent by construction. Used only by the
     /// aggregate-store rule in [`crate::aggregate_store`].
     single_pointer_fields: BTreeSet<String>,
+    /// Members declared **exactly** `void * name` — the specifier list is the
+    /// single token `void`, exactly one star, no array modifier and no
+    /// rejecting qualifier (card ALIAS-AGGREGATE). Such a member holds exactly
+    /// one pointer value, so a store into it replaces exactly one identity,
+    /// but its declared type names no pointee, so no *read* of it can be
+    /// matched against a callee's declared parameter type. Every typedef this
+    /// reader will not resolve, `const void *`, `void **` and every other
+    /// opaque spelling are absent by construction: only the literal one-token
+    /// `void` specifier list is admitted here. Used only by the aggregate-store
+    /// rule in [`crate::aggregate_store`], and there only on the *store* side.
+    void_pointer_fields: BTreeSet<String>,
     /// Members declared with **no** `*`, no array modifier and no rejecting
     /// qualifier, over a specifier list this reader resolved to an
     /// arithmetic/enumeration type or to a `struct` tag. Such a member is a
@@ -117,13 +128,14 @@ struct RecordInfo {
     non_pointer_fields: BTreeSet<String>,
 }
 
-/// The four member classifications one readable record body yields.
+/// The member classifications one readable record body yields.
 #[derive(Clone, Debug, Default)]
 struct RecordMembers {
     scalar_fields: BTreeSet<String>,
     borrowable_fields: BTreeSet<String>,
     record_pointer_fields: BTreeMap<String, String>,
     single_pointer_fields: BTreeSet<String>,
+    void_pointer_fields: BTreeSet<String>,
     non_pointer_fields: BTreeSet<String>,
 }
 
@@ -347,6 +359,7 @@ impl TypedAccessModel {
                 entry.borrowable_fields.clear();
                 entry.record_pointer_fields.clear();
                 entry.single_pointer_fields.clear();
+                entry.void_pointer_fields.clear();
                 entry.non_pointer_fields.clear();
                 continue;
             }
@@ -361,6 +374,7 @@ impl TypedAccessModel {
                 entry.borrowable_fields = members.borrowable_fields;
                 entry.record_pointer_fields = members.record_pointer_fields;
                 entry.single_pointer_fields = members.single_pointer_fields;
+                entry.void_pointer_fields = members.void_pointer_fields;
                 entry.non_pointer_fields = members.non_pointer_fields;
             }
         }
@@ -384,6 +398,7 @@ impl TypedAccessModel {
         let mut borrowable_fields = BTreeSet::new();
         let mut record_pointer_fields = BTreeMap::new();
         let mut single_pointer_fields = BTreeSet::new();
+        let mut void_pointer_fields = BTreeSet::new();
         let mut non_pointer_fields = BTreeSet::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
@@ -450,6 +465,15 @@ impl TypedAccessModel {
                     {
                         single_pointer_fields.insert(name.clone());
                     }
+                    // Card ALIAS-AGGREGATE: exactly one star over the literal
+                    // one-token `void` specifier list. It is disjoint from
+                    // `single_pointer_fields` by construction — `void`
+                    // classifies `Opaque`, never `Record`/`Scalar` — and from
+                    // `record_pointer_fields` for the same reason. `void **`,
+                    // `const void *` and every typedef spelling are excluded.
+                    if declarator.stars == 1 && !qualified && specifiers == ["void"] {
+                        void_pointer_fields.insert(name.clone());
+                    }
                     borrowable_fields.insert(name);
                 }
             }
@@ -459,6 +483,7 @@ impl TypedAccessModel {
             borrowable_fields,
             record_pointer_fields,
             single_pointer_fields,
+            void_pointer_fields,
             non_pointer_fields,
         })
     }
@@ -598,6 +623,23 @@ impl TypedAccessModel {
                 && !record.union_tag
                 && record.definitions == 1
                 && record.single_pointer_fields.contains(field)
+        })
+    }
+
+    /// Whether `tag`'s single complete non-union definition declares `field`
+    /// **exactly** `void * field` (card ALIAS-AGGREGATE).
+    ///
+    /// Such a member holds one pointer value, so a *store* into it replaces
+    /// exactly one identity and the aggregate-store rule may link it. It is
+    /// never readable back: `void *` names no pointee, so nothing can match it
+    /// against a callee's declared parameter type, and
+    /// [`crate::aggregate_store::bound_read_actuals`] refuses it explicitly.
+    pub(crate) fn void_pointer_field(&self, tag: &str, field: &str) -> bool {
+        self.records.get(tag).is_some_and(|record| {
+            record.complete
+                && !record.union_tag
+                && record.definitions == 1
+                && record.void_pointer_fields.contains(field)
         })
     }
 
@@ -1307,6 +1349,49 @@ mod tests {
     fn model(source: &str) -> TypedAccessModel {
         let tokens = texts(source);
         TypedAccessModel::read(&tokens)
+    }
+
+    /// Card **ALIAS-AGGREGATE**: the opaque-member class admits the literal
+    /// one-token `void` specifier list with exactly one star, and nothing else.
+    /// Every neighbouring spelling is asserted refused in the same record, so
+    /// the class cannot widen by accident.
+    #[test]
+    fn only_the_exact_void_star_spelling_is_an_opaque_pointer_member() {
+        let model = model(
+            "typedef void * handle ; \
+             struct r { void * plain ; const void * ro ; volatile void * vol ; \
+             void * * deep ; void * arr [ 4 ] ; handle aliased ; \
+             struct q * typed ; int flag ; } ;",
+        );
+        assert!(model.void_pointer_field("r", "plain"));
+        for field in ["ro", "vol", "deep", "arr", "aliased", "typed", "flag"] {
+            assert!(!model.void_pointer_field("r", field), "{field}");
+        }
+        // The three classes are disjoint on every member of the record.
+        for field in [
+            "plain", "ro", "vol", "deep", "arr", "aliased", "typed", "flag",
+        ] {
+            let classes = usize::from(model.scalar_field("r", field))
+                + usize::from(model.single_pointer_field("r", field))
+                + usize::from(model.void_pointer_field("r", field));
+            assert!(classes <= 1, "{field} is in {classes} classes");
+        }
+        assert!(model.single_pointer_field("r", "typed"));
+        assert!(model.scalar_field("r", "flag"));
+    }
+
+    /// An opaque member of a record this reader refuses — a `union`, a
+    /// multiply-defined tag or an incomplete body — is not admitted either.
+    #[test]
+    fn an_opaque_member_of_a_refused_record_is_not_admitted() {
+        assert!(!model("union r { void * plain ; } ;").void_pointer_field("r", "plain"));
+        assert!(
+            !model("struct r { void * plain ; } ; struct r { void * plain ; } ;")
+                .void_pointer_field("r", "plain")
+        );
+        assert!(
+            !model("struct r { void * plain ; int bits : 3 ; } ;").void_pointer_field("r", "plain")
+        );
     }
 
     #[test]

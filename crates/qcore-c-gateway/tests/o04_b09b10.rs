@@ -875,13 +875,33 @@ fn the_constructor_boundary_is_unchanged() {
                 .all(|site| site.disposition == SiteDisposition::Mixed)
         );
     }
+    // **Deliberate pin update, card ALIAS-AGGREGATE.** This count was 7. The
+    // one that moved is `ch->backend = ((void *) 0);` at L166: `backend` is
+    // declared `void *` in `struct cio_chunk`, which is now the admitted
+    // opaque member class, and the null pointer constant is a value that class
+    // takes. It links nothing — `StoredValue::Null` binds the place and records
+    // no field link — so no identity, exit or verdict moved with it.
+    //
+    // `ch->backend = backend;` at L182 is **still refused** and is asserted
+    // below by name: `backend` is itself declared `void *`, so it is not a
+    // declared record pointer and the opaque member's value premise refuses it.
+    // That is the load-bearing half of this row.
     assert_eq!(
         unsupported(constructor)
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        7,
-        "the constructor keeps its seven indirect refusals: {:?}",
+        6,
+        "the constructor keeps its six indirect refusals: {:?}",
+        constructor.diagnostics
+    );
+    assert!(
+        constructor.diagnostics.iter().any(|diagnostic| {
+            diagnostic.line == 182
+                && matches!(&diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description } if description == INDIRECT)
+        }),
+        "`ch->backend = backend;` keeps its refusal: {:?}",
         constructor.diagnostics
     );
     assert!(

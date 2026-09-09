@@ -1,0 +1,48 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4403 -> 4399 (-4)
+  unsupported: 49896 -> 49891 (-5)
+units with diagnostic-count changes: 4
+  chunkio/chunkio.c: {'unknown_alias': 2, 'unsupported': -2}
+  chunkio/cio_chunk.c: {'unknown_alias': 1, 'unsupported': -1}
+  fluent-bit-chunk/flb_input_chunk.c: {'unknown_alias': -8, 'unsupported': -1}
+  monkey-libevent/mk_server/mk_fifo.c: {'unknown_alias': 1, 'unsupported': -1}
+description inventory deltas:
+  unknown_alias / 'unresolved resource identity `ch`': 11 -> 12 (+1)
+  unknown_alias / 'unresolved resource identity `ctx`': 59 -> 61 (+2)
+  unknown_alias / 'unresolved resource identity `fw`': 9 -> 10 (+1)
+  unknown_alias / 'unresolved resource identity `ic`': 34 -> 26 (-8)
+  unsupported / 'indirect memory access is outside the resource projection': 18866 -> 18861 (-5)
+leaf-level diff, per changed unit:
+  UNIT chunkio/chunkio.c
+    +1 cio_create L2337 unknown_alias: unresolved resource identity `ctx`
+    -1 cio_create L2337 unsupported: indirect memory access is outside the resource projection
+    +1 cio_create L2347 unknown_alias: unresolved resource identity `ctx`
+    -1 cio_create L2347 unsupported: indirect memory access is outside the resource projection
+  UNIT chunkio/cio_chunk.c
+    -1 cio_chunk_open L2041 unsupported: indirect memory access is outside the resource projection
+    +1 cio_chunk_open L2041 unknown_alias: unresolved resource identity `ch`
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_create L19607 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19608 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19609 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19610 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19611 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19612 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19613 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19615 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19624 unknown_alias: unresolved resource identity `ic`
+  UNIT monkey-libevent/mk_server/mk_fifo.c
+    +1 mk_fifo_worker_create L5130 unknown_alias: unresolved resource identity `fw`
+    -1 mk_fifo_worker_create L5130 unsupported: indirect memory access is outside the resource projection
+leaves added: 4; leaves removed: 13

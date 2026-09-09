@@ -1,0 +1,100 @@
+function flb_input_chunk_create: status Unknown
+diagnostics: 21
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L19567  n68   NoOp                                     | int ret;
+L19568  n67   NoOp                                     | int err;
+L19569  n66   Clear set_down                           | int set_down = 0;
+L19570  n65   NoOp                                     | int has_routes;
+L19571  n64   NoOp                                     | size_t mask_size;
+L19572  n63   NoOp                                     | char name[64];
+L19573  n62   NoOp                                     | struct cio_chunk *chunk;
+L19574  n61   NoOp                                     | struct flb_storage_input *storage;
+L19575  n60   NoOp                                     | struct flb_input_chunk *ic;
+L19576  n59   OpaqueValue storage alias_read=false     | storage = in->storage;
+L19577  n58   Call generate_chunk_name(in, name, _) -> _ | generate_chunk_name(in, name, sizeof(name) - 1);
+L19578  n57   Call cio_chunk_open(storage->cio, storage->stream, name, _, _, _) -> chunk | chunk = cio_chunk_open(storage->cio, storage->stream, name,
+L19580  n56   BranchOnNull chunk true_is_null=true     | if (!chunk) {
+L19581  n54   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] could not create chunk file: %s:%s", storage->stream->name, name);
+        !! unsupported: indirect memory access is outside the resource projection
+L19581  n55   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] could not create chunk file: %s:%s", storage->stream->name, name);
+        !! unsupported: indirect memory access is outside the resource projection
+L19582  n53   NoOp                                     | return ((void*)0);
+L19584  n52   Call cio_chunk_is_up(chunk) -> ret       | ret = cio_chunk_is_up(chunk);
+L19585  n51   BranchOnNull ret true_is_null=true       | if (ret == 0) {
+L19586  n50   Call cio_chunk_up_force(chunk) -> ret    | ret = cio_chunk_up_force(chunk);
+L19587  n49   NoOp                                     | if (ret == -1) {
+L19588  n48   Call cio_chunk_close(chunk, _) -> _      | cio_chunk_close(chunk, !0);
+L19589  n47   NoOp                                     | return ((void*)0);
+L19591  n46   NoOp                                     | set_down = 1;
+L19593  n45   Call input_chunk_write_header(chunk, event_type, _, tag_len) -> ret | ret = input_chunk_write_header(chunk, event_type, (char *) tag, tag_len);
+L19594  n44   NoOp                                     | if (ret == -1) {
+L19595  n43   Call cio_chunk_close(chunk, _) -> _      | cio_chunk_close(chunk, !0);
+L19596  n42   NoOp                                     | return ((void*)0);
+L19598  n41   Call flb_calloc(_, _) -> ic              | ic = flb_calloc(1, sizeof(struct flb_input_chunk));
+L19599  n40   BranchOnNull ic true_is_null=true        | if (!ic) {
+L19600  n39   Unknown: indirect memory access is outside the resource projection | flb_errno_print((*__errno_location ()), "<stdin>", 2556);
+        !! unsupported: indirect memory access is outside the resource projection
+L19601  n38   Call cio_chunk_close(chunk, _) -> _      | cio_chunk_close(chunk, !0);
+        !! unresolved resource identity `chunk`
+L19602  n37   NoOp                                     | return ((void*)0);
+L19604  n36   AggregateStore ic->event_type            | ic->event_type = event_type;
+L19605  n35   AggregateStore ic->busy                  | ic->busy = 0;
+L19606  n34   AggregateStore ic->fs_counted            | ic->fs_counted = 0;
+L19607  n33   Unknown: indirect memory access is outside the resource projection | ic->chunk = chunk;
+        !! unsupported: indirect memory access is outside the resource projection
+L19608  n32   AggregateStore ic->fs_backlog            | ic->fs_backlog = 0;
+        !! unresolved resource identity `ic`
+L19609  n31   AggregateStore ic->in                    | ic->in = in;
+        !! unresolved resource identity `ic`
+L19610  n30   AggregateStore ic->stream_off            | ic->stream_off = 0;
+        !! unresolved resource identity `ic`
+L19611  n29   Clear ic->task                           | ic->task = ((void*)0);
+        !! unresolved resource identity `ic`
+L19612  n28   Call flb_time_now() -> ic->create_time   | ic->create_time = flb_time_now();
+        !! unresolved resource identity `ic`
+L19613  n27   AggregateStore ic->total_records         | ic->total_records = 0;
+        !! unresolved resource identity `ic`
+L19614  n26   Call flb_routes_mask_get_size(in->config->router) -> mask_size | mask_size = flb_routes_mask_get_size(in->config->router);
+L19615  n25   Call flb_calloc(mask_size, _) -> ic->routes_mask | ic->routes_mask = (flb_route_mask_element *)
+        !! unresolved resource identity `ic`
+L19618  n24   BranchOnNull ic->routes_mask true_is_null=true | if (ic->routes_mask == ((void*)0)) {
+L19619  n23   Unknown: indirect memory access is outside the resource projection | flb_errno_print((*__errno_location ()), "<stdin>", 2584);
+        !! unsupported: indirect memory access is outside the resource projection
+L19620  n22   Call cio_chunk_close(chunk, _) -> _      | cio_chunk_close(chunk, !0);
+        !! unresolved resource identity `chunk`
+L19621  n21   Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L19622  n20   NoOp                                     | return ((void*)0);
+L19624  n19   Call flb_routes_mask_set_by_tag(ic->routes_mask, tag, tag_len, in) -> has_routes reads["ic->routes_mask"] | has_routes = flb_routes_mask_set_by_tag(ic->routes_mask, tag, tag_len, in);
+        !! unresolved resource identity `ic`
+L19625  n18   BranchOnNull has_routes true_is_null=true | if (has_routes == 0) {
+L19626  n16   Call flb_log_print(_, __qcore_literal__, _, __qcore_literal__) -> _ nested=flb_input_chunk_get_name | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2595, "[input chunk] no matching route for input chunk '%s' with tag '%s'", flb_input_chunk_get_name(ic), tag);
+L19626  n17   NoOp                                     | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2595, "[input chunk] no matching route for input chunk '%s' with tag '%s'", flb_input_chunk_get_name(ic), tag);
+L19628  n15   Unknown: indirect memory access is outside the resource projection | msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write);
+        !! unsupported: indirect memory access is outside the resource projection
+L19629  n14   Unknown: indirect memory access is outside the resource projection | mk_list_add(&ic->_head, &in->chunks);
+        !! unsupported: indirect memory access is outside the resource projection
+L19630  n13   NoOp                                     | if (set_down == 1) {
+L19631  n12   Call cio_chunk_down(chunk) -> _          | cio_chunk_down(chunk);
+L19633  n11   BranchOnNull event_type true_is_null=true | if (event_type == 0) {
+L19634  n2    Call flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, _) -> _ | flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, 0);
+L19636  n10   NoOp                                     | else if (event_type == 1) {
+L19637  n5    Unknown: indirect memory access is outside the resource projection | pthread_mutex_lock(&in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19638  n4    Call flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, _) -> _ | flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, 0);
+L19639  n3    Unknown: indirect memory access is outside the resource projection | pthread_mutex_unlock(&in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19641  n9    NoOp                                     | else if (event_type == 2) {
+L19642  n6    Call flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, _) -> _ | flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, 0);
+L19644  n8    NoOp                                     | else if (event_type == 4) {
+L19645  n7    Call flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, _) -> _ | flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, 0);
+L19647  n1    EscapeIfOwned ic                         | return ic;
+        !! unresolved resource identity `ic`
+        !! unsupported: nullable resource `ic` used by a non-null contract
+exits:
+  L19647  node 1 custody Unknown sites ["site0@L19578 Mixed", "site1@L19598 Mixed"]
+  L19622  node 20 custody Unknown sites ["site0@L19578 Mixed", "site1@L19598 Mixed"]
+  L19602  node 37 custody Unknown sites ["site0@L19578 Mixed"]
+  L19596  node 42 custody Discharged sites ["site0@L19578 Released"]
+  L19589  node 47 custody Discharged sites ["site0@L19578 Released"]
+  L19582  node 53 custody Unknown sites []

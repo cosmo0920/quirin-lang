@@ -62,3 +62,17 @@ a linked identity. Non-vacuity is audited in both directions. -/
 #print axioms QCore.AggregateStore.one_aliased_base_flips_the_admitted_store
 #print axioms QCore.AggregateStore.a_released_owner_flips_the_admitted_store
 #print axioms QCore.AggregateStore.a_caller_held_owner_flips_the_admitted_store
+
+-- Card ALIAS-AGGREGATE: the third member class. Admitted as a store
+-- destination, refused as a bound read (audited in AuditBoundFieldRead), with
+-- every other premise of the whitelist unchanged.
+#print axioms QCore.AggregateStore.an_opaque_member_store_is_admitted
+#print axioms QCore.AggregateStore.the_admitted_opaque_store_links
+#print axioms QCore.AggregateStore.the_opaque_member_does_not_require_an_exact_tag
+#print axioms QCore.AggregateStore.an_opaque_member_refuses_a_value_that_is_not_a_declared_record_pointer
+#print axioms QCore.AggregateStore.a_single_pointer_member_still_requires_the_exact_tag
+#print axioms QCore.AggregateStore.an_opaque_member_store_keeps_every_base_premise
+#print axioms QCore.AggregateStore.an_opaque_member_store_keeps_the_qualifier_premise
+#print axioms QCore.AggregateStore.a_released_owner_flips_the_admitted_opaque_store
+#print axioms QCore.AggregateStore.a_caller_held_owner_flips_the_admitted_opaque_store
+#print axioms QCore.AggregateStore.the_member_classes_are_exclusive
