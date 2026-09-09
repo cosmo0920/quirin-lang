@@ -228,5 +228,23 @@
       "why_unmapped": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors.",
       "follow_on": "CT-CTWIN-DESCRIPTOR"
     }
+  },
+  "unmapped_reasons_provenance": "Added by card CT-LABELS (wave 15). This block is a MIGRATION, not a new measurement: the bucket is this card's own label, stated in README section 4 ('CT40/CT41/CT42 are now `blocked-on-gateway-expressiveness (C-twin measured)` (3)') and section 6 item 3, and each reason is the verbatim `cases_examined_and_left_unmapped.<case>.why_unmapped` string above. Recorded finding, not repaired here: this card wrote that same label directly into `docs/reports/remaining-t00/coverage.json` (commit 97e69c0), keeping the pre-existing text under `superseded_bucket`/`superseded_blocker`. That in-place rewrite of an archived audit is the practice this mechanism replaces; because the migrated label is byte-identical to the one that edit installed, the derived tally does not move and `docs/reports/remaining-t00/coverage.json` is deliberately left untouched by card CT-LABELS, which does not own it.",
+  "unmapped_reasons": {
+    "CT40": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The verdict is invariant under removing the construct the scenario names, so no control can attribute it to the publication protocol; mapping it would record either a Safe against a case that demands non-certification, or an Unknown attributable to something else.",
+      "measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-PUBLISH"
+    },
+    "CT41": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The gateway has no synchronization model at all, so no verdict it produces is evidence about one; the mapping would be vacuous by the same rule that requires a non-vacuous control.",
+      "measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-SYNC"
+    },
+    "CT42": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors.",
+      "measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-DESCRIPTOR"
+    }
   }
 }

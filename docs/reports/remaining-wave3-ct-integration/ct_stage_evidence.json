@@ -563,5 +563,13 @@
       "proposed_by": "docs/reports/remaining-t04/README.md",
       "reason_left_unmapped": "As CT24."
     }
+  },
+  "unmapped_reasons_provenance": "Added by card CT-LABELS (wave 15). This block is a MIGRATION, not a new measurement: every field is copied from text this file and this card's README already carried, and the migration is limited to the one case whose README states both a measured reason and a bucket label. CT11's bucket is this card's own label, introduced in README section 6 ('two are added (`blocked-on-scenario-mismatch (no local alias form)` for CT11 ...)'); its reason is the verbatim `cases_examined_and_left_unmapped.CT11.reason_left_unmapped` string above, measured in README section 1.2. The five other cases this file examined get NO row: CT35/CT36/CT38/CT39 were mapped by card T08-SRC-CT, so a bucket naming them would be a bucket on a mapped case (refused), and CT06/CT24/CT25 carry a measured reason here but no bucket label anywhere in this card's record, so inventing one is exactly what this mechanism forbids.",
+  "unmapped_reasons": {
+    "CT11": {
+      "bucket": "blocked-on-scenario-mismatch (no local alias form)",
+      "reason": "The scenario reads 'full permission reconstructed while local shared aliases survive'. ScopedReadSharesV1 has no local alias form at all, and the party retaining the share here is an unjoined child task. The refusal direction matches, but the retaining party does not, so mapping it would claim intra-frame alias evidence the corpus does not have. T05 flagged exactly this and left the decision to the integrator.",
+      "measured_by": "docs/reports/remaining-wave3-ct-integration/README.md section 1.2 (Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] } at the write placed between the two joins)"
+    }
   }
 }

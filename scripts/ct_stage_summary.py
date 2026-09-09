@@ -13,6 +13,10 @@ This module turns that record into the consumable numbers:
 
   * `summarize(root)`   -- the generated block, mirroring
                            `ct_corpus.rs::ct_stage_summary` exactly.
+  * `unmapped_labels(root)` -- each unmapped case's current bucket label beside
+                           the record that measured it: the newest CT lane's
+                           `unmapped_reasons` row, else card T00's frozen
+                           archive (card CT-LABELS).
   * `merge_evidence(root)` -- the archived per-card `ct_stage_evidence.json`
                            files (and T00's `coverage.json`) merged into one
                            matrix, including the `aux:` rows the manifest has no
@@ -64,12 +68,20 @@ STAGE_DEPTH = {
 #: Everything else in that block is recorded analysis, not stage evidence.
 #:
 #: `unmapped_bucket_counts` joined this list in card HYGIENE-14 (finding
-#: `D02-BUCKETS-STALE`). It is derived from a second input — card T00's archived
-#: triage — rather than from stage evidence, because the manifest carries no
+#: `D02-BUCKETS-STALE`). It is derived from a second input — the per-case bucket
+#: labels — rather than from stage evidence, because the manifest carries no
 #: per-case blocker record for an unmapped case at all; what makes it *derived*
 #: rather than hand-kept is that the set of cases it counts comes from the
 #: manifest's own `mapping_status`, so a case that gets mapped leaves the tally
 #: in the same commit that maps it.
+#:
+#: `unmapped_label_sources` joined it in card CT-LABELS (finding
+#: `D02-BUCKETS-LABELS`), which is what made the *label* derived too: a CT lane
+#: that examines a case and leaves it unmapped may now record the bucket it
+#: measured in its own `ct_stage_evidence.json`, and the newest such record wins
+#: over card T00's frozen archive. Publishing the source beside the label is the
+#: whole point — a reader can see which labels are current measurements and
+#: which are still the 2026-09-07 archive.
 GENERATED_FIELDS = [
     "ct_mapped",
     "ct_unmapped",
@@ -80,6 +92,7 @@ GENERATED_FIELDS = [
     "depth_profile",
     "case_depth",
     "unmapped_bucket_counts",
+    "unmapped_label_sources",
 ]
 
 #: Per-card stage-evidence records, in landing order. T00's coverage.json is an
@@ -99,10 +112,17 @@ EVIDENCE_FILES = [
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
 MANIFEST = "docs/reevaluation/ct_manifest.json"
 
-#: Card T00's archived triage of the then-unmapped cases. It is the only record
-#: in the repository that carries a per-case bucket label, and it is frozen at
-#: revision ea2af0f: the manifest has no blocker field for an unmapped case.
+#: Card T00's archived triage of the then-unmapped cases, at revision ea2af0f.
+#: Until card CT-LABELS it was the only record in the repository carrying a
+#: per-case bucket label; it remains the fallback for every case no later lane
+#: measured. The manifest itself has no blocker field for an unmapped case.
 TRIAGE = "docs/reports/remaining-t00/coverage.json"
+
+#: The `label_source` a case gets when no CT lane recorded a bucket for it and
+#: the label therefore comes from `TRIAGE`. Deliberately not a path: the point of
+#: publishing the source is that "this label is card T00's 2026-09-07 analysis,
+#: not a current measurement" is legible at a glance.
+ARCHIVE_SOURCE = "t00-archive"
 
 
 def _read(root: pathlib.Path, relative: str):
@@ -128,6 +148,182 @@ def unmapped_ids(manifest):
     return [case["id"] for case in manifest["cases"] if case["mapping_status"] == "unmapped"]
 
 
+def _triage_rows(root: pathlib.Path):
+    """Card T00's archived per-case labels, one row per case or refuse."""
+    triage = _read(root, TRIAGE)["unmapped_triage"]
+    rows: dict[str, dict] = {}
+    for case in triage["cases"]:
+        # A second row for one case would silently decide the label — measured
+        # while writing this: the obvious dict comprehension lets the *last* row
+        # win with no complaint. One case, one classification.
+        if case["id"] in rows:
+            raise SystemExit(
+                "%s: two triage rows classify the same case in %s" % (case["id"], TRIAGE)
+            )
+        rows[case["id"]] = case
+    return rows
+
+
+def _lane_labels(root: pathlib.Path, unmapped: set):
+    """The per-case buckets the CT lanes measured, newest record winning.
+
+    Card CT-LABELS (finding `D02-BUCKETS-LABELS`). A lane that examines a case
+    and leaves it unmapped may record, in its own `ct_stage_evidence.json`, an
+    `unmapped_reasons` block of `{CASE: {bucket, reason, measured_by}}` rows.
+    The files are read in landing order, so the newest row for a case is the one
+    that survives.
+
+    Three total-or-reject conditions, each a real way this could go wrong:
+
+    * a row naming a case the manifest currently maps — the record would publish
+      a blocker for a case that has none, which is exactly the staleness
+      HYGIENE-14's structural repair removed from the *counts*;
+    * two records carrying different buckets for one case with no supersession
+      declared — the later row would silently decide the label, the same defect
+      the duplicate-triage-row refusal above catches on the other input;
+    * a supersession that is stale (names a record that does not hold the label)
+      or vacuous (names anything at all when no earlier row exists). A lane label
+      always beats card T00's archive by the resolution rule, so declaring *that*
+      is vacuous too.
+    """
+    held: dict[str, dict] = {}
+    for relative in EVIDENCE_FILES:
+        data = _read(root, relative)
+        rows = data.get("unmapped_reasons") or {}
+        for case_id, row in rows.items():
+            if case_id not in unmapped:
+                raise SystemExit(
+                    "%s: %s records an unmapped-case bucket, but the manifest maps this case"
+                    % (case_id, relative)
+                )
+            for field in ("bucket", "reason", "measured_by"):
+                value = row.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    raise SystemExit(
+                        "%s: %s carries no %s for this case" % (case_id, relative, field)
+                    )
+            superseded = row.get("supersedes")
+            previous = held.get(case_id)
+            if previous is None:
+                if superseded is not None:
+                    raise SystemExit(
+                        "%s: %s declares its bucket supersedes %s, but no earlier record "
+                        "labels this case" % (case_id, relative, superseded)
+                    )
+            elif previous["bucket"] == row["bucket"]:
+                # Re-verification that reaches the same label is not a second
+                # claim on the case; it is the record saying the label still
+                # holds, and it needs no supersession declaration.
+                pass
+            elif superseded is None:
+                raise SystemExit(
+                    "%s: two evidence records label this case differently (%s says %r, "
+                    "%s says %r) and neither declares a supersession"
+                    % (
+                        case_id,
+                        previous["label_source"],
+                        previous["bucket"],
+                        relative,
+                        row["bucket"],
+                    )
+                )
+            elif superseded != previous["label_source"]:
+                raise SystemExit(
+                    "%s: %s declares its bucket supersedes %s, but the record holding the "
+                    "label is %s" % (case_id, relative, superseded, previous["label_source"])
+                )
+            held[case_id] = dict(row, label_source=relative)
+    return held
+
+
+def unmapped_labels(root: pathlib.Path, manifest=None):
+    """The current bucket label of every unmapped case, beside its source.
+
+    Card CT-LABELS. The resolution rule is one sentence: **the newest CT lane
+    record that measured this case, else card T00's frozen archive.** Both halves
+    are published — `label` and `label_source` — because a label whose source is
+    invisible is exactly what let CT11's and CT46's archived text stay wrong for
+    several waves while the acceptance matrix published a corrected
+    `blocker_current` beside it for one case only.
+
+    Total-or-reject: a case with neither a lane row nor an archived row is a
+    hole, not a zero.
+    """
+    manifest = manifest or load_manifest(root)
+    unmapped = unmapped_ids(manifest)
+    archive = _triage_rows(root)
+    lanes = _lane_labels(root, set(unmapped))
+    resolved: dict[str, dict] = {}
+    unclassified = [
+        case_id for case_id in unmapped if case_id not in lanes and case_id not in archive
+    ]
+    if unclassified:
+        raise SystemExit(
+            "unmapped cases with no measured bucket and no archived triage row in %s: %s"
+            % (TRIAGE, unclassified)
+        )
+    for case_id in unmapped:
+        if case_id in lanes:
+            resolved[case_id] = {
+                "label": lanes[case_id]["bucket"],
+                "label_source": lanes[case_id]["label_source"],
+                "reason": lanes[case_id]["reason"],
+                "measured_by": lanes[case_id]["measured_by"],
+                "archived_label": archive[case_id]["current_bucket"]
+                if case_id in archive
+                else None,
+            }
+        else:
+            resolved[case_id] = {
+                "label": archive[case_id]["current_bucket"],
+                "label_source": ARCHIVE_SOURCE,
+                "reason": archive[case_id]["blocker"],
+                "measured_by": ARCHIVE_SOURCE,
+                "archived_label": archive[case_id]["current_bucket"],
+            }
+    return resolved
+
+
+def unmapped_label_sources(root: pathlib.Path, manifest=None):
+    """`{case: label_source}` — the published half that makes a label auditable."""
+    return {
+        case_id: entry["label_source"]
+        for case_id, entry in unmapped_labels(root, manifest).items()
+    }
+
+
+def check_label_sources(root: pathlib.Path):
+    """A committed `label_source` the file set cannot support, as strings.
+
+    The generated-field drift check already catches a source that disagrees with
+    the derivation. This is the other direction and the one a hand edit reaches
+    first: a source naming a record that is not in `EVIDENCE_FILES` at all, or a
+    record that carries no row for that case. Either way the record would be
+    citing evidence that is not there.
+    """
+    block = _read(root, ACCEPTANCE).get("ct_evidence", {})
+    committed = block.get("unmapped_label_sources") or {}
+    carries: dict[str, set] = {}
+    for relative in EVIDENCE_FILES:
+        for case_id in (_read(root, relative).get("unmapped_reasons") or {}):
+            carries.setdefault(relative, set()).add(case_id)
+    problems = []
+    for case_id, source in sorted(committed.items()):
+        if source == ARCHIVE_SOURCE:
+            continue
+        if source not in EVIDENCE_FILES:
+            problems.append(
+                "acceptance.json labels %s from %s, which is not a CT stage-evidence record"
+                % (case_id, source)
+            )
+        elif case_id not in carries.get(source, set()):
+            problems.append(
+                "acceptance.json labels %s from %s, which records no bucket for that case"
+                % (case_id, source)
+            )
+    return problems
+
+
 def unmapped_bucket_counts(root: pathlib.Path, manifest=None):
     """Bucket tally over the cases the manifest *currently* leaves unmapped.
 
@@ -142,45 +338,25 @@ def unmapped_bucket_counts(root: pathlib.Path, manifest=None):
 
     Two total-or-reject conditions, both load-bearing:
 
-    * every currently-unmapped id must have a triage row — a case the archive
-      does not classify is a hole, not a zero;
+    * every currently-unmapped id must have a label — a case neither a lane nor
+      the archive classifies is a hole, not a zero;
     * the counts must sum to the number of unmapped cases — the exact property
       whose silent violation is the finding this repair closes.
 
-    What is *not* derived, and is recorded as the card's boundary: the bucket
-    label itself is card T00's frozen analysis at revision ea2af0f. A later card
-    that re-verifies a still-unmapped case's reason by measurement publishes it
-    beside the archived one (`blocker_current` in the acceptance matrix,
-    read from the per-card `ct_stage_evidence.json` records), and does not
-    rewrite the frozen label. So a count here is current by construction while a
-    label is historical by construction.
+    Card CT-LABELS then made the *label* derived as well, and this function now
+    counts resolved labels rather than archived ones. HYGIENE-14's boundary — "a
+    count is current by construction; a label is historical by construction" —
+    holds only for the cases no lane measured, and `unmapped_label_sources` says
+    which those are.
     """
-    manifest = manifest or load_manifest(root)
-    triage = _read(root, TRIAGE)["unmapped_triage"]
-    rows: dict[str, dict] = {}
-    for case in triage["cases"]:
-        # A second row for one case would silently decide the label — measured
-        # while writing this: the obvious dict comprehension lets the *last* row
-        # win with no complaint. One case, one classification.
-        if case["id"] in rows:
-            raise SystemExit(
-                "%s: two triage rows classify the same case in %s" % (case["id"], TRIAGE)
-            )
-        rows[case["id"]] = case
-    unmapped = unmapped_ids(manifest)
-    unclassified = [case_id for case_id in unmapped if case_id not in rows]
-    if unclassified:
-        raise SystemExit(
-            "unmapped cases with no archived triage row in %s: %s" % (TRIAGE, unclassified)
-        )
+    labels = unmapped_labels(root, manifest)
     counts: dict[str, int] = {}
-    for case_id in unmapped:
-        bucket = rows[case_id]["current_bucket"]
-        counts[bucket] = counts.get(bucket, 0) + 1
-    if sum(counts.values()) != len(unmapped):
+    for entry in labels.values():
+        counts[entry["label"]] = counts.get(entry["label"], 0) + 1
+    if sum(counts.values()) != len(labels):
         raise SystemExit(
             "unmapped_bucket_counts sums to %s against %s unmapped cases"
-            % (sum(counts.values()), len(unmapped))
+            % (sum(counts.values()), len(labels))
         )
     return counts
 
@@ -205,10 +381,11 @@ def check_newly_decidable(root: pathlib.Path):
 def summarize(root: pathlib.Path):
     """The generated block.
 
-    Every field but one is computed from the manifest's stage evidence alone;
-    `unmapped_bucket_counts` additionally reads card T00's archived triage for
-    the labels, over the case set the manifest itself fixes (see
-    [`unmapped_bucket_counts`]).
+    Every field but two is computed from the manifest's stage evidence alone;
+    `unmapped_bucket_counts` and `unmapped_label_sources` additionally read the
+    CT lanes' own `unmapped_reasons` rows and card T00's archived triage for the
+    labels, over the case set the manifest itself fixes (see
+    [`unmapped_labels`]).
     """
     manifest = load_manifest(root)
     stages = manifest["stage_vocabulary"]["stages"]
@@ -263,6 +440,7 @@ def summarize(root: pathlib.Path):
         "depth_profile": _sorted(depth_profile),
         "case_depth": _sorted(case_depth),
         "unmapped_bucket_counts": unmapped_bucket_counts(root, manifest),
+        "unmapped_label_sources": _sorted(unmapped_label_sources(root, manifest)),
     }
 
 
@@ -372,6 +550,15 @@ def check_acceptance(root: pathlib.Path):
         source = acceptance if field.startswith("ct_") else block
         if source.get(field) != derived[field]:
             problems.append("acceptance.json `%s` is not what the manifest derives" % field)
+    # `derived_from` is the third record that pins the evidence-file set, and
+    # `compiler/tests/ct_corpus.rs` asserts its own Rust copy of that list
+    # against the same field. Checking it here is what keeps the two derivations
+    # reading the same files (card CT-LABELS).
+    if block.get("derived_from") != [MANIFEST] + EVIDENCE_FILES:
+        problems.append(
+            "acceptance.json `derived_from` is not the manifest plus this generator's "
+            "evidence-file list"
+        )
     return problems
 
 
@@ -396,7 +583,12 @@ def main(argv):
     if "--write" in flags:
         write_acceptance(root)
         print("wrote", root / ACCEPTANCE)
-    problems = check_acceptance(root) + check_provenance(root) + check_newly_decidable(root)
+    problems = (
+        check_acceptance(root)
+        + check_provenance(root)
+        + check_newly_decidable(root)
+        + check_label_sources(root)
+    )
     for problem in problems:
         print("DRIFT:", problem)
     summary = summarize(root)

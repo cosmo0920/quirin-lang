@@ -321,43 +321,45 @@ assert {case["id"] for case in triage_cases} == set(unmapped_ids), sorted(
 # a tally that does not sum to the number of unmapped cases.
 bucket_counts = ct_stage_summary.unmapped_bucket_counts(ROOT, manifest)
 assert sum(bucket_counts.values()) == len(unmapped_ids)
+# The *label* is derived too since card CT-LABELS (finding D02-BUCKETS-LABELS).
 # T00's `blocker` text is frozen at revision ea2af0f, and for a case whose
-# blocker has since been repaired it can read as a false statement about the
+# blocker has since been repaired it reads as a false statement about the
 # implementation. CT34 was the worked example — its frozen text says "no source
 # form creates or declares a mutex", which card T03 and then card CT33-RANKS
 # made untrue — and card CT34-GROWTH has since supplied the growth form, so the
-# wave-13 CT lane mapped CT34 and it leaves this table entirely. CT46 is the
-# remaining case: card CT46-SENDSYNC retired its recorded Send/Sync-derivation
-# blocker and measured a different one (CT46-MUTEX-CAPTURE). Where a later card
-# re-verified a still-unmapped case's reason by measurement, that reason is
-# published beside the archived one rather than replacing it, so the history
-# stays visible and the current statement is the accurate one. Only ids a named
-# record really re-verified appear here; the assertions below are what stop this
-# from going stale in turn.
-SUPERSEDING_REASONS = "docs/reports/wave13-ct34/ct_stage_evidence.json"
-_superseded = json.loads((ROOT / SUPERSEDING_REASONS).read_text())[
-    "cases_examined_and_left_unmapped"
-]
-assert set(_superseded) == {"CT46"}, sorted(_superseded)
-assert set(_superseded) <= set(unmapped_ids), "a superseded reason names a mapped case"
+# wave-13 CT lane mapped CT34 and it leaves this table entirely. What replaced
+# the hand-kept `SUPERSEDING_REASONS` reader that used to sit here is the shared
+# resolution rule: each unmapped case's current label is the newest CT lane
+# record that measured it, else T00's archive, and both halves are published.
+# The archived label and blocker stay beside the current ones, so the history
+# remains visible rather than being overwritten.
+labels = ct_stage_summary.unmapped_labels(ROOT, manifest)
+assert set(labels) == set(unmapped_ids)
 # CT34 left this table by being mapped (wave-13 CT lane), not by its blocker
 # being quietly dropped. Asserting the transition is what keeps "CT34 no longer
 # appears here" from reading as an accident.
 assert "CT34" not in unmapped_ids, "CT34 is mapped; its frozen blocker text is no longer published"
 for case in triage_cases:
+    label = labels[case["id"]]
+    measured = label["label_source"] != ct_stage_summary.ARCHIVE_SOURCE
     row = {
         "id": case["id"],
         "mapping_status": "unmapped",
         "expected": cases[case["id"]]["expected"],
-        "current_bucket": case["current_bucket"],
+        "current_bucket": label["label"],
+        "current_bucket_source": label["label_source"],
+        # T00's archived analysis, kept beside the current label whether or not a
+        # lane has since measured a different one.
+        "archived_bucket": case["current_bucket"],
         "blocker": case["blocker"],
         "bucket_changed_since_batch2": case.get("bucket_changed_since_batch2", False),
         "stage_derived_status": {stage: {"status": "unexecuted"} for stage in STAGE_ORDER},
         "deepest_executed_stage": None,
     }
-    if case["id"] in _superseded:
-        row["blocker_current"] = _superseded[case["id"]]["why_still_unmapped"]
-        row["blocker_superseded_by"] = SUPERSEDING_REASONS
+    if measured:
+        row["blocker_current"] = label["reason"]
+        row["blocker_superseded_by"] = label["label_source"]
+        row["blocker_measured_by"] = label["measured_by"]
     ct_rows.append(row)
 ct_rows.sort(key=lambda row: int(row["id"][2:]))
 
@@ -407,6 +409,9 @@ ct_section = {
     "ct_rows": ct_rows,
     "executed_totals_from_t00": coverage["executed_totals"],
     "unmapped_bucket_counts": bucket_counts,
+    # Which record decided each current label: a CT lane's own `unmapped_reasons`
+    # row, or `t00-archive` for a case no lane has re-measured (card CT-LABELS).
+    "unmapped_label_sources": {case: entry["label_source"] for case, entry in labels.items()},
     "newly_decidable_not_mapped": [
         cid for cid in triage["newly_decidable"] if cid in set(unmapped_ids)
     ],
@@ -426,8 +431,13 @@ ct_section = {
         "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the "
         "record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this "
         "generator's inputs no longer allow.",
-        "The unmapped triage rows are recorded analysis, not stage evidence, and come from "
-        "T00's audit filtered to the cases that are still unmapped.",
+        "The unmapped triage rows are recorded analysis, not stage evidence. The counted set is "
+        "the manifest's own unmapped set (card HYGIENE-14); each row's current_bucket is the "
+        "newest CT lane record that measured that case, else T00's archived audit, with "
+        "current_bucket_source naming which and archived_bucket keeping T00's text beside it "
+        "(card CT-LABELS). A row whose source is a lane also carries blocker_current and "
+        "blocker_measured_by; a row on t00-archive carries only T00's frozen blocker, which for "
+        "such a case has not been re-verified against the current implementation.",
         "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed "
         "through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a "
         "different artifact and a different property — a resource projection over declared "

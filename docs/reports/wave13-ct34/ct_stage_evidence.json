@@ -193,5 +193,13 @@
       "checked": "The wave-11 record's CT34 reason (`CreateMutex still fixes its declared footprints at creation; there is no growth form`) was accurate when written and is now superseded by card CT34-GROWTH landing the growth form. The archived wave-11 file is NOT edited - rewriting an archived record would destroy the history it exists to keep - and CT34 simply leaves the unmapped triage rows, so no stale blocker text is published for it any more.",
       "text_changed": true
     }
+  },
+  "unmapped_reasons_provenance": "Added by card CT-LABELS (wave 15). This block is a MIGRATION, not a new measurement: the reason is the verbatim `cases_examined_and_left_unmapped.CT46.why_still_unmapped` string above, measured in README section 'CT46 - stale, and updated'. One deviation is recorded rather than hidden: unlike the wave-3 and wave-9 migrations, this card's README states no bucket LABEL for CT46, only the named obstacle CT46-MUTEX-CAPTURE, so the label below is COMPOSED from that name in the shape the sibling buckets use. Nothing about the measurement is composed. The label it replaces - card T00's frozen `blocked-on-unimplemented-syntax (no mutex value)` - is measurably false since cards T03 and CT33-RANKS: mutex values exist. The row carries no `supersedes` key, and that is deliberate: `supersedes` in this block declares a replacement of an earlier LANE row, and the wave-11 record states no bucket for CT46 at all (it re-verified a reason, which is why this file's `cases_examined_and_left_unmapped.CT46` carries the supersession of that reason instead). A lane label always replaces card T00's frozen archive by the resolution rule itself, so declaring that here would be vacuous. CT34 gets no row: this lane mapped it, and a bucket naming a mapped case is refused.",
+  "unmapped_reasons": {
+    "CT46": {
+      "bucket": "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)",
+      "reason": "The recorded Send/Sync-derivation blocker is retired: card CT46-SENDSYNC landed a closed transferable(T) judgment that decides both matrices whole, so the derivation CT46 was said to need now exists. The measured remaining obstacle is different, and is named CT46-MUTEX-CAPTURE: the mutex ledger and the task ledger compose today by mutual exclusion rather than over a capture - the mutex route admits no task capture of a guarded payload and the task route refuses mutexes outright - so no source text can ask for mutex-mediated sharing across a task boundary and CT46's `accept` half is unwritable. Mapping only the refusing half would answer a different question.",
+      "measured_by": "docs/reports/wave13-ct34/README.md section 'CT46 - stale, and updated', carrying card CT46-SENDSYNC (wave 12) forward"
+    }
   }
 }
