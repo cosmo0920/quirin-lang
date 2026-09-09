@@ -35,7 +35,7 @@ fn parts() -> (
             native,
             native_profile,
         } => (wrapper, native, native_profile),
-        CompositionFamilyInput::FileClose { .. } => {
+        CompositionFamilyInput::FileClose { .. } | CompositionFamilyInput::MemoryClose { .. } => {
             panic!("the leaf fixture must carry the leaf family")
         }
     }
@@ -346,7 +346,8 @@ fn file_close_parts(deleting: bool) -> FileCloseParts {
             close_profile,
             delete,
         } => (wrapper, *unmap, close, close_profile, delete.map(|d| *d)),
-        CompositionFamilyInput::UnmapWrapper { .. } => {
+        CompositionFamilyInput::UnmapWrapper { .. }
+        | CompositionFamilyInput::MemoryClose { .. } => {
             panic!("the file_close fixture must carry the file_close family")
         }
     }

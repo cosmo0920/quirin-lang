@@ -32,11 +32,13 @@ use qcore_schemas::cleanup_replay_summary::{
     CleanupReplayRecord, CleanupReplayValueRecord,
 };
 use qcore_schemas::composition_summary::{
-    CompositionFamilyInput, CompositionProposalRecord, CompositionRecord, CompositionSourceInput,
-    CompositionWitness, DeletingCloseCaseRecord, DeletionOutcomeRecord,
-    FILE_CLOSE_DELETE_SEMANTIC_PROFILE, FILE_CLOSE_SEMANTIC_PROFILE, FileCloseCaseRecord,
-    FileCloseCompositionRecord, FileCloseDeleteInput, ResidualCustodyRecord,
-    UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapCaseRecord,
+    CalleeIdentityRecord, CompositionFamilyInput, CompositionProposalRecord, CompositionRecord,
+    CompositionSourceInput, CompositionWitness, DeletingCloseCaseRecord, DeletionOutcomeRecord,
+    DerivedUnitRecord, FILE_CLOSE_DELETE_SEMANTIC_PROFILE, FILE_CLOSE_SEMANTIC_PROFILE,
+    FileCloseCaseRecord, FileCloseCompositionRecord, FileCloseDeleteInput,
+    MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryCloseCalleeRecord, MemoryCloseCaseRecord,
+    MemoryCloseCompositionRecord, ResidualCustodyRecord, UNMAP_WRAPPER_SEMANTIC_PROFILE,
+    UnmapCaseRecord,
 };
 use qcore_schemas::plugin::*;
 use std::collections::{BTreeMap, BTreeSet};
@@ -1073,6 +1075,346 @@ fn compose_file_close(
     })
 }
 
+// ---------------------------------------------------------------------------
+// The memory-close family: four prerequisites over a derived unit.
+// ---------------------------------------------------------------------------
+
+/// The memory-close wrapper's symbolic value domain, constructor for
+/// constructor with the trusted composition's own private domain and in the
+/// same order — minus the symbolic unsupported-backend class, which the
+/// transported question never asks about. There is no `Unknown`/`Other`
+/// constructor: an unresolved value is a decline, never an opaque token.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MemoryValue {
+    Null,
+    Chunk,
+    Context,
+    Stream,
+    Name,
+    PrimaryLink,
+    StateLink,
+    Integer(i32),
+    Boolean(bool),
+}
+
+struct MemoryReplay<'a> {
+    nonnull: bool,
+    memory_kind: i32,
+    freed: bool,
+    backend: bool,
+    primary: bool,
+    state_link: bool,
+    name: bool,
+    counter: bool,
+    calls: u32,
+    symbols: BTreeMap<u32, MemoryValue>,
+    callees: &'a MemoryCloseCalleeRecord,
+}
+
+impl MemoryReplay<'_> {
+    fn truth(value: &MemoryValue) -> bool {
+        !matches!(
+            value,
+            MemoryValue::Null | MemoryValue::Boolean(false) | MemoryValue::Integer(0)
+        )
+    }
+
+    fn value(&self, v: &CleanupReplayValueRecord, depth: u32) -> Option<MemoryValue> {
+        if depth > MAX_EXPRESSION_DEPTH {
+            return None;
+        }
+        match &v.expression {
+            CleanupReplayExpressionRecord::Parameter { index: 0 } => Some(if self.nonnull {
+                MemoryValue::Chunk
+            } else {
+                MemoryValue::Null
+            }),
+            CleanupReplayExpressionRecord::Symbol { operation } => {
+                self.symbols.get(operation).cloned()
+            }
+            CleanupReplayExpressionRecord::Integer { value } => {
+                Some(MemoryValue::Integer(value.parse().ok()?))
+            }
+            CleanupReplayExpressionRecord::Cast { cast, value }
+                if matches!(cast.as_str(), "BitCast" | "NoOp") =>
+            {
+                self.value(value, depth + 1)
+            }
+            CleanupReplayExpressionRecord::Unary { operator, value } if operator == "!" => Some(
+                MemoryValue::Boolean(!Self::truth(&self.value(value, depth + 1)?)),
+            ),
+            CleanupReplayExpressionRecord::Binary {
+                operator,
+                left,
+                right,
+            } if operator == "==" => {
+                // C logical expressions have integer results. Preserve that
+                // equality when a guard compares !pointer with literal zero.
+                let integer_bool = |value| match value {
+                    MemoryValue::Boolean(value) => MemoryValue::Integer(i32::from(value)),
+                    other => other,
+                };
+                let left = integer_bool(self.value(left, depth + 1)?);
+                let right = integer_bool(self.value(right, depth + 1)?);
+                if matches!(&left, MemoryValue::Integer(_))
+                    != matches!(&right, MemoryValue::Integer(_))
+                {
+                    return None;
+                }
+                Some(MemoryValue::Boolean(left == right))
+            }
+            CleanupReplayExpressionRecord::Unary { operator, value } if operator == "&" => {
+                let CleanupReplayExpressionRecord::Field { base, name } = &value.expression else {
+                    return None;
+                };
+                if self.value(base, depth + 1)? != MemoryValue::Chunk
+                    || self.freed
+                    || value.c_type != "struct mk_list"
+                {
+                    return None;
+                }
+                match name.as_str() {
+                    "_head" => Some(MemoryValue::PrimaryLink),
+                    "_state_head" => Some(MemoryValue::StateLink),
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    }
+
+    /// Walk one complete path. `Some(true)` means this entry selects it,
+    /// `Some(false)` that a guard turned the other way, and `None` that the
+    /// path is outside what this producer can resolve — a decline.
+    fn run(&mut self, operations: &[CleanupReplayOperationRecord]) -> Option<bool> {
+        for (index, operation) in operations.iter().enumerate() {
+            let index = u32::try_from(index).ok()?;
+            match operation {
+                CleanupReplayOperationRecord::Guard { condition, taken } => {
+                    if Self::truth(&self.value(condition, 0)?) != *taken {
+                        return Some(false);
+                    }
+                }
+                CleanupReplayOperationRecord::Read { place } => {
+                    let CleanupReplayExpressionRecord::Field { base, name } = &place.expression
+                    else {
+                        return None;
+                    };
+                    let resolved = match (self.value(base, 0)?, name.as_str()) {
+                        (MemoryValue::Chunk, _) if self.freed => return None,
+                        (MemoryValue::Chunk, "ctx") if place.c_type == "struct cio_ctx *" => {
+                            MemoryValue::Context
+                        }
+                        (MemoryValue::Chunk, "st") if place.c_type == "struct cio_stream *" => {
+                            MemoryValue::Stream
+                        }
+                        (MemoryValue::Chunk, "name") if !self.name && place.c_type == "char *" => {
+                            MemoryValue::Name
+                        }
+                        (MemoryValue::Stream, "type") if place.c_type == "int" => {
+                            MemoryValue::Integer(self.memory_kind)
+                        }
+                        _ => return None,
+                    };
+                    self.symbols.insert(index, resolved);
+                }
+                CleanupReplayOperationRecord::LocalWrite { value, .. } => {
+                    self.value(value, 0)?;
+                }
+                CleanupReplayOperationRecord::LocalEnd { .. } => (),
+                CleanupReplayOperationRecord::Call {
+                    function,
+                    signature,
+                    arguments,
+                    result_type,
+                } => {
+                    let mut resolved = Vec::new();
+                    for argument in arguments {
+                        resolved.push(self.value(argument, 0)?);
+                    }
+                    self.calls = self.calls.checked_add(1)?;
+                    let named = |callee: &CalleeIdentityRecord| {
+                        *function == callee.function && *signature == callee.signature
+                    };
+                    if named(&self.callees.reset)
+                        && result_type == "void"
+                        && resolved == [MemoryValue::Chunk]
+                        && !self.freed
+                        && self.calls == 1
+                    {
+                    } else if !self.freed
+                        && !self.backend
+                        && *function == self.callees.backend.function
+                        && *signature == self.callees.backend.signature
+                        && resolved == [MemoryValue::Chunk]
+                    {
+                        self.backend = true;
+                    } else if named(&self.callees.unlink) && !self.freed && self.backend {
+                        match resolved.as_slice() {
+                            [MemoryValue::PrimaryLink] if !self.primary => self.primary = true,
+                            [MemoryValue::StateLink] if !self.state_link => {
+                                self.state_link = true;
+                            }
+                            _ => return None,
+                        }
+                    } else if function == MEMORY_CLOSE_RELEASE_CALLEE.0
+                        && signature == MEMORY_CLOSE_RELEASE_CALLEE.1
+                        && result_type == "void"
+                        && self.backend
+                        && self.primary
+                        && self.state_link
+                    {
+                        match resolved.as_slice() {
+                            [MemoryValue::Name] if !self.name && !self.freed => self.name = true,
+                            [MemoryValue::Chunk] if self.name && !self.freed => self.freed = true,
+                            _ => return None,
+                        }
+                    } else if *function == self.callees.counter.function
+                        && result_type
+                            == self
+                                .callees
+                                .counter
+                                .signature
+                                .split('(')
+                                .next()
+                                .unwrap_or_default()
+                                .trim()
+                        && signature.split_once('(').map(|(_, args)| args)
+                            == Some("struct cio_ctx *)")
+                        && resolved == [MemoryValue::Context]
+                        && self.freed
+                        && !self.counter
+                    {
+                        self.counter = true;
+                    } else {
+                        return None;
+                    }
+                }
+                CleanupReplayOperationRecord::Return
+                    if usize::try_from(index).ok()? + 1 == operations.len() =>
+                {
+                    return Some(true);
+                }
+                _ => return None,
+            }
+        }
+        None
+    }
+}
+
+/// The libc release frame the memory-close wrapper is allowed to resolve
+/// without a prerequisite. It is not a transported value: a wrapper that calls
+/// anything else under this name has no projection, and the receiver runs its
+/// own composition regardless.
+const MEMORY_CLOSE_RELEASE_CALLEE: (&str, &str) = ("free", "void (void *)");
+
+/// Read the backend discriminant out of the transported probe body. The value
+/// is never handed to this process; only the body is.
+fn memory_kind(probe: &CleanupReplayFunctionRecord) -> Option<i32> {
+    if probe.signature != "int (void)" {
+        return None;
+    }
+    let [path] = probe.paths.as_slice() else {
+        return None;
+    };
+    let [CleanupReplayOperationRecord::ReturnValue { value }] = path.operations.as_slice() else {
+        return None;
+    };
+    let CleanupReplayExpressionRecord::Integer { value } = &value.expression else {
+        return None;
+    };
+    value.parse().ok()
+}
+
+/// Recompute the whole memory-close reading from the transported question.
+fn compose_memory_close(
+    wrapper: &CleanupReplayFunctionRecord,
+    probe: &CleanupReplayFunctionRecord,
+    derivation: &DerivedUnitRecord,
+    callees: &MemoryCloseCalleeRecord,
+) -> Option<MemoryCloseCompositionRecord> {
+    if !bounded(wrapper) || !bounded(probe) {
+        return None;
+    }
+    if wrapper.signature != "void (struct cio_chunk *, int)"
+        || wrapper.source_revision != probe.source_revision
+        || wrapper.function == probe.function
+    {
+        return None;
+    }
+    // The derivation travels as a claim. This process cannot check it against
+    // any text — it has none — so it checks only that the claim is well formed
+    // and names the body it was handed. The receiver compares it against its
+    // own derivation, which is where the authority is.
+    if !derivation.is_complete()
+        || !derivation.is_a_derivation()
+        || derivation.recipe_function != probe.function
+    {
+        return None;
+    }
+    if !callees.is_complete() || !callees.are_distinct() {
+        return None;
+    }
+    let memory_kind = memory_kind(probe)?;
+    let mut cases = Vec::new();
+    let mut checked = BTreeSet::new();
+    for nonnull in [false, true] {
+        let mut accepted: Vec<(u32, MemoryCloseCaseRecord)> = Vec::new();
+        for (index, path) in wrapper.paths.iter().enumerate() {
+            let index = u32::try_from(index).ok()?;
+            let mut replay = MemoryReplay {
+                nonnull,
+                memory_kind,
+                freed: false,
+                backend: false,
+                primary: false,
+                state_link: false,
+                name: false,
+                counter: false,
+                calls: 0,
+                symbols: BTreeMap::new(),
+                callees,
+            };
+            if replay.run(&path.operations)? {
+                accepted.push((
+                    index,
+                    MemoryCloseCaseRecord {
+                        nonnull,
+                        source_path: index,
+                        calls: replay.calls,
+                        backend_discharged: replay.backend,
+                        primary_unlinked: replay.primary,
+                        state_unlinked: replay.state_link,
+                        name_released: replay.name,
+                        chunk_released: replay.freed,
+                        counter_decremented: replay.counter,
+                    },
+                ));
+            }
+        }
+        // Exactly one complete path per entry state, exactly as the trusted
+        // composition requires. Two, or none, is a decline.
+        let [(index, case)] = accepted.as_slice() else {
+            return None;
+        };
+        checked.insert(*index);
+        cases.push(case.clone());
+    }
+    let uncovered = (0..u32::try_from(wrapper.paths.len()).ok()?)
+        .filter(|index| !checked.contains(index))
+        .collect();
+    Some(MemoryCloseCompositionRecord {
+        function: wrapper.function.clone(),
+        source_revision: wrapper.source_revision.clone(),
+        signature: wrapper.signature.clone(),
+        memory_kind,
+        cases,
+        checked_paths: checked.into_iter().collect(),
+        uncovered_paths: uncovered,
+        profile_assumptions: wrapper.profile_assumptions.clone(),
+    })
+}
+
 fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> {
     if !source.version_matches()
         || !source.prerequisites.is_complete()
@@ -1096,6 +1438,13 @@ fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> 
             delete,
         } => compose_file_close(wrapper, unmap, close, close_profile, delete.as_deref())
             .map(CompositionProposalRecord::FileClose),
+        CompositionFamilyInput::MemoryClose {
+            wrapper,
+            probe,
+            derivation,
+            callees,
+        } => compose_memory_close(wrapper, probe, derivation, callees)
+            .map(CompositionProposalRecord::MemoryClose),
     }
 }
 
@@ -1109,6 +1458,7 @@ pub fn propose(
             UNMAP_WRAPPER_SEMANTIC_PROFILE
                 | FILE_CLOSE_SEMANTIC_PROFILE
                 | FILE_CLOSE_DELETE_SEMANTIC_PROFILE
+                | MEMORY_CLOSE_SEMANTIC_PROFILE
         )
         || !matches!(
             request.target.dialect.as_str(),
