@@ -47,14 +47,17 @@ fn the_two_tokenizers_agree_on_marker_free_input() {
 fn a_marker_is_read_only_at_a_logical_line_start() {
     let real = tokenize_marked("# 1 \"main.c\"\nint a(void) { return 0; }\n");
     assert_eq!(real.primary.as_deref(), Some("main.c"));
-    assert_eq!(real.names, ["main.c"]);
+    assert!(!real.unbalanced);
 
-    let forged = tokenize_marked("int a(void) { return 0; } # 1 \"forged.c\"\n");
+    let forged = tokenize_marked("int a(void) { return 0; } # 1 \"forged.c\" 1\n");
     assert_eq!(forged.primary, None);
-    assert!(forged.names.is_empty());
     assert!(
         forged.tokens.iter().any(|token| token.text == "#"),
         "a mid-line `#` is an ordinary punctuator"
+    );
+    assert!(
+        forged.depths.iter().all(|depth| *depth == 0),
+        "a mid-line marker-looking run must not push the include stack"
     );
 }
 
@@ -63,15 +66,97 @@ fn a_marker_is_read_only_at_a_logical_line_start() {
 #[test]
 fn a_marker_after_a_continued_directive_is_still_read() {
     let stream = tokenize_marked(
-        "# 1 \"main.c\"\n#define WRAP(E)   \\\n        {E, &(#E)[0]}\n# 1 \"other.c\"\nint a(void) { return 0; }\n",
+        "# 1 \"main.c\"\n#define WRAP(E)   \\\n        {E, &(#E)[0]}\n# 1 \"other.c\" 1\nint a(void) { return 0; }\n",
     );
     assert_eq!(stream.primary.as_deref(), Some("main.c"));
-    assert_eq!(stream.names, ["main.c", "other.c"]);
-    // Every emitted token comes from `other.c`: the macro body is directive
-    // text, not source.
+    // The second marker enters a file, so it is read: every emitted token is
+    // at depth 1. The macro's replacement list contributes none of them — it
+    // is directive text, not source.
     assert!(
-        stream.files.iter().all(|slot| *slot == 1),
+        stream.depths.iter().all(|depth| *depth == 1),
+        "the trailing enter marker must be read, and the macro body must \
+         contribute no token"
+    );
+    assert!(
+        stream
+            .tokens
+            .iter()
+            .all(|token| token.text != "WRAP" && token.text != "E"),
         "the macro's replacement list must contribute no token"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Include-depth attribution (unit E01-TAIL, residual E01-F1-STDIN)
+// ---------------------------------------------------------------------------
+
+/// The reader-level matrix for the depth rule. Each row is a marker stream
+/// Clang could emit (or, for the refusal rows, could not), with the depth every
+/// token must land at.
+///
+/// The load-bearing rows are the two `#line` directions: a flagless marker
+/// changes the *name* Clang reports and nothing else, so it must leave the
+/// depth alone in both directions.
+#[test]
+fn include_depth_follows_the_enter_and_return_flags() {
+    // Flags 3 and 4 say nothing about the stack.
+    let system = tokenize_marked("# 1 \"m.c\"\n# 1 \"s.h\" 1 3 4\nint a;\n# 2 \"m.c\" 2\nint b;\n");
+    assert_eq!(system.depths, vec![1, 1, 1, 0, 0, 0], "`1 3 4` enters once");
+    assert!(!system.unbalanced);
+
+    // A flagless marker inside a header (a `#line`) keeps the header's depth.
+    let relabel_in =
+        tokenize_marked("# 1 \"m.c\"\n# 1 \"h.h\" 1\n# 9 \"m.c\"\nint a;\n# 2 \"m.c\" 2\nint b;\n");
+    assert_eq!(
+        relabel_in.depths,
+        vec![1, 1, 1, 0, 0, 0],
+        "a `#line` writing the primary spelling must not leave the header"
+    );
+
+    // A flagless marker in the primary input (a `#line`) keeps depth 0.
+    let relabel_out = tokenize_marked("# 1 \"m.c\"\nint a;\n# 9 \"far.h\"\nint b;\n");
+    assert_eq!(
+        relabel_out.depths,
+        vec![0, 0, 0, 0, 0, 0],
+        "a `#line` writing a foreign spelling must not leave the primary input"
+    );
+
+    // Nesting.
+    let nested = tokenize_marked(
+        "# 1 \"m.c\"\n# 1 \"a.h\" 1\nint a;\n# 1 \"b.h\" 1\nint b;\n# 3 \"a.h\" 2\nint c;\n# 2 \"m.c\" 2\nint d;\n",
+    );
+    assert_eq!(nested.depths, vec![1, 1, 1, 2, 2, 2, 1, 1, 1, 0, 0, 0]);
+    assert!(!nested.unbalanced);
+}
+
+/// Two ways an include stack fails to balance, and the well-formed control.
+/// Neither failure may be attributed: `inventory_from_marked` refuses the
+/// completeness claim on `unbalanced-include-markers` instead.
+#[test]
+fn unbalanced_marker_streams_are_refused() {
+    // A return with nothing to return to.
+    let underflow = tokenize_marked("# 1 \"m.c\"\n# 1 \"m.c\" 2\nint a;\n");
+    assert!(underflow.unbalanced, "a return at depth 0 is unreadable");
+
+    // A file still open at end of output.
+    let unclosed = tokenize_marked("# 1 \"m.c\"\n# 1 \"h.h\" 1\nint a;\n");
+    assert!(unclosed.unbalanced, "an unclosed file leaves depth nonzero");
+
+    // The control: balanced, so readable.
+    let balanced = tokenize_marked("# 1 \"m.c\"\n# 1 \"h.h\" 1\nint a;\n# 2 \"m.c\" 2\nint b;\n");
+    assert!(!balanced.unbalanced);
+}
+
+/// A trailing word that is not a flag makes the line not a marker at all, so
+/// it neither names a primary input nor moves the stack. This is what keeps a
+/// `#pragma` — and any future directive shape — from being read as one.
+#[test]
+fn an_unreadable_trailing_word_is_not_a_marker() {
+    let stream = tokenize_marked("# 1 \"m.c\" 1 bogus\nint a;\n");
+    assert_eq!(stream.primary, None, "not a marker, so no primary input");
+    assert!(
+        stream.depths.iter().all(|depth| *depth == 0),
+        "an unread directive must not move the include stack"
     );
 }
 

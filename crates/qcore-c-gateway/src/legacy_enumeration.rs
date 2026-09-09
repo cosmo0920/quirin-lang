@@ -36,12 +36,18 @@
 //! Macro expansion is decided by the preprocessor, not by a token scan, so the
 //! enumeration reads a *second, enumeration-only* Clang preprocessing of the
 //! same unit run **with** line markers (`-E`, no `-P`). Each definition in that
-//! output is attributed to the file the marker names, so a definition spelled
-//! in a header stays out of scope (boundary **E01-B2**, unchanged) while a
-//! definition produced by expanding a macro *at a main-source line* is in
-//! scope. The unit's published `preprocessed_source` — the `-E -P` text every
-//! certificate, identity and diagnostic line number is bound to — is not
-//! touched by this run.
+//! output is attributed by the *include depth* those markers describe, so a
+//! definition spelled in a header stays out of scope (boundary **E01-B2**,
+//! unchanged) while a definition produced by expanding a macro *at a
+//! main-source line* is in scope. The unit's published `preprocessed_source` —
+//! the `-E -P` text every certificate, identity and diagnostic line number is
+//! bound to — is not touched by this run.
+//!
+//! Attribution reads the markers' enter/return flags, not their file names,
+//! so a `#line` directive cannot move a definition into or out of the audited
+//! scope, and a `<stdin>`-transported unit is attributed by the same rule as a
+//! declared-file one (unit **E01-TAIL**, residual E01-F1-STDIN; see
+//! [`MarkedStream`] for the two measured directions).
 //!
 //! # Fail-closed
 //!
@@ -59,7 +65,7 @@
 //! raw scan by construction: the raw names are unioned in, never filtered.
 //! A definition guarded out by `#if 0` therefore keeps its historical row.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::process::Stdio;
 
 use qcore_schemas::reason::ReasonCategory;
@@ -162,6 +168,12 @@ pub enum EnumerationRefusal {
     /// `#else` or `#endif` with no open group, an `#elif`/`#else` after an
     /// `#else`, or a group never closed (unit **E01-RAW-COND**).
     UnstructuredConditionalGroup,
+    /// The line-marked output's include stack does not balance: a return
+    /// marker with nothing to return to, or a file still open at end of
+    /// output. The primary input's own extent is then undecidable, so no
+    /// definition can be attributed to it (unit **E01-TAIL**, residual
+    /// E01-F1-STDIN).
+    UnbalancedIncludeMarkers,
 }
 
 impl EnumerationRefusal {
@@ -175,6 +187,7 @@ impl EnumerationRefusal {
             Self::UnclassifiedFileScopeConstruct => "unclassified-file-scope-construct",
             Self::ConditionalArmDepthDisagreement => "conditional-arm-depth-disagreement",
             Self::UnstructuredConditionalGroup => "unstructured-conditional-group",
+            Self::UnbalancedIncludeMarkers => "unbalanced-include-markers",
         }
     }
 
@@ -208,21 +221,24 @@ impl EnumerationRefusal {
             Self::UnstructuredConditionalGroup => {
                 "enumeration completeness refused: a conditional group cannot be read by the raw scan — an `#elif`, `#else` or `#endif` with no open group, or a group never closed"
             }
+            Self::UnbalancedIncludeMarkers => {
+                "enumeration completeness refused: the line-marked preprocessing's include stack does not balance, so the primary input's own extent cannot be established"
+            }
         }
     }
 
     /// The closed §L21.1 category.
     ///
-    /// The first two grounds are failures of the *analysis environment* — a
-    /// tool did not run, or produced output the transport cannot read — and
-    /// say nothing about the analysed source. The last two name a construct in
-    /// the analysed token stream that the scanner's grammar does not cover.
+    /// Three grounds are failures of the *analysis environment* — a tool did
+    /// not run, or produced output the transport cannot read — and say nothing
+    /// about the analysed source. The rest name a construct in the analysed
+    /// token stream that the scanner's grammar does not cover.
     #[must_use]
     pub const fn category(self) -> ReasonCategory {
         match self {
-            Self::ExpansionUnavailable | Self::PrimaryInputUnidentified => {
-                ReasonCategory::EnvironmentUnavailable
-            }
+            Self::ExpansionUnavailable
+            | Self::PrimaryInputUnidentified
+            | Self::UnbalancedIncludeMarkers => ReasonCategory::EnvironmentUnavailable,
             Self::UnbalancedDelimiters
             | Self::UnclassifiedFileScopeConstruct
             | Self::ConditionalArmDepthDisagreement
@@ -415,16 +431,53 @@ fn preprocess_with_line_markers(unit: &C11TranslationUnit<'_>) -> Result<String,
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
-/// A token of line-marked preprocessed output together with the file the
-/// markers attribute it to. `file` indexes [`MarkedStream::files`].
+/// A token of line-marked preprocessed output together with the *include
+/// depth* the markers put it at. `depths[i] == 0` means token `i` came from
+/// the primary input's own text.
+///
+/// # Why depth, not the file name (unit **E01-TAIL**, residual E01-F1-STDIN)
+///
+/// E01-F1 attributed a token to the main source by comparing the current
+/// marker's *file spelling* against the primary input's. That reading is
+/// decided by a name a `#line` directive can write at will, and the pinned
+/// Cycle 19 compatibility route's primary spelling is the fixed, guessable
+/// `<stdin>` (`CSourceInput::HistoricalStdin`), so the split rested on the
+/// transport rather than on provenance. Both directions were measured against
+/// Clang 21:
+///
+/// * `#line 100 "<stdin>"` inside a header relabels the header's definitions
+///   onto the primary spelling. Under name attribution a stdin unit counts
+///   them as main-source definitions — a scope *mis*statement that boundary
+///   E01-B2 exists to prevent, reachable without knowing any path.
+/// * `#line 500 "elsewhere.h"` in the main source relabels the *rest of the
+///   main source* off the primary spelling. Under name attribution those
+///   definitions leave the enumeration; the raw-scan half of the union rescues
+///   a definition spelled literally, but a macro-produced one after that
+///   directive is lost from the denominator with nothing said — the fail-open
+///   direction.
+///
+/// Clang's markers carry the provenance directly: flag `1` enters a file and
+/// flag `2` returns from one, and a `#line` directive carries neither, so it
+/// cannot move a token between files. Depth 0 is therefore exactly the text
+/// Clang read from the primary input, whatever any directive calls it, and the
+/// rule is the same for a declared-file unit and a `<stdin>` one. Both
+/// directions are pinned in `tests/e01_stdin_attribution.rs`, in both transport
+/// modes, and in `QCore.EnumerationAttribution`.
+///
+/// The measured `<built-in>` and `<command line>` preamble, and any
+/// `-include` file, sit at depth 1 or 2 and stay out of scope exactly as they
+/// did under name attribution.
 struct MarkedStream {
     tokens: Vec<Token>,
-    files: Vec<usize>,
+    depths: Vec<usize>,
     /// The quoted spelling of the primary input, exactly as the first line
     /// marker writes it, or `None` when the output does not open with one.
+    /// This is the *environment* check that Clang emitted markers at all; it
+    /// is deliberately no longer consulted for attribution.
     primary: Option<String>,
-    /// Distinct file spellings in first-appearance order; `files` indexes it.
-    names: Vec<String>,
+    /// Set when the marker stream's include stack does not balance, in which
+    /// case no depth in this stream may be trusted.
+    unbalanced: bool,
 }
 
 /// Lex line-marked preprocessed output.
@@ -444,10 +497,9 @@ struct MarkedStream {
 fn tokenize_marked(source: &str) -> MarkedStream {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
-    let mut files = Vec::new();
-    let mut names: Vec<String> = Vec::new();
-    let mut index: BTreeMap<String, usize> = BTreeMap::new();
-    let mut current = usize::MAX;
+    let mut depths = Vec::new();
+    let mut depth = 0usize;
+    let mut unbalanced = false;
     let mut primary = None;
     let mut cursor = 0;
     let mut line = 1usize;
@@ -494,15 +546,19 @@ fn tokenize_marked(source: &str) -> MarkedStream {
                     cursor += 1;
                 }
             }
-            if let Some(name) = line_marker_file(&source[start..cursor]) {
-                let next = index.len();
-                let slot = *index.entry(name.clone()).or_insert_with(|| {
-                    names.push(name.clone());
-                    next
-                });
-                current = slot;
+            if let Some(marker) = line_marker(&source[start..cursor]) {
                 if primary.is_none() && tokens.is_empty() {
-                    primary = Some(name);
+                    primary = Some(marker.file);
+                }
+                // A `#line` directive carries neither flag, so it moves no
+                // token between files; only a real enter/return does.
+                if marker.enters {
+                    depth += 1;
+                } else if marker.returns {
+                    match depth.checked_sub(1) {
+                        Some(outer) => depth = outer,
+                        None => unbalanced = true,
+                    }
                 }
             }
         } else if byte == b'"' || byte == b'\'' {
@@ -527,7 +583,7 @@ fn tokenize_marked(source: &str) -> MarkedStream {
                 text: "__qcore_literal__".to_owned(),
                 line: token_line,
             });
-            files.push(current);
+            depths.push(depth);
         } else if byte.is_ascii_alphabetic() || byte == b'_' {
             at_line_start = false;
             let start = cursor;
@@ -541,7 +597,7 @@ fn tokenize_marked(source: &str) -> MarkedStream {
                 text: source[start..cursor].to_owned(),
                 line,
             });
-            files.push(current);
+            depths.push(depth);
         } else if byte.is_ascii_digit() {
             at_line_start = false;
             let start = cursor;
@@ -553,31 +609,48 @@ fn tokenize_marked(source: &str) -> MarkedStream {
                 text: source[start..cursor].to_owned(),
                 line,
             });
-            files.push(current);
+            depths.push(depth);
         } else {
             at_line_start = false;
             tokens.push(Token {
                 text: char::from(byte).to_string(),
                 line,
             });
-            files.push(current);
+            depths.push(depth);
             cursor += 1;
         }
     }
     MarkedStream {
         tokens,
-        files,
+        depths,
         primary,
-        names,
+        // A file still open at end of output is as unreadable as a return
+        // with nothing to return to: the primary input's extent is undecided.
+        unbalanced: unbalanced || depth != 0,
     }
 }
 
-/// Read the quoted file spelling of `# <digits> "<file>" …`.
+/// One `# <digits> "<file>" <flags…>` line marker.
+struct LineMarker {
+    /// The quoted body exactly as written, escapes included. Used only to
+    /// record that the output opened with a marker at all; nothing is gained
+    /// by unescaping and a wrong unescaping could merge two files.
+    file: String,
+    /// Flag `1`: Clang is *entering* a file.
+    enters: bool,
+    /// Flag `2`: Clang is *returning* to the file that included this one.
+    returns: bool,
+}
+
+/// Read a line marker, including its GNU/Clang flags.
 ///
-/// The quoted body is returned exactly as written, escapes included: it is
-/// used only for identity comparison against the primary marker, so nothing is
-/// gained by unescaping and a wrong unescaping could merge two files.
-fn line_marker_file(directive: &str) -> Option<String> {
+/// Flags follow the quoted file name as space-separated digits and may be
+/// combined (`1 3`, `2 3 4`). Only `1` and `2` describe the include stack;
+/// `3` (system header) and `4` (`extern "C"`) do not, and a `#line` directive
+/// — which Clang re-emits as a flagless marker — carries none, so it cannot
+/// move a token between files. Any trailing word that is not a digit run makes
+/// this not a marker at all, so a `#pragma` is discarded as before.
+fn line_marker(directive: &str) -> Option<LineMarker> {
     let rest = directive.strip_prefix('#')?.trim_start();
     let digits = rest
         .split(|c: char| c.is_whitespace())
@@ -585,20 +658,37 @@ fn line_marker_file(directive: &str) -> Option<String> {
         .filter(|word| !word.is_empty() && word.bytes().all(|b| b.is_ascii_digit()))?;
     let after = rest[digits.len()..].trim_start();
     let body = after.strip_prefix('"')?;
-    let mut name = String::new();
-    let mut bytes = body.char_indices();
-    while let Some((_, character)) = bytes.next() {
+    let mut file = String::new();
+    let mut characters = body.char_indices();
+    let flags = loop {
+        let (offset, character) = characters.next()?;
         match character {
             '\\' => {
-                let (_, escaped) = bytes.next()?;
-                name.push('\\');
-                name.push(escaped);
+                let (_, escaped) = characters.next()?;
+                file.push('\\');
+                file.push(escaped);
             }
-            '"' => return Some(name),
-            _ => name.push(character),
+            '"' => break &body[offset + 1..],
+            _ => file.push(character),
+        }
+    };
+    let mut enters = false;
+    let mut returns = false;
+    for word in flags.split_whitespace() {
+        match word {
+            "1" => enters = true,
+            "2" => returns = true,
+            // `3` and `4` say nothing about the include stack.
+            "3" | "4" => {}
+            // An unreadable trailing word: not a marker this reader knows.
+            _ => return None,
         }
     }
-    None
+    Some(LineMarker {
+        file,
+        enters,
+        returns,
+    })
 }
 
 /// Which definition shape a file-scope `name(` construct turned out to be.
@@ -616,18 +706,18 @@ enum FileScopeConstruct {
 
 fn inventory_from_marked(raw: &RawHalf, marked: &str) -> SourceDefinitionInventory {
     let stream = tokenize_marked(marked);
-    let Some(primary) = stream.primary.as_ref() else {
+    if stream.primary.is_none() {
         return SourceDefinitionInventory::raw_only(
             raw,
             EnumerationRefusal::PrimaryInputUnidentified,
         );
-    };
-    let Some(primary_index) = stream.names.iter().position(|name| name == primary) else {
+    }
+    if stream.unbalanced {
         return SourceDefinitionInventory::raw_only(
             raw,
-            EnumerationRefusal::PrimaryInputUnidentified,
+            EnumerationRefusal::UnbalancedIncludeMarkers,
         );
-    };
+    }
     let mut prototype = BTreeSet::new();
     let mut identifier_list = BTreeSet::new();
     let mut refusals = raw.refusals.clone();
@@ -656,7 +746,10 @@ fn inventory_from_marked(raw: &RawHalf, marked: &str) -> SourceDefinitionInvento
             depth = depth.saturating_sub(1);
             continue;
         }
-        if depth != 0 || stream.files[index] != primary_index {
+        // Brace depth must be file scope, and the token must have come from
+        // the primary input's own text — include depth 0, not a matching file
+        // *name* (see [`MarkedStream`]).
+        if depth != 0 || stream.depths[index] != 0 {
             continue;
         }
         if !is_identifier(text)
