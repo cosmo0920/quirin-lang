@@ -739,13 +739,27 @@ Run in this worktree on Linux with Clang available.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | *(see §10.1)* |
+| `cargo test --workspace --no-fail-fast` | **2212 passed, 1 failed, 7 ignored** across 112 targets — the one failure is the known load-flaky `vp04`, §10.1 |
 | `cargo fmt --all -- --check` (both workspaces) | clean |
 | `cargo clippy --all-targets -- -D warnings` (both workspaces) | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
-| `python3 -B scripts/check_lean_audits.py` | *(see §10.1)* |
-| `cargo test --manifest-path providers/Cargo.toml --workspace` | *(see §10.1)* |
+| `python3 -B scripts/check_lean_audits.py` | **62 audits passed**, no new axiom (the count does not move — this card extends an existing audit file rather than adding one) |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --no-fail-fast` | **102 passed, 0 failed** (94 → 102) |
 | `python3 -B providers/package.py build` + `qcorec plugins verify` × 5 | all five built and verified (exit 0); ChunkIO 0.9.0 → **0.10.0** |
 | `python3 -m unittest discover -s scripts/tests` | 125 tests, **1 failed** — the acceptance-matrix derived fact, §8.2 |
 | 185-unit corpus | not re-measurable here — §7 |
+
+### 10.1 The one workspace failure, and one process note
+
+`cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+fails under the full parallel run on `assertion failed: elapsed <
+Duration::from_millis(500)` and **passes in isolation** (1.40 s for the target,
+the assertion satisfied). This is the load-flaky `vp04` the wave brief names,
+alongside P02's `RLIMIT_NPROC` and P03's confined-write rows. Its wall-clock
+assertion is deliberately not weakened.
+
+Process note, recorded because it nearly hid a real defect: an early gate run
+was piped into `grep`, which swallowed cargo's exit code, and its apparent
+"exit 0" masked a genuinely stale pin (§8.1 row 6). Every result in the table
+above is from an unpiped run whose own exit code was read.
