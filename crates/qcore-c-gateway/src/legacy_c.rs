@@ -416,6 +416,25 @@ impl CSourceInput {
         }
     }
 
+    /// The name this input identity class records, so a transported question
+    /// can name which class a unit declares and the core can refuse a claim
+    /// that is not the class its own unit carries.
+    ///
+    /// This is deliberately a *class* and not a full identity:
+    /// [`Self::for_derived_text`] collapses [`Self::DeclaredFile`] to
+    /// [`Self::AnonymousText`], so a derived unit records neither the spelled
+    /// input nor the directory the base unit declared. A route that derives
+    /// text must therefore bind the **base** unit's own identity separately;
+    /// the derived identity cannot stand in for it.
+    #[must_use]
+    pub const fn class(&self) -> &'static str {
+        match self {
+            Self::AnonymousText => "anonymous_text",
+            Self::DeclaredFile { .. } => "declared_file",
+            Self::HistoricalStdin => "historical_stdin",
+        }
+    }
+
     /// Whether the transport must reject `<stdin>` file-name expansions.
     fn rejects_stdin_file_names(&self) -> bool {
         matches!(self, Self::AnonymousText)
@@ -428,6 +447,45 @@ impl CSourceInput {
     /// pinned historical route keeps its previous silent behavior.
     fn rejects_source_location_builtins(&self) -> bool {
         !matches!(self, Self::HistoricalStdin)
+    }
+}
+
+/// Append a *derivation recipe* to a base unit's text.
+///
+/// One route in this repository imports from text it derived rather than from
+/// the declared file: the memory-close composition appends a constant probe so
+/// a preprocessor-defined backend discriminant can be read as an ordinary
+/// integer literal instead of being guessed. The derivation is a single
+/// concatenation, written here once so every caller — the trusted decision
+/// procedure, its transported projection and its verification task — derives
+/// the same bytes from the same base and the same recipe.
+#[must_use]
+pub fn derived_source_text(base: &str, recipe: &str) -> String {
+    format!("{base}{recipe}")
+}
+
+/// The translation unit a derived text is analysed as.
+///
+/// Every declared option of the base unit is carried across unchanged, because
+/// the derived text is the base text plus a recipe and must be preprocessed the
+/// same way. The one thing that is **not** carried across is the input
+/// identity: [`CSourceInput::for_derived_text`] drops a declared file, because
+/// derived text is not that file's bytes. A caller that needs to know which
+/// base unit the derived text came from must bind the base unit's own identity;
+/// see [`CSourceInput::class`].
+#[must_use]
+pub fn derived_translation_unit<'a>(
+    base: &C11TranslationUnit<'_>,
+    derived: &'a str,
+) -> C11TranslationUnit<'a> {
+    C11TranslationUnit {
+        source: derived,
+        include_paths: base.include_paths.clone(),
+        definitions: base.definitions.clone(),
+        preprocessor_options: base.preprocessor_options.clone(),
+        dialect: base.dialect,
+        function_scope: base.function_scope,
+        input: base.input.for_derived_text(),
     }
 }
 

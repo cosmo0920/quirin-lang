@@ -1,4 +1,5 @@
 use super::*;
+use qcore_verification::memory_close_composition::check_memory_close_bodies;
 use crate::verifier_plugins::chunkio::{
     import_chunk_frame_helper,
     teardown_source::{
@@ -211,11 +212,11 @@ fn close_contract_clauses_and_dependency_role_are_rechecked() {
         ),
     ] {
         assert!(
-            check(
-                &cert.source,
-                &cert.constant_probe,
+            check_memory_close_bodies(
+                cert.source(),
+                cert.constant_probe(),
                 &deps,
-                &CONTRACT.replace(old, new)
+                &contracts_with(&CONTRACT.replace(old, new))
             )
             .is_err()
         );
@@ -228,7 +229,15 @@ fn close_contract_clauses_and_dependency_role_are_rechecked() {
                 &CONTRACT[..i],
                 &CONTRACT[j..]
             );
-            assert!(check(&cert.source, &cert.constant_probe, &deps, &changed).is_err());
+            assert!(
+                check_memory_close_bodies(
+                    cert.source(),
+                    cert.constant_probe(),
+                    &deps,
+                    &contracts_with(&changed)
+                )
+                .is_err()
+            );
         }
     }
     let mut wrong = deps.clone();
@@ -241,5 +250,8 @@ fn close_contract_clauses_and_dependency_role_are_rechecked() {
     )
     .unwrap()
     .remove(3);
-    assert!(check(&cert.source, &cert.constant_probe, &wrong, CONTRACT).is_err());
+    assert!(
+        check_memory_close_bodies(cert.source(), cert.constant_probe(), &wrong, &contracts())
+            .is_err()
+    );
 }
