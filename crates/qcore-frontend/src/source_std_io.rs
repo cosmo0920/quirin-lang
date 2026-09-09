@@ -67,7 +67,7 @@ pub const LOG_KEYWORD: &str = "log";
 pub const FLUSH_KEYWORD: &str = "flush";
 
 /// Which of this card's capabilities a statement head requires.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum StdIoUse {
     /// `print …` — needs `std.io` and, for its rendering, `std.fmt`.
     Print,
@@ -152,25 +152,6 @@ pub fn rendering_span(program: &SourceProgram) -> Option<Span> {
     uses.get(&StdIoUse::Print)
         .or_else(|| uses.get(&StdIoUse::Log))
         .copied()
-}
-
-impl PartialOrd for StdIoUse {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for StdIoUse {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        fn rank(kind: StdIoUse) -> u8 {
-            match kind {
-                StdIoUse::Print => 0,
-                StdIoUse::Log => 1,
-                StdIoUse::Flush => 2,
-            }
-        }
-        rank(*self).cmp(&rank(*other))
-    }
 }
 
 fn diagnostic(

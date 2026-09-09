@@ -14,9 +14,7 @@
 
 use std::fmt::Write as _;
 
-use crate::std_io::{
-    Level, StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, Stream,
-};
+use crate::std_io::{StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, Stream};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StdIoEmissionRefusal {
@@ -172,21 +170,5 @@ pub fn emit_std_io_c11(
     }
 
     source.push_str("    return 0;\n}\n");
-    let _ = level_is_used(program);
     Ok(StdIoCEmission { source })
-}
-
-/// Present so a future level that changed the stream would not silently keep
-/// the old one. Every level writes to `stderr` in v1, deliberately: the level
-/// is a label, not a stream selector.
-fn level_is_used(program: &StdIoProgram) -> bool {
-    program.events.iter().any(|event| {
-        matches!(
-            event,
-            StdIoEvent::Log {
-                level: Level::Info | Level::Warn | Level::Fatal,
-                ..
-            }
-        )
-    })
 }
