@@ -574,8 +574,8 @@ package-identity residue class (the ChunkIO `provider_version` and
 `package_digest` leaves in `source-effects.json`, as in every card that bumps
 that package).
 
-The contract corpus is untouched at **61 modules**: no `.qcore` file was added or
-edited.
+The contract corpus is untouched: **no `.qcore` file was added or edited**, so
+whatever count the other wave-14 cards leave it at is unchanged by this one.
 
 ---
 
@@ -647,8 +647,8 @@ and the digest key moves with it.
    apart from the key name. This pin caught the version move rather than
    inheriting it.
 
-All five provider packages were rebuilt and verified. The contract corpus is
-untouched at 61 modules.
+All five provider packages were rebuilt and verified. No `.qcore` file was added
+or edited, so the contract corpus is untouched by this card.
 
 ### 8.2 One Python failure the card cannot fix, by instruction
 
@@ -658,12 +658,21 @@ fails: the committed `docs/reviews/r0_3/acceptance_matrix.json` carries
 constraints forbid editing that file.
 
 **Integrator action item:** `versions.qcore_schemas_rust_api` 10.0.0 →
-**11.0.0**. **`validation.lean_audits` does not move** — this card extends the
-existing `AuditCompositionAdmission.lean` rather than adding a new audit file, so
-the count stays 62 and the matrix's derived-facts test will pass on that half.
-Regenerate the matrix (or supply `--gate`) at the wave's close. Nothing else in
-the matrix moves from this card: the contract corpus stays 61 modules, CT
-coverage is untouched at 32/50, and no verdict moves.
+**11.0.0**. **`validation.lean_audits` does not move from this card** — it
+extends the existing `AuditCompositionAdmission.lean` rather than adding a new
+audit file, so whatever the merged count is (62 at this card's base `009bde0`,
+63 on `main` once `CT34-SANITIZED` is merged) this card leaves it alone.
+Regenerate the matrix (or supply `--gate`) at the wave's close.
+
+Nothing else in the matrix moves from this card: **no `.qcore` file was added or
+edited**, so the contract corpus is whatever the other wave-14 cards make it
+(61 at this base, 64 on `main` after `PROD-CONTRACTS`); CT coverage is
+untouched; and no verdict moves.
+
+`main` has advanced 23 commits since this card's base. This branch touches none
+of the files those commits touch — no `contract/qcore`, no
+`docs/reviews/r0_3/*`, no CT manifest — so the merge is expected to be textual
+only. The one number to reconcile is the schema version above.
 
 ---
 
