@@ -317,19 +317,36 @@ assert {case["id"] for case in triage_cases} == set(unmapped_ids), sorted(
 bucket_counts = {}
 for case in triage_cases:
     bucket_counts[case["current_bucket"]] = bucket_counts.get(case["current_bucket"], 0) + 1
+# T00's `blocker` text is frozen at revision ea2af0f, and for a case whose
+# blocker has since been repaired it can read as a false statement about the
+# implementation: CT34's says "no source form creates or declares a mutex",
+# which card T03 and then card CT33-RANKS made untrue without changing why
+# CT34 is unmapped. Where a later card re-verified a still-unmapped case's
+# reason by measurement, that reason is published beside the archived one
+# rather than replacing it, so the history stays visible and the current
+# statement is the accurate one. Only ids a named record really re-verified
+# appear here; the assertion below is what stops this from going stale in turn.
+SUPERSEDING_REASONS = "docs/reports/wave11-ct33/ct_stage_evidence.json"
+_superseded = json.loads((ROOT / SUPERSEDING_REASONS).read_text())[
+    "cases_examined_and_left_unmapped"
+]
+assert set(_superseded) == {"CT34", "CT46"}, sorted(_superseded)
+assert set(_superseded) <= set(unmapped_ids), "a superseded reason names a mapped case"
 for case in triage_cases:
-    ct_rows.append(
-        {
-            "id": case["id"],
-            "mapping_status": "unmapped",
-            "expected": cases[case["id"]]["expected"],
-            "current_bucket": case["current_bucket"],
-            "blocker": case["blocker"],
-            "bucket_changed_since_batch2": case.get("bucket_changed_since_batch2", False),
-            "stage_derived_status": {stage: {"status": "unexecuted"} for stage in STAGE_ORDER},
-            "deepest_executed_stage": None,
-        }
-    )
+    row = {
+        "id": case["id"],
+        "mapping_status": "unmapped",
+        "expected": cases[case["id"]]["expected"],
+        "current_bucket": case["current_bucket"],
+        "blocker": case["blocker"],
+        "bucket_changed_since_batch2": case.get("bucket_changed_since_batch2", False),
+        "stage_derived_status": {stage: {"status": "unexecuted"} for stage in STAGE_ORDER},
+        "deepest_executed_stage": None,
+    }
+    if case["id"] in _superseded:
+        row["blocker_current"] = _superseded[case["id"]]["why_still_unmapped"]
+        row["blocker_superseded_by"] = SUPERSEDING_REASONS
+    ct_rows.append(row)
 ct_rows.sort(key=lambda row: int(row["id"][2:]))
 
 ct_section = {
