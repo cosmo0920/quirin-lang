@@ -5742,7 +5742,7 @@
   "workspace_tests": 2638,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 70,
+  "lean_audits": 71,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5752,6 +5752,7 @@
    "AuditCallUseAdmission.lean",
    "AuditCapacityBoundary.lean",
    "AuditChainedAccess.lean",
+   "AuditChainedTailActual.lean",
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
@@ -5773,6 +5774,7 @@
    "AuditCycle7.lean",
    "AuditCycle8.lean",
    "AuditCycle9.lean",
+   "AuditDeclaredAbiAgreement.lean",
    "AuditDenominatorCoverage.lean",
    "AuditDerivedTextAdmission.lean",
    "AuditDisjointFootprint.lean",
@@ -5810,6 +5812,7 @@
    "AuditTaskTraceRelation.lean",
    "AuditTeardownAdmission.lean",
    "AuditTransferability.lean",
+   "AuditTwoDerivationAdmission.lean",
    "AuditVariadicNested.lean",
    "AuditW4.lean"
   ],
