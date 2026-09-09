@@ -17,7 +17,7 @@ use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
 use crate::projection::{AuditCounts, project_unit};
-use crate::report::AuditReport;
+use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
 /// triples. Output and macro variants are separate audit obligations.
@@ -153,7 +153,12 @@ impl CurrentAudit {
             .strip_prefix(&self.checkout)
             .map_err(|_| "source outside current checkout")?;
         let file = crate::repository_path(relative);
-        let bytes = fs::read(&entry.file).map_err(|error| error.to_string());
+        // Card REASON-CODES-B1: raw `std::io::Error` text carries no marker the
+        // closed vocabulary can recognise, so this site names its category
+        // instead of leaving the row uncoded. It is an environment failure,
+        // which says nothing about the analysed source.
+        let bytes =
+            fs::read(&entry.file).map_err(|error| UnitRefusal::environment(error.to_string()));
         let mut configuration = json!({
             "source_revision": self.revision, "file": entry.file, "expected_source": expected_source,
             "directory": entry.directory, "command": entry.command,
@@ -165,12 +170,12 @@ impl CurrentAudit {
             .ok()
             .and_then(|bytes| std::str::from_utf8(bytes).ok());
         let functions = source.map(legacy_c_source_functions).unwrap_or_default();
-        let prepared = (|| {
+        let prepared = (|| -> Result<C11TranslationUnit<'_>, UnitRefusal> {
             let bytes = bytes.as_ref().map_err(Clone::clone)?;
             crate::verify_pinned_bytes(&self.checkout, &self.revision, &expected_source, bytes)?;
-            let source = source.ok_or("source is not UTF-8")?;
+            let source = source.ok_or_else(|| UnitRefusal::classified("source is not UTF-8"))?;
             if let Some(reason) = unresolved {
-                return Err(reason.to_owned());
+                return Err(UnitRefusal::classified(reason));
             }
             let options = compiler_options(entry)?;
             Ok(C11TranslationUnit {
@@ -213,12 +218,13 @@ impl CurrentAudit {
                     &mut self.counts,
                 )?;
             }
-            Err(reason) => {
+            Err(refusal) => {
                 self.counts.units += 1;
                 self.counts.unknown_units += 1;
                 self.counts.source_functions += functions.len();
                 self.report
-                    .record_unknown(library, &file, &functions, &reason);
+                    .record_unknown(library, &file, &functions, &refusal);
+                let reason = refusal.reason();
                 configuration["unresolved"] = json!(reason);
                 println!("  {library}/{file}: Unknown: {reason}");
             }

@@ -125,7 +125,8 @@ impl SourceContractAudit {
                     return Err("helper source escapes its configured source root".into());
                 }
                 let bytes = read_bounded(&path, 8_388_608).map_err(|error| error.to_string())?;
-                crate::verify_pinned_bytes(checkout, revision, &path, &bytes)?;
+                crate::verify_pinned_bytes(checkout, revision, &path, &bytes)
+                    .map_err(crate::report::UnitRefusal::into_reason)?;
                 pinned.insert(
                     policy.function().to_owned(),
                     qcore_schemas::sha256_hex(&bytes),
@@ -230,10 +231,17 @@ impl SourceContractAudit {
                                 }
                             }
                         }
-                        ChunkSourceResult::Unknown { function, reason } => {
+                        // The category travels with the row (REASON-CODES-B2)
+                        // rather than being re-derived from the free text here,
+                        // so the importer and this report cannot disagree.
+                        ChunkSourceResult::Unknown {
+                            function,
+                            reason,
+                            reason_code,
+                        } => {
                             seen.insert(function.clone());
                             self.unknown += 1;
-                            functions.push(json!({"function": function, "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code(Some(&reason))}));
+                            functions.push(json!({"function": function, "status": "unknown", "reason": reason, "reason_code": crate::report::reason_code_value(reason_code)}));
                         }
                     }
                 }

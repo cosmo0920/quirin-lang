@@ -31,7 +31,7 @@ use serde::{Deserialize, Serialize};
 
 use compile_db::{CompileEntry, compile_entries, compiler_options};
 use projection::{AuditCounts, project_unit};
-use report::AuditReport;
+use report::{AuditReport, UnitRefusal};
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -177,33 +177,40 @@ fn repository_path(path: &Path) -> String {
         .join("/")
 }
 
+/// Card REASON-CODES-B1: the two OS/tool failures here carry raw text that the
+/// closed vocabulary cannot recognise, so they name their category at the site.
+/// Both are environment failures, which is the one category that says nothing
+/// about the analysed source; the classified refusals beside them are unchanged
+/// and keep classifying from their own text.
 fn verify_pinned_bytes(
     checkout: &Path,
     revision: &str,
     path: &Path,
     source: &[u8],
-) -> Result<(), String> {
-    let canonical = path.canonicalize().map_err(|error| error.to_string())?;
+) -> Result<(), UnitRefusal> {
+    let canonical = path
+        .canonicalize()
+        .map_err(|error| UnitRefusal::environment(error.to_string()))?;
     if !canonical.starts_with(checkout) {
-        return Err("source outside selected checkout".into());
+        return Err(UnitRefusal::classified("source outside selected checkout"));
     }
     // Keep the selected path's Git blob, rather than letting an unpinned
     // symlink borrow the bytes of a different pinned file.
     let file = canonical
         .strip_prefix(checkout)
-        .map_err(|_| "source outside selected checkout")?;
+        .map_err(|_| UnitRefusal::classified("source outside selected checkout"))?;
     let git_file = repository_path(file);
     let pinned = Command::new("git")
         .arg("-C")
         .arg(checkout)
         .args(["show", &format!("{revision}:{git_file}")])
         .output()
-        .map_err(|error| error.to_string())?;
+        .map_err(|error| UnitRefusal::environment(error.to_string()))?;
     if !pinned.status.success() || pinned.stdout != source {
-        return Err(format!(
+        return Err(UnitRefusal::classified(format!(
             "selected source `{}` does not match its pinned bytes",
             file.display()
-        ));
+        )));
     }
     Ok(())
 }
@@ -360,12 +367,16 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             let pin = profile
                 .pin_for(library)
                 .ok_or("selected source has no pin")?;
+            // This route returns a whole-run `Err(String)` rather than a report
+            // row, so it narrows the refusal to its text (REASON-CODES-B1
+            // residual: the category has nowhere to travel on a String channel).
             verify_pinned_bytes(
                 &checkout,
                 selected_head.as_deref().unwrap_or(&pin.git_commit),
                 &entry.file,
                 source.as_bytes(),
-            )?;
+            )
+            .map_err(UnitRefusal::into_reason)?;
             source_identities.insert(
                 format!("{library}/{file}"),
                 qcore_contract::profile_loader::sha256_hex(source.as_bytes()),

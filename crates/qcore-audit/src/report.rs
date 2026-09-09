@@ -28,9 +28,89 @@ use serde_json::{Value, json};
 ///   `qcore_schemas`'s `reason_codes` test enumerates the reason families this
 ///   workspace emits and pins that each one classifies.
 pub(crate) fn reason_code(reason: Option<&str>) -> Value {
-    match reason.map(ReasonCategory::classify) {
-        Some(Ok(category)) => json!(category.as_str()),
-        Some(Err(_)) | None => Value::Null,
+    reason_code_value(reason.map(ReasonCategory::classify).and_then(Result::ok))
+}
+
+/// The report value for a category a producer already classified.
+///
+/// Rows whose producer carries a typed category — `ChunkSourceResult::Unknown`
+/// since REASON-CODES-B2 — go through here instead of being re-classified from
+/// their own free text, so the producer and the report cannot disagree. The
+/// fail-closed shape is identical: `None` serializes as `null` and asserts
+/// nothing.
+pub(crate) fn reason_code_value(category: Option<ReasonCategory>) -> Value {
+    match category {
+        Some(category) => json!(category.as_str()),
+        None => Value::Null,
+    }
+}
+
+/// A refusal of one selected configuration, carrying its closed §L21.1
+/// category beside its text.
+///
+/// Card REASON-CODES-B1. Most refusal texts on this route classify under
+/// `ReasonCategory::classify`, but a few are raw OS or tool text -
+/// `std::io::Error::to_string()` from reading the selected source, and the
+/// `canonicalize`/`git show` failures inside `verify_pinned_bytes`. Those carry
+/// no stable marker, so classifying from prose returns `null`: honest (no
+/// claim) but incomplete (no code). This type lets such a site name its
+/// category where the text cannot, without changing one byte of the text
+/// (§L21.1 rule 2).
+///
+/// Naming a category here can only narrow what a row claims: the sites that use
+/// [`Self::environment`] are OS and tool failures, and
+/// `ReasonCategory::EnvironmentUnavailable` is the one category that says
+/// nothing about the analysed source and can never contribute to a provisional
+/// `Unsafe` (§L21.1 rule 1). There is deliberately no constructor that names a
+/// source-subject category for opaque text.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct UnitRefusal {
+    reason: String,
+    category: Option<ReasonCategory>,
+}
+
+impl UnitRefusal {
+    /// A refusal whose text the closed vocabulary is expected to recognise.
+    /// Fail-closed exactly as before: an unrecognised text carries no category.
+    pub fn classified(reason: impl Into<String>) -> Self {
+        let reason = reason.into();
+        let category = ReasonCategory::classify(&reason).ok();
+        Self { reason, category }
+    }
+
+    /// A refusal minted from opaque OS or tool text, whose category is named at
+    /// the site because the text cannot carry it.
+    pub fn environment(reason: impl Into<String>) -> Self {
+        Self {
+            reason: reason.into(),
+            category: Some(ReasonCategory::EnvironmentUnavailable),
+        }
+    }
+
+    pub fn reason(&self) -> &str {
+        &self.reason
+    }
+
+    pub fn category(&self) -> Option<ReasonCategory> {
+        self.category
+    }
+
+    /// Drop the category for a caller that only has a `String` channel. This is
+    /// a narrowing, never a relabeling: the text is unchanged.
+    pub fn into_reason(self) -> String {
+        self.reason
+    }
+}
+
+impl From<String> for UnitRefusal {
+    fn from(reason: String) -> Self {
+        Self::classified(reason)
+    }
+}
+
+impl From<&str> for UnitRefusal {
+    fn from(reason: &str) -> Self {
+        Self::classified(reason)
     }
 }
 
@@ -62,11 +142,12 @@ impl AuditReport {
         library: &str,
         file: &str,
         functions: &[String],
-        reason: &str,
+        refusal: &UnitRefusal,
     ) {
+        let reason = refusal.reason();
         self.units.push(json!({
             "library": library, "file": file, "status": "Unknown", "reason": reason,
-            "reason_code": reason_code(Some(reason)),
+            "reason_code": reason_code_value(refusal.category()),
             "source_functions": functions, "functions": [], "not_projected": functions,
             "diagnostic_counts": {},
         }));
@@ -342,6 +423,65 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
+    fn opaque_os_text_names_its_category_at_the_site_without_changing_its_text() {
+        // Card REASON-CODES-B1. `std::io::Error::to_string()` carries no marker
+        // the closed vocabulary recognises, so classifying from prose yields
+        // null. The three reachable OS/tool sites on the resource-projection
+        // route now name their category instead, and the text is byte-identical.
+        let text = "No such file or directory (os error 2)";
+        assert_eq!(reason_code(Some(text)), Value::Null);
+        let refusal = UnitRefusal::environment(text);
+        assert_eq!(refusal.reason(), text);
+        assert_eq!(
+            refusal.category(),
+            Some(ReasonCategory::EnvironmentUnavailable)
+        );
+        let mut report = AuditReport::new("revision");
+        report.record_unknown("test", "unit.c", &[], &refusal);
+        let unit = &report.units[0];
+        assert_eq!(unit["reason"], text);
+        assert_eq!(unit["reason_code"], "environment-unavailable");
+        // The named category is the one subject that can never be read as a
+        // statement about the analysed source (L21.1 rule 1).
+        assert!(!ReasonCategory::EnvironmentUnavailable.describes_analysed_source());
+    }
+
+    #[test]
+    fn a_classified_refusal_still_fails_closed_on_text_nobody_recognises() {
+        // `classified` is the ordinary constructor and must not acquire a
+        // category from nowhere: there is no fallback, and in particular no
+        // fallback onto a source-subject category.
+        let refusal = UnitRefusal::classified("something nobody has ever emitted");
+        assert_eq!(refusal.category(), None);
+        let mut report = AuditReport::new("revision");
+        report.record_unknown("test", "unit.c", &[], &refusal);
+        assert_eq!(report.units[0]["reason_code"], Value::Null);
+    }
+
+    #[test]
+    fn a_producer_supplied_category_is_published_without_being_reclassified() {
+        // Card REASON-CODES-B2/B3: rows whose producer already classified their
+        // reason (ChunkSourceResult::Unknown) publish that category rather than
+        // re-deriving it here, so the two cannot disagree. The fail-closed shape
+        // is unchanged: an unclassified row is null, never a defaulted category.
+        assert_eq!(
+            reason_code_value(Some(ReasonCategory::UnsupportedSyntax)),
+            json!("unsupported-syntax")
+        );
+        assert_eq!(
+            reason_code_value(Some(ReasonCategory::EnvironmentUnavailable)),
+            json!("environment-unavailable")
+        );
+        assert_eq!(reason_code_value(None), Value::Null);
+        // The two routes agree on a reason both can see.
+        let reason = "outside single borrowed chunk / int-or-void-result source profile";
+        assert_eq!(
+            reason_code(Some(reason)),
+            reason_code_value(ReasonCategory::classify(reason).ok())
+        );
+    }
+
+    #[test]
     fn a_unit_without_a_reason_asserts_no_category() {
         assert_eq!(reason_code(None), Value::Null);
         let mut report = AuditReport::new("revision");
@@ -363,7 +503,7 @@ mod tests {
             "test",
             "unit.c",
             &[],
-            "No such file or directory (os error 2)",
+            &UnitRefusal::classified("No such file or directory (os error 2)"),
         );
         assert_eq!(
             report.units[0]["reason"],
@@ -379,7 +519,12 @@ mod tests {
                       Clang build with scripts/prepare_cycle19_clang_audit.py --run; \
                       GCC compiler equivalence is unproven";
         let mut report = AuditReport::new("revision");
-        report.record_unknown("test", "unit.c", &["f".into()], reason);
+        report.record_unknown(
+            "test",
+            "unit.c",
+            &["f".into()],
+            &UnitRefusal::classified(reason),
+        );
         let unit = &report.units[0];
         assert_eq!(unit["status"], "Unknown");
         assert_eq!(unit["reason_code"], "environment-unavailable");
@@ -425,7 +570,12 @@ mod tests {
         let reason = "resource projection unresolved: 1 unsupported operation(s), \
                       0 unresolved alias(es), 0 custody summary conflict(s)";
         let mut report = AuditReport::new("revision");
-        report.record_unknown("lib", "unit.c", &["a".into(), "b".into()], reason);
+        report.record_unknown(
+            "lib",
+            "unit.c",
+            &["a".into(), "b".into()],
+            &UnitRefusal::classified(reason),
+        );
         let unit = &report.units[0];
         assert_eq!(unit["library"], "lib");
         assert_eq!(unit["file"], "unit.c");

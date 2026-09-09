@@ -113,6 +113,12 @@ pub enum ChunkSourceResult {
     Unknown {
         function: String,
         reason: String,
+        /// Mirrors the gateway row's closed §L21.1 category
+        /// (`qcore_c_gateway::boolean_source::ChunkSourceResult`, card
+        /// REASON-CODES-B2). It is carried across this compatibility boundary
+        /// rather than re-derived, so this facade cannot become a second
+        /// classification of the same text.
+        reason_code: Option<qcore_schemas::reason::ReasonCategory>,
     },
 }
 
@@ -164,9 +170,15 @@ pub fn import_chunk_source_with_profile(
                 gateway::ChunkSourceResult::Summary(summary) => {
                     ChunkSourceResult::Summary(Box::new(ChunkSourceSummary(*summary)))
                 }
-                gateway::ChunkSourceResult::Unknown { function, reason } => {
-                    ChunkSourceResult::Unknown { function, reason }
-                }
+                gateway::ChunkSourceResult::Unknown {
+                    function,
+                    reason,
+                    reason_code,
+                } => ChunkSourceResult::Unknown {
+                    function,
+                    reason,
+                    reason_code,
+                },
             })
             .collect()
     })

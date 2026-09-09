@@ -10,6 +10,7 @@
 use crate::typed_c_ast::{ast_declarations, function_ast};
 use qcore_contract::profile_loader::LoadedProfile;
 use qcore_schemas::profile::{BooleanFieldModel, OperationKind};
+use qcore_schemas::reason::ReasonCategory;
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -545,7 +546,43 @@ pub enum ChunkSourceResult {
     Unknown {
         function: String,
         reason: String,
+        /// The closed §L21.1 category of `reason` (card REASON-CODES-B2).
+        ///
+        /// This *refines* the row: `function` and `reason` keep their exact
+        /// bytes, and every consumer that already read the free text is
+        /// unaffected. It is fail-closed in the two directions the vocabulary
+        /// requires — a reason the closed vocabulary does not recognise carries
+        /// `None`, never a defaulted category, and `None` asserts nothing, so
+        /// an unrecognised row can never be read as a statement about the
+        /// analysed source. Consumers that used to re-derive the category from
+        /// the free text now read it from here, so this enum stops being a
+        /// second, uncarried reason vocabulary.
+        reason_code: Option<ReasonCategory>,
     },
+}
+
+impl ChunkSourceResult {
+    /// Build an `Unknown` row, classifying its reason under the closed
+    /// vocabulary. This is the only way an `Unknown` row is minted in
+    /// production, so the category can never disagree with the text beside it.
+    pub fn unknown(function: impl Into<String>, reason: impl Into<String>) -> Self {
+        let reason = reason.into();
+        let reason_code = ReasonCategory::classify(&reason).ok();
+        Self::Unknown {
+            function: function.into(),
+            reason,
+            reason_code,
+        }
+    }
+
+    /// The closed category of this row's reason, or `None` for a summary row
+    /// and for a reason the closed vocabulary does not recognise.
+    pub fn reason_code(&self) -> Option<ReasonCategory> {
+        match self {
+            Self::Summary(_) => None,
+            Self::Unknown { reason_code, .. } => *reason_code,
+        }
+    }
 }
 
 /// Import selected single-field models from explicit declared profile data.
@@ -722,7 +759,7 @@ pub fn import_chunk_source_with_profile(
         });
         results.push(match result {
             Ok(summary) => ChunkSourceResult::Summary(Box::new(summary)),
-            Err(reason) => ChunkSourceResult::Unknown { function, reason },
+            Err(reason) => ChunkSourceResult::unknown(function, reason),
         });
     }
     if CompilerIdentity::capture()? != compiler {

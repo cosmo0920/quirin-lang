@@ -130,7 +130,9 @@ fn import(profile: &LoadedProfile, libraries: &[&str]) -> Vec<ChunkSourceResult>
 fn reason<'a>(results: &'a [ChunkSourceResult], name: &str) -> &'a str {
     for result in results {
         match result {
-            ChunkSourceResult::Unknown { function, reason } if function == name => return reason,
+            ChunkSourceResult::Unknown {
+                function, reason, ..
+            } if function == name => return reason,
             ChunkSourceResult::Summary(summary) => panic!(
                 "no CTraces function may produce a Boolean-field summary; got one for `{}`",
                 summary.function()

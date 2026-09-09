@@ -152,7 +152,9 @@ fn inventory(
                     Derived::Contract(obligation.obligation_id.clone()),
                 );
             }
-            ChunkSourceResult::Unknown { function, reason } => {
+            ChunkSourceResult::Unknown {
+                function, reason, ..
+            } => {
                 assert!(!reason.is_empty(), "`{function}` has no residual reason");
                 derived.insert(function, Derived::Unknown(reason));
             }

@@ -1060,12 +1060,24 @@ fn audit_chunk_source(
                     certificate.checked_states()
                 );
             }
-            ChunkSourceResult::Unknown { function, reason } => {
+            // Card REASON-CODES-B3: both sidecars carry the closed §L21.1
+            // category beside the free text. It is the category the importer
+            // classified (REASON-CODES-B2), not a third vocabulary re-derived
+            // here, and it is fail-closed - `null` for a reason the closed
+            // vocabulary does not recognise, never a defaulted category. The
+            // key is emitted only on `unknown` rows, so `checked` rows keep
+            // their exact bytes.
+            ChunkSourceResult::Unknown {
+                function,
+                reason,
+                reason_code,
+            } => {
+                let reason_code = reason_code.map(|category| category.as_str());
                 if process_mode {
                     native_results.push(serde_json::json!({ "kind": "provider_source_effect", "library": library, "file": file,
-                        "function": function, "status": "unknown", "reason": reason }));
+                        "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
                 }
-                native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason }));
+                native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
                 println!("  chunk-source {library}/{file}/{function}: Unknown: {reason}")
             }
         }
