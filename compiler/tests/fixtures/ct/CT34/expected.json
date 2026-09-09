@@ -38,10 +38,14 @@
     "parse",
     "elaborate",
     "mutex_lowering",
-    "mutex_invariant_check"
+    "mutex_invariant_check",
+    "mutex_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
   ],
   "evidence_target": "linux",
-  "notes": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared and two generations created over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned rather than filtered, and every entry says something. Entry 1, Q613 InvariantOpenAtUnlock { event: 6, guard: 1 }: the section unlocks with its invariant still open, because its `close` was refused. Entry 2, Q617 FootprintAlreadyProtected { event: 4, mutex: 1 }, is the growth's OWN refusal and sits second, not first — the lowering mints the new predicate identity before the core decides, and the core reports in its own enum order (card boundary CT34-GROWTH-CASCADE; this is recorded, not concealed). Entry 3, Q619 NonquiescentMutexDestruction { event: 8, mutex: 1 }: the generation is destroyed while its guard is still live. Entry 4, Q613 InvalidInvariantWitness { event: 5, guard: 1 }: the refused growth installed nothing, so the section's `close` names a declared identity the generation never took. Entries 5-7 (Q600 NonquiescentDestruction, OutstandingGuard, OutstandingMutex) are the scope exit finding the resource, the guard and the generation still outstanding. Together, entries 3-7 are what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were: a change that started mutating a generation on a refused growth would move this vector. The growth_onto_unprotected.qcore control differs from the case by exactly ONE TOKEN — the growth names the unprotected `z` instead of `y` — so Q617 is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_check_only`, not `accept`: the core admits it and records exactly one admitted protection growth (generation 1's shape becomes x[0,4) plus z[0,4) while generation 2 keeps y[0,4)), and compile_files then refuses with [Q600] `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }`. That refusal is card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE) and is pinned as a decision: nothing in the C backend reads a generation's declared shape, so rather than emit an mtx_t protecting less than the model says, both emit_mutex_c11 and interpret_mutex_program refuse a GrowProtection event. The growth_over_own_footprint.qcore control grows onto `x`, the generation's OWN declared interval, and refuses with the identical seven-entry cascade, so W4's `one protector` rule is measured to cover a generation's own shape and not only another generation's. NOT established: any native or sanitized evidence. native_sanitized is unassessed, not executed — this case compiles no C at all, and the schema-2 gate lists exactly which cases may read `executed`. evidence_target=linux records only that the two compile_files-reaching controls are host-gated (the harness asserts the Q500 refusal on any other target rather than skipping silently); it records NO compiled or executed C. There is no shrink form and no replacement form in this profile, so CT34's `replaces identities` half is answered by refusal, not by a rule about replacement, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage at all.",
+  "notes": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth, rendered natively by card CT34-SANITIZED. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared and two generations created over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned rather than filtered, and every entry says something. Entry 1, Q613 InvariantOpenAtUnlock { event: 6, guard: 1 }: the section unlocks with its invariant still open, because its `close` was refused. Entry 2, Q617 FootprintAlreadyProtected { event: 4, mutex: 1 }, is the growth's OWN refusal and sits second, not first — the lowering mints the new predicate identity before the core decides, and the core reports in its own enum order (card boundary CT34-GROWTH-CASCADE; this is recorded, not concealed). Entry 3, Q619 NonquiescentMutexDestruction { event: 8, mutex: 1 }: the generation is destroyed while its guard is still live. Entry 4, Q613 InvalidInvariantWitness { event: 5, guard: 1 }: the refused growth installed nothing, so the section's `close` names a declared identity the generation never took. Entries 5-7 (Q600 NonquiescentDestruction, OutstandingGuard, OutstandingMutex) are the scope exit finding the resource, the guard and the generation still outstanding. Together, entries 3-7 are what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were: a change that started mutating a generation on a refused growth would move this vector. The growth_onto_unprotected.qcore control differs from the case by exactly ONE TOKEN — the growth names the unprotected `z` instead of `y` — so Q617 is attributable to the interval already having a protector rather than to growth being written down at all. The growth_over_own_footprint.qcore control grows onto `x`, the generation's OWN declared interval, and refuses with the identical seven-entry cascade, so W4's `one protector` rule is measured to cover a generation's own shape and not only another generation's. The growth_then_guarded_access.qcore control carries this case's native evidence: it writes the originally declared region under the guard, grows onto a second allocation, writes the newly protected region under the SAME guard, then reads both in a second section. Its emitted C is compiled under ASan/UBSan/LSan and run, and its stdout equals interpret_mutex_program's independently computed reference line for line. WHAT THAT RUN SHOWS AND DOES NOT SHOW: a CheckedMutexInvariantV1 footprint is a DECLARED SHAPE, and a C mtx_t has no extent to widen, so a growth emits NO mutex operation at all — only the bookkeeping line that keeps the two observations comparable. The run therefore witnesses that the accesses the checker admitted on the strength of the growth are real, in-bounds accesses to real allocations inside the growing section's own lock/unlock pair, that both allocations are reclaimed under LeakSanitizer, and that the native and reference renderings agree. It witnesses NOTHING about the C mutex protecting the grown region, about contention, about any multi-threaded schedule, or about the invariant predicate, which stays the InvariantPredicateDeclared premise. The backend renders a growth only where the supplied certificate admits it, and refuses a hand-built or edited growth trace at UnadmittedProtectionGrowth (crates/qcore-core/tests/unit/mutex_c_emit.rs). There is no shrink form and no replacement form in this profile, so CT34's `replaces identities` half is answered by refusal, not by a rule about replacement, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. This route emits from a checked event list and has no CFG stage at all.",
   "checked_mutex_reject": {
     "diagnostic_sequence": [
       "Q613",
@@ -55,12 +59,10 @@
     "controls": [
       {
         "source": "growth_onto_unprotected.qcore",
-        "expectation": "accept_check_only",
+        "expectation": "accept_growth",
         "diagnostic_sequence": [],
-        "backend_refusal": [
-          "Q600"
-        ],
-        "note": "the case with exactly one token changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and records one admitted protection growth, so the case's Q617 is attributable to the interval already having a protector — not to growth being written at all, not to the third resource existing, and not to the second generation being declared. It is check-only rather than accepted because the C backend deliberately refuses a GrowProtection event (card CT34-GROWTH boundary 3): the exact backend vector [Q600] is pinned here so the check-only admission is never reported as a full acceptance and the backend's refusal stays a recorded decision rather than an omission."
+        "backend_refusal": [],
+        "note": "the case with exactly one token changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and records one admitted protection growth, so the case's Q617 is attributable to the interval already having a protector — not to growth being written at all, not to the third resource existing, and not to the second generation being declared. Card CT34-GROWTH recorded this control as `accept_check_only` because the C backend then refused every growth; card CT34-SANITIZED renders an admitted growth, so it is now `accept_growth`: it must check, record the growth AND return a compiled module carrying emitted C. It carries no sanitized_run because a case's native stages name one artifact, and the growth_then_guarded_access control is the one that exercises pre-growth and post-growth access."
       },
       {
         "source": "growth_over_own_footprint.qcore",
@@ -75,6 +77,56 @@
           "Q600"
         ],
         "note": "the case with the growth aimed at `x`, generation `m`'s OWN declared interval, rather than at generation `n`'s. It refuses with the identical seven-entry cascade, so W4's `the new interval must overlap no live generation's declared shape, this generation's included` is a measured statement rather than prose, and a reader can see the rule is about protection rather than about which generation holds it."
+      },
+      {
+        "source": "growth_then_guarded_access.qcore",
+        "expectation": "accept_growth",
+        "diagnostic_sequence": [],
+        "backend_refusal": [],
+        "sanitized_run": {
+          "sanitizer_flags": [
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-pedantic",
+            "-g",
+            "-O0",
+            "-fsanitize=address,undefined",
+            "-fno-omit-frame-pointer"
+          ],
+          "asan_options": "detect_leaks=1:halt_on_error=1",
+          "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+          "emitted_c_contains": [
+            "mtx_init",
+            "mtx_lock",
+            "mtx_unlock",
+            "mtx_destroy",
+            "printf(\"grow 1 1 2 0 4\\n\")",
+            "free(r1)",
+            "free(r2)"
+          ],
+          "reference_observation": [
+            "resource 1 4",
+            "resource 2 4",
+            "create 1",
+            "lock 1 1",
+            "open 1",
+            "write 1 0 4",
+            "grow 1 1 2 0 4",
+            "write 2 0 4",
+            "close 1",
+            "unlock 1",
+            "lock 1 2",
+            "read 1 0 4 16",
+            "read 2 0 4 24",
+            "unlock 2",
+            "destroy-mutex 1",
+            "destroy 2",
+            "destroy 1"
+          ]
+        },
+        "note": "the case's native evidence, and the only file any compiler in this case ever saw. One generation writes its originally declared region under the guard, grows onto a second allocation mid-section, writes the newly protected region under the SAME guard, closes on the identity the growth installed, and a second section reads both. The pinned reference_observation is checked against interpret_mutex_program's own output before the native run, so neither the pin nor the reference can drift alone, and the `grow 1 1 2 0 4` line records that the growth's whole runtime rendering is one bookkeeping line with no mtx_t operation. The two `read` sums are the bytes the two writes really left behind, so a rendering that skipped either write would move them. The run witnesses in-bounds access and full reclamation under ASan/UBSan/LSan on Linux; on macOS LeakSanitizer is unavailable and the harness runs with detect_leaks=0, and on Windows the harness asserts the emission and reports the sanitized run unexecuted rather than skipping silently."
       }
     ]
   }

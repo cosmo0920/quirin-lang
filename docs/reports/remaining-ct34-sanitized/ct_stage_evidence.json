@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "card": "remaining-ct34-sanitized",
+  "generated": "2026-09-09",
+  "report": "docs/reports/remaining-ct34-sanitized/README.md",
+  "purpose": "Per-stage executed evidence for CT34 after card CT34-SANITIZED made the C backend render an admitted protection growth. This record SUPERSEDES docs/reports/wave13-ct34/ct_stage_evidence.json for CT34; that file is left byte-identical, because rewriting an archived record would destroy the history it exists to keep. CT34 is neither newly mapped nor unmapped by this card: mapped stays 32 and unmapped stays 18.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test really runs it, and it names the exact file that test ran on. Four stages of this case name a CONTROL's file rather than the case's own fixture, because the case's own fixture is a refusal that emits nothing and no compiler ever saw it; compiler/tests/ct_corpus.rs derives the same artifact independently and refuses a manifest that names any other file.",
+  "what_the_backend_now_does": "A CheckedMutexInvariantV1 footprint is a DECLARED SHAPE. The C backend protects by discipline — the checker decided which accesses may run under which guard — and an mtx_t has no extent to widen, so a GrowProtection event renders as no mutex operation at all plus one bookkeeping line (`grow <mutex> <guard> <resource> <start> <end>`) that keeps the native and reference observations comparable. The emission is admitted ONLY where the supplied certificate carries a matching AdmittedProtectionGrowth whose interval the certificate's own effective protected_shape also carries; anything else is refused at MutexEmissionRefusal::UnadmittedProtectionGrowth in both renderings.",
+  "what_the_sanitized_run_shows": "That the accesses the checker admitted on the strength of the growth are real, in-bounds accesses to real allocations, performed inside the growing section's own mtx_lock/mtx_unlock pair; that both allocations are reclaimed (LeakSanitizer, Linux); and that the native stdout equals interpret_mutex_program's independently computed reference line for line. One thread, one Linux target, one compiler invocation.",
+  "what_the_sanitized_run_does_not_show": "Nothing about a C mutex protecting the grown region — no mtx_t can express an extent, and no such claim is made anywhere in this card. Nothing about contention, scheduling, publication or the C memory model; nothing about the invariant predicate, which stays the InvariantPredicateDeclared premise; and nothing about growth by a non-creator, a shrink or a replacement, none of which the profile admits.",
+  "why_this_route_has_no_cfg_stage": "Unchanged from wave 5: source.mutex.guard.v1 emits from a checked event list and constructs no CFG, so schema 2's route vocabulary omits every CFG-bearing stage rather than recording an indefinite `unassessed`.",
+  "coverage_unchanged": "CT coverage stays 32/50 mapped and 18 unmapped. What moves is conformance rather than mapping: harness-gated sanitized-native evidence goes 3 of 32 (CT03, CT17, CT26) to 4 of 32 (+CT34). Proof stays 0 of 32; no theorem is bound to any CT fixture (T00.7 remains open).",
+  "new_harness_control_expectation": {
+    "name": "accept_growth",
+    "why": "Card CT34-GROWTH's `accept_check_only` control asserted that the checker admits a growth and the backend refuses it. The second half is no longer true, so the expectation would have been asserting a falsehood. `accept_growth` keeps the load-bearing half of the old one — the control must really record a protection growth, or it attributes nothing — and adds what is now true: compile_files returns a compiled module on the checked mutex route carrying emitted C.",
+    "sanitized_run_block": "At most one control per case may carry a `sanitized_run`, because the case's native stages name a single artifact. The block pins the sanitizer flags, the ASan/UBSan options, substrings the emitted C must contain, and the exact reference observation — which the harness first checks against interpret_mutex_program's own output, so neither the pin nor the reference can drift alone.",
+    "gate_direction": "strictly more assertion for the case, and no relaxation elsewhere. `accept`, `accept_check_only` and `reject` are unchanged and `accept_check_only` is retained with no user, so a future check-only route states its refusal rather than inventing a weaker spelling. The corpus-wide rule that a mutex rejection carries at least one non-`reject` control is unchanged. Two new pinned rules: at most one sanitized control per case, and a mutex rejection carries a sanitized control exactly when it is in SANITIZED_GATED_CASES.",
+    "artifact_rule": "Was: an executed stage's artifact is the case's own fixture, compared against a constant. Now: an executed stage's artifact is what the derived plan says it is — the case's own fixture for every stage of every other case, and the sanitized control's own file for this case's four native stages. The manifest must name exactly the derived file, so this is a tighter check than the constant it replaces, not a relaxation."
+  },
+  "inventory": {
+    "added_mapped_ids": [],
+    "mapped_before": 32,
+    "mapped_after": 32,
+    "unmapped_after": 18,
+    "total": 50,
+    "sanitized_native_before": 3,
+    "sanitized_native_after": 4
+  },
+  "mapped_case_stage_matrix": {
+    "CT34": {
+      "supersedes": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": "linux",
+      "mutex_reject_controls_executed": 3,
+      "measured_cascade": [
+        "Q613",
+        "Q617",
+        "Q619",
+        "Q613",
+        "Q600",
+        "Q600",
+        "Q600"
+      ],
+      "cascade_unchanged_by_this_card": "The case's own seven-entry cascade and every entry's meaning are wave 13's, re-measured unchanged on this card's tree. The refused growth still installs nothing, so the section's close still names an identity the generation never took, and the growth's own Q617 still sits second (card boundary CT34-GROWTH-CASCADE).",
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ],
+          "note": "qcore_core::mutex_c_emit::interpret_mutex_program over the control's own checked event list. It never reads the emitted C. The 17-line observation is pinned in the fixture and compared with this computation before the native run, so the pin and the reference cannot drift apart."
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ],
+          "note": "qcore_core::mutex_c_emit::emit_mutex_c11 through compile_files. The growth's whole rendering is `printf(\"grow 1 1 2 0 4\\n\");` — the emitted C carries exactly one mtx_init, two mtx_lock, two mtx_unlock and one mtx_destroy, the same six mutex operations a two-section program without a growth carries, which is asserted directly in crates/qcore-core/tests/unit/mutex_c_emit.rs."
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ],
+          "note": "The compiled program is run once and its stdout compared with the reference line for line. On Windows the runner asserts the emission exists and reports the run unexecuted rather than skipping silently; on a host outside {linux, macos, windows} the control arrives as the same Q500 refusal every other route uses."
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ],
+          "note": "The same single run, compiled with -fsanitize=address,undefined -fno-omit-frame-pointer -Werror and executed under ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 and UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1. On macOS detect_leaks is 0 because Apple's AddressSanitizer does not implement LeakSanitizer. This is the corpus's fourth harness-gated sanitized case (CT03, CT17, CT26, CT34)."
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:one_token_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+          "expectation": "accept_growth",
+          "observations": 1,
+          "measured_core_result": "accepted; admitted_protection_growths = 1; protected_shape = {1: [x[0,4), z[0,4)], 2: [y[0,4)]}",
+          "emits_c": true,
+          "note": "The case with exactly ONE TOKEN changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. Wave 13 recorded this control as accept_check_only with a measured backend refusal of [Q600] UnsupportedEvent; that refusal no longer exists, so the expectation moved to accept_growth and its backend_refusal is now empty. The growth-recorded assertion is retained verbatim, so the attribution wave 13 established is unchanged."
+        },
+        "aux:own_footprint_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+          "expectation": "reject",
+          "observations": 1,
+          "measured_cascade": [
+            "Q613",
+            "Q617",
+            "Q619",
+            "Q613",
+            "Q600",
+            "Q600",
+            "Q600"
+          ],
+          "note": "Unchanged from wave 13 and re-measured: the growth aimed at `x`, generation `m`'s OWN declared interval, refuses with the identical seven-entry cascade."
+        }
+      }
+    }
+  },
+  "executed_totals_added": {
+    "mutex_reference_executions": 1,
+    "c_emissions": 1,
+    "sanitized_native_compile_and_run": 1,
+    "in_case_source_controls": 3,
+    "admitted_growth_controls": 2,
+    "admitted_check_only_controls": 0,
+    "refused_controls": 1,
+    "cases_with_proof_evidence": 0
+  }
+}

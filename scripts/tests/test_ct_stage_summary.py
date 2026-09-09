@@ -46,6 +46,12 @@ class MutableRoot:
     def write_manifest(self, manifest):
         (self.directory / summary.MANIFEST).write_text(json.dumps(manifest, indent=2) + "\n")
 
+    def read_evidence(self, relative):
+        return json.loads((self.directory / relative).read_text())
+
+    def write_evidence(self, relative, data):
+        (self.directory / relative).write_text(json.dumps(data, indent=2) + "\n")
+
 
 class SummaryTest(unittest.TestCase):
     def test_committed_acceptance_record_is_what_the_manifest_derives(self):
@@ -157,6 +163,49 @@ class SummaryTest(unittest.TestCase):
                 "CT24: mapped with no archived stage-evidence record",
                 summary.check_provenance(scratch.directory),
             )
+
+    # Card CT34-SANITIZED. A later card may re-measure a case an earlier card
+    # mapped. That is new evidence for the same case, not a second claim on it,
+    # and it must say so by naming the record it replaces — so a silent second
+    # claim stays the error it has always been, and a supersession declaration
+    # can be neither stale nor vacuous.
+    SUPERSEDING = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
+    SUPERSEDED = "docs/reports/wave13-ct34/ct_stage_evidence.json"
+
+    def test_a_declared_supersession_replaces_exactly_the_record_it_names(self):
+        merged = summary.merge_evidence(ROOT)
+        self.assertEqual(merged["CT34"]["source"], self.SUPERSEDING)
+        self.assertEqual(merged["CT34"]["supersedes"], self.SUPERSEDED)
+        # The superseded file is still read for every case it alone claims.
+        self.assertEqual(merged["CT33"]["source"], "docs/reports/wave11-ct33/ct_stage_evidence.json")
+
+    def test_an_undeclared_second_claim_on_a_case_fails_closed(self):
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.SUPERSEDING)
+            del data["mapped_case_stage_matrix"]["CT34"]["supersedes"]
+            scratch.write_evidence(self.SUPERSEDING, data)
+            with self.assertRaises(SystemExit):
+                summary.merge_evidence(scratch.directory)
+
+    def test_a_supersession_naming_the_wrong_record_fails_closed(self):
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.SUPERSEDING)
+            data["mapped_case_stage_matrix"]["CT34"]["supersedes"] = (
+                "docs/reports/remaining-t00/coverage.json"
+            )
+            scratch.write_evidence(self.SUPERSEDING, data)
+            with self.assertRaises(SystemExit):
+                summary.merge_evidence(scratch.directory)
+
+    def test_a_supersession_of_nothing_fails_closed(self):
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.SUPERSEDING)
+            entry = copy.deepcopy(data["mapped_case_stage_matrix"]["CT34"])
+            # CT26 is claimed by no earlier record this file could replace.
+            data["mapped_case_stage_matrix"]["CT26"] = entry
+            scratch.write_evidence(self.SUPERSEDING, data)
+            with self.assertRaises(SystemExit):
+                summary.merge_evidence(scratch.directory)
 
     def test_an_unknown_schema_version_fails_closed(self):
         manifest = load_manifest()
