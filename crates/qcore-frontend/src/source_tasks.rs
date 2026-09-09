@@ -485,6 +485,88 @@ fn core_span(span: Span) -> TaskSpan {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Card CT46-SENDSYNC: the transferability judgment, consulted redundantly.
+//
+// `qcore_core::transfer` derives which kinds may cross a task-creation
+// boundary from the kind itself. It is consulted here *beside* the existing
+// enumeration in `spawn_inputs`, and the two must agree; see that function.
+// Neither side is preferred, so this cannot widen admission — a disagreement
+// in either direction is a refusal.
+// ---------------------------------------------------------------------------
+
+/// The elaborated scalar grammar, as a transfer kind.
+///
+/// This is total over `Scalar`, so a new executable scalar spelling must be
+/// classified before it can reach a boundary.
+fn transfer_kind(scalar: Scalar) -> qcore_core::transfer::TransferKind {
+    use qcore_core::transfer::TransferKind;
+    match scalar {
+        Scalar::I32 => TransferKind::I32,
+        Scalar::Unit => TransferKind::Unit,
+        Scalar::OwnedBuffer => TransferKind::OwnedBuffer,
+        Scalar::ReadLoan => TransferKind::ReadLoan,
+    }
+}
+
+/// The lowering's binding grammar, as a transfer kind. Total over
+/// [`ValueType`].
+///
+/// Only the scalar cases can reach the capture match, because a non-scalar
+/// place is already refused by the place/parameter type check. The other arms
+/// exist so the guard in `spawn_inputs` can state — and a test can check —
+/// that no non-scalar binding is ever sendable.
+fn binding_transfer_kind(kind: &ValueType) -> qcore_core::transfer::TransferKind {
+    use qcore_core::transfer::TransferKind;
+    match kind {
+        ValueType::Scalar(scalar) => transfer_kind(*scalar),
+        ValueType::Handle(_) => TransferKind::TaskHandle,
+        ValueType::Result { .. } => TransferKind::TaskResult,
+        ValueType::Scope => TransferKind::ThreadScope,
+        ValueType::KnownError(_) => TransferKind::KnownErrorTag,
+        ValueType::Error { .. } => TransferKind::ErrorValue,
+    }
+}
+
+/// The capture keywords, as transfer modes. Total over
+/// [`SourceCaptureMode`], `Write` included: the keyword parses and has never
+/// had a lowering, and the judgment refuses it by name rather than by
+/// falling off the end of a match.
+fn transfer_mode(mode: &SourceCaptureMode) -> qcore_core::transfer::TransferMode {
+    use qcore_core::transfer::TransferMode;
+    match mode {
+        SourceCaptureMode::Copy => TransferMode::Copy,
+        SourceCaptureMode::Move => TransferMode::Move,
+        SourceCaptureMode::Read { .. } => TransferMode::Lend,
+        SourceCaptureMode::Write => TransferMode::Write,
+    }
+}
+
+/// Which of the three admitted capture forms the existing enumeration picked,
+/// as a value rather than as an early return, so that the derived judgment can
+/// be compared against a refusal as well as against an admission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum EnumeratedCapture {
+    Copy,
+    Move,
+    Lend,
+}
+
+impl EnumeratedCapture {
+    /// The derived transfer this enumerated form claims to be, for the
+    /// agreement check.
+    fn as_admitted(self) -> qcore_core::transfer::AdmittedTransfer {
+        use qcore_core::transfer::{AdmittedTransfer, ShareProtocol};
+        match self {
+            EnumeratedCapture::Copy => AdmittedTransfer::Duplicate,
+            EnumeratedCapture::Move => AdmittedTransfer::MoveCustody,
+            EnumeratedCapture::Lend => {
+                AdmittedTransfer::LendShare(ShareProtocol::CountedReadShares)
+            }
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum ValueType {
     Scalar(Scalar),
@@ -1270,6 +1352,20 @@ impl<'a> Builder<'a> {
             } else {
                 *parameter_type
             };
+            // Card CT46-SENDSYNC. A non-scalar binding has no transferable
+            // kind, and the check just below already refuses it. This guard
+            // states that agreement rather than assuming it: if the judgment
+            // ever called a handle, scope, Result or error value sendable,
+            // this refuses instead of letting the type check be the only
+            // thing standing between it and a boundary.
+            if !matches!(kind, ValueType::Scalar(_))
+                && qcore_core::transfer::transferable(binding_transfer_kind(&kind)).sendable()
+            {
+                return Err(self.bad(
+                    capture.span,
+                    "the transferability judgment admits a binding that is not a value",
+                ));
+            }
             if kind != ValueType::Scalar(place_type) {
                 return Err(failure(
                     capture.span,
@@ -1277,22 +1373,57 @@ impl<'a> Builder<'a> {
                     "capture type does not match worker parameter",
                 ));
             }
-            let operand = match (&capture.mode, parameter_type) {
-                (SourceCaptureMode::Copy, Scalar::I32) => ScalarOperand::Slot(symbol.0 as usize),
-                (SourceCaptureMode::Move, Scalar::OwnedBuffer) => {
-                    ScalarOperand::Move(symbol.0 as usize)
-                }
-                (SourceCaptureMode::Read { share }, Scalar::ReadLoan) => {
+            // Card CT46-SENDSYNC: the derived judgment, over what the parent
+            // holds (`place_type`), the mode asked for, and what the worker
+            // declared it receives (`parameter_type`).
+            let derived = qcore_core::transfer::admits_capture(
+                transfer_kind(place_type),
+                transfer_mode(&capture.mode),
+                transfer_kind(*parameter_type),
+            );
+            // The existing enumeration, as a decision rather than an early
+            // return, so that the two can be compared on refusals too.
+            let enumerated = match (&capture.mode, parameter_type) {
+                (SourceCaptureMode::Copy, Scalar::I32) => Some(EnumeratedCapture::Copy),
+                (SourceCaptureMode::Move, Scalar::OwnedBuffer) => Some(EnumeratedCapture::Move),
+                (SourceCaptureMode::Read { .. }, Scalar::ReadLoan) => Some(EnumeratedCapture::Lend),
+                _ => None,
+            };
+            // Both must agree, on the verdict and on which transfer it is.
+            // A disagreement in either direction refuses: the judgment cannot
+            // admit what the enumeration refuses, and it cannot silently
+            // withdraw what the enumeration admits either.
+            let agrees = match (&derived, enumerated) {
+                (Ok(admitted), Some(form)) => *admitted == form.as_admitted(),
+                (Err(_), None) => true,
+                _ => false,
+            };
+            if !agrees {
+                return Err(self.bad(
+                    capture.span,
+                    "the derived transferability judgment and the capture enumeration disagree \
+                     about this capture",
+                ));
+            }
+            let operand = match enumerated {
+                Some(EnumeratedCapture::Copy) => ScalarOperand::Slot(symbol.0 as usize),
+                Some(EnumeratedCapture::Move) => ScalarOperand::Move(symbol.0 as usize),
+                Some(EnumeratedCapture::Lend) => {
                     // The share the *borrower* receives. Whether the resource
                     // has that much authority left to give is the ledger's
                     // decision, on the path that reaches this creation.
+                    let SourceCaptureMode::Read { share } = &capture.mode else {
+                        // Unreachable: only a `read` capture enumerates as a
+                        // lend. Refused rather than panicked on.
+                        return Err(self.bad(capture.span, "a lend capture without a share"));
+                    };
                     loans += 1;
                     ScalarOperand::Loan {
                         slot: symbol.0 as usize,
                         share: read_share(&share.value, share.span)?,
                     }
                 }
-                _ => {
+                None => {
                     return Err(self.bad(
                         capture.span,
                         "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
