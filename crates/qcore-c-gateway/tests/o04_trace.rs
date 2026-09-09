@@ -714,6 +714,30 @@ fn a_partial_nested_call_expression_is_never_admitted() {
     }
 }
 
+/// **Adversarial row 5 — an address inside the nested call's own arguments.**
+/// This is a fail-open the card **found and closed** during implementation:
+/// the enclosing `&`-gate is exempted for the admitted nested argument, and
+/// `contains_unmodeled_access` does not read `&`, so without premise N9
+/// `v_log("%s", v_name(&b))` was admitted with the escape modeled by nobody.
+#[test]
+fn an_address_inside_the_nested_arguments_is_never_admitted() {
+    if !clang_available() {
+        return;
+    }
+    let summary = generic_summary(
+        "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
+           v_log(\"%s\", v_name(*&b)); v_drop(b); return 0; }",
+        "v_use",
+    );
+    assert_ne!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "an undenotable inner actual must refuse: {:?}",
+        summary.diagnostics
+    );
+    assert!(!summary.diagnostics.is_empty());
+}
+
 /// **The arity repair.** An actual beyond the declared parameter vector, with
 /// no declared tail, is refused rather than silently dropped — a fail-closed
 /// repair of the same class card O04-B09B10 found for a nested call.

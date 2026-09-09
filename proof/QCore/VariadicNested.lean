@@ -187,6 +187,11 @@ structure Nested where
   outerDeclaredTail : Bool
   /-- The nested call's actual count equals its declared parameter count. -/
   innerArityExact : Bool
+  /-- **N9** — every inner actual is either a place this projection can denote
+      or data. Without it the admission is fail-*open*: `f (g (& x))` hands the
+      callee an address that `canonicalPlace` refuses to denote and that the
+      enclosing gate, exempted for the admitted nested argument, never sees. -/
+  innerActualsDenotable : Bool
   deriving DecidableEq, Repr
 
 /-- **N6 and N7**, the load-bearing pair: the nested contract's declared
@@ -212,6 +217,7 @@ def admitsNested (n : Nested) : Bool :=
     && n.calleeContracted
     && n.outerContracted
     && n.innerArityExact
+    && n.innerActualsDenotable
     && nestedContractNeutral n.contract
     && slotIsData n
 
@@ -248,6 +254,14 @@ theorem an_uncontracted_outer_callee_never_admits_a_nested_call (n : Nested)
 theorem a_nested_arity_mismatch_is_never_admitted (n : Nested)
     (mismatch : n.innerArityExact = false) : admitsNested n = false := by
   simp [admitsNested, mismatch]
+
+/-- **N9**, the fail-open this card closed after finding it: an inner actual
+    the projection can neither denote nor call data — `& x` above all — is
+    refused. The enclosing `&` gate is exempted for the admitted nested
+    argument, so without this premise nothing at all would see the escape. -/
+theorem an_undenotable_inner_actual_is_never_admitted (n : Nested)
+    (undenotable : n.innerActualsDenotable = false) : admitsNested n = false := by
+  simp [admitsNested, undenotable]
 
 /-! ## N6 and N7 — the neutrality premises -/
 
@@ -493,7 +507,8 @@ def witnessNested (slot : Slot) : Nested :=
     innerArgumentsCallFree := true, calleeContracted := true, outerContracted := true,
     contract := { modes := [ParamMode.borrowed], result := ResultMode.none,
                   declaredTail := false },
-    slot := slot, outerDeclaredTail := true, innerArityExact := true }
+    slot := slot, outerDeclaredTail := true, innerArityExact := true,
+    innerActualsDenotable := true }
 
 theorem a_nested_call_in_a_declared_tail_is_admitted :
     admitsNested (witnessNested Slot.beyondNamedVector) = true := by decide
@@ -514,6 +529,8 @@ theorem the_nested_premises_are_separately_load_bearing :
                        calleeContracted := false } = false
       ∧ admitsNested { witnessNested Slot.beyondNamedVector with
                        innerArityExact := false } = false
+      ∧ admitsNested { witnessNested Slot.beyondNamedVector with
+                       innerActualsDenotable := false } = false
       ∧ admitsNested { witnessNested Slot.beyondNamedVector with
                        outerDeclaredTail := false } = false := by decide
 

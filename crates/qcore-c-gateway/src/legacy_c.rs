@@ -3115,7 +3115,9 @@ impl Parser<'_> {
                         &contract,
                         variadic_tail,
                         self.contracts,
+                        &self.typed_model,
                         &self.typed_types,
+                        &self.typed_bases,
                     )
                 });
                 // Every nested call the premises do not admit keeps card

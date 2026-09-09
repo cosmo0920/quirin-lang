@@ -23,7 +23,8 @@ named vector with no declared tail is refused rather than dropped — the
 fail-closed arity repair. Non-vacuity is audited in both directions, with each
 premise separately flipped on the same witness. -/
 
--- Every premise of the nested-call whitelist refuses on its own.
+-- Every premise of the nested-call whitelist refuses on its own, N9 (the
+-- fail-open this card found and closed) included.
 #print axioms QCore.VariadicNested.unread_declarations_never_admit_a_nested_call
 #print axioms QCore.VariadicNested.more_than_one_nested_call_is_never_admitted
 #print axioms QCore.VariadicNested.a_partial_nested_expression_is_never_admitted
@@ -31,6 +32,7 @@ premise separately flipped on the same witness. -/
 #print axioms QCore.VariadicNested.an_uncontracted_nested_callee_is_never_admitted
 #print axioms QCore.VariadicNested.an_uncontracted_outer_callee_never_admits_a_nested_call
 #print axioms QCore.VariadicNested.a_nested_arity_mismatch_is_never_admitted
+#print axioms QCore.VariadicNested.an_undenotable_inner_actual_is_never_admitted
 
 -- N6 and N7: the neutrality premises, in the refusing direction.
 #print axioms QCore.VariadicNested.an_owned_nested_result_is_never_admitted

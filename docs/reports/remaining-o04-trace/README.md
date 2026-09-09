@@ -147,7 +147,7 @@ shape cards C03-NFR, O04-READ-BOUND and O04-B09B10 each recorded.
 [`crates/qcore-c-gateway/src/variadic_nested.rs`](../../../crates/qcore-c-gateway/src/variadic_nested.rs),
 consumed by `legacy_c::classify_simple` and `legacy_c::transfer`.
 
-### 3.1 The eight conjunctive premises
+### 3.1 The nine conjunctive premises
 
 | # | Premise | Refused otherwise |
 |---|---|---|
@@ -161,6 +161,35 @@ consumed by `legacy_c::classify_simple` and `legacy_c::transfer`.
 | **N7** | **every** parameter mode of the nested contract is `Borrowed` | `Owned`, `Consumed`, `Released`, `Stored`, `Removed`, `Out` |
 | **N8** | the slot the nested result occupies needs no identity: a declared `Borrowed` parameter, **or** a position covered by a declared variadic data tail | every custody-bearing parameter; and an excess position with **no** declared tail |
 | — | the nested call's actual count equals its declared parameter count | a nested arity mismatch is refused rather than zipped |
+| **N9** | every **inner** actual is either a place this projection can denote or is data | `&x`, `*p`, a non-constant subscript — see §3.1bis |
+
+### 3.1bis — N9, a fail-open this card found and closed
+
+The first implementation had eight premises, not nine. Exempting the admitted
+nested argument from the enclosing `&`-gate (§3.1's last paragraph) is
+justified *for the nested call as an expression* — its declared effects are now
+applied — but it also exempted the nested call's **own arguments**, and
+`contains_unmodeled_access` does not read `&` either. So
+
+```c
+v_log("%s", v_name(&b));
+```
+
+was **admitted**, with the address escape of `b` modeled by nobody:
+`canonical_place` refuses to denote `&b`, the inner Borrowed position then has
+no place, and nothing complained. Before this card the whole statement refused
+(nested call), so that would have been a regression in the fail-closed
+direction — exactly card C00's class of mistake, in a new place.
+
+**N9 closes it**: every inner actual must be a place `canonical_place` denotes
+**or** pass the §3.2 data walker. `v_name(ic)` passes on the first disjunct,
+`v_name(b, 0)` on the second, and `v_name(&b)` on neither. It is asserted at
+unit level (`an_address_or_dereference_inside_the_nested_arguments_is_refused`,
+with its plain-name control), at integration level
+(`an_address_inside_the_nested_arguments_is_never_admitted`) and in Lean
+(`an_undenotable_inner_actual_is_never_admitted`). Recorded rather than
+quietly fixed, because it is the kind of hole the next card should look for
+first.
 
 **Why N6 and N7 are the whole rule.** C leaves the evaluation order of a
 call's arguments unspecified (C11 6.5.2.2p10). A nested call with any custody
@@ -353,10 +382,13 @@ cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit
   <out>/monkey-source.json <out>/resource-diagnostics.json
 ```
 
-Run **twice from this same worktree**, with only `crates/qcore-c-gateway/src/`
-and `crates/qcore-contract/src/` reverted to the branch base `bf210eb` between
-runs, so the comparison carries no path provenance at all. Both exit 0 with
-**zero gateway failures**. Transcripts:
+Run **from this same worktree**, with only `crates/qcore-c-gateway/src/` and
+`crates/qcore-contract/src/` reverted to the branch base `bf210eb` for the
+BEFORE run, so the comparison carries no path provenance at all. The AFTER run
+recorded here was re-measured against the **final** code, after premise N9
+(§3.1bis) landed; the earlier pre-N9 after-run produced the same five digests,
+which is what N9 being strictly more refusing on a set that was already empty
+predicts. All runs exit 0 with **zero gateway failures**. Transcripts:
 [`logs/corpus-before.log.gz`](logs/corpus-before.log.gz),
 [`logs/corpus-after.log.gz`](logs/corpus-after.log.gz). `build/cycle19/` is
 gitignored, so the run script is not committed; the command it runs is complete
@@ -441,16 +473,16 @@ Transcripts in [`logs/`](logs/).
 ## 6. Lean parity
 
 **58 audits** (57 → 58). No new axiom, no placeholder, no `sorry`. Every one of
-the **39** theorems in the new module is audited **by name**; a scripted check
+the **40** theorems in the new module is audited **by name**; a scripted check
 compares the theorem list against the audit list and they are equal.
 
-### 6.1 New — [`proof/QCore/VariadicNested.lean`](../../../proof/QCore/VariadicNested.lean), 39 theorems
+### 6.1 New — [`proof/QCore/VariadicNested.lean`](../../../proof/QCore/VariadicNested.lean), 40 theorems
 
 Registered as
 [`proof/AuditVariadicNested.lean`](../../../proof/AuditVariadicNested.lean).
 
-* **Every nested premise refuses on its own** — seven theorems (N0-N5, the
-  arity premise), including `more_than_one_nested_call_is_never_admitted`,
+* **Every nested premise refuses on its own** — eight theorems (N0-N5, the
+  arity premise and N9), including `more_than_one_nested_call_is_never_admitted`,
   which is two-level nesting and sibling nesting in one statement.
 * **N6 and N7, refusing** — `an_owned_nested_result_is_never_admitted`,
   `a_reallocating_nested_result_is_never_admitted`, and
@@ -514,7 +546,7 @@ added, removed or downgraded, and the two diagnostics this card introduces are
 
 ## 8. Evidence
 
-### 8.1 Held-out generic family — 12 assertions
+### 8.1 Held-out generic family — 13 assertions
 
 [`crates/qcore-c-gateway/tests/o04_trace.rs`](../../../crates/qcore-c-gateway/tests/o04_trace.rs),
 a `v_*` API deliberately unrelated to ChunkIO, to Fluent Bit **and** to the
@@ -532,12 +564,13 @@ contract modes, so no name in it can matter.
 | `two_level_and_sibling_nesting_are_never_admitted` | **adversarial row 3** — `f(g(h(x)))` and `f(g(x), h(y))` |
 | `a_nested_call_without_a_contract_is_never_admitted` | **adversarial row 4** — an uncontracted inner callee |
 | `a_partial_nested_call_expression_is_never_admitted` | arithmetic around the call, and a nested call at a *custody* position |
+| `an_address_inside_the_nested_arguments_is_never_admitted` | **adversarial row 5** — premise N9, the fail-open this card found and closed (§3.1bis) |
 | `an_excess_actual_without_a_declared_tail_is_refused` | the §3.3 arity repair, with the exact-arity control on the same callee still `Safe` |
 | `a_declared_tail_covers_only_the_tail` | a tail actual carrying an identity is not rescued by the declaration |
 | `the_variadic_tail_clause_is_total_or_reject` | the loader: the clause is rederived from retained sources; an empty environment has no tails; four malformed spellings each reject the whole module; the clause does not replace a parameter mode |
 | `a_certificate_resting_on_the_tail_is_rederived_from_its_own_sources` | **the sharp substitution**: withdrawing the clause from the certificate's retained sources leaves the loaded contract table byte-identical (asserted) and the **independent recheck refuses** |
 
-Plus **14 new unit tests** in `variadic_nested`'s own module, with no Clang:
+Plus **16 new unit tests** in `variadic_nested`'s own module, with no Clang:
 the T1-T4 walker over declared scalars, enumeration constants, literals and a
 name the body binds; the five indirection shapes; an unreadable function; and
 the nested admission's whole premise set including the custody-position refusal
@@ -566,7 +599,7 @@ Carried forward unchanged: O04's blockers **B02-B07** and **B11**;
 Closed by this card, at the boundary §2 and §3 state: **`O04-B09B10-TRACE`**,
 **`O04-ARMS-VARIADIC`**. **Superseded** at a narrower checked boundary:
 **`O04-B09B10-NESTED`** — a nested call is no longer *always* a refusal, but
-every nested call outside the eight premises still is.
+every nested call outside the nine premises still is.
 
 | # | Boundary | Status |
 |---|---|---|
@@ -641,10 +674,10 @@ Three wave-13 cards run in parallel in `crates/qcore-c-gateway/`:
 | `crates/qcore-c-gateway/src/borrowed_actual.rs` | one widened conjunct in `seed_call_arguments` plus the `variadic_tails` parameter (§3.2) |
 | `crates/qcore-c-gateway/src/typed_field_access.rs` | one additive accessor, `declared_is_scalar` (the existing `is_enum_constant` is reused unchanged) |
 | `crates/qcore-c-gateway/src/aggregate_store.rs` | one test-only call site updated for the new parameter |
-| `crates/qcore-c-gateway/tests/o04_trace.rs` | new — 17 held-out assertions plus one ignored reporting aid |
+| `crates/qcore-c-gateway/tests/o04_trace.rs` | new — 18 held-out assertions plus one ignored reporting aid |
 | `crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_{callees,generic}.qcore` | new — the two declared callee premises and the held-out `v_*` API, both outside `contract/qcore` |
 | `crates/qcore-c-gateway/tests/unit/legacy_c.rs` | one new struct field in one constructed instruction |
-| `proof/QCore/VariadicNested.lean`, `proof/QCore.lean`, `proof/AuditVariadicNested.lean` | new module (39 theorems) and its axiom audit |
+| `proof/QCore/VariadicNested.lean`, `proof/QCore.lean`, `proof/AuditVariadicNested.lean` | new module (40 theorems) and its axiom audit |
 | `docs/reports/remaining-o04-trace/` | this record, the census tool and the transcripts |
 
 No file owned by the integrator was touched: `AGENTS.md`, `CLAUDE.md`,
@@ -663,7 +696,7 @@ Libevent submodule initialised.
 
 | Gate | Command | Observed | Exit |
 |---|---|---|---|
-| Workspace tests | `cargo test --workspace --no-fail-fast` | **2,349 passed / 0 failed / 6 ignored** | 0 |
+| Workspace tests | `cargo test --workspace --no-fail-fast` | **2,352 passed / 0 failed / 6 ignored** | 0 |
 | Format | `cargo fmt --all -- --check` | clean | 0 |
 | Clippy | `cargo clippy --all-targets -- -D warnings` | clean | 0 |
 | Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | ran | 0 |
@@ -677,11 +710,12 @@ Libevent submodule initialised.
 
 ### 12.1 What this card contributes
 
-**31 new assertions** — 17 held-out integration (`o04_trace.rs`) and 14
-Clang-free unit tests (`variadic_nested`'s own module) — and **39 new Lean
+**34 new assertions** — 18 held-out integration (`o04_trace.rs`, plus one
+ignored reporting aid) and 16
+Clang-free unit tests (`variadic_nested`'s own module) — and **40 new Lean
 theorems**, every one of them audited by name and none introducing an axiom
 (every theorem depends only on `propext`, some additionally on `Quot.sound`).
-The workspace tally is 2,349; no existing test was added, removed or renamed,
+The workspace tally is 2,352; no existing test was added, removed or renamed,
 so the branch base stood at 2,318 — that figure is **derived by subtraction**,
 not separately measured.
 

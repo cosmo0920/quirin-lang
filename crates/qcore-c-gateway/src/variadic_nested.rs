@@ -37,7 +37,7 @@
 //!
 //! ## One level of nesting
 //!
-//! [`admitted_nested_call`] admits exactly one nested call, under eight
+//! [`admitted_nested_call`] admits exactly one nested call, under nine
 //! conjunctive premises. The load-bearing pair is **N6** and **N7**: the nested
 //! contract's result mode is `None` and every one of its parameter modes is
 //! `Borrowed`. Under those two the nested call's **declared effects are the
@@ -62,7 +62,9 @@
 //! Two or more nested calls (two-level nesting included), a nested call whose
 //! callee has no contract in force, a nested result carrying custody, a nested
 //! parameter carrying custody, a nested call that is only *part* of an
-//! argument, a nested call inside the nested call's own arguments, a tail
+//! argument, a nested call inside the nested call's own arguments, an inner
+//! actual this projection can neither denote nor call data (premise **N9**, the
+//! fail-open this card found and closed — see `admitted_nested_call`), a tail
 //! actual mentioning a name that may hold a tracked identity, and every tail
 //! actual carrying `&`, `*`, a subscript or a member access.
 //!
@@ -108,7 +110,9 @@ pub(crate) fn admitted_nested_call(
     outer: &ResourceFunctionContract,
     outer_tail: bool,
     contracts: &ResourceContracts,
+    model: &TypedAccessModel,
     types: &FunctionTypes,
+    bases: &UntrackedBases,
 ) -> Option<NestedCallActual> {
     // Premise 0: a function whose declarations this reader refused admits
     // nothing at all, exactly as in every other typed family.
@@ -185,6 +189,24 @@ pub(crate) fn admitted_nested_call(
         .iter()
         .map(|argument| crate::legacy_c::borrowed_argument_place(argument))
         .collect::<Vec<_>>();
+    // Premise N9: every inner actual is either a place this projection can
+    // denote, or data.
+    //
+    // Without it the admission is fail-OPEN, and measurably so: `f(g(&x))`
+    // hands the callee the *address* of a name, which `canonical_place`
+    // refuses to denote and which the enclosing gate — exempted below for the
+    // admitted nested argument — would then never see. `contains_unmodeled_access`
+    // does not read `&` either, so the escape would be modeled by nobody. Every
+    // other unmodeled shape (`*p`, `p[i]` with a non-constant index, a chain)
+    // is refused here too, and a member selection inside the nested arguments is
+    // separately refused by the enclosing statement's own indirect-access gate.
+    if inner_arguments
+        .iter()
+        .zip(&arguments)
+        .any(|(actual, place)| place.is_none() && !is_data_only_actual(actual, model, types, bases))
+    {
+        return None;
+    }
     Some(NestedCallActual {
         argument,
         function: function.to_owned(),
@@ -355,7 +377,9 @@ mod tests {
         let f = facts(body_source, contracts);
         let tokens = texts(statement);
         let spans = crate::legacy_c::call_argument_spans(&tokens, 0)?;
-        admitted_nested_call(&tokens, 0, &spans, outer, outer_tail, contracts, &f.types)
+        admitted_nested_call(
+            &tokens, 0, &spans, outer, outer_tail, contracts, &f.model, &f.types, &f.bases,
+        )
     }
 
     fn tail_ok(body_source: &str, statement: &str, named: usize) -> bool {
@@ -553,6 +577,43 @@ mod tests {
             ResourceReturnMode::None,
         );
         assert!(nested_of(BODY, STATEMENT, &control, false, &contracts).is_some());
+    }
+
+    /// **The fail-open premise N9 closes.** `f(g(&x))` hands the callee an
+    /// *address*, which `canonical_place` refuses to denote and which the
+    /// enclosing `&`-gate — exempted for the admitted nested argument — would
+    /// then never see. Without N9 this shape was admitted with the escape
+    /// modeled by nobody; it is now refused, and the plain-name control on the
+    /// same callee still passes.
+    #[test]
+    fn an_address_or_dereference_inside_the_nested_arguments_is_refused() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        for statement in [
+            "log ( __qcore_literal__ , name ( & b ) )",
+            "log ( __qcore_literal__ , name ( * label ) )",
+        ] {
+            assert!(
+                nested_of(BODY, statement, &borrowing(1), true, &contracts).is_none(),
+                "`{statement}` must refuse"
+            );
+        }
+        assert!(nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).is_some());
+    }
+
+    /// A literal or a declared scalar inside the nested arguments is data, so
+    /// N9 admits it without a canonical place.
+    #[test]
+    fn a_literal_or_scalar_inside_the_nested_arguments_is_admitted() {
+        let contracts = with_accessor(ResourceReturnMode::None, 2);
+        for statement in [
+            "log ( __qcore_literal__ , name ( b , 0 ) )",
+            "log ( __qcore_literal__ , name ( b , count ) )",
+        ] {
+            assert!(
+                nested_of(BODY, statement, &borrowing(1), true, &contracts).is_some(),
+                "`{statement}` must be admitted"
+            );
+        }
     }
 
     #[test]
