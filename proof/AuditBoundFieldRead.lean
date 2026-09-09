@@ -69,3 +69,10 @@ route and non-vacuity are audited in both directions. -/
 #print axioms QCore.BoundFieldRead.a_released_child_flips_the_admitted_read
 #print axioms QCore.BoundFieldRead.an_unlinked_member_flips_the_admitted_read
 #print axioms QCore.BoundFieldRead.the_borrowed_actual_route_is_not_vacuous
+
+-- Card ALIAS-AGGREGATE: the store/read asymmetry of the opaque member. It is
+-- admitted by neither read half, in any position, insulated or not.
+#print axioms QCore.BoundFieldRead.an_opaque_member_never_admits_a_read
+#print axioms QCore.BoundFieldRead.an_opaque_member_never_admits_a_custody_read
+#print axioms QCore.BoundFieldRead.an_opaque_member_is_admitted_by_no_read_half
+#print axioms QCore.BoundFieldRead.one_opaque_member_flips_the_admitted_read

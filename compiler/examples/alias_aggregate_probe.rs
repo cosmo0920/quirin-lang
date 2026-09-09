@@ -17,14 +17,14 @@ use std::process::ExitCode;
 use qcore_audit::compile_db::{
     CompileEntry, compile_entries, compiler_options_compatibility as compiler_options,
 };
+use qcore_c_gateway::legacy_c::{
+    LegacyDiagnostic, LegacyDiagnosticKind, LegacyInstruction, LegacyProgramSummary,
+};
 use qcore_compiler::contract_loader::load_resource_contract_manifest;
 use qcore_compiler::source_profiles::{FLUENT_BIT_SOURCE_SET, load_profile};
 use qcore_compiler::{
     C11TranslationUnit, LegacyFunctionScope, ResourceContracts, UnrestrictedLegacyResult,
     analyze_unrestricted_c11,
-};
-use qcore_c_gateway::legacy_c::{
-    LegacyDiagnostic, LegacyDiagnosticKind, LegacyInstruction, LegacyProgramSummary,
 };
 
 fn main() -> ExitCode {
@@ -32,7 +32,9 @@ fn main() -> ExitCode {
     let (Some(database), Some(file), Some(function)) = (
         arguments.next().map(PathBuf::from),
         arguments.next().map(PathBuf::from),
-        arguments.next().map(|value| value.to_string_lossy().into_owned()),
+        arguments
+            .next()
+            .map(|value| value.to_string_lossy().into_owned()),
     ) else {
         eprintln!("usage: alias_aggregate_probe <compile_commands.json> <source.c> <function>");
         return ExitCode::FAILURE;
@@ -53,7 +55,8 @@ fn run(database: &Path, file: &Path, function: &str) -> Result<(), String> {
         .ok_or("source-set profile supplies no resource contracts")?;
     let contracts = load_resource_contract_manifest(&manifest)?;
     let entries = compile_entries(
-        &fs::read_to_string(database).map_err(|error| format!("{}: {error}", database.display()))?,
+        &fs::read_to_string(database)
+            .map_err(|error| format!("{}: {error}", database.display()))?,
     )?;
     let file = file.canonicalize().map_err(|error| error.to_string())?;
     let entry = entries
@@ -75,12 +78,7 @@ fn run(database: &Path, file: &Path, function: &str) -> Result<(), String> {
     }
     println!("function {function}: status {:?}", target.status);
     println!("diagnostics: {}", target.diagnostics.len());
-    let mut nodes = target
-        .cfg
-        .nodes
-        .iter()
-        .enumerate()
-        .collect::<Vec<_>>();
+    let mut nodes = target.cfg.nodes.iter().enumerate().collect::<Vec<_>>();
     nodes.sort_by_key(|(index, node)| (node.line, *index));
     for (index, node) in nodes {
         let source = lines
@@ -144,6 +142,25 @@ fn analyze(
     };
     let preprocessed =
         qcore_compiler::validate_unrestricted_c11(&unit).map_err(|error| error.to_string())?;
+    // `QCORE_PROBE_WITHDRAW=OLD=>NEW[;OLD=>NEW…]` re-analyses the *preprocessed*
+    // text with the named statements replaced, so the card can measure whether a
+    // residual is a consequence of a neighbouring refusal by withdrawing that
+    // refusal and nothing else. Read-only with respect to every file.
+    if let Some(spec) = std::env::var_os("QCORE_PROBE_WITHDRAW") {
+        let mut text = preprocessed.clone();
+        for pair in spec.to_string_lossy().split(';') {
+            let Some((from, to)) = pair.split_once("=>") else {
+                return Err(format!("malformed withdrawal `{pair}`"));
+            };
+            if !text.contains(from) {
+                return Err(format!("withdrawal source `{from}` is absent"));
+            }
+            text = text.replace(from, to);
+        }
+        let summary = qcore_compiler::analyze_legacy_c_translation_unit(&text, function, contracts)
+            .map_err(|error| format!("{error:?}"))?;
+        return Ok((text, summary));
+    }
     match analyze_unrestricted_c11(&unit, function, contracts).map_err(|error| error.to_string())? {
         UnrestrictedLegacyResult::Unknown {
             partial: Some(summary),
@@ -159,7 +176,9 @@ fn analyze(
 
 fn instruction(instruction: &LegacyInstruction) -> String {
     match instruction {
-        LegacyInstruction::Acquire { destination, site } => format!("Acquire {destination} @{site}"),
+        LegacyInstruction::Acquire { destination, site } => {
+            format!("Acquire {destination} @{site}")
+        }
         LegacyInstruction::Alias {
             destination,
             source,

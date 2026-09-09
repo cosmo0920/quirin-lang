@@ -1389,7 +1389,9 @@ mod tests {
             !model("struct r { void * plain ; } ; struct r { void * plain ; } ;")
                 .void_pointer_field("r", "plain")
         );
-        assert!(!model("struct r { void * plain ; int bits : 3 ; } ;").void_pointer_field("r", "plain"));
+        assert!(
+            !model("struct r { void * plain ; int bits : 3 ; } ;").void_pointer_field("r", "plain")
+        );
     }
 
     #[test]

@@ -187,6 +187,17 @@ theorem a_refused_member_shape_never_admits_a_read (r : Read)
     (refused : r.member = MemberKind.refusedShape) : admitsRead r = false := by
   simp [admitsRead, readMemberOk, refused]
 
+/-- Card **ALIAS-AGGREGATE**: the store/read asymmetry of the opaque member.
+    `QCore.AggregateStore.admitsStore` admits a `void *` destination, and this
+    rule refuses reading it back — in *every* position, borrowed or
+    custody-taking — because `void *` names no pointee and this rule has
+    nothing to match against the callee's declared parameter type. The store
+    side needs no such match: a link is by identity, and identity carries no
+    type. -/
+theorem an_opaque_member_never_admits_a_read (r : Read)
+    (isOpaque : r.member = MemberKind.opaquePointer) : admitsRead r = false := by
+  simp [admitsRead, readMemberOk, isOpaque]
+
 theorem a_qualified_member_never_admits_a_read (r : Read)
     (qualified : r.qualified = true) : admitsRead r = false := by
   simp [admitsRead, readMemberOk, qualified]
@@ -429,6 +440,12 @@ theorem one_scalar_member_flips_the_admitted_read :
     admitsRead { admittedExample with member := MemberKind.scalar } = false := by
   rfl
 
+/-- Card **ALIAS-AGGREGATE**, non-vacuously: the admitted read refuses when the
+    only thing changed is that the member is `void *`. -/
+theorem one_opaque_member_flips_the_admitted_read :
+    admitsRead { admittedExample with member := MemberKind.opaquePointer } = false := by
+  rfl
+
 theorem one_releasing_position_flips_the_admitted_read :
     admitsRead { admittedExample with position := Position.released } = false := by
   rfl
@@ -567,6 +584,20 @@ theorem an_unacquired_base_never_admits_a_custody_read (r : Read) (insulated : B
 theorem a_scalar_member_never_admits_a_custody_read (r : Read) (insulated : Bool)
     (scalar : r.member = MemberKind.scalar) : admitsCustodyRead r insulated = false := by
   simp [admitsCustodyRead, readMemberOk, scalar]
+
+/-- Card **ALIAS-AGGREGATE**: an opaque member is refused in the custody half
+    too, insulated base or not, so no `void *` member can ever hand an identity
+    to a callee. -/
+theorem an_opaque_member_never_admits_a_custody_read (r : Read) (insulated : Bool)
+    (isOpaque : r.member = MemberKind.opaquePointer) : admitsCustodyRead r insulated = false := by
+  simp [admitsCustodyRead, readMemberOk, isOpaque]
+
+/-- The complete statement of the asymmetry over the implementation's own
+    decision: an opaque member is admitted by neither read half. -/
+theorem an_opaque_member_is_admitted_by_no_read_half (r : Read) (insulated : Bool)
+    (isOpaque : r.member = MemberKind.opaquePointer) : admitsAnyRead r insulated = false := by
+  simp [admitsAnyRead, an_opaque_member_never_admits_a_read r isOpaque,
+    an_opaque_member_never_admits_a_custody_read r insulated isOpaque]
 
 /-! ### What an admitted custody read does
 

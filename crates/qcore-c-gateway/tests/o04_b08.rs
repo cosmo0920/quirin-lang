@@ -435,8 +435,15 @@ fn every_refused_member_keeps_its_unknown_and_its_diagnostic() {
     }
     let prologue = "struct k_item *it; struct k_box *b; b = k_make(n); if (!b) { return; } \
                     it = k_take(n); if (!it) { k_drop(b); return; }";
-    let cases: [(&str, &str); 6] = [
-        ("a `void *` member has no resolved pointee", "b->any = it;"),
+    // **Deliberate pin update, card ALIAS-AGGREGATE.** The row
+    // `("a `void *` member has no resolved pointee", "b->any = it;")` moved out
+    // of this table: a `void *` destination is now the admitted third member
+    // class, measured on the production corpus where
+    // `struct flb_input_chunk` declares `void *chunk`. It is asserted admitted
+    // — and asserted still unreadable — in
+    // `crates/qcore-c-gateway/tests/alias_aggregate.rs`. Every other row of
+    // this table is unchanged and is the load-bearing half.
+    let cases: [(&str, &str); 5] = [
         (
             "a double-star member is not a single pointer",
             "b->deep = 0;",
@@ -653,10 +660,18 @@ fn a_certificate_resting_on_an_aggregate_store_is_rederived_from_source() {
         // pointer identity, which `struct k_ctx *` satisfies just as
         // `k_word *` does. The premise-violating substitution is a pointee the
         // reader will not resolve at all.
+        //
+        // **Deliberate pin update, card ALIAS-AGGREGATE.** This row used to
+        // substitute `void *raw;`, which is now the admitted third member
+        // class, so it would no longer withdraw anything. The substitution is
+        // an undeclared typedef instead — still exactly "a pointee the reader
+        // will not resolve at all", and still refused. The row keeps its
+        // load-bearing direction; only the spelling that violates the premise
+        // moved.
         (
             "the acquired member's pointee stops resolving",
             "k_word *raw;",
-            "void *raw;",
+            "k_hidden *raw;",
         ),
     ];
     for (reason, from, to) in substitutions {
@@ -867,10 +882,13 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
             "struct cio_chunk *chunk;",
             "volatile struct cio_chunk *chunk;",
         ),
+        // **Deliberate pin update, card ALIAS-AGGREGATE.** `void *` is now an
+        // admitted member class, so the substitution that violates the premise
+        // is a member that stops being a *single* pointer at all.
         (
-            "the branched member's pointee stops resolving",
+            "the branched member stops being a single pointer",
             "flb_route_mask_element *routes_mask;",
-            "void *routes_mask;",
+            "flb_route_mask_element **routes_mask;",
         ),
         // Retagging or duplicating `struct flb_input_chunk` is not
         // expressible on the real fixture — Clang rejects the unit, exactly as
@@ -878,10 +896,13 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
         // ambiguous-record direction is covered by the module's unit tests and
         // by the generic certificate substitutions instead. Recorded, not
         // skipped. This row substitutes an admitted *scalar* member instead.
+        // **Deliberate pin update, card ALIAS-AGGREGATE**, for the same
+        // reason: a `void *` member is admitted now, so the substitution uses a
+        // double-star member, which every class refuses.
         (
             "an admitted scalar member stops being one",
             "size_t stream_off;",
-            "void *stream_off;",
+            "size_t **stream_off;",
         ),
     ];
     for (reason, from, to) in substitutions {
