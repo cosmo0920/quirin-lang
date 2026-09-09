@@ -85,5 +85,6 @@ import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
+import QCore.AggregateStore
 
 /-! The executable formal core of QCore-C revision 0.1. -/

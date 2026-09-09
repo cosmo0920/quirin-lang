@@ -97,6 +97,20 @@ pub(crate) struct UntrackedBases {
     readable: bool,
 }
 
+impl UntrackedBases {
+    /// Whether `name` is a name this function can never bind to a tracked
+    /// resource identity. False whenever the declaration reader refused the
+    /// function, so nothing is admitted there.
+    ///
+    /// This is premise (4) read in the positive direction. Card O04-B08 uses it
+    /// for the *value* of an aggregate store: a value that carries no tracked
+    /// identity transfers no custody, so the store is custody-neutral for the
+    /// field it overwrites.
+    pub(crate) fn never_bound(&self, name: &str) -> bool {
+        self.readable && !self.risky.contains(name)
+    }
+}
+
 /// Bound on the monotone descent below; each round adds at least one name.
 const CLOSURE_ROUNDS: usize = 64;
 

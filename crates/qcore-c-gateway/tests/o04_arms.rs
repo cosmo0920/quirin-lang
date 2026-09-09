@@ -613,12 +613,28 @@ fn the_routes_mask_arm_records_its_named_residual() {
         "no residual is alleged on this path: {:?}",
         exit_shape(caller)
     );
-    // The named blockers, and only those. Every refusal left in the caller is
-    // an aggregate *store* (O00 blocker B08, open), a branch condition over
-    // one (out of scope for C02 §7 and for this card), the deliberately
-    // uncontracted success-path logging call, or the consequence of `ic`
-    // staying an unresolved alias because of the stores. Reading is modeled;
-    // writing is not.
+    // The named blockers, and only those.
+    //
+    // DELIBERATE PIN UPDATE, card O04-B08: the aggregate-store and
+    // aggregate-branch-condition families this row named as open are now
+    // admitted under typed premises (`crate::aggregate_store`), so they no
+    // longer appear here. The load-bearing half of the row is unchanged and
+    // still asserted above: this arm is **not** discharged under *this card's*
+    // premise set, both Unknown exits carry both identities unresolved, and no
+    // exit on the path is a `Residual`.
+    //
+    // What replaced them was measured, not assumed. O04-ARMS §1.3 recorded
+    // `flb_time_now` as *inert* — `ic->create_time = flb_time_now();` refused
+    // as an indirect store before any contract was consulted — and deliberately
+    // left it undeclared. With the store admitted, the call is no longer inert
+    // and becomes this arm's blocker under O04-ARMS's byte-unchanged premise
+    // set. Card O04-B08 declares it in its own fixture and measures the arm
+    // discharging there; this row keeps O04-ARMS's premise set exactly, so it
+    // records the refusal instead.
+    //
+    // Everything else is unchanged: `INDIRECT` and the uncontracted
+    // success-path logging call remain on the success exit's path, and `ic`
+    // still reaches the success exit possibly-null.
     let remaining = unsupported(caller);
     assert!(
         !remaining.is_empty(),
@@ -630,6 +646,7 @@ fn the_routes_mask_arm_records_its_named_residual() {
                 || *description
                     == "unmodeled call, aggregate or indirect access in branch condition"
                 || *description == "call to uncontracted function `flb_trace`"
+                || *description == "call to uncontracted function `flb_time_now`"
                 || *description == "nullable resource `ic` used by a non-null contract",
             "unexpected remaining refusal `{description}`"
         );
@@ -741,7 +758,17 @@ fn weakening_the_logging_premise_withdraws_the_arm() {
 
 /// The constructor is untouched by this card: its four guard exits stay
 /// discharged and its rollback and success exits stay unresolved, because its
-/// blockers are aggregate *stores* and uncontracted backend constructors.
+/// blockers are uncontracted backend constructors, a `void *` member the
+/// declaration reader will not type, and list operations through `&`.
+///
+/// DELIBERATE PIN UPDATE, card O04-B08: the per-exit *site count* on the two
+/// unresolved exits moved from one to two. `ch->name = strdup(name);` is an
+/// admitted aggregate store under typed premises, so the `strdup` allocation
+/// this projection previously erased is now a tracked identity. Both exits
+/// still carry **every** site unresolved and the function still keeps status
+/// `Unknown`, which is the load-bearing half; the row now asserts that shape
+/// rather than a fixed arity, and pins the site count separately so a silent
+/// change in either direction still fails.
 #[test]
 fn the_constructor_body_still_does_not_discharge_its_own_contract() {
     if !clang_available() {
@@ -763,11 +790,22 @@ fn the_constructor_body_still_does_not_discharge_its_own_contract() {
         shape
             .iter()
             .filter(|(custody, sites)| {
-                *custody == ExitCustody::Unknown && sites == &vec![SiteDisposition::Mixed]
+                *custody == ExitCustody::Unknown
+                    && !sites.is_empty()
+                    && sites
+                        .iter()
+                        .all(|disposition| *disposition == SiteDisposition::Mixed)
             })
             .count(),
         2,
         "the rollback and success exits stay unresolved: {shape:?}"
+    );
+    assert!(
+        shape
+            .iter()
+            .filter(|(custody, _)| *custody == ExitCustody::Unknown)
+            .all(|(_, sites)| sites.len() == 2),
+        "each unresolved exit carries the chunk and the name allocation: {shape:?}"
     );
 }
 

@@ -34,6 +34,7 @@ pub use qcore_schemas::contract::{
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
+use crate::aggregate_store::AggregateStoreBases;
 use crate::borrowed_actual::UntrackedBases;
 use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
@@ -84,6 +85,19 @@ pub enum LegacyInstruction {
     /// function never binds. It never creates, releases or transfers custody.
     OpaqueValue {
         destination: String,
+    },
+    /// A store into an admitted field of an aggregate this function tracks
+    /// whose stored value carries no tracked identity (O00 blocker B08): a
+    /// scalar expression into a scalar member, or a declared pointer this
+    /// function never binds into a single-star pointer member. See
+    /// [`crate::aggregate_store`].
+    ///
+    /// It is *not* a no-op. Storing through an aggregate this function already
+    /// released, escaped or never resolved is refused by [`transfer`], and the
+    /// store clears whatever field link the member previously carried, so an
+    /// overwritten resource is never silently discharged.
+    AggregateStore {
+        place: String,
     },
     NoOp,
     Unknown {
@@ -1208,8 +1222,14 @@ pub(crate) fn build_function_cfg(
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
-    let (typed_model, typed_types, typed_bases) =
-        typed_access_facts(tokens, function, body_start, &protected_formals, contracts);
+    let (typed_model, typed_types, typed_bases, store_bases) = typed_access_facts(
+        tokens,
+        function,
+        body_start,
+        &parameters,
+        &protected_formals,
+        contracts,
+    );
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -1220,6 +1240,7 @@ pub(crate) fn build_function_cfg(
         typed_model,
         typed_types,
         typed_bases,
+        store_bases,
     };
     let statements =
         parser
@@ -1243,9 +1264,15 @@ fn typed_access_facts(
     tokens: &[Token],
     function: &str,
     body_start: usize,
+    parameters: &[Option<String>],
     protected_formals: &BTreeSet<String>,
     contracts: &ResourceContracts,
-) -> (TypedAccessModel, FunctionTypes, UntrackedBases) {
+) -> (
+    TypedAccessModel,
+    FunctionTypes,
+    UntrackedBases,
+    AggregateStoreBases,
+) {
     let texts = tokens
         .iter()
         .map(|token| token.text.as_str())
@@ -1259,7 +1286,12 @@ fn typed_access_facts(
         _ => None,
     };
     let Some((open, close, body_end)) = body else {
-        return (model, FunctionTypes::default(), UntrackedBases::default());
+        return (
+            model,
+            FunctionTypes::default(),
+            UntrackedBases::default(),
+            AggregateStoreBases::default(),
+        );
     };
     let types = FunctionTypes::read(
         &model,
@@ -1278,7 +1310,21 @@ fn typed_access_facts(
         &model,
         &types,
     );
-    (model, types, bases)
+    // O00 blocker B08: the local aggregate pointers a store may target, read
+    // from the same token stream for the same reason.
+    let formals = parameters
+        .iter()
+        .flatten()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let stores = crate::aggregate_store::store_bases(
+        &texts[body_start + 1..body_end],
+        &formals,
+        contracts,
+        &model,
+        &types,
+    );
+    (model, types, bases, stores)
 }
 
 /// The parenthesis indices of the definition whose body starts at `body_start`.
@@ -1886,9 +1932,85 @@ struct Parser<'a> {
     /// [`crate::borrowed_actual`]. Everything outside that whitelist keeps the
     /// lexical rejection.
     typed_bases: UntrackedBases,
+    /// Local aggregate pointers whose single-selection fields a store may
+    /// target (O00 blocker B08). Everything outside that whitelist keeps the
+    /// lexical rejection. See [`crate::aggregate_store`].
+    store_bases: AggregateStoreBases,
 }
 
 impl Parser<'_> {
+    /// The null test a branch condition expresses, including the one
+    /// aggregate-field form card O04-B08 admits.
+    ///
+    /// The general refusal of `->` in a condition is unchanged: only a null
+    /// test whose *entire* operand is an admitted single-selection **pointer**
+    /// field of an admitted aggregate base is read here, and only when the
+    /// condition carries no call, no braces and no other unmodeled access.
+    fn null_condition(&self, condition: &[Token]) -> Option<PointerNullCondition> {
+        if let Some(existing) = pointer_null_condition(condition) {
+            return Some(existing);
+        }
+        if contains_call(condition) || contains_braces(condition) {
+            return None;
+        }
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        self.aggregate_null_condition(&texts)
+    }
+
+    fn aggregate_null_condition(&self, texts: &[&str]) -> Option<PointerNullCondition> {
+        let texts = strip_parentheses(texts);
+        if let Some(rest) = texts.strip_prefix(&["!"]) {
+            let mut condition = self.aggregate_null_condition(rest)?;
+            condition.true_is_null = !condition.true_is_null;
+            return Some(condition);
+        }
+        if let Some(place) = self.admitted_field_operand(texts) {
+            return Some(PointerNullCondition {
+                source: place,
+                true_is_null: false,
+            });
+        }
+        for index in 0..texts.len().saturating_sub(1) {
+            if !matches!(texts[index], "=" | "!") || texts[index + 1] != "=" {
+                continue;
+            }
+            let left = &texts[..index];
+            let right = &texts[index + 2..];
+            let source = if is_null_constant(left) {
+                self.admitted_field_operand(right)?
+            } else if is_null_constant(right) {
+                self.admitted_field_operand(left)?
+            } else {
+                return None;
+            };
+            return Some(PointerNullCondition {
+                source,
+                true_is_null: texts[index] == "=",
+            });
+        }
+        None
+    }
+
+    /// The place named by an operand that is exactly `BASE - > FIELD` on an
+    /// admitted base whose member is a single-star pointer.
+    fn admitted_field_operand(&self, texts: &[&str]) -> Option<String> {
+        let texts = strip_parentheses(texts);
+        let [base, "-", ">", field] = texts else {
+            return None;
+        };
+        let store = crate::aggregate_store::admitted_field(
+            base,
+            field,
+            &self.store_bases,
+            &self.typed_model,
+            &self.typed_types,
+        )?;
+        store.pointer_field.then_some(store.place)
+    }
+
     fn parse_block(&mut self) -> Result<Vec<Statement>, usize> {
         let opening_line = self.tokens.get(self.cursor).map_or(1, |token| token.line);
         if self.text() != Some("{") {
@@ -1922,7 +2044,7 @@ impl Parser<'_> {
                 Ok(Statement::If {
                     line,
                     condition_supported: supported_neutral_expression(&condition),
-                    null_condition: pointer_null_condition(&condition),
+                    null_condition: self.null_condition(&condition),
                     then_body,
                     else_body,
                 })
@@ -1934,7 +2056,7 @@ impl Parser<'_> {
                 Ok(Statement::While {
                     line,
                     condition_supported: supported_neutral_expression(&condition),
-                    null_condition: pointer_null_condition(&condition),
+                    null_condition: self.null_condition(&condition),
                     body,
                 })
             }
@@ -1959,7 +2081,7 @@ impl Parser<'_> {
                     init,
                     condition_always_true: condition.is_empty(),
                     condition_supported: supported_neutral_expression(&condition),
-                    null_condition: pointer_null_condition(&condition),
+                    null_condition: self.null_condition(&condition),
                     increment,
                     body,
                 })
@@ -1979,7 +2101,7 @@ impl Parser<'_> {
                 Ok(Statement::DoWhile {
                     line,
                     condition_supported: supported_neutral_expression(&condition),
-                    null_condition: pointer_null_condition(&condition),
+                    null_condition: self.null_condition(&condition),
                     body,
                 })
             }
@@ -2260,14 +2382,35 @@ impl Parser<'_> {
         {
             return LegacyInstruction::OpaqueValue { destination };
         }
+        // O00 blocker B08: one destination shape leaves the lexical gate — a
+        // single `->` selection naming an admitted member of a local aggregate
+        // pointer this body acquired. Every premise is typed and checked
+        // against declarations from this same token stream; see
+        // [`crate::aggregate_store`]. The *value* side is classified below and
+        // the aggregate's liveness is required flow-sensitively by [`transfer`].
+        let admitted_store = assignment.and_then(|equal| {
+            let store = crate::aggregate_store::admitted_store(
+                &texts[..equal],
+                &self.store_bases,
+                &self.typed_model,
+                &self.typed_types,
+            )?;
+            // The importer's own canonical place must be exactly the admitted
+            // one, or the destination this statement writes is not the one the
+            // premises were checked against.
+            (direct_assignment_destination(&texts[..equal]).as_deref() == Some(&store.place))
+                .then_some(store)
+        });
         // Explicit Out stores remain a separate modeled instruction. Reading
         // through a pointer, member or subscript has no heap/liveness model and
         // must never disappear into scalar NoOp or borrowed-call argument erasure.
         let unsupported_access = if let Some(equal) = assignment {
             let destination = direct_assignment_destination(&texts[..equal]);
-            destination.as_deref().is_some_and(|place| {
-                place.contains('.') || place.contains('[') || place.contains("->")
-            }) || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
+            (admitted_store.is_none()
+                && destination.as_deref().is_some_and(|place| {
+                    place.contains('.') || place.contains('[') || place.contains("->")
+                }))
+                || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
         } else if declaration_like
             && texts
                 .first()
@@ -2323,6 +2466,30 @@ impl Parser<'_> {
                         call_index == equal + 1
                             && direct_assignment_destination(&texts[..equal]).is_some()
                     });
+                // O00 blocker B08, two refinements that fire **only** for a
+                // destination [`crate::aggregate_store`] admitted, so no other
+                // statement in the corpus can move:
+                //
+                // 1. The aggregate's own name is the modeled destination, not
+                //    "a formal embedded in an unmodeled expression". Its
+                //    liveness and single identity are required flow-sensitively
+                //    by [`transfer`], which is a stronger check than the
+                //    syntactic one this gate performs. A protected name in the
+                //    *right-hand side* still refuses.
+                // 2. One leading parenthesized cast between `=` and the call
+                //    does not break the direct flow of the call's result into
+                //    the member: it converts the result's declared type, and
+                //    this projection tracks identities, not types. The call
+                //    must still be the whole remainder of the statement.
+                let (mentions_formal, direct_call) = match (&admitted_store, assignment) {
+                    (Some(_), Some(equal)) => (
+                        texts[equal + 1..]
+                            .iter()
+                            .any(|name| self.protected_formals.contains(*name)),
+                        call_index == equal + 1 || is_leading_cast(&texts[equal + 1..call_index]),
+                    ),
+                    _ => (mentions_formal, direct_call),
+                };
                 if mentions_formal && (!direct_call || call_end != Some(texts.len() - 1)) {
                     return LegacyInstruction::Unknown {
                         description:
@@ -2331,6 +2498,18 @@ impl Parser<'_> {
                 }
                 let destination =
                     assignment.and_then(|equal| direct_assignment_destination(&texts[..equal]));
+                // A call result carrying custody may only be stored into a
+                // member declared with exactly one `*`; a scalar member cannot
+                // hold an identity, and no other member shape is admitted.
+                if let Some(store) = &admitted_store
+                    && !matches!(contract.result, ResourceReturnMode::None)
+                    && !store.pointer_field
+                {
+                    return LegacyInstruction::Unknown {
+                        description: "indirect memory access is outside the resource projection"
+                            .into(),
+                    };
+                }
                 if !matches!(contract.result, ResourceReturnMode::None) && destination.is_none() {
                     return LegacyInstruction::Unknown {
                         description: format!("discarded owned result of resource API `{function}`"),
@@ -2408,6 +2587,39 @@ impl Parser<'_> {
                 &self.typed_model,
                 &self.typed_types,
             );
+        if let Some(store) = &admitted_store
+            && let Some(equal) = assignment
+        {
+            let right = &texts[equal + 1..];
+            let Some(value) = crate::aggregate_store::classify_value(
+                store,
+                right,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+                is_null_constant,
+            ) else {
+                // A value shape the premises do not cover keeps the existing
+                // refusal and the existing diagnostic.
+                return LegacyInstruction::Unknown {
+                    description: "indirect memory access is outside the resource projection".into(),
+                };
+            };
+            return match value {
+                crate::aggregate_store::StoredValue::Untracked => {
+                    LegacyInstruction::AggregateStore {
+                        place: store.place.clone(),
+                    }
+                }
+                crate::aggregate_store::StoredValue::Null => LegacyInstruction::Clear {
+                    destination: store.place.clone(),
+                },
+                crate::aggregate_store::StoredValue::Tracked(source) => LegacyInstruction::Alias {
+                    destination: store.place.clone(),
+                    source,
+                },
+            };
+        }
         if let Some(equal) = assignment {
             let Some(destination) = direct_assignment_destination(&texts[..equal]) else {
                 if scalar_only {
@@ -2460,6 +2672,34 @@ impl Parser<'_> {
             .get(self.cursor)
             .map(|token| token.text.as_str())
     }
+}
+
+/// Whether `tokens` is exactly one balanced parenthesized group carrying no
+/// call, no assignment and no comma — the shape of a cast applied to the value
+/// that follows it. An empty slice is not a cast; nor is anything with a
+/// second top-level group.
+fn is_leading_cast(tokens: &[&str]) -> bool {
+    if tokens.first() != Some(&"(") || tokens.last() != Some(&")") || tokens.len() < 3 {
+        return false;
+    }
+    let mut depth = 0usize;
+    for (index, text) in tokens.iter().enumerate() {
+        match *text {
+            "(" => depth += 1,
+            ")" => {
+                depth = match depth.checked_sub(1) {
+                    Some(depth) => depth,
+                    None => return false,
+                };
+                if depth == 0 && index + 1 != tokens.len() {
+                    return false;
+                }
+            }
+            "=" | "," | "[" | "]" | "{" | "}" | ";" => return false,
+            _ => {}
+        }
+    }
+    depth == 0 && find_call(tokens).is_none()
 }
 
 fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
@@ -3167,6 +3407,12 @@ struct AbstractState {
     nullable_sites: BTreeSet<usize>,
     conditional_replacements: BTreeMap<usize, BTreeSet<usize>>,
     contained: BTreeMap<usize, BTreeSet<usize>>,
+    /// O00 blocker B08: `owner site -> field name -> child sites` recorded by
+    /// an admitted aggregate field store. Deliberately separate from
+    /// `contained`: escaping the owner escapes its live linked children, while
+    /// *releasing* the owner does not cascade, because a plain C field store
+    /// carries no declared destructor obligation (premise P-B08-SHALLOW).
+    field_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
     /// Custody retained after a rejected effect; its residual is not a proven
     /// leak because the unmodeled action may have discharged it.
     unresolved_effect_sites: BTreeSet<usize>,
@@ -3247,9 +3493,59 @@ impl AbstractState {
                 .or_default()
                 .extend(children.iter().copied());
         }
+        self.join_field_links(incoming);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         *self != before
+    }
+
+    /// Join the B08 field-link relation.
+    ///
+    /// The union alone would be unsound in the escaping direction: a child
+    /// linked on one path only would be carried away by an escape of the
+    /// aggregate on a path that never stored it, hiding a leak. Every child in
+    /// the symmetric difference is therefore recorded as an unresolved effect,
+    /// which makes its disposition `Mixed` and the exit `Unknown`. The union
+    /// and `unresolved_effect_sites` both only grow, so the work list still
+    /// terminates.
+    fn join_field_links(&mut self, incoming: &Self) {
+        let owners = self
+            .field_links
+            .keys()
+            .chain(incoming.field_links.keys())
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for owner in owners {
+            let mine = self.field_links.get(&owner).cloned().unwrap_or_default();
+            let theirs = incoming
+                .field_links
+                .get(&owner)
+                .cloned()
+                .unwrap_or_default();
+            let fields = mine
+                .keys()
+                .chain(theirs.keys())
+                .cloned()
+                .collect::<BTreeSet<_>>();
+            let mut joined: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+            for field in fields {
+                let left = mine.get(&field).cloned().unwrap_or_default();
+                let right = theirs.get(&field).cloned().unwrap_or_default();
+                if left != right {
+                    self.unresolved_effect_sites
+                        .extend(left.symmetric_difference(&right).copied());
+                }
+                let union = left.union(&right).copied().collect::<BTreeSet<_>>();
+                if !union.is_empty() {
+                    joined.insert(field, union);
+                }
+            }
+            if joined.is_empty() {
+                self.field_links.remove(&owner);
+            } else {
+                self.field_links.insert(owner, joined);
+            }
+        }
     }
 }
 
@@ -3501,6 +3797,23 @@ fn site_disposition(state: &AbstractState, site: usize) -> SiteDisposition {
     }
 }
 
+/// Containment a caller could observe: the declared `Stored` relation, plus
+/// every B08 field link. A field link whose owner the caller holds is a
+/// transfer invisible at the call site, so it must reach
+/// [`crate::legacy_summary`]'s observation check and refute any summary that
+/// does not declare it. The store admission already refuses a caller-held
+/// aggregate, so this is defence in depth rather than a reachable case.
+fn caller_visible_containment(state: &AbstractState) -> BTreeMap<usize, BTreeSet<usize>> {
+    let mut containment = state.contained.clone();
+    for (owner, fields) in &state.field_links {
+        let children = containment.entry(*owner).or_default();
+        for linked in fields.values() {
+            children.extend(linked.iter().copied());
+        }
+    }
+    containment
+}
+
 fn observe_exit(
     node: &LegacyCfgNode,
     state: &AbstractState,
@@ -3539,8 +3852,7 @@ fn observe_exit(
             .iter()
             .map(|place| place.as_deref().map(|place| observe_out_slot(state, place)))
             .collect(),
-        caller_containment: state
-            .contained
+        caller_containment: caller_visible_containment(state)
             .iter()
             .filter(|(owner, children)| exempt.contains(owner) && !children.is_empty())
             .map(|(owner, children)| (*owner, children.clone()))
@@ -3589,6 +3901,10 @@ struct TransferContext<'a> {
     sanctioned: BTreeSet<&'a str>,
     /// Whether the contract's result mode obliges callers to null-check.
     result_nullable: bool,
+    /// Sites the *caller* holds at entry. An aggregate store never targets one
+    /// of these: a transfer into a caller-owned aggregate is invisible at the
+    /// call site and is refused rather than modeled (O00 blocker B08).
+    caller_sites: BTreeSet<usize>,
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -3602,6 +3918,12 @@ pub(crate) fn analyze_cfg_with_entry(
     let context = TransferContext {
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
+        caller_sites: entry_custody
+            .parameter_sites
+            .iter()
+            .flatten()
+            .copied()
+            .collect(),
     };
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(entry_custody.state.clone());
@@ -3940,6 +4262,38 @@ fn transfer(
             }
         }
     }
+    // O00 blocker B08: every store into an admitted aggregate field requires
+    // its aggregate to resolve, here and now, to exactly one live identity
+    // *this* body acquired. A released, escaped, refuted, ambiguous, nullable
+    // or caller-held aggregate refuses and poisons the path; this is the C00
+    // premise in its store direction, checked flow-sensitively rather than
+    // syntactically.
+    let stored_field = match written_field_place(&node.instruction) {
+        None => None,
+        Some(place) => {
+            let owner = crate::aggregate_store::place_owner(place).unwrap_or_default();
+            match resolved_aggregate_owner(&state, owner, &context.caller_sites) {
+                Some(site) => {
+                    let field = crate::aggregate_store::place_field(place).unwrap_or_default();
+                    Some((site, field.to_owned(), place.to_owned()))
+                }
+                None => {
+                    diagnostics.insert(LegacyDiagnostic {
+                        function: function.to_owned(),
+                        line: node.line,
+                        kind: LegacyDiagnosticKind::UnknownAlias {
+                            variable: owner.to_owned(),
+                        },
+                    });
+                    for pointer in state.pointers.values_mut() {
+                        pointer.unknown = true;
+                        pointer.may_be_null = true;
+                    }
+                    return state;
+                }
+            }
+        }
+    };
     match &node.instruction {
         LegacyInstruction::Acquire { destination, site } => {
             state.resources.insert(*site, LIVE);
@@ -4091,6 +4445,12 @@ fn transfer(
                 },
             );
         }
+        LegacyInstruction::AggregateStore { place } => {
+            // The stored value carries no tracked identity, so the member binds
+            // nothing. Whatever it previously linked is unlinked below, which
+            // is what makes an overwritten resource visible as a residual.
+            state.pointers.remove(place);
+        }
         LegacyInstruction::BranchOnNull { .. } => {}
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {
@@ -4107,7 +4467,57 @@ fn transfer(
         }
         LegacyInstruction::NoOp => {}
     }
+    if let Some((owner_site, field, place)) = stored_field {
+        let children = state
+            .pointers
+            .get(&place)
+            .map(|pointer| pointer.targets.clone())
+            .unwrap_or_default();
+        let entry = state.field_links.entry(owner_site).or_default();
+        if children.is_empty() {
+            entry.remove(&field);
+        } else {
+            entry.insert(field, children);
+        }
+        if entry.is_empty() {
+            state.field_links.remove(&owner_site);
+        }
+    }
     state
+}
+
+/// The admitted aggregate field place an instruction stores into, if any.
+fn written_field_place(instruction: &LegacyInstruction) -> Option<&str> {
+    let place = match instruction {
+        LegacyInstruction::AggregateStore { place } => place.as_str(),
+        LegacyInstruction::Alias { destination, .. } | LegacyInstruction::Clear { destination } => {
+            destination.as_str()
+        }
+        LegacyInstruction::ContractCall { destination, .. } => destination.as_deref()?,
+        _ => return None,
+    };
+    crate::aggregate_store::is_field_place(place).then_some(place)
+}
+
+/// The single live identity an admitted aggregate base denotes here, when the
+/// projection can name exactly one and this body acquired it.
+fn resolved_aggregate_owner(
+    state: &AbstractState,
+    owner: &str,
+    caller_sites: &BTreeSet<usize>,
+) -> Option<usize> {
+    let pointer = state.pointers.get(owner)?;
+    if pointer.unknown || pointer.may_be_null || pointer.targets.len() != 1 {
+        return None;
+    }
+    let site = pointer.targets.first().copied()?;
+    if caller_sites.contains(&site)
+        || state.nullable_sites.contains(&site)
+        || state.unresolved_effect_sites.contains(&site)
+    {
+        return None;
+    }
+    (state.resources.get(&site) == Some(&LIVE)).then_some(site)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -4238,6 +4648,9 @@ fn mark_unresolved_effect(state: &mut AbstractState, pointer: &AbstractPointer) 
             if let Some(children) = state.contained.get(&site) {
                 pending.extend(children);
             }
+            if let Some(fields) = state.field_links.get(&site) {
+                pending.extend(fields.values().flatten().copied());
+            }
         }
     }
 }
@@ -4280,6 +4693,52 @@ fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool
             .resources
             .insert(site, (status & !(LIVE | CONTAINED)) | terminal);
     }
+    if escape {
+        cascade_field_links_on_escape(state, owner);
+    }
+}
+
+/// B08: publishing an aggregate publishes the resources its admitted members
+/// link, so a live linked child escapes with its owner rather than being
+/// reported as a leak. A child in any other state is left exactly as it is and
+/// recorded as an unresolved effect: a member still pointing at a released
+/// identity when its aggregate escapes is a hazard this projection will not
+/// decide in either direction.
+///
+/// **Releasing** an owner deliberately does not reach this function
+/// (premise P-B08-SHALLOW): a declared `resource_released` release names one
+/// identity, and a plain C field store carries no declared destructor
+/// obligation, so a child still live there stays live and is reported.
+fn cascade_field_links_on_escape(state: &mut AbstractState, owner: usize) {
+    let mut pending = state
+        .field_links
+        .remove(&owner)
+        .into_iter()
+        .flat_map(|fields| fields.into_values().flatten())
+        .collect::<BTreeSet<_>>();
+    let mut visited = BTreeSet::new();
+    let mut unresolved = BTreeSet::new();
+    while let Some(site) = pending.pop_first() {
+        if !visited.insert(site) {
+            continue;
+        }
+        if let Some(fields) = state.field_links.remove(&site) {
+            pending.extend(fields.into_values().flatten());
+        }
+        if let Some(children) = state.contained.remove(&site) {
+            pending.extend(children);
+        }
+        match state.resources.get(&site).copied() {
+            Some(LIVE) => {
+                state.resources.insert(site, ESCAPED);
+            }
+            Some(ESCAPED) | None => {}
+            Some(_) => {
+                unresolved.insert(site);
+            }
+        }
+    }
+    state.unresolved_effect_sites.extend(unresolved);
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -4756,6 +5215,13 @@ fn refine_pointer_null(
         state.contained.retain(|_, children| {
             children.remove(&site);
             !children.is_empty()
+        });
+        state.field_links.retain(|_, fields| {
+            fields.retain(|_, children| {
+                children.remove(&site);
+                !children.is_empty()
+            });
+            !fields.is_empty()
         });
         for alias in state.pointers.values_mut() {
             if alias.targets.remove(&site) {

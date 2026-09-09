@@ -1,0 +1,48 @@
+corpus diagnostic_counts before: {'leak': 271, 'unknown_alias': 4286, 'unsupported': 50089}
+corpus diagnostic_counts after:  {'leak': 271, 'unknown_alias': 4386, 'unsupported': 49936}
+units: 185 185  projected functions: 4834 4834
+unit status before: {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+unit status after:  {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+unit status moves: 0 []
+unit reason_code moves: 0
+function status moves: 0
+functions added: []
+functions removed: []
+
+per-unit diagnostic deltas:
+   chunkio/chunkio.c: {'unsupported': -4, 'unknown_alias': 4}
+   chunkio/cio_chunk.c: {'unsupported': -6, 'unknown_alias': 6}
+   chunkio/cio_memfs.c: {'unsupported': -4, 'unknown_alias': 3}
+   cmetrics/cmt_counter.c: {'unsupported': -3, 'unknown_alias': 2}
+   cmetrics/cmt_decode_msgpack.c: {'unsupported': -6}
+   cmetrics/cmt_encode_opentelemetry.c: {'unsupported': -23, 'unknown_alias': 19}
+   cmetrics/cmt_exp_histogram.c: {'unsupported': -9, 'unknown_alias': 8}
+   cmetrics/cmt_gauge.c: {'unsupported': -2, 'unknown_alias': 1}
+   cmetrics/cmt_histogram.c: {'unsupported': -8, 'unknown_alias': 1}
+   cmetrics/cmt_map.c: {'unsupported': -6, 'unknown_alias': 4}
+   cmetrics/cmt_summary.c: {'unsupported': -4, 'unknown_alias': 1}
+   cmetrics/cmt_untyped.c: {'unsupported': -2, 'unknown_alias': 1}
+   ctraces/ctr_attributes.c: {'unsupported': -1}
+   ctraces/ctr_decode_opentelemetry.c: {'unsupported': -1, 'unknown_alias': 1}
+   ctraces/ctr_encode_opentelemetry.c: {'unsupported': -2}
+   ctraces/ctr_link.c: {'unsupported': -2}
+   ctraces/ctr_resource.c: {'unsupported': -2, 'unknown_alias': 1}
+   ctraces/ctr_scope.c: {'unsupported': -3, 'unknown_alias': 3}
+   ctraces/ctr_span.c: {'unsupported': -6, 'unknown_alias': 4}
+   fluent-bit-chunk/flb_input_chunk.c: {'unsupported': -22, 'unknown_alias': 12}
+   librdkafka/rdkafka_admin.c: {'unsupported': -3, 'unknown_alias': 3}
+   librdkafka/rdkafka_queue.c: {'unsupported': -1, 'unknown_alias': 1}
+   librdkafka/rdkafka_share_acknowledgement.c: {'unsupported': -1, 'unknown_alias': 1}
+   librdkafka/rdunittest_fetcher.c: {'unsupported': -2, 'unknown_alias': 2}
+   monkey-libevent/mk_core/mk_event.c: {'unsupported': -2, 'unknown_alias': 1}
+   monkey-libevent/mk_core/mk_iov.c: {'unsupported': -1, 'unknown_alias': 1}
+   monkey-libevent/mk_core/mk_string.c: {'unsupported': -1, 'unknown_alias': 1}
+   monkey-libevent/mk_server/mk_fifo.c: {'unsupported': -5, 'unknown_alias': 4}
+   monkey-libevent/mk_server/mk_http_thread.c: {'unsupported': -7, 'unknown_alias': 7}
+   monkey-libevent/mk_server/mk_mimetype.c: {'unsupported': -1}
+   monkey-libevent/mk_server/mk_net.c: {'unsupported': -1, 'unknown_alias': 1}
+   monkey-libevent/mk_server/mk_scheduler.c: {'unsupported': -1, 'unknown_alias': 1}
+   monkey-libevent/mk_server/mk_stream.c: {'unsupported': -3}
+   monkey-libevent/mk_server/mk_vhost.c: {'unsupported': -2, 'unknown_alias': 2}
+   monkey-libevent/mk_server/monkey.c: {'unsupported': -6, 'unknown_alias': 4}
+sum of per-unit deltas: {'unsupported': -153, 'unknown_alias': 100}
