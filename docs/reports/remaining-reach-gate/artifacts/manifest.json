@@ -1,0 +1,44 @@
+{
+ "census": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/census.json.gz",
+  "produced_file": "census.json",
+  "uncompressed_bytes": 487936,
+  "uncompressed_sha256": "a2db6f26913ef734ba5b60eb1942d9f6cd5193d8e6b634563bb3c51e6ab1975a"
+ },
+ "chunk-contracts": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/chunk-contracts.json.gz",
+  "produced_file": "resource-diagnostics.chunk-contracts.json",
+  "uncompressed_bytes": 4186178,
+  "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/contracts.json.gz",
+  "produced_file": "resource-diagnostics.contracts.json",
+  "uncompressed_bytes": 8168,
+  "uncompressed_sha256": "95494abbb333d9d5f11fe8fcbfad73e2ea706f56b243a9670c5376e4ef1fc64f"
+ },
+ "corpus-run-log": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/corpus-run.log.gz",
+  "produced_file": "run.log",
+  "uncompressed_bytes": 132937,
+  "uncompressed_sha256": "c760b60196f053a8e58ee803a98b8ce7c284d0cc8498c85bec434610dec67ad3"
+ },
+ "diagnostics": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/diagnostics.json.gz",
+  "produced_file": "resource-diagnostics.json",
+  "uncompressed_bytes": 11147442,
+  "uncompressed_sha256": "03022741780503648d2e1ddb6e661e5b01e13e1e675656c8095cbd810d55a5b1"
+ },
+ "source": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/source.json.gz",
+  "produced_file": "monkey-source.json",
+  "uncompressed_bytes": 1664550,
+  "uncompressed_sha256": "53d55b7e1fb174de4268a163c61a6f25a3658e3bca7377160369016c91489df9"
+ },
+ "source-effects": {
+  "archived_path": "docs/reports/remaining-reach-gate/artifacts/source-effects.json.gz",
+  "produced_file": "resource-diagnostics.source-effects.json",
+  "uncompressed_bytes": 118502,
+  "uncompressed_sha256": "cdb82c5c2691a06eef33f4932dc4bfce7b3412bd0d9221a27d667a63c61f5d69"
+ }
+}

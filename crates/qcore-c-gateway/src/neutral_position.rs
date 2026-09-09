@@ -1,4 +1,5 @@
-//! Card W4-EXPR-POS: the typed neutral-expression-position admission.
+//! Cards W4-EXPR-POS and REACH-GATE: the typed neutral-expression-position
+//! admission — its POSITION half (families F1–F3) and its INDIRECT half (F4).
 //!
 //! # What this module decides
 //!
@@ -56,18 +57,64 @@
 //! [`crate::typed_field_access::is_scalar_operand_expression`] on the tokens
 //! that lie outside every admitted call span.
 //!
+//! **F4, the bounded typed access chain (card REACH-GATE).** The INDIRECT half
+//! of the joint gate card C03-REACH measured. A `BASE (-> LINK)* -> FIELD`
+//! chain of at most [`ACCESS_CHAIN_LIMIT`] selections, where `BASE` is declared
+//! exactly `struct TAG *` (or `struct TAG` for a leading `.`) and is a name this
+//! body **never binds**, every intermediate `LINK` is a
+//! [`TypedAccessModel::record_pointer_field`] re-entered in the declaration
+//! model per link, and the access does not continue into `.`, `[`, `(` or
+//! another `->`. Its leaf may be
+//!
+//! * a **scalar** member — admitted in every position and inside an admitted
+//!   call's arguments, because the value it produces is not a pointer at all;
+//!   this is F3 generalised from one selection to a chain, and nothing else;
+//! * a **single-pointer** member — admitted **only** where the position itself
+//!   discards the value into a control-flow decision
+//!   ([`ExpressionRole::Decides`]), only outside every admitted call's argument
+//!   list, and only in an expression carrying no assignment.
+//!
 //! # Why the permissive direction is safe here
 //!
-//! The load-bearing consequence of the conjunction is one sentence:
+//! Card W4-EXPR-POS's sentence was "an admitted neutral expression contains no
+//! pointer-valued operand anywhere". F4 reads *through* record pointers, so that
+//! sentence is **refined**, not violated. Its `Returned` half survives verbatim;
+//! the general statement becomes:
 //!
-//! > **An admitted neutral expression contains no pointer-valued operand
-//! > anywhere.**
+//! > **An admitted neutral expression binds, releases, escapes and addresses
+//! > nothing the projection tracks.** Every call it contains is declared
+//! > all-`Borrowed` / `None` at exactly its written arity over arguments that
+//! > name no pointer at all; every pointer it names appears only as the base or
+//! > an intermediate link of an F4 chain whose base this body never binds, so
+//! > no place along that chain is a place the projection binds; and the value
+//! > such a chain produces is either a scalar, or — only in a position that
+//! > discards it into a control-flow decision, in an expression carrying no
+//! > assignment and outside every call argument list — one pointer that is
+//! > therefore stored nowhere, passed to nothing and returned to no caller.
 //!
-//! Every identifier is an enumeration constant, a declared *scalar* variable,
-//! a callee name whose contract is neutral, or the base or field of an admitted
-//! direct scalar-field access whose base the body never binds. A pointer-typed
-//! local, a formal holding a resource, a `void *`, an array and every base the
-//! body may bind are each refused by name.
+//! Each clause is load-bearing and each is checked:
+//!
+//! * **the base is never bound.** [`FunctionTypes::may_bind`] is the same
+//!   over-approximation C02's premise 8 uses: a name written, address-taken or
+//!   named anywhere in a call's argument list is bound, and a protected formal
+//!   is bound at entry. The projection's own tracked `->` places come from
+//!   card O04-B08's aggregate store, whose base must be a body-acquired name —
+//!   which is bound by construction — so a never-bound base carries no tracked
+//!   field place, at any chain depth. This is what makes reading through the
+//!   chain custody-neutral rather than merely convenient, and it is why card
+//!   O04-READ-BOUND's *bound*-base reads stay refused here: their premise is a
+//!   flow-sensitive liveness revalidation that a condition, carrying no modeled
+//!   call, has nothing to attach to.
+//! * **the value is discarded.** A pointer leaf is admitted only for
+//!   [`ExpressionRole::Decides`]. A `return` expression keeps the strict
+//!   no-pointer rule, because its value flows to the caller and
+//!   `legacy_c`'s `EscapeIfOwned` models only a *canonical place*: a compound
+//!   return expression that produced a pointer would escape it unmodeled.
+//! * **no assignment, no call argument, no address.** `&`, `*`, `[`, `]`, `{`,
+//!   `}`, `,` and `;` are refused by the operand walker, an assignment is
+//!   refused whenever a pointer leaf is in play, and an admitted call's
+//!   arguments are walked with the pointer leaf switched off, so W4-EXPR-POS's
+//!   argument reasoning is preserved word for word.
 //!
 //! That is what makes turning the node into a `NoOp` sound rather than merely
 //! convenient. A statement-position call is modeled — it checks the liveness of
@@ -75,8 +122,10 @@
 //! to each of its read arguments. Skipping that modeling would be exactly the
 //! C00 hazard the project already paid for once. Here nothing is skipped,
 //! because there is nothing to model: no argument can carry a tracked identity,
-//! and `crate::may_alias` relates only names declared `struct TAG *`, none of
-//! which can appear.
+//! and `crate::may_alias`'s obligation is attached where it belongs — to the
+//! modeled reads of a *statement*, which this module never reclassifies. A
+//! condition was already outside that obligation before this card
+//! (`C02-P-ALIAS-USES`, a retained pre-existing answer) and still is.
 //!
 //! # What is deliberately not admitted
 //!
@@ -97,6 +146,18 @@
 //!   The rule is all-or-nothing over the expression: one unadmitted call
 //!   refuses the whole position, so no unmodelled call can hide beside an
 //!   admitted one.
+//! * An access chain whose base is a name this body may bind, at any depth.
+//!   That is card O04-READ-BOUND's subject and its premise — a flow-sensitive
+//!   liveness revalidation attached to a modeled call — is unavailable in an
+//!   expression position, so it stays refused here (`REACH-GATE-BOUND-BASE`).
+//! * A chain longer than [`ACCESS_CHAIN_LIMIT`] selections, a chain through a
+//!   member this reader did not fully type, a leaf that is an aggregate, an
+//!   array or a multi-star pointer, and any access continuing into `.`, `[`,
+//!   `(` or a further `->`.
+//! * An explicit dereference `* p` or a subscript `a [ i ]` anywhere, in any
+//!   position and in any role (`REACH-GATE-DEREF`).
+//! * A pointer-valued leaf in a `return` expression, inside an admitted call's
+//!   argument list, or in an expression carrying an assignment.
 //!
 //! Nothing here changes a diagnostic code, an admission of a *statement*, the
 //! null-test refinement, the pointer-inequality refinement or any contract.
@@ -105,7 +166,8 @@ use qcore_schemas::contract::{ResourceContracts, ResourceParameterMode, Resource
 
 use crate::legacy_c::is_identifier;
 use crate::typed_field_access::{
-    FunctionTypes, TypedAccessModel, is_name, is_scalar_operand_expression,
+    DeclaredType, FunctionTypes, TypedAccessModel, is_admitted_numeric_literal,
+    is_admitted_operand_punctuation, is_name, is_scalar_operand_expression,
 };
 
 /// Nested admitted-call depth bound. A deeper expression is refused rather
@@ -113,9 +175,33 @@ use crate::typed_field_access::{
 /// [`crate::borrowed_actual`]: the bound is a refusal, never a truncation.
 const CALL_NESTING_LIMIT: usize = 4;
 
+/// Maximum number of member selections one admitted F4 access chain may
+/// contain, the same bound card O04-ARMS set for a borrowed actual
+/// (`borrowed_actual::ACCESS_CHAIN_LIMIT`). A longer chain is refused, never
+/// truncated.
+const ACCESS_CHAIN_LIMIT: usize = 4;
+
 /// Token-count bound for one classified expression. Beyond it the expression is
 /// refused, so the walk is finite on any input the importer can hand it.
 const EXPRESSION_TOKEN_LIMIT: usize = 4096;
+
+/// What the position does with the value the classified expression produces.
+///
+/// The distinction is load-bearing for card REACH-GATE's pointer-valued leaf
+/// and for nothing else: F1, F2, F3 and the scalar-leaf half of F4 decide
+/// identically in both roles.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ExpressionRole {
+    /// A branch, loop, `for`, `do`/`while` or `switch` condition. The value
+    /// decides control flow here and is bound to no place, passed to no callee
+    /// and returned to no caller.
+    Decides,
+    /// A `return` expression. The value flows to the caller, and `legacy_c`
+    /// models that escape only for a *canonical place*, so a pointer this rule
+    /// admitted inside a compound expression would leave unmodeled. The strict
+    /// no-pointer sentence of card W4-EXPR-POS is kept verbatim in this role.
+    Returned,
+}
 
 /// Whether an expression position is resource-neutral under the contract
 /// environment in force.
@@ -125,6 +211,7 @@ const EXPRESSION_TOKEN_LIMIT: usize = 4096;
 /// `false` here always leaves the existing refusal in place.
 pub(crate) fn is_neutral_expression(
     texts: &[&str],
+    role: ExpressionRole,
     contracts: &ResourceContracts,
     model: &TypedAccessModel,
     types: &FunctionTypes,
@@ -132,7 +219,14 @@ pub(crate) fn is_neutral_expression(
     if texts.is_empty() || texts.len() > EXPRESSION_TOKEN_LIMIT {
         return false;
     }
-    neutral(texts, contracts, model, types, 0)
+    neutral(
+        texts,
+        contracts,
+        model,
+        types,
+        0,
+        role == ExpressionRole::Decides,
+    )
 }
 
 fn neutral(
@@ -141,6 +235,7 @@ fn neutral(
     model: &TypedAccessModel,
     types: &FunctionTypes,
     depth: usize,
+    pointer_leaf: bool,
 ) -> bool {
     if depth > CALL_NESTING_LIMIT {
         return false;
@@ -161,7 +256,13 @@ fn neutral(
         index = end;
     }
     let outside = outside_spans(texts, &spans);
-    is_scalar_operand_expression(&outside, model, types)
+    // Card W4-EXPR-POS's F2/F3 answer first and unchanged, so this module's own
+    // additivity mirrors the one `Parser::supported_expression` establishes for
+    // the lexical predicate: F4 is consulted only where F2/F3 already refused.
+    if is_scalar_operand_expression(&outside, model, types) {
+        return true;
+    }
+    admitted_read_run(&outside, model, types, pointer_leaf)
 }
 
 /// Whether `texts[index]` opens a call-shaped occurrence.
@@ -225,11 +326,171 @@ fn admitted_neutral_call(
         return None;
     }
     for argument in &arguments {
-        if argument.is_empty() || !neutral(argument, contracts, model, types, depth + 1) {
+        // An argument is walked with the pointer leaf switched off, in every
+        // role. Card W4-EXPR-POS's sentence about call arguments — that no
+        // argument of an admitted call can carry a tracked identity, because
+        // none of them names a pointer at all — therefore survives card
+        // REACH-GATE unchanged.
+        if argument.is_empty() || !neutral(argument, contracts, model, types, depth + 1, false) {
             return None;
         }
     }
     Some(close + 1)
+}
+
+/// **F4.** Whether an operand run outside every admitted call span is a
+/// sequence of admitted bounded typed access chains, declared scalars,
+/// enumeration constants, numeric literals and admitted punctuation.
+///
+/// Consulted only after [`is_scalar_operand_expression`] has refused, so it can
+/// only add admissions. `pointer_leaf` says whether the position discards the
+/// value it produces; see [`ExpressionRole`].
+fn admitted_read_run(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    pointer_leaf: bool,
+) -> bool {
+    // A function whose declarations this reader refused admits nothing, exactly
+    // as in C02's walker.
+    if !types.is_readable() {
+        return false;
+    }
+    // The same exclusions C02's walker makes, by the same decision: an address,
+    // an indirection, a subscript, an aggregate, the comma operator and a
+    // statement separator each refuse (`REACH-GATE-DEREF`).
+    if texts
+        .iter()
+        .any(|text| matches!(*text, "&" | "*" | "[" | "]" | "{" | "}" | "," | ";"))
+    {
+        return false;
+    }
+    // A pointer value is admitted only where it is discarded. An assignment
+    // could store it, so an expression carrying one keeps the strict rule.
+    if pointer_leaf && contains_assignment(texts) {
+        return false;
+    }
+    let mut cursor = 0usize;
+    while cursor < texts.len() {
+        let text = texts[cursor];
+        if is_name(text) {
+            let arrow = texts.get(cursor + 1) == Some(&"-") && texts.get(cursor + 2) == Some(&">");
+            let dot = texts.get(cursor + 1) == Some(&".");
+            if arrow || dot {
+                let Some(end) = admitted_chain(texts, cursor, model, types, pointer_leaf) else {
+                    return false;
+                };
+                cursor = end;
+                continue;
+            }
+            if model.is_enum_constant(text) {
+                cursor += 1;
+                continue;
+            }
+            // A remaining identifier must be a declared scalar. A pointer-typed
+            // name standing on its own is refused: this rule reads *through*
+            // record pointers, it never admits one as a bare operand.
+            if types.declared_type(text) != Some(&DeclaredType::Scalar) {
+                return false;
+            }
+            cursor += 1;
+            continue;
+        }
+        if is_admitted_numeric_literal(text) {
+            cursor += 1;
+            continue;
+        }
+        if text == "-" && texts.get(cursor + 1) == Some(&">") {
+            // An arrow whose base this reader did not admit.
+            return false;
+        }
+        if !is_admitted_operand_punctuation(text) {
+            return false;
+        }
+        cursor += 1;
+    }
+    true
+}
+
+/// The index just past an admitted F4 access chain starting at `start`, or
+/// `None`.
+///
+/// The chain discipline is card O04-ARMS's, re-derived here for a read that no
+/// call consumes: the base is declared exactly `struct TAG *` (or `struct TAG`
+/// for a leading `.`) and is a name this body never binds; each selection
+/// before the last is a fully typed [`TypedAccessModel::record_pointer_field`]
+/// continued with `->`, with the model re-entered at the pointee; and the leaf
+/// must not continue into `.`, `[`, `(` or a further `->`.
+fn admitted_chain(
+    texts: &[&str],
+    start: usize,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    pointer_leaf: bool,
+) -> Option<usize> {
+    let base = texts.get(start).copied().filter(|text| is_name(text))?;
+    // C02 premise 8, verbatim: a base this body may bind can hold a released,
+    // escaped or reallocated identity. Refusing it is what keeps every place
+    // along the chain outside the projection's own bindings.
+    if types.may_bind(base) {
+        return None;
+    }
+    let (mut field_index, arrow) =
+        if texts.get(start + 1) == Some(&"-") && texts.get(start + 2) == Some(&">") {
+            (start + 3, true)
+        } else if texts.get(start + 1) == Some(&".") {
+            (start + 2, false)
+        } else {
+            return None;
+        };
+    let mut tag = match (types.declared_type(base), arrow) {
+        (Some(DeclaredType::RecordPointer(tag)), true) => tag.clone(),
+        (Some(DeclaredType::Record(tag)), false) => tag.clone(),
+        _ => return None,
+    };
+    for _ in 0..ACCESS_CHAIN_LIMIT {
+        let field = texts
+            .get(field_index)
+            .copied()
+            .filter(|field| is_name(field))?;
+        let continues_with_arrow =
+            texts.get(field_index + 1) == Some(&"-") && texts.get(field_index + 2) == Some(&">");
+        if continues_with_arrow {
+            tag = model.record_pointer_field(&tag, field)?.to_owned();
+            field_index += 3;
+            continue;
+        }
+        // The leaf. A scalar member is admitted in every role; a member holding
+        // exactly one pointer only where the position discards the value.
+        let admitted = model.scalar_field(&tag, field)
+            || (pointer_leaf && model.single_pointer_field(&tag, field));
+        if !admitted {
+            return None;
+        }
+        match texts.get(field_index + 1) {
+            Some(&".") | Some(&"[") | Some(&"(") => return None,
+            _ => {}
+        }
+        return Some(field_index + 1);
+    }
+    None
+}
+
+/// Whether the run carries an assignment, simple or compound.
+///
+/// An `=` is a comparison only when it is the first half of `==` or the second
+/// half of `==`, `!=`, `<=` or `>=`. Every other `=` writes, including the
+/// compound forms `+=`, `-=`, `*=`, `/=`, `%=`, `&=`, `|=` and `^=`, whose
+/// preceding operator is deliberately absent from the accepted set.
+fn contains_assignment(texts: &[&str]) -> bool {
+    texts.iter().enumerate().any(|(index, text)| {
+        *text == "="
+            && texts.get(index + 1) != Some(&"=")
+            && !matches!(
+                index.checked_sub(1).and_then(|at| texts.get(at)).copied(),
+                Some("=") | Some("!") | Some("<") | Some(">")
+            )
+    })
 }
 
 /// The index of the `)` matching the `(` at `open`, or `None` when the
@@ -278,10 +539,12 @@ fn split_arguments<'a>(texts: &[&'a str]) -> Vec<Vec<&'a str>> {
 ///
 /// Deleting a whole `NAME ( … )` span can only bring operators or parentheses
 /// into contact. It can never manufacture an admitted access out of neighbours
-/// that did not have one, because every token an access needs — `*`, `&`, `[`,
-/// `]`, `.` and the `-` `>` pair — is refused by
-/// [`is_scalar_operand_expression`] wherever it survives, and a deleted span
-/// contributes no identifier to the result.
+/// that did not have one. A deleted span contributes no identifier to the
+/// result; a surviving `*`, `&`, `[` or `]` is refused by both operand walkers;
+/// a surviving `-` `>` pair with no admitted base before it is refused by name
+/// in [`admitted_read_run`]; and a surviving `.` cannot acquire a fresh base,
+/// because [`admitted_neutral_call`] refuses a callee preceded by an identifier
+/// or by `.`, so no admitted span is ever adjacent to one on either side.
 fn outside_spans<'a>(texts: &[&'a str], spans: &[(usize, usize)]) -> Vec<&'a str> {
     texts
         .iter()
@@ -360,10 +623,28 @@ mod tests {
         (model, types)
     }
 
-    fn admits(unit: &str, body: &str, expression: &str, env: &ResourceContracts) -> bool {
+    fn admits_in(
+        role: ExpressionRole,
+        unit: &str,
+        body: &str,
+        expression: &str,
+        env: &ResourceContracts,
+    ) -> bool {
         let (model, types) = facts(unit, body);
         let tokens = texts(expression);
-        is_neutral_expression(&tokens, env, &model, &types)
+        is_neutral_expression(&tokens, role, env, &model, &types)
+    }
+
+    /// The `Decides` role — a branch, loop or `switch` position. Every
+    /// W4-EXPR-POS assertion below reads the same in either role; only card
+    /// REACH-GATE's pointer-valued leaf distinguishes them, and those
+    /// assertions name their role explicitly.
+    fn admits(unit: &str, body: &str, expression: &str, env: &ResourceContracts) -> bool {
+        admits_in(ExpressionRole::Decides, unit, body, expression, env)
+    }
+
+    fn returns(unit: &str, body: &str, expression: &str, env: &ResourceContracts) -> bool {
+        admits_in(ExpressionRole::Returned, unit, body, expression, env)
     }
 
     const SCALAR_BODY: &str = "unsigned long v ; int n ;";
@@ -508,11 +789,19 @@ mod tests {
     }
 
     #[test]
-    fn a_pointer_field_read_refuses() {
+    fn a_pointer_field_read_is_admitted_only_where_the_value_is_discarded() {
         let env = environment(Vec::new());
         let unit = "struct r { int a ; struct q * p ; } ;";
         let body = "struct r * s ;";
-        assert!(!admits(unit, body, "s -> p", &env));
+        // Deliberate pin update, card REACH-GATE. W4-EXPR-POS pinned this shape
+        // refused in every position because F3's leaf had to be scalar. F4
+        // admits it exactly where the position discards the value; both
+        // load-bearing halves of the old pin are kept below.
+        assert!(admits(unit, body, "s -> p", &env));
+        assert!(!returns(unit, body, "s -> p", &env));
+        let bound_body = "struct r * s ; use ( s ) ;";
+        assert!(!admits(unit, bound_body, "s -> p", &env));
+        assert!(!returns(unit, bound_body, "s -> p", &env));
     }
 
     #[test]
@@ -530,7 +819,13 @@ mod tests {
         let (model, types) = facts(NO_UNIT, "struct { int a ; } anon ;");
         assert!(!types.is_readable());
         let tokens = texts("f ( 1 )");
-        assert!(!is_neutral_expression(&tokens, &env, &model, &types));
+        assert!(!is_neutral_expression(
+            &tokens,
+            ExpressionRole::Decides,
+            &env,
+            &model,
+            &types
+        ));
     }
 
     #[test]
@@ -560,5 +855,222 @@ mod tests {
     fn an_unbalanced_call_refuses() {
         let env = environment(vec![("f", neutral_contract(1))]);
         assert!(!admits(NO_UNIT, SCALAR_BODY, "f ( n", &env));
+    }
+
+    // ---------------------------------------------------------------------
+    // Card REACH-GATE: F4, the bounded typed access chain.
+    // ---------------------------------------------------------------------
+
+    /// A three-record chain: `struct a` -> `struct b` -> `struct c`, with a
+    /// scalar leaf on each and a pointer leaf on the first.
+    const CHAIN_UNIT: &str = "struct c { int leaf ; } ; \
+         struct b { int mid ; struct c * down ; } ; \
+         struct a { int top ; struct b * next ; struct b * other ; } ;";
+    const CHAIN_BODY: &str = "struct a * head ; int n ;";
+
+    #[test]
+    fn a_chain_to_a_scalar_leaf_is_admitted_in_either_role() {
+        let env = environment(Vec::new());
+        assert!(admits(CHAIN_UNIT, CHAIN_BODY, "head -> next -> mid", &env));
+        assert!(returns(CHAIN_UNIT, CHAIN_BODY, "head -> next -> mid", &env));
+        assert!(admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> down -> leaf",
+            &env
+        ));
+        assert!(returns(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> down -> leaf",
+            &env
+        ));
+    }
+
+    #[test]
+    fn a_chain_to_a_pointer_leaf_splits_on_the_role() {
+        let env = environment(Vec::new());
+        assert!(admits(CHAIN_UNIT, CHAIN_BODY, "head -> next -> down", &env));
+        assert!(!returns(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> down",
+            &env
+        ));
+    }
+
+    #[test]
+    fn a_chain_past_the_depth_bound_refuses() {
+        // Five selections: one more than ACCESS_CHAIN_LIMIT. The record model
+        // is deliberately made cyclic so the chain is well typed at every link
+        // and only the bound refuses it.
+        let unit = "struct l { int leaf ; struct l * next ; } ;";
+        let body = "struct l * head ;";
+        assert!(admits(
+            unit,
+            body,
+            "head -> next -> next -> leaf",
+            &env_empty()
+        ));
+        assert!(admits(
+            unit,
+            body,
+            "head -> next -> next -> next -> leaf",
+            &env_empty()
+        ));
+        assert!(!admits(
+            unit,
+            body,
+            "head -> next -> next -> next -> next -> leaf",
+            &env_empty()
+        ));
+    }
+
+    fn env_empty() -> ResourceContracts {
+        environment(Vec::new())
+    }
+
+    #[test]
+    fn a_chain_through_an_untyped_link_refuses() {
+        // `opaque` is `void *`: not a record pointer, so the chain cannot be
+        // continued through it.
+        let unit = "struct a { void * opaque ; int top ; } ;";
+        let body = "struct a * head ;";
+        assert!(!admits(
+            unit,
+            body,
+            "head -> opaque -> anything",
+            &env_empty()
+        ));
+    }
+
+    #[test]
+    fn a_bound_base_refuses_a_chain_in_either_role() {
+        let env = environment(Vec::new());
+        // `head` appears in a call argument list, so `bound_names` records it.
+        let body = "struct a * head ; use ( head ) ;";
+        assert!(!admits(CHAIN_UNIT, body, "head -> next -> mid", &env));
+        assert!(!returns(CHAIN_UNIT, body, "head -> next -> mid", &env));
+        assert!(!admits(CHAIN_UNIT, body, "head -> next", &env));
+    }
+
+    #[test]
+    fn a_released_base_is_refused_by_the_same_premise() {
+        let env = environment(vec![(
+            "release",
+            ResourceFunctionContract::from(ResourceApiKind::Release),
+        )]);
+        // The body releases through `head`, so it is bound and every read
+        // through it refuses — the C02 §2 hazard, in an expression position.
+        let body = "struct a * head ; release ( head ) ;";
+        assert!(!admits(CHAIN_UNIT, body, "head -> next -> mid", &env));
+        assert!(!admits(CHAIN_UNIT, body, "head -> next", &env));
+    }
+
+    #[test]
+    fn an_address_of_a_chain_refuses_in_a_condition() {
+        let env = environment(Vec::new());
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "& head -> next", &env));
+        assert!(!returns(CHAIN_UNIT, CHAIN_BODY, "& head -> next", &env));
+    }
+
+    #[test]
+    fn a_dereference_or_subscript_refuses_in_a_condition() {
+        let env = environment(Vec::new());
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "* head -> next", &env));
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "head -> next [ 0 ]", &env));
+    }
+
+    #[test]
+    fn an_assignment_refuses_a_pointer_leaf() {
+        let env = environment(Vec::new());
+        let body = "struct a * head ; struct b * held ;";
+        // `held = head->next` would store the pointer this rule only ever
+        // discards, so the whole expression refuses.
+        assert!(!admits(CHAIN_UNIT, body, "held = head -> next", &env));
+        // A comparison is not an assignment and stays admitted.
+        assert!(admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next != head -> other",
+            &env
+        ));
+        assert!(admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> mid <= 3",
+            &env
+        ));
+    }
+
+    #[test]
+    fn a_pointer_leaf_refuses_inside_an_admitted_call_argument() {
+        let env = environment(vec![("f", neutral_contract(1))]);
+        // The scalar leaf of the same chain is admitted there; the pointer leaf
+        // is not, so W4-EXPR-POS's argument sentence survives verbatim.
+        assert!(admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "f ( head -> next -> mid )",
+            &env
+        ));
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "f ( head -> next )", &env));
+    }
+
+    #[test]
+    fn a_bare_pointer_name_is_never_an_operand() {
+        let env = environment(Vec::new());
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "head", &env));
+        assert!(!admits(CHAIN_UNIT, CHAIN_BODY, "head != 0", &env));
+    }
+
+    #[test]
+    fn a_chain_continuing_into_a_call_or_subscript_refuses() {
+        let env = environment(vec![("f", neutral_contract(1))]);
+        assert!(!admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> mid ( n )",
+            &env
+        ));
+        assert!(!admits(
+            CHAIN_UNIT,
+            CHAIN_BODY,
+            "head -> next -> mid [ n ]",
+            &env
+        ));
+    }
+
+    #[test]
+    fn a_union_or_incomplete_record_refuses_the_chain() {
+        let unit = "union u { int leaf ; void * p ; } ; \
+             struct a { int top ; union u * bad ; } ;";
+        let body = "struct a * head ;";
+        assert!(!admits(unit, body, "head -> bad -> leaf", &env_empty()));
+    }
+
+    #[test]
+    fn a_record_value_base_admits_only_its_first_selection_by_dot() {
+        let unit = "struct b { int mid ; struct c * down ; } ; \
+             struct c { int leaf ; } ;";
+        let body = "struct b value ;";
+        assert!(admits(unit, body, "value . mid", &env_empty()));
+        assert!(admits(unit, body, "value . down -> leaf", &env_empty()));
+        // A second `.` would cross a nested aggregate sub-object.
+        let nested = "struct c { int leaf ; } ; struct b { struct c inner ; } ;";
+        assert!(!admits(
+            nested,
+            "struct b value ;",
+            "value . inner . leaf",
+            &env_empty()
+        ));
+    }
+
+    #[test]
+    fn a_scalar_only_expression_still_decides_by_the_earlier_family() {
+        // Additivity: F2's answer is unchanged and is consulted first.
+        let env = environment(Vec::new());
+        assert!(admits(NO_UNIT, SCALAR_BODY, "n + 1", &env));
+        assert!(returns(NO_UNIT, SCALAR_BODY, "n + 1", &env));
     }
 }

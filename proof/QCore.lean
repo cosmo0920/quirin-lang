@@ -95,6 +95,7 @@ import QCore.BoundFieldRead
 import QCore.MemberAddress
 import QCore.MayAlias
 import QCore.NeutralExpressionPosition
+import QCore.ReachGatePosition
 import QCore.Transferability
 
 /-! The executable formal core of QCore-C revision 0.1. -/

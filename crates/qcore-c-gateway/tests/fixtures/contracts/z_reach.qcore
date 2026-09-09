@@ -1,0 +1,17 @@
+module contract;
+
+// REACH-GATE — held-out generic `z_*` custody API for the expression-position
+// access-chain admission.
+//
+// Deliberately unrelated to the `q_*` (W4-EXPR-POS), `k_*` (O04-B08), `g_*`
+// (O04) and `h_*` (O04-ARMS) families. One borrowed reader is all this card
+// needs beyond `q_base.qcore`: the may-alias obligation of card C02-P-ALIAS is
+// attached to *modeled reads*, and `q_transfer` consumes rather than borrows.
+// These are synthetic trusted test assumptions, not facts about any library.
+
+extern fn z_hold(n: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};

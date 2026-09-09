@@ -489,9 +489,14 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
              if (b->flag == 0) { k_drop(b); return; } k_drop(b); }",
         ),
         (
-            "a member of a base this rule never admitted",
-            "void k_w(struct k_outer *o, int n) { struct k_box *b; b = k_make(n); \
-             if (!b) { return; } if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
+            // Card REACH-GATE's F4 admits a member read on a base this body
+            // never binds, so the base here is bound — by `k_drop(o)` — which
+            // is the load-bearing half of this row: an aggregate branch on a
+            // base whose custody this body may change keeps its refusal.
+            "a member of a base this rule never admitted, on a bound base",
+            "void k_w(struct k_outer *o, int n) { struct k_box *b; struct k_box *p; \
+             b = k_make(n); if (!b) { return; } p = k_pick(o); \
+             if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
         ),
         (
             "a chained member is not one selection",
@@ -508,6 +513,38 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
         );
         assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
     }
+}
+
+/// Deliberate pin update, card REACH-GATE.
+///
+/// O04-B08 pinned "a member of a base this rule never admitted" as refused,
+/// meaning refused *by O04-B08's aggregate null-condition rule*. REACH-GATE's
+/// F4 admits that same read by a different, typed route — the base is a formal
+/// this body never binds, so no place under it is one the projection binds, and
+/// the value the read produces is discarded into the branch decision. The row
+/// above keeps the negative half on a bound base; this records the positive
+/// half explicitly rather than leaving it to a silently weakened assertion.
+#[test]
+fn a_branch_on_a_never_bound_formals_member_is_admitted_by_reach_gate() {
+    if !clang_available() {
+        return;
+    }
+    let measured = summary_of(
+        "void k_w(struct k_outer *o, int n) { struct k_box *b; b = k_make(n); \
+         if (!b) { return; } if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
+        "k_w",
+    );
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "diagnostics {:?}",
+        measured.diagnostics
+    );
+    assert!(
+        unsupported(&measured).is_empty(),
+        "no refusal must remain, got {:?}",
+        measured.diagnostics
+    );
 }
 
 /// The admission must never manufacture a discharge: an arm that stores and

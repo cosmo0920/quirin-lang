@@ -820,6 +820,19 @@ impl FunctionTypes {
         self.variables.is_some()
     }
 
+    /// Whether this function may bind `name` to a resource identity.
+    ///
+    /// The over-approximation [`bound_names`] computes, read out so that a rule
+    /// living in another module can require C02's premise 8 — a base a body may
+    /// bind can hold a released, escaped or reallocated identity, and a read
+    /// through it is not something any of these rules may neutralize. Card
+    /// REACH-GATE reads it for the access chains it admits in an expression
+    /// position; every link of such a chain hangs off a base this answers
+    /// `false` for.
+    pub(crate) fn may_bind(&self, name: &str) -> bool {
+        self.bound.contains(name)
+    }
+
     /// Every name this function declares as exactly `struct TAG *`, paired with
     /// `TAG`.
     ///
@@ -1150,6 +1163,23 @@ pub(crate) fn is_scalar_operand_expression(
     types: &FunctionTypes,
 ) -> bool {
     scalar_statement_accesses(texts, model, types).is_some()
+}
+
+/// Whether one token is a punctuation mark this project's operand rules admit.
+///
+/// Exactly [`ADMITTED_PUNCTUATION`], read out so that card REACH-GATE's chain
+/// walker in [`crate::neutral_position`] uses the *same* set rather than a copy
+/// of it: `&`, `*`, `[`, `]`, `{`, `}`, `,` and `;` are absent there, so an
+/// address, an indirection, a subscript, an aggregate and the comma operator
+/// each refuse in both walkers by one decision, not two.
+pub(crate) fn is_admitted_operand_punctuation(text: &str) -> bool {
+    ADMITTED_PUNCTUATION.contains(&text)
+}
+
+/// Whether `text` is a numeric literal, read out for the same reason as
+/// [`is_admitted_operand_punctuation`].
+pub(crate) fn is_admitted_numeric_literal(text: &str) -> bool {
+    is_numeric_literal(text)
 }
 
 /// The shared walker: `Some(count)` when every token of the statement is

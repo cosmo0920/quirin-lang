@@ -1,0 +1,24 @@
+=== cmetrics/cmt_encode_opentelemetry.c
+    unit status Unsafe -> Unsafe
+    reason same: True
+    counts {'leak': 18, 'unknown_alias': 114, 'unsupported': 862} -> {'leak': 18, 'unknown_alias': 114, 'unsupported': 861}
+    -- compute_flat_scope_index: Unknown -> Unknown
+       removed  line 7131  [unsupported] unmodeled call, aggregate or indirect access in branch condition
+=== ctraces/ctr_encode_opentelemetry.c
+    unit status Unsafe -> Unsafe
+    reason same: True
+    counts {'leak': 3, 'unknown_alias': 44, 'unsupported': 349} -> {'leak': 3, 'unknown_alias': 44, 'unsupported': 348}
+    -- destroy_id: Unknown -> Unknown
+       removed  line 9351  [unsupported] unmodeled call, aggregate or indirect access in branch condition
+=== fluent-bit-chunk/flb_input_chunk.c
+    unit status Unsafe -> Unsafe
+    reason same: True
+    counts {'leak': 10, 'unknown_alias': 129, 'unsupported': 839} -> {'leak': 10, 'unknown_alias': 129, 'unsupported': 838}
+    -- logs_tag_records_metrics_enabled: Unknown -> Safe
+       removed  line 17709  [unsupported] unmodeled call, aggregate or indirect access in return expression
+=== monkey-libevent/mk_server/mk_plugin.c
+    unit status Unsafe -> Unsafe
+    reason same: True
+    counts {'leak': 1, 'unknown_alias': 10, 'unsupported': 258} -> {'leak': 1, 'unknown_alias': 10, 'unsupported': 257}
+    -- mk_plugin_time_now_unix: Unknown -> Safe
+       removed  line 6497  [unsupported] unmodeled call, aggregate or indirect access in return expression

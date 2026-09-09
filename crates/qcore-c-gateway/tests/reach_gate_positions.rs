@@ -1,0 +1,444 @@
+//! Card REACH-GATE: the INDIRECT half of the joint expression-position gate,
+//! end to end through the real gateway.
+//!
+//! Card C03-REACH measured that the neutral-frame recursive route's corpus
+//! reach is gated on `POSITION + INDIRECT` **jointly**
+//! (`docs/reports/remaining-c03-reach/README.md` §5). Card W4-EXPR-POS landed
+//! the POSITION half with the proved sentence that an admitted expression names
+//! no pointer-valued operand anywhere. This card lands the INDIRECT half in the
+//! same six positions, which forces that sentence to be *refined*: a member
+//! access on a record pointer is a pointer-valued base by construction.
+//!
+//! The refined sentence — an admitted expression binds, releases, escapes and
+//! addresses nothing the projection tracks — is stated and argued in
+//! `crate::neutral_position`'s header. These tests are its held-out evidence:
+//! the admissions it claims, measured through `analyze_unrestricted_c11`, and
+//! the adversarial family each of whose members must keep its existing
+//! `Unknown` and its existing diagnostic.
+//!
+//! Nothing here promotes a verdict. `Safe` in this family is `Safe` for a
+//! synthetic declared custody projection under premises this file names.
+use qcore_c_gateway::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, LegacySafetyCertificate,
+    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    check_legacy_safety_certificate,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+/// The refusal an unmodeled branch condition keeps.
+const BRANCH: &str = "unmodeled call, aggregate or indirect access in branch condition";
+/// The refusal an unmodeled return expression keeps.
+const RETURN: &str = "unmodeled call, aggregate or indirect access in return expression";
+
+/// A three-record chain with a scalar leaf at every level, one self-referential
+/// link so a chain can be made arbitrarily long, and a `void *` member the
+/// reader will not resolve.
+const DECLARATIONS: &str = "\
+void *q_alloc(void); void q_free(void *); void q_transfer(void *); \
+struct z_leaf { int size; void *opaque; }; \
+struct z_node { int flag; struct z_leaf *leaf; struct z_node *next; }; \
+struct z_view { int kind; struct z_node *head; struct z_node *tail; \
+                struct z_node *ring[2]; int *count; }; \
+void z_hold(struct z_node *n); \
+int z_unknown(int n);";
+
+fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(
+        &[
+            (
+                "q_base.qcore".to_owned(),
+                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            ),
+            (
+                "z_reach.qcore".to_owned(),
+                include_str!("fixtures/contracts/z_reach.qcore").to_owned(),
+            ),
+        ]
+        .into_iter()
+        .collect(),
+    )
+    .unwrap()
+}
+
+struct Run {
+    status: AnalysisStatus,
+    diagnostics: Vec<LegacyDiagnosticKind>,
+    certificate: Option<LegacySafetyCertificate>,
+}
+
+impl Run {
+    fn unsupported(&self) -> Vec<String> {
+        self.diagnostics
+            .iter()
+            .filter_map(|kind| match kind {
+                LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                _ => None,
+            })
+            .collect()
+    }
+
+    fn unknown_aliases(&self) -> Vec<String> {
+        self.diagnostics
+            .iter()
+            .filter_map(|kind| match kind {
+                LegacyDiagnosticKind::UnknownAlias { variable } => Some(variable.clone()),
+                _ => None,
+            })
+            .collect()
+    }
+
+    fn leaks(&self) -> usize {
+        self.diagnostics
+            .iter()
+            .filter(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. }))
+            .count()
+    }
+}
+
+fn run(body: &str) -> Run {
+    let source = format!("{DECLARATIONS}\n{body}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "subject",
+        &contracts(),
+    )
+    .unwrap_or_else(|error| panic!("valid fixture rejected by Clang: {error:?}\n{source}"));
+    let (summary, certificate) = match outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => {
+            check_legacy_safety_certificate(&certificate)
+                .expect("a Safe certificate must recheck independently");
+            (certificate.summary.clone(), Some(certificate))
+        }
+        UnrestrictedLegacyResult::Unsafe(summary) => (summary, None),
+        UnrestrictedLegacyResult::Unknown { partial, .. } => (
+            partial.expect("these fixtures always project partially"),
+            None,
+        ),
+    };
+    let function = summary
+        .functions
+        .get("subject")
+        .expect("the entry is projected");
+    Run {
+        status: function.status,
+        diagnostics: function
+            .diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.kind.clone())
+            .collect(),
+        certificate,
+    }
+}
+
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent REACH-GATE test: {reason}");
+            false
+        }
+    }
+}
+
+/// The admission this card exists for: a bounded typed access chain, on a base
+/// the body never binds, in a branch condition — the shape card W4-EXPR-POS's
+/// scalar-leaf family refused because it was not one selection.
+#[test]
+fn a_chain_to_a_scalar_leaf_discharges_a_branch_condition() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (view->head->leaf->size > 0) { q_free(p); return; } q_free(p); }",
+    );
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "diagnostics {:?}",
+        measured.diagnostics
+    );
+    assert!(
+        measured.unsupported().is_empty(),
+        "no refusal must remain, got {:?}",
+        measured.unsupported()
+    );
+    assert!(
+        measured.certificate.is_some(),
+        "the admission must carry an independently rechecked certificate"
+    );
+}
+
+/// The same chain in every one of the five other positions.
+#[test]
+fn the_chain_admission_reaches_every_value_discarding_position() {
+    if !clang_available() {
+        return;
+    }
+    let bodies = [
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         while (view->head->leaf->size > 0) { break; } q_free(p); }",
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         for (; view->head->leaf->size > 0; ) { break; } q_free(p); }",
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         do { break; } while (view->head->leaf->size > 0); q_free(p); }",
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         switch (view->head->leaf->size) { default: break; } q_free(p); }",
+        "int subject(struct z_view *view) { void *p; p = q_alloc(); q_free(p); \
+         return view->head->leaf->size; }",
+    ];
+    for body in bodies {
+        let measured = run(body);
+        assert_eq!(
+            measured.status,
+            AnalysisStatus::Safe,
+            "{body}\ndiagnostics {:?}",
+            measured.diagnostics
+        );
+        assert!(
+            measured.unsupported().is_empty(),
+            "{body}: {:?}",
+            measured.unsupported()
+        );
+    }
+}
+
+/// The refined soundness sentence's second clause, measured: a chain whose leaf
+/// is a **pointer** is admitted exactly where the position discards the value.
+#[test]
+fn a_pointer_leaf_is_admitted_in_a_condition_and_refused_in_a_return() {
+    if !clang_available() {
+        return;
+    }
+    let condition = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (view->head->next) { q_free(p); return; } q_free(p); }",
+    );
+    assert_eq!(
+        condition.status,
+        AnalysisStatus::Safe,
+        "diagnostics {:?}",
+        condition.diagnostics
+    );
+    assert!(condition.unsupported().is_empty());
+
+    for returned in [
+        "struct z_node *subject(struct z_view *view) { return view->head->next; }",
+        "struct z_node *subject(struct z_view *view) { \
+         return view->kind ? view->head : view->tail; }",
+    ] {
+        let measured = run(returned);
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{returned}");
+        assert!(
+            measured.unsupported().contains(&RETURN.to_owned()),
+            "{returned}: the existing return refusal must be retained, got {:?}",
+            measured.unsupported()
+        );
+    }
+}
+
+/// The C02 §2 hazard, in an expression position: a member read through a base
+/// this body released must never be neutralized.
+#[test]
+fn a_released_base_read_in_a_condition_keeps_its_refusal() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run(
+        "void subject(void) { struct z_node *n; n = q_alloc(); if (!n) { return; } \
+         q_free(n); if (n->flag) { return; } }",
+    );
+    assert_ne!(measured.status, AnalysisStatus::Safe);
+    assert!(
+        measured.unsupported().contains(&BRANCH.to_owned()),
+        "the existing branch refusal must be retained, got {:?}",
+        measured.unsupported()
+    );
+    // And the whole point: no arm of it reports a discharge the release would
+    // have contradicted.
+    assert_eq!(measured.leaks(), 0, "{:?}", measured.diagnostics);
+}
+
+/// Every adversarial shape the card names, each keeping its existing refusal.
+#[test]
+fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
+    if !clang_available() {
+        return;
+    }
+    let cases: [(&str, &str); 8] = [
+        (
+            "the address of a member is not a read",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if (&view->kind) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "an explicit dereference has no model here",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if (*view->count) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "a subscript has no model here",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if (view->ring[0]) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "a chain one selection past the bound refuses",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if (view->head->next->next->next->flag) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "a link this reader will not type refuses",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if (view->head->leaf->opaque) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "a base named in any call argument list is bound",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             z_hold(view->head); if (view->head->flag) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "an assignment could store the pointer this rule only discards",
+            "void subject(struct z_view *view, struct z_node **out) { void *p; p = q_alloc(); \
+             if ((*out = view->head)) { q_free(p); return; } q_free(p); }",
+        ),
+        (
+            "a cast is not an admitted operand",
+            "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+             if ((struct z_node *) view->head) { q_free(p); return; } q_free(p); }",
+        ),
+    ];
+    for (reason, body) in cases {
+        let measured = run(body);
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
+        assert!(
+            !measured.unsupported().is_empty(),
+            "{reason}: the existing refusal must be retained, got {:?}",
+            measured.diagnostics
+        );
+    }
+}
+
+/// A chain exactly at the bound is admitted, so the bound is a refusal and not
+/// a blanket rejection of chains.
+#[test]
+fn a_chain_exactly_at_the_bound_is_admitted() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (view->head->next->next->flag) { q_free(p); return; } q_free(p); }",
+    );
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "diagnostics {:?}",
+        measured.diagnostics
+    );
+}
+
+/// Card C02-P-ALIAS's obligation is attached to *modeled reads*, which this
+/// card never reclassifies. An admitted condition beside such a read neither
+/// creates the obligation nor erases it: the diagnostic vector is identical
+/// with and without the condition.
+#[test]
+fn the_may_alias_obligation_still_fires_beside_an_admitted_condition() {
+    if !clang_available() {
+        return;
+    }
+    let control = run(
+        "void subject(struct z_node *a, struct z_node *b, struct z_view *view) { \
+         q_free(a); z_hold(b); }",
+    );
+    let with_condition = run(
+        "void subject(struct z_node *a, struct z_node *b, struct z_view *view) { \
+         q_free(a); if (view->head->flag) { } z_hold(b); }",
+    );
+    assert!(
+        control.unknown_aliases().contains(&"b/a".to_owned()),
+        "the control must carry the may-alias obligation, got {:?}",
+        control.diagnostics
+    );
+    assert_eq!(
+        control.unknown_aliases(),
+        with_condition.unknown_aliases(),
+        "an admitted condition must neither add nor remove a may-alias obligation"
+    );
+    assert_ne!(with_condition.status, AnalysisStatus::Safe);
+}
+
+/// The structural reason the previous test can only ever read that way, made
+/// explicit: a name that appears in *any* call argument list of the body is
+/// bound, so no base this rule admits is ever a modeled call's actual.
+#[test]
+fn an_admitted_base_is_never_a_modeled_call_actual() {
+    if !clang_available() {
+        return;
+    }
+    let admitted = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (view->head->flag) { q_free(p); return; } q_free(p); }",
+    );
+    assert_eq!(admitted.status, AnalysisStatus::Safe);
+    let borrowed = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         z_hold(view->head); if (view->head->flag) { q_free(p); return; } q_free(p); }",
+    );
+    assert_ne!(
+        borrowed.status,
+        AnalysisStatus::Safe,
+        "one modeled read of the base withdraws every admission through it"
+    );
+    assert!(borrowed.unsupported().contains(&BRANCH.to_owned()));
+}
+
+/// The admission must never manufacture a discharge: a body that acquires and
+/// then leaks is still reported, with the leak intact, when its only newly
+/// admitted construct is a condition.
+#[test]
+fn an_admitted_condition_never_hides_a_leak() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (view->head->leaf->size > 0) { return; } q_free(p); }",
+    );
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Unsafe,
+        "diagnostics {:?}",
+        measured.diagnostics
+    );
+    assert_eq!(measured.leaks(), 1, "{:?}", measured.diagnostics);
+}
+
+/// Additivity against card W4-EXPR-POS: every expression its families admitted
+/// is still admitted, decided by the same code, and the `digits10` shape is
+/// unaffected by the role split.
+#[test]
+fn the_earlier_families_are_unchanged() {
+    if !clang_available() {
+        return;
+    }
+    let scalar_only = run(
+        "void subject(struct z_view *view, int n) { void *p; p = q_alloc(); \
+         if (n + 1 > 0) { q_free(p); return; } q_free(p); }",
+    );
+    assert_eq!(scalar_only.status, AnalysisStatus::Safe);
+    let single_selection = run("int subject(struct z_view *view) { return view->kind; }");
+    assert_eq!(single_selection.status, AnalysisStatus::Safe);
+    let uncontracted_call = run(
+        "void subject(struct z_view *view) { void *p; p = q_alloc(); \
+         if (z_unknown(view->kind)) { q_free(p); return; } q_free(p); }",
+    );
+    assert_ne!(uncontracted_call.status, AnalysisStatus::Safe);
+    assert!(uncontracted_call.unsupported().contains(&BRANCH.to_owned()));
+}

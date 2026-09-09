@@ -1,0 +1,14 @@
+units: 185
+unit verdict/reason moves: 0
+units with any changed leaf: 4
+    - cmetrics/cmt_encode_opentelemetry.c
+    - ctraces/ctr_encode_opentelemetry.c
+    - fluent-bit-chunk/flb_input_chunk.c
+    - monkey-libevent/mk_server/mk_plugin.c
+function status moves: 2
+    ('fluent-bit-chunk/flb_input_chunk.c', 'logs_tag_records_metrics_enabled', 'Unknown', 'Safe')
+    ('monkey-libevent/mk_server/mk_plugin.c', 'mk_plugin_time_now_unix', 'Unknown', 'Safe')
+leak diagnostics: 271 -> 271
+diagnostic deltas (normalized):
+      -2  ('unsupported', 'unmodeled call, aggregate or indirect access in branch condition')
+      -2  ('unsupported', 'unmodeled call, aggregate or indirect access in return expression')
