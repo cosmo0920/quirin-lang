@@ -170,7 +170,13 @@ impl Denotation<'_> {
     /// committed to exactly one. `None` for an unknown, ambiguous, unbound or
     /// possibly-null binding — every case in which two such names might still
     /// denote different objects.
-    fn settled(&self) -> Option<usize> {
+    ///
+    /// Card `ALIAS-LOCALS-BORROW-LIVENESS` reads the same commitment for a
+    /// different question — whether *one* name's identity is definitely dead —
+    /// in [`crate::borrow_liveness`]. Sharing this accessor is deliberate: the
+    /// two rules must agree on what "the projection committed" means, and
+    /// neither may relax it.
+    pub(crate) fn settled(&self) -> Option<usize> {
         (!self.unknown && !self.may_be_null && self.targets.len() == 1)
             .then(|| self.targets.iter().copied().next())
             .flatten()

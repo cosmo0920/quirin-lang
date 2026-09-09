@@ -4865,6 +4865,91 @@ fn observe_exit(
     }
 }
 
+/// `ALIAS-LOCALS-BORROW-LIVENESS`: refuse every `Borrowed` actual the
+/// projection's own bindings show is a **definitely released** identity.
+///
+/// Card ALIAS-LOCALS recorded that a `Borrowed` position had no implemented
+/// precondition at all, so a body could hand a callee an identity this
+/// projection records `RELEASED` and be certified `Safe`. The decision is
+/// [`crate::borrow_liveness::borrowed_actual_liveness`]; this function only
+/// locates the positions and publishes the refusal.
+///
+/// Three deliberate bounds, each recorded in
+/// `docs/reports/remaining-borrow-liveness/README.md`:
+///
+/// * **Settled states only.** The pass runs after the work list is stable and
+///   reads `incoming[node]` — the state *entering* the call, before any of this
+///   call's own parameter effects. A precondition is evaluated in the
+///   pre-state, so `f(p /*released*/, p /*borrowed*/)` is not refused here; the
+///   release side already has its own diagnostics.
+/// * **Plain names only.** A `BASE->FIELD` bound read and a member-address
+///   actual are governed by O04-READ-BOUND / O04-B09B10, whose admissions
+///   already require the identity to be `LIVE` (`bound_read_resolves`,
+///   `resolved_aggregate_owner`). Restating it here would double-report against
+///   another card's channel without adding a refusal.
+/// * **Read-only.** Nothing is written to any `AbstractState`, so the custody
+///   fixed point, the leak inventory and every per-exit residual are unchanged
+///   by construction (`C02-P-ALIAS-LEAK-ORDER` undisturbed). The refusal
+///   therefore does not set `unmodeled`, exactly as ALIAS-LOCALS's obligations
+///   do not — the same recorded `ALIAS-LOCALS-EXIT-CUSTODY` boundary, since a
+///   read changes no site's disposition.
+///
+/// The published claim is the existing `UnknownAlias` naming the actual. No
+/// diagnostic code is added, changed or downgraded, and the rule can only turn
+/// `Safe` into `Unknown`.
+fn require_live_borrowed_actuals(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        // An unreached node supports no claim in either direction.
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        let LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } = &node.instruction
+        else {
+            continue;
+        };
+        for (index, mode) in contract.parameters.iter().enumerate() {
+            if !matches!(mode, ResourceParameterMode::Borrowed) {
+                continue;
+            }
+            let Some(source) = arguments.get(index).and_then(Option::as_deref) else {
+                continue;
+            };
+            if crate::may_alias::place_root(source) != Some(source) {
+                continue;
+            }
+            let pointer = state.pointers.get(source);
+            let decision = crate::borrow_liveness::borrowed_actual_liveness(
+                crate::borrow_liveness::BorrowSite {
+                    denotation: pointer.map(|pointer| crate::may_alias::Denotation {
+                        targets: &pointer.targets,
+                        unknown: pointer.unknown,
+                        may_be_null: pointer.may_be_null,
+                    }),
+                    resources: &state.resources,
+                    unresolved: &state.unresolved_effect_sites,
+                },
+            );
+            if decision == crate::borrow_liveness::BorrowLiveness::DefinitelyReleased {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: cfg.function.clone(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: source.to_owned(),
+                    },
+                });
+            }
+        }
+    }
+}
+
 fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
     let unsafe_found = diagnostics.iter().any(|diagnostic| {
         matches!(
@@ -5033,6 +5118,13 @@ pub(crate) fn analyze_cfg_with_entry(
             },
         });
     }
+
+    // ALIAS-LOCALS-BORROW-LIVENESS: the `Borrowed` liveness precondition, read
+    // from the settled incoming states for the same reason the exit pass below
+    // is: it is a *must* fact, and a must fact read on an intermediate iterate
+    // would depend on the work-list schedule. Read-only — see
+    // [`crate::borrow_liveness`].
+    require_live_borrowed_actuals(&cfg, &incoming, &mut diagnostics);
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
