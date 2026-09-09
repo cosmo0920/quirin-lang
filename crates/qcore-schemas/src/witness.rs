@@ -327,6 +327,14 @@ pub enum SemanticWitness {
     /// profile. Equality binds the proposal to that import; the core still runs
     /// its own unedited replay and evaluates the pinned contract itself.
     CleanupReplay(Box<crate::cleanup_replay_summary::CleanupReplayWitness>),
+    /// One composed reading over separately checked prerequisite capabilities
+    /// — every sampled entry state's selected wrapper path, the prerequisite's
+    /// own selected path, the return value, the counter decrement and the
+    /// wrapper's field writes — recomputed from the core's own typed path
+    /// projections. Equality binds the proposal to those imports; the core
+    /// still re-establishes every prerequisite and runs its own unedited
+    /// composition itself.
+    Composition(Box<crate::composition_summary::CompositionWitness>),
 }
 
 impl SemanticWitness {
@@ -344,6 +352,7 @@ impl SemanticWitness {
             Self::ReactorCallback(witness) => &witness.task_digest,
             Self::CallResultUse(witness) => &witness.task_digest,
             Self::CleanupReplay(witness) => &witness.task_digest,
+            Self::Composition(witness) => &witness.task_digest,
         }
     }
 
@@ -358,6 +367,7 @@ impl SemanticWitness {
             Self::ReactorCallback(_) => "reactor_callback",
             Self::CallResultUse(_) => "call_result_use",
             Self::CleanupReplay(_) => "cleanup_replay",
+            Self::Composition(_) => "composition",
         }
     }
 }

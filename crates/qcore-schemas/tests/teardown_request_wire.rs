@@ -121,6 +121,7 @@ fn request(
         teardown_source: teardown,
         call_use_source: None,
         cleanup_replay_source: None,
+        composition_source: None,
     }
 }
 

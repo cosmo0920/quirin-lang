@@ -36,6 +36,8 @@ pub use qcore_core::prelude::concurrency::concurrency;
 pub mod call_use_source_capability;
 #[path = "cleanup_replay_source_capability.rs"]
 pub mod cleanup_replay_source_capability;
+#[path = "composition_source_capability.rs"]
+pub mod composition_source_capability;
 pub mod counter_contract;
 pub mod counter_source;
 pub mod driver;

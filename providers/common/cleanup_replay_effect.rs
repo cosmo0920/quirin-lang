@@ -390,7 +390,12 @@ impl<'a> Replay<'a> {
 
 /// The native cleanup outcome family: four sampled prestates over one
 /// eligibility field the successful arm resets.
-fn replay_native_cleanup_outcome(
+/// Public so the composition producer can recompute this prerequisite reading
+/// itself rather than being handed one. It is the same computation this
+/// capability performs standalone: a composition producer that could not
+/// recompute it would have to be *told* the prerequisite's conclusion, which
+/// the composition vocabulary deliberately cannot express.
+pub fn replay_native_cleanup_outcome(
     body: &CleanupReplayFunctionRecord,
     profile: &CleanupProfileRecord,
 ) -> Option<CleanupReplayRecord> {

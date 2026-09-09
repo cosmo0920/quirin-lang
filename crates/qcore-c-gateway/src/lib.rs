@@ -15,6 +15,7 @@ mod borrowed_actual;
 pub mod call_use_source;
 mod clang;
 pub mod cleanup_replay_source;
+pub mod composition_source;
 pub mod counter_source;
 pub mod legacy_c;
 pub mod legacy_census;

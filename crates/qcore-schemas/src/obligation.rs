@@ -106,6 +106,12 @@ pub enum ObligationProperty {
     /// value lattice. Successful OS cleanup, descriptor, mapping and file
     /// custody remain outside this property entirely.
     CleanupReplayContract,
+    /// One source-derived wrapper body composes separately checked
+    /// prerequisite capabilities into the return value, call order, counter
+    /// decrement and field writes its pinned contract requires, in every
+    /// sampled entry state. Every prerequisite is re-established by the core;
+    /// successful OS cleanup and mapping custody remain outside this property.
+    CompositionContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -138,6 +144,7 @@ impl ObligationProperty {
             Self::FieldDestructorContract => "field_destructor_contract",
             Self::CallResultUseContract => "call_result_use_contract",
             Self::CleanupReplayContract => "cleanup_replay_contract",
+            Self::CompositionContract => "composition_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

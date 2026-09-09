@@ -166,11 +166,45 @@ impl CounterSourceTask {
             teardown_source: None,
             call_use_source: None,
             cleanup_replay_source: None,
+            composition_source: None,
         }
     }
 
     /// Re-check the imported path against the pinned contract. This is the
     /// core's own evaluation; no provider input reaches it.
+    /// This task's own identity, for a *dependent* capability to name it by.
+    /// It carries no verdict, certificate or reading — only the semantic
+    /// profile, the task digest and the single obligation identifier, each of
+    /// which the dependent's core re-derives for itself.
+    pub fn prerequisite_identity(&self) -> qcore_schemas::call_use_summary::PrerequisiteIdentity {
+        qcore_schemas::call_use_summary::PrerequisiteIdentity {
+            semantic_profile: self.task.semantic_profile.clone(),
+            task_digest: self.task.task_digest(),
+            obligation_id: self.task.obligations[0].obligation_id.clone(),
+        }
+    }
+
+    /// Re-run this task's own evaluation for a dependent and confirm the
+    /// claimed identity is the one this context derives.
+    pub fn revalidate_as_prerequisite(
+        &self,
+        claimed: &qcore_schemas::call_use_summary::PrerequisiteIdentity,
+    ) -> Result<CounterCertificate, String> {
+        if !claimed.is_complete() {
+            return Err("counter prerequisite identity is incomplete".into());
+        }
+        if *claimed != self.prerequisite_identity() {
+            return Err("counter prerequisite identity is not the one the core derives".into());
+        }
+        self.evaluate()
+    }
+
+    /// The typed summary this task imported, so a dependent can require that
+    /// the body it composes over is the one this prerequisite checked.
+    pub fn summary(&self) -> &qcore_c_gateway::typed_source::SourceSummary {
+        self.import.summary()
+    }
+
     pub fn evaluate(&self) -> Result<CounterCertificate, String> {
         check_counter_contract(
             self.import.summary(),

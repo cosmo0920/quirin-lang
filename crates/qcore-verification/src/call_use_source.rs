@@ -218,6 +218,12 @@ impl FileAttemptSourceTask {
     /// from this task, so a dependent that re-derives the prerequisite the
     /// same way gets the same triple and one that is handed a forged triple
     /// gets a different one. Nothing a provider sends can produce it.
+    /// The typed summary this task imported, so a dependent can require that
+    /// the body it composes over is the one this prerequisite checked.
+    pub fn summary(&self) -> &qcore_c_gateway::typed_source::SourceSummary {
+        self.import.summary()
+    }
+
     pub fn prerequisite_identity(&self) -> PrerequisiteIdentity {
         PrerequisiteIdentity {
             semantic_profile: self.task.semantic_profile.clone(),
@@ -262,6 +268,7 @@ impl FileAttemptSourceTask {
             teardown_source: None,
             call_use_source: Some(self.import.source_input()),
             cleanup_replay_source: None,
+            composition_source: None,
         }
     }
 
