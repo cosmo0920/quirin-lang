@@ -330,7 +330,7 @@ fn the_established_raw_scan_behaviour_is_unchanged() {
 }
 
 // ---------------------------------------------------------------------------
-// 6. The residual this repair does NOT close, named and pinned
+// 6. The residual this repair did not close, closed by unit E01-RAW-COND
 // ---------------------------------------------------------------------------
 
 /// A **second, distinct** desynchronisation cause, reduced from the real
@@ -350,18 +350,22 @@ fn the_established_raw_scan_behaviour_is_unchanged() {
 ///
 /// The raw scan is deliberately **not** a preprocessor — E01-F1 §1.4 makes
 /// keeping both arms load-bearing, so that a definition guarded out by `#if 0`
-/// never leaves the denominator — so it counts both opens and one close and
-/// stays one level deep for the rest of the file. Deciding which arm survives
-/// is conditional evaluation, not lexing, so this cause is **outside** unit
-/// E01-F1-RAW and is recorded as boundary **E01-F1-RAW-COND**, not repaired.
+/// never leaves the denominator — so at this unit's checkpoint it counted both
+/// opens and one close and stayed one level deep for the rest of the file. That
+/// residual was recorded as boundary **E01-F1-RAW-COND** and is closed by unit
+/// **E01-RAW-COND** (`docs/reports/remaining-e01-raw-cond/README.md`) *without*
+/// evaluating a conditional: both arms of this group leave the same file-scope
+/// depth, so that depth is the group's depth whichever arm survives, and no arm
+/// is selected.
 ///
-/// On the pinned corpus this is exactly the residual: after the repair
-/// `rdkafka.c`'s `absent_from_raw_scan` is 15 rows, all of them definitions
-/// after this body, and E01-F1's expansion reader supplies every one of them.
-/// The assertions below are therefore in the fail-closed direction: the raw
-/// scan under-reports, and the audited denominator does not.
+/// **Deliberate pin update.** The load-bearing half is kept and strengthened:
+/// the enumerated denominator is still exactly these three definitions, the raw
+/// scan is still a subset of it, and the two mechanisms now *agree* on this
+/// shape instead of disagreeing by one row. The refusal direction — a group
+/// whose arms do *not* agree — is pinned in
+/// `crates/qcore-c-gateway/tests/e01_raw_cond.rs`.
 #[test]
-fn a_conditional_brace_imbalance_is_a_separate_recorded_residual() {
+fn a_conditional_brace_imbalance_is_decided_when_the_arms_agree() {
     let source = "\
 int before_the_imbalance(void) { return 0; }\n\
 int subject(const char *path) {\n\
@@ -375,27 +379,31 @@ int subject(const char *path) {\n\
         return 0;\n\
 }\n\
 int after_the_imbalance(void) { return 2; }\n";
-    // The raw scan keeps both arms, so its depth never returns to zero and the
-    // later definition is invisible to it. This is the recorded residual.
+    // Both arms leave the same file-scope depth, so the group contributes that
+    // depth once and the scan returns to zero after the body.
     assert_eq!(
         legacy_c_source_functions(source),
-        ["before_the_imbalance", "subject"],
-        "E01-F1-RAW-COND: the raw scan cannot decide a conditional arm"
+        ["after_the_imbalance", "before_the_imbalance", "subject"],
+        "E01-RAW-COND: agreeing arms are decided without selecting one"
     );
     if !clang_available() {
         return;
     }
-    // The audited denominator is not the raw scan: reading the expansion
-    // recovers the hidden definition, so nothing is lost where it counts.
+    // The audited denominator is unchanged; the two mechanisms now agree.
     let inventory = enumerate_source_definitions(&unit(source));
     assert!(
         inventory
             .definitions()
             .contains(&"after_the_imbalance".to_owned()),
-        "the enumeration must cover what the raw scan cannot decide: {:?}",
+        "the enumeration must still cover every definition: {:?}",
         inventory.definitions()
     );
-    assert_eq!(inventory.absent_from_raw_scan(), ["after_the_imbalance"]);
+    assert!(
+        inventory.absent_from_raw_scan().is_empty(),
+        "the raw scan and the enumeration agree on this shape: {:?}",
+        inventory.absent_from_raw_scan()
+    );
+    assert!(inventory.is_complete());
 }
 
 /// The repair must not make the enumeration and the raw scan disagree in the
