@@ -1,0 +1,82 @@
+module contract;
+
+// Fluent Bit input-chunk name accessor — resource-projection vocabulary v1.
+//
+// Card PROD-CONTRACTS. One TRUSTED ASSUMPTION about one upstream function.
+// It verifies nothing: the C body is not analyzed by this loader, and a
+// declaration is a premise. A function-level `Safe` that rests on it is `Safe`
+// RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// ## The pinned body, read (`src/flb_input_chunk.c:3849` at Fluent Bit
+// ## 66910c10a4d7eafa810b84229cf2dcf7b0f26f97)
+//
+//     flb_sds_t flb_input_chunk_get_name(struct flb_input_chunk *ic)
+//     {
+//         struct cio_chunk *ch;
+//         ch = (struct cio_chunk *) ic->chunk;
+//         return ch->name;
+//     }
+//
+// `flb_sds_t` is `typedef char *flb_sds_t` (`include/fluent-bit/flb_sds.h:36`).
+//
+// ## Which mode is faithful
+//
+// The body reads two fields and returns. It allocates nothing, frees nothing,
+// stores nothing and retains nothing, so the caller keeps exactly the
+// obligations it had before the call: `resource_borrowed(ic)` states that, and
+// it is the only v1 parameter mode with that caller-side effect (`owned`
+// demands live custody, `consumed` transfers, `released` discharges, `out`
+// creates custody at a destination, `stored` transfers under an owner and
+// `removed` detaches from one).
+//
+// The RESULT is a pointer, and its faithful mode is nevertheless
+// `resource_return_none()`, which reads "the call hands the caller no custody".
+// `ch->name` is the chunk's OWN sds, allocated and freed by ChunkIO; the caller
+// must not free it. Declaring `resource_return_owned(...)` here would install a
+// cleanup obligation on the caller for storage another owner releases — a
+// double-free the projection would then demand — so it is refused. That the
+// mode is `None` rather than `Owned` is a decision about custody, not about the
+// C type.
+//
+// ## What this declaration does NOT say — named, not hidden
+//
+// The returned pointer ALIASES INTO `ic` (it is `ic->chunk->name`), and this
+// projection does not track the handback at all, so it does not model that
+// alias and cannot notice a caller that outlives `ic` with it or frees it. Two
+// separate things keep that from being a fail-open on this route, and both are
+// stated as the bounded facts they are:
+//
+//   * the gateway admits a call whose result mode is `None` and whose
+//     parameters are all `Borrowed` only where the result occupies a position
+//     that needs no identity (card O04-TRACE's premises N6/N8) and never binds
+//     it to a name, so it cannot outlive the statement; a body that STORED the
+//     handback is a different statement shape and is refused;
+//   * measured on the pinned corpus: all 20 call sites of this function in
+//     `src/flb_input_chunk.c` — the only Fluent Bit unit in the 185-unit
+//     corpus, and the only unit that calls it — occur inside a logging call's
+//     argument list. NONE binds the result. The other two occurrences of the
+//     name in the preprocessed unit are its prototype and its definition.
+//
+// That measurement is a fact about today's corpus, not a rule; the rule is the
+// first bullet, and it is the gateway's, not this module's. The alias itself
+// remains outside every claim here (O00 blockers B03/R13, and card O04-TRACE's
+// `O04-TRACE-HANDBACK`).
+//
+// This declaration also says nothing about `ic` being non-null — the body
+// dereferences it unconditionally, but `resource_borrowed` imposes NO non-null
+// precondition, which is the weaker statement and deliberately so: a mode that
+// demanded entry custody would delete the caller's failure paths.
+//
+// ## A note on precedence
+//
+// This function is DEFINED in a corpus unit. A declared contract always wins
+// over an inferred W4 summary, and a disagreement is reported as a
+// `SummaryConflict` diagnostic rather than silently resolved either way. The
+// unit's own definition stays analyzable and is not rewritten.
+
+extern fn flb_input_chunk_get_name(ic: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_return_none();
+};

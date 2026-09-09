@@ -1,0 +1,102 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4410 -> 4405 (-5)
+  unsupported: 49956 -> 49920 (-36)
+units with diagnostic-count changes: 1
+  fluent-bit-chunk/flb_input_chunk.c: {'unknown_alias': -5, 'unsupported': -36}
+description inventory deltas:
+  unknown_alias / 'unresolved resource identity `ic`': 38 -> 33 (-5)
+  unsupported / 'arguments beyond the declared parameters of `flb_log_print` are outside the resource projection': 0 -> 1 (+1)
+  unsupported / 'call to uncontracted function `flb_log_print`': 21 -> 0 (-21)
+  unsupported / 'indirect memory access is outside the resource projection': 18874 -> 18879 (+5)
+  unsupported / 'nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection': 0 -> 2 (+2)
+  unsupported / 'nested call `flb_input_name` inside a modeled call is outside the resource projection': 0 -> 3 (+3)
+  unsupported / 'unmodeled call, aggregate or indirect access in branch condition': 9187 -> 9161 (-26)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_create L19581 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_create L19624 unsupported: indirect memory access is outside the resource projection
+    +1 flb_input_chunk_create L19624 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_create L19626 unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection
+    -1 flb_input_chunk_create L19626 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_create L19626 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_destroy L19741 unsupported: call to uncontracted function `flb_log_print`
+    +1 flb_input_chunk_destroy L19741 unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+    -1 flb_input_chunk_destroy L19746 unsupported: call to uncontracted function `flb_log_print`
+    +1 flb_input_chunk_destroy L19746 unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+    -1 flb_input_chunk_flush L20428 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_flush L20428 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_get_real_size L18192 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_get_real_size L18192 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_map L18758 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_map L18758 unsupported: call to uncontracted function `flb_log_print`
+    +1 flb_input_chunk_map L18777 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18777 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18787 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18787 unsupported: indirect memory access is outside the resource projection
+    +1 flb_input_chunk_map L18798 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18798 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18808 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18808 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18818 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18818 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18824 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18824 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18851 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_map L18851 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_map L18852 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18852 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18934 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_map L18934 unsupported: call to uncontracted function `flb_log_print`
+    +1 flb_input_chunk_map L18935 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18935 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18940 unsupported: indirect memory access is outside the resource projection
+    +1 flb_input_chunk_map L18940 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18942 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_map L18942 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    +1 flb_input_chunk_map L18947 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18947 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18949 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_map L18949 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_output_size_subtract L17688 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_protect L19930 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_protect L19945 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_release_route L18231 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_release_route L18231 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_release_route L18234 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_release_space L18070 unsupported: call to uncontracted function `flb_log_print`
+    -1 flb_input_chunk_set_limits L19918 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_set_limits L19921 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_write_header_v2 L19248 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 flb_input_chunk_write_header_v2 L19248 unsupported: call to uncontracted function `flb_log_print`
+    +1 input_chunk_append_raw L20078 unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+    -1 input_chunk_append_raw L20078 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20078 unsupported: call to uncontracted function `flb_log_print`
+    -1 input_chunk_append_raw L20082 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20082 unsupported: call to uncontracted function `flb_log_print`
+    -1 input_chunk_append_raw L20097 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20097 unsupported: call to uncontracted function `flb_log_print`
+    -1 input_chunk_append_raw L20107 unsupported: call to uncontracted function `flb_log_print`
+    -1 input_chunk_append_raw L20107 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20168 unsupported: call to uncontracted function `flb_log_print`
+    +1 input_chunk_append_raw L20168 unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+    -1 input_chunk_append_raw L20168 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20222 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_append_raw L20222 unsupported: call to uncontracted function `flb_log_print`
+    +1 input_chunk_append_raw L20222 unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+    -1 input_chunk_get L19821 unsupported: call to uncontracted function `flb_log_print`
+    -1 input_chunk_get L19821 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_output_size_add L17698 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_write_header L18989 unsupported: unmodeled call, aggregate or indirect access in branch condition
+    -1 input_chunk_write_header L18989 unsupported: call to uncontracted function `flb_log_print`
+leaves added: 17; leaves removed: 58

@@ -29,7 +29,8 @@ extern fn alloc() -> ptr<mut, u8> contract {
 #[test]
 fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
-    assert_eq!(contracts.source_assumptions().len(), 6);
+    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS.
+    assert_eq!(contracts.source_assumptions().len(), 9);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -82,6 +83,24 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             R::None,
         ),
     );
+    // Card PROD-CONTRACTS adds five declarations that were NOT in the old
+    // table, listed explicitly here for the same reason: the parity check below
+    // still covers every previous name, and each addition is visible as an
+    // addition rather than exempted from the comparison. All five borrow every
+    // parameter and return no custody, which is the only v1 mode with the
+    // caller-side effect each pinned body was read to have.
+    for (name, parameters) in [
+        ("flb_log_check", 1),
+        ("flb_log_print", 4),
+        ("flb_input_chunk_get_name", 1),
+        ("flb_routes_mask_set_by_tag", 4),
+        ("flb_routes_mask_get_size", 1),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(vec![P::Borrowed; parameters], R::None),
+        );
+    }
     old.insert_contract(
         "rd_realloc",
         ResourceFunctionContract::new(
@@ -349,7 +368,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
         )],
     };
     check_legacy_safety_certificate(&certificate).unwrap();
-    assert_eq!(certificate.contracts.source_assumptions().len(), 6);
+    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 9);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -444,7 +464,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // modules; neither carries the v1 marker, so both are rejected here.
     // 60 -> 61: card HASH-CONTRACTS adds
     // `fluent_bit/hash_table_publication.qcore`, which carries the v1 marker.
-    assert_eq!(modules.len(), 61, "corpus module count");
+    // 61 -> 64: card PROD-CONTRACTS adds `fluent_bit/input_chunk_name.qcore`,
+    // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, all three
+    // entirely v1 and all three manifest-selected.
+    assert_eq!(modules.len(), 64, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -495,13 +518,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
             }
         }
     }
-    // The six manifest-selected resource projections and their 20 assumptions;
+    // The nine manifest-selected resource projections and their 25 assumptions;
     // every other declaration belongs to another interpreter and is rejected.
-    // 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; the rejected count is
-    // unchanged, because the added module is entirely v1.
+    // 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; 6 -> 9 and 20 -> 25 by card
+    // PROD-CONTRACTS. The rejected count is unchanged in both cases, because
+    // every added module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (6, 20, 145)
+        (9, 25, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

@@ -1,0 +1,140 @@
+module contract;
+
+// Fluent Bit diagnostic logging — resource-projection vocabulary version 1.
+//
+// Card PROD-CONTRACTS. This module declares TRUSTED ASSUMPTIONS about the two
+// upstream functions the logging macros actually reach. It verifies nothing:
+// the C bodies are not analyzed by this loader, and a declaration is a premise.
+// A function-level `Safe` that rests on this module is `Safe` RELATIVE TO these
+// declarations and is never a proof of the C implementation.
+//
+// ## What the call sites actually reach — measured, not assumed
+//
+// `flb_trace`, `flb_error`, `flb_warn`, `flb_info`, `flb_debug`, `flb_helper`
+// and `flb_idebug` are FUNCTION-LIKE MACROS, not functions
+// (`include/fluent-bit/flb_log.h` at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97, lines 247-306). Under the pinned
+// build's `-DFLB_HAVE_TRACE` they expand as, for example,
+//
+//     flb_trace(fmt, ...)
+//       -> if (flb_log_check(FLB_LOG_TRACE))
+//              flb_log_print(FLB_LOG_TRACE, __FILE__, __LINE__, fmt, ...)
+//
+//     flb_error(fmt, ...)
+//       -> if (flb_log_check(FLB_LOG_ERROR))
+//              flb_log_print(FLB_LOG_ERROR, NULL, 0, fmt, ...)
+//
+// so NO analyzed statement in the pinned corpus ever names `flb_trace` or
+// `flb_error`. Declaring either of those names in a production module would be
+// inert text: it is measured at ZERO call sites corpus-wide, while
+// `flb_log_print` is the callee the resource projection actually reports
+// (21 occurrences of `call to uncontracted function \`flb_log_print\`` in the
+// 185-unit baseline, all in `fluent-bit-chunk/flb_input_chunk.c`, the corpus's
+// only Fluent Bit unit). This module therefore declares the two functions the
+// expansion names, and nothing else.
+//
+// ## `flb_log_print`, read from the pinned body (`src/flb_log.c:1242`)
+//
+//   void flb_log_print(int type, const char *file, int line,
+//                      const char *fmt, ...)
+//
+//   * `type` is an `int` by value. It is passed to `flb_log_construct` and to
+//     `flb_log_message_type_str`, and compared. No custody.
+//   * `file` and `line` are forwarded to `flb_log_construct`
+//     (`src/flb_log.c:1179`), whose first two statements are `(void) file;` and
+//     `(void) line;`. They are DISCARDED. No custody, no retention.
+//   * `fmt` reaches `vsnprintf(body, body_size, fmt, *args)` where `body` is a
+//     function-local `char` array. It is read, never freed, never stored.
+//   * the variadic tail is consumed by `va_start`/`vsnprintf` into that same
+//     local `body`. What leaves the function afterwards — `log_queue_enqueue`,
+//     `log_render_message`, `fprintf` — carries the RENDERED TEXT of `body`,
+//     never a tail argument's pointer. No tail argument is freed, and no
+//     pointer to one is retained past the call.
+//
+// That last sentence is exactly what `resource_variadic_data_tail()` declares:
+// the callee takes no custody of, and retains no pointer to, any argument
+// beyond the ones this declaration names. It says nothing about the body being
+// correct, nothing about the tail being type-correct against the format string,
+// and nothing about the tail being read at all. It also admits nothing on its
+// own: the gateway independently requires, PER CALL SITE, that each tail actual
+// really is data, and a tail actual that may carry a tracked resource identity
+// is refused UNDER this declaration exactly as it is without one.
+//
+// NOT CLAIMED, recorded rather than hidden: `vsnprintf` READS through every
+// `%s` tail pointer. That is a validity/reachability requirement on the caller,
+// not a custody fact, and this projection models custody only. A caller that
+// passes a released pointer in a tail position is a use-after-free this
+// declaration neither creates nor detects — the gateway's own liveness
+// precondition (card BORROW-LIVENESS) is what refuses that, on settled
+// denotations, and it is unchanged here.
+//
+// ## `flb_log_check`, read from the pinned body
+//     (`include/fluent-bit/flb_log.h:162`, a `static inline`)
+//
+//   static inline int flb_log_check(int l)
+//
+// It takes one `int` BY VALUE, reads the thread-local worker pointer, compares
+// a level and returns `FLB_TRUE`/`FLB_FALSE`. It has no pointer parameter at
+// all, so it can have no effect on any caller's custody obligations under any
+// reading. `resource_borrowed` on its one parameter and `resource_return_none`
+// on its scalar result is the faithful — and the only faithful — declaration.
+//
+// This one matters more than its triviality suggests: `flb_log_check(N)` is the
+// BRANCH CONDITION every logging expansion wraps its print in, and an
+// uncontracted call in a condition is refused. Declaring it lets the existing
+// F1 neutral-call admission (card W4-EXPR-POS) decide those conditions instead.
+// F1 is unchanged by this module: it still requires the contract in force to
+// declare every parameter borrowed and the result `None`, an exact arity, and
+// every argument admitted by the same predicate.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+//   * `flb_log_is_truncated(int, const char *, int, const char *, ...)`
+//     (`src/flb_log.c:1222`) has the same body shape and would take the same
+//     faithful declaration, tail included. It is measured at ZERO call sites in
+//     the whole preprocessed corpus — only its prototype occurs — so declaring
+//     it would be a premise with no measured payoff. Left undeclared.
+//   * `flb_errno_print(int, const char *, int)` (`src/flb_log.c:1321`) is
+//     reached by the `flb_errno()` macro, which expands its first argument to
+//     `errno`, i.e. `(*__errno_location ())`. The DEREFERENCE refuses the
+//     statement before any contract is consulted, so a declaration cannot
+//     decide those sites. This is the same measured-inert situation card
+//     O04-ARMS recorded for `flb_time_now`, and it is left undeclared for the
+//     same reason.
+//   * `flb_log_check_level(int, int)` and
+//     `flb_log_suppress_check(int, const char *, ...)`
+//     (`include/fluent-bit/flb_log.h:153` and `:200`) are the plugin-scoped
+//     `flb_plg_*` family's two gates. Both are custody-free. They are left
+//     undeclared because the F1 expression-position admission requires an
+//     EXACT declared arity, so a variadic tail can never be admitted in a
+//     branch condition; `flb_log_suppress_check` occurs only in branch
+//     conditions, so its declaration is unreachable by construction, and
+//     admitting only the outer `flb_log_check_level` gate leaves the inner one
+//     refusing. Named `PROD-CONTRACTS-PLG` in the card report.
+//
+// ## What no declaration here says
+//
+// Nothing about the logging pipeline's own resources — the worker, the log
+// queue, the cache, the counters — is modeled or claimed. Nothing about
+// ordering, locking, truncation, or output is claimed. These are per-call
+// custody statements about the CALLER's obligations, and nothing more.
+
+// --- the level gate every logging expansion branches on --------------------
+extern fn flb_log_check(level: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_return_none();
+};
+
+// --- the variadic diagnostic entry point every logging expansion calls -----
+extern fn flb_log_print(level: i32, file: ptr<const, u8>, line: i32, format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
