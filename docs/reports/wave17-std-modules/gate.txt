@@ -1,0 +1,98 @@
+Card STD-MODULES — standing per-change gate
+Host: x86_64 Linux. Base commit: main 8ec8402.
+
+Commands run, in the order the AGENTS.md gate lists them.
+
+--------------------------------------------------------------------------
+cargo test --workspace --no-fail-fast
+--------------------------------------------------------------------------
+(filled in below from /tmp scratch output; see "RESULT" line)
+
+RESULT: see the final line of this file.
+
+--------------------------------------------------------------------------
+cargo fmt --all -- --check
+--------------------------------------------------------------------------
+PASS — clean (one formatting pass was applied first; the diffs were
+whitespace/line-breaking only and are in commit "STD-MODULES: apply rustfmt").
+
+--------------------------------------------------------------------------
+cargo clippy --all-targets -- -D warnings
+--------------------------------------------------------------------------
+(filled in below)
+
+--------------------------------------------------------------------------
+cargo run -p qcore-compiler --example reevaluation_probe
+cargo run -p qcore-compiler --example reevaluation_followup
+--------------------------------------------------------------------------
+(filled in below)
+
+--------------------------------------------------------------------------
+PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py
+--------------------------------------------------------------------------
+PASS — exit 0, "Passed 73 Lean audits".
+The count moves 72 -> 73: this card adds proof/AuditStdIo.lean, which audits
+45 theorems across QCore.ModuleImports (registry generalised two -> five
+modules) and the new QCore.StdIo (effect discipline, stream separation,
+barrier, capability gating). No new axiom and no placeholder; every audited
+theorem depends on nothing or only on propext / Classical.choice / Quot.sound.
+
+--------------------------------------------------------------------------
+python3 -m unittest discover -s scripts/tests
+--------------------------------------------------------------------------
+161 tests, 1 failure — EXPECTED, and deliberately left for the integrator.
+
+  FAIL: test_the_derived_facts_are_recomputed_rather_than_carried
+        (test_build_matrix_sections)
+        AssertionError: ['13.0.0', 72] != ['13.0.0', 73]
+
+That is the derived-value tripwire working as designed: this card adds one
+audited Lean module and docs/reviews/r0_3/acceptance_matrix.json carries the
+pre-card count of 72. The base commit 8ec8402 was self-consistent (72 audit
+files, matrix value 72), so the delta is entirely this card's and is not a
+pre-existing failure. This card's brief forbids editing acceptance files, so
+the matrix is left stale for the wave integrator to regenerate — the same
+handling every wave's derived sections receive.
+
+--------------------------------------------------------------------------
+Sanitizer fixtures (ASan/UBSan/LSan), reported honestly
+--------------------------------------------------------------------------
+Two fixed runs inside compiler/tests/std_modules.rs, x86_64 Linux:
+  cc -std=c11 -Wall -Wextra -Werror -pedantic -g -O0
+     -fsanitize=address,undefined -fno-omit-frame-pointer
+  ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+  UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+
+  lines.qcore        PASS — compiles clean under -Werror, exit 0; stdout
+                     matched the reference's stdout projection and stderr
+                     matched the stderr projection, per stream.
+  logger_only.qcore  PASS — compiles clean, exit 0, wrote nothing on either
+                     stream, as the barrier model predicts.
+
+Honest scope: these programs allocate nothing, so the leak check is a NEGATIVE
+CONTROL — it confirms the emitted program introduces no allocation, which is
+itself the effect discipline's prediction. It is not evidence about a route
+that does allocate. Apple ASan provides no LSan, so leak detection remains a
+Linux-only observation (existing repository convention). No threaded native
+program is run by this card, so T04's measured "TSan does not intercept C11
+thrd_create" is recorded but not relied on.
+
+--------------------------------------------------------------------------
+Card-local suite
+--------------------------------------------------------------------------
+cargo test -p qcore-compiler --test std_modules
+  PASS — 31 passed, 0 failed, 0 ignored (includes the two sanitized native
+  runs above).
+
+--------------------------------------------------------------------------
+Untouched by construction (verified against the base commit)
+--------------------------------------------------------------------------
+contract/qcore/            unchanged — corpus pin stays 67 modules
+docs/reevaluation/         unchanged — CT coverage stays 32/50 mapped
+docs/reviews/r0_3/         unchanged — deliberately, see the Python note above
+AGENTS.md CLAUDE.md DEVELOPMENT.md   unchanged, per the brief
+No pinned audit artifact was edited. The card is corpus-neutral by
+construction: it touches no gateway, contract-loader, audit or provider file,
+so the canonical CMetrics artifacts and the 185-unit baseline are expected
+byte-identical at consolidation, with the headline unchanged at
+2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only.
