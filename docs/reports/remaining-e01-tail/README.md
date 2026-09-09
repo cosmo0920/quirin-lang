@@ -1,6 +1,6 @@
 # E01-TAIL — the enumeration leftovers
 
-2026-09-09. Branch base `19fbaa5` (wave 14 merged). Workstream W3/W2, follow-on
+2026-09-09/10. Branch base `19fbaa5` (wave 14 merged). Workstream W3/W2, follow-on
 unit of [`docs/reports/remaining-e01-f1/README.md`](../remaining-e01-f1/README.md)
 §6, closing its three named residuals: **E01-F1-STDIN**, **E01-F1-DENOM** and
 **E01-F1-COST**.
@@ -442,10 +442,10 @@ three.**
 
 Two new modules, audited by `AuditEnumerationAttribution.lean` and
 `AuditDenominatorCoverage.lean`. `scripts/check_lean_audits.py` moves
-**64 → 66** audits. No new axiom and no placeholder; every theorem depends on at
+**64 → 66** audits, and 31 audited theorems in total. No new axiom and no placeholder; every theorem depends on at
 most `propext` and `Quot.sound`.
 
-### 6.1 `QCore.EnumerationAttribution` (20 audited theorems)
+### 6.1 `QCore.EnumerationAttribution` (18 audited theorems)
 
 Models the marker stream, the depth rule and E01-F1's name rule side by side.
 
