@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "12.0.0",
+  "qcore_schemas_rust_api": "13.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Existing wire bytes are unchanged and pinned by crates/qcore-schemas/tests/counter_request_wire.rs.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -5742,7 +5742,7 @@
   "workspace_tests": 2638,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 69,
+  "lean_audits": 70,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
