@@ -122,8 +122,15 @@ fn concurrency_span(program: &SourceProgram) -> Option<Span> {
             | "join" => true,
             "task" | "mutex" => {
                 next == Some(&TokenKind::Symbol(Symbol::Less))
+                    // `mutex rank` is card CT33-RANKS's ranked declaration and
+                    // needs the concurrency import exactly as `mutex guards`
+                    // does; without this arm the ranked spelling would be the
+                    // one mutex form usable with no import.
                     || word == "mutex"
-                        && matches!(next, Some(TokenKind::Word(word)) if word == "guards")
+                        && matches!(
+                            next,
+                            Some(TokenKind::Word(word)) if word == "guards" || word == "rank"
+                        )
             }
             _ => false,
         };

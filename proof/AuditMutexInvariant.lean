@@ -140,3 +140,22 @@ happens-before conditions on destruction are not among these. -/
 #print axioms QCore.Concurrency.MutexInvariant.a_registered_waiter_is_recorded_as_mutex_keyed
 #print axioms QCore.Concurrency.MutexInvariant.guarded_and_unguarded_access_are_recorded_differently
 #print axioms QCore.Concurrency.MutexInvariant.an_end_borrow_is_recorded_as_mutex_keyed
+
+-- Card CT33-RANKS: the opt-in lock-rank discipline. A rank is a declared
+-- position in an order, so nothing below is a deadlock-freedom claim; the
+-- soundness result is that a rank-respecting run's would-block relation has no
+-- cycle.
+#print axioms QCore.Concurrency.MutexInvariant.admitted_edges_increase_rank
+#print axioms QCore.Concurrency.MutexInvariant.a_non_increasing_acquisition_is_refused
+#print axioms QCore.Concurrency.MutexInvariant.equal_ranks_are_never_nested
+#print axioms QCore.Concurrency.MutexInvariant.an_unranked_acquisition_is_refused
+#print axioms QCore.Concurrency.MutexInvariant.an_unranked_held_generation_refuses_every_acquisition
+#print axioms QCore.Concurrency.MutexInvariant.no_generation_is_acquired_while_held
+#print axioms QCore.Concurrency.MutexInvariant.runRanked_edges_increase_rank
+#print axioms QCore.Concurrency.MutexInvariant.path_rank_strictly_increases
+#print axioms QCore.Concurrency.MutexInvariant.a_rank_respecting_run_admits_no_cycle
+
+-- The discipline is a layer over the unchanged model: it only ever refuses.
+#print axioms QCore.Concurrency.MutexInvariant.stepRanked_agrees_with_step_off_lock
+#print axioms QCore.Concurrency.MutexInvariant.stepRanked_refines_step
+#print axioms QCore.Concurrency.MutexInvariant.runRanked_refines_run

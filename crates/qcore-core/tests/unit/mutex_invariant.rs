@@ -462,6 +462,7 @@ fn resource_destruction_is_blocked_by_parked_authority() {
             },
             destroy_mutex(0, 1),
         ],
+        ..Default::default()
     };
     assert_eq!(
         refusals(&program),
@@ -483,6 +484,7 @@ fn resource_destruction_is_blocked_by_parked_authority() {
                 resource: RESOURCE,
             },
         ],
+        ..Default::default()
     };
     let certificate = check_mutex_invariant_program(&ordered).expect("accepted");
     assert_eq!(certificate.destroyed_resources, vec![RESOURCE]);
@@ -1206,6 +1208,7 @@ fn derived_spawn_and_join_edges_are_admitted_and_recorded() {
                 via: SyncWitness::JoinEdge { child: 1 },
             },
         ],
+        ..Default::default()
     };
     let certificate = check_mutex_invariant_program(&program).expect("accepted");
     assert_eq!(
@@ -1265,6 +1268,7 @@ fn a_forged_spawn_witness_is_refused() {
                 child: 2,
             },
         ],
+        ..Default::default()
     };
     assert_eq!(
         refusals(&program),
@@ -1309,6 +1313,7 @@ fn a_mutex_handoff_witness_requires_the_protecting_mutex() {
         initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
         initial_custody: BTreeMap::from([(OTHER, 0)]),
         events: events(SyncWitness::MutexHandoff { mutex: 1 }),
+        ..Default::default()
     };
     assert_eq!(
         refusals(&unrelated),
@@ -1323,6 +1328,7 @@ fn a_mutex_handoff_witness_requires_the_protecting_mutex() {
         initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
         initial_custody: BTreeMap::from([(OTHER, 0)]),
         events: events(SyncWitness::MutexHandoff { mutex: 2 }),
+        ..Default::default()
     };
     assert_eq!(
         refusals(&unreleased),
@@ -1360,6 +1366,7 @@ fn a_derived_mutex_handoff_over_the_protecting_mutex_is_admitted() {
             },
             destroy_mutex(0, 1),
         ],
+        ..Default::default()
     };
     let certificate = check_mutex_invariant_program(&program).expect("accepted");
     assert_eq!(
@@ -2056,6 +2063,7 @@ fn a_guard_local_join_of_a_child_holding_share_or_custody_is_refused() {
             unlock(0, 10),
             destroy_mutex(0, 1),
         ],
+        ..Default::default()
     };
     assert_eq!(
         refusals(&custodian),
@@ -2156,6 +2164,270 @@ fn every_mutex_keying_event_kind_refuses_a_guard_local_join() {
             refusals(&program)
                 .contains(&MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 }),
             "{kind:?} must refuse the guard-local join"
+        );
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Card CT33-RANKS: the opt-in lock-rank discipline at the model level.
+//
+// Every case below is a mutation of one accepted control: two disjoint
+// generations, `a` at rank 1 and `b` at rank 2, nested in that order.
+// ---------------------------------------------------------------------------
+
+/// Two ranked generations over disjoint footprints, nested in strictly
+/// increasing rank order. This is the control every rank refusal mutates.
+fn ranked_control(events: Vec<MutexInvariantEvent>) -> MutexInvariantProgram {
+    MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events,
+        lock_ranks: BTreeMap::from([(1, 1), (2, 2)]),
+        ..Default::default()
+    }
+}
+
+fn ranked_nesting(outer: MutexId, inner: MutexId) -> Vec<MutexInvariantEvent> {
+    vec![
+        create(0, 1, vec![fp(0, 8)]),
+        create(0, 2, vec![other_fp(0, 8)]),
+        lock(0, outer, 10),
+        lock(0, inner, 11),
+        unlock(0, 11),
+        unlock(0, 10),
+        destroy_mutex(0, 1),
+        destroy_mutex(0, 2),
+    ]
+}
+
+#[test]
+fn ranked_nesting_in_increasing_order_checks_and_records_its_ranks() {
+    let program = ranked_control(ranked_nesting(1, 2));
+    let certificate = check_mutex_invariant_program(&program).expect("increasing order checks");
+    assert_eq!(
+        certificate.declared_lock_ranks,
+        BTreeMap::from([(1, 1), (2, 2)]),
+        "the certificate records the declared order verbatim"
+    );
+    // A rank is a declared position, not a premise about the world: the
+    // discipline adds no assumption, and a passing check is not a
+    // deadlock-freedom proof.
+    assert!(
+        !certificate
+            .assumption_names()
+            .iter()
+            .any(|name| name.contains("Rank")),
+        "the rank discipline names no premise: {:?}",
+        certificate.assumption_names()
+    );
+    recheck_mutex_invariant_certificate(&program, &certificate).unwrap();
+}
+
+/// R2. Acquiring the lower-ranked generation while holding the higher one is
+/// refused, and the diagnostic names both sides of the comparison.
+#[test]
+fn acquiring_a_lower_rank_while_holding_a_higher_one_is_refused() {
+    let diagnostics = refusals(&ranked_control(ranked_nesting(2, 1)));
+    assert!(
+        diagnostics.contains(&MutexInvariantDiagnostic::LockRankViolation {
+            event: 3,
+            mutex: 1,
+            rank: 1,
+            held_guard: 10,
+            held_mutex: 2,
+            held_rank: 2,
+        }),
+        "{diagnostics:?}"
+    );
+    assert!(codes(&diagnostics).contains(&"Q624"));
+}
+
+/// R2 is strict: equal ranks may not be nested in either direction.
+#[test]
+fn equal_ranks_may_not_be_nested_in_either_direction() {
+    for (outer, inner) in [(1, 2), (2, 1)] {
+        let program = MutexInvariantProgram {
+            lock_ranks: BTreeMap::from([(1, 4), (2, 4)]),
+            ..ranked_control(ranked_nesting(outer, inner))
+        };
+        assert!(
+            codes(&refusals(&program)).contains(&"Q624"),
+            "nesting {inner} inside {outer} at one rank must be refused"
+        );
+    }
+}
+
+/// R2 applies over live guards only: a released guard imposes no order on what
+/// the task acquires next.
+#[test]
+fn a_released_guard_imposes_no_order_on_the_next_acquisition() {
+    let program = ranked_control(vec![
+        create(0, 1, vec![fp(0, 8)]),
+        create(0, 2, vec![other_fp(0, 8)]),
+        lock(0, 2, 10),
+        unlock(0, 10),
+        // `b` is released, so acquiring the lower-ranked `a` is not a nesting.
+        lock(0, 1, 11),
+        unlock(0, 11),
+        destroy_mutex(0, 1),
+        destroy_mutex(0, 2),
+    ]);
+    check_mutex_invariant_program(&program).expect("sequential acquisitions are not nested");
+}
+
+/// R2 is keyed to the acting task: one task's held guard does not order
+/// another task's acquisition.
+#[test]
+fn one_tasks_held_guard_does_not_order_another_tasks_acquisition() {
+    let program = ranked_control(vec![
+        create(0, 1, vec![fp(0, 8)]),
+        create(0, 2, vec![other_fp(0, 8)]),
+        MutexInvariantEvent::Spawn {
+            parent: 0,
+            child: 1,
+        },
+        lock(0, 2, 10),
+        // The child holds nothing, so the lower rank is admitted for it.
+        lock(1, 1, 11),
+        unlock(1, 11),
+        unlock(0, 10),
+        MutexInvariantEvent::Join {
+            parent: 0,
+            child: 1,
+        },
+        destroy_mutex(0, 1),
+        destroy_mutex(0, 2),
+    ]);
+    check_mutex_invariant_program(&program).expect("ranks order one task's own nesting");
+}
+
+/// R1, the created-but-unranked direction: a module that ranks some of its
+/// generations and not others has no lock order, so it is refused rather than
+/// checked over its ranked part. The unranked generation is never minted, so
+/// the later acquisition reports an unknown mutex — fail-closed fallout, not a
+/// second opinion about ranks.
+#[test]
+fn a_created_generation_with_no_declared_rank_is_refused() {
+    let program = MutexInvariantProgram {
+        lock_ranks: BTreeMap::from([(1, 1)]),
+        ..ranked_control(ranked_nesting(1, 2))
+    };
+    let diagnostics = refusals(&program);
+    assert!(
+        diagnostics.contains(&MutexInvariantDiagnostic::MixedLockRankDeclaration {
+            event: Some(1),
+            mutex: 2,
+        }),
+        "{diagnostics:?}"
+    );
+    assert!(codes(&diagnostics).contains(&"Q625"));
+    assert!(codes(&diagnostics).contains(&"Q600"), "{diagnostics:?}");
+}
+
+/// R1, the dangling-declaration direction: a declared rank naming a generation
+/// the trace never creates ranks nothing, so the order is incomplete and the
+/// whole program is refused. Without this half a module could quietly declare
+/// an order over generations it does not have.
+#[test]
+fn a_declared_rank_for_an_uncreated_generation_is_refused() {
+    let program = MutexInvariantProgram {
+        lock_ranks: BTreeMap::from([(1, 1), (2, 2), (3, 3)]),
+        ..ranked_control(ranked_nesting(1, 2))
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::MixedLockRankDeclaration {
+            event: None,
+            mutex: 3,
+        }]
+    );
+}
+
+/// The discipline is additive and runs last: a self-relock keeps its existing
+/// `DuplicateLockCapability`, the stronger rank-free fact, rather than being
+/// re-attributed to the equal-rank violation it also is.
+#[test]
+fn a_self_relock_reports_the_held_generation_not_the_equal_rank() {
+    let diagnostics = refusals(&ranked_control(vec![
+        create(0, 1, vec![fp(0, 8)]),
+        create(0, 2, vec![other_fp(0, 8)]),
+        lock(0, 1, 10),
+        lock(0, 1, 11),
+        unlock(0, 10),
+        destroy_mutex(0, 1),
+        destroy_mutex(0, 2),
+    ]));
+    assert!(
+        diagnostics
+            .contains(&MutexInvariantDiagnostic::DuplicateLockCapability { event: 3, mutex: 1 }),
+        "{diagnostics:?}"
+    );
+    assert!(
+        !codes(&diagnostics).contains(&"Q624"),
+        "the rank discipline must not displace an existing refusal: {diagnostics:?}"
+    );
+}
+
+/// An empty rank map leaves every decision above unmade. The certificate says
+/// so with an empty map, and a reader must not read that as "ranks were
+/// satisfied": this same nesting is admitted with no order checked at all.
+#[test]
+fn an_empty_rank_map_checks_no_order_at_all() {
+    let program = MutexInvariantProgram {
+        lock_ranks: BTreeMap::new(),
+        ..ranked_control(ranked_nesting(2, 1))
+    };
+    let certificate = check_mutex_invariant_program(&program)
+        .expect("with no ranks there is no order to violate");
+    assert!(certificate.declared_lock_ranks.is_empty());
+}
+
+/// `LockRankDeclaration` is unchanged: it still refuses at `Q622`, and now
+/// denotes a rank construct outside this bounded discipline. Declaring ranks
+/// does not admit it.
+#[test]
+fn the_unsupported_lock_rank_construct_still_refuses_under_the_discipline() {
+    let program = ranked_control(vec![
+        create(0, 1, vec![fp(0, 8)]),
+        create(0, 2, vec![other_fp(0, 8)]),
+        MutexInvariantEvent::UnsupportedConstruct {
+            task: 0,
+            construct: UnsupportedSynchronization::LockRankDeclaration,
+        },
+        destroy_mutex(0, 1),
+        destroy_mutex(0, 2),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::UnsupportedSynchronizationConstruct {
+                event: 2,
+                construct: UnsupportedSynchronization::LockRankDeclaration,
+            }
+        ]
+    );
+}
+
+/// The recheck re-derives the ranks and refuses a certificate whose recorded
+/// order is not the one the program declares — including the tamper that
+/// matters most, a certificate claiming ranks over a program that declared
+/// none.
+#[test]
+fn the_recheck_refuses_a_tampered_rank_record() {
+    let program = ranked_control(ranked_nesting(1, 2));
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    for forged in [
+        BTreeMap::new(),
+        BTreeMap::from([(1, 2), (2, 1)]),
+        BTreeMap::from([(1, 1), (2, 2), (3, 3)]),
+    ] {
+        let mut tampered = certificate.clone();
+        tampered.declared_lock_ranks = forged.clone();
+        assert_eq!(
+            recheck_mutex_invariant_certificate(&program, &tampered).unwrap_err(),
+            vec![CertificateRecheckError::FieldMismatch {
+                field: "declared_lock_ranks"
+            }],
+            "{forged:?}"
         );
     }
 }

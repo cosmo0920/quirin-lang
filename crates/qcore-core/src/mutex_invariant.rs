@@ -79,12 +79,61 @@
 //! the certificate — every condition is checked — and it records each admitted
 //! join, with its verified quiet subtree, in
 //! [`MutexInvariantCertificate::admitted_guard_local_joins`].
+//!
+//! # Lock ranks (card `CT33-RANKS`)
+//!
+//! Lock ranks were a *represented refusal* of this profile: the only way to
+//! mention one was [`UnsupportedSynchronization::LockRankDeclaration`], which
+//! refuses at `Q622`. That variant is unchanged and still refuses — it now
+//! denotes a rank construct outside this bounded discipline (a dynamic rank, a
+//! rank propagated through a call, a rank relation this model cannot decide).
+//!
+//! Beside it, [`MutexInvariantProgram::lock_ranks`] adds one **opt-in**,
+//! module-wide discipline. It is off by default: an empty map means every
+//! decision below is skipped and the checker's behaviour is byte-identical to
+//! before, which is what keeps every already-written trace unmoved.
+//!
+//! When the map is non-empty the discipline is on for the whole program, and:
+//!
+//! * **R1 — no mixed modules.** Every mutex generation the trace creates must
+//!   have a declared rank, and every declared rank must name a generation the
+//!   trace creates. Either direction is
+//!   [`MutexInvariantDiagnostic::MixedLockRankDeclaration`] (`Q625`). A module
+//!   that ranks some of its mutexes and not others has no lock order at all,
+//!   so it is refused rather than checked over the ranked part.
+//! * **R2 — strictly increasing acquisition.** A `Lock` of a generation with
+//!   rank `r` by a task that already holds a live guard over a generation with
+//!   rank `held >= r` is
+//!   [`MutexInvariantDiagnostic::LockRankViolation`] (`Q624`). Equality is
+//!   refused, not admitted: two generations at one rank may never be nested,
+//!   which is what makes the order a strict one.
+//!
+//! R2 is deliberately the *last* precondition of `Lock`, after the existing
+//! dead-generation, unknown-mutex, already-held and guard-freshness checks. The
+//! discipline is additive: it never displaces a refusal the profile already
+//! issues. In particular a task re-locking a generation it already holds keeps
+//! its existing `DuplicateLockCapability` (`Q600`) — the stronger, rank-free
+//! fact that the generation is held — even though its equal rank would also
+//! violate R2.
+//!
+//! What a *passing* rank check establishes is exactly R2: no execution of this
+//! trace nests two acquisitions in non-increasing rank order. It is **not** a
+//! deadlock-freedom proof. This model has no blocking — a `Lock` of a held
+//! generation is refused rather than parked — so the wait-for graph a real
+//! deadlock argument needs is not represented here at all, and waits on
+//! anything other than these mutexes (I/O, joins, condition variables) are
+//! outside the profile entirely. Accordingly the discipline adds **no**
+//! assumption to the certificate: the declared ranks are recorded verbatim in
+//! [`MutexInvariantCertificate::declared_lock_ranks`] and re-derived by the
+//! independent recheck, and nothing about the world is taken on trust. A rank
+//! is a name for a position in a declared order, not a claim about memory,
+//! layout or the scheduler.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 pub use crate::concurrency::{
-    AccessFootprint, AccessKind, ConcurrencyAssumption, ConcurrencyProfile, FULL_ACCESS,
+    AccessFootprint, AccessKind, ConcurrencyAssumption, ConcurrencyProfile, FULL_ACCESS, LockRank,
     SharedResourceId, TaskId,
 };
 
@@ -297,6 +346,15 @@ pub struct MutexInvariantProgram {
     pub initial_shares: Vec<ShareGrant>,
     pub initial_custody: BTreeMap<SharedResourceId, TaskId>,
     pub events: Vec<MutexInvariantEvent>,
+    /// Declared lock rank per mutex generation — card `CT33-RANKS`.
+    ///
+    /// Empty (the default) means the rank discipline is **off** and the
+    /// checker behaves exactly as it did before the discipline existed. A
+    /// non-empty map turns it on for the whole program: see
+    /// `§ Lock ranks` for R1 (no mixed modules) and R2 (strictly increasing
+    /// acquisition). A rank is a declared position in an order, never a
+    /// deadlock-freedom claim.
+    pub lock_ranks: BTreeMap<MutexId, LockRank>,
 }
 
 /// Which phase a guard's invariant is in.
@@ -405,6 +463,25 @@ pub enum MutexInvariantDiagnostic {
     },
     DeadMutexGeneration {
         event: usize,
+        mutex: MutexId,
+    },
+    /// R2 of `§ Lock ranks`: an acquisition of `mutex` at rank `rank` while
+    /// the acting task already holds `held_guard` over a generation at
+    /// `held_rank >= rank`. Reported only when the rank discipline is on.
+    LockRankViolation {
+        event: usize,
+        mutex: MutexId,
+        rank: LockRank,
+        held_guard: GuardId,
+        held_mutex: MutexId,
+        held_rank: LockRank,
+    },
+    /// R1 of `§ Lock ranks`: the rank discipline is on and this generation is
+    /// on exactly one side of it. `event` is the `CreateMutex` index for a
+    /// created-but-unranked generation, and `None` for a declared rank naming
+    /// a generation the trace never creates.
+    MixedLockRankDeclaration {
+        event: Option<usize>,
         mutex: MutexId,
     },
 
@@ -528,9 +605,13 @@ impl MutexInvariantDiagnostic {
     /// The source-level diagnostic code this refusal surfaces as. The fourteen
     /// named refusals of this profile occupy `Q610`-`Q623`; `DeadGuard` joins
     /// the affinity family at `Q612` and the remaining invariant-phase
-    /// refusals join `Q613`. Structural refusals carried over from the bounded
-    /// concurrency model keep the existing concurrency pass code `Q600`; they
-    /// are not new obligations of this profile.
+    /// refusals join `Q613`. Card `CT33-RANKS` extends the profile's band to
+    /// `Q625` with the two obligations of the opt-in lock-rank discipline:
+    /// `Q624` for an acquisition out of rank order and `Q625` for a module
+    /// that declares ranks for only part of itself. Structural refusals
+    /// carried over from the bounded concurrency model keep the existing
+    /// concurrency pass code `Q600`; they are not new obligations of this
+    /// profile.
     pub const fn code(&self) -> &'static str {
         match self {
             Self::UnprotectedFootprint { .. } => "Q610",
@@ -550,6 +631,8 @@ impl MutexInvariantDiagnostic {
             Self::MutexAuthorityNotConserved { .. } => "Q621",
             Self::UnsupportedSynchronizationConstruct { .. } => "Q622",
             Self::DeadMutexGeneration { .. } => "Q623",
+            Self::LockRankViolation { .. } => "Q624",
+            Self::MixedLockRankDeclaration { .. } => "Q625",
             _ => "Q600",
         }
     }
@@ -583,6 +666,13 @@ pub struct MutexInvariantCertificate {
     /// guard-local rule. Empty unless the trace used
     /// [`MutexInvariantEvent::GuardLocalJoin`] *and* every condition held.
     pub admitted_guard_local_joins: Vec<AdmittedGuardLocalJoin>,
+    /// The declared lock ranks the rank discipline ran under, verbatim. Empty
+    /// means the discipline was off and no acquisition order was checked; a
+    /// reader must not read an empty map as "ranks were satisfied". Non-empty
+    /// records exactly which generation sat at which declared position, and
+    /// the recheck re-derives it. It is not a deadlock-freedom claim
+    /// (`§ Lock ranks`).
+    pub declared_lock_ranks: BTreeMap<MutexId, LockRank>,
 }
 
 impl MutexInvariantCertificate {
@@ -954,6 +1044,10 @@ pub fn check_mutex_invariant_program(
     program: &MutexInvariantProgram,
 ) -> Result<MutexInvariantCertificate, Vec<MutexInvariantDiagnostic>> {
     let mut diagnostics = BTreeSet::<MutexInvariantDiagnostic>::new();
+    // The opt-in lock-rank discipline of `§ Lock ranks`. Off for an empty map,
+    // which is what keeps every trace written before the discipline existed
+    // byte-identical.
+    let ranked = !program.lock_ranks.is_empty();
 
     for grant in &program.initial_shares {
         if !grant.footprint.is_valid() {
@@ -1186,6 +1280,18 @@ pub fn check_mutex_invariant_program(
                         });
                         break 'event;
                     }
+                    // R1 of `§ Lock ranks`: with the discipline on, a mutex
+                    // this trace creates without a declared rank has no
+                    // position in the order, so the module is refused rather
+                    // than checked over its ranked part. The generation is not
+                    // minted, so a later `Lock` of it reports `UnknownMutex`.
+                    if ranked && !program.lock_ranks.contains_key(mutex) {
+                        diagnostics.insert(MutexInvariantDiagnostic::MixedLockRankDeclaration {
+                            event: Some(index),
+                            mutex: *mutex,
+                        });
+                        break 'event;
+                    }
                     let malformed = protects.is_empty()
                         || protects.iter().any(|footprint| !footprint.is_valid())
                         || protects.iter().enumerate().any(|(position, left)| {
@@ -1337,6 +1443,43 @@ pub fn check_mutex_invariant_program(
                     if !require_active(&clocks, &active, index, *task, &mut diagnostics) {
                         break 'event;
                     }
+                    // R2 of `§ Lock ranks`, computed before the mutable borrow
+                    // of `mutexes` below and applied *after* every existing
+                    // precondition, so the discipline never displaces a
+                    // refusal this profile already issues. A generation with
+                    // no declared rank cannot be reached here with the
+                    // discipline on — R1 refused its creation, so the
+                    // generation was never minted and `UnknownMutex` below
+                    // fires first — but the `None` arm blocks rather than
+                    // admits, so the rule stays fail-closed if that ever
+                    // changes. On that unreachable arm the reported `rank` is
+                    // the held rank, since there is no declared one to name.
+                    let rank_conflict = ranked
+                        .then(|| {
+                            let acquiring = program.lock_ranks.get(mutex).copied();
+                            guards
+                                .iter()
+                                .filter(|(_, state)| state.holder == *task)
+                                .filter_map(|(held_guard, state)| {
+                                    program
+                                        .lock_ranks
+                                        .get(&state.mutex)
+                                        .map(|held_rank| (*held_guard, state.mutex, *held_rank))
+                                })
+                                .find(|(_, _, held_rank)| match acquiring {
+                                    Some(rank) => *held_rank >= rank,
+                                    None => true,
+                                })
+                                .map(|(held_guard, held_mutex, held_rank)| {
+                                    (
+                                        acquiring.unwrap_or(held_rank),
+                                        held_guard,
+                                        held_mutex,
+                                        held_rank,
+                                    )
+                                })
+                        })
+                        .flatten();
                     if destroyed_mutexes.contains(mutex) {
                         diagnostics.insert(MutexInvariantDiagnostic::DeadMutexGeneration {
                             event: index,
@@ -1363,6 +1506,17 @@ pub fn check_mutex_invariant_program(
                             event: index,
                             kind: IdentityKind::Guard,
                             id: *guard,
+                        });
+                        break 'event;
+                    }
+                    if let Some((rank, held_guard, held_mutex, held_rank)) = rank_conflict {
+                        diagnostics.insert(MutexInvariantDiagnostic::LockRankViolation {
+                            event: index,
+                            mutex: *mutex,
+                            rank,
+                            held_guard,
+                            held_mutex,
+                            held_rank,
                         });
                         break 'event;
                     }
@@ -2003,6 +2157,18 @@ pub fn check_mutex_invariant_program(
         conservation_checkpoints += 1;
     }
 
+    // R1 of `§ Lock ranks`, the other direction: a declared rank naming a
+    // generation this trace never created ranks nothing, so the module's order
+    // is incomplete and the whole program is refused.
+    for mutex in program.lock_ranks.keys() {
+        if !minted_mutexes.contains(mutex) {
+            diagnostics.insert(MutexInvariantDiagnostic::MixedLockRankDeclaration {
+                event: None,
+                mutex: *mutex,
+            });
+        }
+    }
+
     for child in task_parents.keys() {
         if !joined.contains(child) {
             diagnostics.insert(MutexInvariantDiagnostic::OutstandingTask { child: *child });
@@ -2034,6 +2200,7 @@ pub fn check_mutex_invariant_program(
             admitted_invariant_transitions: transitions,
             derived_sync_edges: sync_edges,
             admitted_guard_local_joins: guard_local_joins,
+            declared_lock_ranks: program.lock_ranks.clone(),
         })
     } else {
         Err(diagnostics.into_iter().collect())
@@ -2108,6 +2275,10 @@ pub fn recheck_mutex_invariant_certificate(
             mismatch(
                 "admitted_guard_local_joins",
                 derived.admitted_guard_local_joins != certificate.admitted_guard_local_joins,
+            );
+            mismatch(
+                "declared_lock_ranks",
+                derived.declared_lock_ranks != certificate.declared_lock_ranks,
             );
         }
     }

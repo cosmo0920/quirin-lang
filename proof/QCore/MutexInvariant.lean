@@ -2119,4 +2119,400 @@ example : run custodied
     [.createMutex 0 1 [cell] 1, .spawn 0 1, .registerWaiter 1 1, .join 0 1,
      .destroyMutex 0 1] = none := by decide
 
+
+/-! ## 12. The opt-in lock-rank discipline (card `CT33-RANKS`)
+
+Ranks are declared, not derived: a `RankMap` says where each generation sits in
+an order the *program* chose. Nothing here claims a rank is correct, and a
+passing check is not a deadlock-freedom proof — this model has no blocking at
+all (`canLock` refuses a held generation rather than parking the acquirer), so
+the wait-for graph a real deadlock argument needs is not represented.
+
+What *is* proved is exactly the discipline's own claim. Every acquisition made
+while holding another generation contributes an edge `(held, acquired)` to the
+relation this model can express, `rankAdmits` refuses every edge that does not
+strictly increase in rank, and a relation whose every edge strictly increases a
+`Nat` has no cycle — no self-loop, and no path that returns to where it began.
+
+`step`, `run` and every definition above are untouched: the discipline is a
+layer over them, matching the Rust checker, where the rank test is the last
+precondition of `Lock` and an empty map skips it entirely. -/
+
+/-- A declared rank assignment: generation to position. -/
+abbrev RankMap := List (MutexId × Nat)
+
+def rankOf (rs : RankMap) (m : MutexId) : Option Nat :=
+  (rs.find? (fun p => p.1 == m)).map Prod.snd
+
+/-- The generations `task` currently holds a live guard over. -/
+def heldMutexes (s : State) (task : TaskId) : List MutexId :=
+  (s.guards.filter (fun g => g.holder == task)).map GuardRecord.mutex
+
+/-- R1's well-formedness half: every live generation has a declared position.
+A module that ranks only part of itself has no order, so the Rust checker
+refuses it outright rather than checking the ranked part. -/
+def ranksTotal (rs : RankMap) (s : State) : Bool :=
+  s.mutexes.all (fun r => (rankOf rs r.id).isSome)
+
+/-- R2. `task` may acquire `mutex` only if every generation it already holds
+sits strictly below `mutex`. Both `none` arms refuse: an unranked generation on
+either side of the comparison has no position, and an acquisition with no
+position is not admitted on the strength of the other side having one. -/
+def rankAdmits (rs : RankMap) (s : State) (task : TaskId) (mutex : MutexId) : Bool :=
+  match rankOf rs mutex with
+  | none => false
+  | some r =>
+      (heldMutexes s task).all (fun h =>
+        match rankOf rs h with
+        | none => false
+        | some hr => decide (hr < r))
+
+/-- The `(held, acquired)` edges one admitted acquisition contributes. This is
+the whole of the would-block relation this model can express. -/
+def lockEdges (s : State) (task : TaskId) (mutex : MutexId) : List (MutexId × MutexId) :=
+  (heldMutexes s task).map (fun h => (h, mutex))
+
+/-- One step under the discipline, collecting the edges it creates. Only `.lock`
+differs from `step`; every other event is `step` with no edge. -/
+def stepRanked (rs : RankMap) (s : State) : Event → Option (State × List (MutexId × MutexId))
+  | .lock task mutex guard =>
+      if canLock s task mutex guard && rankAdmits rs s task mutex then
+        some (lockEffect s task mutex guard, lockEdges s task mutex)
+      else none
+  | e => (step s e).map (fun next => (next, []))
+
+def runRanked (rs : RankMap) (s : State) :
+    List Event → Option (State × List (MutexId × MutexId))
+  | [] => some (s, [])
+  | e :: rest =>
+      match stepRanked rs s e with
+      | none => none
+      | some (next, here) => (runRanked rs next rest).map (fun p => (p.1, here ++ p.2))
+
+/-- An edge strictly increases rank. -/
+def rankIncreases (rs : RankMap) (e : MutexId × MutexId) : Bool :=
+  match rankOf rs e.1, rankOf rs e.2 with
+  | some a, some b => decide (a < b)
+  | _, _ => false
+
+/-! ### 12.1 Every admitted acquisition contributes only increasing edges -/
+
+theorem admitted_edges_increase_rank (rs : RankMap) (s : State) (task : TaskId)
+    (mutex : MutexId) (admits : rankAdmits rs s task mutex = true) :
+    (lockEdges s task mutex).all (rankIncreases rs) = true := by
+  simp only [lockEdges, List.all_map]
+  simp only [rankAdmits] at admits
+  cases hm : rankOf rs mutex with
+  | none => rw [hm] at admits; exact absurd admits (by simp)
+  | some r =>
+      rw [hm] at admits
+      rw [List.all_eq_true] at admits ⊢
+      intro h hmem
+      have := admits h hmem
+      simp only [Function.comp_apply, rankIncreases, hm]
+      cases hh : rankOf rs h with
+      | none => rw [hh] at this; exact absurd this (by simp)
+      | some hr => rw [hh] at this; simpa using this
+
+/-- Contrapositive: an acquisition whose edge would not increase rank is
+refused. Equal ranks are the case that matters — the order is strict. -/
+theorem a_non_increasing_acquisition_is_refused (rs : RankMap) (s : State) (task : TaskId)
+    (mutex held : MutexId) (holds : held ∈ heldMutexes s task)
+    (flat : rankIncreases rs (held, mutex) = false) :
+    rankAdmits rs s task mutex = false := by
+  cases hb : rankAdmits rs s task mutex with
+  | false => rfl
+  | true =>
+      have all := admitted_edges_increase_rank rs s task mutex hb
+      rw [lockEdges, List.all_map, List.all_eq_true] at all
+      have := all held holds
+      simp only [Function.comp_apply] at this
+      rw [flat] at this
+      exact absurd this (by simp)
+
+/-- Equal ranks are never admitted, stated on its own so the strictness of the
+order is not left to be read out of `<`. -/
+theorem equal_ranks_are_never_nested (rs : RankMap) (s : State) (task : TaskId)
+    (mutex held : MutexId) (r : Nat) (holds : held ∈ heldMutexes s task)
+    (hheld : rankOf rs held = some r) (hmutex : rankOf rs mutex = some r) :
+    rankAdmits rs s task mutex = false := by
+  refine a_non_increasing_acquisition_is_refused rs s task mutex held holds ?_
+  simp [rankIncreases, hheld, hmutex]
+
+/-- An unranked generation is refused on either side of the comparison: the
+discipline fails closed rather than admitting what it cannot place. -/
+theorem an_unranked_acquisition_is_refused (rs : RankMap) (s : State) (task : TaskId)
+    (mutex : MutexId) (unranked : rankOf rs mutex = none) :
+    rankAdmits rs s task mutex = false := by
+  simp [rankAdmits, unranked]
+
+theorem an_unranked_held_generation_refuses_every_acquisition (rs : RankMap) (s : State)
+    (task : TaskId) (mutex held : MutexId) (holds : held ∈ heldMutexes s task)
+    (unranked : rankOf rs held = none) :
+    rankAdmits rs s task mutex = false := by
+  refine a_non_increasing_acquisition_is_refused rs s task mutex held holds ?_
+  simp [rankIncreases, unranked]
+
+/-! ### 12.2 A whole run collects only increasing edges -/
+
+theorem runRanked_edges_increase_rank (rs : RankMap) :
+    ∀ (events : List Event) (s : State) (t : State) (edges : List (MutexId × MutexId)),
+      runRanked rs s events = some (t, edges) → edges.all (rankIncreases rs) = true := by
+  intro events
+  induction events with
+  | nil =>
+      intro s t edges h
+      simp only [runRanked, Option.some.injEq, Prod.mk.injEq] at h
+      rw [← h.2]
+      rfl
+  | cons e rest ih =>
+      intro s t edges h
+      simp only [runRanked] at h
+      cases hstep : stepRanked rs s e with
+      | none => rw [hstep] at h; exact absurd h (by simp)
+      | some p =>
+          rw [hstep] at h
+          simp only [Option.map_eq_some_iff] at h
+          obtain ⟨q, hq, hedges⟩ := h
+          have tail := ih p.1 q.1 q.2 hq
+          have head : p.2.all (rankIncreases rs) = true := by
+            cases e with
+            | lock task mutex guard =>
+                simp only [stepRanked] at hstep
+                by_cases hc : canLock s task mutex guard && rankAdmits rs s task mutex
+                · rw [if_pos hc] at hstep
+                  have admits : rankAdmits rs s task mutex = true :=
+                    (Bool.and_eq_true _ _ |>.mp hc).2
+                  have : p.2 = lockEdges s task mutex := by
+                    simp only [Option.some.injEq] at hstep; rw [← hstep]
+                  rw [this]
+                  exact admitted_edges_increase_rank rs s task mutex admits
+                · rw [if_neg hc] at hstep; exact absurd hstep (by simp)
+            | _ =>
+                -- Every other event is `step` unchanged and contributes no
+                -- edge, so there is nothing to check.
+                simp only [stepRanked, Option.map_eq_some_iff] at hstep
+                obtain ⟨_, _, hp⟩ := hstep
+                have empty : p.2 = [] := by rw [← hp]
+                rw [empty]
+                rfl
+          have : edges = p.2 ++ q.2 := by
+            have := congrArg Prod.snd hedges
+            simpa using this.symm
+          rw [this, List.all_append, head, tail]
+          rfl
+
+/-! ### 12.3 Increasing edges admit no cycle
+
+A path is a list of generations whose consecutive pairs are edges. If every
+edge strictly increases rank then every path's rank strictly increases, so a
+path of length two or more can never return to where it began. That is exactly
+"no cycle in the would-block relation the model can express". -/
+
+/-- `path` walks `edges`: every consecutive pair is one of them. -/
+def isPath (edges : List (MutexId × MutexId)) : List MutexId → Bool
+  | [] => true
+  | [_] => true
+  | a :: b :: rest => edges.contains (a, b) && isPath edges (b :: rest)
+
+/-- Rank, defaulted so the statement is total; every generation on an admitted
+path is ranked, by `admitted_edges_increase_rank`. -/
+def rankAt (rs : RankMap) (m : MutexId) : Nat := (rankOf rs m).getD 0
+
+private theorem increasing_edge_ranks (rs : RankMap) (edges : List (MutexId × MutexId))
+    (inc : edges.all (rankIncreases rs) = true) (a b : MutexId)
+    (mem : edges.contains (a, b) = true) : rankAt rs a < rankAt rs b := by
+  rw [List.all_eq_true] at inc
+  have : rankIncreases rs (a, b) = true := inc (a, b) (by simpa using mem)
+  simp only [rankIncreases] at this
+  cases ha : rankOf rs a with
+  | none => rw [ha] at this; exact absurd this (by simp)
+  | some x =>
+      cases hb : rankOf rs b with
+      | none => rw [ha, hb] at this; exact absurd this (by simp)
+      | some y =>
+          rw [ha, hb] at this
+          simp only [rankAt, ha, hb, Option.getD_some]
+          simpa using this
+
+/-- Along any path through increasing edges, rank strictly increases from the
+head to every later element. -/
+theorem path_rank_strictly_increases (rs : RankMap) (edges : List (MutexId × MutexId))
+    (inc : edges.all (rankIncreases rs) = true) :
+    ∀ (a : MutexId) (rest : List MutexId), isPath edges (a :: rest) = true →
+      ∀ b ∈ rest, rankAt rs a < rankAt rs b := by
+  intro a rest
+  induction rest generalizing a with
+  | nil => intro _ b hb; exact absurd hb (by simp)
+  | cons c tail ih =>
+      intro hpath b hb
+      simp only [isPath, Bool.and_eq_true] at hpath
+      have edge : rankAt rs a < rankAt rs c :=
+        increasing_edge_ranks rs edges inc a c hpath.1
+      rcases List.mem_cons.mp hb with rfl | hlater
+      · exact edge
+      · exact Nat.lt_trans edge (ih c hpath.2 b hlater)
+
+/-- **The discipline's soundness claim.** A rank-respecting run admits no cycle
+in the would-block relation it can express: no path through the edges it
+collected returns to where it began. -/
+theorem a_rank_respecting_run_admits_no_cycle (rs : RankMap) (events : List Event)
+    (s t : State) (edges : List (MutexId × MutexId))
+    (ran : runRanked rs s events = some (t, edges)) (a : MutexId) (rest : List MutexId)
+    (nonempty : rest ≠ []) (walks : isPath edges (a :: rest) = true) :
+    rest.getLast nonempty ≠ a := by
+  have inc := runRanked_edges_increase_rank rs events s t edges ran
+  have := path_rank_strictly_increases rs edges inc a rest walks
+    (rest.getLast nonempty) (List.getLast_mem nonempty)
+  intro hcycle
+  rw [hcycle] at this
+  exact absurd this (Nat.lt_irrefl _)
+
+/-- The self-loop case, stated separately because it is the one a reader checks
+first: a generation is never acquired while it is itself held. -/
+theorem no_generation_is_acquired_while_held (rs : RankMap) (s : State) (task : TaskId)
+    (mutex : MutexId) (holds : mutex ∈ heldMutexes s task) :
+    rankAdmits rs s task mutex = false := by
+  refine a_non_increasing_acquisition_is_refused rs s task mutex mutex holds ?_
+  simp only [rankIncreases]
+  cases h : rankOf rs mutex with
+  | none => simp
+  | some r => simp
+
+/-! ### 12.4 The discipline only ever refuses
+
+Everything the ranked layer admits, the unranked model admits too, and every
+non-`lock` event is `step` unchanged. So turning ranks on cannot make a refused
+trace check, and cannot change what a checking trace does. -/
+
+theorem stepRanked_agrees_with_step_off_lock (rs : RankMap) (s : State) (e : Event)
+    (notLock : ∀ task mutex guard, e ≠ .lock task mutex guard) :
+    stepRanked rs s e = (step s e).map (fun next => (next, [])) := by
+  cases e with
+  | lock task mutex guard => exact absurd rfl (notLock task mutex guard)
+  | _ => rfl
+
+theorem stepRanked_refines_step (rs : RankMap) (s : State) (e : Event) (next : State)
+    (edges : List (MutexId × MutexId)) (ranked : stepRanked rs s e = some (next, edges)) :
+    step s e = some next := by
+  cases e with
+  | lock task mutex guard =>
+      simp only [stepRanked] at ranked
+      by_cases hc : canLock s task mutex guard && rankAdmits rs s task mutex
+      · rw [if_pos hc] at ranked
+        simp only [Option.some.injEq, Prod.mk.injEq] at ranked
+        simp only [step, if_pos (Bool.and_eq_true _ _ |>.mp hc).1, Option.some.injEq]
+        exact ranked.1
+      · rw [if_neg hc] at ranked; exact absurd ranked (by simp)
+  | _ =>
+      simp only [stepRanked, Option.map_eq_some_iff] at ranked
+      obtain ⟨w, hw, hp⟩ := ranked
+      rw [hw]
+      simp only [Option.some.injEq]
+      exact (Prod.mk.injEq .. ▸ hp).1.symm ▸ rfl
+
+theorem runRanked_refines_run (rs : RankMap) :
+    ∀ (events : List Event) (s t : State) (edges : List (MutexId × MutexId)),
+      runRanked rs s events = some (t, edges) → run s events = some t := by
+  intro events
+  induction events with
+  | nil =>
+      intro s t edges h
+      simp only [runRanked, Option.some.injEq, Prod.mk.injEq] at h
+      simp [run, h.1]
+  | cons e rest ih =>
+      intro s t edges h
+      simp only [runRanked] at h
+      cases hstep : stepRanked rs s e with
+      | none => rw [hstep] at h; exact absurd h (by simp)
+      | some p =>
+          rw [hstep] at h
+          simp only [Option.map_eq_some_iff] at h
+          obtain ⟨q, hq, hedges⟩ := h
+          have head := stepRanked_refines_step rs s e p.1 p.2 (by rw [hstep])
+          have tail := ih p.1 q.1 q.2 hq
+          have same : t = q.1 := by
+            have := congrArg Prod.fst hedges
+            simpa using this.symm
+          rw [same]
+          simp only [run, head, Option.bind_some, tail]
+
+/-! ### 12.5 Decidable scenarios
+
+The shapes the Rust tests drive, decided here over the same rules. -/
+
+private def twoCells : State :=
+  { holdings := [{ custodian := .task 0, footprint := ⟨1, 0, 8⟩, share := fullAccess },
+                 { custodian := .task 0, footprint := ⟨2, 0, 8⟩, share := fullAccess }] }
+
+private def ranks : RankMap := [(1, 1), (2, 2)]
+
+private def flatRanks : RankMap := [(1, 4), (2, 4)]
+
+-- Nesting the higher rank inside the lower one is admitted, and its one edge
+-- increases.
+example : (runRanked ranks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 1 10, .lock 0 2 11, .unlock 0 11, .unlock 0 10]).isSome = true := by decide
+
+example : (runRanked ranks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 1 10, .lock 0 2 11, .unlock 0 11, .unlock 0 10]).map Prod.snd
+    = some [(1, 2)] := by decide
+
+-- The reverse nesting is the CT33 shape, and is refused.
+example : runRanked ranks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 2 10, .lock 0 1 11] = none := by decide
+
+-- Equal ranks are refused in both directions.
+example : runRanked flatRanks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 1 10, .lock 0 2 11] = none := by decide
+
+example : runRanked flatRanks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 2 10, .lock 0 1 11] = none := by decide
+
+-- A released guard imposes no order on the next acquisition.
+example : (runRanked ranks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 2 10, .unlock 0 10, .lock 0 1 11, .unlock 0 11]).isSome = true := by decide
+
+-- R1: a module that ranks only part of itself places nothing, so every
+-- acquisition of the unplaced generation is refused.
+example : ranksTotal [(1, 1)] { twoCells with
+    mutexes := [{ id := 1, protects := [⟨1, 0, 8⟩], invariant := 1, creator := 0,
+                  holder := none, waiters := [], releasedBy := [], observed := [] },
+                { id := 2, protects := [⟨2, 0, 8⟩], invariant := 2, creator := 0,
+                  holder := none, waiters := [], releasedBy := [], observed := [] }] }
+    = false := by decide
+
+example : runRanked [(1, 1)] twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .lock 0 2 10] = none := by decide
+
+-- A three-generation chain checks, and the closing edge is refused.
+private def threeRanks : RankMap := [(1, 1), (2, 2), (3, 3)]
+
+private def threeCells : State :=
+  { holdings := [{ custodian := .task 0, footprint := ⟨1, 0, 8⟩, share := fullAccess },
+                 { custodian := .task 0, footprint := ⟨2, 0, 8⟩, share := fullAccess },
+                 { custodian := .task 0, footprint := ⟨3, 0, 8⟩, share := fullAccess }] }
+
+example : (runRanked threeRanks threeCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .createMutex 0 3 [⟨3, 0, 8⟩] 3,
+     .lock 0 1 10, .lock 0 2 11, .lock 0 3 12,
+     .unlock 0 12, .unlock 0 11, .unlock 0 10]).isSome = true := by decide
+
+example : runRanked threeRanks threeCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .createMutex 0 2 [⟨2, 0, 8⟩] 2,
+     .createMutex 0 3 [⟨3, 0, 8⟩] 3,
+     .lock 0 3 10, .lock 0 1 11] = none := by decide
+
+-- The unsupported rank construct still refuses under the discipline.
+example : runRanked ranks twoCells
+    [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .unsupportedConstruct 0] = none := by decide
+
 end QCore.Concurrency.MutexInvariant

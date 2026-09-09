@@ -2197,6 +2197,13 @@ fn is_reserved_source_word(word: &str) -> bool {
             // header, never a reference to a binding. The guard name that
             // follows it *is* a reference and still resolves normally.
             | "under"
+            // Card CT33-RANKS's ranked mutex declaration
+            // (`let m = mutex rank 1 guards r;`). Reserved for the same reason
+            // as every profile keyword above: it is a clause word in a
+            // declaration, never a reference to a binding. Measured
+            // load-bearing: without it the ranked declaration collects `rank`
+            // as a referenced name and refuses with `Q013`.
+            | "rank"
             | "spawn"
             | "join"
             | "copy"

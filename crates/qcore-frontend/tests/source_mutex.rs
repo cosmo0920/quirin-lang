@@ -1039,3 +1039,350 @@ fn a_guard_local_child_that_waits_for_the_held_generation_is_refused() {
         vec!["Q619", "Q600", "Q600", "Q600", "Q600"]
     );
 }
+
+// ---------------------------------------------------------------------------
+// Card CT33-RANKS: the opt-in lock-rank discipline, reached from source.
+//
+// The point of these cases is that a lock-order cycle is now *writable*. Before
+// this card no source form declared a rank, so the shape CT33 describes could
+// not be expressed at all and the profile's refusal was untestable from source.
+// ---------------------------------------------------------------------------
+
+/// Two protected resources and two ranked mutexes over them. `a` sits strictly
+/// below `b`, so nesting `b` inside `a` is the admitted order.
+const RANKED: &str = "let x = protected 4; let y = protected 4; \
+     let a = mutex rank 1 guards x; let b = mutex rank 2 guards y;";
+
+/// The accepted control: acquisitions in strictly increasing rank order. This
+/// is one statement away from every refusal below.
+#[test]
+fn nested_guards_in_increasing_rank_order_check() {
+    let module = codes(&entry(&format!(
+        "{RANKED} with lock a as ga {{ with lock b as gb {{ open gb; write y with gb; \
+         close gb; }} }}"
+    )))
+    .unwrap();
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    assert_eq!(
+        certificate.declared_lock_ranks,
+        std::collections::BTreeMap::from([(1, 1), (2, 2)]),
+        "the certificate records the declared order verbatim"
+    );
+    // The discipline adds no premise: a rank is a declared position, not a
+    // claim about the world, and a passing check is not a deadlock proof.
+    assert_eq!(
+        certificate.assumption_names(),
+        std::collections::BTreeSet::from([
+            "InitialAuthorityAndUniqueLifetimeIds",
+            "DeclaredFootprintShape",
+            "InvariantPredicateDeclared",
+        ])
+    );
+    recheck_mutex_invariant_certificate(&module.program, &certificate).unwrap();
+}
+
+/// CT33 itself: a lock-order cycle. One section nests `b` inside `a` and the
+/// next nests `a` inside `b`. The second is refused at `Q624`.
+#[test]
+fn a_lock_order_cycle_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ with lock b as gb {{ }} }} \
+             with lock b as gc {{ with lock a as gd {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q624", "Q612"],
+        "the descending acquisition is the refusal; the ascending one checks. `Q612` is \
+         its fallout: the refused `Lock` minted no guard, so the section's own `Unlock` \
+         names a dead one"
+    );
+}
+
+/// A three-mutex cycle: `a < b < c` individually, closed by acquiring `a` while
+/// holding `c`. Only the closing edge is refused.
+#[test]
+fn a_three_mutex_cycle_is_refused_at_its_closing_edge() {
+    let declarations = "let x = protected 4; let y = protected 4; let z = protected 4; \
+         let a = mutex rank 1 guards x; let b = mutex rank 2 guards y; \
+         let c = mutex rank 3 guards z;";
+    assert_eq!(
+        codes(&entry(&format!(
+            "{declarations} with lock a as g1 {{ with lock b as g2 {{ }} }} \
+             with lock b as g3 {{ with lock c as g4 {{ }} }} \
+             with lock c as g5 {{ with lock a as g6 {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q624", "Q612"],
+        "only the closing edge is refused; the two ascending edges check"
+    );
+    // Every edge in increasing order, same three sections, checks.
+    codes(&entry(&format!(
+        "{declarations} with lock a as g1 {{ with lock b as g2 {{ }} }} \
+         with lock b as g3 {{ with lock c as g4 {{ }} }} \
+         with lock a as g5 {{ with lock c as g6 {{ }} }}"
+    )))
+    .unwrap();
+}
+
+/// Equal ranks are refused, not admitted: the order is a strict one, so two
+/// generations at one rank may never be nested in either direction.
+#[test]
+fn equal_ranks_may_not_be_nested() {
+    let declarations = "let x = protected 4; let y = protected 4; \
+         let a = mutex rank 7 guards x; let b = mutex rank 7 guards y;";
+    assert_eq!(
+        codes(&entry(&format!(
+            "{declarations} with lock a as ga {{ with lock b as gb {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q624", "Q612"]
+    );
+    assert_eq!(
+        codes(&entry(&format!(
+            "{declarations} with lock b as gb {{ with lock a as ga {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q624", "Q612"],
+        "neither direction is the admitted one"
+    );
+    // Both sections separately, with no nesting, check under the same ranks.
+    codes(&entry(&format!(
+        "{declarations} with lock a as ga {{ }} with lock b as gb {{ }}"
+    )))
+    .unwrap();
+}
+
+/// Re-locking a generation the task already holds is refused by the existing
+/// `DuplicateLockCapability` (`Q600`), **not** by the new `Q624`, even though
+/// its equal rank also violates R2. The discipline is additive: it is the last
+/// precondition of `Lock` and never displaces a refusal the profile already
+/// issues.
+#[test]
+fn a_self_relock_keeps_its_existing_refusal_in_rank_mode() {
+    let ranked = codes(&entry(
+        "let x = protected 4; let a = mutex rank 1 guards x; \
+         with lock a as g1 { with lock a as g2 { } }",
+    ))
+    .unwrap_err();
+    assert!(
+        ranked.contains(&"Q600".to_owned()) && !ranked.contains(&"Q624".to_owned()),
+        "the held generation is the stronger, rank-free fact: {ranked:?}"
+    );
+    // Unranked, the same source is not even expressible: nesting without a
+    // declared order keeps its `Q622` represented refusal, unchanged.
+    assert_eq!(
+        codes(&entry(
+            "let x = protected 4; let a = mutex guards x; \
+             with lock a as g1 { with lock a as g2 { } }",
+        ))
+        .unwrap_err(),
+        vec!["Q622"]
+    );
+}
+
+/// R1: a module that ranks some of its mutexes and not others has no lock
+/// order, so it is refused rather than checked over its ranked part.
+#[test]
+fn a_module_that_mixes_ranked_and_unranked_mutexes_is_refused() {
+    let mixed = codes(&entry(
+        "let x = protected 4; let y = protected 4; \
+         let a = mutex rank 1 guards x; let b = mutex guards y; \
+         with lock a as ga { } with lock b as gb { }",
+    ))
+    .unwrap_err();
+    assert_eq!(
+        mixed[0], "Q625",
+        "the unranked generation is the refusal; the rest is fallout from its \
+         creation never being admitted, {mixed:?}"
+    );
+    assert!(mixed.iter().any(|code| code == "Q600"));
+    // Ranking the second mutex too is the one-declaration repair.
+    codes(&entry(
+        "let x = protected 4; let y = protected 4; \
+         let a = mutex rank 1 guards x; let b = mutex rank 2 guards y; \
+         with lock a as ga { } with lock b as gb { }",
+    ))
+    .unwrap();
+}
+
+/// Declaring the same mutex name twice is refused before any rank question is
+/// reached, ranked spelling or not: a redeclaration is a name-binding failure.
+#[test]
+fn a_redeclared_mutex_name_is_refused_with_either_spelling() {
+    for declarations in [
+        "let x = protected 4; let m = mutex rank 1 guards x; let m = mutex rank 2 guards x;",
+        "let x = protected 4; let m = mutex rank 1 guards x; let m = mutex guards x;",
+    ] {
+        assert_eq!(
+            codes(&entry(declarations)).unwrap_err(),
+            vec!["Q012"],
+            "a duplicate binding is a name-resolution refusal, reached before any \
+             rank question: `{declarations}`"
+        );
+    }
+}
+
+/// A malformed rank is refused by the grammar, never defaulted. `integer` is
+/// `u32`-valued, so a sign, an overflow and a non-literal all land here.
+#[test]
+fn a_malformed_lock_rank_is_refused() {
+    for declaration in [
+        "let x = protected 4; let m = mutex rank guards x;",
+        "let x = protected 4; let m = mutex rank x guards x;",
+        "let x = protected 4; let m = mutex rank -1 guards x;",
+        "let x = protected 4; let m = mutex rank 4294967296 guards x;",
+        "let x = protected 4; let m = mutex rank 1 x;",
+        "let x = protected 4; let m = mutex rank 1 guards;",
+    ] {
+        assert_eq!(
+            codes(&entry(declaration)).unwrap_err(),
+            vec!["Q600"],
+            "`{declaration}`"
+        );
+    }
+}
+
+/// The ranked spelling selects this route and needs the concurrency import,
+/// exactly as the unranked one does. Without both, the ranked declaration
+/// would be the one mutex form usable with no import.
+#[test]
+fn the_ranked_spelling_selects_the_route_and_requires_the_import() {
+    let parsed = parse_source_program(
+        "fn main() -> unit { thread scope s { let x = protected 4; \
+         let m = mutex rank 1 guards x; } }",
+    )
+    .unwrap();
+    assert!(has_source_mutex(&parsed));
+    assert_eq!(
+        elaborate_source(&parsed)
+            .unwrap_err()
+            .into_iter()
+            .map(|d| d.code.to_owned())
+            .collect::<Vec<_>>(),
+        vec!["Q015"],
+        "the missing `import std.concurrency;` is refused before checking"
+    );
+}
+
+/// `rank` joins the profile keywords in the reserved-word list, and that
+/// reservation is load-bearing rather than decorative: without it the ranked
+/// declaration collects `rank` as a referenced name and refuses at `Q013`.
+/// Measured alongside it: a resource still *may* be named `rank`, exactly as
+/// one may be named `guards` today, so the reservation costs nothing already
+/// written. Both halves are asserted so a future edit cannot quietly drop
+/// either.
+#[test]
+fn reserving_rank_is_load_bearing_and_costs_no_existing_spelling() {
+    // Load-bearing half: the ranked declaration parses and checks.
+    codes(&entry(
+        "let x = protected 4; let a = mutex rank 1 guards x; with lock a as g { }",
+    ))
+    .unwrap();
+    // No-cost half: `rank` and the already-reserved `guards` are both still
+    // usable as ordinary resource names.
+    for word in ["rank", "guards"] {
+        codes(&entry(&format!(
+            "let {word} = protected 4; let m = mutex guards {word}; \
+             with lock m as g {{ open g; write {word} with g; close g; }}"
+        )))
+        .unwrap_or_else(|codes| panic!("`{word}` should still name a resource: {codes:?}"));
+    }
+}
+
+/// An unranked module is unchanged: the certificate records an empty rank map,
+/// and a reader must not read that as "ranks were satisfied".
+#[test]
+fn an_unranked_module_records_no_ranks() {
+    let module = codes(&entry(OPEN_WRITE_CLOSE)).unwrap();
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    assert!(certificate.declared_lock_ranks.is_empty());
+    assert!(module.program.lock_ranks.is_empty());
+}
+
+/// Admitting a nested section does not widen guard authority: the inner body's
+/// frame carries only the inner section, so naming the enclosing guard from
+/// inside the nested one is refused. A nested acquisition buys the right to
+/// hold two guards, not the right to conflate them.
+#[test]
+fn a_nested_section_may_not_name_the_enclosing_guard() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ with lock b as gb {{ open ga; }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// Two interactions measured and pinned rather than assumed. Both are admitted,
+/// and both are sound for the same reason: the enclosing guard is still held
+/// throughout, and everything derived from it stays keyed to it. The inner
+/// section reaches a disjoint footprint that its own mutex protects.
+#[test]
+fn an_enclosing_open_invariant_and_a_live_borrow_survive_a_nested_section() {
+    // The outer invariant is open across the nesting. Nothing in the inner
+    // section can reach the outer footprint, and the outer `close` is still
+    // required before its `unlock`.
+    codes(&entry(&format!(
+        "{RANKED} with lock a as ga {{ open ga; with lock b as gb {{ }} \
+         write x with ga; close ga; }}"
+    )))
+    .unwrap();
+    // An outer guard-derived borrow is still live across the nesting, and
+    // still has to end before the outer section does.
+    codes(&entry(&format!(
+        "{RANKED} with lock a as ga {{ let bo = borrow x with ga; \
+         with lock b as gb {{ }} drop bo; }}"
+    )))
+    .unwrap();
+    // Leaving that borrow live at the outer section's end is still `Q615`.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ let bo = borrow x with ga; \
+             with lock b as gb {{ }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q615", "Q619", "Q600", "Q600", "Q600"],
+        "the same fail-closed cascade an unnested escaping borrow produces"
+    );
+}
+
+/// A nested acquisition is a statement like any other, so it invalidates the
+/// decidable read-only region behind `close g unchanged;`. The checked
+/// `NoWriteOccurred` witness is never silently downgraded to the declared one.
+#[test]
+fn a_nested_section_invalidates_the_checked_no_write_witness() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ open ga; with lock b as gb {{ }} \
+             close ga unchanged; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"]
+    );
+}
+
+/// Nesting composes with card T03-GUARD-JOIN in the conservative direction:
+/// its condition G3 requires the joining guard to be the *only* one the parent
+/// holds, so a guard-local join written inside a nested section is refused
+/// while the same join in an unnested section is admitted. The nesting
+/// admission does not quietly widen a rule that was argued for one held guard.
+#[test]
+fn a_guard_local_join_inside_a_nested_section_is_refused() {
+    // Admitted: one held guard, the guard-local join's own section.
+    codes(&entry(&format!(
+        "{RANKED} with lock b as gb {{ thread scope c under gb {{ }} }}"
+    )))
+    .unwrap();
+    // Refused: the same join with the outer section also held.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{RANKED} with lock a as ga {{ with lock b as gb {{ \
+             thread scope c under gb {{ }} }} }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"],
+        "G3 wants the section to be the only one held; two guards keep the \
+         existing JoinWhileGuardHeld refusal"
+    );
+}

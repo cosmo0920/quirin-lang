@@ -16,6 +16,7 @@
 //! scope       ::= "thread" "scope" NAME "{" outer* "}"
 //! outer       ::= "let" NAME "=" "protected" INT ";"          -- one protected resource
 //!               | "let" NAME "=" "mutex" "guards" NAME ";" -- fixed footprint, declared here
+//!               | "let" NAME "=" "mutex" "rank" INT "guards" NAME ";" -- with a declared lock rank
 //!               | "let" NAME "=" "fact" NAME ";"           -- a guard-scoped refinement fact
 //!               | "read" NAME ";" | "write" NAME ";"       -- unguarded access
 //!               | "wait" NAME ";"                          -- announced acquisition
@@ -63,6 +64,16 @@
 //!   own `JoinWhileGuardHeld` rule, and a child that names the enclosing
 //!   guard is refused with `WrongGuardAffinity` (`Q612`).
 //!
+//! Card CT33-RANKS adds the ranked declaration `let m = mutex rank N guards r;`
+//! and nothing else: `with lock` is unchanged, and the acquisition order a
+//! nested section already produces is what the core's opt-in rank discipline
+//! decides. So a lock-order cycle is now *writable* — two sections that nest
+//! `a` inside `b` and `b` inside `a` — and is refused at check time with
+//! `Q624`, while a module that ranks only some of its mutexes is refused with
+//! `Q625`. Declaring no rank at all leaves every existing module byte-identical.
+//! A passing rank check is not a deadlock-freedom proof; see the core module's
+//! `§ Lock ranks` for exactly what it does and does not establish.
+//!
 //! Card T03-GUARD-JOIN adds one opt-in form on top of that last rule.
 //! `thread scope c under g { … }`, written inside `g`'s own section, lowers its
 //! join to the core's `GuardLocalJoin` instead of `Join`. `under` names the
@@ -91,9 +102,9 @@ use std::collections::BTreeMap;
 use crate::frontend::*;
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::prelude::concurrency::mutex_invariant::{
-    AccessFootprint, AccessKind, FULL_ACCESS, InvariantWitness, MutexId, MutexInvariantDiagnostic,
-    MutexInvariantEvent, MutexInvariantProgram, ShareGrant, SharedResourceId,
-    UnsupportedSynchronization,
+    AccessFootprint, AccessKind, FULL_ACCESS, InvariantWitness, LockRank, MutexId,
+    MutexInvariantDiagnostic, MutexInvariantEvent, MutexInvariantProgram, ShareGrant,
+    SharedResourceId, UnsupportedSynchronization,
 };
 
 /// The task the entry function itself runs as. Child tasks are the nested
@@ -110,12 +121,17 @@ pub struct MutexSourceResource {
     pub bytes: u32,
 }
 
-/// One mutex generation declared by `let NAME = mutex guards R;`.
+/// One mutex generation declared by `let NAME = mutex guards R;`, or by the
+/// ranked spelling `let NAME = mutex rank N guards R;`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MutexSourceGeneration {
     pub name: String,
     pub mutex: MutexId,
     pub protects: SharedResourceId,
+    /// The declared lock rank, or `None` for the unranked spelling. This
+    /// records what the source said; whether a module may mix the two is the
+    /// core's R1 decision, not this record's.
+    pub rank: Option<LockRank>,
 }
 
 /// A complete lowering of one entry function. The core checker still has to
@@ -168,6 +184,7 @@ fn event_index(diagnostic: &MutexInvariantDiagnostic) -> Option<usize> {
         | D::ForgedSynchronizationWitness { event, .. }
         | D::UnsupportedSynchronizationConstruct { event, .. }
         | D::DeadMutexGeneration { event, .. }
+        | D::LockRankViolation { event, .. }
         | D::DeadGuard { event, .. }
         | D::DoubleOpenInvariant { event, .. }
         | D::WriteWithClosedInvariant { event, .. }
@@ -187,7 +204,12 @@ fn event_index(diagnostic: &MutexInvariantDiagnostic) -> Option<usize> {
         | D::IdentityNotFresh { event, .. }
         | D::UnknownBorrow { event, .. }
         | D::UnknownFact { event, .. } => Some(*event),
-        D::MutexAuthorityNotConserved { event, .. } | D::InvalidFootprint { event } => *event,
+        D::MutexAuthorityNotConserved { event, .. }
+        | D::InvalidFootprint { event }
+        // R1's created-but-unranked half names its `CreateMutex`; its
+        // dangling-declaration half names no event at all, and falls back to
+        // the scope span like the end-of-trace sweep does.
+        | D::MixedLockRankDeclaration { event, .. } => *event,
         D::DataRace { first, .. } => Some(*first),
         D::OutstandingTask { .. }
         | D::OutstandingGuard { .. }
@@ -200,10 +222,24 @@ fn event_index(diagnostic: &MutexInvariantDiagnostic) -> Option<usize> {
 /// grants no support, and a detected module that leaves the admitted grammar is
 /// refused rather than handed to another route.
 pub fn has_source_mutex(source: &SourceProgram) -> bool {
+    // `mutex rank` selects this route as surely as `mutex guards` does: without
+    // it, card CT33-RANKS's ranked declaration would fall through to another
+    // route and be refused for the wrong reason.
+    source.lexical_tokens().windows(2).any(|pair| {
+        word(pair.first(), "mutex") && (word(pair.get(1), "guards") || word(pair.get(1), "rank"))
+    })
+}
+
+/// Whether this module opts into card CT33-RANKS's lock-rank discipline.
+///
+/// Syntactic and whole-module, like [`has_source_mutex`]: it grants nothing on
+/// its own, and a module it selects still has to satisfy the core's R1 (every
+/// generation ranked) and R2 (strictly increasing acquisition).
+fn declares_lock_rank(source: &SourceProgram) -> bool {
     source
         .lexical_tokens()
         .windows(2)
-        .any(|pair| word(pair.first(), "mutex") && word(pair.get(1), "guards"))
+        .any(|pair| word(pair.first(), "mutex") && word(pair.get(1), "rank"))
 }
 
 fn failure(span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -297,6 +333,14 @@ struct Lowering {
     resource_of: BTreeMap<String, SharedResourceId>,
     bytes_of: BTreeMap<SharedResourceId, u32>,
     mutex_of: BTreeMap<String, MutexId>,
+    /// Declared lock ranks, keyed by model generation — card `CT33-RANKS`.
+    /// Empty unless at least one `mutex rank N guards R` declaration appeared,
+    /// which is exactly the core's opt-in condition.
+    lock_ranks: BTreeMap<MutexId, LockRank>,
+    /// Whether this module declares any lock rank at all, decided once over
+    /// the whole source. It gates the *nesting* admission below, so it must not
+    /// depend on how far lowering has got.
+    ranked: bool,
     /// Declared refinement facts: source name to the protected resource the
     /// fact is about.
     fact_resource: BTreeMap<String, SharedResourceId>,
@@ -444,7 +488,15 @@ fn lower(
         ));
     };
 
-    let mut state = Lowering::default();
+    let mut state = Lowering {
+        // Card CT33-RANKS: whether this module opted into the rank discipline
+        // is decided once, syntactically, over the whole source, before any
+        // statement is lowered. Reading it off the declarations seen so far
+        // would make a nested section's admission depend on where the
+        // declaration happened to sit.
+        ranked: declares_lock_rank(source),
+        ..Lowering::default()
+    };
     for statement in &scope_body.statements {
         if lower_statement(source, statement, Frame::root(), false, &mut state)?.is_some() {
             return Err(failure(
@@ -494,6 +546,7 @@ fn lower(
             .map(|resource| (resource.resource, ROOT_TASK))
             .collect(),
         events: state.events,
+        lock_ranks: state.lock_ranks,
     };
     Ok(LoweredMutexModule {
         entry: entry.to_owned(),
@@ -549,7 +602,15 @@ fn lower_statement(
         }
         StatementKind::WithLock { guard, body } => {
             state.invalidate_open_regions();
-            if frame.section.is_some() {
+            // Card CT33-RANKS. A section nested inside another is admitted only
+            // when this module declared a lock order for it. That is the whole
+            // rule: you may nest exactly where you have said in which order,
+            // and the core's R2 then decides whether this particular nesting
+            // respects it. Without a declared rank there is no order to check
+            // against, so the existing represented refusal stands unchanged —
+            // which is what leaves every module written before this card
+            // byte-identical.
+            if frame.section.is_some() && !state.ranked {
                 // Represented refusal: the construct becomes a real event the
                 // core rejects, rather than being inexpressible here.
                 state.push(
@@ -1133,17 +1194,38 @@ fn lower_declaration(
         return Ok(());
     }
     if word(tokens.get(3), "mutex") {
-        if tokens.len() != 7
-            || !word(tokens.get(4), "guards")
-            || !symbol(tokens.get(6), Symbol::Semicolon)
+        // Card `CT33-RANKS`: `mutex rank N guards R` is the ranked spelling of
+        // the same declaration. Whether a rank is declared is decided here and
+        // nowhere else; the module-wide "all or none" rule (R1) is the core's,
+        // so a partly ranked module reaches the checker and is refused there
+        // with `Q625` rather than being second-guessed by this grammar.
+        let ranked = word(tokens.get(4), "rank");
+        // `integer` is `u32`-valued, so a sign, an overflow or a non-literal
+        // all land on the same refusal rather than being silently truncated.
+        let rank: Option<LockRank> = if ranked {
+            Some(integer(tokens.get(5)).ok_or_else(|| {
+                failure(
+                    span,
+                    "a lock rank is one decimal literal in `0 ..= 4294967295`, as in \
+                     `let NAME = mutex rank 1 guards RESOURCE;`",
+                )
+            })?)
+        } else {
+            None
+        };
+        let (length, guards_at, resource_at) = if ranked { (9, 6, 7) } else { (7, 4, 5) };
+        if tokens.len() != length
+            || !word(tokens.get(guards_at), "guards")
+            || !symbol(tokens.get(length - 1), Symbol::Semicolon)
         {
             return Err(failure(
                 span,
-                "a mutex declaration is exactly `let NAME = mutex guards RESOURCE;`; the \
+                "a mutex declaration is exactly `let NAME = mutex guards RESOURCE;`, or \
+                 `let NAME = mutex rank N guards RESOURCE;` to declare a lock rank; the \
                  protected footprint is fixed at this declaration",
             ));
         }
-        let protected = name(tokens.get(5))
+        let protected = name(tokens.get(resource_at))
             .ok_or_else(|| failure(span, "a mutex declaration names one shared resource"))?;
         let resource = *state.resource_of.get(protected).ok_or_else(|| {
             failure(
@@ -1154,6 +1236,9 @@ fn lower_declaration(
         let mutex = state.generations.len() as MutexId + 1;
         if state.mutex_of.insert(binding.clone(), mutex).is_some() {
             return Err(failure(span, format!("`{binding}` is already declared")));
+        }
+        if let Some(rank) = rank {
+            state.lock_ranks.insert(mutex, rank);
         }
         let footprint = state.footprint(resource);
         state.push(
@@ -1169,6 +1254,7 @@ fn lower_declaration(
             name: binding,
             mutex,
             protects: resource,
+            rank,
         });
         return Ok(());
     }
