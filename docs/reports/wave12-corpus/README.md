@@ -1,5 +1,11 @@
 # Wave-12 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-09 (wave-13 consolidation):**
+> `docs/reports/wave13-corpus/artifacts/` is the current baseline — 4 units
+> changed (REACH-GATE's set, with HASH-CONTRACTS' premise leaf), 2 attributed
+> function discharges, headline unchanged. This directory remains the
+> wave-12 record.
+
 **Date:** 2026-09-09. **Tree:** main `205e8bf` (all seven wave-12 cards
 merged). Integrator-run, closing the wave under hard invariants 3 and 5.
 

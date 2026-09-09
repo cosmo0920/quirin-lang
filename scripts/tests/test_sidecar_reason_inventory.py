@@ -29,9 +29,9 @@ import unittest
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-# The current baseline, deliberately re-pinned at the wave-12 consolidation
-# (docs/reports/wave12-corpus/README.md); it carries REASON-CODES-B3's field.
-ARTIFACTS = ROOT / "docs/reports/wave12-corpus/artifacts"
+# The current baseline, deliberately re-pinned at the wave-13 consolidation
+# (docs/reports/wave13-corpus/README.md); it carries REASON-CODES-B3's field.
+ARTIFACTS = ROOT / "docs/reports/wave13-corpus/artifacts"
 REASON_CORPUS = ROOT / "crates/qcore-schemas/tests/reason_codes.rs"
 
 # Measured on the archived bytes, read-only. Both sidecars carry the same 96

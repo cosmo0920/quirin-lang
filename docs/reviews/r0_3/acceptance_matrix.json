@@ -5735,7 +5735,7 @@
   {
    "id": "T03-CT-REST",
    "title": "The two still-unmapped mutex-family CT cases (was three)",
-   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain. CT33 mapped in wave 11 (31/50) with the sharper one-statement control; CT33-SANITIZED and D02-BLOCKER-STALE recorded by the lane. CT34 unblocked in wave 12 (CT34-GROWTH: five-condition creator-only growth, Q626/Q627, band Q610-Q627; mapping proposed, awaits the next CT lane with CT34-GROWTH-CREATOR/-NATIVE/-CASCADE/-Q621 recorded). CT46 stays honestly unmapped: the derivation exists (QCore.Transferability) but a mutex-protected payload crossing a task boundary is unwritable — blocker replaced by CT46-MUTEX-CAPTURE.",
+   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain. CT33 mapped in wave 11 (31/50) with the sharper one-statement control; CT33-SANITIZED and D02-BLOCKER-STALE recorded by the lane. CT34 unblocked in wave 12 (CT34-GROWTH: five-condition creator-only growth, Q626/Q627, band Q610-Q627; mapping proposed, awaits the next CT lane with CT34-GROWTH-CREATOR/-NATIVE/-CASCADE/-Q621 recorded). CT46 stays honestly unmapped: the derivation exists (QCore.Transferability) but a mutex-protected payload crossing a task boundary is unwritable — blocker replaced by CT46-MUTEX-CAPTURE. CT34 mapped in wave 13 (32/50) with the new accept_check_only harness capability (core admission AND pinned backend refusal asserted together); CT34-SANITIZED is a backend card (CT34-GROWTH-NATIVE). CT46 unchanged on CT46-MUTEX-CAPTURE.",
    "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-ct33-ranks/README.md"
   },
   {
@@ -5746,9 +5746,9 @@
   },
   {
    "id": "C03-NFR-REACH",
-   "title": "Neutral-frame recursion reach: 1 of 46 (digits10 admitted)",
-   "why": "W4-EXPR-POS landed the expression-position admission in wave 12: three conjunctive families with the proved no-pointer-operand sentence, a pre-existing for-condition fail-open repaired (measured Safe with no diagnostic at base), 28 attributed function discharges, digits10 through V1-V10 end-to-end — reach 0 to 1. POSITION+INDIRECT jointly remains the gate, now measured; W4-EXPR-POS-CASE and -FOR-CLAUSES recorded.",
-   "source": "docs/reports/remaining-c03-nfr/README.md, docs/reports/remaining-c03-reach/README.md, docs/reports/remaining-w4-expr-pos/README.md"
+   "title": "Recursion reach measured CLOSED at the sound-admission frontier (1 of 46)",
+   "why": "REACH-GATE landed family F4 (typed chains in positions under the refined proved sentence: binds, releases, escapes and addresses nothing the projection tracks) with 2 more function discharges — and DISPROVED the design note's 11-component payoff: every component at that threshold needs what fail-closed must refuse (release through an unnameable place, function-pointer member, cast, subscript), named per component. Residual families REACH-GATE-BOUND-BASE/-DEREF/-RETURN-POINTER each carry the refusal reason; further reach requires new model capability, not admission tuning.",
+   "source": "docs/reports/remaining-c03-nfr/README.md, docs/reports/remaining-c03-reach/README.md, docs/reports/remaining-w4-expr-pos/README.md, docs/reports/remaining-reach-gate/README.md"
   },
   {
    "id": "EXTERN-CALL-F",
@@ -5758,9 +5758,9 @@
   },
   {
    "id": "O04-ARMS-O",
-   "title": "Constructor residual: C6 is one statement (O04-B09B10-TRACE)",
-   "why": "O04-B09B10 closed in wave 12: member-address actuals and custody-taking bound reads land, C6 narrows nine refusals to one — the flb_trace statement plus its proved shadow (a labelled control shows removing it makes the function Safe with all six exits discharged). O04-B09B10-TRACE (= variadic tail + nested-call modeling) owns the whole residual; -NESTED, -VALUE-DEPENDENT (hash_table_add custody faithful only at the literal 0), -FRAME and -REACH (zero admitted member-address statements pending contract text) recorded. A third pre-existing false-Safe (nested-call custody silently dropped) repaired, firing on the real corpus. P-B08-SHALLOW, VARIADIC and SCALAR-CHAIN carry forward.",
-   "source": "docs/reports/remaining-o04-arms/README.md, docs/reports/remaining-o04-b08/README.md, docs/reports/remaining-o04-read-bound/README.md, docs/reports/remaining-o04-b09b10/README.md"
+   "title": "Constructor discharged on the fixture route; production reach gated on contract text",
+   "why": "O04-TRACE closed C6 in wave 13: flb_input_chunk_create reaches function-level Safe on the byte-verbatim body via the variadic-data-tail vocabulary and nine-premise one-level nested composition — every premise named as an assumption, two silent gaps repaired (undeclared-tail zip-away; the N9 nested-argument escape exemption fail-open, found and closed mid-card). The declarations deliberately live as gateway fixtures (corpus stays untouched by it), so O04-TRACE-REACH (zero production admitted statements) gates the corpus payoff on production contract text. P-B08-SHALLOW, VARIADIC (superseded by the tail vocabulary at declared sites), SCALAR-CHAIN carried.",
+   "source": "docs/reports/remaining-o04-arms/README.md, docs/reports/remaining-o04-b08/README.md, docs/reports/remaining-o04-read-bound/README.md, docs/reports/remaining-o04-b09b10/README.md, docs/reports/remaining-o04-trace/README.md"
   },
   {
    "id": "T08-SRC-O",
@@ -5795,8 +5795,8 @@
   {
    "id": "P04-NEXT-O",
    "title": "Remaining ChunkIO capabilities after the teardown pair moved",
-   "why": "B2 closed in wave 12: the fourth (symbolic-replay) vocabulary moves file_outcomes and file_delete through the boundary with the profile contract-derived, never wire-trusted, and the prerequisite mechanism's first production consumer (AB-CONSUMER closed). Remaining: C (sealed SourceMatch), the compositions, P04-B1-HELPER-SIG, P04-B1-CALLEE-TABLE, P04-B2-INITIAL-MIRROR, P04-B2-PREREQ-IDENTITY-CWD.",
-   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md"
+   "why": "P04-COMPOSE closed the composable-now subset in wave 13: the unmap_wrapper composition travels as the fifth vocabulary (no composed result or prerequisite conclusion on the wire; the provider recomputes prerequisite readings; the core re-derives and re-evaluates all three prerequisites; E03-B premise union), with verify_v2's missing QP001 binding for the new projection strengthened. Census: P04-COMPOSE-A (file_close is composable-now BECAUSE this landed), P04-COMPOSE-FRAME (the frame helper has no verification task — structural), which transitively blocks filesystem_chunk_close and unsupported_close; nested_memory/nested_cleanup stay behind SourceMatch. P04-B1-HELPER-SIG/CALLEE-TABLE, P04-B2-INITIAL-MIRROR/PREREQ-IDENTITY-CWD carried.",
+   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md, docs/reports/remaining-p04-compose/README.md"
   },
   {
    "id": "T03-GUARD-JOIN-O",
@@ -5831,15 +5831,27 @@
   {
    "id": "C02-P-ALIAS-O",
    "title": "May-alias refinement residuals",
-   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried.",
-   "source": "docs/reports/remaining-c02-p-alias/README.md, docs/reports/remaining-alias-locals/README.md"
+   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried. BORROW-LIVENESS closed in wave 13: the plainest single-name use-after-free (release-then-borrow, no aliasing involved) was measured Safe with no diagnostics at base and is now refused — verdict class Unknown on three measured grounds (resource_borrowed declares nothing to contradict; Owned's own liveness answer is UnknownAlias; the must-fact bar exceeds DoubleRelease's may-fact bar, proved both directions). Census: 0 settling positions of 267 — reach gated on what the projection binds. New: BORROW-LIVENESS-MIXED/-PRESTATE/-PLACES/-OUT/-ASSUMPTION.",
+   "source": "docs/reports/remaining-c02-p-alias/README.md, docs/reports/remaining-alias-locals/README.md, docs/reports/remaining-borrow-liveness/README.md"
   },
   {
    "id": "TRANSFER-DERIVATION",
    "title": "Transferability judgment landed; enumeration kept beside it",
    "why": "QCore.Transferability decides both matrices whole; the checked-redundant composition is proven structurally unable to diverge, and the per-profile enumeration was deliberately kept (two agreeing decisions). CT46-MUTEX-CAPTURE gates CT46's accept half.",
    "source": "docs/reports/remaining-ct46-sendsync/README.md"
+  },
+  {
+   "id": "HASH-CONTRACTS-O",
+   "title": "Hash-table contract residuals",
+   "why": "the borrowed-mode contract with the machine-parsed literal-argument premise landed (corpus 60→61; the size-0 boundary enforced by a total-or-reject directive in retained text — the deliberate HASH-CONTRACTS-CLAUSE deviation pending a vocabulary clause). Rows 5–8 decide on the fixture tree but not yet in production (the neighboring flb_routes_mask_set_by_tag is uncontracted). B09B10's VALUE-DEPENDENT note corrected by reading the upstream body: the table frees only its own allocation; retention, not custody, is the arm-dependent fact and stays unmodeled (O00 B03/R13).",
+   "source": "docs/reports/remaining-hash-contracts/README.md"
+  },
+  {
+   "id": "D02-BUCKETS-STALE",
+   "title": "acceptance.json's hand-kept unmapped buckets sum 22 against 18",
+   "why": "the 4-case epoch bucket wave 8 mapped was never decremented in the hand-kept counts; the derived matrix counts are correct and unaffected. Recorded by the wave-13 CT lane, not repaired (outside its ownership).",
+   "source": "docs/reports/wave13-ct34/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 12 complete: seven cards close — expression positions (28 discharges, reach 1, a fail-open repaired), C6 down to one statement (a third false-Safe repaired), locals may-alias (a launderable bound and a projection false-Safe repaired), the fourth transport vocabulary (schemas 9.0.0), extern error-arm release (STORE-REACH closed), creator-only protection growth (Q610-Q627), and the transferability derivation; the corpus re-pins to docs/reports/wave12-corpus/ with the 59-unit diff triangulated exactly; nothing promoted)"
+ "updated": "2026-09-09 (wave 13 complete: CT34 mapped (32/50) with accept_check_only; C6 DISCHARGES on the fixture route with every premise named and two silent gaps repaired; recursion reach measured closed at the sound-admission frontier with the 11-component payoff disproved; the plainest use-after-free now refused; the hash-table contract lands with the size-0 premise enforced (corpus 61); the unmap composition becomes the fifth transported vocabulary (schemas 10.0.0); the corpus re-pins to docs/reports/wave13-corpus/ with 4 units / 2 discharges attributed exactly; nothing promoted)"
 }
