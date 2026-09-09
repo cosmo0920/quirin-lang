@@ -110,20 +110,38 @@ cargo run -p qcorec -- plugins list
 The historical `cargo run -p qcore-compiler --bin qcorec` spelling is obsolete after the CLI split.
 
 Bundled semantic modules require an explicit top-level `import` in each source
-file. The current registry contains `std.concurrency`:
+file. The current registry contains exactly five names — `std.concurrency`,
+`std.extern`, `std.fmt`, `std.io` and `std.logger`:
 
 ```qcore
 import std.concurrency;
 concurrency checked;
 ```
 
+```qcore
+import std.fmt;
+import std.logger;
+```
+
+Each module gates its own capability and no other. `std.fmt` names how a scalar
+is rendered and opens no stream; `std.io` writes a rendered line to standard
+output; `std.logger` writes a level-tagged rendered line to standard error and
+provides the `flush` sink-handoff barrier. Holding one of the three never grants
+another, and `std.concurrency` grants none of them: a threaded module has no
+free output channel. `flush` names no rendering, so a file that logs only a
+barrier needs no `std.fmt`.
+
 Import paths are dot-separated identifiers terminated by a semicolon. Imports
 may occur between top-level declarations, after the optional module header, and
 apply to the whole file. Repeated imports are idempotent. Unknown module names
 reject with `Q014`; concurrency forms without their import reject with `Q015`,
-including in uncalled bodies and non-executable modules. Each input file is
-checked before combining declarations: another file's import cannot grant it
-concurrency. Importing vocabulary does not discharge operation checks or make an
+including in uncalled bodies and non-executable modules. `Q015` is reused,
+deliberately and without a new code, for the three `STD-MODULES` capabilities:
+`print` without `std.io`, `log` or `flush` without `std.logger`, and a named
+rendering without `std.fmt` each reject with `Q015` naming the missing module.
+Each input file is checked before combining declarations: another file's import
+cannot grant it concurrency or any of those three. Importing vocabulary does not
+discharge operation checks or make an
 unsupported profile executable. The task profile still requires its
 `concurrency checked;` marker. User-file/package resolution, import aliases,
 wildcards, reexports and implicit/transitive imports are not implemented.
@@ -497,9 +515,10 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 |---|---|---|---|
 | `Q000` | `NameResolution` (per input file) | `qcore-verification::driver` | An input file does not parse as a QCore declaration. |
 | `Q001`, `Q016` | `Index` | `qcore-frontend` | `Q001` generic index/quant presentation; `Q016` dimension/axis declaration validity (checked unconditionally) and quant-index type resolution. |
-| `Q010`–`Q015` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name, `Q014` unknown imported module, `Q015` concurrency used without its file-local import. |
+| `Q010`–`Q015` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name, `Q014` unknown imported module, `Q015` a capability used without its file-local import — concurrency, or one of the three `STD-MODULES` capabilities (`print` without `std.io`, `log`/`flush` without `std.logger`, a named rendering without `std.fmt`), the message naming the missing module. |
 | `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule, the task route's source-contract gate, and an `effects { … }` row naming an effect the extern-call profile does not model; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
 | `Q022`–`Q027` | `ExternCall` | `qcore-frontend`, `qcore-verification::driver` | Admission and bridging of a call to a **declared** extern function (`source.extern-call.v1`). `Q022` an extern call in a file without its `import std.extern;`; `Q023` the callee has no admitted declared contract in the explicit selection (no selection, a selection that does not load, or an absent name); `Q024` the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count — including a stored argument that names the same identity as its declared owner, and an error-arm disposition of the wrong arity or argument form; `Q025` the mandatory acquisition adapter is missing, applied to a callee that establishes no fresh custody, names a declared non-error, or does not discharge live custody on its error arm. The adapter is mandatory for each of the two admitted acquisition sources: a `resource_return_owned(nullable)` result and a `resource_out(_, nullable)` slot. Under card `EXTERN-ERR-REL` the error arm may carry explicit dispositions, and `Q025` covers every way one fails to be that acquisition's established cleanup edge: an identity live at the raise that no disposition releases (the retained abandonment refusal), a disposition that itself acquires or stores, one that discharges other than exactly one identity, one that names an identity not live on the arm, an order other than reverse acquisition order, and a disposition whose derived effect row the entry's declared row does not admit. An acquiring call that also moves custody out is refused there too, because a declaration constrains only its normal exit; `Q026` an extern call in a context this profile refuses (a nested block, a non-entry function, or an entry with parameters); `Q027` a declared input and the checked artifact disagree — an `extern fn` declaration against its selected contract, an inline `contract { … }` on a called extern declaration, a selection that no longer reproduces its own sources, or a published certificate against its independent rederivation. |
+| `Q028`–`Q031` | `StandardIo` | `qcore-frontend`, `qcore-verification::driver` | Admission of the line-producing statements of `std.fmt`, `std.io` and `std.logger` (`source.std-io.v1`, card `STD-MODULES`). `Q028` a rendering operand that is not one of the entry's integer bindings — the refusal that keeps every resource unrenderable, since the v1 operand grammar has no form that could denote one; `Q029` the entry performs `Io` but its declared `effects { … }` row does not admit it; `Q030` the flat entry shape this profile models is violated — a statement it does not model, a nested block, an entry with parameters, a `print`/`log`/`flush` outside the entry, an unknown rendering or level *whose word is reserved*, a `flush` with an operand, a missing or repeated return, or a malformed `effects` row; `Q031` a published certificate against its independent rederivation. An unreserved word in a rendering or level position is collected as a referenced name and refuses earlier at `Q013`; that is fail-closed and recorded, not `Q030`. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
 | `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |
