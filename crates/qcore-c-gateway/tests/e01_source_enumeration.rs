@@ -23,7 +23,7 @@
 //! * the enumeration is monotone: every historical raw-scan name survives.
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, EnumerationRefusal, LegacyFunctionScope, ResourceContracts,
+    AnalysisStatus, C11TranslationUnit, EnumerationRefusal, LegacyFunctionScope, ResourceContracts,
     UnanalyzableForm, UnrestrictedLegacyResult, analyze_unrestricted_c11,
     enumerate_source_definitions, legacy_c_source_functions,
 };
@@ -141,9 +141,28 @@ fn knr_definition_with_declarations_is_enumerated_but_not_analysed() {
 
     // The analyzer is unchanged: it simply never finds a K&R body, so the name
     // stays out of the projection instead of acquiring an unearned status.
+    //
+    // **Deliberate pin update, unit E01-TAIL, residual E01-F1-DENOM.** This
+    // arm previously asserted the *gateway* published `Safe` over this unit,
+    // with the whole-unit claim withheld only later, in the audit's projection
+    // layer. That left every other caller of `analyze_unrestricted_c11` — and
+    // the certificate itself — holding a `Safe` over a definition nothing read.
+    // The gateway now refuses it on its own ground. Both halves this arm was
+    // protecting are kept and read out of the retained partial summary: `knr`
+    // still acquires no status at all, and `plain` is still analysed and clean.
     match analyze_unrestricted_c11(&unit(source), "plain", &ResourceContracts::default()) {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
-            assert_eq!(certificate.checked_functions, ["plain"]);
+        Ok(UnrestrictedLegacyResult::Unknown {
+            reason,
+            partial: Some(summary),
+            ..
+        }) => {
+            assert_eq!(summary.functions.keys().collect::<Vec<_>>(), vec!["plain"]);
+            assert_eq!(summary.status, AnalysisStatus::Safe);
+            assert!(
+                !summary.functions.contains_key("knr"),
+                "the K&R name must acquire no status"
+            );
+            assert!(reason.contains("`knr`"), "{reason}");
         }
         other => panic!("unexpected analysis outcome: {other:?}"),
     }

@@ -1,0 +1,11 @@
+{
+ "archived_units": 185,
+ "archived_units_with_more_than_one_configuration": {},
+ "archived_units_with_no_measured_configuration": [],
+ "enumerated_denominator_moves": [],
+ "function_set_differences": [],
+ "function_status_moves": [],
+ "measured_configurations": 185,
+ "measured_configurations_matching_no_archived_unit": [],
+ "unit_verdict_moves": []
+}

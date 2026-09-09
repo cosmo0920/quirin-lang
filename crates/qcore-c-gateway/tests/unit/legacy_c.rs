@@ -568,6 +568,20 @@ fn unrestricted_projection_retains_successful_siblings() {
     assert_eq!(analysis.projection_failures.len(), 1);
 }
 
+/// A compiled-out source entry does not block the unit from being analysed:
+/// the effective entry falls back to a definition that survives preprocessing,
+/// and that definition is analysed and clean.
+///
+/// **Deliberate pin update, unit E01-TAIL, residual E01-F1-DENOM.** This test
+/// previously also asserted the *unit* was `Safe`. It is now `Unknown`: the
+/// selected scope carries `hidden`, which the preprocessor removed, so nothing
+/// analysed it, and hard invariant 2 forbids publishing a whole-unit `Safe`
+/// over a definition the analysis never read. The property this test was really
+/// protecting — that a compiled-out *entry selection* does not blind the unit,
+/// and that `subject` is still reached and checked — is kept below, now read
+/// out of the retained partial summary; and the control immediately after
+/// shows the same source without the compiled-out definition is still `Safe`,
+/// so the refusal is attributable to the unprojected definition alone.
 #[test]
 fn source_scope_uses_a_definition_that_survives_preprocessing() {
     if !crate::test_support::clang_available() {
@@ -582,12 +596,42 @@ fn source_scope_uses_a_definition_that_survives_preprocessing() {
         ..C11TranslationUnit::default()
     };
     match analyze_unrestricted_c11(&unit, "hidden", &contracts()) {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
-            assert_eq!(certificate.entry, "subject");
-            assert_eq!(certificate.checked_functions, vec!["subject"]);
+        Ok(UnrestrictedLegacyResult::Unknown {
+            reason,
+            partial: Some(summary),
+            ..
+        }) => {
+            // The entry fallback still happened, and `subject` was analysed.
+            assert_eq!(summary.entry, "subject");
+            assert_eq!(summary.status, AnalysisStatus::Safe);
+            assert_eq!(
+                summary.functions.keys().collect::<Vec<_>>(),
+                vec!["subject"]
+            );
+            assert!(
+                reason.contains("carry no analysed row") && reason.contains("`hidden`"),
+                "the withheld Safe must name its ground and the definition: {reason}"
+            );
         }
         Err(LegacyCError::ProductionParserUnavailable(_)) => {}
         other => panic!("compiled-out source entry blocked the unit: {other:?}"),
+    }
+
+    // Control: the same source without the compiled-out definition. Every
+    // selected definition now carries a row, so the unit is `Safe` — the
+    // refusal above is the unprojected definition and nothing else.
+    let clean = "void subject(void) { return; }";
+    let clean_unit = C11TranslationUnit {
+        source: clean,
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        ..C11TranslationUnit::default()
+    };
+    match analyze_unrestricted_c11(&clean_unit, "subject", &contracts()) {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            assert_eq!(certificate.checked_functions, vec!["subject"]);
+        }
+        Err(LegacyCError::ProductionParserUnavailable(_)) => {}
+        other => panic!("the control unit must still be Safe: {other:?}"),
     }
 
     assert!(matches!(

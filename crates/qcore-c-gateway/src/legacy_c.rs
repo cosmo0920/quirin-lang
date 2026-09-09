@@ -962,6 +962,56 @@ pub fn analyze_unrestricted_c11_with_inventory(
             partial: Some(summary),
         }),
         AnalysisStatus::Safe => {
+            // Fail-closed (unit **E01-TAIL**, residual E01-F1-DENOM). A `Safe`
+            // verdict here is a claim over the *selected scope* — the
+            // enumerated main-source definition set. A selected definition that
+            // carries no analysed row was never looked at, and hard invariant 2
+            // says projection coverage is not safety coverage: publishing
+            // `Safe` over it would assert safety for a function the analysis
+            // never read.
+            //
+            // Such a definition reaches here silently, because
+            // `analyze_legacy_c_translation_unit_selected_partial` intersects
+            // the selection with the definitions the analyzer's own body finder
+            // reports and simply drops the rest — no diagnostic, no projection
+            // failure. Two measured causes: a definition the enumeration's raw
+            // half kept but the preprocessor removed (a `#if 0` body — it is
+            // not in this translation unit at all), and a definition present in
+            // the preprocessed text that the body finder does not classify as
+            // one (a K&R body is the named instance; an unnamed one would be an
+            // analyzer blind spot).
+            //
+            // The two are indistinguishable from here, and the report's own
+            // `not_projected_meaning` already conflates them, so this refuses
+            // both rather than excusing either. Only the `Safe` arm is gated:
+            // `Unsafe` still names its validated reachable violation and
+            // `Unknown` is already the fail-closed answer, so neither moves.
+            //
+            // This gate is at *issuance*, not at recheck. A
+            // `LegacySafetyCertificate` carries no record of the definition set
+            // it was selected over — `check_legacy_safety_certificate` takes
+            // `checked_functions` as the selection — so an independent checker
+            // cannot verify coverage against the audited scope. Recorded open
+            // as **E01-TAIL-CERT-SCOPE**; carrying the denominator in the
+            // certificate would change every certificate's shape and identity.
+            if let Some(selected) = source_functions.as_deref() {
+                let unread = selected
+                    .iter()
+                    .filter(|name| !summary.functions.contains_key(*name))
+                    .cloned()
+                    .collect::<Vec<_>>();
+                if let Some(first) = unread.first() {
+                    return Ok(UnrestrictedLegacyResult::Unknown {
+                        preprocessed_source,
+                        reason: format!(
+                            "{} of {} selected source definition(s) carry no analysed row, so no whole-unit Safe claim is published over them; first: `{first}`",
+                            unread.len(),
+                            selected.len(),
+                        ),
+                        partial: Some(summary),
+                    });
+                }
+            }
             let checked_functions = summary.functions.keys().cloned().collect::<Vec<_>>();
             let certificate = LegacySafetyCertificate {
                 preprocessed_source,
