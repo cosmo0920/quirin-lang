@@ -88,3 +88,21 @@ void qcore_extern_attach(uint8_t *owner, uint8_t *child)
 {
     memcpy(owner, &child, sizeof child);
 }
+
+/* --- Card `EXTERN-ERR-REL`: releasing a declared store owner. --- */
+
+/* `resource_consumed(owner, nonnull)`, declared exactly like
+ * `qcore_extern_release`. This implementation additionally releases whatever
+ * `qcore_extern_attach` stored beneath the owner, which is what lets a leak
+ * checker account for both allocations of the store fixtures. That is this
+ * fixture satisfying the `StoredCustodyUnderDeclaredOwner` premise for its own
+ * runs; no run establishes it in general. An owner that was never attached to
+ * still reads the zeroed slot `calloc` gave it, so the child release is a
+ * `free(NULL)`. */
+void qcore_extern_release_owner(uint8_t *owner)
+{
+    uint8_t *child = NULL;
+    memcpy(&child, owner, sizeof child);
+    free(child);
+    free(owner);
+}

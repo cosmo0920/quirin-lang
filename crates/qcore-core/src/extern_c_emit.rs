@@ -144,6 +144,20 @@ pub fn interpret_extern_program(
                             )
                         });
                         if !adapter.succeeds {
+                            // The error arm's dispositions are real calls and
+                            // are observed exactly as plain calls are, in the
+                            // order the checked handler names them, before the
+                            // raise ends the trace.
+                            for release in &adapter.releases {
+                                let released =
+                                    program.callees.get(&release.callee).ok_or_else(|| {
+                                        ExternEmissionRefusal::UnknownCallee {
+                                            event: index,
+                                            name: release.callee.clone(),
+                                        }
+                                    })?;
+                                trace.push(call_observation(released, &release.arguments));
+                            }
                             trace.push(format!("raise {}", adapter.error));
                             return Ok(trace);
                         }
@@ -306,9 +320,58 @@ pub fn emit_extern_c11(
                             source,
                             "    printf(\"{observed} %s\\n\", {binding} != NULL ? \"ok\" : \"null\");"
                         );
+                        // The error arm renders this acquisition's cleanup edge:
+                        // the checked dispositions are emitted as real calls
+                        // inside the failure branch, so a leak checker sees the
+                        // releases the checker required rather than taking them
+                        // on trust.
+                        let mut arm = String::new();
+                        for release in &adapter.releases {
+                            let released =
+                                program.callees.get(&release.callee).ok_or_else(|| {
+                                    ExternEmissionRefusal::UnknownCallee {
+                                        event: index,
+                                        name: release.callee.clone(),
+                                    }
+                                })?;
+                            for argument in &release.arguments {
+                                if let Some(resource) = argument_identity(argument)
+                                    && !bound.contains(&resource)
+                                {
+                                    return Err(ExternEmissionRefusal::UnboundIdentity {
+                                        event: index,
+                                        resource,
+                                    });
+                                }
+                            }
+                            let released_arguments = release
+                                .arguments
+                                .iter()
+                                .map(|argument| argument_expression(argument, 0))
+                                .collect::<Vec<_>>()
+                                .join(", ");
+                            if released.result_abi == AbiType::Unit {
+                                let _ = writeln!(
+                                    arm,
+                                    "        {}({released_arguments});",
+                                    released.name
+                                );
+                            } else {
+                                let _ = writeln!(
+                                    arm,
+                                    "        (void) {}({released_arguments});",
+                                    released.name
+                                );
+                            }
+                            let _ = writeln!(
+                                arm,
+                                "        printf(\"{}\\n\");",
+                                call_observation(released, &release.arguments)
+                            );
+                        }
                         let _ = writeln!(
                             source,
-                            "    if ({binding} == NULL) {{\n        \
+                            "    if ({binding} == NULL) {{\n{arm}        \
                              printf(\"raise {}\\n\");\n        return 0;\n    }}",
                             adapter.error
                         );

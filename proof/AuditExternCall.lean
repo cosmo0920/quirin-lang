@@ -83,6 +83,38 @@ import QCore.ModuleImports
 #print axioms QCore.ExternCall.a_stored_identity_does_not_survive
 #print axioms QCore.ExternCall.the_owner_survives_a_store
 
+-- Card `EXTERN-ERR-REL`: the adapter's error-arm disposition discipline.
+-- Conservation first — under an admitted arm every live identity is released,
+-- and an identity that is not is refused. The v1 abandonment refusal is
+-- narrowed to empty arms, not deleted.
+#print axioms QCore.ExternCall.error_arm_conservation
+#print axioms QCore.ExternCall.an_abandoned_identity_refuses
+#print axioms QCore.ExternCall.an_admitted_error_exit_is_empty
+#print axioms QCore.ExternCall.an_empty_arm_with_live_custody_refuses
+#print axioms QCore.ExternCall.an_empty_arm_with_nothing_live_is_admitted
+
+-- A disposition is a release and nothing else, exactly once per live identity,
+-- in the reverse acquisition order the established cleanup edge performs.
+#print axioms QCore.ExternCall.an_acquiring_disposition_refuses
+#print axioms QCore.ExternCall.a_storing_disposition_refuses
+#print axioms QCore.ExternCall.an_arm_of_the_wrong_length_refuses
+#print axioms QCore.ExternCall.a_repeated_disposition_refuses
+#print axioms QCore.ExternCall.a_disposition_of_a_departed_identity_refuses
+#print axioms QCore.ExternCall.an_arm_in_the_wrong_order_refuses
+#print axioms QCore.ExternCall.two_dispositions_must_run_in_reverse_acquisition_order
+
+-- The arm is a path: the success arm keeps everything, and totality survives.
+#print axioms QCore.ExternCall.the_success_arm_keeps_every_dispositioned_identity
+#print axioms QCore.ExternCall.adapter_with_arm_totality
+
+-- STORE-REACH, non-vacuity: the second acquisition an arm makes admissible is
+-- exactly what the admitted store needs, and is still refused without the arm.
+#print axioms QCore.ExternCall.the_release_callee_is_a_disposition
+#print axioms QCore.ExternCall.the_attach_callee_is_not_a_disposition
+#print axioms QCore.ExternCall.a_second_acquisition_is_admitted_when_its_arm_releases_the_first
+#print axioms QCore.ExternCall.the_same_acquisition_with_an_empty_arm_refuses
+#print axioms QCore.ExternCall.the_store_is_reachable_from_two_live_identities
+
 -- The file-local import gate is a second, independent opt-in.
 #print axioms QCore.ModuleImports.empty_imports_grant_no_extern_calls
 #print axioms QCore.ModuleImports.admitted_extern_calls_require_the_extern_import

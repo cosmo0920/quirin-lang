@@ -27,6 +27,16 @@
 //!    *distinct `Owned` parameter*, so admitting `resource_stored` forces
 //!    `resource_owned` to be admitted in exactly that position and nowhere
 //!    else.
+//!    Card `EXTERN-ERR-REL` adds the adapter's error-arm dispositions, which is
+//!    what makes `resource_stored` reachable from a single source module: a
+//!    store needs two simultaneously live identities, and `EXTERN-F1`'s adapter
+//!    could abandon nothing. The arm is not a second custody rule. The
+//!    sequential lowering [`crate::cleanup_lowering`] already releases every
+//!    identity live before a failing acquisition, in reverse acquisition order,
+//!    on that acquisition's cleanup edge; the arm names the declared consuming
+//!    calls that edge performs, and admission requires it to be exactly that
+//!    edge. The v1 abandonment refusal is narrowed to the undispositioned case
+//!    and keeps its code, its message subject and its named identity.
 //! 2. **Derivation** ([`derived_custody`], [`derived_effects`]). The custody
 //!    delta and effect row a call site imposes are a *function* of the admitted
 //!    callee, so a certificate consumer can repeat the derivation instead of
@@ -619,6 +629,23 @@ pub enum ExternArgument {
     OutSlot,
 }
 
+/// One disposition on an adapter's error arm (card `EXTERN-ERR-REL`): a call
+/// that discharges exactly one still-live identity before the raise.
+///
+/// This is not a new custody rule. `qcore_core::cleanup_lowering` already
+/// releases every identity live before a failing acquisition, in reverse
+/// acquisition order, on that acquisition's cleanup edge. What this profile
+/// lacked was a *rendering* of that edge: an extern-acquired identity is
+/// released only by calling a declared `resource_consumed` callee, and the
+/// profile cannot invent one. The error arm therefore names the calls the
+/// cleanup edge performs, and [`check_extern_program`] requires them to be
+/// exactly that edge — same identities, same reverse-acquisition order.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExternRelease {
+    pub callee: String,
+    pub arguments: Vec<ExternArgument>,
+}
+
 /// The mandatory nullable-owned-return adapter (design §3.3): the null arm is
 /// branched on at the call site and takes the declared typed error exit.
 /// `succeeds` is the fixture's literal outcome control; both arms are
@@ -627,6 +654,10 @@ pub enum ExternArgument {
 pub struct ExternAdapter {
     pub resource: ResourceId,
     pub succeeds: bool,
+    /// The error arm's dispositions, in the order the handler writes them.
+    /// Empty is the v1 shape: an error arm that abandons nothing because
+    /// nothing else is live.
+    pub releases: Vec<ExternRelease>,
     pub error: String,
 }
 
@@ -680,10 +711,64 @@ pub enum ExternDiagnostic {
     AdapterUnexpected { event: usize },
     /// Q025: the adapter's error arm does not name a declared error type.
     AdapterUnknownError { event: usize, error: String },
-    /// Q025: the adapter's error arm would abandon custody this profile cannot
-    /// release. The bounded v1 adapter admits a raise only where no acquired
-    /// identity is live; releasing on the error arm is a named follow-on.
+    /// Q025: the adapter's error arm would abandon live custody. Card
+    /// `EXTERN-ERR-REL` narrows *when* this fires — an identity the error arm
+    /// explicitly releases is no longer abandoned — without weakening what it
+    /// means: an identity that reaches the raise still live is still refused,
+    /// with the same code and the same named identity.
     AdapterAbandonsCustody { event: usize, resource: ResourceId },
+    /// Q025: an acquiring call also carries departing custody, so that
+    /// custody's status on the failure arm is undecided — the declaration
+    /// speaks only about the normal exit. Refused rather than assumed either
+    /// way; this shape was already refused in v1, as abandonment.
+    AdapterDepartingArgument { event: usize, resource: ResourceId },
+    /// Q023: an error-arm disposition names a callee with no admitted declared
+    /// contract. Kept distinct from [`Self::UnknownCallee`] so a refusal says
+    /// which position it came from.
+    ReleaseUnknownCallee { event: usize, name: String },
+    /// Q024: an error-arm disposition passes the wrong number of arguments.
+    ReleaseArity {
+        event: usize,
+        expected: usize,
+        actual: usize,
+    },
+    /// Q024: an error-arm disposition's argument does not match its declared
+    /// parameter mode.
+    ReleaseArgumentForm {
+        event: usize,
+        parameter: usize,
+        expected: CallParameter,
+    },
+    /// Q025: an error-arm disposition establishes fresh custody. The error arm
+    /// discharges obligations; it never opens a new one, because a second
+    /// acquisition there would need its own checked adapter.
+    ReleaseAcquires { event: usize, name: String },
+    /// Q025: an error-arm disposition stores custody beneath a declared owner
+    /// instead of releasing it. That converts an obligation into a premise on
+    /// a path taken because something already failed, so it is refused.
+    ReleaseStores { event: usize, name: String },
+    /// Q025: an error-arm disposition does not discharge exactly one identity.
+    /// A disposition is a release; a call that consumes nothing releases
+    /// nothing, and one that consumes two is not one disposition.
+    ReleaseNotSingular {
+        event: usize,
+        name: String,
+        discharged: usize,
+    },
+    /// Q025: an error-arm disposition names an identity that is not live at
+    /// that point on the error arm — already released by an earlier
+    /// disposition, already consumed, or already stored.
+    ReleaseNotLive { event: usize, resource: ResourceId },
+    /// Q025: the error arm releases the right identities in an order the
+    /// established cleanup edge does not perform. `qcore_core::cleanup_lowering`
+    /// releases live identities in reverse acquisition order; a handler that
+    /// states another order describes a different program than the sequential
+    /// lowering of the same module.
+    ReleaseOrder {
+        event: usize,
+        expected: Vec<ResourceId>,
+        actual: Vec<ResourceId>,
+    },
     /// Q024: an acquisition reuses an identity the trace already introduced.
     DuplicateAcquisition { event: usize, resource: ResourceId },
     /// Q024: a stored argument names the same identity as its declared owner.
@@ -695,15 +780,23 @@ impl ExternDiagnostic {
     #[must_use]
     pub const fn code(&self) -> &'static str {
         match self {
-            Self::UnknownCallee { .. } => "Q023",
+            Self::UnknownCallee { .. } | Self::ReleaseUnknownCallee { .. } => "Q023",
             Self::ArgumentArity { .. }
             | Self::ArgumentForm { .. }
             | Self::DuplicateAcquisition { .. }
-            | Self::StoredUnderItself { .. } => "Q024",
+            | Self::StoredUnderItself { .. }
+            | Self::ReleaseArity { .. }
+            | Self::ReleaseArgumentForm { .. } => "Q024",
             Self::AdapterMissing { .. }
             | Self::AdapterUnexpected { .. }
             | Self::AdapterUnknownError { .. }
-            | Self::AdapterAbandonsCustody { .. } => "Q025",
+            | Self::AdapterAbandonsCustody { .. }
+            | Self::AdapterDepartingArgument { .. }
+            | Self::ReleaseAcquires { .. }
+            | Self::ReleaseStores { .. }
+            | Self::ReleaseNotSingular { .. }
+            | Self::ReleaseNotLive { .. }
+            | Self::ReleaseOrder { .. } => "Q025",
         }
     }
 
@@ -718,8 +811,17 @@ impl ExternDiagnostic {
             | Self::AdapterUnexpected { event }
             | Self::AdapterUnknownError { event, .. }
             | Self::AdapterAbandonsCustody { event, .. }
+            | Self::AdapterDepartingArgument { event, .. }
             | Self::DuplicateAcquisition { event, .. }
-            | Self::StoredUnderItself { event, .. } => *event,
+            | Self::StoredUnderItself { event, .. }
+            | Self::ReleaseUnknownCallee { event, .. }
+            | Self::ReleaseArity { event, .. }
+            | Self::ReleaseArgumentForm { event, .. }
+            | Self::ReleaseAcquires { event, .. }
+            | Self::ReleaseStores { event, .. }
+            | Self::ReleaseNotSingular { event, .. }
+            | Self::ReleaseNotLive { event, .. }
+            | Self::ReleaseOrder { event, .. } => *event,
         }
     }
 }
@@ -756,7 +858,53 @@ impl fmt::Display for ExternDiagnostic {
             }
             Self::AdapterAbandonsCustody { resource, .. } => write!(
                 f,
-                "the adapter's error arm would abandon live resource {resource}; releasing custody on an extern error arm is not in v1"
+                "the adapter's error arm would abandon live resource {resource}; every other live identity must be released by an explicit disposition before the raise"
+            ),
+            Self::AdapterDepartingArgument { resource, .. } => write!(
+                f,
+                "the call both establishes fresh custody and moves live resource {resource} out; what became of {resource} on the failure arm is not declared"
+            ),
+            Self::ReleaseUnknownCallee { name, .. } => write!(
+                f,
+                "the error-arm disposition calls `{name}`, which has no admitted declared contract in the selected extern contract environment"
+            ),
+            Self::ReleaseArity {
+                expected, actual, ..
+            } => write!(
+                f,
+                "an error-arm disposition's declared contract has {expected} parameters; the call passes {actual} arguments"
+            ),
+            Self::ReleaseArgumentForm {
+                parameter,
+                expected,
+                ..
+            } => write!(
+                f,
+                "error-arm disposition argument {parameter} does not bridge to its declared mode {expected:?}"
+            ),
+            Self::ReleaseAcquires { name, .. } => write!(
+                f,
+                "the error-arm disposition calls `{name}`, which establishes fresh custody; an error arm discharges obligations and never opens one"
+            ),
+            Self::ReleaseStores { name, .. } => write!(
+                f,
+                "the error-arm disposition calls `{name}`, which stores custody beneath a declared owner instead of releasing it"
+            ),
+            Self::ReleaseNotSingular {
+                name, discharged, ..
+            } => write!(
+                f,
+                "the error-arm disposition calls `{name}`, which discharges {discharged} identities; a disposition releases exactly one"
+            ),
+            Self::ReleaseNotLive { resource, .. } => write!(
+                f,
+                "the error-arm disposition names resource {resource}, which is not live at that point on the error arm"
+            ),
+            Self::ReleaseOrder {
+                expected, actual, ..
+            } => write!(
+                f,
+                "the error arm releases {actual:?}; the established cleanup edge of this acquisition releases {expected:?}, in reverse acquisition order"
             ),
             Self::DuplicateAcquisition { resource, .. } => {
                 write!(f, "resource identity {resource} is acquired twice")
@@ -817,9 +965,157 @@ pub struct ExternCallCertificate {
     /// caller's; what it does with the child is the premise recorded as
     /// [`ExternAssumption::StoredCustodyUnderDeclaredOwner`].
     pub stored: Vec<(ResourceId, ResourceId)>,
-    /// Union of the derived rows of every call site.
+    /// Per acquisition, in trace order: the identity the adapter binds and the
+    /// identities its error arm releases before the raise, in the order it
+    /// releases them. An acquisition whose error arm abandons nothing because
+    /// nothing else was live records an empty vector, so a reader can tell the
+    /// two apart.
+    pub error_dispositions: Vec<(ResourceId, Vec<ResourceId>)>,
+    /// Union of the derived rows of every call site, error-arm dispositions
+    /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
     pub assumptions: Vec<ExternAssumption>,
+}
+
+/// Remove one identity from the acquisition-ordered live list, if present.
+fn remove_live(live: &mut Vec<ResourceId>, resource: ResourceId) {
+    if let Some(position) = live.iter().position(|candidate| *candidate == resource) {
+        live.remove(position);
+    }
+}
+
+/// Simulate one adapter's error arm over the identities live when the
+/// acquisition is attempted.
+///
+/// The arm is admitted only when it reproduces this acquisition's established
+/// cleanup edge exactly: the same identities, each released by one call to a
+/// declared `resource_consumed` callee, in reverse acquisition order. Anything
+/// left live when the raise is reached is [`ExternDiagnostic::AdapterAbandonsCustody`],
+/// which is the v1 refusal with its meaning intact.
+///
+/// Returns the identities the arm released, in order, and the effects its calls
+/// derive. On refusal it returns every diagnostic found rather than the first.
+fn check_error_arm(
+    program: &ExternProgram,
+    event: usize,
+    live: &[ResourceId],
+    releases: &[ExternRelease],
+    diagnostics: &mut Vec<ExternDiagnostic>,
+    effects: &mut BTreeSet<Effect>,
+) -> Vec<ResourceId> {
+    let mut remaining = live.to_vec();
+    let mut released = Vec::new();
+    for release in releases {
+        let Some(callee) = program.callees.get(&release.callee) else {
+            diagnostics.push(ExternDiagnostic::ReleaseUnknownCallee {
+                event,
+                name: release.callee.clone(),
+            });
+            continue;
+        };
+        effects.extend(derived_effects(callee).iter().cloned());
+        if callee.acquires() {
+            diagnostics.push(ExternDiagnostic::ReleaseAcquires {
+                event,
+                name: callee.name.clone(),
+            });
+            continue;
+        }
+        if callee
+            .parameters
+            .iter()
+            .any(|parameter| matches!(parameter, CallParameter::Stored { .. }))
+        {
+            diagnostics.push(ExternDiagnostic::ReleaseStores {
+                event,
+                name: callee.name.clone(),
+            });
+            continue;
+        }
+        if release.arguments.len() != callee.parameters.len() {
+            diagnostics.push(ExternDiagnostic::ReleaseArity {
+                event,
+                expected: callee.parameters.len(),
+                actual: release.arguments.len(),
+            });
+            continue;
+        }
+        let mut discharged = Vec::new();
+        let mut malformed = false;
+        for (parameter, (argument, declared)) in
+            release.arguments.iter().zip(&callee.parameters).enumerate()
+        {
+            let admitted = matches!(
+                (argument, declared),
+                (ExternArgument::Data(_), CallParameter::Data(_))
+                    | (ExternArgument::Borrow(_), CallParameter::Borrowed(_))
+                    | (ExternArgument::Consume(_), CallParameter::Consumed)
+                    | (ExternArgument::Owner(_), CallParameter::Owner)
+            );
+            if !admitted {
+                diagnostics.push(ExternDiagnostic::ReleaseArgumentForm {
+                    event,
+                    parameter,
+                    expected: *declared,
+                });
+                malformed = true;
+                continue;
+            }
+            match argument {
+                ExternArgument::Consume(resource) => discharged.push(*resource),
+                // Every identity the arm merely reads must still be live there;
+                // the error arm is a path, not a place where a dead binding
+                // becomes readable again.
+                ExternArgument::Borrow(resource) | ExternArgument::Owner(resource) => {
+                    if !remaining.contains(resource) {
+                        diagnostics.push(ExternDiagnostic::ReleaseNotLive {
+                            event,
+                            resource: *resource,
+                        });
+                        malformed = true;
+                    }
+                }
+                ExternArgument::Data(_) | ExternArgument::Store(_) | ExternArgument::OutSlot => {}
+            }
+        }
+        if malformed {
+            continue;
+        }
+        if discharged.len() != 1 {
+            diagnostics.push(ExternDiagnostic::ReleaseNotSingular {
+                event,
+                name: callee.name.clone(),
+                discharged: discharged.len(),
+            });
+            continue;
+        }
+        let resource = discharged[0];
+        let Some(position) = remaining
+            .iter()
+            .position(|candidate| *candidate == resource)
+        else {
+            diagnostics.push(ExternDiagnostic::ReleaseNotLive { event, resource });
+            continue;
+        };
+        remaining.remove(position);
+        released.push(resource);
+    }
+    // The cleanup edge of `qcore_core::cleanup_lowering` releases the live set
+    // in reverse acquisition order; a handler that states another order
+    // describes a different program than the sequential lowering of the same
+    // module, so the two are required to agree rather than reconciled.
+    let expected = live.iter().rev().copied().collect::<Vec<_>>();
+    if !released.is_empty() && released != expected[..released.len().min(expected.len())] {
+        diagnostics.push(ExternDiagnostic::ReleaseOrder {
+            event,
+            expected,
+            actual: released.clone(),
+        });
+    }
+    for resource in remaining {
+        diagnostics.push(ExternDiagnostic::AdapterAbandonsCustody { event, resource });
+    }
+    released
 }
 
 /// Check one lowered module's call sites. Returns a certificate or every
@@ -833,7 +1129,10 @@ pub fn check_extern_program(
     let mut out_acquisitions = Vec::new();
     let mut consumptions = Vec::new();
     let mut stored = Vec::new();
-    let mut live = BTreeSet::<ResourceId>::new();
+    let mut error_dispositions = Vec::new();
+    // Acquisition order, because the established cleanup edge releases in
+    // reverse acquisition order and the error arm is required to match it.
+    let mut live = Vec::<ResourceId>::new();
     let mut introduced = BTreeSet::<ResourceId>::new();
     let mut effects = BTreeSet::new();
     for (index, event) in program.events.iter().enumerate() {
@@ -916,14 +1215,44 @@ pub fn check_extern_program(
                     });
                 }
                 // Adapter totality with a bounded error arm: the null path
-                // takes the typed error exit, and v1 admits that exit only
-                // where it abandons nothing.
-                if let Some(resource) = live.iter().next().copied() {
-                    diagnostics.push(ExternDiagnostic::AdapterAbandonsCustody {
-                        event: index,
-                        resource,
-                    });
+                // takes the typed error exit, and that exit is admitted only
+                // where every other live identity is explicitly dispositioned
+                // first. The departures of *this* call have already left the
+                // ledger below-order — they are recorded after the adapter — so
+                // the arm sees exactly the identities the cleanup edge would.
+                // A declaration says what holds on its *normal* exit only, so an
+                // acquiring call that also carries departing custody leaves that
+                // custody's status undecided on the failure arm: the arm can
+                // neither release it (the callee may already have) nor leave it
+                // (the callee may not have). That shape is refused by name
+                // rather than resolved by assumption; it was already refused in
+                // v1, as abandonment, and stays refused here.
+                let departing = consumed_here
+                    .iter()
+                    .copied()
+                    .chain(stored_here.iter().map(|(child, _)| *child))
+                    .collect::<Vec<_>>();
+                let mut arm_live = live.clone();
+                for resource in &departing {
+                    if let Some(position) =
+                        arm_live.iter().position(|candidate| candidate == resource)
+                    {
+                        arm_live.remove(position);
+                        diagnostics.push(ExternDiagnostic::AdapterDepartingArgument {
+                            event: index,
+                            resource: *resource,
+                        });
+                    }
                 }
+                let released = check_error_arm(
+                    program,
+                    index,
+                    &arm_live,
+                    &adapter.releases,
+                    &mut diagnostics,
+                    &mut effects,
+                );
+                error_dispositions.push((adapter.resource, released));
                 if !introduced.insert(adapter.resource) {
                     diagnostics.push(ExternDiagnostic::DuplicateAcquisition {
                         event: index,
@@ -934,14 +1263,14 @@ pub fn check_extern_program(
             (None, false) => {}
         }
         for resource in &consumed_here {
-            live.remove(resource);
+            remove_live(&mut live, *resource);
             consumptions.push(*resource);
         }
         // A stored identity leaves the caller's ledger exactly as a consumed
         // one does. What distinguishes it is where it went, which is recorded
         // and premised rather than checked.
         for (child, owner) in &stored_here {
-            live.remove(child);
+            remove_live(&mut live, *child);
             stored.push((*child, *owner));
         }
         if let Some(adapter) = &call.adapter
@@ -955,7 +1284,7 @@ pub fn check_extern_program(
             // trace keeps the static identity so the caller's passes still see
             // one binding, and the reference/native runs take the error arm.
             if adapter.succeeds {
-                live.insert(adapter.resource);
+                live.push(adapter.resource);
             }
         }
         calls.push((callee.name.clone(), derived_custody(callee)));
@@ -989,6 +1318,7 @@ pub fn check_extern_program(
         out_acquisitions,
         consumptions,
         stored,
+        error_dispositions,
         effects: EffectRow::new(effects),
         assumptions,
     })

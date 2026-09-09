@@ -1,0 +1,28 @@
+import std.extern;
+
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_alloc_failing(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_attach(owner: ptr<mut, u8>, child: ptr<mut, u8>) -> unit;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+extern fn qcore_extern_release_owner(owner: ptr<mut, u8>) -> unit;
+
+// The store-then-callee-fails path. After the store, the child has left this
+// body's ledger permanently and only `owner` is live, so the failing
+// acquisition's error arm must dispose of exactly `owner` — and does, by the
+// call whose C implementation releases the owner and the child stored beneath
+// it. The two final releases are on the success path of that acquisition: they
+// are checked, exactly as in the round trip's own null-arm variant, and under
+// `succeeds false` they are never executed.
+fn main() -> unit effects { io, alloc, mut } {
+    let owner = qcore_extern_alloc(16) succeeds true else raise Failure;
+    let child = qcore_extern_alloc(8) succeeds true
+        else qcore_extern_release(move owner) raise Failure;
+    qcore_extern_attach(owner, move child);
+    let extra = qcore_extern_alloc_failing(4) succeeds false
+        else qcore_extern_release_owner(move owner) raise Failure;
+    qcore_extern_release(move extra);
+    qcore_extern_release_owner(move owner);
+    return;
+}
