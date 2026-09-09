@@ -46,7 +46,36 @@ old condition. Their replacements are audited below.
   never manufactures a `violation`, and never softens an existing one.
 * **Monotonicity and non-vacuity** — recording an unresolved effect only drops
   refusals, and every guard, including both conjuncts of the widened status
-  condition, is shown load-bearing by a fixture that moves without it. -/
+  condition, is shown load-bearing by a fixture that moves without it.
+
+Card BORROW-RESIDUALS then took the `BORROW-LIVENESS-PRESTATE` residual, adding
+a **second, separate** decision (`sameCall`) over the same settled state: this
+call's own declared effects destroy the identity one of its own `Borrowed`
+positions reads, with nothing in the contract vocabulary ordering the two. No
+theorem above was retired or weakened by it — the path rule's own definition,
+statement and proofs are byte-identical — and the new theorems are grouped
+below.
+
+* **The positive direction** — one name at a released and a borrowed position,
+  two distinct names the projection settled to one identity, order-independence
+  both concretely and in general, and what a refusal publishes.
+* **The mode table** — exactly one of the seven declared modes destroys, decided
+  over the whole domain, with `consumed`, `out`, `removed` and `stored` each
+  refused by name. `BORROW-LIVENESS-OUT` is decided here rather than asserted.
+* **Every way it fails closed** — an unbound borrowed actual (**every scalar**),
+  an unsettled one, an unsettled destroying actual, a distinct identity, and a
+  call with no destroying position at all, the last two stated over every input
+  rather than sampled.
+* **The converse and the separation** — a refusal names the settled identity its
+  call destroys, and the rule reads no status bitmap, so it refuses a call whose
+  identity the path rule admits.
+* **The published class** — it never certifies, never manufactures a
+  `violation` and never softens one.
+* **`BORROW-LIVENESS-ASSUMPTION`** — neither rule removes a premise from a
+  published assumption set on any input, and every outcome of either either
+  changes nothing or withdraws a certificate. A refusal-only rule discharges
+  nothing; the subject mismatch (entry parameter versus onward actual) is
+  recorded in the card's prose, not proved here. -/
 
 -- The decision, positively, and what a refusal publishes.
 #print axioms QCore.BorrowLiveness.a_settled_released_identity_is_refused
@@ -101,3 +130,40 @@ old condition. Their replacements are audited below.
 #print axioms QCore.BorrowLiveness.the_released_conjunct_is_load_bearing
 #print axioms QCore.BorrowLiveness.the_entitling_conjunct_is_load_bearing
 #print axioms QCore.BorrowLiveness.a_reacquired_identity_is_admitted_again
+
+-- ---------------------------------------------------------------------------
+-- Card BORROW-RESIDUALS: destroyed by the call that reads it.
+-- ---------------------------------------------------------------------------
+
+-- The positive direction, and what a refusal publishes.
+#print axioms QCore.BorrowLiveness.a_call_that_destroys_the_identity_it_reads_is_refused
+#print axioms QCore.BorrowLiveness.two_positions_settled_to_one_identity_are_refused
+#print axioms QCore.BorrowLiveness.the_decision_does_not_depend_on_position_order
+#print axioms QCore.BorrowLiveness.the_decision_reads_only_the_destroyed_identities
+#print axioms QCore.BorrowLiveness.a_same_call_refusal_withdraws_a_certificate
+
+-- The mode table, decided over its whole domain.
+#print axioms QCore.BorrowLiveness.only_released_destroys
+#print axioms QCore.BorrowLiveness.a_consumption_in_the_same_call_is_not_a_destruction
+#print axioms QCore.BorrowLiveness.an_out_position_never_destroys
+#print axioms QCore.BorrowLiveness.a_removed_or_stored_position_never_destroys
+
+-- Every way the same-call decision fails closed.
+#print axioms QCore.BorrowLiveness.an_unbound_borrowed_actual_is_never_refused
+#print axioms QCore.BorrowLiveness.an_unsettled_borrowed_actual_is_never_refused
+#print axioms QCore.BorrowLiveness.an_unsettled_destroying_actual_refuses_nothing
+#print axioms QCore.BorrowLiveness.a_distinct_identity_in_the_same_call_is_never_refused
+#print axioms QCore.BorrowLiveness.a_call_that_destroys_nothing_is_never_refused
+
+-- The converse, and the separation from the path rule.
+#print axioms QCore.BorrowLiveness.a_same_call_refusal_names_the_identity_it_claims
+#print axioms QCore.BorrowLiveness.the_same_call_rule_reads_no_status
+
+-- The published verdict class.
+#print axioms QCore.BorrowLiveness.the_same_call_rule_never_certifies
+#print axioms QCore.BorrowLiveness.a_same_call_refusal_is_never_the_violation_class
+#print axioms QCore.BorrowLiveness.an_existing_violation_survives_the_same_call_rule
+
+-- `BORROW-LIVENESS-ASSUMPTION`: a refusal-only rule discharges nothing.
+#print axioms QCore.BorrowLiveness.no_decision_discharges_a_premise
+#print axioms QCore.BorrowLiveness.every_outcome_either_refuses_or_changes_nothing

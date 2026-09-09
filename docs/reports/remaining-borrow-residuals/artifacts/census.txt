@@ -1,0 +1,11 @@
+raw considerations              353
+distinct functions              108
+  bound at all                  34
+  settled                       0
+calls with a declared Released  0
+  …and a settled destroying     0
+path-rule refusals              0
+same-call refusals              0
+
+distinct functions carrying a Borrowed position with a declared Released peer:
+  (0 distinct)

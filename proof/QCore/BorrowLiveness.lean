@@ -550,4 +550,313 @@ theorem the_decision_reads_only_its_own_actual (f g : Facts)
     | none => simp [liveness, hd, hgd, hds]
     | some s => simp [liveness, hd, hgd, hds, hs s, hu s]
 
+/-! # Destroyed by the call that reads it (card BORROW-RESIDUALS)
+
+`liveness` above reads the state **entering** the call, which is the standard
+reading of a precondition and stays that way. Card BORROW-LIVENESS recorded the
+consequence as the residual `BORROW-LIVENESS-PRESTATE`: a single call that
+declares `resource_released` on one argument and `resource_borrowed` on another
+is not refused by it, because at the pre-state the identity is still live.
+
+Card BORROW-RESIDUALS takes that residual. The question it asks lives entirely
+inside one call: **this call's own declared effects destroy the identity one of
+its own `Borrowed` positions reads.** The fact is a *must* fact of the same kind
+as `liveness`'s — the projection settled both actuals to one identity — and the
+reason it is refused rather than admitted is that the contract vocabulary
+carries **no ordering** between a callee's own declared effects. An unproven
+call effect is `Unknown`.
+
+`sameCall` is a separate decision with a separate result type on purpose. The
+path fact and the call fact are never conflated, exactly as this module's rule
+and `QCore.MayAlias`'s are not. It also reads **no status at all**
+(`the_same_call_rule_reads_no_status`), which is why it can refuse a call whose
+identity `liveness` admits.
+
+Only `released` destroys, mirroring `custodyDefinitelyEnded`'s treatment of the
+four bits: `consumed`, `stored` and `removed` move or detach custody without
+destroying — §C04.2 says `resource_consumed` "is not a proof of destruction" —
+and `out` writes a slot (`BORROW-LIVENESS-OUT`, decided here rather than
+asserted).
+-/
+
+/-- A declared parameter mode, as far as this decision needs it. These are
+    exactly `qcore_schemas::contract::ResourceParameterMode`'s constructors with
+    their payloads dropped: nothing here reads a nullability. -/
+inductive Mode where
+  | borrowed
+  | released
+  | consumed
+  | stored
+  | removed
+  | owned
+  | out
+deriving DecidableEq, Repr
+
+/-- Which declared modes destroy the object at that position.
+
+    `only_released_destroys` decides the whole seven-mode domain, so the table
+    cannot be widened without that theorem moving. -/
+def destroys : Mode → Bool
+  | .released => true
+  | _ => false
+
+/-- One modeled call: the declared mode and the projection's denotation for each
+    argument position, in order. -/
+structure Call where
+  positions : List (Mode × Option Denotation)
+
+/-- The decision of the same-call rule. -/
+inductive SameCall where
+  /-- The projection settled this `Borrowed` actual and one of the same call's
+      destroying actuals to **one** identity. -/
+  | destroyedByThisCall
+  /-- Anything else. No claim in either direction. -/
+  | notDecided
+deriving DecidableEq, Repr
+
+/-- The identities this call's own declared effects destroy, so far as the
+    projection settled them. A position whose mode does not destroy, and one
+    whose actual the projection did not settle, contributes nothing. -/
+def destroyingIdentities (c : Call) : List Site :=
+  c.positions.filterMap fun position =>
+    if destroys position.1 then position.2.bind Denotation.settled else none
+
+/-- The rule, fail-closed to `notDecided` at every step. -/
+def sameCall (borrowed : Option Denotation) (c : Call) : SameCall :=
+  match borrowed.bind Denotation.settled with
+  | none => .notDecided
+  | some s => if s ∈ destroyingIdentities c then .destroyedByThisCall else .notDecided
+
+/-- What a same-call refusal does to the published verdict: the same
+    `UnknownAlias`, i.e. the `unresolved` class, and `Unsafe` still wins. -/
+def publishSameCall (v : Verdict) (s : SameCall) : Verdict :=
+  match s with
+  | .notDecided => v
+  | .destroyedByThisCall =>
+    match v with
+    | .violation => .violation
+    | _ => .unresolved
+
+/-- One settled binding of site `s`. -/
+def settledOn (s : Site) : Denotation := ⟨[s], false, false⟩
+
+/-! ## The positive direction, and its non-vacuity -/
+
+/-- **The headline of card BORROW-RESIDUALS.** One call declaring
+    `resource_released` at one position and `resource_borrowed` at another, over
+    one settled identity. Measured `Safe` with no diagnostics at that card's
+    base. -/
+theorem a_call_that_destroys_the_identity_it_reads_is_refused :
+    sameCall (some (settledOn 0))
+        ⟨[(.released, some (settledOn 0)), (.borrowed, some (settledOn 0))]⟩
+      = .destroyedByThisCall := by
+  decide
+
+/-- Two *distinct* declared names the projection settled to one identity answer
+    the same way, because the decision is over identities and not over names.
+    This is not the may-alias relation: nothing here reads a declared tag. -/
+theorem two_positions_settled_to_one_identity_are_refused :
+    sameCall (some ⟨[3], false, false⟩) ⟨[(.released, some ⟨[3], false, false⟩)]⟩
+      = .destroyedByThisCall := by
+  decide
+
+/-- Position order is not consulted, so the answer cannot be an artefact of the
+    parameter loop's direction. -/
+theorem the_decision_does_not_depend_on_position_order :
+    sameCall (some (settledOn 0))
+        ⟨[(.borrowed, some (settledOn 1)), (.released, some (settledOn 0))]⟩
+      = sameCall (some (settledOn 0))
+        ⟨[(.released, some (settledOn 0)), (.borrowed, some (settledOn 1))]⟩ := by
+  decide
+
+/-- …and in general the decision depends only on *which* identities the call
+    destroys, never on where or how often they occur. -/
+theorem the_decision_reads_only_the_destroyed_identities (b : Option Denotation) (c c' : Call)
+    (h : ∀ s, s ∈ destroyingIdentities c ↔ s ∈ destroyingIdentities c') :
+    sameCall b c = sameCall b c' := by
+  cases hb : b.bind Denotation.settled with
+  | none => simp [sameCall, hb]
+  | some s => simp [sameCall, hb, h s]
+
+/-- A refusal withdraws a certificate rather than issuing an allegation. -/
+theorem a_same_call_refusal_withdraws_a_certificate :
+    publishSameCall .safe .destroyedByThisCall = .unresolved := by
+  decide
+
+/-! ## The mode table, decided over its whole domain -/
+
+/-- Every declared mode, so the table below is decided rather than sampled. -/
+def allModes : List Mode :=
+  [.borrowed, .released, .consumed, .stored, .removed, .owned, .out]
+
+/-- Exactly one mode destroys, over the whole seven-mode domain. This is the
+    model's counterpart of `custodyDefinitelyEnded`'s `released` conjunct. -/
+theorem only_released_destroys : allModes.filter destroys = [.released] := by
+  decide
+
+/-- `resource_consumed` "is not a proof of destruction" (§C04.2), so a
+    consumed-and-borrowed pair keeps its existing answer exactly as `escapedOnly`
+    does on the path rule. `C02-P-ALIAS-CONSUME` is not closed through this back
+    door. -/
+theorem a_consumption_in_the_same_call_is_not_a_destruction :
+    sameCall (some (settledOn 0)) ⟨[(.consumed, some (settledOn 0))]⟩ = .notDecided := by
+  decide
+
+/-- **`BORROW-LIVENESS-OUT`, in the model.** An `Out` actual is the address of a
+    slot the callee writes; it destroys nothing, so it never makes a borrow of
+    the same identity refusable. -/
+theorem an_out_position_never_destroys :
+    sameCall (some (settledOn 0)) ⟨[(.out, some (settledOn 0))]⟩ = .notDecided := by
+  decide
+
+/-- Detaching from a container and storing beneath an owner leave the object
+    alive, exactly as `containedOnly` does on the path rule. -/
+theorem a_removed_or_stored_position_never_destroys :
+    sameCall (some (settledOn 0)) ⟨[(.removed, some (settledOn 0))]⟩ = .notDecided ∧
+      sameCall (some (settledOn 0)) ⟨[(.stored, some (settledOn 0))]⟩ = .notDecided := by
+  exact ⟨by decide, by decide⟩
+
+/-! ## Every way the same-call decision fails closed -/
+
+/-- **Every scalar `Borrowed` actual takes this path**, and that matters
+    concretely: the one declaration in the pinned corpus carrying a released and
+    a borrowed parameter at once has a scalar flag in the borrowed position. -/
+theorem an_unbound_borrowed_actual_is_never_refused (c : Call) :
+    sameCall none c = .notDecided := by
+  rfl
+
+/-- A borrowed actual the projection will not settle is never refused, whatever
+    the call destroys — the same fail-closed conjunct `liveness` has. -/
+theorem an_unsettled_borrowed_actual_is_never_refused (d : Denotation) (c : Call)
+    (h : d.settled = none) : sameCall (some d) c = .notDecided := by
+  simp [sameCall, h]
+
+/-- A destroying position the projection will not settle names no identity, so
+    it can refuse nothing. -/
+theorem an_unsettled_destroying_actual_refuses_nothing (b : Option Denotation) :
+    sameCall b ⟨[(.released, some ⟨[0], true, false⟩), (.released, some ⟨[0], false, true⟩),
+                 (.released, some ⟨[0, 1], false, false⟩), (.released, some ⟨[], false, false⟩),
+                 (.released, none)]⟩ = .notDecided := by
+  cases hb : b.bind Denotation.settled with
+  | none => simp [sameCall, hb]
+  | some s => simp [sameCall, hb, destroyingIdentities, Denotation.settled]
+
+/-- The ordinary well-formed call: a different identity at the destroying
+    position. Nothing may move here, or the rule would refuse every call that
+    releases anything at all. -/
+theorem a_distinct_identity_in_the_same_call_is_never_refused :
+    sameCall (some (settledOn 0))
+        ⟨[(.released, some (settledOn 1)), (.borrowed, some (settledOn 0))]⟩
+      = .notDecided := by
+  decide
+
+/-- A call with no destroying position at all — the overwhelming majority — is
+    untouched, over every borrowed actual whatsoever. -/
+theorem a_call_that_destroys_nothing_is_never_refused (b : Option Denotation) (c : Call)
+    (h : ∀ p ∈ c.positions, destroys p.1 = false) : sameCall b c = .notDecided := by
+  have hempty : destroyingIdentities c = [] := by
+    have : ∀ l : List (Mode × Option Denotation), (∀ p ∈ l, destroys p.1 = false) →
+        (l.filterMap fun p => if destroys p.1 then p.2.bind Denotation.settled else none) = [] := by
+      intro l
+      induction l with
+      | nil => intro _; rfl
+      | cons p rest ih =>
+        intro hall
+        have hp : destroys p.1 = false := hall p (by simp)
+        have hrest : ∀ q ∈ rest, destroys q.1 = false := fun q hq => hall q (by simp [hq])
+        simp [List.filterMap, hp, ih hrest]
+    simpa [destroyingIdentities] using this c.positions h
+  cases hb : b.bind Denotation.settled with
+  | none => simp [sameCall, hb]
+  | some s => simp [sameCall, hb, hempty]
+
+/-! ## The converse, and the separation from the path rule -/
+
+/-- Every refusal is backed by a settled borrowed actual whose identity this
+    call's own declared effects destroy. The rule invents nothing. -/
+theorem a_same_call_refusal_names_the_identity_it_claims (b : Option Denotation) (c : Call)
+    (h : sameCall b c = .destroyedByThisCall) :
+    ∃ s, b.bind Denotation.settled = some s ∧ s ∈ destroyingIdentities c := by
+  cases hb : b.bind Denotation.settled with
+  | none => simp [sameCall, hb] at h
+  | some s =>
+    by_cases hm : s ∈ destroyingIdentities c
+    · exact ⟨s, rfl, hm⟩
+    · simp [sameCall, hb, hm] at h
+
+/-- The two decisions are independent, demonstrated rather than asserted: an
+    identity `liveness` admits — live on every reaching path — is still refused
+    when this call destroys it. The same-call rule reads no status bitmap at
+    all, which is why its `Call` carries none. -/
+theorem the_same_call_rule_reads_no_status :
+    liveness (settledAt Status.liveOnly) = .notDecided ∧
+      sameCall (some (settledOn 0)) ⟨[(.released, some (settledOn 0))]⟩
+        = .destroyedByThisCall := by
+  exact ⟨by decide, by decide⟩
+
+/-! ## The published class -/
+
+/-- The same-call rule can never certify either. -/
+theorem the_same_call_rule_never_certifies (v : Verdict) (s : SameCall)
+    (h : publishSameCall v s = .safe) : v = .safe := by
+  cases s with
+  | notDecided => simpa [publishSameCall] using h
+  | destroyedByThisCall => cases v <;> simp [publishSameCall] at h
+
+/-- …and never manufactures an upstream defect allegation. -/
+theorem a_same_call_refusal_is_never_the_violation_class (v : Verdict) (s : SameCall)
+    (h : v ≠ .violation) : publishSameCall v s ≠ .violation := by
+  cases s with
+  | notDecided => simpa [publishSameCall] using h
+  | destroyedByThisCall => cases v <;> simp [publishSameCall] at h ⊢
+
+/-- An existing violation is not softened by it. -/
+theorem an_existing_violation_survives_the_same_call_rule (s : SameCall) :
+    publishSameCall .violation s = .violation := by
+  cases s <;> rfl
+
+/-! ## `BORROW-LIVENESS-ASSUMPTION`: neither rule can discharge a premise
+
+The Boolean-field source-effect route publishes
+`assumptions_used.borrowed_parameter_is_live: true` on every certificate it
+issues — a premise about the analyzed function's own **entry** parameter,
+supplied by a caller this projection never sees. Both rules here decide the
+actuals an analyzed body passes *onward*, so the two are related only by name.
+
+The subject mismatch is prose, recorded in the card. What is decidable, and
+decided here, is the shape of the publication: neither codomain contains a value
+that asserts liveness, and neither transformer touches the assumption set. A
+refusal-only rule discharges nothing.
+-/
+
+/-- A premise a published certificate carries as an assumption. -/
+inductive Premise where
+  | borrowedParameterIsLive
+deriving DecidableEq, Repr
+
+/-- A published result: a verdict together with the premises it still assumes. -/
+structure Published where
+  verdict : Verdict
+  assumed : List Premise
+
+/-- Publishing either decision. -/
+def publishBoth (p : Published) (l : Liveness) (s : SameCall) : Published :=
+  { p with verdict := publishSameCall (publish p.verdict l) s }
+
+/-- Neither rule ever removes a premise from the assumption set, on any input.
+    `borrowed_parameter_is_live` is exactly as assumed after this card as before
+    it. -/
+theorem no_decision_discharges_a_premise (p : Published) (l : Liveness) (s : SameCall) :
+    (publishBoth p l s).assumed = p.assumed := by
+  rfl
+
+/-- The reason, stated over the verdict rather than the assumption set: every
+    outcome of either rule either changes nothing or withdraws a certificate.
+    There is no input at which either rule *adds* anything to a published
+    result, so nothing it produces can serve as evidence for a premise. -/
+theorem every_outcome_either_refuses_or_changes_nothing (v : Verdict) (l : Liveness)
+    (s : SameCall) :
+    publishSameCall (publish v l) s = v ∨ publishSameCall (publish v l) s = .unresolved := by
+  cases v <;> cases l <;> cases s <;> simp [publish, publishSameCall]
+
 end QCore.BorrowLiveness
