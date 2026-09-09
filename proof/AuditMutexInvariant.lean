@@ -159,3 +159,34 @@ happens-before conditions on destruction are not among these. -/
 #print axioms QCore.Concurrency.MutexInvariant.stepRanked_agrees_with_step_off_lock
 #print axioms QCore.Concurrency.MutexInvariant.stepRanked_refines_step
 #print axioms QCore.Concurrency.MutexInvariant.runRanked_refines_run
+
+-- Card CT34-GROWTH: the opt-in protection growth. `extendProtection` is
+-- unchanged and still refuses unconditionally (`protected_shape_is_fixed`
+-- above); this is a second, narrower rule beside it. The two results that carry
+-- the soundness argument are that growth conserves authority — it moves the
+-- grower's holding exactly as creation does — and that an admitted growth's
+-- interval had no protector at all, so no footprint acquires a second one.
+#print axioms QCore.Concurrency.MutexInvariant.growProtectionEffect_preserves_authority
+#print axioms QCore.Concurrency.MutexInvariant.grow_step_preserves_authority
+#print axioms QCore.Concurrency.MutexInvariant.admitted_growth_had_no_protector
+#print axioms QCore.Concurrency.MutexInvariant.grow_preserves_every_other_declared_shape
+#print axioms QCore.Concurrency.MutexInvariant.grow_appends_the_interval_and_moves_the_predicate
+
+-- The refusals: everything outside W1-W5.
+#print axioms QCore.Concurrency.MutexInvariant.grow_refuses_a_dead_guard
+#print axioms QCore.Concurrency.MutexInvariant.grow_requires_the_holder
+#print axioms QCore.Concurrency.MutexInvariant.grow_requires_an_open_invariant
+#print axioms QCore.Concurrency.MutexInvariant.grow_requires_the_creator
+#print axioms QCore.Concurrency.MutexInvariant.grow_requires_an_unused_predicate_identity
+#print axioms QCore.Concurrency.MutexInvariant.grow_refuses_an_already_protected_interval
+#print axioms QCore.Concurrency.MutexInvariant.grow_refuses_a_parked_interval
+#print axioms QCore.Concurrency.MutexInvariant.grow_requires_full_authority
+#print axioms QCore.Concurrency.MutexInvariant.grow_refuses_a_destroyed_resource
+#print axioms QCore.Concurrency.MutexInvariant.refused_growth_produces_no_state
+
+-- What an admitted growth forces afterwards: the section is marked as having
+-- changed the region, so it cannot claim the checked witness, and it cannot
+-- leave the critical section without an explicit close.
+#print axioms QCore.Concurrency.MutexInvariant.grow_marks_the_section_it_ran_under
+#print axioms QCore.Concurrency.MutexInvariant.a_grown_section_cannot_close_with_the_checked_witness
+#print axioms QCore.Concurrency.MutexInvariant.a_grown_section_cannot_be_released_before_closing

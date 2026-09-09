@@ -551,6 +551,7 @@ outer       = "let" , NAME , "=" , "protected" , NAT , ";"
             | "with" , "lock" , NAME , "as" , NAME , "{" , { inner } , "}" ;
 inner       = "open" , NAME , ";"
             | "close" , NAME , [ "unchanged" ] , ";"
+            | "grow" , NAME , "guards" , NAME , ";"
             | ( "read" | "write" ) , NAME , "with" , NAME , ";"
             | "let" , NAME , "=" , "borrow" , NAME , "with" , NAME , ";"
             | "drop" , NAME , ";"
@@ -564,9 +565,10 @@ child       = (* any `outer` or `inner` form except a declaration and except
                  lexically and holds none of its authority *) ;
 ```
 
-`mutex guards R;` fixes the protected footprint syntactically at the
-declaration, so a dynamic protected shape is not expressible rather than being
-detected later. Creation consumes the declaring task's `FULL_ACCESS` share over
+`mutex guards R;` declares the protected footprint syntactically, and the only
+way to change it afterwards is card CT34-GROWTH's `grow` statement below, under
+its own rule; a dynamic protected shape is otherwise not expressible rather than
+being detected later. Creation consumes the declaring task's `FULL_ACCESS` share over
 `R`, so a second `mutex guards R;` cannot obtain it (`Q617`) and an unguarded
 access to `R` has no fallback authority (`Q611`). A guard obtained over one
 generation authorizes only that generation's footprint (`Q610`).
@@ -650,6 +652,30 @@ Card CT33-RANKS adds the ranked declaration and nothing else to the grammar:
   `docs/QCORE_SPEC_r0_3.md` for exactly what it does and does not establish.
   `rank` is reserved. See
   [the CT33-RANKS record](reports/remaining-ct33-ranks/README.md).
+
+Card CT34-GROWTH adds one statement and nothing else to the grammar:
+
+* **`grow g guards r;`**, written inside `g`'s own section, adds `r` to the
+  protected footprint of the generation `g` guards. It names the guard, and the
+  core reads the generation off it, so a growth can never reach a mutex its
+  holder does not hold. Admission is the core's decision, not the grammar's: the
+  invariant must be open at the growth (`Q626`); `r` must be protected by no
+  live generation, this one included (`Q617`); the growing task must be the
+  generation's creator and hold the full share over `r` (`Q621`); and the growth
+  must move the generation's declared invariant to an identity it has never
+  carried (`Q627`), which the lowering mints. A growth is a change to the
+  protected region, so `close g unchanged;` is refused in a section that grew
+  (`Q600`) rather than downgraded, and the section must close by declaration.
+  Growth is permanent: `r` is behind the guard from then on — an unguarded
+  access to it becomes `Q611` — the originally declared footprint stays
+  protected, and there is no shrink or replacement form. A refused growth leaves
+  the generation's shape, its declared identity and the ledger untouched, so the
+  section's own `close` then names an identity the generation never took; that
+  fallout is reported rather than repaired. Growth adds no premise beyond the
+  `InvariantPredicateDeclared` the new identity carries, and each admitted
+  growth is named on the certificate. The unconditional `Q618` fixed-shape
+  refusal is unchanged and has no source form. `grow` is reserved. See
+  [the CT34-GROWTH record](reports/remaining-ct34-growth/README.md).
 
 Native emission uses one thread and C11 `mtx_t` with real heap footprints on
 Linux, macOS and Windows (the latter two through the emitted compatibility layer);
