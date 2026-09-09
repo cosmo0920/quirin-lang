@@ -255,6 +255,153 @@ theorem exactly_five_call_sites_satisfy_the_premise :
 theorem exactly_ten_call_sites_are_withdrawn :
     (measuredSizeActuals.filter (fun a => !(a == sizePremise.literal))).length = 10 := by decide
 
+/-! ## 3. The carrier, and the migration off the comment directive
+
+Card **HASH-CLAUSE**. The premise above was first written as a machine-parsed
+`// qcore-premise: literal_argument(...)` comment in the module's declared text,
+and is now the first-class clause `requires resource_literal_argument(p, L);`.
+The mechanism of §1 is unchanged; what changes is *where the premise is read
+from*. Three things are proved here.
+
+**Parity.** The refusal set at a call site is a function of the premise
+environment alone, so two carriers that state the same premises decide every
+call site identically. That is the general form of the measurement the card
+took, not a restatement of it: the Rust side measured that the two carriers
+*do* state the same premises, and this says that measuring that is enough.
+
+**Non-vacuity.** Two carriers can disagree, so the parity theorem is not
+vacuous.
+
+**Retirement.** A reader that no longer parses the directive reads a
+directive-only text as carrying *no* premise, which re-admits exactly the call
+sites the premise withdrew. The exhibited hazard is closed by refusing such a
+text outright, and refusing is proved to close it. -/
+
+/-- Where a premise is written. -/
+inductive Carrier where
+  /-- The retired machine-parsed comment directive (card HASH-CONTRACTS). -/
+  | directive
+  /-- The §C04.5 clause (card HASH-CLAUSE). -/
+  | clause
+  deriving DecidableEq, Repr
+
+/-- A declared module text, abstracted to what each carrier states about it and
+to whether the reader could read the text at all. `readable = false` is the
+loader refusing the text — a malformed clause, or, after retirement, a text
+still carrying the directive. -/
+structure Declared where
+  viaDirective : Name → List Premise
+  viaClause : Name → List Premise
+  readable : Bool
+
+/-- Read premises from one carrier. An unreadable text **poisons**: the premise
+set is not emptied, because an empty set applies every declaration everywhere. -/
+def readWith (c : Carrier) (d : Declared) (contracts : Name → Option Contract) :
+    Environment where
+  contracts := contracts
+  premises := match c with
+    | Carrier.directive => d.viaDirective
+    | Carrier.clause => d.viaClause
+  poisoned := !d.readable
+
+/-- The fail-open reading the implementation must never perform: an unreadable
+text answered with no premises at all. -/
+def readOpen (contracts : Name → Option Contract) : Environment where
+  contracts := contracts
+  premises := fun _ => []
+  poisoned := false
+
+/-! ### Parity: equal premises decide every call site identically -/
+
+theorem equal_carriers_decide_every_call_site_alike {d : Declared}
+    {contracts : Name → Option Contract} (h : ∀ n, d.viaDirective n = d.viaClause n)
+    (c : Call) :
+    applied (readWith Carrier.directive d contracts) c
+      = applied (readWith Carrier.clause d contracts) c := by
+  unfold applied unmet readWith
+  simp [h c.callee]
+
+theorem equal_carriers_withdraw_alike {d : Declared}
+    {contracts : Name → Option Contract} (h : ∀ n, d.viaDirective n = d.viaClause n)
+    (c : Call) :
+    unmet (readWith Carrier.directive d contracts) c
+      = unmet (readWith Carrier.clause d contracts) c := by
+  unfold unmet readWith
+  simp [h c.callee]
+
+/-- The migrated declaration: both carriers state the same one premise, and the
+text reads. -/
+def migrated : Declared where
+  viaDirective := fun n => if n = 0 then [sizePremise] else []
+  viaClause := fun n => if n = 0 then [sizePremise] else []
+  readable := true
+
+theorem the_migrated_carriers_state_the_same_premises (n : Name) :
+    migrated.viaDirective n = migrated.viaClause n := by
+  unfold migrated; simp
+
+theorem the_migration_preserves_every_refusal
+    (contracts : Name → Option Contract) (c : Call) :
+    applied (readWith Carrier.directive migrated contracts) c
+      = applied (readWith Carrier.clause migrated contracts) c :=
+  equal_carriers_decide_every_call_site_alike the_migrated_carriers_state_the_same_premises c
+
+/-- The environment the card lands is exactly what either carrier reads. -/
+theorem the_clause_reading_is_the_declared_environment (c : Call) :
+    applied (readWith Carrier.clause migrated declared.contracts) c = applied declared c := by
+  unfold applied unmet readWith migrated declared
+  simp only [Bool.not_true]
+
+/-! ### Non-vacuity: the carriers *can* disagree -/
+
+/-- A text whose clause states the premise and whose directive states nothing. -/
+def clauseOnly : Declared where
+  viaDirective := fun _ => []
+  viaClause := fun n => if n = 0 then [sizePremise] else []
+  readable := true
+
+theorem the_carriers_can_disagree :
+    applied (readWith Carrier.directive clauseOnly declared.contracts) atPositive
+      ≠ applied (readWith Carrier.clause clauseOnly declared.contracts) atPositive := by
+  decide
+
+/-! ### Retirement: an unread directive re-admits what the premise withdrew -/
+
+/-- A text that still carries only the retired directive. After retirement no
+reader parses it, so its clause carrier states nothing. -/
+def directiveOnly : Declared where
+  viaDirective := fun n => if n = 0 then [sizePremise] else []
+  viaClause := fun _ => []
+  readable := true
+
+/-- **The hazard, exhibited.** Silently ignoring a leftover directive applies the
+declaration at the very call site the premise withdrew. -/
+theorem an_ignored_directive_readmits_the_withdrawn_call :
+    applied (readWith Carrier.clause directiveOnly declared.contracts) atPositive
+      = some publication := by decide
+
+/-- The same text, refused by the loader. Refusing closes the hazard. -/
+def directiveRefused : Declared := { directiveOnly with readable := false }
+
+theorem refusing_the_directive_text_withdraws_every_call (c : Call) :
+    applied (readWith Carrier.clause directiveRefused declared.contracts) c = none := by
+  refine a_poisoned_environment_applies_nothing ?_
+  unfold readWith directiveRefused directiveOnly
+  simp
+
+/-- **Why poisoning is not emptying.** On the same unreadable text, the
+fail-open reading applies the declaration everywhere the poisoned one refuses. -/
+theorem the_fail_open_reading_applies_what_poison_refuses :
+    applied (readOpen declared.contracts) atPositive = some publication
+      ∧ applied (readWith Carrier.clause directiveRefused declared.contracts) atPositive
+          = none := by
+  constructor
+  · decide
+  · exact refusing_the_directive_text_withdraws_every_call atPositive
+
+theorem the_fail_open_reading_even_applies_at_an_unmet_premise :
+    applied (readOpen declared.contracts) tooShort = some publication := by decide
+
 /-! ## The upstream body, and which mode is faithful -/
 
 /-- The two arms of `entry_set_value`. -/

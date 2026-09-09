@@ -309,7 +309,7 @@ fn without_the_declared_premise_the_positive_size_call_is_admitted() {
         return;
     }
     let unrestricted =
-        GENERIC_CONTRACTS.replace("// qcore-premise: literal_argument(p_publish, 2, 0)", "");
+        GENERIC_CONTRACTS.replace("    requires resource_literal_argument(size, 0);\n", "");
     assert_ne!(unrestricted, GENERIC_CONTRACTS, "the substitution applied");
     let body =
         format!("void p_g7(void) {{ {OPENED} p_publish(t, v, 8); p_release(v); p_close(t); }}");
@@ -332,34 +332,6 @@ fn without_the_declared_premise_the_positive_size_call_is_admitted() {
 // --------------------------------------------------------------------------
 // Card HASH-CLAUSE: migration parity, measured
 // --------------------------------------------------------------------------
-
-/// Rewrite a contract module so `function`'s premise is carried by the
-/// first-class clause instead of the retiring comment directive.
-///
-/// The clause is inserted immediately after that declaration's marker, so the
-/// only textual difference between the two variants is which carrier states the
-/// restriction.
-fn as_clause(text: &str, directive: &str, declaration: &str, clause: &str) -> String {
-    let without = text.replace(directive, "");
-    assert_ne!(without, text, "the directive was present to remove");
-    let marker = format!("{declaration}\ncontract {{\n    requires resource_contract_v1;");
-    let with = without.replace(
-        &marker,
-        &format!("{marker}\n    requires resource_literal_argument({clause});"),
-    );
-    assert_ne!(with, without, "the clause substitution applied");
-    with
-}
-
-/// The generic family's contracts, carried by the clause.
-fn generic_clause_contracts() -> String {
-    as_clause(
-        GENERIC_CONTRACTS,
-        "// qcore-premise: literal_argument(p_publish, 2, 0)",
-        "extern fn p_publish(t: ptr<mut, u8>, v: ptr<mut, u8>, size: isize) -> i32",
-        "size, 0",
-    )
-}
 
 /// Every call-site shape whose treatment the premise decides: the declared
 /// literal, spellings that are not it, and a call that does not reach the
@@ -395,6 +367,16 @@ const PINNED_REFUSALS: &[bool] = &[
     true,  // (0)                      — parenthesised, not the literal token
 ];
 
+/// `flb_input_chunk_create`'s complete ordered unsupported-diagnostic vector on
+/// the real upstream body, measured under the comment directive and reproduced
+/// under the clause. The four publications decide — none of them appears here —
+/// and the two residues are rows 0 and 9 of O04-B09B10's census, owned by that
+/// card's named follow-ons.
+const PINNED_REAL_DIAGNOSTICS: &[&str] = &[
+    "call to uncontracted function `flb_trace`",
+    "nullable resource `ic` used by a non-null contract",
+];
+
 /// Whether the declaration was withdrawn at a publication passing `actual`.
 fn withdrawn_under(contracts: &str, actual: &str) -> bool {
     let body = format!(
@@ -407,82 +389,119 @@ fn withdrawn_under(contracts: &str, actual: &str) -> bool {
     }
 }
 
-/// **The migration parity measurement.** At every call-site shape the premise
-/// decides, the clause withdraws exactly what the directive withdrew — and both
-/// reproduce the pinned vector, which is what anchors the claim once the
-/// directive is gone.
+/// **The migration parity measurement, pinned.** At every call-site shape the
+/// premise decides, the clause withdraws exactly the set card HASH-CONTRACTS'
+/// comment directive withdrew. Both carriers were run against this vector while
+/// both existed (`docs/reports/remaining-hash-clause/logs/carrier-parity.txt`);
+/// the directive is now retired, and this pin is what keeps the claim checkable.
 #[test]
 fn the_clause_reproduces_the_directives_refusal_set() {
     if !clang_available() {
         return;
     }
-    let clause = generic_clause_contracts();
-    let under_directive: Vec<bool> = PARITY_ACTUALS
+    let measured: Vec<bool> = PARITY_ACTUALS
         .iter()
         .map(|actual| withdrawn_under(GENERIC_CONTRACTS, actual))
         .collect();
-    let under_clause: Vec<bool> = PARITY_ACTUALS
-        .iter()
-        .map(|actual| withdrawn_under(&clause, actual))
-        .collect();
     assert_eq!(
-        under_directive, under_clause,
-        "carriers disagree: {PARITY_ACTUALS:?}"
-    );
-    assert_eq!(
-        under_directive, PINNED_REFUSALS,
+        measured, PINNED_REFUSALS,
         "the measured refusal set moved: {PARITY_ACTUALS:?}"
     );
 }
 
-/// The same parity on the real upstream body: the four publications the
-/// declaration covers and the one it withdraws decide identically under either
-/// carrier, diagnostic vector for diagnostic vector.
+/// The same parity on the real upstream body: the production module's clause
+/// leaves `flb_input_chunk_create`'s diagnostics exactly as the directive did.
+/// The vector is pinned in `PINNED_REAL_REFUSALS`.
 #[test]
 fn the_clause_reproduces_the_directives_real_source_diagnostics() {
     if !clang_available() {
         return;
     }
-    let directive = real_contracts();
-    let clause = as_clause(
-        &directive,
-        "// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)",
-        "extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<const, u8>, key_len: i32, \
-         val: ptr<mut, u8>, val_size: isize) -> i32",
-        "val_size, 0",
-    );
     let source = real_unit();
-    let under = |contracts: &str| {
-        let result = analyze_unrestricted_c11(
-            &C11TranslationUnit {
-                source: &source,
-                ..Default::default()
-            },
-            "flb_input_chunk_create",
-            &load("hash_contracts_path.qcore", contracts),
-        )
-        .expect("real fixture accepted by Clang");
-        unsupported(function(program(&result), "flb_input_chunk_create"))
-            .iter()
-            .map(|text| (*text).to_owned())
-            .collect::<Vec<_>>()
-    };
-    assert_eq!(under(&directive), under(&clause));
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "flb_input_chunk_create",
+        &load("hash_contracts_path.qcore", &real_contracts()),
+    )
+    .expect("real fixture accepted by Clang");
+    let measured = unsupported(function(program(&result), "flb_input_chunk_create"));
+    assert_eq!(
+        measured, PINNED_REAL_DIAGNOSTICS,
+        "the real-source diagnostic vector moved"
+    );
+    assert!(
+        !measured.contains(&OUTSIDE_HASH),
+        "the four publications decide under the clause"
+    );
 }
 
-/// A malformed directive refuses **every** contracted call rather than silently
-/// applying the contracts a typo left unrestricted.
+/// The parity table archived by card HASH-CLAUSE, printed rather than asserted.
+/// The directive column is gone with the directive; the transcript taken while
+/// both carriers existed is
+/// `docs/reports/remaining-hash-clause/logs/carrier-parity.txt`.
+#[test]
+#[ignore = "reporting aid, not an assertion"]
+fn print_the_carrier_parity_table() {
+    if !clang_available() {
+        return;
+    }
+    println!("{:<26} {:>8} {:>10}", "val_size actual", "clause", "pinned");
+    for (index, actual) in PARITY_ACTUALS.iter().enumerate() {
+        println!(
+            "{:<26} {:>8} {:>10}",
+            actual,
+            withdrawal(withdrawn_under(GENERIC_CONTRACTS, actual)),
+            withdrawal(PINNED_REFUSALS[index]),
+        );
+    }
+}
+
+fn withdrawal(refused: bool) -> &'static str {
+    if refused { "withdrawn" } else { "applied" }
+}
+
+/// A premise text the loader cannot re-read refuses **every** contracted call
+/// rather than silently applying the contracts a typo left unrestricted.
+///
+/// A malformed clause rejects the module outright, so the only way to reach the
+/// analyzer with one is to substitute the retained text after loading — which is
+/// exactly what a tampered certificate would do. The premise set poisons; it
+/// does not become empty, which would apply every declaration everywhere.
 #[test]
 fn a_malformed_premise_refuses_every_contracted_call() {
     if !clang_available() {
         return;
     }
-    let broken =
-        GENERIC_CONTRACTS.replace("literal_argument(p_publish, 2, 0)", "literal_argument(");
+    let broken = GENERIC_CONTRACTS.replace("(size, 0)", "(absent, 0)");
     assert_ne!(broken, GENERIC_CONTRACTS, "the substitution applied");
+    assert!(
+        load_resource_contract_sources(&BTreeMap::from([(
+            "hash_contracts_generic.qcore".to_owned(),
+            broken.clone(),
+        )]))
+        .is_err(),
+        "a malformed clause must reject the module"
+    );
     let body =
         format!("void p_g8(void) {{ {OPENED} p_publish(t, v, 0); p_release(v); p_close(t); }}");
-    let result = analyze_with(&broken, &body, "p_g8");
+    let mut contracts = load("hash_contracts_generic.qcore", GENERIC_CONTRACTS);
+    contracts.set_source_assumptions(BTreeMap::from([(
+        "hash_contracts_generic.qcore".to_owned(),
+        broken,
+    )]));
+    let source = format!("{DECLARATIONS} {body}");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "p_g8",
+        &contracts,
+    )
+    .expect("fixture accepted by Clang");
     assert!(
         !matches!(result, UnrestrictedLegacyResult::Safe(_)),
         "a poisoned premise set must not certify: {result:?}"
@@ -566,7 +585,7 @@ fn real_unit() -> String {
 
 /// The production module is a standalone corpus module, so it opens with its
 /// own `module contract;`. Concatenating it onto the path fixture keeps its
-/// declaration and its premise directive byte-for-byte; only that one module
+/// declaration and its premise clause byte-for-byte; only that one module
 /// header, which the fixture already supplies, is dropped.
 fn publication_fragment() -> String {
     let normalized = PUBLICATION.replace("\r\n", "\n");
@@ -574,8 +593,12 @@ fn publication_fragment() -> String {
         .strip_prefix("module contract;\n")
         .expect("the production module opens with its module header");
     assert!(
-        body.contains("// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)"),
-        "the production module carries its declared premise"
+        body.contains("    requires resource_literal_argument(val_size, 0);"),
+        "the production module carries its declared premise clause"
+    );
+    assert!(
+        !body.contains("qcore-premise:"),
+        "the retired comment directive is gone from the production module"
     );
     body.to_owned()
 }

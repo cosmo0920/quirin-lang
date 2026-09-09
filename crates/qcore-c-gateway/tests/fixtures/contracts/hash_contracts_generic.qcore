@@ -11,10 +11,8 @@ module contract;
 // `p_publish` is the shape the card exists for: a real callee whose behaviour
 // switches on a scalar argument. Its declaration below was read off the
 // size-zero arm alone — the value is stored by pointer, nothing is copied and
-// nothing is freed — so the premise restricts the declaration to call sites
-// that pass exactly the literal `0`.
-//
-// qcore-premise: literal_argument(p_publish, 2, 0)
+// nothing is freed — so its §C04.5 literal-argument premise restricts the
+// declaration to call sites that pass exactly the literal `0`.
 
 // The table the value is published into.
 extern fn p_open(n: i32) -> ptr<mut, u8>
@@ -55,6 +53,7 @@ contract {
 extern fn p_publish(t: ptr<mut, u8>, v: ptr<mut, u8>, size: isize) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_literal_argument(size, 0);
     ensures normal resource_borrowed(t);
     ensures normal resource_borrowed(v);
     ensures normal resource_borrowed(size);

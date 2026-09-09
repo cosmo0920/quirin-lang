@@ -69,23 +69,23 @@ module contract;
 // Everything above was read off the reference arm. The copy arm allocates,
 // reads `val_size` bytes through `val`, and can fail — none of which this
 // projection modeled. So the declaration must not be believed at a call site
-// that takes the other arm. Version 1's clause grammar cannot condition a mode
-// on an argument's value (§C04.2 has no value-dependent mode; §C04.4 records
-// that success-dependent parameter modes are not in v1), so the restriction is
-// declared here as a machine-checked premise and enforced by the analyzer at
-// each call site: the contract above is applied only where the argument at
-// parameter 4 is exactly the literal `0`, and every other call to this function
-// is refused as if it were uncontracted.
+// that takes the other arm. §C04.5's literal-argument premise states exactly
+// that boundary: the contract below is applied only where the `val_size` actual
+// is exactly the literal `0`, and every other call to this function is refused
+// as if it were uncontracted.
 //
-// The premise directive is part of this module's declared text. It travels in
-// `source_assumptions`, is reloaded by `check_source_assumptions`, and can only
-// ever REFUSE call sites the declaration would otherwise have covered.
-//
-// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)
+// The premise is a clause of the declaration itself. The loader validates it
+// total-or-reject — a parameter name this signature does not declare, a
+// malformed literal or a second premise on one parameter rejects this whole
+// module — and it can only ever REFUSE call sites the declaration would
+// otherwise have covered. Card HASH-CLAUSE; it replaces the machine-parsed
+// comment directive card HASH-CONTRACTS carried here, which is now retired and
+// rejected by name.
 
 extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<const, u8>, key_len: i32, val: ptr<mut, u8>, val_size: isize) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_literal_argument(val_size, 0);
     ensures normal resource_borrowed(ht);
     ensures normal resource_borrowed(key);
     ensures normal resource_borrowed(key_len);

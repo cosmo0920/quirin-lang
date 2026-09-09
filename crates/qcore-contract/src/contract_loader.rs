@@ -113,11 +113,13 @@
 //! failure over sources that mention the clause as a refusal, never as an empty
 //! premise set: `qcore_c_gateway::legacy_literal_premise` does exactly that.
 //!
-//! The mechanism this clause replaces is the machine-parsed
+//! The mechanism this clause replaces was the machine-parsed
 //! `// qcore-premise: literal_argument(...)` comment directive of card
-//! HASH-CONTRACTS, which this loader neither parses nor validates. Both
-//! carriers are live during the migration; the directive is retired, with a
-//! loud refusal, once the corpus and fixtures have moved.
+//! HASH-CONTRACTS. That carrier is **retired**, and a leftover occurrence of it
+//! must fail loudly rather than rot: a module whose text still contains the
+//! directive introducer is rejected by name — see
+//! [`RETIRED_PREMISE_DIRECTIVE`]. Silently ignoring one would drop a declared
+//! restriction, which is exactly the fail-open direction.
 //!
 //! Signatures are opaque C ABI projections, not checked C layouts. The type
 //! vocabulary is likewise an explicit table, not a wildcard:
@@ -166,6 +168,29 @@ pub const SCALAR_ABI_TYPES: &[&str] = &[
 /// Opaque C ABI pointer projections. These are the custody-bearing types.
 pub const POINTER_ABI_TYPES: &[&str] =
     &["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"];
+
+/// The introducer of the retired `qcore-premise` comment directive (card
+/// HASH-CONTRACTS, superseded by HASH-CLAUSE's `resource_literal_argument`
+/// clause).
+///
+/// A contract module whose text still contains it is **rejected**, anywhere in
+/// the text and in any comment shape. Ignoring a leftover directive would drop
+/// the restriction it declares and silently widen the declaration back to every
+/// call site, so the refusal is deliberately broader than the shape the
+/// directive parser recognised: prose that names the retired introducer belongs
+/// in this loader's own documentation, never in a contract module.
+pub const RETIRED_PREMISE_DIRECTIVE: &str = "qcore-premise:";
+
+/// Reject a module carrying the retired directive.
+fn reject_retired_premise_directive(path: &str, source: &str) -> Result<(), String> {
+    if source.contains(RETIRED_PREMISE_DIRECTIVE) {
+        return Err(format!(
+            "{path}: the `{RETIRED_PREMISE_DIRECTIVE}` comment directive is retired; \
+             declare `requires resource_literal_argument(PARAMETER, LITERAL);` instead"
+        ));
+    }
+    Ok(())
+}
 
 /// One declared literal-argument premise (card HASH-CLAUSE): the contract
 /// applies only where the actual at `parameter` is exactly `literal`.
@@ -252,6 +277,7 @@ pub fn load_resource_contract_sources(
     }
     let mut contracts = ResourceContracts::default();
     for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -278,6 +304,7 @@ pub fn load_resource_contract_sources(
 pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
     let mut tails = BTreeSet::new();
     for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -307,6 +334,7 @@ pub fn literal_argument_premises(
 ) -> Result<BTreeMap<String, Vec<DeclaredLiteralArgument>>, String> {
     let mut premises = BTreeMap::new();
     for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
