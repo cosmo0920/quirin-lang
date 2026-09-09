@@ -1079,6 +1079,27 @@ fn analyze_legacy_c_translation_unit_selected(
     Ok(analysis.summary)
 }
 
+/// Run the production derivation over one preprocessed translation unit and
+/// return only its recursive-component census (card C03-REACH).
+///
+/// This shares [`derive_custody_summaries`] with the analyzer, so the census
+/// reads the same components, the same environment and the same route
+/// decisions the audit does. It performs no per-function analysis and produces
+/// no summary, certificate or verdict.
+pub(crate) fn recursive_component_census(
+    source: &str,
+    contracts: &ResourceContracts,
+    selected_functions: Option<&[String]>,
+) -> Vec<crate::legacy_census::NeutralComponentCensus> {
+    let tokens = tokenize(source);
+    let mut names = function_names(&tokens);
+    if let Some(selected) = selected_functions {
+        let selected = selected.iter().collect::<BTreeSet<_>>();
+        names.retain(|name| selected.contains(name));
+    }
+    derive_custody_summaries(&tokens, &names, contracts).census()
+}
+
 pub(crate) struct PartialTranslationUnitAnalysis {
     pub(crate) summary: LegacyProgramSummary,
     pub(crate) projection_failures: Vec<LegacyCError>,

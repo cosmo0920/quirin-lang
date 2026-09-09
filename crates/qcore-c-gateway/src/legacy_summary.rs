@@ -130,6 +130,7 @@ use crate::legacy_c::{
     LegacyFunctionSummary, LegacyInstruction, OutSlotValue, ReturnedValue, SiteDisposition, Token,
     analyze_cfg_with_entry, build_function_cfg, direct_calls, function_parameters,
 };
+use crate::legacy_census::{NeutralComponentCensus, NeutralComponentOutcome};
 
 /// The custody environment a translation unit's analysis runs under, together
 /// with the provenance of every summary in it.
@@ -149,6 +150,11 @@ pub(crate) struct CustodyDerivation {
     /// force at a call site the component reaches, so they are not independent
     /// corroboration of anything and are never published (design unit U7).
     self_dependent: BTreeSet<String>,
+    /// Read-only record of how each *recursive* component was disposed of
+    /// (card C03-REACH). Written by this pass, read by
+    /// [`crate::legacy_census`] alone: no analysis, certificate or report
+    /// consults it, so it cannot move a verdict.
+    census: Vec<NeutralComponentCensus>,
 }
 
 impl CustodyDerivation {
@@ -158,6 +164,12 @@ impl CustodyDerivation {
 
     pub(crate) fn environment(&self) -> &ResourceContracts {
         &self.environment
+    }
+
+    /// The recursive-component census this derivation recorded (C03-REACH).
+    /// Read-only evidence; nothing in the analysis consults it.
+    pub(crate) fn census(self) -> Vec<NeutralComponentCensus> {
+        self.census
     }
 
     /// The contract a defined function's own body is checked against.
@@ -259,6 +271,9 @@ pub(crate) fn derive_custody_summaries(
         if recursive && component.iter().any(|n| contracts.contract(n).is_some()) {
             derivation.self_dependent.extend(component.iter().cloned());
         }
+        // Census only (C03-REACH): how this recursive component was disposed
+        // of. Assigned on every arm below, read by no analysis.
+        let mut outcome = None;
         if recursive
             && !pending.is_empty()
             && component.iter().all(|n| contracts.contract(n).is_none())
@@ -266,6 +281,7 @@ pub(crate) fn derive_custody_summaries(
             if let Some(contexts) =
                 infer_contextual_component(tokens, &component, &derivation.environment)
             {
+                let mut ranked = Vec::new();
                 for (name, (contract, cfg)) in contexts {
                     if derivation.inferred.contains_key(&name) {
                         continue;
@@ -274,27 +290,55 @@ pub(crate) fn derive_custody_summaries(
                         .environment
                         .insert_contract(name.clone(), contract.clone());
                     derivation.inferred.insert(name.clone(), contract);
-                    derivation.contextual.insert(name, cfg);
+                    derivation.contextual.insert(name.clone(), cfg);
+                    ranked.push(name);
                 }
-            } else if pending.len() == component.len()
+                outcome = Some(NeutralComponentOutcome::PublishedByRankedRecursion {
+                    members: ranked,
+                });
+            } else if pending.len() == component.len() {
                 // (V2) Ordinary inference and both ranked recursive routes run
                 // first. Neutral-frame recursion is consulted only for a
                 // component that published nothing, and can therefore never
                 // replace or weaken a contract another route published.
-                && let Some(published) = neutral::infer_neutral_component(
+                let decision = neutral::infer_neutral_component(
                     tokens,
                     &component,
                     contracts,
                     &derivation.environment,
-                )
-            {
-                for (name, contract) in published {
-                    derivation
-                        .environment
-                        .insert_contract(name.clone(), contract.clone());
-                    derivation.inferred.insert(name, contract);
+                );
+                if let Some(published) = decision.published {
+                    for (name, contract) in published {
+                        derivation
+                            .environment
+                            .insert_contract(name.clone(), contract.clone());
+                        derivation.inferred.insert(name, contract);
+                    }
                 }
+                outcome = Some(decision.outcome);
+            } else {
+                outcome = Some(NeutralComponentOutcome::PartiallyPublished {
+                    published: component
+                        .iter()
+                        .filter(|name| !pending.contains(name))
+                        .cloned()
+                        .collect(),
+                });
             }
+        }
+        if recursive {
+            let outcome = outcome.unwrap_or_else(|| {
+                if component.iter().any(|n| contracts.contract(n).is_some()) {
+                    NeutralComponentOutcome::DeclaredContract
+                } else {
+                    NeutralComponentOutcome::PublishedByOrdinaryInference
+                }
+            });
+            derivation.census.push(NeutralComponentCensus {
+                self_recursive: component.len() == 1,
+                members: component,
+                outcome,
+            });
         }
     }
     derivation
