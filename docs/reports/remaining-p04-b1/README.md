@@ -413,7 +413,7 @@ Run in this worktree on Linux with Clang 21.1.8 available:
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | see §7.1 |
+| `cargo test --workspace` | **1893 passed, 0 failed, 4 ignored** — against wave 9's 1888/4, exactly +5 (this card's five new tests) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -428,8 +428,9 @@ Run in this worktree on Linux with Clang 21.1.8 available:
 `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
 (`compiler/tests/cycle20_verifier_plugins.rs`) asserts a 500 ms wall bound and
 failed while the Lean gate and the corpus audit were saturating the machine; it
-was measured at ~2 s under that load. This is the recorded P02/vp04 flake
-class. Its assertion is deliberately **not** weakened. One provider run also
+was measured at ~2 s under that load, and it **passes in the clean full run
+above**. This is the recorded P02/vp04 flake class. Its assertion is
+deliberately **not** weakened. One provider run also
 failed `real_packages_preserve_unknown_and_reject_mutations` with
 `ExecutableFileBusy` when two provider suites overlapped; rerun alone it passes,
 and the 75/0 figure above is from the clean rerun.
