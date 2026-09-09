@@ -118,6 +118,11 @@ pub enum CheckedSourceModule {
     /// the evidence; the lowered epoch is retained beside it so a consumer can
     /// re-derive rather than believe it.
     CheckedEpochBound(Box<CheckedEpochModule>),
+    /// One entry function checked under `source.epoch.tasks.v1`: a flat-epoch
+    /// plan composed with a real checked task region. Both halves are retained
+    /// separately, because both were checked separately by their own unedited
+    /// checker and only then required to agree.
+    ComposedEpochTasks(Box<ComposedEpochModule>),
     /// One entry function checked under `source.extern-call.v1`. Both the
     /// extern-call certificate and the ordinary sequential evidence are
     /// retained, because both were required: the call sites are checked by the
@@ -155,6 +160,26 @@ pub struct CheckedEpochModule {
     pub certificate: epoch_accounting::EpochBoundCertificate,
 }
 
+/// A checked `source.epoch.tasks.v1` module: one flat-epoch plan and the real
+/// checked task region it accounts for.
+///
+/// Neither half is evidence for the other. `tasks` was checked by the unedited
+/// `check_task_module`, `certificate` by the unedited `check_flat_epoch` over a
+/// program whose *shape* — task count, captures, retained results, joins,
+/// disposals — was derived from `tasks` and then required to equal what the plan
+/// declared. `composed.rows` records that reconciliation row by row, including
+/// which disposals were declared and which were derived.
+#[derive(Clone, Debug)]
+pub struct ComposedEpochModule {
+    pub tasks: task_execution::CheckedTaskModule,
+    pub composed: qcore_frontend::source_epoch_tasks::LoweredComposedEpoch,
+    pub certificate: epoch_accounting::EpochBoundCertificate,
+    /// The scoped-task profile the task half executes under, kept because the
+    /// composed label would otherwise hide whether the region moves owned
+    /// Buffers or only copies scalars.
+    pub task_profile: SourceExecutionProfile,
+}
+
 impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
@@ -162,15 +187,21 @@ impl CheckedSourceModule {
             Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_) => None,
         }
     }
 
+    /// The scoped-task evidence of a module whose *whole* checked evidence is
+    /// that task module. A composed epoch answers `None` here on purpose: its
+    /// task evidence is one half of a pair, and a consumer that wants it must
+    /// ask for the composition and see the accounting half beside it.
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
             Self::Sequential(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
@@ -181,18 +212,34 @@ impl CheckedSourceModule {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
 
+    /// The certificate of a module whose whole checked evidence is the flat
+    /// epoch. A composed epoch answers `None` here for the same reason
+    /// `as_scoped_tasks` does.
     pub fn as_checked_epoch_bound(&self) -> Option<&CheckedEpochModule> {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
+            | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
+        }
+    }
+
+    pub fn as_composed_epoch_tasks(&self) -> Option<&ComposedEpochModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ExternCalls(_) => None,
+            Self::ComposedEpochTasks(module) => Some(module),
         }
     }
 
@@ -201,7 +248,8 @@ impl CheckedSourceModule {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
-            | Self::CheckedEpochBound(_) => None,
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -219,6 +267,9 @@ impl CheckedSourceModule {
             // And likewise for the flat epoch: one entry declares the whole
             // epoch, and its workers are declared shapes, not checked bodies.
             Self::CheckedEpochBound(_) => 1,
+            // A composed epoch's workers *are* checked bodies, so the count is
+            // the task module's, exactly as on the scoped-task route.
+            Self::ComposedEpochTasks(module) => module.tasks.module().functions.len(),
         }
     }
 }
@@ -253,6 +304,11 @@ pub enum SourceExecutionProfile {
     /// checked accounting statement about a declared shape: this route has no
     /// reference execution and no C emission.
     FlatEpochBoundV1,
+    /// `source.epoch.tasks.v1`: a flat-epoch plan composed with a real checked
+    /// task region. The task half executes exactly as it does on its own route —
+    /// same lowering, same checker, same emission — and the epoch stays
+    /// check-only on top of it.
+    ComposedEpochTasksV1,
 }
 
 #[derive(Clone, Debug)]
@@ -437,6 +493,13 @@ pub fn compile_files_with_registry(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    if qcore_frontend::source_epoch_tasks::has_composed_epoch(&parsed) {
+        // Selected before the pure epoch route: a module carrying both an epoch
+        // scope and the scoped-task profile's own marker is accounting for a
+        // real task region, and must not be handed to a route whose workers are
+        // declarations with no bodies.
+        return compile_composed_epoch_source(&parsed, mode, options, &ranges);
+    }
     if qcore_frontend::source_epoch::has_source_epoch(&parsed) {
         // Selected before every other concurrent route: an epoch scope is also
         // a `thread scope`, and a module that declares a quantitative epoch
@@ -1850,6 +1913,129 @@ fn compile_epoch_source(
         source_map: Vec::new(),
         reference_observation: None,
         extern_observation: None,
+    })
+}
+
+/// Compile one `source.epoch.tasks.v1` module: card T08-COMPOSE.
+///
+/// The composition is performed here and nowhere else, and every step of it is
+/// a check:
+///
+/// 1. The entry is split syntactically into its epoch plan and its task region.
+///    The plan's bytes are blanked, not deleted, so the task half is byte-for-
+///    byte the module the scoped-task route would have compiled and every span
+///    it reports still points at the original file.
+/// 2. The task half goes through the **unedited** scoped-task route —
+///    `lower_source_tasks`, `check_task_module`, `emit_task_c11` — by calling
+///    `compile_task_source` itself. Reference execution and emission are that
+///    route's, unchanged.
+/// 3. The epoch's *shape* is derived from the resulting `CheckedTaskModule` and
+///    required to equal what the plan declared. Divergence in either direction
+///    is a refusal here, at `Q600`.
+/// 4. The reconciled program goes through the **unedited** `check_flat_epoch`,
+///    and the driver re-derives the certificate before publishing it, exactly as
+///    the pure epoch route does.
+///
+/// Agreement is not a bound and a bound is not agreement: both are required, and
+/// neither is inferred from the other.
+fn compile_composed_epoch_source(
+    parsed: &SourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_epoch_tasks;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free composed epoch modules require additional source lowering",
+        )]);
+    }
+    // The entry is selected from the module as written, before the plan is
+    // removed: the two texts declare the same functions.
+    let planned_typed = elaborate_source(parsed).map_err(|diagnostics| {
+        diagnostics
+            .into_iter()
+            .map(|diagnostic| map_diagnostic(diagnostic, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let entry = select_entry(&planned_typed, options).map_err(|error| vec![error])?;
+    let split = source_epoch_tasks::split_composed_epoch(parsed, &entry).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let task_parsed = parse_source_program(&split.task_source).map_err(|error| {
+        vec![map_raw_diagnostic(
+            "Q000",
+            SemanticPass::NameResolution,
+            error.span,
+            error.message,
+            ranges,
+        )]
+    })?;
+    let task_typed = elaborate_source(&task_parsed).map_err(|diagnostics| {
+        diagnostics
+            .into_iter()
+            .map(|diagnostic| map_diagnostic(diagnostic, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    // The whole scoped-task route, unedited, on the task half alone.
+    let task_module = compile_task_source(&task_parsed, &task_typed, mode, options, ranges)?;
+    let CheckedSourceModule::ScopedTasks(tasks) = task_module.checked else {
+        unreachable!("the scoped-task route publishes scoped-task evidence")
+    };
+    let composed =
+        source_epoch_tasks::lower_composed_epoch(parsed, &entry, split.plan_span, &tasks).map_err(
+            |errors| {
+                errors
+                    .into_iter()
+                    .map(|error| map_diagnostic(error, ranges))
+                    .collect::<Vec<_>>()
+            },
+        )?;
+    let certificate =
+        epoch_accounting::check_flat_epoch(&composed.plan.program).map_err(|diagnostics| {
+            diagnostics
+                .iter()
+                .map(|diagnostic| map_diagnostic(composed.plan.locate(diagnostic), ranges))
+                .collect::<Vec<_>>()
+        })?;
+    epoch_accounting::recheck_epoch_bound(&composed.plan.program, &certificate).map_err(
+        |errors| {
+            vec![plain_diagnostic(
+                "Q600",
+                format!("composed epoch certificate failed independent recheck: {errors:?}"),
+            )]
+        },
+    )?;
+    if composed.plan.latency_claim.is_some() {
+        let Err(refusal) = epoch_accounting::epoch_wall_clock_bound(&certificate) else {
+            unreachable!("a wall-clock bound is never available in this profile")
+        };
+        return Err(vec![map_diagnostic(composed.plan.locate(&refusal), ranges)]);
+    }
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::ComposedEpochTasks(Box::new(ComposedEpochModule {
+            tasks: *tasks,
+            composed,
+            certificate,
+            task_profile: task_module.execution_profile,
+        })),
+        execution_profile: SourceExecutionProfile::ComposedEpochTasksV1,
+        declaration_count: task_module.declaration_count,
+        mode,
+        result_profile: task_module.result_profile,
+        entry: task_module.entry,
+        // The task half's emission and reference execution, unchanged. The
+        // epoch adds a checked accounting statement on top and emits nothing of
+        // its own.
+        c_source: task_module.c_source,
+        source_map: task_module.source_map,
+        reference_observation: task_module.reference_observation,
+        extern_observation: task_module.extern_observation,
     })
 }
 

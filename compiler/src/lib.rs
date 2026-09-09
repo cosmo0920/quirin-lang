@@ -107,9 +107,9 @@ pub use concurrency::{
 };
 pub use driver::{
     CheckedEpochModule, CheckedExternModule, CheckedMutexGuardModule, CheckedSourceModule,
-    CompileOptions, CompiledModule, CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic,
-    SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile, compile_files,
-    compile_files_with_registry, format_diagnostic,
+    CompileOptions, CompiledModule, ComposedEpochModule, CustodyPayloadProfile, EmittedSourceMap,
+    FileDiagnostic, SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile,
+    compile_files, compile_files_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,

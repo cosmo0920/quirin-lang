@@ -809,6 +809,56 @@ accounting statement about a declared shape, so it emits no C, runs no reference
 execution and implies no native run. See
 [the epoch source record](reports/remaining-t08-epoch-src/README.md).
 
+## G02f. Flat-epoch bound over a checked task region
+
+`source.epoch.tasks.v1`. Selected before G02e by an `epoch` marker **and** the
+scoped-task profile's own `concurrency checked;` declaration: a module carrying
+both is accounting for a real task region, not for declared worker shapes. The
+entry's first statement is an epoch *plan*; the rest of the entry is an ordinary
+scoped-task region. No diagnostic code is added by this route.
+
+```ebnf
+composed_entry = "fn", NAME, "(", ")", "->", result, "{", plan, { statement }, "}" ;
+plan           = "thread", "scope", NAME, "epoch", "{", { header | row }, "}" ;
+header         = allocation | overhead | latency_claim ;   (* G02e's, minus `cell` *)
+row            = "thread", "scope", WORKER, "{", { clause }, "}" ;
+clause         = "move", ";" | "copy", ";"
+               | "peak", NAT, ";" | "effort", NAT, ";"
+               | "credit", NAT, "effort", NAT, ";"
+               | "retained", NAT, ";"
+               | [ "join", "(", ( "move" | "drop" | "close" ), ")", ";" ] ;
+```
+
+`WORKER` names a source function the region spawns. Rows naming `WORKER`, in
+declaration order, correspond one-to-one with that worker's `TrySpawn` sites in
+the checked task IR, in source order; a declared row with no matching creation
+and a creation with no declared row are both refused, per worker. A row's
+ordered `move;`/`copy;` clauses must equal that creation's ordered argument
+operands, and `retained BYTES;` is required exactly when the spawned worker's
+checked result type is an owned Buffer.
+
+The `join` clause is **optional here**: the creator's disposal is derived from
+the checked IR (the handle's joins, the outcome's eliminations, and whether the
+bound value is released), and a written clause must equal what was derived. The
+task count, each task's identity and `joined` are derived and cannot be
+declared at all.
+
+No byte or work figure is derivable: this backend's `Buffer` carries no extent
+(`TryAllocateBuffer` takes an initial scalar value, not a size) and the profile
+has no cost model, so `peak`, `effort`, `credit`, `bound` and `overhead` stay
+declared premises exactly as in G02e.
+
+Refused at `Q600`, each with a named follow-on: shared storage cells and
+`read`/`write` clauses (`T08-COMPOSE-SHARED`), read-loan captures
+(`T08-COMPOSE-LOAN`), a mutex generation anywhere in the composed body
+(`T08-COMPOSE-GUARD`, ranked or not), a joined owned result the creator hands on
+rather than releasing or keeping (`T08-COMPOSE-RESULT-REUSE`), a plan that is
+not the entry's first statement, and a second epoch scope. The profile's own
+refusals still come from the core's `Q630`-`Q641` band. Emission and reference
+execution are the scoped-task route's own, byte for byte; the epoch is
+check-only on top. See
+[the composition record](reports/remaining-t08-compose/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf

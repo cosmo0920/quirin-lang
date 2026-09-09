@@ -138,6 +138,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::FlatEpochBoundV1 => {
                     "; flat-epoch quantitative bound (checked accounting only, no emission)"
                 }
+                qcore_compiler::SourceExecutionProfile::ComposedEpochTasksV1 => {
+                    "; scoped tasks with an agreeing flat-epoch bound (Linux/macOS/Windows threads)"
+                }
                 _ => "",
             };
             println!(
