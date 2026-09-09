@@ -1,4 +1,4 @@
-# HASH-REFINE — the literal-argument clause's two boundaries, decided — 2026-09-09
+# HASH-REFINE — the literal-argument clause's two boundaries, decided — 2026-09-10
 
 Closes the two boundaries card **HASH-CLAUSE** recorded open in
 [`docs/reports/remaining-hash-clause/README.md`](../remaining-hash-clause/README.md)
