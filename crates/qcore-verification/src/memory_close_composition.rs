@@ -33,7 +33,9 @@
 //! before use; nothing a caller supplies replaces that.
 
 use qcore_c_gateway::boolean_source::ChunkFrameSummary;
-use qcore_c_gateway::legacy_c::{C11TranslationUnit, derived_source_text, derived_translation_unit};
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, derived_source_text, derived_translation_unit,
+};
 use qcore_c_gateway::typed_source::{
     SourceExpression as Expr, SourceImportProfile, SourceOperation as Op, SourceResult,
     SourceSummary, SourceValue, import_source_functions,

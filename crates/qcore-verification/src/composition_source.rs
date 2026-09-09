@@ -1573,8 +1573,8 @@ impl MemoryCloseCompositionSourceTask {
             );
         }
         // 4. The transported callee identities must be the ones the core reads
-            //    off its own prerequisites' bodies, so the wrapper cannot be
-            //    projected against frames no prerequisite established.
+        //    off its own prerequisites' bodies, so the wrapper cannot be
+        //    projected against frames no prerequisite established.
         let derived_callees = memory_close_callees(
             (prerequisites.reset.summary().function(), RESET_SIGNATURE),
             prerequisites.backend.summary(),

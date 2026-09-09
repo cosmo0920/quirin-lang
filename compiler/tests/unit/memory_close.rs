@@ -1,11 +1,11 @@
 use super::*;
-use qcore_verification::memory_close_composition::check_memory_close_bodies;
 use crate::verifier_plugins::chunkio::{
     import_chunk_frame_helper,
     teardown_source::{
         check_counter_sources, check_list_unlink_source, check_memory_backend_source,
     },
 };
+use qcore_verification::memory_close_composition::check_memory_close_bodies;
 pub(crate) const FIXTURE:&str="
 #define CIO_STORE_MEM 1
 #define CIO_STORE_FS 0

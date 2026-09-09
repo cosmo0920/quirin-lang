@@ -957,7 +957,10 @@ pub fn import_memory_close_source(
         },
     )?;
     let result = match imported.as_slice() {
-        [SourceResult::Summary(wrapper_summary), SourceResult::Summary(probe_summary)] => {
+        [
+            SourceResult::Summary(wrapper_summary),
+            SourceResult::Summary(probe_summary),
+        ] => {
             let mut admitted: Vec<(&str, &str)> = memory_close
                 .fixed_callees
                 .iter()
