@@ -29,7 +29,7 @@ extern fn alloc() -> ptr<mut, u8> contract {
 #[test]
 fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
-    assert_eq!(contracts.source_assumptions().len(), 5);
+    assert_eq!(contracts.source_assumptions().len(), 6);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -64,6 +64,24 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         );
     }
     old.insert("cio_chunk_close", ResourceApiKind::Release);
+    // Card HASH-CONTRACTS adds one declaration that was NOT in the old table.
+    // It is listed explicitly rather than exempted, so the parity check below
+    // still covers every previous name and this addition is visible as an
+    // addition: a publication that borrows every parameter and returns no
+    // custody, restricted to its declared literal-argument premise.
+    old.insert_contract(
+        "flb_hash_table_add",
+        ResourceFunctionContract::new(
+            [
+                P::Borrowed,
+                P::Borrowed,
+                P::Borrowed,
+                P::Borrowed,
+                P::Borrowed,
+            ],
+            R::None,
+        ),
+    );
     old.insert_contract(
         "rd_realloc",
         ResourceFunctionContract::new(
@@ -331,7 +349,7 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
         )],
     };
     check_legacy_safety_certificate(&certificate).unwrap();
-    assert_eq!(certificate.contracts.source_assumptions().len(), 5);
+    assert_eq!(certificate.contracts.source_assumptions().len(), 6);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -424,7 +442,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     modules.sort();
     // Includes the runtime-only reopen-failure and integrity observation
     // modules; neither carries the v1 marker, so both are rejected here.
-    assert_eq!(modules.len(), 60, "corpus module count");
+    // 60 -> 61: card HASH-CONTRACTS adds
+    // `fluent_bit/hash_table_publication.qcore`, which carries the v1 marker.
+    assert_eq!(modules.len(), 61, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -475,11 +495,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
             }
         }
     }
-    // The five manifest-selected resource projections and their 19 assumptions;
+    // The six manifest-selected resource projections and their 20 assumptions;
     // every other declaration belongs to another interpreter and is rejected.
+    // 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; the rejected count is
+    // unchanged, because the added module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (5, 19, 145)
+        (6, 20, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

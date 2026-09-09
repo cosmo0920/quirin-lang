@@ -1,0 +1,49 @@
+// HASH-CONTRACTS — the four NON-hash callee premises card O04-B09B10 declared,
+// reproduced verbatim from
+// `crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore`.
+//
+// That file stays byte-unchanged so card O04-B09B10 keeps its exact premise set
+// and its exact measurements. This card's real-source leg needs the same four
+// premises but must take `flb_hash_table_add` from the PRODUCTION module
+// `contract/qcore/fluent_bit/hash_table_publication.qcore` instead, and the
+// loader rejects a duplicate function contract, so the hash declaration is the
+// one thing this file omits. Every other declaration is character-for-character
+// the one O04-B09B10 measured under, and a test asserts that.
+//
+// EVERY declaration here is a TRUSTED ASSUMPTION. None is derived from any body
+// in this fixture. See the O04-B09B10 fixture header for what each one does and
+// does not say; nothing about them is changed here.
+
+// --- B09: the msgpack packer the caller initialises in place ---------------
+extern fn msgpack_packer_init(pk: ptr<mut, u8>, data: ptr<mut, u8>, callback: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(pk);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_return_none();
+};
+
+// --- the list linkage ------------------------------------------------------
+extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(entry);
+    ensures normal resource_borrowed(head);
+    ensures normal resource_return_none();
+};
+
+// --- the metrics lock the second publication sits between ------------------
+extern fn pthread_mutex_lock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_mutex_unlock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};

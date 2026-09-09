@@ -1,0 +1,19 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0fecb4280ceb37de/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.86s
+     Running tests/hash_contracts.rs (target/debug/deps/hash_contracts-5eabdfdeef60f2fb)
+
+running 1 test
+== BEFORE: status Unknown
+  L255 flb_trace("[input chunk] no matching route for input chunk '%s' with tag '%s'", | call to uncontracted function `flb_trace`
+  L264 flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, 0); | indirect memory access is outside the resource projection
+  L268 flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, 0); | indirect memory access is outside the resource projection
+  L272 flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, 0); | indirect memory access is outside the resource projection
+  L275 flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, 0); | indirect memory access is outside the resource projection
+  L277 return ic; | nullable resource `ic` used by a non-null contract
+== AFTER: status Unknown
+  L255 flb_trace("[input chunk] no matching route for input chunk '%s' with tag '%s'", | call to uncontracted function `flb_trace`
+  L277 return ic; | nullable resource `ic` used by a non-null contract
+test print_the_measured_publication_ledger ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.77s
+

@@ -96,5 +96,6 @@ import QCore.MemberAddress
 import QCore.MayAlias
 import QCore.NeutralExpressionPosition
 import QCore.Transferability
+import QCore.LiteralArgumentPremise
 
 /-! The executable formal core of QCore-C revision 0.1. -/

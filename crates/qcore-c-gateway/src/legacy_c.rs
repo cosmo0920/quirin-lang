@@ -21,6 +21,9 @@ pub use enumeration::{
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
 
+#[path = "legacy_literal_premise.rs"]
+pub(crate) mod literal_premise;
+
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
@@ -1307,6 +1310,18 @@ pub(crate) fn build_function_cfg(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyCfg, LegacyCError> {
+    // Card HASH-CONTRACTS. A declared literal-argument premise restricts a
+    // contract to the call sites whose named argument is the named literal;
+    // every other call is rewritten to an undeclared callee, so the restriction
+    // holds uniformly at every reader below — the out-alias normalizer, the
+    // typed access facts, the C02-P and aggregate-store admissions and the
+    // resource CFG — rather than at whichever contract lookups remembered it.
+    // The premises come from the environment's own declared module texts, so
+    // W4 derivation, W4 validation and certificate rederivation, which each
+    // hold exactly that text, reproduce this rewrite identically.
+    let premises = literal_premise::LiteralPremises::read(contracts);
+    let restricted = literal_premise::restrict_to_declared_literals(tokens, contracts, &premises);
+    let tokens = restricted.as_deref().unwrap_or(tokens);
     let normalized = out_alias::normalize(tokens, function, contracts);
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
@@ -3014,6 +3029,20 @@ impl Parser<'_> {
         } else {
             contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, 0))
         };
+        // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
+        // *before* the lexical access gate, so the statement reports why the
+        // declaration did not cover it rather than the access the withdrawn
+        // declaration would have admitted. Both are the same `Unknown`; only
+        // the attribution differs, and the informative one is the premise.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| literal_premise::unmet_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: format!(
+                    "call to `{callee}` outside its declared literal-argument premise"
+                ),
+            };
+        }
         if unsupported_access {
             return LegacyInstruction::Unknown {
                 description: "indirect memory access is outside the resource projection".into(),
@@ -3198,6 +3227,19 @@ impl Parser<'_> {
                         .filter_map(|address| address.bound_owner.clone())
                         .collect(),
                     alias_reads,
+                };
+            }
+            // Card HASH-CONTRACTS: a callee whose declared literal-argument
+            // premise this call site does not satisfy arrives here rewritten,
+            // exactly as uncontracted as any callee with no declaration at all.
+            // Only the wording distinguishes the two, so that a report can tell
+            // "nothing was declared" from "the declaration does not cover this
+            // call".
+            if let Some(callee) = literal_premise::unmet_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: format!(
+                        "call to `{callee}` outside its declared literal-argument premise"
+                    ),
                 };
             }
             return LegacyInstruction::Unknown {
