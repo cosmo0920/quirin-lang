@@ -71,18 +71,46 @@
 //! 6. The destination tokens are exactly `BASE - > FIELD` — one selection,
 //!    written `->`, with nothing before or after it.
 //! 7. `TAG` is a `struct` defined exactly once in the unit whose every member
-//!    declaration was read, and `FIELD` is either a scalar member
-//!    ([`TypedAccessModel::scalar_field`]) or a member declared with exactly
-//!    one `*` over a specifier list the reader resolved
-//!    ([`TypedAccessModel::single_pointer_field`]). Unions, bitfields, arrays,
+//!    declaration was read, and `FIELD` is exactly one of three classes: a
+//!    scalar member ([`TypedAccessModel::scalar_field`]), a member declared
+//!    with exactly one `*` over a specifier list the reader resolved
+//!    ([`TypedAccessModel::single_pointer_field`]), or — card
+//!    **ALIAS-AGGREGATE** — a member declared exactly `void *`
+//!    ([`TypedAccessModel::void_pointer_field`]). Unions, bitfields, arrays,
 //!    `volatile`/`_Atomic` members, aggregate sub-objects, function pointers,
-//!    `void *`, multi-star members and unresolved typedefs all refuse.
+//!    `const void *`, `void **`, multi-star members and unresolved typedefs
+//!    all refuse.
 //!
 //! **On the stored value** (decided by [`crate::legacy_c`] against
 //! [`classify_value`]): a scalar expression into a scalar field, the null
 //! pointer constant into a pointer field, a declared pointer variable of
-//! *exactly the field's declared record-pointer type* into that field, or the
-//! result of a contracted call.
+//! *exactly the field's declared record-pointer type* into that field, a
+//! declared record-pointer variable of **any** tag into a `void *` field, or
+//! the result of a contracted call.
+//!
+//! ## The opaque member (card ALIAS-AGGREGATE)
+//!
+//! A `void *` member is admitted as a **store destination only**. Three facts
+//! make the asymmetry the sound one, and each is pinned by a test:
+//!
+//! * a store replaces exactly one pointer value, so the link `(owner, field) ->
+//!   child` remains single-valued — the property every use of a field link
+//!   depends on. Nothing in that machinery reads the member's declared type:
+//!   escape cascades by identity, overwrite replaces by place, and release
+//!   deliberately does not cascade (**P-B08-SHALLOW**, unchanged);
+//! * a *read* is refused ([`bound_read_actuals`]), because `void *` names no
+//!   pointee and there is therefore nothing to match against the callee's
+//!   declared parameter type. Admitting one would hand a callee an identity on
+//!   a type premise this reader cannot state;
+//! * the stored value must still be a **declared record pointer**, so the
+//!   identity written into the member is one this projection can name. A
+//!   scalar, a cast, a call result that is not contracted, an address-of and
+//!   every opaque local keep the existing refusal.
+//!
+//! The measured motivation is recorded in `docs/reports/remaining-alias-aggregate/`:
+//! on the production corpus `struct flb_input_chunk` declares `void *chunk`,
+//! not `struct cio_chunk *chunk` as the reduced O04 fixture prelude does, so
+//! card O04-B08's flagship store never reached production at all.
 //!
 //! **Flow-sensitively**, at the store itself, [`crate::legacy_c`] additionally
 //! requires the aggregate to resolve to exactly one **live** identity this
@@ -159,6 +187,13 @@ pub(crate) struct AdmittedStore {
     /// `struct TAG *`. Used to require an exact declared-type match on a
     /// variable stored into it.
     pub(crate) pointee_record: Option<String>,
+    /// Card **ALIAS-AGGREGATE**: whether the field is declared exactly
+    /// `void *`. Such a member is a legitimate *store* destination — it holds
+    /// one pointer value, so a store replaces exactly one identity — but it is
+    /// never a legitimate bound *read*, because `void *` names no pointee and
+    /// nothing can match it against a callee's declared parameter type.
+    /// [`bound_read_actuals`] refuses it explicitly.
+    pub(crate) opaque_pointer: bool,
 }
 
 /// What an admitted store writes into the field.
@@ -509,17 +544,23 @@ pub(crate) fn admitted_field(
     };
     let scalar = model.scalar_field(tag, field);
     let pointer = model.single_pointer_field(tag, field);
-    // A member is classified as exactly one of the two, by construction: a
-    // scalar member has no star and a single-pointer member has one.
-    if scalar == pointer {
+    // Card ALIAS-AGGREGATE: exactly `void *`, disjoint from both of the above
+    // by construction — `void` classifies `Opaque`, and a scalar member has no
+    // star at all.
+    let opaque = model.void_pointer_field(tag, field);
+    // A member is classified as exactly one of the three, by construction. The
+    // sum is checked rather than assumed: a member the reader placed in two
+    // classes would be a defect in the model, and refusing it is fail-closed.
+    if usize::from(scalar) + usize::from(pointer) + usize::from(opaque) != 1 {
         return None;
     }
     Some(AdmittedStore {
         place: format!("{base}->{field}"),
-        pointer_field: pointer,
+        pointer_field: pointer || opaque,
         pointee_record: model
             .record_pointer_field(tag, field)
             .map(ToOwned::to_owned),
+        opaque_pointer: opaque,
     })
 }
 
@@ -732,6 +773,13 @@ pub(crate) fn bound_read_actuals(
         if !store.pointer_field {
             continue;
         }
+        // Card ALIAS-AGGREGATE: a `void *` member is a store destination only.
+        // Its declared type names no pointee, so this rule has nothing to match
+        // against the callee's declared parameter type and the read keeps its
+        // existing refusal.
+        if store.opaque_pointer {
+            continue;
+        }
         reads.push(BoundFieldRead {
             start,
             end,
@@ -771,6 +819,31 @@ pub(crate) fn classify_value(
     };
     if !is_name(name) {
         return None;
+    }
+    if store.opaque_pointer {
+        // Card ALIAS-AGGREGATE. A `void *` member names no pointee, so there is
+        // no declared type to match exactly. What the store needs is that the
+        // value is one *pointer identity* this projection can name, and the
+        // only spellings admitted are declared record pointers — the same class
+        // of variable the typed branch below admits. Scalars, opaque locals,
+        // casts, calls, `&x`, arithmetic and every other right-hand side keep
+        // their refusal, because `strip_parentheses` already required a single
+        // name and `declared_type` commits to `RecordPointer` for nothing else.
+        //
+        // The member is never read back (`bound_read_actuals` refuses it), so
+        // no declared type is ever matched against this link: the link is by
+        // identity, and identity carries no type.
+        if !matches!(
+            types.declared_type(name),
+            Some(&DeclaredType::RecordPointer(_))
+        ) {
+            return None;
+        }
+        return if untracked.never_bound(name) {
+            Some(StoredValue::Untracked)
+        } else {
+            Some(StoredValue::Tracked((*name).to_owned()))
+        };
     }
     // An exact declared-type match: the field is `struct TAG *` and so is the
     // stored variable. A pointer field whose pointee this reader resolved to a
@@ -1018,19 +1091,73 @@ mod tests {
         assert!(!index.bases.contains("b"));
     }
 
+    /// **Deliberate pin update, card ALIAS-AGGREGATE.** `void * any` moves from
+    /// refused to admitted as the third member class — an *opaque* pointer
+    /// field, a store destination that is never a bound read. The load-bearing
+    /// negative half is unchanged and is asserted here in full: `struct child
+    /// ** deep` and an undeclared member stay refused, and every field's class
+    /// is asserted rather than only its admission.
     #[test]
-    fn a_scalar_and_a_single_pointer_field_are_admitted_and_nothing_else() {
+    fn a_scalar_a_single_pointer_and_an_opaque_pointer_field_are_admitted_and_nothing_else() {
         let facts = facts("", "struct box * b ; b = make ( ) ;", &[]);
-        for (field, pointer) in [("flag", false), ("kid", true), ("raw", true)] {
+        for (field, pointer, opaque) in [
+            ("flag", false, false),
+            ("kid", true, false),
+            ("raw", true, false),
+            ("any", true, true),
+        ] {
             let store = admitted_field("b", field, &facts.bases, &facts.model, &facts.types)
                 .unwrap_or_else(|| panic!("{field} admitted"));
-            assert_eq!(store.pointer_field, pointer, "{field}");
+            assert_eq!(store.pointer_field, pointer, "{field} pointer");
+            assert_eq!(store.opaque_pointer, opaque, "{field} opaque");
         }
-        for field in ["any", "deep", "missing"] {
+        for field in ["deep", "missing"] {
             assert!(
                 admitted_field("b", field, &facts.bases, &facts.model, &facts.types).is_none(),
                 "{field} refused"
             );
+        }
+    }
+
+    /// The opaque member takes a declared record pointer of **any** tag and the
+    /// null constant, and nothing else. `void *` names no pointee, so the exact
+    /// declared-type match of the typed branch has nothing to match; what
+    /// replaces it is the requirement that the value be one pointer identity
+    /// this projection can name.
+    #[test]
+    fn an_opaque_pointer_field_takes_a_declared_record_pointer_and_the_null_constant() {
+        let facts = facts(
+            "",
+            "struct box * b ; struct child * k ; unsigned long * u ; int n ; \
+             b = make ( ) ; k = make ( ) ; u = make ( ) ; n = 0 ;",
+            &[],
+        );
+        let store = admitted_field("b", "any", &facts.bases, &facts.model, &facts.types).unwrap();
+        assert!(store.opaque_pointer);
+        let null = |texts: &[&str]| texts == ["NULL"];
+        let classify = |right: &[&str]| {
+            classify_value(
+                &store,
+                right,
+                &facts.model,
+                &facts.types,
+                &facts.untracked,
+                null,
+            )
+        };
+        assert_eq!(classify(&["k"]), Some(StoredValue::Tracked("k".to_owned())));
+        assert_eq!(classify(&["NULL"]), Some(StoredValue::Null));
+        // Not a declared record pointer: a scalar variable, a non-record
+        // pointer, an address-of, a cast and a call all keep their refusal.
+        for right in [
+            vec!["n"],
+            vec!["u"],
+            vec!["&", "n"],
+            vec!["(", "void", "*", ")", "k"],
+            vec!["make", "(", ")"],
+            vec!["0"],
+        ] {
+            assert_eq!(classify(&right), None, "{right:?}");
         }
     }
 
@@ -1172,6 +1299,23 @@ mod tests {
     #[test]
     fn a_scalar_member_is_never_an_admitted_bound_read() {
         assert!(reads(BOUND, "sink ( b -> flag , b -> flag )").is_empty());
+    }
+
+    /// Card **ALIAS-AGGREGATE**: the store/read asymmetry, in one test. A
+    /// `void *` member is an admitted store destination and is **never** an
+    /// admitted bound read — in a borrowed position or a custody-taking one —
+    /// while the typed member beside it in the same record and the same
+    /// statement still reads. Nothing about the opaque member reaches a callee.
+    #[test]
+    fn an_opaque_pointer_member_stores_but_never_reads() {
+        let facts = facts_with("", BOUND, &[], borrowing_contract(2));
+        assert!(
+            admitted_field("b", "any", &facts.bases, &facts.model, &facts.types)
+                .is_some_and(|store| store.opaque_pointer)
+        );
+        let borrowed = reads(BOUND, "sink ( b -> any , b -> kid )");
+        assert_eq!(borrowed, ["b->kid"], "{borrowed:?}");
+        assert!(reads(BOUND, "eat ( b -> any )").is_empty());
     }
 
     /// Card O04-B09B10 supersedes card O04-READ-BOUND's blanket refusal of
