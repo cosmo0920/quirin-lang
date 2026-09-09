@@ -2312,6 +2312,32 @@ struct Parser<'a> {
 }
 
 impl Parser<'_> {
+    /// Whether one expression position is resource-neutral.
+    ///
+    /// Card W4-EXPR-POS. The existing lexical predicate is consulted **first**
+    /// and unchanged, so every expression this project accepted before is
+    /// accepted here by the same code; only when it refuses does the typed,
+    /// environment-aware admission of [`crate::neutral_position`] get a say.
+    /// That admission is where the contract environment finally reaches the
+    /// classification — the architectural change
+    /// `docs/design/W4_NEUTRAL_EXPRESSION_POSITIONS.md` §5 asks for — and it
+    /// admits nothing the lexical predicate would have had to loosen for.
+    fn supported_expression(&self, tokens: &[Token]) -> bool {
+        if supported_neutral_expression(tokens) {
+            return true;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::neutral_position::is_neutral_expression(
+            &texts,
+            self.contracts,
+            &self.typed_model,
+            &self.typed_types,
+        )
+    }
+
     /// The null test a branch condition expresses, including the one
     /// aggregate-field form card O04-B08 admits.
     ///
@@ -2660,7 +2686,9 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
-                    expression_supported: supported_neutral_expression(&expression),
+                    // W4-EXPR-POS stage 1: the return position alone, which is
+                    // the design note's §6 minimal validation case.
+                    expression_supported: self.supported_expression(&expression),
                     returned_place: canonical_place(&texts),
                 })
             }
@@ -3564,7 +3592,12 @@ fn canonical_place(tokens: &[&str]) -> Option<String> {
     Some(place)
 }
 
-fn is_identifier(text: &str) -> bool {
+/// Whether a token could be spelled as an identifier. Reserved words are
+/// *included*: this is a lexical shape test, and `find_call` relies on it to
+/// treat `sizeof (` as call-shaped. [`crate::neutral_position`] uses the same
+/// test so that the occurrences it must account for are exactly the ones
+/// [`contains_call`] refuses on.
+pub(crate) fn is_identifier(text: &str) -> bool {
     text.as_bytes()
         .first()
         .is_some_and(|byte| byte.is_ascii_alphabetic() || *byte == b'_')

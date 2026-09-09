@@ -18,6 +18,7 @@ pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_summary;
 mod may_alias;
+mod neutral_position;
 pub mod source_call_use;
 pub mod teardown_source;
 pub mod typed_c_ast;
