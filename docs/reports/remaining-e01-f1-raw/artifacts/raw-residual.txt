@@ -1,0 +1,13 @@
+corpus diagnostic_counts before: {'leak': 271, 'unknown_alias': 4286, 'unsupported': 50089}
+corpus diagnostic_counts after : {'leak': 271, 'unknown_alias': 4286, 'unsupported': 50089}
+absent_from_raw_scan: before=146 after=15
+unanalyzable: before=0 after=0
+refusals: before=0 after=0
+
+units whose absent_from_raw_scan changed:
+  librdkafka/rdkafka.c: 146 -> 15
+      no longer absent (131): ['rd_kafka_1s_tmr_cb', 'rd_kafka_DescribeGroups_resp_cb', 'rd_kafka_ListGroups_resp_cb', 'rd_kafka_broker_dump', 'rd_kafka_clusterid', 'rd_kafka_committed', 'rd_kafka_consume', 'rd_kafka_consume0'] ...
+
+units with any other change:
+
+units with a non-enumeration change: 0

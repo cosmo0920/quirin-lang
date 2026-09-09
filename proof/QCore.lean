@@ -83,5 +83,6 @@ import QCore.PackageTemplateBinding
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.SourceEnumeration
+import QCore.RawDirectiveLexing
 
 /-! The executable formal core of QCore-C revision 0.1. -/

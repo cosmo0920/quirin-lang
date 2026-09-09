@@ -1,0 +1,78 @@
+{
+  "card": "E01-F1",
+  "denominator_rows_added": [],
+  "denominator_rows_removed": [],
+  "per_library": {
+    "chunkio": {
+      "absent_from_raw_scan": 0,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 126,
+      "source_functions_before": 126,
+      "unanalyzable": 0,
+      "units": 13
+    },
+    "cmetrics": {
+      "absent_from_raw_scan": 0,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 540,
+      "source_functions_before": 540,
+      "unanalyzable": 0,
+      "units": 31
+    },
+    "ctraces": {
+      "absent_from_raw_scan": 0,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 274,
+      "source_functions_before": 274,
+      "unanalyzable": 0,
+      "units": 17
+    },
+    "fluent-bit-chunk": {
+      "absent_from_raw_scan": 0,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 66,
+      "source_functions_before": 66,
+      "unanalyzable": 0,
+      "units": 1
+    },
+    "librdkafka": {
+      "absent_from_raw_scan": 15,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 3556,
+      "source_functions_before": 3556,
+      "unanalyzable": 0,
+      "units": 94
+    },
+    "monkey-libevent": {
+      "absent_from_raw_scan": 0,
+      "enumeration_refused_units": 0,
+      "source_functions_after": 359,
+      "source_functions_before": 359,
+      "unanalyzable": 0,
+      "units": 29
+    }
+  },
+  "refusal_grounds": {},
+  "status_after": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+  },
+  "status_before": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+  },
+  "totals": {
+    "absent_from_raw_scan": 15,
+    "enumeration_refused_units": 0,
+    "source_functions_after": 4921,
+    "source_functions_before": 4921,
+    "unanalyzable": 0,
+    "units": 185
+  },
+  "unanalyzable_forms": {},
+  "unit_verdict_moves": []
+}

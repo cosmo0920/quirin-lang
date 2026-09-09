@@ -1421,34 +1421,108 @@ pub(crate) struct Token {
     line: usize,
 }
 
+/// Width of a C11 5.1.1.2 phase-2 line splice at `cursor`, if there is one.
+///
+/// Phase 2 deletes each backslash immediately followed by a new-line, joining
+/// the two physical lines into one *logical* line, before any preprocessing
+/// token is formed. Only the two spellings a conforming source can use are
+/// admitted: `\` `\n` and `\` `\r` `\n`. A backslash followed by anything else
+/// — trailing blanks included — is not a splice here, so a source that relies
+/// on a compiler extension keeps its existing tokenization rather than
+/// silently acquiring a different one.
+pub(crate) fn line_splice_width(bytes: &[u8], cursor: usize) -> Option<usize> {
+    if bytes.get(cursor) != Some(&b'\\') {
+        return None;
+    }
+    match bytes.get(cursor + 1) {
+        Some(&b'\n') => Some(2),
+        Some(&b'\r') if bytes.get(cursor + 2) == Some(&b'\n') => Some(3),
+        _ => None,
+    }
+}
+
+/// Lex C source into the gateway's coarse token stream.
+///
+/// # Directives (unit **E01-F1-RAW**)
+///
+/// C11 6.10 reads a preprocessing directive only when `#` is the **first
+/// preprocessing token of a logical line** — that is, when nothing but white
+/// space and comments precedes it since the last new-line that phase 2 did not
+/// delete — and the directive then runs to the end of that *logical* line. Two
+/// consequences are load-bearing here and were both wrong before:
+///
+/// * a `#` that is *not* line-initial is an ordinary punctuator: the `#`
+///   stringification and `##` pasting operators of a macro replacement list,
+///   which may sit on a backslash-continuation line. Reading one as a directive
+///   discarded the rest of that line — a closing brace included — and
+///   desynchronised the file-scope brace depth for the whole rest of the file
+///   (`docs/reports/remaining-e01-f1/README.md` §2.2, measured on
+///   `librdkafka/src/rdkafka.c`);
+/// * a directive continued with `\`-newline carries its whole replacement list,
+///   so a multi-line macro body is skipped in full, exactly as a single-line
+///   one already was. Macro *bodies* therefore contribute no token and no brace
+///   to this scan, uniformly; a macro's braces perturb no depth.
+///
+/// A `#` reached in any other position is emitted as its own punctuator token
+/// rather than discarded, so unmodeled text stays visible to the callers that
+/// refuse what they cannot read.
 pub(crate) fn tokenize(source: &str) -> Vec<Token> {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
     let mut cursor = 0;
     let mut line = 1;
+    // True while nothing but white space and comments has been seen since the
+    // last undeleted new-line. A splice does not restore it: the logical line
+    // continues.
+    let mut at_logical_line_start = true;
     while cursor < bytes.len() {
         let byte = bytes[cursor];
-        if byte == b'\n' {
+        if let Some(width) = line_splice_width(bytes, cursor) {
+            line += 1;
+            cursor += width;
+        } else if byte == b'\n' {
             line += 1;
             cursor += 1;
+            at_logical_line_start = true;
         } else if byte.is_ascii_whitespace() {
             cursor += 1;
         } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'/') {
+            // A `//` comment is white space that ends at the next *logical*
+            // line boundary, so a spliced continuation line stays commented.
             cursor += 2;
             while cursor < bytes.len() && bytes[cursor] != b'\n' {
-                cursor += 1;
+                if let Some(width) = line_splice_width(bytes, cursor) {
+                    line += 1;
+                    cursor += width;
+                } else {
+                    cursor += 1;
+                }
             }
         } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'*') {
+            // A block comment is white space too. A new-line inside it is a
+            // real new-line, so a `#` after it is still line-initial.
             cursor += 2;
             while cursor + 1 < bytes.len() && !(bytes[cursor] == b'*' && bytes[cursor + 1] == b'/')
             {
                 if bytes[cursor] == b'\n' {
                     line += 1;
+                    at_logical_line_start = true;
                 }
                 cursor += 1;
             }
             cursor = (cursor + 2).min(bytes.len());
+        } else if byte == b'#' && at_logical_line_start {
+            // A directive, consumed to the end of its logical line.
+            while cursor < bytes.len() && bytes[cursor] != b'\n' {
+                if let Some(width) = line_splice_width(bytes, cursor) {
+                    line += 1;
+                    cursor += width;
+                } else {
+                    cursor += 1;
+                }
+            }
         } else if byte == b'"' || byte == b'\'' {
+            at_logical_line_start = false;
             let quote = byte;
             let token_line = line;
             cursor += 1;
@@ -1470,6 +1544,7 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
                 line: token_line,
             });
         } else if byte.is_ascii_alphabetic() || byte == b'_' {
+            at_logical_line_start = false;
             let start = cursor;
             cursor += 1;
             while cursor < bytes.len()
@@ -1482,6 +1557,7 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
                 line,
             });
         } else if byte.is_ascii_digit() {
+            at_logical_line_start = false;
             let start = cursor;
             cursor += 1;
             while cursor < bytes.len() && bytes[cursor].is_ascii_alphanumeric() {
@@ -1491,11 +1567,11 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
                 text: source[start..cursor].to_owned(),
                 line,
             });
-        } else if byte == b'#' {
-            while cursor < bytes.len() && bytes[cursor] != b'\n' {
-                cursor += 1;
-            }
         } else {
+            // Every other byte is its own punctuator, `#` and `##` included:
+            // a non-line-initial `#` is a stringification or pasting operator,
+            // never a directive introducer.
+            at_logical_line_start = false;
             tokens.push(Token {
                 text: char::from(byte).to_string(),
                 line,
