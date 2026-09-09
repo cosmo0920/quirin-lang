@@ -47,7 +47,8 @@ A growth changes a **declared shape**. At C level it is:
 
 The interesting consequence is not the growth statement itself but what the
 checker admits *after* it: accesses to the grown region under that guard, which
-the checker would have refused at `Q611`/`Q615` before. Those lower to ordinary
+the checker would have refused at `Q610 UnprotectedFootprint` before (measured,
+§5 M7). Those lower to ordinary
 reads and writes of a real allocation, inside the growing section's own
 `mtx_lock`/`mtx_unlock` pair. **That** is what a sanitized run can witness, and
 it is what the fixture is built to exercise (§3).
@@ -305,8 +306,8 @@ baseline passes before and after.
 | M4 | the `grow` line removed from the pinned reference | REFUSED | same — the growth's own line is part of the observation |
 | M5 | emitted C required to carry a mutex call (`mtx_trylock`) for the growth, and the `printf` pin dropped | REFUSED | "emitted C is missing `mtx_trylock`" — a growth emits no mutex call, which is the card's own claim, checked from the other side |
 | M6 | a second control also claims a sanitized run | REFUSED | "at most one control carries the case's sanitized native run" |
-| M7 | the control's `grow` statement deleted | REFUSED | "must check, so the case's refusal is not vacuous" (`Q611`: the post-growth write has no protector without it) |
-| M8 | the control grows onto its own declared footprint | REFUSED | same, at `Q617` |
+| M7 | the control's `grow` statement deleted | REFUSED | "must check, so the case's refusal is not vacuous" — measured `[Q610 UnprotectedFootprint { event: 4, guard: 1 }, Q610 UnprotectedFootprint { event: 9, guard: 2 }]`: without the growth, both the post-growth write and the second section's read of `y` have no protector |
+| M8 | the control grows onto its own declared footprint | REFUSED | same assertion, on a cascade led by `Q610` and carrying the growth's own `Q617 FootprintAlreadyProtected` (W4, this generation's shape included) |
 | M9 | manifest names `case.qcore` as the sanitized artifact | REFUSED | "`native_sanitized` must name the exact file its runner executed" |
 | M10 | manifest names the case's *other* control as the artifact | REFUSED | same |
 | M11 | manifest claims the sanitized run is host-unconditional (`+windows`) | REFUSED | both acceptance derivations (`host_scope`) |
