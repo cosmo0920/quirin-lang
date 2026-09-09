@@ -55,6 +55,13 @@ class MutableRoot:
 
     def write_evidence(self, relative, data):
         (self.directory / relative).write_text(json.dumps(data, indent=2) + "\n")
+
+    def read_acceptance(self):
+        return json.loads((self.directory / summary.ACCEPTANCE).read_text())
+
+    def write_acceptance(self, acceptance):
+        (self.directory / summary.ACCEPTANCE).write_text(json.dumps(acceptance, indent=2) + "\n")
+
     def write_triage(self, coverage):
         (self.directory / summary.TRIAGE).write_text(json.dumps(coverage, indent=2) + "\n")
 
@@ -358,6 +365,247 @@ class SummaryTest(unittest.TestCase):
                     "acceptance.json newly_decidable_not_mapped names CT11, "
                     "which the manifest maps"
                 ],
+            )
+
+    # ------------------------------------------------------------------
+    # Card CT-LABELS, finding D02-BUCKETS-LABELS: the label, not just the count.
+    # ------------------------------------------------------------------
+
+    #: The three lanes that measured a still-unmapped case's bucket, and the
+    #: newest evidence record overall (which measures none, so it is the natural
+    #: place to stage a conflicting second claim).
+    WAVE3 = "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json"
+    WAVE9 = "docs/reports/wave9-ctwin/ct_stage_evidence.json"
+    WAVE13 = "docs/reports/wave13-ct34/ct_stage_evidence.json"
+    NEWEST = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
+
+    def test_a_measured_label_wins_over_the_archive_and_says_so(self):
+        """The resolution rule, on the real tree.
+
+        Five of the eighteen unmapped cases now carry a lane's measured bucket;
+        the other thirteen still read card T00's 2026-09-07 analysis, and the
+        published source is what makes the difference legible.
+        """
+        labels = summary.unmapped_labels(ROOT)
+        measured = {
+            case: entry["label_source"]
+            for case, entry in labels.items()
+            if entry["label_source"] != summary.ARCHIVE_SOURCE
+        }
+        self.assertEqual(
+            measured,
+            {
+                "CT11": self.WAVE3,
+                "CT40": self.WAVE9,
+                "CT41": self.WAVE9,
+                "CT42": self.WAVE9,
+                "CT46": self.WAVE13,
+            },
+        )
+        # The two labels that actually moved, with the archived text retained
+        # beside each rather than overwritten.
+        self.assertEqual(
+            labels["CT11"]["label"], "blocked-on-scenario-mismatch (no local alias form)"
+        )
+        self.assertEqual(labels["CT11"]["archived_label"], "blocked-on-task-lowering (share captures)")
+        self.assertEqual(labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)")
+        self.assertEqual(
+            labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
+        )
+        # CT40/CT41/CT42's label text is byte-identical to the archive's, because
+        # card CT-CTWIN wrote its own measurement into T00's archived audit in
+        # place. Migrating it to that lane's own record is what stops the label
+        # from depending on that edit; the tally does not move.
+        for case in ["CT40", "CT41", "CT42"]:
+            self.assertEqual(labels[case]["label"], labels[case]["archived_label"])
+        self.assertEqual(
+            sum(summary.unmapped_bucket_counts(ROOT).values()),
+            summary.summarize(ROOT)["ct_unmapped"],
+        )
+
+    def test_every_committed_label_source_is_supported_by_the_file_set(self):
+        self.assertEqual(summary.check_label_sources(ROOT), [])
+
+    def test_a_bucket_naming_a_mapped_case_fails_closed(self):
+        """A mapped case has no blocker to publish.
+
+        This is the label-side of HYGIENE-14's structural repair: a lane row
+        cannot outlive the mapping of its own case. CT34 is the worked example —
+        the wave-13 lane both mapped it and left CT46 unmapped, so a row for it
+        in that same file is the exact mistake to refuse.
+        """
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.WAVE13)
+            data["unmapped_reasons"]["CT34"] = {
+                "bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+                "reason": "stale text for a case this very lane mapped",
+                "measured_by": "nothing",
+            }
+            scratch.write_evidence(self.WAVE13, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_mapping_a_labelled_case_retires_its_label(self):
+        """The same refusal reached from the manifest side.
+
+        A lane maps CT46 without deleting its own `unmapped_reasons` row: the
+        derivation refuses rather than publishing a blocker for a mapped case.
+        """
+        manifest = load_manifest()
+        for case in manifest["cases"]:
+            if case["id"] == "CT46":
+                case["mapping_status"] = "mapped"
+        with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory, manifest)
+
+    def test_two_records_labelling_one_case_differently_fail_closed(self):
+        """Without a supersession the later row would silently decide the label.
+
+        Exactly the defect the duplicate-triage-row refusal catches on the other
+        input, on the input a future CT lane will actually write.
+        """
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.NEWEST)
+            data["unmapped_reasons"] = {
+                "CT46": {
+                    "bucket": "a different label",
+                    "reason": "a second, undeclared claim on the same case",
+                    "measured_by": "nothing",
+                }
+            }
+            scratch.write_evidence(self.NEWEST, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_a_declared_bucket_supersession_replaces_exactly_the_record_it_names(self):
+        """The admitted direction, and both ways of getting it wrong."""
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.NEWEST)
+            data["unmapped_reasons"] = {
+                "CT46": {
+                    "bucket": "a later measurement",
+                    "reason": "measured again on a later tree",
+                    "measured_by": "a hypothetical wave-15 lane",
+                    "supersedes": self.WAVE13,
+                }
+            }
+            scratch.write_evidence(self.NEWEST, data)
+            labels = summary.unmapped_labels(scratch.directory)
+            self.assertEqual(labels["CT46"]["label"], "a later measurement")
+            self.assertEqual(labels["CT46"]["label_source"], self.NEWEST)
+
+            # Stale: it names a record that does not hold the label.
+            data["unmapped_reasons"]["CT46"]["supersedes"] = self.WAVE9
+            scratch.write_evidence(self.NEWEST, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+            # Vacuous: no earlier record labels CT44 at all. A lane label always
+            # beats T00's archive by the resolution rule, so declaring it is not
+            # a supersession of anything.
+            data["unmapped_reasons"] = {
+                "CT44": {
+                    "bucket": "ambiguous",
+                    "reason": "re-measured",
+                    "measured_by": "a hypothetical wave-15 lane",
+                    "supersedes": summary.TRIAGE,
+                }
+            }
+            scratch.write_evidence(self.NEWEST, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_a_re_verification_reaching_the_same_label_needs_no_supersession(self):
+        """Agreement is not a second claim.
+
+        A later lane that re-measures a case and lands on the same bucket is the
+        record saying the label still holds — refusing that would make honest
+        re-verification harder than silence.
+        """
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.NEWEST)
+            data["unmapped_reasons"] = {
+                "CT46": {
+                    "bucket": "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)",
+                    "reason": "re-verified on a later tree; unchanged",
+                    "measured_by": "a hypothetical wave-15 lane",
+                }
+            }
+            scratch.write_evidence(self.NEWEST, data)
+            labels = summary.unmapped_labels(scratch.directory)
+            self.assertEqual(
+                labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)"
+            )
+            self.assertEqual(labels["CT46"]["label_source"], self.NEWEST)
+
+    def test_a_row_missing_a_required_field_fails_closed(self):
+        for field in ["bucket", "reason", "measured_by"]:
+            with self.subTest(field=field), MutableRoot() as scratch:
+                data = scratch.read_evidence(self.WAVE13)
+                data["unmapped_reasons"]["CT46"][field] = "   "
+                scratch.write_evidence(self.WAVE13, data)
+                with self.assertRaises(SystemExit):
+                    summary.unmapped_labels(scratch.directory)
+
+    def test_an_unsupported_label_source_is_reported(self):
+        """A `label_source` the file set cannot support.
+
+        Two shapes, both reachable by a hand edit of the committed record: a
+        source that is not a CT stage-evidence record at all, and one that is but
+        carries no row for that case.
+        """
+        with MutableRoot() as scratch:
+            acceptance = scratch.read_acceptance()
+            acceptance["ct_evidence"]["unmapped_label_sources"]["CT44"] = (
+                "docs/reports/remaining-t00/README.md"
+            )
+            acceptance["ct_evidence"]["unmapped_label_sources"]["CT47"] = self.WAVE9
+            scratch.write_acceptance(acceptance)
+            problems = summary.check_label_sources(scratch.directory)
+            self.assertEqual(
+                problems,
+                [
+                    "acceptance.json labels CT44 from docs/reports/remaining-t00/README.md, "
+                    "which is not a CT stage-evidence record",
+                    "acceptance.json labels CT47 from %s, which records no bucket for that case"
+                    % self.WAVE9,
+                ],
+            )
+
+    def test_a_changed_lane_label_moves_the_tally_and_drifts_the_record(self):
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.WAVE13)
+            data["unmapped_reasons"]["CT46"]["bucket"] = "a relabelled bucket"
+            scratch.write_evidence(self.WAVE13, data)
+            counts = summary.unmapped_bucket_counts(scratch.directory)
+            self.assertIn("a relabelled bucket", counts)
+            self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
+            self.assertEqual(sum(counts.values()), 18)
+            self.assertIn(
+                "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
+                summary.check_acceptance(scratch.directory),
+            )
+
+    def test_derived_from_pins_the_evidence_file_set(self):
+        """The third record that ties the Python and Rust derivations together.
+
+        Neither generator can read the other's source, so both assert their own
+        file list against `acceptance.json`'s `derived_from`.
+        """
+        block = json.loads((ROOT / summary.ACCEPTANCE).read_text())["ct_evidence"]
+        self.assertEqual(block["derived_from"], [summary.MANIFEST] + summary.EVIDENCE_FILES)
+        with MutableRoot() as scratch:
+            acceptance = scratch.read_acceptance()
+            acceptance["ct_evidence"]["derived_from"] = acceptance["ct_evidence"]["derived_from"][
+                :-1
+            ]
+            scratch.write_acceptance(acceptance)
+            self.assertIn(
+                "acceptance.json `derived_from` is not the manifest plus this generator's "
+                "evidence-file list",
+                summary.check_acceptance(scratch.directory),
             )
 
     def test_a_stage_without_a_depth_rank_fails_closed(self):

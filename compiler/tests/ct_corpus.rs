@@ -2353,7 +2353,166 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
         "depth_profile": depth_profile,
         "case_depth": case_depth,
         "unmapped_bucket_counts": unmapped_bucket_counts(manifest),
+        "unmapped_label_sources": unmapped_label_sources(manifest),
     })
+}
+
+/// The per-card CT stage-evidence records, in landing order, mirroring
+/// `scripts/ct_stage_summary.py::EVIDENCE_FILES`. The two lists are tied
+/// together through a third committed record: `acceptance.json`'s
+/// `ct_evidence.derived_from` is asserted against this array below, and the
+/// Python generator asserts the same field against its own list, so neither
+/// derivation can quietly read a different file set (card CT-LABELS).
+const EVIDENCE_FILES: [&str; 9] = [
+    "docs/reports/remaining-t00/coverage.json",
+    "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
+    "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
+    "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "docs/reports/wave11-ct33/ct_stage_evidence.json",
+    "docs/reports/wave13-ct34/ct_stage_evidence.json",
+    "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
+];
+
+/// The `label_source` of a case no CT lane measured: card T00's frozen archive.
+const ARCHIVE_SOURCE: &str = "t00-archive";
+
+/// Each unmapped case's current bucket label beside the record that measured it
+/// (card CT-LABELS, finding `D02-BUCKETS-LABELS`).
+///
+/// Card HYGIENE-14 derived the *set* of counted cases from the manifest and
+/// recorded that the *label* stayed card T00's 2026-09-07 analysis, measurably
+/// stale for CT11 and CT46. The repair is the same shape as its predecessor: a
+/// CT lane that examines a case and leaves it unmapped records the bucket it
+/// measured in its own `ct_stage_evidence.json`, under `unmapped_reasons`, and
+/// the newest such record wins over the archive. The source is published beside
+/// the label, so "this is a current measurement" and "this is still the archive"
+/// are distinguishable without reading three reports.
+///
+/// Total-or-reject, matching `scripts/ct_stage_summary.py` exactly:
+///
+/// * a lane row naming a case the manifest currently maps is refused — a mapped
+///   case has no blocker to publish;
+/// * two lane records labelling one case differently with no supersession
+///   declared is refused, and a supersession that is stale or vacuous is refused
+///   with it;
+/// * a case with neither a lane row nor an archived row is a hole, not a zero.
+fn unmapped_labels(manifest: &Manifest) -> BTreeMap<String, (String, String)> {
+    let unmapped: BTreeSet<&str> = manifest
+        .cases
+        .iter()
+        .filter(|case| case.mapping_status != "mapped")
+        .map(|case| case.id.as_str())
+        .collect();
+
+    // Card T00's archive, one row per case or refuse. A duplicate row does not
+    // disturb the sum, so the sum assertion below cannot catch it — the natural
+    // map-building lets the last row silently decide the label.
+    let triage_path = repo_root().join(EVIDENCE_FILES[0]);
+    let triage: serde_json::Value = read_json(&triage_path);
+    let mut archive: BTreeMap<String, String> = BTreeMap::new();
+    for case in triage["unmapped_triage"]["cases"]
+        .as_array()
+        .expect("T00's triage lists its cases")
+    {
+        let id = case["id"].as_str().expect("a triage row names its case");
+        let bucket = case["current_bucket"]
+            .as_str()
+            .expect("a triage row names its bucket");
+        assert!(
+            archive.insert(id.to_owned(), bucket.to_owned()).is_none(),
+            "{id}: two triage rows classify the same case in {}",
+            triage_path.display()
+        );
+    }
+
+    // The lanes' own measured labels, newest record winning.
+    let mut lanes: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for relative in &EVIDENCE_FILES {
+        let path = repo_root().join(relative);
+        let record: serde_json::Value = read_json(&path);
+        let Some(rows) = record.get("unmapped_reasons") else {
+            continue;
+        };
+        for (case_id, row) in rows.as_object().expect("unmapped_reasons is an object") {
+            assert!(
+                unmapped.contains(case_id.as_str()),
+                "{case_id}: {relative} records an unmapped-case bucket, but the manifest \
+                 maps this case"
+            );
+            for field in ["bucket", "reason", "measured_by"] {
+                let value = row
+                    .get(field)
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("");
+                assert!(
+                    !value.trim().is_empty(),
+                    "{case_id}: {relative} carries no {field} for this case"
+                );
+            }
+            let bucket = row["bucket"].as_str().expect("bucket").to_owned();
+            let superseded = row.get("supersedes").and_then(serde_json::Value::as_str);
+            match lanes.get(case_id) {
+                None => assert!(
+                    superseded.is_none(),
+                    "{case_id}: {relative} declares its bucket supersedes {}, but no earlier \
+                     record labels this case",
+                    superseded.unwrap_or_default()
+                ),
+                // Re-verification reaching the same label is the record saying
+                // the label still holds, not a second claim on the case.
+                Some((held, _)) if *held == bucket => {}
+                Some((held, held_source)) => {
+                    let superseded = superseded.unwrap_or_else(|| {
+                        panic!(
+                            "{case_id}: two evidence records label this case differently \
+                             ({held_source} says {held:?}, {relative} says {bucket:?}) and \
+                             neither declares a supersession"
+                        )
+                    });
+                    assert_eq!(
+                        superseded, held_source,
+                        "{case_id}: {relative} declares its bucket supersedes {superseded}, but \
+                         the record holding the label is {held_source}"
+                    );
+                }
+            }
+            lanes.insert(case_id.clone(), (bucket, (*relative).to_owned()));
+        }
+    }
+
+    let mut resolved: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for case_id in &unmapped {
+        let entry = lanes.get(*case_id).cloned().or_else(|| {
+            archive
+                .get(*case_id)
+                .map(|bucket| (bucket.clone(), ARCHIVE_SOURCE.to_owned()))
+        });
+        let entry = entry.unwrap_or_else(|| {
+            panic!(
+                "{case_id}: unmapped with no measured bucket and no archived triage row in {}",
+                triage_path.display()
+            )
+        });
+        resolved.insert((*case_id).to_owned(), entry);
+    }
+    resolved
+}
+
+fn unmapped_label_sources(manifest: &Manifest) -> BTreeMap<String, String> {
+    unmapped_labels(manifest)
+        .into_iter()
+        .map(|(case_id, (_, source))| (case_id, source))
+        .collect()
+}
+
+fn read_json(path: &std::path::Path) -> serde_json::Value {
+    serde_json::from_str(
+        &fs::read_to_string(path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display())),
+    )
+    .unwrap_or_else(|error| panic!("cannot parse {}: {error}", path.display()))
 }
 
 /// The triage tally over the cases the manifest *currently* leaves unmapped
@@ -2368,56 +2527,23 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// and that is what ends the rot: a case that gets mapped leaves this tally in
 /// the same commit that maps it.
 ///
-/// Two total-or-reject conditions, matching `scripts/ct_stage_summary.py`
-/// exactly:
+/// Total-or-reject, matching `scripts/ct_stage_summary.py` exactly: the labels
+/// come from [`unmapped_labels`], which refuses a case it cannot classify, and
+/// the counts must sum to the number of unmapped cases — the property whose
+/// silent violation *is* the finding.
 ///
-/// * an unmapped case with no archived triage row is a hole, not a zero;
-/// * the counts must sum to the number of unmapped cases — the property whose
-///   silent violation *is* the finding.
+/// Card CT-LABELS made the label derived as well, so this counts resolved
+/// labels rather than archived ones; `unmapped_label_sources` records which
+/// cases are still on the archive.
 fn unmapped_bucket_counts(manifest: &Manifest) -> BTreeMap<String, usize> {
-    let path = repo_root().join("docs/reports/remaining-t00/coverage.json");
-    let triage: serde_json::Value = serde_json::from_str(
-        &fs::read_to_string(&path)
-            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display())),
-    )
-    .unwrap_or_else(|error| panic!("cannot parse {}: {error}", path.display()));
-    let mut rows: BTreeMap<&str, &str> = BTreeMap::new();
-    for case in triage["unmapped_triage"]["cases"]
-        .as_array()
-        .expect("T00's triage lists its cases")
-    {
-        let id = case["id"].as_str().expect("a triage row names its case");
-        let bucket = case["current_bucket"]
-            .as_str()
-            .expect("a triage row names its bucket");
-        // One case, one classification. A duplicate row does not disturb the
-        // sum, so the sum assertion below cannot catch it — the natural
-        // map-building lets the last row silently decide the label.
-        assert!(
-            rows.insert(id, bucket).is_none(),
-            "{id}: two triage rows classify the same case in {}",
-            path.display()
-        );
-    }
+    let labels = unmapped_labels(manifest);
     let mut counts: BTreeMap<String, usize> = BTreeMap::new();
-    let mut unmapped = 0usize;
-    for case in &manifest.cases {
-        if case.mapping_status == "mapped" {
-            continue;
-        }
-        unmapped += 1;
-        let bucket = rows.get(case.id.as_str()).unwrap_or_else(|| {
-            panic!(
-                "{}: unmapped with no archived triage row in {}",
-                case.id,
-                path.display()
-            )
-        });
-        *counts.entry((*bucket).to_owned()).or_insert(0) += 1;
+    for (bucket, _) in labels.values() {
+        *counts.entry(bucket.clone()).or_insert(0) += 1;
     }
     assert_eq!(
         counts.values().sum::<usize>(),
-        unmapped,
+        labels.len(),
         "the bucket tally must account for every unmapped case — a sum that \
          drifts from ct_unmapped is exactly finding D02-BUCKETS-STALE"
     );
@@ -2461,8 +2587,11 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
             "depth_profile",
             "case_depth",
             // Card HYGIENE-14: the triage tally is generated too, over the case
-            // set this manifest fixes. Its labels stay T00's archived analysis.
+            // set this manifest fixes.
             "unmapped_bucket_counts",
+            // Card CT-LABELS: and so is each label's source, which is what makes
+            // the labels themselves derivable rather than frozen.
+            "unmapped_label_sources",
         ],
         "the generated field set is itself pinned, so a field cannot quietly \
          become hand-maintained"
@@ -2485,6 +2614,7 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
         "depth_profile",
         "case_depth",
         "unmapped_bucket_counts",
+        "unmapped_label_sources",
     ] {
         assert_eq!(
             evidence.get(field),
@@ -2492,6 +2622,26 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
             "acceptance.json `{field}` is not what the manifest's stage evidence derives"
         );
     }
+    // The two derivations must read the same evidence files, and neither can
+    // check the other's source directly. `derived_from` is the third record both
+    // assert against (card CT-LABELS).
+    let expected_sources: Vec<String> = std::iter::once("docs/reevaluation/ct_manifest.json")
+        .chain(EVIDENCE_FILES)
+        .map(str::to_owned)
+        .collect();
+    let recorded: Vec<String> = evidence
+        .get("derived_from")
+        .expect("the CT block names the records it derives from")
+        .as_array()
+        .expect("derived_from is a list")
+        .iter()
+        .map(|value| value.as_str().expect("a path").to_owned())
+        .collect();
+    assert_eq!(
+        recorded, expected_sources,
+        "acceptance.json `derived_from` must be the manifest plus this derivation's \
+         evidence-file list, or the Rust and Python generators are reading different files"
+    );
     // `newly_decidable_not_mapped` stays hand-kept — whether a case is decidable
     // *now* is a judgment no record derives — but "not mapped" is a manifest
     // fact, so the half of it that can go stale the way the buckets did is
