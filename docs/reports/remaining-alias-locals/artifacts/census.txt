@@ -1,0 +1,71 @@
+# ALIAS-LOCALS scratch census - instrumented run over the pinned 185-unit corpus
+#
+# Instrumentation: two eprintln! lines added to
+# crates/qcore-c-gateway/src/legacy_c.rs for this run only --
+#   ALIASREL at CFG construction: every may-alias pair a modeled read carries,
+#     classified v1 (at least one formal) or locals (neither),
+#   ALIASDEC in require_unaliased_reads: the per-consideration decision state.
+# Both were removed before this card's commits; no production route emits them.
+# The instrumented run reproduced the same five artifacts.
+
+## relation reach at modeled reads (emissions)
+locals emissions: 18
+v1 emissions:     75
+
+## distinct (place,peer) name pairs the relation carries at a modeled read
+locals: e/_aft
+locals: e/_elm
+locals: e/insert_after
+locals: e/_last
+locals: negative/positive
+locals: positive/negative
+v1:     app_conf/conf
+v1:     conf/app_conf
+v1:     conf/new
+v1:     ctr_arr_val/ctr_val
+v1:     ctr_kvlist_val/ctr_val
+v1:     fwdq/rkq
+v1:     grplist/grplist0
+v1:     metric/source
+v1:     msg_rko/rko
+v1:     new/conf
+v1:     resource/source
+v1:     rko/msg_rko
+v1:     scope/source
+v1:     span/parent
+v1:     summary/sum
+
+## distinct (function,place,peer) considered at a modeled read
+batch_add_resource resource/source
+batch_add_scope scope/source
+cat_histogram_values histogram_dst/histogram_src
+cat_histogram_values histogram_src/histogram_dst
+cmt_cat_counter counter/c
+cmt_cat_exp_histogram exp_histogram/eh
+cmt_cat_gauge gauge/g
+cmt_cat_histogram histogram/hist
+cmt_cat_summary summary/sum
+cmt_cat_untyped untyped/u
+convert_array_value ctr_arr_val/ctr_val
+convert_kvlist_value ctr_kvlist_val/ctr_val
+ctr_span_create span/parent
+decode_exponential_histogram_data_point negative/positive
+decode_exponential_histogram_data_point positive/negative
+metric_view_create metric/source
+mk_socket_connect rp/res
+mk_socket_server rp/res
+rd_kafka_group_list_destroy grplist/grplist0
+rd_kafka_new app_conf/conf
+rd_kafka_new conf/app_conf
+rd_kafka_op_destroy rko/msg_rko
+ut_tq_test e/_aft
+ut_tq_test e/_elm
+ut_tq_test e/insert_after
+ut_tq_test e/_last
+
+## considerations whose peer was released on the reaching path
+ALIASDEC rd_kafka_new app_conf conf released=true prov=false guard=false definite=false
+
+## guard facts / definite aliases observed at a considered read
+guard=true:    0
+definite=true: 0
