@@ -145,9 +145,11 @@ pub enum LegacyInstruction {
 ///
 /// `place` is the root name the read dereferences — `storage` for the actual
 /// `storage->cio`, `b` for the actual `b`. `peers` are the *other* declared
-/// names of this function that share `place`'s declared `struct TAG *` type,
-/// with at least one of the two a formal parameter. Releasing any peer leaves
-/// this read unresolved unless a discharge applies; see [`crate::may_alias`].
+/// names of this function that share `place`'s declared `struct TAG *` type.
+/// Releasing any peer leaves this read unresolved unless a discharge applies;
+/// see [`crate::may_alias`]. Card ALIAS-LOCALS removed v1's additional
+/// requirement that at least one of the two be a formal parameter, so a pair of
+/// locals is now related exactly like any other pair.
 ///
 /// Both fields are derived from the same preprocessed token stream every other
 /// typed rule reads, so W4 derivation, W4 validation and
@@ -1305,7 +1307,7 @@ pub(crate) fn build_function_cfg(
         &protected_formals,
         contracts,
     );
-    let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types, &formal_parameters);
+    let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -4217,6 +4219,42 @@ fn distinct_by_provenance(
     })
 }
 
+/// ALIAS-LOCALS: whether the projection's own bindings show these two names
+/// denote one object here. See [`crate::may_alias::definitely_aliased`].
+///
+/// Read-only against the custody state, exactly like [`distinct_by_provenance`],
+/// so it cannot perturb the custody work list.
+fn definitely_aliased(state: &AbstractState, one: &str, other: &str) -> bool {
+    let (Some(left), Some(right)) = (state.pointers.get(one), state.pointers.get(other)) else {
+        return false;
+    };
+    fn denote(pointer: &AbstractPointer) -> crate::may_alias::Denotation<'_> {
+        crate::may_alias::Denotation {
+            targets: &pointer.targets,
+            unknown: pointer.unknown,
+            may_be_null: pointer.may_be_null,
+        }
+    }
+    crate::may_alias::definitely_aliased(denote(left), denote(right))
+}
+
+/// ALIAS-LOCALS: the pointer-inequality discharge, with the definite-alias
+/// exception.
+///
+/// A `BranchOnDistinct` edge discharges the pair only while the projection has
+/// not itself decided that the two names denote one object. When it has, the
+/// branch and the identity model contradict each other; refusing is strictly
+/// the more refusing of the two answers, and it is the only one that does not
+/// let a source-level comparison overrule the projection's own bindings.
+fn distinct_by_guard(
+    state: &AbstractState,
+    alias: &NodeAliasFacts,
+    place: &str,
+    peer: &str,
+) -> bool {
+    alias.proved_distinct(place, peer) && !definitely_aliased(state, place, peer)
+}
+
 /// C02-P-ALIAS: refuse each modeled read whose base may denote an object some
 /// peer's release already destroyed.
 ///
@@ -4240,7 +4278,8 @@ fn require_unaliased_reads(
             continue;
         }
         for peer in &read.peers {
-            if alias.released.contains(peer) && !alias.proved_distinct(&read.place, peer) {
+            if alias.released.contains(peer) && !distinct_by_guard(state, alias, &read.place, peer)
+            {
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line,
