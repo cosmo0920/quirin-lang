@@ -165,12 +165,12 @@ rejected evidence and explicit package/policy selection are exercised without
 hand-constructed source summaries. Semantic replay and Lean rules are unchanged;
 resource verdicts retain parity.
 
-## Validated checkpoint at halt (2026-09-07)
+## Validated checkpoint (2026-09-07)
 
 Implementation revision `e3e7c2c` passed 819 workspace tests, 45 excluded provider
 tests, 43 Python evidence-validator tests, formatting, Clippy, both reevaluation
 examples, Lean build and 20 axiom audits. The [Clang CMake report](reports/w2-clang-cmake-build/README.md)
 archives these gates, two successful native CMetrics builds, exact full 185-unit
 parity and every configured-audit difference. CT coverage is 11 mapped / 39
-unmapped. The [handoff](HANDOFF_2026-09-07.md) records unfinished requirements;
-this checkpoint is not aggregate Cycle18/19/20 or full v0.3 acceptance.
+unmapped. This historical checkpoint is not aggregate Cycle18/19/20 or full
+v0.3 acceptance.

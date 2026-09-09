@@ -6,14 +6,6 @@ audit specifics, the repository layout, and the full build/validation
 instructions. [`README.md`](README.md) is the short human summary and
 [`AGENTS.md`](AGENTS.md) is the compressed ledger for AI agents.
 
-## Handoff (2026-09-07)
-
-> **Handoff, 2026-09-07:** The user requested that subagents halt and remaining
-> work be documented. All three managed subagents were interrupted; none is
-> running. Do not restart subagents without a new user instruction. Current
-> implementation checkpoint: `e3e7c2c`; see [progress, remaining tasks and specs](docs/HANDOFF_2026-09-07.md).
-> This handoff is not a claim that the overall generalization goal is complete.
-
 ## Specifications and records
 
 - Current specification: [QCore revision 0.3](docs/QCORE_SPEC_r0_3.md), with
