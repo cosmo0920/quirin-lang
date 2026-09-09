@@ -5649,10 +5649,10 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2318,
+  "workspace_tests": 2344,
   "provider_tests": 87,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 57,
+  "lean_audits": 58,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5698,6 +5698,7 @@
    "AuditPackageTemplateBinding.lean",
    "AuditProcessQuotaPlan.lean",
    "AuditRawDirectiveLexing.lean",
+   "AuditReachGatePosition.lean",
    "AuditReadLoan.lean",
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
@@ -5718,7 +5719,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate13.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate13b.json)"
  },
  "named_followups": [
   {
