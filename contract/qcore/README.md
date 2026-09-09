@@ -92,16 +92,40 @@ wrapper source projections and remaining composition gates.
 
 ## Declarative resource-projection contracts
 
-`../cycle19-resource-contracts.json` explicitly selects nine modules for the
+`../cycle19-resource-contracts.json` explicitly selects twelve modules for the
 legacy-C audit: `libc/memory.qcore`, `monkey/memory.qcore`,
 `librdkafka/memory.qcore`, `fluent_bit/resource_memory.qcore`,
 `fluent_bit/hash_table_publication.qcore`,
-`fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore`,
-`fluent_bit/routes_mask.qcore`, and `chunkio/resource_open_close.qcore`. These
-25 declarations replace the audit's Rust table. They are trusted
-resource-projection assumptions, separate from the more detailed execution and
-lifecycle profiles above. In particular the ChunkIO close declaration does not
-itself provide a nested teardown certificate.
+`fluent_bit/input_chunk_helpers.qcore`, `fluent_bit/input_chunk_name.qcore`,
+`fluent_bit/logging.qcore`, `fluent_bit/routes_mask.qcore`,
+`fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`, and
+`chunkio/resource_open_close.qcore`. These 31 declarations replace the audit's
+Rust table. They are trusted resource-projection assumptions, separate from the
+more detailed execution and lifecycle profiles above. In particular the ChunkIO
+close declaration does not itself provide a nested teardown certificate.
+
+### A file-`static` callee may be declared (card NEIGHBOURS)
+
+`fluent_bit/input_chunk_helpers.qcore` declares `generate_chunk_name` and
+`input_chunk_write_header`, both file-`static` definitions inside a unit of the
+pinned corpus. That is deliberate and safe by construction: a declared contract
+always wins over a W4-inferred summary, a disagreement is reported as a
+`SummaryConflict` diagnostic rather than silently resolved, and the unit's own
+body still analyzes. What a declaration fixes is only what the callee's
+*callers* may assume. Read the body first, all the same — the same discipline
+every module in this family follows.
+
+### Float scalars in the ABI table (card NEIGHBOURS)
+
+`SCALAR_ABI_TYPES` gained `f32`/`f64` so that `fluent_bit/time.qcore` could
+declare `double flb_time_now()` with its own result type instead of projecting
+it onto an integer it does not have. Adding a scalar spelling changes which
+signatures can be *written* and nothing else: a float is refused in every
+custody mode exactly as every other scalar is, and a non-`None` result still
+requires a pointer return type, so no float can occupy a custody position.
+Before adding a spelling to that table, have a real declaration that needs it;
+before writing an inexact one, remember that an unfaithful declaration is worse
+than `Unknown`.
 
 ### Declare the callee the call site reaches (card PROD-CONTRACTS)
 

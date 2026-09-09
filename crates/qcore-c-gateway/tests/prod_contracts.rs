@@ -695,9 +695,13 @@ fn the_remaining_production_blocker_is_one_uncontracted_neighbour() {
     let result = analyze_real(&source, &without);
     let summary = function(program(&result), "flb_input_chunk_create").clone();
     let refusals = unsupported(&summary);
+    // Lint-only rewrite by card NEIGHBOURS (`clippy::manual_contains`, which
+    // fails `-D warnings` at base main `19fbaa5`). The asserted text is
+    // byte-identical and the assertion is unchanged.
     assert!(
-        refusals.iter().any(|text| *text
-            == "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"),
+        refusals.contains(
+            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
+        ),
         "the production refusal is reproduced by withdrawing one neighbour: {refusals:?}"
     );
     // The gate is still decided — the neighbour affects the tail actual, not
@@ -766,5 +770,10 @@ fn the_modules_under_test_are_the_production_ones() {
             "{name} is not in force in the production manifest"
         );
     }
-    assert_eq!(contracts.source_assumptions().len(), 9);
+    // 9 -> 12 by card NEIGHBOURS' deliberate addition of
+    // `fluent_bit/input_chunk_helpers.qcore`, `fluent_bit/time.qcore` and
+    // `chunkio/chunk_residency.qcore`. This card's own five declarations, its
+    // three modules and every assertion above are unchanged: the pin moves
+    // because the manifest grew, not because anything measured here did.
+    assert_eq!(contracts.source_assumptions().len(), 12);
 }

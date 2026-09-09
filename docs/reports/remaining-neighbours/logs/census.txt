@@ -1,0 +1,65 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4405 -> 4403 (-2)
+  unsupported: 49920 -> 49896 (-24)
+units with diagnostic-count changes: 3
+  chunkio/cio_chunk.c: {'unknown_alias': -1}
+  chunkio/cio_file.c: {'unsupported': -6}
+  fluent-bit-chunk/flb_input_chunk.c: {'unknown_alias': -1, 'unsupported': -18}
+description inventory deltas:
+  unknown_alias / 'unresolved resource identity `ch`': 12 -> 11 (-1)
+  unknown_alias / 'unresolved resource identity `chunk`': 5 -> 3 (-2)
+  unknown_alias / 'unresolved resource identity `ic`': 33 -> 34 (+1)
+  unsupported / 'arguments beyond the declared parameters of `flb_log_print` are outside the resource projection': 1 -> 0 (-1)
+  unsupported / 'call to uncontracted function `cio_chunk_down`': 4 -> 0 (-4)
+  unsupported / 'call to uncontracted function `cio_chunk_is_up`': 1 -> 0 (-1)
+  unsupported / 'call to uncontracted function `cio_chunk_up_force`': 2 -> 0 (-2)
+  unsupported / 'call to uncontracted function `flb_time_now`': 1 -> 0 (-1)
+  unsupported / 'call to uncontracted function `generate_chunk_name`': 1 -> 0 (-1)
+  unsupported / 'call to uncontracted function `input_chunk_write_header`': 1 -> 0 (-1)
+  unsupported / 'indirect memory access is outside the resource projection': 18879 -> 18866 (-13)
+leaf-level diff, per changed unit:
+  UNIT chunkio/cio_chunk.c
+    -1 chunk_state_sync L2383 unsupported: indirect memory access is outside the resource projection
+    +1 cio_chunk_open L2053 unsupported: indirect memory access is outside the resource projection
+    -1 cio_chunk_open L2053 unknown_alias: unresolved resource identity `ch`
+  UNIT chunkio/cio_file.c
+    -1 cio_file_content_copy L3165 unsupported: indirect memory access is outside the resource projection
+    -1 cio_file_content_copy L3167 unsupported: call to uncontracted function `cio_chunk_up_force`
+    -1 cio_file_content_copy L3173 unsupported: indirect memory access is outside the resource projection
+    -1 cio_file_content_copy L3177 unsupported: call to uncontracted function `cio_chunk_down`
+    -1 cio_file_content_copy L3185 unsupported: call to uncontracted function `cio_chunk_down`
+    -1 cio_file_content_copy L3194 unsupported: call to uncontracted function `cio_chunk_down`
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_create L19576 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19577 unsupported: call to uncontracted function `generate_chunk_name`
+    -1 flb_input_chunk_create L19578 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19584 unsupported: call to uncontracted function `cio_chunk_is_up`
+    -1 flb_input_chunk_create L19586 unsupported: call to uncontracted function `cio_chunk_up_force`
+    -1 flb_input_chunk_create L19588 unknown_alias: unresolved resource identity `chunk`
+    -1 flb_input_chunk_create L19593 unsupported: call to uncontracted function `input_chunk_write_header`
+    -1 flb_input_chunk_create L19595 unknown_alias: unresolved resource identity `chunk`
+    -1 flb_input_chunk_create L19612 unsupported: call to uncontracted function `flb_time_now`
+    +1 flb_input_chunk_create L19612 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19614 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19626 unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection
+    -1 flb_input_chunk_create L19631 unsupported: call to uncontracted function `cio_chunk_down`
+    -1 flb_input_chunk_create L19634 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19638 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19642 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19645 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_set_up_down L19961 unsupported: indirect memory access is outside the resource projection
+    -1 get_input_chunk_record_count L17985 unsupported: indirect memory access is outside the resource projection
+    -1 get_input_chunk_record_count L17988 unsupported: indirect memory access is outside the resource projection
+    -1 get_input_chunk_record_count L18009 unsupported: indirect memory access is outside the resource projection
+leaves added: 2; leaves removed: 28

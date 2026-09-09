@@ -17,6 +17,18 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/intrusive_list.qcore", "cfl_list_del", 5),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_close", 10),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_delete", 5),
+    // Card NEIGHBOURS: the corpus moves 64 -> 67 modules with this file,
+    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`, and
+    // the resource-v1 declaration count 25 -> 31. Deliberate; see
+    // `docs/reports/remaining-neighbours/README.md`. All three residency
+    // helpers borrow the chunk and return no custody, which is the only v1
+    // mode combination with the caller-side effect each pinned body was read
+    // to have: neither `cio_chunk_up_force` nor `cio_chunk_down` frees the
+    // chunk or its backend, so the caller's obligation to `cio_chunk_close` is
+    // unchanged across both.
+    ("chunkio/chunk_residency.qcore", "cio_chunk_is_up", 3),
+    ("chunkio/chunk_residency.qcore", "cio_chunk_up_force", 3),
+    ("chunkio/chunk_residency.qcore", "cio_chunk_down", 3),
     (
         "chunkio/constructor_failure_observation.qcore",
         "native_constructor_failure_observation",
@@ -222,6 +234,20 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_hash_table_add",
         8,
     ),
+    // Card NEIGHBOURS, continued. Both helpers are file-`static` definitions
+    // inside `src/flb_input_chunk.c`, itself a corpus unit: a declared contract
+    // always wins over a W4-inferred summary, and a disagreement is reported as
+    // a `SummaryConflict` diagnostic rather than silently resolved.
+    (
+        "fluent_bit/input_chunk_helpers.qcore",
+        "generate_chunk_name",
+        5,
+    ),
+    (
+        "fluent_bit/input_chunk_helpers.qcore",
+        "input_chunk_write_header",
+        6,
+    ),
     // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
     // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
     // resource-v1 declaration count 20 -> 25. Deliberate; see
@@ -254,6 +280,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_routes_mask_get_size",
         3,
     ),
+    // Card NEIGHBOURS, continued. The FIRST production declaration whose C
+    // result is floating-point: `double flb_time_now()` is declared `-> f64`
+    // rather than projected onto an integer it does not have, which is why the
+    // card added `f32`/`f64` to `SCALAR_ABI_TYPES`. Two clauses: the marker and
+    // the result mode. It takes no parameter, so it has no parameter clause.
+    ("fluent_bit/time.qcore", "flb_time_now", 2),
     (
         "language/quantified_indices.qcore",
         "preserve_five_chunk_credits",
@@ -426,14 +458,16 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/hash_table_publication.qcore`; 61 -> 64 by card
     // PROD-CONTRACTS' deliberate addition of
     // `fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore` and
-    // `fluent_bit/routes_mask.qcore`.
-    assert_eq!(sources.len(), 64, "unexpected contract corpus size");
+    // `fluent_bit/routes_mask.qcore`; 64 -> 67 by card NEIGHBOURS' deliberate
+    // addition of `chunkio/chunk_residency.qcore`,
+    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`.
+    assert_eq!(sources.len(), 67, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");
         // Card HASH-CLAUSE. The `qcore-premise` comment directive is retired in
         // favour of §C04.5's `resource_literal_argument` clause. The resource
-        // loader rejects a module carrying it, but only the six modules the
+        // loader rejects a module carrying it, but only the modules the
         // manifest selects ever reach that loader; this sweeps the whole corpus,
         // so a directive cannot rot unread in an unselected module either.
         assert!(

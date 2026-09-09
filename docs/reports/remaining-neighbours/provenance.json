@@ -1,0 +1,52 @@
+{
+  "card": "NEIGHBOURS",
+  "date": "2026-09-09",
+  "base_tree": "main 19fbaa5 (Consolidate wave 14: corpus re-pin, §C05 correction, follow-ons, ledger)",
+  "libevent_submodule": "d82464a277d0f42703702c4dfd9af6af38595a83",
+  "commands": {
+    "provider_packages": "python3 -B providers/package.py build --output build/cycle19/provider-packages-neighbours",
+    "pinned_route": "QCORE_CLANG=/usr/bin/clang QCORE_CHUNKIO_PACKAGE=<worktree>/build/cycle19/provider-packages-neighbours/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --pinned-evidence <pin>/fluent-bit-clang-source <pin>/monkey/monkey-build/compile_commands.json <out>/monkey-source.json <out>/resource-diagnostics.json",
+    "script": "build/neighbours/run-audit.sh <out-subdir>",
+    "census": "python3 -B docs/reports/remaining-neighbours/census.py --before build/neighbours/before --after build/neighbours/after",
+    "archive": "python3 -B docs/reports/remaining-neighbours/archive.py --measured build/neighbours/after --output docs/reports/remaining-neighbours/artifacts"
+  },
+  "host": {
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "clang_path": "/usr/bin/clang",
+    "platform": "Linux 7.0.0-30-generic x86_64",
+    "python": "Python 3.14.4",
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)"
+  },
+  "inputs": {
+    "fluent_bit_pin": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "independent_clone": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/fluent-bit-clang-source (the shared prepared pinned clone; read-only for this card)",
+    "compile_database_sha256": "cd8bffe9079247ea07c9e4db5a59bf0000a1429666ec3dd63248aa6930e6d09f",
+    "monkey_database_sha256": "24147f377033155f73a43c5e6d1e07f19a87b25384a61081838fb1a52c24593e",
+    "provider_packages": "build/cycle19/provider-packages-neighbours (rebuilt for this run)"
+  },
+  "isolation": [
+    "The BEFORE run was started before any file of this card's diff existed. Its resource-diagnostics.contracts.json records the nine-module manifest verbatim, so the isolation carries no path provenance from this card at all.",
+    "The AFTER run used the same script, the same prepared clone and the same provider packages; only contract/cycle19-resource-contracts.json and the three new contract modules differ."
+  ],
+  "sources_read": {
+    "generate_chunk_name": "src/flb_input_chunk.c:743-754",
+    "input_chunk_write_header": "src/flb_input_chunk.c:1782-1852",
+    "flb_time_now": "src/flb_lib.c:936-942",
+    "cio_chunk_is_up": "lib/chunkio/src/cio_chunk.c:509-524",
+    "cio_chunk_up_force": "lib/chunkio/src/cio_chunk.c:590-605",
+    "cio_chunk_down": "lib/chunkio/src/cio_chunk.c:556-571",
+    "supporting": {
+      "cio_file_is_up": "lib/chunkio/src/cio_file.c:1378-1388",
+      "_cio_file_up": "lib/chunkio/src/cio_file.c:816-883",
+      "cio_file_up_force": "lib/chunkio/src/cio_file.c:901-904",
+      "cio_file_down": "lib/chunkio/src/cio_file.c:920-958",
+      "cio_file_free_sites": "lib/chunkio/src/cio_file.c:722,736,761,772,990 (all in cio_file_open rollback and cio_file_close teardown)",
+      "chunk_state_sync": "lib/chunkio/src/cio_chunk.c:538-554",
+      "cio_error_reset": "lib/chunkio/src/cio_error.c:56-59",
+      "cio_meta_write": "lib/chunkio/src/cio_meta.c:46-73",
+      "cio_file_write_metadata": "lib/chunkio/src/cio_file.c:1075-1145",
+      "flb_time_get": "src/flb_time.c:76-79",
+      "flb_time_to_double": "src/flb_time.c:95-98"
+    }
+  }
+}
