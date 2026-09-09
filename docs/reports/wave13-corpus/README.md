@@ -1,5 +1,10 @@
 # Wave-13 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-09 (wave-14 consolidation):**
+> `docs/reports/wave14-corpus/artifacts/` is the current baseline — one
+> diagnostics unit (PROD-CONTRACTS, attributed) plus the deliberately grown
+> contract inventory. This directory remains the wave-13 record.
+
 **Date:** 2026-09-09. **Tree:** main `57d6372` (all six wave-13 cards
 merged). Integrator-run, closing the wave under hard invariants 3 and 5.
 

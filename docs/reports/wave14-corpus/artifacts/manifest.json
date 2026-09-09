@@ -1,0 +1,32 @@
+{
+ "chunk-contracts": {
+  "archived_path": "docs/reports/wave14-corpus/artifacts/chunk-contracts.json.gz",
+  "produced_file": "resource-diagnostics.chunk-contracts.json",
+  "uncompressed_bytes": 4186178,
+  "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "archived_path": "docs/reports/wave14-corpus/artifacts/contracts.json.gz",
+  "produced_file": "resource-diagnostics.contracts.json",
+  "uncompressed_bytes": 30152,
+  "uncompressed_sha256": "72e665be6308223f23ca2c941c378402b226d89df5ba85df9e5e4bf03315aebc"
+ },
+ "diagnostics": {
+  "archived_path": "docs/reports/wave14-corpus/artifacts/diagnostics.json.gz",
+  "produced_file": "resource-diagnostics.json",
+  "uncompressed_bytes": 11140129,
+  "uncompressed_sha256": "40691eab1fdd7b34eff1fbd59851adbea9472d62fcefc324d6206cd764e97d9d"
+ },
+ "source": {
+  "archived_path": "docs/reports/wave14-corpus/artifacts/source.json.gz",
+  "produced_file": "monkey-source.json",
+  "uncompressed_bytes": 1664550,
+  "uncompressed_sha256": "53d55b7e1fb174de4268a163c61a6f25a3658e3bca7377160369016c91489df9"
+ },
+ "source-effects": {
+  "archived_path": "docs/reports/wave14-corpus/artifacts/source-effects.json.gz",
+  "produced_file": "resource-diagnostics.source-effects.json",
+  "uncompressed_bytes": 118505,
+  "uncompressed_sha256": "5d857ba336be0a693e7824ac19c11072043aed236d048402d7390f240ad0c540"
+ }
+}

@@ -178,7 +178,7 @@
   "source_set_profile_manifest": "v1 (unchanged)",
   "compile_task_identity": "1 (new in G01)",
   "provider_packages": {
-   "qcore.chunkio": "0.9.0",
+   "qcore.chunkio": "0.10.0",
    "qcore.cmetrics": "0.2.0",
    "qcore.ctraces": "0.1.0",
    "qcore.libevent": "0.2.0",
@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 21
+  "named_followups": 25
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -5671,7 +5671,7 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2508,
+  "workspace_tests": 2536,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
   "lean_audits": 64,
@@ -5747,7 +5747,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14g.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14seal.json)"
  },
  "named_followups": [
   {
@@ -5759,7 +5759,7 @@
   {
    "id": "T03-CT-REST",
    "title": "The two still-unmapped mutex-family CT cases (was three)",
-   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain. CT33 mapped in wave 11 (31/50) with the sharper one-statement control; CT33-SANITIZED and D02-BLOCKER-STALE recorded by the lane. CT34 unblocked in wave 12 (CT34-GROWTH: five-condition creator-only growth, Q626/Q627, band Q610-Q627; mapping proposed, awaits the next CT lane with CT34-GROWTH-CREATOR/-NATIVE/-CASCADE/-Q621 recorded). CT46 stays honestly unmapped: the derivation exists (QCore.Transferability) but a mutex-protected payload crossing a task boundary is unwritable — blocker replaced by CT46-MUTEX-CAPTURE. CT34 mapped in wave 13 (32/50) with the new accept_check_only harness capability (core admission AND pinned backend refusal asserted together); CT34-SANITIZED is a backend card (CT34-GROWTH-NATIVE). CT46 unchanged on CT46-MUTEX-CAPTURE.",
+   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain. CT33 mapped in wave 11 (31/50) with the sharper one-statement control; CT33-SANITIZED and D02-BLOCKER-STALE recorded by the lane. CT34 unblocked in wave 12 (CT34-GROWTH: five-condition creator-only growth, Q626/Q627, band Q610-Q627; mapping proposed, awaits the next CT lane with CT34-GROWTH-CREATOR/-NATIVE/-CASCADE/-Q621 recorded). CT46 stays honestly unmapped: the derivation exists (QCore.Transferability) but a mutex-protected payload crossing a task boundary is unwritable — blocker replaced by CT46-MUTEX-CAPTURE. CT34 mapped in wave 13 (32/50) with the new accept_check_only harness capability (core admission AND pinned backend refusal asserted together); CT34-SANITIZED is a backend card (CT34-GROWTH-NATIVE). CT46 unchanged on CT46-MUTEX-CAPTURE. CT34-SANITIZED landed in wave 14: GrowProtection renders admission-gated in the C backend and CT34 joins the gated sanitized set (4 of 32); CT34-SANITIZED closes, with CT34-CHECKONLY-UNUSED, CT34-CONTROL-EMISSION and CT34-EMISSION-CORRESPONDENCE recorded.",
    "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-ct33-ranks/README.md"
   },
   {
@@ -5819,8 +5819,8 @@
   {
    "id": "P04-NEXT-O",
    "title": "Remaining ChunkIO capabilities after the teardown pair moved",
-   "why": "P04-COMPOSE closed the composable-now subset in wave 13: the unmap_wrapper composition travels as the fifth vocabulary (no composed result or prerequisite conclusion on the wire; the provider recomputes prerequisite readings; the core re-derives and re-evaluates all three prerequisites; E03-B premise union), with verify_v2's missing QP001 binding for the new projection strengthened. Census: P04-COMPOSE-A (file_close is composable-now BECAUSE this landed), P04-COMPOSE-FRAME (the frame helper has no verification task — structural), which transitively blocks filesystem_chunk_close and unsupported_close; nested_memory/nested_cleanup stay behind SourceMatch. P04-B1-HELPER-SIG/CALLEE-TABLE, P04-B2-INITIAL-MIRROR/PREREQ-IDENTITY-CWD carried.",
-   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md, docs/reports/remaining-p04-compose/README.md"
+   "why": "Waves 13-14 close the transported ladder's reachable rungs: unmap_wrapper (fifth vocabulary), both file_close entry points (structural nested recursion, depth 2/4, 171 mutation rows), and the frame/list-unlink/field-destructor verification tasks (P04-FRAME — three unnameable dependencies corrected to nameable; the shared obligation-id proved sound only via the identity triple, P04-FRAME-OBLIGATION-ID). Remaining: P04-COMPOSE-MEMCLOSE (sixth vocabulary, sized: 717-line relocation plus a derived-text input identity question), filesystem_chunk_close and unsupported_close behind it, nested_memory/nested_cleanup behind SourceMatch, P04-COMPOSE-A-CASE-INDEX, -CLOSE-PROFILE-SHARED, P04-B1/B2 residuals.",
+   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md, docs/reports/remaining-p04-compose/README.md, docs/reports/remaining-p04-compose-a/README.md, docs/reports/remaining-p04-frame/README.md"
   },
   {
    "id": "T03-GUARD-JOIN-O",
@@ -5855,7 +5855,7 @@
   {
    "id": "C02-P-ALIAS-O",
    "title": "May-alias refinement residuals",
-   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried. BORROW-LIVENESS closed in wave 13: the plainest single-name use-after-free (release-then-borrow, no aliasing involved) was measured Safe with no diagnostics at base and is now refused — verdict class Unknown on three measured grounds (resource_borrowed declares nothing to contradict; Owned's own liveness answer is UnknownAlias; the must-fact bar exceeds DoubleRelease's may-fact bar, proved both directions). Census: 0 settling positions of 267 — reach gated on what the projection binds. New: BORROW-LIVENESS-MIXED/-PRESTATE/-PLACES/-OUT/-ASSUMPTION.",
+   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried. BORROW-LIVENESS closed in wave 13: the plainest single-name use-after-free (release-then-borrow, no aliasing involved) was measured Safe with no diagnostics at base and is now refused — verdict class Unknown on three measured grounds (resource_borrowed declares nothing to contradict; Owned's own liveness answer is UnknownAlias; the must-fact bar exceeds DoubleRelease's may-fact bar, proved both directions). Census: 0 settling positions of 267 — reach gated on what the projection binds. New: BORROW-LIVENESS-MIXED/-PRESTATE/-PLACES/-OUT/-ASSUMPTION. HYGIENE-14 closed -MIXED: the refusable joins are exactly {RELEASED} and {RELEASED,ESCAPED} over the modelled bits, enumerated in Rust and decided in Lean; three theorems retired by name.",
    "source": "docs/reports/remaining-c02-p-alias/README.md, docs/reports/remaining-alias-locals/README.md, docs/reports/remaining-borrow-liveness/README.md"
   },
   {
@@ -5875,7 +5875,31 @@
    "title": "acceptance.json's hand-kept unmapped buckets sum 22 against 18",
    "why": "the 4-case epoch bucket wave 8 mapped was never decremented in the hand-kept counts; the derived matrix counts are correct and unaffected. Recorded by the wave-13 CT lane, not repaired (outside its ownership).",
    "source": "docs/reports/wave13-ct34/README.md"
+  },
+  {
+   "id": "PROD-CONTRACTS-O",
+   "title": "Production-contract residuals",
+   "why": "PROD-CONTRACTS-NEIGHBOURS (six uncontracted callees, sized, the sole remaining production blocker on flb_input_chunk_create's trace statement — the C6 discharge stays fixture-route until they are contracted); -ATTRIB (eleven category-swap leaves); -MASK-EXTENT; -TAIL-COST (the tail lookup's short-circuit stopped; mechanism read, cost unmeasured); four functions read and deliberately left undeclared with reasons. Also recorded: flb_trace/flb_error are macros — O04-TRACE's fixture models a function that does not exist upstream; its discharge stands on its own premise set.",
+   "source": "docs/reports/remaining-prod-contracts/README.md"
+  },
+  {
+   "id": "HASH-CLAUSE-O",
+   "title": "Literal-argument clause boundaries",
+   "why": "HASH-CLAUSE-TYPE (a premise is accepted on any parameter, not only scalars) and HASH-CLAUSE-LITERAL (decimal integers only — 0L/(0)/enum spellings refused, fail-closed but uncovered); HASH-CONTRACTS-PAIRING/-RETENTION/-CALL-POSITION carried.",
+   "source": "docs/reports/remaining-hash-clause/README.md"
+  },
+  {
+   "id": "D02-BUCKETS-LABELS",
+   "title": "Bucket labels are frozen T00 analysis; counts now derive",
+   "why": "HYGIENE-14 made the counts current by construction (derived set, sum-refusals in both derivations, a duplicate-triage-row bug repaired); labels remain T00's archive with blocker_current published beside them. Deriving current labels needs a bucket field in the CT lanes' own evidence records.",
+   "source": "docs/reports/remaining-hygiene-14/README.md"
+  },
+  {
+   "id": "DIFF-TOOL-CONTRACTS",
+   "title": "diff_artifacts.py does not row-itemize contracts.json's top-level keys",
+   "why": "the wave-14 consolidation verified the deliberately grown contract inventory by direct comparison; the diff document silently shows no section for that artifact's sources/manifest growth.",
+   "source": "docs/reports/wave14-corpus/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 13 complete: CT34 mapped (32/50) with accept_check_only; C6 DISCHARGES on the fixture route with every premise named and two silent gaps repaired; recursion reach measured closed at the sound-admission frontier with the 11-component payoff disproved; the plainest use-after-free now refused; the hash-table contract lands with the size-0 premise enforced (corpus 61); the unmap composition becomes the fifth transported vocabulary (schemas 10.0.0); the corpus re-pins to docs/reports/wave13-corpus/ with 4 units / 2 discharges attributed exactly; nothing promoted)"
+ "updated": "2026-09-09 (wave 14 complete: the sanitized growth backend, production logging contracts (corpus 64, the C6 production blocker isolated to six named neighbours), the real literal-argument clause with the comment carrier loudly retired, derived bucket counts, the frame/list/destructor verification tasks and both file_close compositions (schemas 11.0.0); the corpus re-pins to docs/reports/wave14-corpus/ with one attributed diagnostics unit and the deliberately grown contract inventory; nothing promoted)"
 }
