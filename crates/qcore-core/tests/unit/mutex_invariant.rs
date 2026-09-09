@@ -3,6 +3,8 @@ use super::*;
 const RESOURCE: SharedResourceId = 7;
 const OTHER: SharedResourceId = 8;
 const INVARIANT: InvariantId = 5;
+/// The declared predicate identity a growth moves to — card `CT34-GROWTH`.
+const GROWN: InvariantId = 6;
 
 fn fp(start: u32, end: u32) -> AccessFootprint {
     AccessFootprint::new(RESOURCE, start, end)
@@ -2156,8 +2158,14 @@ fn every_mutex_keying_event_kind_refuses_a_guard_local_join() {
             construct: UnsupportedSynchronization::ConditionVariable,
         },
         access(1, fp(0, 4), AccessKind::Read, Some(10)),
+        MutexInvariantEvent::GrowProtection {
+            task: 1,
+            guard: 10,
+            footprint: other_fp(0, 4),
+            invariant: GROWN,
+        },
     ];
-    assert_eq!(kinds.len(), 15);
+    assert_eq!(kinds.len(), 16);
     for kind in kinds {
         let program = noisy(kind.clone());
         assert!(
@@ -2430,4 +2438,528 @@ fn the_recheck_refuses_a_tampered_rank_record() {
             "{forged:?}"
         );
     }
+}
+
+// ---------------------------------------------------------------------------
+// Card CT34-GROWTH: the opt-in protection growth at the model level.
+//
+// Every case is a mutation of one accepted control: a generation over the whole
+// of `RESOURCE` grows, inside its own open critical section, to cover the whole
+// of `OTHER`, which nothing protected. The source lowering can only ever
+// produce whole-resource growths by the creating task, so the rules the source
+// cannot reach — a non-creator grower, a partial share, a partial interval —
+// are exercised here.
+// ---------------------------------------------------------------------------
+
+fn grow(task: TaskId, guard: GuardId, footprint: AccessFootprint) -> MutexInvariantEvent {
+    MutexInvariantEvent::GrowProtection {
+        task,
+        guard,
+        footprint,
+        invariant: GROWN,
+    }
+}
+
+/// `close` naming the identity a growth moved the generation to.
+fn close_grown(task: TaskId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::CloseInvariant {
+        task,
+        guard,
+        witness: InvariantWitness::Declared { invariant: GROWN },
+    }
+}
+
+/// The accepted control. Both resources start wholly in task 0's hands; only
+/// `RESOURCE` is declared protected at creation.
+fn growth_control(section: Vec<MutexInvariantEvent>) -> MutexInvariantProgram {
+    let mut events = vec![create(0, 1, vec![fp(0, 8)])];
+    events.extend(section);
+    events.push(destroy_mutex(0, 1));
+    MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events,
+        ..Default::default()
+    }
+}
+
+fn admitted_growth_section() -> Vec<MutexInvariantEvent> {
+    vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        grow(0, 10, other_fp(0, 8)),
+        close_grown(0, 10),
+        unlock(0, 10),
+    ]
+}
+
+#[test]
+fn an_admitted_growth_parks_its_interval_and_conserves_authority() {
+    let program = growth_control(admitted_growth_section());
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    assert_eq!(
+        certificate.protected_shape,
+        BTreeMap::from([(1, vec![fp(0, 8), other_fp(0, 8)])]),
+        "the effective shape is the declared interval followed by the growth"
+    );
+    let [growth] = certificate.admitted_protection_growths.as_slice() else {
+        panic!("one growth");
+    };
+    assert_eq!(growth.mutex, 1);
+    assert_eq!(growth.guard, 10);
+    assert_eq!(growth.footprint, other_fp(0, 8));
+    assert_eq!(growth.from_invariant, INVARIANT);
+    assert_eq!(growth.to_invariant, GROWN);
+    // Conservation is checked once before the first event and once after each,
+    // refused events included — and no authority diagnostic was raised.
+    assert_eq!(
+        certificate.conservation_checkpoints,
+        program.events.len() + 1
+    );
+    recheck_mutex_invariant_certificate(&program, &certificate).expect("rederived");
+}
+
+/// The point of growing, at the model level: the interval is behind the guard
+/// afterwards and reachable through it, and the declared interval still is too.
+#[test]
+fn a_grown_interval_is_reachable_only_through_the_generation() {
+    let mut section = admitted_growth_section();
+    section.pop();
+    section.extend([
+        access(0, other_fp(0, 8), AccessKind::Read, Some(10)),
+        access(0, fp(0, 8), AccessKind::Read, Some(10)),
+        unlock(0, 10),
+    ]);
+    check_mutex_invariant_program(&growth_control(section)).expect("accepted");
+
+    let mut unguarded = admitted_growth_section();
+    unguarded.push(access(0, other_fp(0, 8), AccessKind::Read, None));
+    assert_eq!(
+        codes(&refusals(&growth_control(unguarded))),
+        vec!["Q611"],
+        "an unguarded read of the grown interval has no fallback authority, and \
+         that is the only complaint: creation consumed the share, so there is no \
+         second opinion to fall back on"
+    );
+}
+
+/// W5, first half. Destruction returns every parked interval to the creator, so
+/// a grower who is not the creator would park authority that arrives at a task
+/// which never gave it up. Unreachable from the source lowering, where shares
+/// never leave the root task.
+#[test]
+fn a_growth_by_a_task_that_is_not_the_creator_is_refused() {
+    let program = MutexInvariantProgram {
+        // The child owns `OTHER` outright, so its authority is not the reason.
+        initial_shares: vec![full(0, fp(0, 8)), full(1, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            spawn(0, 1),
+            lock(1, 1, 10),
+            open(1, 10),
+            grow(1, 10, other_fp(0, 8)),
+            close_grown(1, 10),
+            unlock(1, 10),
+        ],
+        ..Default::default()
+    };
+    assert!(
+        refusals(&program).contains(&MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+            event: Some(4),
+            resource: OTHER,
+        }),
+        "the parked share would be returned to the creator, not the grower"
+    );
+    // The control: the same growth performed by the creator is admitted.
+    let mut admitted = program.clone();
+    admitted.initial_shares = vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))];
+    admitted.events = vec![create(0, 1, vec![fp(0, 8)])];
+    admitted.events.extend(admitted_growth_section());
+    admitted.events.push(destroy_mutex(0, 1));
+    check_mutex_invariant_program(&admitted).expect("accepted");
+}
+
+/// W5, second half. Parking is all-or-nothing, exactly as at creation.
+#[test]
+fn a_growth_without_full_authority_over_the_new_interval_is_refused() {
+    for share in [0, 1, FULL_ACCESS - 1] {
+        let program = MutexInvariantProgram {
+            initial_shares: vec![
+                full(0, fp(0, 8)),
+                ShareGrant {
+                    task: 0,
+                    footprint: other_fp(0, 8),
+                    share,
+                },
+            ],
+            events: {
+                let mut events = vec![create(0, 1, vec![fp(0, 8)])];
+                events.extend(admitted_growth_section());
+                events
+            },
+            ..Default::default()
+        };
+        assert!(
+            refusals(&program).contains(&MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+                event: Some(3),
+                resource: OTHER,
+            }),
+            "share {share} is not full authority"
+        );
+    }
+}
+
+/// A growth may name a strict sub-interval, and it authorises exactly that
+/// interval: a guarded access to a wider one is `Q610`, the same rule a partial
+/// declaration at creation already obeys.
+#[test]
+fn a_partial_growth_authorises_exactly_the_interval_it_named() {
+    let section = vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        grow(0, 10, other_fp(0, 4)),
+        close_grown(0, 10),
+        access(0, other_fp(0, 4), AccessKind::Read, Some(10)),
+        unlock(0, 10),
+    ];
+    check_mutex_invariant_program(&growth_control(section)).expect("accepted");
+
+    let wider = vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        grow(0, 10, other_fp(0, 4)),
+        close_grown(0, 10),
+        access(0, other_fp(0, 8), AccessKind::Read, Some(10)),
+        unlock(0, 10),
+    ];
+    assert!(
+        refusals(&growth_control(wider)).contains(
+            &MutexInvariantDiagnostic::UnprotectedFootprint {
+                event: 5,
+                guard: 10
+            }
+        ),
+        "the guard authorises the grown interval, not the whole resource"
+    );
+}
+
+/// Growth is permanent for the generation, and the grown intervals are released
+/// exactly like the declared ones — to the creator, at destruction.
+#[test]
+fn destruction_returns_every_grown_interval_to_the_creator() {
+    let mut section = admitted_growth_section();
+    section.push(destroy_mutex(0, 1));
+    // After destruction the creator writes both resources with no guard at all,
+    // which requires it to hold full authority over each.
+    section.push(access(0, other_fp(0, 8), AccessKind::Write, None));
+    section.push(access(0, fp(0, 8), AccessKind::Write, None));
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events: {
+            let mut events = vec![create(0, 1, vec![fp(0, 8)])];
+            events.extend(section);
+            events
+        },
+        ..Default::default()
+    };
+    check_mutex_invariant_program(&program).expect("accepted");
+}
+
+/// A live generation over any part of a resource blocks that resource's
+/// destruction — growth extends that reach to the intervals it acquired.
+#[test]
+fn a_grown_resource_cannot_be_destroyed_while_the_generation_lives() {
+    let mut section = admitted_growth_section();
+    section.push(MutexInvariantEvent::Destroy {
+        task: 0,
+        resource: OTHER,
+    });
+    let program = MutexInvariantProgram {
+        initial_custody: BTreeMap::from([(OTHER, 0)]),
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events: {
+            let mut events = vec![create(0, 1, vec![fp(0, 8)])];
+            events.extend(section);
+            events
+        },
+        ..Default::default()
+    };
+    assert!(
+        refusals(&program).contains(&MutexInvariantDiagnostic::NonquiescentDestruction {
+            event: 6,
+            resource: OTHER,
+        })
+    );
+}
+
+/// Every refusal leaves the generation exactly as it was: the shape, the
+/// declared predicate identity and the ledger are untouched, so the section can
+/// still close on the original identity and the interval is still unprotected.
+#[test]
+fn a_refused_growth_leaves_the_generation_untouched() {
+    let program = growth_control(vec![
+        lock(0, 1, 10),
+        // Refused: the invariant is closed (W2).
+        grow(0, 10, other_fp(0, 8)),
+        open(0, 10),
+        // Admitted, on the *original* identity: the refusal installed nothing.
+        close(0, 10),
+        unlock(0, 10),
+        // And the interval is still unprotected, so an unguarded write works.
+        access(0, other_fp(0, 8), AccessKind::Write, None),
+    ]);
+    assert_eq!(
+        codes(&refusals(&program)),
+        vec!["Q626"],
+        "the refused growth is the only complaint: nothing downstream moved"
+    );
+}
+
+/// W1. The generation is read off the guard, so a growth can only ever reach a
+/// mutex whose live section the acting task holds.
+#[test]
+fn a_growth_needs_the_acting_tasks_own_live_section() {
+    // A guard the acting task does not hold.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(1, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            spawn(0, 1),
+            lock(0, 1, 10),
+            open(0, 10),
+            grow(1, 10, other_fp(0, 8)),
+        ],
+        ..Default::default()
+    };
+    assert!(
+        refusals(&program).contains(&MutexInvariantDiagnostic::WrongGuardAffinity {
+            event: 4,
+            guard: 10,
+            task: 1,
+        })
+    );
+    // A guard whose section already closed.
+    let released = growth_control(vec![
+        lock(0, 1, 10),
+        unlock(0, 10),
+        grow(0, 10, other_fp(0, 8)),
+    ]);
+    assert!(
+        refusals(&released).contains(&MutexInvariantDiagnostic::DeadGuard {
+            event: 3,
+            guard: 10
+        })
+    );
+}
+
+/// W3. A growth counts as a change to the protected region, so the *checked*
+/// `NoWriteOccurred` witness — which asserts the invariant is unchanged — is
+/// unavailable to the section that grew.
+#[test]
+fn a_section_that_grew_cannot_close_with_the_checked_witness() {
+    // The control: an open region with no write closes with the checked witness.
+    let unchanged = growth_control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::NoWriteOccurred,
+        },
+        unlock(0, 10),
+    ]);
+    check_mutex_invariant_program(&unchanged).expect("accepted");
+
+    let grew = growth_control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        grow(0, 10, other_fp(0, 8)),
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::NoWriteOccurred,
+        },
+        unlock(0, 10),
+    ]);
+    assert!(
+        refusals(&grew).contains(&MutexInvariantDiagnostic::InvalidInvariantWitness {
+            event: 4,
+            guard: 10
+        })
+    );
+}
+
+/// W3, the other half. The declared predicate identity must move to one this
+/// generation has never carried — including one it carried and grew away from.
+#[test]
+fn a_growth_must_move_the_predicate_identity_to_an_unused_one() {
+    for reused in [INVARIANT, GROWN] {
+        let program = growth_control(vec![
+            lock(0, 1, 10),
+            open(0, 10),
+            grow(0, 10, other_fp(0, 4)),
+            close_grown(0, 10),
+            open(0, 10),
+            MutexInvariantEvent::GrowProtection {
+                task: 0,
+                guard: 10,
+                footprint: other_fp(4, 8),
+                invariant: reused,
+            },
+        ]);
+        assert!(
+            refusals(&program).contains(
+                &MutexInvariantDiagnostic::ProtectionGrowthInvariantUnchanged {
+                    event: 6,
+                    mutex: 1,
+                    invariant: reused,
+                }
+            ),
+            "identity {reused} was already carried by this generation"
+        );
+    }
+    // The control: a third identity, and the second growth is admitted.
+    let program = growth_control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        grow(0, 10, other_fp(0, 4)),
+        close_grown(0, 10),
+        open(0, 10),
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            guard: 10,
+            footprint: other_fp(4, 8),
+            invariant: GROWN + 1,
+        },
+        MutexInvariantEvent::CloseInvariant {
+            task: 0,
+            guard: 10,
+            witness: InvariantWitness::Declared {
+                invariant: GROWN + 1,
+            },
+        },
+        unlock(0, 10),
+    ]);
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    assert_eq!(certificate.admitted_protection_growths.len(), 2);
+    assert_eq!(
+        certificate.protected_shape[&1],
+        vec![fp(0, 8), other_fp(0, 4), other_fp(4, 8)]
+    );
+}
+
+/// A reader that established something about the pre-growth region keeps it: a
+/// growth adds memory and never moves any, so no fact about the declared
+/// interval is disturbed, and a guard-derived borrow of it survives too. The
+/// newly grown interval, by contrast, could carry no fact before the growth —
+/// the guard did not cover it — so nothing stale can be carried across.
+#[test]
+fn a_growth_disturbs_no_fact_about_the_region_that_was_already_protected() {
+    let program = growth_control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 30,
+        },
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 0,
+            guard: 10,
+            footprint: fp(4, 8),
+            borrow: 20,
+        },
+        open(0, 10),
+        grow(0, 10, other_fp(0, 8)),
+        close_grown(0, 10),
+        MutexInvariantEvent::UseFact { task: 0, fact: 30 },
+        MutexInvariantEvent::EndBorrow {
+            task: 0,
+            borrow: 20,
+        },
+        unlock(0, 10),
+    ]);
+    check_mutex_invariant_program(&program).expect("accepted");
+
+    // And a fact about the grown interval cannot predate the growth: the guard
+    // did not cover it, so the assertion is `Q610`.
+    let early = growth_control(vec![
+        lock(0, 1, 10),
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 10,
+            footprint: other_fp(0, 4),
+            fact: 30,
+        },
+    ]);
+    assert!(
+        refusals(&early).contains(&MutexInvariantDiagnostic::UnprotectedFootprint {
+            event: 2,
+            guard: 10
+        })
+    );
+}
+
+/// The unconditional fixed-shape refusal is untouched: the same proposal that
+/// growth admits under its rule is still refused when it arrives as
+/// `ExtendProtection`, with the generation left live and unchanged.
+#[test]
+fn the_fixed_shape_proposal_still_refuses_beside_the_admitted_growth() {
+    let program = growth_control(vec![
+        lock(0, 1, 10),
+        open(0, 10),
+        MutexInvariantEvent::ExtendProtection {
+            task: 0,
+            mutex: 1,
+            footprint: other_fp(0, 8),
+        },
+        close(0, 10),
+        unlock(0, 10),
+        // Untouched: the interval is still the task's own.
+        access(0, other_fp(0, 8), AccessKind::Write, None),
+    ]);
+    assert_eq!(
+        codes(&refusals(&program)),
+        vec!["Q618"],
+        "the proposal is refused and nothing else moves"
+    );
+}
+
+/// The recheck re-derives the growth record and refuses a certificate whose
+/// account of what grew is not the one the program produces — including the
+/// tamper that matters most, a certificate claiming no growth at all.
+#[test]
+fn the_recheck_refuses_a_tampered_growth_record() {
+    let program = growth_control(admitted_growth_section());
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    let mut forged = vec![Vec::new()];
+    let mut widened = certificate.admitted_protection_growths.clone();
+    widened[0].footprint = other_fp(0, 4);
+    forged.push(widened);
+    let mut rehomed = certificate.admitted_protection_growths.clone();
+    rehomed[0].to_invariant = INVARIANT;
+    forged.push(rehomed);
+    let mut doubled = certificate.admitted_protection_growths.clone();
+    doubled.push(doubled[0]);
+    forged.push(doubled);
+    for record in forged {
+        let mut tampered = certificate.clone();
+        tampered.admitted_protection_growths = record.clone();
+        assert_eq!(
+            recheck_mutex_invariant_certificate(&program, &tampered).unwrap_err(),
+            vec![CertificateRecheckError::FieldMismatch {
+                field: "admitted_protection_growths"
+            }],
+            "{record:?}"
+        );
+    }
+    // The effective shape is rederived too, so a certificate that hides the
+    // growth from `protected_shape` is refused on that field.
+    let mut hidden = certificate.clone();
+    hidden.protected_shape = BTreeMap::from([(1, vec![fp(0, 8)])]);
+    assert_eq!(
+        recheck_mutex_invariant_certificate(&program, &hidden).unwrap_err(),
+        vec![CertificateRecheckError::FieldMismatch {
+            field: "protected_shape"
+        }]
+    );
 }

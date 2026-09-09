@@ -24,6 +24,7 @@
 //!               | "thread" "scope" NAME "{" child* "}"     -- one child task, joined here
 //!               | "with" "lock" NAME "as" NAME "{" inner* "}"
 //! inner       ::= "open" NAME ";" | "close" NAME ";" | "close" NAME "unchanged" ";"
+//!               | "grow" NAME "guards" NAME ";"           -- protection growth
 //!               | ("read" | "write") NAME "with" NAME ";"
 //!               | "let" NAME "=" "borrow" NAME "with" NAME ";"
 //!               | "drop" NAME ";"
@@ -86,6 +87,21 @@
 //! guard or guard-scoped fact anywhere. A plain `thread scope c { … }` inside a
 //! section is unchanged and still refuses at `Q600`, so nothing already written
 //! moves.
+//!
+//! Card CT34-GROWTH adds `grow GUARD guards RESOURCE;`, admitted only inside a
+//! critical section. It names this section's own guard; the core reads the
+//! generation off that guard, so a growth can never name a mutex its holder
+//! does not hold. Whether the growth is *admitted* is entirely the core's
+//! decision — it must sit inside an open invariant, over memory no live
+//! generation protects, with the growing task holding the generation's full
+//! share and being its creator — and this lowering only mints the new declared
+//! predicate identity the growth moves to, because a wider protected region is
+//! a different proposition. A section that grew therefore cannot use
+//! `close GUARD unchanged;`: growth is a change to the region, so the decidable
+//! read-only shape is gone and the checked witness is refused here rather than
+//! silently downgraded. The pre-existing `ExtendProtection` refusal (`Q618`) is
+//! untouched and has no source form at all; a module that never writes `grow`
+//! is byte-identical to before, its declared invariant identities included.
 //!
 //! Because a child in this profile can hold no share and no custody, the work a
 //! guard-local child can do is whatever this profile does not model: it may not
@@ -185,6 +201,8 @@ fn event_index(diagnostic: &MutexInvariantDiagnostic) -> Option<usize> {
         | D::UnsupportedSynchronizationConstruct { event, .. }
         | D::DeadMutexGeneration { event, .. }
         | D::LockRankViolation { event, .. }
+        | D::ProtectionGrowthOutsideOpenInvariant { event, .. }
+        | D::ProtectionGrowthInvariantUnchanged { event, .. }
         | D::DeadGuard { event, .. }
         | D::DoubleOpenInvariant { event, .. }
         | D::WriteWithClosedInvariant { event, .. }
@@ -341,6 +359,15 @@ struct Lowering {
     /// the whole source. It gates the *nesting* admission below, so it must not
     /// depend on how far lowering has got.
     ranked: bool,
+    /// The declared invariant identity each generation currently carries — card
+    /// `CT34-GROWTH`. Seeded at the declaration and moved by every admitted
+    /// growth, because a wider protected region is a different proposition. A
+    /// `close GUARD;` names whatever its generation carries *now*.
+    invariant_of: BTreeMap<MutexId, u32>,
+    /// Mints those identities. It advances at a declaration and at a growth, so
+    /// a module that never grows reproduces the previous
+    /// `invariant == mutex` numbering exactly.
+    next_invariant: u32,
     /// Declared refinement facts: source name to the protected resource the
     /// fact is about.
     fact_resource: BTreeMap<String, SharedResourceId>,
@@ -385,6 +412,11 @@ impl Lowering {
     fn mint_fact(&mut self) -> u32 {
         self.next_fact += 1;
         self.next_fact
+    }
+
+    fn mint_invariant(&mut self) -> u32 {
+        self.next_invariant += 1;
+        self.next_invariant
     }
 }
 
@@ -680,11 +712,16 @@ fn lower_statement(
                 InvariantWitness::NoWriteOccurred
             } else {
                 // The predicate is declared, never proved: this is exactly
-                // where `InvariantPredicateDeclared` enters the certificate.
-                // The generation and its invariant share one identity in this
-                // lowering, so a `close` names its own mutex.
+                // where `InvariantPredicateDeclared` enters the certificate. A
+                // `close` names whichever identity its generation carries now —
+                // the declared one, or the one a growth in this section moved
+                // it to (card CT34-GROWTH).
                 InvariantWitness::Declared {
-                    invariant: section.mutex,
+                    invariant: state
+                        .invariant_of
+                        .get(&section.mutex)
+                        .copied()
+                        .unwrap_or(section.mutex),
                 }
             };
             state.push(
@@ -696,6 +733,13 @@ fn lower_statement(
                 },
             );
             Ok(None)
+        }
+        StatementKind::Expression if word(tokens.first(), "grow") => {
+            // A growth changes what the protected region *is*, so like a write
+            // it ends every decidable read-only region: `close g unchanged;`
+            // after one is refused here rather than downgraded.
+            state.invalidate_open_regions();
+            lower_grow(&tokens, span, frame, state).map(|()| None)
         }
         StatementKind::Expression if word(tokens.first(), "assert") => {
             state.invalidate_open_regions();
@@ -989,6 +1033,54 @@ fn lower_assert_fact(
     Ok(())
 }
 
+/// `grow GUARD guards RESOURCE;` — card `CT34-GROWTH`'s protection growth.
+///
+/// It names this section's own guard, and the core reads the generation off it,
+/// so a growth can never name a mutex its holder does not hold. Whether the
+/// growth is *admitted* is entirely the core's decision (W1-W5 of that module's
+/// `§ Protection growth`): this lowering only refuses shapes it cannot
+/// represent, and hands everything else over as a real event. In particular a
+/// growth written by a child task inside its parent's section lowers, and the
+/// core refuses it with `WrongGuardAffinity` (`Q612`); a growth outside an open
+/// invariant lowers, and the core refuses it with `Q626`.
+fn lower_grow(
+    tokens: &[Token],
+    span: Span,
+    frame: Frame<'_>,
+    state: &mut Lowering,
+) -> Result<(), SourceDiagnostic> {
+    let section = require_section(span, frame, "grow")?;
+    if tokens.len() != 5
+        || !names_guard(tokens, 1, section)
+        || !word(tokens.get(2), "guards")
+        || !symbol(tokens.get(4), Symbol::Semicolon)
+    {
+        return Err(failure(
+            span,
+            "growing a protected footprint is exactly `grow GUARD guards RESOURCE;` for this \
+             section's own guard",
+        ));
+    }
+    let resource = resolve_resource(name(tokens.get(3)), span, state)?;
+    let footprint = state.footprint(resource);
+    // A wider protected region is a different proposition, so the declared
+    // predicate identity moves with the shape. The core requires an identity
+    // this generation has never carried; minting a fresh one here is what makes
+    // that requirement satisfiable from source.
+    let invariant = state.mint_invariant();
+    state.invariant_of.insert(section.mutex, invariant);
+    state.push(
+        span,
+        MutexInvariantEvent::GrowProtection {
+            task: frame.task,
+            guard: section.guard,
+            footprint,
+            invariant,
+        },
+    );
+    Ok(())
+}
+
 /// `use FACT;` — rely on a guard-scoped refinement fact.
 fn lower_use_fact(
     tokens: &[Token],
@@ -1241,13 +1333,17 @@ fn lower_declaration(
             state.lock_ranks.insert(mutex, rank);
         }
         let footprint = state.footprint(resource);
+        // The counter advances once per declaration, so in a module that never
+        // grows this is the generation's own identity, exactly as before.
+        let invariant = state.mint_invariant();
+        state.invariant_of.insert(mutex, invariant);
         state.push(
             span,
             MutexInvariantEvent::CreateMutex {
                 task: ROOT_TASK,
                 mutex,
                 protects: vec![footprint],
-                invariant: mutex,
+                invariant,
             },
         );
         state.generations.push(MutexSourceGeneration {

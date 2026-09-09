@@ -73,6 +73,10 @@ structure MutexRecord where
   id : MutexId
   protects : List Footprint
   invariant : InvariantId
+  /-- Every declared invariant this generation has carried, most recent first.
+  A protection growth must move the identity to one that is not in here: a
+  wider protected region is a different proposition (card `CT34-GROWTH`, §16). -/
+  invariants : List InvariantId
   creator : TaskId
   holder : Option GuardId
   waiters : List TaskId
@@ -232,6 +236,7 @@ def createMutexEffect (s : State) (task : TaskId) (mutex : MutexId)
     (protects : List Footprint) (invariant : InvariantId) : State :=
   { s with
     mutexes := { id := mutex, protects := protects, invariant := invariant
+                 invariants := [invariant]
                  creator := task, holder := none, waiters := []
                  releasedBy := [], observed := [] } :: s.mutexes
     mintedMutexes := mutex :: s.mintedMutexes
@@ -625,8 +630,10 @@ theorem footprint_has_at_most_one_protector {s : State} {task : TaskId} {mutex :
     simp [taken] at this
   simp [step, canCreateMutex, blocked]
 
-/-- CT34: the protected shape is fixed at creation. No state enables this; it is
-a refusal, not a case the model happens not to cover. -/
+/-- A proposal to change the protected shape is refused. No state enables this;
+it is a refusal, not a case the model happens not to cover. Card `CT34-GROWTH`
+leaves it exactly as it was and adds its admitted growth as a separate layer
+(§16), so this remains the unconditional rule for `extendProtection`. -/
 theorem protected_shape_is_fixed (s : State) (task : TaskId) (mutex : MutexId)
     (f : Footprint) : step s (.extendProtection task mutex f) = none := rfl
 
@@ -1973,7 +1980,8 @@ private def sectionHeld : State :=
     parents := [(1, 0)]
     guards := [{ id := 1, mutex := 1, holder := 0, phase := Phase.closed,
                  borrows := [], facts := [], wroteWhileOpen := false }]
-    mutexes := [{ id := 1, protects := [cell], invariant := 1, creator := 0,
+    mutexes := [{ id := 1, protects := [cell], invariant := 1, invariants := [1],
+                  creator := 0,
                   holder := some 1, waiters := [], releasedBy := [], observed := [] }]
     holdings := [{ custodian := .mutex 1, footprint := cell, share := fullAccess }] }
 
@@ -2016,6 +2024,7 @@ example : stepGuardLocalJoin
 -- The child is a recorded waiter on the held generation: the deadlock shape.
 example : stepGuardLocalJoin
     { sectionHeld with mutexes := [{ id := 1, protects := [cell], invariant := 1,
+                                     invariants := [1],
                                      creator := 0, holder := some 1, waiters := [1],
                                      releasedBy := [], observed := [] }] }
     quietLedger 0 1 1 = none := by decide
@@ -2482,9 +2491,11 @@ example : (runRanked ranks twoCells
 -- R1: a module that ranks only part of itself places nothing, so every
 -- acquisition of the unplaced generation is refused.
 example : ranksTotal [(1, 1)] { twoCells with
-    mutexes := [{ id := 1, protects := [⟨1, 0, 8⟩], invariant := 1, creator := 0,
+    mutexes := [{ id := 1, protects := [⟨1, 0, 8⟩], invariant := 1, invariants := [1],
+                  creator := 0,
                   holder := none, waiters := [], releasedBy := [], observed := [] },
-                { id := 2, protects := [⟨2, 0, 8⟩], invariant := 2, creator := 0,
+                { id := 2, protects := [⟨2, 0, 8⟩], invariant := 2, invariants := [2],
+                  creator := 0,
                   holder := none, waiters := [], releasedBy := [], observed := [] }] }
     = false := by decide
 
@@ -2514,5 +2525,340 @@ example : runRanked threeRanks threeCells
 -- The unsupported rank construct still refuses under the discipline.
 example : runRanked ranks twoCells
     [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .unsupportedConstruct 0] = none := by decide
+
+/-! ## 16. The opt-in protection growth (card `CT34-GROWTH`)
+
+`extendProtection` is, and stays, the unconditional refusal proved above
+(`protected_shape_is_fixed`). Beside it this section models one *admitted*
+growth as a separate layer over an unedited `step`, exactly as §15's guard-local
+join and §12's rank discipline are layered: a trace that never grows is
+untouched, and nothing here relaxes an existing rule.
+
+The soundness argument is the ledger's own. Growth performs `createMutexEffect`'s
+move on a further interval — the grower's `fullAccess` holding is re-custodied to
+the mutex — so `authorityTotal` is preserved for exactly the same reason. The
+other conditions keep the invariants a *mid-trace* shape change could disturb:
+the grower holds the generation's own live section with its invariant open, the
+interval has no protector, the grower is the creator holding full authority over
+it, and the declared predicate identity moves to one this generation has never
+carried. -/
+
+/-- The growth event, as its own guarded transition. The generation is read off
+`guard`, never named separately, so a growth can only reach a mutex whose live
+section the acting task holds (W1). -/
+def canGrowProtection (s : State) (task : TaskId) (guard : GuardId) (f : Footprint)
+    (invariant : InvariantId) : Bool :=
+  s.act task && f.valid && !s.destroyedResources.contains f.resource &&
+    s.guardSat guard (fun g =>
+      -- W1: the acting task's own live section, and W2: with the invariant open
+      g.holder == task && g.phase == .opened &&
+        s.mutexSat g.mutex (fun m =>
+          -- W5: destruction returns parked share to the creator
+          m.creator == task &&
+            -- W3: a wider region is a different proposition
+            !m.invariants.contains invariant)) &&
+    -- W4: over memory no live generation protects, from both sides
+    (s.protectorOf f).isNone && !s.parkedOver f &&
+    -- W5: parking is all-or-nothing, exactly as at creation
+    s.holdsFull task f
+
+/-- The effect: the interval joins the generation's declared shape, the
+generation's declared predicate identity moves, the grower's holding is
+re-custodied to the mutex, and the section is marked as having changed the
+protected region — so the *checked* `NoWriteOccurred` witness, which asserts the
+invariant is unchanged, becomes unavailable to it. -/
+def growProtectionEffect (s : State) (task : TaskId) (guard : GuardId) (f : Footprint)
+    (invariant : InvariantId) (mutex : MutexId) : State :=
+  { s with
+    mutexes := s.mutexes.map (fun r =>
+      if r.id == mutex then
+        { r with protects := r.protects ++ [f], invariant := invariant
+                 invariants := invariant :: r.invariants }
+      else r)
+    guards := s.guards.map (fun r =>
+      if r.id == guard then { r with wroteWhileOpen := true } else r)
+    holdings := s.holdings.map (fun h =>
+      if h.custodian == .task task && h.footprint == f then
+        { h with custodian := .mutex mutex } else h) }
+
+/-- One growth step. `none` is a refusal, and a refusal produces no state at
+all, so nothing about the generation can move on a refused growth. -/
+def stepGrowProtection (s : State) (task : TaskId) (guard : GuardId) (f : Footprint)
+    (invariant : InvariantId) : Option State :=
+  if canGrowProtection s task guard f invariant then
+    match s.guardOf guard with
+    | none => none
+    | some g => some (growProtectionEffect s task guard f invariant g.mutex)
+  else none
+
+/-! ### 16.1 Conservation and the single protector -/
+
+/-- The conserved quantity is untouched: growth re-custodies a holding, it does
+not create or destroy share. Same proof as creation's, for the same reason. -/
+theorem growProtectionEffect_preserves_authority (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (mutex : MutexId) :
+    (growProtectionEffect s task guard f invariant mutex).authorityTotal = s.authorityTotal := by
+  unfold growProtectionEffect State.authorityTotal
+  exact map_preserves_share_sum _ _ (by intro h; split <;> rfl)
+
+/-- The same statement over the whole guarded step, so an admitted growth
+anywhere in a trace conserves authority. -/
+theorem grow_step_preserves_authority {s next : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId}
+    (accepted : stepGrowProtection s task guard f invariant = some next) :
+    next.authorityTotal = s.authorityTotal := by
+  unfold stepGrowProtection at accepted
+  split at accepted
+  · split at accepted
+    · contradiction
+    · cases Option.some.inj accepted
+      exact growProtectionEffect_preserves_authority ..
+  · contradiction
+
+/-- W4, the single-protector half: an admitted growth's interval had no
+protector at all, so the growth cannot give a footprint a second one. -/
+theorem admitted_growth_had_no_protector {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId}
+    (admitted : canGrowProtection s task guard f invariant = true) :
+    (s.protectorOf f).isNone = true ∧ s.parkedOver f = false := by
+  unfold canGrowProtection at admitted
+  simp only [Bool.and_eq_true, Bool.not_eq_true'] at admitted
+  exact ⟨admitted.1.1.2, admitted.1.2⟩
+
+/-- The record a growth installs in place of `r`. -/
+private def grown (f : Footprint) (invariant : InvariantId) (r : MutexRecord) : MutexRecord :=
+  { r with protects := r.protects ++ [f], invariant := invariant
+           invariants := invariant :: r.invariants }
+
+/-- Growth touches exactly one generation's declared shape: every other record
+survives it verbatim. -/
+theorem grow_preserves_every_other_declared_shape (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (mutex : MutexId) (r : MutexRecord)
+    (other : r ∈ s.mutexes) (distinct : ¬ r.id = mutex) :
+    r ∈ (growProtectionEffect s task guard f invariant mutex).mutexes := by
+  have rewritten : (if r.id == mutex then grown f invariant r else r) = r := by
+    simp [distinct]
+  have := List.mem_map_of_mem (f := fun x : MutexRecord =>
+    if x.id == mutex then grown f invariant x else x) other
+  rw [rewritten] at this
+  simpa [growProtectionEffect, grown] using this
+
+/-- Growth is permanent and additive: the declared intervals survive it with the
+new one appended, and the declared predicate identity moves with the shape,
+recorded in the generation's history. There is no shrink, no replacement and no
+reordering. -/
+theorem grow_appends_the_interval_and_moves_the_predicate (s : State) (task : TaskId)
+    (guard : GuardId) (f : Footprint) (invariant : InvariantId) (r : MutexRecord)
+    (present : r ∈ s.mutexes) :
+    grown f invariant r ∈ (growProtectionEffect s task guard f invariant r.id).mutexes ∧
+      (grown f invariant r).protects = r.protects ++ [f] ∧
+      (grown f invariant r).invariant = invariant ∧
+      (grown f invariant r).invariants = invariant :: r.invariants := by
+  refine ⟨?_, rfl, rfl, rfl⟩
+  have := List.mem_map_of_mem (f := fun x : MutexRecord =>
+    if x.id == r.id then grown f invariant x else x) present
+  simpa [growProtectionEffect, grown] using this
+
+/-! ### 16.2 The refusals: everything outside the rule -/
+
+theorem grow_refuses_a_dead_guard (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (dead : s.guardOf guard = none) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, State.guardSat, dead]
+
+theorem grow_requires_the_holder {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId} {g : GuardRecord}
+    (live : s.guardOf guard = some g) (foreign : g.holder ≠ task) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, State.guardSat, live, foreign]
+
+/-- W2. A closed invariant asserts the declared predicate of the protected
+region, so widening the region under one would assert it of memory nothing
+established it for. -/
+theorem grow_requires_an_open_invariant {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId} {g : GuardRecord}
+    (live : s.guardOf guard = some g) (shut : g.phase = .closed) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, State.guardSat, live, shut]
+
+/-- W5. Destruction returns every parked share to the creator, so a grower who
+is not the creator would park authority that arrives at a task which never gave
+it up. -/
+theorem grow_requires_the_creator {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId} {g : GuardRecord} {m : MutexRecord}
+    (live : s.guardOf guard = some g) (generation : s.mutexOf g.mutex = some m)
+    (foreign : m.creator ≠ task) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, State.guardSat, State.mutexSat, live, generation, foreign]
+
+/-- W3. An identity this generation already carried is refused, so a growth can
+never re-use a declaration made for a narrower region. -/
+theorem grow_requires_an_unused_predicate_identity {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId} {g : GuardRecord} {m : MutexRecord}
+    (live : s.guardOf guard = some g) (generation : s.mutexOf g.mutex = some m)
+    (carried : invariant ∈ m.invariants) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, State.guardSat, State.mutexSat, live, generation, carried]
+
+/-- W4. An interval a live generation already protects is refused — this
+generation's own declared or already grown intervals included. -/
+theorem grow_refuses_an_already_protected_interval (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (taken : (s.protectorOf f).isNone = false) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, taken]
+
+theorem grow_refuses_a_parked_interval (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (parked : s.parkedOver f = true) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, parked]
+
+/-- W5. Parking is all-or-nothing: a partial share over the new interval is
+refused, so no growth can park authority the grower did not wholly hold. -/
+theorem grow_requires_full_authority (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId) (partial_share : s.holdsFull task f = false) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, partial_share]
+
+theorem grow_refuses_a_destroyed_resource (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId)
+    (dead : f.resource ∈ s.destroyedResources) :
+    canGrowProtection s task guard f invariant = false := by
+  simp [canGrowProtection, dead]
+
+/-- A refused growth produces no state, so nothing about the generation, the
+section or the ledger can move on one. -/
+theorem refused_growth_produces_no_state (s : State) (task : TaskId) (guard : GuardId)
+    (f : Footprint) (invariant : InvariantId)
+    (refused : canGrowProtection s task guard f invariant = false) :
+    stepGrowProtection s task guard f invariant = none := by
+  simp [stepGrowProtection, refused]
+
+/-! ### 16.3 What an admitted growth forces afterwards -/
+
+/-- Looking a guard up after a map that preserves identities finds the mapped
+record. The growth only ever rewrites the section it grew under, so this is what
+lets its post-state be read off the pre-state's guard. -/
+private theorem guardOf_after_id_preserving_map (l : List GuardRecord)
+    (m : GuardRecord → GuardRecord) (keeps : ∀ r, (m r).id = r.id) (guard : GuardId)
+    (r : GuardRecord) (found : l.find? (fun x => x.id == guard) = some r) :
+    (l.map m).find? (fun x => x.id == guard) = some (m r) := by
+  induction l with
+  | nil => simp at found
+  | cons h t ih =>
+    have head : ((m h).id == guard) = (h.id == guard) := by rw [keeps h]
+    cases hb : h.id == guard with
+    | true =>
+      simp only [List.find?_cons, hb] at found
+      have same : h = r := Option.some.inj found
+      subst same
+      simp only [List.map_cons, List.find?_cons, head, hb]
+    | false =>
+      simp only [List.find?_cons, hb] at found
+      simp only [List.map_cons, List.find?_cons, head, hb]
+      exact ih found
+
+/-- A guard the lookup found does carry the identity it was looked up by. -/
+private theorem found_guard_matches (l : List GuardRecord) (guard : GuardId) (r : GuardRecord)
+    (found : l.find? (fun x => x.id == guard) = some r) : (r.id == guard) = true := by
+  induction l with
+  | nil => simp at found
+  | cons h t ih =>
+    cases hb : h.id == guard with
+    | true =>
+      simp only [List.find?_cons, hb] at found
+      have same : h = r := Option.some.inj found
+      exact same ▸ hb
+    | false =>
+      simp only [List.find?_cons, hb] at found
+      exact ih found
+
+/-- The section a growth ran under keeps its identity, its holder and its phase,
+and is marked as having changed the protected region. -/
+theorem grow_marks_the_section_it_ran_under {s : State} {task : TaskId} {guard : GuardId}
+    {f : Footprint} {invariant : InvariantId} {mutex : MutexId} {g : GuardRecord}
+    (live : s.guardOf guard = some g) :
+    (growProtectionEffect s task guard f invariant mutex).guardOf guard =
+      some { g with wroteWhileOpen := true } := by
+  have matched : (g.id == guard) = true := found_guard_matches s.guards guard g live
+  have mapped := guardOf_after_id_preserving_map s.guards
+    (fun r => if r.id == guard then { r with wroteWhileOpen := true } else r)
+    (by intro r; split <;> rfl) guard g live
+  have unfolded : (growProtectionEffect s task guard f invariant mutex).guardOf guard =
+      (s.guards.map fun r => if r.id == guard then { r with wroteWhileOpen := true } else r).find?
+        (fun x => x.id == guard) := rfl
+  rw [unfolded, mapped]
+  simp [matched]
+
+/-- W3, from the witness side. Growth changes what the protected region *is*, so
+the checked `NoWriteOccurred` witness — "the invariant is unchanged" — is
+unavailable to the section that grew. It must close by declaration. -/
+theorem a_grown_section_cannot_close_with_the_checked_witness (s : State) (task : TaskId)
+    (guard : GuardId) (f : Footprint) (invariant : InvariantId) (mutex : MutexId)
+    (g : GuardRecord) (live : s.guardOf guard = some g) :
+    canCloseUnwritten (growProtectionEffect s task guard f invariant mutex) task guard = false := by
+  simp [canCloseUnwritten, State.guardSat, grow_marks_the_section_it_ran_under live]
+
+/-- The section stays open after a growth, so it cannot be released until an
+explicit close has restored the new declared invariant. Growth cannot escape a
+critical section without one. -/
+theorem a_grown_section_cannot_be_released_before_closing (s : State) (task : TaskId)
+    (guard : GuardId) (f : Footprint) (invariant : InvariantId) (mutex : MutexId)
+    (g : GuardRecord) (live : s.guardOf guard = some g) (open_now : g.phase = .opened) :
+    canRelease (growProtectionEffect s task guard f invariant mutex) task guard = false := by
+  simp [canRelease, State.guardSat, grow_marks_the_section_it_ran_under live, open_now]
+
+/-! ### 16.4 Decidable scenarios
+
+One accepted control and its refusals, each a single mutation. `growable` holds
+both cells outright and protects only the first; `grown` is the state after
+locking and opening the first generation's section. -/
+
+private def growable : State :=
+  { holdings := [{ custodian := .task 0, footprint := ⟨1, 0, 8⟩, share := fullAccess },
+                 { custodian := .task 0, footprint := ⟨2, 0, 8⟩, share := fullAccess }] }
+
+private def afterOpen : State :=
+  match run growable [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .lock 0 1 10, .openInvariant 0 10] with
+  | some s => s
+  | none => growable
+
+private def afterLock : State :=
+  match run growable [.createMutex 0 1 [⟨1, 0, 8⟩] 1, .lock 0 1 10] with
+  | some s => s
+  | none => growable
+
+-- The control: the creator grows its own open section over the unprotected
+-- cell, and it is admitted.
+example : (stepGrowProtection afterOpen 0 10 ⟨2, 0, 8⟩ 2).isSome = true := by decide
+
+-- W2: the same growth with the invariant closed is refused.
+example : stepGrowProtection afterLock 0 10 ⟨2, 0, 8⟩ 2 = none := by decide
+
+-- W4: the generation's own declared interval is already protected.
+example : stepGrowProtection afterOpen 0 10 ⟨1, 0, 8⟩ 2 = none := by decide
+
+-- W3: the identity this generation was created with is refused.
+example : stepGrowProtection afterOpen 0 10 ⟨2, 0, 8⟩ 1 = none := by decide
+
+-- W5: a task that is not the creator, and does not hold the section, is
+-- refused; so is a growth over an interval the grower does not wholly hold.
+example : stepGrowProtection afterOpen 1 10 ⟨2, 0, 8⟩ 2 = none := by decide
+example : stepGrowProtection afterOpen 0 10 ⟨3, 0, 8⟩ 2 = none := by decide
+
+-- W1: a guard that was never minted is refused.
+example : stepGrowProtection afterOpen 0 11 ⟨2, 0, 8⟩ 2 = none := by decide
+
+-- An admitted growth conserves the total authority it moved.
+example : (stepGrowProtection afterOpen 0 10 ⟨2, 0, 8⟩ 2).map State.authorityTotal
+    = some afterOpen.authorityTotal := by decide
+
+-- And it leaves the grown interval reachable only through the generation: the
+-- unguarded write that was admitted before the growth is refused after it.
+example : (run afterOpen [.access 0 ⟨2, 0, 8⟩ .write none]).isSome = true := by decide
+example : (stepGrowProtection afterOpen 0 10 ⟨2, 0, 8⟩ 2).bind
+    (fun s => run s [.access 0 ⟨2, 0, 8⟩ .write none]) = none := by decide
+
+-- The unconditional fixed-shape proposal still refuses in the same state.
+example : step afterOpen (.extendProtection 0 1 ⟨2, 0, 8⟩) = none := by decide
 
 end QCore.Concurrency.MutexInvariant

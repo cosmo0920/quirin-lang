@@ -223,6 +223,17 @@ fn emission_refuses_anything_outside_the_single_task_subset() {
             task: 0,
             construct: UnsupportedSynchronization::ConditionVariable,
         },
+        // Card CT34-GROWTH: a checked protection growth is a change to the
+        // model's bookkeeping, not to emitted C — nothing in this backend reads
+        // a generation's declared shape. Rather than emit a `mtx_t` that
+        // protects less than the model says it does, the backend refuses the
+        // trace outright, and this route is check-only.
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            guard: 10,
+            footprint: AccessFootprint::new(2, 0, 4),
+            invariant: 99,
+        },
     ] {
         let mut program = base.clone();
         program.events.insert(1, event);

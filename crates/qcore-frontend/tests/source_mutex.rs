@@ -5,8 +5,9 @@
 //! that only asserted `is_err()` would not distinguish the intended rule from
 //! any other refusal on the way.
 use qcore_core::mutex_invariant::{
-    AccessFootprint, AccessKind, ConcurrencyAssumption, ConcurrencyProfile, MutexInvariantEvent,
-    check_mutex_invariant_program, recheck_mutex_invariant_certificate,
+    AccessFootprint, AccessKind, ConcurrencyAssumption, ConcurrencyProfile,
+    MutexInvariantDiagnostic, MutexInvariantEvent, check_mutex_invariant_program,
+    recheck_mutex_invariant_certificate,
 };
 use qcore_frontend::frontend::{elaborate_source, parse_source_program};
 use qcore_frontend::source_mutex::{LoweredMutexModule, has_source_mutex, lower_source_mutex};
@@ -1384,5 +1385,329 @@ fn a_guard_local_join_inside_a_nested_section_is_refused() {
         vec!["Q600"],
         "G3 wants the section to be the only one held; two guards keep the \
          existing JoinWhileGuardHeld refusal"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Card CT34-GROWTH: `grow GUARD guards RESOURCE;`
+//
+// Every refusal below has an accepted control differing by one statement, so
+// the refusal is attributable to the rule under test rather than to growth
+// being written down at all.
+// ---------------------------------------------------------------------------
+
+/// The declarations CT34's shape starts from: one protected resource with a
+/// generation over it, and a second protected resource with no protector.
+const GROWABLE: &str = "let x = protected 4; let y = protected 4; \
+     let m = mutex guards x;";
+
+#[test]
+fn a_guarded_growth_checks_and_records_the_generation_it_widened() {
+    let module = codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }} \
+         with lock m as g2 {{ read y with g2; }}"
+    )))
+    .unwrap();
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    let [growth] = certificate.admitted_protection_growths.as_slice() else {
+        panic!("exactly one growth was admitted");
+    };
+    assert_eq!(growth.mutex, 1);
+    assert_eq!(growth.task, 0);
+    assert_eq!(growth.footprint, AccessFootprint::new(2, 0, 4));
+    assert_ne!(
+        growth.from_invariant, growth.to_invariant,
+        "a wider region is a different proposition, so the predicate identity moves"
+    );
+    assert_eq!(
+        certificate.protected_shape[&1],
+        vec![AccessFootprint::new(1, 0, 4), AccessFootprint::new(2, 0, 4)],
+        "protected_shape records the effective shape the checker authorised against"
+    );
+}
+
+/// The point of growing: memory that was reachable without a guard before the
+/// growth is reachable only through the generation afterwards, and the growth
+/// is permanent — the original footprint is still protected too.
+#[test]
+fn growth_moves_the_resource_behind_the_guard_permanently() {
+    // Before the growth, `y` has no protector, so an unguarded read is fine.
+    codes(&entry(&format!("{GROWABLE} read y;"))).unwrap();
+    // After it, the same statement is `Q611 UnguardedProtectedAccess`.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }} read y;"
+        )))
+        .unwrap_err(),
+        vec!["Q611"]
+    );
+    // And the originally declared footprint is still protected: both resources
+    // are now reachable under one guard, in a later section.
+    codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }} \
+         with lock m as g2 {{ read x with g2; read y with g2; }}"
+    )))
+    .unwrap();
+}
+
+/// W2. Growth belongs in the window where the invariant need not hold. Under a
+/// closed invariant it would silently assert the declared predicate of memory
+/// nothing established it for.
+#[test]
+fn growing_outside_an_open_invariant_is_refused() {
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} with lock m as g {{ grow g guards y; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q626"],
+        "a growth under a closed invariant is refused, and refusing it leaves \
+         the section otherwise well formed"
+    );
+    // One statement apart: open first, and it checks.
+    codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }}"
+    )))
+    .unwrap();
+}
+
+/// W3, from the source side. A section that grew may not close with the checked
+/// `NoWriteOccurred` witness: growth changes what the region *is*, so "the
+/// invariant is unchanged" is not available to it.
+#[test]
+fn a_section_that_grew_cannot_use_the_checked_witness() {
+    // The control: an open region with only reads decides `unchanged`.
+    codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; read x with g; close g unchanged; }}"
+    )))
+    .unwrap();
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g unchanged; }}"
+        )))
+        .unwrap_err(),
+        vec!["Q600"],
+        "the checked witness is refused at the lowering, never downgraded to \
+         the declared one"
+    );
+}
+
+/// W3, from the model side: the core refuses a growth whose supplied identity
+/// this generation has already carried. Reached by handing the core a program
+/// whose growth re-uses the creation identity — a shape the lowering never
+/// mints, which is exactly why the core checks it rather than trusting the
+/// lowering.
+#[test]
+fn a_growth_that_does_not_move_the_predicate_identity_is_refused() {
+    let module = lower(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }}"
+    )))
+    .unwrap();
+    let mut program = module.program.clone();
+    let created = program
+        .events
+        .iter()
+        .find_map(|event| match event {
+            MutexInvariantEvent::CreateMutex { invariant, .. } => Some(*invariant),
+            _ => None,
+        })
+        .unwrap();
+    for event in &mut program.events {
+        if let MutexInvariantEvent::GrowProtection { invariant, .. } = event {
+            *invariant = created;
+        }
+    }
+    let reported = check_mutex_invariant_program(&program)
+        .unwrap_err()
+        .iter()
+        .map(MutexInvariantDiagnostic::code)
+        .collect::<Vec<_>>();
+    assert!(
+        reported.contains(&"Q627"),
+        "re-using the pre-growth declaration is refused: {reported:?}"
+    );
+}
+
+/// W4. The new interval may not be one a live generation already protects —
+/// another generation's, or this generation's own, declared or already grown.
+///
+/// Each refusal carries the same measured fallout, pinned rather than filtered
+/// because every entry says something: the refused growth did not install the
+/// new declared predicate identity the lowering minted, so the section's
+/// `close` names one the generation never took (`Q613 InvalidInvariantWitness`)
+/// and therefore unlocks with its invariant still open
+/// (`Q613 InvariantOpenAtUnlock`), which in turn leaves the generation and its
+/// guard outstanding at scope exit. A change that started mutating a
+/// generation on a refused growth would break this vector.
+#[test]
+fn growing_over_protected_memory_is_refused() {
+    const FALLOUT: [&str; 5] = ["Q619", "Q613", "Q600", "Q600", "Q600"];
+    let cascade = |own: &[&str]| {
+        own.iter()
+            .chain(FALLOUT.iter())
+            .map(|code| (*code).to_owned())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} let n = mutex guards y; \
+             with lock m as g {{ open g; grow g guards y; close g; }}"
+        )))
+        .unwrap_err(),
+        cascade(&["Q613", "Q617"]),
+        "another live generation already protects `y`"
+    );
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} with lock m as g {{ open g; grow g guards y; grow g guards y; close g; }}"
+        )))
+        .unwrap_err(),
+        // One extra `Q600`: the first growth succeeded, so `y`'s own
+        // destruction at scope exit is nonquiescent too.
+        [cascade(&["Q613", "Q617"]), vec!["Q600".to_owned()]].concat(),
+        "the second growth finds the interval parked by this same generation"
+    );
+    // And growing over the generation's own declared footprint is refused too.
+    assert_eq!(
+        codes(&entry(&format!(
+            "{GROWABLE} with lock m as g {{ open g; grow g guards x; close g; }}"
+        )))
+        .unwrap_err(),
+        cascade(&["Q613", "Q617"])
+    );
+}
+
+/// W1. A growth names this section's own guard. A child task written inside its
+/// parent's section can name that guard — that is how the frame works — and the
+/// core refuses the act, because the child does not hold it.
+#[test]
+fn a_child_task_may_not_grow_its_parents_section() {
+    let refused = codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; thread scope c {{ grow g guards y; }} close g; }}"
+    )))
+    .unwrap_err();
+    assert!(
+        refused.contains(&"Q612".to_owned()),
+        "the child does not hold the section: {refused:?}"
+    );
+    // The parent's own growth in the same shape checks.
+    codes(&entry(&format!(
+        "{GROWABLE} with lock m as g {{ open g; grow g guards y; close g; }}"
+    )))
+    .unwrap();
+}
+
+/// The grammar refuses the shapes it cannot represent, one spelling each — and
+/// the two spellings that name something undeclared are refused earlier still,
+/// by name resolution. Both halves are asserted so a later change cannot move a
+/// refusal from one to the other unnoticed.
+#[test]
+fn malformed_growth_spellings_are_refused() {
+    for body in [
+        // outside any critical section. A guard name never resolves out there —
+        // guard binders are body-local — so this spelling uses a name that does
+        // resolve, and the grammar refusal is the one measured.
+        format!("{GROWABLE} grow x guards y;"),
+        // missing the `guards` clause word
+        format!("{GROWABLE} with lock m as g {{ open g; grow g y; close g; }}"),
+        // no resource
+        format!("{GROWABLE} with lock m as g {{ open g; grow g guards; close g; }}"),
+    ] {
+        assert_eq!(
+            codes(&entry(&body))
+                .unwrap_err()
+                .first()
+                .map(String::as_str),
+            Some("Q600"),
+            "{body}"
+        );
+    }
+    for body in [
+        // naming a guard this section did not bind
+        format!("{GROWABLE} with lock m as g {{ open g; grow other guards y; close g; }}"),
+        // an undeclared resource
+        format!("{GROWABLE} with lock m as g {{ open g; grow g guards z; close g; }}"),
+    ] {
+        assert_eq!(
+            codes(&entry(&body)).unwrap_err(),
+            vec!["Q013"],
+            "an undeclared name is a name-resolution refusal, reached before any \
+             growth question: {body}"
+        );
+    }
+}
+
+/// The growth form needs the concurrency import like every other form here.
+#[test]
+fn a_growth_without_the_concurrency_import_is_refused() {
+    let source = format!(
+        "fn main() -> unit {{ thread scope s {{ {GROWABLE} \
+         with lock m as g {{ open g; grow g guards y; close g; }} }} }}"
+    );
+    assert_eq!(lower(&source).unwrap_err(), vec!["Q015"]);
+}
+
+/// The reservation costs no existing spelling: `grow` is still usable as a
+/// resource name, exactly as the already-reserved `guards` and `rank` are.
+#[test]
+fn reserving_grow_costs_no_existing_spelling() {
+    codes(&entry(
+        "let grow = protected 4; let m = mutex guards grow; \
+         with lock m as g { open g; write grow with g; close g; }",
+    ))
+    .unwrap();
+}
+
+/// `ExtendProtection` — the unconditional refusal growth sits beside — has no
+/// source form at all and is untouched: a module that never writes `grow`
+/// lowers exactly as it did, declared predicate identities included.
+#[test]
+fn the_fixed_shape_refusal_is_untouched_by_the_growth_form() {
+    let module = lower(&entry(OPEN_WRITE_CLOSE)).unwrap();
+    assert!(
+        module
+            .program
+            .events
+            .iter()
+            .all(|event| !matches!(event, MutexInvariantEvent::GrowProtection { .. })),
+        "no growth event without the source form"
+    );
+    assert!(
+        module.program.events.iter().any(|event| matches!(
+            event,
+            MutexInvariantEvent::CreateMutex {
+                invariant: 1,
+                mutex: 1,
+                ..
+            }
+        )),
+        "an ungrown module keeps the historical `invariant == mutex` numbering"
+    );
+    let certificate = check_mutex_invariant_program(&module.program).unwrap();
+    assert!(certificate.admitted_protection_growths.is_empty());
+}
+
+/// Growth composes with the opt-in rank discipline without touching it: a
+/// ranked module may grow, and growing does not make a descending acquisition
+/// admissible.
+#[test]
+fn growth_and_the_rank_discipline_do_not_interact() {
+    codes(&entry(
+        "let x = protected 4; let y = protected 4; let z = protected 4; \
+         let a = mutex rank 1 guards x; let b = mutex rank 2 guards y; \
+         with lock a as ga { open ga; grow ga guards z; close ga; } \
+         with lock a as g1 { with lock b as g2 { } }",
+    ))
+    .unwrap();
+    assert_eq!(
+        codes(&entry(
+            "let x = protected 4; let y = protected 4; let z = protected 4; \
+             let a = mutex rank 1 guards x; let b = mutex rank 2 guards y; \
+             with lock a as ga { open ga; grow ga guards z; close ga; } \
+             with lock b as g1 { with lock a as g2 { } }"
+        ))
+        .unwrap_err(),
+        vec!["Q624", "Q612"],
+        "a grown generation keeps its declared rank; growth orders nothing"
     );
 }
