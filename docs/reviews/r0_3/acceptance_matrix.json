@@ -5620,9 +5620,9 @@
   },
   {
    "id": "T03-CT-REST",
-   "title": "The three still-unmapped mutex-family CT cases (was seven)",
-   "why": "CT28/CT31/CT32/CT48 mapped in wave 5 after T03-F landed bounded task composition and guard-scoped facts. Remaining: CT33 (no source form declares a lock rank, so a lock-order cycle cannot be written down), CT34 (CreateMutex fixes declared footprints at creation; no protection-growth form), CT46 (needs Send/Sync derivation, outside L09 and this profile).",
-   "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md"
+   "title": "The two still-unmapped mutex-family CT cases (was three)",
+   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain.",
+   "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-ct33-ranks/README.md"
   },
   {
    "id": "wave3-CT",
@@ -5643,34 +5643,16 @@
    "source": "docs/reports/remaining-c03-nfr/README.md"
   },
   {
-   "id": "E03-B-O",
-   "title": "Composition residuals after the E03-B repairs",
-   "why": "O1: an absent provider's obligations are refused, not derived (its manifest is unavailable). O2: composition is not associative under its own output. O3: the bounds intersection is argued and unit-tested for count kinds no derivation currently emits.",
-   "source": "docs/reports/remaining-e03-b/README.md"
-  },
-  {
-   "id": "P01-F3",
-   "title": "Template-binding residuals: forged executables, TOCTOU, unverified loader",
-   "why": "a rebuilt or forged executable carries whatever template its builder chose; there is a TOCTOU window between check and dispatch; ProcessProvider::from_package remains an unverified loader (registration is pointed at verify_executable_package). Signature/immutable-execution proof remains out of scope as documented.",
-   "source": "docs/reports/remaining-p01-f2/README.md"
-  },
-  {
    "id": "EXTERN-CALL-F",
    "title": "source.extern-call.v1 follow-ons",
-   "why": "resource_out/stored/removed/reallocated/released call modes; nonnull owned returns; sentinel/errno adapters (O03 interaction); buffer extents; variadics/function pointers/callbacks/structs/floats; extern calls in concurrent or error-region contexts; releasing custody on the adapter error arm (currently admitted only with no other live acquisition); cost summaries; linkage verification; the inline Q020/Q021 source-contract consumer. CT45 is closer but still blocked on the single-live-acquisition restriction and an admitted-but-unmodeled contract form.",
-   "source": "docs/reports/extern-call-v1/README.md SS7"
-  },
-  {
-   "id": "O03-U4-REACTOR-TARGET",
-   "title": "The reactor's event vocabulary carries no close target or errno",
-   "why": "after U4's repair the reactor poisons a failed close, but it answers with the unpinned join because CloseSocket records neither the target POSIX profile nor errno; pinning them needs an event-vocabulary extension.",
-   "source": "docs/reports/remaining-o03-u4u5/README.md"
+   "why": "resource_out(nullable) and resource_stored landed in wave 10 (EXTERN-F1), with resource_owned admitted only in the stored owner position per §C04.2; the nonnull out form is refused by design. Measured: resource_stored is admitted and checked but unreachable from a single source module — the v1 adapter error arm may abandon nothing, so a second live acquisition refuses at Q025 (EXTERN-F1-STORE-REACH, filed against the error-arm-release follow-on, the gate deliberately not weakened). Still open: removed/reallocated/released modes, sentinel/errno adapters (O03 interaction), extents, variadics, concurrent/error-region contexts, cost summaries, linkage verification, the inline Q020/Q021 consumer.",
+   "source": "docs/reports/extern-call-v1/README.md SS7, docs/reports/extern-call-f1/README.md"
   },
   {
    "id": "O04-ARMS-O",
-   "title": "Constructor residuals after O04-B08 (C5 discharged)",
-   "why": "B08 closed in wave 9: the aggregate-store admission and bounded branch condition discharge C5; five of six exits settle and only the out-of-scope success exit C6 remains, with O04-B08-READ-BOUND-BASE (a member read through a bound base is still refused) the last blocker toward B09/B10. P-B08-SHALLOW is a named premise (escape carries live linked children; release does not cascade), assumed and modeled, never proved. O04-ARMS-VARIADIC and O04-ARMS-SCALAR-CHAIN carry forward; `flb_time_now` is now the named residual on the routes-mask arm (O04-ARMS's inertness measurement was correct then and false after the store admission — recorded with the updated pin).",
-   "source": "docs/reports/remaining-o04-arms/README.md, docs/reports/remaining-o04-b08/README.md"
+   "title": "Constructor residuals after O04-READ-BOUND (C6 remains Unknown)",
+   "why": "READ-BOUND-BASE closed in wave 10: bound-base member reads are admitted (whole Borrowed actual only — O04-READ-BOUND-CUSTODY keeps free/consuming positions refused, which is why cio_chunk_open's free(ch->name) stays refused) and C6's residual narrows ten to nine refusals, but C6 stays Unknown carrying three Mixed identities. P-B08-SHALLOW, O04-ARMS-VARIADIC and O04-ARMS-SCALAR-CHAIN carry forward; B09/B10 descriptor/mapping identities and the remaining eight INDIRECT refusals are the path to C6.",
+   "source": "docs/reports/remaining-o04-arms/README.md, docs/reports/remaining-o04-b08/README.md, docs/reports/remaining-o04-read-bound/README.md"
   },
   {
    "id": "T08-SRC-O",
@@ -5705,8 +5687,8 @@
   {
    "id": "P04-NEXT-O",
    "title": "Remaining ChunkIO capabilities after the teardown pair moved",
-   "why": "A closed in wave 9: file_attempts travels as the third (call-result def/use, policy-free) vocabulary with 122 refused mutation rows. B is corrected by measurement into two independent blockers: P04-NEXT-B1 (neither cleanup-outcome contract declares any field/syscall/type name, so a transported custody profile has no contract-side referent — the vocabulary must be declared first) and P04-NEXT-B2 (the 268-line symbolic replay over a 9-constructor value lattice is a fourth vocabulary). PrerequisiteIdentity + revalidate_prerequisite are implemented with no production consumer yet (P04-NEXT-AB-CONSUMER). C (sealed SourceMatch) and the seven compositions unchanged.",
-   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md"
+   "why": "B1 closed in wave 10: the cleanup-outcome contracts declare their referents under cleanup_vocabulary_v1, bound structurally (13 source-binding + 17 profile + 20 grammar refusals). Remaining: P04-NEXT-B2 (the symbolic-replay fourth vocabulary), P04-B1-HELPER-SIG (helper signatures stay checker literals), P04-B1-CALLEE-TABLE (the attempt family's callee table stays a caller assertion), P04-NEXT-AB-CONSUMER, C (sealed SourceMatch) and the compositions.",
+   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md"
   },
   {
    "id": "T03-GUARD-JOIN-O",
@@ -5719,7 +5701,31 @@
    "title": "C-twin residuals after CT43/CT45 mapped",
    "why": "CT-CTWIN-PUBLISH (a store of an owned pointer into a file-scope object is invisible to the projection — publish-then-free is Safe with no diagnostic), CT-CTWIN-SYNC (verdicts invariant under the volatile flag), CT-CTWIN-DESCRIPTOR (int-typed resource identity refused by the contract loader), CT-CTWIN-UNRESOLVED-LEAK and CT-CTWIN-ENTRY (the declared entry is inert for projection-complete units; the runner asserts it as the weak check it is), plus D02-BUCKETS (a pre-existing acceptance.json bucket-count divergence, recorded).",
    "source": "docs/reports/wave9-ctwin/README.md"
+  },
+  {
+   "id": "P01-F3-O",
+   "title": "Identity-hardening residuals",
+   "why": "P01-F3-FDEXEC (executing the held descriptor is refused on a measured interpreted-package ground and a confinement-policy ground; the 0.5–24 ms window is proved open in Lean, not papered over); P01-F3-COST (one SHA-256 per dispatch, 37–142 ms release); forged/rebuilt executables need signatures and stay out of scope; two DeliberatelyUnverified harness newtypes are the named escape.",
+   "source": "docs/reports/remaining-p01-f3/README.md"
+  },
+  {
+   "id": "E03-B-O1-HOOKS",
+   "title": "ObservationHooks obligations for an absent provider",
+   "why": "the other five capabilities' obligations now derive without the provider and refuse on absence; ObservationHooks withholds its inventory because an empty-denominator coverage obligation would be vacuous, recorded under EnvironmentUnavailable. O2 grouping-invariance and O3's BoundedPaths composition landed; a census tripwire fires when a derivation first emits schedules_explored/max_operations.",
+   "source": "docs/reports/remaining-e03-b-o/README.md"
+  },
+  {
+   "id": "O03-REACTOR-SRC",
+   "title": "Deriving the close-failure declaration instead of accepting declared text",
+   "why": "the reactor now classifies a failed close from a declared (target, errno) pair through the relation (the sole retry-permitting row proved unique); deriving that pair from a build profile plus a source-visible errno remains open, as do O03's U3/U7.",
+   "source": "docs/reports/remaining-o03-reactor/README.md"
+  },
+  {
+   "id": "WAVE11-DEFERRED",
+   "title": "Cards stopped for the fleet-size trim, to relaunch",
+   "why": "C02-P-ALIAS, E01-RAW-COND (restart cherry-picks recovered commit 830e387), C03-REACH and T08-COMPOSE were stopped mid-work when the worktree fleet was cut to seven for storage; their briefs are unchanged.",
+   "source": "session record, 2026-09-09"
   }
  ],
- "updated": "2026-09-09 (wave 9 complete: E01-F1-RAW, O04-B08, T03-GUARD-JOIN, CT-CTWIN (CT 28/50 -> 30/50), P04-NEXT-AB (qcore-schemas 8.0.0, ChunkIO 0.7.0) and GEN-REASON close at their stated boundaries; the corpus is deliberately re-pinned to the wave-9 integrator measurement (docs/reports/wave9-corpus/) at unchanged headline counts with every changed leaf attributed; the acceptance-matrix generator's non-CT sections are now derived or carried; nothing promoted)"
+ "updated": "2026-09-09 (wave 10 complete: O03-REACTOR, P04-B1, P01-F3, CT33-RANKS, E03-B-O, EXTERN-F1 and O04-READ-BOUND close at their stated boundaries; the corpus is re-pinned to docs/reports/wave10-corpus/ with the only movement P04-B1's 18 contract_source leaves; qcore-compiler 0.4.0, qcore-verifier-host/verification 0.3.0, mutex band Q610–Q625; four cards deferred to wave 11 by the fleet-size trim; nothing promoted)"
 }

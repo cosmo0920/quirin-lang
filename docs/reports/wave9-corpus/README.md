@@ -1,5 +1,10 @@
 # Wave-9 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-09 (wave-10 consolidation):**
+> `docs/reports/wave10-corpus/artifacts/` is the current baseline — identical
+> except for P04-B1's 18 `contract_source` leaves, fully attributed there.
+> This directory remains the wave-9 measurement record.
+
 **Date:** 2026-09-09. **Tree:** main `13a67f6` (all six wave-9 cards merged).
 **Integrator-run**, closing the wave under hard invariants 3 and 5: three
 wave-9 cards changed different artifact leaves against the same E01-F1
