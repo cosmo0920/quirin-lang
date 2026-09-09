@@ -26,6 +26,7 @@ pub mod typed_c_ast;
 mod typed_field_access;
 pub mod typed_source;
 pub mod typed_source_match;
+mod variadic_nested;
 
 use qcore_contract::contract_loader;
 

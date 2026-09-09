@@ -1,0 +1,62 @@
+// O04-TRACE — the two declared callee premises the constructor's *success*
+// exit C6 traverses once a declared variadic tail and one level of nesting stop
+// refusing. Concatenated onto `o04_path.qcore`, `o04_arms_callees.qcore`,
+// `o04_b08_callees.qcore` and `o04_b09b10_callees.qcore`, all of which stay
+// BYTE-UNCHANGED, so cards O04, O04-ARMS, O04-B08, O04-READ-BOUND and
+// O04-B09B10 keep their exact premise sets and their exact measurements.
+//
+// BOTH declarations here are TRUSTED ASSUMPTIONS. Neither is derived from any
+// body in this fixture, and neither is offered as a production declaration:
+// this file lives with the gateway test fixtures, so the pinned
+// `contract/qcore` corpus count is untouched — the same placement card
+// O04-B09B10 chose, and for the same reason. What this card puts into
+// production is the *vocabulary* (the loader clause) and the *admission* (the
+// gateway rule); the declaration that a particular real callee has a data tail
+// is a premise about that callee, and it is stated here where it can be read
+// beside the measurement it supports.
+//
+// WHY NOT `contract/qcore/`: a `flb_trace` declaration there would enter the
+// 185-unit production corpus, where it would apply to every `flb_trace` call
+// site in Fluent Bit at once — hundreds of statements whose tail actuals this
+// card has not measured — and it would move the pinned corpus module count from
+// 60. Neither is a cost this card's bounded claim needs, so the corpus count
+// stays 60 and the reach of the tail vocabulary in the production corpus stays
+// ZERO admitted statements, recorded as `O04-TRACE-REACH`.
+//
+// WHAT `resource_variadic_data_tail()` DOES AND DOES NOT SAY:
+//
+//   IT SAYS: `flb_trace` takes no custody of, and retains no pointer to, any
+//   argument beyond `format`.
+//
+//   IT DOES NOT SAY: anything about `flb_trace`'s body; that the tail is
+//   type-correct against the format string; that the tail is even read. It is
+//   a declaration, and nothing here verifies the callee. It also admits
+//   nothing on its own: the gateway still requires, at THIS call site, that
+//   each tail actual carries no tracked resource identity, and an actual that
+//   does is refused under the declaration exactly as without it.
+//
+// WHAT `flb_input_chunk_get_name`'s DECLARATION SAYS: it borrows the chunk and
+// returns no custody. That is faithful to the pinned upstream body, which
+// returns `ic->name` — a BORROWED HANDBACK the caller must not free. This
+// projection does not track the handback at all, so it also does not model
+// that the handback aliases into `ic`; the gateway compensates by admitting a
+// nested result only in a position that needs no identity and never binding it
+// to a name, so it cannot outlive the statement. A caller that stored it would
+// be a different statement shape, and refused.
+
+// --- the variadic diagnostic entry point -----------------------------------
+extern fn flb_trace(format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// --- the borrowed-handback accessor the tail's first actual calls ----------
+extern fn flb_input_chunk_get_name(ic: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_return_none();
+};

@@ -1,0 +1,98 @@
+module contract;
+
+// O04-TRACE — the held-out generic `v_*` API.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to the `g_*` (O04),
+// `h_*` (O04-ARMS), `k_*` (O04-B08), `r_*` (O04-READ-BOUND) and `m_*`
+// (O04-B09B10) families. Every rule this card implements is stated over
+// declared C types and contract modes, so no name here can matter; the family
+// exists so the admission and its refusals can be exercised without the real
+// subject's premises being in scope.
+
+// --- acquisition ----------------------------------------------------------
+extern fn v_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn v_take(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+// --- release --------------------------------------------------------------
+extern fn v_drop(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn v_free(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- a custody-taking position, so a nested call can be aimed at one -------
+extern fn v_eat(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- the two accessors the nested-call premises separate ------------------
+// `v_name` borrows and returns NO custody: the one shape premises N6 and N7
+// admit. Its result is a borrowed handback this projection does not track,
+// which is why it may occupy only a position needing no identity.
+extern fn v_name(b: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+};
+
+// --- a nested accessor that DOES produce custody, and is therefore refused -
+extern fn v_grab(b: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_owned(nullable);
+};
+
+// --- a second neutral accessor, for the sibling-nesting refusal ------------
+extern fn v_size(b: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+};
+
+// --- the variadic logger, WITH a declared data tail -----------------------
+// TRUSTED ASSUMPTION: `v_log` takes no custody of, and retains no pointer to,
+// any argument beyond `fmt`. It says nothing about `v_log`'s body and admits
+// nothing on its own — each tail actual must still be data at its call site.
+extern fn v_log(fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// --- the same C shape WITHOUT a declared tail -----------------------------
+// `v_plain` is variadic in C too. Its declaration names one parameter and
+// declares no tail, so an actual beyond that vector is REFUSED rather than
+// silently dropped. This is the control for the arity repair.
+extern fn v_plain(fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_return_none();
+};
