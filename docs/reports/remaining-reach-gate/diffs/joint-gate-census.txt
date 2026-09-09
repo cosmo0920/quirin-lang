@@ -1,0 +1,147 @@
+components: 46, refused: 45
+POSITION only: 2 components, 2 members
+    librdkafka/rdavl.c: rd_avl_find_node
+    librdkafka/rdkafka_conf.c: rd_kafka_anyconf_get
+INDIRECT only: 0 components, 0 members
+POSITION+INDIRECT: 10 components, 16 members
+    cmetrics/cmt_encode_opentelemetry.c: otlp_any_value_destroy,otlp_array_destroy,otlp_kvlist_destroy,otlp_kvpair_destroy
+    ctraces/ctr_encode_opentelemetry.c: otlp_any_value_destroy,otlp_array_destroy,otlp_kvlist_destroy,otlp_kvpair_destroy
+    librdkafka/cJSON.c: cJSON_Delete
+    librdkafka/cJSON.c: cJSON_Compare
+    librdkafka/nanopb/pb_encode.c: pb_check_proto3_default_value
+    librdkafka/rdavl.c: rd_avl_find_node
+    librdkafka/rdavl.c: rd_avl_insert_node
+    librdkafka/rdavl.c: rd_avl_move
+    librdkafka/rdavl.c: rd_avl_remove_elm0
+    librdkafka/rdkafka_conf.c: rd_kafka_anyconf_get
+
+=== blocking sites of the POSITION+INDIRECT components ===
+--- cmetrics/cmt_encode_opentelemetry.c: otlp_any_value_destroy,otlp_array_destroy,otlp_kvlist_destroy,otlp_kvpair_destroy
+    [indirect memory access is outside the re] free(value->string_value);
+    [unmodeled call, aggregate or indirect ac] if (value->string_value != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_array_destroy(value->array_value);
+    [unmodeled call, aggregate or indirect ac] if (value->array_value != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_kvlist_destroy(value->kvlist_value);
+    [unmodeled call, aggregate or indirect ac] if (value->kvlist_value != ((void*)0)) {
+    [indirect memory access is outside the re] free(value->bytes_value.data);
+    [unmodeled call, aggregate or indirect ac] if (value->bytes_value.data != ((void*)0)) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_BYTES_VALUE) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_KVLIST_VALUE) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_ARRAY_VALUE) {
+    [unmodeled call, aggregate or indirect ac] if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_STRING_VALUE) {
+    [indirect memory access is outside the re] free(array->values);
+    [unmodeled call, aggregate or indirect ac] for (index = 0 ; index < array->n_values ; index++) {
+    [indirect memory access is outside the re] otlp_any_value_destroy(array->values[index]);
+    [unmodeled call, aggregate or indirect ac] if (array->values != ((void*)0)) {
+    [indirect memory access is outside the re] free(kvlist->values);
+    [unmodeled call, aggregate or indirect ac] for (index = 0 ; index < kvlist->n_values ; index++) {
+    [indirect memory access is outside the re] otlp_kvpair_destroy(kvlist->values[index]);
+    [unmodeled call, aggregate or indirect ac] if (kvlist->values != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_any_value_destroy(kvpair->value);
+    [unmodeled call, aggregate or indirect ac] if (kvpair->value != ((void*)0)) {
+    [indirect memory access is outside the re] free(kvpair->key);
+    [unmodeled call, aggregate or indirect ac] if (kvpair->key != ((void*)0)) {
+--- ctraces/ctr_encode_opentelemetry.c: otlp_any_value_destroy,otlp_array_destroy,otlp_kvlist_destroy,otlp_kvpair_destroy
+    [indirect memory access is outside the re] value->string_value = ((void*)0);
+    [indirect memory access is outside the re] free(value->string_value);
+    [unmodeled call, aggregate or indirect ac] if (value->string_value != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_array_destroy(value->array_value);
+    [unmodeled call, aggregate or indirect ac] if (value->array_value != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_kvlist_destroy(value->kvlist_value);
+    [unmodeled call, aggregate or indirect ac] if (value->kvlist_value != ((void*)0)) {
+    [indirect memory access is outside the re] free(value->bytes_value.data);
+    [unmodeled call, aggregate or indirect ac] if (value->bytes_value.data != ((void*)0)) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_BYTES_VALUE) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_KVLIST_VALUE) {
+    [unmodeled call, aggregate or indirect ac] else if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_ARRAY_VALUE) {
+    [unmodeled call, aggregate or indirect ac] if (value->value_case == OPENTELEMETRY__PROTO__COMMON__V1__ANY_VALUE__VALUE_STRING_VALUE) {
+    [indirect memory access is outside the re] free(array->values);
+    [unmodeled call, aggregate or indirect ac] for (index = 0 ; index < array->n_values ; index++) {
+    [indirect memory access is outside the re] otlp_any_value_destroy(array->values[index]);
+    [unmodeled call, aggregate or indirect ac] if (array->values != ((void*)0)) {
+    [indirect memory access is outside the re] free(kvlist->values);
+    [unmodeled call, aggregate or indirect ac] for (index = 0 ; index < kvlist->n_values ; index++) {
+    [indirect memory access is outside the re] otlp_kvpair_destroy(kvlist->values[index]);
+    [unmodeled call, aggregate or indirect ac] if (kvlist->values != ((void*)0)) {
+    [indirect memory access is outside the re] otlp_any_value_destroy(kvpair->value);
+    [unmodeled call, aggregate or indirect ac] if (kvpair->value != ((void*)0)) {
+    [indirect memory access is outside the re] free(kvpair->key);
+    [unmodeled call, aggregate or indirect ac] if (kvpair->key != ((void*)0)) {
+--- librdkafka/cJSON.c: cJSON_Delete
+    [indirect memory access is outside the re] global_hooks.deallocate(item);
+    [indirect memory access is outside the re] item->string = ((void*)0);
+    [indirect memory access is outside the re] global_hooks.deallocate(item->string);
+    [unmodeled call, aggregate or indirect ac] if (!(item->type & 512) && (item->string != ((void*)0)))
+    [indirect memory access is outside the re] item->valuestring = ((void*)0);
+    [indirect memory access is outside the re] global_hooks.deallocate(item->valuestring);
+    [unmodeled call, aggregate or indirect ac] if (!(item->type & 256) && (item->valuestring != ((void*)0)))
+    [indirect memory access is outside the re] cJSON_Delete(item->child);
+    [unmodeled call, aggregate or indirect ac] if (!(item->type & 256) && (item->child != ((void*)0)))
+    [indirect memory access is outside the re] next = item->next;
+--- librdkafka/cJSON.c: cJSON_Compare
+    [indirect memory access is outside the re] for(b_element = (b != ((void*)0)) ? (b)->child : ((void*)0); b_element != ((void*)0); b_element = b_element->next)
+    [unmodeled call, aggregate or indirect ac] if (!cJSON_Compare(b_element, a_element, case_sensitive))
+    [indirect memory access is outside the re] a_element = get_object_item(a, b_element->string, case_sensitive);
+    [indirect memory access is outside the re] for(b_element = (b != ((void*)0)) ? (b)->child : ((void*)0); b_element != ((void*)0); b_element = b_element->next)
+    [indirect memory access is outside the re] for(a_element = (a != ((void*)0)) ? (a)->child : ((void*)0); a_element != ((void*)0); a_element = a_element->next)
+    [unmodeled call, aggregate or indirect ac] if (!cJSON_Compare(a_element, b_element, case_sensitive))
+    [indirect memory access is outside the re] b_element = get_object_item(b, a_element->string, case_sensitive);
+    [indirect memory access is outside the re] for(a_element = (a != ((void*)0)) ? (a)->child : ((void*)0); a_element != ((void*)0); a_element = a_element->next)
+    [indirect memory access is outside the re] b_element = b_element->next;
+    [indirect memory access is outside the re] a_element = a_element->next;
+    [unmodeled call, aggregate or indirect ac] if (!cJSON_Compare(a_element, b_element, case_sensitive))
+    [indirect memory access is outside the re] cJSON *b_element = b->child;
+    [indirect memory access is outside the re] cJSON *a_element = a->child;
+    [unmodeled call, aggregate or indirect ac] if (strcmp(a->valuestring, b->valuestring) == 0)
+    [unmodeled call, aggregate or indirect ac] if ((a->valuestring == ((void*)0)) || (b->valuestring == ((void*)0)))
+    [unmodeled call, aggregate or indirect ac] if (compare_double(a->valuedouble, b->valuedouble))
+    [unmodeled call, aggregate or indirect ac] switch (a->type & 0xFF)
+    [unmodeled call, aggregate or indirect ac] switch (a->type & 0xFF)
+    [unmodeled call, aggregate or indirect ac] if ((a == ((void*)0)) || (b == ((void*)0)) || ((a->type & 0xFF) != (b->type & 0xFF)))
+--- librdkafka/nanopb/pb_encode.c: pb_check_proto3_default_value
+    [unmodeled call, aggregate or indirect ac] for (i = 0; i < field->data_size; i++)
+    [unmodeled call, aggregate or indirect ac] if (p[i] != 0)
+    [indirect memory access is outside the re] const char *p = (const char*)field->pData;
+    [unmodeled call, aggregate or indirect ac] return bytes->size == 0;
+    [indirect memory access is outside the re] const pb_bytes_array_t *bytes = (const pb_bytes_array_t*)field->pData;
+    [unmodeled call, aggregate or indirect ac] return *(const char*)field->pData == '\0';
+    [unmodeled call, aggregate or indirect ac] return field->data_size == 0;
+    [unmodeled call, aggregate or indirect ac] do
+    [unmodeled call, aggregate or indirect ac] if (!pb_check_proto3_default_value(&iter))
+    [unmodeled call, aggregate or indirect ac] if (pb_field_iter_begin(&iter, field->submsg_desc, field->pData))
+    [unmodeled call, aggregate or indirect ac] return *(const pb_size_t*)field->pSize == 0;
+    [unmodeled call, aggregate or indirect ac] return *(const pb_size_t*)field->pSize == 0;
+    [unmodeled call, aggregate or indirect ac] return safe_read_bool(field->pSize) == 0;
+    [unmodeled call, aggregate or indirect ac] else if (field->descriptor->default_value)
+    [unmodeled call, aggregate or indirect ac] else if (((type) & 0x30U) == 0x10U && field->pSize != ((void*)0))
+    [unmodeled call, aggregate or indirect ac] return field->pData == ((void*)0);
+    [indirect memory access is outside the re] const pb_extension_t *extension = *(const pb_extension_t* const *)field->pData;
+    [unmodeled call, aggregate or indirect ac] return pCallback->funcs.encode == ((void*)0);
+    [indirect memory access is outside the re] pb_callback_t *pCallback = (pb_callback_t*)field->pData;
+    [unmodeled call, aggregate or indirect ac] return field->descriptor->field_callback == ((void*)0);
+    [unmodeled call, aggregate or indirect ac] else if (field->descriptor->field_callback == pb_default_field_callback)
+--- librdkafka/rdavl.c: rd_avl_find_node
+    [unmodeled call, aggregate or indirect ac] return rd_avl_find_node(ravl, begin->ran_p[RD_AVL_LEFT], elm);
+    [unmodeled call, aggregate or indirect ac] return rd_avl_find_node(ravl, begin->ran_p[RD_AVL_RIGHT], elm);
+    [unmodeled call, aggregate or indirect ac] else if (!(r = ravl->ravl_cmp(elm, begin->ran_elm)))
+--- librdkafka/rdavl.c: rd_avl_insert_node
+    [unmodeled call, aggregate or indirect ac] return rd_avl_balance_node(parent);
+    [indirect memory access is outside the re] parent->ran_p[dir] =
+    [indirect memory access is outside the re] ran->ran_height = parent->ran_height;
+    [indirect memory access is outside the re] ran->ran_p[RD_AVL_RIGHT] = parent->ran_p[RD_AVL_RIGHT];
+    [indirect memory access is outside the re] ran->ran_p[RD_AVL_LEFT] = parent->ran_p[RD_AVL_LEFT];
+    [unmodeled call, aggregate or indirect ac] if ((r = ravl->ravl_cmp(ran->ran_elm, parent->ran_elm)) == 0) {
+--- librdkafka/rdavl.c: rd_avl_move
+    [unmodeled call, aggregate or indirect ac] return rd_avl_balance_node(dst);
+    [indirect memory access is outside the re] dst->ran_p[dir] = rd_avl_move(dst->ran_p[dir], src, dir);
+--- librdkafka/rdavl.c: rd_avl_remove_elm0
+    [unmodeled call, aggregate or indirect ac] return rd_avl_balance_node(parent);
+    [indirect memory access is outside the re] parent->ran_p[dir] = rd_avl_remove_elm0(ravl, parent->ran_p[dir], elm);
+    [unmodeled call, aggregate or indirect ac] return rd_avl_remove_node0(parent);
+    [unmodeled call, aggregate or indirect ac] if ((r = ravl->ravl_cmp(elm, parent->ran_elm)) == 0)
+--- librdkafka/rdkafka_conf.c: rd_kafka_anyconf_get
+    [unmodeled call, aggregate or indirect ac] for (prop = rd_kafka_properties; prop->name; prop++) {
+    [unmodeled call, aggregate or indirect ac] if (rd_kafka_anyconf_get0(conf, prop, dest, dest_size) ==
+    [unmodeled call, aggregate or indirect ac] return rd_kafka_anyconf_get(scope, conf, prop->sdef,
+    [unmodeled call, aggregate or indirect ac] if (prop->type == _RK_C_ALIAS)
+    [unmodeled call, aggregate or indirect ac] if (!(prop->scope & scope) || strcmp(prop->name, name))

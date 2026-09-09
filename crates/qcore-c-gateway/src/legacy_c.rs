@@ -37,6 +37,7 @@ pub use qcore_schemas::contract::{
 use crate::aggregate_store::AggregateStoreBases;
 use crate::borrowed_actual::UntrackedBases;
 use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
+use crate::neutral_position::ExpressionRole;
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -2340,7 +2341,12 @@ impl Parser<'_> {
     /// classification — the architectural change
     /// `docs/design/W4_NEUTRAL_EXPRESSION_POSITIONS.md` §5 asks for — and it
     /// admits nothing the lexical predicate would have had to loosen for.
-    fn supported_expression(&self, tokens: &[Token]) -> bool {
+    /// Card REACH-GATE threads the position's *role* through: a condition
+    /// discards the value it computes into a control-flow decision, while a
+    /// `return` expression hands it to the caller. Only the pointer-valued leaf
+    /// of the access-chain family reads the difference; every other family
+    /// decides identically in both roles.
+    fn supported_expression(&self, tokens: &[Token], role: ExpressionRole) -> bool {
         if supported_neutral_expression(tokens) {
             return true;
         }
@@ -2350,6 +2356,7 @@ impl Parser<'_> {
             .collect::<Vec<_>>();
         crate::neutral_position::is_neutral_expression(
             &texts,
+            role,
             self.contracts,
             &self.typed_model,
             &self.typed_types,
@@ -2572,7 +2579,8 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
-                    condition_supported: self.supported_expression(&condition),
+                    condition_supported: self
+                        .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     then_body,
@@ -2585,7 +2593,8 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
-                    condition_supported: self.supported_expression(&condition),
+                    condition_supported: self
+                        .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -2621,7 +2630,8 @@ impl Parser<'_> {
                     line,
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: self.supported_expression(&condition),
+                    condition_supported: self
+                        .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
                     increment,
                     body,
@@ -2641,7 +2651,8 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::DoWhile {
                     line,
-                    condition_supported: self.supported_expression(&condition),
+                    condition_supported: self
+                        .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -2652,7 +2663,8 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
-                    expression_supported: self.supported_expression(&expression),
+                    expression_supported: self
+                        .supported_expression(&expression, ExpressionRole::Decides),
                     body,
                 })
             }
@@ -2719,7 +2731,8 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
-                    expression_supported: self.supported_expression(&expression),
+                    expression_supported: self
+                        .supported_expression(&expression, ExpressionRole::Returned),
                     returned_place: canonical_place(&texts),
                 })
             }
