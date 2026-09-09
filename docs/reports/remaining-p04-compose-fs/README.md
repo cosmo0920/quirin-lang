@@ -352,7 +352,7 @@ away:
 * **the contract-clause count is 44, not the 42 predicted** from the retained
   unit suite's own loop. The pin was corrected to the measured number.
 
-### 4.4 Provider-side matrix — 5 tests, 32 refusal rows
+### 4.4 Provider-side matrix — 5 tests, 29 refusal rows
 
 `providers/common/composition_effect_tests.rs`, driven over the **real**
 projection the gateway emits for these bodies
@@ -615,33 +615,69 @@ Run in this worktree on Linux with Clang available.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | **GATE_WORKSPACE** |
+| `cargo test --workspace --no-fail-fast` | **2667 passed, 0 failed, 8 ignored** (2567+ → 2667) |
 | `cargo fmt --all -- --check` (both workspaces) | clean |
 | `cargo clippy --all-targets -- -D warnings` (both workspaces) | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 -B scripts/check_lean_audits.py` | **68 audits passed** (67 → 68), no new axiom |
-| `cargo test --manifest-path providers/Cargo.toml --workspace --no-fail-fast` | **GATE_PROVIDERS** |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --no-fail-fast` | **115 passed, 0 failed** (108 → 115) |
 | `python3 -B providers/package.py build` + `qcorec plugins verify` × 5 | all five built and verified (exit 0); ChunkIO 0.11.0 → **0.12.0** |
-| `python3 -m unittest discover -s scripts/tests` | **GATE_PYTHON** |
+| `python3 -B -m unittest discover -s scripts/tests` | 146 tests, **1 failed** — §8.3 |
 
 ### 8.1 New tests
 
-**GATE_NEW_TESTS**
+Twenty-eight new workspace tests — 13 core-side positive
+(`filesystem_chunk_close_composition_source.rs`, one of which is the
+fixture generator and is inert without `QCORE_WRITE_FS_CLOSE_FIXTURE`), 8
+mutation (`filesystem_chunk_close_composition_mutations.rs`), 3 route parity
+(`filesystem_chunk_close_route_parity.rs`) and 4 wire
+(`composition_request_wire.rs`, 14 → 18) — plus six in the providers
+workspace: 5 producer-side (`composition_effect_tests.rs`) and 1 conformance
+pair (`filesystem_chunk_close_composition_capability.rs`, 2 tests).
 
-### 8.2 Corpus expectation, and what could not be measured here
+### 8.1.1 One recorded flake, deliberately not weakened
 
-**No gateway analysis rule changed** (§6), **no contract file changed**, and the
-retained in-process route publishes a **byte-identical certificate** (§4.1), so
-this card cannot move a unit verdict, a function verdict or a diagnostic.
+The first full workspace run recorded **one** failure:
+`enforced_process_limits::a_declared_process_limit_stops_the_fixture_from_forking`,
+the load-flaky `RLIMIT_NPROC` row recorded as **`P02-FLAKE`** in
+`docs/reports/remaining-p03/README.md` §9.1 — it counts every process of the
+real UID, and this wave ran a seven-agent fleet on one host. It **passes in
+isolation** and its assertion is deliberately unchanged. The clean re-run
+recorded in the table above is the one taken with the tree quiescent.
 
-**The canonical CMetrics audit, the `chunkio-core` profile route and the four
-pinned 185-unit artifacts were not re-measured here.** Each needs a prepared
-pinned upstream clone and a CMake build tree, and this host ran out of disk
-during the wave (the shared worktree fleet is the binding constraint, as wave 10
-recorded; a `cargo clean` was needed mid-run just to complete the workspace
-gate). This is the same position `P04-COMPOSE-A`, `P04-B2`, `P04-COMPOSE` and
-`MEMCLOSE` recorded for the 185-unit corpus, extended by one route.
+### 8.2 The canonical CMetrics audit is byte-identical, measured
+
+Not argued: measured, in this worktree, with the five provider packages built
+**once** from this branch's tree and used for both runs, so the comparison
+isolates the analysis change from the package-identity residue.
+
+```sh
+python3 -B scripts/prepare_cmetrics_clang_audit.py \
+  --fluent-bit <checkout> --revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 \
+  --output <build>
+python3 -B providers/package.py build --output build/cycle19/provider-packages-unit
+cargo run --quiet -p qcore-audit -- <build>/fluent-bit-clang-production/cmetrics-audit.json.config
+```
+
+The audit was run at this branch's head, the worktree checked out at the
+untouched base commit `8069a99`, and the audit run again. Both reports are
+`431423131e1f98937b0db0cd6665a8557363d1332931ff12956c877367ae5d3c` and both
+assumption sidecars are
+`c0c15ed22c6ff96914ad3d9318caea8aab3baa545929895cd1c4a97f7ce540b9`, with the
+same `1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0
+gateway failures` and the same `1 checked function contract(s) / 6 Unknown`.
+
+That is what the diff shape predicts (§6): no gateway analysis rule changed, no
+contract file changed, and the retained in-process route publishes a
+byte-identical certificate (§4.1).
+
+**What was not re-measured here.** The `chunkio-core` profile route and the four
+pinned 185-unit artifacts need a further prepared clone and a forced-Libevent
+Monkey tree, and this host's disk was the binding constraint during the wave
+(the shared worktree fleet filled it; a `cargo clean` was needed mid-run just to
+complete the workspace gate). This is the same position `P04-COMPOSE-A`,
+`P04-B2`, `P04-COMPOSE` and `MEMCLOSE` recorded for the 185-unit corpus.
 
 **The integrator's corpus consolidation should expect no change from this card
 beyond the package-identity residue class** — the ChunkIO `provider_version` and
@@ -778,7 +814,35 @@ prerequisite is now nameable.
 
 ---
 
-## 10. Draft increment paragraph
+## 10. Reproduction
+
+```sh
+git submodule update --init --recursive
+cargo test --workspace --no-fail-fast
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo run -p qcore-compiler --example reevaluation_probe
+cargo run -p qcore-compiler --example reevaluation_followup
+python3 -B scripts/check_lean_audits.py
+cargo test --manifest-path providers/Cargo.toml --workspace --no-fail-fast
+python3 -B providers/package.py build --output build/cycle19/provider-packages-unit
+cargo run -q -p qcorec -- plugins verify build/cycle19/provider-packages-unit/qcore.chunkio
+python3 -B -m unittest discover -s scripts/tests -t scripts/tests
+```
+
+The provider fixture is regenerated from the live gateway with
+
+```sh
+QCORE_WRITE_FS_CLOSE_FIXTURE=$PWD/providers/common/fixtures \
+  cargo test -p qcore-verification --test filesystem_chunk_close_composition_source \
+  write_the_provider_fixture
+```
+
+and the conformance drift test refuses a stale one.
+
+---
+
+## 11. Draft increment paragraph
 
 > ChunkIO filesystem-close composition (P04-COMPOSE-FS): the fourth and
 > second-to-last reachable composition module moves through the process
