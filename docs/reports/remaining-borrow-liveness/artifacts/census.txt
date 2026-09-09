@@ -1,0 +1,26 @@
+total borrowed-position considerations: 267
+distinct functions carrying one: 100
+unbound (scalars / names this projection never tracks): 233
+bound: 34
+settled: 0
+
+why each bound consideration fails to settle:
+  unknown + may_be_null + no-target n=27
+  unknown + may_be_null            n=7
+
+functions with a bound borrowed consideration:
+  ctr_span_create                                  n=3
+  LZ4_decompress_generic                           n=3
+  rd_kafka_txn_handle_AddOffsetsToTxn              n=3
+  rd_kafka_txn_handle_AddPartitionsToTxn           n=3
+  rd_kafka_txn_handle_EndTxn                       n=3
+  rd_kafka_AlterConfigsResponse_parse              n=2
+  rd_kafka_AuthorizedOperations_copy               n=2
+  rd_kafka_IncrementalAlterConfigsResponse_parse   n=2
+  rd_kafka_oidc_assertion_create                   n=2
+  rd_kafka_oidc_token_metadata_azure_imds_refresh_cb n=2
+  rd_kafka_snappy_java_uncompress                  n=2
+  input_chunk_collect_output_references            n=2
+  flb_input_chunk_write_header_v2                  n=2
+  mk_http_parser_chunked_decode                    n=2
+  rd_kafka_txn_handle_TxnOffsetCommit              n=1
