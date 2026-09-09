@@ -3252,13 +3252,11 @@ impl Parser<'_> {
                 // Every other call-bearing argument keeps its refusal, because
                 // every other one was refused outright above.
                 if raw_arguments.as_ref().is_some_and(|arguments| {
-                    contract
-                        .parameters
-                        .iter()
-                        .zip(arguments)
-                        .enumerate()
-                        .any(|(index, (mode, argument))| {
-                            !nested.as_ref().is_some_and(|nested| nested.argument == index)
+                    contract.parameters.iter().zip(arguments).enumerate().any(
+                        |(index, (mode, argument))| {
+                            !nested
+                                .as_ref()
+                                .is_some_and(|nested| nested.argument == index)
                                 && !admitted_addresses.contains(argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
@@ -3267,7 +3265,8 @@ impl Parser<'_> {
                                     && argument
                                         .iter()
                                         .any(|name| self.protected_formals.contains(*name)))
-                        })
+                        },
+                    )
                 }) {
                     return LegacyInstruction::Unknown {
                         description: "call has an unmodeled formal address or borrowed expression"
@@ -3305,7 +3304,10 @@ impl Parser<'_> {
                 if let Some(nested) = &nested {
                     let inner = self.call_alias_reads(&nested.arguments, &nested.contract);
                     for read in inner {
-                        if !alias_reads.iter().any(|existing| existing.place == read.place) {
+                        if !alias_reads
+                            .iter()
+                            .any(|existing| existing.place == read.place)
+                        {
                             alias_reads.push(read);
                         }
                     }

@@ -204,9 +204,7 @@ pub fn load_resource_contract_sources(
 /// Derived from the same trusted texts [`load_resource_contract_sources`]
 /// reads, and total-or-reject in the same way: a source set this loader would
 /// reject yields an error here too, never a partial set.
-pub fn variadic_data_tails(
-    sources: &BTreeMap<String, String>,
-) -> Result<BTreeSet<String>, String> {
+pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
     let mut tails = BTreeSet::new();
     for (path, source) in sources {
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;

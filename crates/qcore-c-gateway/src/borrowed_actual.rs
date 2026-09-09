@@ -234,12 +234,10 @@ fn seed_call_arguments(
             // the declaration alone, never from the actual, so a name that is
             // risky for any other reason — an acquisition, an address, a
             // custody position elsewhere — stays risky here.
-            let borrowed = contract.is_some_and(|contract| {
-                match contract.parameters.get(index) {
-                    Some(ResourceParameterMode::Borrowed) => true,
-                    Some(_) => false,
-                    None => variadic_tails.contains(callee),
-                }
+            let borrowed = contract.is_some_and(|contract| match contract.parameters.get(index) {
+                Some(ResourceParameterMode::Borrowed) => true,
+                Some(_) => false,
+                None => variadic_tails.contains(callee),
             });
             if borrowed {
                 continue;

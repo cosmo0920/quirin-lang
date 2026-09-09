@@ -67,7 +67,9 @@ fn nested_refusal(callee: &str) -> String {
 /// The refusal this card installs for an actual beyond the declared parameter
 /// vector with no declared tail to cover it.
 fn excess_refusal(callee: &str) -> String {
-    format!("arguments beyond the declared parameters of `{callee}` are outside the resource projection")
+    format!(
+        "arguments beyond the declared parameters of `{callee}` are outside the resource projection"
+    )
 }
 
 fn load(name: &str, source: &str) -> ResourceContracts {
@@ -301,7 +303,10 @@ fn the_five_settled_arms_are_unchanged() {
             (1, vec![SiteDisposition::Released]),
             (1, vec![SiteDisposition::Released]),
             (1, vec![SiteDisposition::Released]),
-            (2, vec![SiteDisposition::Released, SiteDisposition::Released]),
+            (
+                2,
+                vec![SiteDisposition::Released, SiteDisposition::Released]
+            ),
         ],
         "the five settled arms keep their exact shape: {:?}",
         exit_shape(&caller)

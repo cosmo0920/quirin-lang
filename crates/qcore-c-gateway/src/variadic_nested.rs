@@ -73,8 +73,6 @@
 //! (**C02-P-ALIAS**), which is what decides whether a tail actual can hold an
 //! identity; and that a declared `Borrowed` mode really borrows.
 
-
-
 use qcore_schemas::contract::{
     ResourceContracts, ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
 };
@@ -268,4 +266,299 @@ fn is_data_only_actual(
         }
     }
     true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::BTreeSet;
+
+    /// Split like the importer's own tokenizer: identifiers, numbers and one
+    /// character per punctuation token, so `->` is `-` followed by `>`.
+    fn texts(source: &str) -> Vec<&str> {
+        let bytes = source.as_bytes();
+        let mut tokens = Vec::new();
+        let mut cursor = 0;
+        while cursor < bytes.len() {
+            let byte = bytes[cursor];
+            if byte.is_ascii_whitespace() {
+                cursor += 1;
+            } else if byte.is_ascii_alphabetic() || byte == b'_' {
+                let start = cursor;
+                while cursor < bytes.len()
+                    && (bytes[cursor].is_ascii_alphanumeric() || bytes[cursor] == b'_')
+                {
+                    cursor += 1;
+                }
+                tokens.push(&source[start..cursor]);
+            } else if byte.is_ascii_digit() {
+                let start = cursor;
+                while cursor < bytes.len() && bytes[cursor].is_ascii_alphanumeric() {
+                    cursor += 1;
+                }
+                tokens.push(&source[start..cursor]);
+            } else {
+                tokens.push(&source[cursor..cursor + 1]);
+                cursor += 1;
+            }
+        }
+        tokens
+    }
+
+    const RECORDS: &str = "struct child { int n ; } ; \
+         struct box { int flag ; struct child * kid ; } ; \
+         enum kind { KIND_ONE , KIND_TWO } ;";
+
+    struct Facts {
+        model: TypedAccessModel,
+        types: FunctionTypes,
+        bases: UntrackedBases,
+    }
+
+    /// Build the three declaration facts the tail walker reads over one body.
+    fn facts(body_source: &str, contracts: &ResourceContracts) -> Facts {
+        let unit_tokens = texts(RECORDS);
+        let model = TypedAccessModel::read(&unit_tokens);
+        let body = texts(body_source);
+        let types = FunctionTypes::read(&model, &[], &body, &BTreeSet::new());
+        let bases = crate::borrowed_actual::untracked_bases(
+            &body,
+            &BTreeSet::new(),
+            contracts,
+            &BTreeSet::new(),
+            &model,
+            &types,
+        );
+        Facts {
+            model,
+            types,
+            bases,
+        }
+    }
+
+    fn borrowing(count: usize) -> ResourceFunctionContract {
+        ResourceFunctionContract::new(
+            std::iter::repeat_n(ResourceParameterMode::Borrowed, count),
+            ResourceReturnMode::None,
+        )
+    }
+
+    /// One statement's admitted nested call, decided over `body`'s declaration
+    /// facts, with the enclosing call's contract and tail supplied explicitly.
+    fn nested_of(
+        body_source: &str,
+        statement: &str,
+        outer: &ResourceFunctionContract,
+        outer_tail: bool,
+        contracts: &ResourceContracts,
+    ) -> Option<NestedCallActual> {
+        let f = facts(body_source, contracts);
+        let tokens = texts(statement);
+        let spans = crate::legacy_c::call_argument_spans(&tokens, 0)?;
+        admitted_nested_call(&tokens, 0, &spans, outer, outer_tail, contracts, &f.types)
+    }
+
+    fn tail_ok(body_source: &str, statement: &str, named: usize) -> bool {
+        let contracts = ResourceContracts::default();
+        let f = facts(body_source, &contracts);
+        let tokens = texts(statement);
+        let Some(spans) = crate::legacy_c::call_argument_spans(&tokens, 0) else {
+            return false;
+        };
+        let arguments = spans
+            .iter()
+            .map(|&(start, end)| &tokens[start..end])
+            .collect::<Vec<_>>();
+        tail_arguments_are_data(&arguments, named, None, &f.model, &f.types, &f.bases)
+    }
+
+    const BODY: &str = "int count ; struct box * b ; char * label ; b = make ( ) ;";
+
+    #[test]
+    fn a_declared_scalar_an_enum_constant_and_a_literal_are_data() {
+        assert!(tail_ok(
+            BODY,
+            "log ( __qcore_literal__ , count , KIND_TWO , 7 , label )",
+            1
+        ));
+    }
+
+    #[test]
+    fn a_name_the_body_may_bind_is_never_data() {
+        // `b` is bound by an opaque call, so C02-P's closure refuses it: the
+        // adversarial "a tail smuggling a custody pointer" row, at unit level.
+        assert!(!tail_ok(BODY, "log ( __qcore_literal__ , b )", 1));
+    }
+
+    #[test]
+    fn an_address_a_dereference_a_subscript_or_a_member_is_never_data() {
+        for actual in [
+            "& count",
+            "* label",
+            "label [ 0 ]",
+            "b - > flag",
+            "b . flag",
+        ] {
+            assert!(
+                !tail_ok(BODY, &format!("log ( __qcore_literal__ , {actual} )"), 1),
+                "`{actual}` must never be admitted as tail data"
+            );
+        }
+    }
+
+    #[test]
+    fn a_call_in_the_tail_is_never_data_for_this_walker() {
+        assert!(!tail_ok(BODY, "log ( __qcore_literal__ , size ( b ) )", 1));
+    }
+
+    #[test]
+    fn an_unreadable_function_admits_no_tail() {
+        // A declaration this reader refuses makes `FunctionTypes` unreadable,
+        // and then nothing in the function is admitted.
+        let contracts = ResourceContracts::default();
+        let f = facts("struct { int a ; } anon ;", &contracts);
+        assert!(
+            !f.types.is_readable(),
+            "the fixture must produce an unreadable function"
+        );
+        let tokens = texts("log ( __qcore_literal__ , 1 )");
+        let spans = crate::legacy_c::call_argument_spans(&tokens, 0).expect("balanced");
+        let arguments = spans
+            .iter()
+            .map(|&(start, end)| &tokens[start..end])
+            .collect::<Vec<_>>();
+        assert!(!tail_arguments_are_data(
+            &arguments, 1, None, &f.model, &f.types, &f.bases
+        ));
+    }
+
+    fn with_accessor(result: ResourceReturnMode, modes: usize) -> ResourceContracts {
+        let mut contracts = ResourceContracts::default();
+        contracts.insert_contract(
+            "name",
+            ResourceFunctionContract::new(
+                std::iter::repeat_n(ResourceParameterMode::Borrowed, modes),
+                result,
+            ),
+        );
+        contracts.insert_contract("log", borrowing(1));
+        contracts
+    }
+
+    const STATEMENT: &str = "log ( __qcore_literal__ , name ( b ) )";
+
+    #[test]
+    fn a_neutral_accessor_in_a_declared_tail_is_admitted() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        let nested = nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).expect("admitted");
+        assert_eq!(nested.function, "name");
+        assert_eq!(nested.argument, 1);
+        assert_eq!(nested.arguments, vec![Some("b".to_owned())]);
+    }
+
+    #[test]
+    fn the_same_accessor_without_a_declared_tail_is_refused() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        assert!(nested_of(BODY, STATEMENT, &borrowing(1), false, &contracts).is_none());
+    }
+
+    #[test]
+    fn an_owned_nested_result_is_refused() {
+        for result in [
+            ResourceReturnMode::Owned { nullable: true },
+            ResourceReturnMode::Owned { nullable: false },
+        ] {
+            let contracts = with_accessor(result, 1);
+            assert!(
+                nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).is_none(),
+                "{result:?} must refuse"
+            );
+        }
+    }
+
+    #[test]
+    fn a_custody_bearing_nested_parameter_is_refused() {
+        for mode in [
+            ResourceParameterMode::Owned { nullable: false },
+            ResourceParameterMode::Consumed { nullable: false },
+            ResourceParameterMode::Released { nullable: false },
+            ResourceParameterMode::Out { nullable: false },
+        ] {
+            let mut contracts = ResourceContracts::default();
+            contracts.insert_contract(
+                "name",
+                ResourceFunctionContract::new([mode], ResourceReturnMode::None),
+            );
+            contracts.insert_contract("log", borrowing(1));
+            assert!(
+                nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).is_none(),
+                "{mode:?} must refuse"
+            );
+        }
+    }
+
+    #[test]
+    fn an_uncontracted_nested_callee_is_refused() {
+        let mut contracts = ResourceContracts::default();
+        contracts.insert_contract("log", borrowing(1));
+        assert!(nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).is_none());
+    }
+
+    #[test]
+    fn a_second_nested_call_and_two_level_nesting_are_refused() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        for statement in [
+            "log ( __qcore_literal__ , name ( b ) , name ( b ) )",
+            "log ( __qcore_literal__ , name ( name ( b ) ) )",
+        ] {
+            assert!(
+                nested_of(BODY, statement, &borrowing(1), true, &contracts).is_none(),
+                "`{statement}` must refuse"
+            );
+        }
+    }
+
+    #[test]
+    fn a_nested_call_that_is_only_part_of_an_argument_is_refused() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        for statement in [
+            "log ( __qcore_literal__ , name ( b ) + 1 )",
+            "log ( __qcore_literal__ , ( name ( b ) ) )",
+        ] {
+            assert!(
+                nested_of(BODY, statement, &borrowing(1), true, &contracts).is_none(),
+                "`{statement}` must refuse"
+            );
+        }
+    }
+
+    #[test]
+    fn a_nested_call_at_a_custody_position_is_refused() {
+        let contracts = with_accessor(ResourceReturnMode::None, 1);
+        let refusing = ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Borrowed,
+                ResourceParameterMode::Consumed { nullable: false },
+            ],
+            ResourceReturnMode::None,
+        );
+        assert!(nested_of(BODY, STATEMENT, &refusing, true, &contracts).is_none());
+        // The borrowed position is the control: same statement, same contracts,
+        // and no declared tail needed because the position is named.
+        let control = ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Borrowed,
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::None,
+        );
+        assert!(nested_of(BODY, STATEMENT, &control, false, &contracts).is_some());
+    }
+
+    #[test]
+    fn a_nested_arity_mismatch_is_refused() {
+        // Declared with two parameters, called with one.
+        let contracts = with_accessor(ResourceReturnMode::None, 2);
+        assert!(nested_of(BODY, STATEMENT, &borrowing(1), true, &contracts).is_none());
+    }
 }
