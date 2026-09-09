@@ -15,6 +15,7 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
+use qcore_core::{std_io, std_io_c_emit};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -129,6 +130,23 @@ pub enum CheckedSourceModule {
     /// core extern checker and the surrounding custody, flow and effect
     /// obligations by the established sequential passes.
     ExternCalls(Box<CheckedExternModule>),
+    /// One entry function checked under `source.std-io.v1` (card
+    /// `STD-MODULES`). The certificate is the evidence; the lowered program is
+    /// retained beside it so a consumer can re-derive rather than believe it.
+    StandardIo(Box<CheckedStdIoModule>),
+}
+
+/// A checked `source.std-io.v1` module.
+///
+/// There is no sequential evidence beside the certificate here, and that is a
+/// stated boundary rather than an omission: the route's operand grammar admits
+/// no resource, so the entry binds no identity for the custody, flow and
+/// cleanup passes to check. If that grammar is ever widened — card
+/// `STD-FMT-BORROW` — this module must carry their evidence too.
+#[derive(Clone, Debug)]
+pub struct CheckedStdIoModule {
+    pub lowered: qcore_frontend::source_std_io::LoweredStdIoModule,
+    pub certificate: std_io::StdIoCertificate,
 }
 
 /// A checked `source.extern-call.v1` module.
@@ -188,7 +206,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
         }
     }
 
@@ -202,7 +221,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -213,7 +233,8 @@ impl CheckedSourceModule {
             | Self::ScopedTasks(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -227,7 +248,8 @@ impl CheckedSourceModule {
             | Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -238,7 +260,8 @@ impl CheckedSourceModule {
             | Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -249,8 +272,21 @@ impl CheckedSourceModule {
             | Self::ScopedTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
-            | Self::ComposedEpochTasks(_) => None,
+            | Self::ComposedEpochTasks(_)
+            | Self::StandardIo(_) => None,
             Self::ExternCalls(module) => Some(module),
+        }
+    }
+
+    pub fn as_standard_io(&self) -> Option<&CheckedStdIoModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_) => None,
+            Self::StandardIo(module) => Some(module),
         }
     }
 
@@ -270,6 +306,9 @@ impl CheckedSourceModule {
             // A composed epoch's workers *are* checked bodies, so the count is
             // the task module's, exactly as on the scoped-task route.
             Self::ComposedEpochTasks(module) => module.tasks.module().functions.len(),
+            // And likewise for standard IO: one entry is lowered, and the
+            // profile admits no calls at all.
+            Self::StandardIo(_) => 1,
         }
     }
 }
@@ -309,6 +348,11 @@ pub enum SourceExecutionProfile {
     /// same lowering, same checker, same emission — and the epoch stays
     /// check-only on top of it.
     ComposedEpochTasksV1,
+    /// `source.std-io.v1`: a flat sequential entry that renders scalars and
+    /// writes them as lines, behind the `std.fmt`, `std.io` and `std.logger`
+    /// bundled modules (card `STD-MODULES`). The route's operand grammar admits
+    /// no resource, so its derived effect row is exactly `{Io}`.
+    StandardIoV1,
 }
 
 #[derive(Clone, Debug)]
@@ -521,6 +565,15 @@ pub fn compile_files_with_registry(
     // task worker is a separate checked model (design §3.4).
     if qcore_frontend::source_extern::has_source_extern(&parsed) {
         return compile_extern_source(&parsed, &typed, mode, options, &ranges);
+    }
+    // Selected last among the special routes, on the same principle as the
+    // extern route above: a module that both prints and spawns, or both prints
+    // and calls an extern function, stays with the more specific model, which
+    // keeps its existing refusal for the statements it does not model. Lifting
+    // either composition is a separate card — a worker and an extern callee are
+    // each a separate checked model.
+    if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
+        return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
     }
     let error_names = parsed
         .declarations
@@ -1739,6 +1792,108 @@ fn compile_extern_source(
         source_map: Vec::new(),
         // The reference observation of this route is the extern call trace, not
         // the sequential cleanup observation this field carries.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.std-io.v1` module (card `STD-MODULES`).
+///
+/// The route emits real C and has a real reference execution, and the two are
+/// compared per stream. It publishes no sequential evidence, because its
+/// operand grammar admits no resource — see [`CheckedStdIoModule`].
+fn compile_std_io_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q030",
+            "entry-free `source.std-io.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_std_io::lower_source_std_io(parsed, typed, &entry)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let certificate = std_io::check_std_io_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardIo,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_io::recheck_std_io_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q031",
+            SemanticPass::StandardIo,
+            lowered.scope_span,
+            format!("the standard-IO certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let reference_observation = std_io_c_emit::interpret_std_io_program(
+        &lowered.program,
+        &certificate,
+    )
+    .map_err(|refusal| {
+        vec![plain_diagnostic(
+            "Q030",
+            format!("the standard-IO reference execution refused this trace: {refusal:?}"),
+        )]
+    })?;
+    let emission = std_io_c_emit::emit_std_io_c11(&lowered.program, &certificate).map_err(
+        |refusal| {
+            vec![plain_diagnostic(
+                "Q030",
+                format!("the standard-IO backend refused this trace: {refusal:?}"),
+            )]
+        },
+    )?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardIo(Box::new(CheckedStdIoModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::StandardIoV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream line trace,
+        // carried on `extern_observation` beside the extern route's own trace
+        // rather than on the sequential cleanup field, which models something
+        // else entirely.
         reference_observation: None,
         extern_observation: Some(reference_observation),
     })

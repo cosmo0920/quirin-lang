@@ -1,0 +1,22 @@
+import std.fmt;
+import std.io;
+import std.logger;
+
+// All three modules in one entry (card STD-MODULES). Every rendered value is a
+// scalar: `source.std-io.v1` has no operand form that could denote a resource,
+// so nothing here can be consumed, released or retained by a rendering.
+//
+// `fatal` is the severity spelled where a stdlib would write `error`; `error`
+// is already the reserved error-type declaration keyword.
+fn main() -> unit effects { io } {
+    let total = 42;
+    let mask = 255;
+    print dec total;
+    print hex mask;
+    log info dec total;
+    log warn hex mask;
+    log fatal dec -7;
+    flush;
+    print dec -7;
+    return;
+}

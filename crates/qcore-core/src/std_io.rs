@@ -1,0 +1,447 @@
+//! `source.std-io.v1` — the checked model behind the `std.fmt`, `std.io` and
+//! `std.logger` bundled modules (card `STD-MODULES`).
+//!
+//! # What this model is, stated before anything else
+//!
+//! A program on this route is a flat, ordered list of line-producing events in
+//! one entry function. Each event renders **one scalar** and writes **one line**
+//! to one of two streams, or hands the logger's stream to its sink.
+//!
+//! # The v1 effect discipline, and why it is sound by construction
+//!
+//! [`StdIoOperand`] has exactly two constructors, and **neither of them can
+//! denote a resource**. There is no operand form for an owned buffer, a borrow,
+//! a loan share or a handle. So a rendering on this route cannot consume,
+//! release, store or retain custody of anything: it is not that the checker
+//! refuses those uses, it is that the model cannot express them. That is
+//! stronger than the borrow-only discipline the spec already states for logging
+//! at §L11 ("Matching an error, logging it, or replacing its tag does not
+//! release its payload"), and it is why [`derived_effects`] is exactly `{Io}`
+//! for every program this module accepts — never `Alloc`, never `Mut`.
+//!
+//! Admitting a *borrowed* render of a live resource is deliberately out of v1
+//! and named `STD-FMT-BORROW`. Refusing the whole class is the fail-closed
+//! choice; widening it is a separate card with its own custody argument.
+//!
+//! # What is not claimed
+//!
+//! * No interleaving order between the two streams is modeled or claimed. Each
+//!   stream's own line order is checked; their relative order is not.
+//! * [`StdIoEvent::Flush`] models **sink handoff**, not durability: the C
+//!   rendering is `fflush`, and no `fsync`, no device write and no crash
+//!   survival is claimed or measured (the O02/O03 boundary discipline).
+//! * Rendering agreement between the reference execution and the emitted C is
+//!   checked by comparison over the fixed forms below, not proved from a model
+//!   of C's `printf` conversion specifiers.
+//! * There is no format-string language here. A rendering is one of two closed
+//!   constructors; nothing in a source program supplies a template.
+
+use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
+
+use crate::typed_errors::{Effect, EffectRow};
+
+/// The `std.fmt` vocabulary: how one scalar becomes the bytes of a line.
+///
+/// Both forms are total on `i32`, so a rendering never fails and never has an
+/// error exit. `Dec` is the signed decimal the sequential backend already
+/// renders results with; `Hex` renders the unsigned reinterpretation in a fixed
+/// eight-digit field, which is the one construct this card adds to the
+/// backend's existing repertoire — it exists so the selector is non-vacuous and
+/// so a wrong-rendering refusal is testable in both directions.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Rendering {
+    Dec,
+    Hex,
+}
+
+impl Rendering {
+    pub fn parse(text: &str) -> Option<Self> {
+        match text {
+            "dec" => Some(Self::Dec),
+            "hex" => Some(Self::Hex),
+            _ => None,
+        }
+    }
+
+    pub fn keyword(self) -> &'static str {
+        match self {
+            Self::Dec => "dec",
+            Self::Hex => "hex",
+        }
+    }
+
+    /// The exact bytes of the rendered field. The C backend must produce this
+    /// same text; the two are compared, never assumed equal.
+    pub fn render(self, value: i32) -> String {
+        match self {
+            Self::Dec => format!("{value}"),
+            Self::Hex => format!("0x{:08X}", value as u32),
+        }
+    }
+
+    /// The `printf` conversion the C backend uses for this rendering.
+    pub fn c_conversion(self) -> &'static str {
+        match self {
+            Self::Dec => "%\" PRId32 \"",
+            Self::Hex => "0x%08\" PRIX32 \"",
+        }
+    }
+
+    /// The C expression that presents the operand to [`Self::c_conversion`].
+    pub fn c_operand(self, expression: &str) -> String {
+        match self {
+            Self::Dec => expression.to_owned(),
+            Self::Hex => format!("(uint32_t)({expression})"),
+        }
+    }
+}
+
+/// The `std.logger` severity tag. A level is a label on a line; it selects no
+/// stream, filters nothing and is not a configuration model. Whether a
+/// consumer acts on it is outside this route.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Level {
+    Info,
+    Warn,
+    /// Spelled `fatal`, **not** `error`. `error` is already the reserved
+    /// error-type declaration keyword (34 occurrences across the source corpus
+    /// at this card's census), so the level was renamed rather than the pinned
+    /// declaration surface edited — the same resolution card T08-EPOCH-SRC
+    /// applied when `work` became `effort`.
+    Fatal,
+}
+
+impl Level {
+    pub fn parse(text: &str) -> Option<Self> {
+        match text {
+            "info" => Some(Self::Info),
+            "warn" => Some(Self::Warn),
+            "fatal" => Some(Self::Fatal),
+            _ => None,
+        }
+    }
+
+    pub fn keyword(self) -> &'static str {
+        match self {
+            Self::Info => "info",
+            Self::Warn => "warn",
+            Self::Fatal => "fatal",
+        }
+    }
+
+    pub fn tag(self) -> &'static str {
+        match self {
+            Self::Info => "INFO",
+            Self::Warn => "WARN",
+            Self::Fatal => "FATAL",
+        }
+    }
+}
+
+/// The two streams this route writes. They are separate observations: no order
+/// between them is modeled.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Stream {
+    /// `std.io` writes here.
+    Out,
+    /// `std.logger` writes here.
+    Err,
+}
+
+impl Stream {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Out => "out",
+            Self::Err => "err",
+        }
+    }
+
+    pub fn c_handle(self) -> &'static str {
+        match self {
+            Self::Out => "stdout",
+            Self::Err => "stderr",
+        }
+    }
+}
+
+/// What a rendering may be applied to.
+///
+/// **This enum is the v1 effect discipline.** It has no resource constructor,
+/// so no program on this route can hand custody to a rendering. Adding one is
+/// a semantic change requiring its own custody argument, not a convenience.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StdIoOperand {
+    /// An integer literal written at the site.
+    Literal(i32),
+    /// A name the entry bound to an integer literal with `let`.
+    Scalar(String),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StdIoEvent {
+    /// `print RENDERING OPERAND;` — one line on [`Stream::Out`].
+    Print {
+        rendering: Rendering,
+        operand: StdIoOperand,
+    },
+    /// `log LEVEL RENDERING OPERAND;` — one line on [`Stream::Err`].
+    Log {
+        level: Level,
+        rendering: Rendering,
+        operand: StdIoOperand,
+    },
+    /// `flush;` — hand every previously accepted logger line to the sink.
+    /// Produces no line of its own, so it never moves either stream's
+    /// observation.
+    Flush,
+    /// The entry's return. Exactly one, last.
+    Return,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct StdIoProgram {
+    pub entry: String,
+    /// The integer values the entry bound with `let`, by name.
+    pub scalars: BTreeMap<String, i32>,
+    /// The entry's declared `effects { … }` row, verbatim from source.
+    pub declared_effects: EffectRow,
+    pub events: Vec<StdIoEvent>,
+}
+
+/// The derived effect row: exactly `{Io}` when the program writes or flushes,
+/// and empty otherwise. `Alloc` and `Mut` are unreachable on this route by
+/// construction — see the module header.
+pub fn derived_effects(program: &StdIoProgram) -> EffectRow {
+    let writes = program.events.iter().any(|event| {
+        matches!(
+            event,
+            StdIoEvent::Print { .. } | StdIoEvent::Log { .. } | StdIoEvent::Flush
+        )
+    });
+    if writes {
+        EffectRow::new([Effect::Io])
+    } else {
+        EffectRow::default()
+    }
+}
+
+/// One accepted line of the reference observation, before it is split by
+/// stream. `Flush` contributes none.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ObservedLine {
+    pub stream: Stream,
+    pub text: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct StdIoCertificate {
+    pub entry: String,
+    /// The derived row, recomputed by the recheck and compared.
+    pub effects: EffectRow,
+    /// Every line this program produces, in program order across both streams.
+    /// A consumer that needs one stream projects it; the cross-stream order
+    /// here is the *program's* order, which is not claimed to be the order the
+    /// two streams are observed in.
+    pub lines: Vec<ObservedLine>,
+    /// How many `flush` barriers the program performs.
+    pub flushes: usize,
+    /// The renderings actually used, so a certificate names its own `std.fmt`
+    /// surface rather than the whole vocabulary.
+    pub renderings: BTreeSet<Rendering>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StdIoError {
+    /// `Q028`: the operand does not denote a scalar this entry bound.
+    UnboundScalar { event: usize, name: String },
+    /// `Q029`: the declared effect row does not admit the derived one.
+    EffectNotDeclared { event: usize, effect: Effect },
+    /// `Q030`: the flat entry shape this profile models is violated.
+    Shape { event: usize, reason: &'static str },
+}
+
+impl StdIoError {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::UnboundScalar { .. } => "Q028",
+            Self::EffectNotDeclared { .. } => "Q029",
+            Self::Shape { .. } => "Q030",
+        }
+    }
+
+    pub fn event(&self) -> usize {
+        match self {
+            Self::UnboundScalar { event, .. }
+            | Self::EffectNotDeclared { event, .. }
+            | Self::Shape { event, .. } => *event,
+        }
+    }
+}
+
+impl fmt::Display for StdIoError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnboundScalar { name, .. } => write!(
+                f,
+                "`{name}` is not a scalar this entry bound; `source.std-io.v1` renders integer \
+                 literals and `let`-bound integers only, and has no operand form that could \
+                 denote a resource"
+            ),
+            Self::EffectNotDeclared { effect, .. } => write!(
+                f,
+                "this entry performs `{effect:?}` but its declared `effects {{ … }}` row does not \
+                 admit it"
+            ),
+            Self::Shape { reason, .. } => write!(f, "{reason}"),
+        }
+    }
+}
+
+fn operand_value(
+    program: &StdIoProgram,
+    index: usize,
+    operand: &StdIoOperand,
+) -> Result<i32, StdIoError> {
+    match operand {
+        StdIoOperand::Literal(value) => Ok(*value),
+        StdIoOperand::Scalar(name) => {
+            program
+                .scalars
+                .get(name)
+                .copied()
+                .ok_or_else(|| StdIoError::UnboundScalar {
+                    event: index,
+                    name: name.clone(),
+                })
+        }
+    }
+}
+
+/// Check a lowered program and derive its certificate. Every refusal is
+/// reported; the certificate is produced only when there are none.
+pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, Vec<StdIoError>> {
+    let mut errors = Vec::new();
+    let mut lines = Vec::new();
+    let mut flushes = 0;
+    let mut renderings = BTreeSet::new();
+    let mut returned = false;
+
+    for (index, event) in program.events.iter().enumerate() {
+        if returned {
+            errors.push(StdIoError::Shape {
+                event: index,
+                reason: "this entry continues after its return; `source.std-io.v1` models one \
+                         flat sequence ending in exactly one return",
+            });
+            break;
+        }
+        match event {
+            StdIoEvent::Print { rendering, operand } => {
+                renderings.insert(*rendering);
+                match operand_value(program, index, operand) {
+                    Ok(value) => lines.push(ObservedLine {
+                        stream: Stream::Out,
+                        text: rendering.render(value),
+                    }),
+                    Err(error) => errors.push(error),
+                }
+            }
+            StdIoEvent::Log {
+                level,
+                rendering,
+                operand,
+            } => {
+                renderings.insert(*rendering);
+                match operand_value(program, index, operand) {
+                    Ok(value) => lines.push(ObservedLine {
+                        stream: Stream::Err,
+                        text: format!("[{}] {}", level.tag(), rendering.render(value)),
+                    }),
+                    Err(error) => errors.push(error),
+                }
+            }
+            StdIoEvent::Flush => flushes += 1,
+            StdIoEvent::Return => returned = true,
+        }
+    }
+
+    if !returned {
+        errors.push(StdIoError::Shape {
+            event: program.events.len(),
+            reason: "this entry never returns; `source.std-io.v1` requires exactly one return",
+        });
+    }
+
+    let derived = derived_effects(program);
+    for effect in derived.iter() {
+        if !program.declared_effects.contains(effect) {
+            errors.push(StdIoError::EffectNotDeclared {
+                event: program.events.len(),
+                effect: effect.clone(),
+            });
+        }
+    }
+
+    if errors.is_empty() {
+        Ok(StdIoCertificate {
+            entry: program.entry.clone(),
+            effects: derived,
+            lines,
+            flushes,
+            renderings,
+        })
+    } else {
+        Err(errors)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StdIoRecheckFailure {
+    Entry,
+    Effects,
+    Lines,
+    Flushes,
+    Renderings,
+    Refused,
+}
+
+impl fmt::Display for StdIoRecheckFailure {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let what = match self {
+            Self::Entry => "the entry name",
+            Self::Effects => "the derived effect row",
+            Self::Lines => "the produced lines",
+            Self::Flushes => "the barrier count",
+            Self::Renderings => "the used renderings",
+            Self::Refused => "the program itself, which the recheck refuses",
+        };
+        write!(f, "{what} does not survive an independent rederivation")
+    }
+}
+
+/// Rederive the certificate from the program alone and compare it field for
+/// field. A published certificate is never one the driver did not recompute.
+pub fn recheck_std_io_certificate(
+    program: &StdIoProgram,
+    certificate: &StdIoCertificate,
+) -> Result<(), StdIoRecheckFailure> {
+    let rederived =
+        check_std_io_program(program).map_err(|_| StdIoRecheckFailure::Refused)?;
+    if rederived.entry != certificate.entry {
+        return Err(StdIoRecheckFailure::Entry);
+    }
+    if rederived.effects != certificate.effects {
+        return Err(StdIoRecheckFailure::Effects);
+    }
+    if rederived.lines != certificate.lines {
+        return Err(StdIoRecheckFailure::Lines);
+    }
+    if rederived.flushes != certificate.flushes {
+        return Err(StdIoRecheckFailure::Flushes);
+    }
+    if rederived.renderings != certificate.renderings {
+        return Err(StdIoRecheckFailure::Renderings);
+    }
+    Ok(())
+}

@@ -3,7 +3,10 @@ use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind,
 };
 use crate::lexer::{Span, Symbol, TokenKind};
-use qcore_core::module_imports::{CONCURRENCY_MODULE, EXTERN_MODULE, ModuleImports};
+use crate::source_std_io::StdIoUse;
+use qcore_core::module_imports::{
+    CONCURRENCY_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE, LOGGER_MODULE, ModuleImports,
+};
 
 /// Importing another compilation input never grants this file a capability.
 /// Call this on each input before combining declarations across files.
@@ -47,7 +50,51 @@ pub fn check_source_imports(
             ),
         }]);
     }
+    // Card `STD-MODULES`. Each capability is gated by its own module, and by no
+    // other: `std.io` never grants the logger, `std.logger` never grants
+    // standard output, and `std.fmt` alone opens no stream at all. `flush`
+    // names no rendering, so a logger-only file that never renders needs no
+    // `std.fmt` — measured, not assumed.
+    let uses = crate::source_std_io::std_io_uses(program);
+    if !imports.io()
+        && let Some(span) = uses.get(&StdIoUse::Print)
+    {
+        return Err(vec![missing_import(*span, IO_MODULE, "`print`")]);
+    }
+    if !imports.logger()
+        && let Some(span) = uses
+            .get(&StdIoUse::Log)
+            .or_else(|| uses.get(&StdIoUse::Flush))
+    {
+        return Err(vec![missing_import(
+            *span,
+            LOGGER_MODULE,
+            "`log` and `flush`",
+        )]);
+    }
+    if !imports.fmt()
+        && let Some(span) = crate::source_std_io::rendering_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            FMT_MODULE,
+            "naming a rendering",
+        )]);
+    }
     Ok(imports)
+}
+
+/// `Q015` is the existing "this file uses a capability it did not import"
+/// diagnostic; this card reuses it rather than minting a code that would mean
+/// the same thing. The message names the module, so the three capabilities are
+/// distinguishable without three codes.
+fn missing_import(span: Span, module: &str, what: &str) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: "Q015",
+        pass: SemanticPass::NameResolution,
+        span,
+        message: format!("{what} requires an explicit `import {module};` in this source file"),
+    }
 }
 
 /// The first call in this file whose callee is one of this file's own `extern

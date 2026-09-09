@@ -15,6 +15,7 @@ pub mod source_epoch;
 pub mod source_epoch_tasks;
 pub mod source_extern;
 pub mod source_mutex;
+pub mod source_std_io;
 pub mod source_tasks;
 
 pub use parser::parse_program;

@@ -1,0 +1,9 @@
+import std.logger;
+
+// `flush` names no rendering, so a logger-only file that never renders needs no
+// `std.fmt` import. This fixture pins that measurement rather than assuming the
+// three modules always travel together.
+fn main() -> unit effects { io } {
+    flush;
+    return;
+}
