@@ -272,43 +272,49 @@ fn the_success_exit_discharges_and_the_caller_reaches_safe() {
     assert!(leaks(&caller).is_empty());
 }
 
-/// The five failure arms are **unchanged**: each still releases the chunk
-/// exactly once, naming the same acquisition site, exactly as cards O04-ARMS,
-/// O04-B08, O04-READ-BOUND and O04-B09B10 measured.
+/// The **whole** per-exit ledger, pinned exactly: every exit line, its custody
+/// disposition, and every site with its acquisition line. The five failure arms
+/// keep the exact shape cards O04-ARMS, O04-B08, O04-READ-BOUND and O04-B09B10
+/// measured — each releasing the chunk once, all naming acquisition site 206 —
+/// and C6 escapes all three identities. A silent change in either direction
+/// fails here.
 #[test]
-fn the_five_settled_arms_are_unchanged() {
+fn the_whole_per_exit_ledger_is_pinned() {
     if !clang_available() {
         return;
     }
     let caller = real_caller(&real_unit());
-    let mut arms = caller
+    let ledger = caller
         .exits
         .iter()
-        .filter(|exit| exit.sites.len() < 3)
         .map(|exit| {
             (
-                exit.sites.len(),
+                exit.line,
+                exit.custody,
                 exit.sites
                     .iter()
-                    .map(|site| site.disposition)
+                    .map(|site| (site.acquisition_line, site.disposition))
                     .collect::<Vec<_>>(),
             )
         })
         .collect::<Vec<_>>();
-    arms.sort_by_key(|(count, _)| *count);
+    use ExitCustody::Discharged;
+    use SiteDisposition::{Escaped, Released};
     assert_eq!(
-        arms,
+        ledger,
         vec![
-            (0, vec![]),
-            (1, vec![SiteDisposition::Released]),
-            (1, vec![SiteDisposition::Released]),
-            (1, vec![SiteDisposition::Released]),
             (
-                2,
-                vec![SiteDisposition::Released, SiteDisposition::Released]
+                277,
+                Discharged,
+                vec![(206, Escaped), (227, Escaped), (244, Escaped)]
             ),
+            (251, Discharged, vec![(206, Released), (227, Released)]),
+            (231, Discharged, vec![(206, Released)]),
+            (225, Discharged, vec![(206, Released)]),
+            (218, Discharged, vec![(206, Released)]),
+            (211, Discharged, vec![]),
         ],
-        "the five settled arms keep their exact shape: {:?}",
+        "the whole per-exit ledger: {:?}",
         exit_shape(&caller)
     );
 }
@@ -823,4 +829,28 @@ fn a_certificate_resting_on_the_tail_is_rederived_from_its_own_sources() {
         check_legacy_safety_certificate(&forged).is_err(),
         "the recheck admitted a certificate whose declared tail was withdrawn"
     );
+}
+
+/// Reporting aid: the measured per-exit ledger, printed for the card report.
+/// `cargo test -p qcore-c-gateway --test o04_trace -- --ignored --nocapture`
+#[test]
+#[ignore = "reporting aid, not an assertion"]
+fn print_the_measured_arm_ledger() {
+    if !clang_available() {
+        return;
+    }
+    let caller = real_caller(&real_unit());
+    println!("flb_input_chunk_create: {:?}", caller.status);
+    for exit in &caller.exits {
+        println!(
+            "  exit L{} {:?} sites={:?}",
+            exit.line,
+            exit.custody,
+            exit.sites
+                .iter()
+                .map(|site| (site.acquisition_line, site.disposition))
+                .collect::<Vec<_>>()
+        );
+    }
+    println!("  diagnostics: {:?}", caller.diagnostics);
 }

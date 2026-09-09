@@ -258,6 +258,50 @@ this card's subject.
 
 ---
 
+## 3bis. The measured per-exit ledger
+
+`flb_input_chunk_create`, on the **byte-verbatim** upstream body, under the
+premise set of §4. Measured by
+[`o04_trace.rs::print_the_measured_arm_ledger`](../../../crates/qcore-c-gateway/tests/o04_trace.rs)
+and pinned in full — exit line, custody, and every site with its acquisition
+line — by `the_whole_per_exit_ledger_is_pinned`, so a silent change in either
+direction fails.
+
+```
+flb_input_chunk_create: Safe
+  exit L277 Discharged sites=[(206, Escaped), (227, Escaped), (244, Escaped)]
+  exit L251 Discharged sites=[(206, Released), (227, Released)]
+  exit L231 Discharged sites=[(206, Released)]
+  exit L225 Discharged sites=[(206, Released)]
+  exit L218 Discharged sites=[(206, Released)]
+  exit L211 Discharged sites=[]
+  diagnostics: []
+```
+
+| O00 exit | preprocessed line | Arm | O04-B09B10 | **This card** | Residual |
+|---|---|---|---|---|---|
+| C1 | 211 | constructor returned NULL | Discharged | **Discharged** | none acquired |
+| C2 | 218 | `up_force == -1` | Discharged | **Discharged** | chunk Released @206 |
+| C3 | 225 | header write `== -1` | Discharged | **Discharged** | chunk Released @206 |
+| C4 | 231 | `ic` calloc NULL | Discharged | **Discharged** | chunk Released @206 |
+| C5 | 251 | `routes_mask` calloc NULL | Discharged | **Discharged** | chunk + `ic` Released @206, @227 |
+| **C6** | **277** | **success + publication** | **`Unknown`, 1 refusal** | **Discharged** | all three **Escaped** @206, @227, @244 |
+
+Site counts `[0,1,1,1,2]` on the five settled arms, every site `Released`, all
+four cleanup arms naming the same acquisition site 206: **unchanged** from
+cards O04-ARMS, O04-B08, O04-READ-BOUND and O04-B09B10. No exit is a
+`Residual`, no `Leak` is reported, and **no `Mixed` site remains**.
+
+C6 escapes all three identities — the chunk and the routes mask as live linked
+children of the escaping aggregate (premise **P-B08-SHALLOW**), and `ic` itself
+as the returned value. This is the shape card O04-B09B10's labelled control
+predicted; the one difference is the exit line, **277** here against the
+control's 276, because that control replaced the two-line `flb_trace` statement
+with a one-line call. On the verbatim body the statement is still there, and
+now modeled.
+
+---
+
 ## 4. Every entry premise, named
 
 O04's nine premises, O04-ARMS's two, O04-B08's two (**P-B08-SHALLOW** and the
@@ -470,7 +514,7 @@ added, removed or downgraded, and the two diagnostics this card introduces are
 
 ## 8. Evidence
 
-### 8.1 Held-out generic family — 17 assertions
+### 8.1 Held-out generic family — 12 assertions
 
 [`crates/qcore-c-gateway/tests/o04_trace.rs`](../../../crates/qcore-c-gateway/tests/o04_trace.rs),
 a `v_*` API deliberately unrelated to ChunkIO, to Fluent Bit **and** to the
@@ -499,12 +543,12 @@ name the body binds; the five indirection shapes; an unreadable function; and
 the nested admission's whole premise set including the custody-position refusal
 with its borrowed-position control.
 
-### 8.2 Real-source recheck — 5 assertions
+### 8.2 Real-source recheck — 5 assertions plus one reporting aid
 
 | Test | Result |
 |---|---|
 | `the_success_exit_discharges_and_the_caller_reaches_safe` | **the headline**: `Safe`, no diagnostics, six exits `Discharged`, C6 escaping all three identities |
-| `the_five_settled_arms_are_unchanged` | the five failure arms keep their exact site counts and `Released` dispositions |
+| `the_whole_per_exit_ledger_is_pinned` | the complete six-exit ledger — line, custody, and every site with its acquisition line — pinned exactly (§3bis) |
 | `withdrawing_either_declared_callee_restores_the_refusal` | three substitutions on the real fixture — no `flb_trace` declaration; `flb_trace` without its tail; the accessor uncontracted — each restores a refusal and returns C6 to `Unknown` |
 | `the_constructor_boundary_is_unchanged` | `cio_chunk_open`: 4 Discharged / 2 Unknown, no leak alleged |
 | `the_program_stays_unknown` | a function reaching `Safe` is not a unit reaching `Safe` |
@@ -595,9 +639,9 @@ Three wave-13 cards run in parallel in `crates/qcore-c-gateway/`:
 | `crates/qcore-c-gateway/src/variadic_nested.rs` | new — `NestedCallActual`, `admitted_nested_call`, `tail_arguments_are_data`, `is_data_only_actual`; 14 unit tests |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | `NestedContractCall` and `ContractCall::nested`; the nested admission, the arity gate and the `&`-gate exemption in `classify_simple`; the nested application in `transfer`; `call_argument_spans` with `call_arguments` refactored onto it; `borrowed_argument_place`; `declared_variadic_tails` |
 | `crates/qcore-c-gateway/src/borrowed_actual.rs` | one widened conjunct in `seed_call_arguments` plus the `variadic_tails` parameter (§3.2) |
-| `crates/qcore-c-gateway/src/typed_field_access.rs` | two additive accessors (`declared_is_scalar`, and `is_enum_constant` reused) |
+| `crates/qcore-c-gateway/src/typed_field_access.rs` | one additive accessor, `declared_is_scalar` (the existing `is_enum_constant` is reused unchanged) |
 | `crates/qcore-c-gateway/src/aggregate_store.rs` | one test-only call site updated for the new parameter |
-| `crates/qcore-c-gateway/tests/o04_trace.rs` | new — 17 held-out assertions |
+| `crates/qcore-c-gateway/tests/o04_trace.rs` | new — 17 held-out assertions plus one ignored reporting aid |
 | `crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_{callees,generic}.qcore` | new — the two declared callee premises and the held-out `v_*` API, both outside `contract/qcore` |
 | `crates/qcore-c-gateway/tests/unit/legacy_c.rs` | one new struct field in one constructed instruction |
 | `proof/QCore/VariadicNested.lean`, `proof/QCore.lean`, `proof/AuditVariadicNested.lean` | new module (39 theorems) and its axiom audit |
@@ -619,21 +663,27 @@ Libevent submodule initialised.
 
 | Gate | Command | Observed | Exit |
 |---|---|---|---|
-| Workspace tests | `cargo test --workspace --no-fail-fast` | see §12.1 | 0 |
+| Workspace tests | `cargo test --workspace --no-fail-fast` | **2,349 passed / 0 failed / 6 ignored** | 0 |
 | Format | `cargo fmt --all -- --check` | clean | 0 |
 | Clippy | `cargo clippy --all-targets -- -D warnings` | clean | 0 |
 | Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | ran | 0 |
 | Follow-up | `cargo run -p qcore-compiler --example reevaluation_followup` | ran | 0 |
 | Lean audits | `python3 -B scripts/check_lean_audits.py` | **58 audits passed** (57 → 58) | 0 |
-| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | see §12.1 | 0 |
+| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | **87 passed / 0 failed** | 0 |
 | Provider packages | `python3 -B providers/package.py build` | five packages built and verified | 0 |
-| Python | `python3 -B -m unittest discover -s scripts/tests` | see §12.2 | 1 |
+| Python | `python3 -B -m unittest discover -s scripts/tests` | **125 ran, 1 failure** — see §12.2 | 1 |
 | 185-unit corpus | pinned route, before and after | §5 | 0 / 0 |
 | Configured audits | `qcore-audit` over cmetrics-counter and chunkio-core, before and after | §5.4 | 0 / 0 |
 
-### 12.1 Measured tallies
+### 12.1 What this card contributes
 
-Filled in from the final run; see §12.3 for the load-flaky tests.
+**31 new assertions** — 17 held-out integration (`o04_trace.rs`) and 14
+Clang-free unit tests (`variadic_nested`'s own module) — and **39 new Lean
+theorems**, every one of them audited by name and none introducing an axiom
+(every theorem depends only on `propext`, some additionally on `Quot.sound`).
+The workspace tally is 2,349; no existing test was added, removed or renamed,
+so the branch base stood at 2,318 — that figure is **derived by subtraction**,
+not separately measured.
 
 ### 12.2 One integrator-owned pin must move — `validation.lean_audits`
 
@@ -656,6 +706,16 @@ regenerating the matrix with `--gate`:
 ### 12.3 Load-flaky
 
 `cycle20_verifier_plugins`'s `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
-failed once in a full-workspace run under the concurrent wave-13 fleet and
-**passed in isolation**; its assertion was not touched. The P02 `RLIMIT_NPROC`
-and P03 confined-write tests are the other two recorded load-flaky cases.
+failed once in an early full-workspace run under the concurrent wave-13 fleet
+and **passed in isolation**; it also passed in the final full run recorded
+above. Its assertion was not touched. The P02 `RLIMIT_NPROC` and P03
+confined-write tests are the other two recorded load-flaky cases; neither
+failed here.
+
+### 12.4 A note on the concurrent fleet
+
+The corpus runs of §5 were executed while three other wave-13 cards were
+running their own audits on the same host, which is why the BEFORE run took
+substantially longer than the AFTER one. That affects wall-clock only: both
+runs read the same pinned clone read-only, wrote to separate output
+directories, and produced byte-identical artifacts.
