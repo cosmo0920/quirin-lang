@@ -259,7 +259,7 @@ contract and profile, and the guarded-delete contract, profile and declared
 eligibility field) are now explicit parameters (`FileCloseContracts`,
 `FileCloseDeleteContracts`).
 
-`compiler/src/verifier_plugins/chunkio/file_close.rs` becomes a 150-line adapter
+`compiler/src/verifier_plugins/chunkio/file_close.rs` becomes a 159-line adapter
 that supplies the ChunkIO half and delegates. Its public API is preserved:
 `CONTRACT`, `DELETE_CONTRACT`, `check_file_close_source`,
 `check_file_close_deletion_source`, and every published type re-exported at the
@@ -291,7 +291,8 @@ are otherwise unedited.
 
 ## 5. The gateway diff is one module
 
-The whole `crates/qcore-c-gateway` change is `composition_source.rs`.
+The whole `crates/qcore-c-gateway` change is `composition_source.rs` plus its
+`Cargo.toml` schema-version line.
 `legacy_c.rs`, `legacy_summary.rs`, `typed_source.rs`, `borrowed_actual.rs`,
 `aggregate_store.rs`, `may_alias.rs` and every other analysis file are untouched.
 No gateway analysis rule changed, so no unit verdict, function verdict or
@@ -330,8 +331,8 @@ card makes a previously refused body admissible.
 
 ### 6.2 Core-side positive suite
 
-`crates/qcore-verification/tests/file_close_composition_source.rs` (13 tests +
-a fixture generator), driving the real gateway imports, the real task
+`crates/qcore-verification/tests/file_close_composition_source.rs` (12 tests
+plus a fixture generator), driving the real gateway imports, the real task
 derivations at both levels and the real trusted compositions:
 
 - the non-deleting composition answers 43 cases with the very counts the
@@ -363,7 +364,7 @@ arm's diagnostic follows the **returned** value, not the syscall outcome, so a
 deletion blocked by the record's own fields logs exactly as a failed one does —
 21 rows, not 8. The assertion was corrected to the measurement.
 
-### 6.3 Core-side mutation matrix — 7 tests, **169 rows, all refused**
+### 6.3 Core-side mutation matrix — 7 tests, **171 rows, all refused**
 
 `crates/qcore-verification/tests/file_close_composition_mutations.rs`. Every
 forged reading is asserted to actually differ from the honest one **before** it is
@@ -409,7 +410,7 @@ certificates the honest route re-established for itself, rather than rebuilding
 core supplies decides — and the end-to-end direction is covered by §6.5's
 false-contract rows through the real package.
 
-### 6.4 Provider-side matrix — 5 tests
+### 6.4 Provider-side matrix — 6 tests
 
 `providers/common/composition_effect_tests.rs`, driven over the **real**
 projections the gateway emits for these bodies
@@ -534,11 +535,20 @@ retained routes' own unit suites, which are unchanged and pass — including
 `filesystem_chunk_close`'s, which consumes the deleting certificate through the
 relocated procedure.
 
-**The 185-unit corpus was not re-measured here**: no prepared pinned Fluent Bit
-clone exists in this worktree, and the audit's own pin gate refuses to run
-without one. This is the same position `P04-B2`, `T02` and several earlier cards
-recorded. The integrator's corpus consolidation should expect **no change from
-this card** beyond the package-identity residue class (§8.2).
+Every configured-audit route that runs **without** a prepared upstream clone did
+run, unchanged and passing, as part of the workspace gate: the `chunkio-core`
+second-source-set regressions, the root-source-set suite, the configured CLI
+suite, the compile-option and compile-task-identity suites, and the
+source-contract configuration suite. None of them moved.
+
+**The 185-unit corpus and the canonical CMetrics audit were not re-measured
+here**: both need a prepared pinned upstream clone that this worktree does not
+have, and the audit's own pin gate refuses to run without one. This is the same
+position `P04-B2`, `T02` and several earlier cards recorded. The integrator's
+corpus consolidation should expect **no change from this card** beyond the
+package-identity residue class (the ChunkIO `provider_version` and
+`package_digest` leaves in `source-effects.json`, as in every card that bumps
+that package).
 
 The contract corpus is untouched at **61 modules**: no `.qcore` file was added or
 edited.
@@ -606,6 +616,12 @@ and the digest key moves with it.
    version 1 rather than version 2. **The load-bearing negative halves are all
    kept and extended**: unknown-field refusal, admission exactness, and identity
    completeness/distinctness all grow rows rather than losing them.
+6. `crates/qcore-verification/tests/composition_source.rs` — the leaf
+   composition's pinned digest-key list moves `…-source-input:v1` to `:v2`, with
+   the reason recorded beside it. The other nine keys and every other assertion
+   in that suite are unchanged, and the leaf route's own behaviour is unchanged
+   apart from the key name. This pin caught the version move rather than
+   inheriting it.
 
 All five provider packages were rebuilt and verified. The contract corpus is
 untouched at 61 modules.

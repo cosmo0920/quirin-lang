@@ -177,7 +177,10 @@ fn the_task_binds_every_contract_and_each_prerequisite_separately() {
             "qcore:composition-prerequisite-call-use:v1".into(),
             "qcore:composition-prerequisite-cleanup:v1".into(),
             "qcore:composition-prerequisite-counter:v1".into(),
-            "qcore:composition-source-input:v1".into(),
+            // Deliberate pin update (card P04-COMPOSE-A): the projection's own
+            // version moved 1 -> 2, and its digest key moves with it, so a
+            // version-1 witness cannot be replayed against a version-2 task.
+            "qcore:composition-source-input:v2".into(),
         ]
     );
     // The three prerequisite digests are distinct, so no key can absorb

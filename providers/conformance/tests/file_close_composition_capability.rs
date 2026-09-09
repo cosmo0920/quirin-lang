@@ -125,7 +125,6 @@ fn real_package_composes_two_levels_without_admitting_false_contracts() {
     if !clang_available() {
         return;
     }
-    let rc = pinned();
     let output = build_packages();
     let mut registry = VerifierRegistry::default();
     registry
@@ -317,6 +316,6 @@ fn real_package_composes_two_levels_without_admitting_false_contracts() {
             .verdict,
         ProposedVerdict::Unknown
     );
-    let _ = rc;
+
     std::fs::remove_dir_all(output).unwrap();
 }
