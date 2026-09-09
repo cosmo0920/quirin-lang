@@ -90,6 +90,8 @@ import QCore.PackageTemplateBinding
 import QCore.PackageIdentity
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
+import QCore.DenominatorCoverage
+import QCore.EnumerationAttribution
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth

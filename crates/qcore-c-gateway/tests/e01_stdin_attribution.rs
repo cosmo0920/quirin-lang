@@ -147,22 +147,25 @@ fn a_header_relabelled_to_the_primary_spelling_stays_out_of_scope() {
     );
 }
 
-/// The same attack aimed at a *declared-file* unit, which spells its primary
-/// input as a path: the header writes that path. Nothing about depth
-/// attribution is special to `<stdin>`, and this pins that.
+/// The same attack aimed at a *declared-file* unit. Clang's primary marker
+/// there carries the compile command's own input word, so the header writes
+/// exactly that word — `subject.c` — rather than an absolute path, which would
+/// miss by string comparison and pass vacuously.
+///
+/// Measured against the pre-repair rule, this is the asymmetry E01-F1-STDIN
+/// named: a declared-file unit can only be attacked by an author who knows how
+/// the compilation database spells the input, while every `HistoricalStdin`
+/// unit in the pinned corpus answers to the one fixed word `<stdin>`. Depth
+/// attribution removes both, and nothing about it is special to `<stdin>`.
 #[test]
 fn a_header_relabelled_to_the_declared_path_stays_out_of_scope() {
     if !clang_available() {
         return;
     }
     let fixture = Fixture::new("hdr-path-relabel");
-    let subject = fixture.directory.join("subject.c");
     fixture.write(
         "path_relabel.h",
-        &format!(
-            "#line 100 \"{}\"\nint relabelled_header_fn(void) {{ return 1; }}\n",
-            subject.display()
-        ),
+        "#line 100 \"subject.c\"\nint relabelled_header_fn(void) { return 1; }\n",
     );
     let source = "#include \"path_relabel.h\"\nint subject(void) { return 0; }\n";
     let (_, declared) = both_transports(&fixture, source);
@@ -214,7 +217,11 @@ fn a_relabelled_main_source_tail_stays_in_scope() {
             "{label}: the macro-produced definition is the one only the \
              expansion can contribute"
         );
-        assert!(inventory.is_complete(), "{label}: {:?}", inventory.refusals());
+        assert!(
+            inventory.is_complete(),
+            "{label}: {:?}",
+            inventory.refusals()
+        );
     }
 }
 
