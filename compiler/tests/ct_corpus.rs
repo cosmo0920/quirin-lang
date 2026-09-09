@@ -2442,7 +2442,10 @@ fn unmapped_labels(manifest: &Manifest) -> BTreeMap<String, (String, String)> {
                  maps this case"
             );
             for field in ["bucket", "reason", "measured_by"] {
-                let value = row.get(field).and_then(serde_json::Value::as_str).unwrap_or("");
+                let value = row
+                    .get(field)
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("");
                 assert!(
                     !value.trim().is_empty(),
                     "{case_id}: {relative} carries no {field} for this case"
