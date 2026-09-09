@@ -29,8 +29,9 @@ contract {
 ```
 
 **The schemas change the prior card predicted is not required.** `qcore-schemas`
-stays **10.0.0**, no provider package's wire bytes move, and no archived task
-digest moves — the last of those is *measured*, not argued (§5.2). The premise
+stays **10.0.0**, no wire format changes, and no obligation identifier or
+archived task digest moves *because of this card* — the last of those is
+measured against a base-tree control, not argued (§5.2). The premise
 follows O04-TRACE's `resource_variadic_data_tail` precedent: it is rederived
 from the environment's own retained trusted texts rather than carried on
 `ResourceFunctionContract`, so the contract map — which is what the evidence
