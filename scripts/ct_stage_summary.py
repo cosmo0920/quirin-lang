@@ -367,15 +367,30 @@ def check_newly_decidable(root: pathlib.Path):
     This field stays analysis — whether a case is *decidable now* is a judgment
     no record derives — but "not mapped" is a manifest fact, so the half that can
     go stale the way the buckets did is checked here.
+
+    Card HYGIENE-16 extends the same check to the companion
+    `newly_decidable_not_mapped_reasons` map, which HYGIENE-14 left unchecked:
+    its keys are the same claim in prose, and a mapped case keeping a "why this
+    is not mapped" paragraph is the identical staleness one field over. Measured
+    while writing this: the acceptance *matrix*'s copy of that map still carried
+    a CT39 row that wave 8 mapped, so the defect was live, not hypothetical.
     """
     manifest = load_manifest(root)
-    listed = _read(root, ACCEPTANCE).get("ct_evidence", {}).get("newly_decidable_not_mapped", [])
+    block = _read(root, ACCEPTANCE).get("ct_evidence", {})
     unmapped = set(unmapped_ids(manifest))
-    return [
+    problems = [
         "acceptance.json newly_decidable_not_mapped names %s, which the manifest maps" % case_id
-        for case_id in listed
+        for case_id in block.get("newly_decidable_not_mapped", [])
         if case_id not in unmapped
     ]
+    problems.extend(
+        "acceptance.json newly_decidable_not_mapped_reasons explains why %s is not mapped, "
+        "but the manifest maps it" % case_id
+        for case_id in sorted(block.get("newly_decidable_not_mapped_reasons") or {})
+        # A leading underscore marks the map's own commentary rather than a case.
+        if not case_id.startswith("_") and case_id not in unmapped
+    )
+    return problems
 
 
 def summarize(root: pathlib.Path):

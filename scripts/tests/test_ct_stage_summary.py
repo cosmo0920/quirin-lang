@@ -359,13 +359,120 @@ class SummaryTest(unittest.TestCase):
                 case["mapping_status"] = "mapped"
         with MutableRoot() as scratch:
             scratch.write_manifest(manifest)
+            # Card HYGIENE-16 deliberately widened this pin rather than
+            # loosening it: CT11 is named in BOTH hand-kept halves, so mapping it
+            # must now be reported twice — once for the id list, once for the
+            # companion reasons map. The load-bearing half (the list) is
+            # unchanged and still asserted verbatim.
             self.assertEqual(
                 summary.check_newly_decidable(scratch.directory),
                 [
                     "acceptance.json newly_decidable_not_mapped names CT11, "
-                    "which the manifest maps"
+                    "which the manifest maps",
+                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT11 "
+                    "is not mapped, but the manifest maps it",
                 ],
             )
+
+    def test_a_reason_paragraph_for_a_mapped_case_fails_closed(self):
+        """Card HYGIENE-16: the prose half of the same claim goes stale too.
+
+        Measured on the committed tree while writing this: the acceptance
+        *matrix*'s copy of this map still carried a CT39 row explaining why the
+        case had no epoch source syntax, four waves after wave 8 mapped it. The
+        matrix copy is hand-carried commentary no derivation reads; the
+        acceptance record's copy is now checked, in both derivations.
+        """
+        self.assertEqual(summary.check_newly_decidable(ROOT), [])
+        acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
+        reasons = dict(acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"])
+        # CT01 is mapped, and giving it a reason paragraph is exactly the shape
+        # the matrix's CT39 row had.
+        reasons["CT01"] = "invented: this case has no source form"
+        acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"] = reasons
+        with MutableRoot() as scratch:
+            scratch.write_acceptance(acceptance)
+            self.assertEqual(
+                summary.check_newly_decidable(scratch.directory),
+                [
+                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT01 "
+                    "is not mapped, but the manifest maps it"
+                ],
+            )
+
+    def test_the_maps_own_commentary_key_is_not_read_as_a_case(self):
+        """`_note` is the map's own prose, not a case id; it must not refuse."""
+        acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
+        reasons = dict(acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"])
+        reasons["_note"] = "hand-maintained commentary"
+        acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"] = reasons
+        with MutableRoot() as scratch:
+            scratch.write_acceptance(acceptance)
+            self.assertEqual(summary.check_newly_decidable(scratch.directory), [])
+
+    def test_the_historical_stale_bucket_block_is_refused(self):
+        """Card HYGIENE-16, finding `D02-BUCKETS-STALE`, as a regression.
+
+        The committed record and the derivation agree today, so a test that only
+        reads the tree cannot show that a *re-inflated* hand edit would be
+        caught. This restores the exact historical shape — the four cases wave 8
+        mapped still counted, summing 22 against `ct_unmapped: 18` — into a
+        scratch acceptance record and requires the drift to be reported by
+        field name.
+        """
+        acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
+        derived = summary.summarize(ROOT)
+        self.assertEqual(
+            acceptance["ct_evidence"]["unmapped_bucket_counts"],
+            derived["unmapped_bucket_counts"],
+            "precondition: the committed record is currently reconciled",
+        )
+        stale = dict(derived["unmapped_bucket_counts"])
+        # The wave-8 epoch bucket, never decremented when CT35/36/38/39 mapped.
+        stale["blocked-on-epoch-source-syntax"] = 4
+        acceptance["ct_evidence"]["unmapped_bucket_counts"] = stale
+        self.assertEqual(sum(stale.values()), 22)
+        with MutableRoot() as scratch:
+            scratch.write_acceptance(acceptance)
+            self.assertIn(
+                "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
+                summary.check_acceptance(scratch.directory),
+            )
+
+    def test_the_archive_label_of_a_lane_measured_case_does_not_move_the_tally(self):
+        """Card HYGIENE-16 item 2: why restoring T00's frozen bytes is neutral.
+
+        Card CT-CTWIN rewrote CT40/CT41/CT42's rows inside card T00's archived
+        `coverage.json`; this card restored that file to its pre-CTWIN bytes and
+        left the current labels to the dual-publication mechanism. The property
+        that makes the restoration tally-neutral is the resolution rule itself:
+        for a case a lane measured, the archived label is not read at all. This
+        drives it directly — rewriting the archive rows of all three to an
+        invented bucket must change neither the counts nor the sources.
+        """
+        before_counts = summary.unmapped_bucket_counts(ROOT)
+        before_sources = summary.unmapped_label_sources(ROOT)
+        coverage = json.loads((ROOT / summary.TRIAGE).read_text())
+        measured = {"CT40", "CT41", "CT42"}
+        touched = 0
+        for case in coverage["unmapped_triage"]["cases"]:
+            if case["id"] in measured:
+                case["current_bucket"] = "invented-archive-label"
+                case["blocker"] = "invented"
+                touched += 1
+        self.assertEqual(touched, len(measured))
+        with MutableRoot() as scratch:
+            scratch.write_triage(coverage)
+            self.assertEqual(summary.unmapped_bucket_counts(scratch.directory), before_counts)
+            self.assertEqual(summary.unmapped_label_sources(scratch.directory), before_sources)
+            self.assertEqual(summary.check_acceptance(scratch.directory), [])
+            # Non-vacuity: the archive text IS read, and published, for a case no
+            # lane measured, so the neutrality above is a property of the
+            # resolution rule and not of the archive being ignored everywhere.
+            labels = summary.unmapped_labels(scratch.directory)
+            self.assertEqual(labels["CT40"]["archived_label"], "invented-archive-label")
+            self.assertNotEqual(labels["CT40"]["label"], "invented-archive-label")
+            self.assertEqual(labels["CT44"]["label_source"], summary.ARCHIVE_SOURCE)
 
     # ------------------------------------------------------------------
     # Card CT-LABELS, finding D02-BUCKETS-LABELS: the label, not just the count.
@@ -412,12 +519,21 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(
             labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
         )
-        # CT40/CT41/CT42's label text is byte-identical to the archive's, because
+        # CT40/CT41/CT42 used to read byte-identically to the archive, because
         # card CT-CTWIN wrote its own measurement into T00's archived audit in
-        # place. Migrating it to that lane's own record is what stops the label
-        # from depending on that edit; the tally does not move.
+        # place. Card HYGIENE-16 restored that file to its pre-CTWIN bytes
+        # (`CT-LABELS-T00-REVERT`), so the two halves now differ for these three
+        # and the assertion is inverted deliberately: the current label comes
+        # from the lane's own record, T00's original text is retained beside it,
+        # and the tally did not move in either direction.
         for case in ["CT40", "CT41", "CT42"]:
-            self.assertEqual(labels[case]["label"], labels[case]["archived_label"])
+            self.assertEqual(
+                labels[case]["label"], "blocked-on-gateway-expressiveness (C-twin measured)"
+            )
+            self.assertEqual(
+                labels[case]["archived_label"], "blocked-on-harness-schema (C-twin stage)"
+            )
+            self.assertNotEqual(labels[case]["label"], labels[case]["archived_label"])
         self.assertEqual(
             sum(summary.unmapped_bucket_counts(ROOT).values()),
             summary.summarize(ROOT)["ct_unmapped"],

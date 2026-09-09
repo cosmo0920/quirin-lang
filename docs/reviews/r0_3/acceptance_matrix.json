@@ -4743,9 +4743,9 @@
     "expected": "Not certified; unsupported lifetime/publication protocol",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "blocker": "measured on the legacy_c route (card CT-CTWIN): a store of an owned pointer into a file-scope object is invisible to the resource projection, so the publishing function is Safe with no diagnostic and the verdict is identical with and without `_Atomic`; a unit that also reads the published object is Unknown, but on the reader's unknown-alias diagnostics, not on the publication. The verdict is invariant under the construct the scenario names, so no control can attribute it. Follow-on CT-CTWIN-PUBLISH.",
-    "bucket_changed_since_batch2": true,
+    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
+    "bucket_changed_since_batch2": false,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -4810,9 +4810,9 @@
     "expected": "No synchronization proof",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "blocker": "measured on the legacy_c route (card CT-CTWIN): adding or removing the volatile completion flag changes neither the verdict nor a single diagnostic, in both shapes measured; the gateway models no synchronization, so no verdict it produces is evidence about one and the mapping would be vacuous. Follow-on CT-CTWIN-SYNC.",
-    "bucket_changed_since_batch2": true,
+    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
+    "bucket_changed_since_batch2": false,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -4877,9 +4877,9 @@
     "expected": "Preserve shared protocol-cell identity",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "blocker": "measured on the legacy_c route (card CT-CTWIN): an int-typed resource identity is refused by the contract loader (`owned result requires a pointer return type`), so the descriptor twin is Unknown on three uncontracted calls — the profile cannot express it at all — and the case asks for a preserved identity, which no measured verdict establishes. Follow-on CT-CTWIN-DESCRIPTOR.",
-    "bucket_changed_since_batch2": true,
+    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "blocker": "as CT40",
+    "bucket_changed_since_batch2": false,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -5646,10 +5646,9 @@
    "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. Neither adds native, sanitized or proof evidence."
   ],
   "newly_decidable_not_mapped_reasons": {
-   "_note": "hand-maintained commentary, not generator output — build_matrix.py drops this key on regeneration and it is re-added deliberately; the generated newly_decidable_not_mapped and unmapped_bucket_counts derive from T00's triage vocabulary, which is coarser than these later per-card refinements (recorded pre-existing divergence, see remaining-t00-ct-schema §integrator notes).",
+   "_note": "hand-maintained commentary, not generator output — build_matrix.py owns ct_conformance wholly and drops this key on regeneration, so it is re-added deliberately (recorded as follow-on D02-GEN-CTREASONS by card HYGIENE-16); the generated newly_decidable_not_mapped and unmapped_bucket_counts derive from the manifest's own unmapped set through scripts/ct_stage_summary.py. Card HYGIENE-16 measured this map stale here — it still carried a CT39 row four waves after wave 8 mapped that case — and dropped it; the acceptance record's copy of the same map is now checked against the manifest by both derivations, this copy is not.",
    "CT11": "Measured: ScopedReadSharesV1 refuses reconstruction while a share is retained (Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] }). Left unmapped because the scenario says 'while local shared aliases survive' and this profile has no local alias form; the retaining party is an unjoined child task, so mapping it would answer a different question (card T05 section 9).",
    "CT24": "Card T04's own proposal, unchanged and still unmapped; its fixture stays in docs/reports/remaining-t04/fixtures/.",
-   "CT39": "Refused at model level by FlatEpochBoundV1 (card T08), but there is no epoch source syntax, hence no parser stage and no reference execution.",
    "CT47": "As recorded by T00; unchanged by this wave."
   }
  },
@@ -5743,12 +5742,13 @@
   "workspace_tests": 2638,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 67,
+  "lean_audits": 68,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
    "AuditBorrowLiveness.lean",
    "AuditBoundFieldRead.lean",
+   "AuditBucketTally.lean",
    "AuditCallUseAdmission.lean",
    "AuditCapacityBoundary.lean",
    "AuditChainedAccess.lean",
@@ -5819,7 +5819,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate15seal.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

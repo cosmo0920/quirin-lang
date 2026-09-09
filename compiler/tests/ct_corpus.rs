@@ -2665,6 +2665,21 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
              manifest maps it"
         );
     }
+    // Card HYGIENE-16: the companion reasons map is the same claim in prose and
+    // goes stale the same way, so it is checked with it. A key beginning with an
+    // underscore is the map's own commentary rather than a case id.
+    if let Some(reasons) = evidence.get("newly_decidable_not_mapped_reasons") {
+        for case_id in reasons
+            .as_object()
+            .expect("newly_decidable_not_mapped_reasons is an object")
+            .keys()
+        {
+            assert!(
+                case_id.starts_with('_') || !mapped_ids.contains(case_id.as_str()),
+                "acceptance.json explains why {case_id} is not mapped, but the manifest maps it"
+            );
+        }
+    }
 }
 
 fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
