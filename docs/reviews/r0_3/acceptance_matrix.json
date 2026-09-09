@@ -5585,7 +5585,7 @@
   }
  },
  "corpus": {
-  "contract_modules": 61,
+  "contract_modules": 64,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -5671,7 +5671,7 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2457,
+  "workspace_tests": 2471,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
   "lean_audits": 63,
@@ -5746,7 +5746,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14b.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14c.json)"
  },
  "named_followups": [
   {
