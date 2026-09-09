@@ -5742,7 +5742,7 @@
   "workspace_tests": 2638,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 68,
+  "lean_audits": 69,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
