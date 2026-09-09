@@ -233,6 +233,15 @@ pub enum CleanupReplayOperationRecord {
     ReturnValue {
         value: CleanupReplayValueRecord,
     },
+    /// A value-free `return` from a `void` function.
+    ///
+    /// Added by card `P04-COMPOSE-A` for the composition route's `void`
+    /// wrapper. **The cleanup-replay route does not admit it in either
+    /// direction**: its gateway projector refuses `SourceOperation::Return` by
+    /// name and its producer declines this record by name, so widening the
+    /// shared enum did not widen that family's vocabulary. That refusal is
+    /// pinned by test on both sides (`P04-COMPOSE-SHARED-PATHS`).
+    Return,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -339,12 +348,14 @@ pub enum CleanupReplayFamilyInput {
     /// `cio_file_native_close` / `cio_file_native_unmap`: four sampled
     /// prestates over an eligibility field the successful arm resets.
     NativeCleanupOutcome {
+        #[serde(deserialize_with = "value_returning_body")]
         body: CleanupReplayFunctionRecord,
         profile: CleanupProfileRecord,
     },
     /// `cio_file_native_delete`: five sampled prestates over two eligibility
     /// fields, where every arm preserves the record.
     GuardedDelete {
+        #[serde(deserialize_with = "value_returning_body")]
         body: CleanupReplayFunctionRecord,
         profile: CleanupProfileRecord,
         /// The second eligibility field, which is not a profile member. It is
@@ -352,6 +363,40 @@ pub enum CleanupReplayFamilyInput {
         /// projection naming any other field.
         mapping_field: String,
     },
+}
+
+/// Refuse a value-free `return` in a cleanup-replay body **at parse time**.
+///
+/// Card `P04-COMPOSE-A` added
+/// [`CleanupReplayOperationRecord::Return`] to the shared operation vocabulary
+/// for the composition route's `void` wrapper. Before that this family's bodies
+/// refused a bare `return` because the enum had no spelling for it, and that
+/// refusal is a fail-closed gate this family still needs: none of its bodies is
+/// `void`-returning, and a projection carrying one is malformed, not merely
+/// unreplayable.
+///
+/// Widening the shared enum would otherwise have moved that refusal one layer
+/// in — from the deserializer to the producer's decline and the projector's
+/// omission. It is restored exactly where it was instead, so
+/// `the_closed_vocabulary_refuses_every_unrepresented_form` keeps asserting a
+/// parse-time refusal rather than being relaxed to match the new enum.
+fn value_returning_body<'de, D>(deserializer: D) -> Result<CleanupReplayFunctionRecord, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::Error as _;
+    let body = CleanupReplayFunctionRecord::deserialize(deserializer)?;
+    if body.paths.iter().any(|path| {
+        path.operations
+            .iter()
+            .any(|operation| matches!(operation, CleanupReplayOperationRecord::Return))
+    }) {
+        return Err(D::Error::custom(
+            "a cleanup replay body has no value-free `return`: that operation form belongs to \
+             the composition route's `void` wrapper alone",
+        ));
+    }
+    Ok(body)
 }
 
 impl CleanupReplayFamilyInput {

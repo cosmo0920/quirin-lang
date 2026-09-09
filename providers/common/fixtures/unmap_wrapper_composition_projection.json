@@ -1,20 +1,22 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "prerequisites": {
-    "wrapper_call_use": {
-      "semantic_profile": "qcore.c_call_result_use.v1",
-      "task_digest": "2679c9bb23bc0ecb63eccef5214e88fd32ccacb823e7d6111c35b4f6382baa2f",
-      "obligation_id": "resource_contracts:e23e4704eaca7fbc6f29d8e1"
-    },
-    "native_cleanup": {
-      "semantic_profile": "qcore.c_cleanup_replay.v1",
-      "task_digest": "ad1f08ca898e669f6017dda7384d2f95c7348c486f755126f9546695090ce16c",
-      "obligation_id": "resource_contracts:7e1de326ed7e17290883483c"
-    },
-    "counter": {
-      "semantic_profile": "qcore.c_counter_contract.v1",
-      "task_digest": "e3599e16838a5a1e809103d6cd517acd196cde4e57408cb7ca1a92a9319e712b",
-      "obligation_id": "resource_contracts:f8af627fa28e08bcc0b702c3"
+    "unmap_wrapper": {
+      "wrapper_call_use": {
+        "semantic_profile": "qcore.c_call_result_use.v1",
+        "task_digest": "c43459f6fc7066790aff940943e56c4191998c8d9d63232bbafe48a054c8927c",
+        "obligation_id": "resource_contracts:be903b94e907e5bd771af717"
+      },
+      "native_cleanup": {
+        "semantic_profile": "qcore.c_cleanup_replay.v1",
+        "task_digest": "7c4858083668822e7b5ca9e1c6122791999a88b40f73bb2acc8cdc56080cf1c4",
+        "obligation_id": "resource_contracts:f6bfd66518d47f0828ce0ab9"
+      },
+      "counter": {
+        "semantic_profile": "qcore.c_counter_contract.v1",
+        "task_digest": "4c81ed13a44bfef46c34d539cd8ea0a63fed06b0a02b85462d4c3cc2b9728947",
+        "obligation_id": "resource_contracts:84fe27f2e3933b18938bd05c"
+      }
     }
   },
   "family": {

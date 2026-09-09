@@ -33,8 +33,8 @@ use qcore_schemas::cleanup_replay_summary::{
     CleanupReplayOperationRecord, CleanupReplayPathRecord, CleanupReplayValueRecord,
 };
 use qcore_schemas::composition_summary::{
-    COMPOSITION_SOURCE_INPUT_VERSION, CompositionFamilyInput, CompositionSourceInput,
-    UnmapWrapperPrerequisites,
+    COMPOSITION_SOURCE_INPUT_VERSION, CompositionFamilyInput, CompositionPrerequisiteSet,
+    CompositionSourceInput, FileCloseDeleteInput,
 };
 
 use crate::boolean_source::{SourceInputIdentity, input_identity};
@@ -61,13 +61,56 @@ pub const UNMAP_WRAPPER_CALLEES: [(&str, &str); 4] = [
     ),
 ];
 
-/// Which bounded composition question a body is projected for. One inhabitant;
-/// the family is a caller selection, recorded on the import and bound into the
-/// verification task.
+/// The `cio_file_close` wrapper's closed callee table: exactly the five frames
+/// the trusted composition's own replay admits, matched on **both** name and
+/// declared C signature. Two of them — `munmap_file` and
+/// `cio_file_native_delete` — are themselves separately checked capabilities,
+/// which is what makes this wrapper a two-level composition.
+pub const FILE_CLOSE_CALLEES: [(&str, &str); 5] = [
+    ("munmap_file", "int (struct cio_ctx *, struct cio_chunk *)"),
+    ("cio_file_native_close", "int (struct cio_file *)"),
+    ("cio_file_native_delete", "int (struct cio_file *)"),
+    (
+        "cio_log_print",
+        "void (void *, int, const char *, int, const char *, ...)",
+    ),
+    ("free", "void (void *)"),
+];
+
+/// Which bounded composition question a body is projected for. The family is a
+/// caller selection, recorded on the import and bound into the verification
+/// task; the two `FileClose` inhabitants are separate because the deleting entry
+/// point answers a strictly larger question under its own semantic profile.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum CompositionFamily {
     UnmapWrapper,
+    FileClose,
+    FileCloseDeleting,
+}
+
+impl CompositionFamily {
+    #[must_use]
+    pub const fn is_file_close(&self) -> bool {
+        matches!(self, Self::FileClose | Self::FileCloseDeleting)
+    }
+}
+
+/// The nested unmap composition's own two bodies and record profile, selected
+/// for a `file_close` import. The nested *question* is rebuilt from them
+/// verbatim, so a producer must recompute the whole nested composed reading.
+pub struct NestedUnmapSelection<'a> {
+    pub wrapper: &'a str,
+    pub native: &'a str,
+    pub native_profile: CleanupProfileRecord,
+}
+
+/// The guarded-delete body, record profile and declared eligibility field the
+/// deleting arm additionally needs.
+pub struct FileCloseDeleteSelection<'a> {
+    pub function: &'a str,
+    pub profile: CleanupProfileRecord,
+    pub mapping_field: &'a str,
 }
 
 /// Constructed only by the importer below, so a wire record can never be
@@ -81,6 +124,11 @@ pub enum CompositionFamily {
 pub struct CompositionSourceImport {
     wrapper: SourceSummary,
     native: SourceSummary,
+    /// The nested composition's own two bodies, on the `file_close` families.
+    nested_wrapper: Option<SourceSummary>,
+    nested_native: Option<SourceSummary>,
+    /// The guarded-delete body, on the deleting family only.
+    delete: Option<SourceSummary>,
     #[serde(skip)]
     identity: SourceInputIdentity,
     #[serde(skip)]
@@ -102,6 +150,23 @@ impl CompositionSourceImport {
     /// requires this summary to be the one that task imported.
     pub fn native_summary(&self) -> &SourceSummary {
         &self.native
+    }
+
+    /// The nested composition's wrapper body (`munmap_file`), on the
+    /// `file_close` families. The core requires it to be the body the nested
+    /// composition task itself imported.
+    pub fn nested_wrapper_summary(&self) -> Option<&SourceSummary> {
+        self.nested_wrapper.as_ref()
+    }
+
+    /// The nested composition's prerequisite body (`cio_file_native_unmap`).
+    pub fn nested_native_summary(&self) -> Option<&SourceSummary> {
+        self.nested_native.as_ref()
+    }
+
+    /// The guarded-delete body, on the deleting family only.
+    pub fn delete_summary(&self) -> Option<&SourceSummary> {
+        self.delete.as_ref()
     }
 
     /// Identity captured by the importer, never supplied by a schema record.
@@ -214,6 +279,7 @@ fn value(value: &SourceValue) -> Result<CleanupReplayValueRecord, String> {
 fn project(
     summary: &SourceSummary,
     admitted: &[(&str, &str)],
+    void_return: bool,
 ) -> Result<CleanupReplayFunctionRecord, String> {
     if summary.has_scan_loop() {
         return Err("composition projection does not represent scan loops".into());
@@ -290,6 +356,11 @@ fn project(
                         value: value(returned)?,
                     }
                 }
+                // A value-free return is admitted only for a body the caller
+                // declared `void`-returning — the `cio_file_close` wrapper. Every
+                // value-returning body on this route keeps the existing refusal,
+                // so no family's vocabulary widened by accident.
+                SourceOperation::Return if void_return => CleanupReplayOperationRecord::Return,
                 SourceOperation::Return => {
                     return Err(
                         "composition projection does not represent value-free returns".into(),
@@ -331,12 +402,45 @@ pub struct CompositionSelection<'a> {
     pub records: &'a [&'a str],
     pub native_profile: CleanupProfileRecord,
     /// Lookup keys, never conclusions.
-    pub prerequisites: UnmapWrapperPrerequisites,
+    pub prerequisites: CompositionPrerequisiteSet,
+    /// The nested composition's own bodies. Required by the `file_close`
+    /// families and refused for the leaf family, in both directions.
+    pub nested: Option<NestedUnmapSelection<'a>>,
+    /// The guarded-delete body. Required by the deleting family and refused
+    /// otherwise, in both directions.
+    pub delete: Option<FileCloseDeleteSelection<'a>>,
 }
 
-/// Import one composition family's two bodies and project both. The revision is
-/// a caller assertion, exactly as in the existing typed import; the outer audit
-/// must bind the actual checkout.
+/// The profile-declared callee table one native cleanup body is admitted
+/// against, exactly as on the cleanup-replay route.
+fn native_callees(profile: &CleanupProfileRecord) -> [(&str, &str); 3] {
+    [
+        (profile.syscall.as_str(), profile.syscall_signature.as_str()),
+        (profile.errno_function.as_str(), "int *(void)"),
+        (
+            profile.report_function.as_str(),
+            "int (int, const char *, int)",
+        ),
+    ]
+}
+
+fn profile_is_complete(profile: &CleanupProfileRecord) -> bool {
+    !profile.fields.is_empty()
+        && !profile.argument_fields.is_empty()
+        && !profile.syscall.is_empty()
+        && !profile.errno_function.is_empty()
+        && !profile.report_function.is_empty()
+}
+
+/// Import one composition family's bodies and project every one of them. The
+/// revision is a caller assertion, exactly as in the existing typed import; the
+/// outer audit must bind the actual checkout.
+///
+/// The `file_close` families import **five** bodies at once — the wrapper, the
+/// native close, the nested composition's wrapper and native, and (on the
+/// deleting arm) the guarded-delete body — because the producer must recompute
+/// the whole nested composed reading, not merely a body replay, before it can
+/// answer this question.
 pub fn import_composition_source(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
@@ -349,6 +453,8 @@ pub fn import_composition_source(
         records,
         native_profile,
         prerequisites,
+        nested,
+        delete,
     } = selection;
     if wrapper.is_empty() || native.is_empty() || records.is_empty() {
         return Err("composition import needs both functions and a record inventory".into());
@@ -357,21 +463,82 @@ pub fn import_composition_source(
         return Err("composition import needs two distinct functions".into());
     }
     if !prerequisites.is_complete() {
-        return Err("composition import needs three complete prerequisite identities".into());
+        return Err("composition import needs complete prerequisite identities".into());
     }
     if !prerequisites.are_distinct() {
-        return Err("composition import needs three distinct prerequisite identities".into());
+        return Err("composition import needs distinct prerequisite identities".into());
     }
     if native_profile.function != *native {
         return Err("composition prerequisite profile names a different function".into());
     }
-    if native_profile.fields.is_empty()
-        || native_profile.argument_fields.is_empty()
-        || native_profile.syscall.is_empty()
-        || native_profile.errno_function.is_empty()
-        || native_profile.report_function.is_empty()
-    {
+    if !profile_is_complete(native_profile) {
         return Err("composition prerequisite profile is incomplete".into());
+    }
+    // The selected shape and the named prerequisite set must agree, in both
+    // directions, before anything is imported.
+    match (family, prerequisites) {
+        (CompositionFamily::UnmapWrapper, CompositionPrerequisiteSet::UnmapWrapper(_)) => (),
+        (
+            CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting,
+            CompositionPrerequisiteSet::FileClose(_),
+        ) => (),
+        _ => return Err("composition family does not match its prerequisite set".into()),
+    }
+    let deleting = matches!(family, CompositionFamily::FileCloseDeleting);
+    if deleting
+        != prerequisites
+            .file_close()
+            .is_some_and(|set| set.native_delete.is_some())
+    {
+        return Err(
+            "the deleting composition family and its delete prerequisite must agree".into(),
+        );
+    }
+    if deleting != delete.is_some() {
+        return Err("the deleting composition family and its delete body must agree".into());
+    }
+    if family.is_file_close() != nested.is_some() {
+        return Err("only a file_close composition carries a nested composition".into());
+    }
+    let mut functions: Vec<&str> = vec![wrapper, native];
+    if let Some(nested) = nested {
+        if nested.wrapper.is_empty() || nested.native.is_empty() {
+            return Err("the nested composition needs both of its functions".into());
+        }
+        if nested.native_profile.function != nested.native {
+            return Err("nested composition profile names a different function".into());
+        }
+        if !profile_is_complete(&nested.native_profile) {
+            return Err("nested composition profile is incomplete".into());
+        }
+        functions.push(nested.wrapper);
+        functions.push(nested.native);
+    }
+    if let Some(delete) = delete {
+        if delete.function.is_empty() || delete.mapping_field.is_empty() {
+            return Err("the guarded-delete selection is incomplete".into());
+        }
+        if delete.profile.function != delete.function {
+            return Err("guarded-delete profile names a different function".into());
+        }
+        if !profile_is_complete(&delete.profile) {
+            return Err("guarded-delete profile is incomplete".into());
+        }
+        if !delete
+            .profile
+            .fields
+            .iter()
+            .any(|field| field.name == delete.mapping_field)
+        {
+            return Err("the declared eligibility field is not a profile member".into());
+        }
+        functions.push(delete.function);
+    }
+    let mut distinct = functions.clone();
+    distinct.sort_unstable();
+    distinct.dedup();
+    if distinct.len() != functions.len() {
+        return Err("composition import needs distinct functions".into());
     }
     let compiler = ClangIdentity::capture()?;
     let preprocessed = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
@@ -387,7 +554,7 @@ pub fn import_composition_source(
     let imported = import_source_functions(
         unit,
         source_revision,
-        &[wrapper, native],
+        &functions,
         &SourceImportProfile {
             records,
             sizeof_types: &[],
@@ -395,68 +562,146 @@ pub fn import_composition_source(
             restricted_calls: &[],
         },
     )?;
-    let result = match imported.as_slice() {
-        [
-            SourceResult::Summary(wrapper_summary),
-            SourceResult::Summary(native_summary),
-        ] => {
-            // The prerequisite body's closed callee table is the profile's own
-            // declared names, exactly as on the cleanup-replay route.
-            let native_admitted = [
-                (native_profile.syscall.as_str(), {
-                    native_profile.syscall_signature.as_str()
-                }),
-                (native_profile.errno_function.as_str(), "int *(void)"),
-                (
-                    native_profile.report_function.as_str(),
-                    "int (int, const char *, int)",
-                ),
-            ];
-            let wrapper_admitted: Vec<(&str, &str)> = match family {
-                CompositionFamily::UnmapWrapper => UNMAP_WRAPPER_CALLEES.to_vec(),
-            };
-            match project(wrapper_summary, &wrapper_admitted)
-                .and_then(|body| Ok((body, project(native_summary, &native_admitted)?)))
-            {
-                Ok((wrapper_body, native_body)) => {
-                    let family_input = match family {
-                        CompositionFamily::UnmapWrapper => CompositionFamilyInput::UnmapWrapper {
-                            wrapper: wrapper_body,
-                            native: native_body,
-                            native_profile: native_profile.clone(),
-                        },
-                    };
-                    CompositionSourceResult::Import(Box::new(CompositionSourceImport {
-                        wrapper: wrapper_summary.clone(),
-                        native: native_summary.clone(),
-                        identity,
-                        family: family.clone(),
-                        native_profile: native_profile.clone(),
-                        input: CompositionSourceInput {
-                            schema_version: COMPOSITION_SOURCE_INPUT_VERSION,
-                            prerequisites: prerequisites.clone(),
-                            family: family_input,
-                        },
-                    }))
+    let mut summaries = Vec::new();
+    let mut unknown = None;
+    for result in &imported {
+        match result {
+            SourceResult::Summary(summary) => summaries.push(summary.clone()),
+            SourceResult::Unknown { function, reason } => {
+                if unknown.is_none() {
+                    unknown = Some((function.clone(), reason.clone()));
                 }
-                Err(reason) => CompositionSourceResult::Unknown {
-                    function: wrapper_summary.function().into(),
-                    reason,
-                },
             }
         }
-        [SourceResult::Unknown { function, reason }, ..]
-        | [_, SourceResult::Unknown { function, reason }] => CompositionSourceResult::Unknown {
-            function: function.clone(),
-            reason: reason.clone(),
-        },
-        _ => CompositionSourceResult::Unknown {
+    }
+    let result = if let Some((function, reason)) = unknown {
+        CompositionSourceResult::Unknown { function, reason }
+    } else if summaries.len() != functions.len() {
+        CompositionSourceResult::Unknown {
             function: (*wrapper).into(),
             reason: format!("composition source import incomplete: {imported:?}"),
-        },
+        }
+    } else {
+        let wrapper_summary = summaries[0].clone();
+        let native_summary = summaries[1].clone();
+        let wrapper_admitted: Vec<(&str, &str)> = match family {
+            CompositionFamily::UnmapWrapper => UNMAP_WRAPPER_CALLEES.to_vec(),
+            CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
+                FILE_CLOSE_CALLEES.to_vec()
+            }
+        };
+        // Only the `void` file_close wrapper may end a path without a value.
+        let void_wrapper = family.is_file_close();
+        let projected = project_family(
+            family,
+            &wrapper_summary,
+            &wrapper_admitted,
+            void_wrapper,
+            &native_summary,
+            native_profile,
+            nested.as_ref(),
+            delete.as_ref(),
+            &summaries,
+        );
+        match projected {
+            Ok(family_input) => {
+                if family_input.semantic_profile() != expected_profile(family) {
+                    return Err("composition family input answers another semantic profile".into());
+                }
+                CompositionSourceResult::Import(Box::new(CompositionSourceImport {
+                    wrapper: wrapper_summary,
+                    native: native_summary,
+                    nested_wrapper: nested.as_ref().map(|_| summaries[2].clone()),
+                    nested_native: nested.as_ref().map(|_| summaries[3].clone()),
+                    delete: delete.as_ref().map(|_| summaries[4].clone()),
+                    identity,
+                    family: family.clone(),
+                    native_profile: native_profile.clone(),
+                    input: CompositionSourceInput {
+                        schema_version: COMPOSITION_SOURCE_INPUT_VERSION,
+                        prerequisites: prerequisites.clone(),
+                        family: family_input,
+                    },
+                }))
+            }
+            Err(reason) => CompositionSourceResult::Unknown {
+                function: wrapper_summary.function().into(),
+                reason,
+            },
+        }
     };
     if ClangIdentity::capture()? != compiler {
         return Err("Clang identity changed during composition source import".into());
     }
     Ok(result)
+}
+
+/// Project the selected family's whole question. For a `file_close` family the
+/// nested composition question is rebuilt verbatim, so the transported value is
+/// the same one the leaf composition's own projection carries.
+#[allow(clippy::too_many_arguments)]
+fn project_family(
+    family: &CompositionFamily,
+    wrapper_summary: &SourceSummary,
+    wrapper_admitted: &[(&str, &str)],
+    void_wrapper: bool,
+    native_summary: &SourceSummary,
+    native_profile: &CleanupProfileRecord,
+    nested: Option<&NestedUnmapSelection<'_>>,
+    delete: Option<&FileCloseDeleteSelection<'_>>,
+    summaries: &[SourceSummary],
+) -> Result<CompositionFamilyInput, String> {
+    let wrapper_body = project(wrapper_summary, wrapper_admitted, void_wrapper)?;
+    let native_body = project(native_summary, &native_callees(native_profile), false)?;
+    match family {
+        CompositionFamily::UnmapWrapper => Ok(CompositionFamilyInput::UnmapWrapper {
+            wrapper: wrapper_body,
+            native: native_body,
+            native_profile: native_profile.clone(),
+        }),
+        CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
+            let nested = nested.ok_or("missing nested composition selection")?;
+            let nested_wrapper = project(&summaries[2], &UNMAP_WRAPPER_CALLEES, false)?;
+            let nested_native = project(
+                &summaries[3],
+                &native_callees(&nested.native_profile),
+                false,
+            )?;
+            let delete_input = match delete {
+                None => None,
+                Some(delete) => Some(Box::new(FileCloseDeleteInput {
+                    body: project(&summaries[4], &native_callees(&delete.profile), false)?,
+                    profile: delete.profile.clone(),
+                    mapping_field: delete.mapping_field.to_owned(),
+                })),
+            };
+            Ok(CompositionFamilyInput::FileClose {
+                wrapper: wrapper_body,
+                unmap: Box::new(CompositionFamilyInput::UnmapWrapper {
+                    wrapper: nested_wrapper,
+                    native: nested_native,
+                    native_profile: nested.native_profile.clone(),
+                }),
+                close: native_body,
+                close_profile: native_profile.clone(),
+                delete: delete_input,
+            })
+        }
+    }
+}
+
+/// The semantic profile a selected family must answer under, so the projected
+/// shape and the caller's selection cannot disagree.
+const fn expected_profile(family: &CompositionFamily) -> &'static str {
+    match family {
+        CompositionFamily::UnmapWrapper => {
+            qcore_schemas::composition_summary::UNMAP_WRAPPER_SEMANTIC_PROFILE
+        }
+        CompositionFamily::FileClose => {
+            qcore_schemas::composition_summary::FILE_CLOSE_SEMANTIC_PROFILE
+        }
+        CompositionFamily::FileCloseDeleting => {
+            qcore_schemas::composition_summary::FILE_CLOSE_DELETE_SEMANTIC_PROFILE
+        }
+    }
 }

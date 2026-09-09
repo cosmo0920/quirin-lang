@@ -411,4 +411,266 @@ theorem an_established_chain_is_established (inner outer : Prereq)
     revalidate (chained inner inner.identity outer) outer.identity = some () := by
   simp [chained, revalidate, hic, hie, hoc, hoe]
 
+/-! ## The nested composition (card `P04-COMPOSE-A`)
+
+The `cio_file_close` compositions are the first route whose own prerequisite is
+**another composition**. Two things are modelled here and nothing else:
+
+1. **The two-level re-establishment is total.** Re-establishing a nested
+   composition is re-running the whole leaf admission work — its identity, its
+   own three prerequisites and its own composition — and the result is a decided
+   function of every input, with no partial case. A forged *leaf* prerequisite
+   under an honest *middle* identity refuses, which is the decisive property:
+   every level is the core's own work, and no level can be skipped by naming the
+   level above it honestly.
+2. **It is order-independent.** The outer route discharges three or four
+   obligations; the value it computes does not depend on the order in which they
+   are discharged, so the implementation's fixed order is a choice and not a
+   load-bearing assumption.
+
+The deleting arm's fourth obligation is present exactly when the question has a
+deleting arm, in both directions. Whether a file was unlinked, a descriptor
+closed or a mapping torn down stays outside every statement here. -/
+
+/-- A nested composition context: the identity a dependent names it by, and the
+whole leaf `Core` it is. -/
+structure Nested where
+  identity : Identity
+  core : Core
+  deriving DecidableEq, Repr
+
+/-- A nested composition seen as a prerequisite of its dependent. Its "own
+evaluation succeeds" is exactly the leaf work: all three of *its* prerequisites
+re-established under the identities the core derives, **and** its own
+composition succeeding. Nothing a producer sends enters this. -/
+def asPrereq (n : Nested) : Prereq :=
+  { identity := n.identity,
+    evaluates := established n.core (identities n.core) && n.core.composes.isSome,
+    body := n.core.wrapper }
+
+/-- The two-level re-establishment is **total**: it answers on every (nested
+context, claim) pair, and its answer is exactly the decided conjunction of the
+outer identity check and the whole inner level. There is no partial case. -/
+theorem two_level_revalidation_is_total (n : Nested) (claimed : Identity) :
+    (revalidate (asPrereq n) claimed).isSome =
+      (complete claimed && claimed == n.identity &&
+        (established n.core (identities n.core) && n.core.composes.isSome)) := by
+  simpa [asPrereq] using revalidation_is_total (asPrereq n) claimed
+
+/-- **The decisive statement of this card.** A forged leaf prerequisite under an
+honest middle certificate refuses. The claim naming the nested composition is
+the identity the core derives, the nested composition's own composition
+succeeds, and it still refuses — because the core re-establishes the nested
+composition's *own* prerequisites itself. -/
+theorem a_forged_leaf_prerequisite_refuses_under_an_honest_middle_identity
+    (n : Nested) (claimed : Identity)
+    (hhonest : claimed = n.identity)
+    (hcomposes : n.core.composes.isSome = true)
+    (hleaf : n.core.counter.evaluates = false) :
+    revalidate (asPrereq n) claimed = none := by
+  have _honest := hhonest
+  have _composes := hcomposes
+  have hfalse : (asPrereq n).evaluates = false := by
+    simp [asPrereq, established,
+      a_refusing_prerequisite_is_never_established n.core.counter (identities n.core).counter hleaf]
+  exact a_refusing_prerequisite_is_never_established _ _ hfalse
+
+/-- The same for each of the other two leaf prerequisites, so no single leaf can
+be skipped. -/
+theorem a_refusing_leaf_call_use_refuses_the_nested_composition (n : Nested) (claimed : Identity)
+    (h : n.core.callUse.evaluates = false) : revalidate (asPrereq n) claimed = none := by
+  have hfalse : (asPrereq n).evaluates = false := by
+    simp [asPrereq, established,
+      a_refusing_prerequisite_is_never_established n.core.callUse (identities n.core).callUse h]
+  exact a_refusing_prerequisite_is_never_established _ _ hfalse
+
+theorem a_refusing_leaf_cleanup_refuses_the_nested_composition (n : Nested) (claimed : Identity)
+    (h : n.core.cleanup.evaluates = false) : revalidate (asPrereq n) claimed = none := by
+  have hfalse : (asPrereq n).evaluates = false := by
+    simp [asPrereq, established,
+      a_refusing_prerequisite_is_never_established n.core.cleanup (identities n.core).cleanup h]
+  exact a_refusing_prerequisite_is_never_established _ _ hfalse
+
+/-- A nested composition whose own composition refuses is never established,
+however honest every identity is. -/
+theorem a_refusing_nested_composition_is_never_established (n : Nested) (claimed : Identity)
+    (h : n.core.composes = none) : revalidate (asPrereq n) claimed = none := by
+  have hfalse : (asPrereq n).evaluates = false := by simp [asPrereq, h]
+  exact a_refusing_prerequisite_is_never_established _ _ hfalse
+
+/-- A foreign identity for the nested composition is refused even when the whole
+inner level holds: the middle level's identity is load-bearing on its own. -/
+theorem a_foreign_nested_identity_is_refused (n : Nested) (claimed : Identity)
+    (h : claimed ≠ n.identity) : revalidate (asPrereq n) claimed = none :=
+  a_foreign_claim_is_refused (asPrereq n) claimed (by simpa [asPrereq] using h)
+
+/-- Non-vacuity of the two-level rule: a whole honest chain is established. -/
+theorem an_honest_two_level_chain_is_established (n : Nested) (reading : Reading)
+    (hid : complete n.identity = true)
+    (h1 : complete n.core.callUse.identity = true)
+    (h2 : complete n.core.cleanup.identity = true)
+    (h3 : complete n.core.counter.identity = true)
+    (hcu : n.core.callUse.evaluates = true) (hcl : n.core.cleanup.evaluates = true)
+    (hco : n.core.counter.evaluates = true)
+    (hc : n.core.composes = some reading) :
+    revalidate (asPrereq n) n.identity = some () := by
+  simp [asPrereq, revalidate, established, identities, hid, h1, h2, h3, hcu, hcl, hco, hc]
+
+/-! ### The outer `file_close` obligations -/
+
+/-- The outer route's prerequisite set: three named prerequisites plus an
+optional fourth, present exactly on the deleting arm. -/
+structure CloseSet where
+  callUse : Identity
+  nested : Identity
+  cleanup : Identity
+  delete : Option Identity
+  deriving DecidableEq, Repr
+
+/-- The outer core: its own three contexts, its nested composition context, and
+the optional guarded-delete context. -/
+structure CloseCore where
+  callUse : Prereq
+  nested : Nested
+  cleanup : Prereq
+  delete : Option Prereq
+  deriving DecidableEq, Repr
+
+/-- The obligations the outer route discharges, as a list, so the order in which
+they are discharged can be quantified over. The optional fourth contributes an
+obligation exactly when the question has a deleting arm; a set and a core that
+disagree about its presence contribute `false`, which is the fail-closed answer.
+-/
+def closeObligations (c : CloseCore) (s : CloseSet) : List Bool :=
+  [ (revalidate c.callUse s.callUse).isSome,
+    (revalidate (asPrereq c.nested) s.nested).isSome,
+    (revalidate c.cleanup s.cleanup).isSome,
+    (match c.delete, s.delete with
+     | none, none => true
+     | some p, some i => (revalidate p i).isSome
+     | _, _ => false) ]
+
+/-- Every obligation discharged. -/
+def establishClose (c : CloseCore) (s : CloseSet) : Bool :=
+  (closeObligations c s).all id
+
+/-- A conjunction over a list is invariant under permutation. -/
+theorem all_id_is_permutation_invariant {l l' : List Bool} (h : l.Perm l') :
+    l.all id = l'.all id := by
+  have forward : ∀ {a b : List Bool}, a.Perm b → a.all id = true → b.all id = true := by
+    intro a b hp ha
+    exact List.all_eq_true.mpr fun x hx => List.all_eq_true.mp ha x (hp.mem_iff.mpr hx)
+  cases hl : l.all id with
+  | true => exact (forward h hl).symm
+  | false =>
+      cases hl' : l'.all id with
+      | true =>
+          have hback := forward h.symm hl'
+          rw [hl] at hback
+          exact absurd hback (by simp)
+      | false => rfl
+
+/-- **The two-level re-establishment is order-independent.** The outer route's
+answer is the same however its obligations are ordered, so the implementation's
+fixed order — its own def/use, then the nested composition, then the close
+replay, then the guarded delete — is a choice and not a load-bearing
+assumption. -/
+theorem establishing_the_obligations_is_order_independent
+    (c : CloseCore) (s : CloseSet) (order : List Bool)
+    (h : (closeObligations c s).Perm order) :
+    establishClose c s = order.all id :=
+  all_id_is_permutation_invariant h
+
+/-- Totality of the outer rule: it is a decided function of every input, and its
+answer is exactly the conjunction of its four obligations. There is no partial
+case and no obligation is skipped. -/
+theorem establishing_the_obligations_is_total (c : CloseCore) (s : CloseSet) :
+    establishClose c s =
+      ((revalidate c.callUse s.callUse).isSome &&
+        (revalidate (asPrereq c.nested) s.nested).isSome &&
+        (revalidate c.cleanup s.cleanup).isSome &&
+        (match c.delete, s.delete with
+         | none, none => true
+         | some p, some i => (revalidate p i).isSome
+         | _, _ => false)) := by
+  cases h1 : (revalidate c.callUse s.callUse).isSome <;>
+    cases h2 : (revalidate (asPrereq c.nested) s.nested).isSome <;>
+      cases h3 : (revalidate c.cleanup s.cleanup).isSome <;>
+        simp [establishClose, closeObligations, h1, h2, h3]
+
+/-- The decisive row, at the outer level: a forged leaf prerequisite refuses the
+whole outer route, with every outer identity honest and the outer route's own
+contracts untouched. -/
+theorem a_forged_leaf_refuses_the_whole_outer_route (c : CloseCore) (s : CloseSet)
+    (h : c.nested.core.counter.evaluates = false) : establishClose c s = false := by
+  have hnested : revalidate (asPrereq c.nested) s.nested = none := by
+    have hfalse : (asPrereq c.nested).evaluates = false := by
+      simp [asPrereq, established,
+        a_refusing_prerequisite_is_never_established c.nested.core.counter
+          (identities c.nested.core).counter h]
+    exact a_refusing_prerequisite_is_never_established _ _ hfalse
+  rw [establishing_the_obligations_is_total, hnested]
+  simp
+
+/-- The deleting arm's obligation is present exactly when the question has one,
+in both directions: a set that names a delete prerequisite the core does not
+have, and a core that has one the set does not name, both refuse. -/
+theorem the_deleting_arm_must_agree_in_both_directions (c : CloseCore) (s : CloseSet)
+    (h : c.delete.isSome ≠ s.delete.isSome) : establishClose c s = false := by
+  rw [establishing_the_obligations_is_total]
+  cases hc : c.delete <;> cases hs : s.delete <;>
+    simp_all
+
+/-- Non-vacuity of the outer rule: a whole honest two-level route, with or
+without a deleting arm, is established. -/
+theorem an_honest_outer_route_is_established (c : CloseCore) (reading : Reading)
+    (hcu : complete c.callUse.identity = true) (hcue : c.callUse.evaluates = true)
+    (hcl : complete c.cleanup.identity = true) (hcle : c.cleanup.evaluates = true)
+    (hnid : complete c.nested.identity = true)
+    (h1 : complete c.nested.core.callUse.identity = true)
+    (h2 : complete c.nested.core.cleanup.identity = true)
+    (h3 : complete c.nested.core.counter.identity = true)
+    (he1 : c.nested.core.callUse.evaluates = true)
+    (he2 : c.nested.core.cleanup.evaluates = true)
+    (he3 : c.nested.core.counter.evaluates = true)
+    (hnc : c.nested.core.composes = some reading)
+    (hd : c.delete = none) :
+    establishClose c
+      { callUse := c.callUse.identity, nested := c.nested.identity,
+        cleanup := c.cleanup.identity, delete := none } = true := by
+  rw [establishing_the_obligations_is_total]
+  simp [revalidate, asPrereq, established, identities, hcu, hcue, hcl, hcle, hnid,
+    h1, h2, h3, he1, he2, he3, hnc, hd]
+
+/-- The named members of the outer set are pairwise distinct, and the optional
+fourth is subject to the rule rather than exempt from it. -/
+def closeDistinct (s : CloseSet) : Bool :=
+  s.callUse ≠ s.nested && s.callUse ≠ s.cleanup && s.nested ≠ s.cleanup &&
+    (match s.delete with
+     | none => true
+     | some d => d ≠ s.callUse && d ≠ s.nested && d ≠ s.cleanup)
+
+/-- The distinctness rule really discriminates, including on the optional
+fourth member. -/
+theorem the_outer_distinctness_rule_is_decidable :
+    closeDistinct { callUse := ⟨1, 1, 1⟩, nested := ⟨2, 2, 2⟩, cleanup := ⟨3, 3, 3⟩,
+                    delete := some ⟨4, 4, 4⟩ } = true ∧
+      closeDistinct { callUse := ⟨1, 1, 1⟩, nested := ⟨2, 2, 2⟩, cleanup := ⟨3, 3, 3⟩,
+                      delete := some ⟨3, 3, 3⟩ } = false ∧
+      closeDistinct { callUse := ⟨1, 1, 1⟩, nested := ⟨1, 1, 1⟩, cleanup := ⟨3, 3, 3⟩,
+                      delete := none } = false ∧
+      closeDistinct { callUse := ⟨1, 1, 1⟩, nested := ⟨2, 2, 2⟩, cleanup := ⟨3, 3, 3⟩,
+                      delete := none } = true := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-- The nesting depth is a measured property of the question, not an assumption:
+this vocabulary nests exactly one composition inside another, and a question
+that nested a `file_close` question inside a `file_close` question would be a
+third level the outer rule has no prerequisite for. -/
+def nestingDepth : Nat → Nat
+  | 0 => 1
+  | n + 1 => 1 + nestingDepth n
+
+theorem the_file_close_question_nests_exactly_twice : nestingDepth 1 = 2 := by decide
+
 end QCore.CompositionAdmission

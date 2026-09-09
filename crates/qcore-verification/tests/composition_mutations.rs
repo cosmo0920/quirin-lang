@@ -183,7 +183,9 @@ fn every_prerequisite_is_re_established_rather_than_read() {
                     native: NATIVE,
                     records: &RECORDS,
                     native_profile: native_profile_record(),
-                    prerequisites: claimed,
+                    prerequisites: qcore_schemas::composition_summary::CompositionPrerequisiteSet::UnmapWrapper(claimed),
+                    nested: None,
+                    delete: None,
                 },
             )
             .is_err()
@@ -215,7 +217,9 @@ fn every_prerequisite_is_re_established_rather_than_read() {
                     native: NATIVE,
                     records: &RECORDS,
                     native_profile: native_profile_record(),
-                    prerequisites: claimed,
+                    prerequisites: qcore_schemas::composition_summary::CompositionPrerequisiteSet::UnmapWrapper(claimed),
+                    nested: None,
+                    delete: None,
                 },
             )
             .is_err()

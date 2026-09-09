@@ -336,8 +336,12 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             // the same already-`*` profile list, 0.8.0 adds the symbolic
             // cleanup-replay route on that same target and profile list, and
             // 0.9.0 adds the unmap-wrapper composition route on it too (card
-            // P04-COMPOSE).
-            expected.package_version = "0.9.0".into();
+            // P04-COMPOSE), and 0.10.0 the two `cio_file_close` composition
+            // routes, whose own prerequisite is that composition (card
+            // P04-COMPOSE-A). All of them are reached through the same
+            // `chunkio` target, whose profile list is already `*`, so no other
+            // manifest field moves.
+            expected.package_version = "0.10.0".into();
             expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]

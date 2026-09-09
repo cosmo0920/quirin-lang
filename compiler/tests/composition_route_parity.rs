@@ -30,7 +30,7 @@ use qcore_compiler::verifier_plugins::chunkio::{
 };
 use qcore_schemas::TargetProfile;
 use qcore_schemas::composition_summary::{
-    UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapWrapperPrerequisites,
+    CompositionPrerequisiteSet, UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapWrapperPrerequisites,
 };
 use qcore_verification::call_use_contract::CallResultUsePolicy;
 use qcore_verification::call_use_source::{
@@ -268,7 +268,9 @@ fn moved(source: &str) -> Result<String, String> {
             native: NATIVE,
             records: &RECORDS,
             native_profile: profile_record(&declared_profile(OUTCOMES_CONTRACT, NATIVE_POLICY)?.0),
-            prerequisites: claimed,
+            prerequisites: CompositionPrerequisiteSet::UnmapWrapper(claimed),
+            nested: None,
+            delete: None,
         },
     )?;
     let CompositionSourceResult::Import(import) = result else {

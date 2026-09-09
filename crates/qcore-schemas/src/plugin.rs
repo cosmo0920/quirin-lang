@@ -662,10 +662,12 @@ impl VerificationRequestV2 {
         }
         // A composition projection carries exactly one obligation, of its own
         // property, for the wrapper it names, and never travels with another
-        // projection. Its prerequisite triples must each be complete and the
-        // three must be distinct: an empty component is a lookup key that names
+        // projection. Its prerequisite identities must each be complete and all
+        // of them distinct: an empty component is a lookup key that names
         // nothing, and a repeated one names a prerequisite it has not
-        // established.
+        // established. Its family and its prerequisite set must also agree —
+        // one family's set is never read as another's, and the deleting arm's
+        // delete body and delete prerequisite are present or absent together.
         let composition_obligations = self
             .obligations
             .iter()
@@ -678,6 +680,7 @@ impl VerificationRequestV2 {
                 if input.version_matches()
                     && input.prerequisites.is_complete()
                     && input.prerequisites.are_distinct()
+                    && input.family.matches(&input.prerequisites)
                     && self.source_effect.is_none()
                     && self.counter_effect.is_none()
                     && self.reactor_program.is_none()

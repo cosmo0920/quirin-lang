@@ -382,6 +382,12 @@ impl<'a> Replay<'a> {
                     return Some(Some(value));
                 }
                 CleanupReplayOperationRecord::ReturnValue { .. } => return None,
+                // The value-free return exists on the shared record enum for
+                // the composition route's `void` wrapper only. This family's
+                // bodies all return a value, so it is declined by name here
+                // exactly as the gateway projector refuses it on the way out
+                // (`P04-COMPOSE-SHARED-PATHS`).
+                CleanupReplayOperationRecord::Return => return None,
             }
         }
         None
@@ -468,7 +474,12 @@ pub fn replay_native_cleanup_outcome(
 
 /// The guarded delete family: five sampled prestates over two eligibility
 /// fields, where every arm preserves the record.
-fn replay_guarded_delete(
+///
+/// Public for the same reason as the outcome family above: the deleting
+/// `file_close` composition producer must recompute this prerequisite reading
+/// itself, because the composition vocabulary cannot carry a prerequisite's
+/// conclusion.
+pub fn replay_guarded_delete(
     body: &CleanupReplayFunctionRecord,
     profile: &CleanupProfileRecord,
     mapping_field: &str,

@@ -143,7 +143,7 @@ fn check(
     contract: &str,
 ) -> Result<FilesystemChunkCloseEvidence, String> {
     let memory = memory.recheck()?;
-    let backend = backend.recheck()?;
+    let backend = super::file_close::recheck_deletion(backend)?;
     if probe.source_revision() != PINNED_FLUENT_BIT_REVISION
         || probe.function() != "qcore_cio_filesystem_store_value"
         || backend.source().source_revision() != memory.source().source_revision()

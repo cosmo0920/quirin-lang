@@ -33,7 +33,7 @@ use qcore_schemas::cleanup_replay_summary::{
     CLEANUP_REPLAY_SEMANTIC_PROFILE, CleanupProfileRecord,
 };
 use qcore_schemas::composition_summary::{
-    CompositionProposalRecord, CompositionRecord, CompositionWitness,
+    CompositionPrerequisiteSet, CompositionProposalRecord, CompositionRecord, CompositionWitness,
     UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapCaseRecord, UnmapWrapperPrerequisites,
 };
 use qcore_verification::call_use_contract::CallResultUsePolicy;
@@ -347,7 +347,9 @@ pub fn import_result(
             native: NATIVE,
             records: &RECORDS,
             native_profile,
-            prerequisites: claimed,
+            prerequisites: CompositionPrerequisiteSet::UnmapWrapper(claimed),
+            nested: None,
+            delete: None,
         },
     )
     .unwrap()

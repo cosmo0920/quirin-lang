@@ -75,19 +75,18 @@ fn the_provider_fixture_is_the_live_projection() {
     let live = import(SOURCE, identities(&prereqs)).source_input();
     assert_eq!(committed.schema_version, live.schema_version);
     assert_eq!(committed.family, live.family, "the projection drifted");
+    let committed_set = committed
+        .prerequisites
+        .unmap_wrapper()
+        .expect("the leaf fixture carries the leaf set");
+    let live_set = live
+        .prerequisites
+        .unmap_wrapper()
+        .expect("the live leaf projection carries the leaf set");
     for (a, b) in [
-        (
-            &committed.prerequisites.wrapper_call_use,
-            &live.prerequisites.wrapper_call_use,
-        ),
-        (
-            &committed.prerequisites.native_cleanup,
-            &live.prerequisites.native_cleanup,
-        ),
-        (
-            &committed.prerequisites.counter,
-            &live.prerequisites.counter,
-        ),
+        (&committed_set.wrapper_call_use, &live_set.wrapper_call_use),
+        (&committed_set.native_cleanup, &live_set.native_cleanup),
+        (&committed_set.counter, &live_set.counter),
     ] {
         assert_eq!(a.semantic_profile, b.semantic_profile);
         assert!(a.is_complete() && b.is_complete());
@@ -100,6 +99,7 @@ fn the_provider_fixture_is_the_live_projection() {
         );
     }
     assert!(committed.prerequisites.are_distinct());
+    assert!(committed.family.matches(&committed.prerequisites));
 }
 
 #[test]
@@ -133,7 +133,9 @@ fn real_package_composes_without_admitting_false_contracts() {
     let Some(SemanticWitness::Composition(witness)) = certificate.witness() else {
         panic!("wrong witness kind")
     };
-    let CompositionProposalRecord::UnmapWrapper(record) = &witness.summary;
+    let CompositionProposalRecord::UnmapWrapper(record) = &witness.summary else {
+        panic!("the leaf route must publish a leaf reading")
+    };
     assert_eq!(record.function, WRAPPER);
     assert_eq!(record.cases.len(), 8);
     assert_eq!(
@@ -198,7 +200,10 @@ fn real_package_composes_without_admitting_false_contracts() {
     let mut forged = request.clone();
     {
         let CompositionFamilyInput::UnmapWrapper { wrapper, .. } =
-            &mut forged.composition_source.as_mut().unwrap().family;
+            &mut forged.composition_source.as_mut().unwrap().family
+        else {
+            panic!("the leaf route must carry the leaf family")
+        };
         // A projection the process still answers — the composed reading is
         // recomputed the same way — but one the core never imported.
         wrapper
