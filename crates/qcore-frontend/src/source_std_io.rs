@@ -74,7 +74,7 @@ pub enum StdIoUse {
     Flush,
 }
 
-fn statement_head<'a>(tokens: &'a [Token], span: Span) -> Option<&'a str> {
+fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
     tokens
         .iter()
         .find(|token| span.start <= token.span.start && token.span.end <= span.end)
@@ -84,7 +84,7 @@ fn statement_head<'a>(tokens: &'a [Token], span: Span) -> Option<&'a str> {
         })
 }
 
-fn window<'a>(tokens: &'a [Token], span: Span) -> Vec<&'a Token> {
+fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
     tokens
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)

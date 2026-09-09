@@ -6,9 +6,32 @@ Commands run, in the order the AGENTS.md gate lists them.
 --------------------------------------------------------------------------
 cargo test --workspace --no-fail-fast
 --------------------------------------------------------------------------
-(filled in below from /tmp scratch output; see "RESULT" line)
+Three suites failed on a single ENVIRONMENT cause, not on this card's changes:
 
-RESULT: see the final line of this file.
+    libevent_submodule_matches_the_audited_revision
+    declared_pins_match_the_checkouts_and_the_retained_rust_constant
+    f9_and_f10_missing_files_and_digest_drift_reject_the_inventory
+
+All three read `third_party/libevent`, which was never initialized in this
+fresh worktree:
+
+    Pin(SourceRevisionMismatch { pin: "libevent",
+        expected: "d82464a277d0f42703702c4dfd9af6af38595a83",
+        actual:   "61b5a4bd3fc0c6a59d2ae1b7362199f30ff4f2fe" })
+
+`git submodule status` confirmed the diagnosis — a leading `-`, i.e. not
+initialized, with the *recorded* commit already correct.
+
+The pin was NOT weakened. The fix is the standing gate's own documented
+once-per-checkout step:
+
+    git submodule update --init --recursive
+    -> Submodule path 'third_party/libevent': checked out
+       'd82464a277d0f42703702c4dfd9af6af38595a83'
+
+and the three targets were then re-run and pass (see "Re-verification" below).
+
+RESULT: see the final section of this file.
 
 --------------------------------------------------------------------------
 cargo fmt --all -- --check

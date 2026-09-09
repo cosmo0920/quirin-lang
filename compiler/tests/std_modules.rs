@@ -209,7 +209,7 @@ fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability(
     let diagnostics = compile_files(
         &[
             SourceFile::new("granting.qcore", granting),
-            SourceFile::new("using.qcore", &LINES.replace("import std.io;\n", "")),
+            SourceFile::new("using.qcore", LINES.replace("import std.io;\n", "")),
         ],
         &CompileOptions {
             entry: None,
