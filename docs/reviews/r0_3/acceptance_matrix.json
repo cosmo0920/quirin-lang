@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "8.0.0",
+  "qcore_schemas_rust_api": "9.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Existing wire bytes are unchanged and pinned by crates/qcore-schemas/tests/counter_request_wire.rs.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -178,7 +178,7 @@
   "source_set_profile_manifest": "v1 (unchanged)",
   "compile_task_identity": "1 (new in G01)",
   "provider_packages": {
-   "qcore.chunkio": "0.7.0",
+   "qcore.chunkio": "0.8.0",
    "qcore.cmetrics": "0.2.0",
    "qcore.ctraces": "0.1.0",
    "qcore.libevent": "0.2.0",
@@ -5595,10 +5595,10 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2265,
-  "provider_tests": 76,
+  "workspace_tests": 2287,
+  "provider_tests": 87,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 55,
+  "lean_audits": 56,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5607,6 +5607,7 @@
    "AuditCapacityBoundary.lean",
    "AuditChainedAccess.lean",
    "AuditChunkIntegrityObservation.lean",
+   "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
    "AuditConcurrencyPrelude.lean",
    "AuditConditionalGroupDepth.lean",
@@ -5662,7 +5663,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate12b.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate12c.json)"
  },
  "named_followups": [
   {
