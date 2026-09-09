@@ -2843,6 +2843,17 @@ fn check_legacy_analysis(
     let summary = summary.unwrap_or_else(|| {
         panic!("{case_id} ({label}): the analysis published no per-function summary")
     });
+    // The published summary must be the one this entry was asked for. This is a
+    // weak check by construction and is recorded as such: mutation M20 (analyze
+    // `on_complete` instead of `subject`) is *admitted*, because the projection
+    // covers every main-source definition, so both entries yield the same unit
+    // verdict, the same statuses and the same diagnostics. The declared entry
+    // therefore selects the summary's label, not what these two cases measure —
+    // recorded as CT-CTWIN-ENTRY rather than papered over.
+    assert_eq!(
+        summary.entry, entry,
+        "{case_id} ({label}): the analysis must be the one this case's declared entry asked for"
+    );
     // Both maps are rebuilt whole from the summary rather than looked up by the
     // keys the fixture happens to name, so a fixture cannot pin a convenient
     // subset of the functions or of their diagnostics.
