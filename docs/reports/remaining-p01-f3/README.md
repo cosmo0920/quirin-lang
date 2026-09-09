@@ -205,6 +205,18 @@ dispatches. Recorded open as **`P01-F3-COST`**: caching keyed on anything weaker
 than the content (size, mtime, a kernel change notification) would reintroduce
 exactly the substitution this card refuses, so no cache is added here.
 
+**A regression this cost caused, and the repair.** The first implementation left
+the wall deadline where it was, computed before the re-check, so the host's own
+SHA-256 was charged against the *package's* `limits.timeout_ms`. On a debug
+build that silently broke the configured process audit: two conformance cases
+went from two and one checked function contracts to zero, with the provider
+timing out and the audit correctly recording `Unknown`. The deadline now starts
+after the re-check, because `limits.timeout_ms` bounds how long the *package*
+may run, not how long the host spends deciding whether to run it. The
+five-package measurement case above dispatches the real 2.3 MB executables under
+their declared timeouts in a debug build, so it is also the regression test for
+this.
+
 Providers now also hold one open descriptor each for their lifetime (five, for
 the five shipped packages).
 
@@ -312,6 +324,24 @@ says nothing about `execve` semantics beyond "the path's content is what loads".
 | `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --offline -- -D warnings` | GATE_PROV_CLIPPY |
 | `python3 -B providers/package.py build` + `verify` | GATE_PACKAGES |
 | `python3 -m unittest discover -s scripts/tests` | GATE_PYTHON |
+
+### 7.1 One derived number the card may not update
+
+`scripts/tests/test_build_matrix_sections.py::test_the_derived_facts_are_recomputed_rather_than_carried`
+fails, and is **expected to**: it compares the committed
+`docs/reviews/r0_3/acceptance_matrix.json` against the live sources, and this
+card adds `proof/AuditPackageIdentity.lean`, so the derived
+`validation.lean_audits` moves 48 -> 49 and `validation.lean_audit_files`
+gains the new name. The matrix is integrator-owned and this card is instructed
+not to edit it, so the failure is left standing and handed over. It clears with
+the regeneration the wave-9 generator already supports:
+
+```sh
+python3 -B docs/reports/remaining-d02/build_matrix.py . --gate GATE.json
+```
+
+No other Python test fails (124 of 125 pass), and nothing about the assertion
+was weakened to make it green.
 
 ## 8. Compatibility and deliberate decisions
 

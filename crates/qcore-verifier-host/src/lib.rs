@@ -1551,11 +1551,6 @@ impl ProcessProvider {
         };
         #[cfg(not(target_os = "linux"))]
         let _ = (confinement, quota_procs);
-        let deadline = Instant::now()
-            .checked_add(Duration::from_millis(enforced.wall_clock_ms))
-            .ok_or_else(|| {
-                ProviderFailure::Protocol("provider timeout exceeds clock range".into())
-            })?;
         let limit = enforced.stdout_bytes;
         let wire_limit = limit.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
         // A verified provider executes the *canonical* path verification
@@ -1647,6 +1642,17 @@ impl ProcessProvider {
             }
             None => None,
         };
+        // The declared wall deadline starts here, *after* the host's own
+        // checking. A package's `limits.timeout_ms` bounds how long the package
+        // may run; charging the host's re-read of the executable against it
+        // would shorten every provider's budget by the cost of a check the
+        // provider did not ask for, and on an unoptimized build that cost is
+        // comparable to the budget itself.
+        let deadline = Instant::now()
+            .checked_add(Duration::from_millis(enforced.wall_clock_ms))
+            .ok_or_else(|| {
+                ProviderFailure::Protocol("provider timeout exceeds clock range".into())
+            })?;
         let mut child = ProviderChild(
             command
                 .spawn()
