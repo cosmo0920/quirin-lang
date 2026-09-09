@@ -153,6 +153,8 @@ fn reports_unresolved(summary: &LegacyFunctionSummary, name: &str) -> bool {
 ///   deliberately — one `void *`, one double-star, one array and one `volatile`
 ///   member the reader must refuse.
 /// * `r_outer` supplies an aggregate read out of another object's memory.
+/// * `r_probe` accepts every pointer shape, including qualifiers, so Clang
+///   accepts the adversarial calls and the gateway decides their admission.
 const DECLARATIONS: &str = "\
 typedef unsigned long r_word; \
 struct r_item { int weight; struct r_item *next; }; \
@@ -165,7 +167,7 @@ struct r_item *r_take(int n); \
 r_word *r_words(int n); \
 void r_drop(struct r_box *b); \
 void r_release(struct r_item *i); \
-int r_probe(struct r_item *i); \
+int r_probe(const volatile void *i); \
 int r_scan(r_word *w); \
 int r_count(int n); \
 void r_reap(struct r_item *i); \
@@ -802,13 +804,14 @@ fn a_certificate_resting_on_a_bound_read_rests_on_the_declared_mode() {
     let borrowed = "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);";
     {
         let mode = "resource_owned(i, nonnull)";
-        let weakened = GENERIC_CONTRACTS.replace(
+        let contracts = GENERIC_CONTRACTS.replace("\r\n", "\n");
+        let weakened = contracts.replace(
             borrowed,
             &format!(
                 "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {{\n    requires resource_contract_v1;\n    ensures normal {mode};"
             ),
         );
-        assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
+        assert_ne!(weakened, contracts, "the substitution applied");
         let source = format!("{DECLARATIONS} {R_CREATE}");
         let result = analyze_unrestricted_c11(
             &C11TranslationUnit {
@@ -978,7 +981,23 @@ fn substituting_the_read_member_declaration_restores_the_refusal() {
     for (reason, from, to) in substitutions {
         let unit = real_unit();
         assert!(unit.contains(from), "{reason}: `{from}` is present");
-        let result = analyze_real(&unit.replacen(from, to, 1));
+        // Preserve valid C for both mutated member types without casting the
+        // read itself: the gateway must still inspect the original member.
+        let changed = unit.replacen(from, to, 1);
+        let allocation = "ic->routes_mask = (flb_route_mask_element *)";
+        let signature = "int flb_routes_mask_set_by_tag(flb_route_mask_element *routes_mask,";
+        assert!(
+            changed.contains(allocation),
+            "the allocation anchor is present"
+        );
+        assert!(changed.contains(signature), "the callee anchor is present");
+        let changed = changed
+            .replace(allocation, "ic->routes_mask = (void *)")
+            .replace(
+                signature,
+                "int flb_routes_mask_set_by_tag(const volatile void *routes_mask,",
+            );
+        let result = analyze_real(&changed);
         let caller = function(program(&result), "flb_input_chunk_create");
         assert!(
             unsupported(caller)

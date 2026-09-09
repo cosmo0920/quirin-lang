@@ -792,7 +792,7 @@ const STORE_BLOCK: &str = "    let child = qcore_extern_alloc(8) succeeds true\n
 #[test]
 fn a_store_is_reachable_once_the_error_arm_disposes_of_the_other_identity() {
     assert!(
-        STORED.contains(STORE_BLOCK),
+        STORED.replace("\r\n", "\n").contains(STORE_BLOCK),
         "the store fixture no longer contains the block the store tests substitute into"
     );
     let module = compile_with(STORED, selection()).unwrap();
@@ -892,11 +892,12 @@ fn a_disposition_does_not_consume_the_identity_on_the_success_arm() {
 /// disposition still abandons the live owner and is still refused.
 #[test]
 fn an_acquisition_whose_arm_disposes_of_nothing_still_refuses() {
-    let source = STORED.replace(
+    let stored = STORED.replace("\r\n", "\n");
+    let source = stored.replace(
         "succeeds true\n        else qcore_extern_release(move owner) raise Failure;",
         "succeeds true else raise Failure;",
     );
-    assert_ne!(source, STORED, "the arm must have been emptied");
+    assert_ne!(source, stored, "the arm must have been emptied");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
 }
@@ -975,7 +976,8 @@ fn an_arm_call_that_releases_nothing_refuses() {
 /// owner and the child are live at the failing acquisition, so the arm must
 /// dispose of two identities and the order is observable.
 fn two_live_identities_at_the_failing_acquisition(arm: &str) -> String {
-    let source = STORED_FAILURE.replace("    qcore_extern_attach(owner, move child);\n", "");
+    let source = STORED_FAILURE.replace("\r\n", "\n");
+    let source = source.replace("    qcore_extern_attach(owner, move child);\n", "");
     let source = source.replace(
         "    qcore_extern_release(move extra);\n",
         "    qcore_extern_release(move extra);\n    qcore_extern_release(move child);\n",
@@ -1027,11 +1029,12 @@ fn substituting_the_recorded_dispositions_fails_the_recheck() {
 /// the extern pass does not duplicate it under a second code.
 #[test]
 fn an_arm_calling_an_undeclared_symbol_refuses_at_name_resolution() {
-    let source = STORED.replace(
+    let stored = STORED.replace("\r\n", "\n");
+    let source = stored.replace(
         "extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n",
         "",
     );
-    assert_ne!(source, STORED, "the declaration must have been removed");
+    assert_ne!(source, stored, "the declaration must have been removed");
     assert_eq!(codes(&source, selection()), ["Q013"]);
 }
 
@@ -1048,19 +1051,21 @@ fn an_arm_call_outside_the_declared_effect_row_refuses() {
 /// because a self-store needs only one — and is refused by name.
 #[test]
 fn storing_an_identity_beneath_itself_refuses() {
-    let source = STORED.replace(STORE_BLOCK, "    qcore_extern_attach(owner, move owner);");
-    assert_ne!(source, STORED, "the store block must have been substituted");
+    let stored = STORED.replace("\r\n", "\n");
+    let source = stored.replace(STORE_BLOCK, "    qcore_extern_attach(owner, move owner);");
+    assert_ne!(source, stored, "the store block must have been substituted");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }
 
 #[test]
 fn moving_where_the_contract_declares_the_store_owner_refuses() {
-    let source = STORED.replace(
+    let stored = STORED.replace("\r\n", "\n");
+    let source = stored.replace(
         STORE_BLOCK,
         "    qcore_extern_attach(move owner, move owner);",
     );
-    assert_ne!(source, STORED, "the store block must have been substituted");
+    assert_ne!(source, stored, "the store block must have been substituted");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }

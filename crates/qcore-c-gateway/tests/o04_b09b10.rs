@@ -583,11 +583,12 @@ fn a_certificate_resting_on_a_member_address_rests_on_the_declared_mode() {
         "void m_g1(void) {{ {LINKED} m_visit(&b->pad); m_visit(&b->count); \
          m_free(i); m_drop(b); }}"
     );
-    let weakened = GENERIC_CONTRACTS.replace(
+    let contracts = GENERIC_CONTRACTS.replace("\r\n", "\n");
+    let weakened = contracts.replace(
         "extern fn m_visit(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(p);",
         "extern fn m_visit(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nonnull);",
     );
-    assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
+    assert_ne!(weakened, contracts, "the substitution applied");
     let source = format!("{DECLARATIONS} {body}");
     let result = analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -770,7 +771,14 @@ fn substituting_the_addressed_member_declarations_restores_the_refusal() {
             unit.contains(before),
             "the substitution anchor `{before}` is present"
         );
-        let changed = unit.replace(before, after);
+        let mut changed = unit.replace(before, after);
+        // Keep the mutated fixture valid C on Clang versions that reject
+        // incompatible pointer arguments. The borrowed position accepts the
+        // address of either member shape; its declared type still determines
+        // whether the gateway admits that address.
+        let signature = "void msgpack_packer_init(struct msgpack_packer *pk,";
+        assert!(changed.contains(signature), "the callee anchor is present");
+        changed = changed.replace(signature, "void msgpack_packer_init(void *pk,");
         let result = analyze_real(&changed);
         let caller = function(program(&result), "flb_input_chunk_create");
         assert!(
