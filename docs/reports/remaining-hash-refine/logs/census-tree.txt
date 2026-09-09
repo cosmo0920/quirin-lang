@@ -1,0 +1,55 @@
+== literal 0 (exact): 23
+   plugins/filter_checklist/checklist.c:176  0
+   plugins/filter_ecs/ecs.c:937  0
+   plugins/in_node_exporter_metrics/ne_meminfo_linux.c:168  0
+   plugins/in_node_exporter_metrics/ne_netdev_linux.c:39  0
+   plugins/in_node_exporter_metrics/ne_vmstat_linux.c:107  0
+   plugins/in_tail/tail_scan.c:39  0
+   plugins/in_windows_exporter_metrics/we_metric.c:175  0
+   plugins/in_windows_exporter_metrics/we_perflib.c:706  0
+   plugins/in_windows_exporter_metrics/we_perflib.c:714  0
+   plugins/in_windows_exporter_metrics/we_perflib.c:856  0
+   plugins/in_windows_exporter_metrics/we_perflib.c:884  0
+   plugins/in_winevtlog/winevtlog.c:562  0
+   plugins/out_file/file.c:1180  0
+   plugins/out_file/file_rotate.c:684  0
+   plugins/out_stackdriver/stackdriver_resource_types.c:122  0
+   plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c:613  0
+   plugins/processor_sampling/sampling_span_registry.c:182  0
+   plugins/processor_tda/tda.c:280  0
+   src/flb_input_chunk.c:2606  0
+   src/flb_input_chunk.c:2610  0
+   src/flb_input_chunk.c:2614  0
+   src/flb_input_chunk.c:2617  0
+   src/flb_oauth2_jwt.c:908  0
+== non-literal expression: 29
+   include/fluent-bit/flb_hash_table.h:73  ssize_t val_size
+   plugins/filter_ecs/ecs.c:1415  sizeof(int)
+   plugins/filter_ecs/ecs.c:1436  sizeof(int)
+   plugins/filter_geoip2/geoip2.c:170  val->via.str.size
+   plugins/filter_kubernetes/kube_meta.c:2470  hash_meta_size
+   plugins/filter_kubernetes/kube_meta.c:2594  hash_meta_size
+   plugins/filter_kubernetes/kubernetes_aws.c:177  sizeof(struct service_attributes)
+   plugins/filter_throttle_size/size_window.h:131  sizeof(struct throttle_size_window)
+   plugins/in_tail/tail_file.c:1064  vlen
+   plugins/in_tail/tail_file.c:1630  sizeof(file)
+   plugins/in_tail/tail_file.c:1643  sizeof(file)
+   plugins/in_tail/tail_file.c:2262  sizeof(file)
+   plugins/in_tail/tail_scan.c:68  sizeof(inode)
+   plugins/in_windows_exporter_metrics/we_perflib.c:351  strlen(counter_index)
+   plugins/in_windows_exporter_metrics/we_perflib.c:364  strlen(counter_name)
+   plugins/out_azure_kusto/azure_kusto_conf.c:78  uri_length
+   plugins/out_azure_kusto/azure_kusto_conf.c:81  sas_length
+   plugins/out_prometheus_exporter/prom.c:136  cfl_sds_len(buf)
+   src/flb_callback.c:67  sizeof(struct flb_callback_entry *)
+   src/flb_env.c:186  vlen
+   src/flb_env.c:283  vlen
+   src/flb_hash_table.c:401  ssize_t val_size
+   src/flb_http_common.c:308  value_length
+   src/flb_http_common.c:1171  value_length
+   src/flb_input_chunk.c:215  sizeof(value)
+   src/flb_upstream_ha.c:312  vlen
+   src/http_server/flb_http_server_http1.c:462  (ssize_t) value_length
+   src/http_server/flb_http_server_http2.c:140  (ssize_t) value_length
+   src/http_server/flb_http_server_http2.c:559  value_length
+TOTAL 52

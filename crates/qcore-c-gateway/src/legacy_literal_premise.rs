@@ -623,6 +623,7 @@ contract {
             ("(void *) 0", "a cast"),
             ("(long) 0", "a cast"),
             ("(0) + (0)", "arithmetic, and the parentheses do not match"),
+            ("(0, 0)", "evaluation of a comma expression"),
             ("ZERO_CONSTANT", "symbol resolution"),
             ("'\\0'", "a character constant"),
             ("0.0", "a floating constant"),
