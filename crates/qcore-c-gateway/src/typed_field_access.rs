@@ -98,14 +98,23 @@ struct RecordInfo {
     /// a multi-star member and a record-valued member are all absent here by
     /// construction, so a chain can never cross one.
     record_pointer_fields: BTreeMap<String, String>,
+    /// Members declared with *exactly one* `*` over a specifier list this
+    /// reader resolves to a `struct` tag or to an arithmetic/enumeration type,
+    /// with no array modifier and no rejecting qualifier. Such a member holds
+    /// exactly one pointer value, so a store into it replaces exactly one
+    /// identity. `void *`, multi-star, function-pointer, array, bitfield and
+    /// unresolved-typedef members are absent by construction. Used only by the
+    /// aggregate-store rule in [`crate::aggregate_store`].
+    single_pointer_fields: BTreeSet<String>,
 }
 
-/// The three member classifications one readable record body yields.
+/// The four member classifications one readable record body yields.
 #[derive(Clone, Debug, Default)]
 struct RecordMembers {
     scalar_fields: BTreeSet<String>,
     borrowable_fields: BTreeSet<String>,
     record_pointer_fields: BTreeMap<String, String>,
+    single_pointer_fields: BTreeSet<String>,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -327,6 +336,7 @@ impl TypedAccessModel {
                 entry.scalar_fields.clear();
                 entry.borrowable_fields.clear();
                 entry.record_pointer_fields.clear();
+                entry.single_pointer_fields.clear();
                 continue;
             }
             if entry.union_tag {
@@ -339,6 +349,7 @@ impl TypedAccessModel {
                 entry.scalar_fields = members.scalar_fields;
                 entry.borrowable_fields = members.borrowable_fields;
                 entry.record_pointer_fields = members.record_pointer_fields;
+                entry.single_pointer_fields = members.single_pointer_fields;
             }
         }
     }
@@ -360,6 +371,7 @@ impl TypedAccessModel {
         let mut scalar_fields = BTreeSet::new();
         let mut borrowable_fields = BTreeSet::new();
         let mut record_pointer_fields = BTreeMap::new();
+        let mut single_pointer_fields = BTreeSet::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -399,6 +411,17 @@ impl TypedAccessModel {
                     {
                         record_pointer_fields.insert(name.clone(), pointee);
                     }
+                    // Exactly one star over a specifier list this reader
+                    // resolves. `void *` and every typedef it will not resolve
+                    // classify `Opaque` and are excluded here.
+                    if declarator.stars == 1
+                        && matches!(
+                            self.classify_specifiers(&specifiers, 0),
+                            DeclaredType::Record(_) | DeclaredType::Scalar
+                        )
+                    {
+                        single_pointer_fields.insert(name.clone());
+                    }
                     borrowable_fields.insert(name);
                 }
             }
@@ -407,6 +430,7 @@ impl TypedAccessModel {
             scalar_fields,
             borrowable_fields,
             record_pointer_fields,
+            single_pointer_fields,
         })
     }
 
@@ -493,7 +517,7 @@ impl TypedAccessModel {
         }
     }
 
-    fn scalar_field(&self, tag: &str, field: &str) -> bool {
+    pub(crate) fn scalar_field(&self, tag: &str, field: &str) -> bool {
         self.records.get(tag).is_some_and(|record| {
             record.complete
                 && !record.union_tag
@@ -527,6 +551,27 @@ impl TypedAccessModel {
     /// The pointee record itself is **not** checked here: the chain walker
     /// re-enters this model at the next link, so an incomplete, ambiguous or
     /// `union` pointee refuses there.
+    /// Whether `tag` has exactly one definition in this translation unit, it
+    /// is a `struct` rather than a `union`, and every one of its member
+    /// declarations was read.
+    pub(crate) fn record_definition_is_complete(&self, tag: &str) -> bool {
+        self.records
+            .get(tag)
+            .is_some_and(|record| record.complete && !record.union_tag && record.definitions == 1)
+    }
+
+    /// Whether `tag`'s single complete non-union definition declares `field`
+    /// with exactly one `*` over a specifier list this reader resolved. Such a
+    /// member holds exactly one pointer value.
+    pub(crate) fn single_pointer_field(&self, tag: &str, field: &str) -> bool {
+        self.records.get(tag).is_some_and(|record| {
+            record.complete
+                && !record.union_tag
+                && record.definitions == 1
+                && record.single_pointer_fields.contains(field)
+        })
+    }
+
     pub(crate) fn record_pointer_field(&self, tag: &str, field: &str) -> Option<&str> {
         self.records
             .get(tag)

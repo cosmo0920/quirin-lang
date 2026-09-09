@@ -1,0 +1,29 @@
+// O04-B08 — the one additional declared callee premise the routes-mask arm
+// traverses once aggregate stores stop refusing before the contract in force is
+// consulted. Concatenated onto `o04_path.qcore` and `o04_arms_callees.qcore`,
+// both of which stay byte-unchanged so cards O04 and O04-ARMS keep their exact
+// premise sets.
+//
+// EVERY declaration here is a TRUSTED ASSUMPTION. It is not derived from any
+// body in this fixture and it is not offered as a production declaration: this
+// file lives with the gateway test fixtures, so the pinned `contract/qcore`
+// corpus count is untouched.
+//
+// Card O04-ARMS measured `flb_time_now` *inert* and deliberately left it
+// undeclared, because its statement `ic->create_time = flb_time_now();` was an
+// aggregate store that refused before any contract was consulted. This card
+// admits that store, so the call is no longer inert and the measurement changes
+// with it: without this declaration the routes-mask arm would report
+// `call to uncontracted function `flb_time_now`` instead. That movement is
+// recorded in the card report rather than hidden.
+//
+// `flb_trace` stays deliberately UNcontracted: it is on the success exit's path
+// only, which is out of scope, and keeping it uncontracted keeps a real refusal
+// in place there.
+
+// Premise: reading the clock takes no argument and returns no custody.
+extern fn flb_time_now() -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

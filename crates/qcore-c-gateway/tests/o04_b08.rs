@@ -1,0 +1,946 @@
+//! O04-B08 — aggregate stores and the aggregate branch condition
+//! (`docs/reports/remaining-o04-b08/README.md`).
+//!
+//! Card O04-ARMS settled four of the six exits of byte-verbatim
+//! `flb_input_chunk_create` and recorded the routes-mask arm C5's residual as
+//! exactly two open families: **aggregate stores** (O00 blocker B08, including
+//! `ic->chunk = chunk`) and the **aggregate branch condition**
+//! `if (ic->routes_mask == NULL)`. Both were destination-side and condition-side
+//! refusals that fire *before* any contract is consulted.
+//!
+//! This card supplies the missing typed premises for both, in
+//! `crate::aggregate_store`, and measures what C5 does with them.
+//!
+//! Two legs, both through the public gateway entry points only.
+//!
+//! **Held-out generic family.** A `k_*` API deliberately unrelated to ChunkIO,
+//! to Fluent Bit, and to the `g_*` (O04) and `h_*` (O04-ARMS) families: an
+//! admitted store whose every exit settles, the adversarial matrix the card
+//! names — a store through a released aggregate, a double store, an aliased
+//! destination, a borrowed-in aggregate that escapes, a branch on an unrelated
+//! field — and declaration substitutions the independent certificate recheck
+//! refuses.
+//!
+//! **Real source.** The same byte-verbatim upstream regions O04 and O04-ARMS
+//! pinned, under their byte-unchanged premise sets plus one declared callee.
+//!
+//! Nothing here promotes a verdict. `Safe` in the generic family is `Safe` for
+//! a synthetic declared custody projection under premises this card names; both
+//! real functions keep function-level status `Unknown`, and no raw unit is
+//! promoted.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, ExitCustody, LegacyDiagnosticKind, LegacyFunctionSummary,
+    LegacyProgramSummary, LegacySafetyCertificate, ResourceContracts, SiteDisposition,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
+const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
+const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
+const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
+const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
+const ARMS_CALLEES: &str = include_str!("fixtures/contracts/o04_arms_callees.qcore");
+/// The single declared callee premise this card adds; see the fixture header.
+const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qcore");
+const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/o04_b08_generic.qcore");
+
+/// The existing rejection every refused shape must keep.
+const INDIRECT: &str = "indirect memory access is outside the resource projection";
+/// The existing rejection an unmodeled branch condition keeps.
+const BRANCH: &str = "unmodeled call, aggregate or indirect access in branch condition";
+
+fn load(name: &str, source: &str) -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([(name.to_owned(), source.to_owned())])).unwrap()
+}
+
+fn path_contracts() -> String {
+    format!(
+        "{}\n{ARMS_CALLEES}\n{B08_CALLEES}",
+        PATH_CONTRACTS.replace("\r\n", "\n")
+    )
+}
+
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent O04-B08 test: {reason}");
+            false
+        }
+    }
+}
+
+fn program(result: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
+    match result {
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        }
+        | UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        other => panic!("expected an analyzable partial summary: {other:?}"),
+    }
+}
+
+fn function<'a>(summary: &'a LegacyProgramSummary, name: &str) -> &'a LegacyFunctionSummary {
+    summary
+        .functions
+        .get(name)
+        .unwrap_or_else(|| panic!("missing function `{name}`"))
+}
+
+fn exit_shape(summary: &LegacyFunctionSummary) -> Vec<(ExitCustody, Vec<SiteDisposition>)> {
+    summary
+        .exits
+        .iter()
+        .map(|exit| {
+            (
+                exit.custody,
+                exit.sites.iter().map(|site| site.disposition).collect(),
+            )
+        })
+        .collect()
+}
+
+fn unsupported(summary: &LegacyFunctionSummary) -> Vec<&str> {
+    summary
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => Some(description.as_str()),
+            _ => None,
+        })
+        .collect()
+}
+
+fn leaks(summary: &LegacyFunctionSummary) -> Vec<usize> {
+    summary
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match diagnostic.kind {
+            LegacyDiagnosticKind::Leak { acquisition_line } => Some(acquisition_line),
+            _ => None,
+        })
+        .collect()
+}
+
+// --------------------------------------------------------------------------
+// Held-out generic family
+// --------------------------------------------------------------------------
+
+/// Deliberately unrelated to every library in this repository and to the `g_*`
+/// and `h_*` families of cards O04 and O04-ARMS. Every rule under test is
+/// stated over declared C types and contract modes, so no name here can matter.
+///
+/// * `k_box` is the admitted aggregate: a scalar member, two `struct k_item *`
+///   members, one arithmetic-pointee member, and — deliberately — one `void *`,
+///   one double-star and one array member the reader must refuse.
+/// * `k_odd` carries a member whose declared type the reader will not resolve.
+/// * `union k_alt` is the union the base premise must refuse.
+const DECLARATIONS: &str = "\
+typedef unsigned long k_word; \
+struct k_ctx; \
+struct k_item { int weight; }; \
+struct k_box { int flag; struct k_item *item; struct k_item *spare; \
+               k_word *raw; void *any; struct k_item **deep; \
+               struct k_item *fixed[2]; volatile struct k_item *hot; }; \
+struct k_odd { struct k_ctx *ctx; void (*hook)(int); }; \
+union k_alt { struct k_item *item; int tag; }; \
+struct k_outer { struct k_box *box; }; \
+struct k_box *k_make(int n); \
+struct k_item *k_take(int n); \
+k_word *k_words(int n); \
+void k_drop(struct k_box *b); \
+void k_release(struct k_item *i); \
+void k_borrow(struct k_item *i); \
+void k_adopt(struct k_item *i); \
+void k_untracked(struct k_box *b); \
+struct k_box *k_pick(struct k_outer *o);";
+
+fn analyze_generic(body: &str, entry: &str) -> UnrestrictedLegacyResult {
+    let source = format!("{DECLARATIONS} {body}");
+    analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        entry,
+        &load("o04_b08_generic.qcore", GENERIC_CONTRACTS),
+    )
+    .unwrap_or_else(|error| panic!("generic fixture rejected by Clang: {error:?}\n{source}"))
+}
+
+fn certified(body: &str, entry: &str) -> LegacySafetyCertificate {
+    match analyze_generic(body, entry) {
+        UnrestrictedLegacyResult::Safe(certificate) => {
+            check_legacy_safety_certificate(&certificate).expect("certificate rechecks");
+            certificate
+        }
+        other => panic!("expected a validated custody projection: {other:?}"),
+    }
+}
+
+fn summary_of(body: &str, entry: &str) -> LegacyFunctionSummary {
+    let result = analyze_generic(body, entry);
+    match &result {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate
+            .summary
+            .functions
+            .get(entry)
+            .expect("entry present")
+            .clone(),
+        _ => function(program(&result), entry).clone(),
+    }
+}
+
+/// The shape the card exists for, in the generic family: a resource is stored
+/// into a member of a live aggregate this body acquired, the routes-mask-style
+/// branch tests another member, and the failure arm releases both.
+const K_CREATE: &str = "\
+struct k_box *k_create(int n) \
+{ \
+    struct k_item *it; \
+    struct k_box *b; \
+    it = k_take(n); \
+    if (!it) { return 0; } \
+    b = k_make(n); \
+    if (!b) { k_release(it); return 0; } \
+    b->flag = 0; \
+    b->item = it; \
+    b->spare = 0; \
+    b->raw = k_words(n); \
+    if (b->raw == 0) { k_release(it); k_drop(b); return 0; } \
+    return b; \
+}";
+
+/// Non-vacuity, positive direction: the store, the acquisition into a member
+/// and the branch over a member are all modeled, so every exit settles.
+#[test]
+fn an_aggregate_store_and_its_branch_condition_discharge_every_exit() {
+    if !clang_available() {
+        return;
+    }
+    let certificate = certified(K_CREATE, "k_create");
+    let measured = certificate
+        .summary
+        .functions
+        .get("k_create")
+        .expect("entry present");
+    assert_eq!(measured.status, AnalysisStatus::Safe);
+    assert!(
+        unsupported(measured).is_empty(),
+        "no refusal remains: {:?}",
+        measured.diagnostics
+    );
+    assert!(
+        measured
+            .exits
+            .iter()
+            .all(|exit| exit.custody == ExitCustody::Discharged),
+        "every exit settles: {:?}",
+        exit_shape(measured)
+    );
+}
+
+/// P-B08-SHALLOW's *reporting* half: publishing the aggregate publishes what
+/// its admitted members link, so the stored resource is not a leak at the
+/// success exit — and the failure arm that releases both is still Safe.
+#[test]
+fn publishing_the_aggregate_carries_its_linked_child() {
+    if !clang_available() {
+        return;
+    }
+    let measured = summary_of(K_CREATE, "k_create");
+    assert!(
+        leaks(&measured).is_empty(),
+        "the escaping aggregate carries its member: {:?}",
+        measured.diagnostics
+    );
+}
+
+/// The adversarial row the card names: a second store into the same member
+/// must not discharge the first resource. It stays live and is reported.
+#[test]
+fn a_double_store_reports_the_first_resource_as_a_leak() {
+    if !clang_available() {
+        return;
+    }
+    let body = "\
+struct k_box *k_twice(int n) \
+{ \
+    struct k_item *first; \
+    struct k_item *second; \
+    struct k_box *b; \
+    first = k_take(n); \
+    if (!first) { return 0; } \
+    second = k_take(n); \
+    if (!second) { k_release(first); return 0; } \
+    b = k_make(n); \
+    if (!b) { k_release(first); k_release(second); return 0; } \
+    b->item = first; \
+    b->item = second; \
+    return b; \
+}";
+    let measured = summary_of(body, "k_twice");
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Unsafe,
+        "the overwritten resource is reported: {:?}",
+        measured.diagnostics
+    );
+    assert_eq!(
+        leaks(&measured).len(),
+        1,
+        "exactly the first resource leaks: {:?}",
+        measured.diagnostics
+    );
+}
+
+/// The C00 premise in its store direction, checked flow-sensitively: a store
+/// through an aggregate this body already released is never admitted, and can
+/// never reach `Safe`.
+#[test]
+fn a_store_through_a_released_aggregate_is_never_admitted() {
+    if !clang_available() {
+        return;
+    }
+    let body = "\
+int k_after_free(int n) \
+{ \
+    struct k_item *it; \
+    struct k_box *b; \
+    b = k_make(n); \
+    if (!b) { return 0; } \
+    it = k_take(n); \
+    if (!it) { k_drop(b); return 0; } \
+    k_drop(b); \
+    b->item = it; \
+    return 0; \
+}";
+    let measured = summary_of(body, "k_after_free");
+    assert_ne!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "a store through a released aggregate must never be admitted: {:?}",
+        measured.diagnostics
+    );
+    assert!(
+        measured.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "b"
+        )),
+        "the aggregate is reported unresolved: {:?}",
+        measured.diagnostics
+    );
+}
+
+/// A caller-owned aggregate is refused: a transfer into it is invisible at the
+/// call site, and this card models publication, not interface change.
+#[test]
+fn a_store_into_a_borrowed_in_aggregate_is_never_admitted() {
+    if !clang_available() {
+        return;
+    }
+    let body = "\
+void k_fill(struct k_box *b, int n) \
+{ \
+    struct k_item *it; \
+    it = k_take(n); \
+    if (!it) { return; } \
+    b->item = it; \
+}";
+    let measured = summary_of(body, "k_fill");
+    assert_ne!(measured.status, AnalysisStatus::Safe);
+    assert!(
+        unsupported(&measured).contains(&INDIRECT),
+        "the base is not one this body acquired, so the store keeps its \
+         existing refusal: {:?}",
+        measured.diagnostics
+    );
+}
+
+/// Every base premise, one row per violated premise, each keeping the existing
+/// `Unknown` **and** the existing diagnostic. Nothing here is a new code.
+#[test]
+fn every_refused_base_keeps_its_unknown_and_its_diagnostic() {
+    if !clang_available() {
+        return;
+    }
+    let cases: [(&str, &str); 6] = [
+        (
+            "the aggregate is read out of another object rather than acquired",
+            "void k_w(struct k_outer *o, int n) { struct k_item *it; struct k_box *b; \
+             b = o->box; it = k_take(n); if (!it) { return; } b->item = it; }",
+        ),
+        (
+            "the aggregate is copied to a second declared name",
+            "void k_w(int n) { struct k_item *it; struct k_box *b; struct k_box *c; \
+             b = k_make(n); if (!b) { return; } c = b; it = k_take(n); \
+             if (!it) { k_drop(b); return; } b->item = it; k_untracked(c); }",
+        ),
+        (
+            "the aggregate is address-taken whole",
+            "void k_w(int n) { struct k_item *it; struct k_box *b; struct k_box **pp; \
+             b = k_make(n); if (!b) { return; } pp = &b; it = k_take(n); \
+             if (!it) { k_drop(b); return; } b->item = it; k_untracked(*pp); }",
+        ),
+        (
+            "the aggregate is bound twice",
+            "void k_w(int n) { struct k_item *it; struct k_box *b; \
+             b = k_make(n); b = k_make(n); if (!b) { return; } it = k_take(n); \
+             if (!it) { k_drop(b); return; } b->item = it; }",
+        ),
+        (
+            "the aggregate is dereferenced whole",
+            "void k_w(int n) { struct k_item *it; struct k_box *b; struct k_box copy; \
+             b = k_make(n); if (!b) { return; } copy = *b; it = k_take(n); \
+             if (!it) { k_drop(b); return; } b->item = it; }",
+        ),
+        (
+            "the aggregate is subscripted",
+            "void k_w(int n) { struct k_item *it; struct k_box *b; \
+             b = k_make(n); if (!b) { return; } it = k_take(n); \
+             if (!it) { k_drop(b); return; } b[0].flag = 0; b->item = it; }",
+        ),
+    ];
+    for (reason, body) in cases {
+        let measured = summary_of(body, "k_w");
+        assert_ne!(
+            measured.status,
+            AnalysisStatus::Safe,
+            "{reason}: must stay refused, diagnostics {:?}",
+            measured.diagnostics
+        );
+        assert!(
+            unsupported(&measured).contains(&INDIRECT),
+            "{reason}: the existing diagnostic must be retained, got {:?}",
+            measured.diagnostics
+        );
+    }
+}
+
+/// Every member premise, same discipline. A member the reader will not fully
+/// type keeps the destination side of the lexical gate exactly as it was.
+#[test]
+fn every_refused_member_keeps_its_unknown_and_its_diagnostic() {
+    if !clang_available() {
+        return;
+    }
+    let prologue = "struct k_item *it; struct k_box *b; b = k_make(n); if (!b) { return; } \
+                    it = k_take(n); if (!it) { k_drop(b); return; }";
+    let cases: [(&str, &str); 6] = [
+        ("a `void *` member has no resolved pointee", "b->any = it;"),
+        (
+            "a double-star member is not a single pointer",
+            "b->deep = 0;",
+        ),
+        ("an array member is never admitted", "b->fixed[0] = it;"),
+        ("a `volatile` member is never admitted", "b->hot = it;"),
+        (
+            "a chained destination is not one selection",
+            "b->item->weight = 1;",
+        ),
+        // `b->flag = it;` — a pointer into a scalar member — is not
+        // expressible: Clang rejects the fixture before the analyzer sees it,
+        // so that direction is covered by the module's own unit tests
+        // (`a_pointer_field_never_takes_a_scalar_expression` and its mirror)
+        // rather than here. Recorded, not skipped.
+        (
+            "a member read is not a single declared identifier",
+            "b->spare = b->item;",
+        ),
+    ];
+    for (reason, store) in cases {
+        let body = format!("void k_w(int n) {{ {prologue} {store} k_release(it); k_drop(b); }}");
+        let measured = summary_of(&body, "k_w");
+        assert_ne!(
+            measured.status,
+            AnalysisStatus::Safe,
+            "{reason}: must stay refused, diagnostics {:?}",
+            measured.diagnostics
+        );
+        assert!(
+            unsupported(&measured).contains(&INDIRECT),
+            "{reason}: the existing diagnostic must be retained, got {:?}",
+            measured.diagnostics
+        );
+    }
+}
+
+/// The branch-condition half is bounded to admitted **pointer** members of
+/// admitted bases. Everything else keeps the existing branch refusal, which is
+/// a different diagnostic from the store one and stays that way.
+#[test]
+fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
+    if !clang_available() {
+        return;
+    }
+    let cases: [(&str, &str); 3] = [
+        (
+            "a scalar member is not a null test this rule reads",
+            "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
+             if (b->flag == 0) { k_drop(b); return; } k_drop(b); }",
+        ),
+        (
+            "a member of a base this rule never admitted",
+            "void k_w(struct k_outer *o, int n) { struct k_box *b; b = k_make(n); \
+             if (!b) { return; } if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
+        ),
+        (
+            "a chained member is not one selection",
+            "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
+             if (b->item->weight == 0) { k_drop(b); return; } k_drop(b); }",
+        ),
+    ];
+    for (reason, body) in cases {
+        let measured = summary_of(body, "k_w");
+        assert!(
+            unsupported(&measured).contains(&BRANCH) || unsupported(&measured).contains(&INDIRECT),
+            "{reason}: the existing branch refusal must be retained, got {:?}",
+            measured.diagnostics
+        );
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
+    }
+}
+
+/// The admission must never manufacture a discharge: an arm that stores and
+/// then returns without releasing is reported, with a residual naming the
+/// acquisition.
+#[test]
+fn a_store_never_manufactures_a_discharge() {
+    if !clang_available() {
+        return;
+    }
+    let body = "\
+void k_w(int n) \
+{ \
+    struct k_item *it; \
+    struct k_box *b; \
+    b = k_make(n); \
+    if (!b) { return; } \
+    it = k_take(n); \
+    if (!it) { k_drop(b); return; } \
+    b->item = it; \
+    k_drop(b); \
+}";
+    let measured = summary_of(body, "k_w");
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Unsafe,
+        "releasing the aggregate does not discharge its member \
+         (premise P-B08-SHALLOW): {:?}",
+        measured.diagnostics
+    );
+    assert_eq!(leaks(&measured).len(), 1, "{:?}", measured.diagnostics);
+    assert!(
+        measured
+            .exits
+            .iter()
+            .any(|exit| exit.custody == ExitCustody::Residual),
+        "the residual is recorded: {:?}",
+        exit_shape(&measured)
+    );
+}
+
+/// A discharge follows the *declared* contract, not the statement's shape:
+/// weakening the destructor to a borrow turns the arm into a reported residual.
+#[test]
+fn a_borrowed_destructor_turns_the_store_path_arm_into_a_residual() {
+    if !clang_available() {
+        return;
+    }
+    let weakened = GENERIC_CONTRACTS.replace(
+        "ensures normal resource_released(i, nonnull);",
+        "ensures normal resource_borrowed(i);",
+    );
+    assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
+    let source = format!("{DECLARATIONS} {K_CREATE}");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "k_create",
+        &load("o04_b08_generic.qcore", &weakened),
+    )
+    .expect("fixture accepted by Clang");
+    let measured = function(program(&result), "k_create");
+    assert_eq!(measured.status, AnalysisStatus::Unsafe);
+    assert!(
+        !leaks(measured).is_empty(),
+        "the weakened premise is reported, never silently discharged: {:?}",
+        measured.diagnostics
+    );
+}
+
+/// W4 derivation, W4 validation and the independent certificate recheck all
+/// repeat this classification from the certificate's own content: substituting
+/// a member or base declaration in the certificate's source withdraws the
+/// projection.
+#[test]
+fn a_certificate_resting_on_an_aggregate_store_is_rederived_from_source() {
+    if !clang_available() {
+        return;
+    }
+    let certificate = certified(K_CREATE, "k_create");
+    let substitutions: [(&str, &str, &str); 5] = [
+        (
+            "the member becomes a double pointer",
+            "struct k_item *item;",
+            "struct k_item **item;",
+        ),
+        (
+            "the member becomes an array",
+            "struct k_item *item;",
+            "struct k_item *item[2];",
+        ),
+        (
+            "the member becomes volatile",
+            "struct k_item *item;",
+            "volatile struct k_item *item;",
+        ),
+        (
+            "the aggregate record becomes a union",
+            "struct k_box { int flag;",
+            "union k_box { int flag;",
+        ),
+        // Substituting one *resolved* pointee for another is deliberately
+        // NOT a refusal: the premise is that the member holds exactly one
+        // pointer identity, which `struct k_ctx *` satisfies just as
+        // `k_word *` does. The premise-violating substitution is a pointee the
+        // reader will not resolve at all.
+        (
+            "the acquired member's pointee stops resolving",
+            "k_word *raw;",
+            "void *raw;",
+        ),
+    ];
+    for (reason, from, to) in substitutions {
+        let mut substituted = certificate.clone();
+        assert!(
+            substituted.preprocessed_source.contains(from),
+            "{reason}: `{from}` is present in the certificate source"
+        );
+        substituted.preprocessed_source = substituted.preprocessed_source.replace(from, to);
+        assert!(
+            check_legacy_safety_certificate(&substituted).is_err(),
+            "{reason}: the recheck must refuse the substituted declaration"
+        );
+    }
+    check_legacy_safety_certificate(&certificate)
+        .expect("the unmodified certificate still rechecks");
+}
+
+// --------------------------------------------------------------------------
+// Real source
+// --------------------------------------------------------------------------
+
+fn real_unit() -> String {
+    format!("{PRELUDE}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n")
+}
+
+fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
+    analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "flb_input_chunk_create",
+        &load("o04_b08_path.qcore", &path_contracts()),
+    )
+    .unwrap_or_else(|error| panic!("O04-B08 fixture rejected by Clang: {error:?}"))
+}
+
+/// The card's headline, on real source: the routes-mask arm C5 settles. Five of
+/// the caller's six exits are `Discharged`; the three cleanup arms and C5 all
+/// release the same constructor acquisition site, and C5 additionally releases
+/// the `ic` allocation it made. Only the out-of-scope success exit stays
+/// `Unknown`.
+#[test]
+fn the_routes_mask_arm_discharges_under_the_declared_premises() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_real(&real_unit());
+    let caller = function(program(&result), "flb_input_chunk_create");
+    let shape = exit_shape(caller);
+    let discharged = caller
+        .exits
+        .iter()
+        .filter(|exit| exit.custody == ExitCustody::Discharged)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        discharged.len(),
+        5,
+        "C1 through C5 all settle; exits were {shape:?}"
+    );
+    // C1 crosses no acquisition; C2/C3/C4 release the constructor's chunk;
+    // C5 releases that chunk *and* the aggregate it allocated.
+    let mut released = discharged
+        .iter()
+        .map(|exit| exit.sites.len())
+        .collect::<Vec<_>>();
+    released.sort_unstable();
+    assert_eq!(released, vec![0, 1, 1, 1, 2], "exits were {shape:?}");
+    for exit in &discharged {
+        assert!(
+            exit.sites
+                .iter()
+                .all(|site| site.disposition == SiteDisposition::Released),
+            "every site a settled exit carries is released: {shape:?}"
+        );
+    }
+    let cleanup = discharged
+        .iter()
+        .filter(|exit| !exit.sites.is_empty())
+        .collect::<Vec<_>>();
+    let constructor_site = cleanup[0].sites[0].acquisition_line;
+    for exit in &cleanup {
+        assert_eq!(
+            exit.sites[0].acquisition_line, constructor_site,
+            "all four cleanup arms release the same acquisition site: {shape:?}"
+        );
+    }
+    // No promotion: the function itself stays Unknown on the success exit.
+    assert_eq!(caller.status, AnalysisStatus::Unknown);
+    assert_eq!(
+        caller
+            .exits
+            .iter()
+            .filter(|exit| exit.custody == ExitCustody::Unknown)
+            .count(),
+        1,
+        "only the out-of-scope success exit stays unresolved: {shape:?}"
+    );
+    assert!(
+        caller
+            .exits
+            .iter()
+            .all(|exit| exit.custody != ExitCustody::Residual),
+        "no residual is alleged on this path: {shape:?}"
+    );
+}
+
+/// The other half of the obligation: every refusal that remains on the real
+/// path belongs to the success exit C6, which is out of scope, and none of them
+/// is an aggregate store or an aggregate branch condition any more.
+#[test]
+fn every_remaining_refusal_belongs_to_the_out_of_scope_success_exit() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_real(&real_unit());
+    let caller = function(program(&result), "flb_input_chunk_create");
+    let remaining = unsupported(caller);
+    assert!(
+        !remaining.is_empty(),
+        "the named blockers are still reported"
+    );
+    for description in &remaining {
+        assert!(
+            *description == INDIRECT
+                || *description == "call to uncontracted function `flb_trace`"
+                || *description == "nullable resource `ic` used by a non-null contract",
+            "unexpected remaining refusal `{description}`"
+        );
+    }
+    // Nothing is alleged in the defect direction anywhere on this path.
+    assert!(
+        leaks(caller).is_empty(),
+        "no leak is alleged: {:?}",
+        caller.diagnostics
+    );
+}
+
+/// The constructor keeps its own boundary: its four guard exits stay
+/// discharged and its rollback and success exits stay unresolved. Its
+/// `ch->name = strdup(name);` store is admitted, so the allocation this
+/// projection previously erased is now a *second* tracked identity — which
+/// makes both unresolved exits carry more, never less.
+#[test]
+fn the_constructor_body_still_does_not_discharge_its_own_contract() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_real(&real_unit());
+    let constructor = function(program(&result), "cio_chunk_open");
+    assert_eq!(constructor.status, AnalysisStatus::Unknown);
+    let shape = exit_shape(constructor);
+    assert_eq!(
+        shape
+            .iter()
+            .filter(|(custody, sites)| *custody == ExitCustody::Discharged && sites.is_empty())
+            .count(),
+        4,
+        "the four guard/allocation-failure exits acquire nothing: {shape:?}"
+    );
+    let unresolved = shape
+        .iter()
+        .filter(|(custody, _)| *custody == ExitCustody::Unknown)
+        .collect::<Vec<_>>();
+    assert_eq!(unresolved.len(), 2, "{shape:?}");
+    for (_, sites) in &unresolved {
+        assert_eq!(
+            sites.len(),
+            2,
+            "the chunk and its name allocation: {shape:?}"
+        );
+        assert!(
+            sites
+                .iter()
+                .all(|disposition| *disposition == SiteDisposition::Mixed),
+            "both stay unresolved: {shape:?}"
+        );
+    }
+    assert!(
+        leaks(constructor).is_empty(),
+        "nothing is alleged in the defect direction: {:?}",
+        constructor.diagnostics
+    );
+}
+
+/// The discharge rests on *declared* member types read from this same token
+/// stream: substituting one member declaration in the real fixture withdraws
+/// the arm, in each case for its own measured reason.
+#[test]
+fn substituting_a_member_declaration_withdraws_the_arm() {
+    if !clang_available() {
+        return;
+    }
+    let substitutions: [(&str, &str, &str); 4] = [
+        (
+            "the stored member becomes a double pointer",
+            "struct cio_chunk *chunk;",
+            "struct cio_chunk **chunk;",
+        ),
+        (
+            "the stored member becomes volatile",
+            "struct cio_chunk *chunk;",
+            "volatile struct cio_chunk *chunk;",
+        ),
+        (
+            "the branched member's pointee stops resolving",
+            "flb_route_mask_element *routes_mask;",
+            "void *routes_mask;",
+        ),
+        // Retagging or duplicating `struct flb_input_chunk` is not
+        // expressible on the real fixture — Clang rejects the unit, exactly as
+        // card O04-ARMS §4.2 recorded for `struct cio_stream` — so the
+        // ambiguous-record direction is covered by the module's unit tests and
+        // by the generic certificate substitutions instead. Recorded, not
+        // skipped. This row substitutes an admitted *scalar* member instead.
+        (
+            "an admitted scalar member stops being one",
+            "size_t stream_off;",
+            "void *stream_off;",
+        ),
+    ];
+    for (reason, from, to) in substitutions {
+        let unit = real_unit();
+        assert!(unit.contains(from), "{reason}: `{from}` is present");
+        let substituted = unit.replacen(from, to, 1);
+        let result = analyze_real(&substituted);
+        let caller = function(program(&result), "flb_input_chunk_create");
+        assert!(
+            caller
+                .exits
+                .iter()
+                .filter(|exit| exit.custody == ExitCustody::Discharged)
+                .count()
+                < 5,
+            "{reason}: the arm must be withdrawn, exits were {:?}",
+            exit_shape(caller)
+        );
+    }
+}
+
+/// The discharge follows the *declared* contract, not the statement's shape:
+/// weakening the destructor to a borrow turns the settled arms into reported
+/// residuals rather than silent discharges.
+#[test]
+fn weakening_the_destructor_premise_withdraws_the_arms() {
+    if !clang_available() {
+        return;
+    }
+    let weakened = path_contracts().replace(
+        "ensures normal resource_released(ch, nonnull);",
+        "ensures normal resource_borrowed(ch);",
+    );
+    assert_ne!(weakened, path_contracts(), "the substitution applied");
+    let unit = real_unit();
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &unit,
+            ..Default::default()
+        },
+        "flb_input_chunk_create",
+        &load("o04_b08_path.qcore", &weakened),
+    )
+    .expect("fixture accepted by Clang");
+    let caller = function(program(&result), "flb_input_chunk_create");
+    assert!(
+        !leaks(caller).is_empty(),
+        "the weakened premise is reported, never silently discharged: {:?}",
+        caller.diagnostics
+    );
+}
+
+/// Not an assertion: prints the measured per-exit ledger and the remaining
+/// refusals of the real path under this card's premise set, so the archived
+/// report can be regenerated. Run with
+/// `cargo test -p qcore-c-gateway --test o04_b08 -- --ignored --nocapture
+///  print_the_measured_arm_ledger`.
+#[test]
+#[ignore = "reporting aid, not an assertion"]
+fn print_the_measured_arm_ledger() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_real(&real_unit());
+    let preprocessed = match &result {
+        UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            ..
+        } => preprocessed_source.clone(),
+        _ => String::new(),
+    };
+    let lines = preprocessed.split('\n').collect::<Vec<_>>();
+    let summary = program(&result);
+    for name in ["cio_chunk_open", "flb_input_chunk_create"] {
+        let measured = function(summary, name);
+        println!("{name}: {:?}", measured.status);
+        for diagnostic in &measured.diagnostics {
+            println!(
+                "  refusal L{:<4} {:<58} | {:?}",
+                diagnostic.line,
+                lines
+                    .get(diagnostic.line.saturating_sub(1))
+                    .unwrap_or(&"?")
+                    .trim(),
+                diagnostic.kind
+            );
+        }
+        for exit in &measured.exits {
+            println!(
+                "  exit    L{:<4} {:<11?} {:<40} sites={:?}",
+                exit.line,
+                exit.custody,
+                lines
+                    .get(exit.line.saturating_sub(1))
+                    .unwrap_or(&"?")
+                    .trim(),
+                exit.sites
+                    .iter()
+                    .map(|site| (site.acquisition_line, site.disposition))
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
+}

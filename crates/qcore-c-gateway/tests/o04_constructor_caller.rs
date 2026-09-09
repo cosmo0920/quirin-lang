@@ -301,15 +301,36 @@ fn the_constructor_body_does_not_discharge_its_own_declared_contract() {
         discharged, 4,
         "the four guard/allocation-failure exits acquire nothing: {shape:?}"
     );
+    // DELIBERATE PIN UPDATE, card O04-B08: the per-exit *site count* on the two
+    // unresolved exits moved from one to two. `ch->name = strdup(name);` is an
+    // admitted aggregate store under typed premises
+    // (`crate::aggregate_store`), so the `strdup` allocation this projection
+    // previously erased is now a tracked identity of this body. The
+    // load-bearing half is unchanged and still asserted: the constructor keeps
+    // status `Unknown`, its four guard exits acquire nothing, and **every**
+    // site on both unresolved exits stays `Mixed` — the projection got finer,
+    // not more permissive. The exact arity is pinned separately below so a
+    // silent change in either direction still fails.
     let unresolved = shape
         .iter()
         .filter(|(custody, sites)| {
-            *custody == ExitCustody::Unknown && sites == &vec![SiteDisposition::Mixed]
+            *custody == ExitCustody::Unknown
+                && !sites.is_empty()
+                && sites
+                    .iter()
+                    .all(|disposition| *disposition == SiteDisposition::Mixed)
         })
         .count();
     assert_eq!(
         unresolved, 2,
         "the rollback and success exits stay unresolved: {shape:?}"
+    );
+    assert!(
+        shape
+            .iter()
+            .filter(|(custody, _)| *custody == ExitCustody::Unknown)
+            .all(|(_, sites)| sites.len() == 2),
+        "each unresolved exit carries the chunk and the name allocation: {shape:?}"
     );
 }
 

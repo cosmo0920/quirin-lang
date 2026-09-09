@@ -1,0 +1,64 @@
+module contract;
+
+// O04-B08 — held-out generic aggregate-store custody API.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to the `g_*` (O04) and
+// `h_*` (O04-ARMS) families: every rule under test is stated over declared C
+// types and contract modes, so no name here can matter. These are synthetic
+// trusted test assumptions, not facts about any library.
+
+// The aggregate's own constructor and destructor. `k_drop` releases exactly the
+// aggregate it is given: it declares no `Removed` parameter, so under premise
+// P-B08-SHALLOW it does not discharge anything the aggregate's members link.
+extern fn k_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn k_drop(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The child resource stored into a member.
+extern fn k_take(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn k_release(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn k_borrow(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(i);
+    ensures normal resource_return_none();
+};
+
+// A consuming sink, used to show that a member store is not an escape.
+extern fn k_adopt(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// An acquisition whose pointee is an arithmetic typedef rather than a record:
+// the shape the real routes-mask member has.
+extern fn k_words(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
