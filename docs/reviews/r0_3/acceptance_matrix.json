@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 18
+  "named_followups": 19
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1011,13 +1011,14 @@
    "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
    "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
    "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-   "docs/reports/wave11-ct33/ct_stage_evidence.json"
+   "docs/reports/wave11-ct33/ct_stage_evidence.json",
+   "docs/reports/wave13-ct34/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 31,
-   "unmapped": 19
+   "mapped": 32,
+   "unmapped": 18
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1127,76 +1128,76 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 31
+    "executed": 32
    },
    "elaborate": {
-    "executed": 29,
+    "executed": 30,
     "not_applicable": 2
    },
    "task_lowering": {
     "executed": 16,
-    "not_applicable": 15
+    "not_applicable": 16
    },
    "task_ledger_check": {
     "executed": 15,
-    "not_applicable": 16
+    "not_applicable": 17
    },
    "mutex_lowering": {
-    "executed": 9,
+    "executed": 10,
     "not_applicable": 22
    },
    "mutex_invariant_check": {
-    "executed": 9,
+    "executed": 10,
     "not_applicable": 22
    },
    "epoch_lowering": {
     "executed": 4,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "epoch_bound_check": {
     "executed": 4,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "sequential_whole_program": {
-    "not_applicable": 31
+    "not_applicable": 32
    },
    "sequential_reference_execution": {
-    "not_applicable": 31
+    "not_applicable": 32
    },
    "task_reference_execution": {
     "executed": 11,
-    "not_applicable": 20
+    "not_applicable": 21
    },
    "mutex_reference_execution": {
     "executed": 1,
-    "not_applicable": 30
+    "not_applicable": 31
    },
    "c_emission": {
     "executed": 12,
-    "not_applicable": 19
+    "not_applicable": 20
    },
    "native_execution": {
     "executed": 12,
-    "not_applicable": 19
+    "not_applicable": 20
    },
    "native_sanitized": {
     "executed": 3,
     "not_applicable": 6,
     "recorded_not_gated": 5,
-    "unassessed": 17
+    "unassessed": 18
    },
    "legacy_c_twin": {
     "executed": 2,
-    "not_applicable": 29
+    "not_applicable": 30
    },
    "proof": {
-    "unassessed": 31
+    "unassessed": 32
    }
   },
   "depth_profile": {
    "epoch_bound_check": 4,
    "legacy_c_twin": 2,
-   "mutex_invariant_check": 8,
+   "mutex_invariant_check": 9,
    "native_execution": 9,
    "native_sanitized": 3,
    "task_ledger_check": 4,
@@ -1225,6 +1226,7 @@
    "CT31": "mutex_invariant_check",
    "CT32": "mutex_invariant_check",
    "CT33": "mutex_invariant_check",
+   "CT34": "mutex_invariant_check",
    "CT35": "epoch_bound_check",
    "CT36": "epoch_bound_check",
    "CT37": "native_execution",
@@ -1237,16 +1239,16 @@
   },
   "observation_counts": {
    "c_emission": 28,
-   "elaborate": 29,
+   "elaborate": 30,
    "epoch_bound_check": 4,
    "epoch_lowering": 4,
    "legacy_c_twin": 3,
-   "mutex_invariant_check": 9,
-   "mutex_lowering": 9,
+   "mutex_invariant_check": 10,
+   "mutex_lowering": 10,
    "mutex_reference_execution": 1,
    "native_execution": 28,
    "native_sanitized": 9,
-   "parse": 31,
+   "parse": 32,
    "task_ledger_check": 15,
    "task_lowering": 16,
    "task_reference_execution": 26
@@ -4097,67 +4099,119 @@
    },
    {
     "id": "CT34",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Unsupported in fixed-shape profile",
-    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
-    "blocker": "no source form creates or declares a mutex; the guard-binding blocker batch 2 named was repaired but is no longer the limit",
-    "bucket_changed_since_batch2": true,
+    "route": "mutex_guard",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "observations": 1
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+      "observations": 1
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "CreateMutex still fixes its declared footprints at creation and consumes the creator's FULL_ACCESS share over each of them; there is no growth form, and post-creation protection growth is a represented refusal rather than something a program can write down. A lock rank orders acquisitions of existing generations and changes nothing about what a mutex protects, so CT33-RANKS did not create a protection-growth form and the wave-5 reason stands verbatim in substance.",
-    "blocker_superseded_by": "docs/reports/wave11-ct33/ct_stage_evidence.json"
+    "auxiliary_executed_stages": {
+     "admitted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+      "expectation": "accept_check_only",
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ],
+      "observations": 1,
+      "emits_c": false,
+      "measured_core_result": "accepted; admitted_protection_growths = 1; protected_shape = {1: [x[0,4), z[0,4)], 2: [y[0,4)]}",
+      "measured_backend_refusal": [
+       "Q600"
+      ],
+      "note": "The case with exactly ONE TOKEN changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and really records the growth, so the case's Q617 is attributable to the interval already having a protector rather than to growth being written at all, to the third resource existing, or to the second generation being declared. It is `accept_check_only` rather than `accept` because the C backend deliberately refuses a GrowProtection event; that refusal is measured as Q600 `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }` and pinned. Host-gated in exactly the way an `accept` control is: on a host outside the gate the runner reports the Q500 refusal instead of skipping silently."
+     },
+     "own_footprint_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+      "expectation": "reject",
+      "observations": 1,
+      "measured_cascade": [
+       "Q613",
+       "Q617",
+       "Q619",
+       "Q613",
+       "Q600",
+       "Q600",
+       "Q600"
+      ],
+      "note": "The case with the growth aimed at `x`, generation `m`'s OWN declared interval, rather than at generation `n`'s. It refuses with the identical seven-entry cascade, so W4's `the new interval must overlap no live generation's declared shape, this generation's included` is a measured statement rather than prose. It reaches the same core refusal on every host."
+     }
+    },
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared with generations over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned and every entry says something: the section unlocks with its invariant still open (Q613 InvariantOpenAtUnlock), the growth's own refusal sits SECOND rather than first because the lowering mints the new predicate identity before the core decides (Q617; card boundary CT34-GROWTH-CASCADE, recorded rather than concealed), the generation is destroyed with its guard still live (Q619), the section's `close` names a declared identity the generation never took because the refused growth installed nothing (Q613 InvalidInvariantWitness), and scope exit finds the resource, the guard and the generation outstanding (three Q600). Every entry after Q617 is what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were. The admitted control differs by exactly ONE TOKEN - the growth names the unprotected `z` instead of `y` - so the refusal is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_check_only`: the core admits it and records one admitted protection growth, and compile_files then refuses with [Q600] UnsupportedEvent, which is card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE) pinned as a decision - nothing in the C backend reads a generation's declared shape, so it refuses to render a growth rather than emit a mutex protecting less than the model says. A second control grows onto the generation's OWN declared interval and refuses with the identical seven-entry cascade, so W4's one-protector rule is measured to cover this generation's shape too. There is no shrink or replacement form in this profile at all, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage. native_sanitized is unassessed, not executed: this case compiles no C at all, and the schema-2 gate lists exactly which cases may read executed. evidence_target=linux records only the Q500 host gate on the two controls that reach compile_files, NOT any compiled or executed C."
    },
    {
     "id": "CT35",
@@ -5128,8 +5182,8 @@
      }
     },
     "deepest_executed_stage": null,
-    "blocker_current": "Needs Send/Sync derivation, which is outside L09 and outside this profile entirely. Ranks are declared positions in an acquisition order; they say nothing about which payloads may cross a task boundary, so CT33-RANKS supplies no part of what CT46 asks for and the wave-5 reason stands verbatim in substance.",
-    "blocker_superseded_by": "docs/reports/wave11-ct33/ct_stage_evidence.json"
+    "blocker_current": "The recorded Send/Sync-derivation blocker is retired: card CT46-SENDSYNC landed a closed transferable(T) judgment that decides both matrices whole, so the derivation CT46 was said to need now exists. The measured remaining obstacle is different, and is named CT46-MUTEX-CAPTURE: the mutex ledger and the task ledger compose today by mutual exclusion rather than over a capture - the mutex route admits no task capture of a guarded payload and the task route refuses mutexes outright - so no source text can ask for mutex-mediated sharing across a task boundary and CT46's `accept` half is unwritable. Mapping only the refusing half would answer a different question.",
+    "blocker_superseded_by": "docs/reports/wave13-ct34/ct_stage_evidence.json"
    },
    {
     "id": "CT47",
@@ -5473,9 +5527,9 @@
    "blocked-on-W3/W4": 2,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
-   "blocked-on-unimplemented-syntax (no mutex value)": 2,
    "blocked-on-gateway-expressiveness (C-twin measured)": 3,
    "ambiguous": 1,
+   "blocked-on-unimplemented-syntax (no mutex value)": 1,
    "DECIDABLE-NOW (coarser reason)": 1
   },
   "newly_decidable_not_mapped": [
@@ -5664,7 +5718,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate12d.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate13.json)"
  },
  "named_followups": [
   {
