@@ -347,6 +347,15 @@ recorded P02/P03 timing flakiness.
 - **U5 (C02-P) gates the corpus payoff.** NFR's measured reach at `66910c10` is
   **0**, blocked by indirect memory access and unmodelled branch conditions, not
   by the recursion. Re-measure this card's reach once C02-P lands.
+  **Done, 2026-09-09, card C03-REACH**
+  ([`docs/reports/remaining-c03-reach/README.md`](../remaining-c03-reach/README.md)):
+  with C02-P, O04-ARMS, O04-B08 and O04-READ-BOUND all landed the reach is
+  **still 0**, and the population above is corrected — this card's "12
+  self-recursive functions in 6 units", counted from published diagnostics, is
+  46 components / 96 members across 21 units when read off the route itself.
+  That card also measures that admitting the *largest* blocker family
+  completely would still admit zero components, so the payoff is not gated on
+  any single admission.
 - **U6 (reachable-region release mode) is not started and must not be.** The
   design's §8 three-part boundary is unmet — no `ReleasedReachable` mode exists in
   `qcore-schemas`, the caller-side domain cannot represent region membership, and
