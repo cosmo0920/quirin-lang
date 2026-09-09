@@ -467,3 +467,319 @@ fn a_sizeof_in_a_return_expression_keeps_its_existing_answer() {
     // rule does not admit it either.
     assert_eq!(run.status("sized"), AnalysisStatus::Unknown);
 }
+
+// ---------------------------------------------------------------------------
+// Stage 2: the other five positions the design note names.
+// ---------------------------------------------------------------------------
+
+/// A branch condition carrying an admitted neutral call. The null-test and
+/// pointer-inequality refinements are checked before this, and neither applies
+/// to a comparison against a literal, so the position is decided by this card.
+#[test]
+fn a_branch_condition_admits_a_neutral_call() {
+    if !clang_available() {
+        return;
+    }
+    let program = format!(
+        "{DIGITS10}
+        void subject(void) {{
+            void *p = q_alloc();
+            if (digits10(41) > 3) {{ q_free(p); }} else {{ q_free(p); }}
+        }}"
+    );
+    let run = run(&program);
+    assert_eq!(
+        run.status("subject"),
+        AnalysisStatus::Safe,
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}
+
+/// A `while` condition, a `for` condition and a `do`/`while` condition, all
+/// three carrying the same admitted call.
+#[test]
+fn the_three_loop_conditions_admit_a_neutral_call() {
+    if !clang_available() {
+        return;
+    }
+    for header in [
+        "while (digits10(n) < 3) { }",
+        "for (; digits10(n) < 3; ) { }",
+        "do { } while (digits10(n) < 3);",
+    ] {
+        let program = format!(
+            "{DIGITS10}
+            void subject(unsigned long n) {{
+                void *p = q_alloc();
+                {header}
+                q_free(p);
+            }}"
+        );
+        let run = run(&program);
+        assert_eq!(
+            run.status("subject"),
+            AnalysisStatus::Safe,
+            "header `{header}` unsupported: {:?}",
+            run.unsupported("subject")
+        );
+    }
+}
+
+/// A `switch` expression carrying the same admitted call.
+#[test]
+fn a_switch_expression_admits_a_neutral_call() {
+    if !clang_available() {
+        return;
+    }
+    let program = format!(
+        "{DIGITS10}
+        void subject(unsigned long n) {{
+            void *p = q_alloc();
+            switch (digits10(n)) {{
+                case 1: break;
+                default: break;
+            }}
+            q_free(p);
+        }}"
+    );
+    let run = run(&program);
+    assert_eq!(
+        run.status("subject"),
+        AnalysisStatus::Safe,
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}
+
+/// A branch condition reading a direct scalar member of an unbound base: the
+/// C02 whitelist, in the position card C02 deliberately left out of scope.
+#[test]
+fn a_branch_condition_admits_a_direct_scalar_field_read() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("struct counters { int hits; void *slot; };
+        void subject(struct counters *c) {
+            void *p = q_alloc();
+            if (c->hits > 2) { q_free(p); } else { q_free(p); }
+        }");
+    assert_eq!(
+        run.status("subject"),
+        AnalysisStatus::Safe,
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}
+
+/// The same read through a base this body binds: refused, which is card C02's
+/// premise 8 and the reason the C00 recommendation was not implemented as
+/// written.
+#[test]
+fn a_branch_condition_refuses_a_read_through_a_bound_base() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("struct counters { int hits; void *slot; };
+        void subject(struct counters *c) {
+            void *p = q_alloc();
+            q_transfer(c);
+            if (c->hits > 2) { q_free(p); } else { q_free(p); }
+        }");
+    assert_eq!(run.status("subject"), AnalysisStatus::Unknown);
+    assert!(
+        run.unsupported("subject").iter().any(|description| {
+            description == "unmodeled call, aggregate or indirect access in branch condition"
+        }),
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}
+
+/// A releasing call in a branch condition keeps its refusal: the release must
+/// not disappear into a `NoOp`. It answers `Unsafe` rather than `Unknown`
+/// because the refused condition leaves the acquisition outstanding at the
+/// exit, which is the fail-closed direction.
+#[test]
+fn a_releasing_call_in_a_branch_condition_is_never_admitted() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("void subject(void) {
+            void *p = q_alloc();
+            if ((q_free(p), 1)) { }
+        }");
+    assert_ne!(run.status("subject"), AnalysisStatus::Safe);
+    assert!(
+        run.unsupported("subject").iter().any(|description| {
+            description == "unmodeled call, aggregate or indirect access in branch condition"
+        }),
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+    assert_eq!(run.leaks("subject"), 1);
+}
+
+/// An uncontracted call in each of the five stage-2 positions keeps its own
+/// existing diagnostic, so no position silently borrows another's answer.
+#[test]
+fn an_uncontracted_call_keeps_each_positions_own_diagnostic() {
+    if !clang_available() {
+        return;
+    }
+    for (header, description) in [
+        (
+            "if (external(n)) { }",
+            "unmodeled call, aggregate or indirect access in branch condition",
+        ),
+        (
+            "while (external(n)) { n = n + 1; }",
+            "unmodeled call, aggregate or indirect access in loop condition",
+        ),
+        (
+            "for (; external(n); ) { n = n + 1; }",
+            "unmodeled call, aggregate or indirect access in for-loop condition",
+        ),
+        (
+            "do { n = n + 1; } while (external(n));",
+            "unmodeled call, aggregate or indirect access in do-while condition",
+        ),
+        (
+            "switch (external(n)) { default: break; }",
+            "unmodeled call, aggregate or indirect access in switch expression",
+        ),
+    ] {
+        let program = format!(
+            "unsigned long external(unsigned long);
+            void subject(unsigned long n) {{
+                {header}
+            }}"
+        );
+        let run = run(&program);
+        assert_eq!(
+            run.status("subject"),
+            AnalysisStatus::Unknown,
+            "{header}: {:?}",
+            run.unsupported("subject")
+        );
+        assert!(
+            run.unsupported("subject")
+                .iter()
+                .any(|found| found == description),
+            "`{header}` expected `{description}`, got {:?}",
+            run.unsupported("subject")
+        );
+    }
+}
+
+/// A `case` label keeps the strict lexical predicate (`W4-EXPR-POS-CASE`): a
+/// constant expression can carry neither a call nor a member access, so the
+/// typed admission would be inert. Pinned so the decision is visible.
+#[test]
+fn a_case_label_keeps_the_lexical_predicate() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("void subject(int k) {
+            switch (k) {
+                case 1: break;
+                default: break;
+            }
+        }");
+    assert_eq!(run.status("subject"), AnalysisStatus::Safe);
+}
+
+// ---------------------------------------------------------------------------
+// The `for`-clause fail-open this card measured and repaired.
+// ---------------------------------------------------------------------------
+
+/// `split_for_clauses` consumes `(`, `)`, `[` and `]` while tracking depth, so
+/// before this card `for (; external(n); )` reached the classification as the
+/// two tokens `external n` — no call for `contains_call` to find and no
+/// subscript for `contains_unmodeled_access` to find — and the position was
+/// classified `NoOp`. Both spellings now refuse, from the original tokens.
+#[test]
+fn a_for_condition_is_classified_from_its_original_spelling() {
+    if !clang_available() {
+        return;
+    }
+    for header in [
+        "for (; external(n); ) { n = n + 1; }",
+        "for (; table[n]; ) { n = n + 1; }",
+    ] {
+        let program = format!(
+            "unsigned long external(unsigned long);
+            void subject(unsigned long n, unsigned long *table) {{
+                {header}
+            }}"
+        );
+        let run = run(&program);
+        assert_eq!(run.status("subject"), AnalysisStatus::Unknown, "{header}");
+        assert!(
+            run.unsupported("subject").iter().any(|description| {
+                description == "unmodeled call, aggregate or indirect access in for-loop condition"
+            }),
+            "`{header}` unsupported: {:?}",
+            run.unsupported("subject")
+        );
+    }
+}
+
+/// The repair is confined to the condition: `init` and `increment` keep the
+/// stripped spelling `split_for_clauses` gives them, which is recorded as the
+/// named follow-on `W4-EXPR-POS-FOR-CLAUSES` rather than repaired here. Pinned
+/// so the residual is visible and moves deliberately.
+#[test]
+fn a_for_init_and_increment_keep_the_stripped_spelling() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("unsigned long external(unsigned long);
+        void subject(unsigned long n) {
+            for (n = external(0); n < 3; n = external(n)) { }
+        }");
+    // Neither clause raises the call diagnostic a statement-position call
+    // would: the parentheses never reach `classify_simple`.
+    assert!(
+        !run.unsupported("subject")
+            .iter()
+            .any(|description| description.starts_with("call to uncontracted function")),
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+    // Measured: the residual is fail-closed, but for an unrelated reason —
+    // `n = external` with the parentheses gone is an unsupported assignment
+    // expression, not a call. That is the shape `W4-EXPR-POS-FOR-CLAUSES`
+    // records: the clause is refused by accident of the stripped spelling
+    // rather than because a call was seen.
+    assert_eq!(run.status("subject"), AnalysisStatus::Unknown);
+    assert_eq!(
+        run.unsupported("subject"),
+        ["unsupported assignment expression"]
+    );
+}
+
+/// The condition repair also lets the new typed rule reach the `for` position
+/// at all: with the stripped spelling the admitted call was invisible in both
+/// directions.
+#[test]
+fn a_for_condition_admits_a_neutral_call_from_its_original_spelling() {
+    if !clang_available() {
+        return;
+    }
+    let program = format!(
+        "{DIGITS10}
+        void subject(unsigned long n) {{
+            void *p = q_alloc();
+            for (; digits10(n) < 3; ) {{ n = n + 1; }}
+            q_free(p);
+        }}"
+    );
+    let run = run(&program);
+    assert_eq!(
+        run.status("subject"),
+        AnalysisStatus::Safe,
+        "unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}

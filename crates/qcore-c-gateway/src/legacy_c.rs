@@ -2554,7 +2554,7 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
-                    condition_supported: supported_neutral_expression(&condition),
+                    condition_supported: self.supported_expression(&condition),
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     then_body,
@@ -2567,7 +2567,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
-                    condition_supported: supported_neutral_expression(&condition),
+                    condition_supported: self.supported_expression(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -2575,7 +2575,18 @@ impl Parser<'_> {
             Some("for") => {
                 self.cursor += 1;
                 let clauses = self.take_parenthesized()?;
-                let Some([init, condition, increment]) = split_for_clauses(&clauses) else {
+                let Some([init, _stripped_condition, increment]) = split_for_clauses(&clauses)
+                else {
+                    return Ok(Statement::Instruction(
+                        LegacyInstruction::Unknown {
+                            description: "malformed for-loop clauses".to_owned(),
+                        },
+                        line,
+                    ));
+                };
+                // The condition is classified from its original spelling; the
+                // other two clauses keep the stripped one they have today.
+                let Some(condition) = for_condition_tokens(&clauses) else {
                     return Ok(Statement::Instruction(
                         LegacyInstruction::Unknown {
                             description: "malformed for-loop clauses".to_owned(),
@@ -2592,7 +2603,7 @@ impl Parser<'_> {
                     line,
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: supported_neutral_expression(&condition),
+                    condition_supported: self.supported_expression(&condition),
                     null_condition: self.null_condition(&condition),
                     increment,
                     body,
@@ -2612,7 +2623,7 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::DoWhile {
                     line,
-                    condition_supported: supported_neutral_expression(&condition),
+                    condition_supported: self.supported_expression(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -2623,7 +2634,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
-                    expression_supported: supported_neutral_expression(&expression),
+                    expression_supported: self.supported_expression(&expression),
                     body,
                 })
             }
@@ -2632,6 +2643,10 @@ impl Parser<'_> {
                 let expression = self.consume_to_colon()?;
                 Ok(Statement::Case {
                     line,
+                    // A `case` label is an integer constant expression: no call and
+                    // no member access can appear in one, so the typed admission
+                    // would be inert here. The strict lexical predicate is kept
+                    // deliberately (W4-EXPR-POS-CASE).
                     expression_supported: supported_neutral_expression(&expression),
                     is_default: false,
                 })
@@ -2686,8 +2701,6 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
-                    // W4-EXPR-POS stage 1: the return position alone, which is
-                    // the design note's §6 minimal validation case.
                     expression_supported: self.supported_expression(&expression),
                     returned_place: canonical_place(&texts),
                 })
@@ -3361,6 +3374,16 @@ fn contains_braces(tokens: &[Token]) -> bool {
         .any(|token| matches!(token.text.as_str(), "{" | "}"))
 }
 
+/// Split a `for` header into its three clauses.
+///
+/// The grouping tokens are consumed by the depth tracking and do **not** reach
+/// the clause vectors. That is load-bearing for the `init` and `increment`
+/// clauses, whose classification by [`Parser::classify_simple`] this card does
+/// not touch, and it is why [`for_condition_tokens`] exists: the condition is
+/// classified from the original spelling instead, so that a call, a subscript
+/// or a parenthesized group in a `for` condition is visible to the predicates
+/// that must refuse it. See `W4-EXPR-POS-FOR-CLAUSES` in
+/// `docs/reports/remaining-w4-expr-pos/README.md`.
 fn split_for_clauses(tokens: &[Token]) -> Option<[Vec<Token>; 3]> {
     let mut clauses = vec![Vec::new()];
     let mut parentheses = 0usize;
@@ -3376,6 +3399,42 @@ fn split_for_clauses(tokens: &[Token]) -> Option<[Vec<Token>; 3]> {
         }
     }
     clauses.try_into().ok()
+}
+
+/// The `for` header's condition clause, **with its grouping tokens intact**.
+///
+/// A measured fail-open repair (card W4-EXPR-POS). `split_for_clauses` drops
+/// `(`, `)`, `[` and `]`, so `for (; external(n); )` reached
+/// `supported_neutral_expression` as the two tokens `external n`, in which
+/// `contains_call` finds no call and `contains_unmodeled_access` finds no
+/// subscript: the position was classified `NoOp` and the unmodelled call
+/// disappeared. Every other position was already classified from its original
+/// spelling; this makes the `for` condition agree with them.
+///
+/// This is a **refusal** repair — it can only turn an accepted condition into a
+/// refused one — and it is confined to the condition. The `init` and
+/// `increment` clauses keep the stripped spelling they have today, byte for
+/// byte.
+fn for_condition_tokens(tokens: &[Token]) -> Option<Vec<Token>> {
+    let mut clauses = vec![Vec::new()];
+    let mut parentheses = 0usize;
+    let mut brackets = 0usize;
+    for token in tokens {
+        match token.text.as_str() {
+            "(" => parentheses += 1,
+            ")" => parentheses = parentheses.checked_sub(1)?,
+            "[" => brackets += 1,
+            "]" => brackets = brackets.checked_sub(1)?,
+            ";" if parentheses == 0 && brackets == 0 => {
+                clauses.push(Vec::new());
+                continue;
+            }
+            _ => {}
+        }
+        clauses.last_mut()?.push(token.clone());
+    }
+    let [_, condition, _]: [Vec<Token>; 3] = clauses.try_into().ok()?;
+    Some(condition)
 }
 
 fn pointer_null_condition(tokens: &[Token]) -> Option<PointerNullCondition> {

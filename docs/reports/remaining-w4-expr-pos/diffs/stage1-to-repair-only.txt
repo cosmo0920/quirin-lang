@@ -1,0 +1,274 @@
+== cJSON.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 76, "unsupported": 682}
+        -> {"unknown_alias": 78, "unsupported": 683}
+    reason: "resource projection unresolved: 682 unsupported operation(s), 76 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 683 unsupported operation(s), 78 unresolved alias(es), 0 custody summary conflict(s)"
+    cJSON_Compare: Unknown -> Unknown  {'unresolved resource identity `b_element`': 1, 'unresolved resource identity `a_element`': 1}
+    case_insensitive_strcmp: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== cmt_encode_opentelemetry.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 18, "unknown_alias": 114, "unsupported": 859}
+        -> {"leak": 18, "unknown_alias": 114, "unsupported": 866}
+    destroy_exponential_histogram_data_point_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_histogram_data_point_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_metric_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_numerical_data_point_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_resource_metrics_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_scope_metric_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    destroy_summary_data_point_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== mk_core/mk_string.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 19, "unsupported": 92}
+        -> {"leak": 1, "unknown_alias": 19, "unsupported": 94}
+    mk_string_html_escape: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+== mk_server/mk_socket.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 5, "unsupported": 76}
+        -> {"unknown_alias": 7, "unsupported": 76}
+    reason: "resource projection unresolved: 76 unsupported operation(s), 5 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 76 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    mk_socket_connect: Unknown -> Unknown  {'unresolved resource identity `rp`': 1}
+    mk_socket_server: Unknown -> Unknown  {'unresolved resource identity `rp`': 1}
+== nanopb/pb_encode.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 6, "unsupported": 215}
+        -> {"unknown_alias": 6, "unsupported": 216}
+    reason: "resource projection unresolved: 215 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 216 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    safe_read_bool: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdaddr.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 8, "unsupported": 54}
+        -> {"unknown_alias": 10, "unsupported": 54}
+    reason: "resource projection unresolved: 54 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 54 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_getaddrinfo: Unknown -> Unknown  {'unresolved resource identity `ai`': 2}
+== rdkafka.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 122, "unsupported": 1847}
+        -> {"unknown_alias": 122, "unsupported": 1853}
+    reason: "resource projection unresolved: 1847 unsupported operation(s), 122 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1853 unsupported operation(s), 122 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_destroy_internal: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+    rd_kafka_offsets_for_times: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_rebootstrap_tmr_cb: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_commit_sync: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_fetch_reply_op: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_admin.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 432, "unsupported": 3158}
+        -> {"unknown_alias": 432, "unsupported": 3163}
+    reason: "resource projection unresolved: 3158 unsupported operation(s), 432 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 3163 unsupported operation(s), 432 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_ConfigResource_get_single_broker_id: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ConsumerGroupListing_list_append_dedup: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_DeleteRecords_leaders_queried_cb: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ListOffsets_leaders_queried_cb: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_admin_DescribeConsumerGroupsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_assignor.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 26, "unsupported": 364}
+        -> {"unknown_alias": 26, "unsupported": 367}
+    reason: "resource projection unresolved: 364 unsupported operation(s), 26 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 367 unsupported operation(s), 26 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_consumer_protocol_member_metadata_new: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_use_rack_aware_assignment: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    ut_populate_internal_topic_metadata: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_cert.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 25, "unsupported": 117}
+        -> {"unknown_alias": 25, "unsupported": 118}
+    reason: "resource projection unresolved: 117 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 118 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_cert_new: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_cgrp.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 151, "unsupported": 2349}
+        -> {"leak": 1, "unknown_alias": 152, "unsupported": 2353}
+    rd_kafka_cgrp_terminate0: Unknown -> Unknown  {'unresolved resource identity `rkb`': 1}
+    rd_kafka_cgrp_update_subscribed_topics: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    unittest_consumer_group_metadata: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 3}
+== rdkafka_feature.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 6, "unsupported": 65}
+        -> {"unknown_alias": 6, "unsupported": 66}
+    reason: "resource projection unresolved: 65 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 66 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_features2str: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_fetcher.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 159, "unsupported": 1287}
+        -> {"unknown_alias": 159, "unsupported": 1297}
+    reason: "resource projection unresolved: 1287 unsupported operation(s), 159 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1297 unsupported operation(s), 159 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_ShareAcknowledgeRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ShareFetchRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 3}
+    rd_kafka_broker_session_update_toppars_list: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_broker_share_rpc: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_ack_details_totals: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_build_response_rko: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_fetch_reply_handle: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+== rdkafka_metadata.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 104, "unsupported": 719}
+        -> {"unknown_alias": 104, "unsupported": 726}
+    reason: "resource projection unresolved: 719 unsupported operation(s), 104 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 726 unsupported operation(s), 104 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_metadata_copy_internal: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_metadata_decommission_unavailable_brokers: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_parse_Metadata0: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 4}
+    rd_kafka_populate_metadata_topic_racks: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_metadata_cache.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 11, "unsupported": 212}
+        -> {"unknown_alias": 11, "unsupported": 216}
+    reason: "resource projection unresolved: 212 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 216 unsupported operation(s), 11 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_metadata_cache_hint: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_metadata_cache_purge_hints: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_metadata_cache_purge_hints_by_id: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_metadata_cache_topics_count_exists: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_mock.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 71, "unsupported": 1332}
+        -> {"unknown_alias": 72, "unsupported": 1332}
+    reason: "resource projection unresolved: 1332 unsupported operation(s), 71 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1332 unsupported operation(s), 72 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_mock_partition_offset_for_leader_epoch: Unknown -> Unknown  {'unresolved resource identity `mset`': 1}
+== rdkafka_mock_cgrp.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 25, "unsupported": 454}
+        -> {"unknown_alias": 25, "unsupported": 455}
+    reason: "resource projection unresolved: 454 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 455 unsupported operation(s), 25 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_mock_handlers.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 495, "unsupported": 2584}
+        -> {"unknown_alias": 495, "unsupported": 2589}
+    reason: "resource projection unresolved: 2584 unsupported operation(s), 495 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 2589 unsupported operation(s), 495 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_mock_handle_ShareAcknowledge: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_mock_handle_ShareFetch: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_mock_sgrp_ack_error_for_partition: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_mock_sgrp_write_acquired_records: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_mock_sgrp_write_acquired_records_meta: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_mock_sharegrp.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 19, "unsupported": 322}
+        -> {"unknown_alias": 20, "unsupported": 324}
+    reason: "resource projection unresolved: 322 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 324 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_mock_sgrp_session_validate: Unknown -> Unknown  {'unresolved resource identity `session`': 1}
+    rd_kafka_mock_sharegroup_assignment_recalculate: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_mock_sharegroup_collect_subscribed_topics: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_range_assignor.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 10, "unsupported": 470}
+        -> {"unknown_alias": 10, "unsupported": 477}
+    reason: "resource projection unresolved: 470 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 477 unsupported operation(s), 10 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_assign_co_partitioned: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 3}
+    rd_kafka_range_assignor_assign_cb: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 3}
+    rd_kafka_range_assignor_unittest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_request.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 189, "unsupported": 2197}
+        -> {"leak": 1, "unknown_alias": 189, "unsupported": 2214}
+    rd_kafka_AlterConfigsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_CreateAclsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 4}
+    rd_kafka_CreatePartitionsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_CreateTopicsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_DeleteAclsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+    rd_kafka_DescribeConfigsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_IncrementalAlterConfigsRequest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_MetadataRequest0: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+    rd_kafka_buf_read_topic_partitions_nullable: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_buf_write_topic_partitions: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafkap_share_leader_changes_apply: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+== rdkafka_sasl_oauthbearer.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 33, "unsupported": 466}
+        -> {"unknown_alias": 33, "unsupported": 470}
+    reason: "resource projection unresolved: 466 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 470 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)"
+    create_jws_compact_serialization: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    do_unittest_config_empty_value_should_fail: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    do_unittest_config_value_with_quote_should_fail: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    do_unittest_illegal_extension_keys_should_fail: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_sasl_scram.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 23, "unsupported": 212}
+        -> {"leak": 1, "unknown_alias": 23, "unsupported": 213}
+    unittest_scram_safe: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_share_acknowledgement.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 16, "unsupported": 268}
+        -> {"unknown_alias": 16, "unsupported": 273}
+    reason: "resource projection unresolved: 268 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 273 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_share_build_ack_details: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_commit_sync_apply_result: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_dispatch_ack_callbacks: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_find_ack_batch: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_share_find_ack_batch_by_id: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_ssl.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 30, "unsupported": 406}
+        -> {"unknown_alias": 30, "unsupported": 410}
+    reason: "resource projection unresolved: 406 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 410 unsupported operation(s), 30 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_ssl_cert_callback: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ssl_cert_issuer_match: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ssl_probe_and_set_default_ca_location: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_ssl_set_certs: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_sticky_assignor.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 33, "unsupported": 1304}
+        -> {"unknown_alias": 33, "unsupported": 1313}
+    reason: "resource projection unresolved: 1304 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1313 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)"
+    balance: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+    isBalanced: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    maybeAssignPartition: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    performReassignments: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 2}
+    rd_kafka_sticky_assignor_assign_cb: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_kafka_sticky_assignor_unittest: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    reassignPartition: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_telemetry.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 14, "unsupported": 189}
+        -> {"unknown_alias": 15, "unsupported": 189}
+    reason: "resource projection unresolved: 189 unsupported operation(s), 14 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 189 unsupported operation(s), 15 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_handle_get_telemetry_subscriptions: Unknown -> Unknown  {'unresolved resource identity `rkb`': 1}
+== rdkafka_topic.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 34, "unsupported": 602}
+        -> {"unknown_alias": 34, "unsupported": 603}
+    reason: "resource projection unresolved: 602 unsupported operation(s), 34 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 603 unsupported operation(s), 34 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_topic_partitions_remove: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdkafka_txnmgr.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 72, "unsupported": 753}
+        -> {"unknown_alias": 72, "unsupported": 754}
+    reason: "resource projection unresolved: 753 unsupported operation(s), 72 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 754 unsupported operation(s), 72 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_txn_require_states0: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdlist.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 7, "unsupported": 146}
+        -> {"unknown_alias": 7, "unsupported": 154}
+    reason: "resource projection unresolved: 146 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 154 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_list_apply: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_copy_to: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_deduplicate: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_find: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_index: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_remove: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_remove_cmp: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_list_remove_multi_cmp: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdmap.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 8, "unsupported": 151}
+        -> {"unknown_alias": 8, "unsupported": 154}
+    reason: "resource projection unresolved: 151 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 154 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_map_alloc_buckets: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    rd_map_copy: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+    unittest_untyped_map: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdstring.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 20, "unsupported": 102}
+        -> {"unknown_alias": 20, "unsupported": 103}
+    reason: "resource projection unresolved: 102 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 103 unsupported operation(s), 20 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_string_hash: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in for-loop condition': 1}
+== rdunittest.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 6, "unsupported": 88}
+        -> {"unknown_alias": 7, "unsupported": 88}
+    reason: "resource projection unresolved: 88 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 88 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)"
+    ut_tq_find_prev_pos: Unknown -> Unknown  {'unresolved resource identity `e`': 1}
+
+total diagnostic delta:
+     +121  unmodeled call, aggregate or indirect access in for-loop condition
+       +2  unresolved resource identity `rp`
+       +2  unresolved resource identity `ai`
+       +2  unresolved resource identity `rkb`
+       +1  unresolved resource identity `b_element`
+       +1  unresolved resource identity `a_element`
+       +1  unresolved resource identity `mset`
+       +1  unresolved resource identity `session`
+       +1  unresolved resource identity `e`

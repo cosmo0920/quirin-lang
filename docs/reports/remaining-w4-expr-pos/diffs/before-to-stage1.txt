@@ -1,0 +1,76 @@
+== cio_chunk.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 19, "unsupported": 147}
+        -> {"unknown_alias": 19, "unsupported": 140}
+    reason: "resource projection unresolved: 147 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 140 unsupported operation(s), 19 unresolved alias(es), 0 custody summary conflict(s)"
+    cio_chunk_close: Unknown -> Unknown  {'call to uncontracted function `cio_chunk_counter_total_sub`': -1}
+    cio_chunk_counter_total_add: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_chunk_counter_total_sub: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_chunk_counter_total_up_add: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_chunk_counter_total_up_sub: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_chunk_is_locked: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_chunk_open: Unknown -> Unknown  {'call to uncontracted function `cio_chunk_counter_total_add`': -1}
+== cio_error.c  Unknown -> Unknown
+    diagnostic_counts: {"unsupported": 4}
+        -> {"unsupported": 2}
+    reason: "resource projection unresolved: 4 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 2 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)"
+    cio_error_get: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    cio_error_get_str: Unknown -> Safe  {'call to uncontracted function `cio_error_get`': -1}
+== flb_input_chunk.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 10, "unknown_alias": 121, "unsupported": 857}
+        -> {"leak": 10, "unknown_alias": 121, "unsupported": 856}
+    logs_tag_records_metrics_enabled: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== mk_core/mk_string.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 19, "unsupported": 94}
+        -> {"leak": 1, "unknown_alias": 19, "unsupported": 92}
+    digits10: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    mk_string_itop: Unknown -> Unknown  {'call to uncontracted function `digits10`': -1}
+== mk_server/mk_http_parser.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 6, "unsupported": 305}
+        -> {"leak": 1, "unknown_alias": 6, "unsupported": 304}
+    method_lookup: Unknown -> Unknown  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== rdkafka.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 122, "unsupported": 1848}
+        -> {"unknown_alias": 122, "unsupported": 1847}
+    reason: "resource projection unresolved: 1848 unsupported operation(s), 122 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1847 unsupported operation(s), 122 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_messages_count: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== rdkafka_admin.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 432, "unsupported": 3165}
+        -> {"unknown_alias": 432, "unsupported": 3158}
+    reason: "resource projection unresolved: 3165 unsupported operation(s), 432 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 3158 unsupported operation(s), 432 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_ConsumerGroupDescription_is_simple_consumer_group: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_ConsumerGroupListing_is_simple_consumer_group: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_ListOffsetsResultInfo_timestamp: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_ScramCredentialInfo_iterations: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_TopicDescription_is_internal: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_TopicPartitionInfo_partition: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_UserScramCredentialsDescription_scramcredentialinfo_count: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== rdkafka_cgrp.c  Unsafe -> Unsafe
+    diagnostic_counts: {"leak": 1, "unknown_alias": 151, "unsupported": 2350}
+        -> {"leak": 1, "unknown_alias": 151, "unsupported": 2349}
+    rd_kafka_consumer_group_metadata_generation_id: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== rdkafka_mock.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 71, "unsupported": 1335}
+        -> {"unknown_alias": 71, "unsupported": 1332}
+    reason: "resource projection unresolved: 1335 unsupported operation(s), 71 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 1332 unsupported operation(s), 71 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_mock_request_api_key: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_mock_request_id: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_mock_request_timestamp: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+== rdkafka_share_acknowledgement.c  Unknown -> Unknown
+    diagnostic_counts: {"unknown_alias": 16, "unsupported": 270}
+        -> {"unknown_alias": 16, "unsupported": 268}
+    reason: "resource projection unresolved: 270 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)"
+        -> "resource projection unresolved: 268 unsupported operation(s), 16 unresolved alias(es), 0 custody summary conflict(s)"
+    rd_kafka_share_partition_offsets_list_count: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+    rd_kafka_share_partition_offsets_offsets_cnt: Unknown -> Safe  {'unmodeled call, aggregate or indirect access in return expression': -1}
+
+total diagnostic delta:
+      -23  unmodeled call, aggregate or indirect access in return expression
+       -1  call to uncontracted function `cio_chunk_counter_total_sub`
+       -1  call to uncontracted function `cio_chunk_counter_total_add`
+       -1  call to uncontracted function `cio_error_get`
+       -1  call to uncontracted function `digits10`
