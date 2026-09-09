@@ -129,12 +129,23 @@ and 5–9 for 22.
 ## 4. Comparison with C03-NFR's figures
 
 C03-NFR recorded "**155** indirect memory access and **106** unmodeled call,
-aggregate or indirect access in branch condition" over its twelve functions.
-Restricting this census to the same twelve gives 154 and 106 on the wave-10
-tree: the four admissions that landed since removed **one** occurrence between
-them, from `cJSON_Duplicate_rec`. Those figures were also counted from the
-published diagnostics; the census's own counts over all 96 members, at the
-point of refusal, are the 642 and 450 above.
+aggregate or indirect access in branch condition" over its twelve functions,
+counted from the **published diagnostics**. Two readings, kept separate
+because they are two different measurements:
+
+| reading, restricted to C03-NFR's twelve | indirect access | branch condition |
+|---|---|---|
+| published diagnostics, C03-NFR's baseline | 155 | 106 |
+| published diagnostics, wave-10 tree | **154** | **106** |
+| this census — retained instructions under `N(m)` | 160 | 108 |
+
+The first two rows are the like-for-like comparison: across C02-P, O04-ARMS,
+O04-B08 and O04-READ-BOUND, **one** occurrence disappeared, from
+`cJSON_Duplicate_rec`. The third row is higher because the census counts the
+instructions the containment gate retains under the neutral environment, which
+is not the same set as the diagnostics a completed analysis publishes — the
+distinction §3.1 explains. The census's own totals over all 96 members are the
+642 and 450 of §3.2.
 
 Neither number is a criticism of the admissions that landed. C02-P, O04-ARMS,
 O04-B08 and O04-READ-BOUND each targeted the constructor-to-caller path they
