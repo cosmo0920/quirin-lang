@@ -448,3 +448,125 @@ fn a_trace_with_task_structure_is_outside_this_backend_and_says_so_before_emitti
         );
     }
 }
+
+/// Card CT33-RANKS. Two ranked generations over disjoint footprints, nested in
+/// declared order, with a write under each guard. Nesting is what the rank
+/// discipline makes expressible, so the backend has to render two live guards;
+/// this is that rendering, run once under ASan/UBSan/LSan and compared with the
+/// independently computed reference execution.
+fn ranked_nested_sections() -> MutexInvariantProgram {
+    let outer = AccessFootprint::new(1, 0, 4);
+    let inner = AccessFootprint::new(2, 0, 4);
+    MutexInvariantProgram {
+        initial_shares: vec![grant(1, 4), grant(2, 4)],
+        initial_custody: [(1, 0), (2, 0)].into_iter().collect(),
+        lock_ranks: std::collections::BTreeMap::from([(1, 1), (2, 2)]),
+        events: vec![
+            MutexInvariantEvent::CreateMutex {
+                task: 0,
+                mutex: 1,
+                protects: vec![outer],
+                invariant: 1,
+            },
+            MutexInvariantEvent::CreateMutex {
+                task: 0,
+                mutex: 2,
+                protects: vec![inner],
+                invariant: 2,
+            },
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 1,
+                guard: 1,
+            },
+            MutexInvariantEvent::OpenInvariant { task: 0, guard: 1 },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: outer,
+                kind: AccessKind::Write,
+                guard: Some(1),
+            },
+            // The nested acquisition, in strictly increasing rank order.
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 2,
+                guard: 2,
+            },
+            MutexInvariantEvent::OpenInvariant { task: 0, guard: 2 },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: inner,
+                kind: AccessKind::Write,
+                guard: Some(2),
+            },
+            MutexInvariantEvent::CloseInvariant {
+                task: 0,
+                guard: 2,
+                witness: InvariantWitness::Declared { invariant: 2 },
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 2 },
+            MutexInvariantEvent::CloseInvariant {
+                task: 0,
+                guard: 1,
+                witness: InvariantWitness::Declared { invariant: 1 },
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 1 },
+            MutexInvariantEvent::DestroyMutex { task: 0, mutex: 2 },
+            MutexInvariantEvent::DestroyMutex { task: 0, mutex: 1 },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 2,
+            },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 1,
+            },
+        ],
+    }
+}
+
+#[test]
+fn ranked_nested_sections_agree_between_the_reference_and_a_sanitized_native_run() {
+    let program = ranked_nested_sections();
+    let certificate = check_mutex_invariant_program(&program).expect("the declared order is kept");
+    assert_eq!(
+        certificate.declared_lock_ranks,
+        std::collections::BTreeMap::from([(1, 1), (2, 2)])
+    );
+    let reference = crate::mutex_c_emit::interpret_mutex_program(&program, &certificate)
+        .expect("a single-task nesting is inside the emitted subset");
+    let emission = crate::mutex_c_emit::emit_mutex_c11(&program, &certificate).expect("emitted");
+    // Two generations, and the inner section is released before the outer one.
+    assert_eq!(
+        emission.source.matches("mtx_init(&m").count(),
+        2,
+        "two generations, not one"
+    );
+    let inner_unlock = emission
+        .source
+        .find("mtx_unlock(&m2")
+        .expect("the inner section is released");
+    let outer_unlock = emission
+        .source
+        .find("mtx_unlock(&m1")
+        .expect("the outer section is released");
+    assert!(
+        inner_unlock < outer_unlock,
+        "the nesting unwinds in reverse acquisition order"
+    );
+    assert_eq!(compile_and_run(&emission.source), reference);
+}
+
+/// The backend renders the trace it is given. Reversing the nesting is refused
+/// by the checker before emission is ever reached, so there is no ranked
+/// program the backend can render out of order.
+#[test]
+fn the_reversed_nesting_never_reaches_the_backend() {
+    let mut program = ranked_nested_sections();
+    program.lock_ranks = std::collections::BTreeMap::from([(1, 2), (2, 1)]);
+    let diagnostics = check_mutex_invariant_program(&program).expect_err("refused");
+    assert!(
+        diagnostics.iter().any(|d| d.code() == "Q624"),
+        "{diagnostics:?}"
+    );
+}

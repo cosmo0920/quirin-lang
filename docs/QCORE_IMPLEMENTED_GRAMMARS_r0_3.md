@@ -542,6 +542,7 @@ entry       = "fn" , NAME , "(" , ")" , "->" , "unit" , "{" , scope , "}" ;
 scope       = "thread" , "scope" , NAME , "{" , { outer } , "}" ;
 outer       = "let" , NAME , "=" , "protected" , NAT , ";"
             | "let" , NAME , "=" , "mutex" , "guards" , NAME , ";"
+            | "let" , NAME , "=" , "mutex" , "rank" , NAT , "guards" , NAME , ";"
             | "let" , NAME , "=" , "fact" , NAME , ";"
             | ( "read" | "write" ) , NAME , ";"
             | "wait" , NAME , ";"
@@ -578,11 +579,12 @@ end and a `raise` require it restored and every guard-derived borrow released
 certificate covering it carries `InvariantPredicateDeclared`;
 `close g unchanged;` supplies the **checked** witness and carries none.
 `DeclaredFootprintShape` is on every certificate from this route, and
-`GuardFootprintAuthority` and `SynchronizedCustodyEdges` never are. A nested
-`with lock` lowers to an explicit unsupported-construct event and is refused at
-`Q622`; `defer` inside a critical section, and every other statement outside
-the grammar above, is refused at `Q600`. Scope exit destroys each generation
-and then each resource, under the model's quiescence rules.
+`GuardFootprintAuthority` and `SynchronizedCustodyEdges` never are. Unless the
+module declares a lock rank (card CT33-RANKS below), a nested `with lock` lowers
+to an explicit unsupported-construct event and is refused at `Q622`; `defer`
+inside a critical section, and every other statement outside the grammar above,
+is refused at `Q600`. Scope exit destroys each generation and then each
+resource, under the model's quiescence rules.
 
 Card T03-F's three completions, each bounded by a stated rule:
 
@@ -625,11 +627,35 @@ else about it:
   join is named on it. `under` is reserved. See
   [the T03-GUARD-JOIN record](reports/remaining-t03-guard-join/README.md).
 
+Card CT33-RANKS adds the ranked declaration and nothing else to the grammar:
+
+* **`let m = mutex rank N guards r;`** declares `m`'s position in a lock order.
+  `N` is one decimal literal in `0 ..= 4294967295`; any other spelling is a
+  lowering refusal (`Q600`). Declaring at least one rank turns on the core's
+  opt-in discipline for the whole module, and two things follow. Every mutex the
+  module declares must then be ranked, or the module is refused at `Q625` — a
+  partly ranked module has no order, so it is not checked over its ranked part.
+  And a nested `with lock` becomes expressible: you may nest exactly where you
+  have declared in which order, and the core then refuses any acquisition made
+  while holding an equal-or-higher rank (`Q624`), which is what makes a
+  lock-order cycle writable and refused rather than inexpressible. Nesting buys
+  the right to hold two guards, not to conflate them: the inner body's frame
+  carries only the inner section, so naming the enclosing guard from inside is
+  `Q600`, and a nested acquisition invalidates the decidable region behind
+  `close g unchanged;`. A task re-locking a generation it holds keeps its
+  existing `Q600 DuplicateLockCapability`, since the rank test runs last and
+  never displaces an existing refusal. Declaring no rank leaves every module
+  written before this card byte-identical, including the `Q622` nesting refusal.
+  A passing rank check is not a deadlock-freedom proof — see
+  `docs/QCORE_SPEC_r0_3.md` for exactly what it does and does not establish.
+  `rank` is reserved. See
+  [the CT33-RANKS record](reports/remaining-ct33-ranks/README.md).
+
 Native emission uses one thread and C11 `mtx_t` with real heap footprints on
 Linux, macOS and Windows (the latter two through the emitted compatibility layer);
 the reference execution of the checked event list must reproduce the same
-observation. There is no condition variable, no try/timed lock, no
-reader/writer lock and no lock ranking in this profile. A module whose trace
+observation. There is no condition variable, no try/timed lock and no
+reader/writer lock in this profile. A module whose trace
 carries task structure (`spawn`, `join`, a custody transfer or an announced
 acquisition) is checked but has **no native rendering**: the backend emits one
 thread, so the module is published with no C rather than with C the backend did
