@@ -64,7 +64,10 @@ use std::process::Stdio;
 
 use qcore_schemas::reason::ReasonCategory;
 
-use super::{C11TranslationUnit, LegacyCError, Token, function_names, is_identifier, matching};
+use super::{
+    C11TranslationUnit, ConditionalScanRefusal, LegacyCError, Token, is_identifier,
+    legacy_c_source_scan, matching,
+};
 
 /// The shape of an enumerated definition the resource analyzer cannot read.
 ///
@@ -150,6 +153,15 @@ pub enum EnumerationRefusal {
     /// `;`, nor a declaration list this scanner reads, so whether it is a
     /// definition cannot be decided.
     UnclassifiedFileScopeConstruct,
+    /// The raw half of the union could not establish a conditional group's
+    /// contribution to file-scope brace depth, so a definition guarded out of
+    /// the expansion — the only definitions the raw half contributes — may be
+    /// missing from the union after that group (unit **E01-RAW-COND**).
+    ConditionalArmDepthDisagreement,
+    /// The raw half met a conditional group it cannot read at all: an `#elif`,
+    /// `#else` or `#endif` with no open group, an `#elif`/`#else` after an
+    /// `#else`, or a group never closed (unit **E01-RAW-COND**).
+    UnstructuredConditionalGroup,
 }
 
 impl EnumerationRefusal {
@@ -161,6 +173,16 @@ impl EnumerationRefusal {
             Self::PrimaryInputUnidentified => "primary-input-unidentified",
             Self::UnbalancedDelimiters => "unbalanced-delimiters",
             Self::UnclassifiedFileScopeConstruct => "unclassified-file-scope-construct",
+            Self::ConditionalArmDepthDisagreement => "conditional-arm-depth-disagreement",
+            Self::UnstructuredConditionalGroup => "unstructured-conditional-group",
+        }
+    }
+
+    /// The ground a raw-scan conditional refusal contributes to the inventory.
+    const fn from_conditional(refusal: ConditionalScanRefusal) -> Self {
+        match refusal {
+            ConditionalScanRefusal::ArmDepthDisagreement => Self::ConditionalArmDepthDisagreement,
+            ConditionalScanRefusal::UnstructuredGroup => Self::UnstructuredConditionalGroup,
         }
     }
 
@@ -180,6 +202,12 @@ impl EnumerationRefusal {
             Self::UnclassifiedFileScopeConstruct => {
                 "enumeration completeness refused: a file-scope construct is neither a definition nor a declaration this scanner reads, so definition boundaries cannot be established"
             }
+            Self::ConditionalArmDepthDisagreement => {
+                "enumeration completeness refused: a conditional group's arms leave different file-scope brace depths in the raw scan, and deciding which arm survives is conditional evaluation, so a definition guarded out of the expansion may be missing after that group"
+            }
+            Self::UnstructuredConditionalGroup => {
+                "enumeration completeness refused: a conditional group cannot be read by the raw scan — an `#elif`, `#else` or `#endif` with no open group, or a group never closed"
+            }
         }
     }
 
@@ -195,9 +223,10 @@ impl EnumerationRefusal {
             Self::ExpansionUnavailable | Self::PrimaryInputUnidentified => {
                 ReasonCategory::EnvironmentUnavailable
             }
-            Self::UnbalancedDelimiters | Self::UnclassifiedFileScopeConstruct => {
-                ReasonCategory::UnsupportedSyntax
-            }
+            Self::UnbalancedDelimiters
+            | Self::UnclassifiedFileScopeConstruct
+            | Self::ConditionalArmDepthDisagreement
+            | Self::UnstructuredConditionalGroup => ReasonCategory::UnsupportedSyntax,
         }
     }
 }
@@ -297,14 +326,24 @@ impl SourceDefinitionInventory {
 
     /// Build an inventory that carries only the historical raw scan, with an
     /// explicit refusal ground. Used when the expansion cannot be read.
-    fn raw_only(raw: Vec<String>, refusal: EnumerationRefusal) -> Self {
+    fn raw_only(raw: &RawHalf, refusal: EnumerationRefusal) -> Self {
+        let mut refusals = raw.refusals.clone();
+        refusals.insert(refusal);
         Self {
-            definitions: raw,
+            definitions: raw.names.clone(),
             unanalyzable: Vec::new(),
             absent_from_raw_scan: Vec::new(),
-            refusals: vec![refusal],
+            refusals: refusals.into_iter().collect(),
         }
     }
+}
+
+/// The raw token scan of the unpreprocessed main source: the half of the union
+/// that keeps a `#if 0` definition in the denominator, together with the
+/// grounds on which its conditional groups could not be decided exactly.
+struct RawHalf {
+    names: Vec<String>,
+    refusals: BTreeSet<EnumerationRefusal>,
 }
 
 /// Enumerate one unit's main-source definitions.
@@ -313,11 +352,19 @@ impl SourceDefinitionInventory {
 /// historical raw scan, with the completeness claim explicitly refused.
 #[must_use]
 pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefinitionInventory {
-    let raw = function_names(&super::tokenize(unit.source));
+    let scan = legacy_c_source_scan(unit.source);
+    let raw = RawHalf {
+        names: scan.definitions().to_vec(),
+        refusals: scan
+            .refusals()
+            .iter()
+            .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
+            .collect(),
+    };
     match preprocess_with_line_markers(unit) {
-        Ok(marked) => inventory_from_marked(raw, &marked),
+        Ok(marked) => inventory_from_marked(&raw, &marked),
         Err(_) => {
-            SourceDefinitionInventory::raw_only(raw, EnumerationRefusal::ExpansionUnavailable)
+            SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
         }
     }
 }
@@ -567,7 +614,7 @@ enum FileScopeConstruct {
     Unclassified(EnumerationRefusal),
 }
 
-fn inventory_from_marked(raw: Vec<String>, marked: &str) -> SourceDefinitionInventory {
+fn inventory_from_marked(raw: &RawHalf, marked: &str) -> SourceDefinitionInventory {
     let stream = tokenize_marked(marked);
     let Some(primary) = stream.primary.as_ref() else {
         return SourceDefinitionInventory::raw_only(
@@ -583,7 +630,7 @@ fn inventory_from_marked(raw: Vec<String>, marked: &str) -> SourceDefinitionInve
     };
     let mut prototype = BTreeSet::new();
     let mut identifier_list = BTreeSet::new();
-    let mut refusals = BTreeSet::new();
+    let mut refusals = raw.refusals.clone();
     let tokens = &stream.tokens;
     let mut depth = 0usize;
     let mut linkage_closes = BTreeSet::new();
@@ -634,7 +681,7 @@ fn inventory_from_marked(raw: Vec<String>, marked: &str) -> SourceDefinitionInve
             }
         }
     }
-    let raw_names = raw.iter().cloned().collect::<BTreeSet<_>>();
+    let raw_names = raw.names.iter().cloned().collect::<BTreeSet<_>>();
     let absent_from_raw_scan = prototype
         .difference(&raw_names)
         .cloned()

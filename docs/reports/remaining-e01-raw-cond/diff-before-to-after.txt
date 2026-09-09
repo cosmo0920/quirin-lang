@@ -1,0 +1,17 @@
+leaves: left=179972 right=179957
+removed=15 added=0 changed=0
+  REMOVED .units[69].enumeration.absent_from_raw_scan[0]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[10]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[11]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[12]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[13]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[14]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[1]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[2]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[3]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[4]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[5]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[6]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[7]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[8]
+  REMOVED .units[69].enumeration.absent_from_raw_scan[9]

@@ -88,6 +88,7 @@ import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
+import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.BoundFieldRead
 

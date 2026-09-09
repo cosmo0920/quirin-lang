@@ -1092,8 +1092,8 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     contracts: &ResourceContracts,
     selected_functions: Option<&[String]>,
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
-    let tokens = tokenize(source);
-    let mut names = function_names(&tokens);
+    let (tokens, conditionals) = tokenize_with_conditionals(source);
+    let mut names = function_names(&tokens, &conditionals).definitions;
     let requested_was_selected =
         selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
     if let Some(selected) = selected_functions {
@@ -1521,8 +1521,94 @@ pub(crate) fn line_splice_width(bytes: &[u8], cursor: usize) -> Option<usize> {
 /// rather than discarded, so unmodeled text stays visible to the callers that
 /// refuse what they cannot read.
 pub(crate) fn tokenize(source: &str) -> Vec<Token> {
+    tokenize_with_conditionals(source).0
+}
+
+/// Which conditional-inclusion directive a line-initial `#` introduces
+/// (unit **E01-RAW-COND**).
+///
+/// Only the four *structural* roles matter to the raw scan: a group opens, an
+/// arm ends and another begins, the last arm begins, the group closes. Which
+/// controlling expression a directive carries is deliberately never read: this
+/// scan does not evaluate conditionals and never selects an arm.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ConditionalDirective {
+    /// `#if`, `#ifdef`, `#ifndef`.
+    Open,
+    /// `#elif`, `#elifdef`, `#elifndef`.
+    Alternative,
+    /// `#else`. The group's arms then cover every outcome, so there is no
+    /// implicit empty arm.
+    Otherwise,
+    /// `#endif`.
+    Close,
+}
+
+/// One conditional directive, positioned in the token stream it contributes no
+/// token to: `token_index` is the number of tokens emitted before it, so the
+/// directive stands immediately before `tokens[token_index]`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct ConditionalMark {
+    token_index: usize,
+    directive: ConditionalDirective,
+}
+
+/// Read the directive word of one complete directive line, which begins at its
+/// `#`, and classify it if it is a conditional-inclusion directive.
+///
+/// The word is separated from the `#` by nothing, by horizontal white space, by
+/// phase-2 splices, or by block comments; a `//` comment ends the line before a
+/// word can follow. Recognition is total and exact — a directive introducer is
+/// never macro-expanded (C11 6.10.3p10), so `#if` has exactly these spellings —
+/// and it is deliberately *not* extended to unknown words: `#define`,
+/// `#include`, `#pragma` and the null directive stay what they were, opaque
+/// text that contributes nothing.
+fn conditional_directive(line: &str) -> Option<ConditionalDirective> {
+    let bytes = line.as_bytes();
+    let mut cursor = 1; // the `#` itself
+    loop {
+        match bytes.get(cursor) {
+            Some(&b'\\') if line_splice_width(bytes, cursor).is_some() => {
+                cursor += line_splice_width(bytes, cursor)?;
+            }
+            Some(byte) if byte.is_ascii_whitespace() => cursor += 1,
+            Some(&b'/') if bytes.get(cursor + 1) == Some(&b'*') => {
+                cursor += 2;
+                while cursor + 1 < bytes.len()
+                    && !(bytes[cursor] == b'*' && bytes[cursor + 1] == b'/')
+                {
+                    cursor += 1;
+                }
+                cursor = (cursor + 2).min(bytes.len());
+            }
+            _ => break,
+        }
+    }
+    let start = cursor;
+    while cursor < bytes.len() && (bytes[cursor].is_ascii_alphanumeric() || bytes[cursor] == b'_') {
+        cursor += 1;
+    }
+    match &line[start..cursor] {
+        "if" | "ifdef" | "ifndef" => Some(ConditionalDirective::Open),
+        "elif" | "elifdef" | "elifndef" => Some(ConditionalDirective::Alternative),
+        "else" => Some(ConditionalDirective::Otherwise),
+        "endif" => Some(ConditionalDirective::Close),
+        _ => None,
+    }
+}
+
+/// Lex as [`tokenize`] does, additionally recording where each
+/// conditional-inclusion directive stood.
+///
+/// The token stream is **byte-identical** to [`tokenize`]'s: a directive still
+/// contributes no token, so every consumer that reads only tokens is unchanged.
+/// The marks are a side channel for [`function_names`], which needs the group
+/// structure to keep the arms of one `#if … #endif` from each contributing a
+/// brace to the same file-scope depth (unit **E01-RAW-COND**).
+pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<ConditionalMark>) {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
+    let mut conditionals = Vec::new();
     let mut cursor = 0;
     let mut line = 1;
     // True while nothing but white space and comments has been seen since the
@@ -1567,6 +1653,7 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
             cursor = (cursor + 2).min(bytes.len());
         } else if byte == b'#' && at_logical_line_start {
             // A directive, consumed to the end of its logical line.
+            let start = cursor;
             while cursor < bytes.len() && bytes[cursor] != b'\n' {
                 if let Some(width) = line_splice_width(bytes, cursor) {
                     line += 1;
@@ -1574,6 +1661,12 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
                 } else {
                     cursor += 1;
                 }
+            }
+            if let Some(directive) = conditional_directive(&source[start..cursor]) {
+                conditionals.push(ConditionalMark {
+                    token_index: tokens.len(),
+                    directive,
+                });
             }
         } else if byte == b'"' || byte == b'\'' {
             at_logical_line_start = false;
@@ -1633,7 +1726,7 @@ pub(crate) fn tokenize(source: &str) -> Vec<Token> {
             cursor += 1;
         }
     }
-    tokens
+    (tokens, conditionals)
 }
 
 fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
@@ -1649,11 +1742,168 @@ fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)
     None
 }
 
-fn function_names(tokens: &[Token]) -> Vec<String> {
+/// Why the raw scan could not establish a conditional group's contribution to
+/// file-scope brace depth (unit **E01-RAW-COND**).
+///
+/// Both grounds are mechanical, and neither is a defect claim about the
+/// analysed source: they say the *scan* cannot decide, not that the source is
+/// wrong.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ConditionalScanRefusal {
+    /// Two arms of one `#if … #endif` group leave different file-scope brace
+    /// depths, so which depth survives is decided by evaluating the controlling
+    /// expressions — preprocessing, not lexing. The scan takes the greatest
+    /// arm depth, which can only hide definitions, never invent one.
+    ArmDepthDisagreement,
+    /// A conditional group is not well formed in this token stream: an
+    /// `#elif`, `#else` or `#endif` with no open group, an `#elif`/`#else`
+    /// after an `#else`, or a group never closed.
+    UnstructuredGroup,
+}
+
+impl ConditionalScanRefusal {
+    /// Stable report spelling.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::ArmDepthDisagreement => "conditional-arm-depth-disagreement",
+            Self::UnstructuredGroup => "unstructured-conditional-group",
+        }
+    }
+
+    /// The free-text reason carried by the refusal row.
+    #[must_use]
+    pub const fn reason(self) -> &'static str {
+        match self {
+            Self::ArmDepthDisagreement => {
+                "raw scan refused a conditional group: its arms leave different file-scope brace depths, and deciding which arm survives is conditional evaluation, not lexing"
+            }
+            Self::UnstructuredGroup => {
+                "raw scan refused a conditional group: an `#elif`, `#else` or `#endif` has no open group, or a group is never closed"
+            }
+        }
+    }
+}
+
+/// The raw token scan of one main source: the definitions it found, and the
+/// grounds on which it could not establish a conditional group's contribution.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct LegacyRawScan {
+    definitions: Vec<String>,
+    refusals: Vec<ConditionalScanRefusal>,
+}
+
+impl LegacyRawScan {
+    /// The definitions this scan found, sorted and deduplicated.
+    #[must_use]
+    pub fn definitions(&self) -> &[String] {
+        &self.definitions
+    }
+
+    /// The grounds on which a conditional group's contribution was refused.
+    /// Empty means every conditional group in this source was decided exactly.
+    #[must_use]
+    pub fn refusals(&self) -> &[ConditionalScanRefusal] {
+        &self.refusals
+    }
+
+    /// Whether every conditional group was decided exactly. A scan that is not
+    /// exact is still a *subset* of the definitions of every arm selection —
+    /// the depth it carries dominates every selection's — but it may be a
+    /// proper subset, so it cannot support a completeness claim.
+    #[must_use]
+    pub fn is_exact(&self) -> bool {
+        self.refusals.is_empty()
+    }
+}
+
+/// One open `#if … #endif` group, while its arms are being scanned.
+struct ConditionalFrame {
+    /// File-scope brace depth where the group began: every arm is scanned from
+    /// here, so a definition written in *any* arm is seen at the depth it would
+    /// have if that arm survived (E01-F1 §1.4 monotonicity).
+    entry_depth: usize,
+    /// The depth each already-scanned arm ended at.
+    arm_depths: Vec<usize>,
+    /// Whether an `#else` arm has been opened.
+    saw_else: bool,
+}
+
+/// Apply one conditional directive to the scan state (unit **E01-RAW-COND**).
+///
+/// The rule, stated once: **a group's resulting depth is the greatest depth its
+/// arms reach**, where a group without `#else` has an implicit empty arm that
+/// reaches the entry depth. When every arm reaches the same depth — the
+/// overwhelmingly common case, and the `rd_kafka_dir_is_empty` case this unit
+/// closes — that greatest depth *is* the depth of every arm, so the group is
+/// decided exactly without any arm being selected. When the arms disagree, the
+/// scan does not guess: it takes the greatest depth, which dominates every arm
+/// selection and can therefore only hide definitions, and records
+/// [`ConditionalScanRefusal::ArmDepthDisagreement`] so the enumeration's
+/// completeness claim is refused rather than silently over-claimed.
+fn apply_conditional(
+    mark: ConditionalMark,
+    frames: &mut Vec<ConditionalFrame>,
+    brace_depth: &mut usize,
+    refusals: &mut BTreeSet<ConditionalScanRefusal>,
+) {
+    match mark.directive {
+        ConditionalDirective::Open => frames.push(ConditionalFrame {
+            entry_depth: *brace_depth,
+            arm_depths: Vec::new(),
+            saw_else: false,
+        }),
+        ConditionalDirective::Alternative | ConditionalDirective::Otherwise => {
+            let Some(frame) = frames.last_mut() else {
+                refusals.insert(ConditionalScanRefusal::UnstructuredGroup);
+                return;
+            };
+            if frame.saw_else {
+                // An `#elif` or a second `#else` after `#else` is not a group
+                // this scan can read.
+                refusals.insert(ConditionalScanRefusal::UnstructuredGroup);
+            }
+            frame.saw_else |= mark.directive == ConditionalDirective::Otherwise;
+            frame.arm_depths.push(*brace_depth);
+            *brace_depth = frame.entry_depth;
+        }
+        ConditionalDirective::Close => {
+            let Some(mut frame) = frames.pop() else {
+                refusals.insert(ConditionalScanRefusal::UnstructuredGroup);
+                return;
+            };
+            frame.arm_depths.push(*brace_depth);
+            if !frame.saw_else {
+                // Every controlling expression may be false: an implicit empty
+                // arm that reaches the entry depth is one of the outcomes.
+                frame.arm_depths.push(frame.entry_depth);
+            }
+            let first = frame.arm_depths[0];
+            if frame.arm_depths.iter().any(|depth| *depth != first) {
+                refusals.insert(ConditionalScanRefusal::ArmDepthDisagreement);
+            }
+            *brace_depth = frame.arm_depths.into_iter().max().unwrap_or(first);
+        }
+    }
+}
+
+fn function_names(tokens: &[Token], conditionals: &[ConditionalMark]) -> LegacyRawScan {
     let mut names = BTreeSet::new();
+    let mut refusals = BTreeSet::new();
+    let mut frames: Vec<ConditionalFrame> = Vec::new();
+    let mut next_mark = 0usize;
     let mut brace_depth = 0usize;
     let mut linkage_closes = BTreeSet::new();
     for (index, token) in tokens.iter().enumerate() {
+        while next_mark < conditionals.len() && conditionals[next_mark].token_index <= index {
+            apply_conditional(
+                conditionals[next_mark],
+                &mut frames,
+                &mut brace_depth,
+                &mut refusals,
+            );
+            next_mark += 1;
+        }
         if token.text == "{" {
             // Raw C sources commonly retain an `extern "C"` wrapper behind
             // `#ifdef __cplusplus`; it is a linkage boundary, not a function.
@@ -1690,7 +1940,22 @@ fn function_names(tokens: &[Token]) -> Vec<String> {
             names.insert(token.text.clone());
         }
     }
-    names.into_iter().collect()
+    while next_mark < conditionals.len() {
+        apply_conditional(
+            conditionals[next_mark],
+            &mut frames,
+            &mut brace_depth,
+            &mut refusals,
+        );
+        next_mark += 1;
+    }
+    if !frames.is_empty() {
+        refusals.insert(ConditionalScanRefusal::UnstructuredGroup);
+    }
+    LegacyRawScan {
+        definitions: names.into_iter().collect(),
+        refusals: refusals.into_iter().collect(),
+    }
 }
 
 /// Return the function definitions written in a source file before headers
@@ -1698,7 +1963,20 @@ fn function_names(tokens: &[Token]) -> Vec<String> {
 /// [`LegacyFunctionScope::MainSourceDefinitions`].
 #[must_use]
 pub fn legacy_c_source_functions(source: &str) -> Vec<String> {
-    function_names(&tokenize(source))
+    legacy_c_source_scan(source).definitions
+}
+
+/// Scan a source file for the function definitions written in it, before
+/// headers and macros are expanded, reporting whether every conditional group
+/// was decided exactly (unit **E01-RAW-COND**).
+///
+/// This is [`legacy_c_source_functions`] with its conditional-group grounds
+/// kept, so a caller that publishes a completeness claim over the result can
+/// refuse it. The definition list is identical.
+#[must_use]
+pub fn legacy_c_source_scan(source: &str) -> LegacyRawScan {
+    let (tokens, conditionals) = tokenize_with_conditionals(source);
+    function_names(&tokens, &conditionals)
 }
 
 /// Declaration specifiers that can end a parameter declarator without naming
