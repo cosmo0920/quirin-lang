@@ -1229,6 +1229,7 @@ fn a_malformed_lock_rank_is_refused() {
     for declaration in [
         "let x = protected 4; let m = mutex rank guards x;",
         "let x = protected 4; let m = mutex rank x guards x;",
+        "let x = protected 4; let m = mutex rank -1 guards x;",
         "let x = protected 4; let m = mutex rank 4294967296 guards x;",
         "let x = protected 4; let m = mutex rank 1 x;",
         "let x = protected 4; let m = mutex rank 1 guards;",

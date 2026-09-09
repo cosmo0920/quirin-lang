@@ -168,7 +168,7 @@ check), diagnostics in the order the core reports them, mapped to spans.
 | Mixed declared/undeclared | one ranked, one unranked mutex | leads with `Q625`, then `Q600` fallout |
 | Mixed, repaired | rank the second mutex too | accepted |
 | Redeclared mutex name | `let m = mutex rank 1 …; let m = mutex rank 2 …;` | `["Q012"]` — a duplicate binding is a name-resolution refusal reached before any rank question |
-| Malformed rank (5 spellings: missing, non-literal, overflow, missing `guards`, missing resource) | — | `["Q600"]` each |
+| Malformed rank (6 spellings: missing, non-literal, negative, overflow, missing `guards`, missing resource) | — | `["Q600"]` each |
 | Ranked declaration with no import | — | `["Q015"]` |
 
 The trailing `Q612` on every refused cycle is honest fallout, not a second
