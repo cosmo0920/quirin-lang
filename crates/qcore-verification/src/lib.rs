@@ -17,6 +17,7 @@ pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
 pub mod file_close_composition;
+pub mod filesystem_chunk_close_composition;
 pub mod frame_source;
 pub mod memory_close_composition;
 pub mod source_effect;

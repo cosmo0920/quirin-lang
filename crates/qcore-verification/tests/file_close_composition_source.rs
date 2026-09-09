@@ -237,11 +237,10 @@ fn the_re_establishment_recurses_two_composition_levels() {
             .composition_source
             .unwrap()
             .family
-            .nested()
-            .unwrap()
+            .nested()[0]
             .clone();
         assert_eq!(nested.nesting_depth(), 1);
-        assert!(nested.nested().is_none());
+        assert!(nested.nested().is_empty());
         // And the whole chain really is re-established: the outer call returns
         // the nested composition's own certificate plus both cleanup readings.
         let (unmap, close, delete) = task.revalidate_prerequisites().unwrap();
