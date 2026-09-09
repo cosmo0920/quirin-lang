@@ -91,7 +91,50 @@ pub struct CompositionPrerequisites {
     pub counter: CounterSourceTask,
 }
 
+/// Merge premise sets the way `compose_verification` merges a composite's
+/// (card E03-B): the published set is the **union** of every component's, never
+/// one component's, and a key two components disagree on **refuses** rather than
+/// being silently resolved.
+///
+/// A composition that published only its own premises would be claiming its
+/// prerequisites' obligations under fewer assumptions than those prerequisites
+/// were checked under, which is exactly the failure E03-B repaired at the host
+/// level. This route is a single-provider capability, so the merge happens here
+/// rather than in `compose_verification`; the semantics are the same and
+/// `composition_premise_union` is public so the disagreement direction can be
+/// driven directly.
+pub fn composition_premise_union(
+    component_sets: &[&BTreeMap<String, bool>],
+) -> Result<BTreeMap<String, bool>, String> {
+    let mut merged: BTreeMap<String, bool> = BTreeMap::new();
+    for set in component_sets {
+        for (name, value) in *set {
+            match merged.get(name) {
+                Some(existing) if existing != value => {
+                    return Err(format!(
+                        "components disagree on the premise `{name}`; a composition                          publishes the union of its components' premises and refuses                          a conflicting value"
+                    ));
+                }
+                _ => {
+                    merged.insert(name.clone(), *value);
+                }
+            }
+        }
+    }
+    Ok(merged)
+}
+
 impl CompositionPrerequisites {
+    /// The three components' own premise sets, in the order the core
+    /// re-establishes them.
+    fn premise_sets(&self) -> [&BTreeMap<String, bool>; 3] {
+        [
+            &self.wrapper_call_use.task().assumptions,
+            &self.native_cleanup.task().assumptions,
+            &self.counter.task().assumptions,
+        ]
+    }
+
     fn identities(&self) -> UnmapWrapperPrerequisites {
         UnmapWrapperPrerequisites {
             wrapper_call_use: self.wrapper_call_use.prerequisite_identity(),
@@ -272,19 +315,17 @@ impl CompositionSourceTask {
                 claimed.counter.digest(),
             ),
         ]);
-        let assumptions = BTreeMap::from([
-            ("record_is_live".into(), true),
-            ("exclusive_access".into(), true),
-            ("cleanup_callees_are_declared_external".into(), true),
-            ("os_cleanup_success_is_not_inferred".into(), true),
+        // The composition's own premises, over and above what its components
+        // already assume: the wrapper's external sync and logging frames.
+        let own = BTreeMap::from([
             ("sync_and_logging_frames_are_declared_premises".into(), true),
-            ("clang_typed_import_is_trusted".into(), true),
-            ("source_projection_policy_is_declared_trusted".into(), true),
-            (
-                "declared_source_revision_is_outer_audit_assumption".into(),
-                true,
-            ),
+            ("os_cleanup_success_is_not_inferred".into(), true),
         ]);
+        // E03-B semantics: the published set is the union of every component's
+        // premises and this route's own, never one component's.
+        let mut sets = prerequisites.premise_sets().to_vec();
+        sets.push(&own);
+        let assumptions = composition_premise_union(&sets)?;
         let bounds = TaskBounds {
             path_exploration: PathBounds::BoundedPaths { paths },
             schedules_explored: None,

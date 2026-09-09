@@ -158,8 +158,26 @@ any proposal is compared.
 4. **Acceptance terminates in the core's own composition.** The core runs the
    unedited procedure over its own imports, its own contracts and its own
    derived profile, and only then requires the proposal to be that same
-   reading. Agreement alone discharges nothing — §6.3's decisive rows measure
+   reading. Agreement alone discharges nothing — §5.3's decisive rows measure
    both halves.
+
+### 3.0 The published premise set is the union, per E03-B
+
+A composition that published only its own premises would be claiming its
+prerequisites' obligations under **fewer** assumptions than those prerequisites
+were checked under — exactly the failure card E03-B repaired at the host level
+when it replaced QP012's unequal-premise-set refusal with a premise union.
+
+`composition_premise_union` applies the same semantics at capability level: the
+task's and the obligation's `assumptions` are the union of all three
+components' premise sets and the composition's own, and a key two components
+**disagree** on refuses rather than being silently resolved. This route is a
+single-provider capability, so the merge happens in the task rather than in
+`compose_verification`; the function is public so the disagreement direction can
+be driven directly, and a test asserts both — every component premise survives
+with its value, the published set *is* the union, and it is a strict superset
+(no component assumes the wrapper's external sync and logging frames; the
+composition does).
 
 ### 3.1 Digests the task binds
 
@@ -237,7 +255,7 @@ admissible.
 
 ### 5.2 Core-side positive suite
 
-`crates/qcore-verification/tests/composition_source.rs` (6 tests + a
+`crates/qcore-verification/tests/composition_source.rs` (7 tests + a
 fixture generator), driving the real gateway imports, the real task derivations
 and the real trusted composition:
 
@@ -252,7 +270,10 @@ and the real trusted composition:
 - the ten digest keys are exactly the task's contract sources and the three
   prerequisite digests are distinct;
 - the record profile the composition is handed is the contract's own
-  declaration.
+  declaration;
+- the published premise set is the union of all three components' premises and
+  the composition's own (§3.0), the obligation carries the same set, and the
+  union refuses a disagreement rather than resolving it.
 
 ### 5.3 Core-side mutation matrix — 7 tests, all rows refused
 
@@ -459,7 +480,7 @@ Run in this worktree on Linux with Clang available.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | **2342 passed, 0 failed, 5 ignored** (+23 new tests) |
+| `cargo test --workspace --no-fail-fast` | **2343 passed, 0 failed, 5 ignored** (+24 new tests) |
 | `cargo fmt --all -- --check` (both workspaces) | clean |
 | `cargo clippy --all-targets -- -D warnings` (both workspaces) | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |

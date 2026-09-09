@@ -202,6 +202,51 @@ fn the_task_binds_every_contract_and_each_prerequisite_separately() {
     );
 }
 
+/// The published premise set is the **union** of every component's premises and
+/// the composition's own — never one component's — and a disagreement refuses
+/// (card E03-B's semantics, applied at capability level).
+#[test]
+fn the_published_premise_set_is_the_union_of_its_components() {
+    if !clang_available() {
+        return;
+    }
+    let task = route(SOURCE, UNIX_TU);
+    let published = &task.task().assumptions;
+    let prereqs = prerequisites(SOURCE, UNIX_TU);
+    let components = [
+        &prereqs.wrapper_call_use.task().assumptions,
+        &prereqs.native_cleanup.task().assumptions,
+        &prereqs.counter.task().assumptions,
+    ];
+    // Every component's premises survive into the published set with their
+    // values, so the composition never claims a component's obligation under
+    // fewer assumptions than that component was checked under.
+    let mut union: std::collections::BTreeMap<String, bool> = Default::default();
+    for component in components {
+        for (name, value) in component {
+            assert_eq!(
+                published.get(name),
+                Some(value),
+                "`{name}` was dropped or altered by the composition"
+            );
+            union.insert(name.clone(), *value);
+        }
+    }
+    // It is a strict superset: no component assumes the wrapper's external
+    // sync and logging frames, and the composition does.
+    assert!(!union.contains_key("sync_and_logging_frames_are_declared_premises"));
+    union.insert("sync_and_logging_frames_are_declared_premises".into(), true);
+    union.insert("os_cleanup_success_is_not_inferred".into(), true);
+    assert_eq!(published, &union, "the published set is not the union");
+    // The obligation carries the same set the task does.
+    assert_eq!(&task.task().obligations[0].assumptions, published);
+    // And the union really refuses a disagreement rather than resolving it.
+    let a = std::collections::BTreeMap::from([("record_is_live".to_string(), true)]);
+    let b = std::collections::BTreeMap::from([("record_is_live".to_string(), false)]);
+    assert!(qcore_verification::composition_source::composition_premise_union(&[&a, &b]).is_err());
+    assert!(qcore_verification::composition_source::composition_premise_union(&[&a, &a]).is_ok());
+}
+
 /// The record profile the composition is handed is the contract's own
 /// declaration, and it is the same table the retained in-process route uses.
 #[test]
