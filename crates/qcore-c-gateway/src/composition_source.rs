@@ -970,9 +970,16 @@ pub fn import_memory_close_source(
                 &memory_close.callees.reset,
                 &memory_close.callees.backend,
                 &memory_close.callees.unlink,
-                &memory_close.callees.counter,
             ] {
                 admitted.push((callee.function.as_str(), callee.signature.as_str()));
+            }
+            // The counter frame's call-site prototype, derived under the
+            // trusted composition's own rule rather than assumed equal to the
+            // definition's.
+            let counter_call =
+                counter_call_identity(wrapper_summary, &memory_close.callees.counter);
+            if let Some((function, signature)) = &counter_call {
+                admitted.push((function.as_str(), signature.as_str()));
             }
             // The wrapper returns `void`, so its complete paths end without a
             // value, exactly as the `cio_file_close` wrapper's do.
@@ -1036,6 +1043,47 @@ pub fn import_memory_close_source(
         return Err("Clang identity changed during memory close source import".into());
     }
     Ok(result)
+}
+
+/// The counter frame's **call-site** prototype, admitted only when it satisfies
+/// the trusted composition's own rule against the prerequisite's declared
+/// signature: the same name, the same declared argument list, and a result type
+/// equal to the prerequisite's declared return type.
+///
+/// A C typedef may be spelled differently at a call site than at the
+/// definition — the pinned ChunkIO counters return a `size_t` typedef — which is
+/// exactly why the trusted replay compares those three things rather than the
+/// whole signature string. Deriving the admitted pair from the body under the
+/// core's own rule buys no authority: the core re-runs its own replay over its
+/// own import regardless, and a call that fails the rule has no projection at
+/// all.
+fn counter_call_identity(
+    wrapper: &SourceSummary,
+    counter: &CalleeIdentityRecord,
+) -> Option<(String, String)> {
+    let (declared_result, declared_arguments) = counter.signature.split_once('(')?;
+    let declared_result = declared_result.trim();
+    for path in wrapper.paths() {
+        for operation in &path.operations {
+            let SourceOperation::Call {
+                function,
+                signature,
+                result_type,
+                ..
+            } = operation
+            else {
+                continue;
+            };
+            if function != &counter.function || result_type != declared_result {
+                continue;
+            }
+            if signature.split_once('(').map(|(_, rest)| rest) != Some(declared_arguments) {
+                continue;
+            }
+            return Some((function.clone(), signature.clone()));
+        }
+    }
+    None
 }
 
 /// Build the four prerequisite callee identities from the bodies the core's own

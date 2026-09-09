@@ -1818,10 +1818,12 @@ impl MemoryCloseCompositionSourceTask {
     /// the core's own imports and its own contracts. This is the core's own
     /// evaluation; no provider input reaches it.
     pub fn evaluate(&self) -> Result<MemoryCloseCertificate, String> {
-        Ok(self.read()?.certificate)
+        Ok(self.reading()?.certificate)
     }
 
-    fn read(&self) -> Result<MemoryCloseReading, String> {
+    /// The whole reading the core decides: the certificate the retained route
+    /// publishes, the probed discriminant and the per-entry replay detail.
+    pub fn reading(&self) -> Result<MemoryCloseReading, String> {
         let dependencies = self.revalidate_prerequisites()?;
         read_memory_close_bodies(
             self.import.wrapper_summary(),
@@ -1965,7 +1967,7 @@ impl WitnessChecker for MemoryCloseCompositionSourceTask {
         }
         // Every prerequisite is re-established and the composition re-run by the
         // core before the proposal is looked at at all.
-        let reading = self.read()?;
+        let reading = self.reading()?;
         if proposed.summary != self.record(&reading)? {
             return Err("composition witness differs from the checked source composition".into());
         }
