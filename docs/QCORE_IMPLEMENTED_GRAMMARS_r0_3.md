@@ -968,7 +968,11 @@ pointer_abi = "ptr", "<", "mut", ",", "u8", ">"
             | "ptr", "<", "const", ",", "u8", ">"
             | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">" ;
 resource_clause = "requires", "resource_contract_v1", ";"
+                | "requires", literal_argument_premise, ";"
                 | "ensures", "normal", resource_predicate, ";" ;
+literal_argument_premise =
+    "resource_literal_argument", "(", IDENT, ",", integer_literal, ")" ;
+integer_literal = ["-"], DIGITS ;
 resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | ("resource_owned" | "resource_consumed" | "resource_released" | "resource_out"),
     "(", IDENT, ",", nullability, ")"
@@ -980,7 +984,9 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
 nullability = "nullable" | "nonnull" ;
 ```
 
-Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, and an owned reallocation source. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
+Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, an owned reallocation source, and — for `literal_argument_premise` — a parameter name the same declaration declares, at most one premise per parameter, and a `DIGITS` run the lexer produces as a single integer token, which excludes suffixed and alternate-base spellings. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
+
+`literal_argument_premise` (card HASH-CLAUSE) states where the declaration is applied, not what it means: a consumer treats the callee as undeclared at every call site whose actual at the named parameter is not exactly that literal. It never widens a declaration and never changes a mode.
 
 The grammar describes tokens, not required whitespace. It provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
 

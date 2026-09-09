@@ -329,6 +329,147 @@ fn without_the_declared_premise_the_positive_size_call_is_admitted() {
     );
 }
 
+// --------------------------------------------------------------------------
+// Card HASH-CLAUSE: migration parity, measured
+// --------------------------------------------------------------------------
+
+/// Rewrite a contract module so `function`'s premise is carried by the
+/// first-class clause instead of the retiring comment directive.
+///
+/// The clause is inserted immediately after that declaration's marker, so the
+/// only textual difference between the two variants is which carrier states the
+/// restriction.
+fn as_clause(text: &str, directive: &str, declaration: &str, clause: &str) -> String {
+    let without = text.replace(directive, "");
+    assert_ne!(without, text, "the directive was present to remove");
+    let marker = format!("{declaration}\ncontract {{\n    requires resource_contract_v1;");
+    let with = without.replace(
+        &marker,
+        &format!("{marker}\n    requires resource_literal_argument({clause});"),
+    );
+    assert_ne!(with, without, "the clause substitution applied");
+    with
+}
+
+/// The generic family's contracts, carried by the clause.
+fn generic_clause_contracts() -> String {
+    as_clause(
+        GENERIC_CONTRACTS,
+        "// qcore-premise: literal_argument(p_publish, 2, 0)",
+        "extern fn p_publish(t: ptr<mut, u8>, v: ptr<mut, u8>, size: isize) -> i32",
+        "size, 0",
+    )
+}
+
+/// Every call-site shape whose treatment the premise decides: the declared
+/// literal, spellings that are not it, and a call that does not reach the
+/// declared parameter at all.
+const PARITY_ACTUALS: &[&str] = &[
+    "0",
+    "8",
+    "1",
+    "-1",
+    "n",
+    "sizeof(struct p_value)",
+    "(long) n",
+    "0 + 0",
+    "-0",
+    "0L",
+    "(0)",
+];
+
+/// **The refusal set the directive produced**, measured with both carriers
+/// present and pinned here so the claim survives the directive's retirement.
+/// `true` is "the declaration was withdrawn at this call site".
+const PINNED_REFUSALS: &[bool] = &[
+    false, // 0                       — the declared literal
+    true,  // 8
+    true,  // 1
+    true,  // -1
+    true,  // n
+    true,  // sizeof(struct p_value)
+    true,  // (long) n
+    true,  // 0 + 0
+    true,  // -0
+    true,  // 0L
+    true,  // (0)                      — parenthesised, not the literal token
+];
+
+/// Whether the declaration was withdrawn at a publication passing `actual`.
+fn withdrawn_under(contracts: &str, actual: &str) -> bool {
+    let body = format!(
+        "void p_gp(int n) {{ {OPENED} p_publish(t, v, {actual}); p_release(v); p_close(t); }}"
+    );
+    let result = analyze_with(contracts, &body, "p_gp");
+    match &result {
+        UnrestrictedLegacyResult::Safe(_) => false,
+        _ => unsupported(function(program(&result), "p_gp")).contains(&OUTSIDE),
+    }
+}
+
+/// **The migration parity measurement.** At every call-site shape the premise
+/// decides, the clause withdraws exactly what the directive withdrew — and both
+/// reproduce the pinned vector, which is what anchors the claim once the
+/// directive is gone.
+#[test]
+fn the_clause_reproduces_the_directives_refusal_set() {
+    if !clang_available() {
+        return;
+    }
+    let clause = generic_clause_contracts();
+    let under_directive: Vec<bool> = PARITY_ACTUALS
+        .iter()
+        .map(|actual| withdrawn_under(GENERIC_CONTRACTS, actual))
+        .collect();
+    let under_clause: Vec<bool> = PARITY_ACTUALS
+        .iter()
+        .map(|actual| withdrawn_under(&clause, actual))
+        .collect();
+    assert_eq!(
+        under_directive, under_clause,
+        "carriers disagree: {PARITY_ACTUALS:?}"
+    );
+    assert_eq!(
+        under_directive, PINNED_REFUSALS,
+        "the measured refusal set moved: {PARITY_ACTUALS:?}"
+    );
+}
+
+/// The same parity on the real upstream body: the four publications the
+/// declaration covers and the one it withdraws decide identically under either
+/// carrier, diagnostic vector for diagnostic vector.
+#[test]
+fn the_clause_reproduces_the_directives_real_source_diagnostics() {
+    if !clang_available() {
+        return;
+    }
+    let directive = real_contracts();
+    let clause = as_clause(
+        &directive,
+        "// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)",
+        "extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<const, u8>, key_len: i32, \
+         val: ptr<mut, u8>, val_size: isize) -> i32",
+        "val_size, 0",
+    );
+    let source = real_unit();
+    let under = |contracts: &str| {
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "flb_input_chunk_create",
+            &load("hash_contracts_path.qcore", contracts),
+        )
+        .expect("real fixture accepted by Clang");
+        unsupported(function(program(&result), "flb_input_chunk_create"))
+            .iter()
+            .map(|text| (*text).to_owned())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(under(&directive), under(&clause));
+}
+
 /// A malformed directive refuses **every** contracted call rather than silently
 /// applying the contracts a typo left unrestricted.
 #[test]
