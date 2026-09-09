@@ -77,6 +77,22 @@ pub enum LegacyInstruction {
         /// field link an admitted store recorded; otherwise the whole call
         /// refuses. Empty for every other statement in the corpus.
         aggregate_reads: Vec<String>,
+        /// The subset of `aggregate_reads` at positions that *take* custody
+        /// (card O04-B09B10). The call's own contract effect releases or
+        /// consumes the linked identity; afterwards the member no longer holds
+        /// anything this projection may denote, so [`transfer`] drops both the
+        /// place binding and the field link. A second read of the same member
+        /// then fails `bound_read_resolves` rather than releasing twice.
+        aggregate_consumed: Vec<String>,
+        /// The bases of this call's admitted **member-address** actuals whose
+        /// aggregate *this* body bound (card O04-B09B10, O00 blockers
+        /// **B09**/**B10**). Handing a callee the address of a member of a
+        /// released, escaped, ambiguous, nullable or caller-held aggregate is
+        /// refused by [`transfer`] before any effect of the call applies, in
+        /// exactly the way a store through such an aggregate is. A
+        /// member-address actual on a C02-P untracked base carries no entry
+        /// here: that base can never bind a tracked identity at all.
+        aggregate_addresses: Vec<String>,
         /// The C02-P-ALIAS may-alias obligations of this call's *read*
         /// arguments: one entry per distinct root name a modeled position
         /// dereferences that shares a declared record-pointer type with some
@@ -2916,6 +2932,28 @@ impl Parser<'_> {
             )
         });
         borrowed_actuals.extend(bound_reads.iter().map(|read| (read.start, read.end)));
+        // O04-B09B10: the member-address half of the same premise set — a whole
+        // `Borrowed` actual `& BASE - > FIELD` whose member is declared with no
+        // `*`. Its span leaves the lexical gate exactly as a bound read does;
+        // when the base is one this body bound, [`transfer`] additionally
+        // requires the aggregate to be live here. See
+        // [`crate::aggregate_store::member_address_actuals`].
+        let member_addresses = find_call(&texts).map_or_else(Vec::new, |(call_index, _)| {
+            crate::aggregate_store::member_address_actuals(
+                &texts,
+                call_index,
+                self.contracts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.store_bases,
+                &self.typed_bases,
+            )
+        });
+        borrowed_actuals.extend(
+            member_addresses
+                .iter()
+                .map(|address| (address.start, address.end)),
+        );
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
@@ -2992,7 +3030,25 @@ impl Parser<'_> {
                     description: format!("C operator `{function}` requires type/operand analysis"),
                 };
             }
+            // Card O04-B09B10, a fail-closed repair of a pre-existing hole this
+            // card's own subject made reachable. `find_call` returns the
+            // *first* call of a statement, and everything below models exactly
+            // that one. A second call nested inside an argument was therefore
+            // dropped without a diagnostic: `k_borrow(k_take(1))` reported
+            // `Safe` with no leak, discarding an owned non-null result the
+            // top-level form `k_take(1);` refuses. Every nested call now
+            // refuses. The C type operators keep their exemption — they
+            // evaluate no operand and appear inside admitted arguments such as
+            // `flb_calloc(n, sizeof(T))` — and an *outer* call this analyzer
+            // does not model already refuses on its own.
             if let Some(contract) = self.contracts.contract(function).cloned() {
+                if let Some(nested) = nested_call(&texts, call_index) {
+                    return LegacyInstruction::Unknown {
+                        description: format!(
+                            "nested call `{nested}` inside a modeled call is outside the resource projection"
+                        ),
+                    };
+                }
                 let mut call_depth = 0usize;
                 let call_end =
                     texts
@@ -3067,19 +3123,31 @@ impl Parser<'_> {
                     };
                 }
                 let raw_arguments = call_arguments(&texts, call_index);
+                // O04-B09B10: an argument this statement's member-address rule
+                // admitted is not "an unmodeled formal address". Its premises —
+                // a complete `struct` base, a member declared with no `*`, a
+                // declared `Borrowed` position, and a live aggregate required
+                // flow-sensitively — are exactly the frame condition this gate
+                // otherwise has no way to establish. Every other `&` argument
+                // mentioning a protected name keeps its refusal.
+                let admitted_addresses = member_addresses
+                    .iter()
+                    .map(|address| &texts[address.start..address.end])
+                    .collect::<Vec<_>>();
                 if raw_arguments.as_ref().is_some_and(|arguments| {
                     contract
                         .parameters
                         .iter()
                         .zip(arguments)
                         .any(|(mode, argument)| {
-                            ((!matches!(mode, ResourceParameterMode::Out { .. })
-                                && argument.contains(&"&"))
-                                || (matches!(mode, ResourceParameterMode::Borrowed)
-                                    && canonical_place(argument).is_none()))
-                                && argument
-                                    .iter()
-                                    .any(|name| self.protected_formals.contains(*name))
+                            !admitted_addresses.contains(argument)
+                                && (((!matches!(mode, ResourceParameterMode::Out { .. })
+                                    && argument.contains(&"&"))
+                                    || (matches!(mode, ResourceParameterMode::Borrowed)
+                                        && canonical_place(argument).is_none()))
+                                    && argument
+                                        .iter()
+                                        .any(|name| self.protected_formals.contains(*name)))
                         })
                 }) {
                     return LegacyInstruction::Unknown {
@@ -3120,6 +3188,15 @@ impl Parser<'_> {
                     contract,
                     produced_sites,
                     aggregate_reads: bound_reads.iter().map(|read| read.place.clone()).collect(),
+                    aggregate_consumed: bound_reads
+                        .iter()
+                        .filter(|read| read.custody)
+                        .map(|read| read.place.clone())
+                        .collect(),
+                    aggregate_addresses: member_addresses
+                        .iter()
+                        .filter_map(|address| address.bound_owner.clone())
+                        .collect(),
                     alias_reads,
                 };
             }
@@ -3259,6 +3336,34 @@ fn is_leading_cast(tokens: &[&str]) -> bool {
 fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
     tokens.windows(2).enumerate().find_map(|(index, pair)| {
         (is_identifier(pair[0]) && pair[1] == "(").then_some((index, pair[0]))
+    })
+}
+
+/// The C type operators, which take a type or an unevaluated operand and can
+/// therefore never acquire, release or transfer a resource identity.
+const TYPE_OPERATORS: [&str; 6] = [
+    "sizeof",
+    "_Alignof",
+    "alignof",
+    "typeof",
+    "__typeof",
+    "__typeof__",
+];
+
+/// The name of a call in `texts` other than the one whose callee is at
+/// `call_index`, ignoring the C type operators (card O04-B09B10).
+///
+/// [`find_call`] returns the *first* call of a statement and the modeling below
+/// covers exactly that one, so any further call would have its acquisitions,
+/// releases and transfers silently dropped. Reporting it is strictly more
+/// refusing: this can only withdraw a projection, never create one.
+fn nested_call<'a>(texts: &[&'a str], call_index: usize) -> Option<&'a str> {
+    texts.windows(2).enumerate().find_map(|(index, pair)| {
+        (index != call_index
+            && is_identifier(pair[0])
+            && pair[1] == "("
+            && !TYPE_OPERATORS.contains(&pair[0]))
+        .then_some(pair[0])
     })
 }
 
@@ -5165,12 +5270,25 @@ fn transfer(
     // never linked or whose binding no longer agrees with its link. This is the
     // C00 premise in its read direction.
     if let LegacyInstruction::ContractCall {
-        aggregate_reads, ..
+        aggregate_reads,
+        aggregate_addresses,
+        ..
     } = &node.instruction
         && let Some(owner) = aggregate_reads
             .iter()
             .find(|place| !bound_read_resolves(&state, place, &context.caller_sites))
             .and_then(|place| crate::aggregate_store::place_owner(place))
+            // O04-B09B10: the same C00 premise for a member *address*. The
+            // member itself carries no link — it is declared with no `*` — so
+            // only the aggregate's own liveness is required, not a field link.
+            .or_else(|| {
+                aggregate_addresses
+                    .iter()
+                    .map(String::as_str)
+                    .find(|owner| {
+                        resolved_aggregate_owner(&state, owner, &context.caller_sites).is_none()
+                    })
+            })
     {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
@@ -5334,8 +5452,10 @@ fn transfer(
             arguments,
             contract,
             produced_sites,
-            // Both revalidated above, before any effect of this call applies.
+            // All revalidated above, before any effect of this call applies.
             aggregate_reads: _,
+            aggregate_consumed: _,
+            aggregate_addresses: _,
             alias_reads: _,
         } => {
             let unsanctioned = destination
@@ -5425,6 +5545,37 @@ fn transfer(
             }
         }
         LegacyInstruction::NoOp => {}
+    }
+    // O04-B09B10: a custody-taking member read handed the linked child to the
+    // callee, whose contract effect above released or consumed it. The member
+    // now holds a value this projection must not denote again, so drop both the
+    // place binding and the field link. A second read of the same member then
+    // fails `bound_read_resolves` — conjunct 2 for the binding, conjunct 3 for
+    // the link — instead of releasing the same identity twice, and an escape of
+    // the aggregate no longer cascades to a child it no longer holds.
+    if let LegacyInstruction::ContractCall {
+        aggregate_consumed, ..
+    } = &node.instruction
+    {
+        for place in aggregate_consumed {
+            state.pointers.remove(place);
+            let (Some(owner), Some(field)) = (
+                crate::aggregate_store::place_owner(place),
+                crate::aggregate_store::place_field(place),
+            ) else {
+                continue;
+            };
+            let Some(owner_site) = resolved_aggregate_owner(&state, owner, &context.caller_sites)
+            else {
+                continue;
+            };
+            if let Some(fields) = state.field_links.get_mut(&owner_site) {
+                fields.remove(field);
+                if fields.is_empty() {
+                    state.field_links.remove(&owner_site);
+                }
+            }
+        }
     }
     if let Some((owner_site, field, place)) = stored_field {
         let children = state

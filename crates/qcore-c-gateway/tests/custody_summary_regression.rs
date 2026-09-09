@@ -14,7 +14,7 @@
 //! behavior the merged increments already implement.
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, ContractTrust, LegacySafetyCertificate, ResourceContracts,
+    AnalysisStatus, C11TranslationUnit, ContractTrust, LegacySafetyCertificate, ResourceContracts,
     ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
     UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
@@ -222,10 +222,19 @@ fn a_changed_transitive_callee_body_invalidates_the_whole_certificate() {
             "void *p = 0;",
             SUMMARY_MISMATCH,
         ),
-        // C now acquires a second resource it never discharges. The published
-        // summaries survive this change, so the divergence surfaces one gate
-        // later, in the per-function results the certificate carries.
-        ("q_observe(p);", "q_observe(q_alloc());", PROGRAM_MISMATCH),
+        // C now acquires a second resource it never discharges, in a call
+        // nested inside another call's argument.
+        //
+        // Card O04-B09B10 moved which gate catches this, deliberately and in
+        // the fail-closed direction. `find_call` models the *first* call of a
+        // statement only, so before that card the nested `q_alloc()` was
+        // dropped without a diagnostic — measured directly as a `Safe` verdict
+        // on `k_borrow(k_take(1))` — and the mutation surfaced only later, in
+        // the per-function results (`PROGRAM_MISMATCH`). A nested call now
+        // refuses where it stands, so C publishes no summary at all and the
+        // mutation is refused one gate *earlier*. The load-bearing half of this
+        // row is unchanged: the mutated source is rejected, never admitted.
+        ("q_observe(p);", "q_observe(q_alloc());", SUMMARY_MISMATCH),
     ] {
         let mut changed = certificate.clone();
         changed.preprocessed_source = changed.preprocessed_source.replace(before, after);
@@ -235,6 +244,20 @@ fn a_changed_transitive_callee_body_invalidates_the_whole_certificate() {
         );
         rejected_because(&changed, reason, &format!("`{before}` -> `{after}`"));
     }
+    // The `PROGRAM_MISMATCH` gate the third row above used to reach is kept
+    // under test directly, rather than left uncovered when that row moved to
+    // the earlier gate: a certificate whose *published per-function result*
+    // disagrees with the one the recheck rederives from the unchanged source is
+    // refused, and refused with that reason.
+    let mut forged = certificate.clone();
+    forged
+        .summary
+        .functions
+        .get_mut("subject")
+        .expect("the entry is summarised")
+        .status = AnalysisStatus::Unknown;
+    assert_ne!(forged.summary, certificate.summary, "the forgery applied");
+    rejected_because(&forged, PROGRAM_MISMATCH, "forged per-function status");
 }
 
 #[test]

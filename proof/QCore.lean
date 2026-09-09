@@ -92,6 +92,7 @@ import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.BoundFieldRead
+import QCore.MemberAddress
 import QCore.MayAlias
 import QCore.NeutralExpressionPosition
 import QCore.Transferability

@@ -1,0 +1,54 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba172a278a4e543a/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.35s
+     Running tests/o04_b08.rs (target/debug/deps/o04_b08-28e7ffc265bfcb38)
+
+running 1 test
+cio_chunk_open: Unknown
+  refusal L160  ch->ctx = ctx;                                             | UnknownAlias { variable: "ctx" }
+  refusal L161  ch->st = st;                                               | UnknownAlias { variable: "st" }
+  refusal L166  ch->backend = ((void *) 0);                                | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L167  mk_list_add(&ch->_head, &st->chunks);                      | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L169  if (st->type == CIO_STORE_FS) {                            | Unsupported { description: "unmodeled call, aggregate or indirect access in branch condition" }
+  refusal L170  backend = cio_file_open(ctx, st, ch, flags, size, err);    | Unsupported { description: "call to uncontracted function `cio_file_open`" }
+  refusal L172  else if (st->type == CIO_STORE_MEM) {                      | Unsupported { description: "unmodeled call, aggregate or indirect access in branch condition" }
+  refusal L173  *err = CIO_OK;                                             | Unsupported { description: "store through `*err` without an out-parameter contract" }
+  refusal L174  backend = cio_memfs_open(ctx, st, ch, flags, size);        | Unsupported { description: "call to uncontracted function `cio_memfs_open`" }
+  refusal L176  if (!backend) {                                            | UnknownAlias { variable: "backend" }
+  refusal L177  mk_list_del(&ch->_head);                                   | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L178  free(ch->name);                                            | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L179  free(ch);                                                  | UnknownAlias { variable: "ch" }
+  refusal L179  free(ch);                                                  | Unsupported { description: "nullable resource `ch` used by a non-null contract" }
+  refusal L182  ch->backend = backend;                                     | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L184  if (cio_chunk_is_up(ch) == CIO_TRUE) {                     | Unsupported { description: "unmodeled call, aggregate or indirect access in branch condition" }
+  refusal L185  mk_list_add(&ch->_state_head, &st->chunks_up);             | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L188  mk_list_add(&ch->_state_head, &st->chunks_down);           | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L190  return ch;                                                 | UnknownAlias { variable: "ch" }
+  refusal L190  return ch;                                                 | Unsupported { description: "nullable resource `ch` used by a non-null contract" }
+  exit    L190  Unknown return ch;                               sites=[(154, Mixed), (159, Mixed)]
+  exit    L180  Unknown return ((void *) 0);                     sites=[(154, Mixed), (159, Mixed)]
+  exit    L157  Discharged return ((void *) 0);                     sites=[]
+  exit    L152  Discharged return ((void *) 0);                     sites=[]
+  exit    L147  Discharged return ((void *) 0);                     sites=[]
+  exit    L143  Discharged return ((void *) 0);                     sites=[]
+flb_input_chunk_create: Unknown
+  refusal L255  flb_trace("[input chunk] no matching route for input chunk '%s' with tag '%s'", | Unsupported { description: "call to uncontracted function `flb_trace`" }
+  refusal L258  msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write); | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L259  mk_list_add(&ic->_head, &in->chunks);                      | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L264  flb_hash_table_add(in->ht_log_chunks, tag, tag_len, ic, 0); | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L267  pthread_mutex_lock(&in->metrics_chunk_lock);               | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L268  flb_hash_table_add(in->ht_metric_chunks, tag, tag_len, ic, 0); | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L269  pthread_mutex_unlock(&in->metrics_chunk_lock);             | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L272  flb_hash_table_add(in->ht_trace_chunks, tag, tag_len, ic, 0); | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L275  flb_hash_table_add(in->ht_profile_chunks, tag, tag_len, ic, 0); | Unsupported { description: "indirect memory access is outside the resource projection" }
+  refusal L277  return ic;                                                 | UnknownAlias { variable: "ic" }
+  refusal L277  return ic;                                                 | Unsupported { description: "nullable resource `ic` used by a non-null contract" }
+  exit    L277  Unknown return ic;                               sites=[(206, Mixed), (227, Mixed), (244, Mixed)]
+  exit    L251  Discharged return ((void *) 0);                     sites=[(206, Released), (227, Released)]
+  exit    L231  Discharged return ((void *) 0);                     sites=[(206, Released)]
+  exit    L225  Discharged return ((void *) 0);                     sites=[(206, Released)]
+  exit    L218  Discharged return ((void *) 0);                     sites=[(206, Released)]
+  exit    L211  Discharged return ((void *) 0);                     sites=[]
+test print_the_measured_arm_ledger ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.10s
+

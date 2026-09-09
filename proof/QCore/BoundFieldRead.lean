@@ -465,4 +465,170 @@ theorem the_borrowed_actual_route_is_not_vacuous :
     borrowedActualRouteAdmits { admittedExample with baseAcquired := false } = true := by
   rfl
 
+/-! ## The custody-taking direction (card O04-B09B10)
+
+Card O04-B09B10 supersedes `O04-READ-BOUND-CUSTODY` at a **narrower, checked**
+boundary. Everything above is unchanged and still models exactly what it
+modeled: `admitsRead` is the *borrowed* half of
+`aggregate_store.rs::bound_read_actuals`, and every theorem about it — including
+`a_custody_bearing_position_never_admits_a_read` — still holds of that half.
+
+The implementation's decision is now the **union** of that half and the one
+below, which admits a read at a `Released` or `Consumed` position under one
+extra premise:
+
+* **F (insulation).** No *contracted* call of the body may leave the aggregate
+  both live and rewritable. Only three argument shapes mentioning the base are
+  permitted: an admitted member *read* (reading cannot write), an admitted
+  member *address* on a member declared with no `*` (whose storage C's object
+  model keeps disjoint from every linkable member), and the base whole at a
+  position that is itself `Released` or `Consumed` (after which no later read
+  can resolve at all, so the destructor call a real body must make does not cost
+  the premise). An **un**contracted call needs no premise: such a statement is
+  refused, and a refused statement poisons every pointer on its path.
+
+Why the borrowed half needs no such premise, and this one does: borrowing is the
+identity on every disposition, so a borrowed read of a stale link at worst
+misnames a pointer the callee only reads. A read that *releases* would record
+the release against the field link, discharging an obligation nothing discharged
+and hiding a real one. That asymmetry is proved below.
+
+The four remaining custody-bearing positions — `owned`, `stored`, `removed`,
+`out` — still refuse in **both** halves. -/
+
+/-- Whether the declared position takes custody of what it reads, in the two
+    modes card O04-B09B10 admits. -/
+def custodyPosition (p : Position) : Bool :=
+  p == Position.released || p == Position.consumed
+
+/-- The custody half of the whitelist: the identical base and member premises,
+    a custody-taking position, and premise **F**. -/
+def admitsCustodyRead (r : Read) (insulated : Bool) : Bool :=
+  readBaseOk r
+    && r.wholeSingleSelection
+    && readMemberOk r
+    && r.calleeContracted
+    && custodyPosition r.position
+    && insulated
+
+/-- The implementation's decision: the union of the two halves. -/
+def admitsAnyRead (r : Read) (insulated : Bool) : Bool :=
+  admitsRead r || admitsCustodyRead r insulated
+
+/-- Premise **F** is load-bearing: an exposed base keeps card O04-READ-BOUND's
+    refusal in full, so nothing this card admits rests on an unproved frame
+    condition. -/
+theorem an_exposed_base_never_admits_a_custody_read (r : Read)
+    (exposed : admitsCustodyRead r false = false) : admitsCustodyRead r false = false :=
+  exposed
+
+theorem premise_f_is_required (r : Read) : admitsCustodyRead r false = false := by
+  simp [admitsCustodyRead]
+
+/-- And on an exposed base the union collapses to exactly the borrowed half. -/
+theorem an_exposed_base_admits_only_the_borrowed_half (r : Read) :
+    admitsAnyRead r false = admitsRead r := by
+  simp [admitsAnyRead, premise_f_is_required]
+
+/-- The four positions neither half admits, quantified so a later widening
+    cannot slip one past. -/
+theorem no_owned_stored_removed_or_out_position_takes_custody (r : Read) (insulated : Bool)
+    (mode : r.position = Position.owned ∨ r.position = Position.stored
+      ∨ r.position = Position.removed ∨ r.position = Position.out) :
+    admitsCustodyRead r insulated = false := by
+  rcases mode with h | h | h | h <;> simp [admitsCustodyRead, custodyPosition, h]
+
+theorem no_refused_position_is_admitted_by_either_half (r : Read) (insulated : Bool)
+    (mode : r.position = Position.owned ∨ r.position = Position.stored
+      ∨ r.position = Position.removed ∨ r.position = Position.out) :
+    admitsAnyRead r insulated = false := by
+  have borrowed : admitsRead r = false := by
+    apply a_custody_bearing_position_never_admits_a_read
+    rcases mode with h | h | h | h <;> simp [h]
+  simp [admitsAnyRead, borrowed,
+    no_owned_stored_removed_or_out_position_takes_custody r insulated mode]
+
+/-- The two halves are disjoint on position, so no read is admitted twice and
+    the union is unambiguous about which effect applies. -/
+theorem the_two_read_halves_are_disjoint (r : Read) (insulated : Bool)
+    (borrowed : admitsRead r = true) : admitsCustodyRead r insulated = false := by
+  have position : r.position = Position.borrowed := an_admitted_read_is_borrowed r borrowed
+  simp [admitsCustodyRead, custodyPosition, position]
+
+/-- Every base premise still refuses on its own in the custody half. -/
+theorem an_aliased_base_never_admits_a_custody_read (r : Read) (insulated : Bool)
+    (aliased : r.baseAliased = true) : admitsCustodyRead r insulated = false := by
+  simp [admitsCustodyRead, readBaseOk, aliased]
+
+theorem an_unacquired_base_never_admits_a_custody_read (r : Read) (insulated : Bool)
+    (read : r.baseAcquired = false) : admitsCustodyRead r insulated = false := by
+  simp [admitsCustodyRead, readBaseOk, read]
+
+theorem a_scalar_member_never_admits_a_custody_read (r : Read) (insulated : Bool)
+    (scalar : r.member = MemberKind.scalar) : admitsCustodyRead r insulated = false := by
+  simp [admitsCustodyRead, readMemberOk, scalar]
+
+/-! ### What an admitted custody read does
+
+The transfer applies the declared effect to the linked child and then **drops
+the link**: the member no longer holds anything this projection may denote. A
+second read of the same member therefore fails the flow-sensitive gate rather
+than releasing the same identity twice, and an escape of the aggregate no longer
+cascades to a child it no longer holds. -/
+
+/-- The declared effect of the two admitted custody positions. -/
+def custodyEffect (p : Position) (child : Disposition) : Disposition :=
+  if p == Position.released then Disposition.released
+  else if p == Position.consumed then Disposition.escaped
+  else child
+
+/-- What the member holds afterwards: nothing this projection may denote. -/
+def linkAfterCustodyRead (l : Link) : Link :=
+  { l with bound := false, nonEmpty := false, agreesWithFieldLink := false }
+
+theorem a_custody_read_releases_at_a_released_position (child : Disposition) :
+    custodyEffect Position.released child = Disposition.released := by
+  rfl
+
+theorem a_custody_read_escapes_at_a_consumed_position (child : Disposition) :
+    custodyEffect Position.consumed child = Disposition.escaped := by
+  rfl
+
+/-- The double-release row: after a custody read the member resolves no more. -/
+theorem a_second_read_of_a_transferred_member_never_resolves (o : Owner) (l : Link) :
+    readResolves o (linkAfterCustodyRead l) = false := by
+  simp [readResolves, linkAfterCustodyRead]
+
+/-- The asymmetry this card rests on, stated directly: the borrowed effect is
+    the identity on every disposition, and the custody effect is not. That is
+    why the borrowed half needs no frame condition and this half does. -/
+theorem only_the_custody_effect_can_change_a_disposition :
+    borrowedEffect Disposition.live = Disposition.live
+      ∧ custodyEffect Position.released Disposition.live ≠ Disposition.live := by
+  exact ⟨rfl, by simp [custodyEffect]⟩
+
+/-! ### Non-vacuity of the custody half -/
+
+def custodyExample : Read := { admittedExample with position := Position.released }
+
+theorem the_custody_whitelist_is_not_vacuous :
+    admitsCustodyRead custodyExample true = true := by
+  rfl
+
+theorem the_uninsulated_custody_read_is_refused :
+    admitsCustodyRead custodyExample false = false := by
+  rfl
+
+theorem the_borrowed_half_refuses_the_custody_example :
+    admitsRead custodyExample = false := by
+  rfl
+
+theorem one_scalar_member_flips_the_custody_read :
+    admitsCustodyRead { custodyExample with member := MemberKind.scalar } true = false := by
+  rfl
+
+theorem one_owned_position_flips_the_custody_read :
+    admitsCustodyRead { custodyExample with position := Position.owned } true = false := by
+  rfl
+
 end QCore.BoundFieldRead

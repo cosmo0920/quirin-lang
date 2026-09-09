@@ -1,0 +1,51 @@
+== chunkio/cio_chunk.c
+  + x1 ('cio_chunk_open', 2053, None, 'unresolved resource identity `ch`')
+  - x1 ('cio_chunk_open', 2053, None, 'indirect memory access is outside the resource projection')
+== chunkio/cio_memfs.c
+  + x1 ('cio_memfs_open', 2153, None, 'unresolved resource identity `mf`')
+  - x1 ('cio_memfs_open', 2153, None, 'indirect memory access is outside the resource projection')
+== ctraces/ctr_encode_opentelemetry.c
+  + x1 ('ctr_variant_kvpair_to_otlp_kvpair', 8705, None, 'unresolved resource identity `kv`')
+  - x1 ('ctr_variant_kvpair_to_otlp_kvpair', 8705, None, 'indirect memory access is outside the resource projection')
+== fluent-bit-chunk/flb_input_chunk.c
+  + x1 ('flb_input_chunk_map', 18777, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18787, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18798, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18808, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18818, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18824, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18852, None, 'unresolved resource identity `ic`')
+  + x1 ('flb_input_chunk_map', 18935, None, 'unresolved resource identity `ic`')
+  - x1 ('flb_input_chunk_map', 18777, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18787, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18798, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18808, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18818, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18824, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18852, None, 'indirect memory access is outside the resource projection')
+  - x1 ('flb_input_chunk_map', 18935, None, 'indirect memory access is outside the resource projection')
+== librdkafka/rdkafka_request.c
+  + x1 ('rd_kafkap_share_leader_changes_apply', 22568, None, 'nested call `rd_list_cnt` inside a modeled call is outside the resource projection')
+== monkey-libevent/mk_server/mk_cache.c
+  + x1 ('mk_cache_worker_exit', 5619, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  + x1 ('mk_cache_worker_exit', 5621, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  + x1 ('mk_cache_worker_exit', 5622, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  + x1 ('mk_cache_worker_exit', 5623, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  - x1 ('mk_cache_worker_exit', 5619, None, 'arguments do not match resource contract for `mk_mem_free`')
+  - x1 ('mk_cache_worker_exit', 5621, None, 'arguments do not match resource contract for `mk_mem_free`')
+  - x1 ('mk_cache_worker_exit', 5622, None, 'arguments do not match resource contract for `mk_mem_free`')
+  - x1 ('mk_cache_worker_exit', 5623, None, 'arguments do not match resource contract for `mk_mem_free`')
+== monkey-libevent/mk_server/mk_fifo.c
+  + x1 ('mk_fifo_worker_create', 5142, None, 'unresolved resource identity `fw`')
+  - x1 ('mk_fifo_worker_create', 5142, None, 'indirect memory access is outside the resource projection')
+== monkey-libevent/mk_server/mk_scheduler.c
+  + x1 ('mk_sched_worker_free', 6536, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  + x1 ('mk_sched_worker_free', 6537, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  + x1 ('mk_sched_worker_free', 6538, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  - x1 ('mk_sched_worker_free', 6536, None, 'arguments do not match resource contract for `mk_mem_free`')
+  - x1 ('mk_sched_worker_free', 6537, None, 'arguments do not match resource contract for `mk_mem_free`')
+  - x1 ('mk_sched_worker_free', 6538, None, 'arguments do not match resource contract for `mk_mem_free`')
+== monkey-libevent/mk_server/mk_server.c
+  + x1 ('mk_server_worker_loop', 6527, None, 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection')
+  - x1 ('mk_server_worker_loop', 6527, None, 'arguments do not match resource contract for `mk_mem_free`')
+units with diagnostic movement: 9

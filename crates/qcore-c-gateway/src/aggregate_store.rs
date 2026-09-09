@@ -115,6 +115,11 @@ use crate::typed_field_access::{DeclaredType, FunctionTypes, TypedAccessModel, i
 #[derive(Clone, Debug, Default)]
 pub(crate) struct AggregateStoreBases {
     admissible: BTreeSet<String>,
+    /// The strict subset of [`Self::admissible`] that satisfies premise **F**
+    /// of card O04-B09B10: no callee of this body can reach the aggregate at
+    /// all, except through an argument that is exactly one admitted
+    /// `BASE - > FIELD` member read. See [`insulated_bases`].
+    insulated: BTreeSet<String>,
 }
 
 impl AggregateStoreBases {
@@ -122,9 +127,23 @@ impl AggregateStoreBases {
         self.admissible.contains(name)
     }
 
+    /// Whether premise **F** holds for `name`: every occurrence of it inside
+    /// any call's argument list is exactly one admitted member read, so no
+    /// callee ever receives the aggregate, its address, or the address of one
+    /// of its members. Only then may a member read of `name` occupy a position
+    /// that *takes* custody (card O04-B09B10).
+    pub(crate) fn is_insulated(&self, name: &str) -> bool {
+        self.insulated.contains(name)
+    }
+
     #[cfg(test)]
     pub(crate) fn names(&self) -> Vec<&str> {
         self.admissible.iter().map(String::as_str).collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn insulated_names(&self) -> Vec<&str> {
+        self.insulated.iter().map(String::as_str).collect()
     }
 }
 
@@ -275,9 +294,106 @@ pub(crate) fn store_bases(
     // Premise 5.
     refuse_aliased_sources(body, &mut refused);
     refuse_rebinding_arguments(body, contracts, &mut refused);
+    let admissible: BTreeSet<String> = candidates.difference(&refused).cloned().collect();
+    let insulated = insulated_bases(body, &admissible, contracts, model, types);
     AggregateStoreBases {
-        admissible: candidates.difference(&refused).cloned().collect(),
+        admissible,
+        insulated,
     }
+}
+
+/// Premise **F** of card O04-B09B10, the frame condition a *custody-taking*
+/// member read needs and a borrowed one does not.
+///
+/// An admitted store records a field link, and a later read of that member
+/// claims the link still describes what the member holds. A **borrowed** read
+/// may claim that on a stale link without harm: borrowing is the identity
+/// effect on every disposition, so at worst the callee borrows a pointer the
+/// projection has misnamed. A read at a position that *releases* or *consumes*
+/// cannot: if some callee rewrote the member since the store, the released
+/// pointer is not the linked identity, and recording the release against the
+/// link would both discharge an obligation nothing discharged and hide a real
+/// one. Card O04-READ-BOUND refused every such position outright and recorded
+/// the gap as `O04-READ-BOUND-CUSTODY`.
+///
+/// This is the missing premise, decided syntactically over the whole body. A
+/// base is *insulated* when no **contracted** call of the body can leave the
+/// aggregate both live and rewritable. Only three argument shapes mentioning
+/// the base are permitted, and each has its own reason:
+///
+/// * exactly `BASE - > FIELD` — a *read* of a member cannot write one;
+/// * exactly `& BASE - > FIELD` where `FIELD` is declared with no `*`
+///   ([`TypedAccessModel::addressable_field`], the member-address rule's own
+///   premise) — the callee receives an interior pointer to a sub-object whose
+///   storage C's object model keeps disjoint from every linkable member;
+/// * exactly `BASE` at a declared `Released` or `Consumed` position — after
+///   such a call the identity is no longer live, so no later read through the
+///   aggregate can resolve at all. This is what lets a body hand its aggregate
+///   to its own destructor without losing the premise.
+///
+/// Every other shape — the aggregate whole at a `Borrowed` position above all —
+/// refuses the base.
+///
+/// **Uncontracted** calls need no premise here, exactly as [`store_bases`]'s
+/// premise 5 already argues for its own case: such a statement is refused, and
+/// a refused statement poisons every pointer on its path. If it precedes the
+/// read, the read fails its flow-sensitive owner check; if it follows, it
+/// cannot have changed what the read saw. Statements that are refused for any
+/// other reason — a `&` on a *pointer* member, a member buried in a larger
+/// expression — are covered by the same argument.
+///
+/// Together with premises 4 and 5 — the pointer is never address-taken whole
+/// and never denoted by a second declared name — the only writes to
+/// `BASE->FIELD` that can occur before an admitted read are the admitted stores
+/// this module already models, under the C effective types premise the whole
+/// module inherits.
+fn insulated_bases(
+    body: &[&str],
+    admissible: &BTreeSet<String>,
+    contracts: &ResourceContracts,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> BTreeSet<String> {
+    let mut insulated = admissible.clone();
+    for index in 0..body.len().saturating_sub(1) {
+        if !is_name(body[index]) || body[index + 1] != "(" {
+            continue;
+        }
+        let Some(contract) = contracts.contract(body[index]) else {
+            continue;
+        };
+        let Some(arguments) = argument_spans(body, index + 1) else {
+            // An argument list this reader cannot split may hide any shape;
+            // refuse every candidate that occurs in the rest of the body.
+            insulated.retain(|name| !body[index..].contains(&name.as_str()));
+            continue;
+        };
+        for (position, (start, end)) in arguments.iter().copied().enumerate() {
+            let terminal = matches!(
+                contract.parameters.get(position),
+                Some(
+                    ResourceParameterMode::Released { .. } | ResourceParameterMode::Consumed { .. }
+                )
+            );
+            insulated.retain(|name| {
+                if !body[start..end].contains(&name.as_str()) {
+                    return true;
+                }
+                match &body[start..end] {
+                    [base, "-", ">", field] => base == name && is_name(field),
+                    ["&", base, "-", ">", field] => {
+                        base == name
+                            && is_name(field)
+                            && matches!(types.declared_type(base), Some(DeclaredType::RecordPointer(tag))
+                                if model.addressable_field(tag, field))
+                    }
+                    [base] => terminal && base == name,
+                    _ => false,
+                }
+            });
+        }
+    }
+    insulated
 }
 
 /// Premise 3, second half: the names bound by an assignment whose right-hand
@@ -419,6 +535,122 @@ pub(crate) struct BoundFieldRead {
     pub(crate) end: usize,
     /// The canonical place, `BASE->FIELD`.
     pub(crate) place: String,
+    /// Whether the declared position *takes* custody of what it reads, so the
+    /// call transfers the linked child out of the aggregate (card O04-B09B10).
+    /// `false` is card O04-READ-BOUND's borrowed read, which discharges
+    /// nothing.
+    pub(crate) custody: bool,
+}
+
+/// One admitted **member-address actual** (card O04-B09B10, O00 blockers
+/// **B09**/**B10**): a whole `Borrowed` argument written `& BASE - > FIELD`
+/// where `FIELD` is declared with no `*`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct MemberAddressActual {
+    /// Inclusive start index of the argument in the statement's tokens.
+    pub(crate) start: usize,
+    /// Exclusive end index.
+    pub(crate) end: usize,
+    /// The base name when the base is one *this* body bound through
+    /// [`store_bases`], so [`crate::legacy_c`]'s transfer function must find it
+    /// live here. `None` for a C02-P untracked base, which by premise carries
+    /// no tracked identity at all.
+    pub(crate) bound_owner: Option<String>,
+}
+
+/// The admitted member-address actuals of the call whose callee name is at
+/// `call_index`.
+///
+/// The blocked statements card O04-READ-BOUND left on the constructor's success
+/// exit are `msgpack_packer_init(&ic->mp_pck, ic, …)`,
+/// `mk_list_add(&ic->_head, &in->chunks)` and
+/// `pthread_mutex_lock(&in->metrics_chunk_lock)`: each hands a callee the
+/// address of a *member*, which the lexical gate refuses because the argument
+/// contains `->`. This function supplies the missing typed premise for exactly
+/// that shape.
+///
+/// Conjunctive, and every conjunct is checked against declarations read from
+/// this same token stream:
+///
+/// 1. the callee has a contract in force and the argument index it covers is
+///    declared **`Borrowed`** — a borrowed actual discharges nothing, so an
+///    admitted address can only withdraw a coverage refusal, never manufacture
+///    a release. A variadic tail beyond the declared vector is never admitted;
+/// 2. the argument is exactly `& BASE - > FIELD` and is the **whole** argument
+///    — no cast, no parentheses, no arithmetic, no chain, no subscript;
+/// 3. `BASE` is declared exactly `struct TAG *` and `TAG` is a `struct` defined
+///    once in this unit whose every member declaration was read;
+/// 4. `FIELD` is declared with **no** `*`
+///    ([`TypedAccessModel::addressable_field`]). A pointer member is refused
+///    outright: its address is a handle with which the callee could overwrite
+///    the very link this projection maintains. A non-pointer member is a
+///    sub-object whose storage C's object model keeps disjoint from every
+///    linkable member of the same `struct`, so no field link can be reached
+///    through it;
+/// 5. `BASE` is either a [`store_bases`] base this body bound — in which case
+///    [`crate::legacy_c`] additionally requires it to resolve *here* to one
+///    live identity this body acquired, so the address of a member of a
+///    released aggregate is never admitted — or a C02-P
+///    [`crate::borrowed_actual::UntrackedBases`] name this body can never bind
+///    to a tracked identity.
+pub(crate) fn member_address_actuals(
+    texts: &[&str],
+    call_index: usize,
+    contracts: &ResourceContracts,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &AggregateStoreBases,
+    untracked: &crate::borrowed_actual::UntrackedBases,
+) -> Vec<MemberAddressActual> {
+    if !types.is_readable() {
+        return Vec::new();
+    }
+    let Some(callee) = texts.get(call_index).copied().filter(|text| is_name(text)) else {
+        return Vec::new();
+    };
+    if texts.get(call_index + 1) != Some(&"(") {
+        return Vec::new();
+    }
+    let Some(contract) = contracts.contract(callee) else {
+        return Vec::new();
+    };
+    let Some(arguments) = argument_spans(texts, call_index + 1) else {
+        return Vec::new();
+    };
+    let mut addresses = Vec::new();
+    for (position, (start, end)) in arguments.iter().copied().enumerate() {
+        if !matches!(
+            contract.parameters.get(position),
+            Some(ResourceParameterMode::Borrowed)
+        ) {
+            continue;
+        }
+        let ["&", base, "-", ">", field] = &texts[start..end] else {
+            continue;
+        };
+        if !is_name(base) || !is_name(field) {
+            continue;
+        }
+        let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
+            continue;
+        };
+        if !model.record_definition_is_complete(tag) || !model.addressable_field(tag, field) {
+            continue;
+        }
+        let bound_owner = if bases.contains(base) {
+            Some((*base).to_owned())
+        } else if untracked.never_bound(base) {
+            None
+        } else {
+            continue;
+        };
+        addresses.push(MemberAddressActual {
+            start,
+            end,
+            bound_owner,
+        });
+    }
+    addresses
 }
 
 /// The admitted bound reads of the call whose callee name is at `call_index`.
@@ -475,15 +707,25 @@ pub(crate) fn bound_read_actuals(
     };
     let mut reads = Vec::new();
     for (position, (start, end)) in arguments.iter().copied().enumerate() {
-        if !matches!(
-            contract.parameters.get(position),
-            Some(ResourceParameterMode::Borrowed)
-        ) {
-            continue;
-        }
+        // O04-B09B10: `Released` and `Consumed` join `Borrowed`, and only for a
+        // base premise **F** insulates ([`insulated_bases`]). `Owned`,
+        // `Stored`, `Removed` and `Out` keep their refusals: each either
+        // rebinds the member or attaches it into a relation this module does
+        // not maintain, and `store_bases` premise 5 already refuses a base that
+        // occupies one.
+        let custody = match contract.parameters.get(position) {
+            Some(ResourceParameterMode::Borrowed) => false,
+            Some(
+                ResourceParameterMode::Released { .. } | ResourceParameterMode::Consumed { .. },
+            ) => true,
+            _ => continue,
+        };
         let [base, "-", ">", field] = &texts[start..end] else {
             continue;
         };
+        if custody && !bases.is_insulated(base) {
+            continue;
+        }
         let Some(store) = admitted_field(base, field, bases, model, types) else {
             continue;
         };
@@ -494,6 +736,7 @@ pub(crate) fn bound_read_actuals(
             start,
             end,
             place: store.place,
+            custody,
         });
     }
     reads
@@ -677,7 +920,7 @@ mod tests {
     const RECORDS: &str = "struct child { int n ; } ; \
          struct box { int flag ; struct child * kid ; struct child * other ; \
          unsigned long * raw ; void * any ; struct child ** deep ; \
-         struct box * self ; } ;";
+         struct box * self ; struct child pad ; } ;";
 
     struct Facts {
         model: TypedAccessModel,
@@ -687,6 +930,20 @@ mod tests {
     }
 
     fn facts(declarations: &str, body_source: &str, formals: &[&str]) -> Facts {
+        facts_with(
+            declarations,
+            body_source,
+            formals,
+            ResourceContracts::default(),
+        )
+    }
+
+    fn facts_with(
+        declarations: &str,
+        body_source: &str,
+        formals: &[&str],
+        contracts: ResourceContracts,
+    ) -> Facts {
         let unit = format!("{RECORDS} {declarations}");
         let unit_tokens = texts(&unit);
         let model = TypedAccessModel::read(&unit_tokens);
@@ -696,7 +953,6 @@ mod tests {
             .map(|name| (*name).to_owned())
             .collect::<BTreeSet<_>>();
         let types = FunctionTypes::read(&model, &[], &body, &BTreeSet::new());
-        let contracts = ResourceContracts::default();
         let untracked = crate::borrowed_actual::untracked_bases(
             &body,
             &BTreeSet::new(),
@@ -855,6 +1111,33 @@ mod tests {
                 result: ResourceReturnMode::None,
             },
         );
+        contracts.insert_contract(
+            "hold".to_owned(),
+            ResourceFunctionContract {
+                parameters: vec![ResourceParameterMode::Stored {
+                    owner_parameter: 0,
+                    nullable: false,
+                }],
+                result: ResourceReturnMode::None,
+            },
+        );
+        contracts.insert_contract(
+            "own".to_owned(),
+            ResourceFunctionContract {
+                parameters: vec![ResourceParameterMode::Owned { nullable: false }],
+                result: ResourceReturnMode::None,
+            },
+        );
+        contracts.insert_contract(
+            "pull".to_owned(),
+            ResourceFunctionContract {
+                parameters: vec![ResourceParameterMode::Removed {
+                    owner_parameter: 0,
+                    nullable: false,
+                }],
+                result: ResourceReturnMode::None,
+            },
+        );
         contracts
     }
 
@@ -890,14 +1173,48 @@ mod tests {
         assert!(reads(BOUND, "sink ( b -> flag , b -> flag )").is_empty());
     }
 
+    /// Card O04-B09B10 supersedes card O04-READ-BOUND's blanket refusal of
+    /// custody-bearing positions (`O04-READ-BOUND-CUSTODY`) for exactly two
+    /// modes and exactly the bases premise **F** insulates. The two halves that
+    /// were load-bearing are asserted separately below and are unchanged: a
+    /// base any callee can reach still refuses
+    /// (`a_custody_bearing_read_through_an_exposed_base_is_never_admitted`), and
+    /// every *other* custody-bearing mode still refuses
+    /// (`only_released_and_consumed_positions_take_custody_of_a_bound_read`).
     #[test]
-    fn a_custody_bearing_position_is_never_an_admitted_bound_read() {
+    fn a_released_position_through_an_insulated_base_takes_custody() {
         let facts = facts("", BOUND, &[]);
         let contracts = borrowing_contract(2);
         let tokens = texts("eat ( b -> kid )");
+        let reads = bound_read_actuals(
+            &tokens,
+            0,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        );
+        assert_eq!(reads.len(), 1, "{reads:?}");
+        assert_eq!(reads[0].place, "b->kid");
+        assert!(reads[0].custody, "a released position takes custody");
+        assert_eq!(facts.bases.insulated_names(), ["b"]);
+    }
+
+    /// Premise **F**: a base some callee can reach — passed whole here — can
+    /// have been rewritten between the store and the read, so a custody-taking
+    /// read of its member keeps card O04-READ-BOUND's refusal. The *borrowed*
+    /// read of the same member stays admitted, because borrowing discharges
+    /// nothing.
+    #[test]
+    fn a_custody_bearing_read_through_an_exposed_base_is_never_admitted() {
+        let exposed = "struct box * b ; b = make ( ) ; b -> kid = 0 ; sink ( b , b ) ;";
+        let contracts = borrowing_contract(2);
+        let facts = facts_with("", exposed, &[], contracts.clone());
+        assert_eq!(facts.bases.names(), ["b"]);
+        assert!(facts.bases.insulated_names().is_empty());
         assert!(
             bound_read_actuals(
-                &tokens,
+                &texts("eat ( b -> kid )"),
                 0,
                 &contracts,
                 &facts.model,
@@ -906,6 +1223,179 @@ mod tests {
             )
             .is_empty()
         );
+        assert_eq!(
+            bound_read_actuals(
+                &texts("sink ( b -> kid , b -> other )"),
+                0,
+                &contracts,
+                &facts.model,
+                &facts.types,
+                &facts.bases
+            )
+            .len(),
+            2
+        );
+    }
+
+    /// A `&` argument preserves premise **F** exactly when the member-address
+    /// rule's own premise holds for it; a pointer member's address is a handle
+    /// with which the callee could rewrite the very link the read believes.
+    #[test]
+    fn only_a_non_pointer_member_address_preserves_the_insulation_premise() {
+        // `& b -> pad` on a *non-pointer* member preserves the premise: the
+        // callee receives storage disjoint from every linkable member. The
+        // pointer member `& b -> kid` does not.
+        let permitted =
+            "struct box * b ; b = make ( ) ; b -> kid = 0 ; sink ( & b -> pad , b -> kid ) ;";
+        let contracts = borrowing_contract(2);
+        let facts = facts_with("", permitted, &[], contracts.clone());
+        assert_eq!(facts.bases.insulated_names(), ["b"]);
+        let exposed =
+            "struct box * b ; b = make ( ) ; b -> kid = 0 ; sink ( & b -> kid , b -> kid ) ;";
+        let facts = facts_with("", exposed, &[], contracts);
+        assert_eq!(facts.bases.names(), ["b"]);
+        assert!(facts.bases.insulated_names().is_empty());
+    }
+
+    /// The member-address rule, with no Clang in the loop. `addresses` reports
+    /// `(place tokens, bound owner)` for each admitted argument.
+    fn addresses(
+        declarations: &str,
+        body_source: &str,
+        formals: &[&str],
+        statement: &str,
+    ) -> Vec<(String, Option<String>)> {
+        let facts = facts(declarations, body_source, formals);
+        let contracts = borrowing_contract(2);
+        let tokens = texts(statement);
+        member_address_actuals(
+            &tokens,
+            0,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+            &facts.untracked,
+        )
+        .into_iter()
+        .map(|address| {
+            (
+                tokens[address.start..address.end].join(""),
+                address.bound_owner,
+            )
+        })
+        .collect()
+    }
+
+    #[test]
+    fn a_whole_borrowed_member_address_on_a_bound_base_is_admitted() {
+        assert_eq!(
+            addresses("", BOUND, &[], "sink ( & b -> pad , & b -> flag )"),
+            [
+                ("&b->pad".to_owned(), Some("b".to_owned())),
+                ("&b->flag".to_owned(), Some("b".to_owned())),
+            ]
+        );
+    }
+
+    #[test]
+    fn a_member_address_on_an_untracked_base_carries_no_owner() {
+        assert_eq!(
+            addresses(
+                "",
+                "struct box * p ;",
+                &["p"],
+                "sink ( & p -> pad , & p -> flag )"
+            ),
+            [("&p->pad".to_owned(), None), ("&p->flag".to_owned(), None)]
+        );
+    }
+
+    #[test]
+    fn a_pointer_member_address_is_never_admitted() {
+        for member in ["kid", "other", "raw", "any", "deep", "self", "missing"] {
+            assert!(
+                addresses(
+                    "",
+                    BOUND,
+                    &[],
+                    &format!("sink ( & b -> {member} , & b -> flag )")
+                )
+                .iter()
+                .all(|(place, _)| place != &format!("&b->{member}")),
+                "`&b->{member}` must keep its refusal"
+            );
+        }
+    }
+
+    #[test]
+    fn a_custody_bearing_position_never_admits_a_member_address() {
+        for callee in ["eat", "hold", "own", "pull"] {
+            assert!(
+                addresses("", BOUND, &[], &format!("{callee} ( & b -> pad )")).is_empty(),
+                "`{callee}` must keep its refusal"
+            );
+        }
+    }
+
+    #[test]
+    fn a_partial_or_continued_member_address_is_never_admitted() {
+        for argument in [
+            "& b -> pad . n",
+            "( & b -> pad )",
+            "& b -> pad + 1",
+            "b -> pad",
+            "& b",
+            "& b -> kid -> n",
+        ] {
+            assert!(
+                addresses("", BOUND, &[], &format!("sink ( {argument} , b )")).is_empty(),
+                "`{argument}` must keep its refusal"
+            );
+        }
+    }
+
+    #[test]
+    fn an_uncontracted_callee_admits_no_member_address() {
+        let facts = facts("", BOUND, &[]);
+        let tokens = texts("other ( & b -> pad )");
+        assert!(
+            member_address_actuals(
+                &tokens,
+                0,
+                &ResourceContracts::default(),
+                &facts.model,
+                &facts.types,
+                &facts.bases,
+                &facts.untracked,
+            )
+            .is_empty()
+        );
+    }
+
+    /// The other four custody-bearing modes keep their refusal in full: each
+    /// either rebinds the member or attaches it into a relation this module
+    /// does not maintain.
+    #[test]
+    fn only_released_and_consumed_positions_take_custody_of_a_bound_read() {
+        let facts = facts("", BOUND, &[]);
+        let contracts = borrowing_contract(2);
+        for callee in ["hold", "own", "pull"] {
+            let statement = format!("{callee} ( b -> kid )");
+            let tokens = texts(&statement);
+            assert!(
+                bound_read_actuals(
+                    &tokens,
+                    0,
+                    &contracts,
+                    &facts.model,
+                    &facts.types,
+                    &facts.bases
+                )
+                .is_empty(),
+                "`{callee}` must keep its refusal"
+            );
+        }
     }
 
     #[test]
