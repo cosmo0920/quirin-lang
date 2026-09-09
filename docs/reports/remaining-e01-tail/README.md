@@ -334,7 +334,19 @@ prepared exactly as
 records, and compared against the current baseline
 [`docs/reports/wave14-corpus/artifacts/`](../wave14-corpus/artifacts).
 
-### 4.1 Headline
+The corpus was measured **twice**, through both of the routes CORPUS-REPIN
+records: the *current* route (§4.1–4.3), which reconciles unit for unit against
+the baseline, and the *pinned* `--pinned-evidence` route (§4.4), which is the
+one the archived artifacts were produced by and so can be compared byte for
+byte. Both exit 0 with zero gateway failures. Their logs and machine-readable
+reconciliations are archived under [`logs/`](logs) and
+[`artifacts/`](artifacts).
+
+**Result: nothing moved.** No unit changed verdict, no unit's enumerated
+denominator changed, no function changed status, and every differing byte in
+any artifact is attributed to a residue class that is not analysis.
+
+### 4.1 Headline, current route
 
 ```
 185 source file(s), 186 configuration(s):
