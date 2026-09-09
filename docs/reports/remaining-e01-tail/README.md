@@ -351,7 +351,11 @@ by measurement. **Nothing is promoted: 2 Safe / 42 provisional Unsafe /
 
 The archived baseline keys units by a path relative to each library root; the
 current route keys them by the checkout-relative path. Matching by suffix, every
-archived unit is accounted for and nothing is left over:
+archived unit is accounted for and nothing is left over. The reconciliation is
+performed by the read-only [`reconcile.py`](reconcile.py) in this directory,
+which **exits nonzero** on any verdict, denominator or function-status move, so
+it is a check and not only a report; its output is archived as
+[`artifacts/reconciliation-current-route.json`](artifacts/reconciliation-current-route.json).
 
 | Check | Result |
 |---|---|
@@ -396,9 +400,43 @@ Because neither new ground fires, no published row carries a reason this card
 introduced, so no row's `reason_code` changes and **E01-TAIL-REASON-ROWS** (§9)
 affects nothing today.
 
-### 4.4 Byte-level artifact comparison
+### 4.4 Byte-level artifact comparison, `--pinned-evidence` route
 
-<!-- CORPUS-RESULTS -->
+The archived artifacts were produced by the pinned compatibility route, so a
+second run was made through **exactly** that route (provider packages rebuilt at
+this tree, `QCORE_CHUNKIO_PACKAGE` selected, the prepared database placed at
+`<clone>/build/compile_commands.json` as CORPUS-REPIN's provenance records).
+Exit 0, zero gateway failures.
+
+Its headline is the archived one, not the current route's:
+
+| | archived | measured |
+|---|---|---|
+| units | 185 | **185** (0 added, 0 removed) |
+| Safe / provisional Unsafe / Unknown / data-only | 2 / 42 / 137 / 4 | **2 / 42 / 137 / 4** |
+| enumerated definitions | 4,921 | **4,921** |
+| projected functions | 4,834 | **4,834** |
+| `leak` / `unknown_alias` / `unsupported` | 271 / 4,405 / 49,920 | **271 / 4,405 / 49,920** |
+| unit verdict moves | — | **0** |
+| enumerated denominator moves | — | **0** |
+| function status moves | — | **0** |
+
+Two of the five artifacts are **byte-identical** to the archived pin, and the
+other three are attributed leaf by leaf with **nothing unclassified**:
+
+| Artifact | SHA-256 (archived → measured) | Disposition |
+|---|---|---|
+| `diagnostics.json` | `40691eab…` → `40691eab…` | **byte-identical** |
+| `chunk-contracts.json` | `c4f438e4…` → `c4f438e4…` | **byte-identical** |
+| `source.json` | `53d55b7e…` → `6c8269e0…` | 34 changed leaves: 20 absolute paths and 14 `char[N]` extents of the `__FILE__` path literals they contain. **Identical once the worktree path prefix and those extents are normalised.** |
+| `contracts.json` | `72e665be…` → `f5415f96…` | 18 changed leaves, all absolute contract-file paths (the map is keyed by path). **Identical once the worktree path prefix is normalised.** |
+| `source-effects.json` | `5d857ba3…` → `23380975…` | 33 changed JSON paths, all identity: `build_digest` (6), `configuration_digest` (5), `package_digest` (3), `task_digest` (3), `obligation_id` (3), `qcore:boolean-field-import:v1` (3), `preprocessed_source_digest` (1), plus 3 renamed `resource_contracts:<digest>` assumption keys and the 3 `coverage` entries that name them. **Identical once every identity field and digest-keyed entry is scrubbed.** The 96 functions, the **3 checked / 93 Unknown** split and all five distinct reasons are unchanged. |
+
+Both classes are the ones CORPUS-REPIN's provenance already itemises:
+*location provenance* (this card's prepared clone lives under its own worktree,
+so absolute paths — and the extents of `__FILE__` literals expanded from them —
+differ) and *package identity* (provider packages rebuilt at this tree). Neither
+is analysis. **Nothing is unattributed.**
 
 ---
 
@@ -600,7 +638,7 @@ not about this repository.
 | `cargo test --manifest-path providers/Cargo.toml` | passed, 0 failed |
 | `python3 -B -m unittest discover -s scripts/tests` | **134 passed, 1 failed by design** (§7.2) |
 | pinned 185-unit audit, current route | exit 0, 0 gateway failures; 185 files / 186 configurations, 2 Safe / 43 provisional Unsafe (42 distinct files) / 137 Unknown / 4 data-only. Reconciled unit for unit against the baseline: 0 verdict moves, 0 denominator changes, 0 function status moves (§4.2) |
-| pinned 185-unit audit, `--pinned-evidence` route | <!-- CORPUS --> |
+| pinned 185-unit audit, `--pinned-evidence` route | exit 0, 0 gateway failures; 185 units, 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only — the archived headline exactly. `diagnostics.json` and `chunk-contracts.json` **byte-identical**; the other three attributed leaf by leaf to location provenance and package identity (§4.4) |
 | `chunkio-core` configured audit | exit 0; 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown — its recorded result, unchanged |
 | `libevent-core` configured audit | exit 0; 21 units, 0 Safe / 4 provisional Unsafe / 17 Unknown — G03-F's recorded result, unchanged (§7.4) |
 | `cmetrics-counter` configured audit (with source contracts) | exit 0; 1 unit, 0 Safe / 1 provisional Unsafe / 0 Unknown; 1 checked function contract / 6 Unknown — its recorded result, unchanged |

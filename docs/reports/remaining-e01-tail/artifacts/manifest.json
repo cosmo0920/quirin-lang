@@ -1,0 +1,60 @@
+{
+ "card": "E01-TAIL",
+ "note": "This card measured the corpus twice and moved nothing, so it archives its reconciliation documents rather than a fresh artifact set. The 185-unit baseline remains docs/reports/wave14-corpus/artifacts/; re-pinning is the integrator's decision and there is nothing here to re-pin to.",
+ "provenance": {
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1), /usr/bin/clang",
+  "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "preparation": "python3 -B scripts/prepare_cycle19_clang_audit.py --fluent-bit /home/cosmo/Documents/GitHub/fluent-bit --revision 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 --clang clang --clangxx clang++",
+  "provider_packages": "python3 -B providers/package.py build --output build/cycle19/provider-packages-e01tail"
+ },
+ "runs": {
+  "current_route": {
+   "command": "QCORE_CLANG=/usr/bin/clang cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --compile-database <build>/compile_commands.json <clone> <monkey compile_commands.json> <reports>/monkey-source.json <reports>/resource-diagnostics.json",
+   "exit": 0,
+   "gateway_failures": 0,
+   "headline": "185 source files / 186 configurations: 2 Safe / 43 provisional Unsafe (42 distinct files) / 137 Unknown / 4 data-only",
+   "log": "../logs/corpus-current-route.log.gz",
+   "reconciliation": "reconciliation-current-route.json"
+  },
+  "pinned_route": {
+   "command": "QCORE_CLANG=/usr/bin/clang QCORE_CHUNKIO_PACKAGE=build/cycle19/provider-packages-e01tail/qcore.chunkio cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- --pinned-evidence <clone> <monkey compile_commands.json> <reports>/monkey-source.json <reports>/resource-diagnostics.json",
+   "exit": 0,
+   "gateway_failures": 0,
+   "headline": "185 units: 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only",
+   "log": "../logs/corpus-pinned-route.log.gz",
+   "reconciliation": "reconciliation-pinned-route.json"
+  }
+ },
+ "artifact_comparison_pinned_route": {
+  "baseline": "docs/reports/wave14-corpus/artifacts",
+  "chunk-contracts.json": {
+   "disposition": "byte-identical",
+   "sha256": "c4f438e4ed3d… (archived and measured)"
+  },
+  "contracts.json": {
+   "changed_leaves": 18,
+   "disposition": "identical once the worktree path prefix is normalised",
+   "residue_class": "location provenance (the map is keyed by absolute contract-file path)"
+  },
+  "diagnostics.json": {
+   "disposition": "byte-identical",
+   "sha256": "40691eab1fdd… (archived and measured)"
+  },
+  "monkey-source.json": {
+   "changed_leaves": 34,
+   "disposition": "identical once the worktree path prefix and the char[N] extents of __FILE__ path literals are normalised",
+   "residue_class": "location provenance"
+  },
+  "source-effects.json": {
+   "changed_json_paths": 33,
+   "disposition": "identical once every identity field and digest-keyed entry is scrubbed; 96 functions and the 3 checked / 93 Unknown split unchanged",
+   "residue_class": "package identity (build_digest, configuration_digest, package_digest, task_digest, obligation_id, preprocessed_source_digest and the resource_contracts:<digest> assumption keys)"
+  }
+ },
+ "movement": {
+  "enumerated_denominator_moves": 0,
+  "function_status_moves": 0,
+  "unattributed_changed_leaves": 0,
+  "unit_verdict_moves": 0
+ }
+}
