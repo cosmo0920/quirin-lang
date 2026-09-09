@@ -426,8 +426,7 @@ pub fn recheck_std_io_certificate(
     program: &StdIoProgram,
     certificate: &StdIoCertificate,
 ) -> Result<(), StdIoRecheckFailure> {
-    let rederived =
-        check_std_io_program(program).map_err(|_| StdIoRecheckFailure::Refused)?;
+    let rederived = check_std_io_program(program).map_err(|_| StdIoRecheckFailure::Refused)?;
     if rederived.entry != certificate.entry {
         return Err(StdIoRecheckFailure::Entry);
     }

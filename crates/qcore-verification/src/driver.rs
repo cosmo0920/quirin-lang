@@ -1854,24 +1854,22 @@ fn compile_std_io_source(
         )]
     })?;
 
-    let reference_observation = std_io_c_emit::interpret_std_io_program(
-        &lowered.program,
-        &certificate,
-    )
-    .map_err(|refusal| {
-        vec![plain_diagnostic(
-            "Q030",
-            format!("the standard-IO reference execution refused this trace: {refusal:?}"),
-        )]
-    })?;
-    let emission = std_io_c_emit::emit_std_io_c11(&lowered.program, &certificate).map_err(
-        |refusal| {
+    let reference_observation =
+        std_io_c_emit::interpret_std_io_program(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q030",
+                    format!("the standard-IO reference execution refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+    let emission =
+        std_io_c_emit::emit_std_io_c11(&lowered.program, &certificate).map_err(|refusal| {
             vec![plain_diagnostic(
                 "Q030",
                 format!("the standard-IO backend refused this trace: {refusal:?}"),
             )]
-        },
-    )?;
+        })?;
 
     let result_profile = SourceResultProfile {
         scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),

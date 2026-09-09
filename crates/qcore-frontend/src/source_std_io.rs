@@ -39,13 +39,10 @@
 use std::collections::BTreeMap;
 
 use crate::frontend::{
-    DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram,
-    TypedSourceProgram,
+    DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, TypedSourceProgram,
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
-use qcore_core::std_io::{
-    Level, Rendering, StdIoEvent, StdIoOperand, StdIoProgram,
-};
+use qcore_core::std_io::{Level, Rendering, StdIoEvent, StdIoOperand, StdIoProgram};
 use qcore_core::typed_errors::{Effect, EffectRow};
 
 /// A complete lowering of one entry. The core checker still has to validate the
@@ -103,11 +100,7 @@ pub fn std_io_uses(program: &SourceProgram) -> BTreeMap<StdIoUse, Span> {
     let tokens = program.lexical_tokens();
     let mut found: BTreeMap<StdIoUse, Span> = BTreeMap::new();
 
-    fn scan(
-        block: &SourceBlock,
-        tokens: &[Token],
-        found: &mut BTreeMap<StdIoUse, Span>,
-    ) {
+    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StdIoUse, Span>) {
         for statement in &block.statements {
             if let Some(head) = statement_head(tokens, statement.span) {
                 let use_kind = match head {
@@ -154,11 +147,7 @@ pub fn rendering_span(program: &SourceProgram) -> Option<Span> {
         .copied()
 }
 
-fn diagnostic(
-    code: &'static str,
-    span: Span,
-    message: impl Into<String>,
-) -> SourceDiagnostic {
+fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {
     SourceDiagnostic {
         code,
         pass: SemanticPass::StandardIo,
@@ -191,9 +180,7 @@ fn operand(window: &[&Token], cursor: usize) -> Option<(StdIoOperand, usize)> {
         return Some((StdIoOperand::Literal(value), next));
     }
     match window.get(cursor).map(|token| &token.kind) {
-        Some(TokenKind::Word(name)) => {
-            Some((StdIoOperand::Scalar(name.clone()), cursor + 1))
-        }
+        Some(TokenKind::Word(name)) => Some((StdIoOperand::Scalar(name.clone()), cursor + 1)),
         _ => None,
     }
 }
@@ -215,10 +202,7 @@ fn ends_with_semicolon(window: &[&Token], cursor: usize) -> bool {
 /// The entry's declared `effects { … }` row. An absent suffix is the empty
 /// row, which admits nothing, so the opt-in stays visible exactly as it does
 /// on the extern-call route.
-fn declared_effect_row(
-    tokens: &[TokenKind],
-    span: Span,
-) -> Result<EffectRow, SourceDiagnostic> {
+fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
         .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
@@ -229,7 +213,11 @@ fn declared_effect_row(
         tokens.get(index + 1),
         Some(TokenKind::Symbol(Symbol::LeftBrace))
     ) {
-        return Err(diagnostic("Q030", span, "an `effects` row requires a block"));
+        return Err(diagnostic(
+            "Q030",
+            span,
+            "an `effects` row requires a block",
+        ));
     }
     let mut effects = Vec::new();
     let mut cursor = index + 2;
@@ -259,11 +247,7 @@ fn declared_effect_row(
                 }
             }
             _ => {
-                return Err(diagnostic(
-                    "Q030",
-                    span,
-                    "this `effects` row is not closed",
-                ));
+                return Err(diagnostic("Q030", span, "this `effects` row is not closed"));
             }
         }
     }
@@ -281,14 +265,9 @@ pub fn lower_source_std_io(
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
 
-    let Some(declaration) = parsed
-        .declarations
-        .iter()
-        .find(|declaration| {
-            declaration.value.kind == DeclarationKind::Function
-                && declaration.value.name == entry
-        })
-    else {
+    let Some(declaration) = parsed.declarations.iter().find(|declaration| {
+        declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
+    }) else {
         return Err(vec![diagnostic(
             "Q030",
             Span { start: 0, end: 0 },
@@ -305,11 +284,7 @@ pub fn lower_source_std_io(
         }
         if let Some(body) = &other.value.body {
             let mut found = BTreeMap::new();
-            fn scan(
-                block: &SourceBlock,
-                tokens: &[Token],
-                found: &mut BTreeMap<StdIoUse, Span>,
-            ) {
+            fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StdIoUse, Span>) {
                 for statement in &block.statements {
                     if let Some(head) = statement_head(tokens, statement.span) {
                         match head {

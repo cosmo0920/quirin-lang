@@ -19,8 +19,9 @@ fn with_line_endings(source: &str) -> [String; 2] {
     [lf, crlf]
 }
 
-fn compile(source: &str) -> Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>
-{
+fn compile(
+    source: &str,
+) -> Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>> {
     compile_files(
         &[SourceFile::new("std_modules.qcore", source)],
         &CompileOptions {
@@ -216,7 +217,11 @@ fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability(
         },
     )
     .expect_err("imports are file-local");
-    assert!(diagnostics.iter().any(|diagnostic| diagnostic.code == "Q015"));
+    assert!(
+        diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "Q015")
+    );
 }
 
 #[test]

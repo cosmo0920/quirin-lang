@@ -38,12 +38,16 @@ fn operand_value(
 ) -> Result<i32, StdIoEmissionRefusal> {
     match operand {
         StdIoOperand::Literal(value) => Ok(*value),
-        StdIoOperand::Scalar(name) => program.scalars.get(name).copied().ok_or_else(|| {
-            StdIoEmissionRefusal::UnboundScalar {
-                event: index,
-                name: name.clone(),
-            }
-        }),
+        StdIoOperand::Scalar(name) => {
+            program
+                .scalars
+                .get(name)
+                .copied()
+                .ok_or_else(|| StdIoEmissionRefusal::UnboundScalar {
+                    event: index,
+                    name: name.clone(),
+                })
+        }
     }
 }
 
@@ -159,11 +163,7 @@ pub fn emit_std_io_c11(
                 );
             }
             StdIoEvent::Flush => {
-                let _ = writeln!(
-                    source,
-                    "    (void) fflush({});",
-                    Stream::Err.c_handle()
-                );
+                let _ = writeln!(source, "    (void) fflush({});", Stream::Err.c_handle());
             }
             StdIoEvent::Return => {}
         }

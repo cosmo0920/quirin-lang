@@ -75,11 +75,7 @@ pub fn check_source_imports(
     if !imports.fmt()
         && let Some(span) = crate::source_std_io::rendering_span(program)
     {
-        return Err(vec![missing_import(
-            span,
-            FMT_MODULE,
-            "naming a rendering",
-        )]);
+        return Err(vec![missing_import(span, FMT_MODULE, "naming a rendering")]);
     }
     Ok(imports)
 }
