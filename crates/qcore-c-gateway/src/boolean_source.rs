@@ -294,6 +294,23 @@ impl ChunkFrameSummary {
         &self.1
     }
 
+    /// The declared profile selection this helper was imported under: the
+    /// model library owning the record's Boolean models, and the digest of the
+    /// loaded profile manifest. A legacy import carries no profile and reports
+    /// `None`.
+    ///
+    /// Neither value appears in `SourceInputIdentity` — a helper has no
+    /// field-model owner, so `model_library` and `profile_digest` are `None`
+    /// there — and neither is serialized with the summary. A verification task
+    /// that binds this helper must therefore bind this pair separately, or two
+    /// different profile selections over one body would record one identity.
+    pub fn profile_binding(&self) -> Option<(&str, &str)> {
+        self.2
+            .profile
+            .as_ref()
+            .map(|(library, digest)| (library.as_str(), digest.as_str()))
+    }
+
     pub fn function(&self) -> &str {
         &self.function
     }
