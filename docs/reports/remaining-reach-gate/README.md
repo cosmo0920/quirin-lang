@@ -408,9 +408,12 @@ Run from this worktree at the card checkpoint.
 | 185-unit corpus, three runs | §6 |
 | reach census, **three** runs | §5, all three byte-identical |
 
-The workspace count is 2344 against 2318 on the pristine tree: exactly the
-26 new tests — 15 in `neutral_position`, 10 in `reach_gate_positions` and one
-in `o04_b08` (§8, beside one renamed) — and no other binary's count moves.
+The workspace count is 2344. The card adds exactly 26 tests — 15 in
+`neutral_position`, 10 in `reach_gate_positions` and one in `o04_b08` (§8,
+beside one renamed) — so the pristine tree stands at 2318 by arithmetic; that
+figure is reconciled, not separately measured, and no other binary's count
+moves. The intermediate run before `reach_gate_positions.rs` existed measured
+2332 passed with the two §10.1 flakes failing, which is the same 2334 items.
 
 The third census run, at the final formatted tree, produced the same SHA-256 as
 both earlier runs, so the reach measurement is reproducible at the committed
