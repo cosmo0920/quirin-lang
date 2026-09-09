@@ -37,6 +37,10 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const CONTRACTS: &str = include_str!("fixtures/contracts/c02p_generic.qcore");
+/// Card `CTWIN-RESIDUALS` needs a declared **`Out`** position, which the `b_*`
+/// surface has none of; BORROW-RESIDUALS' `y_*` surface supplies one and is
+/// equally synthetic and equally unrelated to any library.
+const OUT_CONTRACTS: &str = include_str!("fixtures/contracts/borrow_residuals.qcore");
 
 /// C02-P's declarations, verbatim, so every generic gateway family shares one
 /// surface.
@@ -50,14 +54,20 @@ int b_probe(void *h); \
 int b_write(struct b_handle *h, int n); \
 void b_adopt(void *p); \
 void b_release(void *p); \
-struct b_storage *b_pick(struct b_instance *in);";
+struct b_storage *b_pick(struct b_instance *in); \
+void *y_take(int n); \
+void y_release(void *p); \
+void y_fill(void **destination);";
 
 fn contracts() -> qcore_c_gateway::legacy_c::ResourceContracts {
-    load_resource_contract_sources(&BTreeMap::from([(
-        "c02p_generic.qcore".to_owned(),
-        CONTRACTS.to_owned(),
-    )]))
-    .expect("the generic contract fixture loads")
+    load_resource_contract_sources(&BTreeMap::from([
+        ("c02p_generic.qcore".to_owned(), CONTRACTS.to_owned()),
+        (
+            "borrow_residuals.qcore".to_owned(),
+            OUT_CONTRACTS.to_owned(),
+        ),
+    ]))
+    .expect("the generic contract fixtures load")
 }
 
 fn clang_available() -> bool {
@@ -420,21 +430,12 @@ fn a_formal_of_the_same_name_is_not_a_publication_destination() {
 // 3. The value side: only a tracked identity this body holds
 // ---------------------------------------------------------------------------
 
-/// BASE: `Safe`. Publishing a **borrowed** pointer — one whose identity the
-/// caller holds — is a lifetime question this projection never claimed to
-/// decide. It stays admitted; the boundary is recorded as
-/// `CTWIN-PUBLISH-BORROWED`.
-#[test]
-fn publishing_a_borrowed_pointer_is_not_newly_refused() {
-    if !clang_available() {
-        return;
-    }
-    admitted(
-        "publish-borrowed",
-        "struct b_handle *g_published; \
-         void w(struct b_handle *p, int n) { g_published = p; }",
-    );
-}
+// Card `CTWIN-PUBLISH`'s `publishing_a_borrowed_pointer_is_not_newly_refused`
+// stood here. Card `CTWIN-RESIDUALS` **withdrew** that admission — it was
+// measured to launder a caller's release through a publishing helper — and the
+// same body is now asserted refused by
+// `a_body_that_publishes_a_borrowed_formal_no_longer_certifies` in §7. Retired
+// by name so the flip is visible rather than silent.
 
 /// BASE: `Safe`. Clearing the object stores the null constant, which carries no
 /// identity.
@@ -505,7 +506,12 @@ fn indirect_file_scope_destinations_keep_their_pre_existing_refusal() {
     if !clang_available() {
         return;
     }
+    // Card CTWIN-RESIDUALS added this card's diagnostic to these three shapes:
+    // the pre-existing refusal is preserved — which is what this test is for —
+    // and the publication is now *named*, so the withdrawn residual is
+    // auditable rather than silent. The load-bearing half is unchanged.
     let expected = &[
+        "publication:g_reg",
         "unknown_alias:h",
         "unsupported:indirect memory access is outside the resource projection",
     ];
@@ -528,7 +534,11 @@ fn indirect_file_scope_destinations_keep_their_pre_existing_refusal() {
         "struct b_handle *g_slots[4]; \
          void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
          g_slots[0] = h; b_close(h); }",
-        expected,
+        &[
+            "publication:g_slots",
+            "unknown_alias:h",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
     );
 }
 
@@ -636,4 +646,348 @@ fn both_halves_of_the_rule_are_load_bearing() {
         tracked_into_object, tracked_into_local,
         "the destination half must be load-bearing"
     );
+}
+
+// ---------------------------------------------------------------------------
+// 7. Card `CTWIN-RESIDUALS`: the publication shapes wave 16 left open
+// ---------------------------------------------------------------------------
+//
+// Measured at this card's base — main `8ec8402`, wave-16 consolidated — three
+// of the four recorded residuals carried a **live false `Safe`**: a
+// publish-then-free body answered `Safe` with no diagnostic through a
+// parenthesised `_Atomic` specifier (`CTWIN-PUBLISH-SCAN`), through a helper
+// that publishes a borrowed formal (`CTWIN-PUBLISH-BORROWED`), and through a
+// declared `Out` slot naming the object (`CTWIN-PUBLISH-OUT`). The fourth,
+// `CTWIN-PUBLISH-INDIRECT`, carried **no** false `Safe` — every indirect shape
+// was already refused — but kept a provisional `Unsafe` `Leak` the direct rule
+// withdraws. Each `BASE:` line below records the measured answer there.
+
+/// BASE: **`Safe`, no diagnostics.** `_Atomic ( type-name )` is a *specifier*,
+/// and the `(`-carrying skip that keeps prototypes out of the destination set
+/// swallowed the declarator with it — so CT40's literal atomic-pointer
+/// spelling published without a word. Dropping the specifier is monotone: it
+/// can only reveal a declarator.
+#[test]
+fn a_parenthesised_atomic_specifier_no_longer_hides_its_declarator() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "atomic-parenthesised",
+        "_Atomic(struct b_handle *) g_published; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_published = h; b_close(h); }",
+        &["publication:g_published", "unknown_alias:h"],
+    );
+}
+
+/// The other legal spelling of the same object was **already** refused, so the
+/// two must now answer identically — whole verdict, not just the class. A
+/// spelling the reader treats differently from a semantically identical one is
+/// exactly the defect this test exists to exclude.
+#[test]
+fn both_atomic_spellings_of_one_object_answer_identically() {
+    if !clang_available() {
+        return;
+    }
+    let parenthesised = verdict(
+        "_Atomic(struct b_handle *) g_published; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_published = h; b_close(h); }",
+    );
+    let postfix = verdict(
+        "struct b_handle *_Atomic g_published; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_published = h; b_close(h); }",
+    );
+    assert_eq!(parenthesised, postfix);
+    assert_ne!(parenthesised.0, "safe");
+}
+
+/// BASE: `Safe`, no diagnostics — and this is the shape that mattered, because
+/// it **composes**. A helper publishing a borrowed formal was `Safe`, so W4
+/// published `Borrowed` for that formal, and a caller that acquired, called it
+/// and released was `Safe` too: the wave-16 headline body with one level of
+/// indirection through a helper.
+///
+/// The rule that refuses it inlined must refuse it composed, so the caller-held
+/// exclusion is withdrawn. `Borrowed` asserts the caller's obligations are
+/// unchanged across the call and a publication falsifies exactly that; the
+/// faithful alternatives (`Escaped`, `Consumed`) are the escape model
+/// `CTWIN-PUBLISH` §3 proved promotes.
+///
+/// One measured consequence, recorded rather than hidden: the *published*
+/// diagnostic on the publishing body is its unresolved identity, not this
+/// card's refusal, because the publication fires inside the summary derivation
+/// whose answer is then withheld. Named `CTWIN-BORROWED-ATTRIBUTION`.
+#[test]
+fn a_body_that_publishes_a_borrowed_formal_no_longer_certifies() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "publish-borrowed",
+        "struct b_handle *g_published; \
+         void w(struct b_handle *p, int n) { g_published = p; }",
+        &["unknown_alias:p"],
+    );
+}
+
+/// BASE: `Safe` for **both** functions. The composition, measured whole: the
+/// helper no longer publishes a summary, so the caller's release no longer
+/// discharges a custody the helper had already handed to a static-storage
+/// object.
+#[test]
+fn a_publishing_helper_no_longer_launders_its_callers_release() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze(
+        "struct b_handle *g_published; \
+         static void publish(struct b_handle *q) { g_published = q; } \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         publish(h); b_close(h); }",
+    );
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "a publishing helper must not launder its caller's release"
+    );
+    let summary = program(&result);
+    assert_eq!(entry(summary).status, AnalysisStatus::Unknown);
+    assert_eq!(
+        summary
+            .functions
+            .get("publish")
+            .expect("the helper is projected")
+            .status,
+        AnalysisStatus::Unknown,
+        "the publishing helper itself is refused"
+    );
+    assert_eq!(
+        vector(entry(summary)),
+        [
+            "unknown_alias:h".to_owned(),
+            "unsupported:call to uncontracted function `publish`".to_owned(),
+        ],
+        "the caller refuses because the helper published no summary"
+    );
+}
+
+/// The control that keeps the previous test from being vacuous: the identical
+/// caller, and a helper that does **not** publish, still certifies.
+#[test]
+fn a_non_publishing_helper_still_lets_its_caller_certify() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "borrowing-helper",
+        "static void inspect(struct b_handle *q) { b_probe(q); } \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         inspect(h); b_close(h); }",
+    );
+}
+
+/// BASE: `Safe`, no diagnostics. A declared `Out` slot whose actual *is* the
+/// object acquires the resource directly into it — the `Acquire` arm seen from
+/// the callee's side — so `y_fill(&g_published); y_release(g_published);` is
+/// the publish-then-free hazard in the out shape.
+#[test]
+fn an_out_slot_naming_a_file_scope_object_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "out-into-global",
+        "void *g_published; \
+         void w(int n) { y_fill(&g_published); y_release(g_published); }",
+        &["publication:g_published", "unknown_alias:g_published"],
+    );
+}
+
+/// BASE: `Safe`, no diagnostics. The same, into a `static` local.
+#[test]
+fn an_out_slot_naming_a_static_local_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "out-into-static-local",
+        "void w(int n) { static void *cache; y_fill(&cache); y_release(cache); }",
+        &["publication:cache", "unknown_alias:cache"],
+    );
+}
+
+/// BASE: `Unsafe`, `[leak]`. Refused *before* the call's effects apply, so no
+/// site exists to report — the same withdrawal the direct acquisition arm
+/// performs, and a downgrade rather than a promotion.
+#[test]
+fn an_out_publication_without_a_release_withdraws_its_leak_claim() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "out-into-global-unreleased",
+        "void *g_published; void w(int n) { y_fill(&g_published); }",
+        &["publication:g_published"],
+    );
+}
+
+/// The control: an `Out` slot naming an ordinary local is untouched, so the
+/// destination half of the out rule is load-bearing too.
+#[test]
+fn an_out_slot_naming_an_ordinary_local_is_untouched() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "out-into-local",
+        "void w(int n) { void *loc; y_fill(&loc); y_release(loc); }",
+    );
+}
+
+/// BASE: `Unsafe`, `[leak, indirect memory access …]` for each. The statement
+/// keeps the refusal it already had — attribution stays with the gate that read
+/// it — and additionally withdraws the residual claim, because the destination
+/// is a continued access on an object that outlives the call. Wave 16 asserted
+/// these shapes gained **no** diagnostic of its card; that pin is deliberately
+/// updated here, with its load-bearing half — the pre-existing refusal survives
+/// — kept.
+#[test]
+fn an_indirect_publication_withdraws_its_leak_claim() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "file-scope aggregate member, unreleased",
+        "struct b_reg { struct b_handle *slot; }; struct b_reg g_reg; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_reg.slot = h; }",
+        &[
+            "publication:g_reg",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
+    );
+    refused(
+        "through a file-scope pointer, unreleased",
+        "struct b_reg { struct b_handle *slot; }; struct b_reg *g_reg; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_reg->slot = h; }",
+        &[
+            "publication:g_reg",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
+    );
+    refused(
+        "file-scope array element, unreleased",
+        "struct b_handle *g_slots[4]; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_slots[0] = h; }",
+        &[
+            "publication:g_slots",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
+    );
+    refused(
+        "static local aggregate member, unreleased",
+        "struct b_reg { struct b_handle *slot; }; \
+         void w(int n) { static struct b_reg s; struct b_handle *h; h = b_open(0,0,n); \
+         if (!h) { return; } s.slot = h; }",
+        &[
+            "publication:s",
+            "unsupported:indirect memory access is outside the resource projection",
+        ],
+    );
+}
+
+/// The control: the identical store into a **local** aggregate keeps its
+/// pre-existing answer, `Leak` included. The destination half of the indirect
+/// rule is load-bearing.
+#[test]
+fn an_indirect_store_into_a_local_aggregate_keeps_its_leak_claim() {
+    if !clang_available() {
+        return;
+    }
+    let (head, keys) = verdict(
+        "struct b_reg { struct b_handle *slot; }; \
+         void w(int n) { struct b_reg local; struct b_handle *h; h = b_open(0,0,n); \
+         if (!h) { return; } local.slot = h; }",
+    );
+    assert_eq!(head, "unsafe");
+    assert!(
+        keys.contains(&"leak".to_owned()),
+        "a local destination publishes nothing: {keys:?}"
+    );
+    assert!(
+        !keys.iter().any(|key| key.starts_with("publication:")),
+        "no publication may be reported for a local destination: {keys:?}"
+    );
+}
+
+/// The recorded residual, pinned as measured rather than left unstated: a store
+/// through a **local pointer** that was assigned the address of a publication
+/// destination keeps its pre-existing answer, `Leak` included, because the base
+/// this scan reads is the local `p`. Deciding it needs a pointer relation the
+/// projection does not have. Named `CTWIN-PUBLISH-INDIRECT-POINTER`.
+#[test]
+fn a_store_through_a_local_pointer_to_the_object_keeps_its_pre_existing_answer() {
+    if !clang_available() {
+        return;
+    }
+    let (head, keys) = verdict(
+        "struct b_handle *g_published; \
+         void w(int n) { struct b_handle **p = &g_published; struct b_handle *h; \
+         h = b_open(0,0,n); if (!h) { return; } *p = h; }",
+    );
+    assert_eq!(head, "unsafe");
+    assert!(
+        !keys.iter().any(|key| key.starts_with("publication:")),
+        "this scan reads the base `p`, which is not a destination: {keys:?}"
+    );
+}
+
+/// A compound assignment reads its destination and stores an arithmetic value,
+/// never a pointer this projection tracks, so it is not a publication — and the
+/// `=` reader must not mistake `==` for one either. Both statements sit in a
+/// body the projection already refuses for unrelated, pre-existing reasons
+/// (`unrecognized assignment destination`, `unmodeled … branch condition`),
+/// which is why the assertion is that **no** publication is reported rather
+/// than that the body certifies.
+#[test]
+fn a_compound_assignment_and_a_comparison_are_not_publications() {
+    if !clang_available() {
+        return;
+    }
+    let (_, keys) = verdict(
+        "struct b_counters { int hits; }; struct b_counters g_reg; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_reg.hits += n; if (g_reg.hits == n) { b_write(h, n); } b_close(h); }",
+    );
+    assert!(
+        !keys.iter().any(|key| key.starts_with("publication:")),
+        "neither `+=` nor `==` is a simple assignment: {keys:?}"
+    );
+}
+
+/// The rule reads no **provenance**, exactly as it reads no per-site status: a
+/// body-acquired identity and a caller-held one are refused alike. Measured on
+/// two bodies that differ in nothing else.
+#[test]
+fn the_rule_reads_no_provenance() {
+    if !clang_available() {
+        return;
+    }
+    let body_acquired = verdict(
+        "struct b_handle *g_published; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_published = h; b_close(h); }",
+    );
+    let caller_held = verdict(
+        "struct b_handle *g_published; \
+         static void publish(struct b_handle *q) { g_published = q; } \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         publish(h); b_close(h); }",
+    );
+    assert_ne!(body_acquired.0, "safe");
+    assert_ne!(caller_held.0, "safe");
 }

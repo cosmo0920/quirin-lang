@@ -86,10 +86,20 @@ def outlivesTheCall (ns : Names) (n : Name) : Bool :=
 
 end Names
 
-/-- What one name denotes here, as `AbstractPointer` records it. -/
+/-- What one name denotes here, as `AbstractPointer` records it, together with
+    the one fact about the *name* the rule reads.
+
+    `scalar` is `true` when this function's own declarations read the source
+    name as a declared scalar. A candidate entry custody binds every declared
+    formal to a resource site, scalar parameters included, so without that
+    exclusion `g_count = n;` would refuse on a modelling artefact rather than on
+    a published identity (card `CTWIN-RESIDUALS`). It fails closed: a function
+    whose declarations the type reader could not read yields `false` here, and
+    the store is refused. -/
 structure Denotation where
   targets : List Site
   unknown : Bool
+  scalar : Bool := false
 deriving DecidableEq, Repr
 
 /-- The instruction shapes whose destination the analyzer writes. -/
@@ -104,6 +114,11 @@ inductive Instruction where
   | clear
   /-- A value this function never tracks (`OpaqueValue`). -/
   | opaque
+  /-- Card `CTWIN-RESIDUALS`, shape `CTWIN-PUBLISH-OUT`: a contracted call with
+      a declared `Out` slot whose actual *is* the destination. The identity is
+      created directly into the object, so this is the `acquire` arm seen from
+      the callee's side. -/
+  | outWrite
 deriving Repr
 
 /-- The decision. -/
@@ -118,16 +133,26 @@ deriving DecidableEq, Repr
 /-- Whether the value this instruction stores carries an identity *this body*
     holds.
 
-    A caller-held site is deliberately excluded: publishing a **borrowed**
-    pointer is a lifetime question this projection never claimed to decide, and
-    refusing it would newly refuse bodies sound in the acquire/release
-    accounting the projection does decide (`CTWIN-PUBLISH-BORROWED`). -/
-def storesTrackedIdentity (callerHeld : Site → Bool) : Instruction → Bool
-  | .alias d => d.targets.any fun s => !callerHeld s
+    Card `CTWIN-PUBLISH` excluded a caller-held site here, leaving the
+    publication of a **borrowed** pointer admitted as `CTWIN-PUBLISH-BORROWED`.
+    Card `CTWIN-RESIDUALS` **withdrew** that exclusion, on a measured ground:
+    a body publishing a borrowed formal certified, so W4 published `Borrowed`
+    for that formal, and a caller that acquired, called it and released
+    certified too — the same hazard, one call level up
+    (`publishing_borrowed_launders_the_callers_release`). The faithful
+    alternative summary modes are the escape model this module already proves
+    promotes (`an_escaping_summary_promotes_the_unreleased_caller`).
+
+    `callerHeld` is therefore no longer read; it stays in the signature because
+    `TransferContext` still carries it for other rules, and
+    `the_rule_reads_no_provenance` makes the independence explicit. -/
+def storesTrackedIdentity (_callerHeld : Site → Bool) : Instruction → Bool
+  | .alias d => !d.targets.isEmpty && !d.scalar
   | .acquire => true
   | .contractCall yields => yields
   | .clear => false
   | .opaque => false
+  | .outWrite => true
 
 /-- The rule, fail-closed to `notDecided` at every step. -/
 def classify (ns : Names) (callerHeld : Site → Bool) (destination : Name)
@@ -326,15 +351,22 @@ theorem a_call_with_no_custody_result_is_never_refused
   simp [classify, storesTrackedIdentity]
 
 theorem an_unbound_source_is_never_refused (ns : Names) (c : Site → Bool) (n : Name)
-    (unknown : Bool) :
-    classify ns c n (.alias { targets := [], unknown }) = .notDecided := by
+    (unknown scalar : Bool) :
+    classify ns c n (.alias { targets := [], unknown, scalar }) = .notDecided := by
   simp [classify, storesTrackedIdentity]
 
-/-- Publishing a **borrowed** identity — every target caller-held — is not
-    refused. `CTWIN-PUBLISH-BORROWED`. -/
-theorem a_caller_held_identity_is_never_refused (ns : Names) (n : Name) (s : Site) :
-    classify ns (fun _ => true) n (.alias (bound s)) = .notDecided := by
-  simp [classify, storesTrackedIdentity, bound]
+/-- Card `CTWIN-PUBLISH`'s `a_caller_held_identity_is_never_refused` and
+    `the_caller_site_exclusion_is_load_bearing` stood here. Card
+    `CTWIN-RESIDUALS` retired them **by name**: the admission they pinned was
+    measured to launder a caller's release, and the replacements are
+    `a_caller_held_identity_is_now_refused`,
+    `publishing_borrowed_launders_the_callers_release` and
+    `the_scalar_exclusion_is_load_bearing`. -/
+theorem a_declared_scalar_source_is_never_refused
+    (ns : Names) (c : Site → Bool) (n : Name) (s : Site) :
+    classify ns c n (.alias { targets := [s], unknown := false, scalar := true })
+      = .notDecided := by
+  simp [classify, storesTrackedIdentity]
 
 theorem a_formal_is_not_a_destination (s : Site) :
     classify formalShadowedName noCallerSites 3 (.alias (bound s)) = .notDecided := by
@@ -365,11 +397,16 @@ theorem the_destination_decision_reads_only_the_four_name_sets
 
 /-- The value half reads no per-site status at all: whatever the projection
     recorded about the identity, publishing it refuses. A dangling pointer
-    (released, then published) is therefore refused exactly as a live one is. -/
+    (released, then published) is therefore refused exactly as a live one is.
+
+    Card `CTWIN-RESIDUALS` **strengthened** this statement by deleting its
+    `c s = false` hypothesis: the rule no longer reads the caller-held
+    predicate at all, so the conclusion holds for every `c`. See
+    `the_rule_reads_no_provenance`. -/
 theorem the_rule_reads_no_status (ns : Names) (c : Site → Bool) (n : Name) (s : Site)
-    (h : ns.outlivesTheCall n = true) (hc : c s = false) :
+    (h : ns.outlivesTheCall n = true) :
     classify ns c n (.alias (bound s)) = .publication := by
-  simp [classify, storesTrackedIdentity, bound, h, hc]
+  simp [classify, storesTrackedIdentity, bound, h]
 
 /-! ## Monotonicity and the load-bearing conjuncts -/
 
@@ -421,11 +458,14 @@ theorem the_tracked_value_conjunct_is_load_bearing :
       ∧ classify (publishedName 7) noCallerSites 7 .clear = .notDecided := by
   decide
 
-/-- Without the caller-site exclusion the rule would refuse the publication of a
-    borrowed formal, which is `Safe` and stays `Safe`. -/
-theorem the_caller_site_exclusion_is_load_bearing :
-    classify (publishedName 7) (fun _ => true) 7 (.alias (bound 0)) = .notDecided
-      ∧ classify (publishedName 7) noCallerSites 7 (.alias (bound 0)) = .publication := by
+/-- Without the scalar exclusion the rule would refuse `g_count = n;`, whose
+    scalar formal a candidate entry custody binds to a site like any other. Both
+    directions on one pair of sources. -/
+theorem the_scalar_exclusion_is_load_bearing :
+    classify (publishedName 7) noCallerSites 7
+        (.alias { targets := [0], unknown := false, scalar := true }) = .notDecided
+      ∧ classify (publishedName 7) noCallerSites 7
+        (.alias { targets := [0], unknown := false, scalar := false }) = .publication := by
   decide
 
 /-! ## The published verdict class -/
@@ -455,5 +495,249 @@ theorem the_rule_both_refuses_and_admits :
       ∧ ∃ ns c n i, classify ns c n i = .notDecided :=
   ⟨⟨publishedName 7, noCallerSites, 7, .alias (bound 0), by decide⟩,
    ⟨publishedName 7, noCallerSites, 7, .clear, by decide⟩⟩
+
+/-! ## Card `CTWIN-RESIDUALS`: the publication shapes wave 16 left open
+
+Three of card `CTWIN-PUBLISH`'s four recorded residuals carried a **live false
+`Safe`** on the measured base, and each is withdrawn here. The fourth,
+`CTWIN-PUBLISH-INDIRECT`, carried none — every indirect shape was already
+refused — and what it carried instead was a residual `violation` claim the
+direct rule withdraws.
+-/
+
+/-! ### `CTWIN-PUBLISH-BORROWED`: the exclusion that laundered a release
+
+The rule now reads no provenance at all, exactly as it reads no per-site status.
+-/
+
+/-- The value half is independent of which sites the caller holds. -/
+theorem the_rule_reads_no_provenance
+    (ns : Names) (c₁ c₂ : Site → Bool) (n : Name) (i : Instruction) :
+    classify ns c₁ n i = classify ns c₂ n i := by
+  cases i <;> rfl
+
+/-- The direct half of the withdrawal: a caller-held identity published into an
+    object that outlives the call is now refused. Replaces
+    `a_caller_held_identity_is_never_refused`. -/
+theorem a_caller_held_identity_is_now_refused (s : Site) :
+    classify (publishedName 7) (fun _ => true) 7 (.alias (bound s)) = .publication := by
+  simp [classify, publishedName, Names.outlivesTheCall, storesTrackedIdentity, bound]
+
+/-! #### Why the exclusion had to go, at the summary boundary
+
+A helper's published summary mode is what a caller reads. The three modes a
+publishing body could be given are compared on the same two callers — one that
+releases after the call and one that does not — against the *inlined* body,
+which card `CTWIN-PUBLISH` already refuses in both directions.
+-/
+
+/-- The custody mode a helper's summary can assert for its formal. -/
+inductive SummaryMode where
+  /-- The caller's obligations are unchanged across the call. -/
+  | borrowed
+  /-- Custody left the body at the call. -/
+  | escaped
+deriving DecidableEq, Repr
+
+/-- What a caller sees. `none` is a helper that published **no** summary, which
+    is what a refused body yields: the call is uncontracted. -/
+def callerVerdict : Option SummaryMode → Bool → Verdict
+  -- No summary: the call is an unmodeled effect, so the caller is unresolved
+  -- whatever it does afterwards.
+  | none, _ => .unresolved
+  -- `borrowed`: the caller keeps custody, so releasing discharges it and not
+  -- releasing leaks. This is exactly the pre-card answer.
+  | some .borrowed, true => .safe
+  | some .borrowed, false => .violation
+  -- `escaped`: custody left at the call, so a later release is a violation and
+  -- *not* releasing certifies — the escape model's promotion, one level up.
+  | some .escaped, true => .violation
+  | some .escaped, false => .safe
+
+/-- The summary a publishing helper yields under each candidate rule. -/
+def publishingSummary (admitted : Bool) : Option SummaryMode :=
+  if admitted then some .borrowed else none
+
+/-- The measured launder: under card `CTWIN-PUBLISH`'s admission the helper
+    published `borrowed`, and the caller that acquired, called it and released
+    **certified** — while the same body inlined is refused. -/
+theorem publishing_borrowed_launders_the_callers_release :
+    callerVerdict (publishingSummary true) true = .safe
+      ∧ refuseVerdict true ≠ .safe := by
+  decide
+
+/-- And the faithful alternative promotes in the other direction, exactly as the
+    escape model does inside one body: the caller that does **not** release
+    certifies. So neither mode is available and the body must be refused. -/
+theorem an_escaping_summary_promotes_the_unreleased_caller :
+    callerVerdict (some .escaped) false = .safe
+      ∧ refuseVerdict false ≠ .safe := by
+  decide
+
+/-- The implemented answer: a refused helper publishes no summary, so **neither**
+    caller certifies — the composed body is refused exactly as the inlined one
+    is. -/
+theorem a_refused_helper_certifies_no_caller (releases : Bool) :
+    callerVerdict (publishingSummary false) releases ≠ .safe := by
+  cases releases <;> decide
+
+/-- Non-vacuity for the composition: a helper that does not publish still lets
+    its caller certify, so the withdrawal is not a blanket refusal of helpers. -/
+theorem a_non_publishing_helper_still_certifies_its_caller :
+    callerVerdict (some .borrowed) true = .safe := by
+  decide
+
+/-! ### `CTWIN-PUBLISH-OUT`: the slot that acquires into the object -/
+
+theorem an_out_slot_naming_such_an_object_is_refused :
+    classify (publishedName 7) noCallerSites 7 .outWrite = .publication := by
+  decide
+
+theorem an_out_slot_naming_a_static_local_is_refused :
+    classify (staticLocalName 3) noCallerSites 3 .outWrite = .publication := by
+  decide
+
+/-- The control: an `Out` slot naming an ordinary local is untouched, so the
+    destination half of the out rule is load-bearing too. -/
+theorem an_out_slot_naming_an_ordinary_local_is_not_refused :
+    classify ordinaryLocalName noCallerSites 3 .outWrite = .notDecided := by
+  decide
+
+/-- Refused *before* the call's effects apply, so no site exists to report: the
+    verdict is `unresolved` in both directions, never a violation. This is the
+    same two-direction withdrawal the direct acquisition arm performs. -/
+theorem an_out_publication_is_never_a_validated_violation :
+    publish .safe (classify (publishedName 7) noCallerSites 7 .outWrite) = .unresolved
+      ∧ publish .unresolved (classify (publishedName 7) noCallerSites 7 .outWrite)
+        = .unresolved := by
+  decide
+
+/-! ### `CTWIN-PUBLISH-INDIRECT`: the residual claim, withdrawn
+
+A store into a continued access on such an object — `g.f`, `g->f`, `g[i]` — is
+already an unmodeled instruction, so its verdict was never `safe` and nothing
+here can make one. What it kept was a `violation` residual: the projection
+claimed the identity was never released, from a body that handed it to an
+unmodeled publication protocol.
+-/
+
+/-- What an unmodeled statement does on its own: it poisons the name bindings
+    and contributes an `Unsupported`, but leaves the site's residual standing. -/
+def unmodeledVerdict (residual : Residual) : Verdict :=
+  match residualVerdict residual with
+  | .violation => .violation
+  | _ => .unresolved
+
+/-- The indirect record's effect: the identities the statement's own operands
+    denote carry an unresolved effect from here on. -/
+def withdrawIndirect (base : Names) (n : Name) (bound : Bool) (residual : Residual) :
+    Residual :=
+  if base.outlivesTheCall n && bound then .unresolved else residual
+
+theorem an_indirect_publication_withdraws_its_leak_claim :
+    unmodeledVerdict (withdrawIndirect (publishedName 7) 7 true .leaked) = .unresolved := by
+  decide
+
+/-- The control: the same statement with a **local** base keeps its claim, so
+    the destination half of the indirect rule is load-bearing. -/
+theorem an_indirect_store_into_a_local_keeps_its_claim :
+    unmodeledVerdict (withdrawIndirect ordinaryLocalName 3 true .leaked) = .violation := by
+  decide
+
+/-- And a statement that names no tracked identity withdraws nothing. -/
+theorem an_indirect_store_of_an_untracked_value_withdraws_nothing
+    (ns : Names) (n : Name) (residual : Residual) :
+    withdrawIndirect ns n false residual = residual := by
+  simp [withdrawIndirect]
+
+/-- The record can only ever **weaken** a claim: it never turns a non-certifying
+    answer into a certifying one, on any input. -/
+theorem the_indirect_record_never_certifies
+    (ns : Names) (n : Name) (bound : Bool) (residual : Residual) :
+    unmodeledVerdict (withdrawIndirect ns n bound residual) ≠ .safe := by
+  cases residual <;> cases bound <;>
+    simp [unmodeledVerdict, withdrawIndirect, residualVerdict] <;>
+    cases ns.outlivesTheCall n <;> simp
+
+/-! ### `CTWIN-PUBLISH-SCAN`: the parenthesised specifier, and monotonicity
+
+Card `CTWIN-PUBLISH` recorded that a declarator group carrying `(` contributes
+nothing, so that no prototype's parameter name enters the destination set. That
+skip also swallowed `_Atomic ( type-name ) g;` — CT40's literal atomic-pointer
+spelling — which therefore published without a word.
+
+That the reader splits a group's *specifier* parenthesis from its *declarator*
+parenthesis faithfully is a premise here, exactly as every other reader's
+extraction is. What is proved is that dropping the specifier is **monotone**:
+the extension can only add names, and adding names only adds refusals.
+-/
+
+/-- One declarator group, as the two facts the recognition reads. -/
+structure Group where
+  /-- The group carries a `_Atomic ( type-name )` **specifier** parenthesis. -/
+  specifierParen : Bool
+  /-- The group carries a **declarator** parenthesis — a function declarator, a
+      function-pointer declarator, or a K&R parameter list. -/
+  declaratorParen : Bool
+  /-- The trailing identifier the group declares, when there is one. -/
+  name : Option Name
+deriving Repr
+
+/-- Card `CTWIN-PUBLISH`'s reader: any `(` at all skips the group whole. -/
+def recogniseBefore (g : Group) : Option Name :=
+  if g.specifierParen || g.declaratorParen then none else g.name
+
+/-- Card `CTWIN-RESIDUALS`' reader: the specifier parenthesis is dropped first,
+    so only a **declarator** parenthesis skips the group. -/
+def recogniseAfter (g : Group) : Option Name :=
+  if g.declaratorParen then none else g.name
+
+/-- Monotone: every name the old reader recognised, the new one recognises.
+    A better scanner is strictly more refusing, never less. -/
+theorem the_specifier_drop_only_adds_names (g : Group) (n : Name)
+    (h : recogniseBefore g = some n) : recogniseAfter g = some n := by
+  unfold recogniseBefore recogniseAfter at *
+  cases hs : g.specifierParen <;> cases hd : g.declaratorParen <;>
+    simp [hs, hd] at h ⊢ <;> exact h
+
+/-- The drop never reaches a **declarator** parenthesis, so no prototype's
+    parameter name and no function-pointer object can enter the set through it.
+    Card `CTWIN-PUBLISH`'s reason for the skip is preserved exactly. -/
+theorem a_declarator_parenthesis_still_skips_the_group (g : Group)
+    (h : g.declaratorParen = true) : recogniseAfter g = none := by
+  simp [recogniseAfter, h]
+
+/-- Non-vacuity: there is a group the new reader recognises and the old one did
+    not — `_Atomic ( void * ) g_published ;`, measured `Safe` with no diagnostic
+    before this card. -/
+theorem the_drop_recognises_a_name_the_old_reader_hid :
+    recogniseBefore { specifierParen := true, declaratorParen := false, name := some 7 }
+        = none
+      ∧ recogniseAfter { specifierParen := true, declaratorParen := false, name := some 7 }
+        = some 7 := by
+  decide
+
+/-- And the two spellings of one object now answer alike, which is what makes
+    the answer independent of how the source spelled the qualifier. -/
+theorem both_spellings_of_one_object_are_recognised_alike (n : Name) :
+    recogniseAfter { specifierParen := true, declaratorParen := false, name := some n }
+      = recogniseAfter { specifierParen := false, declaratorParen := false, name := some n } := by
+  simp [recogniseAfter]
+
+/-! ### The whole card, in one sentence each direction -/
+
+/-- Every shape this card landed refuses, and none of them can certify. -/
+theorem no_landed_shape_certifies (v : Verdict) (i : Instruction)
+    (h : classify (publishedName 7) noCallerSites 7 i = .publication) :
+    publish v (classify (publishedName 7) noCallerSites 7 i) ≠ .safe :=
+  the_rule_never_certifies v _ _ _ i h
+
+/-- Non-vacuity for the extensions: the widened rule still admits. -/
+theorem the_widened_rule_both_refuses_and_admits :
+    classify (publishedName 7) (fun _ => true) 7 (.alias (bound 0)) = .publication
+      ∧ classify (publishedName 7) noCallerSites 7 .outWrite = .publication
+      ∧ classify (publishedName 7) noCallerSites 7 .clear = .notDecided
+      ∧ classify ordinaryLocalName noCallerSites 3 .outWrite = .notDecided := by
+  decide
 
 end QCore.PublicationCustody

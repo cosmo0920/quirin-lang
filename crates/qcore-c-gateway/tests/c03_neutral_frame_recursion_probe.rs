@@ -323,13 +323,20 @@ fn assumed_neutral_refuses_every_body_that_carries_an_effect() {
     let probe = run(&format!("{global}\n{CALLER}"), Some(&depth_neutral()));
     assert_eq!(probe.status("depth"), AnalysisStatus::Unknown);
     assert!(probe.has_unresolved_alias("depth"));
+    // Card CTWIN-RESIDUALS moved this refusal *earlier* and left its
+    // load-bearing half exactly where it was. Before that card, storing a
+    // formal into a static-storage object was admitted, ordinary inference read
+    // the formal as `Owned`, and the candidate was refused by the resulting
+    // `SummaryConflict`. The store is now refused as a publication, so no
+    // reading of `p` survives to conflict with anything — and the two
+    // assertions that matter are unchanged above: the candidate is still
+    // refused (`Unknown`, with an unresolved identity) and no summary is
+    // published for it. Asserted here rather than dropped.
     assert!(
-        probe
-            .diagnostics("depth")
-            .iter()
-            .any(|kind| matches!(kind, LegacyDiagnosticKind::SummaryConflict { .. })),
-        "storing a formal makes ordinary inference read `Owned`, which contradicts the candidate"
+        probe.summaries.is_empty(),
+        "an assumed-neutral candidate whose body publishes a formal must not be validated"
     );
+    println!("{:?}", probe.diagnostics("depth"));
 
     let acquires = "void *make(void *p, int n) { if (n > 0) { void *r = make(p, n - 1); return r; } void *f = q_alloc(); return f; }";
     let declared = module(&[neutral(

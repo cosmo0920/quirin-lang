@@ -414,7 +414,11 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
     // destination sets agree; the union is taken rather than assumed so that a
     // future context whose set differs cannot silently lose one half's
     // refusals.
-    zero.publications.append(&mut nonzero.publications);
+    // CTWIN-RESIDUALS: one grouped record now, unioned in both directions by
+    // `absorb`, so a destination, a scalar name or a recorded line from either
+    // context survives into the combination.
+    zero.publications
+        .absorb(std::mem::take(&mut nonzero.publications));
     zero.nodes.extend(nonzero.nodes);
     zero.entry = zero.nodes.len();
     zero.nodes.push(LegacyCfgNode {

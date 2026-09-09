@@ -46,6 +46,7 @@ use crate::aggregate_store::AggregateStoreBases;
 use crate::borrowed_actual::UntrackedBases;
 use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
 use crate::neutral_position::ExpressionRole;
+pub use crate::publication::{IndirectPublication, PublicationFacts};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
 /// One admitted nested call (card **O04-TRACE**), as modeled.
@@ -232,7 +233,9 @@ pub struct LegacyCfg {
     /// shadow, plus its own `static` locals. Derived from the same preprocessed
     /// token stream as every other typed premise, so certificate rederivation
     /// reproduces it; see [`crate::publication`].
-    pub publications: BTreeSet<String>,
+    /// Card **CTWIN-RESIDUALS** groups the three facts that travel together;
+    /// `destinations` is card CTWIN-PUBLISH's original set.
+    pub publications: PublicationFacts,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1587,7 +1590,7 @@ fn typed_access_facts(
     FunctionTypes,
     UntrackedBases,
     AggregateStoreBases,
-    BTreeSet<String>,
+    PublicationFacts,
 ) {
     let texts = tokens
         .iter()
@@ -1611,7 +1614,7 @@ fn typed_access_facts(
             // destination of it can be classified. An empty set here never
             // admits anything: the refusal below fires only on a name this
             // reader positively recognised.
-            BTreeSet::new(),
+            PublicationFacts::default(),
         );
     };
     let types = FunctionTypes::read(
@@ -1650,8 +1653,17 @@ fn typed_access_facts(
     // static storage duration — file-scope objects this body does not shadow,
     // plus its own `static` locals. Read from the same token stream for the
     // same reason as every set above.
-    let publications =
-        crate::publication::destinations(&texts, &texts[body_start + 1..body_end], &formals);
+    // CTWIN-PUBLISH's destinations, plus CTWIN-RESIDUALS' continued-access
+    // stores into them and the scalar names no publication may fire on. Read
+    // from the same token stream for the same reason as every set above.
+    let lines = tokens.iter().map(|token| token.line).collect::<Vec<_>>();
+    let publications = crate::publication::facts(
+        &texts,
+        &texts[body_start + 1..body_end],
+        &lines[body_start + 1..body_end],
+        &formals,
+        &types,
+    );
     (model, types, bases, stores, publications)
 }
 
@@ -4231,7 +4243,7 @@ impl CfgBuilder {
     fn build(
         function: &str,
         statements: &[Statement],
-        publications: BTreeSet<String>,
+        publications: PublicationFacts,
     ) -> LegacyCfg {
         let mut builder = Self {
             nodes: Vec::new(),
@@ -5472,7 +5484,7 @@ struct TransferContext<'a> {
     /// Storing an identity *this body* holds into one of them is a publication
     /// the projection does not model, and is refused; see
     /// [`reject_publication`].
-    publications: BTreeSet<String>,
+    publications: PublicationFacts,
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -5833,6 +5845,45 @@ fn transfer(
         }
         return state;
     }
+    // CTWIN-RESIDUALS, shape `CTWIN-PUBLISH-OUT`: a declared `Out` slot whose
+    // actual *is* one of those objects acquires the resource directly into it.
+    // That is the `Acquire` arm below seen from the callee's side — the
+    // identity is published at the moment it is created — and it was measured
+    // invisible: `y_fill(&g_published); y_release(g_published);` was `Safe`
+    // with no diagnostic, the publish-then-free hazard in the out shape, and
+    // the same body without the release reported a `Leak` the projection is in
+    // no position to claim. Refused *before* the call's effects apply, so no
+    // site exists to carry forward.
+    if let LegacyInstruction::ContractCall {
+        arguments,
+        contract,
+        ..
+    } = &node.instruction
+        && let Some(place) = contract
+            .parameters
+            .iter()
+            .zip(arguments)
+            .filter(|(mode, _)| matches!(mode, ResourceParameterMode::Out { .. }))
+            .filter_map(|(_, argument)| argument.as_deref())
+            .find(|argument| context.publications.destinations.contains(*argument))
+    {
+        let place = place.to_owned();
+        // The call's declared effects never apply, so no identity it names may
+        // keep a residual claim: a `Released` argument would otherwise stay
+        // live to the exit and be reported as a leak the call was going to
+        // discharge. Marking exactly the arguments' own identities keeps an
+        // unrelated resource's residual intact.
+        let named = arguments
+            .iter()
+            .flatten()
+            .filter_map(|argument| state.pointers.get(argument).cloned())
+            .collect::<Vec<_>>();
+        for pointer in &named {
+            mark_unresolved_effect(&mut state, pointer);
+        }
+        reject_publication(function, node.line, &place, &mut state, diagnostics);
+        return state;
+    }
     // CTWIN-PUBLISH: a store of an identity *this body* holds into an object
     // that outlives the call is a publication this projection does not model.
     // Checked here, before any effect of the instruction applies, and
@@ -5840,24 +5891,40 @@ fn transfer(
     // a tracked identity into it is. See [`reject_publication`] for why both
     // directions are withdrawn rather than an escape recorded, and
     // [`crate::publication`] for how the destination set is read.
-    if let Some(place) = destination.filter(|place| context.publications.contains(*place)) {
+    if let Some(place) =
+        destination.filter(|place| context.publications.destinations.contains(*place))
+    {
         let published = match &node.instruction {
-            // The value is whatever `source` denotes here. A caller-held site
-            // is deliberately excluded: publishing a *borrowed* pointer is a
-            // lifetime question this projection never claimed to decide, and
-            // refusing it would newly refuse bodies that are sound in the
-            // acquire/release accounting this projection does decide
-            // (CTWIN-PUBLISH-BORROWED).
-            LegacyInstruction::Alias { source, .. } => state
-                .pointers
-                .get(source)
-                .filter(|pointer| {
-                    pointer
-                        .targets
-                        .iter()
-                        .any(|site| !context.caller_sites.contains(site))
-                })
-                .cloned(),
+            // The value is whatever `source` denotes here — **any** identity
+            // this projection tracks, caller-held or body-acquired.
+            //
+            // Card CTWIN-RESIDUALS withdrew the caller-held exclusion card
+            // CTWIN-PUBLISH left open as `CTWIN-PUBLISH-BORROWED`, on a
+            // measured ground rather than a wider notion of safety: a body that
+            // publishes a *borrowed* formal was `Safe` with no diagnostic, so
+            // W4 published `Borrowed` as its summary for that formal, and a
+            // caller that acquired, called it and released was `Safe` too —
+            // which is the wave-16 headline body with one level of indirection
+            // through a helper, and the rule that refuses it inlined must
+            // refuse it composed. `Borrowed` asserts that the caller's
+            // obligations are unchanged across the call, and a publication
+            // falsifies exactly that. The faithful alternative modes —
+            // `Escaped`, `Consumed` — are the escape model CTWIN-PUBLISH §3
+            // proved promotes, so the only fail-closed answer is withdrawal.
+            //
+            // The rule therefore reads no provenance, exactly as it reads no
+            // per-site status: a formal the projection tracks no identity for
+            // still publishes nothing, so a body analyzed with no entry custody
+            // keeps its pre-existing answer.
+            LegacyInstruction::Alias { source, .. }
+                if !context.publications.scalar_sources.contains(source) =>
+            {
+                state
+                    .pointers
+                    .get(source)
+                    .filter(|pointer| !pointer.targets.is_empty())
+                    .cloned()
+            }
             // An acquisition bound directly to such an object publishes it at
             // the moment it is created. Refused *before* the site exists, so
             // there is nothing to carry forward.
@@ -6226,6 +6293,34 @@ fn transfer(
                     description: description.clone(),
                 },
             });
+            // CTWIN-RESIDUALS, shape `CTWIN-PUBLISH-INDIRECT`. The statement
+            // keeps the refusal it already had — the attribution stays with the
+            // gate that read it — and additionally withdraws the residual claim
+            // on whatever identity it stored, because the destination is a
+            // continued access on an object that outlives the call. Only the
+            // sites the statement's own operands denote are marked, so an
+            // unrelated resource's residual is untouched; a statement that
+            // names no tracked identity marks nothing, and nothing here can
+            // turn a refusal into an admission.
+            if let Some(publication) = context.publications.indirect.get(&node.line) {
+                let published = publication
+                    .sources
+                    .iter()
+                    .filter_map(|source| state.pointers.get(source).cloned())
+                    .collect::<Vec<_>>();
+                if !published.is_empty() {
+                    for pointer in &published {
+                        mark_unresolved_effect(&mut state, pointer);
+                    }
+                    reject_publication(
+                        function,
+                        node.line,
+                        &publication.place,
+                        &mut state,
+                        diagnostics,
+                    );
+                }
+            }
             for pointer in state.pointers.values_mut() {
                 pointer.unknown = true;
                 pointer.may_be_null = true;
