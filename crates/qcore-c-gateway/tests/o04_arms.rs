@@ -448,7 +448,9 @@ fn a_borrowed_destructor_turns_the_chain_path_arm_into_a_residual() {
 // --------------------------------------------------------------------------
 
 fn real_unit() -> String {
-    format!("{PRELUDE}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n")
+    // Git may check out the reduced prelude with CRLF on Windows. Keep the
+    // assembled test input consistent with the LF mutation anchors below.
+    format!("{PRELUDE}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n").replace("\r\n", "\n")
 }
 
 fn analyze_real(source: &str) -> UnrestrictedLegacyResult {

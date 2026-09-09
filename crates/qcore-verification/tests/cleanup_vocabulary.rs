@@ -272,12 +272,13 @@ fn a_profile_that_is_not_the_declaration_is_refused_member_by_member() {
 
 /// Total or reject, in the loader's idiom. Each row edits the real pinned
 /// contract text and must be refused with no partial interpretation.
+/// Remove clauses without matching checkout-dependent line endings.
 #[test]
 fn a_declaration_outside_the_closed_grammar_is_refused_whole() {
     let rows: Vec<(&str, String)> = vec![
         (
             "marker removed",
-            DELETE.replace("    requires cleanup_vocabulary_v1;\n", ""),
+            DELETE.replace("    requires cleanup_vocabulary_v1;", ""),
         ),
         (
             "duplicated clause",
@@ -344,33 +345,30 @@ fn a_declaration_outside_the_closed_grammar_is_refused_whole() {
         ),
         (
             "root type missing",
-            DELETE.replace("    requires cleanup_root_type__struct_cio_file_ptr;\n", ""),
+            DELETE.replace("    requires cleanup_root_type__struct_cio_file_ptr;", ""),
         ),
         (
             "function missing",
-            DELETE.replace(
-                "    requires cleanup_function__cio_file_native_delete;\n",
-                "",
-            ),
+            DELETE.replace("    requires cleanup_function__cio_file_native_delete;", ""),
         ),
         (
             "presence field missing",
-            DELETE.replace("    requires cleanup_presence_field__fd;\n", ""),
+            DELETE.replace("    requires cleanup_presence_field__fd;", ""),
         ),
         (
             "report helper missing",
-            DELETE.replace("    requires cleanup_report_helper__cio_errno_print;\n", ""),
+            DELETE.replace("    requires cleanup_report_helper__cio_errno_print;", ""),
         ),
         (
             "no field inventory",
             DELETE
-                .replace("    requires cleanup_field__0__fd__int__integer_m1;\n", "")
-                .replace("    requires cleanup_field__1__map__char_ptr__null;\n", "")
-                .replace("    requires cleanup_field__2__path__char_ptr__null;\n", ""),
+                .replace("    requires cleanup_field__0__fd__int__integer_m1;", "")
+                .replace("    requires cleanup_field__1__map__char_ptr__null;", "")
+                .replace("    requires cleanup_field__2__path__char_ptr__null;", ""),
         ),
         (
             "no arguments",
-            DELETE.replace("    requires cleanup_argument_field__0__path;\n", ""),
+            DELETE.replace("    requires cleanup_argument_field__0__path;", ""),
         ),
         (
             "record tag with a separator",
@@ -402,11 +400,12 @@ fn a_declaration_outside_the_closed_grammar_is_refused_whole() {
 /// Held-out C, unrelated to ChunkIO, in the two shapes the family binds: a
 /// one-field descriptor release and a three-field mapping release with two
 /// ordered syscall arguments.
+/// The declared field and synthetic syscall both use `unsigned long`, avoiding
+/// a target-dependent `size_t` alias or an unmodeled integral conversion.
 const SAMPLE: &str = r#"
-typedef unsigned long size_t;
-struct sample_file { int handle; char *view; size_t view_bytes; int warned; int spare; };
+struct sample_file { int handle; char *view; unsigned long view_bytes; int warned; int spare; };
 int sample_release(int);
-int sample_unmap(void *, size_t);
+int sample_unmap(void *, unsigned long);
 int *sample_errno(void);
 int sample_report(int, const char *, int);
 #define SAMPLE_REPORT sample_report(*sample_errno(), "sample.c", 7)
@@ -514,7 +513,7 @@ const UNMAP_CLAUSES: &str = "    requires nullable_live_exclusive_record;
     requires cleanup_function__sample_file_unmap;
     requires cleanup_root_type__struct_sample_file_ptr;
     requires cleanup_syscall__sample_unmap;
-    requires cleanup_syscall_signature__int__void_ptr__size_t;
+    requires cleanup_syscall_signature__int__void_ptr__unsigned_long;
     requires cleanup_presence_field__view;
     requires cleanup_field__0__view__char_ptr__null;
     requires cleanup_field__1__view_bytes__unsigned_long__integer_0;

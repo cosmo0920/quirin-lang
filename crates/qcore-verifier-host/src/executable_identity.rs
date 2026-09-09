@@ -427,6 +427,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)]
     fn an_unlink_and_recreate_is_refused_as_a_replaced_path() {
         let directory = scratch("replace");
         let (executable, installed) = verified(&directory);
@@ -442,6 +443,22 @@ mod tests {
             matches!(error, IdentityRefusal::PathReplaced { .. }),
             "expected a replaced path, got {error}"
         );
+        std::fs::remove_dir_all(&directory).ok();
+    }
+
+    // FileIdentity documents that non-Unix hosts compare regular-file status
+    // and length, not device/inode identity. Pin that limitation explicitly
+    // instead of claiming that a byte-identical replacement is detected there.
+    #[test]
+    #[cfg(not(unix))]
+    fn byte_identical_replacement_remains_a_non_unix_identity_limitation() {
+        let directory = scratch("replace");
+        let (executable, installed) = verified(&directory);
+        let path = directory.join("provider");
+        let bytes = std::fs::read(&path).unwrap();
+        std::fs::remove_file(&path).unwrap();
+        std::fs::write(&path, &bytes).unwrap();
+        executable.revalidate(&installed).unwrap();
         std::fs::remove_dir_all(&directory).ok();
     }
 

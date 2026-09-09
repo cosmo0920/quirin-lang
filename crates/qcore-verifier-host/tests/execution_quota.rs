@@ -11,7 +11,7 @@
 //! never run.
 
 use qcore_verifier_host::*;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -19,6 +19,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 // Only the Linux cases spawn a package, register a provider or wait on a
 // descendant; the portable cases below decide before anything is spawned, which
 // is what lets the Windows CI job execute the non-Linux refusal ground.
+#[cfg(target_os = "linux")]
+use std::collections::BTreeMap;
 #[cfg(target_os = "linux")]
 use std::sync::Arc;
 #[cfg(target_os = "linux")]
@@ -132,6 +134,7 @@ impl Drop for Fixture {
     }
 }
 
+#[cfg(target_os = "linux")]
 fn request() -> VerificationRequest {
     VerificationRequest {
         protocol_version: 1,

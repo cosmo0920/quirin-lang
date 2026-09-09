@@ -790,22 +790,26 @@ fn a_store_is_admitted_but_needs_a_second_live_identity_the_profile_refuses() {
 /// identity, because a self-store needs only one — and is refused by name.
 #[test]
 fn storing_an_identity_beneath_itself_refuses() {
-    let source = STORED.replace(
+    let baseline = STORED.replace("\r\n", "\n");
+    let source = baseline.replace(
         "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
          qcore_extern_attach(owner, move child);",
         "    qcore_extern_attach(owner, move owner);",
     );
+    assert_ne!(source, baseline, "the self-store substitution applied");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }
 
 #[test]
 fn moving_where_the_contract_declares_the_store_owner_refuses() {
-    let source = STORED.replace(
+    let baseline = STORED.replace("\r\n", "\n");
+    let source = baseline.replace(
         "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
          qcore_extern_attach(owner, move child);",
         "    qcore_extern_attach(move owner, move owner);",
     );
+    assert_ne!(source, baseline, "the owner-move substitution applied");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }

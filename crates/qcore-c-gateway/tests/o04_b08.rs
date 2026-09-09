@@ -815,10 +815,15 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
         return;
     }
     let substitutions: [(&str, &str, &str); 4] = [
+        // `ic->chunk = chunk` becomes invalid C if only the destination gains
+        // a pointer level. Use the null-initialized member of the same record
+        // so Clang accepts the mutation and the analyzer must refuse it.
+        // The stored-resource double-pointer substitution remains covered by
+        // `a_certificate_resting_on_an_aggregate_store_is_rederived_from_source`.
         (
-            "the stored member becomes a double pointer",
-            "struct cio_chunk *chunk;",
-            "struct cio_chunk **chunk;",
+            "the null-initialized member becomes a double pointer",
+            "struct flb_task *task;",
+            "struct flb_task **task;",
         ),
         (
             "the stored member becomes volatile",
@@ -848,6 +853,12 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
         let substituted = unit.replacen(from, to, 1);
         let result = analyze_real(&substituted);
         let caller = function(program(&result), "flb_input_chunk_create");
+        assert_eq!(caller.status, AnalysisStatus::Unknown, "{reason}");
+        assert!(
+            unsupported(caller).contains(&INDIRECT),
+            "{reason}: the analyzer must retain the indirect-access refusal: {:?}",
+            caller.diagnostics
+        );
         assert!(
             caller
                 .exits

@@ -153,6 +153,8 @@ fn reports_unresolved(summary: &LegacyFunctionSummary, name: &str) -> bool {
 ///   deliberately — one `void *`, one double-star, one array and one `volatile`
 ///   member the reader must refuse.
 /// * `r_outer` supplies an aggregate read out of another object's memory.
+/// * `r_probe` accepts any object pointer, including qualified pointers, so
+///   refused member shapes reach the analyzer without an invalid C argument.
 const DECLARATIONS: &str = "\
 typedef unsigned long r_word; \
 struct r_item { int weight; struct r_item *next; }; \
@@ -165,7 +167,7 @@ struct r_item *r_take(int n); \
 r_word *r_words(int n); \
 void r_drop(struct r_box *b); \
 void r_release(struct r_item *i); \
-int r_probe(struct r_item *i); \
+int r_probe(const volatile void *i); \
 int r_scan(r_word *w); \
 int r_count(int n); \
 void r_reap(struct r_item *i); \
@@ -735,11 +737,12 @@ fn a_certificate_resting_on_a_bound_read_rests_on_the_declared_mode() {
     if !clang_available() {
         return;
     }
-    let weakened = GENERIC_CONTRACTS.replace(
+    let baseline = GENERIC_CONTRACTS.replace("\r\n", "\n");
+    let weakened = baseline.replace(
         "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);",
         "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(i, nonnull);",
     );
-    assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
+    assert_ne!(weakened, baseline, "the substitution applied");
     let source = format!("{DECLARATIONS} {R_CREATE}");
     let result = analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -896,19 +899,22 @@ fn substituting_the_read_member_declaration_restores_the_refusal() {
     let substitutions: [(&str, &str, &str); 2] = [
         (
             "the read member becomes a double pointer",
-            "flb_route_mask_element *routes_mask;",
-            "flb_route_mask_element **routes_mask;",
+            "flb_route_mask_element *",
+            "flb_route_mask_element **",
         ),
         (
             "the read member becomes volatile",
-            "flb_route_mask_element *routes_mask;",
-            "volatile flb_route_mask_element *routes_mask;",
+            "flb_route_mask_element *",
+            "volatile flb_route_mask_element *",
         ),
     ];
     for (reason, from, to) in substitutions {
         let unit = real_unit();
-        assert!(unit.contains(from), "{reason}: `{from}` is present");
-        let result = analyze_real(&unit.replacen(from, to, 1));
+        // Align the member, allocation cast and borrowing callee's parameter
+        // so the mutation stays valid C. The read expression and declared
+        // custody contract are unchanged; the analyzer must refuse the field.
+        assert_eq!(unit.matches(from).count(), 3, "{reason}: all three C types");
+        let result = analyze_real(&unit.replace(from, to));
         let caller = function(program(&result), "flb_input_chunk_create");
         assert!(
             unsupported(caller)
