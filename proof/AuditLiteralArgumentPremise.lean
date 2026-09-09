@@ -31,7 +31,26 @@ directive is proved to re-admit exactly the call site the premise withdrew, and
 refusing such a text is proved to withdraw every call site instead. The
 fail-open reading — answering an unreadable text with an empty premise set — is
 proved to apply the declaration where the poisoned reading refuses, including at
-a call that never reaches the declared parameter. -/
+a call that never reaches the declared parameter.
+
+Card HASH-REFINE adds the two boundaries HASH-CLAUSE recorded open. For
+**HASH-CLAUSE-LITERAL**, the call-site spelling relation is audited on four
+sentences: it is *decided, not evaluated* (the reader selects one integer token
+out of a contiguous slice of the actual's own stream and returns its digits and
+sign verbatim); it is *exact* (every admitted spelling denotes the declared
+constant, and the declared spelling is the relation's own fixed point); it is a
+*strict widening* (everything exact token equality admitted is still admitted,
+and admission is by identity or by denotation, with no third way in); and it
+*never crosses a value* — an admitted spelling of one constant satisfies no
+declaration of another, a sign is erased by nothing, and an octal digit run
+matches no decimal declaration, which is why a leading zero is refused rather
+than stripped. Each refused spelling is audited beside the capability deciding
+it would need: arithmetic, a base, reaching into a cast, or symbol resolution.
+For **HASH-CLAUSE-TYPE**, the premise is audited on a parameter index the
+gateway's fixture gives a pointer type: the null-sentinel call is applied, the
+live-pointer call is withdrawn, and a premise no call site can satisfy is proved
+to withdraw *every* call — so admitting the clause on any parameter type cannot
+make a consumer more permissive. -/
 
 -- Conservativity: the premise never invents, alters or widens a declaration.
 #print axioms QCore.LiteralArgumentPremise.an_applied_contract_is_the_declared_one
@@ -104,3 +123,52 @@ a call that never reaches the declared parameter. -/
 #print axioms QCore.LiteralArgumentPremise.the_admitted_size_takes_the_reference_arm
 #print axioms QCore.LiteralArgumentPremise.a_positive_size_takes_the_copy_arm
 #print axioms QCore.LiteralArgumentPremise.the_two_arms_are_distinct
+
+-- Card HASH-REFINE, HASH-CLAUSE-LITERAL: which call-site spellings are the
+-- declared constant. Decided, not evaluated: the literal reader selects one
+-- integer token out of a contiguous slice of the actual's own stream and
+-- returns its digits and its sign verbatim.
+#print axioms QCore.LiteralArgumentPremise.the_read_literal_is_the_token_itself
+#print axioms QCore.LiteralArgumentPremise.an_admitted_spelling_returns_its_own_digits
+#print axioms QCore.LiteralArgumentPremise.the_core_is_a_contiguous_slice
+
+-- Exact: every admitted spelling denotes the declared constant, and the
+-- declared spelling is a fixed point of the relation.
+#print axioms QCore.LiteralArgumentPremise.a_declared_literal_is_its_own_canonical_form
+#print axioms QCore.LiteralArgumentPremise.an_admitted_spelling_denotes_the_declared_constant
+#print axioms QCore.LiteralArgumentPremise.denote_separates_two_constants
+
+-- A strict widening: everything the exact test admitted is still admitted, and
+-- there is no third way in.
+#print axioms QCore.LiteralArgumentPremise.exact_token_equality_still_satisfies
+#print axioms QCore.LiteralArgumentPremise.the_refinement_only_admits
+#print axioms QCore.LiteralArgumentPremise.admission_is_identity_or_denotation
+
+-- The admitted spellings, decided, with the widening's non-vacuity.
+#print axioms QCore.LiteralArgumentPremise.the_declared_spelling_is_admitted
+#print axioms QCore.LiteralArgumentPremise.a_parenthesised_spelling_is_admitted
+#print axioms QCore.LiteralArgumentPremise.a_doubly_parenthesised_spelling_is_admitted
+#print axioms QCore.LiteralArgumentPremise.a_suffixed_spelling_is_admitted
+#print axioms QCore.LiteralArgumentPremise.a_parenthesised_suffixed_spelling_is_admitted
+#print axioms QCore.LiteralArgumentPremise.the_widening_admits_more_than_exact_equality
+
+-- The refused spellings, and the capability each would need.
+#print axioms QCore.LiteralArgumentPremise.arithmetic_is_refused
+#print axioms QCore.LiteralArgumentPremise.a_negated_zero_is_refused
+#print axioms QCore.LiteralArgumentPremise.an_alternate_base_is_refused
+#print axioms QCore.LiteralArgumentPremise.an_octal_spelling_is_refused
+#print axioms QCore.LiteralArgumentPremise.a_cast_is_refused
+#print axioms QCore.LiteralArgumentPremise.an_identifier_is_refused
+#print axioms QCore.LiteralArgumentPremise.an_unmatched_parenthesis_pair_is_refused
+#print axioms QCore.LiteralArgumentPremise.an_octal_run_matches_no_decimal_declaration
+
+-- The widening never crosses a value, and never erases a sign.
+#print axioms QCore.LiteralArgumentPremise.an_admitted_zero_never_satisfies_another_constant
+#print axioms QCore.LiteralArgumentPremise.a_sign_is_never_erased
+
+-- Card HASH-REFINE, HASH-CLAUSE-TYPE: the premise on a parameter of any type.
+-- The null-sentinel reading decides both ways, and a premise no call site can
+-- satisfy withdraws every call rather than admitting one.
+#print axioms QCore.LiteralArgumentPremise.the_null_sentinel_call_is_applied
+#print axioms QCore.LiteralArgumentPremise.the_live_pointer_call_is_withdrawn
+#print axioms QCore.LiteralArgumentPremise.an_unsatisfiable_pointer_premise_withdraws_every_call
