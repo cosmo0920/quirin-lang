@@ -26,7 +26,12 @@ pub fn recheck_native_delete(
     }
     check_guarded_delete_outcomes(certificate.source(), &profile(), "map", CONTRACT)
 }
-fn profile() -> CleanupProfile {
+/// The guarded-delete record profile the retained in-process route composes
+/// under. Public within the adapter since card `P04-COMPOSE-A` so the relocated
+/// `file_close` decision procedure receives it as an explicit parameter, and so
+/// `compiler/tests/composition_route_parity.rs` can assert directly that this
+/// table **is** the vocabulary the pinned contract declares.
+pub fn profile() -> CleanupProfile {
     CleanupProfile {
         function: "cio_file_native_delete".into(),
         root_type: "struct cio_file *".into(),

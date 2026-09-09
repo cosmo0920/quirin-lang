@@ -29,11 +29,14 @@ use qcore_schemas::SemanticWitness;
 use qcore_schemas::cleanup_replay_summary::{
     CleanupEntryRecord, CleanupProfileRecord, CleanupReplayCaseRecord,
     CleanupReplayExpressionRecord, CleanupReplayFunctionRecord, CleanupReplayOperationRecord,
-    CleanupReplayValueRecord,
+    CleanupReplayRecord, CleanupReplayValueRecord,
 };
 use qcore_schemas::composition_summary::{
     CompositionFamilyInput, CompositionProposalRecord, CompositionRecord, CompositionSourceInput,
-    CompositionWitness, UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapCaseRecord,
+    CompositionWitness, DeletingCloseCaseRecord, DeletionOutcomeRecord,
+    FILE_CLOSE_DELETE_SEMANTIC_PROFILE, FILE_CLOSE_SEMANTIC_PROFILE, FileCloseCaseRecord,
+    FileCloseCompositionRecord, FileCloseDeleteInput, ResidualCustodyRecord,
+    UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapCaseRecord,
 };
 use qcore_schemas::plugin::*;
 use std::collections::{BTreeMap, BTreeSet};
@@ -353,6 +356,10 @@ impl Replay {
                     return Some(Some(n));
                 }
                 CleanupReplayOperationRecord::ReturnValue { .. } => return None,
+                // The leaf family's wrapper returns a value on every complete
+                // path; a value-free return belongs to the `file_close` wrapper
+                // alone and is declined by name here.
+                CleanupReplayOperationRecord::Return => return None,
             }
         }
         None
@@ -476,10 +483,601 @@ fn compose_unmap_wrapper(
     })
 }
 
+/// The `cio_file_close` wrapper's symbolic value domain, constructor for
+/// constructor with the trusted composition's own private domain and in the same
+/// order. There is no `Unknown`/`Other` constructor: an unresolved value is a
+/// decline, never an opaque token.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum CloseValue {
+    Null,
+    Chunk,
+    Context,
+    Backend,
+    Path,
+    Stream,
+    StreamName,
+    ChunkName,
+    Text(String),
+    Integer(i32),
+    IgnoredResult,
+}
+
+struct CloseReplay {
+    backend: bool,
+    path_live: bool,
+    phase: u32,
+    deleting: bool,
+    delete_result: Option<i32>,
+    delete_called: bool,
+    logged: bool,
+    symbols: BTreeMap<u32, CloseValue>,
+}
+
+impl CloseReplay {
+    fn value(&self, v: &CleanupReplayValueRecord, depth: u32) -> Option<CloseValue> {
+        if depth > MAX_EXPRESSION_DEPTH {
+            return None;
+        }
+        match &v.expression {
+            CleanupReplayExpressionRecord::Parameter { index: 0 }
+                if v.c_type == "struct cio_chunk *" =>
+            {
+                Some(CloseValue::Chunk)
+            }
+            CleanupReplayExpressionRecord::Parameter { index: 1 } if v.c_type == "int" => {
+                Some(CloseValue::Integer(i32::from(self.deleting)))
+            }
+            CleanupReplayExpressionRecord::String { value } => {
+                Some(CloseValue::Text(value.clone()))
+            }
+            CleanupReplayExpressionRecord::Integer { value } => {
+                Some(CloseValue::Integer(value.parse().ok()?))
+            }
+            CleanupReplayExpressionRecord::Symbol { operation } => self
+                .symbols
+                .get(operation)
+                .filter(|v| **v != CloseValue::IgnoredResult)
+                .cloned(),
+            CleanupReplayExpressionRecord::Cast { cast, value } => {
+                let result = self.value(value, depth + 1)?;
+                match cast.as_str() {
+                    "NullToPointer"
+                        if matches!(result, CloseValue::Null | CloseValue::Integer(0))
+                            && v.c_type.ends_with('*') =>
+                    {
+                        Some(CloseValue::Null)
+                    }
+                    "ArrayToPointerDecay"
+                        if matches!(result, CloseValue::Text(_)) && v.c_type.ends_with('*') =>
+                    {
+                        Some(result)
+                    }
+                    "BitCast" | "NoOp"
+                        if value.c_type.ends_with('*') && v.c_type.ends_with('*') =>
+                    {
+                        Some(result)
+                    }
+                    _ => None,
+                }
+            }
+            CleanupReplayExpressionRecord::Unary { operator, value } if operator == "-" => {
+                let CloseValue::Integer(n) = self.value(value, depth + 1)? else {
+                    return None;
+                };
+                Some(CloseValue::Integer(n.checked_neg()?))
+            }
+            CleanupReplayExpressionRecord::Unary { operator, value } if operator == "!" => Some(
+                CloseValue::Integer(i32::from(!Self::truth(self.value(value, depth + 1)?)?)),
+            ),
+            CleanupReplayExpressionRecord::Binary {
+                operator,
+                left,
+                right,
+            } if operator == "==" || operator == "!=" => {
+                let a = self.value(left, depth + 1)?;
+                let b = self.value(right, depth + 1)?;
+                let eq = match (&a, &b) {
+                    (CloseValue::Integer(a), CloseValue::Integer(b)) => a == b,
+                    (CloseValue::Null, CloseValue::Null) => true,
+                    (CloseValue::Backend | CloseValue::Path, CloseValue::Null)
+                    | (CloseValue::Null, CloseValue::Backend | CloseValue::Path) => false,
+                    _ => return None,
+                };
+                Some(CloseValue::Integer(i32::from(if operator == "==" {
+                    eq
+                } else {
+                    !eq
+                })))
+            }
+            _ => None,
+        }
+    }
+
+    fn truth(v: CloseValue) -> Option<bool> {
+        match v {
+            CloseValue::Null => Some(false),
+            CloseValue::Backend | CloseValue::Path => Some(true),
+            CloseValue::Integer(n) => Some(n != 0),
+            _ => None,
+        }
+    }
+
+    fn reporting(&self) -> bool {
+        self.phase == 2
+            && self.deleting
+            && self.delete_called
+            && self.delete_result == Some(-1)
+            && !self.logged
+    }
+
+    fn ready_to_free(&self) -> bool {
+        self.phase == 2
+            && (!self.deleting
+                || (self.delete_called && self.logged == (self.delete_result == Some(-1))))
+    }
+
+    /// `Some(true)`: this path completed. `Some(false)`: a guard did not hold,
+    /// so this entry state does not select this path. `None`: the projection is
+    /// outside the vocabulary, so decline entirely.
+    fn run(&mut self, ops: &[CleanupReplayOperationRecord]) -> Option<bool> {
+        for (i, op) in ops.iter().enumerate() {
+            let i = u32::try_from(i).ok()?;
+            match op {
+                CleanupReplayOperationRecord::Read { place } => {
+                    let CleanupReplayExpressionRecord::Field { base, name } = &place.expression
+                    else {
+                        return None;
+                    };
+                    let result = match (
+                        self.value(base, 0)?,
+                        base.c_type.as_str(),
+                        name.as_str(),
+                        place.c_type.as_str(),
+                    ) {
+                        (CloseValue::Chunk, "struct cio_chunk *", "backend", "void *")
+                            if self.phase == 0 =>
+                        {
+                            if self.backend {
+                                CloseValue::Backend
+                            } else {
+                                CloseValue::Null
+                            }
+                        }
+                        (CloseValue::Chunk, "struct cio_chunk *", "ctx", "struct cio_ctx *")
+                            if self.phase == 0 || self.reporting() =>
+                        {
+                            CloseValue::Context
+                        }
+                        (CloseValue::Chunk, "struct cio_chunk *", "st", "struct cio_stream *")
+                            if self.reporting() =>
+                        {
+                            CloseValue::Stream
+                        }
+                        (CloseValue::Chunk, "struct cio_chunk *", "name", "char *")
+                            if self.reporting() =>
+                        {
+                            CloseValue::ChunkName
+                        }
+                        (CloseValue::Stream, "struct cio_stream *", "name", "char *")
+                            if self.reporting() =>
+                        {
+                            CloseValue::StreamName
+                        }
+                        (CloseValue::Backend, "struct cio_file *", "path", "char *")
+                            if self.ready_to_free() =>
+                        {
+                            if self.path_live {
+                                CloseValue::Path
+                            } else {
+                                CloseValue::Null
+                            }
+                        }
+                        _ => return None,
+                    };
+                    self.symbols.insert(i, result);
+                }
+                CleanupReplayOperationRecord::LocalWrite { value, .. } => {
+                    self.value(value, 0)?;
+                }
+                CleanupReplayOperationRecord::LocalStart { .. }
+                | CleanupReplayOperationRecord::LocalEnd { .. } => (),
+                CleanupReplayOperationRecord::Guard { condition, taken } => {
+                    if Self::truth(self.value(condition, 0)?)? != *taken {
+                        return Some(false);
+                    }
+                }
+                CleanupReplayOperationRecord::Call {
+                    function,
+                    signature,
+                    arguments,
+                    result_type,
+                } => {
+                    let args = arguments
+                        .iter()
+                        .map(|v| self.value(v, 0))
+                        .collect::<Option<Vec<_>>>()?;
+                    if function == "cio_file_native_delete" {
+                        if self.phase != 2
+                            || !self.deleting
+                            || self.delete_called
+                            || self.delete_result.is_none()
+                            || signature != "int (struct cio_file *)"
+                            || result_type != "int"
+                            || args != [CloseValue::Backend]
+                        {
+                            return None;
+                        }
+                        self.delete_called = true;
+                        self.symbols
+                            .insert(i, CloseValue::Integer(self.delete_result?));
+                        continue;
+                    }
+                    if function == "cio_log_print" {
+                        if !self.reporting()
+                            || signature
+                                != "void (void *, int, const char *, int, const char *, ...)"
+                            || result_type != "void"
+                            || !matches!(args.as_slice(),[CloseValue::Context,CloseValue::Integer(1),CloseValue::Text(_),CloseValue::Integer(line),CloseValue::Text(format),CloseValue::StreamName,CloseValue::ChunkName] if *line>0 && format=="\"[cio file] error deleting file at close %s:%s\"")
+                        {
+                            return None;
+                        }
+                        self.logged = true;
+                        self.symbols.insert(i, CloseValue::IgnoredResult);
+                        continue;
+                    }
+                    let valid = match (
+                        self.phase,
+                        function.as_str(),
+                        signature.as_str(),
+                        result_type.as_str(),
+                    ) {
+                        (0, "munmap_file", "int (struct cio_ctx *, struct cio_chunk *)", "int") => {
+                            self.backend && args == [CloseValue::Context, CloseValue::Chunk]
+                        }
+                        (1, "cio_file_native_close", "int (struct cio_file *)", "int") => {
+                            args == [CloseValue::Backend]
+                        }
+                        (2, "free", "void (void *)", "void") => {
+                            self.ready_to_free()
+                                && args
+                                    == [if self.path_live {
+                                        CloseValue::Path
+                                    } else {
+                                        CloseValue::Null
+                                    }]
+                        }
+                        (3, "free", "void (void *)", "void") => args == [CloseValue::Backend],
+                        _ => false,
+                    };
+                    if !valid {
+                        return None;
+                    }
+                    self.phase += 1;
+                    self.symbols.insert(i, CloseValue::IgnoredResult);
+                }
+                CleanupReplayOperationRecord::Return
+                    if usize::try_from(i).ok()? + 1 == ops.len() =>
+                {
+                    return Some(true);
+                }
+                _ => return None,
+            }
+        }
+        None
+    }
+}
+
+/// The native close reading's own selected case for one prestate, recomputed
+/// from the prerequisite reading this process derived itself.
+fn close_cases(record: &CleanupReplayRecord) -> Option<Vec<(u32, Option<i32>, bool)>> {
+    let mut cases = Vec::new();
+    for (index, case) in record.cases.iter().enumerate() {
+        let CleanupReplayCaseRecord::NativeCleanupOutcome {
+            entry,
+            syscall_result,
+            ..
+        } = case
+        else {
+            return None;
+        };
+        cases.push((
+            u32::try_from(index).ok()?,
+            *syscall_result,
+            *entry != CleanupEntryRecord::Null,
+        ));
+    }
+    Some(cases)
+}
+
+/// One guarded-delete case as the `file_close` entry domain reads it: the case
+/// index, both eligibility fields, the syscall outcome and the returned value.
+type DeleteCase = (u32, bool, bool, Option<i32>, i32);
+
+/// The guarded delete reading's own cases, in the shape the file_close entry
+/// domain crosses them with.
+fn delete_cases(record: &CleanupReplayRecord) -> Option<Vec<DeleteCase>> {
+    let mut cases = Vec::new();
+    for (index, case) in record.cases.iter().enumerate() {
+        let CleanupReplayCaseRecord::GuardedDelete {
+            descriptor_field_active,
+            mapping_field_active,
+            syscall_result,
+            returned,
+            ..
+        } = case
+        else {
+            return None;
+        };
+        cases.push((
+            u32::try_from(index).ok()?,
+            *descriptor_field_active,
+            *mapping_field_active,
+            *syscall_result,
+            *returned,
+        ));
+    }
+    Some(cases)
+}
+
+fn residual(unresolved: bool) -> ResidualCustodyRecord {
+    if unresolved {
+        ResidualCustodyRecord::Unresolved
+    } else {
+        ResidualCustodyRecord::Absent
+    }
+}
+
+/// Recompute the whole two-level `cio_file_close` reading.
+///
+/// The nested composed reading is recomputed here by running this same process's
+/// unmap-wrapper composition over the transported nested question — not read out
+/// of anything, because the vocabulary cannot carry it.
+fn compose_file_close(
+    wrapper: &CleanupReplayFunctionRecord,
+    unmap: &CompositionFamilyInput,
+    close: &CleanupReplayFunctionRecord,
+    close_profile: &CleanupProfileRecord,
+    delete: Option<&FileCloseDeleteInput>,
+) -> Option<FileCloseCompositionRecord> {
+    if !bounded(wrapper) || !bounded(close) {
+        return None;
+    }
+    if wrapper.signature != "void (struct cio_chunk *, int)"
+        || wrapper.function == close.function
+        || wrapper.source_revision != close.source_revision
+    {
+        return None;
+    }
+    // Level two, recomputed rather than received.
+    let CompositionFamilyInput::UnmapWrapper {
+        wrapper: nested_wrapper,
+        native: nested_native,
+        native_profile,
+    } = unmap
+    else {
+        return None;
+    };
+    if nested_wrapper.source_revision != wrapper.source_revision {
+        return None;
+    }
+    let nested = compose_unmap_wrapper(nested_wrapper, nested_native, native_profile)?;
+    let close_reading =
+        crate::cleanup_replay_effect::replay_native_cleanup_outcome(close, close_profile)?;
+    let close_cases = close_cases(&close_reading)?;
+    let delete_reading = match delete {
+        None => None,
+        Some(delete) => {
+            if !bounded(&delete.body) || delete.body.source_revision != wrapper.source_revision {
+                return None;
+            }
+            let record = crate::cleanup_replay_effect::replay_guarded_delete(
+                &delete.body,
+                &delete.profile,
+                &delete.mapping_field,
+            )?;
+            Some(delete_cases(&record)?)
+        }
+    };
+
+    // The non-deleting arm, over the same entry domain the trusted composition
+    // enumerates: the nested composition's backend-present cases crossed with
+    // the close reading's non-null prestates and the path allocation.
+    // The nested case *index*, not its selected path, is what the trusted
+    // reading publishes, so the entry domain is enumerated over indices.
+    let mut entries: Vec<(Option<u32>, Option<u32>, bool)> = vec![(None, None, false)];
+    for (unmap_index, case) in nested.cases.iter().enumerate() {
+        if !case.backend_present {
+            continue;
+        }
+        let unmap_index = u32::try_from(unmap_index).ok()?;
+        for (close_index, _, present) in &close_cases {
+            if !present {
+                continue;
+            }
+            for path_live in [false, true] {
+                entries.push((Some(unmap_index), Some(*close_index), path_live));
+            }
+        }
+    }
+    let mut cases = Vec::new();
+    let mut covered = BTreeSet::new();
+    for (u, c, path_live) in entries {
+        let mut selected = Vec::new();
+        for (index, path) in wrapper.paths.iter().enumerate() {
+            let mut replay = CloseReplay {
+                backend: u.is_some(),
+                path_live,
+                phase: 0,
+                deleting: false,
+                delete_result: None,
+                delete_called: false,
+                logged: false,
+                symbols: BTreeMap::new(),
+            };
+            if !replay.run(&path.operations)? {
+                continue;
+            }
+            if replay.phase != if u.is_some() { 4 } else { 0 } {
+                return None;
+            }
+            let mapping = u.is_some_and(|i| {
+                nested.cases.get(i as usize).and_then(|c| c.native_result) == Some(-1)
+            });
+            let descriptor = c.is_some_and(|i| {
+                close_cases
+                    .iter()
+                    .find(|(index, _, _)| *index == i)
+                    .and_then(|(_, result, _)| *result)
+                    == Some(-1)
+            });
+            selected.push(FileCloseCaseRecord {
+                source_path: u32::try_from(index).ok()?,
+                backend_present: u.is_some(),
+                path_allocation_present: path_live,
+                unmap_case: u,
+                close_case: c,
+                mapping: residual(mapping),
+                descriptor: residual(descriptor),
+                path_released: path_live,
+                backend_released: u.is_some(),
+                up_counter_decrements: match u {
+                    None => 0,
+                    Some(i) => nested.cases.get(i as usize)?.counter_decrements,
+                },
+            });
+        }
+        let [case] = selected.as_slice() else {
+            return None;
+        };
+        covered.insert(case.source_path);
+        cases.push(case.clone());
+    }
+    let uncovered_paths: Vec<u32> = (0..u32::try_from(wrapper.paths.len()).ok()?)
+        .filter(|index| !covered.contains(index))
+        .collect();
+
+    // The deleting arm, on top of the non-deleting reading.
+    let (deleting_cases, deleting_uncovered_paths) = match delete_reading {
+        None => (None, None),
+        Some(delete_cases) => {
+            let mut entries: Vec<(Option<u32>, Option<u32>, Option<u32>)> =
+                vec![(None, None, None)];
+            for (unmap_index, case) in nested.cases.iter().enumerate() {
+                if !case.backend_present {
+                    continue;
+                }
+                let unmap_index = u32::try_from(unmap_index).ok()?;
+                let mapped = case.native_result == Some(-1);
+                for (close_index, close_result, present) in &close_cases {
+                    if !present {
+                        continue;
+                    }
+                    let open = *close_result == Some(-1);
+                    for (delete_index, descriptor_active, mapping_active, _, _) in &delete_cases {
+                        if *mapping_active == mapped && *descriptor_active == open {
+                            entries.push((
+                                Some(unmap_index),
+                                Some(*close_index),
+                                Some(*delete_index),
+                            ));
+                        }
+                    }
+                }
+            }
+            let mut deleting = Vec::new();
+            let mut covered: BTreeSet<u32> = cases.iter().map(|case| case.source_path).collect();
+            for (u, c, d) in entries {
+                let row = match d {
+                    None => None,
+                    Some(index) => Some(delete_cases.iter().find(|(i, _, _, _, _)| *i == index)?),
+                };
+                let outcome = row.map(|(_, _, _, _, returned)| *returned);
+                let mut selected = Vec::new();
+                for (index, path) in wrapper.paths.iter().enumerate() {
+                    let mut replay = CloseReplay {
+                        backend: u.is_some(),
+                        path_live: u.is_some(),
+                        phase: 0,
+                        deleting: true,
+                        delete_result: outcome,
+                        delete_called: false,
+                        logged: false,
+                        symbols: BTreeMap::new(),
+                    };
+                    if !replay.run(&path.operations)? {
+                        continue;
+                    }
+                    if replay.phase != if u.is_some() { 4 } else { 0 }
+                        || replay.delete_called != d.is_some()
+                        || replay.logged != (outcome == Some(-1))
+                    {
+                        return None;
+                    }
+                    let mapping = u.is_some_and(|i| {
+                        nested.cases.get(i as usize).and_then(|c| c.native_result) == Some(-1)
+                    });
+                    let descriptor = c.is_some_and(|i| {
+                        close_cases
+                            .iter()
+                            .find(|(index, _, _)| *index == i)
+                            .and_then(|(_, result, _)| *result)
+                            == Some(-1)
+                    });
+                    let deletion = match row.map(|(_, _, _, syscall, _)| *syscall) {
+                        None => DeletionOutcomeRecord::NoBackend,
+                        Some(None) => DeletionOutcomeRecord::BlockedByFields,
+                        Some(Some(-1)) => DeletionOutcomeRecord::SyscallFailed,
+                        Some(Some(0)) => DeletionOutcomeRecord::SyscallSucceeded,
+                        _ => return None,
+                    };
+                    selected.push(DeletingCloseCaseRecord {
+                        source_path: u32::try_from(index).ok()?,
+                        unmap_case: u,
+                        close_case: c,
+                        delete_case: d,
+                        mapping: residual(mapping),
+                        descriptor: residual(descriptor),
+                        deletion,
+                        backend_released: u.is_some(),
+                        path_released: u.is_some(),
+                        diagnostic_calls: u32::from(replay.logged),
+                        up_counter_decrements: match u {
+                            None => 0,
+                            Some(i) => nested.cases.get(i as usize)?.counter_decrements,
+                        },
+                    });
+                }
+                let [case] = selected.as_slice() else {
+                    return None;
+                };
+                covered.insert(case.source_path);
+                deleting.push(case.clone());
+            }
+            // The deleting profile must cover every path; an uncovered one is a
+            // decline, never a published gap.
+            if covered.len() != wrapper.paths.len() {
+                return None;
+            }
+            (Some(deleting), Some(Vec::new()))
+        }
+    };
+    Some(FileCloseCompositionRecord {
+        function: wrapper.function.clone(),
+        source_revision: wrapper.source_revision.clone(),
+        signature: wrapper.signature.clone(),
+        cases,
+        uncovered_paths,
+        deleting_cases,
+        deleting_uncovered_paths,
+        profile_assumptions: wrapper.profile_assumptions.clone(),
+    })
+}
+
 fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> {
     if !source.version_matches()
         || !source.prerequisites.is_complete()
         || !source.prerequisites.are_distinct()
+        || !source.family.matches(&source.prerequisites)
     {
         return None;
     }
@@ -490,6 +1088,14 @@ fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> 
             native_profile,
         } => compose_unmap_wrapper(wrapper, native, native_profile)
             .map(CompositionProposalRecord::UnmapWrapper),
+        CompositionFamilyInput::FileClose {
+            wrapper,
+            unmap,
+            close,
+            close_profile,
+            delete,
+        } => compose_file_close(wrapper, unmap, close, close_profile, delete.as_deref())
+            .map(CompositionProposalRecord::FileClose),
     }
 }
 
@@ -498,11 +1104,28 @@ pub fn propose(
     manifest: &PluginManifest,
 ) -> Option<VerificationResponseV2> {
     if request.capability != VerifierCapability::ResourceContracts
-        || request.target.profile != UNMAP_WRAPPER_SEMANTIC_PROFILE
+        || !matches!(
+            request.target.profile.as_str(),
+            UNMAP_WRAPPER_SEMANTIC_PROFILE
+                | FILE_CLOSE_SEMANTIC_PROFILE
+                | FILE_CLOSE_DELETE_SEMANTIC_PROFILE
+        )
         || !matches!(
             request.target.dialect.as_str(),
             "c11" | "gnu99" | "gnu11" | "gnu17"
         )
+    {
+        return None;
+    }
+    // The request's declared profile and the transported question's own family
+    // must agree, so one family's question can never be answered under another's
+    // profile.
+    if request
+        .composition_source
+        .as_ref()?
+        .family
+        .semantic_profile()
+        != request.target.profile
     {
         return None;
     }

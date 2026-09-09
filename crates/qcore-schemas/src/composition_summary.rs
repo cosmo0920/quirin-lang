@@ -62,13 +62,31 @@ use crate::call_use_summary::PrerequisiteIdentity;
 use crate::cleanup_replay_summary::{CleanupProfileRecord, CleanupReplayFunctionRecord};
 
 /// Wire version of the transported composition projection.
-pub const COMPOSITION_SOURCE_INPUT_VERSION: u16 = 1;
+///
+/// Moved 1 → 2 by card `P04-COMPOSE-A`, which made the prerequisite set
+/// per-family (a `file_close` composition names four prerequisites, one of them
+/// another composition) and made the family input recursive. The change is
+/// declared rather than silent: version 1 is refused in both directions and the
+/// digest key moves with it, so a version-1 witness cannot be replayed against a
+/// version-2 task or the reverse.
+pub const COMPOSITION_SOURCE_INPUT_VERSION: u16 = 2;
 
 /// Digest key under which a task binds the complete projection.
-pub const COMPOSITION_SOURCE_INPUT_KEY: &str = "qcore:composition-source-input:v1";
+pub const COMPOSITION_SOURCE_INPUT_KEY: &str = "qcore:composition-source-input:v2";
 
-/// The semantic profile of the one moved composition family.
+/// The semantic profile of the leaf composition family.
 pub const UNMAP_WRAPPER_SEMANTIC_PROFILE: &str = "qcore.c_unmap_wrapper_composition.v1";
+
+/// The semantic profile of the non-deleting `cio_file_close` composition, whose
+/// prerequisites include the unmap-wrapper composition above.
+pub const FILE_CLOSE_SEMANTIC_PROFILE: &str = "qcore.c_file_close_composition.v1";
+
+/// The semantic profile of the deleting `cio_file_close` composition. It answers
+/// a strictly larger question than the non-deleting one — the whole non-deleting
+/// case vector *plus* the deleting arm — so it is a separate profile, a separate
+/// task and a separate obligation, exactly as the two in-process entry points
+/// are separate functions.
+pub const FILE_CLOSE_DELETE_SEMANTIC_PROFILE: &str = "qcore.c_file_close_delete_composition.v1";
 
 /// The three prerequisites the unmap-wrapper composition depends on, each named
 /// separately because each is load-bearing and each is re-established
@@ -113,12 +131,143 @@ impl UnmapWrapperPrerequisites {
     }
 }
 
+/// The four prerequisites the `cio_file_close` compositions depend on.
+///
+/// * `wrapper_call_use` — the call-result def/use contract of `cio_file_close`
+///   itself (card P04-NEXT-AB);
+/// * `unmap_composition` — **another composition**, the moved `munmap_file`
+///   unmap wrapper (card P04-COMPOSE). This is what makes the file_close route
+///   the first two-level composition: re-establishing it re-establishes its own
+///   three prerequisites in turn, and the core does every level itself;
+/// * `native_cleanup` — the symbolic cleanup replay of `cio_file_native_close`
+///   (card P04-B2);
+/// * `native_delete` — the guarded-delete replay of `cio_file_native_delete`
+///   (card P04-B2), present **exactly** on the deleting entry point. The
+///   non-deleting arm makes no deletion attempt, so naming a delete prerequisite
+///   there would claim a prerequisite the question does not have.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileClosePrerequisites {
+    pub wrapper_call_use: PrerequisiteIdentity,
+    pub unmap_composition: PrerequisiteIdentity,
+    pub native_cleanup: PrerequisiteIdentity,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub native_delete: Option<PrerequisiteIdentity>,
+}
+
+impl FileClosePrerequisites {
+    /// Digest keys under which a dependent task binds each identity. Four
+    /// distinct keys, so moving one prerequisite cannot be absorbed by another.
+    pub const WRAPPER_CALL_USE_KEY: &'static str =
+        "qcore:composition-prerequisite-close-call-use:v1";
+    pub const UNMAP_COMPOSITION_KEY: &'static str =
+        "qcore:composition-prerequisite-unmap-composition:v1";
+    pub const NATIVE_CLEANUP_KEY: &'static str = "qcore:composition-prerequisite-close-cleanup:v1";
+    pub const NATIVE_DELETE_KEY: &'static str = "qcore:composition-prerequisite-close-delete:v1";
+
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        self.wrapper_call_use.is_complete()
+            && self.unmap_composition.is_complete()
+            && self.native_cleanup.is_complete()
+            && self.native_delete.as_ref().is_none_or(|d| d.is_complete())
+    }
+
+    /// Every named identity must be distinct: one prerequisite cannot stand in
+    /// for another, and a set that repeats one identity names things it has not
+    /// established.
+    #[must_use]
+    pub fn are_distinct(&self) -> bool {
+        let mut named = vec![
+            &self.wrapper_call_use,
+            &self.unmap_composition,
+            &self.native_cleanup,
+        ];
+        if let Some(delete) = &self.native_delete {
+            named.push(delete);
+        }
+        let count = named.len();
+        named.sort_by(|a, b| {
+            (&a.semantic_profile, &a.task_digest, &a.obligation_id).cmp(&(
+                &b.semantic_profile,
+                &b.task_digest,
+                &b.obligation_id,
+            ))
+        });
+        named.dedup();
+        named.len() == count
+    }
+}
+
+/// Which prerequisite set a composition question names, tagged by family so one
+/// family's set can never be read as another's.
+///
+/// The set is per-family because the shape *is* per-family: the leaf composition
+/// names three prerequisites, none of them a composition; the `file_close`
+/// compositions name three or four, one of which is the leaf composition itself.
+/// A single flat triple would have had to mean different things in different
+/// families, which is exactly what these vocabularies exist not to do.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CompositionPrerequisiteSet {
+    UnmapWrapper(UnmapWrapperPrerequisites),
+    FileClose(FileClosePrerequisites),
+}
+
+impl CompositionPrerequisiteSet {
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        match self {
+            Self::UnmapWrapper(set) => set.is_complete(),
+            Self::FileClose(set) => set.is_complete(),
+        }
+    }
+
+    #[must_use]
+    pub fn are_distinct(&self) -> bool {
+        match self {
+            Self::UnmapWrapper(set) => set.are_distinct(),
+            Self::FileClose(set) => set.are_distinct(),
+        }
+    }
+
+    #[must_use]
+    pub fn unmap_wrapper(&self) -> Option<&UnmapWrapperPrerequisites> {
+        match self {
+            Self::UnmapWrapper(set) => Some(set),
+            Self::FileClose(_) => None,
+        }
+    }
+
+    #[must_use]
+    pub fn file_close(&self) -> Option<&FileClosePrerequisites> {
+        match self {
+            Self::FileClose(set) => Some(set),
+            Self::UnmapWrapper(_) => None,
+        }
+    }
+}
+
+/// The prerequisite body and record shape the deleting arm additionally needs.
+/// It travels so the producer must recompute the guarded-delete reading itself;
+/// that reading never travels.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileCloseDeleteInput {
+    pub body: CleanupReplayFunctionRecord,
+    pub profile: CleanupProfileRecord,
+    /// The declared eligibility field, which is not a profile member. The core
+    /// reads its own from the pinned contract's declaration and refuses a
+    /// transported value that is not exactly that.
+    pub mapping_field: String,
+}
+
 /// Which bounded composition question a projection asks.
 ///
-/// One inhabitant today. The other six ChunkIO compositions are classified in
-/// `docs/reports/remaining-p04-compose/README.md`: five are blocked behind a
-/// prerequisite whose capability has not moved, and two additionally sit behind
-/// the sealed `SourceMatch` boundary.
+/// Two inhabitants. The other five ChunkIO compositions are classified in
+/// `docs/reports/remaining-p04-compose/README.md`: three are blocked behind the
+/// frame helper, which has no verification task at all, and two additionally sit
+/// behind the sealed `SourceMatch` boundary.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "family", rename_all = "snake_case")]
 pub enum CompositionFamilyInput {
@@ -137,28 +286,50 @@ pub enum CompositionFamilyInput {
         /// the pinned contract's declaration and refuses anything else.
         native_profile: CleanupProfileRecord,
     },
+    /// `cio_file_close`: the entry states of the *nested* unmap composition
+    /// crossed with the native close outcomes and the path allocation's
+    /// presence, and — on the deleting arm — the guarded-delete outcomes.
+    FileClose {
+        /// The `cio_file_close` body's complete typed path set.
+        wrapper: CleanupReplayFunctionRecord,
+        /// **The nested composition question, verbatim.** It is the same value
+        /// the leaf composition's own projection carries, so a producer must
+        /// recompute the whole nested composed reading — not merely a body
+        /// replay — before it can answer this one. The core requires it to be
+        /// exactly the family input its own nested composition task imported.
+        unmap: Box<CompositionFamilyInput>,
+        /// The `cio_file_native_close` body and the record shape its replay
+        /// evolves.
+        close: CleanupReplayFunctionRecord,
+        close_profile: CleanupProfileRecord,
+        /// Present exactly on the deleting entry point.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        delete: Option<Box<FileCloseDeleteInput>>,
+    },
 }
 
 impl CompositionFamilyInput {
     /// The function the single obligation of this projection is about.
     #[must_use]
     pub fn subject_function(&self) -> &str {
-        match self {
-            Self::UnmapWrapper { wrapper, .. } => &wrapper.function,
-        }
+        &self.wrapper().function
     }
 
     #[must_use]
     pub fn wrapper(&self) -> &CleanupReplayFunctionRecord {
         match self {
-            Self::UnmapWrapper { wrapper, .. } => wrapper,
+            Self::UnmapWrapper { wrapper, .. } | Self::FileClose { wrapper, .. } => wrapper,
         }
     }
 
+    /// The prerequisite body whose replay this family's own record profile
+    /// describes: the native unmap for the leaf family, the native close for the
+    /// file_close families.
     #[must_use]
     pub fn native(&self) -> &CleanupReplayFunctionRecord {
         match self {
             Self::UnmapWrapper { native, .. } => native,
+            Self::FileClose { close, .. } => close,
         }
     }
 
@@ -166,6 +337,28 @@ impl CompositionFamilyInput {
     pub fn native_profile(&self) -> &CleanupProfileRecord {
         match self {
             Self::UnmapWrapper { native_profile, .. } => native_profile,
+            Self::FileClose { close_profile, .. } => close_profile,
+        }
+    }
+
+    /// The nested composition question, when this family has one. Exactly the
+    /// families that name a composition prerequisite carry one.
+    #[must_use]
+    pub fn nested(&self) -> Option<&Self> {
+        match self {
+            Self::UnmapWrapper { .. } => None,
+            Self::FileClose { unmap, .. } => Some(unmap),
+        }
+    }
+
+    /// How many composition levels this question nests. The leaf family is 1;
+    /// a family whose prerequisite is a composition is one more than its nested
+    /// question. Pinned by test rather than assumed.
+    #[must_use]
+    pub fn nesting_depth(&self) -> u32 {
+        match self.nested() {
+            None => 1,
+            Some(nested) => 1 + nested.nesting_depth(),
         }
     }
 
@@ -174,6 +367,27 @@ impl CompositionFamilyInput {
     pub const fn semantic_profile(&self) -> &'static str {
         match self {
             Self::UnmapWrapper { .. } => UNMAP_WRAPPER_SEMANTIC_PROFILE,
+            Self::FileClose { delete: None, .. } => FILE_CLOSE_SEMANTIC_PROFILE,
+            Self::FileClose {
+                delete: Some(_), ..
+            } => FILE_CLOSE_DELETE_SEMANTIC_PROFILE,
+        }
+    }
+
+    /// A family input is well-formed only when its shape and its prerequisite
+    /// set agree: the leaf family names the leaf set, a file_close family names
+    /// the file_close set, and the deleting arm's delete body and delete
+    /// prerequisite are present or absent **together**. Neither half may claim
+    /// what the other does not.
+    #[must_use]
+    pub fn matches(&self, prerequisites: &CompositionPrerequisiteSet) -> bool {
+        match (self, prerequisites) {
+            (Self::UnmapWrapper { .. }, CompositionPrerequisiteSet::UnmapWrapper(_)) => true,
+            (Self::FileClose { delete, unmap, .. }, CompositionPrerequisiteSet::FileClose(set)) => {
+                delete.is_some() == set.native_delete.is_some()
+                    && matches!(**unmap, Self::UnmapWrapper { .. })
+            }
+            _ => false,
         }
     }
 }
@@ -184,7 +398,7 @@ impl CompositionFamilyInput {
 pub struct CompositionSourceInput {
     pub schema_version: u16,
     /// Identity triples only. Nothing a prerequisite concluded reaches here.
-    pub prerequisites: UnmapWrapperPrerequisites,
+    pub prerequisites: CompositionPrerequisiteSet,
     pub family: CompositionFamilyInput,
 }
 
@@ -249,12 +463,98 @@ pub struct CompositionRecord {
     pub profile_assumptions: BTreeMap<String, String>,
 }
 
+/// Whether a residual OS custody obligation is discharged by the source
+/// projection or left unresolved. Mirrors the trusted composition's own
+/// two-point domain; there is no third, optimistic value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ResidualCustodyRecord {
+    Absent,
+    Unresolved,
+}
+
+/// The four disjoint deletion outcomes the deleting arm distinguishes. Freeing
+/// the C path allocation is never one of them.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DeletionOutcomeRecord {
+    NoBackend,
+    BlockedByFields,
+    SyscallFailed,
+    SyscallSucceeded,
+}
+
+/// One non-deleting `cio_file_close` case. Every field mirrors, field for field,
+/// the `FileCloseCase` the trusted composition publishes.
+///
+/// `unmap_case` is the composed figure of this family: it names the **nested
+/// composition's** own case index for this entry, so a producer that did not
+/// recompute the nested composed reading cannot fill it in.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileCloseCaseRecord {
+    pub source_path: u32,
+    pub backend_present: bool,
+    pub path_allocation_present: bool,
+    /// The nested unmap composition's own selected case, or `None` when this
+    /// entry state never reaches it.
+    pub unmap_case: Option<u32>,
+    /// The native close replay's own selected case.
+    pub close_case: Option<u32>,
+    pub mapping: ResidualCustodyRecord,
+    pub descriptor: ResidualCustodyRecord,
+    pub path_released: bool,
+    pub backend_released: bool,
+    /// Read out of the nested composition's own case, not recomputed here.
+    pub up_counter_decrements: u32,
+}
+
+/// One deleting `cio_file_close` case.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DeletingCloseCaseRecord {
+    pub source_path: u32,
+    pub unmap_case: Option<u32>,
+    pub close_case: Option<u32>,
+    /// The guarded-delete replay's own selected case.
+    pub delete_case: Option<u32>,
+    pub mapping: ResidualCustodyRecord,
+    pub descriptor: ResidualCustodyRecord,
+    pub deletion: DeletionOutcomeRecord,
+    pub backend_released: bool,
+    pub path_released: bool,
+    pub diagnostic_calls: u32,
+    pub up_counter_decrements: u32,
+}
+
+/// One composed `cio_file_close` reading, with the wrapper's imported identity.
+///
+/// The deleting entry point answers a strictly larger question, so it publishes
+/// the whole non-deleting case vector *and* the deleting one; the non-deleting
+/// entry point publishes only the first and leaves the second absent rather than
+/// empty, so "no deleting arm" and "an empty deleting arm" cannot be confused.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileCloseCompositionRecord {
+    pub function: String,
+    pub source_revision: String,
+    pub signature: String,
+    pub cases: Vec<FileCloseCaseRecord>,
+    pub uncovered_paths: Vec<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deleting_cases: Option<Vec<DeletingCloseCaseRecord>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deleting_uncovered_paths: Option<Vec<u32>>,
+    pub profile_assumptions: BTreeMap<String, String>,
+}
+
 /// The proposed reading, tagged by family so one family's proposal can never be
 /// read as another's.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "family", rename_all = "snake_case")]
 pub enum CompositionProposalRecord {
     UnmapWrapper(CompositionRecord),
+    FileClose(FileCloseCompositionRecord),
 }
 
 /// The witness envelope, bound to the task digest the core computed.

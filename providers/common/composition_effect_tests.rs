@@ -6,11 +6,22 @@
 //! contract or asserts anything about the OS.
 use super::*;
 use qcore_schemas::cleanup_replay_summary::{CleanupReplayPathRecord, CleanupResetRecord};
+use qcore_schemas::composition_summary::{CompositionPrerequisiteSet, FileClosePrerequisites};
 
 const PROJECTION: &str = include_str!("fixtures/unmap_wrapper_composition_projection.json");
 
 fn projection() -> CompositionSourceInput {
     serde_json::from_str(PROJECTION).expect("the committed projection parses")
+}
+
+/// A syntactically complete lookup key. It names nothing this process can reach:
+/// identities are the receiver's business, never a producer's.
+fn identity(digest: char) -> qcore_schemas::call_use_summary::PrerequisiteIdentity {
+    qcore_schemas::call_use_summary::PrerequisiteIdentity {
+        semantic_profile: "qcore.example.v1".into(),
+        task_digest: digest.to_string().repeat(64),
+        obligation_id: format!("rc:{digest}"),
+    }
 }
 
 fn parts() -> (
@@ -24,6 +35,9 @@ fn parts() -> (
             native,
             native_profile,
         } => (wrapper, native, native_profile),
+        CompositionFamilyInput::FileClose { .. } => {
+            panic!("the leaf fixture must carry the leaf family")
+        }
     }
 }
 
@@ -258,24 +272,507 @@ fn the_request_gate_declines_every_other_exchange() {
         absent.composition_source = None;
         declines(absent);
         let mut version = honest.clone();
-        version.composition_source.as_mut().unwrap().schema_version = 2;
+        version.composition_source.as_mut().unwrap().schema_version = 1;
         declines(version);
         let mut incomplete = honest.clone();
-        incomplete
-            .composition_source
-            .as_mut()
-            .unwrap()
-            .prerequisites
-            .counter
-            .task_digest
-            .clear();
+        {
+            let CompositionPrerequisiteSet::UnmapWrapper(set) = &mut incomplete
+                .composition_source
+                .as_mut()
+                .unwrap()
+                .prerequisites
+            else {
+                panic!("the leaf fixture must carry the leaf set");
+            };
+            set.counter.task_digest.clear();
+        }
         declines(incomplete);
         let mut repeated = honest.clone();
         {
-            let prerequisites = &mut repeated.composition_source.as_mut().unwrap().prerequisites;
-            prerequisites.counter = prerequisites.native_cleanup.clone();
+            let CompositionPrerequisiteSet::UnmapWrapper(set) =
+                &mut repeated.composition_source.as_mut().unwrap().prerequisites
+            else {
+                panic!("the leaf fixture must carry the leaf set");
+            };
+            set.counter = set.native_cleanup.clone();
         }
         declines(repeated);
+        // A projection whose family and prerequisite set disagree is declined
+        // before any replay: one family's set is never read as another's.
+        let mut crossed = honest.clone();
+        crossed.composition_source.as_mut().unwrap().prerequisites =
+            CompositionPrerequisiteSet::FileClose(FileClosePrerequisites {
+                wrapper_call_use: identity('a'),
+                unmap_composition: identity('b'),
+                native_cleanup: identity('c'),
+                native_delete: None,
+            });
+        declines(crossed);
     }
+    assert_eq!(rows, 8, "row count moved");
+}
+
+// ---------------------------------------------------------------------------
+// The two-level `cio_file_close` producer (card P04-COMPOSE-A).
+// ---------------------------------------------------------------------------
+
+const FILE_CLOSE_PROJECTION: &str = include_str!("fixtures/file_close_composition_projection.json");
+const FILE_CLOSE_DELETE_PROJECTION: &str =
+    include_str!("fixtures/file_close_delete_composition_projection.json");
+
+fn file_close_projection(deleting: bool) -> CompositionSourceInput {
+    let text = if deleting {
+        FILE_CLOSE_DELETE_PROJECTION
+    } else {
+        FILE_CLOSE_PROJECTION
+    };
+    serde_json::from_str(text).expect("the committed file_close projection parses")
+}
+
+type FileCloseParts = (
+    CleanupReplayFunctionRecord,
+    CompositionFamilyInput,
+    CleanupReplayFunctionRecord,
+    CleanupProfileRecord,
+    Option<FileCloseDeleteInput>,
+);
+
+fn file_close_parts(deleting: bool) -> FileCloseParts {
+    match file_close_projection(deleting).family {
+        CompositionFamilyInput::FileClose {
+            wrapper,
+            unmap,
+            close,
+            close_profile,
+            delete,
+        } => (wrapper, *unmap, close, close_profile, delete.map(|d| *d)),
+        CompositionFamilyInput::UnmapWrapper { .. } => {
+            panic!("the file_close fixture must carry the file_close family")
+        }
+    }
+}
+
+/// The producer recomputes the whole **two-level** reading itself: the nested
+/// composed reading, both cleanup readings and the wrapper replay, over the
+/// entry domain the trusted composition enumerates.
+#[test]
+fn the_producer_recomputes_the_whole_two_level_reading() {
+    for deleting in [false, true] {
+        let (wrapper, unmap, close, profile, delete) = file_close_parts(deleting);
+        let record = compose_file_close(&wrapper, &unmap, &close, &profile, delete.as_ref())
+            .expect("the real projection composes");
+        assert_eq!(record.function, "cio_file_close");
+        assert_eq!(record.cases.len(), 43);
+        assert_eq!(record.uncovered_paths, vec![1, 2]);
+        assert_eq!(
+            record
+                .cases
+                .iter()
+                .filter(|case| case.backend_released)
+                .count(),
+            42
+        );
+        // The composed figure: every reached case names the nested composition's
+        // own case, and its counter reading travels with it.
+        assert!(
+            record
+                .cases
+                .iter()
+                .all(|case| case.unmap_case.is_some() == case.backend_present)
+        );
+        let decrements: std::collections::BTreeSet<_> = record
+            .cases
+            .iter()
+            .map(|case| case.up_counter_decrements)
+            .collect();
+        assert_eq!(decrements, std::collections::BTreeSet::from([0, 1]));
+        assert_eq!(record.deleting_cases.is_some(), deleting);
+        if deleting {
+            let cases = record.deleting_cases.as_ref().unwrap();
+            assert_eq!(cases.len(), 30);
+            assert_eq!(
+                cases
+                    .iter()
+                    .filter(|case| case.deletion == DeletionOutcomeRecord::SyscallSucceeded)
+                    .count(),
+                8
+            );
+            assert_eq!(record.deleting_uncovered_paths.as_deref(), Some(&[][..]));
+        }
+    }
+}
+
+/// The nested half is genuinely recomputed, not received: a nested question the
+/// leaf replay refuses makes the **whole** two-level reading decline. A producer
+/// that had been handed the nested conclusion would not have to look at the
+/// nested bodies at all, and could not notice.
+#[test]
+fn the_nested_reading_is_recomputed_not_received() {
+    let (wrapper, unmap, close, profile, delete) = file_close_parts(true);
+    assert!(compose_file_close(&wrapper, &unmap, &close, &profile, delete.as_ref()).is_some());
+    let CompositionFamilyInput::UnmapWrapper {
+        wrapper: nested_wrapper,
+        native: nested_native,
+        native_profile,
+    } = &unmap
+    else {
+        panic!("the nested question must be a leaf composition")
+    };
+    // Break only the nested question's own bodies, one at a time. Nothing at
+    // this level changes; the whole reading declines because the nested reading
+    // does.
+    for (name, mutated) in [
+        ("nested wrapper truncated", {
+            let mut body = nested_wrapper.clone();
+            body.paths[0].operations.pop();
+            CompositionFamilyInput::UnmapWrapper {
+                wrapper: body,
+                native: nested_native.clone(),
+                native_profile: native_profile.clone(),
+            }
+        }),
+        ("nested prerequisite truncated", {
+            let mut body = nested_native.clone();
+            body.paths[0].operations.pop();
+            CompositionFamilyInput::UnmapWrapper {
+                wrapper: nested_wrapper.clone(),
+                native: body,
+                native_profile: native_profile.clone(),
+            }
+        }),
+    ] {
+        assert!(
+            compose_file_close(&wrapper, &mutated, &close, &profile, delete.as_ref()).is_none(),
+            "`{name}` did not reach the composed reading"
+        );
+    }
+}
+
+/// A measured boundary, pinned rather than hidden (`P04-COMPOSE-A-CASE-INDEX`).
+///
+/// This level publishes each prerequisite's **case index** over a fixed sampled
+/// prestate domain, not the prerequisite's selected source path. Permuting a
+/// prerequisite body's paths therefore moves that prerequisite's own reading —
+/// which its own task publishes and its own witness binds — while leaving *this*
+/// reading identical. The permuted bytes are still refused end to end, by the
+/// prerequisite task's own source binding, not by this figure; this row records
+/// exactly which layer notices.
+#[test]
+fn permuting_a_prerequisite_bodys_paths_is_invisible_to_this_level() {
+    let (wrapper, unmap, close, profile, delete) = file_close_parts(true);
+    let honest = compose_file_close(&wrapper, &unmap, &close, &profile, delete.as_ref()).unwrap();
+    let CompositionFamilyInput::UnmapWrapper {
+        wrapper: nested_wrapper,
+        native: nested_native,
+        native_profile,
+    } = &unmap
+    else {
+        panic!("the nested question must be a leaf composition")
+    };
+    // The nested prerequisite's paths reversed: the nested reading's own
+    // `native_source_path` moves, but this level does not publish it.
+    let mut reordered_native = nested_native.clone();
+    reordered_native.paths.reverse();
+    let nested_reading = compose_unmap_wrapper(nested_wrapper, nested_native, native_profile)
+        .expect("the honest nested reading");
+    let reordered_nested_reading =
+        compose_unmap_wrapper(nested_wrapper, &reordered_native, native_profile)
+            .expect("the reordered nested reading still composes");
+    assert_ne!(
+        nested_reading, reordered_nested_reading,
+        "the nested reading is insensitive to its own prerequisite's paths"
+    );
+    let mutated = CompositionFamilyInput::UnmapWrapper {
+        wrapper: nested_wrapper.clone(),
+        native: reordered_native,
+        native_profile: native_profile.clone(),
+    };
+    assert_eq!(
+        compose_file_close(&wrapper, &mutated, &close, &profile, delete.as_ref()).as_ref(),
+        Some(&honest),
+        "this level unexpectedly publishes the nested prerequisite's selected path"
+    );
+    // The same for the close prerequisite's own body.
+    let mut reordered_close = close.clone();
+    reordered_close.paths.reverse();
+    assert_eq!(
+        compose_file_close(
+            &wrapper,
+            &unmap,
+            &reordered_close,
+            &profile,
+            delete.as_ref()
+        )
+        .as_ref(),
+        Some(&honest),
+        "this level unexpectedly publishes the close prerequisite's selected path"
+    );
+}
+
+/// Degenerate and hostile file_close projections decline without panicking, at
+/// the nested level.
+#[test]
+fn degenerate_nested_questions_decline_bounded() {
+    let (wrapper, unmap, close, profile, delete) = file_close_parts(true);
+    let CompositionFamilyInput::UnmapWrapper {
+        wrapper: nested_wrapper,
+        native: nested_native,
+        native_profile,
+    } = &unmap
+    else {
+        panic!("the nested question must be a leaf composition")
+    };
+    let nested = |w: CleanupReplayFunctionRecord, n: CleanupReplayFunctionRecord| {
+        CompositionFamilyInput::UnmapWrapper {
+            wrapper: w,
+            native: n,
+            native_profile: native_profile.clone(),
+        }
+    };
+    let mut rows = 0;
+    let mut declined = |name: &str, family: CompositionFamilyInput| {
+        assert!(
+            compose_file_close(&wrapper, &family, &close, &profile, delete.as_ref()).is_none(),
+            "`{name}` was composed"
+        );
+        rows += 1;
+    };
+    let mut empty = nested_wrapper.clone();
+    empty.paths.clear();
+    declined(
+        "nested wrapper emptied",
+        nested(empty, nested_native.clone()),
+    );
+    let mut huge = nested_wrapper.clone();
+    huge.paths = std::iter::repeat_n(nested_wrapper.paths[0].clone(), MAX_PATHS + 1).collect();
+    declined(
+        "nested wrapper oversized",
+        nested(huge, nested_native.clone()),
+    );
+    let mut long = nested_native.clone();
+    long.paths[0].operations = std::iter::repeat_n(
+        nested_native.paths[0].operations[0].clone(),
+        MAX_OPERATIONS + 1,
+    )
+    .collect();
+    declined(
+        "nested prerequisite oversized",
+        nested(nested_wrapper.clone(), long),
+    );
+    let mut anonymous = nested_wrapper.clone();
+    anonymous.function = String::new();
+    declined(
+        "nested wrapper anonymous",
+        nested(anonymous, nested_native.clone()),
+    );
+    let mut moved = nested_wrapper.clone();
+    moved.source_revision = "0".repeat(40);
+    declined(
+        "nested wrapper revision moved",
+        nested(moved, nested_native.clone()),
+    );
+    declined(
+        "nested wrapper and prerequisite identical",
+        nested(nested_wrapper.clone(), nested_wrapper.clone()),
+    );
+    // A nested question that is itself a file_close question: this vocabulary
+    // nests exactly one level, and the producer says so.
+    declined(
+        "nested question is another file_close question",
+        CompositionFamilyInput::FileClose {
+            wrapper: wrapper.clone(),
+            unmap: Box::new(unmap.clone()),
+            close: close.clone(),
+            close_profile: profile.clone(),
+            delete: None,
+        },
+    );
     assert_eq!(rows, 7, "row count moved");
+}
+
+/// Degenerate and hostile file_close projections decline without panicking, at
+/// the outer level.
+#[test]
+fn degenerate_file_close_questions_decline_bounded() {
+    let (wrapper, unmap, close, profile, delete) = file_close_parts(true);
+    let mut rows = 0;
+    let mut declined = |name: &str,
+                        w: CleanupReplayFunctionRecord,
+                        c: CleanupReplayFunctionRecord,
+                        p: CleanupProfileRecord,
+                        d: Option<FileCloseDeleteInput>| {
+        assert!(
+            compose_file_close(&w, &unmap, &c, &p, d.as_ref()).is_none(),
+            "`{name}` was composed"
+        );
+        rows += 1;
+    };
+    let mut empty = wrapper.clone();
+    empty.paths.clear();
+    declined(
+        "wrapper emptied",
+        empty,
+        close.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    let mut wrong = wrapper.clone();
+    wrong.signature = "int (struct cio_chunk *)".into();
+    declined(
+        "wrapper signature",
+        wrong,
+        close.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    let mut truncated = wrapper.clone();
+    truncated.paths[0].operations.pop();
+    declined(
+        "wrapper path truncated",
+        truncated,
+        close.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    let mut duplicated = wrapper.clone();
+    duplicated.paths.extend(wrapper.paths.clone());
+    declined(
+        "wrapper paths duplicated",
+        duplicated,
+        close.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    let mut single = wrapper.clone();
+    single.paths.truncate(1);
+    declined(
+        "wrapper reduced to one path",
+        single,
+        close.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    declined(
+        "wrapper and close prerequisite identical",
+        wrapper.clone(),
+        wrapper.clone(),
+        profile.clone(),
+        delete.clone(),
+    );
+    let mut bad = profile.clone();
+    bad.fields.clear();
+    declined(
+        "close profile emptied",
+        wrapper.clone(),
+        close.clone(),
+        bad,
+        delete.clone(),
+    );
+    let mut bad_delete = delete.clone().unwrap();
+    bad_delete.mapping_field = "fd".into();
+    declined(
+        "delete eligibility field moved",
+        wrapper.clone(),
+        close.clone(),
+        profile.clone(),
+        Some(bad_delete),
+    );
+    let mut empty_delete = delete.clone().unwrap();
+    empty_delete.body.paths.clear();
+    declined(
+        "delete body emptied",
+        wrapper.clone(),
+        close.clone(),
+        profile.clone(),
+        Some(empty_delete),
+    );
+    assert_eq!(rows, 9, "row count moved");
+}
+
+/// The request gate for the two `file_close` profiles: the transported family
+/// and the declared profile must agree, so one family's question is never
+/// answered under another's profile.
+#[test]
+fn the_file_close_request_gate_binds_family_to_profile() {
+    let manifest: PluginManifest = serde_json::from_str(include_str!(
+        "../qcore-provider-chunkio/provider-template.json"
+    ))
+    .unwrap();
+    let request = |profile: &str, input: CompositionSourceInput| VerificationRequestV2 {
+        protocol_version: 1,
+        evidence_version: 2,
+        request_id: "composition".into(),
+        plugin_id: manifest.plugin_id.clone(),
+        capability: VerifierCapability::ResourceContracts,
+        target: TargetProfile {
+            library: "chunkio".into(),
+            revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
+            profile: profile.into(),
+            dialect: "c11".into(),
+            platform: std::env::consts::OS.into(),
+            backend: "native".into(),
+        },
+        unit: UnitIdentity {
+            translation_unit: "cio_file_unix.c".into(),
+            source_digest: "0".repeat(64),
+            build_digest: "0".repeat(64),
+        },
+        facts: Vec::new(),
+        assumptions: Default::default(),
+        task_digest: "0".repeat(64),
+        obligations: Vec::new(),
+        source_effect: None,
+        counter_effect: None,
+        reactor_program: None,
+        teardown_source: None,
+        call_use_source: None,
+        cleanup_replay_source: None,
+        composition_source: Some(input),
+    };
+    // Each entry point is answered under its own profile.
+    for (profile, deleting) in [
+        (FILE_CLOSE_SEMANTIC_PROFILE, false),
+        (FILE_CLOSE_DELETE_SEMANTIC_PROFILE, true),
+    ] {
+        let response = propose(
+            &request(profile, file_close_projection(deleting)),
+            &manifest,
+        )
+        .expect("the honest request is answered");
+        let SemanticWitness::Composition(witness) = response.evidence.unwrap().witness else {
+            panic!("wrong witness kind")
+        };
+        assert!(matches!(
+            witness.summary,
+            CompositionProposalRecord::FileClose(_)
+        ));
+    }
+    // Every cross pairing declines.
+    let mut rows = 0;
+    for (profile, deleting) in [
+        (FILE_CLOSE_SEMANTIC_PROFILE, true),
+        (FILE_CLOSE_DELETE_SEMANTIC_PROFILE, false),
+        (UNMAP_WRAPPER_SEMANTIC_PROFILE, false),
+        (UNMAP_WRAPPER_SEMANTIC_PROFILE, true),
+    ] {
+        assert!(
+            propose(
+                &request(profile, file_close_projection(deleting)),
+                &manifest
+            )
+            .is_none(),
+            "a {profile} request answered a deleting={deleting} question"
+        );
+        rows += 1;
+    }
+    // And the leaf question under a file_close profile.
+    assert!(
+        propose(
+            &request(FILE_CLOSE_SEMANTIC_PROFILE, projection()),
+            &manifest
+        )
+        .is_none()
+    );
+    rows += 1;
+    assert_eq!(rows, 5, "row count moved");
 }

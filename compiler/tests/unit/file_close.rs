@@ -1,4 +1,5 @@
 use super::*;
+use crate::cleanup_outcome::check_cleanup_outcomes;
 use crate::counter_contract::check_counter_contract;
 use crate::typed_source::{SourceImportProfile, SourceResult, import_source_functions};
 use crate::verifier_plugins::chunkio::{
@@ -218,6 +219,26 @@ int cio_file_native_delete(struct cio_file *cf){if(cf->fd!=-1 || cf->map!=(void*
 "#
     )
 }
+
+/// The moved process route reads its five bodies out of a committed `.c` file
+/// rather than reconstructing them, so the two routes cannot silently drift onto
+/// different source. This asserts the committed bytes **are** the ones this
+/// retained in-process suite builds; `QCORE_WRITE_FILE_CLOSE_FIXTURE` names a
+/// path to regenerate them.
+#[test]
+fn the_committed_file_close_fixture_is_the_source_this_route_reads() {
+    let built = deletion_fixture();
+    if let Some(path) = std::env::var_os("QCORE_WRITE_FILE_CLOSE_FIXTURE") {
+        std::fs::write(path, &built).unwrap();
+        return;
+    }
+    assert_eq!(
+        built,
+        include_str!("../fixtures/chunkio/file_close_source.c"),
+        "the committed file_close fixture is no longer the source the \
+         in-process route reads"
+    );
+}
 #[test]
 fn deleting_close_covers_all_paths_and_keeps_failure_classifications() {
     if !crate::test_support::posix_clang_test() {
@@ -246,7 +267,7 @@ fn deleting_close_covers_all_paths_and_keeps_failure_classifications() {
     .unwrap();
     assert_eq!(evidence.deleting_cases().len(), 30);
     assert!(evidence.uncovered_paths().is_empty());
-    assert_eq!(evidence.no_delete.cases().len(), 43);
+    assert_eq!(evidence.no_delete().cases().len(), 43);
     for (kind, count) in [
         (DeletionOutcome::NoBackend, 1),
         (DeletionOutcome::BlockedByFields, 13),

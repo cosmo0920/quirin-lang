@@ -68,3 +68,30 @@ import QCore.CompositionAdmission
 -- than being absorbed by it.
 #print axioms QCore.CompositionAdmission.an_unestablished_inner_prerequisite_refuses_the_chain
 #print axioms QCore.CompositionAdmission.an_established_chain_is_established
+
+-- Card `P04-COMPOSE-A`: the nested-prerequisite relation, where a composition's
+-- own prerequisite is another composition. The two-level re-establishment is a
+-- total decided function with no partial case; a forged **leaf** prerequisite
+-- refuses under an honest **middle** identity and a succeeding nested
+-- composition, so no level can be skipped by naming the level above it
+-- honestly; and the outer route's answer is independent of the order in which
+-- its three or four obligations are discharged.
+--
+-- Whether a file was unlinked, a descriptor closed or a mapping torn down is
+-- outside every statement below and stays recorded in
+-- `docs/reports/remaining-p04-compose-a/README.md`.
+#print axioms QCore.CompositionAdmission.two_level_revalidation_is_total
+#print axioms QCore.CompositionAdmission.a_forged_leaf_prerequisite_refuses_under_an_honest_middle_identity
+#print axioms QCore.CompositionAdmission.a_refusing_leaf_call_use_refuses_the_nested_composition
+#print axioms QCore.CompositionAdmission.a_refusing_leaf_cleanup_refuses_the_nested_composition
+#print axioms QCore.CompositionAdmission.a_refusing_nested_composition_is_never_established
+#print axioms QCore.CompositionAdmission.a_foreign_nested_identity_is_refused
+#print axioms QCore.CompositionAdmission.an_honest_two_level_chain_is_established
+#print axioms QCore.CompositionAdmission.all_id_is_permutation_invariant
+#print axioms QCore.CompositionAdmission.establishing_the_obligations_is_order_independent
+#print axioms QCore.CompositionAdmission.establishing_the_obligations_is_total
+#print axioms QCore.CompositionAdmission.a_forged_leaf_refuses_the_whole_outer_route
+#print axioms QCore.CompositionAdmission.the_deleting_arm_must_agree_in_both_directions
+#print axioms QCore.CompositionAdmission.an_honest_outer_route_is_established
+#print axioms QCore.CompositionAdmission.the_outer_distinctness_rule_is_decidable
+#print axioms QCore.CompositionAdmission.the_file_close_question_nests_exactly_twice

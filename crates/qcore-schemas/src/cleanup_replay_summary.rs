@@ -233,6 +233,15 @@ pub enum CleanupReplayOperationRecord {
     ReturnValue {
         value: CleanupReplayValueRecord,
     },
+    /// A value-free `return` from a `void` function.
+    ///
+    /// Added by card `P04-COMPOSE-A` for the composition route's `void`
+    /// wrapper. **The cleanup-replay route does not admit it in either
+    /// direction**: its gateway projector refuses `SourceOperation::Return` by
+    /// name and its producer declines this record by name, so widening the
+    /// shared enum did not widen that family's vocabulary. That refusal is
+    /// pinned by test on both sides (`P04-COMPOSE-SHARED-PATHS`).
+    Return,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
