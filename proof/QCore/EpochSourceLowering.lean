@@ -503,4 +503,394 @@ theorem no_lowered_declaration_yields_a_finish_time :
         ∀ works starts : List Nat, latency (totalWork works) = finishTime starts works :=
   no_function_of_the_work_total_is_the_finish_time
 
+-- ===========================================================================
+-- Composition with a checked task region (card T08-COMPOSE).
+-- ===========================================================================
+
+/-! `source.epoch.tasks.v1` puts the same declaration in front of a **real**
+checked task region instead of in front of declared worker shapes. The rows of
+the plan must then agree with what the checked region actually does, and the
+agreement relation is what is modeled here.
+
+Two halves, kept apart on purpose:
+
+* **Matching.** Rows naming worker `w`, in order, correspond one-to-one with the
+  region's creations of `w`, in order. Both directions are checked, per worker,
+  so an over-declared row cannot be paid for by an undeclared creation.
+* **Per pair.** A matched row and creation must agree on the ordered capture
+  list and on the result: `retained` is declared exactly when the creation
+  retains one, and a declared `join` must equal the disposal the region
+  performs. An elided `join` is *derived* from the region.
+
+The payoff is the last theorem: an agreed composition builds a declaration the
+existing `admits` predicate accepts, so
+`every_configuration_of_an_admitted_declaration_is_bounded` applies to it
+unchanged. Agreement is not a bound; it is what makes the bound be about the
+region that runs.
+
+Not modeled here, exactly as in the rest of this file: that the Rust derivation
+is this function (transcription is by inspection), and that any declared byte or
+effort figure describes a real allocation. -/
+
+/-- A capture as either side describes it. The composed profile admits scalar
+copies and owned moves; a read loan has no composed spelling. -/
+inductive Capture where
+  | copy
+  | move
+  deriving DecidableEq, Repr
+
+/-- One creation, as the checked task IR describes it. Every field of this is
+read out of the region; none of it is read out of the plan. -/
+structure LedgerSpawn where
+  worker : Nat
+  captures : List Capture
+  /-- The spawned worker's checked result type is an owned resource. -/
+  retainsResult : Bool
+  /-- What the creator then does with it. `none` exactly when nothing is
+  retained; never `close`, because completion is not a disposal the region can
+  perform. -/
+  disposal : Option Disposal
+  deriving DecidableEq, Repr
+
+/-- One row of the composed plan. `retained` and `join` are the two facts the
+plan may still spell; everything else about the shape is derived. -/
+structure Row where
+  worker : Nat
+  captures : List Capture
+  peak : Nat
+  effort : Nat
+  creditBytes : Nat
+  creditEffort : Nat
+  retained : Option Nat
+  join : Option Disposal
+  deriving DecidableEq, Repr
+
+/-- A creation the region could actually have produced: it retains a result
+exactly when it has a disposal, and never claims completion reclaimed it. -/
+def ledgerWellformed (spawn : LedgerSpawn) : Bool :=
+  (spawn.disposal.isSome == spawn.retainsResult)
+    && (match spawn.disposal with
+        | some .close => false
+        | _ => true)
+
+/-- The result half of the agreement. -/
+def resultAgrees (row : Row) (spawn : LedgerSpawn) : Bool :=
+  match row.retained, spawn.retainsResult, spawn.disposal with
+  | some _, true, some derived =>
+      match row.join with
+      | none => true
+      | some declared => declared == derived
+  | none, false, _ => row.join.isNone
+  | _, _, _ => false
+
+/-- One row agrees with one creation. -/
+def rowAgrees (row : Row) (spawn : LedgerSpawn) : Bool :=
+  (row.worker == spawn.worker) && (row.captures == spawn.captures) && resultAgrees row spawn
+
+def rowsFor (name : Nat) (rows : List Row) : List Row :=
+  rows.filter (fun row => row.worker == name)
+
+def spawnsFor (name : Nat) (ledger : List LedgerSpawn) : List LedgerSpawn :=
+  ledger.filter (fun spawn => spawn.worker == name)
+
+/-- One worker's rows and creations correspond exactly, in order. -/
+def workerAgrees (name : Nat) (rows : List Row) (ledger : List LedgerSpawn) : Bool :=
+  ((rowsFor name rows).length == (spawnsFor name ledger).length)
+    && ((rowsFor name rows).zip (spawnsFor name ledger)).all
+        (fun pair => rowAgrees pair.1 pair.2)
+
+/-- The whole agreement relation. Every worker named by *either* side is
+checked, so a name only the plan mentions and a name only the region creates are
+both caught. Checking a name twice is harmless: the per-worker test does not
+depend on how often it is asked. -/
+def agrees (rows : List Row) (ledger : List LedgerSpawn) : Bool :=
+  (rows.map Row.worker ++ ledger.map LedgerSpawn.worker).all
+    (fun name => workerAgrees name rows ledger)
+
+-- ---------------------------------------------------------------------------
+-- The matching half: both directions, per worker.
+-- ---------------------------------------------------------------------------
+
+/-- Agreement is decided per worker, so it entails that every worker named by
+either side has as many rows as creations. This is the whole matching half. -/
+theorem agrees_implies_the_counts_match {rows : List Row} {ledger : List LedgerSpawn}
+    {name : Nat}
+    (named : name ∈ rows.map Row.worker ++ ledger.map LedgerSpawn.worker)
+    (holds : agrees rows ledger = true) :
+    (rowsFor name rows).length = (spawnsFor name ledger).length := by
+  have single : workerAgrees name rows ledger = true :=
+    List.all_eq_true.mp holds name named
+  have parts := (Bool.and_eq_true _ _).mp single
+  exact (beq_iff_eq).mp parts.1
+
+theorem a_creation_names_its_worker {ledger : List LedgerSpawn} {rows : List Row} {name : Nat}
+    (created : spawnsFor name ledger ≠ []) :
+    name ∈ rows.map Row.worker ++ ledger.map LedgerSpawn.worker := by
+  obtain ⟨spawn, member⟩ : ∃ spawn, spawn ∈ spawnsFor name ledger := by
+    cases sites : spawnsFor name ledger with
+    | nil => exact absurd sites created
+    | cons head _ => exact ⟨head, by simp⟩
+  have inside : spawn ∈ ledger ∧ (spawn.worker == name) = true := by
+    simpa [spawnsFor, List.mem_filter] using member
+  exact List.mem_append_right _
+    (List.mem_map.mpr ⟨spawn, inside.1, (beq_iff_eq).mp inside.2⟩)
+
+theorem a_row_names_its_worker {ledger : List LedgerSpawn} {rows : List Row} {name : Nat}
+    (declared : rowsFor name rows ≠ []) :
+    name ∈ rows.map Row.worker ++ ledger.map LedgerSpawn.worker := by
+  obtain ⟨row, member⟩ : ∃ row, row ∈ rowsFor name rows := by
+    cases declaredRows : rowsFor name rows with
+    | nil => exact absurd declaredRows declared
+    | cons head _ => exact ⟨head, by simp⟩
+  have inside : row ∈ rows ∧ (row.worker == name) = true := by
+    simpa [rowsFor, List.mem_filter] using member
+  exact List.mem_append_left _
+    (List.mem_map.mpr ⟨row, inside.1, (beq_iff_eq).mp inside.2⟩)
+
+/-- A creation the plan never declares is refused. -/
+theorem a_creation_with_no_row_is_not_agreed
+    {rows : List Row} {ledger : List LedgerSpawn} {name : Nat}
+    (declared : rowsFor name rows = [])
+    (created : spawnsFor name ledger ≠ []) : agrees rows ledger = false := by
+  cases holds : agrees rows ledger with
+  | false => rfl
+  | true =>
+    have counts := agrees_implies_the_counts_match
+      (rows := rows) (a_creation_names_its_worker created) holds
+    rw [declared] at counts
+    exact absurd (List.eq_nil_of_length_eq_zero counts.symm) created
+
+/-- A row for a worker the region never creates is refused. -/
+theorem a_row_with_no_creation_is_not_agreed
+    {rows : List Row} {ledger : List LedgerSpawn} {name : Nat}
+    (declared : rowsFor name rows ≠ [])
+    (created : spawnsFor name ledger = []) : agrees rows ledger = false := by
+  cases holds : agrees rows ledger with
+  | false => rfl
+  | true =>
+    have counts := agrees_implies_the_counts_match
+      (ledger := ledger) (a_row_names_its_worker declared) holds
+    rw [created] at counts
+    exact absurd (List.eq_nil_of_length_eq_zero counts) declared
+
+-- ---------------------------------------------------------------------------
+-- Worked compositions: the owned round trip and the copy-only one.
+-- ---------------------------------------------------------------------------
+
+/-- The owned round trip: one creation that moves an owned resource in and hands
+one back, which the creator releases at the join. -/
+def ownedSpawn : LedgerSpawn :=
+  { worker := 1, captures := [.move], retainsResult := true, disposal := some .drop }
+
+def ownedRow : Row :=
+  { worker := 1, captures := [.move], peak := 1024, effort := 10
+    creditBytes := 4096, creditEffort := 100, retained := some 64, join := some .drop }
+
+/-- The copy-only round trip: one scalar copied in and nothing retained. -/
+def copySpawn : LedgerSpawn :=
+  { worker := 2, captures := [.copy], retainsResult := false, disposal := none }
+
+def copyRow : Row :=
+  { worker := 2, captures := [.copy], peak := 256, effort := 4
+    creditBytes := 512, creditEffort := 20, retained := none, join := none }
+
+theorem the_worked_ledger_entries_are_wellformed :
+    ledgerWellformed ownedSpawn = true ∧ ledgerWellformed copySpawn = true := by
+  decide
+
+/-- Non-vacuity, in both shapes: these compositions really are agreed, so the
+refusals below are not proved against a relation that refuses everything. -/
+theorem the_owned_round_trip_is_agreed : agrees [ownedRow] [ownedSpawn] = true := by
+  decide
+
+theorem the_copy_only_round_trip_is_agreed : agrees [copyRow] [copySpawn] = true := by
+  decide
+
+theorem a_two_worker_composition_is_agreed :
+    agrees [ownedRow, copyRow] [ownedSpawn, copySpawn] = true := by
+  decide
+
+/-- And the same two rows agree with the same two creations written in the other
+order: the correspondence is per worker, not positional across workers. -/
+theorem the_two_worker_composition_is_agreed_in_either_order :
+    agrees [copyRow, ownedRow] [ownedSpawn, copySpawn] = true := by
+  decide
+
+-- ---------------------------------------------------------------------------
+-- The per-pair half, by measurement on the worked compositions.
+-- ---------------------------------------------------------------------------
+
+theorem an_undeclared_creation_is_refused : agrees [] [ownedSpawn] = false := by decide
+
+theorem an_over_declared_row_is_refused : agrees [ownedRow] [] = false := by decide
+
+theorem a_second_row_for_one_creation_is_refused :
+    agrees [ownedRow, ownedRow] [ownedSpawn] = false := by decide
+
+theorem a_second_creation_for_one_row_is_refused :
+    agrees [ownedRow] [ownedSpawn, ownedSpawn] = false := by decide
+
+theorem a_missing_capture_is_refused :
+    agrees [{ ownedRow with captures := [] }] [ownedSpawn] = false := by decide
+
+theorem an_extra_capture_is_refused :
+    agrees [{ ownedRow with captures := [.move, .move] }] [ownedSpawn] = false := by decide
+
+theorem a_wrong_capture_mode_is_refused :
+    agrees [{ ownedRow with captures := [.copy] }] [ownedSpawn] = false := by decide
+
+theorem a_declared_result_the_creation_does_not_retain_is_refused :
+    agrees [{ copyRow with retained := some 8 }] [copySpawn] = false := by decide
+
+theorem a_retained_creation_with_no_declared_result_is_refused :
+    agrees [{ ownedRow with retained := none, join := none }] [ownedSpawn] = false := by decide
+
+theorem a_diverging_disposal_is_refused :
+    agrees [{ ownedRow with join := some .move }] [ownedSpawn] = false := by decide
+
+theorem a_completion_disposal_is_refused :
+    agrees [{ ownedRow with join := some .close }] [ownedSpawn] = false := by decide
+
+theorem a_disposal_on_a_row_that_retains_nothing_is_refused :
+    agrees [{ copyRow with join := some .drop }] [copySpawn] = false := by decide
+
+/-- The derivation: an elided `join` agrees, and what it agrees with is the
+region's own disposal. Declaring the same thing is admitted too, and declaring
+anything else is not — so eliding is a derivation, not a hole. -/
+theorem an_elided_join_agrees_and_is_the_regions_disposal :
+    agrees [{ ownedRow with join := none }] [ownedSpawn] = true
+      ∧ agrees [{ ownedRow with join := ownedSpawn.disposal }] [ownedSpawn] = true
+      ∧ ∀ other : Disposal, other ≠ .drop →
+          agrees [{ ownedRow with join := some other }] [ownedSpawn] = false := by
+  refine ⟨by decide, by decide, ?_⟩
+  intro other different
+  cases other with
+  | move => decide
+  | drop => exact absurd rfl different
+  | close => decide
+
+-- ---------------------------------------------------------------------------
+-- From agreement to the model bound.
+-- ---------------------------------------------------------------------------
+
+/-- The disposal the composition records: the region's own, and — for a creation
+that retains nothing — the release of a zero result, which is what
+`TaskResult::ReleasedInWorker` accounts for on the Rust side. -/
+def derivedDisposal (spawn : LedgerSpawn) : Disposal :=
+  match spawn.disposal with
+  | some derived => derived
+  | none => .drop
+
+/-- One agreed pair becomes one worker of the declaration the existing lowering
+already understands: the plan's figures, and the region's disposal. -/
+def composeWorker (row : Row) (spawn : LedgerSpawn) : Worker :=
+  { clauses :=
+      [ .peak row.peak
+      , .effort row.effort
+      , .credit row.creditBytes row.creditEffort
+      , .retained (row.retained.getD 0)
+      , .join (derivedDisposal spawn) ] }
+
+/-- Rows whose declared result fits the peak it was accounted for. This is the
+core's own per-task rule; the composition does not weaken it. -/
+def rowFits (row : Row) : Bool := row.retained.getD 0 ≤ row.peak
+
+def composeDecl (allocationBytes allocationEffort perEpoch perTask : Nat)
+    (pairs : List (Row × LedgerSpawn)) : Decl :=
+  { cells := []
+    allocationBytes := allocationBytes
+    allocationEffort := allocationEffort
+    perEpoch := perEpoch
+    perTask := perTask
+    basis := .declared
+    latency := false
+    workers := pairs.map (fun pair => composeWorker pair.1 pair.2) }
+
+theorem compose_preserves_each_declared_figure (row : Row) (spawn : LedgerSpawn) :
+    peakOf (composeWorker row spawn).clauses = row.peak
+      ∧ effortClauseOf (composeWorker row spawn).clauses = row.effort
+      ∧ creditOf (composeWorker row spawn).clauses = some (row.creditBytes, row.creditEffort)
+      ∧ retainedOf (composeWorker row spawn).clauses = row.retained.getD 0 :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The composed epoch's task count is the region's creation count. No source
+form declares it, so no plan can disagree with it. -/
+theorem the_composed_task_count_is_the_regions
+    (allocationBytes allocationEffort perEpoch perTask : Nat)
+    (pairs : List (Row × LedgerSpawn)) :
+    (lower (composeDecl allocationBytes allocationEffort perEpoch perTask pairs)).tasks.length
+      = pairs.length := by
+  simp [lower, composeDecl]
+
+/-- A composed epoch has no shared storage at all, so its entry allocation is
+zero: `T08-COMPOSE-SHARED` is a structural fact of this composition, not a
+figure a plan could supply. -/
+theorem a_composed_epoch_has_no_entry_allocation
+    (allocationBytes allocationEffort perEpoch perTask : Nat)
+    (pairs : List (Row × LedgerSpawn)) :
+    (lower (composeDecl allocationBytes allocationEffort perEpoch perTask pairs)).cells = [] := by
+  simp [lower, lowerCells, composeDecl]
+
+theorem a_composed_worker_is_admitted {row : Row} {spawn : LedgerSpawn}
+    (wellformed : ledgerWellformed spawn = true) (fits : rowFits row = true) :
+    workerAdmits [] (composeWorker row spawn) = true := by
+  have disposal : derivedDisposal spawn ≠ .close := by
+    cases value : spawn.disposal with
+    | none => simp [derivedDisposal, value]
+    | some inner =>
+      cases inner with
+      | move => simp [derivedDisposal, value]
+      | drop => simp [derivedDisposal, value]
+      | close => simp [ledgerWellformed, value] at wellformed
+  have bound : row.retained.getD 0 ≤ row.peak := by simpa [rowFits] using fits
+  cases value : derivedDisposal spawn with
+  | move => simp [workerAdmits, composeWorker, value, readsOf, distinct, countOf, isCredit,
+      isPeak, isEffort, isRetained, isJoin, modeled, joinOf, retainedOf, peakOf, bound]
+  | drop => simp [workerAdmits, composeWorker, value, readsOf, distinct, countOf, isCredit,
+      isPeak, isEffort, isRetained, isJoin, modeled, joinOf, retainedOf, peakOf, bound]
+  | close => exact absurd value disposal
+
+/-- The payoff. A nonempty composition of pairs that are individually
+wellformed and fitting builds a declaration the *existing* admission predicate
+accepts, so every theorem this file already proved about admitted declarations
+applies to a composed epoch unchanged. -/
+theorem an_agreed_composition_is_admitted
+    {allocationBytes allocationEffort perEpoch perTask : Nat}
+    {pairs : List (Row × LedgerSpawn)} (nonempty : pairs ≠ [])
+    (wellformed : ∀ pair ∈ pairs, ledgerWellformed pair.2 = true)
+    (fitting : ∀ pair ∈ pairs, rowFits pair.1 = true) :
+    Admitted (composeDecl allocationBytes allocationEffort perEpoch perTask pairs) := by
+  refine (Bool.and_eq_true _ _).mpr ⟨(Bool.and_eq_true _ _).mpr ⟨rfl, ?_⟩, ?_⟩
+  · cases value : pairs with
+    | nil => exact absurd value nonempty
+    | cons _ _ => simp [composeDecl]
+  · refine List.all_eq_true.mpr ?_
+    intro worker member
+    have inside : worker ∈ (composeDecl allocationBytes allocationEffort perEpoch perTask
+        pairs).workers := member
+    simp only [composeDecl, List.mem_map] at inside
+    obtain ⟨pair, pair_member, composed⟩ := inside
+    exact composed ▸ a_composed_worker_is_admitted (wellformed pair pair_member)
+      (fitting pair pair_member)
+
+/-- And therefore no configuration of a composed epoch exceeds its bound. The
+composition adds a relation to the region; it does not add a way past the
+accounting. -/
+theorem every_configuration_of_a_composed_epoch_is_bounded
+    {allocationBytes allocationEffort perEpoch perTask : Nat}
+    {pairs : List (Row × LedgerSpawn)} (nonempty : pairs ≠ [])
+    (wellformed : ∀ pair ∈ pairs, ledgerWellformed pair.2 = true)
+    (fitting : ∀ pair ∈ pairs, rowFits pair.1 = true) (phases : List Phase) :
+    QuantVector.Le
+      (residency (lower (composeDecl allocationBytes allocationEffort perEpoch perTask pairs))
+        phases)
+      (epochPeak (lower (composeDecl allocationBytes allocationEffort perEpoch perTask pairs))) :=
+  every_configuration_of_an_admitted_declaration_is_bounded
+    (an_agreed_composition_is_admitted nonempty wellformed fitting) phases
+
+/-- The worked owned composition, end to end: agreed, admitted, and bounded. -/
+theorem the_owned_composition_is_admitted :
+    Admitted (composeDecl 65536 1000 512 128 [(ownedRow, ownedSpawn)]) := by
+  decide
+
 end QCore.EpochSourceLowering

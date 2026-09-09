@@ -170,7 +170,7 @@ pub fn has_source_epoch(source: &SourceProgram) -> bool {
         .any(|pair| word(pair.first(), "epoch") && symbol(pair.get(1), Symbol::LeftBrace))
 }
 
-fn failure(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+pub(crate) fn failure(span: Span, message: impl Into<String>) -> SourceDiagnostic {
     SourceDiagnostic {
         code: "Q600",
         pass: SemanticPass::Concurrency,
@@ -179,15 +179,15 @@ fn failure(span: Span, message: impl Into<String>) -> SourceDiagnostic {
     }
 }
 
-fn word(token: Option<&Token>, expected: &str) -> bool {
+pub(crate) fn word(token: Option<&Token>, expected: &str) -> bool {
     matches!(token.map(|t| &t.kind), Some(TokenKind::Word(w)) if w == expected)
 }
 
-fn symbol(token: Option<&Token>, expected: Symbol) -> bool {
+pub(crate) fn symbol(token: Option<&Token>, expected: Symbol) -> bool {
     matches!(token.map(|t| &t.kind), Some(TokenKind::Symbol(s)) if *s == expected)
 }
 
-fn name(token: Option<&Token>) -> Option<&str> {
+pub(crate) fn name(token: Option<&Token>) -> Option<&str> {
     match &token?.kind {
         TokenKind::Word(w) => Some(w),
         _ => None,
@@ -196,7 +196,7 @@ fn name(token: Option<&Token>) -> Option<&str> {
 
 /// Integers are read exactly, at the full width the checker computes in. An
 /// out-of-range literal is a refusal here, never a wrapped or clamped figure.
-fn integer(token: Option<&Token>) -> Option<u64> {
+pub(crate) fn integer(token: Option<&Token>) -> Option<u64> {
     match &token?.kind {
         TokenKind::Integer(text) => text.parse().ok(),
         _ => None,
@@ -205,7 +205,7 @@ fn integer(token: Option<&Token>) -> Option<u64> {
 
 /// Statement tokens, excluding any nested block: a structured statement's
 /// header ends at its first `{`.
-fn header_tokens(source: &SourceProgram, span: Span) -> Vec<Token> {
+pub(crate) fn header_tokens(source: &SourceProgram, span: Span) -> Vec<Token> {
     let mut tokens = source
         .lexical_tokens()
         .iter()
@@ -221,15 +221,15 @@ fn header_tokens(source: &SourceProgram, span: Span) -> Vec<Token> {
     tokens
 }
 
-fn memory(bytes: u64) -> Quantity {
+pub(crate) fn memory(bytes: u64) -> Quantity {
     Quantity::single(MEMORY_AXIS, bytes)
 }
 
-fn work(units: u64) -> Quantity {
+pub(crate) fn work(units: u64) -> Quantity {
     Quantity::single(EFFORT_AXIS, units)
 }
 
-fn both(bytes: u64, units: u64, span: Span) -> Result<Quantity, SourceDiagnostic> {
+pub(crate) fn both(bytes: u64, units: u64, span: Span) -> Result<Quantity, SourceDiagnostic> {
     Quantity::from_axes([
         (MEMORY_AXIS.to_owned(), bytes),
         (EFFORT_AXIS.to_owned(), units),
