@@ -1552,6 +1552,501 @@ theorem a_shareless_task_cannot_access_unguarded {s : State} {task : TaskId} {f 
     step s (.access task f kind none) = none := by
   cases kind <;> simp [step, canAccessUnguarded, none_held, fullAccess]
 
+/-! ## 15. The guard-local join (card T03-GUARD-JOIN)
+
+§14 states why a join inside a critical section is refused: `canJoin` demands
+that the joining task hold no guard. That rule is **unedited** — every theorem
+above still holds of `step` — and this section adds the one opt-in exception,
+as a separate decision procedure over the same `State` plus the auxiliary
+ledger the Rust checker maintains beside it.
+
+The hazard the blanket refusal covers is one this model cannot otherwise see: a
+join is a *blocking wait*, and nothing here blocks. `canLock` refuses an
+acquisition of a held generation outright, and the representable form of "task
+`t` is waiting for mutex `m`" is `registerWaiter`. So the admission does not
+try to decide when a wait terminates; it removes the possibility of a wait
+altogether, by requiring the whole joined subtree to have named no mutex, no
+guard and no guard-scoped fact anywhere in the trace.
+
+`GuardLedger` is additive: `State`, `Event`, `step` and `run` are untouched, so
+nothing above is restated or weakened. The correspondence between this
+procedure and the Rust checker is the standing transcription premise, exactly
+as for `step` itself. One deliberate difference is recorded: the Rust checker
+marks a task mutex-keyed when the event *occurs*, before its own admission
+check, while `GuardLedger.observe` here is threaded alongside accepted steps.
+On an accepted trace no event is refused, so the two coincide; on a refused one
+the Rust rule is strictly more refusing, never less. -/
+
+/-- The bookkeeping the guard-local rule needs and `State` does not carry:
+which sections a task held when each of its children was created, and which
+tasks have ever named a mutex, a guard or a guard-scoped fact. -/
+structure GuardLedger where
+  spawnGuards : List (TaskId × List GuardId) := []
+  mutexKeyed : List TaskId := []
+  deriving DecidableEq, Repr
+
+def State.guardsHeldBy (s : State) (t : TaskId) : List GuardId :=
+  (s.guards.filter (fun g => g.holder == t)).map (fun g => g.id)
+
+/-- The acting task of an event that names a mutex, a guard or a guard-scoped
+fact. `none` for the events that name none of the three: task structure,
+unguarded access, custody transfer and resource destruction. This is the whole
+of G7's vocabulary. -/
+def keyingTask : Event → Option TaskId
+  | .createMutex t _ _ _ => some t
+  | .destroyMutex t _ => some t
+  | .registerWaiter t _ => some t
+  | .lock t _ _ => some t
+  | .unlock t _ => some t
+  | .errorExit t _ => some t
+  | .openInvariant t _ => some t
+  | .closeInvariant t _ _ => some t
+  | .closeUnwritten t _ => some t
+  | .borrowUnderGuard t _ _ _ => some t
+  | .endBorrow t _ => some t
+  | .assertFact t _ _ _ => some t
+  | .useFact t _ => some t
+  | .extendProtection t _ _ => some t
+  | .unsupportedConstruct t => some t
+  | .access t _ _ (some _) => some t
+  | .access _ _ _ none => none
+  | .spawn _ _ => none
+  | .join _ _ => none
+  | .transferCustody _ _ _ _ => none
+  | .destroy _ _ => none
+
+def GuardLedger.observe (l : GuardLedger) (s : State) (e : Event) : GuardLedger :=
+  let recorded :=
+    match e with
+    | .spawn parent child =>
+        { l with spawnGuards := (child, s.guardsHeldBy parent) :: l.spawnGuards }
+    | _ => l
+  match keyingTask e with
+  | some t => { recorded with mutexKeyed := t :: recorded.mutexKeyed }
+  | none => recorded
+
+private def growSubtree (parents : List (TaskId × TaskId)) (acc : List TaskId) :
+    List TaskId :=
+  acc ++ (parents.filter (fun p => acc.contains p.2 && !acc.contains p.1)).map (fun p => p.1)
+
+private def subtreeAux : Nat → List (TaskId × TaskId) → List TaskId → List TaskId
+  | 0, _, acc => acc
+  | n + 1, parents, acc =>
+      if (growSubtree parents acc).length == acc.length then acc
+      else subtreeAux n parents (growSubtree parents acc)
+
+/-- `root` together with every task transitively spawned under it. The parent
+relation is finite, so `parents.length + 1` rounds reach the fixed point. -/
+def State.subtreeOf (s : State) (root : TaskId) : List TaskId :=
+  subtreeAux (s.parents.length + 1) s.parents [root]
+
+/-- G1: the ordinary join's own structure, minus its clause about the *joining*
+task's guards — which is exactly the clause this section replaces. The child's
+own quiescence is kept verbatim. -/
+def glStructure (s : State) (parent child : TaskId) : Bool :=
+  s.act parent && s.act child && s.parents.contains (child, parent) &&
+    s.guards.all (fun g => g.holder != child)
+
+/-- G2 and G3: `guard` is live, held by `parent`, and the only section it
+holds. Two held sections would need a wait-for argument across both. -/
+def glSection (s : State) (parent : TaskId) (guard : GuardId) : Bool :=
+  s.guardsHeldBy parent == [guard]
+
+/-- G4: the child was created while `parent` held exactly this same section.
+Guard identities are never reused, so this is "strictly inside *this* critical
+section" rather than "inside some section over the same generation". -/
+def glCreatedInSection (l : GuardLedger) (child : TaskId) (guard : GuardId) : Bool :=
+  l.spawnGuards.contains (child, [guard])
+
+/-- G5 and G6: the invariant is closed and no guard-derived borrow is live. -/
+def glSectionQuiet (s : State) (guard : GuardId) : Bool :=
+  s.guardSat guard (fun g => g.phase == Phase.closed && g.borrows.isEmpty)
+
+/-- G7: nobody in the joined subtree ever named a mutex, a guard or a
+guard-scoped fact. This is what makes the wait impossible rather than merely
+unlikely. -/
+def glQuietSubtree (s : State) (l : GuardLedger) (child : TaskId) : Bool :=
+  (s.subtreeOf child).all (fun t => !l.mutexKeyed.contains t)
+
+/-- G8: no live generation records anyone in the subtree as a waiter. -/
+def glNoWaiter (s : State) (child : TaskId) : Bool :=
+  s.mutexes.all (fun m => m.waiters.all (fun w => !(s.subtreeOf child).contains w))
+
+/-- G9: the subtree carries no share, so its completion hands the creator no
+pointwise authority. On a protected atom this holds anyway — creation parked the
+whole share — so the check bites on unprotected footprints. -/
+def glNoShare (s : State) (child : TaskId) : Bool :=
+  s.holdings.all (fun h =>
+    match h.custodian with
+    | .task t => !(s.subtreeOf child).contains t || h.share == 0
+    | .mutex _ => true)
+
+/-- G10: the subtree is custodian of no live resource. -/
+def glNoCustody (s : State) (child : TaskId) : Bool :=
+  s.custody.all (fun c => !(s.subtreeOf child).contains c.2)
+
+def canGuardLocalJoin (s : State) (l : GuardLedger) (parent child : TaskId)
+    (guard : GuardId) : Bool :=
+  glStructure s parent child && glSection s parent guard &&
+    glCreatedInSection l child guard && glSectionQuiet s guard &&
+    glQuietSubtree s l child && glNoWaiter s child && glNoShare s child &&
+    glNoCustody s child
+
+/-- The admitted effect is the ordinary join's effect and nothing more: the
+guard-local rule changes *whether* a join is admitted, never what it does. -/
+def stepGuardLocalJoin (s : State) (l : GuardLedger) (parent child : TaskId)
+    (guard : GuardId) : Option State :=
+  if canGuardLocalJoin s l parent child guard then some (joinEffect s parent child) else none
+
+/-! ### What an accepted guard-local join does, and does not, disturb -/
+
+theorem guard_local_join_effect_is_the_ordinary_join {s next : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next = joinEffect s parent child := by
+  simp only [stepGuardLocalJoin] at accepted
+  split at accepted
+  · exact (Option.some.inj accepted).symm
+  · contradiction
+
+/-- Conservation: the join moves no share, so the pointwise ledger the profile
+verifies before and after every event is untouched. -/
+theorem guard_local_join_preserves_authority {s next : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next.authorityTotal = s.authorityTotal ∧ next.holdings = s.holdings := by
+  rw [guard_local_join_effect_is_the_ordinary_join accepted]
+  exact ⟨rfl, rfl⟩
+
+/-- The declared shapes and the custody map survive unchanged. -/
+theorem guard_local_join_preserves_declared_shapes {s next : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next.mutexes = s.mutexes ∧ next.custody = s.custody := by
+  rw [guard_local_join_effect_is_the_ordinary_join accepted]
+  exact ⟨rfl, rfl⟩
+
+/-- Nothing the invariant needs is dropped: every guard record — its phase, its
+borrows and its guard-scoped facts — is exactly what it was. This is the other
+half of the soundness argument, beside conservation. -/
+theorem guard_local_join_drops_nothing_the_invariant_needs {s next : State}
+    {l : GuardLedger} {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next.guards = s.guards ∧ next.guardOf guard = s.guardOf guard ∧
+      next.guardsHeldBy parent = s.guardsHeldBy parent := by
+  rw [guard_local_join_effect_is_the_ordinary_join accepted]
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Exactly the joined child becomes terminal. -/
+theorem guard_local_join_completes_exactly_the_child {s next : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next.terminalTasks = child :: s.terminalTasks ∧
+      next.joinedBy = (child, parent) :: s.joinedBy := by
+  rw [guard_local_join_effect_is_the_ordinary_join accepted]
+  exact ⟨rfl, rfl⟩
+
+/-- Every one of the seven obligations really was decided; none is a comment. -/
+theorem accepted_guard_local_join_discharges_its_obligations {s : State}
+    {l : GuardLedger} {parent child : TaskId} {guard : GuardId}
+    (accepted : (stepGuardLocalJoin s l parent child guard).isSome = true) :
+    glStructure s parent child = true ∧ glSection s parent guard = true ∧
+      glCreatedInSection l child guard = true ∧ glSectionQuiet s guard = true ∧
+      glQuietSubtree s l child = true ∧ glNoWaiter s child = true ∧
+      glNoShare s child = true ∧ glNoCustody s child = true := by
+  simp only [stepGuardLocalJoin] at accepted
+  split at accepted
+  · rename_i ok
+    simp only [canGuardLocalJoin, Bool.and_eq_true] at ok
+    exact ⟨ok.1.1.1.1.1.1.1, ok.1.1.1.1.1.1.2, ok.1.1.1.1.1.2, ok.1.1.1.1.2, ok.1.1.1.2,
+      ok.1.1.2, ok.1.2, ok.2⟩
+  · simp at accepted
+
+/-- The creator still holds its one section, closed, on the far side of the
+join: the admission collects a child, it does not leave the critical section. -/
+theorem guard_local_join_keeps_the_creator_in_its_only_section {s next : State}
+    {l : GuardLedger} {parent child : TaskId} {guard : GuardId}
+    (accepted : stepGuardLocalJoin s l parent child guard = some next) :
+    next.guardsHeldBy parent = [guard] ∧
+      next.guardSat guard (fun g => g.phase == Phase.closed && g.borrows.isEmpty) = true := by
+  have obligations :=
+    accepted_guard_local_join_discharges_its_obligations (s := s) (l := l)
+      (parent := parent) (child := child) (guard := guard) (by rw [accepted]; rfl)
+  have kept := guard_local_join_drops_nothing_the_invariant_needs accepted
+  refine ⟨?_, ?_⟩
+  · rw [kept.2.2]
+    exact of_decide_eq_true (by simpa [glSection] using obligations.2.1)
+  · rw [State.guardSat, kept.2.1]
+    exact obligations.2.2.2.1
+
+/-! ### The refusals: everything outside the rule -/
+
+private theorem subtreeAux_keeps (n : Nat) (parents : List (TaskId × TaskId))
+    (acc : List TaskId) (t : TaskId) (mem : t ∈ acc) : t ∈ subtreeAux n parents acc := by
+  induction n generalizing acc with
+  | zero => simpa [subtreeAux] using mem
+  | succ n ih =>
+      simp only [subtreeAux]
+      split
+      · exact mem
+      · exact ih _ (by unfold growSubtree; exact List.mem_append_left _ mem)
+
+/-- G7 is non-vacuous: the joined child is always in its own subtree. -/
+theorem the_quiet_subtree_contains_the_child (s : State) (child : TaskId) :
+    child ∈ s.subtreeOf child :=
+  subtreeAux_keeps _ _ _ _ (by simp)
+
+/-- G7: a child that ever named a mutex, a guard or a guard-scoped fact is not
+joinable inside a section. This is the rule that makes the deadlock hazard
+structurally impossible rather than merely improbable. -/
+theorem guard_local_join_requires_a_quiet_subtree {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} (keyed : child ∈ l.mutexKeyed) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have noisy : glQuietSubtree s l child = false :=
+    List.all_eq_false.mpr
+      ⟨child, the_quiet_subtree_contains_the_child s child, by simpa using keyed⟩
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G7 is a subtree property, not a child property: a *grandchild* that named a
+mutex refuses the join just as the child would. -/
+theorem guard_local_join_refuses_a_keyed_descendant {s : State} {l : GuardLedger}
+    {parent child descendant : TaskId} {guard : GuardId}
+    (inSubtree : descendant ∈ s.subtreeOf child) (keyed : descendant ∈ l.mutexKeyed) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have noisy : glQuietSubtree s l child = false :=
+    List.all_eq_false.mpr ⟨descendant, inSubtree, by simpa using keyed⟩
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G4: a child created anywhere but strictly inside this same section — before
+the lock, or in an earlier section over the same generation — is refused. -/
+theorem guard_local_join_requires_creation_in_the_same_section {s : State}
+    {l : GuardLedger} {parent child : TaskId} {guard : GuardId}
+    (elsewhere : (child, [guard]) ∉ l.spawnGuards) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have wrong : glCreatedInSection l child guard = false := by
+    simpa [glCreatedInSection] using elsewhere
+  simp [stepGuardLocalJoin, canGuardLocalJoin, wrong]
+
+private theorem guardsHeldBy_mem {s : State} {t : TaskId} {r : GuardRecord}
+    (mem : r ∈ s.guards) (holder : r.holder = t) : r.id ∈ s.guardsHeldBy t := by
+  unfold State.guardsHeldBy
+  exact List.mem_map_of_mem (List.mem_filter.mpr ⟨mem, by simp [holder]⟩)
+
+/-- G3: two live sections held by the joining task refuse the admission. -/
+theorem guard_local_join_requires_exactly_one_held_section {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} {other : GuardRecord}
+    (live : other ∈ s.guards) (holder : other.holder = parent) (distinct : other.id ≠ guard) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have wrong : glSection s parent guard = false := by
+    unfold glSection
+    refine beq_eq_false_iff_ne.mpr (fun equal => distinct ?_)
+    have := guardsHeldBy_mem live holder
+    rw [equal] at this
+    simpa using this
+  simp [stepGuardLocalJoin, canGuardLocalJoin, wrong]
+
+/-- G2: the named section must be the joining task's own. A section held by
+another task is not a section this join is local to. -/
+theorem guard_local_join_requires_the_joining_task_to_hold_the_section {s : State}
+    {l : GuardLedger} {parent child : TaskId} {guard : GuardId}
+    (foreign : ∀ r ∈ s.guards, r.id = guard → r.holder ≠ parent) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have wrong : glSection s parent guard = false := by
+    unfold glSection
+    refine beq_eq_false_iff_ne.mpr (fun equal => ?_)
+    have mem : guard ∈ s.guardsHeldBy parent := by rw [equal]; simp
+    unfold State.guardsHeldBy at mem
+    simp only [List.mem_map, List.mem_filter] at mem
+    obtain ⟨r, ⟨rmem, rholder⟩, rid⟩ := mem
+    exact foreign r rmem rid (by simpa using rholder)
+  simp [stepGuardLocalJoin, canGuardLocalJoin, wrong]
+
+/-- G5: a join while the invariant is open is refused. Protected memory is in a
+declared-broken state there, and `DeclaredFootprintShape` is a premise, so the
+model cannot rule out collateral the declaration does not mention. -/
+theorem guard_local_join_requires_a_closed_invariant {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} {record : GuardRecord}
+    (present : s.guardOf guard = some record) (broken : record.phase = Phase.opened) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have noisy : glSectionQuiet s guard = false := by
+    simp [glSectionQuiet, State.guardSat, present, broken]
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G6: a live guard-derived borrow refuses the join. -/
+theorem guard_local_join_requires_no_live_borrow {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} {record : GuardRecord}
+    (present : s.guardOf guard = some record) (borrowed : record.borrows ≠ []) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have nonempty : record.borrows.isEmpty = false := by
+    cases hb : record.borrows with
+    | nil => exact absurd hb borrowed
+    | cons _ _ => rfl
+  have noisy : glSectionQuiet s guard = false := by
+    simp [glSectionQuiet, State.guardSat, present, nonempty]
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G8: the deadlock shape itself. A subtree that has announced an acquisition
+would never return from the join, so the join is refused. -/
+theorem guard_local_join_refuses_a_waiting_subtree {s : State} {l : GuardLedger}
+    {parent child waiter : TaskId} {guard : GuardId} {record : MutexRecord}
+    (live : record ∈ s.mutexes) (waiting : waiter ∈ record.waiters)
+    (inSubtree : waiter ∈ s.subtreeOf child) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have inner : record.waiters.all (fun w => !(s.subtreeOf child).contains w) = false :=
+    List.all_eq_false.mpr ⟨waiter, waiting, by simpa using inSubtree⟩
+  have noisy : glNoWaiter s child = false :=
+    List.all_eq_false.mpr ⟨record, live, by simpa using inner⟩
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G9: a child holding share of anything is refused. -/
+theorem guard_local_join_refuses_a_sharing_child {s : State} {l : GuardLedger}
+    {parent child holder : TaskId} {guard : GuardId} {h : Holding}
+    (live : h ∈ s.holdings) (owned : h.custodian = .task holder)
+    (inSubtree : holder ∈ s.subtreeOf child) (nonzero : h.share ≠ 0) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have noisy : glNoShare s child = false :=
+    List.all_eq_false.mpr ⟨h, live, by simp [owned, nonzero]; simpa using inSubtree⟩
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- G10: a child holding custody of a live resource is refused. -/
+theorem guard_local_join_refuses_a_custodian_child {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} {entry : ResourceId × TaskId}
+    (live : entry ∈ s.custody) (inSubtree : entry.2 ∈ s.subtreeOf child) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have noisy : glNoCustody s child = false :=
+    List.all_eq_false.mpr ⟨entry, live, by simpa using inSubtree⟩
+  simp [stepGuardLocalJoin, canGuardLocalJoin, noisy]
+
+/-- The child's own quiescence clause is carried over verbatim from `canJoin`:
+a child still holding a section of its own is refused here too. -/
+theorem guard_local_join_refuses_a_guard_holding_child {s : State} {l : GuardLedger}
+    {parent child : TaskId} {guard : GuardId} {record : GuardRecord}
+    (live : record ∈ s.guards) (holder : record.holder = child) :
+    stepGuardLocalJoin s l parent child guard = none := by
+  have busy : glStructure s parent child = false := by
+    unfold glStructure
+    have : s.guards.all (fun g => g.holder != child) = false :=
+      List.all_eq_false.mpr ⟨record, live, by simp [holder]⟩
+    simp [this]
+  simp [stepGuardLocalJoin, canGuardLocalJoin, busy]
+
+/-! ### The ledger's own vocabulary -/
+
+/-- A spawn records exactly the sections its creator held, which is what G4
+later compares against. -/
+theorem spawn_records_the_creators_open_sections (l : GuardLedger) (s : State)
+    (parent child : TaskId) :
+    (l.observe s (.spawn parent child)).spawnGuards =
+      (child, s.guardsHeldBy parent) :: l.spawnGuards := rfl
+
+/-- An acquisition marks its task, so G7 sees it. -/
+theorem a_lock_is_recorded_as_mutex_keyed (l : GuardLedger) (s : State)
+    (task : TaskId) (mutex : MutexId) (guard : GuardId) :
+    (l.observe s (.lock task mutex guard)).mutexKeyed = task :: l.mutexKeyed := rfl
+
+/-- An announced acquisition marks its task: the deadlock shape cannot slip past
+G7 by never actually locking. -/
+theorem a_registered_waiter_is_recorded_as_mutex_keyed (l : GuardLedger) (s : State)
+    (task : TaskId) (mutex : MutexId) :
+    (l.observe s (.registerWaiter task mutex)).mutexKeyed = task :: l.mutexKeyed := rfl
+
+/-- A guarded access marks its task; an unguarded one does not. The boundary is
+exact: an unguarded access names no mutex, and a child holding no share cannot
+make one anyway (`a_shareless_task_cannot_access_unguarded`). -/
+theorem guarded_and_unguarded_access_are_recorded_differently (l : GuardLedger)
+    (s : State) (task : TaskId) (f : Footprint) (kind : AccessKind) (guard : GuardId) :
+    (l.observe s (.access task f kind (some guard))).mutexKeyed = task :: l.mutexKeyed ∧
+      (l.observe s (.access task f kind none)).mutexKeyed = l.mutexKeyed :=
+  ⟨rfl, rfl⟩
+
+/-- Releasing a borrow marks its task even though `endBorrow` itself checks only
+liveness. This is why a child's release of its creator's borrow — accepted by
+the model on its own terms — still refuses the guard-local join. -/
+theorem an_end_borrow_is_recorded_as_mutex_keyed (l : GuardLedger) (s : State)
+    (task : TaskId) (borrow : BorrowId) :
+    (l.observe s (.endBorrow task borrow)).mutexKeyed = task :: l.mutexKeyed := rfl
+
+/-! ### Decidable guard-local scenarios -/
+
+private def sectionHeld : State :=
+  { activeTasks := [0, 1]
+    parents := [(1, 0)]
+    guards := [{ id := 1, mutex := 1, holder := 0, phase := Phase.closed,
+                 borrows := [], facts := [], wroteWhileOpen := false }]
+    mutexes := [{ id := 1, protects := [cell], invariant := 1, creator := 0,
+                  holder := some 1, waiters := [], releasedBy := [], observed := [] }]
+    holdings := [{ custodian := .mutex 1, footprint := cell, share := fullAccess }] }
+
+private def quietLedger : GuardLedger := { spawnGuards := [(1, [1])], mutexKeyed := [] }
+
+-- The accepted control: a mutex-silent child created inside this section.
+example : (stepGuardLocalJoin sectionHeld quietLedger 0 1 1).isSome = true := by decide
+
+-- The child named a mutex somewhere: refused.
+example : stepGuardLocalJoin sectionHeld { quietLedger with mutexKeyed := [1] } 0 1 1
+    = none := by decide
+
+-- The child was created outside this section: refused.
+example : stepGuardLocalJoin sectionHeld { quietLedger with spawnGuards := [(1, [])] } 0 1 1
+    = none := by decide
+
+-- The child was created in a different section over the same generation:
+-- refused, because guard identities are never reused.
+example : stepGuardLocalJoin sectionHeld { quietLedger with spawnGuards := [(1, [2])] } 0 1 1
+    = none := by decide
+
+-- The invariant is open where the join lands: refused.
+example : stepGuardLocalJoin
+    { sectionHeld with guards := [{ id := 1, mutex := 1, holder := 0, phase := Phase.opened,
+                                    borrows := [], facts := [], wroteWhileOpen := false }] }
+    quietLedger 0 1 1 = none := by decide
+
+-- A guard-derived borrow is still live: refused.
+example : stepGuardLocalJoin
+    { sectionHeld with guards := [{ id := 1, mutex := 1, holder := 0, phase := Phase.closed,
+                                    borrows := [3], facts := [], wroteWhileOpen := false }] }
+    quietLedger 0 1 1 = none := by decide
+
+-- The section belongs to another task: refused.
+example : stepGuardLocalJoin
+    { sectionHeld with guards := [{ id := 1, mutex := 1, holder := 2, phase := Phase.closed,
+                                    borrows := [], facts := [], wroteWhileOpen := false }] }
+    quietLedger 0 1 1 = none := by decide
+
+-- The child is a recorded waiter on the held generation: the deadlock shape.
+example : stepGuardLocalJoin
+    { sectionHeld with mutexes := [{ id := 1, protects := [cell], invariant := 1,
+                                     creator := 0, holder := some 1, waiters := [1],
+                                     releasedBy := [], observed := [] }] }
+    quietLedger 0 1 1 = none := by decide
+
+-- The child holds share of something: refused.
+example : stepGuardLocalJoin
+    { sectionHeld with holdings :=
+        [{ custodian := .mutex 1, footprint := cell, share := fullAccess },
+         { custodian := .task 1, footprint := cell, share := 1 }] }
+    quietLedger 0 1 1 = none := by decide
+
+-- The child is custodian of a live resource: refused.
+example : stepGuardLocalJoin { sectionHeld with custody := [(7, 1)] } quietLedger 0 1 1
+    = none := by decide
+
+-- A quiet grandchild is admitted, and is genuinely inside the subtree.
+private def withGrandchild : State :=
+  { sectionHeld with parents := [(1, 0), (2, 1)], terminalTasks := [2] }
+
+example : (2 : TaskId) ∈ withGrandchild.subtreeOf 1 := by decide
+
+example : (stepGuardLocalJoin withGrandchild quietLedger 0 1 1).isSome = true := by decide
+
+-- but a grandchild that named a mutex refuses the whole admission.
+example : stepGuardLocalJoin withGrandchild { quietLedger with mutexKeyed := [2] } 0 1 1
+    = none := by decide
+
+-- The ordinary join over the very same state is still refused: the admission is
+-- opt-in, and `step` is unedited.
+example : step sectionHeld (.join 0 1) = none := by decide
+
 /-! ### Decidable scenarios for §12-§14 -/
 
 private def custodied : State :=

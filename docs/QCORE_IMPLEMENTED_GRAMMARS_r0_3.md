@@ -605,6 +605,26 @@ Card T03-F's three completions, each bounded by a stated rule:
   not take (`Q600`). **`wait m;`** announces an acquisition and, if never
   performed, blocks the generation's destruction (`Q619`).
 
+Card T03-GUARD-JOIN adds one opt-in form to that last rule and changes nothing
+else about it:
+
+* **`thread scope c under g { … }`**, written inside `g`'s own section, lowers
+  its join to the core's `GuardLocalJoin` rather than `Join`. `under` names the
+  enclosing section explicitly; outside one, or naming a different guard, it is
+  a lowering refusal (`Q600`) or an unresolvable name (`Q013`). Admission is the
+  core's decision, not the grammar's: the child must have been created strictly
+  inside this same section, the section must be the only one held, with its
+  invariant closed and no live borrow, and the child *and every task under it*
+  must have named no mutex, guard or guard-scoped fact anywhere in the trace and
+  hold no share or custody. Anything else keeps the same
+  `Q600 JoinWhileGuardHeld` refusal, so a plain `thread scope c { … }` inside a
+  section is unchanged. Because a child in this profile holds no share and no
+  custody, a guard-local child cannot touch a declared resource at all: the
+  admission is about the *join*, not about giving the child authority. It adds
+  no premise to the certificate — every condition is checked — and each admitted
+  join is named on it. `under` is reserved. See
+  [the T03-GUARD-JOIN record](reports/remaining-t03-guard-join/README.md).
+
 Native emission uses one thread and C11 `mtx_t` with real heap footprints on
 Linux, macOS and Windows (the latter two through the emitted compatibility layer);
 the reference execution of the checked event list must reproduce the same

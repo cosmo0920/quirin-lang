@@ -1634,3 +1634,528 @@ fn an_empty_program_is_accepted_with_no_footprint_premise() {
     assert_eq!(certificate.conservation_checkpoints, 1);
     assert!(certificate.protected_shape.is_empty());
 }
+
+// ---------------------------------------------------------------------------
+// Guard-local join (card T03-GUARD-JOIN).
+//
+// Every case below is a mutation of one accepted control: a mutex-silent child
+// created and joined strictly inside one critical section. The blanket
+// `JoinWhileGuardHeld` refusal is unchanged for a plain `Join`; the admission
+// is opt-in through `GuardLocalJoin` and adds no assumption.
+// ---------------------------------------------------------------------------
+
+fn spawn(parent: TaskId, child: TaskId) -> MutexInvariantEvent {
+    MutexInvariantEvent::Spawn { parent, child }
+}
+
+fn join(parent: TaskId, child: TaskId) -> MutexInvariantEvent {
+    MutexInvariantEvent::Join { parent, child }
+}
+
+fn guard_local_join(parent: TaskId, child: TaskId, guard: GuardId) -> MutexInvariantEvent {
+    MutexInvariantEvent::GuardLocalJoin {
+        parent,
+        child,
+        guard,
+    }
+}
+
+/// The accepted control: lock, spawn a child that names no mutex, join it
+/// guard-locally, unlock.
+fn guard_local_control() -> MutexInvariantProgram {
+    control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ])
+}
+
+#[test]
+fn a_guard_local_join_of_a_mutex_silent_child_is_accepted() {
+    let certificate = check_mutex_invariant_program(&guard_local_control()).expect("accepted");
+    assert_eq!(
+        certificate.admitted_guard_local_joins,
+        vec![AdmittedGuardLocalJoin {
+            event: 3,
+            parent: 0,
+            child: 1,
+            guard: 10,
+            quiet_subtree: vec![1],
+        }]
+    );
+    assert_eq!(certificate.completed_tasks, vec![1]);
+    // The admission is checked, not declared: it adds no premise. The only
+    // assumptions are the entry authority rule and the declared shape every
+    // `CreateMutex` already adds.
+    assert_eq!(
+        certificate.assumptions,
+        BTreeSet::from([
+            ConcurrencyAssumption::InitialAuthorityAndUniqueLifetimeIds,
+            ConcurrencyAssumption::DeclaredFootprintShape,
+        ])
+    );
+    recheck_mutex_invariant_certificate(&guard_local_control(), &certificate)
+        .expect("independently rederived");
+}
+
+#[test]
+fn a_plain_join_inside_a_guard_is_still_refused() {
+    // The identical trace with the ordinary join event. The admission is opt-in:
+    // nothing about `Join` moved, so CT32's cascade is unchanged.
+    let program = control(vec![lock(0, 1, 10), spawn(0, 1), join(0, 1), unlock(0, 10)]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 3, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_child_that_locks_the_creators_generation_is_refused() {
+    // The self-deadlock shape. The child's acquisition is refused before any
+    // deadlock is representable, and the join is refused as well because the
+    // child named a mutex at all.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        lock(1, 1, 11),
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 },
+            MutexInvariantDiagnostic::DuplicateLockCapability { event: 3, mutex: 1 },
+        ]
+    );
+}
+
+#[test]
+fn a_guard_local_child_that_locks_another_generation_is_refused() {
+    // The child's own acquisition of an unheld generation succeeds on its own
+    // terms; the join is still refused. Admitting it would need the wait-for
+    // graph over every task, and lock-order analysis is outside this profile.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            create(0, 2, vec![other_fp(0, 8)]),
+            lock(0, 1, 10),
+            spawn(0, 1),
+            lock(1, 2, 11),
+            unlock(1, 11),
+            guard_local_join(0, 1, 10),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 6, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_child_registered_as_a_waiter_is_refused() {
+    // The representable form of "the child is waiting for the mutex the parent
+    // holds": the join would never return.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        MutexInvariantEvent::RegisterWaiter { task: 1, mutex: 1 },
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert!(
+        refusals(&program)
+            .contains(&MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 })
+    );
+}
+
+#[test]
+fn a_guard_local_join_of_a_child_created_outside_the_section_is_refused() {
+    // G4. This is the shape the pinned `joining_while_holding_a_guard_is_refused`
+    // test uses, now with the opt-in event: opting in does not admit it.
+    let program = control(vec![
+        spawn(0, 1),
+        lock(0, 1, 10),
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 3, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_join_of_a_child_created_in_an_earlier_section_is_refused() {
+    // G4 again, and the reason guard identities are never reused: the child was
+    // created inside a critical section over the *same* generation, but not
+    // this one.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        unlock(0, 10),
+        lock(0, 1, 11),
+        guard_local_join(0, 1, 11),
+        unlock(0, 11),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 5, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_join_with_the_invariant_open_is_refused() {
+    // G5: protected memory is in a declared-broken state at the join.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        open(0, 10),
+        guard_local_join(0, 1, 10),
+        close(0, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_join_with_a_live_guard_borrow_is_refused() {
+    // G6.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 20,
+        },
+        guard_local_join(0, 1, 10),
+        MutexInvariantEvent::EndBorrow {
+            task: 0,
+            borrow: 20,
+        },
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_child_that_acts_through_the_creators_guard_is_refused() {
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        access(1, fp(0, 4), AccessKind::Read, Some(10)),
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::WrongGuardAffinity {
+                event: 3,
+                guard: 10,
+                task: 1,
+            },
+            MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 },
+        ]
+    );
+}
+
+#[test]
+fn a_guard_local_child_that_ends_the_creators_borrow_is_refused() {
+    // The asymmetry card T03-F recorded: `EndBorrow` is not keyed to the guard
+    // holder, so the child's release of the parent's borrow is accepted on its
+    // own. The guard-local rule refuses the join anyway, because the child named
+    // a guard-derived borrow. This is why G7 is stated over the whole event
+    // vocabulary rather than over acquisition alone.
+    let program = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 0,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 20,
+        },
+        MutexInvariantEvent::EndBorrow {
+            task: 1,
+            borrow: 20,
+        },
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 5, task: 0 }]
+    );
+}
+
+#[test]
+fn a_guard_local_join_naming_another_tasks_guard_is_refused() {
+    // G2, with the affinity family's own code rather than `JoinWhileGuardHeld`.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            spawn(0, 1),
+            lock(1, 1, 10),
+            spawn(0, 2),
+            guard_local_join(0, 2, 10),
+            unlock(1, 10),
+            join(0, 1),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert!(
+        refusals(&program).contains(&MutexInvariantDiagnostic::WrongGuardAffinity {
+            event: 4,
+            guard: 10,
+            task: 0,
+        })
+    );
+}
+
+#[test]
+fn a_guard_local_join_naming_no_live_guard_is_refused_as_a_dead_guard() {
+    // G2: the parent holds nothing at all, so there is no section to be local
+    // to. The refusal names the guard, not the join rule.
+    let program = control(vec![spawn(0, 1), guard_local_join(0, 1, 10)]);
+    assert_eq!(
+        refusals(&program),
+        vec![
+            MutexInvariantDiagnostic::DeadGuard {
+                event: 2,
+                guard: 10
+            },
+            MutexInvariantDiagnostic::OutstandingTask { child: 1 },
+        ]
+    );
+}
+
+#[test]
+fn a_guard_local_join_with_two_held_sections_is_refused() {
+    // G3: two live guards would need a wait-for argument across both.
+    let program = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            create(0, 2, vec![other_fp(0, 8)]),
+            lock(0, 1, 10),
+            lock(0, 2, 11),
+            spawn(0, 1),
+            guard_local_join(0, 1, 10),
+            unlock(0, 11),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&program),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 5, task: 0 }]
+    );
+}
+
+#[test]
+fn the_quiet_subtree_rule_reaches_grandchildren() {
+    // G7 is a subtree property. The accepted control has a quiet grandchild; the
+    // refused mutation has the grandchild name a mutex the parent does not hold.
+    let quiet = control(vec![
+        lock(0, 1, 10),
+        spawn(0, 1),
+        spawn(1, 2),
+        join(1, 2),
+        guard_local_join(0, 1, 10),
+        unlock(0, 10),
+    ]);
+    let certificate = check_mutex_invariant_program(&quiet).expect("accepted");
+    assert_eq!(
+        certificate.admitted_guard_local_joins,
+        vec![AdmittedGuardLocalJoin {
+            event: 5,
+            parent: 0,
+            child: 1,
+            guard: 10,
+            quiet_subtree: vec![1, 2],
+        }]
+    );
+
+    let loud = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(0, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            create(0, 2, vec![other_fp(0, 8)]),
+            lock(0, 1, 10),
+            spawn(0, 1),
+            spawn(1, 2),
+            MutexInvariantEvent::RegisterWaiter { task: 2, mutex: 2 },
+            join(1, 2),
+            guard_local_join(0, 1, 10),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+            destroy_mutex(0, 2),
+        ],
+        ..Default::default()
+    };
+    assert!(
+        refusals(&loud)
+            .contains(&MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 7, task: 0 })
+    );
+}
+
+#[test]
+fn a_guard_local_join_of_a_child_holding_share_or_custody_is_refused() {
+    // G9: the child entered with a share of an unprotected footprint.
+    let sharing = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8)), full(1, other_fp(0, 8))],
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            lock(0, 1, 10),
+            spawn(0, 1),
+            guard_local_join(0, 1, 10),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+        ],
+        ..Default::default()
+    };
+    assert_eq!(
+        refusals(&sharing),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 3, task: 0 }]
+    );
+
+    // G10: the child is the custodian of a live resource at the join.
+    let custodian = MutexInvariantProgram {
+        initial_shares: vec![full(0, fp(0, 8))],
+        initial_custody: BTreeMap::from([(OTHER, 0)]),
+        events: vec![
+            create(0, 1, vec![fp(0, 8)]),
+            lock(0, 1, 10),
+            spawn(0, 1),
+            MutexInvariantEvent::TransferCustody {
+                from: 0,
+                to: 1,
+                resource: OTHER,
+                via: SyncWitness::SpawnEdge { child: 1 },
+            },
+            guard_local_join(0, 1, 10),
+            unlock(0, 10),
+            destroy_mutex(0, 1),
+        ],
+    };
+    assert_eq!(
+        refusals(&custodian),
+        vec![MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 }]
+    );
+}
+
+#[test]
+fn recheck_refuses_a_tampered_guard_local_join_record() {
+    let program = guard_local_control();
+    let certificate = check_mutex_invariant_program(&program).expect("accepted");
+    for mutation in [
+        vec![],
+        vec![AdmittedGuardLocalJoin {
+            event: 3,
+            parent: 0,
+            child: 1,
+            guard: 11,
+            quiet_subtree: vec![1],
+        }],
+        vec![AdmittedGuardLocalJoin {
+            event: 3,
+            parent: 0,
+            child: 1,
+            guard: 10,
+            quiet_subtree: vec![1, 2],
+        }],
+    ] {
+        let mut forged = certificate.clone();
+        forged.admitted_guard_local_joins = mutation;
+        let errors = recheck_mutex_invariant_certificate(&program, &forged)
+            .expect_err("a forged record is refused");
+        assert!(errors.contains(&CertificateRecheckError::FieldMismatch {
+            field: "admitted_guard_local_joins",
+        }));
+    }
+}
+
+#[test]
+fn every_mutex_keying_event_kind_refuses_a_guard_local_join() {
+    // The quiet-subtree vocabulary, pinned by behaviour: each of these performed
+    // by the child refuses the join. A new event kind that touches a mutex and
+    // is not classified would widen the admission silently.
+    let noisy = |event: MutexInvariantEvent| {
+        control(vec![
+            lock(0, 1, 10),
+            spawn(0, 1),
+            event,
+            guard_local_join(0, 1, 10),
+            unlock(0, 10),
+        ])
+    };
+    let kinds = vec![
+        create(1, 3, vec![other_fp(0, 8)]),
+        destroy_mutex(1, 1),
+        MutexInvariantEvent::RegisterWaiter { task: 1, mutex: 1 },
+        lock(1, 1, 11),
+        unlock(1, 10),
+        MutexInvariantEvent::ErrorExit {
+            task: 1,
+            guard: 10,
+            exit: 1,
+        },
+        open(1, 10),
+        close(1, 10),
+        MutexInvariantEvent::BorrowUnderGuard {
+            task: 1,
+            guard: 10,
+            footprint: fp(0, 4),
+            borrow: 20,
+        },
+        MutexInvariantEvent::EndBorrow {
+            task: 1,
+            borrow: 20,
+        },
+        MutexInvariantEvent::AssertFact {
+            task: 1,
+            guard: 10,
+            footprint: fp(0, 4),
+            fact: 30,
+        },
+        MutexInvariantEvent::UseFact { task: 1, fact: 30 },
+        MutexInvariantEvent::ExtendProtection {
+            task: 1,
+            mutex: 1,
+            footprint: other_fp(0, 4),
+        },
+        MutexInvariantEvent::UnsupportedConstruct {
+            task: 1,
+            construct: UnsupportedSynchronization::ConditionVariable,
+        },
+        access(1, fp(0, 4), AccessKind::Read, Some(10)),
+    ];
+    assert_eq!(kinds.len(), 15);
+    for kind in kinds {
+        let program = noisy(kind.clone());
+        assert!(
+            refusals(&program)
+                .contains(&MutexInvariantDiagnostic::JoinWhileGuardHeld { event: 4, task: 0 }),
+            "{kind:?} must refuse the guard-local join"
+        );
+    }
+}

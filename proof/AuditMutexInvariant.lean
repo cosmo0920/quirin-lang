@@ -109,3 +109,34 @@ happens-before conditions on destruction are not among these. -/
 #print axioms QCore.Concurrency.MutexInvariant.join_while_holding_a_guard_is_refused
 #print axioms QCore.Concurrency.MutexInvariant.join_of_a_guard_holding_child_is_refused
 #print axioms QCore.Concurrency.MutexInvariant.a_shareless_task_cannot_access_unguarded
+
+-- The guard-local join (card T03-GUARD-JOIN). What an admitted join does, and
+-- does not, disturb.
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_effect_is_the_ordinary_join
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_preserves_authority
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_preserves_declared_shapes
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_drops_nothing_the_invariant_needs
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_completes_exactly_the_child
+#print axioms QCore.Concurrency.MutexInvariant.accepted_guard_local_join_discharges_its_obligations
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_keeps_the_creator_in_its_only_section
+
+-- Everything outside the rule keeps refusing.
+#print axioms QCore.Concurrency.MutexInvariant.the_quiet_subtree_contains_the_child
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_a_quiet_subtree
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_refuses_a_keyed_descendant
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_creation_in_the_same_section
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_exactly_one_held_section
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_the_joining_task_to_hold_the_section
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_a_closed_invariant
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_requires_no_live_borrow
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_refuses_a_waiting_subtree
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_refuses_a_sharing_child
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_refuses_a_custodian_child
+#print axioms QCore.Concurrency.MutexInvariant.guard_local_join_refuses_a_guard_holding_child
+
+-- The ledger's own vocabulary: what marks a task, and what does not.
+#print axioms QCore.Concurrency.MutexInvariant.spawn_records_the_creators_open_sections
+#print axioms QCore.Concurrency.MutexInvariant.a_lock_is_recorded_as_mutex_keyed
+#print axioms QCore.Concurrency.MutexInvariant.a_registered_waiter_is_recorded_as_mutex_keyed
+#print axioms QCore.Concurrency.MutexInvariant.guarded_and_unguarded_access_are_recorded_differently
+#print axioms QCore.Concurrency.MutexInvariant.an_end_borrow_is_recorded_as_mutex_keyed

@@ -62,6 +62,9 @@ pub fn is_single_task_trace(program: &MutexInvariantProgram) -> bool {
             event,
             MutexInvariantEvent::Spawn { .. }
                 | MutexInvariantEvent::Join { .. }
+                // A guard-local join is still a join: the backend emits one
+                // thread, so a trace carrying one is outside it.
+                | MutexInvariantEvent::GuardLocalJoin { .. }
                 | MutexInvariantEvent::TransferCustody { .. }
                 | MutexInvariantEvent::RegisterWaiter { .. }
         )

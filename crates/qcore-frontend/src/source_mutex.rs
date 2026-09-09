@@ -29,6 +29,7 @@
 //!               | "assert" NAME "with" NAME ";" | "use" NAME ";"
 //!               | "wait" NAME ";"
 //!               | "thread" "scope" NAME "{" child* "}"
+//!               | "thread" "scope" NAME "under" NAME "{" child* "}" -- guard-local
 //!               | "raise" NAME "::" NAME ";"               -- typed-error exit, last only
 //! child       ::= any `outer` or `inner` form except a declaration and except
 //!                 `drop`; a child task inherits the enclosing critical
@@ -61,6 +62,24 @@
 //!   child block written *inside* a critical section is refused by the core's
 //!   own `JoinWhileGuardHeld` rule, and a child that names the enclosing
 //!   guard is refused with `WrongGuardAffinity` (`Q612`).
+//!
+//! Card T03-GUARD-JOIN adds one opt-in form on top of that last rule.
+//! `thread scope c under g { … }`, written inside `g`'s own section, lowers its
+//! join to the core's `GuardLocalJoin` instead of `Join`. `under` names the
+//! enclosing section explicitly — outside one, or naming a different guard, it
+//! is refused here — so the admission is requested at the source rather than
+//! inferred from where the block happens to sit. Whether the join is *admitted*
+//! is entirely the core's decision: it checks that the child was created inside
+//! this same section, that the section is the only one held with its invariant
+//! closed and no live borrow, and that the whole joined subtree named no mutex,
+//! guard or guard-scoped fact anywhere. A plain `thread scope c { … }` inside a
+//! section is unchanged and still refuses at `Q600`, so nothing already written
+//! moves.
+//!
+//! Because a child in this profile can hold no share and no custody, the work a
+//! guard-local child can do is whatever this profile does not model: it may not
+//! touch a declared resource at all. The admission is about the *join*, not
+//! about giving the child authority.
 //!
 //! What this lowering does **not** establish: source-to-trace refinement, the
 //! real C layout of the declared intervals (`DeclaredFootprintShape`), or the
@@ -984,12 +1003,44 @@ fn lower_child_task(
     frame: Frame<'_>,
     state: &mut Lowering,
 ) -> Result<(), SourceDiagnostic> {
-    if header.len() != 3 || !word(header.first(), "thread") || !word(header.get(1), "scope") {
+    if !word(header.first(), "thread") || !word(header.get(1), "scope") {
         return Err(failure(
             span,
-            "a child task is exactly `thread scope NAME { … }`",
+            "a child task is exactly `thread scope NAME { … }`, or \
+             `thread scope NAME under GUARD { … }` for a guard-local child",
         ));
     }
+    // Card T03-GUARD-JOIN: `under GUARD` requests the guard-local join. It names
+    // the enclosing section explicitly, so the admission is opted into at the
+    // source rather than inferred from position; a plain `thread scope NAME`
+    // inside a section keeps the core's `JoinWhileGuardHeld` refusal.
+    let guard_local = match header.len() {
+        3 => None,
+        5 if word(header.get(3), "under") => {
+            let Some(section) = frame.section else {
+                return Err(failure(
+                    span,
+                    "`thread scope NAME under GUARD { … }` names the critical section the child \
+                     is local to, so it belongs inside a `with lock` body",
+                ));
+            };
+            if !names_guard(header, 4, section) {
+                return Err(failure(
+                    span,
+                    "a guard-local child names its own enclosing section's guard: \
+                     `thread scope NAME under GUARD { … }`",
+                ));
+            }
+            Some(section)
+        }
+        _ => {
+            return Err(failure(
+                span,
+                "a child task is exactly `thread scope NAME { … }`, or \
+                 `thread scope NAME under GUARD { … }` for a guard-local child",
+            ));
+        }
+    };
     let _ = child_name;
     state.next_task += 1;
     let child = state.next_task;
@@ -1021,9 +1072,16 @@ fn lower_child_task(
             start: body.span.end.saturating_sub(1),
             end: body.span.end,
         },
-        MutexInvariantEvent::Join {
-            parent: frame.task,
-            child,
+        match guard_local {
+            Some(section) => MutexInvariantEvent::GuardLocalJoin {
+                parent: frame.task,
+                child,
+                guard: section.guard,
+            },
+            None => MutexInvariantEvent::Join {
+                parent: frame.task,
+                child,
+            },
         },
     );
     Ok(())

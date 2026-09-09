@@ -2191,6 +2191,12 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "assert"
             | "use"
             | "wait"
+            // Card T03-GUARD-JOIN's guard-local child header
+            // (`thread scope c under g { … }`). Reserved for the same reason as
+            // every profile keyword above: it is a clause word in a thread-scope
+            // header, never a reference to a binding. The guard name that
+            // follows it *is* a reference and still resolves normally.
+            | "under"
             | "spawn"
             | "join"
             | "copy"
