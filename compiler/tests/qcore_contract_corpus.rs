@@ -69,10 +69,18 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "native_file_constructor_failure_observation",
         16,
     ),
+    // Deliberate pin update (card P04-B1): the cleanup-outcome policies now
+    // declare the referents their `CleanupProfile` binds, so a transported
+    // profile has a machine-checkable contract-side inventory instead of none.
+    // 12 -> 25: thirteen `cleanup_` premises — the `cleanup_vocabulary_v1`
+    // selector, the pinned function, the record pointer type, the `unlink`
+    // callee and its signature, the eligibility and mapping fields, three
+    // indexed field entries carrying C type and reset value, one indexed path
+    // argument, and the two diagnostic helpers. No `ensures` clause moved.
     (
         "chunkio/filesystem_delete.qcore",
         "native_delete_outcomes",
-        12,
+        25,
     ),
     (
         "chunkio/filesystem_delete_attempt.qcore",
@@ -114,15 +122,21 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "native_os_cleanup_observation",
         13,
     ),
+    // Deliberate pin updates (card P04-B1), same declaration family as
+    // `filesystem_delete.qcore` above and no `ensures` clause moved. Close
+    // 16 -> 26: ten `cleanup_` premises over a one-field inventory with one
+    // argument. Unmap 16 -> 29: thirteen, over three fields and two ordered
+    // `munmap` arguments. Neither declares a mapping field: that clause exists
+    // only for the guarded-delete policy, and declaring one here is refused.
     (
         "chunkio/filesystem_outcomes.qcore",
         "native_close_outcomes",
-        16,
+        26,
     ),
     (
         "chunkio/filesystem_outcomes.qcore",
         "native_unmap_outcomes",
-        16,
+        29,
     ),
     (
         "chunkio/filesystem_reopen_failure_observation.qcore",

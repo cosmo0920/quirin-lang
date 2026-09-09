@@ -1,5 +1,8 @@
 module contract;
 
+// Card P04-B1: an unrelated source set declaring the same referent vocabulary,
+// so the mechanism is exercised outside the pinned ChunkIO pair. The record tag
+// and every name here belong to this fixture, not to ChunkIO.
 extern fn sample_cleanup_policy() -> unit
 contract {
     requires nullable_live_exclusive_record;
@@ -7,6 +10,16 @@ contract {
     requires syscall_returns_zero_or_minus_one_and_frames_record;
     requires diagnostics_return_and_frame_record;
     requires source_and_abi_bindings;
+    requires cleanup_vocabulary_v1;
+    requires cleanup_function__sample_cleanup;
+    requires cleanup_root_type__struct_sample_handle_ptr;
+    requires cleanup_syscall__sample_release;
+    requires cleanup_syscall_signature__int__int;
+    requires cleanup_presence_field__handle;
+    requires cleanup_field__0__handle__int__integer_m1;
+    requires cleanup_argument_field__0__handle;
+    requires cleanup_errno_helper__sample_errno;
+    requires cleanup_report_helper__sample_report;
     ensures normal not was_null or returned == -1;
     ensures normal was_null or was_present or returned == 0;
     ensures normal not syscall_failed or returned == -1;

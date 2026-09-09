@@ -19,6 +19,7 @@ pub mod teardown_source;
 
 pub mod call_use_contract;
 pub mod cleanup_outcome;
+pub mod cleanup_vocabulary;
 pub mod counter_contract;
 pub mod field_destructor;
 pub mod list_unlink_contract;

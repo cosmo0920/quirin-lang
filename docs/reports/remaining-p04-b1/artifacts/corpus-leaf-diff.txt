@@ -1,0 +1,72 @@
+resource-diagnostics.json: byte-identical
+monkey-source.json: byte-identical
+resource-diagnostics.chunk-contracts.json: 18 changed leaf/leaves, 0 added, 0 removed
+    changed field `contract_source`: 18
+    e.g. backend_teardown.[10].certificate.native.contract_source
+        before[2199]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+        after [4639]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+    e.g. backend_teardown.[12].certificate.contract_source
+        before[1039]: module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, no
+        after [2733]: module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, no
+    e.g. backend_teardown.[14].certificates.[0].contract_source
+        before[2199]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+        after [4639]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+    e.g. backend_teardown.[14].certificates.[1].contract_source
+        before[2199]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+        after [4639]: module contract;
+
+// Conditional source transition policies. The caller supplies live exclusive
+// record provenance, ex
+    e.g. backend_teardown.[19].source.filesystem.backend.native_delete.contract_source
+        before[1039]: module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, no
+        after [2733]: module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, no
+resource-diagnostics.source-effects.json: byte-identical
+resource-diagnostics.contracts.json: byte-identical
+
+complete changed-leaf path list for resource-diagnostics.chunk-contracts.json
+(all 18 are contract_source; 0 added, 0 removed leaves)
+   backend_teardown.[10].certificate.native.contract_source               filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[12].certificate.contract_source                      filesystem_delete.qcore  1039 -> 2733 bytes
+   backend_teardown.[14].certificates.[0].contract_source                 filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[14].certificates.[1].contract_source                 filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[19].source.filesystem.backend.native_delete.contract_source filesystem_delete.qcore  1039 -> 2733 bytes
+   backend_teardown.[19].source.filesystem.backend.no_delete.close.contract_source filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[19].source.filesystem.backend.no_delete.unmap.native.contract_source filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[20].source.filesystem.backend.native_delete.contract_source filesystem_delete.qcore  1039 -> 2733 bytes
+   backend_teardown.[20].source.filesystem.backend.no_delete.close.contract_source filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[20].source.filesystem.backend.no_delete.unmap.native.contract_source filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[5].evidence.backend.native_delete.contract_source    filesystem_delete.qcore  1039 -> 2733 bytes
+   backend_teardown.[5].evidence.backend.no_delete.close.contract_source  filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[5].evidence.backend.no_delete.unmap.native.contract_source filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[8].evidence.native_delete.contract_source            filesystem_delete.qcore  1039 -> 2733 bytes
+   backend_teardown.[8].evidence.no_delete.close.contract_source          filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[8].evidence.no_delete.unmap.native.contract_source   filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[9].evidence.close.contract_source                    filesystem_outcomes.qcore  2199 -> 4639 bytes
+   backend_teardown.[9].evidence.unmap.native.contract_source             filesystem_outcomes.qcore  2199 -> 4639 bytes

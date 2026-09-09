@@ -4,6 +4,26 @@ module contract;
 // record provenance, exact compiled bindings and returning external-call frames.
 // A syscall result is an input, never an assumed success. These policies do not
 // assert OS resource discharge: descriptor custody after an error is unresolved.
+//
+// Card P04-B1. Each policy now declares the referents it binds — the pinned C
+// function, the record pointer type, the external cleanup callee and its exact
+// signature, the eligibility field, the ordered field inventory with each
+// field's C type and post-success reset value, the ordered syscall arguments
+// and the two diagnostic helpers. `cleanup_vocabulary_v1` selects that
+// interpretation, exactly as `resource_contract_v1` selects the resource
+// loader's. The reader is `qcore_verification::cleanup_vocabulary`; a profile
+// that is not this declaration is refused before any path is replayed, and the
+// declaration is then checked against the pinned typed source by that replay.
+//
+// Spelling: a payload after a fixed prefix is the C identifier verbatim, so
+// `__errno_location` reads `cleanup_errno_helper____errno_location`. C types
+// and reset values travel through closed tables (`char *` is `char_ptr`,
+// `unsigned long` is `unsigned_long`, `fd = -1` is `integer_m1`, `map = NULL`
+// is `null`), so a spelling outside those tables has no declaration at all.
+//
+// Declaring a name is not observing an effect: `close` and `munmap` here are
+// declared callees the source must really call, not evidence that a descriptor
+// was released or a mapping torn down.
 
 extern fn native_close_outcomes() -> unit
 contract {
@@ -12,6 +32,16 @@ contract {
     requires syscall_returns_zero_or_minus_one_and_frames_record;
     requires diagnostics_return_and_frame_record;
     requires source_and_abi_bindings;
+    requires cleanup_vocabulary_v1;
+    requires cleanup_function__cio_file_native_close;
+    requires cleanup_root_type__struct_cio_file_ptr;
+    requires cleanup_syscall__close;
+    requires cleanup_syscall_signature__int__int;
+    requires cleanup_presence_field__fd;
+    requires cleanup_field__0__fd__int__integer_m1;
+    requires cleanup_argument_field__0__fd;
+    requires cleanup_errno_helper____errno_location;
+    requires cleanup_report_helper__cio_errno_print;
     ensures normal not was_null or returned == -1;
     ensures normal was_null or was_present or returned == 0;
     ensures normal not syscall_failed or returned == -1;
@@ -32,6 +62,19 @@ contract {
     requires syscall_returns_zero_or_minus_one_and_frames_record;
     requires diagnostics_return_and_frame_record;
     requires source_and_abi_bindings;
+    requires cleanup_vocabulary_v1;
+    requires cleanup_function__cio_file_native_unmap;
+    requires cleanup_root_type__struct_cio_file_ptr;
+    requires cleanup_syscall__munmap;
+    requires cleanup_syscall_signature__int__void_ptr__size_t;
+    requires cleanup_presence_field__map;
+    requires cleanup_field__0__map__char_ptr__null;
+    requires cleanup_field__1__alloc_size__unsigned_long__integer_0;
+    requires cleanup_field__2__map_truncated_warned__int__integer_0;
+    requires cleanup_argument_field__0__map;
+    requires cleanup_argument_field__1__alloc_size;
+    requires cleanup_errno_helper____errno_location;
+    requires cleanup_report_helper__cio_errno_print;
     ensures normal not was_null or returned == -1;
     ensures normal was_null or was_present or returned == 0;
     ensures normal not syscall_failed or returned == -1;
