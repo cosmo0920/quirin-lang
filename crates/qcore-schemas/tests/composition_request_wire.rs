@@ -552,6 +552,151 @@ fn request_admission_is_exact() {
     );
 }
 
+/// The exact variant inventory the composition route's transported bodies can
+/// express, pinned by name.
+///
+/// `P04-COMPOSE` recorded this pin as the mechanism that makes
+/// `P04-COMPOSE-SHARED-PATHS` real — a future widening of the shared step and
+/// expression enums must fail *here* and be decided, instead of silently
+/// widening a family that reuses them. **The test it named did not exist**;
+/// card `P04-COMPOSE-A` found the dangling reference while adding the ninth
+/// operation form (`return`, for the `void` `cio_file_close` wrapper) and wrote
+/// the pin rather than correcting the claim downwards.
+///
+/// A schemas-level pin can only bind the *inventory*; which variants a given
+/// family actually admits is decided by the gateway projector and by each
+/// producer, both of which refuse by name. Those refusals are pinned in their
+/// own crates.
+#[test]
+fn composition_vocabulary_is_pinned() {
+    use qcore_schemas::cleanup_replay_summary::{
+        CleanupReplayExpressionRecord as Expr, CleanupReplayOperationRecord as Op,
+        CleanupReplayValueRecord,
+    };
+    let value = || CleanupReplayValueRecord {
+        c_type: "int".into(),
+        expression: Expr::Integer {
+            value: "0".to_owned(),
+        },
+    };
+    let kind = |v: &serde_json::Value| v["kind"].as_str().unwrap().to_owned();
+
+    let operations = [
+        Op::Read { place: value() },
+        Op::Write {
+            place: value(),
+            value: value(),
+        },
+        Op::LocalStart {
+            local: 0,
+            c_type: "int".into(),
+        },
+        Op::LocalWrite {
+            local: 0,
+            value: value(),
+        },
+        Op::LocalEnd { local: 0 },
+        Op::Guard {
+            condition: value(),
+            taken: true,
+        },
+        Op::Call {
+            function: "f".into(),
+            signature: "int (void)".into(),
+            arguments: Vec::new(),
+            result_type: "int".into(),
+        },
+        Op::ReturnValue { value: value() },
+        Op::Return,
+    ];
+    let mut kinds: Vec<String> = operations
+        .iter()
+        .map(|op| kind(&serde_json::to_value(op).unwrap()))
+        .collect();
+    kinds.sort();
+    assert_eq!(
+        kinds,
+        vec![
+            "call",
+            "guard",
+            "local_end",
+            "local_start",
+            "local_write",
+            "read",
+            "return",
+            "return_value",
+            "write",
+        ],
+        "the transported operation inventory moved; decide which families admit \
+         the change before updating this pin"
+    );
+
+    let expressions = [
+        Expr::Parameter { index: 0 },
+        Expr::Symbol { operation: 0 },
+        Expr::Integer {
+            value: "0".to_owned(),
+        },
+        Expr::String {
+            value: "s".to_owned(),
+        },
+        Expr::Field {
+            base: Box::new(value()),
+            name: "f".into(),
+        },
+        Expr::Cast {
+            cast: "NoOp".into(),
+            value: Box::new(value()),
+        },
+        Expr::Unary {
+            operator: "!".into(),
+            value: Box::new(value()),
+        },
+        Expr::Binary {
+            operator: "==".into(),
+            left: Box::new(value()),
+            right: Box::new(value()),
+        },
+    ];
+    let mut kinds: Vec<String> = expressions
+        .iter()
+        .map(|expression| kind(&serde_json::to_value(expression).unwrap()))
+        .collect();
+    kinds.sort();
+    assert_eq!(
+        kinds,
+        vec![
+            "binary",
+            "cast",
+            "field",
+            "integer",
+            "parameter",
+            "string",
+            "symbol",
+            "unary",
+        ],
+        "the transported expression inventory moved; decide which families admit \
+         the change before updating this pin"
+    );
+
+    // The transported family tags, pinned so a third cannot appear without a
+    // decision here.
+    let mut families: Vec<String> = [
+        projection(),
+        file_close_projection(),
+        file_close_delete_projection(),
+    ]
+    .iter()
+    .map(|value| value["family"]["family"].as_str().unwrap().to_owned())
+    .collect();
+    families.sort();
+    families.dedup();
+    assert_eq!(
+        families,
+        vec!["file_close".to_string(), "unmap_wrapper".into()]
+    );
+}
+
 /// The prerequisite identity rules are not vacuous, in either family.
 #[test]
 fn the_prerequisite_rules_are_decidable() {

@@ -63,6 +63,15 @@ This is the mechanism `P04-COMPOSE-SHARED-PATHS` asked for: a future widening of
 the shared enums fails at an explicit refusal rather than silently widening a
 family.
 
+**A dangling claim was found and repaired rather than corrected downwards.**
+`composition_summary`'s module doc named `composition_vocabulary_is_pinned` as
+the test that pins the exact variant inventory this route admits. **That test did
+not exist.** Adding the ninth operation form is exactly the change it was
+supposed to catch, so the pin is now written: it asserts the sorted tag
+inventory of both shared enums (nine operation forms, eight expression forms)
+and of the composition families themselves, so a future variant must be decided
+there before it can travel.
+
 ### 1.2 Two entry points, two questions
 
 `check_file_close_source` and `check_file_close_deletion_source` are separate
@@ -474,7 +483,7 @@ same projection field.
 
 ### 6.6 Wire compatibility
 
-`crates/qcore-schemas/tests/composition_request_wire.rs` grows from 5 to **8
+`crates/qcore-schemas/tests/composition_request_wire.rs` grows from 5 to **9
 tests**: a request carrying none of the seven projections still serializes with
 none of the seven keys and round-trips; all three question shapes round-trip and
 carry no derived reading (a seventeen-name absence list); the nesting depth is
@@ -487,7 +496,8 @@ admission rule is exact for all three shapes; and the identity rules are
 non-vacuous in both families, with all seven digest-key constants distinct.
 
 The superseded projection version is refused **in both directions**: version 1
-and version 3 both fail request validation.
+and version 3 both fail request validation. The ninth test is
+`composition_vocabulary_is_pinned` (§1.1).
 
 ### 6.7 Lean
 

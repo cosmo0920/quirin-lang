@@ -8,22 +8,33 @@
 //! composition's reading is neither a path evaluation, a def/use fold nor a
 //! single-body symbolic replay: it is a replay of a *wrapper* body whose call
 //! results are the readings of separately checked prerequisite capabilities,
-//! and whose published cases name the prerequisite's own selected paths.
+//! and whose published cases name those prerequisites' own readings.
+//!
+//! Card `P04-COMPOSE-A` extended it to the `cio_file_close` compositions, whose
+//! own prerequisite is **another composition**, so the vocabulary is now
+//! recursive: a family input may carry a nested family input, and the
+//! prerequisite set is tagged by family because the shape genuinely differs
+//! (the leaf family names three prerequisites, none a composition; the
+//! `file_close` families name three or four, one of which is the leaf
+//! composition). The projection version is `2` for that change.
 //!
 //! ## What a composition projection may and may not carry
 //!
 //! It carries the *question* and never a derived result:
 //!
 //! * the wrapper's complete typed path set;
-//! * the prerequisite bodies' complete typed path sets and the record profile
-//!   the prerequisite replay evolves — so the producer must recompute the
+//! * the prerequisite bodies' complete typed path sets and the record profiles
+//!   the prerequisite replays evolve — so the producer must recompute each
 //!   prerequisite reading itself rather than being handed it;
-//! * one [`PrerequisiteIdentity`] triple per prerequisite, which is a **lookup
-//!   key**: it carries no verdict, no certificate, no case vector and no
-//!   coverage.
+//! * on a family whose prerequisite is **another composition**, that
+//!   composition's whole question, verbatim, so the producer must recompute the
+//!   nested composed reading too;
+//! * one [`PrerequisiteIdentity`] per prerequisite, which is a **lookup key**:
+//!   it carries no verdict, no certificate, no case vector and no coverage.
 //!
-//! It never carries a composed result. No case vector, no selected path, no
-//! counter reading, no contract text, no policy name and no verdict travel.
+//! It never carries a composed result, at any level. No case vector, no
+//! selected path, no case index, no counter reading, no residual
+//! classification, no contract text, no policy name and no verdict travel.
 //! **A composed certificate is never transported in either direction**, which
 //! is the property that distinguishes this vocabulary from a naive
 //! "composition" wire format: a producer that could send the prerequisite's
@@ -33,23 +44,28 @@
 //! ## Where the authority is
 //!
 //! Nowhere in this module. The trusted core re-derives every prerequisite task
-//! from its own import, refuses unless each claimed triple *is* the identity it
-//! derives, re-runs each prerequisite's own contract evaluation, and only then
-//! runs its own unedited composition over its own certificates and requires the
-//! proposal to be that same reading. Agreement alone discharges nothing.
+//! from its own import, refuses unless each claimed identity *is* the one it
+//! derives, re-runs each prerequisite's own contract evaluation — recursively,
+//! where a prerequisite is itself a composition — and only then runs its own
+//! unedited composition over its own certificates and requires the proposal to
+//! be that same reading. Agreement alone discharges nothing, at any level.
 //!
 //! ## Shared path records, deliberately
 //!
-//! The bodies travel as [`CleanupReplayFunctionRecord`]s. The wrapper replay
-//! executes exactly the same eight step forms and eight expression forms the
-//! cleanup replay does, so a private copy of those enums would be a
-//! byte-for-byte duplicate with no distinct refusal surface. The *projector*
-//! for this route is separate and enforces its own admission — in particular
-//! its own closed callee table — and
-//! `composition_vocabulary_is_pinned` in `crates/qcore-schemas/tests` pins the
-//! exact variant inventory this route admits, so a future widening of the
+//! The bodies travel as [`CleanupReplayFunctionRecord`]s. The wrapper replays
+//! execute the same step and expression forms the cleanup replay does, so a
+//! private copy of those enums would be a byte-for-byte duplicate with no
+//! distinct refusal surface. The *projector* for this route is separate and
+//! enforces its own admission — in particular its own closed callee tables —
+//! and `composition_vocabulary_is_pinned` in `crates/qcore-schemas/tests` pins
+//! the exact variant inventory this route admits, so a future widening of the
 //! shared enums fails there instead of silently widening this route. Recorded
 //! as boundary `P04-COMPOSE-SHARED-PATHS`.
+//!
+//! Card `P04-COMPOSE-A` widened one shared enum by exactly one variant, for the
+//! `void`-returning `cio_file_close` wrapper: see
+//! [`crate::cleanup_replay_summary::CleanupReplayOperationRecord::Return`],
+//! which the cleanup-replay route refuses by name in both directions.
 //!
 //! Nothing here observes or claims OS behaviour. A recorded `munmap` call is a
 //! recorded call; whether a mapping was torn down is outside every claim this
