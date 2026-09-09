@@ -4329,10 +4329,13 @@ fn branch_instruction(
     }
 }
 
-const LIVE: u8 = 1;
-const RELEASED: u8 = 2;
-const ESCAPED: u8 = 4;
-const CONTAINED: u8 = 8;
+// `pub(crate)` since card HYGIENE-14 so `borrow_liveness` classifies the
+// analyzer's own status bits rather than restating their numeric values. The
+// values, the join and every use here are unchanged.
+pub(crate) const LIVE: u8 = 1;
+pub(crate) const RELEASED: u8 = 2;
+pub(crate) const ESCAPED: u8 = 4;
+pub(crate) const CONTAINED: u8 = 8;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 struct AbstractPointer {
@@ -5144,7 +5147,7 @@ fn require_live_borrowed_actuals(
                     unresolved: &state.unresolved_effect_sites,
                 },
             );
-            if decision == crate::borrow_liveness::BorrowLiveness::DefinitelyReleased {
+            if decision == crate::borrow_liveness::BorrowLiveness::DefinitelyNotLive {
                 diagnostics.insert(LegacyDiagnostic {
                     function: cfg.function.clone(),
                     line: node.line,
