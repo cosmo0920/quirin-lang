@@ -1,0 +1,96 @@
+module contract;
+
+// O04-READ-BOUND — held-out generic API for the *read* half of the aggregate
+// field-link relation.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to the `g_*` (O04),
+// `h_*` (O04-ARMS) and `k_*` (O04-B08) families: every rule under test is
+// stated over declared C types and contract modes, so no name here can matter.
+// These are synthetic trusted test assumptions, not facts about any library.
+
+// The aggregate's own constructor and destructor. `r_drop` releases exactly the
+// aggregate it is given: it declares no `Removed` parameter, so under premise
+// P-B08-SHALLOW it does not discharge anything the aggregate's members link.
+extern fn r_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn r_drop(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The child resource stored into, and later read out of, a member.
+extern fn r_take(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn r_release(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The borrowing sink this card's admission is *about*: it discharges nothing,
+// which is why a bound read may occupy its parameter.
+extern fn r_probe(i: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(i);
+    ensures normal resource_return_none();
+};
+
+// The same, over the arithmetic-pointee member shape the real routes-mask
+// member has.
+extern fn r_scan(w: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(w);
+    ensures normal resource_return_none();
+};
+
+// A borrowing sink over a scalar. A scalar member can never hold an identity,
+// so a bound read of one is deliberately NOT admitted and keeps its refusal.
+extern fn r_count(n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+// The two custody-bearing sinks the admission deliberately refuses
+// (`O04-READ-BOUND-CUSTODY`): a contracted callee that merely *borrows* an
+// aggregate could rewrite the member invisibly, so a bound read may never
+// occupy a position that discharges.
+extern fn r_reap(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn r_adopt(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// An acquisition whose pointee is an arithmetic typedef rather than a record:
+// the shape the real routes-mask member has, and the one the real subject reads
+// back at a borrowed position.
+extern fn r_words(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};

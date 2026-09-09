@@ -69,6 +69,14 @@ pub enum LegacyInstruction {
         arguments: Vec<Option<String>>,
         contract: ResourceFunctionContract,
         produced_sites: Vec<usize>,
+        /// The admitted **bound reads** of this call (card O04-READ-BOUND): the
+        /// canonical `BASE->FIELD` places occupying `Borrowed` positions that
+        /// [`crate::aggregate_store::bound_read_actuals`] admitted on typed
+        /// premises alone. [`transfer`] additionally requires each one, *here*,
+        /// to resolve to a live aggregate this body acquired carrying the exact
+        /// field link an admitted store recorded; otherwise the whole call
+        /// refuses. Empty for every other statement in the corpus.
+        aggregate_reads: Vec<String>,
     },
     BranchOnNull {
         source: String,
@@ -2361,13 +2369,27 @@ impl Parser<'_> {
         // member read. Both are *reads*; the destination side of the lexical
         // gate below is untouched, which is what keeps such a place from ever
         // being bound. See [`crate::borrowed_actual`].
-        let borrowed_actuals = crate::borrowed_actual::borrowed_actual_spans(
+        let mut borrowed_actuals = crate::borrowed_actual::borrowed_actual_spans(
             &texts,
             self.contracts,
             &self.typed_model,
             &self.typed_types,
             &self.typed_bases,
         );
+        // O04-READ-BOUND: the complementary read half of B08's premise set — a
+        // whole `Borrowed` actual `BASE - > FIELD` on an aggregate base *this*
+        // body bound. Its span leaves the lexical gate exactly as a C02-P
+        // borrowed actual does; unlike one, it names a place the projection
+        // binds, so [`transfer`] revalidates it flow-sensitively before the call
+        // takes effect.
+        let bound_reads = crate::aggregate_store::bound_read_actuals(
+            &texts,
+            self.contracts,
+            &self.typed_model,
+            &self.typed_types,
+            &self.store_bases,
+        );
+        borrowed_actuals.extend(bound_reads.iter().map(|read| (read.start, read.end)));
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
@@ -2567,6 +2589,7 @@ impl Parser<'_> {
                     arguments,
                     contract,
                     produced_sites,
+                    aggregate_reads: bound_reads.iter().map(|read| read.place.clone()).collect(),
                 };
             }
             return LegacyInstruction::Unknown {
@@ -4262,6 +4285,34 @@ fn transfer(
             }
         }
     }
+    // O04-READ-BOUND: every admitted bound *read* of an aggregate member
+    // requires the same flow-sensitive premise as a store, plus the member
+    // actually carrying the field link an admitted store recorded. A read
+    // through a released, escaped, refuted, ambiguous, nullable or caller-held
+    // aggregate refuses and poisons the path, and so does a member this body
+    // never linked or whose binding no longer agrees with its link. This is the
+    // C00 premise in its read direction.
+    if let LegacyInstruction::ContractCall {
+        aggregate_reads, ..
+    } = &node.instruction
+        && let Some(owner) = aggregate_reads
+            .iter()
+            .find(|place| !bound_read_resolves(&state, place, &context.caller_sites))
+            .and_then(|place| crate::aggregate_store::place_owner(place))
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line: node.line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: owner.to_owned(),
+            },
+        });
+        for pointer in state.pointers.values_mut() {
+            pointer.unknown = true;
+            pointer.may_be_null = true;
+        }
+        return state;
+    }
     // O00 blocker B08: every store into an admitted aggregate field requires
     // its aggregate to resolve, here and now, to exactly one live identity
     // *this* body acquired. A released, escaped, refuted, ambiguous, nullable
@@ -4382,6 +4433,8 @@ fn transfer(
             arguments,
             contract,
             produced_sites,
+            // Revalidated above, before any effect of this call applies.
+            aggregate_reads: _,
         } => {
             let unsanctioned = destination
                 .as_deref()
@@ -4497,6 +4550,55 @@ fn written_field_place(instruction: &LegacyInstruction) -> Option<&str> {
         _ => return None,
     };
     crate::aggregate_store::is_field_place(place).then_some(place)
+}
+
+/// Whether an admitted bound read of `place` denotes, here and now, exactly the
+/// identity an admitted store linked into that member (card O04-READ-BOUND).
+///
+/// Three conjuncts, all flow-sensitive and all fail-closed:
+///
+/// 1. the **owner** resolves through [`resolved_aggregate_owner`] — one live
+///    identity this body acquired, never a caller-held, nullable or
+///    unresolved-effect one. A read through a released or escaped aggregate can
+///    therefore never be admitted, which is card C00's lesson in this direction;
+/// 2. the **place** is bound to a definite, non-empty target set. A member this
+///    body never stored into carries no identity to denote;
+/// 3. the place's targets are **exactly** the field link the store recorded
+///    under that owner. A binding that has drifted from its link — through a
+///    path join, a refutation or any other route — is refused rather than
+///    believed;
+/// 4. every linked identity is itself **live** and carries no unresolved
+///    effect. A member left pointing at an identity this body already released
+///    or published is a dangling read, and admitting it is exactly the mistake
+///    card C00 records: the whole point of premise 4 is that a read through a
+///    released pointer must never reach `Safe`.
+fn bound_read_resolves(state: &AbstractState, place: &str, caller_sites: &BTreeSet<usize>) -> bool {
+    let (Some(owner), Some(field)) = (
+        crate::aggregate_store::place_owner(place),
+        crate::aggregate_store::place_field(place),
+    ) else {
+        return false;
+    };
+    let Some(owner_site) = resolved_aggregate_owner(state, owner, caller_sites) else {
+        return false;
+    };
+    let Some(pointer) = state.pointers.get(place) else {
+        return false;
+    };
+    if pointer.unknown || pointer.targets.is_empty() {
+        return false;
+    }
+    if state
+        .field_links
+        .get(&owner_site)
+        .and_then(|fields| fields.get(field))
+        != Some(&pointer.targets)
+    {
+        return false;
+    }
+    pointer.targets.iter().all(|site| {
+        state.resources.get(site) == Some(&LIVE) && !state.unresolved_effect_sites.contains(site)
+    })
 }
 
 /// The single live identity an admitted aggregate base denotes here, when the
