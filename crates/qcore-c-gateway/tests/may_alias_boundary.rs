@@ -8,10 +8,15 @@
 //! name leaves a modeled read of a same-typed peer **unresolved**, never
 //! `Safe`, unless the body discharges the pair.
 //!
-//! Every body below was measured at the branch base `695f0e1` before the
-//! refinement landed; the `BASE:` line of each test says what it answered
-//! there, so every assertion is a *measured* movement or a *measured*
-//! preservation rather than an assumption.
+//! Card ALIAS-LOCALS then lifted v1's "at least one formal" bound, so that two
+//! same-tagged **locals** are related too, and added the definite-alias
+//! relation kind (`docs/reports/remaining-alias-locals/README.md`).
+//!
+//! Every body below was measured before the rule that governs it landed — the
+//! v1 family at the branch base `695f0e1`, the ALIAS-LOCALS family at `67961f1`
+//! — and the `BASE:` line of each test says what it answered there, so every
+//! assertion is a *measured* movement or a *measured* preservation rather than
+//! an assumption.
 //!
 //! Every fixture uses the generic `b_*` API card C02-P introduced, deliberately
 //! unrelated to ChunkIO, Fluent Bit and O04's `g_*` family, so no name in it can
@@ -342,16 +347,20 @@ fn a_class_with_no_release_is_untouched() {
     );
 }
 
-/// The v1 blast-radius bound `C02-P-ALIAS-LOCALS`: two *locals* are related by
-/// nothing here. This body's answer is **byte-for-byte the one it had before
-/// the card** — `Unknown` with the single ordinary `UnknownAlias` its
-/// unresolvable release already produced, and no obligation of this rule. It is
-/// a recorded boundary, not an endorsement: `one` and `two` are read from the
-/// same field place and may well denote the same object.
+/// **The pin v1 left for card ALIAS-LOCALS, deliberately moved.** v1 recorded
+/// this body as its blast-radius boundary `C02-P-ALIAS-LOCALS` and asserted the
+/// *complete* diagnostic vector precisely so that lifting the bound would have
+/// to move it. `one` and `two` are read from the same field place and may well
+/// denote the same object; they are now peers, and the read of `two` after the
+/// release of `one` carries this rule's obligation.
 ///
-/// BASE: `Unknown`, `[unknown_alias one]`.
+/// The load-bearing half is kept: the complete vector is still asserted, so the
+/// ordinary `UnknownAlias one` the unresolvable release already produced is
+/// still required to be there and nothing may quietly disappear.
+///
+/// BASE (v1): `Unknown`, `[unknown_alias one]`, no obligation.
 #[test]
-fn two_locals_keep_the_pre_existing_answer_in_v1() {
+fn two_locals_bound_from_one_field_place_are_now_peers() {
     if !clang_available() {
         return;
     }
@@ -361,16 +370,231 @@ fn two_locals_keep_the_pre_existing_answer_in_v1() {
     );
     let w = entry(program(&result));
     assert_eq!(w.status, AnalysisStatus::Unknown);
-    assert!(obligations(w).is_empty(), "{:?}", w.diagnostics);
+    assert_eq!(obligations(w), vec!["two/one".to_owned()]);
     assert_eq!(
         w.diagnostics
             .iter()
             .map(|diagnostic| diagnostic.kind.clone())
             .collect::<Vec<_>>(),
-        vec![LegacyDiagnosticKind::UnknownAlias {
-            variable: "one".to_owned()
-        }],
-        "the pre-existing answer must be preserved exactly"
+        vec![
+            LegacyDiagnosticKind::UnknownAlias {
+                variable: "one".to_owned()
+            },
+            LegacyDiagnosticKind::UnknownAlias {
+                variable: "two/one".to_owned()
+            }
+        ],
+        "the v1 answer must be preserved exactly, with this card's obligation added"
+    );
+}
+
+/// The negative half of the lift, at the source level: the relation is still
+/// the *declared record class*, not "any two pointers". Two locals of different
+/// classes stay unrelated, so lifting the formal bound did not turn the rule
+/// into a blanket refusal.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn two_locals_of_different_declared_classes_are_still_unrelated() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "two locals, two record classes",
+        "void w(struct b_instance *in, int n) { struct b_handle *one; struct b_storage *two; \
+         one = b_open(0, 0, n); if (!one) { return; } two = in->storage; \
+         b_release(one); b_probe(two); }",
+    );
+}
+
+// --------------------------------------------------------------------------
+// ALIAS-LOCALS — the lifted bound and the definite-alias relation kind
+// --------------------------------------------------------------------------
+
+/// **Why the v1 bound had to move.** This is the card's own measured shape,
+/// `b_release(p); b_probe(q);` over two formals of one class, written through
+/// two locals. v1 related `one` to `p` and `two` to `q` but never `one` to
+/// `two`, so nothing fired and the body certified — the refusal was launderable
+/// by two assignments.
+///
+/// The extra ordinary `UnknownAlias` entries this body now also carries are the
+/// consequence the file header describes: once the rule refuses the body, W4
+/// withholds its custody summary, the formals lose their entry custody and the
+/// pre-existing unresolved-identity diagnostics reappear. `obligations` filters
+/// them, so the assertion names exactly this card's obligation.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn two_locals_laundering_the_measured_shape_no_longer_certify() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "the measured shape written through two locals",
+        "void w(struct b_handle *p, struct b_handle *q) { struct b_handle *one; \
+         struct b_handle *two; one = p; two = q; b_release(one); b_probe(two); }",
+        &["two/one"],
+    );
+}
+
+/// Two local copies of **one** formal. `one` and `two` do not merely *may*
+/// denote one object; the projection has bound both to the same identity.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn two_local_copies_of_one_formal_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "both locals copied from one formal",
+        "void w(struct b_handle *a) { struct b_handle *one; struct b_handle *two; \
+         one = a; two = a; b_release(one); b_probe(two); }",
+        &["two/one"],
+    );
+}
+
+/// **The strongest measured movement of this card.** `two` is a copy of `one`,
+/// `one` is released, and the read of `two` is then a read of an identity the
+/// projection itself records as `RELEASED` — no aliasing question is left open
+/// at all. v1 answered `Safe` for it, because `one` and `two` are both locals
+/// and because a `Borrowed` position of a released identity is a no-op in this
+/// model.
+///
+/// The published claim is still the existing `UnknownAlias`, deliberately:
+/// `docs/reports/remaining-alias-locals/README.md` §3 records why no stronger
+/// kind this checker owns is honest here, and names the follow-on
+/// `ALIAS-LOCALS-BORROW-LIVENESS` that would change it.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_definite_copy_read_after_release_no_longer_certifies() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "a definite copy read after the original was released",
+        "void w(int n) { struct b_handle *one; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } two = one; \
+         b_release(one); b_probe(two); }",
+        &["two/one"],
+    );
+}
+
+/// A chain of copies reaches the far end: `mid = one; two = mid;`.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_chain_of_copies_is_refused_at_its_far_end() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "a two-link chain of copies",
+        "void w(int n) { struct b_handle *one; struct b_handle *mid; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } mid = one; two = mid; \
+         b_release(one); b_probe(two); }",
+        &["two/one"],
+    );
+}
+
+/// The first local-specific discharge, and it needed no new machinery: a local
+/// bound from *this body's own* acquisition is provenance-distinct, so the pair
+/// of locals is related and immediately discharged. Without it the lift would
+/// have refused every two-acquisition body in the corpus.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_local_bound_from_its_own_acquisition_is_discharged() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "two locals, two distinct body-made acquisitions",
+        "void w(int n) { struct b_handle *one; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } \
+         two = b_open(0, 0, n); if (!two) { b_close(one); return; } \
+         b_release(one); b_probe(two); b_release(two); }",
+    );
+}
+
+/// Copy-then-rebind: `two = one;` and then `two = b_open(...)`. At the read
+/// `two` denotes a fresh live identity of this body, so provenance discharges
+/// it even though `one` is in the released set — which is the direction that
+/// keeps `released`'s monotonicity from over-refusing.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_local_rebound_after_the_copy_is_discharged_by_provenance() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "the copy is rebound to a fresh acquisition before the read",
+        "void w(int n) { struct b_handle *one; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } two = one; \
+         two = b_open(0, 0, n); if (!two) { b_close(one); return; } \
+         b_release(one); b_probe(two); b_release(two); }",
+    );
+}
+
+/// `C02-P-ALIAS-CONSUME` is **not** lifted by this card. Consuming `one`
+/// transfers custody away rather than releasing it, so `released_names` records
+/// nothing and the copy keeps its pre-existing answer. The exposure is real and
+/// the boundary is retained, not endorsed.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_consumed_argument_still_relates_nothing() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "consumed, then the definite copy is read",
+        "void w(int n) { struct b_handle *one; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } two = one; \
+         b_adopt(one); b_probe(two); }",
+    );
+}
+
+/// **The definite-alias relation kind, load-bearing.** The same guarded shape
+/// the guard discharges everywhere else is refused here, because the projection
+/// has bound `one` and `two` to one identity: a source-level `one != two` may
+/// not overrule the projection's own bindings.
+///
+/// Its control is the next test — the identical guarded shape over two locals
+/// the projection did *not* bind to one identity still certifies, so the
+/// refusal is the definite alias and not the shape.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_pointer_inequality_guard_does_not_discharge_a_definite_alias() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "guarded by one != two, where two is a copy of one",
+        "void w(int n) { struct b_handle *one; struct b_handle *two; \
+         one = b_open(0, 0, n); if (!one) { return; } two = one; \
+         if (one != two) { b_release(one); b_probe(two); } else { b_release(one); } }",
+        &["two/one"],
+    );
+}
+
+/// The measured control for the test above: two locals the projection has not
+/// committed to one identity keep the guard discharge exactly as v1 gave it.
+///
+/// BASE: `Safe`, no diagnostics.
+#[test]
+fn a_guard_still_discharges_two_locals_that_are_not_a_definite_alias() {
+    if !clang_available() {
+        return;
+    }
+    admitted(
+        "guarded by one != two, over copies of two different formals",
+        "void w(struct b_handle *p, struct b_handle *q) { struct b_handle *one; \
+         struct b_handle *two; one = p; two = q; \
+         if (one != two) { b_release(one); b_probe(two); } else { b_release(one); } }",
     );
 }
 
