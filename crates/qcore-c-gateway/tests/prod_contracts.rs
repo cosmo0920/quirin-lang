@@ -696,8 +696,9 @@ fn the_remaining_production_blocker_is_one_uncontracted_neighbour() {
     let summary = function(program(&result), "flb_input_chunk_create").clone();
     let refusals = unsupported(&summary);
     assert!(
-        refusals.iter().any(|text| *text
-            == "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"),
+        refusals.contains(
+            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
+        ),
         "the production refusal is reproduced by withdrawing one neighbour: {refusals:?}"
     );
     // The gate is still decided — the neighbour affects the tail actual, not

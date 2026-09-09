@@ -18,6 +18,21 @@
 //! `file_close` families name three or four, one of which is the leaf
 //! composition). The projection version is `2` for that change.
 //!
+//! Card `P04-COMPOSE-MEMCLOSE` extended it again, to the null / memory-backed
+//! `cio_chunk_close` composition. **No sixth vocabulary was added**: that
+//! question is the same *kind* of question — a wrapper replay whose admitted
+//! frames are separately checked prerequisite capabilities — and the family
+//! tagging `P04-COMPOSE-A` introduced already carries a set of a different
+//! size and shape per family, so a four-member set needed no new mechanism.
+//! The additions are variants and records only; **every existing family's wire
+//! bytes, and therefore every existing task digest, are unchanged**, and the
+//! projection version stays `2`.
+//!
+//! What that family *does* add is a transport question no other family faces:
+//! its bodies are imported from **derived** text rather than from the declared
+//! file. See [`DerivedUnitRecord`], which carries the derivation as a set of
+//! claims the core checks against its own derivation and never believes.
+//!
 //! ## What a composition projection may and may not carry
 //!
 //! It carries the *question* and never a derived result:
@@ -96,6 +111,16 @@ pub const UNMAP_WRAPPER_SEMANTIC_PROFILE: &str = "qcore.c_unmap_wrapper_composit
 /// The semantic profile of the non-deleting `cio_file_close` composition, whose
 /// prerequisites include the unmap-wrapper composition above.
 pub const FILE_CLOSE_SEMANTIC_PROFILE: &str = "qcore.c_file_close_composition.v1";
+
+/// The semantic profile of the null / memory-backed `cio_chunk_close`
+/// composition, whose four prerequisites are the frame helper, the
+/// nullable-field destructor, the list unlink and the unsigned counter.
+///
+/// It is the first family whose bodies are imported from **derived** text: the
+/// backend discriminant the wrapper branches on is a preprocessor macro, so the
+/// route appends a constant probe to the unit and reads the expansion as an
+/// integer literal. See [`DerivedUnitRecord`].
+pub const MEMORY_CLOSE_SEMANTIC_PROFILE: &str = "qcore.c_memory_close_composition.v1";
 
 /// The semantic profile of the deleting `cio_file_close` composition. It answers
 /// a strictly larger question than the non-deleting one — the whole non-deleting
@@ -215,6 +240,179 @@ impl FileClosePrerequisites {
     }
 }
 
+/// The four prerequisites the memory-close composition depends on.
+///
+/// * `reset` — the **frame helper** whose write footprint and preservation the
+///   card `P04-FRAME` task decides (`cio_error_reset`);
+/// * `backend` — the nullable-field destructor of the memory backend
+///   (card `P04-NEXT`);
+/// * `unlink` — the two-summary list-unlink relation (card `P04-NEXT`);
+/// * `counter` — the unsigned counter contract of the decrement the wrapper
+///   performs (card `P04`).
+///
+/// All four are named, none is optional, and each is re-established
+/// independently by the core. Three of the four had no `PrerequisiteIdentity`
+/// at all before wave 14; the frame helper had no verification task at all,
+/// which is what blocked this family for two waves.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryClosePrerequisites {
+    pub reset: PrerequisiteIdentity,
+    pub backend: PrerequisiteIdentity,
+    pub unlink: PrerequisiteIdentity,
+    pub counter: PrerequisiteIdentity,
+}
+
+impl MemoryClosePrerequisites {
+    /// Digest keys under which a dependent task binds each identity. Four
+    /// distinct keys, so moving one prerequisite cannot be absorbed by another.
+    pub const RESET_KEY: &'static str = "qcore:composition-prerequisite-memory-reset:v1";
+    pub const BACKEND_KEY: &'static str = "qcore:composition-prerequisite-memory-backend:v1";
+    pub const UNLINK_KEY: &'static str = "qcore:composition-prerequisite-memory-unlink:v1";
+    pub const COUNTER_KEY: &'static str = "qcore:composition-prerequisite-memory-counter:v1";
+
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        self.reset.is_complete()
+            && self.backend.is_complete()
+            && self.unlink.is_complete()
+            && self.counter.is_complete()
+    }
+
+    /// The four identities must be distinct: one prerequisite cannot stand in
+    /// for another, and a set that repeats one identity names things it has not
+    /// established.
+    #[must_use]
+    pub fn are_distinct(&self) -> bool {
+        let mut named = vec![&self.reset, &self.backend, &self.unlink, &self.counter];
+        let count = named.len();
+        named.sort_by(|a, b| {
+            (&a.semantic_profile, &a.task_digest, &a.obligation_id).cmp(&(
+                &b.semantic_profile,
+                &b.task_digest,
+                &b.obligation_id,
+            ))
+        });
+        named.dedup();
+        named.len() == count
+    }
+}
+
+/// The identity of one callee a composition's wrapper replay is allowed to
+/// resolve, matched on **both** the name and the declared C prototype.
+///
+/// On the memory-close family these are the four prerequisite bodies' own
+/// identities. They travel as part of the *question* — which names the wrapper
+/// may call — and never as a reading: the core reads its own from the
+/// prerequisite tasks it derived and refuses a transported pair that is not
+/// exactly that.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CalleeIdentityRecord {
+    pub function: String,
+    pub signature: String,
+}
+
+impl CalleeIdentityRecord {
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        !self.function.is_empty() && !self.signature.is_empty()
+    }
+}
+
+/// The four prerequisite callee identities a memory-close wrapper replay
+/// resolves against.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryCloseCalleeRecord {
+    pub reset: CalleeIdentityRecord,
+    pub backend: CalleeIdentityRecord,
+    pub unlink: CalleeIdentityRecord,
+    pub counter: CalleeIdentityRecord,
+}
+
+impl MemoryCloseCalleeRecord {
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        self.reset.is_complete()
+            && self.backend.is_complete()
+            && self.unlink.is_complete()
+            && self.counter.is_complete()
+    }
+
+    /// The four callees must name four different functions: a wrapper cannot
+    /// discharge two prerequisites with one frame.
+    #[must_use]
+    pub fn are_distinct(&self) -> bool {
+        let mut named = [
+            &self.reset.function,
+            &self.backend.function,
+            &self.unlink.function,
+            &self.counter.function,
+        ];
+        named.sort_unstable();
+        named.windows(2).all(|pair| pair[0] != pair[1])
+    }
+}
+
+/// How a family's bodies were derived from the unit under analysis, when they
+/// were **not** imported from the declared file itself.
+///
+/// This is the memory-close family's genuinely new transport question. The
+/// route appends a constant probe to the base unit and imports from the result,
+/// so the bodies come from text no file holds. Every field here is a *claim*:
+/// the core builds the derived text itself, from its own base unit and its own
+/// recipe constant, and refuses unless each transported value is exactly what
+/// its own derivation produced. **Derived text never travels**, and a producer's
+/// account of a derivation is never authoritative.
+///
+/// The `base_input_class` field is separate from `derived_input_class` for a
+/// measured reason. `CSourceInput::for_derived_text` collapses a declared file
+/// to an anonymous text, so the derived unit's own captured identity records
+/// neither the spelled input nor the directory the base unit declared: two base
+/// units with equal bytes and different declared identities derive
+/// byte-identical derived identities. A route that bound only the derived
+/// identity would treat them as one task. The dependent core therefore binds
+/// the base import identity under its own key as well, and this field makes the
+/// erasure visible on the wire rather than implicit.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DerivedUnitRecord {
+    /// The recipe appended to the base unit's text, verbatim.
+    pub recipe: String,
+    /// The function that recipe defines and the projection carries.
+    pub recipe_function: String,
+    /// Digest of the base unit's own text.
+    pub base_source_digest: String,
+    /// Digest of the derived text the bodies were imported from.
+    pub derived_source_digest: String,
+    /// The input identity class the **base** unit declares.
+    pub base_input_class: String,
+    /// The input identity class the **derived** unit records, which
+    /// `for_derived_text` may have collapsed.
+    pub derived_input_class: String,
+}
+
+impl DerivedUnitRecord {
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        !self.recipe.is_empty()
+            && !self.recipe_function.is_empty()
+            && !self.base_source_digest.is_empty()
+            && !self.derived_source_digest.is_empty()
+            && !self.base_input_class.is_empty()
+            && !self.derived_input_class.is_empty()
+    }
+
+    /// A derivation is a *change*: derived text equal to base text would mean
+    /// the recipe did nothing, and the two digests would then not distinguish
+    /// a derived import from a plain one.
+    #[must_use]
+    pub fn is_a_derivation(&self) -> bool {
+        self.base_source_digest != self.derived_source_digest
+    }
+}
+
 /// Which prerequisite set a composition question names, tagged by family so one
 /// family's set can never be read as another's.
 ///
@@ -228,6 +426,7 @@ impl FileClosePrerequisites {
 pub enum CompositionPrerequisiteSet {
     UnmapWrapper(UnmapWrapperPrerequisites),
     FileClose(FileClosePrerequisites),
+    MemoryClose(MemoryClosePrerequisites),
 }
 
 impl CompositionPrerequisiteSet {
@@ -236,6 +435,7 @@ impl CompositionPrerequisiteSet {
         match self {
             Self::UnmapWrapper(set) => set.is_complete(),
             Self::FileClose(set) => set.is_complete(),
+            Self::MemoryClose(set) => set.is_complete(),
         }
     }
 
@@ -244,6 +444,7 @@ impl CompositionPrerequisiteSet {
         match self {
             Self::UnmapWrapper(set) => set.are_distinct(),
             Self::FileClose(set) => set.are_distinct(),
+            Self::MemoryClose(set) => set.are_distinct(),
         }
     }
 
@@ -251,7 +452,7 @@ impl CompositionPrerequisiteSet {
     pub fn unmap_wrapper(&self) -> Option<&UnmapWrapperPrerequisites> {
         match self {
             Self::UnmapWrapper(set) => Some(set),
-            Self::FileClose(_) => None,
+            Self::FileClose(_) | Self::MemoryClose(_) => None,
         }
     }
 
@@ -259,7 +460,15 @@ impl CompositionPrerequisiteSet {
     pub fn file_close(&self) -> Option<&FileClosePrerequisites> {
         match self {
             Self::FileClose(set) => Some(set),
-            Self::UnmapWrapper(_) => None,
+            Self::UnmapWrapper(_) | Self::MemoryClose(_) => None,
+        }
+    }
+
+    #[must_use]
+    pub fn memory_close(&self) -> Option<&MemoryClosePrerequisites> {
+        match self {
+            Self::MemoryClose(set) => Some(set),
+            Self::UnmapWrapper(_) | Self::FileClose(_) => None,
         }
     }
 }
@@ -322,6 +531,28 @@ pub enum CompositionFamilyInput {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         delete: Option<Box<FileCloseDeleteInput>>,
     },
+    /// `cio_chunk_close`: the null and memory-backed entry states over a
+    /// wrapper imported from **derived** text, with the backend discriminant
+    /// carried as a probe body rather than guessed.
+    ///
+    /// The four prerequisite readings are not published figures of this family:
+    /// what a prerequisite contributes here is the identity of a frame the
+    /// wrapper is allowed to resolve, and whether its own pinned contract
+    /// holds. The identities travel in `callees`, the contracts never travel at
+    /// all, and the core re-establishes all four before comparing anything.
+    MemoryClose {
+        /// The `cio_chunk_close` body's complete typed path set, imported from
+        /// the derived unit.
+        wrapper: CleanupReplayFunctionRecord,
+        /// The probe body's complete typed path set. A producer reads the
+        /// backend discriminant out of this; it is never handed the value.
+        probe: CleanupReplayFunctionRecord,
+        /// How the two bodies' unit was derived. Every field is a claim the
+        /// core checks against its own derivation.
+        derivation: DerivedUnitRecord,
+        /// The four prerequisite bodies' own callee identities.
+        callees: MemoryCloseCalleeRecord,
+    },
 }
 
 impl CompositionFamilyInput {
@@ -334,7 +565,19 @@ impl CompositionFamilyInput {
     #[must_use]
     pub fn wrapper(&self) -> &CleanupReplayFunctionRecord {
         match self {
-            Self::UnmapWrapper { wrapper, .. } | Self::FileClose { wrapper, .. } => wrapper,
+            Self::UnmapWrapper { wrapper, .. }
+            | Self::FileClose { wrapper, .. }
+            | Self::MemoryClose { wrapper, .. } => wrapper,
+        }
+    }
+
+    /// How this family's bodies were derived from the unit under analysis, on
+    /// the one family that does not import from the declared file itself.
+    #[must_use]
+    pub fn derivation(&self) -> Option<&DerivedUnitRecord> {
+        match self {
+            Self::MemoryClose { derivation, .. } => Some(derivation),
+            Self::UnmapWrapper { .. } | Self::FileClose { .. } => None,
         }
     }
 
@@ -342,18 +585,20 @@ impl CompositionFamilyInput {
     /// describes: the native unmap for the leaf family, the native close for the
     /// file_close families.
     #[must_use]
-    pub fn native(&self) -> &CleanupReplayFunctionRecord {
+    pub fn native(&self) -> Option<&CleanupReplayFunctionRecord> {
         match self {
-            Self::UnmapWrapper { native, .. } => native,
-            Self::FileClose { close, .. } => close,
+            Self::UnmapWrapper { native, .. } => Some(native),
+            Self::FileClose { close, .. } => Some(close),
+            Self::MemoryClose { .. } => None,
         }
     }
 
     #[must_use]
-    pub fn native_profile(&self) -> &CleanupProfileRecord {
+    pub fn native_profile(&self) -> Option<&CleanupProfileRecord> {
         match self {
-            Self::UnmapWrapper { native_profile, .. } => native_profile,
-            Self::FileClose { close_profile, .. } => close_profile,
+            Self::UnmapWrapper { native_profile, .. } => Some(native_profile),
+            Self::FileClose { close_profile, .. } => Some(close_profile),
+            Self::MemoryClose { .. } => None,
         }
     }
 
@@ -362,7 +607,7 @@ impl CompositionFamilyInput {
     #[must_use]
     pub fn nested(&self) -> Option<&Self> {
         match self {
-            Self::UnmapWrapper { .. } => None,
+            Self::UnmapWrapper { .. } | Self::MemoryClose { .. } => None,
             Self::FileClose { unmap, .. } => Some(unmap),
         }
     }
@@ -387,6 +632,7 @@ impl CompositionFamilyInput {
             Self::FileClose {
                 delete: Some(_), ..
             } => FILE_CLOSE_DELETE_SEMANTIC_PROFILE,
+            Self::MemoryClose { .. } => MEMORY_CLOSE_SEMANTIC_PROFILE,
         }
     }
 
@@ -403,6 +649,7 @@ impl CompositionFamilyInput {
                 delete.is_some() == set.native_delete.is_some()
                     && matches!(**unmap, Self::UnmapWrapper { .. })
             }
+            (Self::MemoryClose { .. }, CompositionPrerequisiteSet::MemoryClose(_)) => true,
             _ => false,
         }
     }
@@ -571,6 +818,50 @@ pub struct FileCloseCompositionRecord {
 pub enum CompositionProposalRecord {
     UnmapWrapper(CompositionRecord),
     FileClose(FileCloseCompositionRecord),
+    MemoryClose(MemoryCloseCompositionRecord),
+}
+
+/// One memory-close entry state's composed reading.
+///
+/// Every field mirrors, field for field, the replay state the trusted
+/// composition reaches on that entry. Nothing is invented here: a figure the
+/// checker does not decide has no place in this record.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryCloseCaseRecord {
+    /// Whether the chunk argument was the nonnull entry or the null one.
+    pub nonnull: bool,
+    /// The single wrapper path this entry state selects.
+    pub source_path: u32,
+    /// How many calls the selected path resolved.
+    pub calls: u32,
+    pub backend_discharged: bool,
+    pub primary_unlinked: bool,
+    pub state_unlinked: bool,
+    pub name_released: bool,
+    pub chunk_released: bool,
+    pub counter_decremented: bool,
+}
+
+/// One composed memory-close reading, with the wrapper's imported identity.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryCloseCompositionRecord {
+    pub function: String,
+    pub source_revision: String,
+    pub signature: String,
+    /// The backend discriminant the producer read out of the probe body. It is
+    /// a reading, not an input: the request carries the probe's paths, never
+    /// the value.
+    pub memory_kind: i32,
+    /// The two entry states, in the order the trusted composition enumerates
+    /// them: the null entry first, then the nonnull one.
+    pub cases: Vec<MemoryCloseCaseRecord>,
+    pub checked_paths: Vec<u32>,
+    /// The filesystem and other-backend paths this family leaves explicitly
+    /// uncovered. They are published so a narrowed claim is visible.
+    pub uncovered_paths: Vec<u32>,
+    pub profile_assumptions: BTreeMap<String, String>,
 }
 
 /// The witness envelope, bound to the task digest the core computed.

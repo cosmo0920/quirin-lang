@@ -257,6 +257,12 @@ impl ListUnlinkSourceTask {
         self.evaluate()
     }
 
+    /// The entry body this task imported, so a dependent composition can
+    /// require that the frame it resolves is the one this prerequisite checked.
+    pub fn summary(&self) -> &qcore_c_gateway::typed_source::SourceSummary {
+        self.import.entry()
+    }
+
     /// Re-check both imported bodies against the pinned contract. This is the
     /// core's own evaluation; no provider input reaches it.
     pub fn evaluate(&self) -> Result<ListUnlinkCertificate, String> {
@@ -510,6 +516,12 @@ impl FieldDestructorSourceTask {
 
     /// Re-check the imported body against the pinned contract, exhausting
     /// every realizable nullable state. This is the core's own evaluation.
+    /// The destructor body this task imported, so a dependent composition can
+    /// require that the frame it resolves is the one this prerequisite checked.
+    pub fn summary(&self) -> &qcore_c_gateway::typed_source::SourceSummary {
+        self.import.summary()
+    }
+
     pub fn evaluate(&self) -> Result<FieldDestructorCertificate, String> {
         check_field_destructor(
             self.import.summary(),

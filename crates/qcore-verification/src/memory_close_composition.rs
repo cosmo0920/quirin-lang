@@ -117,7 +117,7 @@ pub struct OwnedMemoryCloseContracts {
 }
 
 impl OwnedMemoryCloseContracts {
-    fn of(contracts: &MemoryCloseContracts<'_>) -> Self {
+    pub fn of(contracts: &MemoryCloseContracts<'_>) -> Self {
         Self {
             pinned_revision: contracts.pinned_revision.into(),
             contract: contracts.contract.into(),
@@ -138,7 +138,7 @@ impl OwnedMemoryCloseContracts {
         }
     }
 
-    fn borrowed(&self) -> MemoryCloseContracts<'_> {
+    pub fn borrowed(&self) -> MemoryCloseContracts<'_> {
         MemoryCloseContracts {
             pinned_revision: &self.pinned_revision,
             contract: &self.contract,

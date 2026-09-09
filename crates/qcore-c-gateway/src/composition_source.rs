@@ -33,13 +33,16 @@ use qcore_schemas::cleanup_replay_summary::{
     CleanupReplayOperationRecord, CleanupReplayPathRecord, CleanupReplayValueRecord,
 };
 use qcore_schemas::composition_summary::{
-    COMPOSITION_SOURCE_INPUT_VERSION, CompositionFamilyInput, CompositionPrerequisiteSet,
-    CompositionSourceInput, FileCloseDeleteInput,
+    COMPOSITION_SOURCE_INPUT_VERSION, CalleeIdentityRecord, CompositionFamilyInput,
+    CompositionPrerequisiteSet, CompositionSourceInput, DerivedUnitRecord, FileCloseDeleteInput,
+    MemoryCloseCalleeRecord,
 };
 
 use crate::boolean_source::{SourceInputIdentity, input_identity};
 use crate::clang::ClangIdentity;
-use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
+use crate::legacy_c::{
+    C11TranslationUnit, derived_source_text, derived_translation_unit, validate_unrestricted_c11,
+};
 use crate::typed_source::{
     DEFAULT_SOURCE_RULES, SourceExpression, SourceImportProfile, SourceOperation, SourceResult,
     SourceSummary, SourceValue, import_source_functions,
@@ -87,6 +90,9 @@ pub enum CompositionFamily {
     UnmapWrapper,
     FileClose,
     FileCloseDeleting,
+    /// The one family whose bodies are imported from **derived** text: the base
+    /// unit plus a constant probe recipe. See [`MemoryCloseSelection`].
+    MemoryClose,
 }
 
 impl CompositionFamily {
@@ -94,6 +100,32 @@ impl CompositionFamily {
     pub const fn is_file_close(&self) -> bool {
         matches!(self, Self::FileClose | Self::FileCloseDeleting)
     }
+
+    /// Whether this family imports from text derived from the unit under
+    /// analysis rather than from the unit itself.
+    #[must_use]
+    pub const fn is_derived(&self) -> bool {
+        matches!(self, Self::MemoryClose)
+    }
+}
+
+/// The memory-close family's selection: the derivation recipe and the four
+/// prerequisite callee identities the wrapper is allowed to resolve.
+///
+/// The recipe is a **caller constant**, supplied by the trusted decision
+/// procedure's own contract selection. This importer builds the derived text
+/// itself from the base unit and that recipe; no derived text is ever accepted
+/// from anywhere.
+pub struct MemoryCloseSelection<'a> {
+    pub recipe: &'a str,
+    pub probe_function: &'a str,
+    /// The four prerequisite bodies' `(name, declared signature)` pairs, in the
+    /// order the composition names them: frame reset, backend destructor, list
+    /// unlink, counter.
+    pub callees: MemoryCloseCalleeRecord,
+    /// The two callees the composition admits that no prerequisite supplies:
+    /// the libc release frame and the filesystem dispatch arm.
+    pub fixed_callees: [(&'a str, &'a str); 2],
 }
 
 /// The nested unmap composition's own two bodies and record profile, selected
@@ -482,6 +514,14 @@ pub fn import_composition_source(
             CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting,
             CompositionPrerequisiteSet::FileClose(_),
         ) => (),
+        // The derived family has its own importer, because it must build its
+        // own text before it can import anything. Refused here rather than
+        // silently imported from the declared file.
+        (CompositionFamily::MemoryClose, _) => {
+            return Err(
+                "the memory close family is imported from derived text by its own importer".into(),
+            );
+        }
         _ => return Err("composition family does not match its prerequisite set".into()),
     }
     let deleting = matches!(family, CompositionFamily::FileCloseDeleting);
@@ -589,6 +629,8 @@ pub fn import_composition_source(
             CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
                 FILE_CLOSE_CALLEES.to_vec()
             }
+            // Refused above, before any import.
+            CompositionFamily::MemoryClose => Vec::new(),
         };
         // Only the `void` file_close wrapper may end a path without a value.
         let void_wrapper = family.is_file_close();
@@ -659,6 +701,9 @@ fn project_family(
             native: native_body,
             native_profile: native_profile.clone(),
         }),
+        CompositionFamily::MemoryClose => {
+            Err("the memory close family is not projected by this importer".into())
+        }
         CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
             let nested = nested.ok_or("missing nested composition selection")?;
             let nested_wrapper = project(&summaries[2], &UNMAP_WRAPPER_CALLEES, false)?;
@@ -703,5 +748,312 @@ const fn expected_profile(family: &CompositionFamily) -> &'static str {
         CompositionFamily::FileCloseDeleting => {
             qcore_schemas::composition_summary::FILE_CLOSE_DELETE_SEMANTIC_PROFILE
         }
+        CompositionFamily::MemoryClose => {
+            qcore_schemas::composition_summary::MEMORY_CLOSE_SEMANTIC_PROFILE
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// The memory-close family: the one composition imported from derived text.
+// ---------------------------------------------------------------------------
+
+/// A sealed memory-close import. Constructed only by the importer below, so a
+/// wire record can never be promoted into a source-checked import.
+///
+/// It records **two** identities, not one, and that separation is the point of
+/// the card. The derived unit's identity is the identity of the text the bodies
+/// actually came from; the base unit's identity is the identity of the file the
+/// audit selected. `CSourceInput::for_derived_text` collapses a declared file
+/// to an anonymous text, so the derived identity records neither the spelled
+/// input nor the directory — two base units with equal bytes and different
+/// declared identities produce byte-identical derived identities. A dependent
+/// that bound only the derived identity would treat them as one task.
+///
+/// ```compile_fail
+/// use qcore_c_gateway::composition_source::MemoryCloseSourceImport;
+/// let _: MemoryCloseSourceImport = serde_json::from_str("{}").unwrap();
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct MemoryCloseSourceImport {
+    wrapper: SourceSummary,
+    probe: SourceSummary,
+    #[serde(skip)]
+    base_identity: SourceInputIdentity,
+    #[serde(skip)]
+    derived_identity: SourceInputIdentity,
+    #[serde(skip)]
+    derivation: DerivedUnitRecord,
+    #[serde(skip)]
+    callees: MemoryCloseCalleeRecord,
+    #[serde(skip)]
+    input: CompositionSourceInput,
+}
+
+impl MemoryCloseSourceImport {
+    /// The trusted typed summary of the wrapper body, imported from the derived
+    /// unit.
+    pub fn wrapper_summary(&self) -> &SourceSummary {
+        &self.wrapper
+    }
+
+    /// The trusted typed summary of the probe body the recipe defines.
+    pub fn probe_summary(&self) -> &SourceSummary {
+        &self.probe
+    }
+
+    /// The identity of the **base** unit the audit selected. Bound separately
+    /// by the dependent task, because the derived identity cannot stand in for
+    /// it.
+    pub fn base_identity(&self) -> &SourceInputIdentity {
+        &self.base_identity
+    }
+
+    /// The identity of the **derived** unit the bodies were imported from.
+    pub fn derived_identity(&self) -> &SourceInputIdentity {
+        &self.derived_identity
+    }
+
+    /// The derivation, as this importer measured it. The trusted core rebuilds
+    /// the same record from its own base unit and its own recipe and refuses a
+    /// transported record that is not exactly this.
+    pub fn derivation(&self) -> &DerivedUnitRecord {
+        &self.derivation
+    }
+
+    pub fn callees(&self) -> &MemoryCloseCalleeRecord {
+        &self.callees
+    }
+
+    /// The portable projection, without any derived reading.
+    pub fn source_input(&self) -> CompositionSourceInput {
+        self.input.clone()
+    }
+
+    pub fn function(&self) -> &str {
+        self.wrapper.function()
+    }
+
+    pub fn source_revision(&self) -> &str {
+        self.wrapper.source_revision()
+    }
+
+    pub fn signature(&self) -> &str {
+        self.wrapper.signature()
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "result", rename_all = "snake_case")]
+pub enum MemoryCloseSourceResult {
+    Import(Box<MemoryCloseSourceImport>),
+    Unknown { function: String, reason: String },
+}
+
+/// Explicit selection inputs for one memory-close composition import.
+pub struct MemoryCloseImportSelection<'a> {
+    /// The wrapper body the composition is about.
+    pub wrapper: &'a str,
+    pub records: &'a [&'a str],
+    /// Lookup keys, never conclusions.
+    pub prerequisites: CompositionPrerequisiteSet,
+    pub memory_close: MemoryCloseSelection<'a>,
+}
+
+/// Import the memory-close family's two bodies **from text this importer
+/// derives** and project both.
+///
+/// The caller supplies the base unit and the recipe; the derived text is built
+/// here, by the one shared helper the trusted decision procedure also uses, so
+/// the two cannot derive different bytes from the same inputs. No caller — and
+/// certainly no proposal — supplies derived text.
+pub fn import_memory_close_source(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    selection: &MemoryCloseImportSelection<'_>,
+) -> Result<MemoryCloseSourceResult, String> {
+    let MemoryCloseImportSelection {
+        wrapper,
+        records,
+        prerequisites,
+        memory_close,
+    } = selection;
+    if wrapper.is_empty() || records.is_empty() {
+        return Err("memory close import needs a wrapper and a record inventory".into());
+    }
+    if memory_close.recipe.is_empty() || memory_close.probe_function.is_empty() {
+        return Err("memory close import needs a complete derivation recipe".into());
+    }
+    if *wrapper == memory_close.probe_function {
+        return Err("memory close import needs two distinct functions".into());
+    }
+    if !prerequisites.is_complete() {
+        return Err("memory close import needs complete prerequisite identities".into());
+    }
+    if !prerequisites.are_distinct() {
+        return Err("memory close import needs distinct prerequisite identities".into());
+    }
+    if prerequisites.memory_close().is_none() {
+        return Err("memory close family does not match its prerequisite set".into());
+    }
+    if !memory_close.callees.is_complete() || !memory_close.callees.are_distinct() {
+        return Err("memory close import needs four distinct prerequisite callees".into());
+    }
+    if memory_close
+        .fixed_callees
+        .iter()
+        .any(|(name, signature)| name.is_empty() || signature.is_empty())
+    {
+        return Err("memory close import needs complete fixed callee identities".into());
+    }
+    let compiler = ClangIdentity::capture()?;
+    // The base unit's own identity: the file the audit selected.
+    let base_preprocessed = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    let base_identity = input_identity(
+        unit,
+        &base_preprocessed,
+        source_revision,
+        DEFAULT_SOURCE_RULES,
+        None,
+        &[],
+        compiler.clone(),
+    )?;
+    // The derived unit: the base text plus the caller's recipe, analysed under
+    // every one of the base unit's declared options and under the input
+    // identity `for_derived_text` leaves it with.
+    let combined = derived_source_text(unit.source, memory_close.recipe);
+    let derived_unit = derived_translation_unit(unit, &combined);
+    let derived_preprocessed =
+        validate_unrestricted_c11(&derived_unit).map_err(|error| error.to_string())?;
+    let derived_identity = input_identity(
+        &derived_unit,
+        &derived_preprocessed,
+        source_revision,
+        DEFAULT_SOURCE_RULES,
+        None,
+        &[],
+        compiler.clone(),
+    )?;
+    let derivation = DerivedUnitRecord {
+        recipe: memory_close.recipe.to_owned(),
+        recipe_function: memory_close.probe_function.to_owned(),
+        base_source_digest: base_identity.raw_source_digest().to_owned(),
+        derived_source_digest: derived_identity.raw_source_digest().to_owned(),
+        base_input_class: unit.input.class().to_owned(),
+        derived_input_class: derived_unit.input.class().to_owned(),
+    };
+    if !derivation.is_complete() || !derivation.is_a_derivation() {
+        return Err("the memory close recipe derived no new text".into());
+    }
+    let imported = import_source_functions(
+        &derived_unit,
+        source_revision,
+        &[wrapper, memory_close.probe_function],
+        &SourceImportProfile {
+            records,
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )?;
+    let result = match imported.as_slice() {
+        [SourceResult::Summary(wrapper_summary), SourceResult::Summary(probe_summary)] => {
+            let mut admitted: Vec<(&str, &str)> = memory_close
+                .fixed_callees
+                .iter()
+                .map(|(name, signature)| (*name, *signature))
+                .collect();
+            for callee in [
+                &memory_close.callees.reset,
+                &memory_close.callees.backend,
+                &memory_close.callees.unlink,
+                &memory_close.callees.counter,
+            ] {
+                admitted.push((callee.function.as_str(), callee.signature.as_str()));
+            }
+            // The wrapper returns `void`, so its complete paths end without a
+            // value, exactly as the `cio_file_close` wrapper's do.
+            match (
+                project(wrapper_summary, &admitted, true),
+                project(probe_summary, &[], false),
+            ) {
+                (Ok(wrapper_body), Ok(probe_body)) => {
+                    let family = CompositionFamilyInput::MemoryClose {
+                        wrapper: wrapper_body,
+                        probe: probe_body,
+                        derivation: derivation.clone(),
+                        callees: memory_close.callees.clone(),
+                    };
+                    if family.semantic_profile()
+                        != qcore_schemas::composition_summary::MEMORY_CLOSE_SEMANTIC_PROFILE
+                    {
+                        return Err(
+                            "memory close family input answers another semantic profile".into()
+                        );
+                    }
+                    MemoryCloseSourceResult::Import(Box::new(MemoryCloseSourceImport {
+                        wrapper: wrapper_summary.clone(),
+                        probe: probe_summary.clone(),
+                        base_identity,
+                        derived_identity,
+                        derivation,
+                        callees: memory_close.callees.clone(),
+                        input: CompositionSourceInput {
+                            schema_version: COMPOSITION_SOURCE_INPUT_VERSION,
+                            prerequisites: prerequisites.clone(),
+                            family,
+                        },
+                    }))
+                }
+                (Err(reason), _) | (_, Err(reason)) => MemoryCloseSourceResult::Unknown {
+                    function: wrapper_summary.function().into(),
+                    reason,
+                },
+            }
+        }
+        _ => {
+            let (function, reason) = imported
+                .iter()
+                .find_map(|result| match result {
+                    SourceResult::Unknown { function, reason } => {
+                        Some((function.clone(), reason.clone()))
+                    }
+                    SourceResult::Summary(_) => None,
+                })
+                .unwrap_or_else(|| {
+                    (
+                        (*wrapper).into(),
+                        format!("memory close source import incomplete: {imported:?}"),
+                    )
+                });
+            MemoryCloseSourceResult::Unknown { function, reason }
+        }
+    };
+    if ClangIdentity::capture()? != compiler {
+        return Err("Clang identity changed during memory close source import".into());
+    }
+    Ok(result)
+}
+
+/// Build the four prerequisite callee identities from the bodies the core's own
+/// prerequisite tasks checked. A caller cannot invent one: three of the four
+/// pairs are read off a summary the core imported, and the fourth is the frame
+/// helper's function with the prototype the composition's own replay requires.
+#[must_use]
+pub fn memory_close_callees(
+    reset: (&str, &str),
+    backend: &SourceSummary,
+    unlink: &SourceSummary,
+    counter: &SourceSummary,
+) -> MemoryCloseCalleeRecord {
+    let identity = |function: &str, signature: &str| CalleeIdentityRecord {
+        function: function.to_owned(),
+        signature: signature.to_owned(),
+    };
+    MemoryCloseCalleeRecord {
+        reset: identity(reset.0, reset.1),
+        backend: identity(backend.function(), backend.signature()),
+        unlink: identity(unlink.function(), unlink.signature()),
+        counter: identity(counter.function(), counter.signature()),
     }
 }
