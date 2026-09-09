@@ -1,0 +1,78 @@
+module contract;
+
+// O04-B09B10 — held-out generic API for member-address actuals and
+// custody-taking bound reads.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to the `g_*` (O04),
+// `h_*` (O04-ARMS), `k_*` (O04-B08) and `r_*` (O04-READ-BOUND) families: every
+// rule under test is stated over declared C types and contract modes, so no
+// name here can matter. These are synthetic trusted test assumptions, not facts
+// about any library.
+
+// The aggregate's constructor and destructor. `m_drop` releases exactly the
+// aggregate it is given; under premise P-B08-SHALLOW it discharges nothing its
+// members link, which is why a still-linked child is reported as a residual.
+extern fn m_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn m_drop(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The child resource stored into, and later read out of, a member.
+extern fn m_take(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+// The custody-taking sinks this card admits a bound read into.
+extern fn m_free(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn m_eat(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(i, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The borrowing sink the member-address rule is *about*.
+extern fn m_visit(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+// A borrowing sink that receives the aggregate **whole**. It is what premise F
+// refuses: a callee holding the aggregate could rewrite any member of it, and
+// this projection maintains no frame condition for that.
+extern fn m_borrow(b: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+};
+
+// A releasing sink over an untyped pointer: the position a member *address*
+// must never occupy, because releasing a sub-object of a live aggregate is not
+// a release this projection could account for.
+extern fn m_reap(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};

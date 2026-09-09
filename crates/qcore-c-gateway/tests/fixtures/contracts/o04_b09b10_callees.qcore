@@ -1,0 +1,93 @@
+// O04-B09B10 — the five declared callee premises the constructor's *success*
+// exit traverses once member-address actuals stop refusing before the contract
+// in force is consulted. Concatenated onto `o04_path.qcore`,
+// `o04_arms_callees.qcore` and `o04_b08_callees.qcore`, all of which stay
+// byte-unchanged so cards O04, O04-ARMS, O04-B08 and O04-READ-BOUND keep their
+// exact premise sets and their exact measurements.
+//
+// EVERY declaration here is a TRUSTED ASSUMPTION. None is derived from any body
+// in this fixture, and none is offered as a production declaration: this file
+// lives with the gateway test fixtures, so the pinned `contract/qcore` corpus
+// count is untouched.
+//
+// These five callees are the ones O00 named as blockers B09 (the packer
+// callback that retains `ic`) and B10 (the four hash-table publications), plus
+// the list linkage and the metrics lock the same statements sit between. Each
+// is declared to borrow every argument and return no custody.
+//
+// WHAT "borrows" DOES AND DOES NOT SAY, per callee, checked against the pinned
+// upstream sources rather than assumed:
+//
+//  * `mk_list_add(entry, head)` and `msgpack_packer_init(pk, data, callback)`
+//    take no ownership of anything: the first splices two list nodes, the
+//    second copies two pointers into `*pk`. Borrowing is faithful.
+//
+//  * `flb_hash_table_add(ht, key, key_len, val, val_size)` is faithful AT THIS
+//    CALL SITE ONLY. `flb_hash_table_entry_free`
+//    (`src/flb_hash_table.c:93` at the pinned revision) frees `entry->val`
+//    exactly when `entry->val_size > 0`, and all four call sites here pass the
+//    literal `0`. The resource-contract vocabulary has no value-dependent
+//    parameter mode, so this declaration ALSO covers call sites that pass a
+//    positive size, where it would be UNFAITHFUL. That limitation is recorded
+//    rather than hidden; it is the same class as O04-ARMS-VARIADIC and is named
+//    `O04-B09B10-VALUE-DEPENDENT` in the card report.
+//
+//  * `pthread_mutex_lock`/`pthread_mutex_unlock` borrow the mutex. This
+//    projection models resource custody, not mutual exclusion: declaring them
+//    says nothing whatever about locking, ordering or data races, which are
+//    outside every claim this fixture makes.
+//
+// NONE of these declarations claims that the containment relationships the real
+// callees create are modeled. `mk_list_add` really does splice `ic` into
+// `in->chunks` and `flb_hash_table_add` really does record `ic` in a table;
+// those publications are O00 blockers B03/R13 and remain unmodeled. What the
+// declarations assert is only that no call transfers custody of a tracked
+// identity out of this function's accounting — which is what the per-exit
+// disposition needs and all it needs, because the projection's per-exit claim
+// is that every identity is accounted for, never that it is exclusively held.
+
+// --- B09: the msgpack packer the caller initialises in place ---------------
+extern fn msgpack_packer_init(pk: ptr<mut, u8>, data: ptr<mut, u8>, callback: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(pk);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_return_none();
+};
+
+// --- the list linkage ------------------------------------------------------
+extern fn mk_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(entry);
+    ensures normal resource_borrowed(head);
+    ensures normal resource_return_none();
+};
+
+// --- B10: the four event-type hash-table publications ----------------------
+extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<mut, u8>, key_len: i32, val: ptr<mut, u8>, val_size: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ht);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(key_len);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_borrowed(val_size);
+    ensures normal resource_return_none();
+};
+
+// --- the metrics lock the second publication sits between ------------------
+extern fn pthread_mutex_lock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_mutex_unlock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};

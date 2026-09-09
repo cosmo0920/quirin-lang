@@ -1213,6 +1213,8 @@ fn only_a_released_position_of_a_contracted_call_records_a_release() {
             contract: ResourceFunctionContract::new([mode], ResourceReturnMode::None),
             produced_sites: Vec::new(),
             aggregate_reads: Vec::new(),
+            aggregate_consumed: Vec::new(),
+            aggregate_addresses: Vec::new(),
             alias_reads: Vec::new(),
         };
         assert_eq!(

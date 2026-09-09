@@ -503,21 +503,47 @@ struct r_box *r_sibling(int n) \
     );
 }
 
-/// `O04-READ-BOUND-CUSTODY`, pinned: a bound read may occupy only a `Borrowed`
-/// position. Every position that discharges keeps the existing refusal, so this
-/// admission can never manufacture a release.
+/// `O04-READ-BOUND-CUSTODY`, **deliberately superseded** by card O04-B09B10 and
+/// re-pinned at its new boundary.
+///
+/// This card refused every custody-bearing position outright, because a
+/// contracted callee that merely *borrows* the aggregate could rewrite the
+/// member invisibly and this projection maintained no frame condition for that.
+/// Card O04-B09B10 supplies that frame condition as premise **F** — no
+/// contracted call of the body may leave the aggregate both live and
+/// rewritable — and admits `Released` and `Consumed` positions for bases it
+/// insulates. `Owned`, `Stored`, `Removed` and `Out` still refuse, and so does
+/// any base premise F does not insulate.
+///
+/// Both halves are asserted here on this card's own `r_*` family. The whole
+/// mode vocabulary and the adversarial matrix are asserted in
+/// `crates/qcore-c-gateway/tests/o04_b09b10.rs`.
 #[test]
-fn a_custody_bearing_position_keeps_its_existing_refusal() {
+fn a_custody_bearing_position_is_admitted_only_for_an_insulated_base() {
     if !clang_available() {
         return;
     }
+    // A borrowing sink over the *aggregate*, declared locally so that this
+    // card's fixture contract file stays byte-unchanged. It is the shape
+    // premise F refuses: a callee holding the box could rewrite `b->item`.
+    let declarations = format!("{DECLARATIONS} int r_hold(struct r_box *b);");
+    let contracts = format!(
+        "{GENERIC_CONTRACTS}\n\
+extern fn r_hold(b: ptr<mut, u8>) -> i32\n\
+contract {{\n\
+    requires resource_contract_v1;\n\
+    ensures normal resource_borrowed(b);\n\
+    ensures normal resource_return_none();\n\
+}};\n"
+    );
     let cases: [(&str, &str); 2] = [
         ("a releasing position", "r_reap(b->item);"),
         ("a consuming position", "r_adopt(b->item);"),
     ];
     for (reason, call) in cases {
-        let body = format!(
-            "void r_w(int n) \
+        for (exposure, insulated) in [("", true), ("r_hold(b);", false)] {
+            let body = format!(
+                "void r_w(int n) \
 {{ \
     struct r_item *it; \
     struct r_box *b; \
@@ -526,22 +552,51 @@ fn a_custody_bearing_position_keeps_its_existing_refusal() {
     b = r_make(n); \
     if (!b) {{ r_release(it); return; }} \
     b->item = it; \
+    {exposure} \
     {call} \
     r_drop(b); \
 }}"
-        );
-        let measured = summary_of(&body, "r_w");
-        assert_ne!(
-            measured.status,
-            AnalysisStatus::Safe,
-            "{reason}: must stay refused, diagnostics {:?}",
-            measured.diagnostics
-        );
-        assert!(
-            unsupported(&measured).contains(&INDIRECT),
-            "{reason}: the existing diagnostic must be retained, got {:?}",
-            measured.diagnostics
-        );
+            );
+            let source = format!("{declarations} {body}");
+            let result = analyze_unrestricted_c11(
+                &C11TranslationUnit {
+                    source: &source,
+                    ..Default::default()
+                },
+                "r_w",
+                &load("o04_read_bound_generic.qcore", &contracts),
+            )
+            .expect("generic fixture accepted by Clang");
+            let measured = match &result {
+                UnrestrictedLegacyResult::Safe(certificate) => certificate
+                    .summary
+                    .functions
+                    .get("r_w")
+                    .expect("entry present")
+                    .clone(),
+                _ => function(program(&result), "r_w").clone(),
+            };
+            if insulated {
+                assert_eq!(
+                    measured.status,
+                    AnalysisStatus::Safe,
+                    "{reason}: an insulated base transfers the linked child, diagnostics {:?}",
+                    measured.diagnostics
+                );
+            } else {
+                assert_ne!(
+                    measured.status,
+                    AnalysisStatus::Safe,
+                    "{reason}: an exposed base must stay refused, diagnostics {:?}",
+                    measured.diagnostics
+                );
+                assert!(
+                    unsupported(&measured).contains(&INDIRECT),
+                    "{reason}: the existing diagnostic must be retained, got {:?}",
+                    measured.diagnostics
+                );
+            }
+        }
     }
 }
 
@@ -728,32 +783,47 @@ fn a_certificate_resting_on_a_bound_read_is_rederived_from_source() {
 }
 
 /// The admission rests on the declared **contract mode** carried in the
-/// certificate, not only on the declarations: turning the borrowing sink into a
-/// releasing one withdraws the projection.
+/// certificate, not only on the declarations: substituting the borrowing sink's
+/// mode withdraws the projection.
+///
+/// Card O04-B09B10 re-pinned which substitutions do that. Under this card every
+/// custody-bearing mode withdrew it; that card admits `Released` and `Consumed`
+/// for a base premise **F** insulates, and `b` here is one — its only whole
+/// occurrence in a call argument is `r_drop(b)`, a terminal position. The other
+/// custody-bearing modes still withdraw the projection, and `Owned` is what
+/// this test now pins at the source level; the whole mode vocabulary is pinned
+/// without Clang by `aggregate_store`'s
+/// `only_released_and_consumed_positions_take_custody_of_a_bound_read`.
 #[test]
 fn a_certificate_resting_on_a_bound_read_rests_on_the_declared_mode() {
     if !clang_available() {
         return;
     }
-    let weakened = GENERIC_CONTRACTS.replace(
-        "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);",
-        "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(i, nonnull);",
-    );
-    assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
-    let source = format!("{DECLARATIONS} {R_CREATE}");
-    let result = analyze_unrestricted_c11(
-        &C11TranslationUnit {
-            source: &source,
-            ..Default::default()
-        },
-        "r_create",
-        &load("o04_read_bound_generic.qcore", &weakened),
-    )
-    .expect("fixture accepted by Clang");
-    assert!(
-        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
-        "a custody-bearing position withdraws the admission: {result:?}"
-    );
+    let borrowed = "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);";
+    {
+        let mode = "resource_owned(i, nonnull)";
+        let weakened = GENERIC_CONTRACTS.replace(
+            borrowed,
+            &format!(
+                "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {{\n    requires resource_contract_v1;\n    ensures normal {mode};"
+            ),
+        );
+        assert_ne!(weakened, GENERIC_CONTRACTS, "the substitution applied");
+        let source = format!("{DECLARATIONS} {R_CREATE}");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "r_create",
+            &load("o04_read_bound_generic.qcore", &weakened),
+        )
+        .expect("fixture accepted by Clang");
+        assert!(
+            !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+            "`{mode}` withdraws the admission: {result:?}"
+        );
+    }
 }
 
 // --------------------------------------------------------------------------

@@ -106,6 +106,15 @@ struct RecordInfo {
     /// unresolved-typedef members are absent by construction. Used only by the
     /// aggregate-store rule in [`crate::aggregate_store`].
     single_pointer_fields: BTreeSet<String>,
+    /// Members declared with **no** `*`, no array modifier and no rejecting
+    /// qualifier, over a specifier list this reader resolved to an
+    /// arithmetic/enumeration type or to a `struct` tag. Such a member is a
+    /// sub-object of the record that can never itself hold a pointer this
+    /// projection links, so its *address* denotes storage disjoint from every
+    /// linkable member. `union`-typed members, pointer members, arrays,
+    /// bitfields and unresolved typedefs are absent by construction. Used only
+    /// by the member-address rule in [`crate::aggregate_store`].
+    non_pointer_fields: BTreeSet<String>,
 }
 
 /// The four member classifications one readable record body yields.
@@ -115,6 +124,7 @@ struct RecordMembers {
     borrowable_fields: BTreeSet<String>,
     record_pointer_fields: BTreeMap<String, String>,
     single_pointer_fields: BTreeSet<String>,
+    non_pointer_fields: BTreeSet<String>,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -337,6 +347,7 @@ impl TypedAccessModel {
                 entry.borrowable_fields.clear();
                 entry.record_pointer_fields.clear();
                 entry.single_pointer_fields.clear();
+                entry.non_pointer_fields.clear();
                 continue;
             }
             if entry.union_tag {
@@ -350,6 +361,7 @@ impl TypedAccessModel {
                 entry.borrowable_fields = members.borrowable_fields;
                 entry.record_pointer_fields = members.record_pointer_fields;
                 entry.single_pointer_fields = members.single_pointer_fields;
+                entry.non_pointer_fields = members.non_pointer_fields;
             }
         }
     }
@@ -372,6 +384,7 @@ impl TypedAccessModel {
         let mut borrowable_fields = BTreeSet::new();
         let mut record_pointer_fields = BTreeMap::new();
         let mut single_pointer_fields = BTreeSet::new();
+        let mut non_pointer_fields = BTreeSet::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -392,6 +405,21 @@ impl TypedAccessModel {
                 let name = declarator.name?;
                 if declarator.array {
                     continue;
+                }
+                // O04-B09B10: a member with no `*` is a sub-object of this
+                // record. Its address denotes storage disjoint from every other
+                // member, so handing it to a borrowing callee cannot disturb a
+                // linked pointer member. `union` specifiers and every typedef
+                // this reader will not resolve classify `Opaque` and are
+                // excluded here, exactly as they are elsewhere in this model.
+                if declarator.stars == 0
+                    && !qualified
+                    && matches!(
+                        self.classify_specifiers(&specifiers, 0),
+                        DeclaredType::Record(_) | DeclaredType::Scalar
+                    )
+                {
+                    non_pointer_fields.insert(name.clone());
                 }
                 if declarator.stars == 0 && scalar_specifiers {
                     scalar_fields.insert(name.clone());
@@ -431,6 +459,7 @@ impl TypedAccessModel {
             borrowable_fields,
             record_pointer_fields,
             single_pointer_fields,
+            non_pointer_fields,
         })
     }
 
@@ -569,6 +598,21 @@ impl TypedAccessModel {
                 && !record.union_tag
                 && record.definitions == 1
                 && record.single_pointer_fields.contains(field)
+        })
+    }
+
+    /// Whether `tag`'s single complete non-union definition declares `field`
+    /// with **no** `*`, no array modifier and no rejecting qualifier, over a
+    /// specifier list this reader resolved. Taking the address of such a member
+    /// yields a pointer into storage that C's object model keeps disjoint from
+    /// every other member of the same `struct`, so no member this projection
+    /// links can be reached through it (card O04-B09B10).
+    pub(crate) fn addressable_field(&self, tag: &str, field: &str) -> bool {
+        self.records.get(tag).is_some_and(|record| {
+            record.complete
+                && !record.union_tag
+                && record.definitions == 1
+                && record.non_pointer_fields.contains(field)
         })
     }
 
