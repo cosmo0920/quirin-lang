@@ -115,25 +115,27 @@ fn the_core_re_establishes_a_prerequisite_rather_than_accepting_one() {
     );
 }
 
-/// The measured structural blocker for `file_outcomes` and `file_delete`.
+/// **Deliberately flipped by card P04-B1, per this test's own design.**
 ///
-/// The destructor family could transport its declared owned-field inventory
-/// because the pinned contract *declares* it: `declared_owned_fields` extracts
-/// exactly that set from `memory_backend.qcore`, and the core refuses a
-/// projection naming any other set. The cleanup-outcome families have no such
-/// referent: their `CleanupProfile` — the syscall name and signature, the
-/// presence field, the field list and, decisively, the reset values that
-/// assert what a successful syscall leaves behind (`fd = -1`, `map = NULL`) —
-/// appears nowhere in either pinned contract. Transporting it would put
-/// custody-bearing declared data on the wire with nothing on the contract side
-/// to cross-check it against.
+/// This test previously pinned the *absence* of a contract-side referent for
+/// `file_outcomes` and `file_delete` — the measured blocker P04-NEXT-AB §6.3(a)
+/// recorded — and said in as many words that a future contract revision
+/// declaring the vocabulary must fail it and force a re-evaluation rather than
+/// let the blocker be inherited. P04-B1 is that revision, so the assertion is
+/// inverted rather than deleted: both contracts now declare the field
+/// inventory, the reset values, the syscall/helper names and the C types, in
+/// the same clause idiom that made the destructor family's inventory
+/// contract-derived, and `qcore_verification::cleanup_vocabulary` refuses a
+/// profile that is not exactly that declaration.
 ///
-/// If a future contract revision declares this vocabulary, this test fails and
-/// the blocker must be re-evaluated rather than inherited.
+/// Blocker (a) is therefore closed. Blocker (b) — that a producer would have
+/// to reimplement a symbolic replay evaluator over a fourth transported
+/// vocabulary, which is a separate capability definition and not a widening of
+/// the third — is untouched by this card and is still what gates P04-NEXT-B2.
 #[test]
-fn the_cleanup_outcome_contracts_declare_no_field_or_reset_vocabulary() {
-    // The destructor contract does name its owned fields, which is why that
-    // family's inventory could travel under a contract cross-check.
+fn the_cleanup_outcome_contracts_declare_their_field_and_reset_vocabulary() {
+    // The destructor contract still names its owned fields; that family is the
+    // precedent this declaration follows.
     assert!(
         MEMORY_BACKEND_CONTRACT.contains("owned_or_null__"),
         "the destructor contract must still declare its inventory"
@@ -145,43 +147,63 @@ fn the_cleanup_outcome_contracts_declare_no_field_or_reset_vocabulary() {
     .unwrap();
     assert!(!declared.is_empty());
 
-    // The two dependent contracts name none of the profile vocabulary. The
-    // comparison is over whole identifiers, not substrings, so
-    // `native_unmap_outcomes` is not read as naming `munmap` and
-    // `reset_field_count` is not read as naming a reset value.
-    for (name, contract) in [
-        ("filesystem_outcomes", OUTCOMES_CONTRACT),
-        ("filesystem_delete", DELETE_OUTCOMES_CONTRACT),
+    // Every profile member the earlier census reported missing is now a
+    // declared premise, matched over whole identifiers so a substring never
+    // passes for a declaration.
+    for (policy, contract, expected) in [
+        (
+            "native_close_outcomes",
+            OUTCOMES_CONTRACT,
+            &[
+                "cleanup_field__0__fd__int__integer_m1",
+                "cleanup_syscall__close",
+            ][..],
+        ),
+        (
+            "native_unmap_outcomes",
+            OUTCOMES_CONTRACT,
+            &[
+                "cleanup_field__1__alloc_size__unsigned_long__integer_0",
+                "cleanup_syscall__munmap",
+            ][..],
+        ),
+        (
+            "native_delete_outcomes",
+            DELETE_OUTCOMES_CONTRACT,
+            &["cleanup_mapping_field__map", "cleanup_syscall__unlink"][..],
+        ),
     ] {
         let identifiers = identifiers(contract);
-        for token in [
-            // Field names the profile declares.
-            "fd",
-            "map",
-            "alloc_size",
-            "map_truncated_warned",
-            "path",
-            // Syscall and diagnostic callees the profile declares.
-            "close",
-            "munmap",
-            "unlink",
-            "__errno_location",
-            "cio_errno_print",
-            // Declared C types the profile fixes.
-            "char",
-            "size_t",
-            // The declaration form that made the destructor inventory
-            // contract-derived in the first place.
-            "owned_or_null__",
-        ] {
+        assert!(
+            identifiers.contains("cleanup_vocabulary_v1"),
+            "{policy} declares no vocabulary selector"
+        );
+        for token in expected {
             assert!(
-                !identifiers.contains(token),
-                "`{name}` now declares `{token}`; the P04-NEXT-B blocker must be re-evaluated"
+                identifiers.contains(*token),
+                "{policy} does not declare {token}"
             );
         }
-        // Whole-identifier matching is only meaningful if the contract really
-        // does have identifiers, so the check is not vacuous.
-        assert!(identifiers.contains("syscall_succeeded"), "{name}");
+        // The declaration is machine-readable, not prose: the reader returns
+        // the profile the checker binds, reset values included.
+        let vocabulary =
+            qcore_verification::cleanup_vocabulary::declared_cleanup_vocabulary(contract, policy)
+                .unwrap();
+        assert!(!vocabulary.shape().fields.is_empty(), "{policy}");
+        assert!(!vocabulary.shape().argument_fields.is_empty(), "{policy}");
+        assert_eq!(
+            vocabulary.shape().root_type,
+            "struct cio_file *",
+            "{policy}"
+        );
+        assert_eq!(
+            vocabulary.shape().errno_function,
+            "__errno_location",
+            "{policy}"
+        );
+        // Still not vacuous: these are the same contracts, with their existing
+        // postcondition vocabulary intact.
+        assert!(identifiers.contains("syscall_succeeded"), "{policy}");
     }
 }
 
@@ -191,9 +213,10 @@ fn the_cleanup_outcome_contracts_declare_no_field_or_reset_vocabulary() {
 /// Line comments are stripped first, and deliberately so: `filesystem_delete`
 /// *mentions* `fd`, `map` and `path` in its header prose ("The fd/map fields
 /// control eligibility; they are bookkeeping"). Prose is not a declaration —
-/// `declared_owned_fields` reads `requires` clauses, and nothing can read a
-/// comment — so a transported profile still has no machine-checkable referent.
-/// That distinction is the finding, not an accident of this helper.
+/// nothing can read a comment — so what this helper sees is exactly the
+/// declared surface. Before P04-B1 that surface named none of the profile;
+/// it now names all of it, and the distinction between the two is why the
+/// helper strips comments.
 fn identifiers(source: &str) -> std::collections::BTreeSet<String> {
     let stripped: String = source
         .lines()

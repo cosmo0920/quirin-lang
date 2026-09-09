@@ -1,6 +1,15 @@
 //! Complete flat-path replay for nullable native cleanup helpers. Symbolic field
 //! identities are never replaced by sampled integers. External cleanup outcomes
 //! and diagnostic framing are explicit assumptions, not inferred OS semantics.
+//!
+//! Card `P04-B1`: the `CleanupProfile` is no longer free Rust data. Both entry
+//! points require the pinned contract to *declare* the field inventory, the
+//! syscall and helper names and the C types they bind
+//! ([`crate::cleanup_vocabulary`]), refuse a profile that is not exactly that
+//! declaration, and then check the declaration against the pinned typed source
+//! by the same replay as before. No accepted input changed: the declaration is
+//! a referent, not a new semantic rule.
+use crate::cleanup_vocabulary::declared_cleanup_vocabulary;
 use qcore_c_gateway::typed_source::{
     SourceExpression as Expr, SourceOperation as Op, SourceSummary, SourceValue,
 };
@@ -64,6 +73,24 @@ impl CleanupCertificate {
     }
 }
 
+/// Evaluate one policy over the case facts plus the vocabulary its own
+/// contract declares. Every declared clause must be supplied or the predicate
+/// interpreter reports `missing observation`, so a contract cannot declare a
+/// referent this checker does not recognise.
+fn check_facts(
+    contract: &str,
+    policy: &str,
+    facts: &[(&str, i128)],
+    declared: &[(String, i128)],
+) -> Result<(), String> {
+    let all: Vec<(&str, i128)> = facts
+        .iter()
+        .copied()
+        .chain(declared.iter().map(|(name, value)| (name.as_str(), *value)))
+        .collect();
+    qcore_contract::contract_observation::check_contract_facts(contract, policy, &all)
+}
+
 pub fn check_cleanup_outcomes(
     source: &SourceSummary,
     profile: &CleanupProfile,
@@ -87,6 +114,11 @@ pub fn check_cleanup_outcomes(
     {
         return Err("invalid cleanup field profile".into());
     }
+    // The profile must be the vocabulary its own contract declares, before any
+    // path is replayed against it.
+    let vocabulary = declared_cleanup_vocabulary(contract, &profile.policy)?;
+    vocabulary.bind(profile, None)?;
+    let declared = vocabulary.facts();
     let mut cases = Vec::new();
     let mut covered = BTreeSet::new();
     for (entry, outcome) in [
@@ -130,7 +162,7 @@ pub fn check_cleanup_outcomes(
                 {
                     return Err("cleanup source violates outcome/field transition".into());
                 }
-                qcore_contract::contract_observation::check_contract_facts(
+                check_facts(
                     contract,
                     &profile.policy,
                     &[
@@ -152,6 +184,7 @@ pub fn check_cleanup_outcomes(
                         ("root_preserved", 1),
                         ("other_fields_preserved", 1),
                     ],
+                    &declared,
                 )?;
                 selected.push(case);
             }
@@ -522,6 +555,12 @@ pub fn check_guarded_delete_outcomes(
     {
         return Err("guarded delete source/field profile mismatch".into());
     }
+    // The eligibility field is not a `CleanupProfile` member, so it is bound
+    // separately: the delete policy must declare it and the close/unmap
+    // policies must not.
+    let vocabulary = declared_cleanup_vocabulary(contract, &profile.policy)?;
+    vocabulary.bind(profile, Some(mapping_field))?;
+    let declared = vocabulary.facts();
     let mut cases = Vec::new();
     let mut covered = BTreeSet::new();
     for (open, mapped, outcome) in [
@@ -556,7 +595,7 @@ pub fn check_guarded_delete_outcomes(
                         "guarded delete violates eligibility/outcome/frame transition".into(),
                     );
                 }
-                qcore_contract::contract_observation::check_contract_facts(
+                check_facts(
                     contract,
                     &profile.policy,
                     &[
@@ -578,6 +617,7 @@ pub fn check_guarded_delete_outcomes(
                         ("fields_preserved", i128::from(preserved)),
                         ("record_and_path_allocations_preserved", 1),
                     ],
+                    &declared,
                 )?;
                 selected.push(GuardedDeleteCase {
                     descriptor_field_active: open,
