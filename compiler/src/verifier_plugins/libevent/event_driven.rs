@@ -133,10 +133,12 @@ pub fn classify_libevent_symbol(
 // Preserve provider-facing types while the generic kernel owns all model states.
 pub use qcore_core::event_reactor::{
     ActivationReason, ArgumentMode, BuffereventId, BuffereventKey, CallbackArgumentId,
-    CallbackContext, CallbackSummary, DeleteMode, DescriptorId, EventBaseId, EventCertificate,
-    EventDiagnostic, EventFlags, EventId, EventKey, EventLifecycle, ExecutionContextId, Generation,
-    InvalidOrderingEvidence, LoopControl, ObservedEvent, ObservedKind, PayloadAccessKind,
-    PayloadId, check_observation_refinement, explore_activation_orders,
+    CallbackContext, CallbackSummary, ClassifiedCloseFailure, ClosePremiseDisposition,
+    ClosePremiseRecheckError, DeclaredCloseFailure, DeclaredClosePremise, DeclaredCloseRefusal,
+    DeleteMode, DescriptorId, EventBaseId, EventCertificate, EventDiagnostic, EventFlags, EventId,
+    EventKey, EventLifecycle, ExecutionContextId, Generation, InvalidOrderingEvidence, LoopControl,
+    ObservedEvent, ObservedKind, PayloadAccessKind, PayloadId, check_observation_refinement,
+    classify_declared_close_failure, explore_activation_orders,
 };
 // Concrete facades preserve enum variant imports and the original public
 // program shape. Conversion is exhaustive and transfers every field unchanged.
@@ -200,9 +202,15 @@ pub enum EventOperation {
         descriptor: DescriptorId,
     },
     /// `evutil_closesocket` consumes close custody only on its success branch.
+    ///
+    /// `declared_failure` carries the kernel's declared close-failure premise
+    /// unchanged (card O03-REACTOR). This adapter establishes nothing about a
+    /// platform or an `errno`: it transports whatever a caller declares, and
+    /// `None` — what every existing caller passes — keeps the poisoned answer.
     CloseSocket {
         descriptor: DescriptorId,
         succeeds: bool,
+        declared_failure: Option<DeclaredCloseFailure>,
     },
     CreateBufferevent {
         bev: BuffereventKey,
@@ -315,9 +323,11 @@ impl From<EventOperation> for qcore_core::event_reactor::EventOperation<Libevent
             EventOperation::CloseSocket {
                 descriptor,
                 succeeds,
+                declared_failure,
             } => Self::CloseSocket {
                 descriptor,
                 succeeds,
+                declared_failure,
             },
             EventOperation::CreateBufferevent {
                 bev,
@@ -420,6 +430,23 @@ pub fn check_event_program(
         .collect::<Vec<_>>();
     let model = program.clone().into();
     qcore_core::event_reactor::check_event_program(&model, &accepted_profiles)
+}
+
+/// Independently rederive the declared close-failure premises a certificate
+/// rests on (card O03-REACTOR). The adapter contributes no authority: it
+/// converts its own program to the kernel's and the kernel rederives every
+/// premise from the post-state relation.
+///
+/// # Errors
+///
+/// [`ClosePremiseRecheckError`] — the certificate is refused, never repaired.
+pub fn recheck_declared_close_premises(
+    program: &EventProgram,
+    certificate: &EventCertificate,
+) -> Result<(), ClosePremiseRecheckError> {
+    let model: qcore_core::event_reactor::EventProgram<LibeventBuildProfile> =
+        program.clone().into();
+    qcore_core::event_reactor::recheck_declared_close_premises(&model, certificate)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

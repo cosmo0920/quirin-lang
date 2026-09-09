@@ -118,13 +118,16 @@ pub use error_region::{
 };
 pub use event_driven::{
     ActivationReason, ArgumentMode, BuffereventId, BuffereventKey, CallbackArgumentId,
-    CallbackContext, CallbackSummary, DeleteMode, DescriptorId, EventBackend, EventBaseId,
-    EventCertificate, EventDiagnostic, EventFlags, EventId, EventKey, EventLifecycle,
-    EventOperation, EventProgram, ExecutionContextId, Generation, InvalidOrderingEvidence,
-    LIBEVENT_SUBMODULE_PATH, LibeventBuildProfile, LibeventSourceError, LibeventSourceEvidence,
-    LoopControl, ObservedEvent, ObservedKind, PayloadAccessKind, PayloadId, ProfileDisposition,
-    ThreadMode, check_event_program, check_observation_refinement, classify_libevent_symbol,
-    explore_activation_orders, verify_pinned_libevent_source,
+    CallbackContext, CallbackSummary, ClassifiedCloseFailure, ClosePremiseDisposition,
+    ClosePremiseRecheckError, DeclaredCloseFailure, DeclaredClosePremise, DeclaredCloseRefusal,
+    DeleteMode, DescriptorId, EventBackend, EventBaseId, EventCertificate, EventDiagnostic,
+    EventFlags, EventId, EventKey, EventLifecycle, EventOperation, EventProgram,
+    ExecutionContextId, Generation, InvalidOrderingEvidence, LIBEVENT_SUBMODULE_PATH,
+    LibeventBuildProfile, LibeventSourceError, LibeventSourceEvidence, LoopControl, ObservedEvent,
+    ObservedKind, PayloadAccessKind, PayloadId, ProfileDisposition, ThreadMode,
+    check_event_program, check_observation_refinement, classify_declared_close_failure,
+    classify_libevent_symbol, explore_activation_orders, recheck_declared_close_premises,
+    verify_pinned_libevent_source,
 };
 pub use executable_model::{
     ErrorIdentity as ModelErrorIdentity, ExecutableModel, ModelBuildError, ModelCleanupPack,

@@ -304,6 +304,7 @@ fn reactor_adapter_enum_supports_external_variant_imports() {
         CloseSocket {
             descriptor: 3,
             succeeds: true,
+            declared_failure: None,
         }
     };
     let program = qcore_compiler::EventProgram {
@@ -321,7 +322,8 @@ fn reactor_adapter_enum_supports_external_variant_imports() {
             },
             qcore_core::event_reactor::EventOperation::CloseSocket {
                 descriptor: 3,
-                succeeds: true
+                succeeds: true,
+                declared_failure: None
             },
             qcore_core::event_reactor::EventOperation::DropArgument { argument: 9 },
         ]

@@ -175,6 +175,27 @@ fn unsupported_operations_and_backends_never_import() {
                     EventOperation::CloseSocket {
                         descriptor: 3,
                         succeeds: true,
+                        declared_failure: None,
+                    },
+                )
+            }),
+        ),
+        (
+            // Card O03-REACTOR: a declared close-failure premise has no wire
+            // record either, so it can never travel silently or be dropped on
+            // the way to a provider. The whole program stays Unknown.
+            "declared close-failure premise",
+            Box::new(|program| {
+                program.operations.insert(
+                    1,
+                    EventOperation::CloseSocket {
+                        descriptor: 3,
+                        succeeds: false,
+                        declared_failure: Some(model::DeclaredCloseFailure {
+                            target: "linux".to_string(),
+                            errno: "eio".to_string(),
+                            record_locks: "none-held".to_string(),
+                        }),
                     },
                 )
             }),

@@ -236,11 +236,142 @@ fn the_relation_agrees_with_the_lean_model_over_the_whole_domain() {
     assert_eq!(relation_digest(&lean_domain()), RELATION_DIGEST);
 }
 
-/// Print the two numbers when they must be re-pinned. Not a gate.
+// ---------------------------------------------------------------------------
+// Card O03-REACTOR: the reactor-side arm of the same correspondence
+// ---------------------------------------------------------------------------
+//
+// The reactor now resolves a declared `(target, errno, record-locks)` premise
+// and reads its disposition out of the same relation. That classification is a
+// second implementation surface, so the digest grows to cover it: the domain is
+// the three closed vocabularies plus **one representative unrecognized
+// spelling** per component, which is faithful because every unrecognized
+// spelling takes the same refusal (pinned separately by
+// `an_unrecognized_declared_spelling_refuses_the_event` in
+// `crates/qcore-core/tests/unit/event_reactor.rs`).
+//
+// The relation's own 1920-triple digest above is deliberately **kept**: the
+// relation did not change, so its pin must not move, and the extended digest is
+// the old fold continued over the new rows.
+
+use qcore_core::event_reactor::{
+    ClosePremiseDisposition, DeclaredCloseFailure, classify_declared_close_failure,
+};
+
+/// `QCore.DescriptorCustody.reactorDomainOffset`.
+const REACTOR_INPUT_OFFSET: u64 = 4096;
+
+/// The combined domain: the relation's 1920 triples, then the reactor arm's
+/// `4 x 8 x 3` declared rows.
+const ADMISSION_DOMAIN_SIZE: usize = 2016;
+/// Recomputed after the reactor arm was added. The pre-card value over the
+/// 1920-row domain alone is `RELATION_DIGEST` above, which is unchanged.
+const ADMISSION_DIGEST: u64 = 2640189996995932678;
+
+/// The representative spellings, in `QCore.DescriptorCustody`'s list order. The
+/// last entry of each list is the unrecognized class.
+const DECLARED_TARGETS: [&str; 4] = ["linux", "posix-2024", "unpinned", "unrecognized-target"];
+const DECLARED_ERRNOS: [&str; 8] = [
+    "ebadf",
+    "eintr",
+    "eio",
+    "enospc",
+    "edquot",
+    "other",
+    "unobserved",
+    "unrecognized-errno",
+];
+const DECLARED_LOCKS: [&str; 3] = ["none-held", "unknown", "unrecognized-locks"];
+
+fn encode_reactor_input(target: usize, errno: usize, locks: usize) -> u64 {
+    REACTOR_INPUT_OFFSET + target as u64 + 4 * (errno as u64 + 8 * locks as u64)
+}
+
+/// `0` stays reserved for the out-of-domain answer, matching the relation's
+/// encoding, so the four dispositions occupy `1..=4`.
+fn encode_disposition(answer: Option<ClosePremiseDisposition>) -> u64 {
+    match answer {
+        // A refused declaration.
+        None => 1,
+        Some(ClosePremiseDisposition::ReleasedNumberRetired) => 2,
+        Some(ClosePremiseDisposition::RetainedRetryPermitted) => 3,
+        Some(ClosePremiseDisposition::Poisoned) => 4,
+    }
+}
+
+fn reactor_domain() -> Vec<(usize, usize, usize)> {
+    let mut out = Vec::new();
+    for target in 0..DECLARED_TARGETS.len() {
+        for errno in 0..DECLARED_ERRNOS.len() {
+            for locks in 0..DECLARED_LOCKS.len() {
+                out.push((target, errno, locks));
+            }
+        }
+    }
+    out
+}
+
+/// Continue the relation's fold over the reactor rows.
+fn admission_digest() -> u64 {
+    reactor_domain().iter().fold(
+        relation_digest(&lean_domain()),
+        |accumulator, &(target, errno, locks)| {
+            let declared = DeclaredCloseFailure {
+                target: DECLARED_TARGETS[target].to_string(),
+                errno: DECLARED_ERRNOS[errno].to_string(),
+                record_locks: DECLARED_LOCKS[locks].to_string(),
+            };
+            let answer = classify_declared_close_failure(&declared)
+                .ok()
+                .map(|classified| classified.disposition);
+            let entry = mix(
+                mix(STATE_SEED, encode_reactor_input(target, errno, locks)),
+                encode_disposition(answer),
+            );
+            accumulator
+                .wrapping_mul(DOMAIN_MUL)
+                .wrapping_add(entry)
+                .wrapping_add(1)
+        },
+    )
+}
+
+#[test]
+fn the_extended_domain_is_the_one_the_lean_model_enumerates() {
+    let reactor = reactor_domain();
+    assert_eq!(lean_domain().len() + reactor.len(), ADMISSION_DOMAIN_SIZE);
+    let mut seen: Vec<_> = reactor
+        .iter()
+        .map(|&(t, e, l)| encode_reactor_input(t, e, l))
+        .collect();
+    seen.sort_unstable();
+    seen.dedup();
+    assert_eq!(seen.len(), reactor.len());
+    // The reactor rows cannot collide with the relation rows.
+    assert!(
+        seen[0]
+            > lean_domain()
+                .iter()
+                .map(|&(t, p, o)| encode_input(t, p, o))
+                .max()
+                .unwrap()
+    );
+}
+
+#[test]
+fn the_reactor_arm_agrees_with_the_lean_model_over_the_whole_domain() {
+    assert_eq!(admission_digest(), ADMISSION_DIGEST);
+}
+
+/// Print the numbers when they must be re-pinned. Not a gate.
 #[test]
 #[ignore = "recompute the pinned digest deliberately"]
 fn recompute_pins() {
     let domain = lean_domain();
     println!("DOMAIN_SIZE {}", domain.len());
     println!("RELATION_DIGEST {}", relation_digest(&domain));
+    println!(
+        "ADMISSION_DOMAIN_SIZE {}",
+        domain.len() + reactor_domain().len()
+    );
+    println!("ADMISSION_DIGEST {}", admission_digest());
 }

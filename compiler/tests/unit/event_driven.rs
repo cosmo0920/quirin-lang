@@ -446,10 +446,12 @@ fn evutil_socket_contracts_are_profiled_and_conserve_custody() {
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: true,
+                declared_failure: None,
             },
             EventOperation::CloseSocket {
                 descriptor: 4,
                 succeeds: true,
+                declared_failure: None,
             },
         ],
     };
@@ -477,10 +479,12 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: false,
+                declared_failure: None,
             },
             EventOperation::CloseSocket {
                 descriptor: 4,
                 succeeds: true,
+                declared_failure: None,
             },
         ],
     };
@@ -501,14 +505,17 @@ fn failed_or_duplicate_socket_close_is_fail_closed() {
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: true,
+                declared_failure: None,
             },
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: true,
+                declared_failure: None,
             },
             EventOperation::CloseSocket {
                 descriptor: 4,
                 succeeds: true,
+                declared_failure: None,
             },
         ],
     };
@@ -535,11 +542,13 @@ fn socket_error_query_cannot_use_a_closed_descriptor() {
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: true,
+                declared_failure: None,
             },
             EventOperation::GetSocketError { descriptor: 3 },
             EventOperation::CloseSocket {
                 descriptor: 4,
                 succeeds: true,
+                declared_failure: None,
             },
         ],
     };
@@ -569,6 +578,7 @@ fn active_event_borrow_prevents_socket_close() {
         EventOperation::CloseSocket {
             descriptor: 3,
             succeeds: true,
+            declared_failure: None,
         },
     );
     let free_base = program.operations.len() - 1;
@@ -578,10 +588,12 @@ fn active_event_borrow_prevents_socket_close() {
             EventOperation::CloseSocket {
                 descriptor: 3,
                 succeeds: true,
+                declared_failure: None,
             },
             EventOperation::CloseSocket {
                 descriptor: 4,
                 succeeds: true,
+                declared_failure: None,
             },
         ],
     );

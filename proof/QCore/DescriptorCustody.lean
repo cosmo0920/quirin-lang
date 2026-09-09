@@ -560,4 +560,310 @@ set_option maxRecDepth 100000 in
 set_option maxHeartbeats 4000000 in
 theorem close_relation_digest : closeRelationDigest = 11372109764820645253 := by decide
 
+/-! ## The reactor-side arm (card O03-REACTOR)
+
+`qcore_core::event_reactor`'s `CloseSocket` failure branch may now carry a
+**declared** `(target, errno, record-locks)` premise. Nothing there observes a
+platform: a declaring adapter supplies the three spellings as declared text,
+they are resolved total-or-reject through closed vocabularies, and the reactor
+then reads its disposition out of `closePostState` for the pinned target.
+
+Modelled here so the declared model and the checker say the same thing:
+
+* the three spellings are the closed alphabets plus one `unrecognized`
+  constructor standing for **every** spelling outside them, which is faithful
+  because the Rust resolver maps them all to the same refusal (pinned by
+  `an_unrecognized_declared_spelling_refuses_the_event`);
+* `reactorPremises` is the premise vector the trace vocabulary can justify:
+  the epoch is live and solely custodied because this arm is reached only under
+  exclusive socket-pair custody, the `-1` result is recorded by the trace, the
+  errno class is named by the declaration, `lastReference` is **false** because
+  the reactor models no open file description and claims no release of one, and
+  A7 comes from the declaration's own spelling;
+* `reactorDisposition` is not an independent policy: every arm reads
+  `PostState.descriptor` and `PostState.mayClose`, so a change to the relation
+  moves the reactor with it. -/
+
+inductive DeclaredTarget where
+  | linux
+  | posix2024
+  | unpinned
+  /-- Every spelling outside the closed vocabulary. -/
+  | unrecognized
+  deriving DecidableEq, Repr
+
+inductive DeclaredErrno where
+  | ebadf
+  | eintr
+  | eio
+  | enospc
+  | edquot
+  | other
+  | unobserved
+  | unrecognized
+  deriving DecidableEq, Repr
+
+inductive DeclaredLocks where
+  | noneHeld
+  /-- A7 declared unknown. Not a refusal: the relation has an answer for a
+  denied A7, and it is the poisoned one. -/
+  | unknownLocks
+  | unrecognized
+  deriving DecidableEq, Repr
+
+def resolveDeclaredTarget : DeclaredTarget → Option Target
+  | .linux => some .linux
+  | .posix2024 => some .posix2024
+  | .unpinned => some .unpinned
+  | .unrecognized => none
+
+def resolveDeclaredErrno : DeclaredErrno → Option Errno
+  | .ebadf => some .ebadf
+  | .eintr => some .eintr
+  | .eio => some .eio
+  | .enospc => some .enospc
+  | .edquot => some .edquot
+  | .other => some .other
+  | .unobserved => some .unobserved
+  | .unrecognized => none
+
+def resolveDeclaredLocks : DeclaredLocks → Option Bool
+  | .noneHeld => some true
+  | .unknownLocks => some false
+  | .unrecognized => none
+
+/-- The premises the reactor supplies, with the declared A7 filled in. -/
+def reactorPremises (noRecordLocks : Bool) : Premises :=
+  ⟨true, true, true, true, false, noRecordLocks⟩
+
+/-- What the relation's classification means for the reactor's descriptor
+model. -/
+inductive Disposition where
+  /-- The declaration did not resolve; the event is refused. -/
+  | refused
+  /-- The epoch ended: custody is discharged and the number is retired. -/
+  | releasedNumberRetired
+  /-- The epoch is live and still owed; the documented retry is admitted. -/
+  | retainedRetryPermitted
+  /-- Neither usable, retriable nor free. -/
+  | poisoned
+  deriving DecidableEq, Repr
+
+def dispositionOf (s : PostState) : Disposition :=
+  match s.descriptor with
+  | .released => .releasedNumberRetired
+  | .retained => if s.mayClose then .retainedRetryPermitted else .poisoned
+  | _ => .poisoned
+
+def reactorDisposition (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    Disposition :=
+  match resolveDeclaredTarget t, resolveDeclaredErrno e, resolveDeclaredLocks l with
+  | some tt, some ee, some ll =>
+      match closePostState tt (reactorPremises ll) (Outcome.minusOne ee) with
+      | some s => dispositionOf s
+      | none => .poisoned
+  | _, _, _ => .refused
+
+def allDeclaredTargets : List DeclaredTarget :=
+  [.linux, .posix2024, .unpinned, .unrecognized]
+
+def allDeclaredErrnos : List DeclaredErrno :=
+  [.ebadf, .eintr, .eio, .enospc, .edquot, .other, .unobserved, .unrecognized]
+
+def allDeclaredLocks : List DeclaredLocks :=
+  [.noneHeld, .unknownLocks, .unrecognized]
+
+/-- The whole declared `4 × 8 × 3` domain, in the order the Rust correspondence
+test enumerates it. -/
+def reactorDomainRows : List (DeclaredTarget × DeclaredErrno × DeclaredLocks) :=
+  allDeclaredTargets.flatMap fun t =>
+    allDeclaredErrnos.flatMap fun e =>
+      allDeclaredLocks.map fun l => (t, e, l)
+
+theorem mem_allDeclaredTargets (t : DeclaredTarget) : t ∈ allDeclaredTargets := by
+  cases t <;> decide
+
+theorem mem_allDeclaredErrnos (e : DeclaredErrno) : e ∈ allDeclaredErrnos := by
+  cases e <;> decide
+
+theorem mem_allDeclaredLocks (l : DeclaredLocks) : l ∈ allDeclaredLocks := by
+  cases l <;> decide
+
+def reactorAll (P : DeclaredTarget → DeclaredErrno → DeclaredLocks → Bool) : Bool :=
+  allDeclaredTargets.all fun t =>
+    allDeclaredErrnos.all fun e => allDeclaredLocks.all fun l => P t e l
+
+/-- Bridge from a decided exhaustive check to a universally quantified fact. -/
+theorem of_reactorAll {P : DeclaredTarget → DeclaredErrno → DeclaredLocks → Bool}
+    (h : reactorAll P = true) (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    P t e l = true := by
+  have ht := (List.all_eq_true.mp h) t (mem_allDeclaredTargets t)
+  have he := (List.all_eq_true.mp ht) e (mem_allDeclaredErrnos e)
+  exact (List.all_eq_true.mp he) l (mem_allDeclaredLocks l)
+
+private def readsTheRelation (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    Bool :=
+  match resolveDeclaredTarget t, resolveDeclaredErrno e, resolveDeclaredLocks l with
+  | some tt, some ee, some ll =>
+      match closePostState tt (reactorPremises ll) (Outcome.minusOne ee) with
+      | some s => reactorDisposition t e l == dispositionOf s
+      | none => reactorDisposition t e l == Disposition.poisoned
+  | _, _, _ => reactorDisposition t e l == Disposition.refused
+
+/-- The reactor decides nothing of its own: on every declared row its
+disposition is the relation's own answer, read through `dispositionOf`. -/
+theorem the_reactor_reads_its_disposition_out_of_the_relation
+    (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    readsTheRelation t e l = true :=
+  of_reactorAll (by decide) t e l
+
+/-- Retention — and with it the only admitted retry — occurs on exactly one
+declared row of the whole `4 × 8 × 3` domain. -/
+theorem only_a_declared_posix2024_eintr_retains_the_epoch :
+    (reactorDomainRows.filter fun row =>
+        reactorDisposition row.1 row.2.1 row.2.2 == Disposition.retainedRetryPermitted) =
+      [(DeclaredTarget.posix2024, DeclaredErrno.eintr, DeclaredLocks.noneHeld)] := by
+  decide
+
+/-- A declared Linux failure releases the epoch and retires the number on every
+errno the kernel documents as releasing; `EBADF` refutes the epoch and an
+unobserved errno excludes nothing, so both stay poisoned. -/
+theorem a_declared_linux_failure_releases_except_on_ebadf_or_an_unobserved_errno :
+    (allDeclaredErrnos.all fun e =>
+      reactorDisposition .linux e .noneHeld ==
+        (match e with
+         | .ebadf | .unobserved => Disposition.poisoned
+         | .unrecognized => Disposition.refused
+         | _ => Disposition.releasedNumberRetired)) = true := by
+  decide
+
+private def unpinnedIsPoisoned (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    Bool :=
+  match t, e, l with
+  | .unpinned, .unrecognized, _ => true
+  | .unpinned, _, .unrecognized => true
+  | .unpinned, _, _ => reactorDisposition t e l == Disposition.poisoned
+  | _, _, _ => true
+
+/-- With `unpinned` declared — the answer an undeclared failure already gets —
+every resolvable row is poisoned. Declaring nothing and declaring `unpinned`
+are the same answer. -/
+theorem a_declared_unpinned_failure_is_poisoned
+    (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    unpinnedIsPoisoned t e l = true :=
+  of_reactorAll (by decide) t e l
+
+private def deniedLocksArePoisoned (t : DeclaredTarget) (e : DeclaredErrno)
+    (l : DeclaredLocks) : Bool :=
+  match t, e, l with
+  | .unrecognized, _, _ => true
+  | _, .unrecognized, _ => true
+  | _, _, .unknownLocks => reactorDisposition t e l == Disposition.poisoned
+  | _, _, _ => true
+
+/-- A7 declared unknown poisons on every target and every errno: the effect
+escapes all three modelled identities, so nothing is concluded. -/
+theorem a_denied_record_lock_premise_is_poisoned_everywhere
+    (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    deniedLocksArePoisoned t e l = true :=
+  of_reactorAll (by decide) t e l
+
+private def unrecognizedIsRefused (t : DeclaredTarget) (e : DeclaredErrno)
+    (l : DeclaredLocks) : Bool :=
+  if t == DeclaredTarget.unrecognized || e == DeclaredErrno.unrecognized ||
+      l == DeclaredLocks.unrecognized then
+    reactorDisposition t e l == Disposition.refused
+  else
+    reactorDisposition t e l != Disposition.refused
+
+/-- An unrecognized spelling in any component refuses the event, and nothing
+else does: the refusal never falls back to a target, an errno or a lock premise
+the declaration did not name, and a recognized declaration is never refused. -/
+theorem an_unrecognized_declaration_is_refused_and_nothing_else_is
+    (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    unrecognizedIsRefused t e l = true :=
+  of_reactorAll (by decide) t e l
+
+private def releasedPermitsNoRetry (t : DeclaredTarget) (e : DeclaredErrno)
+    (l : DeclaredLocks) : Bool :=
+  match resolveDeclaredTarget t, resolveDeclaredErrno e, resolveDeclaredLocks l with
+  | some tt, some ee, some ll =>
+      match closePostState tt (reactorPremises ll) (Outcome.minusOne ee) with
+      | some s =>
+          (reactorDisposition t e l != Disposition.releasedNumberRetired || s.mayClose == false) &&
+            (s.duties.reportPossibleDataLoss == false || s.writeback == WriteBack.failed)
+      | none => true
+  | _, _, _ => true
+
+/-- A released declaration never permits a retry — the documented hazard — and
+a release is never a durability claim: wherever the relation asks for the data
+loss to be reported, the write-back is `failed`, and no arm ever discharges it
+(`QCore.OsEndpointPostState.no_outcome_ever_discharges_the_data_duty`). -/
+theorem a_released_declaration_never_permits_a_retry
+    (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) :
+    releasedPermitsNoRetry t e l = true :=
+  of_reactorAll (by decide) t e l
+
+/-! ### The extended domain digest
+
+`crates/qcore-core/tests/os_endpoint_correspondence.rs` enumerates these rows in
+this list order, encodes each disposition with the same arithmetic, and
+continues the relation's own fold from `closeRelationDigest`. The relation's
+1920-row pin above is deliberately **kept**: the relation did not change, so its
+value must not move, and the extended digest covers the reactor arm on top of
+it. A digest is a comparison device, not a proof device. -/
+
+/-- Disjoint from every relation input, so the two halves of the fold cannot
+be confused. -/
+def reactorDomainOffset : Nat := 4096
+
+def encodeDeclaredTarget : DeclaredTarget → Nat
+  | .linux => 0
+  | .posix2024 => 1
+  | .unpinned => 2
+  | .unrecognized => 3
+
+def encodeDeclaredErrno : DeclaredErrno → Nat
+  | .ebadf => 0
+  | .eintr => 1
+  | .eio => 2
+  | .enospc => 3
+  | .edquot => 4
+  | .other => 5
+  | .unobserved => 6
+  | .unrecognized => 7
+
+def encodeDeclaredLocks : DeclaredLocks → Nat
+  | .noneHeld => 0
+  | .unknownLocks => 1
+  | .unrecognized => 2
+
+def encodeReactorInput (t : DeclaredTarget) (e : DeclaredErrno) (l : DeclaredLocks) : Nat :=
+  reactorDomainOffset + encodeDeclaredTarget t +
+    4 * (encodeDeclaredErrno e + 8 * encodeDeclaredLocks l)
+
+/-- `0` stays reserved for the out-of-domain answer, as in `encodePostState`. -/
+def encodeDisposition : Disposition → Nat
+  | .refused => 1
+  | .releasedNumberRetired => 2
+  | .retainedRetryPermitted => 3
+  | .poisoned => 4
+
+def closeAdmissionDigest : Nat :=
+  reactorDomainRows.foldl (fun accumulator entry =>
+    (accumulator * domainMul +
+      mix (mix stateSeed (encodeReactorInput entry.1 entry.2.1 entry.2.2))
+        (encodeDisposition (reactorDisposition entry.1 entry.2.1 entry.2.2)) + 1) % modulus)
+    closeRelationDigest
+
+set_option maxRecDepth 100000 in
+theorem close_admission_domain_size :
+    closeDomain.length + reactorDomainRows.length = 2016 := by decide
+
+set_option maxRecDepth 100000 in
+theorem close_admission_digest : closeAdmissionDigest = 2640189996995932678 := by
+  unfold closeAdmissionDigest
+  rw [close_relation_digest]
+  decide
+
 end QCore.DescriptorCustody

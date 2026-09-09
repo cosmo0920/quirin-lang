@@ -68,6 +68,18 @@ import QCore.ChunkSource
 -- `crates/qcore-core/tests/os_endpoint_correspondence.rs`.
 #print axioms QCore.DescriptorCustody.close_relation_domain_size
 #print axioms QCore.DescriptorCustody.close_relation_digest
+-- Card O03-REACTOR: the reactor's declared close-failure premise. The three
+-- spellings resolve total-or-reject, the disposition is read out of the same
+-- relation, and the digest correspondence grows to cover the new arm.
+#print axioms QCore.DescriptorCustody.the_reactor_reads_its_disposition_out_of_the_relation
+#print axioms QCore.DescriptorCustody.only_a_declared_posix2024_eintr_retains_the_epoch
+#print axioms QCore.DescriptorCustody.a_declared_linux_failure_releases_except_on_ebadf_or_an_unobserved_errno
+#print axioms QCore.DescriptorCustody.a_declared_unpinned_failure_is_poisoned
+#print axioms QCore.DescriptorCustody.a_denied_record_lock_premise_is_poisoned_everywhere
+#print axioms QCore.DescriptorCustody.an_unrecognized_declaration_is_refused_and_nothing_else_is
+#print axioms QCore.DescriptorCustody.a_released_declaration_never_permits_a_retry
+#print axioms QCore.DescriptorCustody.close_admission_domain_size
+#print axioms QCore.DescriptorCustody.close_admission_digest
 #print axioms QCore.ControlFlow.accepted_import_preserves_declared_control_edges
 #print axioms QCore.ControlFlow.accepted_import_has_no_unresolved_jump
 #print axioms QCore.ControlFlow.accepted_import_edges_reference_known_nodes

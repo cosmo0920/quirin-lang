@@ -8,6 +8,11 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::os_endpoint::{
+    DescriptionState, DescriptorState, Errno, Outcome, PostState, Premises, Recovery, Target,
+    WriteBackState, close_poststate, poisoned_duties,
+};
+
 /// The reactor needs only whether the selected model permits cross-thread use.
 /// Adapters separately determine whether their exact build profile is accepted.
 pub trait ReactorProfile: Copy + Eq {
@@ -176,6 +181,234 @@ pub enum CallbackContext {
     Worker(ExecutionContextId),
 }
 
+/// A **declared** close-failure premise for one `CloseSocket` failure branch
+/// (card O03-REACTOR).
+///
+/// # It is a premise, never an observation
+///
+/// Nothing in this kernel observes a platform or an `errno`. A declaring
+/// adapter supplies these spellings the way profile data is supplied elsewhere
+/// in this project — as declared text, resolved total-or-reject — and the
+/// reactor then answers with what
+/// [`crate::os_endpoint::close_poststate`] derives for that pinned target. The
+/// declaration is copied into the certificate as a named premise
+/// ([`DeclaredClosePremise`]) so a reader can see exactly which platform claim
+/// a verdict rests on, and
+/// [`recheck_declared_close_premises`] rederives the classification from the
+/// relation rather than believing the record.
+///
+/// # Fail-closed
+///
+/// The declaration is optional and **absence is not a default**: a
+/// `CloseSocket` failure without one keeps the unpinned answer, which poisons
+/// the number exactly as before this vocabulary existed. A spelling outside any
+/// of the three closed vocabularies refuses the event — it never falls back to
+/// a target, an errno or a lock premise the declaration did not name.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredCloseFailure {
+    /// One of [`DECLARED_CLOSE_TARGET_SPELLINGS`].
+    pub target: String,
+    /// One of [`DECLARED_CLOSE_ERRNO_SPELLINGS`].
+    pub errno: String,
+    /// One of [`DECLARED_CLOSE_RECORD_LOCK_SPELLINGS`]: premise A7, which the
+    /// relation consumes for the whole answer. Declaring `unknown` keeps the
+    /// poisoned answer on every target.
+    pub record_locks: String,
+}
+
+/// The closed platform vocabulary. Nothing else resolves.
+pub const DECLARED_CLOSE_TARGET_SPELLINGS: [&str; 3] = ["linux", "posix-2024", "unpinned"];
+
+/// The closed observed-error vocabulary. `other` and `unobserved` are the
+/// relation's own classes, not C error names.
+pub const DECLARED_CLOSE_ERRNO_SPELLINGS: [&str; 7] = [
+    "ebadf",
+    "eintr",
+    "eio",
+    "enospc",
+    "edquot",
+    "other",
+    "unobserved",
+];
+
+/// The closed record-lock (premise A7) vocabulary.
+pub const DECLARED_CLOSE_RECORD_LOCK_SPELLINGS: [&str; 2] = ["none-held", "unknown"];
+
+/// Why a declared close-failure premise was refused. Module-local keys; the
+/// reactor reports the refusal through the existing
+/// [`EventDiagnostic::L03DescriptorCustody`] and no diagnostic code is added.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DeclaredCloseRefusal {
+    UnknownTarget(String),
+    UnknownErrno(String),
+    UnknownRecordLocks(String),
+}
+
+/// What the relation's classification means for the reactor's descriptor model.
+///
+/// The reactor does not decide this: it reads
+/// [`crate::os_endpoint::PostState::descriptor`] and the permitted recovery and
+/// maps them, so a change to the relation moves the reactor's disposition with
+/// it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ClosePremiseDisposition {
+    /// [`DescriptorState::Released`]: the epoch ended, so the descriptor
+    /// custody obligation is discharged and the number is **retired** — it may
+    /// not be reused by a fresh pair, queried, attached to a bufferevent or
+    /// closed again, exactly as a successful close retires it here.
+    ReleasedNumberRetired,
+    /// [`DescriptorState::Retained`] with `close` permitted: the epoch is still
+    /// live and still owed, so the terminal custody sweep still requires a
+    /// close and one retry is admitted. This is the only arm on which the
+    /// documentation licenses the retry, and it is reached only under a pinned
+    /// POSIX.1-2024 target.
+    RetainedRetryPermitted,
+    /// Every other answer — every unpinned failure, every `EBADF`, every
+    /// unobserved errno and every denied record-lock premise. The number is
+    /// neither usable, retriable nor free.
+    Poisoned,
+}
+
+/// The relation's answer for one declared close failure, together with the
+/// premises the reactor supplied and the disposition it read out of the answer.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ClassifiedCloseFailure {
+    pub target: Target,
+    pub errno: Errno,
+    /// The premises the reactor supplied, and why each one is justified:
+    /// `epoch_live` and `sole_custodian` because this arm is reached only with
+    /// the number under this trace's exclusive socket-pair custody;
+    /// `result_observed` because the trace records the `-1` return;
+    /// `errno_observed` because the declaration names the errno class (naming
+    /// `unobserved` still poisons); `last_reference` **false** because the
+    /// reactor models no open file description and claims no release of one;
+    /// and `no_record_locks` from the declaration's own A7 spelling.
+    pub premises: Premises,
+    pub derived: PostState,
+    pub disposition: ClosePremiseDisposition,
+}
+
+/// One declared close-failure premise, as it appears in an
+/// [`EventCertificate`].
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DeclaredClosePremise {
+    pub operation: usize,
+    pub descriptor: DescriptorId,
+    pub declared: DeclaredCloseFailure,
+    pub classified: ClassifiedCloseFailure,
+}
+
+fn resolve_declared_target(spelling: &str) -> Option<Target> {
+    match spelling {
+        "linux" => Some(Target::Linux),
+        "posix-2024" => Some(Target::Posix2024),
+        "unpinned" => Some(Target::Unpinned),
+        _ => None,
+    }
+}
+
+fn resolve_declared_errno(spelling: &str) -> Option<Errno> {
+    match spelling {
+        "ebadf" => Some(Errno::Ebadf),
+        "eintr" => Some(Errno::Eintr),
+        "eio" => Some(Errno::Eio),
+        "enospc" => Some(Errno::Enospc),
+        "edquot" => Some(Errno::Edquot),
+        "other" => Some(Errno::Other),
+        "unobserved" => Some(Errno::Unobserved),
+        _ => None,
+    }
+}
+
+/// Premise A7, declared. `unknown` is not a refusal — the relation has an
+/// answer for a denied A7, and it is the poisoned one.
+fn resolve_declared_record_locks(spelling: &str) -> Option<bool> {
+    match spelling {
+        "none-held" => Some(true),
+        "unknown" => Some(false),
+        _ => None,
+    }
+}
+
+/// The premises this trace vocabulary can justify for a failed close, with the
+/// declared A7 spelling filled in. See [`ClassifiedCloseFailure::premises`].
+fn reactor_close_premises(no_record_locks: bool) -> Premises {
+    Premises {
+        epoch_live: true,
+        sole_custodian: true,
+        result_observed: true,
+        errno_observed: true,
+        last_reference: false,
+        no_record_locks,
+    }
+}
+
+/// Read the reactor's disposition out of the relation's answer. Any shape the
+/// relation does not resolve to a release or a documented retention is
+/// poisoned.
+fn disposition_of(derived: &PostState) -> ClosePremiseDisposition {
+    match derived.descriptor {
+        DescriptorState::Released => ClosePremiseDisposition::ReleasedNumberRetired,
+        DescriptorState::Retained if derived.permitted_recovery.contains(&Recovery::Close) => {
+            ClosePremiseDisposition::RetainedRetryPermitted
+        }
+        _ => ClosePremiseDisposition::Poisoned,
+    }
+}
+
+/// Resolve a declared close-failure premise and classify it against the
+/// target-qualified `close(2)` post-state relation.
+///
+/// # Errors
+///
+/// [`DeclaredCloseRefusal`] — a spelling outside the closed vocabulary. The
+/// declaration is refused, never repaired and never defaulted.
+pub fn classify_declared_close_failure(
+    declared: &DeclaredCloseFailure,
+) -> Result<ClassifiedCloseFailure, DeclaredCloseRefusal> {
+    let target = resolve_declared_target(&declared.target)
+        .ok_or_else(|| DeclaredCloseRefusal::UnknownTarget(declared.target.clone()))?;
+    let errno = resolve_declared_errno(&declared.errno)
+        .ok_or_else(|| DeclaredCloseRefusal::UnknownErrno(declared.errno.clone()))?;
+    let no_record_locks = resolve_declared_record_locks(&declared.record_locks)
+        .ok_or_else(|| DeclaredCloseRefusal::UnknownRecordLocks(declared.record_locks.clone()))?;
+    let premises = reactor_close_premises(no_record_locks);
+    // The failure branch is exactly `-1` with the declared errno class. The
+    // relation, not this module, decides what that leaves behind.
+    let derived = match close_poststate(target, premises, Outcome::MinusOne(errno)) {
+        Ok(derived) => derived,
+        // Unreachable: the not-attempted arm is the only refused input and this
+        // outcome is not it. Poisoning rather than panicking keeps the failure
+        // direction closed if the relation's domain ever changes.
+        Err(_) => {
+            return Ok(ClassifiedCloseFailure {
+                target,
+                errno,
+                premises,
+                derived: PostState {
+                    target,
+                    descriptor: DescriptorState::Indeterminate,
+                    description: DescriptionState::Unknown,
+                    writeback: WriteBackState::Unknown,
+                    duties: poisoned_duties(),
+                    permitted_recovery: BTreeSet::new(),
+                    premise_violations: Vec::new(),
+                    note: "outside the relation's declared domain",
+                },
+                disposition: ClosePremiseDisposition::Poisoned,
+            });
+        }
+    };
+    let disposition = disposition_of(&derived);
+    Ok(ClassifiedCloseFailure {
+        target,
+        errno,
+        premises,
+        derived,
+        disposition,
+    })
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventOperation<P> {
     CreateBase {
@@ -237,9 +470,9 @@ pub enum EventOperation<P> {
     },
     /// Socket close consumes close custody only on its success branch.
     ///
-    /// The failure branch does **not** retain a usable descriptor. This trace
-    /// vocabulary carries no target and no `errno`, and
-    /// [`crate::os_endpoint::close_poststate`] answers
+    /// The failure branch does **not** retain a usable descriptor. With no
+    /// `declared_failure`, this trace vocabulary carries no target and no
+    /// `errno`, and [`crate::os_endpoint::close_poststate`] answers
     /// [`crate::os_endpoint::DescriptorState::Indeterminate`] for every failed
     /// close on an unpinned target, with no permitted recovery: on Linux the
     /// descriptor is already released except on `EBADF`, while POSIX.1-2024
@@ -247,9 +480,17 @@ pub enum EventOperation<P> {
     /// poisons the number here — the custody stays unresolved and every later
     /// operation on that number, a retried close included, is refused (card
     /// O03-U4; `docs/design/OS_FAILURE_POSTSTATE_PROFILE.md` §7.3).
+    ///
+    /// `declared_failure` (card O03-REACTOR) lets a declaring adapter pin that
+    /// answer: see [`DeclaredCloseFailure`]. It is a declared premise and never
+    /// an observation, absence keeps the poisoned answer byte for byte, and a
+    /// spelling outside the closed vocabulary refuses the event rather than
+    /// defaulting. A `declared_failure` on the **success** branch is a
+    /// contradictory event and is refused the same way.
     CloseSocket {
         descriptor: DescriptorId,
         succeeds: bool,
+        declared_failure: Option<DeclaredCloseFailure>,
     },
     CreateBufferevent {
         bev: BuffereventKey,
@@ -386,6 +627,13 @@ pub struct EventCertificate {
     pub closed_descriptors: BTreeSet<DescriptorId>,
     pub dropped_arguments: BTreeSet<CallbackArgumentId>,
     pub trace: Vec<ObservedEvent>,
+    /// Every declared close-failure premise this certificate rests on, in
+    /// operation order (card O03-REACTOR). Empty for every program that
+    /// declares nothing, which is every program written before this
+    /// vocabulary existed. A reader can see which platform claim a verdict
+    /// rests on, and [`recheck_declared_close_premises`] rederives each entry
+    /// from [`crate::os_endpoint::close_poststate`] instead of believing it.
+    pub declared_close_premises: Vec<DeclaredClosePremise>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -500,6 +748,7 @@ pub fn check_event_program<P: ReactorProfile>(
     let mut freed_bufferevents = BTreeSet::new();
     let mut accesses = Vec::<RecordedAccess>::new();
     let mut trace = Vec::new();
+    let mut declared_close_premises = Vec::<DeclaredClosePremise>::new();
 
     for (operation_index, operation) in program.operations.iter().enumerate() {
         let mut observed = ObservedKind::Lifecycle;
@@ -864,6 +1113,7 @@ pub fn check_event_program<P: ReactorProfile>(
             EventOperation::CloseSocket {
                 descriptor,
                 succeeds,
+                declared_failure,
             } => {
                 let active_borrow = events.values().any(|event| {
                     event.descriptor == Some(*descriptor)
@@ -880,19 +1130,83 @@ pub fn check_event_program<P: ReactorProfile>(
                 } else {
                     match descriptor_custody.get(descriptor) {
                         Some(DescriptorCustody::SocketPair) if *succeeds => {
-                            descriptor_custody.remove(descriptor);
-                            closed_descriptors.insert(*descriptor);
-                            observed = ObservedKind::DescriptorClose;
+                            if declared_failure.is_some() {
+                                // A failure premise on the success branch is a
+                                // contradictory event. Refuse it and poison the
+                                // number rather than choosing which half to
+                                // believe.
+                                diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
+                                    operation: operation_index,
+                                    descriptor: *descriptor,
+                                });
+                                descriptor_custody.insert(*descriptor, DescriptorCustody::Poisoned);
+                            } else {
+                                descriptor_custody.remove(descriptor);
+                                closed_descriptors.insert(*descriptor);
+                                observed = ObservedKind::DescriptorClose;
+                            }
                         }
                         Some(DescriptorCustody::SocketPair) => {
                             // A failed close leaves the endpoint unresolved,
-                            // not live: with no target and no errno the
-                            // post-state relation is indeterminate and permits
-                            // no recovery. The number is poisoned, so the
-                            // terminal custody check still refuses and every
-                            // later operation on it — a retry included — is
-                            // refused at its own operation index.
-                            descriptor_custody.insert(*descriptor, DescriptorCustody::Poisoned);
+                            // not live. With no declared premise the post-state
+                            // relation is asked about an unpinned target: it is
+                            // indeterminate and permits no recovery, so the
+                            // number is poisoned, the terminal custody check
+                            // still refuses, and every later operation on it —
+                            // a retry included — is refused at its own
+                            // operation index.
+                            //
+                            // With a declared premise the relation is asked
+                            // about the pinned target instead, and the answer
+                            // it derives — not this module — decides the
+                            // disposition.
+                            match declared_failure {
+                                None => {
+                                    descriptor_custody
+                                        .insert(*descriptor, DescriptorCustody::Poisoned);
+                                }
+                                Some(declared) => match classify_declared_close_failure(declared) {
+                                    Err(_) => {
+                                        // An unresolvable declaration refuses
+                                        // the event; the number keeps the
+                                        // conservative residual.
+                                        diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
+                                            operation: operation_index,
+                                            descriptor: *descriptor,
+                                        });
+                                        descriptor_custody
+                                            .insert(*descriptor, DescriptorCustody::Poisoned);
+                                    }
+                                    Ok(classified) => {
+                                        let disposition = classified.disposition;
+                                        declared_close_premises.push(DeclaredClosePremise {
+                                            operation: operation_index,
+                                            descriptor: *descriptor,
+                                            declared: declared.clone(),
+                                            classified,
+                                        });
+                                        match disposition {
+                                            ClosePremiseDisposition::ReleasedNumberRetired => {
+                                                descriptor_custody.remove(descriptor);
+                                                closed_descriptors.insert(*descriptor);
+                                                observed = ObservedKind::DescriptorClose;
+                                            }
+                                            // The epoch is live and still owed:
+                                            // custody is unchanged, so the
+                                            // terminal sweep still requires a
+                                            // close and the documented retry is
+                                            // admitted.
+                                            ClosePremiseDisposition::RetainedRetryPermitted => {}
+                                            ClosePremiseDisposition::Poisoned => {
+                                                descriptor_custody.insert(
+                                                    *descriptor,
+                                                    DescriptorCustody::Poisoned,
+                                                );
+                                            }
+                                        }
+                                    }
+                                },
+                            }
                         }
                         _ => {
                             diagnostics.insert(EventDiagnostic::L03DescriptorCustody {
@@ -1265,6 +1579,7 @@ pub fn check_event_program<P: ReactorProfile>(
             closed_descriptors,
             dropped_arguments,
             trace,
+            declared_close_premises,
         })
     } else {
         Err(diagnostics.into_iter().collect())
@@ -1350,6 +1665,131 @@ pub fn explore_activation_orders(
     let mut output = Vec::new();
     visit(candidates, &mut Vec::new(), &mut output, maximum);
     output
+}
+
+/// Why an independent recheck refused a certificate's declared close premises.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ClosePremiseRecheckError {
+    /// The certificate records a different number of premises than the program
+    /// declares, or records them in a different order.
+    Inventory { expected: usize, recorded: usize },
+    /// The recorded premise does not name the operation the program declares
+    /// it at.
+    Operation { expected: usize, recorded: usize },
+    /// The recorded premise names a different descriptor.
+    Descriptor {
+        operation: usize,
+        expected: DescriptorId,
+        recorded: DescriptorId,
+    },
+    /// The recorded declaration is not the program's declaration — the
+    /// substitution the recheck exists to refuse.
+    Declaration {
+        operation: usize,
+        expected: Box<DeclaredCloseFailure>,
+        recorded: Box<DeclaredCloseFailure>,
+    },
+    /// The recorded classification is not what the relation derives for the
+    /// program's declaration.
+    Classification {
+        operation: usize,
+        expected: Box<ClassifiedCloseFailure>,
+        recorded: Box<ClassifiedCloseFailure>,
+    },
+    /// The program declares a failure premise the reactor refuses, so no
+    /// premise may be recorded for it.
+    RefusedDeclaration {
+        operation: usize,
+        refusal: DeclaredCloseRefusal,
+    },
+    /// The program declares a failure premise on a `CloseSocket` success
+    /// branch, which is a contradictory event no certificate may rest on.
+    DeclarationOnSuccessArm { operation: usize },
+}
+
+/// Independently rederive every declared close premise a certificate carries.
+///
+/// This does not read the certificate's classification and check it for
+/// plausibility: it re-resolves the program's own declared spellings through
+/// the closed vocabularies, re-derives the post-state from
+/// [`crate::os_endpoint::close_poststate`], recomputes the disposition, and
+/// then requires the recorded inventory to be exactly that, in order. A
+/// substituted target, errno, record-lock premise, descriptor state, duty set,
+/// permitted recovery or disposition is refused; so is a premise recorded for
+/// an operation that declares none, and a declaration the reactor itself
+/// refuses.
+///
+/// # Errors
+///
+/// [`ClosePremiseRecheckError`] — the certificate is refused, never repaired.
+pub fn recheck_declared_close_premises<P>(
+    program: &EventProgram<P>,
+    certificate: &EventCertificate,
+) -> Result<(), ClosePremiseRecheckError> {
+    let mut recorded = certificate.declared_close_premises.iter();
+    let mut expected_count = 0usize;
+    for (operation_index, operation) in program.operations.iter().enumerate() {
+        let EventOperation::CloseSocket {
+            descriptor,
+            succeeds,
+            declared_failure: Some(declared),
+        } = operation
+        else {
+            continue;
+        };
+        if *succeeds {
+            return Err(ClosePremiseRecheckError::DeclarationOnSuccessArm {
+                operation: operation_index,
+            });
+        }
+        let classified = classify_declared_close_failure(declared).map_err(|refusal| {
+            ClosePremiseRecheckError::RefusedDeclaration {
+                operation: operation_index,
+                refusal,
+            }
+        })?;
+        expected_count += 1;
+        let Some(entry) = recorded.next() else {
+            return Err(ClosePremiseRecheckError::Inventory {
+                expected: expected_count,
+                recorded: certificate.declared_close_premises.len(),
+            });
+        };
+        if entry.operation != operation_index {
+            return Err(ClosePremiseRecheckError::Operation {
+                expected: operation_index,
+                recorded: entry.operation,
+            });
+        }
+        if entry.descriptor != *descriptor {
+            return Err(ClosePremiseRecheckError::Descriptor {
+                operation: operation_index,
+                expected: *descriptor,
+                recorded: entry.descriptor,
+            });
+        }
+        if entry.declared != *declared {
+            return Err(ClosePremiseRecheckError::Declaration {
+                operation: operation_index,
+                expected: Box::new(declared.clone()),
+                recorded: Box::new(entry.declared.clone()),
+            });
+        }
+        if entry.classified != classified {
+            return Err(ClosePremiseRecheckError::Classification {
+                operation: operation_index,
+                expected: Box::new(classified),
+                recorded: Box::new(entry.classified.clone()),
+            });
+        }
+    }
+    if recorded.next().is_some() {
+        return Err(ClosePremiseRecheckError::Inventory {
+            expected: expected_count,
+            recorded: certificate.declared_close_premises.len(),
+        });
+    }
+    Ok(())
 }
 
 /// Check that an adapter observation is exactly represented by the checked
