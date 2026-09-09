@@ -361,8 +361,35 @@ fn out_of_process_v2_conformance_replays_and_rejects_a_forged_observation() {
     )
     .unwrap();
     let mut registry = VerifierRegistry::default();
+    // This fixture is a standalone, schemas-only executable built by the test;
+    // it carries no embedded manifest template, so it cannot verify (card
+    // `P01-F3`), and `UnverifiedProvider` is deliberately not a
+    // `VerifierProvider`. The property under test is evidence-v2 replay and
+    // forgery rejection, not package identity, so the wrapper below is written
+    // out by hand — which is exactly the explicit act the type demands, and
+    // which nothing in production performs.
+    struct DeliberatelyUnverified(UnverifiedProvider);
+    impl VerifierProvider for DeliberatelyUnverified {
+        fn manifest(&self) -> &PluginManifest {
+            self.0.manifest()
+        }
+        fn verify(
+            &self,
+            request: &VerificationRequest,
+        ) -> Result<VerificationResponse, ProviderFailure> {
+            self.0.verify(request)
+        }
+        fn verify_v2(
+            &self,
+            request: &VerificationRequestV2,
+        ) -> Result<VerificationResponseV2, ProviderFailure> {
+            self.0.verify_v2(request)
+        }
+    }
     registry
-        .register(Arc::new(ProcessProvider::from_package(&package).unwrap()))
+        .register(Arc::new(DeliberatelyUnverified(
+            UnverifiedProvider::load(&package).unwrap(),
+        )))
         .unwrap();
     let parsed = parse_source_program(SOURCE).unwrap();
     let scopes = registry.resolve_source_scopes(&parsed).unwrap();

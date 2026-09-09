@@ -1,7 +1,8 @@
 [package]
 name = "qcore-compiler"
 # 0.4.0: card O03-REACTOR adds a field to the public `EventOperation::CloseSocket`
-# variant and to `EventCertificate`, both source-incompatible additions.
+# variant and to `EventCertificate`, and card P01-F3 breaks the provider-loading
+# API (verified-only construction); both source-incompatible.
 version = "0.4.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
@@ -17,7 +18,7 @@ qcore-contract = { path = "../crates/qcore-contract", version = "0.1.0" }
 qcore-core = { path = "../crates/qcore-core", version = "0.1.0" }
 qcore-frontend = { path = "../crates/qcore-frontend", version = "0.1.0" }
 qcore-schemas = { path = "../crates/qcore-schemas", version = "8.0.0" }
-qcore-verifier-host = { path = "../crates/qcore-verifier-host", version = "0.2.0" }
+qcore-verifier-host = { path = "../crates/qcore-verifier-host", version = "0.3.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 

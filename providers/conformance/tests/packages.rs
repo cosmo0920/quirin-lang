@@ -3,7 +3,8 @@
 use qcore_schemas::plugin::*;
 use qcore_schemas::{obligation::*, sha256_hex};
 use qcore_verifier_host::{
-    BuiltInProvider, ProcessProvider, VerifierProvider, VerifierRegistry, encode_protocol_frame,
+    BuiltInProvider, ProcessProvider, UnverifiedProvider, VerifierProvider, VerifierRegistry,
+    encode_protocol_frame,
 };
 use std::collections::BTreeMap;
 use std::io::Write;
@@ -469,7 +470,15 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             }
             std::fs::write(&manifest_path, serde_json::to_vec(&changed).unwrap()).unwrap();
             rejected(&package, &valid);
-            let provider = ProcessProvider::from_package(&package).unwrap();
+            // The host refuses the mutated package outright (card `P01-F3`);
+            // the executable's own self-check is a *separate* property, so it
+            // is driven through the loader that says "unverified" in its type
+            // and that no registry accepts.
+            assert!(
+                qcore_verifier_host::verify_executable_package(&package).is_err(),
+                "a mutated manifest must not verify"
+            );
+            let provider = UnverifiedProvider::load(&package).unwrap();
             assert!(provider.verify(&request).is_err());
         }
         std::fs::write(&manifest_path, &manifest_bytes).unwrap();
@@ -816,5 +825,135 @@ fn real_packages_answer_identically_under_the_confined_profile() {
     // Five packages, eleven declared capabilities between them.
     assert_eq!(index["artifacts"].as_array().unwrap().len(), 5);
     assert_eq!(checked, 11);
+    std::fs::remove_dir_all(&output).unwrap();
+}
+
+/// Card `P01-F3`: the spawn-time package-identity re-check, measured on the
+/// five real shipped executables rather than on a shell fixture.
+///
+/// Two numbers matter and both are reported:
+///
+/// * the **cost** of the re-check — one SHA-256 over the executable plus one
+///   `stat`, paid per dispatch;
+/// * the **residual window** — from the completed re-check to `spawn`
+///   returning, which is after the child has reported a successful `execve`.
+///   That is an upper bound on the interval in which a writer could still
+///   substitute the file, and it is deliberately *not* claimed to be zero.
+///
+/// The assertions are loose on purpose: this case exists to publish measured
+/// numbers and to pin that every verified dispatch records one, not to pin a
+/// machine's timing.
+#[test]
+#[cfg(unix)]
+fn the_spawn_time_identity_recheck_is_measured_on_the_shipped_packages() {
+    use qcore_verifier_host::ProcessOutcome;
+    let root = root();
+    let output = std::env::temp_dir().join(format!(
+        "qcore-provider-identity-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let built = Command::new("python3")
+        .arg(root.join("package.py"))
+        .args(["build", "--output"])
+        .arg(&output)
+        .arg("--target-dir")
+        .arg(root.join("target/conformance-artifacts"))
+        .output()
+        .unwrap();
+    assert!(
+        built.status.success(),
+        "{}",
+        String::from_utf8_lossy(&built.stderr)
+    );
+    let index: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(output.join("packages.json")).unwrap()).unwrap();
+    let mut measured = 0;
+    for artifact in index["artifacts"].as_array().unwrap() {
+        let id = artifact["plugin_id"].as_str().unwrap();
+        let package = output.join(id);
+        let provider =
+            qcore_verifier_host::verify_executable_package(&package).expect("package verifies");
+        let bytes = std::fs::metadata(package.join("provider")).unwrap().len();
+        let manifest = provider.manifest().clone();
+        let capability = *manifest.capabilities.iter().next().unwrap();
+        let request = request(&manifest, capability);
+        // The cost of the re-check itself, separately from the spawn: one
+        // SHA-256 over the executable plus one `stat`.
+        let verified = provider.verified_executable().expect("verified");
+        let mut rechecks = Vec::new();
+        for _ in 0..5 {
+            let started = std::time::Instant::now();
+            verified.revalidate(&manifest).expect("unchanged");
+            rechecks.push(started.elapsed().as_micros() as u64);
+        }
+        rechecks.sort_unstable();
+        let mut windows = Vec::new();
+        let mut totals = Vec::new();
+        for _ in 0..5 {
+            let started = std::time::Instant::now();
+            provider.verify(&request).expect("the package answers");
+            let total = started.elapsed().as_micros() as u64;
+            let record = provider.last_execution().unwrap();
+            assert_eq!(record.outcome, ProcessOutcome::Completed);
+            windows.push(
+                record
+                    .identity_window_us
+                    .expect("every verified dispatch records its residual window"),
+            );
+            totals.push(total);
+            measured += 1;
+        }
+        windows.sort_unstable();
+        totals.sort_unstable();
+        println!(
+            "P01-F3 {id}: executable {bytes} bytes; residual window us min/median/max \
+             {}/{}/{}; re-check us median {}; whole verify us median {}",
+            windows[0],
+            windows[windows.len() / 2],
+            windows[windows.len() - 1],
+            rechecks[rechecks.len() / 2],
+            totals[totals.len() / 2]
+        );
+        // A window at all means the re-check ran; a window under a second on
+        // any machine means it is the spawn, not a stall.
+        assert!(windows[windows.len() - 1] < 1_000_000);
+
+        // And the same provider refuses once the file is substituted, with
+        // nothing spawned.
+        let executable = package.join("provider");
+        let original = std::fs::read(&executable).unwrap();
+        std::fs::remove_file(&executable).unwrap();
+        std::fs::write(&executable, &original).unwrap();
+        let mut permissions = std::fs::metadata(&executable).unwrap().permissions();
+        {
+            use std::os::unix::fs::PermissionsExt;
+            permissions.set_mode(0o755);
+        }
+        std::fs::set_permissions(&executable, permissions).unwrap();
+        let failure = provider.verify(&request).unwrap_err();
+        assert!(
+            failure
+                .to_string()
+                .contains("was replaced since verification"),
+            "{id}: {failure}"
+        );
+        assert_eq!(
+            provider.last_execution().unwrap().outcome,
+            ProcessOutcome::RefusedByIdentity
+        );
+        // The shipped bytes are unchanged, so the package still verifies from
+        // scratch: what moved is file identity, not content.
+        assert_eq!(
+            sha256_hex(&std::fs::read(&executable).unwrap()),
+            manifest.package_digest
+        );
+        qcore_verifier_host::verify_executable_package(&package)
+            .expect("the restored package verifies again");
+    }
+    assert_eq!(measured, 25);
     std::fs::remove_dir_all(&output).unwrap();
 }

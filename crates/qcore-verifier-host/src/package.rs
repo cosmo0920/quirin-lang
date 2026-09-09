@@ -1,6 +1,7 @@
 //! Read-only executable package identity checks. This is a local snapshot check,
 //! not signature verification, an OS sandbox or a semantic certificate.
 use crate::embedded_template::verify_embedded_template_binding;
+use crate::executable_identity::OpenExecutable;
 use crate::{PackageLoadError, PluginEntrypoint, PluginManifest, ProcessProvider};
 use std::path::Path;
 
@@ -53,12 +54,18 @@ pub fn verify_executable_package(
             "executable escapes package directory or is not a file".into(),
         ));
     }
-    let bytes = std::fs::read(&executable).map_err(|e| error(e.to_string()))?;
-    if qcore_schemas::sha256_hex(&bytes) != manifest.package_digest {
+    // Opened once and *kept* open: the same descriptor decides the digest here
+    // and is re-read immediately before every spawn, so the time-of-check to
+    // time-of-use window is narrowed rather than left open (card `P01-F3`).
+    let opened = OpenExecutable::open(&executable).map_err(|e| error(e.to_string()))?;
+    let digest = qcore_schemas::sha256_hex(opened.bytes());
+    if digest != manifest.package_digest {
         return Err(error("executable digest mismatch".into()));
     }
     // Bind the remaining declarations to the executable's own embedded template,
     // still without executing it. A digest-intact manifest edit fails here.
-    verify_embedded_template_binding(&manifest, &bytes).map_err(|e| error(e.to_string()))?;
-    ProcessProvider::new(manifest, root).map_err(|e| error(e.to_string()))
+    verify_embedded_template_binding(&manifest, opened.bytes())
+        .map_err(|e| error(e.to_string()))?;
+    ProcessProvider::verified(manifest, root, opened.into_verified(digest))
+        .map_err(|e| error(e.to_string()))
 }

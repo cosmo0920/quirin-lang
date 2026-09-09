@@ -466,6 +466,10 @@ pub enum ProcessOutcome {
     Completed,
     /// The profile refused the package before spawning anything.
     RefusedByProfile,
+    /// The verified executable changed between verification and this spawn, so
+    /// nothing was spawned (card `P01-F3`). Distinct from `RefusedByProfile`:
+    /// the profile was satisfiable and the *package identity* was not.
+    RefusedByIdentity,
     /// The child could not be spawned.
     SpawnFailed,
     /// The wall-clock deadline expired; the process group was killed.
@@ -504,6 +508,18 @@ pub struct ProcessExecutionRecord {
     /// this field existed are byte-identical.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub quota_observed: Option<QuotaObservation>,
+    /// The measured time-of-check to time-of-use residual, in microseconds:
+    /// from the moment the verified executable's spawn-time re-check completed
+    /// to the moment `spawn` returned, which is after the kernel has read the
+    /// image. It is an upper bound on the window in which a writer could still
+    /// substitute the file, and it is *not* zero — this mechanism narrows the
+    /// window, it does not close it (card `P01-F3`).
+    ///
+    /// `None` when nothing was spawned, and when the provider carries no
+    /// verified executable to re-check. Absent from the serialized form when
+    /// `None`, so records written before this field existed are byte-identical.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_window_us: Option<u64>,
 }
 
 impl ProcessExecutionRecord {
@@ -576,6 +592,21 @@ pub fn enforceable_limit_kinds(profile: ProcessExecutionProfile) -> Vec<&'static
     kinds
 }
 
+/// Whether a [`ProcessProvider`]'s executable was verified, and the handle that
+/// lets each spawn re-check it.
+///
+/// A [`ProcessProvider`] can only be built publicly through
+/// [`verify_executable_package`], so a published provider always carries
+/// [`ExecutableIdentity::Verified`]. The other variant exists solely inside
+/// [`UnverifiedProvider`], which is deliberately not a [`VerifierProvider`] and
+/// therefore cannot be registered.
+enum ExecutableIdentity {
+    Verified(Box<VerifiedExecutable>),
+    /// Reachable only through [`UnverifiedProvider`]: nothing verified this
+    /// package, so nothing can be re-checked before a spawn.
+    Unverified,
+}
+
 pub struct ProcessProvider {
     manifest: PluginManifest,
     // Process execution currently requires Unix process-group containment.
@@ -594,12 +625,15 @@ pub struct ProcessProvider {
     /// [`VerifierProvider`]'s `&self` dispatch, which providers share behind an
     /// `Arc`, unchanged.
     last_execution: std::sync::Mutex<Option<ProcessExecutionRecord>>,
+    /// The verified executable this provider re-checks before every spawn.
+    identity: ExecutableIdentity,
 }
 
 impl ProcessProvider {
-    pub fn new(
+    fn build(
         manifest: PluginManifest,
         package_root: impl AsRef<Path>,
+        identity: ExecutableIdentity,
     ) -> Result<Self, ManifestError> {
         manifest.validate()?;
         if !matches!(manifest.entrypoint, PluginEntrypoint::Executable { .. }) {
@@ -612,7 +646,43 @@ impl ProcessProvider {
             confinement_policy: None,
             availability: MechanismAvailability::default(),
             last_execution: std::sync::Mutex::new(None),
+            identity,
         })
+    }
+
+    /// The only construction that yields a registrable provider: the caller has
+    /// verified the package's digest and embedded-template binding, and hands
+    /// over the descriptor those checks read.
+    pub(crate) fn verified(
+        manifest: PluginManifest,
+        package_root: impl AsRef<Path>,
+        executable: VerifiedExecutable,
+    ) -> Result<Self, ManifestError> {
+        Self::build(
+            manifest,
+            package_root,
+            ExecutableIdentity::Verified(Box::new(executable)),
+        )
+    }
+
+    /// Constructs a provider over an *unverified* package. Private on purpose:
+    /// [`UnverifiedProvider`] is the only way to reach it, and that type cannot
+    /// enter a [`VerifierRegistry`].
+    pub(crate) fn unverified(
+        manifest: PluginManifest,
+        package_root: impl AsRef<Path>,
+    ) -> Result<Self, ManifestError> {
+        Self::build(manifest, package_root, ExecutableIdentity::Unverified)
+    }
+
+    /// The verified executable behind this provider, if it has one.
+    ///
+    /// `None` only inside [`UnverifiedProvider`].
+    pub fn verified_executable(&self) -> Option<&VerifiedExecutable> {
+        match &self.identity {
+            ExecutableIdentity::Verified(executable) => Some(executable),
+            ExecutableIdentity::Unverified => None,
+        }
     }
 
     /// Selects the execution profile. Additive: the default is unchanged, and
@@ -920,22 +990,138 @@ impl ProcessProvider {
         }
     }
 
+    /// Loads and **verifies** an installed package.
+    ///
+    /// Before card `P01-F3` this was a plain loader that checked neither the
+    /// declared digest nor the embedded-template binding, so a registry built
+    /// from it ran whatever the directory contained. It now delegates to
+    /// [`verify_executable_package`], which is the only construction of a
+    /// registrable provider. A caller that genuinely wants an unverified load —
+    /// the conformance harness drives deliberately mutated packages — asks for
+    /// it by name through [`UnverifiedProvider::load`], and gets a type that
+    /// cannot be registered.
     pub fn from_package(package_root: impl AsRef<Path>) -> Result<Self, PackageLoadError> {
+        verify_executable_package(package_root)
+    }
+}
+
+/// A package loaded **without** verifying its digest or its embedded-template
+/// binding.
+///
+/// The type is the statement: `UnverifiedProvider` does not implement
+/// [`VerifierProvider`], so it cannot be handed to
+/// [`VerifierRegistry::register`], and it exposes no way to extract the
+/// [`ProcessProvider`] it wraps by value. Reading its manifest, inspecting the
+/// limits a profile would enforce, and running it directly stay available — that
+/// is what the adversarial harness and the P02/P03 execution fixtures need —
+/// but its results can never reach a verdict route by accident.
+///
+/// [`UnverifiedProvider::into_verified`] is the one bridge, and it verifies.
+///
+/// A registry cannot take one:
+///
+/// ```compile_fail
+/// use std::sync::Arc;
+/// use qcore_verifier_host::{UnverifiedProvider, VerifierRegistry};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// let mut registry = VerifierRegistry::default();
+/// registry.register(Arc::new(provider)).unwrap();
+/// ```
+///
+/// Nor can the wrapped provider be moved out of it and registered instead:
+///
+/// ```compile_fail
+/// use qcore_verifier_host::{ProcessProvider, UnverifiedProvider};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// let taken: ProcessProvider = *provider;
+/// ```
+///
+/// What it *can* do is read its own manifest, which is a load, not a verdict:
+///
+/// ```no_run
+/// use qcore_verifier_host::{UnverifiedProvider, VerifierProvider};
+/// let provider = UnverifiedProvider::load("package").unwrap();
+/// println!("{}", provider.manifest().plugin_id);
+/// ```
+pub struct UnverifiedProvider {
+    inner: ProcessProvider,
+    package_root: std::path::PathBuf,
+}
+
+impl UnverifiedProvider {
+    /// Wraps a caller-supplied manifest over a package directory, checking only
+    /// that the manifest is well formed and declares an executable.
+    pub fn new(
+        manifest: PluginManifest,
+        package_root: impl AsRef<Path>,
+    ) -> Result<Self, ManifestError> {
+        let package_root = package_root.as_ref().to_path_buf();
+        Ok(Self {
+            inner: ProcessProvider::unverified(manifest, &package_root)?,
+            package_root,
+        })
+    }
+
+    /// Reads `verifier-plugin.json` and nothing else: no digest comparison, no
+    /// template binding, no execution.
+    pub fn load(package_root: impl AsRef<Path>) -> Result<Self, PackageLoadError> {
         let package_root = package_root.as_ref();
         let manifest_path = package_root.join("verifier-plugin.json");
-        let bytes = std::fs::read(&manifest_path).map_err(|error| PackageLoadError {
+        let failure = |error: String| PackageLoadError {
             path: manifest_path.to_string_lossy().into_owned(),
-            message: error.to_string(),
-        })?;
+            message: error,
+        };
+        let bytes = std::fs::read(&manifest_path).map_err(|e| failure(e.to_string()))?;
         let manifest =
-            serde_json::from_slice::<PluginManifest>(&bytes).map_err(|error| PackageLoadError {
-                path: manifest_path.to_string_lossy().into_owned(),
-                message: error.to_string(),
-            })?;
-        Self::new(manifest, package_root).map_err(|error| PackageLoadError {
-            path: manifest_path.to_string_lossy().into_owned(),
-            message: error.to_string(),
-        })
+            serde_json::from_slice::<PluginManifest>(&bytes).map_err(|e| failure(e.to_string()))?;
+        Self::new(manifest, package_root).map_err(|e| failure(e.to_string()))
+    }
+
+    /// Selects the execution profile, exactly as [`ProcessProvider`] does.
+    #[must_use]
+    pub fn with_execution_profile(mut self, profile: ProcessExecutionProfile) -> Self {
+        self.inner = self.inner.with_execution_profile(profile);
+        self
+    }
+
+    /// Supplies the explicit filesystem reach a confining profile grants.
+    #[must_use]
+    pub fn with_confinement_policy(mut self, policy: ConfinementPolicy) -> Self {
+        self.inner = self.inner.with_confinement_policy(policy);
+        self
+    }
+
+    /// Overrides which kernel mechanisms this provider treats as available.
+    #[must_use]
+    pub fn with_mechanism_availability(mut self, availability: MechanismAvailability) -> Self {
+        self.inner = self.inner.with_mechanism_availability(availability);
+        self
+    }
+
+    /// Verifies the package and returns a registrable provider, preserving the
+    /// execution profile, confinement policy and mechanism selection chosen
+    /// here.
+    ///
+    /// Fails closed: a package whose digest, entrypoint or embedded template
+    /// does not bind stays unverified, and no provider is produced.
+    pub fn into_verified(self) -> Result<ProcessProvider, PackageLoadError> {
+        let mut provider = verify_executable_package(&self.package_root)?;
+        provider = provider.with_execution_profile(self.inner.profile);
+        if let Some(policy) = self.inner.confinement_policy.clone() {
+            provider = provider.with_confinement_policy(policy);
+        }
+        Ok(provider.with_mechanism_availability(self.inner.availability))
+    }
+}
+
+impl std::ops::Deref for UnverifiedProvider {
+    type Target = ProcessProvider;
+
+    /// Read-only access to the wrapped provider. Deliberately no `DerefMut` and
+    /// no owning accessor: a `&ProcessProvider` cannot become the
+    /// `Arc<dyn VerifierProvider>` a registry takes.
+    fn deref(&self) -> &ProcessProvider {
+        &self.inner
     }
 }
 
@@ -1123,6 +1309,19 @@ struct PreparedMechanisms {
     quota_procs: Option<()>,
 }
 
+/// What the spawn path observed, carried back out so the execution record can
+/// classify the outcome and publish the measured residual window.
+#[cfg(unix)]
+#[derive(Default)]
+struct SpawnObservation {
+    /// The direct child's exit status, once it has been reaped.
+    status: Option<std::process::ExitStatus>,
+    /// The package-identity re-check refused: nothing was spawned.
+    identity_refused: bool,
+    /// Microseconds from the completed re-check to `spawn` returning.
+    identity_window_us: Option<u64>,
+}
+
 /// A write descriptor on the per-execution cgroup's `cgroup.procs`, for the
 /// child's `pre_exec` closure. Opened in the parent, with the parent's
 /// credentials.
@@ -1176,6 +1375,7 @@ impl ProcessProvider {
                     signal: None,
                     detail: error.to_string(),
                     quota_observed: None,
+                    identity_window_us: None,
                 });
                 return Err(error);
             }
@@ -1201,13 +1401,14 @@ impl ProcessProvider {
                     signal: None,
                     detail: error.to_string(),
                     quota_observed: None,
+                    identity_window_us: None,
                 });
                 return Err(error);
             }
         };
         let mut output = Vec::new();
         let mut error_output = Vec::new();
-        let mut status = None;
+        let mut observed = SpawnObservation::default();
         let result = self.run_process(
             frame,
             &enforced,
@@ -1217,12 +1418,16 @@ impl ProcessProvider {
             },
             &mut output,
             &mut error_output,
-            &mut status,
+            &mut observed,
         );
+        let status = observed.status;
         // Observed before the cgroup is removed: `rmdir` only succeeds on an
         // empty cgroup, and the counters go with it.
         let quota_observed = finish_quota(quota);
         let outcome = match &result {
+            // The package identity re-check refused: nothing was spawned, and
+            // the refusal is its own outcome rather than a profile refusal.
+            Err(_) if observed.identity_refused => ProcessOutcome::RefusedByIdentity,
             Ok(_) => ProcessOutcome::Completed,
             Err(ProviderFailure::Spawn(_)) => ProcessOutcome::SpawnFailed,
             Err(ProviderFailure::Timeout) => ProcessOutcome::WallClockTimeout,
@@ -1238,7 +1443,13 @@ impl ProcessProvider {
         };
         self.record_execution(ProcessExecutionRecord {
             profile: self.profile,
-            enforced: Some(enforced),
+            // A refused identity spawned nothing, so it reports no enforced
+            // limits, exactly as a refused profile does.
+            enforced: if observed.identity_refused {
+                None
+            } else {
+                Some(enforced)
+            },
             outcome,
             wall_time_ms: started.elapsed().as_millis().min(u128::from(u64::MAX)) as u64,
             stdout_bytes: output.len(),
@@ -1254,6 +1465,7 @@ impl ProcessProvider {
                 .map(ToString::to_string)
                 .unwrap_or_default(),
             quota_observed,
+            identity_window_us: observed.identity_window_us,
         });
         result
     }
@@ -1327,7 +1539,7 @@ impl ProcessProvider {
         mechanisms: PreparedMechanisms,
         output: &mut Vec<u8>,
         error_output: &mut Vec<u8>,
-        status: &mut Option<std::process::ExitStatus>,
+        observed: &mut SpawnObservation,
     ) -> Result<T, ProviderFailure> {
         use std::os::unix::process::CommandExt;
         let PreparedMechanisms {
@@ -1339,14 +1551,16 @@ impl ProcessProvider {
         };
         #[cfg(not(target_os = "linux"))]
         let _ = (confinement, quota_procs);
-        let deadline = Instant::now()
-            .checked_add(Duration::from_millis(enforced.wall_clock_ms))
-            .ok_or_else(|| {
-                ProviderFailure::Protocol("provider timeout exceeds clock range".into())
-            })?;
         let limit = enforced.stdout_bytes;
         let wire_limit = limit.checked_add(4).ok_or(ProviderFailure::OutputLimit)?;
-        let executable = Path::new(&self.package_root).join(path);
+        // A verified provider executes the *canonical* path verification
+        // resolved and re-checks below, not the spelled entrypoint. The two
+        // differ whenever the entrypoint is a symbolic link, and a check on one
+        // path with an `execve` on another would be no check at all.
+        let executable = match self.verified_executable() {
+            Some(executable) => executable.path().to_path_buf(),
+            None => Path::new(&self.package_root).join(path),
+        };
         let mut command = Command::new(&executable);
         command
             .current_dir(&self.package_root)
@@ -1414,11 +1628,41 @@ impl ProcessProvider {
                 });
             }
         }
+        // Last act before the spawn: confirm the file about to be executed is
+        // still the file that was verified. A provider without a verified
+        // executable — reachable only through `UnverifiedProvider`, which no
+        // registry accepts — has nothing to re-check and says so.
+        let checked_at = match self.verified_executable() {
+            Some(executable) => {
+                if let Err(refusal) = executable.revalidate(&self.manifest) {
+                    observed.identity_refused = true;
+                    return Err(ProviderFailure::Protocol(refusal.to_string()));
+                }
+                Some(Instant::now())
+            }
+            None => None,
+        };
+        // The declared wall deadline starts here, *after* the host's own
+        // checking. A package's `limits.timeout_ms` bounds how long the package
+        // may run; charging the host's re-read of the executable against it
+        // would shorten every provider's budget by the cost of a check the
+        // provider did not ask for, and on an unoptimized build that cost is
+        // comparable to the budget itself.
+        let deadline = Instant::now()
+            .checked_add(Duration::from_millis(enforced.wall_clock_ms))
+            .ok_or_else(|| {
+                ProviderFailure::Protocol("provider timeout exceeds clock range".into())
+            })?;
         let mut child = ProviderChild(
             command
                 .spawn()
                 .map_err(|error| ProviderFailure::Spawn(error.to_string()))?,
         );
+        // `spawn` returns after the child has reported a successful `execve`, so
+        // this is a genuine upper bound on the residual window rather than an
+        // estimate of it.
+        observed.identity_window_us = checked_at
+            .map(|checked_at| checked_at.elapsed().as_micros().min(u128::from(u64::MAX)) as u64);
         let mut stdin = child.0.stdin.take();
         let mut stdout = child
             .0
@@ -1444,14 +1688,14 @@ impl ProcessProvider {
             // Observe direct-child exit before deciding which bound failed.
             // An exited provider can leave descendant-held output pipes even
             // when its input reader vanished before our first write.
-            if status.is_none() {
-                *status = child
+            if observed.status.is_none() {
+                observed.status = child
                     .0
                     .try_wait()
                     .map_err(|error| ProviderFailure::Io(error.to_string()))?;
             }
             if Instant::now() >= deadline {
-                if status.is_none()
+                if observed.status.is_none()
                     && let Some(error) = input_failure
                 {
                     return Err(error);
@@ -1490,7 +1734,7 @@ impl ProcessProvider {
             if !error_done {
                 error_done = read_available(&mut stderr, error_output, enforced.stderr_bytes)?;
             }
-            if let Some(exit) = *status
+            if let Some(exit) = observed.status
                 && output_done
                 && error_done
                 && stdin.is_none()
@@ -1626,6 +1870,12 @@ impl VerifierRegistry {
     /// Discovers immediate child packages in lexical path order. Each package
     /// must contain `verifier-plugin.json`; malformed packages are reported
     /// together, while valid packages remain registered.
+    ///
+    /// Every discovered package is **verified** before it is registered: its
+    /// declared digest and its embedded-template binding must hold (card
+    /// `P01-F3`; before it, discovery registered whatever the directory
+    /// contained). A package that does not verify is reported as an error and
+    /// left unregistered, never registered with a weaker check.
     pub fn discover_packages(
         &mut self,
         root: impl AsRef<Path>,
@@ -1648,7 +1898,7 @@ impl VerifierRegistry {
         let mut installed = 0;
         let mut errors = Vec::new();
         for path in paths {
-            match ProcessProvider::from_package(&path) {
+            match verify_executable_package(&path) {
                 Ok(provider) => match self.register(Arc::new(provider)) {
                     Ok(()) => installed += 1,
                     Err(error) => errors.push(PackageLoadError {
@@ -2676,6 +2926,9 @@ pub use embedded_template::{
     TEMPLATE_BEGIN, TEMPLATE_END, TemplateBindingError, envelope, extract_template,
     verify_embedded_template_binding,
 };
+
+pub mod executable_identity;
+pub use executable_identity::{IdentityRefusal, VerifiedExecutable};
 
 pub mod package;
 pub use package::verify_executable_package;

@@ -62,10 +62,54 @@ use qcore_verification::reactor_source::{
 };
 use qcore_verification::source_effect::{BooleanFieldSourceTask, semantic_profile_for};
 use qcore_verifier_host::{
-    CoreCertificate, ProcessOutcome, ProcessProvider, VerificationOutcome, VerifierRegistry,
-    WitnessChecker, compose_certificates, compose_verification,
+    CoreCertificate, ProcessOutcome, ProcessProvider, ProviderFailure, UnverifiedProvider,
+    VerificationOutcome, VerificationResponse, VerificationResponseV2, VerifierProvider,
+    VerifierRegistry, WitnessChecker, compose_certificates, compose_verification,
     compose_verification_with_inventory,
 };
+
+/// A deliberately unverified package, wrapped so that it can be registered.
+///
+/// [`UnverifiedProvider`] is not a [`VerifierProvider`] (card `P01-F3`), so a
+/// package nobody verified cannot reach a registry by accident. The cases below
+/// need one anyway: they register manifests that are *deliberately* mutated — a
+/// protocol version the process does not speak, an unreachable one-millisecond
+/// timeout — to drive the registry's own `QP004`/`QP006` gates, and such a
+/// manifest cannot bind to the shipped executable's embedded template by
+/// construction. Writing this wrapper is the explicit act the type now demands;
+/// nothing in production writes one.
+struct DeliberatelyUnverified(UnverifiedProvider);
+
+impl VerifierProvider for DeliberatelyUnverified {
+    fn manifest(&self) -> &PluginManifest {
+        self.0.manifest()
+    }
+
+    fn verify(
+        &self,
+        request: &VerificationRequest,
+    ) -> Result<VerificationResponse, ProviderFailure> {
+        self.0.verify(request)
+    }
+
+    fn verify_v2(
+        &self,
+        request: &VerificationRequestV2,
+    ) -> Result<VerificationResponseV2, ProviderFailure> {
+        self.0.verify_v2(request)
+    }
+}
+
+/// Builds the wrapper over a mutated manifest, keeping the mutation visible at
+/// the call site.
+fn deliberately_unverified(
+    manifest: PluginManifest,
+    package_root: PathBuf,
+) -> DeliberatelyUnverified {
+    DeliberatelyUnverified(
+        UnverifiedProvider::new(manifest, package_root).expect("the manifest is well formed"),
+    )
+}
 
 /// The five packages `providers/package.py` builds.
 const FIVE: [&str; 5] = [
@@ -415,9 +459,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
         older.protocol_versions = BTreeSet::from([2]);
         let mut mismatched = VerifierRegistry::default();
         mismatched
-            .register(Arc::new(
-                ProcessProvider::new(older, output.join(plugin)).expect("provider loads"),
-            ))
+            .register(Arc::new(deliberately_unverified(
+                older,
+                output.join(plugin),
+            )))
             .expect("registers");
         let refused = mismatched.verify(&v1);
         assert!(
@@ -428,9 +473,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
 
         let mut impatient_manifest = manifest_of(&output, plugin);
         impatient_manifest.limits.timeout_ms = 1;
-        let provider = Arc::new(
-            ProcessProvider::new(impatient_manifest, output.join(plugin)).expect("provider loads"),
-        );
+        let provider = Arc::new(deliberately_unverified(
+            impatient_manifest,
+            output.join(plugin),
+        ));
         let mut impatient = VerifierRegistry::default();
         impatient.register(provider.clone()).expect("registers");
         let timed_out = impatient.verify(&v1);
@@ -440,7 +486,7 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
             timed_out.diagnostics
         );
         assert_eq!(
-            provider.last_execution().expect("recorded").outcome,
+            provider.0.last_execution().expect("recorded").outcome,
             ProcessOutcome::WallClockTimeout,
             "{plugin}"
         );
@@ -595,10 +641,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
         manifest.evidence_versions = BTreeSet::from([1]);
         let mut older = VerifierRegistry::default();
         older
-            .register(Arc::new(
-                ProcessProvider::new(manifest, output.join(route.implementer))
-                    .expect("provider loads"),
-            ))
+            .register(Arc::new(deliberately_unverified(
+                manifest,
+                output.join(route.implementer),
+            )))
             .expect("registers");
         let outcome = route.run(&older, route.implementer);
         assert_eq!(outcome.verdict, ProposedVerdict::Unknown, "{}", route.label);
@@ -680,9 +726,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
     for route in &routes {
         let mut manifest = manifest_of(&output, route.implementer);
         manifest.limits.timeout_ms = 1;
-        let provider = Arc::new(
-            ProcessProvider::new(manifest, output.join(route.implementer)).expect("provider loads"),
-        );
+        let provider = Arc::new(deliberately_unverified(
+            manifest,
+            output.join(route.implementer),
+        ));
         let mut impatient = VerifierRegistry::default();
         impatient.register(provider.clone()).expect("registers");
         let outcome = route.run(&impatient, route.implementer);
@@ -695,7 +742,7 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
         );
         assert!(outcome.certificate.is_none(), "{}", route.label);
         assert_eq!(
-            provider.last_execution().expect("recorded").outcome,
+            provider.0.last_execution().expect("recorded").outcome,
             ProcessOutcome::WallClockTimeout,
             "{}",
             route.label

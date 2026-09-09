@@ -169,7 +169,7 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
         fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
     };
     write_script("exec 0<&-\n(/bin/sleep 0.3; : > descendant.marker) &\nexit 0");
-    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
+    let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let start = Instant::now();
     assert_eq!(provider.verify(&request), Err(ProviderFailure::Timeout));
     assert!(start.elapsed() < Duration::from_secs(1));
@@ -180,7 +180,7 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     // Allow the shell to execute the close even on a slower macOS scheduler;
     // it stays alive beyond this deadline, so Timeout would still be wrong.
     manifest.limits.timeout_ms = 100;
-    let provider = ProcessProvider::new(manifest.clone(), &package).unwrap();
+    let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     assert!(matches!(
         provider.verify(&request),
         Err(ProviderFailure::Io(_))
@@ -204,7 +204,7 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     .unwrap();
     write_script("exec 0<&-\n/bin/cat response.bin");
     manifest.limits.timeout_ms = 1000;
-    let provider = ProcessProvider::new(manifest, &package).unwrap();
+    let provider = UnverifiedProvider::new(manifest, &package).unwrap();
     assert!(matches!(
         provider.verify(&request),
         Err(ProviderFailure::Io(_))

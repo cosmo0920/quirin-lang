@@ -93,6 +93,33 @@ impl Fixture {
         self.package().join("ran.marker")
     }
 
+    /// Installs the fixture as a package that actually *verifies*, so it can be
+    /// registered: a registry takes only verified providers (card `P01-F3`).
+    /// The script carries the manifest template its installed manifest binds
+    /// to, exactly as a shipped provider executable does, after the script's
+    /// last command — inert to `sh`, and bytes the host reads without executing
+    /// anything.
+    #[cfg(target_os = "linux")]
+    fn install(&self, manifest: PluginManifest) -> PluginManifest {
+        let script = self.package().join("provider.sh");
+        let mut bytes = fs::read(&script).unwrap();
+        // `exit` before the envelope: `sh` parses commands one at a time, so
+        // it stops before the marker lines, which are not shell syntax.
+        bytes.extend(b"exit $?\n");
+        bytes.extend(envelope(&serde_json::to_string(&manifest).unwrap()).into_bytes());
+        bytes.push(b'\n');
+        fs::write(&script, &bytes).unwrap();
+        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        let mut installed = manifest;
+        installed.package_digest = sha256_hex(&fs::read(&script).unwrap());
+        fs::write(
+            self.package().join("verifier-plugin.json"),
+            serde_json::to_vec(&installed).unwrap(),
+        )
+        .unwrap();
+        installed
+    }
+
     fn policy(&self) -> ConfinementPolicy {
         ConfinementPolicy::linux_runtime_defaults()
             .admitting_read_write(self.writable().to_string_lossy().into_owned())
@@ -180,7 +207,7 @@ fn both_enforcing_profiles_are_target_qualified() {
         ProcessExecutionProfile::LinuxRlimitV1,
         ProcessExecutionProfile::LinuxConfinedV1,
     ] {
-        let mut provider = ProcessProvider::new(manifest(), fixture.package())
+        let mut provider = UnverifiedProvider::new(manifest(), fixture.package())
             .unwrap()
             .with_execution_profile(profile);
         if profile.confines() {
@@ -212,7 +239,7 @@ fn a_declared_quota_is_refused_off_linux() {
         .limits
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 4);
-    let provider = ProcessProvider::new(manifest, fixture.package())
+    let provider = UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -256,7 +283,7 @@ fn only_the_confining_profile_accepts_the_quota_kind() {
         ProcessExecutionProfile::UnenforcedLegacy,
         ProcessExecutionProfile::LinuxRlimitV1,
     ] {
-        let provider = ProcessProvider::new(manifest.clone(), fixture.package())
+        let provider = UnverifiedProvider::new(manifest.clone(), fixture.package())
             .unwrap()
             .with_execution_profile(profile);
         match profile {
@@ -302,7 +329,7 @@ fn a_zero_quota_is_refused() {
         .limits
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 0);
-    let provider = ProcessProvider::new(manifest, fixture.package())
+    let provider = UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -335,7 +362,7 @@ fn the_availability_override_is_one_directional() {
         }
     }
     let fixture = Fixture::new("override-direction");
-    let provider = ProcessProvider::new(manifest(), fixture.package()).unwrap();
+    let provider = UnverifiedProvider::new(manifest(), fixture.package()).unwrap();
     assert_eq!(
         provider.mechanism_availability(),
         MechanismAvailability::default()
@@ -359,7 +386,7 @@ fn quota_available(fixture: &Fixture) -> Option<ProcessQuota> {
         .limits
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 4);
-    ProcessProvider::new(manifest, fixture.package())
+    UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy())
@@ -393,7 +420,7 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 4);
 
-    let provider = ProcessProvider::new(manifest.clone(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest.clone(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -462,7 +489,7 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
         .limits
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 64);
-    let control = ProcessProvider::new(generous, fixture.package())
+    let control = UnverifiedProvider::new(generous, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -494,7 +521,7 @@ fn the_same_fixture_without_a_declared_quota_installs_none() {
     fixture.response(&request);
     fixture.script("/bin/sleep 0.05 &\n/bin/sleep 0.05 &\n/bin/cat response.bin");
 
-    let provider = ProcessProvider::new(manifest(), fixture.package())
+    let provider = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -537,7 +564,7 @@ fn the_quota_binds_without_depending_on_the_accounts_process_count() {
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 6);
 
-    let provider = ProcessProvider::new(manifest, fixture.package())
+    let provider = UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
@@ -605,7 +632,7 @@ fn a_forced_unavailable_quota_mechanism_refuses_before_spawning() {
         .additional
         .insert(MAX_EXECUTION_PROCESSES.into(), 4);
 
-    let provider = ProcessProvider::new(manifest, fixture.package())
+    let provider = UnverifiedProvider::new(manifest, fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy())
@@ -660,7 +687,7 @@ fn a_missing_confinement_mechanism_refuses_before_spawning() {
             },
         ),
     ] {
-        let provider = ProcessProvider::new(manifest(), fixture.package())
+        let provider = UnverifiedProvider::new(manifest(), fixture.package())
             .unwrap()
             .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
             .with_confinement_policy(fixture.policy())
@@ -681,10 +708,15 @@ fn a_missing_confinement_mechanism_refuses_before_spawning() {
         assert!(!fixture.ran_marker().exists());
 
         let mut registry = VerifierRegistry::default();
+        // A registry takes only *verified* providers (card `P01-F3`): rewrite
+        // the script fresh, install the template envelope and the real digest,
+        // and register what verification returns.
+        fixture.script(": > ran.marker\n/bin/cat response.bin");
+        fixture.install(manifest());
         registry
             .register(Arc::new(
-                ProcessProvider::new(manifest(), fixture.package())
-                    .unwrap()
+                verify_executable_package(fixture.package())
+                    .expect("the installed fixture verifies")
                     .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
                     .with_confinement_policy(fixture.policy())
                     .with_mechanism_availability(availability),
@@ -716,7 +748,7 @@ fn a_forced_override_never_weakens_an_execution() {
         process_quota: MechanismProbe::ForcedUnavailable,
     };
     // The confining profile refuses outright rather than running unconfined.
-    let confined = ProcessProvider::new(manifest(), fixture.package())
+    let confined = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy())
@@ -728,11 +760,11 @@ fn a_forced_override_never_weakens_an_execution() {
     );
     // The limit profile installs no confinement and no quota, so the override
     // changes nothing about it: it still installs exactly the same rlimits.
-    let forced = ProcessProvider::new(manifest(), fixture.package())
+    let forced = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1)
         .with_mechanism_availability(all_forced);
-    let plain = ProcessProvider::new(manifest(), fixture.package())
+    let plain = UnverifiedProvider::new(manifest(), fixture.package())
         .unwrap()
         .with_execution_profile(ProcessExecutionProfile::LinuxRlimitV1);
     assert_eq!(
@@ -753,7 +785,7 @@ fn a_written_selection_reaches_the_provider() {
     let fixture = Fixture::new("configured");
     // The recorded default keeps the historical profile and confines nothing.
     let provider = ExecutionPolicy::default()
-        .apply(ProcessProvider::new(manifest(), fixture.package()).unwrap())
+        .apply_unverified(UnverifiedProvider::new(manifest(), fixture.package()).unwrap())
         .unwrap();
     assert_eq!(
         provider.execution_profile(),
@@ -767,7 +799,7 @@ fn a_written_selection_reaches_the_provider() {
     )
     .unwrap();
     let provider = selected
-        .apply(ProcessProvider::new(manifest(), fixture.package()).unwrap())
+        .apply_unverified(UnverifiedProvider::new(manifest(), fixture.package()).unwrap())
         .unwrap();
     assert_eq!(
         provider.execution_profile(),
@@ -791,7 +823,7 @@ fn a_written_selection_reaches_the_provider() {
     );
     assert!(
         mismatched
-            .apply(ProcessProvider::new(manifest(), fixture.package()).unwrap())
+            .apply_unverified(UnverifiedProvider::new(manifest(), fixture.package()).unwrap())
             .is_err()
     );
 }
@@ -843,7 +875,7 @@ fn a_kernel_that_denies_user_namespaces_refuses_the_confined_profile() {
         // The inner run: this process is in a namespace whose
         // `max_user_namespaces` is zero, so the kernel itself denies the
         // mechanism. No override is set.
-        let provider = ProcessProvider::new(manifest(), fixture.package())
+        let provider = UnverifiedProvider::new(manifest(), fixture.package())
             .unwrap()
             .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
             .with_confinement_policy(fixture.policy());
@@ -899,7 +931,7 @@ fn a_kernel_that_denies_user_namespaces_refuses_the_confined_profile() {
                  ({}); asserting the refusal path through the override instead",
                 detail.trim()
             );
-            let provider = ProcessProvider::new(manifest(), fixture.package())
+            let provider = UnverifiedProvider::new(manifest(), fixture.package())
                 .unwrap()
                 .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
                 .with_confinement_policy(fixture.policy())

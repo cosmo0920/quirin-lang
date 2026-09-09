@@ -83,6 +83,7 @@ import QCore.ReasonCarrier
 import QCore.SourceRootAdmission
 import QCore.ChunkIntegrityObservation
 import QCore.PackageTemplateBinding
+import QCore.PackageIdentity
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.SourceEnumeration
