@@ -710,11 +710,12 @@ coverage is untouched at 32/50, and no verdict moves.
   `filesystem_chunk_close`, `unsupported_close` and the two nested modules remain
   compiler-side ChunkIO adapters. Consolidating them follows their capability
   moves, not this card.
-- Of P04-NEXT's original thirteen in-process ChunkIO capabilities, six have moved
-  plus two compositions — **eight routes across five vocabularies**. The
-  remaining classification is `P04-COMPOSE` §1's table with `file_close` struck
-  off and `filesystem_chunk_close` promoted to "blocked on the frame helper
-  alone".
+- Of P04-NEXT's original thirteen in-process ChunkIO capabilities, six
+  non-composition capabilities have moved plus **two composition modules** —
+  eight routes across five vocabularies, with this card's module contributing
+  two semantic profiles and two obligations. The remaining classification is
+  `P04-COMPOSE` §1's table with `file_close` struck off and
+  `filesystem_chunk_close` promoted to "blocked on the frame helper alone".
 
 ---
 
