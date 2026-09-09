@@ -60,11 +60,12 @@ spellings is wrong in one place and incomplete in another:
 call site in the pinned tree (§4) finds **50 call sites: 23 spelling the size
 exactly `0`, 27 non-literal, and zero** spelling zero as `0L`, `(0)`, `0U`, hex,
 octal, an `enum` constant or a macro. The widening is therefore a faithfulness
-repair with **zero measured corpus reach**, and the 185-unit artifacts are
-re-measured **byte-identical** against `docs/reports/wave14-corpus/artifacts/`.
-That byte-identity is a real check on this change, not a coincidence: §7's
-Lean theorem says the relation is a strict widening, so any movement would have
-had to be an admission, and there is none.
+repair with **zero measured corpus reach**: all five 185-unit artifacts are
+**byte-identical between a base-tree control run and the after run in the same
+worktree** (§4.2), so this card's entire corpus effect is zero changed bytes.
+That byte-identity is a real check on this change, not a coincidence: §7's Lean
+theorem says the relation is a strict widening, so any movement would have had
+to be an admission, and there is none.
 
 **One deliberate loader tightening**, in service of the above: a declared
 `LITERAL` may no longer carry a leading zero or spell a negative zero, so the
@@ -280,7 +281,63 @@ cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit
   <out>/monkey-source.json <out>/resource-diagnostics.json
 ```
 
-CORPUS_RESULT_PLACEHOLDER
+**Three measurements, not two.** The archived wave-14 baseline was produced from
+the main checkout with that wave's provider packages; this card runs from a
+worktree with freshly built packages, so an *archive → after* diff alone would
+conflate this card's effect with the recorded environment residue classes. A
+**control** run of the *base tree* `19fbaa5` — reached by detaching this
+worktree to it, so the checkout path and the provider packages are identical to
+the after run — separates them exactly. Logs:
+[`logs/corpus-run.log.gz`](logs/corpus-run.log.gz),
+[`logs/corpus-control.log.gz`](logs/corpus-control.log.gz); comparison
+transcript [`logs/three-way.txt`](logs/three-way.txt).
+
+| Artifact | archive → control | control → **after** |
+|---|---|---|
+| `diagnostics.json` | byte-identical | **byte-identical** |
+| `source.json` | byte-identical | **byte-identical** |
+| `chunk-contracts.json` | byte-identical | **byte-identical** |
+| `contracts.json` | differs — worktree path literals only; **identical after path normalisation** | **byte-identical** |
+| `source-effects.json` | differs — 41 leaves on 3 of 185 results | **byte-identical** |
+
+**This card's entire corpus effect is zero changed bytes, in every artifact.**
+That is the strongest available form of the §3.3 claim: the widening admitted no
+call site anywhere in the pinned corpus, exactly as §4.1's census predicts.
+
+The two archive → control classes are the ones every consolidation since
+CORPUS-REPIN has recorded, and neither is this card's:
+
+* `contracts.json` — the six absolute-path map keys, worktree location
+  provenance. Verified by direct comparison past the recorded
+  `DIFF-TOOL-CONTRACTS` blind spot: replacing the worktree path with the main
+  checkout path makes the file byte-identical to the archive, so the six module
+  *texts* are unchanged.
+* `source-effects.json` — 41 leaves (15 added, 15 removed, 26 changed) on
+  results 16, 24 and 63, itemized by an exhaustive leaf walk rather than
+  sampling ([`logs/source-effects-archive-to-control.txt`](logs/source-effects-archive-to-control.txt)).
+  Every one is an identity digest — `package_digest`, `build_digest`,
+  `configuration_digest`, `task_digest`, `contract_sources` — or a
+  `resource_contracts:<hash>` obligation identifier keyed by one. **No verdict,
+  status, reason or diagnostic is among them.**
+
+### 4.3 Headline
+
+| Measure | wave-14 baseline | after |
+|---|---|---|
+| units | 185 | 185 |
+| verdicts | 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only | **identical** |
+| unit verdict moves | — | **0** |
+| function status moves | — | **0** |
+| source functions / projected | 4921 / 4834 | **identical** |
+| `leak` / `unknown_alias` / `unsupported` | 271 / 4405 / 49920 | **identical** |
+| gateway failures | 0 | **0** |
+
+Per scope: cmetrics 31 (0 Safe / 16 Unsafe / 15 Unknown), ctraces 17
+(1/2/13 + 1 data-only), librdkafka 94 (0/10/81 + 3 data-only), chunkio 13
+(0/2/11), fluent-bit-chunk 1 (0/1/0), monkey-libevent 29 (1/11/17).
+
+**The baseline is not re-pinned here.** `docs/reports/wave14-corpus/artifacts/`
+remains current: this card moves nothing in it.
 
 ---
 

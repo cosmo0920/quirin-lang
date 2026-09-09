@@ -1,0 +1,21 @@
+=== control (base 19fbaa5, this worktree) vs after (the card) ===
+  monkey-source.json: IDENTICAL
+  resource-diagnostics.json: IDENTICAL
+  resource-diagnostics.chunk-contracts.json: IDENTICAL
+  resource-diagnostics.source-effects.json: IDENTICAL
+  resource-diagnostics.contracts.json: IDENTICAL
+
+=== archive (wave-14) vs control ===
+diagnostics      IDENTICAL  archived=11140129B/40691eab1fdd measured=11140129B/40691eab1fdd
+source           IDENTICAL  archived=1664550B/53d55b7e1fb1 measured=1664550B/53d55b7e1fb1
+chunk-contracts  IDENTICAL  archived=4186178B/c4f438e4ed3d measured=4186178B/c4f438e4ed3d
+source-effects   differs    archived=118505B/5d857ba336be measured=118505B/953806ea5cee
+contracts        differs    archived=30152B/72e665be6308 measured=30530B/b24718dab5de
+                 after path normalisation: IDENTICAL
+
+units archived=185 measured=185 added=[] removed=[]
+unit verdict moves: 0
+function status moves: 0
+
+archived Counter({'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}) src_fns= 4921 projected= 4834 leak= 271 unknown_alias= 4405 unsupported= 49920
+measured Counter({'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}) src_fns= 4921 projected= 4834 leak= 271 unknown_alias= 4405 unsupported= 49920
