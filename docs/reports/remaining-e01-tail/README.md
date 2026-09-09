@@ -14,7 +14,7 @@ CT coverage stays 32/50 mapped and full language conformance stays false.
 
 | Residual | Disposition | Corpus effect |
 |---|---|---|
-| **E01-F1-STDIN** | **Repaired.** Attribution moves from the marker's file *name* to the include *depth* those markers describe, so a `#line` can move no definition into or out of the audited scope and the rule is identical for a `<stdin>` unit and a declared-file unit. No transport, identity or published byte changed. | none (§4) |
+| **E01-F1-STDIN** | **Repaired.** Attribution moves from the marker's file *name* to the include *depth* those markers describe, so a `#line` can move no definition into or out of the audited scope and the rule is identical for a `<stdin>` unit and a declared-file unit. No transport, identity or published byte changed. | **none** — every one of the 185 units enumerates an identical definition set (§4.2) |
 | **E01-F1-DENOM** | **Repaired, deliberately strict.** A whole-unit `Safe` now requires every selected definition to carry an analysed row. Two pinned expectations updated, each keeping its load-bearing half. | none — measured reach **0** (§3.1) |
 | **E01-F1-COST** | **Measured; the hypothesised cache declined on measured grounds.** The extra `clang -E` costs a median 53.4 ms against the published `-E -P`'s 53.2 ms. A sound input-keyed skip does exist and its argument is recorded — but on the plain route the enumeration already runs **exactly once per unit**, so it would save nothing, and on the source-contract route the *right* repair is inventory sharing, not caching. Three redundancies found and named, two of them larger than the cost the residual names. | none |
 
@@ -327,13 +327,76 @@ certificate's shape and identity, so it is recorded, not repaired.
 
 ## 4. Corpus parity
 
-Re-measured through the canonical pinned route on a freshly prepared pinned
-clone (Fluent Bit `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`, explicit
-`/usr/bin/clang` 21.1.8), following
-[`docs/reports/corpus-repin/provenance.json`](../corpus-repin/provenance.json),
-and compared against the current baseline
-[`docs/reports/wave14-corpus/artifacts/`](../wave14-corpus/artifacts) with
-[`docs/reports/corpus-repin/diff_artifacts.py`](../corpus-repin/diff_artifacts.py).
+Re-measured on a freshly prepared pinned clone (Fluent Bit
+`66910c10a4d7eafa810b84229cf2dcf7b0f26f97`, explicit `/usr/bin/clang` 21.1.8),
+prepared exactly as
+[`docs/reports/corpus-repin/provenance.json`](../corpus-repin/provenance.json)
+records, and compared against the current baseline
+[`docs/reports/wave14-corpus/artifacts/`](../wave14-corpus/artifacts).
+
+### 4.1 Headline
+
+```
+185 source file(s), 186 configuration(s):
+  2 Safe / 43 provisional Unsafe / 137 Unknown / 4 data-only / 0 gateway failures
+```
+
+43 *configurations* is 42 *distinct files* — the current route counts
+`src/flb_input_chunk.c` twice under G01's recorded compile-configuration
+ambiguity, which is exactly the 42-vs-43 reconciliation CORPUS-REPIN established
+by measurement. **Nothing is promoted: 2 Safe / 42 provisional Unsafe /
+137 Unknown / 4 data-only.**
+
+### 4.2 Unit-for-unit reconciliation against the baseline
+
+The archived baseline keys units by a path relative to each library root; the
+current route keys them by the checkout-relative path. Matching by suffix, every
+archived unit is accounted for and nothing is left over:
+
+| Check | Result |
+|---|---|
+| archived units with no measured configuration | **0** |
+| measured configurations matching no archived unit | **0** |
+| archived units matching more than one configuration | **1** — `fluent-bit-chunk/flb_input_chunk.c` (two, both `Unsafe`), G01's recorded ambiguity |
+| **unit verdict moves, either direction** | **0** |
+| **units whose enumerated denominator changed** | **0** — every unit's `source_functions` list is *identical*, name for name |
+| **function status moves** | **0**, and no unit's function *set* differs |
+
+The zero-denominator-change row is the decisive result for **E01-F1-STDIN**:
+depth attribution enumerates exactly the definition set name attribution did,
+on all 185 units. That is what §1.4 predicted from the inputs, now confirmed by
+the run.
+
+Every aggregate difference is the duplicated configuration and nothing else.
+That unit contributes 66 definitions, 64 projected, and
+`leak=10, unknown_alias=124, unsupported=802`:
+
+| Aggregate | archived | + duplicate | = | measured |
+|---|---|---|---|---|
+| enumerated definitions | 4,921 | 66 | 4,987 | **4,987** ✔ |
+| projected functions | 4,834 | 64 | 4,898 | **4,898** ✔ |
+| `leak` | 271 | 10 | 281 | **281** ✔ |
+| `unknown_alias` | 4,405 | 124 | 4,529 | **4,529** ✔ |
+| `unsupported` | 49,920 | 802 | 50,722 | **50,722** ✔ |
+| `double_release` | 0 | 0 | 0 | **0** ✔ |
+
+Nothing is unattributed.
+
+### 4.3 The two new refusals have reach 0
+
+| Measured on the corpus | count |
+|---|---|
+| units refusing the completeness claim | **0** — the new `unbalanced-include-markers` ground never fires |
+| `unanalyzable` rows | **0** |
+| `absent_from_raw_scan` definitions | **0** — consistent with E01-RAW-COND |
+| `Safe` units with a non-empty `not_projected` | **0**, before and after |
+| unprojected definitions overall | 89, across 25 units, none of them `Safe` (§3.2) |
+
+Because neither new ground fires, no published row carries a reason this card
+introduced, so no row's `reason_code` changes and **E01-TAIL-REASON-ROWS** (§9)
+affects nothing today.
+
+### 4.4 Byte-level artifact comparison
 
 <!-- CORPUS-RESULTS -->
 
@@ -536,7 +599,7 @@ not about this repository.
 | `python3 -B scripts/check_lean_audits.py` | **66 audits passed** (64 → 66) |
 | `cargo test --manifest-path providers/Cargo.toml` | passed, 0 failed |
 | `python3 -B -m unittest discover -s scripts/tests` | **134 passed, 1 failed by design** (§7.2) |
-| pinned 185-unit audit, current route | exit 0, 0 gateway failures; 185 files / 186 configurations, 2 Safe / 43 provisional Unsafe (42 distinct files) / 137 Unknown / 4 data-only — CORPUS-REPIN's recorded current-route figures |
+| pinned 185-unit audit, current route | exit 0, 0 gateway failures; 185 files / 186 configurations, 2 Safe / 43 provisional Unsafe (42 distinct files) / 137 Unknown / 4 data-only. Reconciled unit for unit against the baseline: 0 verdict moves, 0 denominator changes, 0 function status moves (§4.2) |
 | pinned 185-unit audit, `--pinned-evidence` route | <!-- CORPUS --> |
 | `chunkio-core` configured audit | exit 0; 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown — its recorded result, unchanged |
 | `libevent-core` configured audit | exit 0; 21 units, 0 Safe / 4 provisional Unsafe / 17 Unknown — G03-F's recorded result, unchanged (§7.4) |
