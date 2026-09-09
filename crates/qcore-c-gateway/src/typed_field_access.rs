@@ -689,7 +689,7 @@ fn read_declarator(group: &[&str]) -> Option<Declarator> {
 
 /// The index of the `;` that ends the construct starting at `start`, or the
 /// index at which an unmatched closing token ends it.
-fn statement_end(texts: &[&str], start: usize) -> Option<usize> {
+pub(crate) fn statement_end(texts: &[&str], start: usize) -> Option<usize> {
     let mut parentheses = 0usize;
     let mut brackets = 0usize;
     let mut braces = 0usize;
@@ -730,7 +730,7 @@ fn statement_end(texts: &[&str], start: usize) -> Option<usize> {
 /// declaration that *names* a variable matches this shape, which is what lets
 /// an unreadable declaration refuse the whole function instead of silently
 /// leaving a shadowed name typed by an outer declaration.
-fn is_declaration_candidate(texts: &[&str], start: usize) -> bool {
+pub(crate) fn is_declaration_candidate(texts: &[&str], start: usize) -> bool {
     let Some(first) = texts.get(start) else {
         return false;
     };

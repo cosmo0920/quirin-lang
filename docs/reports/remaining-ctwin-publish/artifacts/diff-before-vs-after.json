@@ -1,0 +1,39 @@
+{
+ "chunk-contracts": {
+  "identical": true,
+  "left_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "right_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "identical": true,
+  "left_sha256": "a92964bd7af298bcdb837cd98723071aec9423164b0fba4409302b8193eec110",
+  "right_sha256": "a92964bd7af298bcdb837cd98723071aec9423164b0fba4409302b8193eec110"
+ },
+ "diagnostics": {
+  "identical": true,
+  "left_sha256": "1da0555bd5e3c5a698f1e4114881fb2bdedf9a564bc6bc0a61803e9b66ecd84b",
+  "left_totals": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  },
+  "right_sha256": "1da0555bd5e3c5a698f1e4114881fb2bdedf9a564bc6bc0a61803e9b66ecd84b",
+  "right_totals": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  }
+ },
+ "source": {
+  "identical": true,
+  "left_sha256": "ca7a21a4fd96db6098495b5147909062d6c5f7c4612eaa2f4095234273ab6211",
+  "right_sha256": "ca7a21a4fd96db6098495b5147909062d6c5f7c4612eaa2f4095234273ab6211"
+ },
+ "source-effects": {
+  "identical": true,
+  "left_sha256": "d4bf2be2b4a8c8f04a881f830a793f3540a50f56f903d446230ce56952298097",
+  "right_sha256": "d4bf2be2b4a8c8f04a881f830a793f3540a50f56f903d446230ce56952298097"
+ }
+}
