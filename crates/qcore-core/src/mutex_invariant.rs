@@ -1448,9 +1448,12 @@ pub fn check_mutex_invariant_program(
                     // precondition, so the discipline never displaces a
                     // refusal this profile already issues. A generation with
                     // no declared rank cannot be reached here with the
-                    // discipline on — R1 refused its creation — but the
-                    // `None` arm blocks rather than admits, so the rule stays
-                    // fail-closed if that ever changes.
+                    // discipline on — R1 refused its creation, so the
+                    // generation was never minted and `UnknownMutex` below
+                    // fires first — but the `None` arm blocks rather than
+                    // admits, so the rule stays fail-closed if that ever
+                    // changes. On that unreachable arm the reported `rank` is
+                    // the held rank, since there is no declared one to name.
                     let rank_conflict = ranked
                         .then(|| {
                             let acquiring = program.lock_ranks.get(mutex).copied();
