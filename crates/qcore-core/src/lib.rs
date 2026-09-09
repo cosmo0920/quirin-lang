@@ -107,10 +107,10 @@ pub use disjoint_footprint::{
 };
 pub use mutex_invariant::{
     AdmittedGuardLocalJoin, BorrowId, CertificateRecheckError, DerivedSyncEdge, FactId, GuardId,
-    IdentityKind, InvariantId,
-    InvariantPhase, InvariantTransition, InvariantWitness, MutexInvariantCertificate,
-    MutexInvariantDiagnostic, MutexInvariantEvent, MutexInvariantProgram, ShareGrant, SyncWitness,
-    UnsupportedSynchronization, check_mutex_invariant_program, recheck_mutex_invariant_certificate,
+    IdentityKind, InvariantId, InvariantPhase, InvariantTransition, InvariantWitness,
+    MutexInvariantCertificate, MutexInvariantDiagnostic, MutexInvariantEvent,
+    MutexInvariantProgram, ShareGrant, SyncWitness, UnsupportedSynchronization,
+    check_mutex_invariant_program, recheck_mutex_invariant_certificate,
 };
 pub use native_concurrency::{
     FeatureDisposition, NativeBackendError, NativeCellId, NativeExecutionCertificate,

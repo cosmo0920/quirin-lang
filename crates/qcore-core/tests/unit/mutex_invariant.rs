@@ -1920,11 +1920,13 @@ fn a_guard_local_join_naming_another_tasks_guard_is_refused() {
         ],
         ..Default::default()
     };
-    assert!(refusals(&program).contains(&MutexInvariantDiagnostic::WrongGuardAffinity {
-        event: 4,
-        guard: 10,
-        task: 0,
-    }));
+    assert!(
+        refusals(&program).contains(&MutexInvariantDiagnostic::WrongGuardAffinity {
+            event: 4,
+            guard: 10,
+            task: 0,
+        })
+    );
 }
 
 #[test]
