@@ -5,10 +5,13 @@
     "qcore/monkey/memory.qcore",
     "qcore/librdkafka/memory.qcore",
     "qcore/fluent_bit/hash_table_publication.qcore",
+    "qcore/fluent_bit/input_chunk_helpers.qcore",
     "qcore/fluent_bit/input_chunk_name.qcore",
     "qcore/fluent_bit/logging.qcore",
     "qcore/fluent_bit/resource_memory.qcore",
     "qcore/fluent_bit/routes_mask.qcore",
+    "qcore/fluent_bit/time.qcore",
+    "qcore/chunkio/chunk_residency.qcore",
     "qcore/chunkio/resource_open_close.qcore"
   ]
 }

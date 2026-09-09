@@ -1,0 +1,69 @@
+module contract;
+
+// Fluent Bit clock reading — resource-projection vocabulary version 1.
+//
+// Card NEIGHBOURS. This module declares ONE TRUSTED ASSUMPTION about ONE
+// upstream function. It verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise.
+//
+// ## `flb_time_now`, read from `src/flb_lib.c:936-942` at Fluent Bit
+// ## `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`
+//
+//     double flb_time_now()
+//     {
+//         struct flb_time t;
+//         flb_time_get(&t);
+//         return flb_time_to_double(&t);
+//     }
+//
+// That is the whole body. It takes NO PARAMETER, so under no reading can it
+// touch any caller's custody. `flb_time_get(&t)` takes the address of a
+// function-LOCAL `struct flb_time` and forwards it to `clock_gettime` (or the
+// Mach path) via `_flb_time_get` (`src/flb_time.c:76-79`); `flb_time_to_double`
+// (`src/flb_time.c:95-98`) reads two integer fields and returns arithmetic on
+// them. Nothing is allocated, freed, stored or published on any path, and the
+// result is a real-valued reading, not a handle. `resource_return_none()` on a
+// parameterless declaration is the faithful — and the only faithful —
+// declaration.
+//
+// ## The return type is `f64`, and that mattered
+//
+// This is the first declaration in the corpus whose C result is
+// floating-point. Before this card the v1 scalar ABI table held integers only,
+// so the ONLY writable projections of a `double` result were an integer
+// spelling it does not have or `unit`, which would say the function returns
+// nothing at all. Card O04-B08's gateway FIXTURE took the first of those and
+// wrote `-> u64` — acceptable as a fixture premise, where the header says so —
+// but this is production text, and a declaration unfaithful to the body it
+// names is a defect, not a conservatism (the card P07 lesson). So `f32`/`f64`
+// were added to `SCALAR_ABI_TYPES` instead, under exactly the condition that
+// table's own note stated for them: a resource API in scope that passes one.
+//
+// That widening changes which signatures can be WRITTEN and nothing else. A
+// float is refused in every custody mode exactly as every other scalar is
+// ("custody mode requires a pointer parameter"), and a non-`None` result still
+// requires a pointer return type ("owned result requires a pointer return
+// type"), so no float can occupy a custody position in any declaration. `unit`
+// as a parameter type and every pointer spelling outside `POINTER_ABI_TYPES`
+// stay refused, and their refusals are still pinned.
+//
+// ## NOT CLAIMED
+//
+// Nothing about the clock: not its resolution, not its monotonicity, not
+// whether `clock_gettime` succeeded — `flb_time_get`'s status is discarded by
+// this body, and that is an upstream fact this declaration neither endorses nor
+// reports. A custody declaration says what happens to the caller's resources,
+// and this one says: nothing.
+//
+// `flb_time_get`, `flb_time_to_double`, `flb_time_to_nanosec` and the rest of
+// the `flb_time_*` family are DELIBERATELY LEFT UNDECLARED: each takes a
+// `struct flb_time *` the caller owns as a local, and none occurs in any
+// statement the pinned corpus's projections currently reach, so declaring them
+// would cost premises and buy nothing. Named `NEIGHBOURS-UNDECLARED`.
+
+// --- the wall-clock reading the input-chunk constructor timestamps with ----
+extern fn flb_time_now() -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

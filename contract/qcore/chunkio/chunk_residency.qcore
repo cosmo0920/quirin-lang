@@ -1,0 +1,117 @@
+module contract;
+
+// ChunkIO chunk residency — resource-projection vocabulary version 1.
+//
+// Card NEIGHBOURS. This module declares TRUSTED ASSUMPTIONS about the three
+// residency helpers `flb_input_chunk_create` calls between `cio_chunk_open` and
+// `cio_chunk_close`. It verifies nothing: the C bodies are not analyzed by this
+// loader, and a declaration is a premise. A function-level `Safe` that rests on
+// this module is `Safe` RELATIVE TO these declarations and is never a proof of
+// the ChunkIO implementation.
+//
+// Every body below was read at Fluent Bit
+// `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`, in the vendored ChunkIO copy
+// under `lib/chunkio/`, and is cited by file and line beside the declaration it
+// justifies.
+//
+// ## `cio_chunk_is_up`, read from `lib/chunkio/src/cio_chunk.c:509-524`
+//
+//     int cio_chunk_is_up(struct cio_chunk *ch)
+//
+// The whole body is `type = ch->st->type;` then, for `CIO_STORE_MEM`, a
+// constant `CIO_TRUE`, and for `CIO_STORE_FS`, `cf = ch->backend;` followed by
+// `return cio_file_is_up(ch, cf);`. `cio_file_is_up`
+// (`lib/chunkio/src/cio_file.c:1378-1388`) discards its chunk argument with an
+// explicit `(void) ch;` and answers from two predicates on `cf`
+// (`cio_file_native_is_open`, `cio_file_native_is_mapped`). Nothing is
+// allocated, freed, stored or published on any path, and the result is a
+// `CIO_TRUE`/`CIO_FALSE` flag, not a handle. `resource_borrowed(ch)` with
+// `resource_return_none()` is the faithful — and the only faithful —
+// declaration.
+//
+// ## `cio_chunk_up_force`, read from `lib/chunkio/src/cio_chunk.c:590-605`
+// ## `cio_chunk_down`, read from `lib/chunkio/src/cio_chunk.c:556-571`
+//
+//     int cio_chunk_up_force(struct cio_chunk *ch)
+//     int cio_chunk_down(struct cio_chunk *ch)
+//
+// Both have the same three-step shape:
+//
+//   1. `cio_error_reset(ch)` (`lib/chunkio/src/cio_error.c:56-59`) — the entire
+//      body is `ch->error_n = 0;`.
+//   2. for `CIO_STORE_FS` only, `cio_file_up_force(ch)` or `cio_file_down(ch)`.
+//   3. `chunk_state_sync(ch)` (`cio_chunk.c:538-554`).
+//
+// `cio_file_up_force` is `_cio_file_up(ch, CIO_FALSE)`
+// (`cio_file.c:901-904`, body at `:816-883`): it reads `ch->backend`, refuses
+// when already mapped or already open, opens the native file, updates
+// `cf->fs_size` and maps the content; on `CIO_CORRUPTED`/`CIO_RETRY` it closes
+// the descriptor it just opened. `cio_file_down` (`cio_file.c:920-958`) unmaps
+// through `munmap_file`, zeroes `cf->alloc_size`, updates the size and closes
+// the descriptor. NEITHER frees `ch`, and neither frees `ch->backend`: the only
+// `free(cf)` sites in that file are `cio_file_open`'s four rollback arms
+// (`:722`, `:736`, `:761`, `:772`) and `cio_file_close`'s teardown (`:990`),
+// none of which either function reaches. The result of both is an `int` status,
+// not a handle.
+//
+// So the caller's obligation is UNCHANGED across either call: the chunk it
+// received from `cio_chunk_open` is still its to close, and neither callee took
+// custody of it. That is exactly what `resource_borrowed` says, and — over the
+// whole v1 parameter vocabulary — it is the only mode with that caller-side
+// effect. `resource_released` would discharge an obligation neither body
+// discharges, and `resource_stored` would consume it permanently under another
+// owner while the caller must still call `cio_chunk_close`; both would be
+// unfaithful, and an unfaithful declaration is worse than `Unknown`.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **These calls move OS resources inside the chunk.** `cio_chunk_up_force`
+//     opens a file descriptor and creates a memory mapping; `cio_chunk_down`
+//     unmaps and closes. This projection models the CALLER's custody of the
+//     chunk handle and nothing else, so it neither tracks those endpoints nor
+//     asserts that `cio_chunk_close` releases them. That is separate observed
+//     evidence (`docs/reports/cycle19-file-descriptor-failures/README.md`,
+//     `docs/reports/cycle19-reopen-failures/README.md`), not a consequence of
+//     any declaration here. Named `NEIGHBOURS-RESIDENCY-ENDPOINTS`.
+//   * **`chunk_state_sync` relinks the chunk between two of its stream's
+//     lists** (`mk_list_del(&ch->_state_head)` then `mk_list_add` into
+//     `st->chunks_up` or `st->chunks_down`). That is not a new publication: the
+//     chunk was already published into its stream by `cio_chunk_open`'s own
+//     body, which this projection does not follow either (O00 blockers
+//     B03/R13). The declaration says the caller's obligation does not move; it
+//     says nothing about which list the chunk is on, and nothing about the
+//     containment edge itself.
+//   * **Nothing about success.** `cio_chunk_up_force` and `cio_chunk_down`
+//     return failure codes on several paths. A declaration is a custody
+//     statement, not a postcondition on the status, and no arm of it changes
+//     with the returned `int`.
+//   * **`cio_chunk_up`, `cio_chunk_is_file` and the rest of the residency
+//     family are deliberately left undeclared.** They have the same shapes and
+//     would take the same faithful declarations, but they occur at ZERO call
+//     sites in the pinned 185-unit corpus's projections, so declaring them
+//     would cost a premise and buy nothing — card O04-ARMS' standard, followed
+//     here. Named `NEIGHBOURS-UNDECLARED`.
+
+// --- the residency predicate ----------------------------------------------
+extern fn cio_chunk_is_up(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+// --- put a down chunk back up, ignoring the configured restrictions --------
+extern fn cio_chunk_up_force(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};
+
+// --- release the mapping and descriptor, keeping the chunk -----------------
+extern fn cio_chunk_down(ch: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_return_none();
+};

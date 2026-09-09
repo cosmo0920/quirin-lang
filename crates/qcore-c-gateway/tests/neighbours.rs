@@ -1,0 +1,796 @@
+//! NEIGHBOURS — production declared contract text for the six uncontracted
+//! callees standing between `flb_input_chunk_create` and its production
+//! discharge (`docs/reports/remaining-neighbours/README.md`).
+//!
+//! Card PROD-CONTRACTS landed the logging family, the name accessor and the
+//! routes-mask helpers, and measured that C6 — the constructor's success exit —
+//! still refuses in production. Its
+//! `the_remaining_production_blocker_is_one_uncontracted_neighbour` isolated the
+//! cause by withdrawing ONE declaration and reproducing the production refusal
+//! exactly, and named six uncontracted neighbours: `generate_chunk_name`,
+//! `cio_chunk_is_up`, `cio_chunk_up_force`, `input_chunk_write_header`,
+//! `flb_time_now` and `cio_chunk_down`.
+//!
+//! This card reads each of those six pinned bodies and lands all six as
+//! production contract text, in three new modules.
+//!
+//! **Every declaration is a TRUSTED ASSUMPTION.** Each was read against the
+//! pinned upstream body at Fluent Bit
+//! `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and is cited by file and line in
+//! its module header; nothing in this card analyzes a C body. A function-level
+//! `Safe` that rests on one is `Safe` **relative to** it, and is never a proof
+//! of the C implementation.
+//!
+//! Three legs, all through the public gateway entry points only: a held-out
+//! generic `n_*` family, the byte-verbatim real source, and adversarial
+//! substitutions at every new site class.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, CSourceInput, LegacyDiagnosticKind, LegacyFunctionSummary,
+    LegacyProgramSummary, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    check_legacy_safety_certificate,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+/// **The three production contract modules this card lands.**
+const HELPERS: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_helpers.qcore");
+const TIME: &str = include_str!("../../../contract/qcore/fluent_bit/time.qcore");
+const RESIDENCY: &str = include_str!("../../../contract/qcore/chunkio/chunk_residency.qcore");
+
+/// The production modules card PROD-CONTRACTS landed, byte-unchanged.
+const LOGGING: &str = include_str!("../../../contract/qcore/fluent_bit/logging.qcore");
+const CHUNK_NAME: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_name.qcore");
+const ROUTES_MASK: &str = include_str!("../../../contract/qcore/fluent_bit/routes_mask.qcore");
+/// Card HASH-CONTRACTS' module, byte-unchanged.
+const PUBLICATION: &str =
+    include_str!("../../../contract/qcore/fluent_bit/hash_table_publication.qcore");
+/// The production constructor/destructor pair, byte-unchanged.
+const OPEN_CLOSE: &str = include_str!("../../../contract/qcore/chunkio/resource_open_close.qcore");
+
+/// The earlier cards' fixture premise sets, all byte-unchanged.
+const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
+const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
+const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
+const CONSTRUCTOR: &str = include_str!("fixtures/o04/cio_chunk_open.c.txt");
+const PATH_CONTRACTS: &str = include_str!("fixtures/contracts/o04_path.qcore");
+const B08_CALLEES: &str = include_str!("fixtures/contracts/o04_b08_callees.qcore");
+const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_callees.qcore");
+
+const GENERIC: &str = include_str!("fixtures/contracts/neighbours_generic.qcore");
+
+/// The existing rejection an uncontracted call in a condition keeps.
+const CONDITION: &str = "unmodeled call, aggregate or indirect access in branch condition";
+
+fn load(name: &str, source: &str) -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([(name.to_owned(), source.to_owned())]))
+        .unwrap_or_else(|error| panic!("contract text rejected: {error}"))
+}
+
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent NEIGHBOURS test: {reason}");
+            false
+        }
+    }
+}
+
+fn program(result: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
+    match result {
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        }
+        | UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        other => panic!("expected an analyzable summary: {other:?}"),
+    }
+}
+
+fn function<'a>(summary: &'a LegacyProgramSummary, name: &str) -> &'a LegacyFunctionSummary {
+    summary
+        .functions
+        .get(name)
+        .unwrap_or_else(|| panic!("missing function `{name}`"))
+}
+
+fn unsupported(summary: &LegacyFunctionSummary) -> Vec<&str> {
+    summary
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => Some(description.as_str()),
+            _ => None,
+        })
+        .collect()
+}
+
+fn leaks(summary: &LegacyFunctionSummary) -> Vec<usize> {
+    summary
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match diagnostic.kind {
+            LegacyDiagnosticKind::Leak { acquisition_line } => Some(acquisition_line),
+            _ => None,
+        })
+        .collect()
+}
+
+/// A production module's declarations without its `module contract;` header, so
+/// several modules concatenate into one loadable text. The module texts
+/// themselves are byte-unchanged; only the concatenation drops the repeated
+/// header, and the assertion below fails if a module ever stops carrying one.
+fn declarations_of(module: &str) -> String {
+    let module = module.replace("\r\n", "\n");
+    let header = "module contract;\n";
+    assert!(
+        module.starts_with(header),
+        "a production contract module must declare `module contract;`"
+    );
+    module[header.len()..].to_owned()
+}
+
+// --------------------------------------------------------------------------
+// Held-out generic family
+// --------------------------------------------------------------------------
+
+const DECLARATIONS: &str = "\
+void *n_open(int size); \
+void n_close(void *handle); \
+int n_is_up(void *handle); \
+int n_up(void *handle); \
+int n_down(void *handle); \
+void n_name(void *instance, char *out_buf, int buf_size); \
+int n_header(void *handle, int kind, char *tag, int tag_len); \
+double n_clock(void);";
+
+fn analyze_with(contracts: &str, body: &str, entry: &str) -> UnrestrictedLegacyResult {
+    let source = format!("{DECLARATIONS} {body}");
+    analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        entry,
+        &load("neighbours_generic.qcore", contracts),
+    )
+    .unwrap_or_else(|error| panic!("generic fixture rejected by Clang: {error:?}\n{source}"))
+}
+
+fn summary_with(contracts: &str, body: &str, entry: &str) -> LegacyFunctionSummary {
+    function(program(&analyze_with(contracts, body, entry)), entry).clone()
+}
+
+fn summary_of(body: &str, entry: &str) -> LegacyFunctionSummary {
+    summary_with(GENERIC, body, entry)
+}
+
+/// The generic mirror of `flb_input_chunk_create`'s residency shape: acquire,
+/// interrogate, transition, write a header, read a clock, transition back, and
+/// hand the handle to the caller. Every failure arm releases, and the success
+/// arm escapes.
+const RESIDENCY_BODY: &str = "\
+void *n_create(void *instance, char *tag, int tag_len) { \
+    char name[64]; \
+    void *handle; \
+    int ret; \
+    int set_down = 0; \
+    double created; \
+    n_name(instance, name, 63); \
+    handle = n_open(64); \
+    if (!handle) { return 0; } \
+    ret = n_is_up(handle); \
+    if (ret == 0) { \
+        ret = n_up(handle); \
+        if (ret == -1) { n_close(handle); return 0; } \
+        set_down = 1; \
+    } \
+    ret = n_header(handle, 1, tag, tag_len); \
+    if (ret == -1) { n_close(handle); return 0; } \
+    created = n_clock(); \
+    (void) created; \
+    if (set_down == 1) { n_down(handle); } \
+    return handle; \
+}";
+
+/// **The headline for the generic family.** The whole residency shape is
+/// admitted end to end and the caller's own obligation settles on every exit:
+/// no refusal, and no leak.
+#[test]
+fn the_residency_shape_is_admitted_end_to_end() {
+    if !clang_available() {
+        return;
+    }
+    let summary = summary_of(RESIDENCY_BODY, "n_create");
+    assert!(
+        unsupported(&summary).is_empty(),
+        "unexpected refusals: {:?}",
+        unsupported(&summary)
+    );
+    assert!(
+        leaks(&summary).is_empty(),
+        "unexpected leaks: {:?}",
+        leaks(&summary)
+    );
+    let result = analyze_with(GENERIC, RESIDENCY_BODY, "n_create");
+    let certificate = match result {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate,
+        other => panic!("expected Safe for the admitted residency shape: {other:?}"),
+    };
+    check_legacy_safety_certificate(&certificate)
+        .expect("the certificate rechecks from its own retained sources");
+}
+
+/// **Precision in the defect direction too.** The same body with one failure
+/// arm's release deleted is `Unsafe` with exactly one leak: admitting the
+/// residency calls does not admit the leak they surround.
+#[test]
+fn an_admitted_residency_shape_does_not_hide_a_leak() {
+    if !clang_available() {
+        return;
+    }
+    let leaky = RESIDENCY_BODY.replace(
+        "if (ret == -1) { n_close(handle); return 0; } \
+    created = n_clock();",
+        "if (ret == -1) { return 0; } \
+    created = n_clock();",
+    );
+    assert_ne!(leaky, RESIDENCY_BODY, "the substitution did not apply");
+    let summary = summary_of(&leaky, "n_create");
+    assert_eq!(
+        leaks(&summary).len(),
+        1,
+        "expected exactly one leak: {:?} / {:?}",
+        leaks(&summary),
+        unsupported(&summary)
+    );
+}
+
+/// **Adversarial row 1: the modes are load-bearing in BOTH directions.**
+///
+/// `n_down` declared `resource_released` — the mode a careless reading of
+/// "puts the chunk down" would reach for — discharges the caller's obligation
+/// instead, so the arm that drops the handle without closing stops leaking.
+/// That is precisely why the residency modes had to be read off the bodies:
+/// neither `cio_chunk_down` nor `cio_chunk_up_force` frees the chunk, so
+/// `resource_released` would be an unfaithful declaration that ERASES a real
+/// obligation.
+#[test]
+fn the_residency_modes_are_load_bearing_in_both_directions() {
+    if !clang_available() {
+        return;
+    }
+    // A body whose only exit drops the handle after a `n_down`.
+    let body = "\
+void n_probe(void) { \
+    void *handle; \
+    handle = n_open(64); \
+    if (!handle) { return; } \
+    n_down(handle); \
+}";
+    let faithful = summary_of(body, "n_probe");
+    assert_eq!(
+        leaks(&faithful).len(),
+        1,
+        "the faithful borrowed declaration keeps the leak visible: {:?}",
+        unsupported(&faithful)
+    );
+    let released = GENERIC.replace(
+        "extern fn n_down(handle: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(handle);",
+        "extern fn n_down(handle: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(handle, nonnull);",
+    );
+    assert_ne!(released, GENERIC, "the substitution did not apply");
+    let substituted = summary_with(&released, body, "n_probe");
+    assert!(
+        leaks(&substituted).is_empty(),
+        "the unfaithful `resource_released` discharges the obligation: {:?}",
+        leaks(&substituted)
+    );
+}
+
+/// **Adversarial row 2: withdrawing each declaration restores its refusal.**
+/// Six substitutions on the same generic body, one per declaration this card
+/// lands, each asserted to restore a refusal naming that callee.
+#[test]
+fn withdrawing_each_generic_declaration_restores_its_refusal() {
+    if !clang_available() {
+        return;
+    }
+    for (name, declaration) in [
+        (
+            "n_name",
+            "extern fn n_name(instance: ptr<mut, u8>, out_buf: ptr<mut, u8>, buf_size: i32) -> unit",
+        ),
+        ("n_is_up", "extern fn n_is_up(handle: ptr<mut, u8>) -> i32"),
+        ("n_up", "extern fn n_up(handle: ptr<mut, u8>) -> i32"),
+        ("n_down", "extern fn n_down(handle: ptr<mut, u8>) -> i32"),
+        (
+            "n_header",
+            "extern fn n_header(handle: ptr<mut, u8>, kind: i32, tag: ptr<mut, u8>, tag_len: i32) -> i32",
+        ),
+        ("n_clock", "extern fn n_clock() -> f64"),
+    ] {
+        let start = GENERIC
+            .find(declaration)
+            .unwrap_or_else(|| panic!("the generic fixture no longer declares {name}"));
+        let end = GENERIC[start..]
+            .find("};\n")
+            .map(|offset| start + offset + 3)
+            .expect("a declaration ends with `};`");
+        let without = format!("{}{}", &GENERIC[..start], &GENERIC[end..]);
+        let summary = summary_with(&without, RESIDENCY_BODY, "n_create");
+        let refusals = unsupported(&summary);
+        let expected = format!("call to uncontracted function `{name}`");
+        assert!(
+            refusals.iter().any(|text| *text == expected) || refusals.contains(&CONDITION),
+            "withdrawing {name} must restore a refusal: {refusals:?}"
+        );
+        assert!(
+            !refusals.is_empty(),
+            "withdrawing {name} left the body fully admitted"
+        );
+    }
+}
+
+/// **Adversarial row 3: a tail actual that may carry a tracked identity is
+/// still refused at the new sites.** The residency declarations decide their
+/// statements; they do not widen what a logging tail may carry.
+#[test]
+fn a_tracked_handle_is_never_admitted_where_the_projection_tracks_it() {
+    if !clang_available() {
+        return;
+    }
+    // The handle's ADDRESS in a residency argument: an address-of escape is not
+    // a borrowed actual under any declaration.
+    let body = "\
+void n_probe(void) { \
+    void *handle; \
+    handle = n_open(64); \
+    if (!handle) { return; } \
+    n_down((void *) &handle); \
+    n_close(handle); \
+}";
+    let summary = summary_of(body, "n_probe");
+    assert!(
+        !unsupported(&summary).is_empty() || !leaks(&summary).is_empty(),
+        "an address-of escape must not be silently admitted"
+    );
+}
+
+/// **Contract substitution, one per new declaration.** The certificate the
+/// admitted body produced is rechecked against a contract table built from
+/// SUBSTITUTED text: each of the five pointer-taking declarations in turn has
+/// its faithful `resource_borrowed` replaced by `resource_released`, the mode a
+/// careless reading would reach for. The independent recheck must refuse every
+/// one — the certificate rests on the declared text it retained, not on the
+/// shape of the body it described.
+#[test]
+fn a_certificate_resting_on_the_new_modules_is_rederived_from_its_own_sources() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze_with(GENERIC, RESIDENCY_BODY, "n_create");
+    let certificate = match result {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate,
+        other => panic!("expected Safe: {other:?}"),
+    };
+    check_legacy_safety_certificate(&certificate).expect("the unmutated certificate rechecks");
+    for (callee, parameter) in [
+        ("n_is_up", "handle"),
+        ("n_up", "handle"),
+        ("n_down", "handle"),
+        ("n_header", "handle"),
+        ("n_name", "out_buf"),
+    ] {
+        let start = GENERIC
+            .find(&format!("extern fn {callee}("))
+            .unwrap_or_else(|| panic!("the fixture no longer declares {callee}"));
+        let end = GENERIC[start..]
+            .find("};\n")
+            .map(|offset| start + offset + 3)
+            .expect("a declaration ends with `};`");
+        let faithful = format!("ensures normal resource_borrowed({parameter});");
+        let unfaithful = format!("ensures normal resource_released({parameter}, nonnull);");
+        let declaration = GENERIC[start..end].replace(&faithful, &unfaithful);
+        assert_ne!(
+            declaration,
+            GENERIC[start..end],
+            "the {callee} substitution did not apply"
+        );
+        let substituted = format!("{}{declaration}{}", &GENERIC[..start], &GENERIC[end..]);
+        let mut mutated = certificate.clone();
+        mutated.contracts = load("neighbours_generic.qcore", &substituted);
+        assert!(
+            check_legacy_safety_certificate(&mutated).is_err(),
+            "a certificate rechecked against a substituted `{callee}` declaration must be refused"
+        );
+    }
+}
+
+// --------------------------------------------------------------------------
+// Real source
+// --------------------------------------------------------------------------
+
+/// The upstream logging macros, reproduced verbatim from card PROD-CONTRACTS'
+/// own test so this card's real-source leg preprocesses to exactly the
+/// production shape.
+const MACRO_PRELUDE: &str = "\
+/* Card PROD-CONTRACTS: what the call sites actually reach. */\n\
+int flb_log_check(int level);\n\
+void flb_log_print(int level, const char *file, int line, const char *format, ...);\n\
+#define flb_error(fmt, ...) \\\n\
+    if (flb_log_check(1)) \\\n\
+        flb_log_print(1, ((void *) 0), 0, fmt, ##__VA_ARGS__)\n\
+#define flb_trace(fmt, ...) \\\n\
+    if (flb_log_check(5)) \\\n\
+        flb_log_print(5, __FILE__, __LINE__, fmt, ##__VA_ARGS__)\n\
+void flb_errno(void);\n";
+
+fn expanded_prelude() -> String {
+    let original = "/* Deliberately uncontracted: the logging and errno expansions. */\n\
+void flb_error(const char *format, ...);\n\
+void flb_trace(const char *format, ...);\n\
+void flb_errno(void);\n";
+    let prelude = PRELUDE.replace("\r\n", "\n");
+    assert!(
+        prelude.contains(original),
+        "the o04 prelude no longer carries the logging prototypes this card replaces"
+    );
+    prelude.replace(original, MACRO_PRELUDE)
+}
+
+fn real_source() -> String {
+    format!(
+        "{}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n",
+        expanded_prelude()
+    )
+}
+
+/// One fixture declaration, cut out by name so the PRODUCTION module supplies
+/// it instead. The loader rejects a duplicate function contract, so this is how
+/// a fixture premise is replaced by production text rather than shadowed by it.
+fn without_declaration(text: &str, signature: &str) -> String {
+    let start = text
+        .find(signature)
+        .unwrap_or_else(|| panic!("the fixture no longer declares `{signature}`"));
+    let end = text[start..]
+        .find("};\n")
+        .map(|offset| start + offset + 3)
+        .expect("a declaration ends with `};`");
+    format!("{}{}", &text[..start], &text[end..])
+}
+
+/// **The six fixture premises this card replaces with production text.** Each
+/// name is cut from the fixture that carried it, and supplied instead by one of
+/// the three modules under `contract/qcore`. The fixture FILES stay
+/// byte-unchanged on disk, so cards O04, O04-ARMS, O04-B08, O04-READ-BOUND,
+/// O04-B09B10, O04-TRACE, HASH-CONTRACTS and PROD-CONTRACTS keep their exact
+/// premise sets and their exact measurements.
+const REPLACED: [&str; 6] = [
+    "extern fn cio_chunk_is_up(",
+    "extern fn cio_chunk_up_force(",
+    "extern fn cio_chunk_down(",
+    "extern fn generate_chunk_name(",
+    "extern fn input_chunk_write_header(",
+    "extern fn flb_time_now(",
+];
+
+/// The real caller's premise set with all six neighbours coming from the three
+/// PRODUCTION modules, plus card PROD-CONTRACTS' four and the fixture premises
+/// for everything else.
+fn real_contracts() -> String {
+    let mut path = PATH_CONTRACTS.replace("\r\n", "\n");
+    // PROD-CONTRACTS already takes these two from production modules.
+    for signature in [
+        "extern fn flb_routes_mask_set_by_tag(",
+        "extern fn cio_chunk_open(",
+        "extern fn cio_chunk_close(",
+    ] {
+        path = without_declaration(&path, signature);
+    }
+    for signature in &REPLACED[..5] {
+        path = without_declaration(&path, signature);
+    }
+    let b08 = without_declaration(&B08_CALLEES.replace("\r\n", "\n"), REPLACED[5]);
+    format!(
+        "{path}\n{b08}\n{OTHER_CALLEES}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+        declarations_of(LOGGING),
+        declarations_of(CHUNK_NAME),
+        declarations_of(ROUTES_MASK),
+        declarations_of(PUBLICATION),
+        declarations_of(HELPERS),
+        declarations_of(TIME),
+        declarations_of(RESIDENCY),
+    )
+    // The ChunkIO constructor/destructor pair also comes from production.
+    + "\n"
+        + &declarations_of(OPEN_CLOSE)
+}
+
+fn analyze_real(source: &str, contracts: &str) -> UnrestrictedLegacyResult {
+    analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            // The pinned 185-unit compatibility route's own declared input
+            // identity (card G02). The expanded `flb_trace` carries `__FILE__`,
+            // which an anonymous text must refuse; this is the same declared
+            // assumption the production route makes, not a bypass of it.
+            input: CSourceInput::HistoricalStdin,
+            ..Default::default()
+        },
+        "flb_input_chunk_create",
+        &load("neighbours_real.qcore", contracts),
+    )
+    .unwrap_or_else(|error| panic!("real-source fixture rejected by Clang: {error:?}"))
+}
+
+/// **THE HEADLINE, and it is not the one the card hoped for.**
+///
+/// On the byte-verbatim upstream `flb_input_chunk_create`, with all six
+/// neighbours' declarations coming from `contract/qcore`, the constructor does
+/// **NOT** reach function-level `Safe`. It carries EXACTLY ONE refusal, and
+/// this test pins the whole diagnostic vector so neither direction can move
+/// silently:
+///
+///   * **31 diagnostics without the six, 1 with them.** Six of the thirty-one
+///     name a callee and one is the C6 tail refusal; the other twenty-four are
+///     the aliasing and indirect-access cascade those seven leave behind, and
+///     they settle when the calls become modelled.
+///   * **The C6 statement itself is decided.** The `flb_trace` expansion card
+///     O04-TRACE and card PROD-CONTRACTS both tracked — the one whose declared
+///     tail refused because `tag` was seeded risky by the uncontracted
+///     `input_chunk_write_header` — carries no refusal any more.
+///   * **What remains is not a contract question.** The surviving refusal is on
+///     the `flb_error` arm of the `!chunk` failure exit, and it is an
+///     `indirect memory access` refusal of a TAIL ACTUAL, not of a callee:
+///     `storage->stream->name`, a two-level chained pointer-field read whose
+///     final field is itself pointer-typed. No declaration of any function can
+///     decide it. `withdrawing_the_chained_tail_actual_decides_the_constructor`
+///     below isolates that by substitution, and the card report records it as
+///     the named follow-on `NEIGHBOURS-CHAINED-TAIL`.
+///
+/// Nothing here is promoted. Even the residual-free state that probe reaches is
+/// a FUNCTION-LEVEL projection resting on twelve named declared contracts, each
+/// a trusted assumption about a body read by hand, and never a proof of the C.
+///
+/// **And this fixture's residual UNDERSTATES production, measured.** The caller
+/// excerpt is byte-verbatim but its prelude is reduced, so the real headers'
+/// richer types are absent here. On the pinned 185-unit corpus the same
+/// function moves 36 diagnostics to 21 and stays `Unknown`: every one of the
+/// six callee refusals and the C6 tail refusal are gone, and what remains is
+/// fifteen `unresolved resource identity` and six `indirect memory access`
+/// leaves this reduced prelude does not reproduce. The card report's §4 carries
+/// that measurement; this test carries the fixture's.
+#[test]
+fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
+    if !clang_available() {
+        return;
+    }
+    let source = real_source();
+    let result = analyze_real(&source, &real_contracts());
+    let summary = function(program(&result), "flb_input_chunk_create").clone();
+    assert_eq!(
+        unsupported(&summary),
+        vec!["indirect memory access is outside the resource projection"],
+        "the constructor's refusal vector moved"
+    );
+    assert!(
+        leaks(&summary).is_empty(),
+        "the constructor must not leak: {:?}",
+        leaks(&summary)
+    );
+    assert_eq!(
+        summary.diagnostics.len(),
+        1,
+        "exactly one diagnostic remains: {:?}",
+        summary.diagnostics
+    );
+
+    // And the before-state, measured in the same run so the movement is not
+    // asserted from memory.
+    let mut without = real_contracts();
+    for signature in REPLACED {
+        without = without_declaration(&without, signature);
+    }
+    let before = function(
+        program(&analyze_real(&source, &without)),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    assert_eq!(
+        before.diagnostics.len(),
+        31,
+        "the before-state diagnostic count moved: {:?}",
+        before.diagnostics
+    );
+    for callee in [
+        "generate_chunk_name",
+        "cio_chunk_is_up",
+        "cio_chunk_up_force",
+        "input_chunk_write_header",
+        "flb_time_now",
+        "cio_chunk_down",
+    ] {
+        let expected = format!("call to uncontracted function `{callee}`");
+        assert!(
+            unsupported(&before).iter().any(|text| *text == expected),
+            "the before-state must name {callee}"
+        );
+    }
+    // The C6 tail refusal card PROD-CONTRACTS isolated is present before and
+    // absent after.
+    let tail = "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection";
+    assert!(
+        unsupported(&before).contains(&tail),
+        "{:?}",
+        unsupported(&before)
+    );
+    assert!(!unsupported(&summary).contains(&tail));
+}
+
+/// **The residual isolated by substitution.** Replacing the one chained
+/// pointer-field tail actual with the plain local array the same statement
+/// already passes leaves the constructor with ZERO diagnostics.
+///
+/// This is a PROBE on a derived source, and its substitution is asserted to
+/// have applied. It is evidence about where the remaining refusal comes from —
+/// one actual, in one argument list, on one failure arm — and it is not a claim
+/// about the upstream code, which is byte-unchanged in every other test here.
+/// Extending the chained-access admission to a pointer-typed final field is a
+/// checker question with a real soundness obligation (the read yields a pointer
+/// the projection does not track), and this contract-text card deliberately
+/// does not take it.
+#[test]
+fn withdrawing_the_chained_tail_actual_decides_the_constructor() {
+    if !clang_available() {
+        return;
+    }
+    let source = real_source();
+    let probed = source.replace("storage->stream->name, name);", "name, name);");
+    assert_ne!(probed, source, "the probe substitution did not apply");
+    let summary = function(
+        program(&analyze_real(&probed, &real_contracts())),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    assert!(
+        summary.diagnostics.is_empty(),
+        "the chained tail actual is the whole residual: {:?}",
+        summary.diagnostics
+    );
+}
+
+/// **The isolation experiment, re-run against the new state.** Card
+/// PROD-CONTRACTS withdrew `input_chunk_write_header` alone and reproduced the
+/// production refusal. With the six neighbours now production text, the same
+/// one-withdrawal experiment still reproduces the same refusal — the
+/// declaration is load-bearing, and it is load-bearing from `contract/qcore`
+/// rather than from a fixture.
+#[test]
+fn withdrawing_one_neighbour_still_reproduces_the_refusal() {
+    if !clang_available() {
+        return;
+    }
+    let source = real_source();
+    let contracts = real_contracts();
+    let without = without_declaration(&contracts, "extern fn input_chunk_write_header(");
+    assert_ne!(without, contracts, "the withdrawal did not apply");
+    let summary = function(
+        program(&analyze_real(&source, &without)),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    let refusals = unsupported(&summary);
+    assert!(
+        refusals.contains(
+            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
+        ),
+        "the isolated refusal is reproduced: {refusals:?}"
+    );
+    // The gate stays decided: the neighbour affects the tail actual, not the
+    // branch condition.
+    assert!(!refusals.contains(&CONDITION), "{refusals:?}");
+}
+
+/// **Every one of the six is load-bearing, measured one withdrawal at a time.**
+/// Withdrawing any single production declaration leaves the constructor with at
+/// least one refusal, so none of the six is decoration.
+#[test]
+fn withdrawing_any_single_neighbour_leaves_the_constructor_refusing() {
+    if !clang_available() {
+        return;
+    }
+    let source = real_source();
+    let contracts = real_contracts();
+    for signature in REPLACED {
+        let without = without_declaration(&contracts, signature);
+        let summary = function(
+            program(&analyze_real(&source, &without)),
+            "flb_input_chunk_create",
+        )
+        .clone();
+        assert!(
+            !unsupported(&summary).is_empty(),
+            "withdrawing `{signature}` left the constructor fully admitted"
+        );
+    }
+}
+
+/// **A `Safe` function is not a `Safe` unit, and this card promotes nothing.**
+/// The fixture program is not `Safe`: `cio_chunk_open`, in the same translation
+/// unit, keeps its own refusals, exactly as card O04 recorded.
+#[test]
+fn the_real_program_is_not_promoted_by_this_card() {
+    if !clang_available() {
+        return;
+    }
+    let source = real_source();
+    let result = analyze_real(&source, &real_contracts());
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "the fixture program must not be reported Safe"
+    );
+    let summary = function(program(&result), "cio_chunk_open").clone();
+    assert!(
+        !unsupported(&summary).is_empty() || !leaks(&summary).is_empty(),
+        "the constructor's own callee keeps its refusals"
+    );
+}
+
+/// The modules under test are the files under `contract/qcore`, all six
+/// declarations are in force through the real production manifest, and the
+/// clock declaration carries its own C result type rather than an integer
+/// projection of it.
+#[test]
+fn the_modules_under_test_are_the_production_ones() {
+    assert!(HELPERS.contains("extern fn generate_chunk_name("));
+    assert!(HELPERS.contains("extern fn input_chunk_write_header("));
+    assert!(RESIDENCY.contains("extern fn cio_chunk_is_up("));
+    assert!(RESIDENCY.contains("extern fn cio_chunk_up_force("));
+    assert!(RESIDENCY.contains("extern fn cio_chunk_down("));
+    // The measured faithfulness point this card rests on: `flb_time_now`
+    // returns `double`, so it is declared `-> f64`. Card O04-B08's gateway
+    // FIXTURE projected the same function onto `-> u64`; that is acceptable as
+    // a fixture premise, where its header says so, and it is not what
+    // production text may say.
+    assert!(
+        TIME.contains("extern fn flb_time_now() -> f64"),
+        "the clock declaration must carry its own C result type"
+    );
+    for integer in [
+        "extern fn flb_time_now() -> u64",
+        "extern fn flb_time_now() -> i64",
+    ] {
+        assert!(
+            !TIME.contains(integer),
+            "an integer projection of a `double` result is an unfaithful declaration"
+        );
+    }
+    // The three modules load together and with the rest of the manifest.
+    let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../contract/cycle19-resource-contracts.json");
+    let contracts =
+        qcore_contract::contract_loader::load_resource_contract_manifest(&manifest).unwrap();
+    for name in [
+        "generate_chunk_name",
+        "input_chunk_write_header",
+        "flb_time_now",
+        "cio_chunk_is_up",
+        "cio_chunk_up_force",
+        "cio_chunk_down",
+    ] {
+        assert!(
+            contracts.contract(name).is_some(),
+            "{name} is not in force in the production manifest"
+        );
+    }
+    // 9 -> 12 manifest-selected modules, deliberately.
+    assert_eq!(contracts.source_assumptions().len(), 12);
+}

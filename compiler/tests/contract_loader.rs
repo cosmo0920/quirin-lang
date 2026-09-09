@@ -29,8 +29,10 @@ extern fn alloc() -> ptr<mut, u8> contract {
 #[test]
 fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
-    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS.
-    assert_eq!(contracts.source_assumptions().len(), 9);
+    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
+    // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qcore`,
+    // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`).
+    assert_eq!(contracts.source_assumptions().len(), 12);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -95,6 +97,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("flb_input_chunk_get_name", 1),
         ("flb_routes_mask_set_by_tag", 4),
         ("flb_routes_mask_get_size", 1),
+        // Card NEIGHBOURS adds six more, listed explicitly for the same
+        // reason and in the same shape: every parameter borrowed, no result
+        // custody. `flb_time_now` takes no parameter at all, so its row is
+        // the empty vector, and it is the first production declaration whose
+        // C result is floating-point (`-> f64`).
+        ("generate_chunk_name", 3),
+        ("input_chunk_write_header", 4),
+        ("flb_time_now", 0),
+        ("cio_chunk_is_up", 1),
+        ("cio_chunk_up_force", 1),
+        ("cio_chunk_down", 1),
     ] {
         old.insert_contract(
             name,
@@ -368,8 +381,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
         )],
     };
     check_legacy_safety_certificate(&certificate).unwrap();
-    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 9);
+    // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
+    // NEIGHBOURS.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 12);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -385,10 +399,16 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
 /// rejected rather than approximated.
 #[test]
 fn every_abi_scalar_is_a_borrowed_only_projection() {
+    // Card NEIGHBOURS added `f32`/`f64` under the condition this table's own
+    // note stated for them — a resource API in scope that passes one: Fluent
+    // Bit's `double flb_time_now()`. The loop below still runs over the WHOLE
+    // table, so the two new entries are checked to reject every custody mode
+    // exactly as the integer entries do; nothing about the refusals moved.
     assert_eq!(
         SCALAR_ABI_TYPES,
         [
-            "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize"
+            "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize", "f32",
+            "f64"
         ]
     );
     assert_eq!(
@@ -436,8 +456,12 @@ fn every_abi_scalar_is_a_borrowed_only_projection() {
         }
     }
     // Types outside the table stay rejected: `unit` is a result type only, and
-    // floats have no resource API in scope.
-    for parameter in ["unit", "f32", "f64", "ptr<const, ptr<const, u8>>"] {
+    // a pointer spelling the pointer table does not carry is not a projection
+    // this loader can read. Card NEIGHBOURS moved `f32`/`f64` OUT of this list
+    // and into `SCALAR_ABI_TYPES`; the two entries that stay here are the
+    // load-bearing half of this check, and the loop above now covers the floats
+    // in the borrowed-only direction instead.
+    for parameter in ["unit", "ptr<const, ptr<const, u8>>"] {
         let source = format!(
             "module contract;
         extern fn probe(n: {parameter}) -> unit contract {{
@@ -467,7 +491,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 61 -> 64: card PROD-CONTRACTS adds `fluent_bit/input_chunk_name.qcore`,
     // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, all three
     // entirely v1 and all three manifest-selected.
-    assert_eq!(modules.len(), 64, "corpus module count");
+    // 64 -> 67: card NEIGHBOURS adds `fluent_bit/input_chunk_helpers.qcore`,
+    // `fluent_bit/time.qcore` and `chunkio/chunk_residency.qcore`, all three
+    // entirely v1 and all three manifest-selected.
+    assert_eq!(modules.len(), 67, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -518,14 +545,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
             }
         }
     }
-    // The nine manifest-selected resource projections and their 25 assumptions;
-    // every other declaration belongs to another interpreter and is rejected.
-    // 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; 6 -> 9 and 20 -> 25 by card
-    // PROD-CONTRACTS. The rejected count is unchanged in both cases, because
+    // The twelve manifest-selected resource projections and their 31
+    // assumptions; every other declaration belongs to another interpreter and
+    // is rejected. 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; 6 -> 9 and
+    // 20 -> 25 by card PROD-CONTRACTS; 9 -> 12 and 25 -> 31 by card NEIGHBOURS
+    // (two input-chunk helpers, one clock reading, three ChunkIO residency
+    // helpers). The rejected count is unchanged in all three cases, because
     // every added module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (9, 25, 145)
+        (12, 31, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

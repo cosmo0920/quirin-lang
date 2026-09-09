@@ -124,10 +124,13 @@
 //! Signatures are opaque C ABI projections, not checked C layouts. The type
 //! vocabulary is likewise an explicit table, not a wildcard:
 //!
-//! - [`SCALAR_ABI_TYPES`] — sizes, counts, flags, descriptors and offsets.
-//!   Borrowed only: a scalar cannot carry custody, so every custody mode on
-//!   one is rejected. Float scalars are deliberately absent; no resource API
-//!   in scope passes one, and this loader adds no vocabulary without a use.
+//! - [`SCALAR_ABI_TYPES`] — sizes, counts, flags, descriptors, offsets and
+//!   real-valued readings. Borrowed only: a scalar cannot carry custody, so
+//!   every custody mode on one is rejected. Card NEIGHBOURS admitted `f32` and
+//!   `f64` under exactly the condition this note stated for them — a resource
+//!   API in scope that passes one: Fluent Bit's `double flb_time_now()`
+//!   (`src/flb_lib.c:936`), whose reading `flb_input_chunk_create` stores in
+//!   `ic->create_time`. Before that there was no use, and the table had none.
 //! - [`POINTER_ABI_TYPES`] — the custody-bearing projections. `resource_out`
 //!   additionally requires `ptr<mut, ptr<mut, u8>>`, and any non-`None` result
 //!   requires a pointer return type.
@@ -159,10 +162,19 @@ use qcore_schemas::contract::{
 };
 
 /// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
-/// flags, descriptors and offsets, never custody. Widening this table changes
-/// which signatures can be *written*, never what a loaded contract means.
+/// flags, descriptors, offsets and real-valued readings, never custody.
+/// Widening this table changes which signatures can be *written*, never what a
+/// loaded contract means.
+///
+/// `f32`/`f64` were added by card NEIGHBOURS so that Fluent Bit's
+/// `double flb_time_now()` could be declared with its OWN return type rather
+/// than projected onto an integer it does not have. Nothing else moved with
+/// them: a float is refused in every custody mode exactly as every other scalar
+/// is, and a non-`None` result still requires a pointer return type, so no
+/// float can occupy a custody position. `unit` and every pointer spelling
+/// outside [`POINTER_ABI_TYPES`] stay refused as parameter types.
 pub const SCALAR_ABI_TYPES: &[&str] = &[
-    "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
+    "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize", "f32", "f64",
 ];
 
 /// Opaque C ABI pointer projections. These are the custody-bearing types.

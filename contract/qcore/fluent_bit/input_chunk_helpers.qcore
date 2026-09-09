@@ -1,0 +1,129 @@
+module contract;
+
+// Fluent Bit input-chunk file-static helpers — resource-projection vocabulary
+// version 1.
+//
+// Card NEIGHBOURS. This module declares TRUSTED ASSUMPTIONS about the two
+// `static` helpers `flb_input_chunk_create` calls in its own translation unit.
+// It verifies nothing: the C bodies are not analyzed by this loader, and a
+// declaration is a premise. A function-level `Safe` that rests on this module
+// is `Safe` RELATIVE TO these declarations and is never a proof of the C
+// implementation.
+//
+// Both bodies were read at Fluent Bit
+// `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and are cited by line.
+//
+// ## Both callees are `static`, and that is deliberate, not an oversight
+//
+// `generate_chunk_name` and `input_chunk_write_header` are file-static
+// definitions inside `src/flb_input_chunk.c`, which is itself a unit of the
+// pinned corpus. A declared contract ALWAYS wins over a W4-inferred summary,
+// and a disagreement between the two is reported as a `SummaryConflict`
+// diagnostic, never silently resolved (`crates/qcore-c-gateway/src/legacy_summary.rs`).
+// Declaring a defined function does not stop the unit analyzing that function's
+// own body; it only fixes what its CALLERS may assume. Card PROD-CONTRACTS
+// declared `flb_input_chunk_get_name` under exactly this arrangement and
+// measured zero custody summary conflicts corpus-wide; this card re-measures
+// the same count with these two added.
+//
+// ## `generate_chunk_name`, read from `src/flb_input_chunk.c:743-754`
+//
+//     static void generate_chunk_name(struct flb_input_instance *in,
+//                                     char *out_buf, int buf_size)
+//     {
+//         struct flb_time tm;
+//         (void) in;
+//         flb_time_get(&tm);
+//         snprintf(out_buf, buf_size - 1, "%i-%lu.%4lu.flb",
+//                  getpid(), tm.tm.tv_sec, tm.tm.tv_nsec);
+//     }
+//
+// That is the whole body.
+//
+//   * `in` is DISCARDED by an explicit `(void) in;` on every path. No custody,
+//     no read, no retention.
+//   * `out_buf` is WRITTEN THROUGH by `snprintf`. Nothing is allocated for it,
+//     nothing is freed through it, and the pointer is stored nowhere.
+//   * `buf_size` is an `int` by value.
+//   * `flb_time_get(&tm)` takes the address of a function-LOCAL
+//     `struct flb_time`, not of anything the caller owns.
+//   * the result is `void`.
+//
+// A callee that writes through a caller's buffer is not thereby taking custody
+// of it, and `resource_borrowed` says only the latter. This is the same reading
+// card PROD-CONTRACTS recorded for `flb_routes_mask_set_by_tag`'s
+// `routes_mask`, reached the same way.
+//
+// NOT CLAIMED: that the write is in bounds. The body passes `buf_size - 1` as
+// `snprintf`'s size while the caller passes `sizeof(name) - 1` as `buf_size`,
+// and nothing here relates either number to the caller's array. Extent is not
+// custody and this projection models custody only. Named
+// `NEIGHBOURS-NAME-EXTENT`; it is the same class of non-claim as
+// `PROD-CONTRACTS-MASK-EXTENT`, and it is neither a defect claim about the
+// upstream code nor a licence to ignore one.
+//
+// ## `input_chunk_write_header`, read from `src/flb_input_chunk.c:1782-1852`
+//
+//     static int input_chunk_write_header(struct cio_chunk *chunk,
+//                                         int event_type,
+//                                         char *tag, int tag_len)
+//
+// The body allocates ONE buffer and accounts for it on BOTH exits:
+//
+//   * `meta = flb_calloc(1, meta_size);` (`:1807`). On the allocation-failure
+//     arm it logs and returns `-1` with nothing allocated (`:1808-1811`).
+//   * `memcpy(meta + FLB_INPUT_CHUNK_META_HEADER, tag, tag_len);` (`:1840`) —
+//     `tag` is a memcpy SOURCE. It is read, never freed, never stored.
+//   * `ret = cio_meta_write(chunk, (char *) meta, meta_size);` (`:1843`).
+//     `cio_meta_write` (`lib/chunkio/src/cio_meta.c:46-73`) COPIES the buffer
+//     on both backends: the memory backend `malloc`s `mf->meta_data` and
+//     `memcpy`s into it (`:60-66`), and the filesystem backend forwards to
+//     `cio_file_write_metadata` (`lib/chunkio/src/cio_file.c:1075-1145`), whose
+//     two arms both end in `memcpy(meta, buf, size)` into the chunk's own map
+//     (`:1100`, `:1141`). No callee retains `meta`.
+//   * both remaining exits free it: `flb_free(meta)` on the write-failure arm
+//     (`:1846`) and again on the success arm (`:1849`).
+//
+// So `meta` is a private local, `chunk` is written into but never freed or
+// stored, `tag` is read, and the result is a `0`/`-1` status. Every parameter
+// is borrowed and the result carries no custody. Over the whole v1 parameter
+// vocabulary this is the only mode combination with the caller-side effect the
+// body was read to have.
+//
+// NOT CLAIMED, recorded rather than hidden:
+//
+//   * **`memcpy` reads `tag_len` bytes through `tag`.** That is a validity and
+//     extent requirement on the caller, not a custody fact, and this projection
+//     models custody only. The declaration neither creates nor detects a caller
+//     that passes a released pointer here; the gateway's own liveness
+//     precondition (card BORROW-LIVENESS) is what refuses that, on settled
+//     denotations, and it is unchanged by this module.
+//   * **Nothing about the header's contents, the magic bytes, the truncation of
+//     an over-long tag (`:1800-1803`), or whether the metadata reaches disk.**
+//   * **`flb_input_chunk_write_header_v2`** (`:1854`) — the exported v2 entry
+//     point beside it — is DELIBERATELY LEFT UNDECLARED. Its body is
+//     substantially larger, allocates through a different route and has arms
+//     this card did not read; declaring it on the strength of its neighbour's
+//     shape would be exactly the unfaithful-declaration defect card P07
+//     recorded. Named `NEIGHBOURS-UNDECLARED`.
+
+// --- the chunk-file name the constructor generates into a local array ------
+extern fn generate_chunk_name(in: ptr<mut, u8>, out_buf: ptr<mut, u8>, buf_size: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(in);
+    ensures normal resource_borrowed(out_buf);
+    ensures normal resource_borrowed(buf_size);
+    ensures normal resource_return_none();
+};
+
+// --- the chunk metadata header the constructor writes before publishing ----
+extern fn input_chunk_write_header(chunk: ptr<mut, u8>, event_type: i32, tag: ptr<mut, u8>, tag_len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(chunk);
+    ensures normal resource_borrowed(event_type);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_return_none();
+};
