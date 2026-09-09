@@ -223,7 +223,14 @@ digest.
 | Unit verdicts | 2 Safe / 42 Unsafe / 137 Unknown / 4 data-only | **identical** |
 | Unit and function verdict movements | — | **0** |
 | `leak` diagnostics | 271 | **271** |
+| `unsupported` diagnostics | 49,936 | **49,936** |
 | `unknown_alias` diagnostics | 4,387 | **4,387** |
+| of those, this rule's `place/peer` obligations | **1** | **1** |
+
+Counted directly out of both `diagnostics.json` files, not carried from the
+prior report. The last row is the independent confirmation of the census in
+§4.3: the corpus publishes exactly one obligation of this rule, and it is the
+`v1` one.
 
 `C02-P-ALIAS-LEAK-ORDER` is undisturbed: the leak inventory is unchanged, which
 is the observable consequence of the pre-pass architecture being untouched.
