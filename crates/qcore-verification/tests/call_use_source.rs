@@ -295,7 +295,7 @@ fn the_core_admits_its_own_reading_and_refuses_every_forgery() {
         }
         assert!(applied > 0, "vacuous forgery on both bodies: {name}");
     }
-    assert!(rows >= 18, "the forgery matrix shrank to {rows} rows");
+    assert_eq!(rows, 33, "the forgery matrix moved");
 }
 
 #[test]
@@ -375,7 +375,7 @@ fn a_false_contract_is_refused_by_the_cores_own_evaluation() {
             checked += 1;
         }
     }
-    assert!(checked >= 2, "no contract predicate was exercised");
+    assert_eq!(checked, 10, "the false-contract matrix moved");
 }
 
 #[test]
